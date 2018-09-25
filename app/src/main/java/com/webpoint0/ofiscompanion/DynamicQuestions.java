@@ -2322,7 +2322,7 @@ class DynamicQuestions {
 
                     renderTextBoxQuestionSubQuestion(repeaterQuestions, false, repeaterItemsWrapper, parentid, -1, null);
                 } else if (displayType.toLowerCase().equals("dropdown")) {
-                    //repeaterQuestions = dl.getQuestionsAndAnswersBySubModuleId1(Utilities.subModuleId, Utilities.farmerId, Utilities.farmerModuleId, question_id);
+                    repeaterQuestions = dl.getQuestionsAndAnswersBySubModuleId1(Utilities.subModuleId, Utilities.farmerId, Utilities.farmerModuleId, question_id);
 
                     renderDropDownQuestionSubQuestion(repeaterQuestions, true, repeaterItemsWrapper, parentid, 1, null, res);
                 } else if (displayType.toLowerCase().equals("textbox")) {
