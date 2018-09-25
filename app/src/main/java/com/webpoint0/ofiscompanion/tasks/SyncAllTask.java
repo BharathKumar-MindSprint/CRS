@@ -158,12 +158,12 @@ public class SyncAllTask extends SyncTask {
             }
 
             // Goes directly to the AsyncTask
-//            new UpdateSpinnerListsTask(context).execute(spinnerResponse);
-//            spinnerResponse = null;
+            new UpdateSpinnerListsTask(context).execute(spinnerResponse);
+            spinnerResponse = null;
 
             // Goes directly to the AsyncTask
-//            new UpdateModuleListsTask(context).execute(moduleResponse);
-//            moduleResponse = null;
+            new UpdateModuleListsTask(context).execute(moduleResponse);
+            moduleResponse = null;
 
             // Goes directly to the AsyncTask
 
@@ -176,12 +176,12 @@ public class SyncAllTask extends SyncTask {
             //transactionResponse = null;
 
             // Goes directly to the AsyncTask
-//            new UpdateTrainingListsTask(context).execute(trainingResponse);
-//            trainingResponse = null;
+            new UpdateTrainingListsTask(context).execute(trainingResponse);
+            trainingResponse = null;
 
             // Goes directly to the AsyncTask
-//            new UpdateTasksListsTask(context).execute(tasksResponse);
-//            tasksResponse = null;
+            new UpdateTasksListsTask(context).execute(tasksResponse);
+            tasksResponse = null;
 
             // Goes directly to the AsyncTask
             new UpdateFarmersTask(context).execute(farmerResponse);
