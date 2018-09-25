@@ -1,0 +1,463 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--
+         DICTIONARY FILE, in order to translate just change the value not the key
+         ie, <string name="Settings">Paramètres</string>
+    -->
+    <!-- action bar and activity titles -->
+    <string name="ofis_action_bar_home">Trang chủ</string>
+    <string name="ofis_action_bar_settings">Cài đặt</string>
+    <string name="title_activity_settings">Thiết lập</string>
+    <string name="title_activity_add_farmer">Thêm Nông hộ mới</string>
+    <string name="title_activity_add_infrastructure">Thêm cơ sở hạ tầng về Xã hội</string>
+    <string name="title_activity_find_farmer">Tìm kiếm Nông hộ</string>
+    <string name="title_activity_view_farmer">Chi tiết Nông hộ</string>
+    <string name="title_activity_complete_module">Mục bảng hỏi hoàn tất</string>
+
+    <!-- main stuff -->
+    <string name="app_name">Hiệu chỉnh đồng hành OFIS</string>
+    <string name="cd_topSectionColour">Chọn màu nền cho mục</string>
+    <string name="ofis_switch_text_yes">Có</string>
+    <string name="ofis_switch_text_no">Không</string>
+
+    <!-- Home screen related -->
+    <string name="Retrieving_data">Đang kiểm tra cập nhật…</string>
+    <string name="importing_string">Nhập %% của || các hồ sơ</string>
+    <string name="spinners_up_to_date">Dữ liệu biểu mẫu đã cập nhật.</string>
+    <string name="updating_modules">Đang tải dữ liệu các câu hỏi</string>
+    <string name="modules_up_to_date">Các câu hỏi đã cập nhật.</string>
+    <string name="updating_farmers">Đang tải dữ liệu Nông hộ</string>
+    <string name="farmers_up_to_date">Các nông hộ đã được cập nhật</string>
+    <string name="update_complete">Cập nhật hoàn tất</string>
+    <string name="new_farmer">Nông hộ mới</string>
+    <!-- module row stuff -->
+    <string name="Awaiting_Sync">Chờ đợi để đồng bộ</string>
+    <!-- in XML -->
+    <string name="ofis_complete_questionnaire">Mục bảng hỏi hoàn tất</string>
+    <string name="ofis_add_infrastructure">Thêm cơ sở hạ tầng về Xã hội</string>
+    <string name="ofis_add_new_farmer">Thêm Nông hộ mới</string>
+    <string name="Modules_to_submit">Các mục để gửi</string>
+    <string name="item_synced">Các mục đồng bộ đã được hoàn thành.</string>
+    <string name="item_sync_error">Lỗi đồng bộ. Hãy liên hệ với chúng tôi để được giúp đỡ</string>
+    <string name="ofis_first_run_intro">Bạn đã không ở đây từ trước đúng không? Chúng tôi có thể có một số thông tin chi tiết?</string>
+    <string name="ofis_first_run_save_update">Lưu lại và cập nhật</string>
+
+    <!-- Settings screen related -->
+    <!-- in XML -->
+    <string name="Enumerator_ID">Mã số Nhân viên thu thập</string>
+
+    <!-- ADD POI related -->
+    <string name="Successfully_added">Thêm vào hoàn tất</string>
+    <string name="Successfully_updated">Cập nhật hoàn tất</string>
+    <string name="ofis_select_gender">Giới tính</string>
+    <string name="ofis_olam_funded">Được Olam tài trợ?</string>
+    <string name="ofis_select_year_opened">Năm bắt đầu</string>
+    <string name="ofis_select_education_level">Mục nhập trình độ học vấn</string>
+    <string name="ofis_select_product">Sản phẩm đã mua</string>
+    <string name="ofis_select_supply_type">Loại thiết bị cung cấp nước</string>
+    <string name="location_not_available">Vị trí không tồn tại</string>
+
+    <!-- in XML -->
+    <string name="Add_Point_of_Interest">Thêm cơ sở hạ tầng về Xã hội</string>
+    <string name="Name">Tên</string>
+    <string name="GPS_Position">Vị trí GPS</string>
+
+    <!-- in XML includes -->
+    <string name="Capacity">Dân số</string>
+    <string name="Number_of_Classrooms">Số lượng lớp học</string>
+
+    <!-- Add farmer related -->
+    <!-- in code -->
+    <string name="Select_picture_from">Chọn hình ảnh từ</string>
+    <string name="Camera">Máy ảnh</string>
+    <string name="Gallery">Thư viện</string>
+    <string name="Please_wait">Xin chờ trong giây lát…</string>
+    <string name="Please_fill_all_fields">Hãy điền vào tất cả các trường</string>
+    <string name="id_not_unique">Mã số nông hộ này không phải duy nhất, hãy thử lại</string>
+    <string name="Submitting_data">Đang gửi dữ liệu…</string>
+    <string name="Farmer_Added">Nông hộ đã được thêm !</string>
+    <string name="Farmer_Updated">Nông hộ đã được cập nhật</string>
+    <string name="are_you_at_the_farm">Bạn có ở tại nông trại không?</string>
+    <string name="yes">Đồng ý</string>
+    <string name="no">Không</string>
+    <string name="searching_for_loc">Đang tìm kiếm địa điểm</string>
+    <string name="ofis_farmer_id_hint">AA-0000-AAAA-</string>
+
+    <!-- in XML -->
+    <string name="Add_Farmer">Thêm Nông hộ</string>
+    <string name="Farmer_Name">Tên Nông hộ</string>
+    <string name="Date_of_Birth">Ngày sinh</string>
+    <string name="Country">Quốc gia</string>
+    <string name="New_place_name">Tên địa điểm mới</string>
+    <string name="new_place_name_placeholder">Địa điểm mới</string>
+    <string name="Olam_Farmer_ID">Mã Nông hộ Olam</string>
+    <string name="Save">Lưu lại</string>
+    <string name="Add_Signature">Ký tên</string>
+
+    <!-- Find a farmer related -->
+    <!-- in XML -->
+    <string name="Select_Farmer">Chọn Nông hộ</string>
+    <string name="Search">Tìm kiếm</string>
+
+    <!-- View farmer related -->
+    <!-- in XML -->
+    <string name="View_Farmer">Xem nông hộ</string>
+    <string name="Farmer_Photo">Ảnh nông hộ</string>
+    <string name="Task_list_header">Danh sách công việc</string>
+    <string name="record_farm_location">Ghi vị trí nông trại</string>
+    <string name="record_farm_location_hint">Nhấp vào để chọn GPS</string>
+    <string name="record_farm_location_complete">Vị trí đã được ghi</string>
+    <string name="record_location_timeout">Không thể tìm thấy địa điểm, xin thử lại</string>
+    <string name="enabled_string">true</string>
+    <string name="review_farm_management_plan">Xem lại kế hoạch quản lý nông trại</string>
+    <string name="review_farm_management_plan_hint">Nhấn để ghi phản hồi</string>
+
+    <!-- For View Sub Module - questionnaire default values -->
+    <string name="ModuleTitle">Mục tiêu đề</string>
+    <string name="ModuleSubTitle">Mục phụ đề </string>
+    <string name="ModuleStatus">Tác vụ mới</string>
+    <string name="module_in_progress">Trong tiến trình: </string>
+    <string name="module_finished">Chờ tải lên</string>
+    <string name="ModuleAnswerHint">Trả lời</string>
+
+    <!-- module action buttons -->
+    <string name="ModuleBackButton">Quay lại</string>
+    <string name="ModuleNextButton">Tiếp theo</string>
+    <string name="ModuleSaveButton">Lưu</string>
+
+    <!-- errors -->
+    <string name="Internet_not_available">Không có kết nối Internet - Bạn phải kết nối mạng để hoàn thành mục này.</string>
+    <string name="networking_error">Lỗi. Có lẽ đã quá thời gian, hãy thử lại, hoặc liên hệ hỗ trợ.</string>
+    <string name="farmer_not_synced">Xin lỗi, nhưng nông hộ chưa được đồng bộ. Hãy đồng bộ nông hộ trước.</string>
+
+    <!-- upgrade -->
+    <string name="upgrade_message">Ứng dụng này đã được nâng cấp, cập nhật lại dữ liệu cá nhân của bạn</string>
+
+    <!-- SPINNERS -->
+
+
+    <!-- spinner default values -->
+    <string name="spinner_country_default">Chọn Quốc gia</string>
+    <string name="spinner_region_default">Chọn vùng</string>
+    <string name="spinner_district_default">Chọn Quận/Huyện</string>
+    <string name="spinner_place_default">Chọn địa điểm</string>
+    <string name="spinner_farmergroup_default">Chọn nhóm Nông hộ</string>
+    <string name="spinner_section_default">Chọn bộ phận</string>
+    <string name="spinner_product_default">Chọn sản phẩm</string>
+
+    <string-array name="poitypes">
+        <item>Trường học</item><!-- sch -->
+        <item>Trung tâm Y tế</item><!-- hc -->
+        <item>Nguồn cung cấp nước sạch</item><!-- cws -->
+        <item>Các đại lý thu mua</item><!-- bc -->
+    </string-array>
+    <string name="poitype_school">Trường học</string>
+    <string name="poitype_healthcentre">Trung tâm Y tế</string>
+    <string name="poitype_cleanwatersupply">Nguồn cung cấp nước sạch</string>
+    <string name="poitype_buyingcentre">Các đại lý thu mua</string>
+    <string-array name="genders">
+        <item>Nam</item><!-- male -->
+        <item>Nữ</item><!-- female -->
+    </string-array>
+    <string name="gender_male">Nam</string>
+    <string name="gender_female">Nữ</string>
+    <string-array name="genders_2">
+        <item>Nam</item><!-- male -->
+        <item>Nữ</item><!-- female -->
+        <item>Kết hợp dạy cả nam và nữ</item><!-- coed -->
+    </string-array>
+    <string name="gender_school_male">Nam</string>
+    <string name="gender_school_female">Nữ</string>
+    <string name="gender_school_coeducational">Kết hợp dạy cả nam và nữ</string>
+    <string-array name="educationlevels">
+        <item>Mẫu giáo</item><!-- Nursery -->
+        <item>Tiểu học</item><!-- primary -->
+        <item>Trung học cơ sở</item><!-- junior secondary -->
+        <item>Trung học phổ thông</item><!-- Senior secondary -->
+        <item>Tốt nghiệp</item><!-- graduate -->
+    </string-array>
+    <string name="educationlevel_nursery">Mẫu giáo</string>
+    <string name="educationlevel_primary">Tiểu học</string>
+    <string name="educationlevel_juniorsecondary">Trung học cơ sở</string>
+    <string name="educationlevel_seniorsecondary">Trung học phổ thông</string>
+    <string name="educationlevel_graduate">Tốt nghiệp</string>
+    <string-array name="clean_water_types">
+        <item>Giếng khoan</item><!-- borehole -->
+        <item>Giếng nước đào</item><!-- well -->
+        <item>Ống nước</item><!-- pipe -->
+        <item>Suối</item><!-- spring -->
+    </string-array>
+    <string name="cleanwatertype_borehole">Giếng khoan</string>
+    <string name="cleanwatertype_well">Giếng nước đào</string>
+    <string name="cleanwatertype_pipe">Ống nước</string>
+    <string name="cleanwatertype_spring">Suối</string>
+    <string-array name="plotvariants">
+        <item>Tương tự</item><!-- the same -->
+        <item>Nhiều hơn</item><!-- more -->
+        <item>Ít hơn</item><!-- less -->
+    </string-array>
+    <string name="plotvariant_thesame">Tương tự</string>
+    <string name="plotvariant_more">Nhiều hơn</string>
+    <string name="plotvariant_less">Ít hơn</string>
+
+    <!-- content descriptions -->
+    <string name="ofis_cd_hierarchy_arrow">Mũi tên chỉ hướng phải</string>
+    <string name="ofis_cd_info_icon">Biểu tượng thông tin</string>
+    <string name="ofis_cd_submit_all_icon">Gửi tất cả</string>
+    <string name="module_density_plot_question">Kích thước của lô/rẫy này là lớn hơn, nhỏ hơn hay bằng với lô/rẫy chính?</string>
+    <string name="module_density_plot_question_intro">Thêm các lô/rẫy</string>
+    <string name="module_density_plot_question_result_intro">Kết quả: </string>
+    <string name="app_updated_generic_message">Bản cập nhật mới cho ứng dụng đã sẵn sàng. Nhấn ok để tải về.</string>
+    <string name="app_update_ok">OK</string>
+    <string name="app_update_cancel">Hủy</string>
+    <string name="title_activity_review_farm_management_plan">Xem lại kế hoạch quản lý nông trại</string>
+    <string name="updating_fmps">Cập nhật các kế hoạch quản lý nông trại</string>
+    <string name="fmps_up_to_date">Quản lý nông trại đã được cập nhật</string>
+    <string name="review_farm_management_plan_complete">Phản hồi đã đươc gửi</string>
+    <string name="review_farm_management_plan_in_progress">Đang trong tiến trình xem lại</string>
+    <string name="fmp_redo_baseline">Sửa đổi cơ sở dữ liệu?</string>
+    <string name="hpQId">1</string>
+    <string name="hpAId">2</string>
+    <string name="hpPqId">3</string>
+    <string name="hpRiP">4</string>
+    <string name="hpD">5</string>
+    <string name="fullreview_farm_management_plan">Xem đầy đủ kế hoạch quản lý nông trại</string>
+    <string name="fullreview_farm_management_plan_in_progress">Trong tiến trình xem đầy đủ</string>
+    <string name="fmp_are_you_sure">Điều này sẽ yêu cầu một kế hoạch mới được in, bạn có chắc chắn muốn tiếp tục?</string>
+    <string name="complete_all_required_fields">Bạn phải hoàn thành tất cả các trường bắt buộc trước khi bạn có thể gửi mục này</string>
+    <string name="ReadAndAgreeConsent">Đọc và đồng ý với các điều khoản cam kết</string>
+    <string name="consentStatementMain1">Điều này là cần thiết cho bạn để cung cấp các cho chúng tôi các thông tin cá nhân liên quan đến chương trình phát triển bền vững của Olam với bạn là một phần trong đó. Thông tin cá nhân này sẽ được thu thập và lưu trữ trên Hệ thống quản lý thông tin nông hộ "OFIS". Sau này, bạn có thể rút lại bất kỳ các cam kết với chúng tôi về việc được thu thập. sử dụng và tiết lộ thông tin cá nhân của bạn. Tuy nhiên, bạn sẽ không thể tiếp tục tham gia vào các chương trình phát triển bền vững nếu không cung cấp các dữ liệu cá nhân của bạn hoặc rút lui.</string>
+    <string name="consentStatementMain2">
+        Dữ liệu cá nhân của bạn sẽ được sử dụng trên OFIS để giúp bổ sung thông tin vào:
+    </string>
+    <string name="consentStatementMain2a">
+        Phần mềm định vị và bản đồ. Nó được thiết kế để giới thiệu vị trí của nông trại và các cơ sở hạ tầng khác, và có các thông tin chi tiết hơn được liên kết với vị trí địa lý của các Nông hộ.
+    </string>
+    <string name="consentStatementMain2b">
+        Phần mềm phân tích. Điều này nhìn vào các thông tin cá nhân của Nông hộ đối với các dữ liệu tổng hợp để giúp xác định phương hướng trong tương lai của chương trình. Người sử dụng của OFIS có thể trích xuất các phân tích (và dữ liệu sau phân tích, như thông tin cá nhân của nông hộ) vào file dạng PDF hoặc Excel. Chức năng trích xuất thông tin này đồng ý cho Người sử dụng xác định cụ thể các Nông hộ, với, ví dụ, năng suất cao nhất hoặc thấp nhất trong chương trình.
+    </string>
+    <string name="consentStatementMain2c">
+        Các kế hoạch quản lý nông trại. Nó sẽ thiết kế ra các kế hoạch áp dụng cho từng cá nhân, nêu bật những thay đổi cần thiết để thực hiện trên nông trại với hơn 3-5 năm để đạt được đầy đủ các năng suất tiềm năng.
+    </string>
+    <string name="consentStatementMain3">
+        Người sử dụng OFIS bao gồm cả các nhân viên của Olam, nhân viên quản lý nhóm Nông hộ và các khách hàng trên toàn cầu, phù hợp với Phần mềm định vị, Phần mềm phân tích và Các kế hoạch quản lý nông trại trong đoạn 2 ở trên.
+    </string>
+    <string name="consentStatementMain4">
+        Thông tin cá nhân của bạn được chúng tôi giữ bí mật, nhưng nó sẽ được chia sẻ với các người suer dụng OFIS như đã nêu trên. Thông tin cá nhân của bạn có thể sẽ được trao đổi đến một nơi ở bên ngoài khu vực thẩm quyền của bạn. Tùy thuộc vào luật áp dụng riêng tư ở khu vực mà chúng tôi sử dụng dữ liệu, chúng tôi sẽ thực hiện các bước để chắc chắn rằng các tiêu chuẩn bảo vệ đối với các thông tin chúng tôi đã trao đổi là tương tự với các tiêu chuẩn, luật riêng tư và thẩm quyền tại khu vực của bạn.
+    </string>
+    <string name="consentStatementMain5">
+        Bạn có thể rút lại bất cứ cam kết nào đã đưa ra, yêu cầu được truy cập và/hoặc sửa đổi thông tin cá nhân của bạn và/hoặc yêu cẩu thông tin về các chính sách và thủ tục, bằng cách liên lạc với nhân viên bảo vệ dữ liệu thông qua ofis@olamnet.com.
+    </string>
+    <string name="consentStatementCheck1">Tôi xác nhận rằng Nông hộ đã được nghe Nhân viên thu thập nói về Lưu ý khi thu thập thông tin cá nhân và anh ấy đã tuyệt đối cam kết thẩm quyền về việc thu thập, sử dụng, trao đổi bên ngoài và tiết lộ thông tin cá nhân bởi Olam cho các mục đích được đặt ra trong đó.</string>
+    <string name="consentStatementCheck2">Tôi xác nhận rằng Nông hộ đã được nghe Nhân viên thu thập nói về Lưu ý khi thu thập thông tin cá nhân và anh ấy sẽ xác nhận rằng đã bày tỏ sự cam kết từ tất cả các cá nhân mà dữ liệu đã được ông cung cấp để thu thập, sử dụng và tiết lộ cho các mục đích được nêu trên.</string>
+    <string name="consentStatementTitle">Lưu ý về thu thập thông tin cá nhân</string>
+    <string name="Please_accept_both_consents">Bạn phải đồng ý cả hai tuyên bố cam kết để lưu nông hộ</string>
+    <string name="farmer_id_min">Mã Nông hộ Olam phải dài hơn 4 chữ số.</string>
+    <string name="app_updated_upload_first_message">Bản cập nhật mới cho phần mềm đã sẵn sàng. Để tả về, bạn phải đồng bộ tất cả các dữ kiện trước. Nhấn ok để đồng bộ, và vào mục Thiết lập để cập nhật ứng dụng.</string>
+    <string name="please_sync_before_update">Không có khoản mục đang chờ để được đồng bộ. Xin vui lòng đồng bộ các khoản mục trước khi cập nhật bất kỳ dữ liệu của ứng dụng.</string>
+    <string name="ofis_update_overdue">Phiên bản này của ứng dụng hiện đã hết hạn, bạn phải cập nhật ứng dụng trước khi có thể sử dụng nó. Chọn biểu tượng cài đặt ở phía trên bên phải để cập nhật</string>
+    <string name="ofis_request_help">Xin giúp đỡ</string>
+    <string name="Your_Name">Tên của bạn</string>
+    <string name="problem_description">Mô tả vấn đề mà bạn đang gặp phải</string>
+    <plurals name="days_left_to_update">
+        <item quantity="one">Phiên bản cập nhật được yêu cầu sau 30 ngày. Bạn có %1d ngày còn lại để cập nhật.</item>
+        <item quantity="other">Phiên bản cập nhật được yêu cầu sau 30 ngày. Bạn có %1d ngày còn lại để cập nhật.</item>
+    </plurals>
+    <string name="record_transaction_button_text">Dữ liệu giao dịch</string>
+    <string name="record_training_button">Dữ liệu tập huấn</string>
+    <string name="ViewTransactionsTitle">Các giao dịch</string>
+    <string name="Add">Thêm</string>
+    <string name="AddTransactionItemTitle">Khoản mục giao dịch</string>
+    <string name="please_select">Xin hãy chọn</string>
+    <string name="select_transaction_item_type">Kiểu</string>
+    <string name="ofis_select_item_product_grade">Loại sản phẩm</string>
+    <string name="select_currency">Loại tiền tệ</string>
+    <string name="enter_quantity">Số lượng</string>
+    <string name="select_units">Đơn vị</string>
+    <string name="updating_transaction_data">Đang cập nhật dữ liệu giao dịch</string>
+    <string name="Transaction_item_added">Mục giao dịch đã được thêm</string>
+    <string name="Delete_Item">Xóa mục</string>
+    <string name="Transaction_default">Giao dịch</string>
+    <string name="transaction_are_you_sure">Bạn có chắc chắn muốn xóa giao dịch này?</string>
+    <string name="transaction_deleted">Giao dịch đã được xóa</string>
+    <string name="complete_transaction">Giao dịch hoàn tất</string>
+    <string name="Farmer_Group_Name">Tên nhóm nông dân</string>
+    <string name="direction_hint">Bạn đang cho hay nhận nó</string>
+    <string name="transaction_added_to_queue">Giao dịch đã được xác nhận để tải lên</string>
+    <string name="Transaction_network_queue_title">Giao dịch</string>
+    <string name="transaction_confirmed">Giao dịch đã được xác nhận</string>
+    <string name="ofis_no_transactions_text">Khi bạn thêm vào các giao dịch, nó sẽ xuất hiện ở đây</string>
+    <string name="ofis_no_trainingrecords_text">Khi bạn thêm vào các hồ sơ tập huấn, nó sẽ xuất hiện ở đây</string>
+    <string name="TrainingRecordsTitle">Hồ sơ tập huấn</string>
+    <string name="select_course">Chương trình</string>
+    <string name="TrainingAttendees">Những người tham gia tập huấn</string>
+    <string name="complete_record">Hồ sơ đã hoàn thành</string>
+    <string name="TrainingRecordTitle">Quản lý hồ sơ tập huấn</string>
+    <string name="select_training_module">Khoản mục tập huấn</string>
+    <string name="Training_Photo">Hình ảnh tập huấn</string>
+    <string name="TrainingRecordConfirmationTitle">Đơn xác nhận hồ sơ tập huấn</string>
+    <string name="TrainingRecordConfirmationSubTitle">Xác nhận hồ sơ tập huấn cho đơn xác nhận</string>
+    <string name="confirm_training_record">Xác nhận hồ sơ tập huấn</string>
+    <string name="Select_Attendees">Chọn người tham dự</string>
+    <string name="Attendee_Name">Tên người tham dự</string>
+    <string name="selected">Chọn:</string>
+    <string name="save_selected_attendees">Lưu lại những người tham dự đã được chọn</string>
+    <string name="Training_select_course_module_first">Hãy chọn một khóa học, khoản mục và chụp ảnh trước tiên</string>
+    <string name="add_attendee_scores">Thêm điểm số</string>
+    <string name="attendees_saved">Người tham dự đã được lưu</string>
+    <string name="Training_Record_Edited">Hồ sơ tập huấn đã được cập nhật</string>
+    <string name="Training_Record_Added">Hồ sơ tập huấn đã được thêm</string>
+    <string name="Add_one_attendee_to_continue">Thêm tối thiểu một người tham dự để tiếp tục</string>
+    <string name="updating_training">Cập nhật dữ liệu đào tạo/tập huấn</string>
+    <string name="Attendees">Những người tham dự</string>
+    <string name="trainingrecord_are_you_sure">Bạn có chắc chắn muốn xóa hồ sơ tập huấn này?</string>
+    <string name="trainingrecord_deleted">Hồ sơ tập huấn đã được xóa</string>
+    <string name="trainingattendee_are_you_sure">Bạn có chắc chắn muốn xóa người tham dự này?</string>
+    <string name="trainingattendee_deleted">Người tham dự đã được xóa</string>
+    <string name="TrainingAttendeeScores">Điểm của người tham dự</string>
+    <string name="TrainingAttendeeScoresSubTitle">Thêm hoặc chỉnh sửa điểm của người tham dự</string>
+    <string name="save_scores">Lưu điểm của người tham dự</string>
+    <string name="attendees_scores_updated">Điểm của người tham dự đã được cập nhật</string>
+    <string name="trainingrecord_added_to_queue">Hồ sơ tập huấn đã được xác nhận để tải lên</string>
+    <string name="trainingrecord_confirmed">Hồ sơ tập huấn đã đượ xác nhận</string>
+    <string name="checkbox_image">Hộp lựa chọn hình ảnh</string>
+    <string name="PhoneNumberHint">Số điện thoại</string>
+    <string name="PhoneNumbers">Số điện thoại</string>
+    <string name="main_number">Liên lạc chính?</string>
+    <string name="location">Vị trí</string>
+    <string name="update_phone_numbers">Cập nhật số điện thoại</string>
+    <string name="update_phone_numbers_hint">Nhấn để cập nhật</string>
+    <string name="select_transactee">Bạn đang giao dịch với ai?</string>
+    <string name="price_per_unit">giá mỗi</string>
+    <string name="total_price">Tổng giá</string>
+    <string name="amount_paid">Số tiền trả cho</string>
+    <string name="amount_loaned">Số tiền cho vay</string>
+    <string name="amount_gifted">Số tiền khuyên góp cho</string>
+    <string name="Transaction_item_updated">Khoản mục giao dịch đã được cập nhật</string>
+    <string name="amount_repaid">Số tiền hoàn trả cho</string>
+    <plurals name="trainingAttendeesCount">
+        <item quantity="one">%1d Người tham dự</item>
+        <item quantity="other">%1d Những người tham dự</item>
+    </plurals>
+    <string name="registeredForNotifications">Bây giờ bạn đăng ký để nhận nhiệm vụ</string>
+    <string name="registerForNotificationsFailed">Đăng ký thông báo nhiệm vụ không thành công. Điều này sẽ tự động thử lại sau. Nếu bạn tiếp tục nhận được thông báo này, vui lòng liên hệ hỗ trợ.</string>
+    <string name="NewTaskReceivedTitle">Nhiệm vụ mới nhận</string>
+    <string name="title_activity_tasks">Nhiệm vụ</string>
+    <string name="updating_tasks">Thêm nhiệm vụ</string>
+    <string name="TaskUpdatedTitle">Cập nhập nhiệm vụ</string>
+    <string name="TaskDeletedTitle">Giao dịch bị hủy</string>
+    <string name="take_photo">Chụp ảnh</string>
+    <string name="set_auto_time_message">Thời gian và múi giờ của bạn không được thiết lập tự động. Vui lòng thiết lập tự động</string>
+    <string name="buyingagent">Người đại diện mua hàng</string>
+    <string name="credit_balance">Nợ bạn</string>
+    <string name="ChooseBuyingAgent">Chọn người đại diện mua hàng</string>
+    <string name="WhoTransacting">Bạn đang giao dịch thay cho ai?</string>
+    <string name="PickAgentFirst">Bạn phải chọn một đại lý đầu tiên</string>
+    <string name="farmer_or_buying_agent_name">Tên của nông dân hoặc tên người đại diện mua hàng</string>
+    <string name="title_activity_find_transactee">Tìm giao dịch</string>
+    <string name="amount_repaid_and_loaned">Số tiền hoàn trả và cho mượn</string>
+    <string name="amount_loaned_by">Số tiền cho vay bởi</string>
+    <string name="amount_repaid_by">Số tiền hoàn trả bởi</string>
+    <string name="amount_repaid_and_loaned_by">Số tiền hoàn trả và mượn bởi</string>
+    <string name="amount_paid_by">Số tiền trả bởi</string>
+    <string name="amount_gifted_by">Số tiền khuyên góp bởi</string>
+    <string name="debit_balance">Bạn nợ</string>
+    <string name="cannotTransactNothingToRepay">Bạn không nợ tiền nên không thể hoàn thành giao dịch này</string>
+    <string name="cannotTransactUnableToLoan">Bạn nợ tiền nên không thể hoàn thành giao dịch này.</string>
+    <string name="cannotRepayNotOwedMoney">Bạn không nợ tiền nên không thể hoàn thành giao dịch này</string>
+    <string name="cannotLoanOwedMoney">Bạn đang nợ tiền nên không thể hoàn thành giao dịch này.</string>
+    <string name="ensure_totals_match">Hãy đảm bảo tổng các lĩnh vực thanh toán khớp với giá tổng.</string>
+    <string name="price_per_unit_default">Đơn vị</string>
+    <string name="input_crop_finance">Đầu vào, tài chínhhoặc trồng cây.</string>
+    <string name="input_crop">Đầu vào hoặc mùa vụ.</string>
+    <string name="input_finance">Đầu vào hoặc tài chính</string>
+    <string name="finance_crop">Tài chính hoặc mùa vụ</string>
+    <string name="task_mark_complete">Hoàn thành</string>
+    <string name="transaction_notes">Ghi nhớ</string>
+    <string name="cannotRepayMoreThanOwe">Ông/bà không thể trả lại nhiều hơn số ông/bà nợ</string>
+    <string name="cannotRepayMoreThanTheyOwe">Họ không thể trả lại nhiều hơn số họ nợ</string>
+    <string name="item_in_progress">Trong tiến trình</string>
+    <string name="cannot_do_mobile_money_non_farmer">Bạn không thể dùng Tiền di động để mua hàng từ đại lý mua hàng</string>
+    <string name="pay_using_mobile_money_or_cash">Thanh toán bằng Tiền di động hay tiền mặt?</string>
+    <string-array name="mmCash">
+        <item>Tiền mặt</item>
+        <item>Tiền di động</item>
+    </string-array>
+    <string name="mmCash_mobilemoney">Tiền di động</string>
+    <string name="mmCash_cash">Tiền mặt</string>
+    <string name="mobile_money_suffix">Đang sử dụng Tiền di động</string>
+    <string name="mm_transaction_initiated">Giao dịch Tiền di động bắt đầu, vui lòng đợi…</string>
+    <string name="mm_transaction_checking">Đang kiểm tra trạng thái giao dịch</string>
+    <string name="mm_transaction_timedout">Giao dịch Tiền di động của bạn không hoàn thành đúng thời gian, Vui lòng dùng tiền mặt.</string>
+    <string name="mm_transaction_awaiting_response">Giao dịch Tiền di động đang chờ thực hiện.</string>
+    <string name="mm_transaction_inprogress">Giao dịch Tiền di động đang tiến hành.</string>
+    <string name="mm_transaction_complete">Gia dịch Tiền di động đã đồng bộ và hoàn thành</string>
+    <string name="mm_transaction_failed">Giao dịch Tiền di động không thành công. Vui lòng thử dùng tiền mặt.</string>
+    <string name="mm_transaction_confirmation">Bạn sẽ phải trả %1$s %2$s khi dùng Tiền di động. Vui lòng xác nhận giao dịch</string>
+    <string name="mm_transaction_confirm">Xác nhận</string>
+    <string name="place_name_not_unique">Tên của địa điểm đã có trong quận/huyện này. Vui lòng chọn địa điểm hiện tại từ danh sách.</string>
+    <string name="title_activity_record_polygon">Diện tích lô</string>
+    <string name="loading">"Đang tải "</string>
+    <string name="wait">Xin chờ</string>
+    <string name="save_button_text">Lưu</string>
+    <string name="start_logging_button_text">"Bắt đầu đăng nhập "</string>
+    <string name="stop_logging_button_text">"Dừng đăng nhập "</string>
+    <string name="pause_button_text">"Tạm dừng "</string>
+    <string name="resume_button_text">"Tiếp tục "</string>
+    <string name="plot">"Lô số %1$d "</string>
+    <string name="current_track_name">"Tên trên OFIS  "</string>
+    <string name="plot_already_logged">"Lô số %1$s đã đăng ký "</string>
+    <string name="location_permission_alertdialog_title">"Cho phép truy cập GPS "</string>
+    <string name="open_application_settings_msg">"Vào cài đặt App "</string>
+    <string name="ready_to_save">"Sẵn sàng lưu Lô số %1$s "</string>
+    <string name="restart_logging">"Bạn muốn khởi động lại đăng nhập không? "</string>
+    <string name="save_existing_logs">"Lưu bản ghi hiện có! "</string>
+    <string name="already_logged_and_saved">"Đã đăng nhập và lưu Lô số %1$s! "</string>
+    <string name="try_again_later_msg">"Hãy thử lại sau vài phút! "</string>
+    <string name="location_not_yet_logged">"Bạn chưa Đăng nhập vào Địa điểm nào! "</string>
+    <string name="fetch_location_msg">"Đang dò tìm vị trí. Xin đợi! "</string>
+    <string name="gps_manager_msg">"Quản lý GPS "</string>
+    <string name="enable_gps_msg">"Bạn muốn bật GPS không? "</string>
+    <string name="gps_turned_on">"Bật GPS! "</string>
+    <string name="storage_permission_explanation">"Cần lưu ô bản đồ để giảm sử dụng dữ liệu và để sử dụng ngoại tuyến. "</string>
+    <string name="location_permission_explanation">"Cho phép thu thập dữ liệu địa lý lô. "</string>
+    <string name="speed_unit_kmph">"%1$d km/h "</string>
+    <string name="logging_progress_msg">"Đang đăng nhập! "</string>
+    <string name="cancel_logging_question">"Hủy đăng nhập "</string>
+    <string name="cancel_logging_msg">"%1$s đã hủy đăng nhập! "</string>
+    <string name="not_logged_yet">"%1$s chưa đăng ký! "</string>
+    <string name="area_info">"Diện tích: %1$f ha "</string>
+    <string name="save_polygon_alertdialog_title">"Lưu Lô số %1$s không? "</string>
+    <string name="save_polygon_alertdialog_msg">"Bạn không thể đăng nhập lại %1$s "</string>
+    <string name="close">"Đóng "</string>
+    <string name="saved_successfully_msg">"Lưu thành công Lô số %1$s ! "</string>
+    <string name="confirm">"Xác nhận "</string>
+    <string name="plot_location_confirmation">"Bạn có đang ở Lô số %1$s không? "</string>
+    <string name="logging_not_started_msg">"Không thể đăng nhập! "</string>
+    <string name="edit_plot_dialog_title">"Chọn số Lô "</string>
+    <string name="existing_plots">Số Lô hiện tại %1$d</string>
+    <string name="existing_plots_logged">Các Lô đã ghi %1$d</string>
+    <string name="previous_plot_not_recorded_msg">"Lô số %1$s chưa ghi. Xin hãy ghi Lô số %1$s trước."</string>
+    <string name="send_button">"Gửi "</string>
+    <string name="duplicate_phone_number">"Không cho phép Số Điện thoại trùng lặp. Vui lòng kiểm tra mục nhập số điện thoại "</string>
+    <string name="record_polygon_input_messege">"Có bao nhiêu lô? "</string>
+    <string name="record_polygon_input_title">"Phân tích mức lô "</string>
+    <string name="record_polygon_input_hint">"Nhập số Lô "</string>
+    <string name="camera_and_gallery_permission_denial_msg">Cho phép tính năng Máy ảnh và Thư viện hoạt động</string>
+    <string name="gps_permission_denial_msg">"Cho phép Tính năng Vị trí hoạt động "</string>
+    <string name="phone_state_permission_denial_msg">"Cho phép lấy số EMEI của thiết bị "</string>
+    <string name="permission_permanent_denial_title">"Từ chối vĩnh viễn "</string>
+    <string name="permission_permanent_denial_msg">"Từ chối vĩnh viễn. Vui lòng cung cấp quyền từ Cài đặt ứng dụng. "</string>
+    <string name="go_to_settings_msg">"Cho phép từ Cài đặt. Có đi tới Cài đặt không? "</string>
+    <string name="record_farm_polygon">"Ghi diện tích lô "</string>
+    <string name="record_farm_polygon_hint">Bấm để ghi diện tích lô</string>
+    <string name="record_farm_polygon_complete">"Đã ghi Diện tích lô "</string>
+    <string name="submit">"Gửi đi "</string>
+    <string name="cancel">"Hủy "</string>
+    <string name="valid_count_msg">"Nhập số hợp lệ! "</string>
+    <string name="plot_recording_module_finished">"Hoàn thành ghi Lô "</string>
+    <string name="untick_task">"Nhiệm vụ không ghi "</string>
+    <string name="untick_task_msg">"Bạn muốn đánh dấu đây là nhiệm vụ dở dang? "</string>
+    <string name="updating_master_details">Downloading master details</string>
+</resources>

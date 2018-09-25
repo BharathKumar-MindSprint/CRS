@@ -1,0 +1,9 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.webpoint0.ofiscompanion.CompleteModuleActivity">
+    <item android:id="@+id/action_home"
+        android:title="@string/ofis_action_bar_home"
+        android:icon="@drawable/ic_action_home"
+        android:orderInCategory="100"
+        android:showAsAction="always" />
+</menu>

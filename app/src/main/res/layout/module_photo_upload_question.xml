@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:layout_width="134dp"
+        android:layout_height="wrap_content"
+        android:maxHeight="100dp"
+        android:id="@+id/modulePhotoQuestion"
+        android:contentDescription="@string/Farmer_Photo"
+        android:src="@android:drawable/ic_menu_gallery"
+        android:background="@drawable/border"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/text_button_width_height"
+        android:text="@string/take_photo"
+        android:textAllCaps="true"
+        android:background="@color/ofis_action_button_background"
+        android:textColor="@color/ofis_base_font_white"
+        android:paddingLeft="@dimen/ofis_med_pad"
+        android:paddingRight="@dimen/ofis_med_pad"
+        android:textSize="@dimen/ofis_micro_text"
+        android:id="@+id/modulePhotoUpload"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"/>
+</RelativeLayout>

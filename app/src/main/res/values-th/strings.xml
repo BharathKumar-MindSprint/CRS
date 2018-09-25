@@ -1,0 +1,462 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--
+         DICTIONARY FILE, in order to translate just change the value not the key
+         ie, <string name="Settings">ParamÃ¨tres</string>
+    -->
+    <!-- action bar and activity titles -->
+    <string name="ofis_action_bar_home">หน้าหลัก</string>
+    <string name="ofis_action_bar_settings">การตั้งค่า</string>
+    <string name="title_activity_settings">ตั้งค่า</string>
+    <string name="title_activity_add_farmer">เพิ่มเกษตรกรรายใหม่</string>
+    <string name="title_activity_add_infrastructure"> เพิ่มโครงสร้างพื้นฐานทางสังคม</string>
+    <string name="title_activity_find_farmer">ค้นหาเกษตรกร</string>
+    <string name="title_activity_view_farmer">รายละเอียดเกษตรกร</string>
+    <string name="title_activity_complete_module">แบบสอบถามเสร็จสมบูรณ์</string>
+
+    <!-- main stuff -->
+    <string name="app_name">OFIS Companion Debug</string>
+    <string name="cd_topSectionColour">สีพื้นหลัง</string>
+    <string name="ofis_switch_text_yes">ไม่ใช่</string>
+    <string name="ofis_switch_text_no">ใช่</string>
+
+    <!-- Home screen related -->
+    <string name="Retrieving_data">ตรวจสอบการอัพเดท</string>
+    <string name="importing_string">ดึงข้อมูล %% || จากข้อมูลที่บันทึกในระบบ</string>
+    <string name="spinners_up_to_date">รูปแบบข้อมูลล่าสุด</string>
+    <string name="updating_modules">กำลังดาวน์โหลดคำถาม</string>
+    <string name="modules_up_to_date">ชุดคำถามล่าสุด</string>
+    <string name="updating_farmers">กำลังดาวน์โหลดข้อมูลเกษตรกร</string>
+    <string name="farmers_up_to_date">ข้อมูลเกษตรกรล่าสุด</string>
+    <string name="update_complete">การอัพเดทสมบูรณ์</string>
+    <string name="new_farmer">เกษตรกรรายใหม่</string>
+    <!-- module row stuff -->
+    <string name="Awaiting_Sync">รอการเชื่อมต่อข้อมูล</string>
+    <!-- in XML -->
+    <string name="ofis_complete_questionnaire">เสร็จสิ้นในส่วนของแบบสอบถาม</string>
+    <string name="ofis_add_infrastructure">เพิ่มโครงสร้างพื้นฐานทางสังคม</string>
+    <string name="ofis_add_new_farmer">เพิ่มเกษตรกรใหม่</string>
+    <string name="Modules_to_submit">รายการที่จะส่ง</string>
+    <string name="item_synced">รายการเชื่อมต่อสำเร็จ</string>
+    <string name="item_sync_error">การเชื่อมต่อผิดพลาด โปรดติดต่อเจ้าหน้าที่</string>
+    <string name="ofis_first_run_intro">นี่อาจเป็นการเข้าสู่ระบบครั้งแรกของท่าน เราขอทราบข้อมูลจากท่านได้หรือไม่? </string>
+    <string name="ofis_first_run_save_update">แตะเพื่อบันทึกการเปลี่ยนแปลง</string>
+
+    <!-- Settings screen related -->
+    <!-- in XML -->
+    <string name="Enumerator_ID">รหัสผู้บันทึกข้อมูล</string>
+
+    <!-- ADD POI related -->
+    <string name="Successfully_added">เพิ่มข้อมูลสำเร็จ</string>
+    <string name="Successfully_updated">อัพเดทข้อมูลสำเร็จ</string>
+    <string name="ofis_select_gender">เพศ</string>
+    <string name="ofis_olam_funded">ได้รับเงินสนับสนุนจาก Olam หรือไม่? </string>
+    <string name="ofis_select_year_opened">ปีที่เปิด</string>
+    <string name="ofis_select_education_level">เลือกระดับการศึกษา</string>
+    <string name="ofis_select_product">สินค้าที่ซื้อ</string>
+    <string name="ofis_select_supply_type">แหล่งน้ำที่ใช้</string>
+    <string name="location_not_available">ไม่พบตำแหน่งที่ตั้ง</string>
+
+    <!-- in XML -->
+    <string name="Add_Point_of_Interest">เพิ่มโครงสร้างพื้นฐานทางสังคม</string>
+    <string name="Name">ชื่อ</string>
+    <string name="GPS_Position">ตำแหน่ง GPS </string>
+
+    <!-- in XML includes -->
+    <string name="Capacity">จำนวนนักเรียนที่สามารถรองรับได้</string>
+    <string name="Number_of_Classrooms">จำนวนชั้นเรียน</string>
+
+    <!-- Add farmer related -->
+    <!-- in code -->
+    <string name="Select_picture_from">เลือกรูปภาพจาก</string>
+    <string name="Camera">กล้องถ่ายรูป</string>
+    <string name="Gallery">คลังภาพ</string>
+    <string name="Please_wait">โปรดรอซักครู่</string>
+    <string name="Please_fill_all_fields">กรุณากรอกข้อมูลทั้งหมด</string>
+    <string name="id_not_unique">รหัสเกษตรกรซ้ำกับรายอื่น โปรดลองอีกครั้ง</string>
+    <string name="Submitting_data">กำลังส่งข้อมูล</string>
+    <string name="Farmer_Added">เพิ่มเกษตรกรสำเร็จ!</string>
+    <string name="Farmer_Updated">ข้อมูลเกษตรกรได้รับการอัพเดทแล้ว</string>
+    <string name="are_you_at_the_farm">ขณะนี้คุณอยู่ที่แปลงเกษตรหรือไม่?</string>
+    <string name="yes">ใช่</string>
+    <string name="no">ไม่</string>
+    <string name="searching_for_loc">ค้นหาที่ตั้ง</string>
+    <string name="ofis_farmer_id_hint">AA-0000-AAAA-</string>
+
+    <!-- in XML -->
+    <string name="Add_Farmer">เพิ่มเกษตรกร</string>
+    <string name="Farmer_Name">ชื่อเกษตรกร</string>
+    <string name="Date_of_Birth">วันเกิด</string>
+    <string name="Country">ประเทศ</string>
+    <string name="New_place_name">ชื่อสถานที่ใหม่</string>
+    <string name="new_place_name_placeholder">สถานที่ใหม่</string>
+    <string name="Olam_Farmer_ID">รหัสเกษตรกร</string>
+    <string name="Save">บันทึก</string>
+    <string name="Add_Signature">ลายเซ็นต์</string>
+
+    <!-- Find a farmer related -->
+    <!-- in XML -->
+    <string name="Select_Farmer">เลือกเกษตรกร</string>
+    <string name="Search">ค้นหา</string>
+
+    <!-- View farmer related -->
+    <!-- in XML -->
+    <string name="View_Farmer">ดูข้อมูลเกษตรกร</string>
+    <string name="Farmer_Photo">รูปเกษตรกร</string>
+    <string name="Task_list_header">รายการ</string>
+    <string name="record_farm_location">บันทึกตำแหน่งที่ตั้งแปลง</string>
+    <string name="record_farm_location_hint">แตะเพื่อแสดงตำแหน่ง GPS </string>
+    <string name="record_farm_location_complete">บันทึกตำแหน่งที่ตั้งแล้ว</string>
+    <string name="record_location_timeout">ไม่พบที่ตั้ง โปรดลองอีกครั้ง</string>
+    <string name="enabled_string">จริง</string>
+    <string name="review_farm_management_plan">ทบทวนการวางแผนการจัดการแปลงเพาะปลูกทั้งหมด</string>
+    <string name="review_farm_management_plan_hint">แตะเพื่อบันทึกข้อเสนอแนะ</string>
+
+    <!-- For View Sub Module - questionnaire default values -->
+    <string name="ModuleTitle">หัวข้อหลัก</string>
+    <string name="ModuleSubTitle">หัวข้อย่อย</string>
+    <string name="ModuleStatus">รายการใหม่</string>
+    <string name="module_in_progress">อยู่ในระหว่างดำเนินการ</string>
+    <string name="module_finished">รอการอัปโหลด</string>
+    <string name="ModuleAnswerHint">คำตอบ</string>
+
+    <!-- module action buttons -->
+    <string name="ModuleBackButton">ก่อนหน้า</string>
+    <string name="ModuleNextButton">ถัดไป</string>
+    <string name="ModuleSaveButton">บันทึก</string>
+
+    <!-- errors -->
+    <string name="Internet_not_available">ไม่มีการเชื่อมต่ออินเตอร์เนตในขณะนี้ - การทำรายการนี้จะสมบูรณ์ได้ในขณะที่มีการเชื่อมต่ออินเตอร์เนตเท่านั้น</string>
+    <string name="networking_error">เกิดข้อผิดพลาด ซึ่งอาจเกิดจากท่านทำรายการเกินเวลาที่กำหนด โปรดลองอีกครั้ง หรือติดต่อเจ้าหน้าที่</string>
+    <string name="farmer_not_synced">ขออภัย ข้อมูลเกษตรยังไม่ได้รับการเชื่อมต่อ โปรดเชื่อมต่อข้อมูลเกษตรกรก่อน</string>
+
+    <!-- upgrade -->
+    <string name="upgrade_message">แอปพลิเคชั่นมีการอัพเกรด กรุณาอัพเดทข้อมูลของท่านอีกครั้ง</string>
+
+    <!-- SPINNERS -->
+
+
+    <!-- spinner default values -->
+    <string name="spinner_country_default">เลือกประเทศ</string>
+    <string name="spinner_region_default">เลือกจังหวัด</string>
+    <string name="spinner_district_default">เลือกอำเภอ</string>
+    <string name="spinner_place_default">เลือกตำบล</string>
+    <string name="spinner_farmergroup_default">เลือกกลุ่มเกษตรกร</string>
+    <string name="spinner_section_default">เลือกตำบล</string>
+    <string name="spinner_product_default">เลือกสินค้า</string>
+
+    <string-array name="poitypes">
+        <item>โรงเรียน</item>
+        <item>ศูนย์พยาบาล</item>
+        <item>น้ำประปา</item>
+        <item>ศูนย์รับซื้อ</item>
+    </string-array>
+    <string name="poitype_school">โรงเรียน</string>
+    <string name="poitype_healthcentre">ศูนย์พยาบาล</string>
+    <string name="poitype_cleanwatersupply">น้ำประปา</string>
+    <string name="poitype_buyingcentre">ศูนย์รับซื้อ</string>
+    <string-array name="genders">
+        <item>ชาย</item>
+        <item>หญิง</item>
+    </string-array>
+    <string name="gender_male">ชาย</string>
+    <string name="gender_female">หญิง</string>
+    <string-array name="genders_2">
+        <item>ชาย</item>
+        <item>หญิง</item>
+        <item>สหศึกษา</item>
+    </string-array>
+    <string name="gender_school_male">ชาย</string>
+    <string name="gender_school_female">หญิง</string>
+    <string name="gender_school_coeducational">สหศึกษา</string>
+    <string-array name="educationlevels">
+        <item>เตรียมอนุบาล</item>
+        <item>ประถมศึกษา</item>
+        <item>มัธยมศึกษาตอนต้น</item>
+        <item>มัธยมศึกษาตอนปลาย</item>
+        <item>ปริญญาตรีขึ้นไป</item>
+    </string-array>
+    <string name="educationlevel_nursery">เตรียมอนุบาล</string>
+    <string name="educationlevel_primary">ประถมศึกษา</string>
+    <string name="educationlevel_juniorsecondary">มัธยมศึกษาตอนต้น</string>
+    <string name="educationlevel_seniorsecondary">มัธยมศึกษาตอนปลาย</string>
+    <string name="educationlevel_graduate">ปริญญาตรีขึ้นไป</string>
+    <string-array name="clean_water_types">
+        <item>หลุมเจาะ</item>
+        <item>บ่อน้ำ</item>
+        <item>ท่อน้ำ</item>
+        <item>ตาน้ำ</item>
+    </string-array>
+    <string name="cleanwatertype_borehole">หลุมเจาะ</string>
+    <string name="cleanwatertype_well">บ่อน้ำ</string>
+    <string name="cleanwatertype_pipe">ท่อน้ำ</string>
+    <string name="cleanwatertype_spring">ตาน้ำ</string>
+    <string-array name="plotvariants">
+        <item>เท่าเดิม</item>
+        <item>มากขึ้น</item>
+        <item>น้อยลง</item>
+    </string-array>
+    <string name="plotvariant_thesame">เท่าเดิม</string>
+    <string name="plotvariant_more">มากขึ้น</string>
+    <string name="plotvariant_less">น้อยลง</string>
+
+    <!-- content descriptions -->
+    <string name="ofis_cd_hierarchy_arrow">ลูกศรชี้ไปทางขวา</string>
+    <string name="ofis_cd_info_icon">สัญลักษณ์ข้อมูล</string>
+    <string name="ofis_cd_submit_all_icon">ส่งรายการทั้งหมด</string>
+    <string name="module_density_plot_question">แปลงนี้มีความหนาแน่นมากกว่า น้อยกว่า หรือเท่ากับแปลงหลัก</string>
+    <string name="module_density_plot_question_intro">แปลงเพิ่มเติม</string>
+    <string name="module_density_plot_question_result_intro">ผลลัพธ์ </string>
+    <string name="app_updated_generic_message">การอัพเดทแอปพลิเคชั่นล่าสุดพร้อมใช้งานแล้ว กรุณากดตกลงเพื่อดาวน์โหลด</string>
+    <string name="app_update_ok">ตกลง</string>
+    <string name="app_update_cancel">ยกเลิก</string>
+    <string name="title_activity_review_farm_management_plan">ทบทวนแผนการจัดการแปลง</string>
+    <string name="updating_fmps">กำลังอัพเดทแผนการจัดการแปลง</string>
+    <string name="fmps_up_to_date">การวางแผนการจัดการแปลงเพาะปลูกล่าสุด</string>
+    <string name="review_farm_management_plan_complete">ส่งข้อเสนอแนะแล้ว</string>
+    <string name="review_farm_management_plan_in_progress">อยู่ระหว่างกระบวนการตรวจสอบความถูกต้อง</string>
+    <string name="fmp_redo_baseline">แก้ไขข้อมูลพื้นฐาน?</string>
+    <string name="hpQId">1</string>
+    <string name="hpAId">2</string>
+    <string name="hpPqId">3</string>
+    <string name="hpRiP">4</string>
+    <string name="hpD">5</string>
+    <string name="fullreview_farm_management_plan">ทบทวนการวางแผนการจัดการแปลงเพาะปลูกทั้งหมด</string>
+    <string name="fullreview_farm_management_plan_in_progress">อยู่ระหว่างกระบวนการตรวจสอบความถูกต้อง</string>
+    <string name="fmp_are_you_sure">ขั้นตอนนี้จะต้องพิมพ์แผนการดำเนินการใหม่ ท่านแน่ใจหรือไม่ว่าจะดำเนินการต่อ?</string>
+    <string name="complete_all_required_fields">ท่านต้องกรอกข้อมูลในรายการที่จำเป็นทั้งหมดก่อน (คำถามที่มีเครื่องหมาย *) จึงจะสามารถส่งรายการนี้</string>
+    <string name="ReadAndAgreeConsent">อ่านและเห็นด้วยกับหนังสือให้ความยินยอม</string>
+    <string name="consentStatementMain1">การให้ข้อมูลส่วนบุคคลของท่านมีความจำเป็นต่อโครงการสนับสนุนการทำการเกษตรอย่างยั่งยืนของ Olam ซึ่งท่านได้เป็นส่วนหนึ่งของโครงการนี้ โดยข้อมูลส่วนบุคคลจะถูกรวบรวมและเก็บไว้ในฐานข้อมูลเกษตรกรของ Olam (OFIS)  ทั้งนี้ท่านสามารถปฏิเสธการให้ความยินยอมในการเก็บรวบรวม นำไปใช้ และเปิดเผยข้อมูลส่วนบุคคลได้ในภายหลัง แต่การปกปิดข้อมูล และ/หรือ การปฏิเสธการให้ความยินยอม อาจมีผลให้ท่านไม่สามารถเข้าร่วมในโครงการสนับสนุนการทำการเกษตรอย่างยั่งยืนต่อไปได้</string>
+    <string name="consentStatementMain2">
+        ข้อมูลส่วนบุคคลของท่านจะถูกนำไปใช้ในระบบฐานข้อมูลเกษตรกรของ Olam (OFIS) เพื่อใช้ใน:
+    </string>
+    <string name="consentStatementMain2a">
+        ข้อมูลส่วนบุคคลของท่านจะถูกนำไปใช้ในระบบฐานข้อมูลเกษตรกรของ Olam (OFIS) เพื่อใช้ใน:
+    </string>
+    <string name="consentStatementMain2b">
+        ระบบการวิเคราะห์ โดยระบบจะนำข้อมูลของเกษตรกรทั้งรายบุคคลและในภาพรวม มาใช้สำหรับการวิเคราะห์เพื่อประกอบการตัดสินใจในการวางแผนโครงการในอนาคต ซึ่งผู้ใช้ระบบสามารถนำผลการวิเคราะห์ข้อมูล (รวมทั้งข้อมูลดิบที่นำมาวิเคราะห์ เช่น ข้อมูลส่วนบุคคลของเกษตรกร) มาใช้ได้ทั้งในรูปแบบของไฟล์ PDF และ Excel โดยผู้ใช้ระบบจะสามารถดึงเอาเฉพาะข้อมูลของเกษตรกรในกลุ่มที่ผู้ใช้สนใจได้ เช่น กลุ่มที่ให้ผลิตภาพสูงหรือต่ำ เป็นต้น    </string>
+    <string name="consentStatementMain2c">
+        การวางแผนการจัดการแปลงเพาะปลูก เพื่อเน้นย้ำให้เกษตรกรแต่ละรายเห็นถึงสิ่งที่ควรจะต้องได้รับการเปลี่ยนแปลงในระยะเวลา 3-5 ปีนี้ เพื่อให้เกิดการพัฒนาศักยภาพในการผลิตให้มีประสิทธิภาพสูงสุด
+    </string>
+    <string name="consentStatementMain3">
+        ผู้ใช้ระบบ OFIS ประกอบด้วย พนักงานของ Olam, กลุ่มเกษตรกร, ผู้จัดการข้อมูล และลูกค้าทั่วโลก ตามวัตถุประสงค์ของการใช้งานในระบบแผนที่, ระบบการวิเคราะห์ข้อมูล และการวางแผนการจัดการเกษตร ที่ได้ระบุไว้ในย่อหน้าที่สอง
+    </string>
+    <string name="consentStatementMain4">
+        ข้อมูลส่วนบุคคลของท่านจะถูกเก็บไว้เป็นความลับ จะมีเพียงผู้ใช้ระบบ OFIS ตามที่ระบุไว้ข้างต้นเท่านั้นที่จะสามารถเข้าถึงข้อมูลได้ ทั้งนี้ข้อมูลอาจถูกส่งไปยังพื้นที่นอกเขตพื้นที่อำนาจศาลท้องถิ่นของท่าน แต่การกระทำดังกล่าวจะต้องอยู่ภายใต้กฎหมายคุ้มครองข้อมูลส่วนบุคคลที่มีมารตฐานสอดคล้องกับกฎหมายคุ้มครองข้อมูลส่วนบุคคลของประเทศหรือท้องถิ่นของท่าน
+    </string>
+    <string name="consentStatementMain5">
+        ท่านสามารถปฏิเสธการให้ความยินยอม ขอเข้าสู่ระบบ และ/หรือ แก้ไขข้อมูลส่วนบุคคลของท่าน และ/หรือ ขอข้อมูลอันเป็นไปตามนโยบายและข้อปฏิบัติ ได้โดยการติดต่อเจ้าหน้าที่คุ้มครองข้อมูลที่ ofis@olamnet.com
+    </string>
+    <string name="consentStatementCheck1">ข้าพเจ้าขอยืนยันว่าเกษตรกรได้รับทราบคำชี้แจงการเก็บข้อมูลส่วนบุคคล และยินยอมให้ Olam มีการเก็บรวบรวม ประมวลผล นำไปใช้ ส่ง และเปิดเผยข้อมูลส่วนบุคคล ตามวัตถุประสงค์ที่ได้ระบุไว้</string>
+    <string name="consentStatementCheck2">ข้าพเจ้าขอยืนยันว่าเกษตรกรได้รับทราบคำชี้แจงการเก็บข้อมูลส่วนบุคคล และเกษตรกรยืนยันว่าได้รับความยินยอมจากบุคคลต่างๆ ที่ได้ถูกอ้างถึงจากการทำการสำรวจแล้ว ว่าข้อมูลส่วนตัวของบุคคลเหล่านั้นจะถูกเก็บรวบรวม นำไปใช้ และเปิดเผยได้ตามวัตถุประสงค์ที่ได้ระบุไว้</string>
+    <string name="consentStatementTitle">คำชี้แจงการเก็บข้อมูลส่วนบุคคล</string>
+    <string name="Please_accept_both_consents">ท่านต้องทำการยืนยันในแบบสอบถามความยินยอมเสียก่อน ระบบจึงจะทำการบันทึกข้อมูลเกษตรกรได้</string>
+    <string name="farmer_id_min">รหัสเกษตรกรต้องประกอบด้วยตัวเลข 4 หลัก</string>
+    <string name="app_updated_upload_first_message">การอัพเดทแอปพลิเคชั่นล่าสุดพร้อมใช้งานแล้ว ท่านต้องเชื่อมต่อรายการทั้งหมดก่อนจึงจะทำการดาวน์โหลดได้ กรุณากดตกลงเพื่อเชื่อมต่อรายการทั้งหมด จากนั้นไปที่การตั้งค่าเพื่ออัพเดทแอปพลิเคชั่น</string>
+    <string name="please_sync_before_update">มีบางรายการที่ยังรอการเชื่อมต่อ ท่านต้องทำการเชื่อมต่อรายการเหล่านั้นก่อนจึงจะสามารถอัพเดทข้อมูลได้</string>
+    <string name="ofis_update_overdue">เวอร์ชั่นนี้ได้หมดอายุลงแล้ว ท่านต้องอัพเดทแอปพลิเคชั่นก่อนจึงจะสามารถใช้งานต่อได้ กรุณากดปุ่มที่ด้านบนขวาเพื่ออัพเดท</string>
+    <string name="ofis_request_help">ขอความช่วยเหลือ</string>
+    <string name="Your_Name"> ชื่อ</string>
+    <string name="problem_description">ระบุปัญหาที่พบ</string>
+    <plurals name="days_left_to_update">
+        <item quantity="one">เวอร์ชั่นล่าสุดจะต้องได้รับการอัพเดทหลังจาก 30 วัน ท่านยังมีเวลาอีก %1 วัน สำหรับการอัพเดท</item>
+        <item quantity="other">เวอร์ชั่นล่าสุดจะต้องได้รับการอัพเดทหลังจาก 30 วัน ท่านยังมีเวลาอีก %1 วัน สำหรับการอัพเดท</item>
+    </plurals>
+    <string name="record_transaction_button_text">บันทึกธุรกรรม</string>
+    <string name="record_training_button">บันทึกการอบรม</string>
+    <string name="ViewTransactionsTitle">ธุรกรรม</string>
+    <string name="Add">เพิ่ม</string>
+    <string name="AddTransactionItemTitle">หัวข้อธุรกรรม</string>
+    <string name="please_select">โปรดเลือก</string>
+    <string name="select_transaction_item_type">ประเภท</string>
+    <string name="ofis_select_item_product_grade">ประเภทสินค้า</string>
+    <string name="select_currency">สกุลเงิน</string>
+    <string name="enter_quantity">ปริมาณ</string>
+    <string name="select_units">หน่วย</string>
+    <string name="updating_transaction_data">อัพเดทข้อมูลธุรกรรม</string>
+    <string name="Transaction_item_added">เพิ่มรายการธุรกรรมเรียบร้อยแล้ว</string>
+    <string name="Delete_Item">ลบรายการ</string>
+    <string name="Transaction_default">ธุรกรรม</string>
+    <string name="transaction_are_you_sure">ท่านต้องการลบธุรกรรมนี้ใช่หรือไม่? </string>
+    <string name="transaction_deleted">ลบธุรกรรมเรียบร้อยแล้ว</string>
+    <string name="complete_transaction">ธุรกรรมเสร็จสมบูรณ์</string>
+    <string name="Farmer_Group_Name">ชื่อกลุ่มเกษตรกร</string>
+    <string name="direction_hint">รายการนี้เป็นรายจ่ายหรือรายรับของท่าน?</string>
+    <string name="transaction_added_to_queue">ยืนยันธุรกรรมเพื่อดาวน์โหลด</string>
+    <string name="Transaction_network_queue_title">ธุรกรรม</string>
+    <string name="transaction_confirmed">ยืนยันธุรกรรม</string>
+    <string name="ofis_no_transactions_text">เมื่อท่านเพิ่มธุรกรรม จะปรากฏรายการที่นี่</string>
+    <string name="ofis_no_trainingrecords_text">เมื่อท่านเพิ่มประวัติการอบรม จะปรากฏรายการที่นี่</string>
+    <string name="TrainingRecordsTitle">ประวัติการฝึกอบรม</string>
+    <string name="select_course">หลักสูตร</string>
+    <string name="TrainingAttendees">ผู้เข้าร่วมการอบรม</string>
+    <string name="complete_record">การบันทึกสมบูรณ์</string>
+    <string name="TrainingRecordTitle">จัดการบันทึกการอบรม</string>
+    <string name="select_training_module">หลักสูตรการอบรม</string>
+    <string name="Training_Photo">ภาพการอบรม</string>
+    <string name="TrainingRecordConfirmationTitle">ยืนยันการเก็บบันทึกข้อมูลการอบรม</string>
+    <string name="TrainingRecordConfirmationSubTitle">ยืนยันข้อมูลการอบรมเพื่อบันทึก</string>
+    <string name="confirm_training_record">ยืนยันบันทึกการอบรม</string>
+    <string name="Select_Attendees">เลือกรายชื่อผู้เข้าร่วมอบรม</string>
+    <string name="Attendee_Name">ชื่อผู้เข้าร่วมอบรม</string>
+    <string name="selected">เลือก:</string>
+    <string name="save_selected_attendees">บันทึกชื่อผู้เข้าร่วมอบรม</string>
+    <string name="Training_select_course_module_first">กรุณาเลือกชื่อหลักสูตรและถ่ายภาพ</string>
+    <string name="add_attendee_scores">เพิ่มคะแนน</string>
+    <string name="attendees_saved">บันทึกชื่อผู้เข้าร่วมอบรมแล้ว</string>
+    <string name="Training_Record_Edited">อัพเดทประวัติการอบรม</string>
+    <string name="Training_Record_Added">เพิ่มประวัติการฝึกอบรมแล้ว</string>
+    <string name="Add_one_attendee_to_continue">เพิ่มผู้เข้าร่วมอย่างน้อย 1 คน เพื่อดำเนินการต่อ</string>
+    <string name="updating_training">กำลังอัพเดทประวัติการอบรม</string>
+    <string name="Attendees">ผู้เข้าร่วมอบรม</string>
+    <string name="trainingrecord_are_you_sure">ท่านต้องการลบประวัติการเข้าอบรมนี้ใช่หรือไม่? </string>
+    <string name="trainingrecord_deleted">ลบประวัติการอบรมแล้ว</string>
+    <string name="trainingattendee_are_you_sure">ท่านต้องการลบรายชื่อผู้เข้าอบรมรายนี้ใช่หรือไม่?</string>
+    <string name="trainingattendee_deleted">ลบรายชื่อผู้เข้าอบรมแล้ว</string>
+    <string name="TrainingAttendeeScores">คะแนนของผู้เข้าอบรม</string>
+    <string name="TrainingAttendeeScoresSubTitle">เพิ่มเติม หรือ แก้ไขคะแนนของผู้เข้าอบรม</string>
+    <string name="save_scores">บันทึกคะแนนของผู้เข้าอบรม</string>
+    <string name="attendees_scores_updated">คะแนนของผู้เข้าอบรมได้รับการปรับแล้ว</string>
+    <string name="trainingrecord_added_to_queue">ยืนยันการอัพโหลดประวัติการฝึกอบรม</string>
+    <string name="trainingrecord_confirmed">ยืนยันประวัติการฝึกอบรม</string>
+    <string name="checkbox_image">กล่องเครื่องหมาย</string>
+    <string name="PhoneNumberHint">เบอร์โทร</string>
+    <string name="PhoneNumbers">เบอร์โทร</string>
+    <string name="main_number">เบอร์หลัก?</string>
+    <string name="location">ที่ตั้ง</string>
+    <string name="update_phone_numbers">อัพเดทเบอร์โทร</string>
+    <string name="update_phone_numbers_hint">แตะเพื่ออัพเดท</string>
+    <string name="select_transactee">ท่านทำธุรกรรมกับใคร?</string>
+    <string name="price_per_unit">ราคาต่อ</string>
+    <string name="total_price">ราคาทั้งหมด</string>
+    <string name="amount_paid">จำนวนเงินที่จ่ายให้กับ</string>
+    <string name="amount_loaned">จำนวนสินเชื่อให้กับ</string>
+    <string name="amount_gifted">จำนวนปัจจัยการผลิตให้กับ</string>
+    <string name="amount_repaid_and_loaned">จำนวนที่ชำระคืน และให้สินเชื่อกับ</string>
+    <string name="Transaction_item_updated">อัพเดทธุรกรรมแล้ว</string>
+    <string name="amount_repaid">จำนวนที่ชำระคืนแก่</string>
+    <string name="registeredForNotifications">ท่านได้ลงทะเบียนรับการแจ้งเตือนภารกิจเรียบร้อยแล้ว</string>
+    <string name="registerForNotificationsFailed">การลงทะเบียนรับการแจ้งเตือนภารกิจไม่สำเร็จ ระบบจะดำเนินการภายหลังโดยอัตโนมัติ แต่หากท่านยังคงได้รับข้อความนี้โปรดติดต่อเจ้าหน้าที่เพื่อดำเนินการแก้ไข</string>
+    <string name="NewTaskReceivedTitle">ภารกิจใหม่ที่ได้รับ</string>
+    <plurals name="trainingAttendeesCount">
+        <item quantity="one">%1d ผู้เข้าอบรม</item>
+        <item quantity="other">%1d ผู้เข้าอบรม</item>
+    </plurals>
+    <string name="title_activity_tasks">ภารกิจ</string>
+    <string name="updating_tasks">กำลังอัพเดทภารกิจ</string>
+    <string name="TaskUpdatedTitle">อัพเดทภารกิจเรียบร้อยแล้ว</string>
+    <string name="TaskDeletedTitle">ลบภารกิจ</string>
+    <string name="take_photo">ถ่ายภาพ</string>
+    <string name="set_auto_time_message">เนื่องจากท่านไม่ได้ตั้งค่าเวลาและเขตเวลาอัตโนมัติจึงยังไม่สามารถใช้งานแอพได้ โปรดดำเนินการตั้งค่าให้เป็นแบบอัตโนมัติเพื่อใช้งาน</string>
+    <string name="buyingagent">ศูนย์รับซื้อ</string>
+    <string name="credit_balance">ค้างชำระคุณ</string>
+    <string name="ChooseBuyingAgent">เลือกศูนย์รับซื้อ</string>
+    <string name="WhoTransacting">ท่านทำธุรกรรมในนามของใคร?</string>
+    <string name="PickAgentFirst">ท่านต้องเลือกศูนย์รับซื้อก่อน</string>
+    <string name="farmer_or_buying_agent_name">ชื่อเกษตรกร หรือ ชื่อศูนย์รับซื้อ</string>
+    <string name="title_activity_find_transactee">ค้นหาผู้ทำธุรกรรม</string>
+    <string name="amount_loaned_by">จำนวนสินเชื่อจาก</string>
+    <string name="amount_repaid_by">จำนวนที่ชำระคืนโดย</string>
+    <string name="amount_repaid_and_loaned_by">จำนวนที่ชำระคืน และให้สินเชื่อโดย</string>
+    <string name="amount_paid_by">จำนวนเงินที่จ่ายโดย</string>
+    <string name="amount_gifted_by">จำนวนปัจจัยการผลิตจาก</string>
+    <string name="debit_balance">คุณค้างชำระ</string>
+    <string name="cannotTransactNothingToRepay">ท่านไม่มียอดค้างชำระ จึงไม่มีรายการที่ต้องชำระคืน โปรดเลือกธุรกรรมอื่น</string>
+    <string name="cannotTransactUnableToLoan">ท่านยังมียอดค้างชำระ จึงไม่สามารถให้สินเชื่อได้ โปรดเลือกธุรกรรมอื่น</string>
+    <string name="cannotRepayNotOwedMoney">ท่านไม่มียอดค้างรับ จึงไม่มีรายการที่ต้องรับชำระคืน โปรดเลือกธุรกรรมอื่น</string>
+    <string name="cannotLoanOwedMoney">ท่านยังมียอดค้างรับ จึงไม่สามารถให้สินเชื่อเพิ่มได้ โปรดเลือกธุรกรรมอื่น</string>
+    <string name="ensure_totals_match">โปรดตรวจสอบอีกครั้งว่ายอดชำระทั้งหมดเท่ากับราคารวม</string>
+    <string name="price_per_unit_default">หน่วย</string>
+    <string name="input_crop_finance">ปัจจัยการผลิต, การเงิน หรือ พืชผลเกษตร</string>
+    <string name="input_crop">ปัจจัยการผลิต หรือ พืชผลเกษตร</string>
+    <string name="input_finance">ปัจจัยการผลิต หรือ การเงิน</string>
+    <string name="finance_crop">การเงิน หรือ พืชผลเกษตร</string>
+    <string name="task_mark_complete">เสร็จ</string>
+    <string name="transaction_notes">หมายเหตุ</string>
+    <string name="cannotRepayMoreThanOwe">ท่านไม่สามารถทำรายการจ่ายชำระคืนเกินกว่ายอดค้างชำระ</string>
+    <string name="cannotRepayMoreThanTheyOwe">ยอดการจ่ายชำระคืนจะต้องไม่เกินกว่ายอดค้างชำระ</string>
+    <string name="item_in_progress">อยู่ในระหว่างดำเนินการ</string>
+    <string name="cannot_do_mobile_money_non_farmer">ท่านไม่สามารถใช้จ่ายผ่านมือถือจากจุดรับซื้อ</string>
+    <string name="pay_using_mobile_money_or_cash">ชำระโดยการทำธุรกรรมผ่านมือถือหรือเงินสด</string>
+    <string-array name="mmCash">
+        <item>เงินสด</item>
+        <item>การทำธุรกรรมผ่านมือถือ</item>
+    </string-array>
+    <string name="mmCash_mobilemoney">การทำธุรกรรมผ่านมือถือ</string>
+    <string name="mmCash_cash">เงินสด</string>
+    <string name="mobile_money_suffix">ใช้การทำธุรกรรมผ่านมือถือ</string>
+    <string name="mm_transaction_initiated">เริ่มการทำธุรกรรมผ่านมือถือ โปรดรอสักครู่</string>
+    <string name="mm_transaction_checking">ตรวจสอบสถานะการทำธุรกรรม</string>
+    <string name="mm_transaction_timedout">ท่านทำธุรกรรมผ่านมือถือเกินเวลาที่กำหนด กรุณาใช้เงินสด</string>
+    <string name="mm_transaction_awaiting_response">การทำธุรกรรมผ่านมือถือกำลังรอการตอบกลับ</string>
+    <string name="mm_transaction_inprogress">กำลังดำเนินการทำธุรกรรมผ่านมือถือ</string>
+    <string name="mm_transaction_complete">การทำธุรกรรมผ่านมือถือเรียบร้อย</string>
+    <string name="mm_transaction_failed">การทำธุรกรรมผ่านมือถือไม่สำเร็จ กรุณาใช้เงินสด</string>
+    <string name="mm_transaction_confirmation">ท่านจะชำระเงิน %1$s %2$s ด้วยระบบธุรกรรมผ่านมือถือใช่หรือไม่ กรุณายืนยัน</string>
+    <string name="mm_transaction_confirm">ยืนยัน</string>
+    <string name="place_name_not_unique">ชื่อนี้ถูกใช้งานแล้ว กรุณาเลือกชื่อใหม่</string>
+    <string name="title_activity_record_polygon">บันทึกขอบเขตพื้นที่</string>
+    <string name="loading">"กำลังโหลด "</string>
+    <string name="wait">โปรดรอสักครู่</string>
+    <string name="save_button_text">บันทึก</string>
+    <string name="start_logging_button_text">"เริ่มการบันทึก "</string>
+    <string name="stop_logging_button_text">"หยุดการบันทึก "</string>
+    <string name="pause_button_text">"หยุดชั่วคราว "</string>
+    <string name="resume_button_text">"ดำเนินการต่อ "</string>
+    <string name="plot">"แปลง %1$d "</string>
+    <string name="current_track_name">"OFIS Track "</string>
+    <string name="plot_already_logged">"%1$s บันทึกแล้ว "</string>
+    <string name="location_permission_alertdialog_title">"โปรดตรวจสอบการตั้งค่าการอนุญาตให้เข้าถึงตำแหน่งที่ตั้ง  "</string>
+    <string name="open_application_settings_msg">"ไปยังการตั้งค่าแอปพลิเคชั่น? "</string>
+    <string name="ready_to_save">"%1$s พร้อมสำหรับการบันทึก "</string>
+    <string name="restart_logging">"คุณต้องการเริ่มต้นการบันทึกใหม่หรือไม่? "</string>
+    <string name="save_existing_logs">"บันทึกข้อมูลที่มีอยู่ "</string>
+    <string name="already_logged_and_saved">"%1$s ได้บันทึกเรียบร้อยแล้ว "</string>
+    <string name="try_again_later_msg">"อีกสักครู่โปรดลองอีกครั้ง "</string>
+    <string name="location_not_yet_logged">"คุณยังไม่ได้บันทึกตำแหน่ง "</string>
+    <string name="fetch_location_msg">"กำลังค้นหาตำแหน่ง โปรดรอสักครู่ "</string>
+    <string name="gps_manager_msg">"จัดการ GPS "</string>
+    <string name="enable_gps_msg">"คุณต้องการเปิด GPS ใช่หรือไม่? "</string>
+    <string name="gps_turned_on">"เปิด GPS "</string>
+    <string name="storage_permission_explanation">"การเก็บบันทึกข้อมูลจำเป็นต้องได้รับความยินยอมก่อน เพื่อให้สามารถบันทึกแผนที่, ลดขนาดเนื้อที่การใช้ข้อมูล และการใช้งานแบบออฟไลน์ "</string>
+    <string name="location_permission_explanation">"การเก็บข้อมูลตำแหน่งที่ตั้งจำเป็นต้องได้รับความยินยอมก่อน "</string>
+    <string name="speed_unit_kmph">"%1$d กิโลเมตร/ชั่วโมง "</string>
+    <string name="logging_progress_msg">"อยู่ระหว่างการบันทึก "</string>
+    <string name="cancel_logging_question">"ยกเลิกการบันทึก "</string>
+    <string name="cancel_logging_msg">"%1$s ยกเลิกการบันทึก  "</string>
+    <string name="not_logged_yet">"%1$s ยังไม่ได้บันทึก  "</string>
+    <string name="area_info">"พื้นที่ %1$f เฮกเกตอร์ "</string>
+    <string name="save_polygon_alertdialog_title">"บันทึกขอบเขตพื้นที่ %1$s ? "</string>
+    <string name="save_polygon_alertdialog_msg">"คุณจะไม่สามารถบันทึก %1$s ได้อีก "</string>
+    <string name="close">"ปิด "</string>
+    <string name="saved_successfully_msg">"%1$s บันทึกสำเร็จ "</string>
+    <string name="confirm">"ยืนยัน "</string>
+    <string name="plot_location_confirmation">"คุณกำลังอยู่ที่ตำแหน่ง %1$s ใช่หรือไม่? "</string>
+    <string name="logging_not_started_msg">"ไม่สามารถเริ่มการบันทึกได้ "</string>
+    <string name="edit_plot_dialog_title">"เลือกจำนวนแปลง "</string>
+    <string name="existing_plots">"จำนวนแปลงที่มีอยู่ %1$d"</string>
+    <string name="existing_plots_logged">"บันทึกแปลงแล้ว %1$d"</string>
+    <string name="previous_plot_not_recorded_msg">แปลงที่ %1$s ยังไม่ได้บันทึก กรุณาทำการบันทึกแปลงที่ %1$s ก่อน</string>
+    <string name="send_button">"ส่ง "</string>
+    <string name="duplicate_phone_number">"หมายเลขโทรศัพท์ซ้ำ โปรดตรวจสอบอีกครั้ง "</string>
+    <string name="record_polygon_input_messege">"มีพื้นที่ทั้งหมดกี่แปลง? "</string>
+    <string name="record_polygon_input_title">"การวิเคราะห์ระดับแปลง "</string>
+    <string name="record_polygon_input_hint">"ใส่หมายเลขแปลง "</string>
+    <string name="camera_and_gallery_permission_denial_msg">"กล้องถ่ายรูปและคลังภาพจะไม่สามารถใช้งานได้หากไม่ได้รับการให้ความยินยอม "</string>
+    <string name="gps_permission_denial_msg">"การค้นหาตำแหน่งจะไม่สามารถใช้งานได้หากไม่ได้รับการให้ความยินยอม "</string>
+    <string name="phone_state_permission_denial_msg">"การใช้หมายเลข IMEI จำเป็นต้องได้รับความยินยอมก่อน "</string>
+    <string name="permission_permanent_denial_title">"ปฏิเสธการให้ความยินยอม "</string>
+    <string name="permission_permanent_denial_msg">"ท่านได้ปฏิเสธการให้ความยินยอม โปรดไปที่การตั้งค่าแอปพลิเคชั่นเพื่อเปลี่ยนแปลงการให้ความยินยอม "</string>
+    <string name="go_to_settings_msg">"ไปที่การตั้งค่าแอปพลิเคชั่นเพื่อตั้งค่าการให้ความยินยอม "</string>
+    <string name="record_farm_polygon">"บันทึกขอบเขตพื้นที่แปลง "</string>
+    <string name="record_farm_polygon_hint">แตะเพื่อบันทึกขอบเขตพื้นที่แปลง</string>
+    <string name="record_farm_polygon_complete">"บันทึกขอบเขตพื้นที่ "</string>
+    <string name="submit">"ส่ง "</string>
+    <string name="cancel">"ยกเลิก "</string>
+    <string name="valid_count_msg">"ป้อนจำนวนที่ถูกต้อง "</string>
+    <string name="plot_recording_module_finished">"การบันทึกพื้นที่สมบูรณ์แล้ว "</string>
+    <string name="untick_task">"ไม่เลือก "</string>
+    <string name="untick_task_msg">"คุณต้องการทำเครื่องหมายงานนี้ว่ายังไม่สมบูรณ์ ใช่หรือไม่? "</string>
+    <string name="updating_master_details">Downloading master details</string>
+</resources>

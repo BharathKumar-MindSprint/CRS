@@ -1,0 +1,521 @@
+package com.webpoint0.ofiscompanion;
+
+import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+
+/**
+ * Created by bengallienne on 29/11/14. - update
+ * Describes and creates / updates all the tables the app needs in the SQLite database
+ */
+class OFISDB extends SQLiteOpenHelper {
+    private static OFISDB sInstance;
+    private static final int DATABASE_VERSION = 81;
+    private static final String DATABASE_NAME = "ofismobile";
+
+    // create tables
+    private static final String OFIS_MODULES_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.ModuleEntry.TABLE_NAME +
+            " ( " + OFISDBContract.ModuleEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.ModuleEntry.COLUMN_NAME_NAME + " TEXT, "
+            + OFISDBContract.ModuleEntry.COLUMN_NAME_NAME_FR + " TEXT, " + OFISDBContract.ModuleEntry.COLUMN_NAME_NAME_ES + " TEXT, "
+            + OFISDBContract.ModuleEntry.COLUMN_NAME_NAME_ID + " TEXT, " + OFISDBContract.ModuleEntry.COLUMN_NAME_NAME_PT + " TEXT, "
+            + OFISDBContract.ModuleEntry.COLUMN_NAME_NAME_TR + " TEXT, " + OFISDBContract.ModuleEntry.COLUMN_NAME_NAME_LO + " TEXT, "
+            + OFISDBContract.ModuleEntry.COLUMN_NAME_NAME_VI + " TEXT, " + OFISDBContract.ModuleEntry.COLUMN_NAME_NAME_TH + " TEXT, "
+            + OFISDBContract.ModuleEntry.COLUMN_NAME_EXPIRES + " TEXT, " + OFISDBContract.ModuleEntry.COLUMN_NAME_ANNUAL_SURVEY + " INTEGER )";
+
+    private static final String OFIS_SUBMODULES_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.SubmoduleEntry.TABLE_NAME
+            + " ( " + OFISDBContract.SubmoduleEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.SubmoduleEntry.COLUMN_NAME_MODULE_ID + " INTEGER, "
+            + OFISDBContract.SubmoduleEntry.COLUMN_NAME_POSITION + " INTEGER, " + OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME + " TEXT, "
+            + OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME_FR + " TEXT, " + OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME_ES + " TEXT, "
+            + OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME_ID + " TEXT, " + OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME_PT + " TEXT, "
+            + OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME_TR + " TEXT, " + OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME_LO + " TEXT, "
+            + OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME_VI + " TEXT, " + OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME_TH + " TEXT )";
+
+    private static final String OFIS_MODULEASSIGNMENTS_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.ModuleAssignmentsEntry.TABLE_NAME
+            + " ( " + OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_MODULE_ID + " INTEGER, "
+            + OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_MODULEASSIGNMENT_ID + " INTEGER, " + OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_MODULEASSIGNMENT_TYPE + " TEXT, "
+            + OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_RECURRENCE_FREQUENCY + " INTEGER, " + OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_RECURRENCE_TYPE + " TEXT, "
+            + OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_DISABLED_MONTHS + " TEXT)";
+
+    private static final String OFIS_FARMERMODULES_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.FarmerModulesEntry.TABLE_NAME
+            + " ( " + OFISDBContract.FarmerModulesEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + OFISDBContract.FarmerModulesEntry.COLUMN_NAME_MODULE_ID + " INTEGER, "
+            + OFISDBContract.FarmerModulesEntry.COLUMN_NAME_FARMER_ID + " INTEGER, " + OFISDBContract.FarmerModulesEntry.COLUMN_NAME_OLAM_FARMER_ID + " TEXT, "
+            + OFISDBContract.FarmerModulesEntry.COLUMN_NAME_FARM_ID + " INTEGER, " + OFISDBContract.FarmerModulesEntry.COLUMN_NAME_CURRENT_SUBMODULE_ID + " INTEGER, "
+            + OFISDBContract.FarmerModulesEntry.COLUMN_NAME_STATUS_STARTED + " INTEGER, " + OFISDBContract.FarmerModulesEntry.COLUMN_NAME_STATUS_FINISHED + " INTEGER, "
+            + OFISDBContract.FarmerModulesEntry.COLUMN_NAME_RECORDED_LAT + " TEXT, " + OFISDBContract.FarmerModulesEntry.COLUMN_NAME_RECORDED_LNG + " TEXT, "
+            + OFISDBContract.FarmerModulesEntry.COLUMN_NAME_STARTED_DATE + " TEXT )";
+
+    private static final String OFIS_PLOT_GEO_DATA_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.PlotGeoData.TABLE_NAME
+            + " ( " + OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+            + OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_NAME + " TEXT, "
+            + OFISDBContract.PlotGeoData.COLUMN_NAME_FARM_ID + " INTEGER, "
+            + OFISDBContract.PlotGeoData.COLUMN_NAME_SERVER_ID + " TEXT, "
+            + OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_JSON + " TEXT, "
+            + OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_SYNC_FLAG + " INTEGER )";
+
+    private static final String OFIS_DATATYPES_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.DatatypesEntry.TABLE_NAME
+            + " ( " + OFISDBContract.DatatypesEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.DatatypesEntry.COLUMN_NAME_DATATYPE_NAME + " TEXT )";
+
+    private static final String OFIS_LOOKUPVALUES_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.LookupValuesEntry.TABLE_NAME
+            + " ( " + OFISDBContract.LookupValuesEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.LookupValuesEntry.COLUMN_NAME_QUESTION_ID + " INTEGER, "
+            + OFISDBContract.LookupValuesEntry.COLUMN_NAME_POSITION + " INTEGER, " + OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + " TEXT, "
+            + OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE_FR + " TEXT, " + OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE_ES + " TEXT, "
+            + OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE_ID + " TEXT, " + OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE_PT + " TEXT, "
+            + OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE_TR + " TEXT, " + OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE_LO + " TEXT, "
+            + OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE_VI + " TEXT, " + OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE_TH + " TEXT, "
+            + OFISDBContract.LookupValuesEntry.COLUMN_NAME_PHOTO + " TEXT )";
+
+//    private static final String OFIS_QUESTION_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.QuestionEntry.TABLE_NAME +
+//            " ( " + OFISDBContract.QuestionEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.QuestionEntry.COLUMN_NAME_SUBMODULE_ID + " INTEGER, "
+//            + OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID + " INTEGER, " + OFISDBContract.QuestionEntry.COLUMN_NAME_POSITION + " INTEGER, "
+//            + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE + " TEXT, " + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION + " TEXT, "
+//            + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_FR + " TEXT, " + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_ES + " TEXT, "
+//            + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_ID + " TEXT, " + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_PT + " TEXT, "
+//            + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_TR + " TEXT, " + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_LO + " TEXT, "
+//            + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_VI + " TEXT, " + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_TH + " TEXT, "
+//            + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION + " TEXT)";
+
+
+    private static final String OFIS_QUESTION_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.QuestionEntry.TABLE_NAME +
+            " ( " + OFISDBContract.QuestionEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.QuestionEntry.COLUMN_NAME_SUBMODULE_ID + " INTEGER, "
+            + OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID + " INTEGER, " + OFISDBContract.QuestionEntry.COLUMN_NAME_POSITION + " INTEGER, "
+            + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE + " TEXT, " + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION + " TEXT, "
+            + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_FR + " TEXT, " + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_ES + " TEXT, "
+            + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_ID + " TEXT, " + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_PT + " TEXT, "
+            + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_TR + " TEXT, " + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_LO + " TEXT, "
+            + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_VI + " TEXT, " + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_TH + " TEXT, "
+            + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION + " TEXT, " + OFISDBContract.QuestionEntry.COLUMN_NAME_STOREGE_MODEL + " TEXT, "
+            + OFISDBContract.QuestionEntry.COLUMN_NAME_STOREGE_COLUM + " TEXT, " + OFISDBContract.QuestionEntry.COLUMN_NAME_Active + " TEXT, "
+            + OFISDBContract.QuestionEntry.COLUMN_NAME_CREATED_AT + " TEXT, " + OFISDBContract.QuestionEntry.COLUMN_NAME_UPDATED_AT + " TEXT, "
+            + OFISDBContract.QuestionEntry.COLUMN_NAME_APP_ID + " TEXT, " + OFISDBContract.QuestionEntry.COLUMN_NAME_IS_SUBSET_QUESTION_REQUIRED + " TEXT, "
+            + OFISDBContract.QuestionEntry.COLUMN_NAME_CONDITIONAL_QUESTIONS + " TEXT, " + OFISDBContract.QuestionEntry.COLUMN_NAME_SIPGROUPID + " TEXT, "
+            + OFISDBContract.QuestionEntry.COLUMN_NAME_SIPKEY + " TEXT)";
+
+
+
+    private static final String OFIS_ANSWER_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.AnswerEntry.TABLE_NAME +
+            " ( " + OFISDBContract.AnswerEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID + " INTEGER, "
+            + OFISDBContract.AnswerEntry.COLUMN_NAME_PARENT_QUESTION_ID + " INTEGER, " + OFISDBContract.AnswerEntry.COLUMN_NAME_REPEATER_ITEM_POSITION + " INTEGER, "
+            + OFISDBContract.AnswerEntry.COLUMN_NAME_SUBMODULE_ID + " INTEGER, " + OFISDBContract.AnswerEntry.COLUMN_NAME_FARMER_MODULE_ID + " INTEGER, "
+            + OFISDBContract.AnswerEntry.COLUMN_NAME_FMP_ID + " INTEGER, " + OFISDBContract.AnswerEntry.COLUMN_NAME_FARMER_ID + " INTEGER, "
+            + OFISDBContract.AnswerEntry.COLUMN_NAME_OLAM_FARMER_ID + " TEXT, " + OFISDBContract.AnswerEntry.COLUMN_NAME_FARM_ID + " INTEGER, "
+            + OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_INT + " INTEGER, " + OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_BOOL + " INTEGER, "
+            + OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_DECIMAL + " NUMERIC, " + OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_DATE + " TEXT, "
+            + OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_TEXT + " TEXT, " + OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_REPORTING_YEAR + " TEXT )";
+
+    private static final String OFIS_FARMER_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.FarmerEntry.TABLE_NAME +
+            " ( " + OFISDBContract.FarmerEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_ID + " INTEGER, "
+            + OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID + " INTEGER, " + OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID + " INTEGER, "
+            + OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME + " TEXT, " + OFISDBContract.FarmerEntry.COLUMN_NAME_GENDER + " TEXT, "
+            + OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRYID + " TEXT, "
+            + OFISDBContract.FarmerEntry.COLUMN_NAME_DOB + " TEXT, " + OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID + " TEXT, "
+            + OFISDBContract.FarmerEntry.COLUMN_NAME_PHOTO + " TEXT, " + OFISDBContract.FarmerEntry.COLUMN_NAME_SIGNATURE + " TEXT, "
+            + OFISDBContract.FarmerEntry.COLUMN_NAME_SYNCED + " INTEGER DEFAULT 1, " + OFISDBContract.FarmerEntry.COLUMN_NAME_CREATED_LOCALLY + " INTEGER, "
+            + OFISDBContract.FarmerEntry.COLUMN_NAME_WEBSITE_FARMER_ID + " INTEGER, " + OFISDBContract.FarmerEntry.COLUMN_NAME_WEBSITE_SUBMITTED_MODULES + " TEXT, "
+            + OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_PRIMARY_LAT + " TEXT, " + OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_PRIMARY_LNG + " TEXT, "
+            + OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_PLOTS + " TEXT, "
+            + OFISDBContract.FarmerEntry.COLUMN_NAME_CONSENT_FARMER + " INTEGER DEFAULT 1, " + OFISDBContract.FarmerEntry.COLUMN_NAME_CONSENT_OTHERS + " INTEGER DEFAULT 1)";
+
+    private static final String OFIS_BACKUP_FARMER_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.FarmerEntry.BACKUP_TABLE_NAME +
+            " ( " + OFISDBContract.FarmerEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_ID + " INTEGER, "
+            + OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID + " INTEGER, " + OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID + " INTEGER, "
+            + OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME + " TEXT, " + OFISDBContract.FarmerEntry.COLUMN_NAME_GENDER + " TEXT, "
+            + OFISDBContract.FarmerEntry.COLUMN_NAME_DOB + " TEXT, " + OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID + " TEXT, "
+            + OFISDBContract.FarmerEntry.COLUMN_NAME_PHOTO + " TEXT, " + OFISDBContract.FarmerEntry.COLUMN_NAME_SIGNATURE + " TEXT, "
+            + OFISDBContract.FarmerEntry.COLUMN_NAME_SYNCED + " INTEGER DEFAULT 1, " + OFISDBContract.FarmerEntry.COLUMN_NAME_CREATED_LOCALLY + " INTEGER, "
+            + OFISDBContract.FarmerEntry.COLUMN_NAME_WEBSITE_FARMER_ID + " INTEGER, " + OFISDBContract.FarmerEntry.COLUMN_NAME_WEBSITE_SUBMITTED_MODULES + " TEXT, "
+            + OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_PRIMARY_LAT + " TEXT, " + OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_PRIMARY_LNG + " TEXT, "
+            + OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_PLOTS + " TEXT, "
+            + OFISDBContract.FarmerEntry.COLUMN_NAME_CONSENT_FARMER + " INTEGER DEFAULT 1, " + OFISDBContract.FarmerEntry.COLUMN_NAME_CONSENT_OTHERS + " INTEGER DEFAULT 1)";
+
+    private static final String OFIS_FARMER_INDEX_CREATE = "CREATE INDEX IF NOT EXISTS idx_farmer_locally_created ON " + OFISDBContract.FarmerEntry.TABLE_NAME + "(" + OFISDBContract.FarmerEntry.COLUMN_NAME_CREATED_LOCALLY + ")";
+
+    private static final String OFIS_PHONENUMBERS_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.PhoneNumber.TABLE_NAME
+            + " ( " + OFISDBContract.PhoneNumber.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.PhoneNumber.COLUMN_NAME_FARMER_ID + " INTEGER, "
+            + OFISDBContract.PhoneNumber.COLUMN_NAME_COUNTRY_ID + " INTEGER, " + OFISDBContract.PhoneNumber.COLUMN_NAME_NUMBER + " TEXT, "
+            + OFISDBContract.PhoneNumber.COLUMN_NAME_PRIMARY + " INTEGER DEFAULT 0 )";
+
+    private static final String OFIS_COUNTRIES_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.CountriesEntry.TABLE_NAME
+            + " ( " + OFISDBContract.CountriesEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.CountriesEntry.COLUMN_NAME_CODE + " TEXT, "
+            + OFISDBContract.CountriesEntry.COLUMN_NAME_COUNTRY_NAME + " TEXT, " + OFISDBContract.CountriesEntry.COLUMN_NAME_DIALLING_CODE + " TEXT, "
+            + OFISDBContract.CountriesEntry.COLUMN_NAME_OLAM_COUNTRY + " INTEGER, " + OFISDBContract.CountriesEntry.COLUMN_NAME_ENUMERATOR_COUNTRY + " INTEGER DEFAULT 0)";
+
+    private static final String OFIS_REGIONS_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.RegionsEntry.TABLE_NAME
+            + " ( " + OFISDBContract.RegionsEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.RegionsEntry.COLUMN_NAME_COUNTRY_ID + " INTEGER, "
+            + OFISDBContract.RegionsEntry.COLUMN_NAME_REGION_NAME + " TEXT )";
+
+    private static final String OFIS_DISTRICTS_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.DistrictsEntry.TABLE_NAME
+            + " ( " + OFISDBContract.DistrictsEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.DistrictsEntry.COLUMN_NAME_REGION_ID + " INTEGER, "
+            + OFISDBContract.DistrictsEntry.COLUMN_NAME_DISTRICT_NAME + " TEXT )";
+
+    private static final String OFIS_PLACES_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.PlacesEntry.TABLE_NAME
+            + " ( " + OFISDBContract.PlacesEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + OFISDBContract.PlacesEntry.COLUMN_NAME_DISTRICT_ID + " INTEGER, "
+            + OFISDBContract.PlacesEntry.COLUMN_NAME_PLACE_TYPE + " TEXT, " + OFISDBContract.PlacesEntry.COLUMN_NAME_PLACE_NAME + " TEXT )";
+
+    private static final String OFIS_FARMERGROUPS_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.FarmerGroupsEntry.TABLE_NAME
+            + " ( " + OFISDBContract.FarmerGroupsEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.FarmerGroupsEntry.COLUMN_NAME_PROGRAMME_ID + " INTEGER, "
+            + OFISDBContract.FarmerGroupsEntry.COLUMN_NAME_PARTNER_ID + " INTEGER, " + OFISDBContract.FarmerGroupsEntry.COLUMN_NAME_PRODUCT_ID + " INTEGER, "
+            + OFISDBContract.FarmerGroupsEntry.COLUMN_NAME_CODE + " TEXT, " + OFISDBContract.FarmerGroupsEntry.COLUMN_NAME_FARMERGROUP_NAME + " TEXT )";
+
+    private static final String OFIS_SECTIONS_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.SectionsEntry.TABLE_NAME
+            + " ( " + OFISDBContract.SectionsEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.SectionsEntry.COLUMN_NAME_FARMERGROUP_ID + " INTEGER, "
+            + OFISDBContract.SectionsEntry.COLUMN_NAME_CODE + " TEXT, " + OFISDBContract.SectionsEntry.COLUMN_NAME_SECTION_NAME + " TEXT )";
+
+    private static final String OFIS_PRODUCTS_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.ProductsEntry.TABLE_NAME
+            + " ( " + OFISDBContract.ProductsEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.ProductsEntry.COLUMN_NAME_PRODUCT_NAME + " TEXT )";
+
+
+    //JIRA req OW-505 - added photo column
+    private static final String OFIS_NETWORKQUEUE_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.NetworkQueueEntry.TABLE_NAME +
+            " ( " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ID + " TEXT, "
+            + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE + " TEXT, "
+            + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE + " TEXT, " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME + " TEXT, "
+            + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID + " INTEGER, " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID + " TEXT, "
+            + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID + " INTEGER, " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_MODULE_ID + " INTEGER, "
+            + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FMP_ID + " INTEGER, " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_TRANSACTION_ITEM_ID + " INTEGER, "
+            + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_TRANSACTEE_TYPE + " TEXT, " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_TRAINING_RECORD_ID + " INTEGER, "
+            + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LAT + " TEXT, " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG + " TEXT, "
+            + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_PLOTS + " TEXT, "
+            + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_COUNTRY_ID + " INTEGER, " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_REGION_ID + " INTEGER, "
+            + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_DISTRICT_ID + " INTEGER, " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PLACE_ID + " INTEGER, "
+            + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PRODUCT_ID + " INTEGER, " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMERGROUP_ID + " INTEGER, "
+            + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CAPACITY + " INTEGER," + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_NUM_CLASSROOMS + " INTEGER, "
+            + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_YEAR_OPENED + " INTEGER, " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_GENDER_MIX + " TEXT, "
+            + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SCHOOL_TYPE + " TEXT, " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CWS_TYPE + " TEXT, "
+            + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FUNDED + " INTEGER, " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID + " INTEGER DEFAULT 0, "
+            + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FULLY_SYNCED + " INTEGER DEFAULT 0, " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ATTEMPTS + " INTEGER DEFAULT 0, "
+            + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT + " TEXT, " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPDATED_AT + " TEXT, "
+            + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_PHOTO + " TEXT)";
+
+    private static final String OFIS_FMP_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.FarmManagementPlanEntry.TABLE_NAME +
+            " ( " + OFISDBContract.FarmManagementPlanEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.FarmManagementPlanEntry.COLUMN_NAME_FARMER_ID + " INTEGER, "
+            + OFISDBContract.FarmManagementPlanEntry.COLUMN_NAME_FARM_ID + " INTEGER, " + OFISDBContract.FarmManagementPlanEntry.COLUMN_NAME_STARTING_YEAR + " INTEGER, "
+            + OFISDBContract.FarmManagementPlanEntry.COLUMN_NAME_HAS_FEEDBACK + " INTEGER DEFAULT 0 )";
+
+    private static final String OFIS_FMP_SECTIONS_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.FarmManagementPlanSectionsEntry.TABLE_NAME +
+            " ( " + OFISDBContract.FarmManagementPlanSectionsEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.FarmManagementPlanSectionsEntry.COLUMN_NAME_NAME + " TEXT, "
+            + OFISDBContract.FarmManagementPlanSectionsEntry.COLUMN_NAME_DISPLAY_TITLE + " TEXT, " + OFISDBContract.FarmManagementPlanSectionsEntry.COLUMN_NAME_DISPLAY_TITLE_FR + " TEXT,"
+            + OFISDBContract.FarmManagementPlanSectionsEntry.COLUMN_NAME_DISPLAY_TITLE_ES + " TEXT, " + OFISDBContract.FarmManagementPlanSectionsEntry.COLUMN_NAME_DISPLAY_TITLE_ID + " TEXT, "
+            + OFISDBContract.FarmManagementPlanSectionsEntry.COLUMN_NAME_DISPLAY_TITLE_PT + " TEXT, " + OFISDBContract.FarmManagementPlanSectionsEntry.COLUMN_NAME_DISPLAY_TITLE_TR + " TEXT, "
+            + OFISDBContract.FarmManagementPlanSectionsEntry.COLUMN_NAME_DISPLAY_TITLE_LO + " TEXT, " + OFISDBContract.FarmManagementPlanSectionsEntry.COLUMN_NAME_DISPLAY_TITLE_VI + " TEXT, "
+            + OFISDBContract.FarmManagementPlanSectionsEntry.COLUMN_NAME_DISPLAY_TITLE_TH + " TEXT )";
+
+    private static final String OFIS_FMP_ENTRIES_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.FarmManagementPlanEntriesEntry.TABLE_NAME +
+            " ( " + OFISDBContract.FarmManagementPlanEntriesEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.FarmManagementPlanEntriesEntry.COLUMN_NAME_SECTION_ID + " INTEGER, "
+            + OFISDBContract.FarmManagementPlanEntriesEntry.COLUMN_NAME_POSITION + " INTEGER, " + OFISDBContract.FarmManagementPlanEntriesEntry.COLUMN_NAME_NAME + " TEXT, "
+            + OFISDBContract.FarmManagementPlanEntriesEntry.COLUMN_NAME_DISPLAY_TITLE + " TEXT, " + OFISDBContract.FarmManagementPlanEntriesEntry.COLUMN_NAME_DISPLAY_TITLE_FR + " TEXT, "
+            + OFISDBContract.FarmManagementPlanEntriesEntry.COLUMN_NAME_DISPLAY_TITLE_ES + " TEXT, " + OFISDBContract.FarmManagementPlanEntriesEntry.COLUMN_NAME_DISPLAY_TITLE_ID + " TEXT, "
+            + OFISDBContract.FarmManagementPlanEntriesEntry.COLUMN_NAME_DISPLAY_TITLE_PT + " TEXT, " + OFISDBContract.FarmManagementPlanEntriesEntry.COLUMN_NAME_DISPLAY_TITLE_TR + " TEXT, "
+            + OFISDBContract.FarmManagementPlanEntriesEntry.COLUMN_NAME_DISPLAY_TITLE_LO + " TEXT, " + OFISDBContract.FarmManagementPlanEntriesEntry.COLUMN_NAME_DISPLAY_TITLE_VI + " TEXT, "
+            + OFISDBContract.FarmManagementPlanEntriesEntry.COLUMN_NAME_DISPLAY_TITLE_TH + " TEXT, " + OFISDBContract.FarmManagementPlanEntriesEntry.COLUMN_NAME_SHOW_IN_APP + " INTEGER, "
+            + OFISDBContract.FarmManagementPlanEntriesEntry.COLUMN_NAME_CALCULATED_FIELD + " INTEGER, " + OFISDBContract.FarmManagementPlanEntriesEntry.COLUMN_NAME_CALCULATION_VARIABLE + " INTEGER )";
+
+    private static final String OFIS_FMP_VALUES_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.FarmManagementPlanValuesEntry.TABLE_NAME +
+            " ( " + OFISDBContract.FarmManagementPlanValuesEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + OFISDBContract.FarmManagementPlanValuesEntry.COLUMN_NAME_FMP_ID + " INTEGER, "
+            + OFISDBContract.FarmManagementPlanValuesEntry.COLUMN_NAME_FMP_ENTRY_ID + " INTEGER, " + OFISDBContract.FarmManagementPlanValuesEntry.COLUMN_NAME_YEAR + " INTEGER, "
+            + OFISDBContract.FarmManagementPlanValuesEntry.COLUMN_NAME_VALUE + " TEXT )";
+
+    private static final String OFIS_FMP_CURRENT_VALUES_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.FarmManagementPlanCurrentValuesEntry.TABLE_NAME +
+            " ( " + OFISDBContract.FarmManagementPlanCurrentValuesEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + OFISDBContract.FarmManagementPlanCurrentValuesEntry.COLUMN_NAME_FMP_ID + " INTEGER, "
+            + OFISDBContract.FarmManagementPlanCurrentValuesEntry.COLUMN_NAME_FMP_ENTRY_ID + " INTEGER, " + OFISDBContract.FarmManagementPlanCurrentValuesEntry.COLUMN_NAME_YEAR + " INTEGER, "
+            + OFISDBContract.FarmManagementPlanCurrentValuesEntry.COLUMN_NAME_VALUE + " TEXT )";
+
+    // transaction tables
+    private static final String OFIS_CURRENCY_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.Currency.TABLE_NAME
+            + " ( " + OFISDBContract.Currency.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.Currency.COLUMN_NAME_SYMBOL + " TEXT, "
+            + OFISDBContract.Currency.COLUMN_NAME_CODE + " TEXT, " + OFISDBContract.Currency.COLUMN_NAME_NAME + " TEXT, "
+            + OFISDBContract.Currency.COLUMN_NAME_NAME_FR + " TEXT, " + OFISDBContract.Currency.COLUMN_NAME_NAME_ES + " TEXT, "
+            + OFISDBContract.Currency.COLUMN_NAME_NAME_ID + " TEXT, " + OFISDBContract.Currency.COLUMN_NAME_NAME_PT + " TEXT, "
+            + OFISDBContract.Currency.COLUMN_NAME_NAME_TR + " TEXT, " + OFISDBContract.Currency.COLUMN_NAME_NAME_LO + " TEXT, "
+            + OFISDBContract.Currency.COLUMN_NAME_NAME_VI + " TEXT, " + OFISDBContract.Currency.COLUMN_NAME_NAME_TH + " TEXT )";
+
+    private static final String OFIS_COUNTRY_CURRENCY_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.CountryCurrency.TABLE_NAME
+            + " ( " + OFISDBContract.CountryCurrency.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.CountryCurrency.COLUMN_COUNTRY_ID
+            + " INTEGER, " + OFISDBContract.CountryCurrency.COLUMN_CURRENCY_ID + " INTEGER )";
+
+    private static final String OFIS_DIRECTION_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.Direction.TABLE_NAME
+            + " ( " + OFISDBContract.Direction.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, "
+            + OFISDBContract.Direction.COLUMN_NAME_NAME + " TEXT, " + OFISDBContract.Direction.COLUMN_NAME_NAME_FR + " TEXT, "
+            + OFISDBContract.Direction.COLUMN_NAME_NAME_ES + " TEXT, " + OFISDBContract.Direction.COLUMN_NAME_NAME_ID + " TEXT, "
+            + OFISDBContract.Direction.COLUMN_NAME_NAME_PT + " TEXT, " + OFISDBContract.Direction.COLUMN_NAME_NAME_TR + " TEXT, "
+            + OFISDBContract.Direction.COLUMN_NAME_NAME_LO + " TEXT, " + OFISDBContract.Direction.COLUMN_NAME_NAME_VI + " TEXT, "
+            + OFISDBContract.Direction.COLUMN_NAME_NAME_TH + " TEXT, " + OFISDBContract.Direction.COLUMN_NAME_IS_GIVING_DIRECTION
+            + " INTEGER DEFAULT 0, " + OFISDBContract.Direction.COLUMN_NAME_IS_RECEIVING_DIRECTION + " INTEGER DEFAULT 0)";
+
+    private static final String OFIS_DIRECTIONTRANSACTIONITEMGROUP_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.DirectionTransactionItemGroup.TABLE_NAME
+            + " ( " + OFISDBContract.DirectionTransactionItemGroup.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.DirectionTransactionItemGroup.COLUMN_NAME_DIRECTION_ID
+            + " INTEGER, " + OFISDBContract.DirectionTransactionItemGroup.COLUMN_NAME_TRANSACTIONITEMGROUP_ID + " INTEGER )";
+
+    private static final String OFIS_DIRECTIONTRANSACTIONITEMTYPE_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.DirectionTransactionItemType.TABLE_NAME
+            + " ( " + OFISDBContract.DirectionTransactionItemType.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.DirectionTransactionItemType.COLUMN_NAME_DIRECTION_ID
+            + " INTEGER, " + OFISDBContract.DirectionTransactionItemType.COLUMN_NAME_TRANSACTIONITEMTYPE_ID + " INTEGER )";
+
+    private static final String OFIS_TRANSACTIONITEMGROUP_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.TransactionItemGroup.TABLE_NAME
+            + " ( " + OFISDBContract.TransactionItemGroup.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.TransactionItemGroup.COLUMN_NAME_NAME + " TEXT, "
+            + OFISDBContract.TransactionItemGroup.COLUMN_NAME_NAME_FR + " TEXT, " + OFISDBContract.TransactionItemGroup.COLUMN_NAME_NAME_ES + " TEXT, "
+            + OFISDBContract.TransactionItemGroup.COLUMN_NAME_NAME_ID + " TEXT, " + OFISDBContract.TransactionItemGroup.COLUMN_NAME_NAME_PT + " TEXT, "
+            + OFISDBContract.TransactionItemGroup.COLUMN_NAME_NAME_TR + " TEXT, " + OFISDBContract.TransactionItemGroup.COLUMN_NAME_NAME_LO + " TEXT, "
+            + OFISDBContract.TransactionItemGroup.COLUMN_NAME_NAME_VI + " TEXT, " + OFISDBContract.TransactionItemGroup.COLUMN_NAME_NAME_TH + " TEXT, "
+            + OFISDBContract.TransactionItemType.COLUMN_NAME_DISPLAY_CONFIGURATION + " TEXT )";
+
+    private static final String OFIS_TRANSACTIONITEMTYPE_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.TransactionItemType.TABLE_NAME
+            + " ( " + OFISDBContract.TransactionItemType.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.TransactionItemType.COLUMN_NAME_TRANSACTIONITEMGROUP_ID + " INTEGER, "
+            + OFISDBContract.TransactionItemType.COLUMN_NAME_NAME + " TEXT, " + OFISDBContract.TransactionItemType.COLUMN_NAME_NAME_FR + " TEXT, "
+            + OFISDBContract.TransactionItemType.COLUMN_NAME_NAME_ES + " TEXT, " + OFISDBContract.TransactionItemType.COLUMN_NAME_NAME_ID + " TEXT, "
+            + OFISDBContract.TransactionItemType.COLUMN_NAME_NAME_PT + " TEXT, " + OFISDBContract.TransactionItemType.COLUMN_NAME_NAME_TR + " TEXT, "
+            + OFISDBContract.TransactionItemType.COLUMN_NAME_NAME_LO + " TEXT, " + OFISDBContract.TransactionItemType.COLUMN_NAME_NAME_VI + " TEXT, "
+            + OFISDBContract.TransactionItemType.COLUMN_NAME_NAME_TH + " TEXT, " + OFISDBContract.TransactionItemType.COLUMN_NAME_DISPLAY_CONFIGURATION + " TEXT )";
+
+    private static final String OFIS_PRODUCTTRANSACTIONITEMTYPE_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.ProductTransactionItemType.TABLE_NAME
+            + " ( " + OFISDBContract.ProductTransactionItemType.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.ProductTransactionItemType.COLUMN_NAME_PRODUCT_ID
+            + " INTEGER, " + OFISDBContract.ProductTransactionItemType.COLUMN_NAME_TRANSACTIONITEMTYPE_ID + " INTEGER )";
+
+    private static final String OFIS_TRANSACTIONITEMTYPEUNIT_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.TransactionItemTypeUnit.TABLE_NAME
+            + " ( " + OFISDBContract.TransactionItemTypeUnit.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.TransactionItemTypeUnit.COLUMN_NAME_TRANSACTIONITEMTYPE_ID
+            + " INTEGER, " + OFISDBContract.TransactionItemTypeUnit.COLUMN_NAME_UNIT_ID + " INTEGER )";
+
+    private static final String OFIS_TRANSACTIONITEM_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.TransactionItem.TABLE_NAME
+            + " ( " + OFISDBContract.TransactionItem.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.TransactionItem.COLUMN_NAME_TRANSACTIONITEMGROUP_ID + " INTEGER, "
+            + OFISDBContract.TransactionItem.COLUMN_NAME_TRANSACTIONITEMTYPE_ID + " INTEGER, " + OFISDBContract.TransactionItem.COLUMN_NAME_BUYINGAGENT_ID + " INTEGER, "
+            + OFISDBContract.TransactionItem.COLUMN_NAME_TRANSACTEE_ID + " INTEGER, " + OFISDBContract.TransactionItem.COLUMN_NAME_ENUMERATOR_ID + " INTEGER, "
+            + OFISDBContract.TransactionItem.COLUMN_NAME_TRANSACTION_DATE + " TEXT, " + OFISDBContract.TransactionItem.COLUMN_NAME_TRANSACTEE_TYPE + " TEXT, "
+            + OFISDBContract.TransactionItem.COLUMN_NAME_DIRECTION_ID + " INTEGER, " + OFISDBContract.TransactionItem.COLUMN_NAME_UNIT_ID + " INTEGER, "
+            + OFISDBContract.TransactionItem.COLUMN_NAME_PRODUCT_ID + " INTEGER, " + OFISDBContract.TransactionItem.COLUMN_NAME_PRODUCT_GRADE_ID + " INTEGER, "
+            + OFISDBContract.TransactionItem.COLUMN_NAME_CURRENCY_ID + " INTEGER, " + OFISDBContract.TransactionItem.COLUMN_NAME_MOBILEMONEYCASH_ID + " INTEGER, "
+            + OFISDBContract.TransactionItem.COLUMN_NAME_QUANTITY + " TEXT, " + OFISDBContract.TransactionItem.COLUMN_NAME_PRICE_PER_UNIT + " TEXT,"
+            + OFISDBContract.TransactionItem.COLUMN_NAME_TOTAL_PRICE + " TEXT, " + OFISDBContract.TransactionItem.COLUMN_NAME_AMOUNT_PAID + " TEXT, "
+            + OFISDBContract.TransactionItem.COLUMN_NAME_AMOUNT_MOBILEMONEY + " TEXT, " + OFISDBContract.TransactionItem.COLUMN_NAME_AMOUNT_LOANED + " TEXT, "
+            + OFISDBContract.TransactionItem.COLUMN_NAME_AMOUNT_GIFTED + " TEXT, " + OFISDBContract.TransactionItem.COLUMN_NAME_TRANSACTION_BALANCE_ID + " INTEGER, "
+            + OFISDBContract.TransactionItem.COLUMN_NAME_IN_QUEUE + " INTEGER DEFAULT 0, " + OFISDBContract.TransactionItem.COLUMN_NAME_AMOUNT_LOANED_TEXT + " TEXT, "
+            + OFISDBContract.TransactionItem.COLUMN_NAME_TRANSACTION_NOTES + " TEXT, " + OFISDBContract.TransactionItem.COLUMN_NAME_TRANSACTION_STATUS + " TEXT, "
+            + OFISDBContract.TransactionItem.COLUMN_NAME_TRANSACTION_MMPP_TRANSACTION_ID + " TEXT, " + OFISDBContract.TransactionItem.COLUMN_NAME_TRANSACTION_MMPP_REQUEST_ID + " TEXT, "
+            + OFISDBContract.TransactionItem.COLUMN_NAME_TRANSACTION_MMPP_RECIPIENT_NUMBER + " TEXT, " + OFISDBContract.TransactionItem.COLUMN_NAME_TRANSACTION_MMPP_RECIPIENT_DIALLINGCODE + " TEXT, "
+            + OFISDBContract.TransactionItem.COLUMN_NAME_TRANSACTION_SIGNAL_STRENGTH + " TEXT, " + OFISDBContract.TransactionItem.COLUMN_NAME_SERVERITEM_ID + " INTEGER DEFAULT 0, "
+            + OFISDBContract.TransactionItem.COLUMN_NAME_UPLOAD_ID + " TEXT, " + OFISDBContract.TransactionItem.COLUMN_NAME_FULLY_SYNCED + " INTEGER DEFAULT 0, "
+            + OFISDBContract.TransactionItem.COLUMN_NAME_UPLOAD_ATTEMPTS + " INTEGER DEFAULT 0, " + OFISDBContract.TransactionItem.COLUMN_NAME_CREATED_AT + " TEXT, "
+            + OFISDBContract.TransactionItem.COLUMN_NAME_UPDATED_AT + " TEXT )";
+
+    private static final String OFIS_PRODUCTGRADE_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.ProductGrade.TABLE_NAME
+            + " ( " + OFISDBContract.ProductGrade.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.ProductGrade.COLUMN_NAME_PRODUCT_ID + " INTEGER, "
+            + OFISDBContract.ProductGrade.COLUMN_NAME_NAME + " TEXT, " + OFISDBContract.ProductGrade.COLUMN_NAME_NAME_FR + " TEXT, "
+            + OFISDBContract.ProductGrade.COLUMN_NAME_NAME_ES + " TEXT, " + OFISDBContract.ProductGrade.COLUMN_NAME_NAME_ID + " TEXT, "
+            + OFISDBContract.ProductGrade.COLUMN_NAME_NAME_PT + " TEXT, " + OFISDBContract.ProductGrade.COLUMN_NAME_NAME_TR + " TEXT, "
+            + OFISDBContract.ProductGrade.COLUMN_NAME_NAME_LO + " TEXT, " + OFISDBContract.ProductGrade.COLUMN_NAME_NAME_VI + " TEXT, "
+            + OFISDBContract.ProductGrade.COLUMN_NAME_NAME_TH + " TEXT )";
+
+    private static final String OFIS_PRODUCTPRICE_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.ProductPrice.TABLE_NAME
+            + " ( " + OFISDBContract.ProductPrice.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.ProductPrice.COLUMN_NAME_PRODUCT_ID + " INTEGER, "
+            + OFISDBContract.ProductPrice.COLUMN_NAME_CURRENCY_ID + " INTEGER, " + OFISDBContract.ProductPrice.COLUMN_NAME_DIRECTION_ID + " INTEGER, "
+            + OFISDBContract.ProductPrice.COLUMN_NAME_FIXED_PRICE + " TEXT, " + OFISDBContract.ProductPrice.COLUMN_NAME_MIN_PRICE + " INTEGER, "
+            + OFISDBContract.ProductPrice.COLUMN_NAME_MAX_PRICE + " INTEGER )";
+
+    private static final String OFIS_UNIT_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.Unit.TABLE_NAME
+            + " ( " + OFISDBContract.Unit.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.Unit.COLUMN_NAME_NAME
+            + " TEXT )";
+
+    private static final String OFIS_BUYINGAGENT_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.BuyingAgent.TABLE_NAME
+            + " ( " + OFISDBContract.BuyingAgent.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.BuyingAgent.COLUMN_NAME_NAME + " TEXT )";
+
+    private static final String OFIS_TRANSACTEE_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.Transactee.TABLE_NAME
+            + " ( " + OFISDBContract.Transactee.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.Transactee.COLUMN_NAME_NAME + " TEXT )";
+
+    private static final String OFIS_TRANSACTION_BALANCES_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.TransactionBalance.TABLE_NAME
+            + " ( " + OFISDBContract.TransactionBalance.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.TransactionBalance.COLUMN_NAME_BUYINGAGENT_ID + " INTEGER, "
+            + OFISDBContract.TransactionBalance.COLUMN_NAME_BUYINGAGENT2_ID + " INTEGER, " + OFISDBContract.TransactionBalance.COLUMN_NAME_FARMER_ID + " INTEGER, "
+            + OFISDBContract.TransactionBalance.COLUMN_NAME_CURRENCY_ID + " INTEGER, " + OFISDBContract.TransactionBalance.COLUMN_NAME_BALANCE + " TEXT, "
+            + OFISDBContract.TransactionBalance.COLUMN_NAME_OUT_OF_SYNC + " INTEGER DEFAULT 0 )";
+
+    private static final String OFIS_BUYINGRULE_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.BuyingRule.TABLE_NAME
+            + " ( " + OFISDBContract.BuyingRule.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.BuyingRule.COLUMN_NAME_BUYINGAGENT_ID + " INTEGER, "
+            + OFISDBContract.BuyingRule.COLUMN_NAME_DIRECTION_ID + " INTEGER, " + OFISDBContract.BuyingRule.COLUMN_NAME_TRANSACTEE_TYPE + " TEXT, "
+            + OFISDBContract.BuyingRule.COLUMN_NAME_TRANSACTIONITEMGROUP_ID + " INTEGER, " + OFISDBContract.BuyingRule.COLUMN_NAME_TRANSACTIONITEMTYPE_ID + " INTEGER, "
+            + OFISDBContract.BuyingRule.COLUMN_NAME_CAN_PAY + " INTEGER DEFAULT 0, " + OFISDBContract.BuyingRule.COLUMN_NAME_CAN_MOBILEMONEY + " INTEGER DEFAULT 0, "
+            + OFISDBContract.BuyingRule.COLUMN_NAME_CAN_LOAN + " INTEGER DEFAULT 0, " + OFISDBContract.BuyingRule.COLUMN_NAME_CAN_GIFT + " INTEGER DEFAULT 0, "
+            + OFISDBContract.BuyingRule.COLUMN_NAME_CAN_REPAY + " INTEGER DEFAULT 0 )";
+
+    private static final String OFIS_BUYINGAGENT_BUYINGRULE_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.BuyingAgentBuyingRule.TABLE_NAME
+            + " ( " + OFISDBContract.BuyingAgentBuyingRule.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.BuyingAgentBuyingRule.COLUMN_NAME_BUYINGAGENT_ID + " INTEGER, "
+            + OFISDBContract.BuyingAgentBuyingRule.COLUMN_NAME_BUYINGRULE_ID + " INTEGER )";
+
+    private static final String OFIS_BUYINGAGENT_CURRENCY_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.BuyingAgentCurrency.TABLE_NAME
+            + " ( " + OFISDBContract.BuyingAgentCurrency.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.BuyingAgentCurrency.COLUMN_NAME_BUYINGAGENT_ID + " INTEGER, "
+            + OFISDBContract.BuyingAgentCurrency.COLUMN_NAME_CURRENCY_ID + " INTEGER )";
+
+    // training tables
+    private static final String OFIS_COMPLETIONCRITERIA_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.CompletionCriteria.TABLE_NAME
+            + " ( " + OFISDBContract.CompletionCriteria.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.CompletionCriteria.COLUMN_NAME_NAME + " TEXT, "
+            + OFISDBContract.CompletionCriteria.COLUMN_NAME_SCORING_COLUMNS + " TEXT )";
+
+    private static final String OFIS_COURSE_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.Course.TABLE_NAME
+            + " ( " + OFISDBContract.Course.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, "
+            + OFISDBContract.Course.COLUMN_NAME_NAME + " TEXT, " + OFISDBContract.Course.COLUMN_NAME_NAME_FR + " TEXT, "
+            + OFISDBContract.Course.COLUMN_NAME_NAME_ES + " TEXT, " + OFISDBContract.Course.COLUMN_NAME_NAME_ID + " TEXT, "
+            + OFISDBContract.Course.COLUMN_NAME_NAME_PT + " TEXT, " + OFISDBContract.Course.COLUMN_NAME_NAME_TR + " TEXT, "
+            + OFISDBContract.Course.COLUMN_NAME_NAME_LO + " TEXT, " + OFISDBContract.Course.COLUMN_NAME_NAME_VI + " TEXT, "
+            + OFISDBContract.Course.COLUMN_NAME_NAME_TH + " TEXT )";
+
+    private static final String OFIS_COURSEASSIGNMENT_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.CourseAssignment.TABLE_NAME
+            + " ( " + OFISDBContract.CourseAssignment.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, "
+            + OFISDBContract.CourseAssignment.COLUMN_NAME_COURSE_ID + " INTEGER, " + OFISDBContract.CourseAssignment.COLUMN_NAME_COURSE_ASSIGNMENT_ID + " INTEGER, "
+            + OFISDBContract.CourseAssignment.COLUMN_NAME_COURSE_ASSIGNMENT_TYPE + " TEXT )";
+
+    private static final String OFIS_TRAININGATTENDEE_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.TrainingAttendee.TABLE_NAME
+            + " ( " + OFISDBContract.TrainingAttendee.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.TrainingAttendee.COLUMN_NAME_FARMER_ID + " INTEGER, "
+            + OFISDBContract.TrainingAttendee.COLUMN_NAME_TRAINING_RECORD_ID + " INTEGER, " + OFISDBContract.TrainingAttendee.COLUMN_NAME_ATTENDED + " INTEGER DEFAULT 1, "
+            + OFISDBContract.TrainingAttendee.COLUMN_NAME_PASSED + " INTEGER, " + OFISDBContract.TrainingAttendee.COLUMN_NAME_PRESCORE + " TEXT, "
+            + OFISDBContract.TrainingAttendee.COLUMN_NAME_POSTSCORE + " TEXT, " + OFISDBContract.TrainingAttendee.COLUMN_NAME_SCORE + " TEXT, "
+            + OFISDBContract.TrainingAttendee.COLUMN_NAME_PERCENTAGE + " TEXT, " + OFISDBContract.TrainingAttendee.COLUMN_NAME_GRADE + " TEXT )";
+
+    private static final String OFIS_TRAININGMODULE_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.TrainingModule.TABLE_NAME
+            + " ( " + OFISDBContract.TrainingModule.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.TrainingModule.COLUMN_NAME_COURSE_ID + " INTEGER, "
+            + OFISDBContract.TrainingModule.COLUMN_COMPLETIONCRITERION_ID + " INTEGER, " + OFISDBContract.TrainingModule.COLUMN_NAME_NAME + " TEXT, "
+            + OFISDBContract.TrainingModule.COLUMN_NAME_NAME_FR + " TEXT, " + OFISDBContract.TrainingModule.COLUMN_NAME_NAME_ES + " TEXT, "
+            + OFISDBContract.TrainingModule.COLUMN_NAME_NAME_ID + " TEXT, " + OFISDBContract.TrainingModule.COLUMN_NAME_NAME_PT + " TEXT, "
+            + OFISDBContract.TrainingModule.COLUMN_NAME_NAME_TR + " TEXT, " + OFISDBContract.TrainingModule.COLUMN_NAME_NAME_LO + " TEXT, "
+            + OFISDBContract.TrainingModule.COLUMN_NAME_NAME_VI + " TEXT, " + OFISDBContract.TrainingModule.COLUMN_NAME_NAME_TH + " TEXT )";
+
+    private static final String OFIS_TRAININGRECORD_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.TrainingRecord.TABLE_NAME
+            + " ( " + OFISDBContract.TrainingRecord.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.TrainingRecord.COLUMN_TRAININGMODULE_ID + " INTEGER, "
+            + OFISDBContract.TrainingRecord.COLUMN_NAME_SUBMISSION_TIME + " TEXT, " + OFISDBContract.TrainingRecord.COLUMN_NAME_PHOTO + " TEXT, " + OFISDBContract.TrainingRecord.COLUMN_NAME_COURSE_ID + " INTEGER, "
+            + OFISDBContract.TrainingRecord.COLUMN_NAME_IN_QUEUE + " INTEGER DEFAULT 0)";
+
+    private static final String OFIS_TASK_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.Task.TABLE_NAME
+            + " ( " + OFISDBContract.Task.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.Task.COLUMN_NAME_TASKTEXT + " TEXT, "
+            + OFISDBContract.Task.COLUMN_NAME_TASK_CREATOR + " TEXT, " + OFISDBContract.Task.COLUMN_NAME_COMPLETED + " INTEGER DEFAULT 0, "
+            + OFISDBContract.Task.COLUMN_NAME_CREATED_DATE + " TEXT, "
+            + OFISDBContract.Task.COLUMN_NAME_COMPLETED_DATE + " TEXT, "
+            + OFISDBContract.Task.COLUMN_NAME_ENUMERATORS_TASK_ID + " INTEGER DEFAULT 0, "
+            + OFISDBContract.Task.COLUMN_NAME_SYNCED + " INTEGER DEFAULT 0, " + OFISDBContract.Task.COLUMN_NAME_DELIVERY_CONFIRMED + " INTEGER DEFAULT 0)";
+
+    private static final String OFIS_SUBQUESTION_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.Subquestionanswer.TABLE_NAME
+            + " ( " + OFISDBContract.Subquestionanswer.COLUMN_NAME_ID + " INTEGER , " + OFISDBContract.Subquestionanswer.COLUMN_NAME_PARENR_ID + " INTEGER, "
+            + OFISDBContract.Subquestionanswer.COLUMN_NAME_QUESTION_ID + " INTEGER, " +OFISDBContract.Subquestionanswer.COLUMN_NAME_MODULE_ID + " TEXT, "+
+            OFISDBContract.Subquestionanswer.COLUMN_NAME_FARMER_ID + " TEXT, "+ OFISDBContract.Subquestionanswer.COLUMN_NAME_QUESTION_ANSWER + " TEXT, "+
+            OFISDBContract.Subquestionanswer.COLUMN_NAME_REPORT_YEAR + " TEXT, "+OFISDBContract.Subquestionanswer.COLUMN_NAME_POSITION + " TEXT)";
+
+
+    public static OFISDB getInstance(Context context) {
+        if (sInstance == null) {
+            sInstance = new OFISDB(context.getApplicationContext());
+        }
+        return sInstance;
+    }
+
+    private OFISDB(Context context) {
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
+    }
+
+    @Override
+    public void onCreate(SQLiteDatabase sqLiteDatabase) {
+        sqLiteDatabase.execSQL(OFIS_MODULES_TABLE_CREATE);
+        sqLiteDatabase.execSQL(OFIS_SUBMODULES_TABLE_CREATE);
+        sqLiteDatabase.execSQL(OFIS_MODULEASSIGNMENTS_TABLE_CREATE);
+        sqLiteDatabase.execSQL(OFIS_FARMERMODULES_TABLE_CREATE);
+        sqLiteDatabase.execSQL(OFIS_PLOT_GEO_DATA_TABLE_CREATE);
+        sqLiteDatabase.execSQL(OFIS_DATATYPES_TABLE_CREATE);
+        sqLiteDatabase.execSQL(OFIS_LOOKUPVALUES_TABLE_CREATE);
+        sqLiteDatabase.execSQL(OFIS_QUESTION_TABLE_CREATE);
+        sqLiteDatabase.execSQL(OFIS_ANSWER_TABLE_CREATE);
+        sqLiteDatabase.execSQL(OFIS_FARMER_TABLE_CREATE);
+        sqLiteDatabase.execSQL(OFIS_BACKUP_FARMER_TABLE_CREATE);
+        sqLiteDatabase.execSQL(OFIS_FARMER_INDEX_CREATE);
+        sqLiteDatabase.execSQL(OFIS_PHONENUMBERS_TABLE_CREATE);
+        sqLiteDatabase.execSQL(OFIS_COUNTRIES_TABLE_CREATE);
+        sqLiteDatabase.execSQL(OFIS_REGIONS_TABLE_CREATE);
+        sqLiteDatabase.execSQL(OFIS_DISTRICTS_TABLE_CREATE);
+        sqLiteDatabase.execSQL(OFIS_PLACES_TABLE_CREATE);
+        sqLiteDatabase.execSQL(OFIS_FARMERGROUPS_TABLE_CREATE);
+        sqLiteDatabase.execSQL(OFIS_SECTIONS_TABLE_CREATE);
+        sqLiteDatabase.execSQL(OFIS_PRODUCTS_TABLE_CREATE);
+        sqLiteDatabase.execSQL(OFIS_NETWORKQUEUE_TABLE_CREATE);
+        sqLiteDatabase.execSQL(OFIS_FMP_TABLE_CREATE);
+        sqLiteDatabase.execSQL(OFIS_FMP_SECTIONS_TABLE_CREATE);
+        sqLiteDatabase.execSQL(OFIS_FMP_ENTRIES_TABLE_CREATE);
+        sqLiteDatabase.execSQL(OFIS_FMP_VALUES_TABLE_CREATE);
+        sqLiteDatabase.execSQL(OFIS_FMP_CURRENT_VALUES_TABLE_CREATE);
+        sqLiteDatabase.execSQL(OFIS_CURRENCY_TABLE_CREATE);
+        sqLiteDatabase.execSQL(OFIS_COUNTRY_CURRENCY_TABLE_CREATE);
+        sqLiteDatabase.execSQL(OFIS_DIRECTION_TABLE_CREATE);
+        sqLiteDatabase.execSQL(OFIS_DIRECTIONTRANSACTIONITEMGROUP_TABLE_CREATE);
+        sqLiteDatabase.execSQL(OFIS_DIRECTIONTRANSACTIONITEMTYPE_TABLE_CREATE);
+        sqLiteDatabase.execSQL(OFIS_TRANSACTIONITEMGROUP_TABLE_CREATE);
+        sqLiteDatabase.execSQL(OFIS_TRANSACTIONITEMTYPE_TABLE_CREATE);
+        sqLiteDatabase.execSQL(OFIS_PRODUCTTRANSACTIONITEMTYPE_TABLE_CREATE);
+        sqLiteDatabase.execSQL(OFIS_TRANSACTIONITEMTYPEUNIT_TABLE_CREATE);
+        sqLiteDatabase.execSQL(OFIS_TRANSACTIONITEM_TABLE_CREATE);
+        sqLiteDatabase.execSQL(OFIS_PRODUCTGRADE_TABLE_CREATE);
+        sqLiteDatabase.execSQL(OFIS_PRODUCTPRICE_TABLE_CREATE);
+        sqLiteDatabase.execSQL(OFIS_UNIT_TABLE_CREATE);
+        sqLiteDatabase.execSQL(OFIS_BUYINGAGENT_TABLE_CREATE);
+        sqLiteDatabase.execSQL(OFIS_TRANSACTEE_TABLE_CREATE);
+        sqLiteDatabase.execSQL(OFIS_TRANSACTION_BALANCES_TABLE_CREATE);
+        sqLiteDatabase.execSQL(OFIS_BUYINGRULE_TABLE_CREATE);
+        sqLiteDatabase.execSQL(OFIS_BUYINGAGENT_BUYINGRULE_TABLE_CREATE);
+        sqLiteDatabase.execSQL(OFIS_BUYINGAGENT_CURRENCY_TABLE_CREATE);
+        sqLiteDatabase.execSQL(OFIS_COMPLETIONCRITERIA_TABLE_CREATE);
+        sqLiteDatabase.execSQL(OFIS_COURSE_TABLE_CREATE);
+        sqLiteDatabase.execSQL(OFIS_COURSEASSIGNMENT_TABLE_CREATE);
+        sqLiteDatabase.execSQL(OFIS_TRAININGATTENDEE_TABLE_CREATE);
+        sqLiteDatabase.execSQL(OFIS_TRAININGMODULE_TABLE_CREATE);
+        sqLiteDatabase.execSQL(OFIS_TRAININGRECORD_TABLE_CREATE);
+        sqLiteDatabase.execSQL(OFIS_TASK_TABLE_CREATE);
+        sqLiteDatabase.execSQL(OFIS_SUBQUESTION_TABLE_CREATE);
+    }
+
+    @Override
+    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i2) {
+        sqLiteDatabase.execSQL("drop table IF EXISTS modules;");
+        sqLiteDatabase.execSQL("drop table IF EXISTS submodules;");
+        sqLiteDatabase.execSQL("drop table IF EXISTS moduleassignments;");
+        sqLiteDatabase.execSQL("drop table IF EXISTS farmer_modules;");
+        sqLiteDatabase.execSQL("drop table IF EXISTS datatypes;");
+        sqLiteDatabase.execSQL("drop table IF EXISTS lookupvalues;");
+        sqLiteDatabase.execSQL("drop table IF EXISTS questions;");
+        sqLiteDatabase.execSQL("drop table IF EXISTS answers;");
+        sqLiteDatabase.execSQL("drop index IF EXISTS idx_farmer_locally_created");
+        sqLiteDatabase.execSQL("drop table IF EXISTS farmers;");
+        sqLiteDatabase.execSQL("drop table IF EXISTS farmers_backup;");
+        sqLiteDatabase.execSQL("drop table IF EXISTS phonenumbers;");
+        sqLiteDatabase.execSQL("drop table IF EXISTS countries;");
+        sqLiteDatabase.execSQL("drop table IF EXISTS regions;");
+        sqLiteDatabase.execSQL("drop table IF EXISTS districts;");
+        sqLiteDatabase.execSQL("drop table IF EXISTS places;");
+        sqLiteDatabase.execSQL("drop table IF EXISTS farmergroups;");
+        sqLiteDatabase.execSQL("drop table IF EXISTS sections;");
+        sqLiteDatabase.execSQL("drop table IF EXISTS products;");
+        sqLiteDatabase.execSQL("drop table IF EXISTS networkqueue;");
+        sqLiteDatabase.execSQL("drop table IF EXISTS farm_management_plans;");
+        sqLiteDatabase.execSQL("drop table IF EXISTS fmp_sections;");
+        sqLiteDatabase.execSQL("drop table IF EXISTS fmp_entries;");
+        sqLiteDatabase.execSQL("drop table IF EXISTS fmp_values;");
+        sqLiteDatabase.execSQL("drop table IF EXISTS fmp_current_values;");
+        sqLiteDatabase.execSQL("drop table IF EXISTS currencies;");
+        sqLiteDatabase.execSQL("drop table IF EXISTS country_currency;");
+        sqLiteDatabase.execSQL("drop table IF EXISTS directions;");
+        sqLiteDatabase.execSQL("drop table IF EXISTS direction_transactionitemgroup;");
+        sqLiteDatabase.execSQL("drop table IF EXISTS direction_transactionitemtype;");
+        sqLiteDatabase.execSQL("drop table IF EXISTS transactionitemgroups;");
+        sqLiteDatabase.execSQL("drop table IF EXISTS transactionitemtypes;");
+        sqLiteDatabase.execSQL("drop table IF EXISTS product_transactionitemtype;");
+        sqLiteDatabase.execSQL("drop table IF EXISTS transactionitemtype_unit;");
+        sqLiteDatabase.execSQL("drop table IF EXISTS transactionitems;");
+        sqLiteDatabase.execSQL("drop table IF EXISTS productgrades;");
+        sqLiteDatabase.execSQL("drop table IF EXISTS productprices;");
+        sqLiteDatabase.execSQL("drop table IF EXISTS units;");
+        sqLiteDatabase.execSQL("drop table IF EXISTS buyingagents;");
+        sqLiteDatabase.execSQL("drop table IF EXISTS transactees;");
+        sqLiteDatabase.execSQL("drop table IF EXISTS transactionbalances;");
+        sqLiteDatabase.execSQL("drop table IF EXISTS buyingrules;");
+        sqLiteDatabase.execSQL("drop table IF EXISTS buyingagent_buyingrule;");
+        sqLiteDatabase.execSQL("drop table IF EXISTS buyingagent_currency;");
+        sqLiteDatabase.execSQL("drop table IF EXISTS transactions;");
+        sqLiteDatabase.execSQL("drop table IF EXISTS completioncriteria;");
+        sqLiteDatabase.execSQL("drop table IF EXISTS courses;");
+        sqLiteDatabase.execSQL("drop table IF EXISTS courseassignments;");
+        sqLiteDatabase.execSQL("drop table IF EXISTS trainingattendees;");
+        sqLiteDatabase.execSQL("drop table IF EXISTS trainingmodules;");
+        sqLiteDatabase.execSQL("drop table IF EXISTS trainingrecords;");
+        sqLiteDatabase.execSQL("drop table IF EXISTS tasks;");
+        sqLiteDatabase.execSQL("drop table IF EXISTS Subquestionanswer;");
+        onCreate(sqLiteDatabase);
+    }
+}

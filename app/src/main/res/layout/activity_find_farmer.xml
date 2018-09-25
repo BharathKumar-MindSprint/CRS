@@ -1,0 +1,123 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/ofis_page_background"
+    tools:context="com.webpoint0.ofiscompanion.FindFarmerActivity"
+    tools:ignore="Overdraw">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/topSection"
+        android:background="@color/ofis_farmer_screen_actions_background"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin">
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:text="@string/Select_Farmer"
+                android:id="@+id/pageTitle"
+                android:textColor="@color/ofis_base_font_white"
+                android:textSize="@dimen/ofis_large_text"
+                android:layout_weight="1" />
+
+        </LinearLayout>
+
+        <!-- business groups -->
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="@dimen/ofis_input_field_bottom_margin"
+            android:paddingLeft="0dp"
+            android:paddingRight="0dp">
+
+            <Spinner
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/spinner_farmerGroup"
+                android:layout_weight="1"
+                android:layout_marginLeft="0dp"
+                android:layout_marginStart="0dp"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:nextFocusDown="@+id/spinner_section"
+                android:nextFocusForward="@+id/spinner_section"
+                style="@style/Spinner"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:contentDescription="@string/ofis_cd_hierarchy_arrow"
+                android:src="@drawable/ic_spinner_hierarchy_arrow"
+                android:scaleType="center" />
+
+            <Spinner
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/spinner_section"
+                android:layout_marginRight="0dp"
+                android:layout_marginEnd="0dp"
+                android:layout_weight="1"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                style="@style/Spinner"/>
+
+        </LinearLayout>
+        <!-- end business groups -->
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/ofis_edit_text_holo_dark">
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textCapWords"
+                android:textColorHint="@color/ofis_base_font_white"
+                android:textSize="@dimen/ofis_input_field_text"
+                android:id="@+id/findFarmerSearchBox"
+                android:layout_weight="1"
+                android:textColor="@color/ofis_base_font_white"
+                android:hint="@string/Farmer_Name"
+                android:background="@android:color/transparent"/>
+            <ImageButton
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/imageButton"
+                android:layout_weight="8"
+                android:src="@drawable/ic_search"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/Search" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/bottomSection"
+        android:layout_below="@+id/topSection">
+
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@android:id/list"
+            android:divider="@android:color/transparent"
+            android:dividerHeight="0dp"/>
+    </LinearLayout>
+
+</RelativeLayout>

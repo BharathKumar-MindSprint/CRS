@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingLeft="@dimen/ofis_med_pad"
+    android:paddingRight="@dimen/ofis_med_pad"
+    android:paddingTop="@dimen/ofis_list_itemseparator"
+    android:paddingBottom="@dimen/ofis_list_itemseparator">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:id="@+id/rowlin"
+        android:layout_height="wrap_content"
+        android:minHeight="60dp"
+        android:background="@drawable/list_item"
+        android:baselineAligned="false"
+        android:weightSum="12"
+        tools:ignore="UselessParent">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:id="@+id/itemTextContainer"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:background="@drawable/right_border"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:layout_weight="8.5"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/title_activity_tasks"
+                android:id="@+id/taskListItemText"
+                android:textColor="@color/ofis_base_font_dark"
+                android:textSize="@dimen/ofis_med_text" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/title_activity_tasks"
+                android:id="@+id/taskListItemDate"
+                android:textColor="@color/ofis_base_font_dark"
+                android:textSize="@dimen/ofis_small_text"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="3.5"
+            android:orientation="vertical"
+            android:gravity="center"
+            tools:ignore="UseCompoundDrawables">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:visibility="gone"
+                android:text="false"
+                android:id="@+id/taskId"
+                tools:ignore="HardcodedText" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:visibility="gone"
+                android:text="false"
+                android:id="@+id/taskCompleted"
+                tools:ignore="HardcodedText" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/ofis_base_font_dark"
+                android:textSize="@dimen/ofis_small_text"
+                android:textAllCaps="true"
+                android:textStyle="bold"
+                android:text="@string/task_mark_complete"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/cbImage"
+                android:contentDescription="@string/checkbox_image"
+                android:src="@android:drawable/checkbox_off_background"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>
+
+

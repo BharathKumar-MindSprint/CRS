@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.webpoint0.ofiscompanion">
+
+
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_SYNC_SETTINGS" />
+    <uses-permission android:name="android.permission.READ_SYNC_STATS" />
+    <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" />
+    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
+    <uses-permission android:name="android.permission.CAMERA"/>
+
+    <!-- suppress DeprecatedClassUsageInspection -->
+    <uses-feature
+        android:name="android.hardware.Camera"
+        android:required="false" />
+
+    <uses-feature android:name="android.hardware.location.gps" />
+
+    <!-- updated -->
+    <application
+        android:name="com.webpoint0.ofiscompanion.EnableMultiDex"
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:logo="@drawable/ic_actionbar_launcher"
+        android:supportsRtl="false"
+        android:largeHeap="true"
+        android:theme="@style/AppTheme"
+        tools:ignore="GoogleAppIndexingWarning,UnusedAttribute">
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_notification_icon" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/ofis_poi_screen_top_background_school" />
+
+        <service android:name=".companionFirebaseInstanceIdService">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
+            </intent-filter>
+        </service>
+        <service android:name=".companionFirebaseMessagingService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+        <service android:name=".tasks.AuthenticatorService">
+            <intent-filter>
+                <action android:name="android.accounts.AccountAuthenticator" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.accounts.AccountAuthenticator"
+                android:resource="@xml/authenticator" />
+        </service>
+        <service
+            android:name=".SyncService"
+            android:exported="true"
+            android:process=":sync">
+            <intent-filter>
+                <action android:name="android.content.SyncAdapter" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.content.SyncAdapter"
+                android:resource="@xml/syncadapter" />
+        </service>
+
+        <provider
+            android:name=".tasks.StubProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:syncable="true" />
+
+        <activity
+            android:name=".HomeActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/title_activity_settings"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".AddFarmerActivity"
+            android:label="@string/title_activity_add_farmer"
+            android:parentActivityName=".HomeActivity"
+            android:screenOrientation="portrait"
+            tools:ignore="UnusedAttribute">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.webpoint0.ofiscompanion.HomeActivity" />
+        </activity>
+        <activity
+            android:name=".AddInfrastructureActivity"
+            android:label="@string/title_activity_add_infrastructure"
+            android:parentActivityName=".HomeActivity"
+            android:screenOrientation="portrait"
+            tools:ignore="UnusedAttribute">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.webpoint0.ofiscompanion.HomeActivity" />
+        </activity>
+        <activity
+            android:name=".FindFarmerActivity"
+            android:label="@string/title_activity_find_farmer"
+            android:parentActivityName=".HomeActivity"
+            android:screenOrientation="portrait"
+            tools:ignore="UnusedAttribute">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.webpoint0.ofiscompanion.HomeActivity" />
+        </activity>
+        <activity
+            android:name=".ViewFarmerActivity"
+            android:label="@string/title_activity_view_farmer"
+            android:parentActivityName=".FindFarmerActivity"
+            android:screenOrientation="portrait"
+            tools:ignore="UnusedAttribute">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.webpoint0.ofiscompanion.FindFarmerActivity" />
+        </activity>
+        <activity
+            android:name=".recordpolygon.RecordPolygonActivity"
+            android:label="@string/title_activity_record_polygon"
+            android:parentActivityName=".ViewFarmerActivity"
+            android:screenOrientation="portrait"
+            tools:ignore="UnusedAttribute">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.webpoint0.ofiscompanion.ViewFarmerActivity" />
+        </activity>
+        <activity
+            android:name=".CompleteModuleActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/title_activity_complete_module"
+            android:parentActivityName=".ViewFarmerActivity"
+            android:screenOrientation="portrait"
+            tools:ignore="UnusedAttribute">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.webpoint0.ofiscompanion.ViewFarmerActivity" />
+        </activity>
+        <activity
+            android:name=".ReviewFarmManagementPlan"
+            android:label="@string/title_activity_review_farm_management_plan"
+            android:parentActivityName=".ViewFarmerActivity"
+            android:screenOrientation="portrait"
+            tools:ignore="UnusedAttribute">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.webpoint0.ofiscompanion.ViewFarmerActivity" />
+        </activity>
+        <activity
+            android:name=".TransactionItems"
+            android:label="@string/ViewTransactionsTitle"
+            android:parentActivityName=".HomeActivity"
+            android:screenOrientation="portrait"
+            tools:ignore="UnusedAttribute">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.webpoint0.ofiscompanion.HomeActivity" />
+        </activity>
+        <activity android:name=".BuyingAgent"
+            android:label="@string/buyingagent"
+            android:parentActivityName=".TransactionItems"
+            android:screenOrientation="portrait"
+            tools:ignore="UnusedAttribute">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".TransactionItems" />
+        </activity>
+        <activity
+            android:name=".TransactionItem"
+            android:label="@string/AddTransactionItemTitle"
+            android:parentActivityName=".TransactionItems"
+            android:screenOrientation="portrait"
+            tools:ignore="UnusedAttribute">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".TransactionItems" />
+        </activity>
+        <activity
+            android:name=".TrainingRecords"
+            android:label="@string/TrainingRecordsTitle"
+            android:parentActivityName=".HomeActivity"
+            android:screenOrientation="portrait"
+            tools:ignore="UnusedAttribute">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.webpoint0.ofiscompanion.HomeActivity" />
+        </activity>
+        <activity
+            android:name=".TrainingRecord"
+            android:label="@string/TrainingRecordTitle"
+            android:launchMode="singleTop"
+            android:parentActivityName=".TrainingRecords"
+            android:screenOrientation="portrait"
+            tools:ignore="UnusedAttribute">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.webpoint0.ofiscompanion.TrainingRecords" />
+        </activity>
+        <activity
+            android:name=".TrainingRecordConfirmation"
+            android:label="@string/TrainingRecordConfirmationTitle"
+            android:parentActivityName=".TrainingRecord"
+            android:screenOrientation="portrait"
+            tools:ignore="UnusedAttribute">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.webpoint0.ofiscompanion.TrainingRecord" />
+        </activity>
+        <activity
+            android:name=".TrainingAttendees"
+            android:label="@string/TrainingAttendees"
+            android:parentActivityName=".TrainingRecord"
+            android:screenOrientation="portrait"
+            tools:ignore="UnusedAttribute">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.webpoint0.ofiscompanion.TrainingRecord" />
+        </activity>
+        <activity
+            android:name=".TrainingAttendeeScores"
+            android:label="@string/TrainingAttendeeScores"
+            android:parentActivityName=".TrainingRecord"
+            android:screenOrientation="portrait"
+            tools:ignore="UnusedAttribute">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.webpoint0.ofiscompanion.TrainingRecord" />
+        </activity>
+        <activity
+            android:name=".TasksActivity"
+            android:label="@string/title_activity_tasks"
+            android:screenOrientation="portrait" />
+    </application>
+
+</manifest>

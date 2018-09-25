@@ -1,0 +1,463 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!--
+         DICTIONARY FILE, in order to translate just change the value not the key
+         ie, <string name="Settings">Paramètres</string>
+    -->
+    <!-- action bar and activity titles -->
+    <string name="ofis_action_bar_home">Págia inicial</string>
+    <string name="ofis_action_bar_settings">Configurações</string>
+    <string name="title_activity_settings">Configurações</string>
+    <string name="title_activity_add_farmer">Adicionar novo produtor</string>
+    <string name="title_activity_add_infrastructure">Adicionar Infraestrutura Social</string>
+    <string name="title_activity_find_farmer">Encontrar produtor</string>
+    <string name="title_activity_view_farmer">Detalhes do produtor</string>
+    <string name="title_activity_complete_module">Completar o questiário</string>
+
+    <!-- main stuff -->
+    <string name="app_name">Depurar OFIS</string>
+    <string name="cd_topSectionColour">Cores de fundo</string>
+    <string name="ofis_switch_text_yes">Sim</string>
+    <string name="ofis_switch_text_no">Não</string>
+
+    <!-- Home screen related -->
+    <string name="Retrieving_data">Checando por atualizações…</string>
+    <string name="importing_string">Importando %% dos || dados</string>
+    <string name="spinners_up_to_date">Dados até o momento</string>
+    <string name="updating_modules">Baixando dados do questionário</string>
+    <string name="modules_up_to_date">Questões até momento</string>
+    <string name="updating_farmers">Baixando dados de produtores</string>
+    <string name="farmers_up_to_date">Produtores até o momento</string>
+    <string name="update_complete">Atualizações completas</string>
+    <string name="new_farmer">Novo produtor</string>
+    <!-- module row stuff -->
+    <string name="Awaiting_Sync">Aguardando sincronização</string>
+    <!-- in XML -->
+    <string name="ofis_complete_questionnaire">Complete o questionário</string>
+    <string name="ofis_add_infrastructure">Adicinar infraestrutura social</string>
+    <string name="ofis_add_new_farmer">Adicionar novo produtor</string>
+    <string name="Modules_to_submit">Itens para submeter</string>
+    <string name="item_synced">Item(s) sincronizados com sucesso</string>
+    <string name="item_sync_error">Erro de sincronização. Por favor, entre em contato conosco.</string>
+    <string name="ofis_first_run_intro">Você não esteve aqui antes, esteve? Podemos obter alguns detalhes?</string>
+    <string name="ofis_first_run_save_update">Salvar e Atualizar</string>
+
+    <!-- Settings screen related -->
+    <!-- in XML -->
+    <string name="Enumerator_ID">Númerdo ID</string>
+
+    <!-- ADD POI related -->
+    <string name="Successfully_added">Adicionado com sucesso</string>
+    <string name="Successfully_updated">Atualizado com sucesso</string>
+    <string name="ofis_select_gender">Gênero</string>
+    <string name="ofis_olam_funded">Financiado pela Olam?</string>
+    <string name="ofis_select_year_opened">Ano de abertura</string>
+    <string name="ofis_select_education_level">Entrar nível de escolaridade</string>
+    <string name="ofis_select_product">Produto comprado</string>
+    <string name="ofis_select_supply_type">Tipo de fornecimento de água</string>
+    <string name="location_not_available">Localização não disponível</string>
+
+    <!-- in XML -->
+    <string name="Add_Point_of_Interest">Adicionar Infraestrutura Social</string>
+    <string name="Name">Nome</string>
+    <string name="GPS_Position">Posição do GPS</string>
+
+    <!-- in XML includes -->
+    <string name="Capacity">Capacidade de alunos</string>
+    <string name="Number_of_Classrooms">Número de classes de aula</string>
+
+    <!-- Add farmer related -->
+    <!-- in code -->
+    <string name="Select_picture_from">Selecione a foto</string>
+    <string name="Camera">Câmera</string>
+    <string name="Gallery">Galeria</string>
+    <string name="Please_wait">Aguarde um momento por favor…</string>
+    <string name="Please_fill_all_fields">Pro favor, preencha todos os campos</string>
+    <string name="id_not_unique">Este ID do produtor não é único, tente novamente</string>
+    <string name="Submitting_data">Submetendo dados…</string>
+    <string name="Farmer_Added">Produtor adicionado!</string>
+    <string name="Farmer_Updated">Produtor atualizado</string>
+    <string name="are_you_at_the_farm">Você está na fazenda?</string>
+    <string name="yes">Sim</string>
+    <string name="no">Não</string>
+    <string name="searching_for_loc">Procurando localização</string>
+    <string name="ofis_farmer_id_hint">AA-0000-AAAA-</string>
+
+    <!-- in XML -->
+    <string name="Add_Farmer">Adicionar produtor</string>
+    <string name="Farmer_Name">Nome do produtor</string>
+    <string name="Date_of_Birth">Data de nascimento</string>
+    <string name="Country">País</string>
+    <string name="New_place_name">Nome do novo local</string>
+    <string name="new_place_name_placeholder">Novo local</string>
+    <string name="Olam_Farmer_ID">ID Olam do produtor</string>
+    <string name="Save">Salvar</string>
+    <string name="Add_Signature">Assinatura</string>
+
+    <!-- Find a farmer related -->
+    <!-- in XML -->
+    <string name="Select_Farmer">Selecionar fazendeiro</string>
+    <string name="Search">Procurar</string>
+
+    <!-- View farmer related -->
+    <!-- in XML -->
+    <string name="View_Farmer">Ver produtor</string>
+    <string name="Farmer_Photo">Foto do produtor</string>
+    <string name="Task_list_header">Lista de tarefas</string>
+    <string name="record_farm_location">Gravar localização da fazenda</string>
+    <string name="record_farm_location_hint">Clique para obter o GPS</string>
+    <string name="record_farm_location_complete">Localização gravada</string>
+    <string name="record_location_timeout">Não pode encontrar a localização. Por favor tente novamente.</string>
+    <string name="enabled_string">true</string>
+    <string name="review_farm_management_plan">Revisão do Plano de Gerenciamento de Fazenda</string>
+    <string name="review_farm_management_plan_hint">Clique para gravar o feedback</string>
+
+    <!-- For View Sub Module - questionnaire default values -->
+    <string name="ModuleTitle">Título aqui</string>
+    <string name="ModuleSubTitle">Subtítulo aqui</string>
+    <string name="ModuleStatus">Nova tarefa</string>
+    <string name="module_in_progress">Em progesso: </string>
+    <string name="module_finished">Salvando…</string>
+    <string name="ModuleAnswerHint">Resposta</string>
+
+    <!-- module action buttons -->
+    <string name="ModuleBackButton">Voltar</string>
+    <string name="ModuleNextButton">Próximo</string>
+    <string name="ModuleSaveButton">Salvar</string>
+
+    <!-- errors -->
+    <string name="Internet_not_available">Internet não disponível - você precisa estar online para completar esta tarefa.</string>
+    <string name="networking_error">Erro. O tempo para esta ação foi excedido, por favor tente novamente ou entre em contato com nosso suporte.</string>
+    <string name="farmer_not_synced">Desculpe mas o produtor ainda não foi sincronizado. Por favor, sincronize primeiro.</string>
+
+    <!-- upgrade -->
+    <string name="upgrade_message">O aplicativo foi atualizado. Atualizando seu local novamente.</string>
+
+    <!-- SPINNERS -->
+
+
+    <!-- spinner default values -->
+    <string name="spinner_country_default">Selecione o país</string>
+    <string name="spinner_region_default">Selecione a região</string>
+    <string name="spinner_district_default">Selecione o bairro/distrito/departamento</string>
+    <string name="spinner_place_default">Selecione o local</string>
+    <string name="spinner_farmergroup_default">Selecione o grupo de produtores/cooperativa</string>
+    <string name="spinner_section_default">Selecione a zona</string>
+    <string name="spinner_product_default">Selecione o produto</string>
+
+    <string-array name="poitypes">
+        <item>Escola</item>
+        <item>Posto Saúde</item>
+        <item>Fornecimento de água limpa</item>
+        <item>Unidade de Compra</item>
+    </string-array>
+    <string name="poitype_school">Escola</string>
+    <string name="poitype_healthcentre">Posto Saúde</string>
+    <string name="poitype_cleanwatersupply">Fornecimento de água limpa</string>
+    <string name="poitype_buyingcentre">Unidade de Compra</string>
+    <string-array name="genders">
+        <item>Masculino</item>
+        <item>Feminino</item>
+    </string-array>
+    <string name="gender_male">Masculino</string>
+    <string name="gender_female">Feminino</string>
+    <string-array name="genders_2">
+        <item>Masculino</item>
+        <item>Feminino</item>
+        <item>Coeducational</item>
+    </string-array>
+    <string name="gender_school_male">Masculino</string>
+    <string name="gender_school_female">Feminino</string>
+    <string name="gender_school_coeducational">Coeducational</string>
+    <string-array name="educationlevels">
+        <item>Berçário</item>
+        <item>Ensino Primário</item>
+        <item>Ensino Fundamental</item>
+        <item>Ensino Médio</item>
+        <item>Graduado</item>
+    </string-array>
+    <string name="educationlevel_nursery">Berçário</string>
+    <string name="educationlevel_primary">Ensino Primário</string>
+    <string name="educationlevel_juniorsecondary">Ensino Fundamental</string>
+    <string name="educationlevel_seniorsecondary">Ensino Médio</string>
+    <string name="educationlevel_graduate">Graduado</string>
+    <string-array name="clean_water_types">
+        <item>Poço artesiano</item>
+        <item>Cisterna</item>
+        <item>Encanada (Cidade)</item>
+        <item>Nascente</item>
+    </string-array>
+    <string name="cleanwatertype_borehole">Poço artesiano</string>
+    <string name="cleanwatertype_well">Cisterna</string>
+    <string name="cleanwatertype_pipe">Encanada (Cidade)</string>
+    <string name="cleanwatertype_spring">Nascente</string>
+    <string-array name="plotvariants">
+        <item>O Mesmo</item>
+        <item>Mais</item>
+        <item>Menos</item>
+    </string-array>
+    <string name="plotvariant_thesame">O Mesmo</string>
+    <string name="plotvariant_more">Mais</string>
+    <string name="plotvariant_less">Menos</string>
+
+    <!-- content descriptions -->
+    <string name="ofis_cd_hierarchy_arrow">Seta para direita</string>
+    <string name="ofis_cd_info_icon">Ícone de informação</string>
+    <string name="ofis_cd_submit_all_icon">Submeter tudo</string>
+    <string name="module_density_plot_question">A densidade deste talhão é maior, menor ou a mesma que o principal?</string>
+    <string name="module_density_plot_question_intro">Talhões adicionais</string>
+    <string name="module_density_plot_question_result_intro">Resultado: </string>
+    <string name="app_updated_generic_message">Há uma nova atualização para este aplicativo. Por favor clique OK para efetuar o download.</string>
+    <string name="app_update_ok">Ok</string>
+    <string name="app_update_cancel">Cancelar</string>
+    <string name="title_activity_review_farm_management_plan">Revisar o Plano de Gerenciamento de Fazenda</string>
+    <string name="updating_fmps">Atualizando Plano de Gerenciamento de fazendas</string>
+    <string name="fmps_up_to_date">Plano de gerenciamento de Fazenda até o momento</string>
+    <string name="review_farm_management_plan_complete">Feedback submetido</string>
+    <string name="review_farm_management_plan_in_progress">Revisão em progresso</string>
+    <string name="fmp_redo_baseline">Revisar os dados do cadastro?</string>
+    <string name="hpQId">1</string>
+    <string name="hpAId">2</string>
+    <string name="hpPqId">3</string>
+    <string name="hpRiP">4</string>
+    <string name="hpD">5</string>
+    <string name="fullreview_farm_management_plan">Plano de gerenciamento de Fazenda revisado</string>
+    <string name="fullreview_farm_management_plan_in_progress">Revisão em progresso</string>
+    <string name="fmp_are_you_sure">Esta ação solicita a impressão de um novo plano, você tem certeza?</string>
+    <string name="complete_all_required_fields">Voce deve completar todos os campos antes de enviar esta mensagem (i.e. itens marcados em vermelho*)</string>
+    <string name="ReadAndAgreeConsent">Leia e aceite os termos</string>
+    <string name="consentStatementMain1">É necessário que você nos forneça seus dados pessoais em conexão com os programas de sustentabilidade da Olam dos quais você faz parte . Estes dados serão recolhidos e armazenados no Sistema de Informação do Fazendeiro da Olam ( " OFIS " ) . Você pode , posteriormente, retirar qualquer consentimento dado para a recolha, utilização e divulgação de seus dados pessoais . No entanto , a incapacidade de fornecer os seus dados pessoais e / ou posterior retirada do seu consentimento pode resultar em sua exclusão dos programas de sustentabilidade .</string>
+    <string name="consentStatementMain2">
+        Seus dados pessoais serão utilizados pelo OFIS para ajudar e promover informações à população sobre:
+    </string>
+    <string name="consentStatementMain2a">
+        Mapeamento. É configurado para demonstrar a localização e estrutura da fazenda, sendo mais detalhado as informações sobre produtores próximos a esta localização geográfica.
+    </string>
+    <string name="consentStatementMain2b" tools:ignore="Typos">
+        A análise do software abrange os dados pessoais do produtor e os dados submetidos para determinar as diretrizes do progama. Usuários do OFIS podem exportar as mesmas ( e dados pessoais de produtores) em formato PDF ou Excel. A exportação permite a identificação dos produtores como, por exemplo, a maior ou menor produtividade durante o programa.
+    </string>
+    <string name="consentStatementMain2c">
+        Planos de gerenciamento da fazenda. Realizado individualmente por produtor com foco nas mudanças necessárias durante os próximos 3-5 anos para atingir o máximo do potencial produtivo.
+    </string>
+    <string name="consentStatementMain3">
+        Os usuários do OFIS incluem funcionários da Olam, equipes de gerenciamento das próprias fazendas, clientes globais de acordo com o mapeamento, análises e planos de gerenciamento da fazenda descritos no parágrafo 2.
+    </string>
+    <string name="consentStatementMain4">
+        Seus dados pessoais estão armazendos de forma confidencial mas serão disponibilizados à outros usuários do OFIS, como descrito acima. Estes dados podem ser transferidos para locais fora de sua jurisdição e de acordo com a leis de privacidade aplicáveis.
+    </string>
+    <string name="consentStatementMain5">
+        Você pode solicitar qualquer termo previsto, requerer acesso e/ou corrigir seus dados pessoais dentro das políticas e boas práticas da Olam contatanto nosso Escritório de Proteção de Dados pelo email: ofis@olamnet.com
+    </string>
+    <string name="consentStatementCheck1">Eu confirmo que o produtor entendeu os Termos Pessoais de Coleta de Informação e está de acordo com a coleta, uso e transferência de seus dados pessoais fora de sua jurisdição pela Olam para os efeitos neles estabelecidos.</string>
+    <string name="consentStatementCheck2">Eu confirmo que o produtor entendeu os Termos Pessoais de Coleta de Informação e está de acordo com o fornecimento de seus dados pessoais para coleta, uso e transferência de seus dados pessoais pela Olam e divulgados para os fins idicados.</string>
+    <string name="consentStatementTitle">Aviso de coleta de informações pessoais</string>
+    <string name="Please_accept_both_consents">Você deve aceitar os termos para salvar o produtor</string>
+    <string name="farmer_id_min">O ID do produtor deve possuir 4 dígitos</string>
+    <string name="app_updated_upload_first_message">Há uma nova atualização para este aplicativo. Para baixar, você deve sincronizar todos os itens primeiro. Por favor, clique  OK para sincronizar e depois vá em "Configurações" para atualizar seu aplicativo.</string>
+    <string name="please_sync_before_update">Há itens aguardando para serem sincronizados. Por favor, sincronize antes de atualizar qualquer dado.</string>
+    <string name="ofis_update_overdue">Esta versão do aplicativo está desatualizada. Você precisa atualizar antes de continuar. Clique no ícone de "Configurações" no topo, canto direito, para atualizar.</string>
+    <string name="ofis_request_help">Pergunte ajudar</string>
+    <string name="Your_Name">Seu nome</string>
+    <string name="problem_description">Descreva o problema que você está tendo</string>
+    <plurals name="days_left_to_update">
+        <item quantity="one">Versões de atualizações são requeridas depois de 30 dias. Você tem %1d de dias para atualizar.</item>
+        <item quantity="other">Versões de atualizações são requeridas depois de 30 dias. Você tem %1d de dias para atualizar.</item>
+    </plurals>
+    <string name="record_transaction_button_text">Gravar Ordem</string>
+    <string name="record_training_button">Gravar treinamento</string>
+    <string name="ViewTransactionsTitle">Ordem</string>
+    <string name="Add">Adicionar</string>
+    <string name="AddTransactionItemTitle">Item da transação</string>
+    <string name="please_select">Favor selecionar</string>
+    <string name="select_transaction_item_type">Tipo</string>
+    <string name="ofis_select_item_product_grade">Padrão do Produto</string>
+    <string name="select_currency">Moeda</string>
+    <string name="enter_quantity">Quantidade</string>
+    <string name="select_units">Unidade</string>
+    <string name="updating_transaction_data">Atualizando informação da ordem</string>
+    <string name="Transaction_item_added">Item da transação adicionado!</string>
+    <string name="Delete_Item">Item removido</string>
+    <string name="Transaction_default">Transação</string>
+    <string name="transaction_are_you_sure">Tem certeza que deseja deletar essa ordem?</string>
+    <string name="transaction_deleted">Ordem removida com sucesso</string>
+    <string name="complete_transaction">Completar ordem</string>
+    <string name="Farmer_Group_Name">Nome do Grupo de Produtores</string>
+    <string name="direction_hint">Voce esta dando ou recebendo?</string>
+    <string name="transaction_added_to_queue">Transação confirmada para upload</string>
+    <string name="Transaction_network_queue_title">Ordem</string>
+    <string name="transaction_confirmed">Ordem Confirmada</string>
+    <string name="ofis_no_transactions_text">Quando voce adicionar transações, elas vão aparecer aqui</string>
+    <string name="ofis_no_trainingrecords_text">Quando voce adicionar treinamentos, eles vão aparecer aqui</string>
+    <string name="TrainingRecordsTitle">Histórico de Treinamentos</string>
+    <string name="select_course">Curso</string>
+    <string name="TrainingAttendees">Participantes dos treinamentos</string>
+    <string name="complete_record">Complete a gravação</string>
+    <string name="TrainingRecordTitle">Gerir a gravação dos treinamentos</string>
+    <string name="select_training_module">Modulo de treinamento</string>
+    <string name="Training_Photo">Foto do treinamento</string>
+    <string name="TrainingRecordConfirmationTitle">Confirmar gravação de treinamento</string>
+    <string name="TrainingRecordConfirmationSubTitle">Confirme a gravação de treinamento</string>
+    <string name="confirm_training_record">Confirmar gravação de treinamento</string>
+    <string name="Select_Attendees">Selecionar participantes</string>
+    <string name="Attendee_Name">Nome do Participante</string>
+    <string name="selected">Selecionados:</string>
+    <string name="save_selected_attendees">Salvar participantes selecionados</string>
+    <string name="Training_select_course_module_first">Favor selecionar um curso e módulo e tire uma foto primeiro</string>
+    <string name="add_attendee_scores">Adicione pontos</string>
+    <string name="attendees_saved">Participantes gravados</string>
+    <string name="Training_Record_Edited">Gravação dos treinamentos atualizados</string>
+    <string name="Training_Record_Added">Gravação dos treinamentos adicionados</string>
+    <string name="Add_one_attendee_to_continue">Adicione pelo menos um participante para continuar</string>
+    <string name="updating_training">Atualizando informação dos treinamentos</string>
+    <string name="Attendees">Participantes</string>
+    <string name="trainingrecord_are_you_sure">Tem certeza que quer deletar esse item?</string>
+    <string name="trainingrecord_deleted">Treinamento removido</string>
+    <string name="trainingattendee_are_you_sure">Tem certeza quer quer remover esse participante?</string>
+    <string name="trainingattendee_deleted">Participante deletado</string>
+    <string name="TrainingAttendeeScores">Pontos dos participantes</string>
+    <string name="TrainingAttendeeScoresSubTitle">Adicionar ou editar pontos dos participantes</string>
+    <string name="save_scores">Salvar pontos dos participantes</string>
+    <string name="attendees_scores_updated">Pontos dos participantes atualizados</string>
+    <string name="trainingrecord_added_to_queue">Treinamentos confirmados para atualização</string>
+    <string name="trainingrecord_confirmed">Treinamento Confirmado</string>
+    <string name="checkbox_image">Imagem da caixa</string>
+    <string name="PhoneNumberHint">Telefone</string>
+    <string name="PhoneNumbers">Telefone</string>
+    <string name="main_number">Principal?</string>
+    <string name="location">Localização</string>
+    <string name="update_phone_numbers">Atualize telefone</string>
+    <string name="update_phone_numbers_hint">Toque para atualizar</string>
+    <string name="select_transactee">Com quem está fazendo negócio?</string>
+    <string name="price_per_unit">Preço por</string>
+    <string name="total_price">Preço</string>
+    <string name="amount_paid">Valor pago para</string>
+    <string name="amount_loaned">Valor emprestado para</string>
+    <string name="amount_gifted">Valor entregue para</string>
+    <string name="Transaction_item_updated">Item da transação atualizado</string>
+    <string name="amount_repaid">Valor devolvido para</string>
+    <plurals name="trainingAttendeesCount">
+        <item quantity="one">%1d Participante</item>
+        <item quantity="other">%1d Participante</item>
+    </plurals>
+    <string name="registeredForNotifications">Voce esta cadastrado para receber notificaçãoes de tarefas</string>
+    <string name="registerForNotificationsFailed">Cadastro de tarefas com erro. Uma nova tentativa será feita em breve. Se continuar recebendo essa mensagem, por favor entre em contato com o suporte</string>
+    <string name="NewTaskReceivedTitle">Nova tarefa recebida</string>
+    <string name="title_activity_tasks">Tarefas</string>
+    <string name="updating_tasks">Atualizar tarefas</string>
+    <string name="TaskUpdatedTitle">Tarefa atualizada</string>
+    <string name="TaskDeletedTitle">Excluir tarefa</string>
+    <string name="take_photo">Tirar foto</string>
+    <string name="set_auto_time_message">Seu horario e Fuso horário não está automáticos. Por favor configure para automatico. Enquanto isso não for feito, a aplicativo não podera ser utilizado</string>
+    <string name="buyingagent">Comerciante</string>
+    <string name="credit_balance">Deve voce</string>
+    <string name="ChooseBuyingAgent">Esccolha o comerciante</string>
+    <string name="WhoTransacting">Voce esta fazendo essa transação em nome de quem?</string>
+    <string name="PickAgentFirst">Voce deve escolher um agente primeiro</string>
+    <string name="farmer_or_buying_agent_name">Nome do Produtor ou Comerciante</string>
+    <string name="title_activity_find_transactee">Encontrar transação</string>
+    <string name="amount_repaid_and_loaned">Valor devolvido e emprestado para</string>
+    <string name="amount_loaned_by">Valor emprestado por</string>
+    <string name="amount_repaid_by">Valor devolvido por</string>
+    <string name="amount_repaid_and_loaned_by">Valor devolvido e emprestado por</string>
+    <string name="amount_paid_by">Valor pago por</string>
+    <string name="amount_gifted_by">Valor entregue por</string>
+    <string name="debit_balance">Ele te deve</string>
+    <string name="cannotTransactNothingToRepay">Você não possui nenhum débito, portanto não pode concluir esta transação</string>
+    <string name="cannotTransactUnableToLoan">Você tem débitos em aberto, portanto não pode concluir esta transação</string>
+    <string name="cannotRepayNotOwedMoney">Você não possui nenhum crédito pendente, portanto não pode concluir esta transação</string>
+    <string name="cannotLoanOwedMoney">Você créditos pendentes, portanto não pode concluir essa transação.</string>
+    <string name="ensure_totals_match">Por favor assegure que o total dos campos batam com o preço final</string>
+    <string name="price_per_unit_default">Unidade</string>
+    <string name="input_crop_finance">Insumos, Financeiro ou Safra?</string>
+    <string name="input_crop">Insumos ou Safra?</string>
+    <string name="input_finance">Insumos ou Financeiro?</string>
+    <string name="finance_crop">Financeiro ou Safra?</string>
+    <string name="task_mark_complete">Concluído</string>
+    <string name="transaction_notes">Notas</string>
+    <string name="cannotRepayMoreThanOwe">Você não pode pagar mais do que deve.</string>
+    <string name="cannotRepayMoreThanTheyOwe">Eles não podem pagar mais do que devem.</string>
+    <string name="item_in_progress">Em progesso</string>
+    <string name="cannot_do_mobile_money_non_farmer">Você não pode comprar  de uma comerciante usando dinheiro digital</string>
+    <string name="pay_using_mobile_money_or_cash">Pagar usando dinheiro digital ou dinheiro?</string>
+    <string-array name="mmCash">
+        <item>Dinheiro</item>
+        <item>Dinheiro digital</item>
+    </string-array>
+    <string name="mmCash_mobilemoney">Dinheiro digital</string>
+    <string name="mmCash_cash">Dinheiro</string>
+    <string name="mobile_money_suffix">Usando dinheiro digital</string>
+    <string name="mm_transaction_initiated">Transação com dinheiro digital iniciada, por favor aguarde.</string>
+    <string name="mm_transaction_checking">Verificando o status da transação</string>
+    <string name="mm_transaction_timedout">Sua transação com dinheiro digital não foi finalizada, por favor use dinheiro</string>
+    <string name="mm_transaction_awaiting_response">Transação com dinheiro digital aguardando aprovação</string>
+    <string name="mm_transaction_inprogress">Transação com dinheiro digital em andamento</string>
+    <string name="mm_transaction_complete">Transação com dinheiro digital finalizada e sincronizada</string>
+    <string name="mm_transaction_failed">Transação com dinheiro digital falhou, por favor tente usar dinheiro.</string>
+    <string name="mm_transaction_confirmation">Você esta prestes a pagar %1$S e %2$s usando dinheiro digital. Por favor confirme a transação.</string>
+    <string name="mm_transaction_confirm">Confirme</string>
+    <string name="place_name_not_unique">Esse local já existe nessa região, por favor selecione o local na lista</string>
+    <string name="title_activity_record_polygon">"Gravar o trecho "</string>
+    <string name="loading">"Carregando "</string>
+    <string name="wait">Por favor aguarde</string>
+    <string name="save_button_text">Salvar</string>
+    <string name="start_logging_button_text">"Iniciar o Login "</string>
+    <string name="stop_logging_button_text">"Parar o Login "</string>
+    <string name="pause_button_text">"Pause "</string>
+    <string name="resume_button_text">"Resumo "</string>
+    <string name="plot">Trecho %1$d</string>
+    <string name="current_track_name">"Rastrear o OFIS "</string>
+    <string name="plot_already_logged">Login Feito %1$s</string>
+    <string name="location_permission_alertdialog_title">"Necessita de permissão de localização para acessar o GPS "</string>
+    <string name="open_application_settings_msg">"Ir para Configurações? "</string>
+    <string name="ready_to_save">%1$s pronto para salvar</string>
+    <string name="restart_logging">"Deseja reiniciar o login? "</string>
+    <string name="save_existing_logs">"Salvar logins existentes "</string>
+    <string name="already_logged_and_saved">%1$s registrado e Salvo</string>
+    <string name="try_again_later_msg">"Por favor tente novamente após alguns minutos "</string>
+    <string name="location_not_yet_logged">"Voce ainda não cadastrou nenhuma localização "</string>
+    <string name="fetch_location_msg">"Procurando a localização. Por favor aguarde. "</string>
+    <string name="gps_manager_msg">"Gerenciados de GPS "</string>
+    <string name="enable_gps_msg">"Gostaria de ligar o GPS? "</string>
+    <string name="gps_turned_on">"Ligar GPS "</string>
+    <string name="storage_permission_explanation">"É necessário permitir o armazenamento de dados. "</string>
+    <string name="location_permission_explanation">"É necessário permitir a  localização "</string>
+    <string name="speed_unit_kmph">"%1$d km/h "</string>
+    <string name="logging_progress_msg">"Login em andamento "</string>
+    <string name="cancel_logging_question">"Cancelar login "</string>
+    <string name="cancel_logging_msg">"%1$s login cancelado "</string>
+    <string name="not_logged_yet">%1$s ainda não logado.</string>
+    <string name="area_info">Area: %1$f Há</string>
+    <string name="save_polygon_alertdialog_title">Salvar %1$s?</string>
+    <string name="save_polygon_alertdialog_msg">Voce não poderá logar  %1$s novamente.</string>
+    <string name="close">"Fechar "</string>
+    <string name="saved_successfully_msg">%1$s salvado</string>
+    <string name="confirm">"Confirmar "</string>
+    <string name="plot_location_confirmation">Voce está na localização da %1$s?</string>
+    <string name="logging_not_started_msg">"Login não pode ser iniciado. "</string>
+    <string name="edit_plot_dialog_title">"Selecionar Area "</string>
+    <string name="existing_plots">Área existente %1$d</string>
+    <string name="existing_plots_logged">Área já logada. %1$d</string>
+    <string name="previous_plot_not_recorded_msg">"Área %1$s não foi registrada. Favor registrar área %1$s primeiro. "</string>
+    <string name="send_button">"Enviar "</string>
+    <string name="duplicate_phone_number">"Número de telefone duplicado. Favor verificar número. "</string>
+    <string name="record_polygon_input_messege">"Quantas áreas ele possui? "</string>
+    <string name="record_polygon_input_title">"Analise de áreas "</string>
+    <string name="record_polygon_input_hint">"Número de areas "</string>
+    <string name="camera_and_gallery_permission_denial_msg">Camera &amp; Galeria. Sistema não funcionará sem a sua permissão de acesso.</string>
+    <string name="gps_permission_denial_msg">"Função de localização não irá funcionar sem a permissão. "</string>
+    <string name="phone_state_permission_denial_msg">"É necessário a permissão do telefone  para ter acesso ao IMEI. "</string>
+    <string name="permission_permanent_denial_title">"Permissão foi negada. "</string>
+    <string name="permission_permanent_denial_msg">"Permissão requerida foi negada. Por favor alterar a permissão nas configurações do aplicativo. "</string>
+    <string name="go_to_settings_msg">"Autorizar a permissão das configurações do aplicativo. Ir para Configurações? "</string>
+    <string name="record_farm_polygon">"Gravar propriedade. "</string>
+    <string name="record_farm_polygon_hint">Clique para gravar.</string>
+    <string name="record_farm_polygon_complete">"Gravado. "</string>
+    <string name="submit">"Enviar "</string>
+    <string name="cancel">"Cancelar  "</string>
+    <string name="valid_count_msg">"Entrar com conta válida. "</string>
+    <string name="plot_recording_module_finished">"Area gravada "</string>
+    <string name="untick_task">"Desmarcar tarefa "</string>
+    <string name="untick_task_msg">"Por favor confirme se voce deseja marcar essa tarefa como incompleta. "</string>
+    <string name="updating_master_details">Downloading master details</string>
+</resources>

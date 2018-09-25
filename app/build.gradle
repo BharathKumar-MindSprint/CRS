@@ -1,0 +1,124 @@
+apply plugin: 'com.android.application'
+apply plugin: 'com.google.firebase.firebase-perf'
+apply plugin: 'io.fabric'
+
+//noinspection GroovyMissingReturnStatement
+android {
+    dexOptions {
+        preDexLibraries true
+        javaMaxHeapSize "4G"
+    }
+    signingConfigs {
+        release {
+        }
+    }
+    compileSdkVersion 27
+    buildToolsVersion '27.0.3'
+    flavorDimensions "default"
+    defaultConfig {
+        applicationId "com.webpoint0.ofiscompanion"
+        resValue "string", "contentprovider_authorities", applicationId + '.provider'
+        resValue "string", "sync_account_type", applicationId
+        buildConfigField "String", "ACCOUNT_TYPE", '"com.webpoint0.ofiscompanion"'
+        minSdkVersion 15
+        //noinspection OldTargetApi
+        targetSdkVersion 27
+        multiDexEnabled true
+        versionCode 11
+        versionName "10.0.3"
+    }
+
+    buildTypes {
+        debug {
+            minifyEnabled false
+            shrinkResources false
+            //proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        release {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    productFlavors {
+        //noinspection GroovyMissingReturnStatement
+        local {
+            applicationId "com.webpoint0.ofiscompanionlocal"
+            resValue "string", "contentprovider_authorities", applicationId + '.provider'
+            resValue "string", "sync_account_type", applicationId
+            buildConfigField "String", "ACCOUNT_TYPE", '"com.webpoint0.ofiscompanionlocal"'
+            buildConfigField 'String', 'HOST', '"http://local.ofis52.com/api/v1/"'
+        }
+
+        dev {
+            applicationId "com.webpoint0.ofiscompaniondebug"
+            resValue "string", "contentprovider_authorities", applicationId + '.provider'
+            resValue "string", "sync_account_type", applicationId
+            buildConfigField "String", "ACCOUNT_TYPE", '"com.webpoint0.ofiscompaniondebug"'
+            buildConfigField 'String', 'HOST', '"https://testofis.olamgroup.com/api/v1/"'
+        }
+
+        //noinspection GroovyMissingReturnStatement
+        preprod {
+            applicationId "com.webpoint0.ofiscompanionpreprod"
+            resValue "string", "contentprovider_authorities", applicationId + '.provider'
+            resValue "string", "sync_account_type", applicationId
+            resValue "string", "client_secret", 'gqYWH4dRyQST0dHHgA5iUyxkgtPxGStVd3hJop'
+         //   resValue "string", "AUTH_SERVER_URL", 'http://13.67.108.216:8084/oauth/api/v1/oauth/'
+            buildConfigField "String", "ACCOUNT_TYPE", '"com.webpoint0.ofiscompanionpreprod"'
+          //  buildConfigField 'String', 'HOST', '"http://13.67.108.216:8084/"'
+            buildConfigField 'String', 'MICROSERVICE_HOST', '"http://137.116.145.198:8080/"'
+
+            // New Local changes - QA
+            resValue "string", "AUTH_SERVER_URL", 'http://13.67.74.207:8084/oauth/api/v1/oauth/'
+            buildConfigField 'String', 'HOST', '"http://13.67.74.207:8084/"'
+
+            // New Local changes - DEV
+//            resValue "string", "AUTH_SERVER_URL", 'http://13.67.108.216:8084/oauth/api/v1/oauth/'
+//            buildConfigField 'String', 'HOST', '"http://13.67.108.216:8084/"'
+
+
+            // Exixting PHP Point
+  //          buildConfigField 'String', 'HOST', '"https://stageofis.olamgroup.com/api/v1/"'
+        }
+
+        //noinspection GroovyMissingReturnStatement
+        prod {
+            applicationId "com.webpoint0.ofiscompanion"
+            buildConfigField 'String', 'HOST', '"https://ofis.olamgroup.com/api/v1/"'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+
+    //compile project(":OSMBonusPack")
+    compile 'com.squareup.okhttp3:okhttp:3.7.0'
+    compile 'com.squareup.retrofit2:converter-gson:2.1.0'
+    compile 'com.squareup.okhttp3:logging-interceptor:3.4.1'
+    compile 'commons-io:commons-io:2.6'
+    compile 'com.android.support:support-v4:27.0.2'
+    compile 'com.android.support:mediarouter-v7:27.0.2'
+    compile 'com.android.support:palette-v7:27.0.2'
+    compile 'com.android.support:cardview-v7:27.0.2'
+    compile 'com.google.firebase:firebase-messaging:11.8.0'
+    compile 'com.google.firebase:firebase-crash:11.8.0'
+    compile 'com.google.firebase:firebase-perf:11.8.0'
+    compile 'com.android.support:appcompat-v7:27.0.2'
+    compile 'org.osmdroid:osmdroid-mapsforge:5.5:release@aar'
+    compile 'org.mapsforge:mapsforge-map-android:0.6.1'
+    compile 'org.mapsforge:mapsforge-map:0.6.1'
+    compile 'com.google.android.gms:play-services-location:11.8.0'
+
+    compile 'com.android.support:multidex:1.0.2'
+
+    compile('com.crashlytics.sdk.android:crashlytics:2.7.1@aar') {
+        transitive = true
+    }
+    compile 'com.google.firebase:firebase-core:11.8.0'
+
+    compile 'com.github.MKergall:osmbonuspack:6.4'
+}
+
+apply plugin: 'com.google.gms.google-services'

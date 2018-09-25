@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusableInTouchMode="true"
+    tools:context=".TrainingAttendeeScores">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:id="@+id/topSectionBackground"
+        android:background="@color/ofis_farmer_screen_actions_background"
+        android:contentDescription="@string/cd_topSectionColour" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/attendeeScroller"
+        android:layout_below="@+id/topSection"
+        android:layout_above="@+id/buttonContainer">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:id="@+id/attendeeList">
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <!-- base button -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:id="@+id/buttonContainer"
+        android:layout_alignParentBottom="true"
+        android:paddingBottom="@dimen/ofis_list_itemseparator"
+        android:paddingRight="@dimen/ofis_bottom_section_padding_horizontal"
+        android:paddingLeft="@dimen/ofis_bottom_section_padding_horizontal"
+        android:gravity="right">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/text_button_width_height"
+            android:text="@string/save_scores"
+            android:textAllCaps="true"
+            android:background="@color/ofis_action_button_background"
+            android:textColor="@color/ofis_base_font_white"
+            android:paddingLeft="@dimen/ofis_med_pad"
+            android:paddingRight="@dimen/ofis_med_pad"
+            android:textSize="@dimen/ofis_micro_text"
+            android:id="@+id/saveScores" />
+
+    </LinearLayout>
+
+    <!-- top section -->
+    <!-- page title -->
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@id/topSection"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingBottom="@dimen/activity_vertical_margin">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/TrainingAttendeeScores"
+            android:id="@+id/ViewTrainingRecordTitle"
+            android:textColor="@color/ofis_base_font_white"
+            android:paddingRight="0dp"
+            android:paddingLeft="5dp"
+            android:textSize="@dimen/ofis_large_text"
+            android:maxLines="1" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/TrainingAttendeeScoresSubTitle"
+            android:id="@+id/ViewTrainingRecordSubTitle"
+            android:textColor="@color/ofis_base_font_white"
+            android:paddingRight="0dp"
+            android:paddingLeft="5dp"
+            android:textSize="@dimen/ofis_small_text"
+            tools:ignore="RtlHardcoded"
+            android:maxLines="1" />
+
+    </LinearLayout>
+    <!-- end module and submodule title -->
+
+</RelativeLayout>

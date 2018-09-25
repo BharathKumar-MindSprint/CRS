@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="ofis_page_background">#fffafafa</color>
+    <color name="ofis_actionbar_background">#dddddd</color>
+    <color name="ofis_base_font_dark">#222222</color>
+    <color name="ofis_base_font_white">#ffffff</color>
+    <color name="ofis_text_field">#DE000000</color>
+    <color name="ofis_text_field_read_only">#80000000</color>
+    <color name="ofis_input_field_separator">#26000000</color>
+    <color name="ofis_list_header_text">#DE000000</color>
+    <color name="ofis_list_item_background">#ffffff</color>
+    <color name="ofis_list_item_subtitle">#7d7d7d</color>
+    <color name="ofis_spinner_item_background">@color/ofis_actionbar_background</color>
+    <color name="ofis_home_screen_actions_background">#115e67</color>
+    <color name="ofis_home_screen_midsection_background">#796e65</color>
+    <color name="ofis_farmer_screen_actions_background">#698714</color>
+    <color name="ofis_list_item_disabled_text">#66222222</color>
+    <color name="ofis_list_item_disabled_background">#99d8d8d8</color>
+    <color name="ofis_action_button_background">#dc582a</color>
+    <color name="ofis_action_button_disabled">#9da1a2</color>
+    <color name="ofis_poi_screen_top_background_school">#924c2e</color>
+    <color name="ofis_list_item_border">#40000000</color>
+    <color name="ofis_spinner_divider">#ff333333</color>
+    <color name="ofis_repeater_item_border">#7d7d7d</color>
+    <color name="ofis_consent_statement_background">@color/ofis_actionbar_background</color>
+    <color name="light_cream">#EDE5DC</color>
+    <color name="ofis_red">#be3a34</color>
+    <!-- updated -->
+</resources>

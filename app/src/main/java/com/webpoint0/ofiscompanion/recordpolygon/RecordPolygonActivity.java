@@ -1,0 +1,1398 @@
+package com.webpoint0.ofiscompanion.recordpolygon;
+
+import android.Manifest;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.drawable.AnimationDrawable;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Environment;
+import android.os.Handler;
+import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.NavUtils;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.res.ResourcesCompat;
+import android.text.TextUtils;
+import android.util.Base64;
+import android.view.View;
+import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.NumberPicker;
+import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.gson.Gson;
+import com.webpoint0.ofiscompanion.DataLayer;
+import com.webpoint0.ofiscompanion.OFISDBContract;
+import com.webpoint0.ofiscompanion.R;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.osmdroid.api.IMapController;
+import org.osmdroid.bonuspack.kml.KmlDocument;
+import org.osmdroid.bonuspack.kml.KmlFeature;
+import org.osmdroid.bonuspack.kml.KmlFolder;
+import org.osmdroid.bonuspack.kml.KmlPlacemark;
+import org.osmdroid.bonuspack.kml.KmlTrack;
+import org.osmdroid.bonuspack.kml.LineStyle;
+import org.osmdroid.bonuspack.kml.Style;
+import org.osmdroid.config.Configuration;
+import org.osmdroid.events.MapEventsReceiver;
+import org.osmdroid.tileprovider.MapTileProviderBase;
+import org.osmdroid.tileprovider.MapTileProviderBasic;
+import org.osmdroid.tileprovider.tilesource.MapBoxTileSource;
+import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase;
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
+import org.osmdroid.util.BoundingBox;
+import org.osmdroid.util.GeoPoint;
+import org.osmdroid.util.NetworkLocationIgnorer;
+import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.FolderOverlay;
+import org.osmdroid.views.overlay.MapEventsOverlay;
+import org.osmdroid.views.overlay.Overlay;
+import org.osmdroid.views.overlay.Polygon;
+import org.osmdroid.views.overlay.ScaleBarOverlay;
+import org.osmdroid.views.overlay.compass.CompassOverlay;
+import org.osmdroid.views.overlay.infowindow.InfoWindow;
+import org.osmdroid.views.overlay.mylocation.DirectedLocationOverlay;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Stack;
+
+public class RecordPolygonActivity extends Activity implements AdapterView.OnItemSelectedListener, MapEventsReceiver, LocationListener {
+
+    private static final String TAG = RecordPolygonActivity.class.getSimpleName();
+
+    protected MapView map;
+
+    protected GeoPoint startPoint, destinationPoint;
+    protected ArrayList<GeoPoint> viaPoints;
+    protected FolderOverlay mItineraryMarkers;
+    protected DirectedLocationOverlay myLocationOverlay;
+    protected LocationManager mLocationManager;
+
+    protected boolean mTrackingMode;
+    ImageButton mTrackingModeButton;
+    float mAzimuthAngleSpeed = 0.0f;
+
+    protected FolderOverlay mRoadNodeMarkers;
+    static final int OSRM = 0;
+
+    protected FolderOverlay mKmlOverlay; //root container of overlays from KML reading
+    public static KmlDocument mKmlDocument; //made static to pass between activities
+    public static Stack<KmlFeature> mKmlStack; //passed between activities, top is the current KmlFeature to edit.
+    public static KmlFolder mKmlClipboard; //passed between activities. Folder for multiple items selection.
+
+    boolean mIsRecordingTrack = false;
+    boolean mIsLoggingStopped;
+    boolean mIsLoggingStarted;
+    boolean mIsLoggingPaused;
+    boolean mIsGPSLocationAvailable;
+
+    private enum RecordingState {
+        RECORDING, PAUSED, STOPPED
+    }
+
+    OnlineTileSourceBase MAPBOXSATELLITELABELLED;
+    boolean mNightMode;
+
+    private Button mStartLoggingButton;
+
+    private TextView farmerName, olamFarmerId;
+    private ImageView recordingStatus;
+    private Button pause, startStop, bttnSave;
+    //private ImageButton currentLocation;
+    TextView areaInfo;
+    Spinner spinnerPlotList;
+
+    private static final String FARMER_ID = "FARMER_ID";
+    private static final String FARM_ID = "FARM_ID";
+    private static final String PLOT_COUNT = "PLOT_COUNT";
+    private static final String OLAM_FARMER_ID = "OLAM_FARMER_ID";
+    private static final String FARMER_NAME = "FARMER_NAME";
+    long mFarmerId;
+    int mFarmId;
+    String mOlamFarmerId;
+    String mFarmerName;
+    String currentTrackname = "OFIS Track";
+    String previousTrackname = "Previous OFIS Track";
+    static int currentLoggingTrackSpinnerPosition = 0;
+
+    List<plot> mLocationBeanList = new ArrayList<>();
+    String spinnerArray[];
+    public static final int GRANTED = 0;
+    public static final int DENIED = 1;
+    public static final int BLOCKED_OR_NEVER_ASKED = 2;
+
+    private int lPlotCount = 0;
+
+    ArrayAdapter<String> spinnerArrayAdapter;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+        Configuration.getInstance().setOsmdroidBasePath(new File(Environment.getExternalStorageDirectory(), "osmdroid"));
+        Configuration.getInstance().setOsmdroidTileCache(new File(Environment.getExternalStorageDirectory(), "osmdroid/tiles"));
+
+        boolean hwAccelerationOK = true;
+        Configuration.getInstance().setMapViewHardwareAccelerated(hwAccelerationOK);
+
+        setContentView(R.layout.activity_record_polygon);
+
+        mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
+        if (!isGPSProviderEnabled()) {
+            showTurnOnGPSDialog();
+        } else {
+            //Go to the current location with location marker in center of map.
+            centerCurrentLocation();
+        }
+
+        mFarmerId = getIntent().getLongExtra(FARMER_ID, 0L);
+        mFarmId = getIntent().getIntExtra(FARM_ID, 0);
+        mOlamFarmerId = getIntent().getStringExtra(OLAM_FARMER_ID);
+        mFarmerName = getIntent().getStringExtra(FARMER_NAME);
+        lPlotCount = getIntent().getIntExtra(PLOT_COUNT, 0);
+        SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmID("" + mFarmId);
+
+        farmerName = (TextView) findViewById(R.id.farmer_name);
+        olamFarmerId = (TextView) findViewById(R.id.olam_farmer_id);
+        areaInfo = (TextView) findViewById(R.id.areaInfo);
+        if (!TextUtils.isEmpty(mFarmerName)) {
+            farmerName.setText(mFarmerName);
+        }
+        if (!TextUtils.isEmpty(mOlamFarmerId)) {
+            olamFarmerId.setText(mOlamFarmerId);
+        }
+        spinnerArray = new String[lPlotCount];
+        for (int i = 0; i < lPlotCount; i++) {
+            spinnerArray[i] = getResources().getString(R.string.plot, (i + 1));
+            //SharedPreferenceUtils.getInstance(getApplicationContext()).removePlotUsingKey("Plot " + (i + 1));
+        }
+        spinnerPlotList = (Spinner) findViewById(R.id.plot_number);
+        recordingStatus = (ImageView) findViewById(R.id.recording_status);
+        pause = (Button) findViewById(R.id.pause_recording);
+        mStartLoggingButton = (Button) findViewById(R.id.start_stop_recording);
+        bttnSave = (Button) findViewById(R.id.save_recording);
+        //currentLocation = (ImageButton) findViewById(R.id.current_location);
+        pause.setEnabled(false);
+        bttnSave.setEnabled(false);
+        spinnerArrayAdapter = new ArrayAdapter<String>
+                (this, android.R.layout.simple_spinner_item,
+                        spinnerArray);
+        spinnerArrayAdapter.setDropDownViewResource(android.R.layout
+                .simple_spinner_dropdown_item);
+        spinnerPlotList.setAdapter(spinnerArrayAdapter);
+        spinnerPlotList.setOnItemSelectedListener(this);
+        mStartLoggingButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                handleStartStopLoggingButton();
+            }
+        });
+        pause.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mIsLoggingPaused) {
+                    setPauseButtonState(false);
+                } else {
+                    setPauseButtonState(true);
+                }
+            }
+        });
+
+        bttnSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                setLoggingStarted(false);
+                setRecordingIcon(RecordingState.STOPPED);
+                if (!checkPlotEntryExistInPreference()) {
+                    savePolygonToSharedPreference();
+                } else {
+                    showToastMessage(getResources().getString(R.string.plot_already_logged, currentTrackname));
+                }
+            }
+        });
+
+        SharedPreferences prefs = getSharedPreferences("OSMNAVIGATOR", MODE_PRIVATE);
+
+        MAPBOXSATELLITELABELLED = new MapBoxTileSource("MapBoxSatelliteLabelled", 1, 19, 256, ".png");
+        ((MapBoxTileSource) MAPBOXSATELLITELABELLED).retrieveAccessToken(this);
+        ((MapBoxTileSource) MAPBOXSATELLITELABELLED).retrieveMapBoxMapId(this);
+        TileSourceFactory.addTileSource(MAPBOXSATELLITELABELLED);
+
+
+        map = (MapView) findViewById(R.id.map);
+
+        map.setTilesScaledToDpi(true);
+        map.setBuiltInZoomControls(true);
+        map.setMultiTouchControls(true);
+        IMapController mapController = map.getController();
+
+        //To use MapEventsReceiver methods, we add a MapEventsOverlay:
+        MapEventsOverlay overlay = new MapEventsOverlay(this);
+        map.getOverlays().add(overlay);
+
+
+        myLocationOverlay = new DirectedLocationOverlay(this);
+        map.getOverlays().add(myLocationOverlay);
+        CompassOverlay compassOverlay = new CompassOverlay(this, map);
+        compassOverlay.enableCompass();
+        map.getOverlays().add(compassOverlay);
+
+        if (savedInstanceState == null) {
+            Location location = null;
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                if (location == null)
+                    location = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+            }
+            if (location != null) {
+                //location known:
+                onLocationChanged(location);
+            } else {
+                //no location known: hide myLocationOverlay
+                myLocationOverlay.setEnabled(false);
+            }
+            startPoint = null;
+            destinationPoint = null;
+            viaPoints = new ArrayList<GeoPoint>();
+        } else {
+            myLocationOverlay.setLocation((GeoPoint) savedInstanceState.getParcelable("location"));
+            //TODO: restore other aspects of myLocationOverlay...
+            startPoint = savedInstanceState.getParcelable("start");
+            destinationPoint = savedInstanceState.getParcelable("destination");
+            viaPoints = savedInstanceState.getParcelableArrayList("viapoints");
+            mapController.setCenter(startPoint);
+        }
+
+        ScaleBarOverlay scaleBarOverlay = new ScaleBarOverlay(map);
+        map.getOverlays().add(scaleBarOverlay);
+
+        // Itinerary markers:
+        mItineraryMarkers = new FolderOverlay();
+        //mItineraryMarkers.setName(getString(R.string.itinerary_markers_title));
+        map.getOverlays().add(mItineraryMarkers);
+
+        //Tracking system:
+        mTrackingModeButton = (ImageButton) findViewById(R.id.buttonTrackingMode);
+        mTrackingModeButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                mTrackingMode = !mTrackingMode;
+                updateUIWithTrackingMode();
+            }
+        });
+        if (savedInstanceState != null) {
+            mTrackingMode = savedInstanceState.getBoolean("tracking_mode");
+            updateUIWithTrackingMode();
+        } else
+            mTrackingMode = false;
+
+        View expander = findViewById(R.id.expander);
+
+        expander.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                View topSection = findViewById(R.id.topSection);
+                View saveRecording = findViewById(R.id.save_recording);
+                if (topSection.getVisibility() == View.VISIBLE) {
+                    topSection.setVisibility(View.GONE);
+                    saveRecording.setVisibility(View.GONE);
+                } else {
+                    topSection.setVisibility(View.VISIBLE);
+                    saveRecording.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+        View topSection = findViewById(R.id.topSection);
+        if (prefs.getInt("PANEL_VISIBILITY", View.VISIBLE) == 0) {
+            topSection.setVisibility(View.VISIBLE);
+        } else {
+            topSection.setVisibility(View.GONE);
+        }
+
+        mRoadNodeMarkers = new FolderOverlay();
+        mRoadNodeMarkers.setName("Route Steps");
+        map.getOverlays().add(mRoadNodeMarkers);
+
+        mKmlOverlay = null;
+        if (savedInstanceState != null) {
+            //STATIC - mKmlDocument = savedInstanceState.getParcelable("kml");
+            updateUIWithKml();
+        } else { //first launch:
+            mKmlDocument = new KmlDocument();
+            mKmlStack = new Stack<KmlFeature>();
+            mKmlClipboard = new KmlFolder();
+            //check if intent has been passed with a kml URI to load (url or file)
+            Intent onCreateIntent = getIntent();
+            if (onCreateIntent.getAction().equals(Intent.ACTION_VIEW)) {
+                String uri = onCreateIntent.getDataString();
+                //openFile(uri, true, false);
+            }
+        }
+        setStdTileProvider();
+        map.setTileSource(MAPBOXSATELLITELABELLED);
+        map.getOverlayManager().getTilesOverlay().setColorFilter(null);
+        mapController.setZoom(17);
+
+        int permissionStatus = getPermissionStatus(this, Manifest.permission.ACCESS_FINE_LOCATION);
+        int permissionStatusExtStorage = getPermissionStatus(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        if (permissionStatus == BLOCKED_OR_NEVER_ASKED || permissionStatusExtStorage == BLOCKED_OR_NEVER_ASKED) {
+            checkPermissions();
+        }
+        initializeLoggingVariables();
+    }
+
+    /**
+     * Whenever user start polygon recording at that time will fetch last known location from Android API and put location marker in center of Map UI.
+     * If last known location is null then will request GPS and fetch current location to put location marker in center of Map UI.
+     * Last Known location data is quickly to get from API and easily to update new location data.
+     */
+    private void centerCurrentLocation() {
+        if (startLocationUpdates()) {
+            Location location = null;
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                if (location == null)
+                    location = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+            }
+            if (location != null && map != null) {
+                myLocationOverlay.setEnabled(true);
+                GeoPoint newLocation = new GeoPoint(location);
+                map.getController().animateTo(newLocation);
+                map.setMapOrientation(-(location.getBearing()));
+                //location known:
+                onLocationChanged(location);
+            }
+
+            initCenterCurrentLocation();
+        }
+    }
+
+    private void initCenterCurrentLocation() {
+        int permissionStatus = getPermissionStatus(this, Manifest.permission.ACCESS_FINE_LOCATION);
+        if (permissionStatus == DENIED) {
+            checkPermissions();
+            return;
+        } else if (permissionStatus == BLOCKED_OR_NEVER_ASKED) {
+            showChangeSettingsDialog();
+            return;
+        }
+        if (startLocationUpdates()) {
+            final Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                int count = 0;
+
+                @Override
+                public void run() {
+                    if (count > 20) {
+                        showToastMessage(getResources().getString(R.string.try_again_later_msg));
+                        return;
+                    }
+                    count++;
+                    if (mIsGPSLocationAvailable) {
+                        dismissProgressDialog();
+                    } else {
+                        if (dialog == null) {
+                            showProgressDialog();
+                        }
+                        handler.postDelayed(this, 2000);
+                    }
+                }
+            }, 500);
+        } else {
+            showToastMessage(getResources().getString(R.string.try_again_later_msg));
+        }
+    }
+
+    void initializeKMLDocument() {
+        mKmlDocument = new KmlDocument();
+        mKmlStack = new Stack<KmlFeature>();
+        mKmlClipboard = new KmlFolder();
+    }
+
+    boolean checkPlotEntryExistInPreference() {
+        LocationBeanList LocationBeanList = SharedPreferenceUtils.getInstance(getApplicationContext()).getLocationBeanList(currentTrackname);
+        if (LocationBeanList != null) {
+            return true;
+        }
+        return false;
+    }
+
+    boolean checkPreviousPlotEntryExistInPreference() {
+        LocationBeanList LocationBeanList = SharedPreferenceUtils.getInstance(
+                getApplicationContext()).getLocationBeanList(previousTrackname);
+        if (LocationBeanList != null) {
+            return true;
+        }
+        return false;
+    }
+
+    String getLastLoggedPlotFromPreference() {
+        int plot = 0;
+        for (int i = 0; i < lPlotCount; i++) {
+            String plotName = getResources().getString(R.string.plot, i);
+            LocationBeanList LocationBeanList = SharedPreferenceUtils.getInstance(
+                    getApplicationContext()).getLocationBeanList(plotName);
+            if (LocationBeanList != null) {
+                plot = i;
+            }
+        }
+        return getResources().getString(R.string.plot, (plot + 1));
+    }
+
+    int getTotalLoggedPlotCount() {
+        int count = 0;
+        for (int i = 0; i < lPlotCount; i++) {
+            LocationBeanList LocationBeanList = SharedPreferenceUtils.
+                    getInstance(getApplicationContext()).getLocationBeanList(spinnerArray[i]);
+            if (LocationBeanList != null) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    void showChangeSettingsDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.location_permission_alertdialog_title);
+        builder.setMessage(R.string.open_application_settings_msg);
+        builder.setCancelable(false);
+        builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                Uri uri = Uri.fromParts("package", getPackageName(), null);
+                intent.setData(uri);
+                startActivityForResult(intent, REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS);
+            }
+        });
+        builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                showToastMessage(getResources().getString(R.string.gps_permission_denial_msg));
+            }
+        });
+        builder.create().show();
+    }
+
+    void handleStartStopLoggingButton() {
+
+        if (isGPSProviderEnabled()) {
+            if (!checkPlotEntryExistInPreference()) {
+                if (mLocationBeanList.size() > 0 && !mIsLoggingStarted) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setTitle(getResources().getString(R.string.ready_to_save, currentTrackname));
+                    builder.setMessage(R.string.restart_logging);
+                    builder.setCancelable(false);
+                    builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            mLocationBeanList = new ArrayList<>();
+                            bttnSave.setEnabled(false);
+                            initializeKMLDocument();
+                            initiateLogging();
+                        }
+                    });
+                    builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            showToastMessage(getResources().getString(R.string.save_existing_logs));
+                        }
+                    });
+                    builder.create().show();
+                } else {
+                    initiateLogging();
+                }
+
+            } else {
+                showToastMessage(getResources().getString(R.string.already_logged_and_saved, currentTrackname));
+            }
+
+            /**
+             * Whenever user start polygon recording at that time will fetch last known location from Android API and put location marker in center of Map UI.
+             * If last known location is null then will request GPS and fetch current location to put location marker in center of Map UI.
+             * Last Known location data is quickly to get from API and easily to update new location data.
+             */
+            if (startLocationUpdates()) {
+                Location location = null;
+                if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                    location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                    if (location == null)
+                        location = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                }
+                if (location != null) {
+                    GeoPoint newLocation = new GeoPoint(location);
+                    map.getController().animateTo(newLocation);
+                    //location known:
+                    onLocationChanged(location);
+                }
+            }
+
+        } else {
+            showTurnOnGPSDialog();
+        }
+    }
+
+    void initiateLogging() {
+        int permissionStatus = getPermissionStatus(this, Manifest.permission.ACCESS_FINE_LOCATION);
+        if (permissionStatus == DENIED) {
+            checkPermissions();
+            return;
+        } else if (permissionStatus == BLOCKED_OR_NEVER_ASKED) {
+            showChangeSettingsDialog();
+            return;
+        }
+        if (startLocationUpdates()) {
+            final Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                int count = 0;
+
+                @Override
+                public void run() {
+                    if (count > 10) {
+                        showToastMessage(getResources().getString(R.string.try_again_later_msg));
+                        return;
+                    }
+                    count++;
+                    if (mIsGPSLocationAvailable) {
+                        dismissProgressDialog();
+                        if (!mIsLoggingStarted) {
+                            if (checkPreviousPlotEntryExistInPreference() || (currentTrackname.equals(previousTrackname)))
+                                showPlotLocationConfirmDialog(currentTrackname);
+                            else
+                                showToastMessage(getResources().getString(R.string.previous_plot_not_recorded_msg, getLastLoggedPlotFromPreference()));
+                        } else {
+                            if (mLocationBeanList.size() > 0) {
+                                showToastMessage(getResources().getString(R.string.ready_to_save, currentTrackname).trim().toUpperCase());
+                                pause.setEnabled(false);
+                                bttnSave.setEnabled(true);
+                                setButtonsLoggingState(false);
+                            } else {
+                                showToastMessage(getResources().getString(R.string.location_not_yet_logged));
+                                pause.setEnabled(false);
+                                bttnSave.setEnabled(false);
+                                setButtonsLoggingState(false);
+                            }
+                        }
+                    } else {
+                        if (dialog == null) {
+                            showProgressDialog();
+                        }
+                        handler.postDelayed(this, 2000);
+                    }
+                }
+            }, 500);
+        } else {
+            showToastMessage(getResources().getString(R.string.try_again_later_msg));
+        }
+    }
+
+    boolean isGPSProviderEnabled() {
+        if (mLocationManager != null) {
+            if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void setRecordingIcon(RecordingState recordingState) {
+        if (recordingState == RecordingState.RECORDING) {
+            recordingStatus.setImageResource(R.drawable.animation_recording);
+            AnimationDrawable frameAnimation = (AnimationDrawable) recordingStatus.getDrawable();
+            frameAnimation.start();
+        } else if (recordingState == RecordingState.PAUSED) {
+            recordingStatus.setImageResource(R.drawable.ic_recording_paused);
+        } else if (recordingState == RecordingState.STOPPED) {
+            recordingStatus.setImageResource(R.drawable.ic_recording_stopped);
+        }
+    }
+
+    private ProgressDialog dialog;
+
+    private void showProgressDialog() {
+        dialog = new ProgressDialog(this);
+        dialog.setMessage(getResources().getString(R.string.fetch_location_msg));
+        dialog.show();
+    }
+
+    private void dismissProgressDialog() {
+        if (dialog != null) {
+            if (dialog.isShowing()) {
+                dialog.dismiss();
+            }
+        }
+    }
+
+    private void setButtonsLoggingState(boolean aIsLoggingStarted) {
+        if (aIsLoggingStarted) {
+            mStartLoggingButton.setText(R.string.stop_logging_button_text);
+            setLoggingStarted(true);
+            setRecordingIcon(RecordingState.RECORDING);
+            pause.setEnabled(true);
+        } else {
+            setLoggingStarted(false);
+            setRecordingIcon(RecordingState.STOPPED);
+            mStartLoggingButton.setText(R.string.start_logging_button_text);
+            pause.setEnabled(false);
+        }
+    }
+
+    private void setPauseButtonState(boolean aIsPaused) {
+        if (aIsPaused) {
+            pause.setText(R.string.resume_button_text);
+            setRecordingIcon(RecordingState.PAUSED);
+            setLoggingPaused(true);
+        } else {
+            pause.setText(R.string.pause_button_text);
+            setRecordingIcon(RecordingState.RECORDING);
+            setLoggingPaused(false);
+        }
+    }
+
+    AlertDialog alert;
+
+    void showTurnOnGPSDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.gps_manager_msg);
+        builder.setCancelable(false);
+        builder.setMessage(R.string.enable_gps_msg);
+        builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                showToastMessage(getResources().getString(R.string.gps_turned_on));
+                Intent i = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                dialog.cancel();
+                startActivity(i);
+            }
+        });
+        builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                //No location service, no Activity
+                dialog.cancel();
+                finish();
+            }
+        });
+
+        alert = builder.create();
+        alert.show();
+    }
+
+    final private int REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS = 124;
+
+    boolean getLocationPermissionStatus() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return false;
+        }
+        return true;
+    }
+
+    public static int getPermissionStatus(Activity activity, String androidPermissionName) {
+        if (ContextCompat.checkSelfPermission(activity, androidPermissionName) != PackageManager.PERMISSION_GRANTED) {
+            if (!ActivityCompat.shouldShowRequestPermissionRationale(activity, androidPermissionName)) {
+                return BLOCKED_OR_NEVER_ASKED;
+            }
+            return DENIED;
+        }
+        return GRANTED;
+    }
+
+    void checkPermissions() {
+        List<String> permissions = new ArrayList<>();
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            permissions.add(Manifest.permission.ACCESS_FINE_LOCATION);
+        }
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        }
+
+        if (!permissions.isEmpty()) {
+            String[] params = permissions.toArray(new String[permissions.size()]);
+            ActivityCompat.requestPermissions(this, params, REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS: {
+                Map<String, Integer> perms = new HashMap<>();
+                // Initial
+                //perms.put(Manifest.permission.ACCESS_FINE_LOCATION, PackageManager.PERMISSION_GRANTED);
+                // Fill with results
+                for (int i = 0; i < permissions.length; i++) {
+                    perms.put(permissions[i], grantResults[i]);
+                }
+
+                // Check for WRITE_EXTERNAL_STORAGE
+                Boolean storage = perms.get(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+                if (!storage) {
+                    // Permission Denied
+                    Toast.makeText(this, R.string.storage_permission_explanation, Toast.LENGTH_LONG).show();
+                } // else: permission was granted, yay!
+
+                Boolean locationPerm = perms.get(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+                if (!locationPerm) {
+                    // Permission Denied
+                    Toast.makeText(this, R.string.location_permission_explanation, Toast.LENGTH_LONG).show();
+                }
+            }
+        }
+    }
+
+    void initializeButtonStates() {
+        bttnSave.setEnabled(false);
+        pause.setEnabled(false);
+        mStartLoggingButton.setText(R.string.start_logging_button_text);
+    }
+
+    void initializeLoggingVariables() {
+        mIsLoggingStopped = false;
+        mIsLoggingStarted = false;
+        mIsLoggingPaused = false;
+        mIsGPSLocationAvailable = false;
+    }
+
+    void setLoggingPaused(boolean isPaused) {
+        mIsLoggingPaused = isPaused;
+    }
+
+    void setLoggingStarted(boolean isStarted) {
+        mIsLoggingStarted = isStarted;
+        mIsLoggingStopped = !isStarted;
+    }
+
+    void setLoggingStopped(boolean isStopped) {
+        mIsLoggingStopped = isStopped;
+        mIsLoggingStarted = !isStopped;
+    }
+
+    void setGPSLocationAvailable(boolean isAvailable) {
+        mIsGPSLocationAvailable = isAvailable;
+        if (isAvailable) {
+            //currentLocation.setImageResource(R.drawable.ic_actionbutton_location_found);
+        } else {
+            //currentLocation.setImageResource(R.drawable.ic_actionbutton_location_searching);
+        }
+
+    }
+
+    void savePrefs() {
+        SharedPreferences prefs = getSharedPreferences("OSMNAVIGATOR", MODE_PRIVATE);
+        SharedPreferences.Editor ed = prefs.edit();
+        ed.putInt("MAP_ZOOM_LEVEL", map.getZoomLevel());
+        GeoPoint c = (GeoPoint) map.getMapCenter();
+        ed.putFloat("MAP_CENTER_LAT", (float) c.getLatitude());
+        ed.putFloat("MAP_CENTER_LON", (float) c.getLongitude());
+        MapTileProviderBase tileProvider = map.getTileProvider();
+        String tileProviderName = tileProvider.getTileSource().name();
+        ed.putString("TILE_PROVIDER", tileProviderName);
+        ed.putBoolean("NIGHT_MODE", mNightMode);
+        ed.apply();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putParcelable("location", myLocationOverlay.getLocation());
+        outState.putBoolean("tracking_mode", mTrackingMode);
+        outState.putParcelable("start", startPoint);
+        outState.putParcelable("destination", destinationPoint);
+        outState.putParcelableArrayList("viapoints", viaPoints);
+        savePrefs();
+    }
+
+    boolean startLocationUpdates() {
+        boolean result = false;
+        for (final String provider : mLocationManager.getProviders(true)) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                mLocationManager.requestLocationUpdates(provider, 0, 0, this);
+                result = true;
+            }
+        }
+        return result;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            mLocationManager.removeUpdates(this);
+        }
+    }
+
+    void updateUIWithTrackingMode() {
+        if (mTrackingMode) {
+            mTrackingModeButton.setBackgroundResource(R.drawable.btn_tracking_on);
+            if (myLocationOverlay.isEnabled() && myLocationOverlay.getLocation() != null) {
+                map.getController().animateTo(myLocationOverlay.getLocation());
+            }
+            map.setMapOrientation(-mAzimuthAngleSpeed);
+            mTrackingModeButton.setKeepScreenOn(true);
+        } else {
+            mTrackingModeButton.setBackgroundResource(R.drawable.btn_tracking_off);
+            map.setMapOrientation(0.0f);
+            mTrackingModeButton.setKeepScreenOn(false);
+        }
+    }
+
+    @Override
+    public boolean singleTapConfirmedHelper(GeoPoint p) {
+        InfoWindow.closeAllInfoWindowsOn(map);
+        return true;
+    }
+
+    @Override
+    public boolean longPressHelper(GeoPoint p) {
+        return false;
+    }
+
+    void setStdTileProvider() {
+        if (!(map.getTileProvider() instanceof MapTileProviderBasic)) {
+            MapTileProviderBasic bitmapProvider = new MapTileProviderBasic(this);
+            map.setTileProvider(bitmapProvider);
+        }
+    }
+
+    void updateUIWithKml() {
+        if (mKmlOverlay != null) {
+            mKmlOverlay.closeAllInfoWindows();
+            map.getOverlays().remove(mKmlOverlay);
+        }
+        mKmlOverlay = (FolderOverlay) mKmlDocument.mKmlRoot.buildOverlay(map, buildDefaultStyle(), null, mKmlDocument);
+        map.getOverlays().add(mKmlOverlay);
+        map.invalidate();
+    }
+
+    Style buildDefaultStyle() {
+        Drawable defaultKmlMarker = ResourcesCompat.getDrawable(getResources(), R.drawable.ic_record_polygon, null);
+        Bitmap bitmap = ((BitmapDrawable) defaultKmlMarker).getBitmap();
+        return new Style(bitmap, Color.RED, 5.0f, Color.RED);
+    }
+
+    //------------ LocationListener implementation
+    private final NetworkLocationIgnorer mNetworkLocationIgnorer = new NetworkLocationIgnorer();
+    long mLastTime = 0; // milliseconds
+    double mSpeed = 0.0; // km/h
+
+    @Override
+    public void onLocationChanged(final Location pLoc) {
+        setGPSLocationAvailable(true);
+
+        long currentTime = System.currentTimeMillis();
+        if (mNetworkLocationIgnorer.shouldIgnore(pLoc.getProvider(), currentTime))
+            return;
+        double dT = currentTime - mLastTime;
+        if (dT < 100.0) {
+            //Toast.makeText(this, pLoc.getProvider()+" dT="+dT, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        mLastTime = currentTime;
+
+        GeoPoint newLocation = new GeoPoint(pLoc);
+        if (!myLocationOverlay.isEnabled()) {
+            //we get the location for the first time:
+            myLocationOverlay.setEnabled(true);
+            map.getController().animateTo(newLocation);
+        }
+
+        GeoPoint prevLocation = myLocationOverlay.getLocation();
+        myLocationOverlay.setLocation(newLocation);
+        myLocationOverlay.setAccuracy((int) pLoc.getAccuracy());
+        if (prevLocation != null && pLoc.getProvider().equals(LocationManager.GPS_PROVIDER)) {
+            mSpeed = pLoc.getSpeed() * 3.6;
+            long speedInt = Math.round(mSpeed);
+            TextView speedTxt = (TextView) findViewById(R.id.speed);
+            speedTxt.setText(getResources().getString(R.string.speed_unit_kmph, speedInt));
+
+            //TODO: check if speed is not too small
+            mAzimuthAngleSpeed = pLoc.getBearing();
+            myLocationOverlay.setBearing(mAzimuthAngleSpeed);
+        }
+
+        map.getController().animateTo(newLocation);
+        map.setMapOrientation(-mAzimuthAngleSpeed);
+
+        if (mTrackingMode) {
+            //keep the map view centered on current location:
+            /*map.getController().animateTo(newLocation);
+            map.setMapOrientation(-mAzimuthAngleSpeed);*/
+        } else {
+            //just redraw the location overlay:
+            map.invalidate();
+        }
+        if (mIsLoggingStopped || mIsLoggingPaused) {
+            return;
+        }
+        if (mIsLoggingStarted) {
+            recordCurrentLocationInTrack(currentTrackname.toLowerCase().replace(" ", "-"), currentTrackname, newLocation);
+        }
+    }
+
+    static int[] TrackColor = {
+            Color.CYAN - 0x20000000, Color.BLUE - 0x20000000, Color.MAGENTA - 0x20000000, Color.RED - 0x20000000, Color.YELLOW - 0x20000000
+    };
+
+    KmlTrack createTrack(String id, String name) {
+        KmlTrack t = new KmlTrack();
+        KmlPlacemark p = new KmlPlacemark();
+        p.mId = id;
+        p.mName = name;
+        p.mGeometry = t;
+        mKmlDocument.mKmlRoot.add(p);
+        //set a color to this track by creating a style:
+        Style s = new Style();
+        int color = Color.RED - 0x20000000;
+        s.mLineStyle = new LineStyle(color, 8.0f);
+        String styleId = mKmlDocument.addStyle(s);
+        p.mStyle = styleId;
+        return t;
+    }
+
+    void recordCurrentLocationInTrack(String trackId, String trackName, GeoPoint currentLocation) {
+        //Find the KML track in the current KML structure - and create it if necessary:
+        KmlTrack t;
+        KmlFeature f = mKmlDocument.mKmlRoot.findFeatureId(trackId, false);
+        if (f == null)
+            t = createTrack(trackId, trackName);
+        else if (!(f instanceof KmlPlacemark))
+            //id already defined but is not a PlaceMark
+            return;
+        else {
+            KmlPlacemark p = (KmlPlacemark) f;
+            if (!(p.mGeometry instanceof KmlTrack))
+                //id already defined but is not a Track
+                return;
+            else
+                t = (KmlTrack) p.mGeometry;
+        }
+        //TODO check if current location is really different from last point of the track
+        //record in the track the current location at current time:
+        t.add(currentLocation, new Date());
+        if (currentLocation != null) {
+            plot plot = new plot();
+            plot.setLat(currentLocation.getLatitude());
+            plot.setLng(currentLocation.getLongitude());
+            plot.setEle(0.0);
+            mLocationBeanList.add(plot);
+        }
+        //refresh KML:
+        updateUIWithKml();
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+        setGPSLocationAvailable(false);
+        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+        startActivity(intent);
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+        setGPSLocationAvailable(true);
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        currentTrackname = getResources().getString(R.string.plot, (position + 1));
+        if (position == 0)
+            previousTrackname = getResources().getString(R.string.plot, (position + 1));
+        else
+            previousTrackname = getResources().getString(R.string.plot, position);
+        areaInfo.setText("");
+        if (mIsLoggingStarted) {
+
+            String currentPlotName = spinnerArray[currentLoggingTrackSpinnerPosition];
+            if (!currentTrackname.equals(currentPlotName)) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle(R.string.logging_progress_msg);
+                builder.setMessage(R.string.cancel_logging_question + currentPlotName + "?");
+                builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        showToastMessage(getResources().getString(R.string.cancel_logging_msg, currentTrackname));
+                        mLocationBeanList = new ArrayList<>();
+                        initializeKMLDocument();
+                        setButtonsLoggingState(false);
+                        initializeButtonStates();
+                    }
+                });
+                builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        spinnerPlotList.setSelection(currentLoggingTrackSpinnerPosition);
+                    }
+                });
+                builder.create().show();
+            }
+            return;
+        }
+        currentTrackname = getResources().getString(R.string.plot, (position + 1));
+        if (position == 0)
+            previousTrackname = getResources().getString(R.string.plot, (position + 1));
+        else
+            previousTrackname = getResources().getString(R.string.plot, position);
+        if (!checkPlotEntryExistInPreference()) {
+            showToastMessage(getResources().getString(R.string.not_logged_yet, currentTrackname));
+            initializeKMLDocument();
+            loadMapWithPolygon(currentTrackname);
+            return;
+        } else {
+            initializeKMLDocument();
+            loadMapWithPolygon(currentTrackname);
+        }
+    }
+
+    protected Polygon mDestinationPolygon;
+
+    public void updateUIWithPolygon(ArrayList<GeoPoint> polygon, String name) {
+        if (mKmlOverlay != null) {
+            mKmlOverlay.closeAllInfoWindows();
+            map.getOverlays().remove(mKmlOverlay);
+        }
+        List<Overlay> mapOverlays = map.getOverlays();
+        int location = -1;
+        if (mDestinationPolygon != null)
+            location = mapOverlays.indexOf(mDestinationPolygon);
+        mDestinationPolygon = new Polygon();
+        mDestinationPolygon.setFillColor(0x15FF0080);
+        mDestinationPolygon.setStrokeColor(0x800000FF);
+        mDestinationPolygon.setStrokeWidth(5.0f);
+        mDestinationPolygon.setTitle(name);
+        BoundingBox bb = null;
+        if (polygon != null) {
+            mDestinationPolygon.setPoints(polygon);
+            bb = BoundingBox.fromGeoPoints(polygon);
+        }
+        if (location != -1)
+            mapOverlays.set(location, mDestinationPolygon);
+        else
+            mapOverlays.add(1, mDestinationPolygon); //insert just above the MapEventsOverlay.
+        if (polygon.size() > 0) {
+            setViewOn(bb);
+        }
+        map.invalidate();
+    }
+
+    void setViewOn(BoundingBox bb) {
+        if (bb != null) {
+            map.zoomToBoundingBox(bb, true);
+        }
+    }
+
+
+    void loadMapWithPolygon(String trackId) {
+        //record in the track the current location at current time:
+        ArrayList<GeoPoint> geoPoints = new ArrayList<>();
+        ArrayList<Double> lats = new ArrayList<>();
+        ArrayList<Double> lons = new ArrayList<>();
+        LocationBeanList locationBeanList = SharedPreferenceUtils.getInstance(getApplicationContext()).getLocationBeanList(trackId);
+        if (locationBeanList != null) {
+            for (plot locationBean : locationBeanList.getLocationBean()) {
+                GeoPoint currentLocation = new GeoPoint(locationBean.getLat(), locationBean.getLng());
+                lats.add(locationBean.getLat());
+                lons.add(locationBean.getLng());
+                geoPoints.add(currentLocation);
+            }
+        }
+        if (lats.size() > 0) {
+            double lTotalArea = Utils.getArea(lats, lons);
+            if (lTotalArea >= 0) {
+                lTotalArea = lTotalArea / 10000;
+                lTotalArea = Math.round(lTotalArea * 100.0) / 100.0;
+                areaInfo.setText(getResources().getString(R.string.area_info, lTotalArea));
+                ;
+            }
+        }
+        updateUIWithPolygon(geoPoints, trackId);
+    }
+
+    void savePolygonToSharedPreference() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(getResources().getString(R.string.save_polygon_alertdialog_title, currentTrackname));
+        builder.setCancelable(false);
+        builder.setMessage(getResources().getString(R.string.save_polygon_alertdialog_msg, currentTrackname));
+        builder.setPositiveButton(R.string.save_button_text, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                LocationBeanList lLocationBeanList = new LocationBeanList();
+                lLocationBeanList.setLocationBean(mLocationBeanList);
+
+                String plotGeoJson = SharedPreferenceUtils.getInstance(getApplicationContext()).setLocationBeanList(currentTrackname, lLocationBeanList);
+
+                String plotId = currentTrackname.toLowerCase().replace(" ", "").toString().concat("_" + mFarmId);
+                savePlotGeoDataJsonToDatabase(plotGeoJson, plotId);
+
+                try {
+                    String plotallLocations = prepareJsonServerSync();
+                    saveToSyncDatabase(plotallLocations);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                //List<LocationBeanList> list = SharedPreferenceUtils.getInstance(getApplicationContext()).getAllLocations();
+
+                showToastMessage(getResources().getString(R.string.saved_successfully_msg, currentTrackname));
+                mLocationBeanList = new ArrayList<>();
+                bttnSave.setEnabled(false);
+                if (checkPlotEntryExistInPreference()) {
+                    initializeKMLDocument();
+                    loadMapWithPolygon(currentTrackname);
+                }
+            }
+        });
+        builder.setNegativeButton(R.string.close, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        builder.create().show();
+
+    }
+
+    /**
+     * Save plot geo data to table with plotgeo json and plot name
+     *
+     * @param plotGeoJson plot geo data json
+     * @param plotName    plot name is unique name for identifying plot
+     */
+    void savePlotGeoDataJsonToDatabase(String plotGeoJson, String plotName) {
+        DataLayer dl = new DataLayer(getResources(), RecordPolygonActivity.this);
+        if (plotGeoJson != null) {
+            //plotGeoJson = Base64.encodeToString(plotGeoJson.getBytes(), Base64.NO_WRAP);
+
+            if (plotName != null && plotGeoJson != null) {
+                dl.updatePlotGeoData(mFarmId, plotName, plotGeoJson);
+            }
+        }
+    }
+
+    /**
+     * prepare JSON to sync with server based on server require format. It is collecting require data from plot geo data table and prepare json.
+     * <p>
+     * Prepare JSON to sync with server based on server require format.
+     * It is collecting require data from plot geo data table and prepare json.
+     *
+     * @return JSON server require format
+     * @throws JSONException
+     */
+    String prepareJsonServerSync() throws JSONException {
+
+        DataLayer dl = new DataLayer(getResources(), RecordPolygonActivity.this);
+        Cursor c = dl.getPlotGeoData();
+
+        JSONObject location = new JSONObject();
+
+        if (c.getCount() > 0) {
+            c.moveToFirst();
+
+            JSONArray plotsArray = new JSONArray();
+
+            for (int i = 0; i < c.getCount(); i++) {
+                int farmId = c.getInt(c.getColumnIndex(OFISDBContract.PlotGeoData.COLUMN_NAME_FARM_ID));
+
+                String syncFlag = c.getString(c.getColumnIndex(OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_SYNC_FLAG));
+
+                if (farmId == mFarmId && syncFlag.equals("false")) {
+                    JSONObject plotsObj = new JSONObject(c.getString(c.getColumnIndex(OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_JSON)));
+                    plotsObj.putOpt("plotid", c.getString(c.getColumnIndex(OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_NAME)));
+
+                    plotsArray.put(plotsObj);
+                }
+
+                c.moveToNext();
+            }
+
+            JSONObject plotsObj = new JSONObject();
+            plotsObj.put("plots", plotsArray);
+
+            JSONArray locArray = new JSONArray();
+            locArray.put(plotsObj);
+
+            location.put("location", locArray);
+        }
+
+        return location.toString();
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+    }
+
+    void saveToSyncDatabase(String plotsJson) {
+        DataLayer dl = new DataLayer(getResources(), RecordPolygonActivity.this);
+        if (plotsJson != null) {
+            plotsJson = Base64.encodeToString(plotsJson.getBytes(), Base64.NO_WRAP);
+            dl.updateFarmPolygon(mFarmerId, plotsJson, mOlamFarmerId, mFarmId, mFarmerName);
+        }
+    }
+
+    String getPlotsJsonFromLocationBeanList(List<LocationBeanList> aLocationBeanList, String plotId) {
+        PlotsList lPlotList = new PlotsList();
+        List<location> lplotsList = new ArrayList<>();
+        List<plots> lposition_dataList = new ArrayList<>();
+        location lplots = new location();
+        for (int i = 0; i < aLocationBeanList.size(); i++) {
+            List<plot> lplotList = new ArrayList<>();
+            plots lposition_data = new plots();
+            for (plot bean : aLocationBeanList.get(i).getLocationBean()) {
+                lplotList.add(bean);
+            }
+            lposition_data.setPlot(lplotList);
+            lposition_data.setPlotId(plotId);
+            lposition_dataList.add(lposition_data);
+        }
+        lplots.setPlots(lposition_dataList);
+        lplotsList.add(lplots);
+        lPlotList.setLocation(lplotsList);
+        String json = lPlotList == null ? null : new Gson().toJson(lPlotList);
+        return json;
+    }
+
+    void showPlotLocationConfirmDialog(final String aPlotName) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.confirm);
+        builder.setCancelable(false);
+        builder.setMessage(getResources().getString(R.string.plot_location_confirmation, aPlotName));
+        builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                bttnSave.setEnabled(false);
+                setLoggingStarted(true);
+                setButtonsLoggingState(true);
+                initializeKMLDocument();
+                myLocationOverlay.setEnabled(true);
+                currentLoggingTrackSpinnerPosition = spinnerPlotList.getSelectedItemPosition();
+            }
+        });
+        builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                showToastMessage(getResources().getString(R.string.logging_not_started_msg));
+            }
+        });
+        builder.create().show();
+    }
+
+    void showToastMessage(String aMessage) {
+        Toast.makeText(getApplicationContext(), aMessage,
+                Toast.LENGTH_SHORT).show();
+    }
+
+    public void showEditPlotsDialog(View view) {
+        final Dialog dialog = new Dialog(RecordPolygonActivity.this);
+        dialog.setContentView(R.layout.number_picker_dialog);
+        dialog.setTitle(R.string.edit_plot_dialog_title);
+
+        final NumberPicker numberPicker = dialog.findViewById(R.id.numberPicker);
+        Button buttonSave = dialog.findViewById(R.id.buttonSave);
+        Button buttonCancel = dialog.findViewById(R.id.buttonCancel);
+        TextView existingPlotCount = dialog.findViewById(R.id.existingPlotCount);
+        TextView existingPlotsLogged = dialog.findViewById(R.id.existingPlotsLogged);
+
+
+        existingPlotCount.setText(getResources().getString(R.string.existing_plots, lPlotCount));
+        existingPlotsLogged.setText(getResources().getString(
+                R.string.existing_plots_logged, getTotalLoggedPlotCount()));
+        numberPicker.setMaxValue(1000); // max value 1000
+        if (getTotalLoggedPlotCount() == 0)
+            numberPicker.setMinValue(getTotalLoggedPlotCount() + 1);
+        else
+            numberPicker.setMinValue(getTotalLoggedPlotCount());
+        numberPicker.setValue(lPlotCount);
+        numberPicker.setWrapSelectorWheel(false);
+        //numberPicker.setOnValueChangedListener(this);
+
+        buttonSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                lPlotCount = numberPicker.getValue();
+                spinnerArray = (String[]) resizeArray(spinnerArray, lPlotCount);
+                for (int i = 0; i < lPlotCount; i++) {
+                    spinnerArray[i] = getResources().getString(R.string.plot, (i + 1));
+                }
+                spinnerArrayAdapter = new ArrayAdapter<String>
+                        (RecordPolygonActivity.this, android.R.layout.simple_spinner_item,
+                                spinnerArray);
+                spinnerArrayAdapter.setDropDownViewResource(android.R.layout
+                        .simple_spinner_dropdown_item);
+                spinnerPlotList.setAdapter(spinnerArrayAdapter);
+                SharedPreferenceUtils.getInstance(getApplicationContext()).setPlotCount("" + mFarmId, lPlotCount);
+                dialog.dismiss();
+            }
+        });
+
+        buttonCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+    }
+
+    /**
+     * Reallocates an array with a new size, and copies the contents
+     * of the old array to the new array.
+     *
+     * @param oldArray the old array, to be reallocated.
+     * @param newSize  the new array size.
+     * @return A new array with the same contents.
+     */
+    private static Object resizeArray(Object oldArray, int newSize) {
+        int oldSize = java.lang.reflect.Array.getLength(oldArray);
+        Class elementType = oldArray.getClass().getComponentType();
+        Object newArray = java.lang.reflect.Array.newInstance(
+                elementType, newSize);
+        int preserveLength = Math.min(oldSize, newSize);
+        if (preserveLength > 0)
+            System.arraycopy(oldArray, 0, newArray, 0, preserveLength);
+        return newArray;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        NavUtils.navigateUpFromSameTask(this);
+    }
+}

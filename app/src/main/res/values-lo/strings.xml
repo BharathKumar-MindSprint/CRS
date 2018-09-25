@@ -1,0 +1,449 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--
+         DICTIONARY FILE, in order to translate just change the value not the key
+         ie, <string name="Settings">Paramètres</string>
+    -->
+    <!-- action bar and activity titles -->
+    <string name="ofis_action_bar_home">​ບ້ານ</string>
+    <string name="ofis_action_bar_settings">​ສ​ະ​ຖານ​​ທີ່</string>
+    <string name="title_activity_settings">ສະ​ຖານ​ທີ </string>
+    <string name="title_activity_add_farmer">ເພີມ​ຊື່​ຊາວ​ສວນ</string>
+    <string name="title_activity_add_infrastructure">ເພີມ​ພື້ນ​ຖານ​ໂຄງ​ລາງ​ສັງ​ຄົມ</string>
+    <string name="title_activity_find_farmer">ຊອກ​ຫາ​ສວນ</string>
+    <string name="title_activity_view_farmer">ລາຍ​ລະ​ອ່ຽດ​ຂອງ​ຊາວ​ສວນ</string>
+    <string name="title_activity_complete_module">ພາກ​ສວນ​ຂອງ​ຄຳ​ຖາມ​ທີ່​ສົມ​ບູນ</string>
+
+    <!-- main stuff -->
+    <string name="app_name">ຄູ່​ເຄືອງດັບ​ຟັງ​ຂອງ​ການ OFIS </string>
+    <string name="cd_topSectionColour">ສີ​ພື້ນ​ສະ​ເພາະ​ກຸ່ມ</string>
+    <string name="ofis_switch_text_no">ບໍ່</string>
+    <string name="ofis_switch_text_yes">​ແມ່ນ</string>
+
+    <!-- Home screen related -->
+    <string name="Retrieving_data">ກວດ​ເບີ່ງ​ເພືອ​ດັບ​ເດດ</string>
+    <string name="importing_string">​ກ​ານ​ນຳ​ເຂົ້າ​ເປັນ%% || ຂອງ​ການ​ບັນ​ທຶກ​ຄັ້ງ​ທີ​ສອງ</string>
+    <string name="spinners_up_to_date">ຟອມ​ຂໍ້​ມູນ​ທີ​ທັນ​ສະ​ໄໝ</string>
+    <string name="updating_modules">ກຳ​ລັງ​ໂຫລດ​ຄຳ​ຖາມ​ຂໍ້​ມູນ</string>
+    <string name="modules_up_to_date">ຄຳ​ຖາ​ມ​ທີ​ທັ​ນ​ສະ​ໄໝ</string>
+    <string name="updating_farmers">ກຳ​ລັງ​ດ​າວ​ໂຫລດ​ຂໍ້​ມູນ​ຂອງ​ຊາວ​ສວນ</string>
+    <string name="farmers_up_to_date">​ຄວາມ​ກ່າວ​ໜ້າ​ຂອງ​ຊາວ​ສວນ</string>
+    <string name="update_complete">ອັບ​ເດດ​ສົມ​ບູນ</string>
+    <string name="new_farmer">ຊວນ​ສວນ​ໃໝ່</string>
+    <!-- module row stuff -->
+    <string name="Awaiting_Sync">ລໍ​ຖ້າ_Sync</string>
+    <!-- in XML -->
+    <string name="ofis_complete_questionnaire">ພາກ​ສວນ​ຂອງ​ຄຳ​ຖາມ​ທີ່​ສົມ​ບູນ</string>
+    <string name="ofis_add_infrastructure">ເພີ່ມ​ໂຄງ​ສ້າງ​ສັງ​ຄົມ</string>
+    <string name="ofis_add_new_farmer">ເພີ່ມ​ຊື່​ຊາວ​ສວນ​ໃໝ່</string>
+    <string name="Modules_to_submit">ຫົວ​​ຂໍ້​ສະ​ເໜີ</string>
+    <string name="item_synced">ຂໍ້ (s) ແມ່ນ​ລະ​ບົບ synced ສຳ​ເລັດ​ແລ້ວ</string>
+    <string name="item_sync_error">ລະ​ບົບ syncing ຜິດ​ພາດ. ກະ​ລຸ​ນາ​ຕິ​ດ​ຕໍ່​ພວກ​ເຮົາ​ເພື​ອ​ຊ່ວຍ​ເຫຼື້ອ</string>
+    <string name="ofis_first_run_intro">ເຈົ້າ​ບໍ່​ໄດ້​ຢູ່​ແຖວໆ​ນີ້​ມາ​ກ່ອນ ແມ່ນບໍ່? ເຮົາ​ສາ​ມາດ​   ເອົ​າ​ບາງ​ລາຍ​ລະ​ອຽດ​ໄດ້​ບໍ່?</string>
+    <string name="ofis_first_run_save_update">ຈັດ​ເກັບ ແລະ​ອັບ​ເດດ</string>
+
+    <!-- Settings screen related -->
+    <!-- in XML -->
+    <string name="Enumerator_ID">​​ເລ​ກ​ບັດ​ຂອງ​ຜູ້​ນັບ</string>
+
+    <!-- ADD POI related -->
+    <string name="Successfully_added">ການ​ເພີມ​ແມ່ນ​ສຳ​ເລັດ​ແລ້ວ</string>
+    <string name="Successfully_updated">ການ​ອັບ​ເດດ​ແມ່ນ​ສຳ​ເລັດ​ແລ້ວ</string>
+    <string name="ofis_select_gender">ບົດ​ບາດ</string>
+    <string name="ofis_olam_funded">ທຶນ​ໂອ​ລາມບໍ່?</string>
+    <string name="ofis_select_year_opened">ປີ​ທີ​ເປີດ</string>
+    <string name="ofis_select_education_level">ການ​ເຂົ້າ​ລະ​ດັບ​ການ​ສຶກ​ສາ</string>
+    <string name="ofis_select_product">ຜົນ​ຜະ​ລິດທີ່​ຊື້​</string>
+    <string name="ofis_select_supply_type">​ປະ​ເພດ​ຂອງ​ນ້ຳ​ປະ​ປ​າ</string>
+    <string name="location_not_available">ສ​ະ​ຖານ​ທີບໍ່​ສະ​ດວກ</string>
+
+    <!-- in XML -->
+    <string name="Add_Point_of_Interest">ເຂົ້າ​ພື້ນ​ຖານ​ໂຄງ​ລາງ</string>
+    <string name="Name">ຊື່</string>
+    <string name="GPS_Position">ຕຳ​ແໜງ GPS</string>
+
+    <!-- in XML includes -->
+    <string name="Capacity">ຄວາມ​ສາ​ມາດ​ຂອງ​ລູກ​ສິດ</string>
+    <string name="Number_of_Classrooms">​ເບີ​ຫ້ອ​ງ​ຮຽນ</string>
+
+    <!-- Add farmer related -->
+    <!-- in code -->
+    <string name="Select_picture_from">ເລືອກ​ຮູບ​ພ​າບ​ຈາກ</string>
+    <string name="Camera">ກອງ​ຖ່າຍ​ຮູບ</string>
+    <string name="Gallery">ຮູບ​</string>
+    <string name="Please_wait">ກະ​ລຸ​ນາ​ລໍ​ຖ້າ</string>
+    <string name="Please_fill_all_fields">ກະ​ລຸ​ນາ​ເຕີມ​​ບ່ອນຫ່​ວາ​ງ​ທັງ​ໝົດ​ຂອງ​ສະ​ໜາມ</string>
+    <string name="id_not_unique">ເລກ​ບັດ​ຊາວ​ສວນນັ້ນ​ບໍ່​ຄື​ກັນ, ກ​ະ​ລຸ​ນາ​ລອງ​ອີກ​ຄັ້ງ</string>
+    <string name="Submitting_data">ການ​ຍືນ​ຢັນ​ຂໍ້​ມູນ</string>
+    <string name="Farmer_Added">​ເອົ​າ​ຊື່​ຊາວ​ສວນ​ເຂົ້າ​ແລ້ວ</string>
+    <string name="Farmer_Updated">​ການ​ອັບ​ເດດ​ຂອງ​ຊາວ​ສວນ</string>
+    <string name="are_you_at_the_farm">ເຈົ້າ​ຢູ່​ສວນບໍ່?</string>
+    <string name="yes">ແມ່ນ</string>
+    <string name="no">​ບໍ່</string>
+    <string name="searching_for_loc">ກຳ​ລັງ​ຄົ້ນ​ຫາ​ທີ​ຕັ້ງ</string>
+    <string name="ofis_farmer_id_hint">AA-0000-AAAA-</string>
+
+    <!-- in XML -->
+    <string name="Add_Farmer">ເຂົ້າ​ຊື່​ຊາວ​ສວນ</string>
+    <string name="Farmer_Name">ຊື່​ຊ​າວ​ສວນ</string>
+    <string name="Date_of_Birth">​ວັນ​ເດືອນ​ປີ​ເກີດ</string>
+    <string name="Country">ປະ​ເທດ</string>
+    <string name="New_place_name">​ຊື່​ສະ​ຖານ​ທີ​ໃໝ່</string>
+    <string name="new_place_name_placeholder">​ສ​ະ​ຖານ​ທີ​ໃໝ່</string>
+    <string name="Olam_Farmer_ID">ເລກ​ບັດ​ຊາວ​ສວນ​ໂອ​ລາມ</string>
+    <string name="Save">ເສັບ</string>
+    <string name="Add_Signature">ລາຍ​ເຊັນ</string>
+
+    <!-- Find a farmer related -->
+    <!-- in XML -->
+    <string name="Select_Farmer">ເລືອກ​ຊາວ​ສວນ</string>
+    <string name="Search">ຄົ້ນ​ຫາ</string>
+
+    <!-- View farmer related -->
+    <!-- in XML -->
+    <string name="View_Farmer">ວີວ​ຊາວ​ສວນ;</string>
+    <string name="Farmer_Photo">ຮູບ​ຂອງ​ຊາວ​ສວນ</string>
+    <string name="Task_list_header">ລາຍ​ການ​ຂອງວຽກ</string>
+    <string name="record_farm_location">ບັນ​ທຶກ​ທີ​ຕັ້ງ​ຂອງ​ສວນ</string>
+    <string name="record_farm_location_hint">ແທບ​ເພືອ​ຮັບ GPS</string>
+    <string name="record_farm_location_complete">ບັນ​ທຶກ​ທີ​ຕັ້ງ​</string>
+    <string name="record_location_timeout">ບໍ່​ສາ​ມາດ​ຊອກ​ຫາ​ທີ່​ຕັ້ງ​ໄດ້,​ກະ​ລຸ​ນາ​ລອງ​ອີກ​ເທືອ​ໜຶ່ງ</string>
+    <string name="enabled_string">true</string>
+    <string name="review_farm_management_plan">ທ​ວນ​ຄື່ນ​ແຜນ​ການ​ຄຸ້ມ​ຄອງ​ສວນ</string>
+    <string name="review_farm_management_plan_hint">ແທບ​ເພືອ​ບັນ​ທຶກ​ການ​ສົ່ງ​ກັບ​ຄື່ນ</string>
+
+    <!-- For View Sub Module - questionnaire default values -->
+    <string name="ModuleTitle">ພາກ​ສວນຫົ​ວ​ເລື່ອງ​ຕາມນີ້</string>
+    <string name="ModuleSubTitle">ພາກ​ຄຳ​ສັບ​ຕາມ​ຫົ​ວ​ເລື່ອງ​ທີ່​ຢູ່​ໃນນີ້</string>
+    <string name="ModuleStatus">ວຽກໃໝ່</string>
+    <string name="module_in_progress">ໃນ​ເກີດ​ຂື້ນ​ຢູ່​ທີ່</string>
+    <string name="module_finished">ລໍ​ຖ້າ​ການ​ອັບ​ໂຫຼດ</string>
+    <string name="ModuleAnswerHint">ຄຳ​ຕອບ</string>
+
+    <!-- module action buttons -->
+    <string name="ModuleBackButton">ກັບ</string>
+    <string name="ModuleNextButton">ຄັດ​ໄປ</string>
+    <string name="ModuleSaveButton">ຈັດ​ເກັບ</string>
+
+    <!-- errors -->
+    <string name="Internet_not_available">​ອີນ​ເຕີ​ເນັດ​ບໍ່​ໄດ້ - ເຈົ້າ​ຕ້ອງອອ​ນ​ລ່າ​ຍ​ເພື​ອ​ການ​ເຮັດ​ວ​ຽກ​ນີ້​ໃຫ້​ສຳ​ເລັດ</string>
+    <string name="networking_error">​ຜິດ​ພາດ.ນີ້​ບາງ​ທີ​ອາດ​ແມ່ນ​ຄວາມ​ຜິດ​ພາດ​ບາງ​ເວ​ລ​າ​ນອ​ກ, ກ​ະ​ລຸ​ນາ​ລອງ​ອີກ​ຄັ້ງ</string>
+    <string name="farmer_not_synced">ຂໍ​ໂທດ,​ຊື່​ຂອງ​ຊາວ​ສວນ​ແມ່ນ​ຍັງ​ບໍ່​ທັນ​ໃດ​ຖືກ​ໃຊ້້​ເທືອ,ກະ​ລຸ​ນາ​ຕັ້ງ​ຊື່​ຂອງ​ຊາວ​ສວນ​ເຂົ້າ​ໃນ​ລະ​ບົບ​ sync ກ່ອນ</string>
+
+    <!-- upgrade -->
+    <string name="upgrade_message">ການ​ນຳ​ໃຊ້​ແມ່ນ​ໄດ້​ອັບ​ເກ​ຣດ​ແລ້ວ ກຳ​ລັງ​ອັບ​ເດດ​ຂໍ້​ມູນ​ຂອງ​ເຈົ້າ​ອີກ​ເທືອ​ໜຶ່ງ</string>
+
+    <!-- SPINNERS -->
+
+
+    <!-- spinner default values -->
+    <string name="spinner_country_default">ເລືອກ​ປະ​ເທດ</string>
+    <string name="spinner_region_default">ເລືອກ​ພື້ນ​ທີ່</string>
+    <string name="spinner_district_default">ເລືອກ​ເມືອງ</string>
+    <string name="spinner_place_default">ເລືອກ​ສະ​ຖານ​ທີ</string>
+    <string name="spinner_farmergroup_default">ເລືອກ​ກຸ່ມ​ຊາວ​ສວນ</string>
+    <string name="spinner_section_default">ເລືອກ​ຂະ​ແໜງ</string>
+    <string name="spinner_product_default">ເລືອກ​ຜ​ະ​ລິດ​ຕະ​ພັນ</string>
+
+    <string-array name="poitypes">
+        <item>ໂຮງ​ຮຽນ</item><!-- sc -->
+        <item>ສູນ​ການ​ແພ​ດ</item><!-- hc -->
+        <item>ການ​ສະ​ໜອງ​ນ້ຳ​ທີ່​ສະ​ອາດ</item><!-- cws -->
+        <item>ສູນ​ການ​ຊື້</item><!-- bc -->
+    </string-array>
+    <string name="poitype_school">ໂຮງ​ຮຽນ</string>
+    <string name="poitype_healthcentre">ສູນ​ການ​ແພ​ດ</string>
+    <string name="poitype_cleanwatersupply">ການ​ສະ​ໜອງ​ນ້ຳ​ທີ່​ສະ​ອາດ</string>
+    <string name="poitype_buyingcentre">ສູນ​ການ​ຊື້</string>
+    <string-array name="genders">
+        <item>ຊາຍ</item><!-- male -->
+        <item>ຜູ້​ຍິ່ງ</item><!-- female -->
+    </string-array>
+    <string name="gender_male">ຊາຍ</string>
+    <string name="gender_female">ຜູ້​ຍິ່ງ</string>
+    <string-array name="genders_2">
+        <item>ຊາຍ</item><!-- male -->
+        <item>ຜູ້​ຍິ່ງ</item><!-- female -->
+        <item>ກ່ຽວ​ກັບ​ສະ​ຫະ​ສຶກ​ສາ</item><!-- coed -->
+    </string-array>
+    <string name="gender_school_male">ຊາຍ</string>
+    <string name="gender_school_female">ຜູ້​ຍິ່ງ</string>
+    <string name="gender_school_coeducational">ກ່ຽວ​ກັບ​ສະ​ຫະ​ສຶກ​ສາ</string>
+    <string-array name="educationlevels">
+        <item>​​ອະ​ນຸ​ບານ</item>
+        <item>ຊັ້ນ​ປະ​ຖົມ</item>
+        <item>ລ​ະ​ດັບ​ເດັກ​ນ້ອຍ</item>
+        <item>ມັດ​ທະ​ຍົມ​ຕອນ​ຕົ້ນ</item>
+        <item>​ສຳ​ເລັດ​ການ​ສຶກ​ສາ</item>
+    </string-array>
+    <string name="educationlevel_nursery">​​ອະ​ນຸ​ບານ</string>
+    <string name="educationlevel_primary">ຊັ້ນ​ປະ​ຖົມ</string>
+    <string name="educationlevel_juniorsecondary">ລ​ະ​ດັບ​ເດັກ​ນ້ອຍ</string>
+    <string name="educationlevel_seniorsecondary">ມັດ​ທະ​ຍົມ​ຕອນ​ຕົ້ນ</string>
+    <string name="educationlevel_graduate">​ສຳ​ເລັດ​ການ​ສຶກ​ສາ</string>
+    <string-array name="clean_water_types">
+        <item>ການ​ເຂົ້າ​ເຖີ່ງ​ຫານ້ຳ</item>
+        <item>ນ້ຳ​ສ້າງ</item>
+        <item>ທໍ່</item>
+        <item>ເປັນ​ຮອຍ​ແຕກ</item>
+    </string-array>
+    <string name="cleanwatertype_borehole">ການ​ເຂົ້າ​ເຖີ່ງ​ຫານ້ຳ</string>
+    <string name="cleanwatertype_well">ນ້ຳ​ສ້າງ</string>
+    <string name="cleanwatertype_pipe">ທໍ່</string>
+    <string name="cleanwatertype_spring">ເປັນ​ຮອຍ​ແຕກ</string>
+    <string-array name="plotvariants">
+        <item>ຄື​ກັນ</item><!-- same -->
+        <item>ຫຼາຍ​ຂື້ນ</item><!-- more -->
+        <item>ໜ້ອຍ​ລົງ</item><!-- less -->
+    </string-array>
+    <string name="plotvariant_thesame">ຄື​ກັນ</string>
+    <string name="plotvariant_more">ຫຼາຍ​ຂື້ນ</string>
+    <string name="plotvariant_less">ໜ້ອຍ​ລົງ</string>
+
+    <!-- content descriptions -->
+    <string name="ofis_cd_hierarchy_arrow">ລູກ​ສອນ​ທີ່​ຊີ້​ທາງ​ຂ້​ວາ</string>
+    <string name="ofis_cd_info_icon">ເຄື້ອງ​ໝາຍ​ຂໍ້​ມູນ</string>
+    <string name="ofis_cd_submit_all_icon">ຍອມ​ຮັບ​ທັງ​ໝົດ</string>
+    <string name="module_density_plot_question">​ຕ້ອງ​ການ​​ເລື່ອງ​​​ເຕີມອີກບໍ່,ໜ້ອຍ​ລົງ ຫຼື​ຄື​ກັນ​ກັບ​ຄວາມ​ເລື່ອງ​ບໍ່?</string>
+    <string name="module_density_plot_question_intro">​ເລື່ອງ​ເພີມ​ເຕີມ</string>
+    <string name="module_density_plot_question_result_intro">​ເຫ​ດ​ຜົນ</string>
+    <string name="app_updated_generic_message">ມັນ​ແມ່ນ​ແອບໃໝ່ ສາ​ມາດ​ຄິກ​ເພືອ​ດາວ​ໂຫລດ</string>
+    <string name="app_update_ok">ໂອ​ເຄ</string>
+    <string name="app_update_cancel">ຍົກ​ເລີກ</string>
+    <string name="title_activity_review_farm_management_plan">ທວນ​ຄືນ​ແຜນ​ການ​ຄຸ້ມ​ຄ້ອງ​ຂອງ​ສວນ</string>
+    <string name="updating_fmps">ກຳ​ລັງ​ອັບ​ເດດ​ແຜນ​ການ​ຄຸ້ມ​ຄອງ​ສວນ</string>
+    <string name="fmps_up_to_date">ແຜ​ນ​ການ​ທີ່​ທັນ​ສະ​ໄໝ່​ໃນ​ການ​ຄຸ້ມ​ຄອງ​ຊາວ​ສວນ</string>
+    <string name="review_farm_management_plan_complete">ການ​​ຍື່ນ​ຢັນ​ສົ່ງ​ກັບ​ຄືນ</string>
+    <string name="review_farm_management_plan_in_progress">ທວນ​ຄືນ​ຄວາມ​ຄືບ​ໜ້າ</string>
+    <string name="fmp_redo_baseline">​ທວນ​ຄືນ​ຂໍ້​ມູນ​ທີ່​ຢູ່​ເບື້ອງ​ຫຼັງ​ຂອງ​ຂອບ</string>
+    <string name="hpQId">1</string>
+    <string name="hpAId">2</string>
+    <string name="hpPqId">3</string>
+    <string name="hpRiP">4</string>
+    <string name="hpD">5</string>
+    <string name="fullreview_farm_management_plan">ທວນ​ຄື​ນ​ແຜນ​ການ​ຄຸ້ມ​ຄອ​ງ​ຊາວ​ສວນ​ທັງ​ໝົດ</string>
+    <string name="fullreview_farm_management_plan_in_progress">ຄວາມ​ຄືບ​ໜ້າ​ທັງ​ໝົດ​ໃນ​ການ​ທວນ​ຄືນ</string>
+    <string name="fmp_are_you_sure">ນີ້​ແມ່​ນ​ເຮັດ​ແຜນໃໝ່​ແລ້ວ​ປີ​ຣນ​ອ່ອກ,​ ເພືອ​ໃຫ້​ແນ່​ໃຈ​ວ່າ​ຕ້ອງ​ການ​ດຳ​ເນີ​ນ​ການບໍ່?</string>
+    <string name="complete_all_required_fields">ເຈົ້າ​ຕ້ອງ​ແລ້​ວ​ທັງ​ໝົດ​ທີ​ຕ້​ອງ​ການ​ກ່​ອນ​ເຈົ້າ​ລວມ​ລາຍ​ການ​ທັງ​ໝົດ</string>
+    <string name="ReadAndAgreeConsent">ອ່າ​ນ ແລະ​ຕົກ​ລົງ​ຄຳ​ຍືນ​ຢັນ</string>
+    <string name="consentStatementMain1">ມັນ​ຈຳ​ເປັນ​ຫຼາຍ​ສຳ​ລັບ​ການ​ສະ​ໜອງ​​ຂໍ້​ມູນ​ສວນ​ຕົວໃຫ້​ກັບ​ພວກ​ເຮົາໃນ​ການ​ເຊື່ອມ​ໂຍງ​ຫາ​ໂຄງ​ການ​ແບບ​ຍືນ​ຍົງ​ຂອງໂອ​ລາມນັ້ນ​ແມ່ນ​ພາກ​ສວນ​ໜຶ່ງ.ນີ້​ຄື​ຂໍ້​ມູນ​ສວນ​ຕົວ​ທີ່​ໄດ້​ສະ​ສົມ​ໃຫ້ ແລະ​ລະ​ບົບ​ຂໍ້​ມູນ​ຂອງອົງ​ການ​ຊາວ​ສວນ​ໂອ​ລາມຫຼື ("OFIS").​ເຈົ້າ​ຕ້ອງມີ​ຄວາມ​ຍິນ​ຍ່ອມ​ໃນ​ການ​ຖ່ອນ​ຂໍ້​ມູນ​ຕ່າງໆ​ໃຫ້​ພວກ​ເຮົາ​ທີ່​ສະ​ສົມ​ໄວ້​ ແລະ​ສາ​ມາດ​ນຳ​ໃຊ້​ຂໍ້​ມູນສວນ​ຕົວ​ຕ່າງໆ​ໄດ້ ເຖີ່ງ​ຢ່າງ​ໄດ້​ກໍ່​ຕາມ​ການ​ສະ​ໜອງ​ຂໍ້​ມູນ​ສວນ​ແມ່ນ​ຈະ​ລົມ​ແຫຼວ​ຫຼື​ພາຍ​ຫຼັ້ງ​ການ​ຖ່ອນ​ຂໍ້​ມູນ​ສວນ​ຕົວ​ຕ່າງໆ​ອ່ອກກໍ່​ຕາມ​ແຕ່ກໍ່​ຍັງ​ບໍ່​ສາ​ມາດ​ຮ່ວມ​ໃນ​ໂຄງ​ການ​ແບ​ບ​ຍືນ​ຍົງ​ໄດ້​ເທືອ</string>
+    <string name="consentStatementMain2">ຂໍ້​ມູນ​ສວນ​ຕົວ​ຂອງ​ເຈົ້າ​ແມ່ນ​ຈະ​ຖືກ​ນຳ​ໃຊ້​ໃນ​ໂຄງ​ການ​ໂອ​ລາມ​ແບບ​ຍືນ​ຍົງ​ເພືອ​ໃຫ້​ເປັນ​ຂໍ້​ມູນ​ດັງ​ໄດ້</string>
+    <string name="consentStatementMain2a">ແຜນ​ທີ​ຂອງ​ຊ້ອບ​ແວ.ນີ້​ຄື​ການ​ອ່ອກ​ແບບ​ຕູ້​ສະ​ແດງ​ສີນ​ຄ້າ​ຂອງ​ສວນ ແລະ​ທີ່​ຕັ້ງ​ຂອງ​ໂຄງ​ສ້າງ ແລະ​ມີ​ຂໍ້​ມູນ​ລະ​ອຽດ​ກ່​ຽວ​ກັບ​ຊາວ​ສວນ​ທີ່​ສາ​ມາດ​ເຊື່ອມ​ຫາ​ທີ່​ຕັ້ງ​ຂອງ​ພູມ​ມີ​ສາດ</string>
+    <string name="consentStatementMain2b">​ກ​ານ​ວິ​ເຄາ​ະ​ເລືອງ​ຊ້ອບ​ແວ. ນີ້​ຄື​ການ​ເບີ່ງ​ຊາວ​ສວນ\'​ການ​ເຂົ້າ​ເບີ່ງ​ຂໍ້​ມູນ​ສວນ​ຕົວ​ທີ່​ຜິດ​ຢູ່​ໃນ​ການ​ຕັດ​ສີນ​ໄຈ​ຂ​ອງ​ໂຄງ​ການ​ໃນ​ອາ​ນາ​ຄົດ​ໂດຍ​​ກົງ​ຂອງ​ໂຄງ​ການ​ຜູ້​ທີ​ນຳ​ໃຊ້​ຂອງ​ໂຄງ​ການ​ແມ່ນ​ສາ​ມາດ​ວິ​ເຄາະ​ອ່ອກ​ໄດ້(​ແລະ​ຂໍ້​ມູນ​ຕ່າງໆ​ທີ່​ວິ​ເຄາ​ະ​ແມ່ນ​ຈະ​ວິ​ເຄາະ​ໃນ​ດ້ານ​ຂ້າງ​ເຊັ່ນ​ວ່າ​ຊາວ​ສວນ\'s​ຂໍ້​ມູນ​ສວນ​ຕົວ​ໃນ​ຟາ​ຍ PDF or excel  ນີ້​ຄື​ການ​ເຂົ້າ​ຢຸດ​ເຊີ​ຂອງ​ຜູ້​ນຳ​ໃຊ້​ຕົວ​ຢາງ,​ອັດ​ຕາ​ການ​ຜະ​ລິດ​ຕໍ່​ຫຼື​ສູງ​ຂອງ​ລະ​ດັບ​ໂຄງ​ການ</string>
+    <string name="consentStatementMain2c">​ແຜນ​ການ​ຄຸ້​ມ​ຄອງ​ຂອງ​ສວນ ນັ້ນ​ແມ່ນ​ຈະ​ເຮັດ​ການ​ຕັດ​ຕໍ່​ແຜນ​ທີ່ທີ່​ເປັນ​ຈຸດ​ເດັ່ນ​ຢ່າງ​ດ່ຽວ ແລະ​ຈະ​ຕ້ອງ​ປ່ຽນ​ເປັນ​ການ​ເຮັດ​ສວນ​ໃຫ້​ສຳ​ເລັດ 3&#8211;5 ​ປີທີ່​ຢູ່​ໃນ​ເປົ້າ​ໝາຍ​ອັດ​ຕາ​ການ​ຜະ​ລິດ​ທີ່​ເປັນ​ໄປ​ໄດ້</string>
+    <string name="consentStatementMain3">​ຜູ້​ທີ່​ນຳ​ໃຊ້​ຂອງ​ໂຄງກ​ານ​ໂອ​ລາມ​ລ​ວ່ມ​ທັງ​ພະ​ນັກ​ງານ​ຂອງ​ໂອ​ລາມ​ນຳ,​ພະ​ນັກ​ງານ​ຄຸ້ມ​ຄ້ອງ​ກຸ່ມ​ຊາວ​ສວ​ນ ແລະ​ລູກ​ຄ້າ​ໃນ​ທົ່ວ​ໂລກ,​ໃຫ້​ການ​ເຮັດ​ດີ​ກັບ​ແຜນ​ທີ່​ຂອງ​ຊອບ​ແວ,​ການ​ວິ​ເຄາະ​ຊອບ​ແວ ແລະ​ແຜນກ​ານ​ຄຸ້ມ​ຄອງ​ສວນ​ຕາມ​ວັກ​ທີ່​ຢູ່​ຂ້າງ​ເທີງນັ້ນ</string>
+    <string name="consentStatementMain4">ຂໍ້​ມູນ​ສວນ​ຕົວ​ຂອງ​ເຈົ້າ​ແມ່ນ​ຈະ​ຖືກຈັດ​ໂດຍ​ພວກ​ເຮົາ ແລະ​ຈະ​ຖື​ກ​ຈັດ​ໃຫ້​ເປັນ​ຂໍ້​ມູນ​ລັບແຕ​ວ່າ​ມັນ​ຈະ​ຖືກ​ແຊ​ໃນ​ຢູດ​ເຊີ​ຂອງ​ອົງ​ການ​ໂອ​ລາມ​ຕາມ​ລາຍ​ລະ​ອຽດ​ທີ​ຢູ່​ຂ້າ​ງ​ເທີງນີ້ ຂໍ້​ມູນ​ສວນ​ຕົວ​ຂອງ​ເຈົ້າ​ແມ່ນ​ຈະ​ຕ້ອງ​ໂອນ​ໄປ​ຫາ​ໃນ​ຂອບ​ເຂດ​ຂອງ​ຜູ້​ສາ​ມາດ​ຕັດ​ສິນ​ໄດ້ ບ່ອນ​ທີ່​ສາ​ມາດ​ເຮັດ​ໄດ້​ແລະ​ຄຸ້ມ​ຄອງ​ກົດ​ຕ່າງໆ​ໄດ້​ຄົນ​ດ່ຽວ​ ພວກເຮົາ​ຈະ​ເຮັດ​ໃຫ້​ຂັ້ນ​ຕອນ​ການ​ປົກ​ປ້ອງ​ປ​ອງ​ກັນ​ໃນ​ການ​ໂອນ​ຍ້າຍ​ຂໍ້​ມູນ​ສວນ​ຕົວ​ເພືອ​ໃຫ້​ປຽບ​ທຽບ​ກັບ​ລະ​ບັບ​ການ​ປ້ອງ​ກັບ​ຂໍ້​ແບບ​ມາດ​ຕະ​ຖານ​ແລະ​ສາ​ມາດ​ຕັດ​ສີນ​ໄດ້</string>
+    <string name="consentStatementMain5">ເຈົ້າ​ຄວນ​ຈະ​ເຂົ້າ​ເບີ່ງ​ການ​ໃຫ້​ການ​ຕົ​ກ​ລົງ​ຫຼາຍໆ​ຢ່າງ​ເຊັ່ນ​ວ່າ, ການ​ສະ​ເໜີ​ການ​ເຂົ້າ​ລະ​ບົບ ຫຼື​ກາ​ນ​ລັກ​ເຂົ້າ​​ເບີ່ງລະ​ບົບ​ຂໍ້​ມູນ​ສວນ​ຕົວ​ຂອງ​ສວນ​ບຸກ​ຄົນ ຫຼື​ການ​ສະ​ເໜີ​ກ່ຽວ​ກັບ​ຂໍ້​ມູ​ນ​ນະ​ໂຍ​ບາຍ​ຕ່າງໆ​ຂອງ​ພວກ​ເຮົາ ແລະ​ການ​ປະ​ຕິ​ບັດ​ອື່ນໆ, ໂດຍ​ການ​ຕິດ​ຕໍ່​ຫາ​ຫົວ​ຫ້​ອງ​ການ​ຄຸ້ມ​ຄອງ​ຂໍ້​ມູນ​ຂ​ອງ​ພ​ວກ​ເຮົາ</string>
+    <string name="consentStatementCheck1">ຂ້ອຍ​ຍືນ​ຢັ​ນ​ວ່າ​ຊາວ​ສວນ​ແມ່ນ​ໄດ້​ເປັນ​ຜູ້​ນັບ​ຕົ​ວ​ເລກ​ທັງ​ໝົດ​ຂອງ​ການ​ບັນ​ທຶກ​ຂໍ້​ມູນ​ສວນ​ບຸກ​ຄົນ​ ແລະ​ລາວກໍ່​ໃຫ້​ການ​ຕົກ​ລົງ​ຢ່າງ​ແຈ່ມ​ແຈ້ງ​ຂອງ​ການ​ນຳ​ໃຊ້,ມີ​ສິດ​ທີ່​ຈະ​ໂອຍ​ຍ້າຍ​ໄດ້ ແລະ​ເປີດ​ເຜີຍ​ຂໍ້​ມູນ​ສວນ​ຕົວ​ຂອງ​ບຸກ​ຄົນ​ເຫຼົ້າ​ນັ້ນ​ໄດ້​ໂດຍ​ໂອ​ລາມ ສຳ​ລັບ​ການ​ສະ​ເໜີ​ແມ່ນ​ຢູ່​ໃນ​ການ​ຕິດ​ຕັ້ງ​ນັ້ນ</string>
+    <string name="consentStatementCheck2">ຂ້ອຍ​ຍືນ​ຢັ​ນ​ວ່າ​ຊາວ​ສວນ​ແມ່ນ​ໄດ້​ເປັນ​ຜູ້​ນັບ​ຕົ​ວ​ເລກ​ທັງ​ໝົດ​ຂອງ​ການ​ບັນ​ທຶກ​ຂໍ້​ມູນ​ສວນ​ບຸກ​ຄົນ​ ແລະ​ລາວ​ກໍ​ຍືນ​ຢັນ​ອີກວ່າ​ລາວ​​ເປັນ​ຜູ້ໄດ້​ຕົກ​ລົງ​ຮັບ​ຮູ້​ຂໍ້​ມູນ​ເຫຼົ້າ​ນັ້ນ​ຄົນ​ດຽວ​ທີ່ລາວ​ໄດ້​ສະ​ໜອງ​ໃຫ້ ແລະ​ເປີດ​ເຜີຍ​ໃຫ້​ເປັນ​ການ​ສະ​ເໜີ​ທາງ​ການ</string>
+    <string name="consentStatementTitle">ການ​ບັນ​ທຶກ​ຂໍ້​ມູນ​ສວນ​ຕົວ</string>
+    <string name="Please_accept_both_consents">ເຈົ້າ​ຕ້ອງ​ຕົກ​ລົງ​ຄຳ​ຍືນ​ຢັນ​ທັງ​ສອງ​ຄຳ​ເພືອ​ເສັບ​ຊາວ​ສວນ</string>
+    <string name="farmer_id_min">​ເລ​ກ​ບັດ​ຂອງ​ຊາ​ວ​ສວນ​ຕ້ອງ​ແມ່ນ4ຕົວ​ເລກ​ຂື້ນ​ໄປ</string>
+    <string name="app_updated_upload_first_message">ນັ້​ນ​ຄື​ການ​ອັບ​ເດດ​ໃໝ່​ຂອງ​ແອບ​ເພືອ​ດາວ​ໂຫຼດ,​ເຈົ້າ​ຕ້ອງ​ເລືອກ​ເອົາ sync ລາຍ​ການ​ທັງ​ໝົດ​ກ່ອນ,​ກະ​ລຸ​ນາ​ຄິກ​ໂອ​ເຄ​ຂອງ sync ລາຍ​ການທັງ​ໝົດ​ແລ້ວ​ຫຼັງ​ຈາກນັ້ນ​ເຂົ້າ​ໄປ​ຕັງ​ຄ່າ​ເພືອ​ອັບ​ເດດ​ແອບ</string>
+    <string name="please_sync_before_update">ນັ້ນ​ແມ່ນ​ລາຍ​ການ​ທີ່​ກຳ​ລັງ​ລໍ​ຖ້າ synced. ກະ​ລຸ​ນາ​ໃຊ້​ລ່າຍ​ການ sync ກ່ອນ​ການ​ອັບ​ເດດ​ຂໍ້​ມູນ​ແອບ​ອື່ນໆ</string>
+    <string name="ofis_update_overdue">ເວີ​ຊັນ​ຂອງແອບນີ້ດ່ຽວນີ້​ແມ່ນ​ລ້າ​ສະ​ໄໝ​ແລ້ວ, ເຈົ້າ​ຕ້ອງ​ອັບ​ເດດ​ແອບ​ກ່ອນ​ເຈົ້າ​ຈະ​ສືບ​ຕໍ່​ນຳ​ໃຊ້​ມັນ. ແທບ​ຄື​ການ​ຕັ້ງ​ຄ່​ໄອ​ຄອນ​ຢູ່​ໃການ​ອັບ​ເດດ​ຂອງ​ຂັ້ນ​ເທີ່ງ​ທີ່​ຖືກ​ຕ້ອງ</string>
+    <string name="ofis_request_help">ຖາມ​ເພືອ​ໃຫ້​ຊ່ວຍ</string>
+    <string name="Your_Name">ຊື່​ເຈົ້າ</string>
+    <string name="problem_description">ອະ​ທິ​ບາຍ​ບັນ​ຫາ​ທີ່​ເຈົ້າ​ກຳ​ລັງ​ພົບ​ຢູ່</string>
+    <plurals name="days_left_to_update">
+        <item quantity="one">​ເວີ​ຊັນ​ທີ່​ຕ້ອງ​ການ​ອັບ​ເດດ​ຫຼັງ​ຈາກ 30 ວັນ ເຈົ້າ​ມີ​ເປີ​ເຊັນ%1dຕໍ່​ມື້​ຂອງ​ການ​ອັບ​ເດດ​ຝ່າຍ​ຊ້າຍ</item>
+        <item quantity="other">ເວີ​ຊັນ​ທີ່​ຕ້ອງ​ການ​ອັບ​ເດດ​ຫຼັງ​ຈາກ 30 ວັນ ເຈົ້າ​ມີ​ເປີ​ເຊັນ%1dຕໍ່​ມື້​ຂອງ​ການ​ອັບ​ເດດ​ຝ່າຍ​ຊ້າຍ</item>
+    </plurals>
+    <string name="record_transaction_button_text">ການບັນທຶກການຕິດຕໍ່ກັນ</string>
+    <string name="record_training_button">ການບັນທຶກການຝຶກອົບຮົມ</string>
+    <string name="ViewTransactionsTitle">ການຕິດຕໍ່ກັນ</string>
+    <string name="Add">ເພີ່ມ</string>
+    <string name="AddTransactionItemTitle">ລາຍການຕິດຕໍ່</string>
+    <string name="please_select">ກະລຸນາເລືອກ</string>
+    <string name="select_transaction_item_type">ປະເພດ</string>
+    <string name="ofis_select_item_product_grade">ປະເພດສິນຄ້າ</string>
+    <string name="select_currency">ສະກຸນເງີນ</string>
+    <string name="enter_quantity">ປະລິມານ</string>
+    <string name="select_units">ຫົວໜ່ວຍ</string>
+    <string name="updating_transaction_data">ການປັບປຸງຂໍ້ມູນ</string>
+    <string name="Transaction_item_added">ເພີ່ມລາຍການຕິດຕໍ່ແລ້ວ</string>
+    <string name="Delete_Item">ລົບການຕິດຕໍ່</string>
+    <string name="Transaction_default">ການຕິດຕໍ່</string>
+    <string name="transaction_are_you_sure">ເຈົ້າຕ້ອງການຈະລົບການຕິດຕໍ່ນີ້ບໍ?</string>
+    <string name="transaction_deleted">ລົບການຕິດຕໍ່ສຳເລັດ</string>
+    <string name="complete_transaction">ການຕິດຕໍ່ສົມບູນ</string>
+    <string name="Farmer_Group_Name">ຊື່ກຸ່ມຊາວສວນ</string>
+    <string name="direction_hint">ທ່ານໄດ້ໃຫ້ ຫຼື ໄດ້ຮັບມັນບໍ?</string>
+    <string name="transaction_added_to_queue">ຍືນຍັນການຕິດຕໍ່ສຳລັບການອັບໂຫຼດ</string>
+    <string name="Transaction_network_queue_title">ການຕິດຕໍ່</string>
+    <string name="transaction_confirmed">ຍືນຍັນການຕິດຕໍ່ແລ້ວ</string>
+    <string name="ofis_no_transactions_text">ເມື່ອເຈົ້າເພີ່ມການຕິດຕໍ່, ຊື່ພວກເຂົາຈະປະກົດຂື້ນ</string>
+    <string name="ofis_no_trainingrecords_text">ເມື່ອເຈົ້້າເພີ່ມການບັນທຶກການຝຶກອົບຮົມ, ຊື່ພວກເຂົາຈະປະກົດຂື້ນ</string>
+    <string name="TrainingRecordsTitle">ການບັນທຶກການຝຶກອົບຮົມ</string>
+    <string name="select_course">ແນ່ນອນ</string>
+    <string name="TrainingAttendees">ການເຂົ້າຮ່ວມການຝຶກອົບຮົມ</string>
+    <string name="complete_record">ການບັນທຶກສົມບູນ</string>
+    <string name="TrainingRecordTitle">ການຄຸ້ມຄອງການບັນທຶກການຝຶກອົບຮົມ</string>
+    <string name="select_training_module">ຮູບແບບການຝຶກອົບຮົມ</string>
+    <string name="Training_Photo">ຮູບພາບການຝຶກອົບຮົມ</string>
+    <string name="TrainingRecordConfirmationTitle">ຍືນຍັນການບັນທຶກການຝຶກອົບຮົມ</string>
+    <string name="TrainingRecordConfirmationSubTitle">ຍືນຍັນການຮັບປະກັນການຝຶກອົບຮົມ</string>
+    <string name="confirm_training_record">ຍືນຍັນການບັນທຶກການຝຶກອົບຮົມ</string>
+    <string name="Select_Attendees">ເລືອກຜູ້ເຂົ້າຮ່ວມ</string>
+    <string name="Attendee_Name">ຊື່ຜູ້ເຂົ້າຮ່ວມ</string>
+    <string name="selected">ການຄັດເລືອກ:</string>
+    <string name="save_selected_attendees">ບັນທຶກການຄັດເລືອກຜູ້ເຂົ້າຮ່ວມ</string>
+    <string name="Training_select_course_module_first">ກ່ອນອື່ນກະລຸນາເລືອກຮູບແບບທີ່ແນ່ນອນ ແລະ ຖ່າຍຮູບ</string>
+    <string name="add_attendee_scores">ເພີ່ມຄະແນນ</string>
+    <string name="attendees_saved">ບັນທຶກການເຂົ້າຮ່ວມ</string>
+    <string name="Training_Record_Edited">ປັບປຸງການບັນທຶກການຝຶກອົບຮົມ</string>
+    <string name="Training_Record_Added">ເພີ່ມການບັນທຶກການຝຶກອົບຮົມ</string>
+    <string name="Add_one_attendee_to_continue">ສຸດທ້າຍເພີ່ມຜູ້ເຂົ້າຮ່ວມເພື່ອສືບຕໍ່</string>
+    <string name="updating_training">ປັບປຸງຂໍ້ມູນການຝຶກອົບຮົມ</string>
+    <string name="Attendees">ຜູ້ເຂົ້າຮ່ວມ</string>
+    <string name="trainingrecord_are_you_sure">ເຈົ້າໜັ້ນໃຈຕ້ອງການທີ່ຈະລົບການບັນທຶກການຝຶກອົບຮົມບໍ?</string>
+    <string name="trainingrecord_deleted">ລົບການບັນທຶກການຝຶກອົບຮົມ</string>
+    <string name="trainingattendee_are_you_sure">ເຈົ້າໜັ້ນໃຈຕ້ອງການທີ່ຈະລົບຜູ້ເຂົ້າຮ່ວມນີ້ບໍ?</string>
+    <string name="trainingattendee_deleted">ລົບຜູ້ເຂົ້າຮ່ວມ</string>
+    <string name="TrainingAttendeeScores">ເພີ່ມຄະແນນຜູ້ເຂົ້າຮ່ວມ</string>
+    <string name="TrainingAttendeeScoresSubTitle">ເພີ່ມ ຫຼື ແປງຄະແນນຜູ້ເຂົ້າຮ່ວມ</string>
+    <string name="save_scores">ບັນທຶກຄະແນນຜູ້ເຂົ້າຮ່ວມ</string>
+    <string name="attendees_scores_updated">ປັບປຸງຄະແນນຜູ້ເຂົ້າຮ່ວມ</string>
+    <string name="trainingrecord_added_to_queue">ຍືນຍັນການບັນທຶກການຝຶກອົບຮົມເພື່ອອັບໂຫຼດ</string>
+    <string name="trainingrecord_confirmed">ຍືນຍັນການບັນທຶກການຝຶກອົບຮົມ</string>
+    <string name="checkbox_image">ກວດເບີ່ງກ່ອງຮູບພາບ</string>
+    <string name="PhoneNumberHint">ເບີໂທລະສັບ</string>
+    <string name="PhoneNumbers">ໜາຍເລກໂທລະສັບ</string>
+    <string name="main_number">ຕົ້ນຕໍ?</string>
+    <string name="location">ສະຖານທີ່</string>
+    <string name="update_phone_numbers">ປັບປຸງໜາຍເລກໂທລະສັບ</string>
+    <string name="update_phone_numbers_hint">ປັບປຸງທໍ່</string>
+    <string name="select_transactee">ທ່ານເຮັດທຸລະກຳກັບໃຜ</string>
+    <string name="price_per_unit">ລາຄາຕໍ່</string>
+    <string name="total_price">ລາຄາລວມ</string>
+    <string name="amount_paid">ຈຳນວນທີ່ຈ່າຍ</string>
+    <string name="amount_loaned">ຈຳນວນທີ່ກູ້ຢືມ</string>
+    <string name="amount_gifted">ເຄື່ອງສະໜັບສະໜູນຈາກ້</string>
+    <string name="Transaction_item_updated">ການປັບປຸງລາຍການການຕິດຕໍ່</string>
+    <string name="amount_repaid">ຈຳນວນທີ່ຈ່າຍໃຫ້</string>
+    <plurals name="trainingAttendeesCount">
+        <item quantity="one">%1d ສຽງ1ຂອງຜູ້ເຂົ້າປະຊຸມ</item>
+        <item quantity="other">%1d ສຽງ1ຂອງຜູ້ເຂົ້າປະຊຸມ</item>
+    </plurals>
+    <string name="registeredForNotifications">ທ່ານກຳລັງລົງທະບຽນໃຫນ່ຈະໄດ້ຮັບການແຈ້ງເຕືອນວຽກງານ</string>
+    <string name="registerForNotificationsFailed">ການຈົດທະບຽນຂອງທ່ານປະສົບຜົນສຳເລັດ ຈະມີການແຈ້ງເຕືອນອັດຕະໂນມັດ ຫາກທ່ານໄດ້ຮັບຂໍ້ຄວາມນີ້ແລ້ວກຳະລຸນາຕິດຕໍ່ກັບ</string>
+    <string name="NewTaskReceivedTitle">ວຽກງານໃຫນ່ທີ່ໄດ້ຮັບ</string>
+    <string name="title_activity_tasks">ວຽກງານ</string>
+    <string name="updating_tasks">ປັບປຸງວຽກງານ</string>
+    <string name="TaskUpdatedTitle">ການບັບປຸງ</string>
+    <string name="TaskDeletedTitle">ລົບ</string>
+    <string name="take_photo">ຖ່າຍຮູບ</string>
+    <string name="set_auto_time_message">ທ່ານໄດ້ກຳນົດເວລາ ແລະ ເຂດເວລາຕາມທີ່ໄດ້ກຳນົດໄວຢ່າງອັດຕະໂນມັດກະລຸນາກຳນົດໃຫ້ເປັນຄ່າອັດຕະໂນມັດຈົນກວ່າທ່ານຈະເຮັດ ທ່ານຈະບໍ່ສາມາດນຳໃຊ້ລະບົບໄດ້</string>
+    <string name="buyingagent">ຕົວແທນຊື້</string>
+    <string name="credit_balance">ຕິດໜີ້ທ່ານ</string>
+    <string name="ChooseBuyingAgent">ເລືອກຕົວແທນຊື້</string>
+    <string name="WhoTransacting">ຜູ້ທີ່ທ່ານເຮັດທຸລະກຳຢູ່ໃນນາມຂອງ?</string>
+    <string name="PickAgentFirst">ກະລຸນາເລືອກຕົວແທນກ່ອນ</string>
+    <string name="farmer_or_buying_agent_name">ຊື້ຊາວສວນ ຫຼື ຕົວແທນຊື້</string>
+    <string name="title_activity_find_transactee">ຊອກຫາທຸລະກຳ</string>
+    <string name="amount_repaid_and_loaned">ຈຳນວນທີ່ຈ່າຍ  ແລະ ກູ້ຢືມ</string>
+    <string name="amount_loaned_by">ຈຳນວນທີ່ໃຫ້ກູ້ຢືມໂດຍ</string>
+    <string name="amount_repaid_by">ຈຳນວນທີ່ຈ່າຍໂດຍ</string>
+    <string name="amount_repaid_and_loaned_by">ຈຳນວນທີ່ຈ່າຍ ແລະ ກູ້ຢືມໂດຍ</string>
+    <string name="amount_paid_by">ຈຳນວນທີ່ຈ່າຍໂດຍ</string>
+    <string name="amount_gifted_by">ເຄື່ອງສະໜັບສະໜູນໂດຍ</string>
+    <string name="debit_balance">ໜີ້ຂອງທ່ານ</string>
+    <string name="cannotTransactNothingToRepay">ທ່ານບໍ່ເປັນຫນີ້ເງິນນັ້ນທ່ານບໍ່ສາມາດສໍາເລັດໃນການເຮັດທຸລະນີ້</string>
+    <string name="cannotTransactUnableToLoan">ທ່ານເປັນຫນີ້ເງິນນັ້ນທ່ານບໍ່ສາມາດສໍາເລັດໃນການເຮັດທຸລະນີ້</string>
+    <string name="cannotRepayNotOwedMoney">ທ່ານບໍ່ໃດ້ຖືກເປັນຫນີ້ເງິນນັ້ນທ່ານບໍ່ສາມາດສໍາເລັດໃນການເຮັດທຸລະນີ້</string>
+    <string name="cannotLoanOwedMoney">ທ່ານໃດ້ຖືກເປັນຫນີ້ເງິນນັ້ນທ່ານບໍ່ສາມາດສໍາເລັດໃນການເຮັດທຸລະນີ້</string>
+    <string name="ensure_totals_match">ກະລຸນາຢືນຢັນວ່າການຈ່າຍເງິນນີ້ກົງກັບລາຄາທັງໜົດ</string>
+    <string name="price_per_unit_default">ໜ່ວຍບໍລິການ</string>
+    <string name="input_crop_finance">ການປ້ອນຂໍ້ມູນ, ການລົງທຶນ ຫຼື ຜົນຂອງມັນ?</string>
+    <string name="input_crop">ການປ້ອນຂໍ້ມູນ ຫຼື ຜົນຂໍ້ມູນ?</string>
+    <string name="input_finance">ການປ້ອນຂໍ້ມູນ ຫຼື ການລົງທຶນ</string>
+    <string name="finance_crop">ການລົງທຶນ ຫຼື ຜົນການລົງທຶນ?</string>
+    <string name="task_mark_complete">ສໍາເລັດ</string>
+    <string name="transaction_notes">ໜາຍເຫດ</string>
+    <string name="cannotRepayMoreThanOwe">ເຈົ້າບໍ່ສາມາດຈ່າຍຫຼາຍກວ່າໜີ້ທີ່ເຈົ້າມີ</string>
+    <string name="cannotRepayMoreThanTheyOwe">ພວກເຂົາບໍ່ສາມາດຈ່າຍຄືນຫຼາຍກວ່າໜີ້ທີ່ພວກເຂົາມີ</string>
+    <string name="item_in_progress">ໃນ​ເກີດ​ຂື້ນ​ຢູ່​ທີ່</string>
+    <string name="cannot_do_mobile_money_non_farmer">ທ່ານບໍ່ສາມາດຊື້ໄດ້ຈາກຕົວແທນຈຳນ່າຍໃນການໃຊ້ເງິນໃນໂທລະສັບມືຖື</string>
+    <string name="pay_using_mobile_money_or_cash">ຈ່າຍເງີນໃນໂທລະສັບມືຖື ຫຼື ເງີນສົດ</string>
+    <string-array name="mmCash">
+        <item>ເງີນສົດ</item>
+        <item>ເງີນໃນໂທລະສັບມືຖື</item>
+    </string-array>
+    <string name="mmCash_mobilemoney">ເງີນໃນໂທລະສັບມືຖື</string>
+    <string name="mmCash_cash">ເງີນສົດ</string>
+    <string name="mobile_money_suffix">ການນຳໃຊ້ເງີນໃນໂທລະສັບ</string>
+    <string name="mm_transaction_initiated">ຖຸລະກຳທາງການເງີນກຳລັງເລີ່ມຕົ້ນ, ກະລຸນາລໍຖ້າ</string>
+    <string name="mm_transaction_checking">ກຳລັງກວດສອບສະຖານະທາງຖຸລະກຳ</string>
+    <string name="mm_transaction_timedout">ທຸລະກໍາການເງິນໃນໂທລະສັບມືຖືຂອງທ່ານບໍ່ໄດ້ຮັບສໍາເລັດໃນເວລານີ້, ກະລຸນາໃຊ້ເງິນສົດແທນ.</string>
+    <string name="mm_transaction_awaiting_response">ກຳລັງລໍຄຳຕອບການເຮັດທຸລະກຳທາງການເງີນໃນໂທລະສັບມືຖື</string>
+    <string name="mm_transaction_inprogress">ຖຸລະກຳທາງການເງີນຢູ່ໃນຄວາມຄືບໜ້າ</string>
+    <string name="mm_transaction_complete">ທ່ານໄດ້ດຳເນີນຖຸລະກຳທາງການເງີນສຳເລັດແລ້ວ</string>
+    <string name="mm_transaction_failed">ການເຮັດທຸລະກໍາການເງິນໃນໂທລະສັບມືຖືປະສົບຜົນສໍາເລັດ. ກະລຸນານໍາໃຊ້ເງິນສົດແທນ</string>
+    <string name="mm_transaction_confirmation">"ທ່ານກຳລັງຈ່າຍເງີນ %1$s %2$s ເງີນໃນໂທລະສັບມືຖື. ກະລຸນາຢືນຢັນການເຮັດຖຸລະກຳນີ້ "</string>
+    <string name="mm_transaction_confirm">ຢືນຢັນ</string>
+    <string name="place_name_not_unique">ສະຖານທີ່ມີໃນເມືອງນັ້ນມີຊື່ວ່າ. ກະລຸນາໃຊ້ໃນສະຖານທີ່ທີ່ມີຢູ່ແລ້ວ.</string>
+    <string name="title_activity_record_polygon">"ການບັນທຶກຕອນດິນ "</string>
+    <string name="loading">"ກຳລັງກວດສອບ "</string>
+    <string name="wait">ກະລຸນາລໍຖ້າ</string>
+    <string name="save_button_text">ບັນທຶກ</string>
+    <string name="start_logging_button_text">"ເລີ່ມຕົ້ນການບັນທຶກ "</string>
+    <string name="stop_logging_button_text">"ຢຸດການບັນທຶກ "</string>
+    <string name="pause_button_text">"ຢຸດຊົ່ວຄາວ "</string>
+    <string name="resume_button_text">"ຕັ້ງຕົ້ນໃໜ່ "</string>
+    <string name="plot">ຕອນ %1$d</string>
+    <string name="current_track_name">"ການຕິດຕາມ OFIS  "</string>
+    <string name="plot_already_logged">"%1$s ການບັນທຶກສຳເລັດແລ້ວ "</string>
+    <string name="location_permission_alertdialog_title">"ຕ້ອງການການອະນຸຍາດເພື່ອເຂົ້າເຖິງສະຖານທີ່ GPS! "</string>
+    <string name="open_application_settings_msg">"ໄປສູ່ລະບົບຕັ້ງຄ່າ "</string>
+    <string name="ready_to_save">"%1$s ພ້ອມທີ່ຈະບັນທຶກ "</string>
+    <string name="restart_logging">"ທ່ານຕ້ອງການກັບຄືນສູ່ການບັນທຶກບໍ? "</string>
+    <string name="save_existing_logs">"ການບັນທຶກນີ້ມີຢູ່ແລ້ວ! "</string>
+    <string name="already_logged_and_saved">"%1$s ບັນທຶກສຳເລັດແລ້ວ! "</string>
+    <string name="try_again_later_msg">"ກະລຸນາລອງອີກຄັ້ງຫຼັງຈາກ 2 ນາທີ "</string>
+    <string name="location_not_yet_logged">"ທ່ານບໍ່ໄດ້ບັນທຶກສະຖານທີ່ສຳເລັດແລ້ວ! "</string>
+    <string name="fetch_location_msg">"ກຳລັງເຂົ້າຫາສະຖານທີ່. ກະລຸນາລໍຖ້າ "</string>
+    <string name="gps_manager_msg">"ຜູ້ຈັດການ GPS "</string>
+    <string name="enable_gps_msg">"ທ່ານຕ້ອງການເປີດ GPS ບໍ "</string>
+    <string name="gps_turned_on">"ກັບສູ່ GPS "</string>
+    <string name="storage_permission_explanation">"ການເກັບຮັກສາແມ່ນຕ້ອງໄດ້ຮັບການອະນຸຍາດການເກັບກໍາແຜນທີ່ເພື່ອຫຼຸດຜ່ອນການນໍາໃຊ້ຂໍ້ມູນແລະສໍາລັບການນໍາໃຊ້ອອບໄລນ໌. "</string>
+    <string name="location_permission_explanation">"ຕ້ອງການການອະນຸຍາດຈາກສະຖານທີ່ເພື່ອເກັບຂໍ້ມູນຕອນດິນ. "</string>
+    <string name="speed_unit_kmph">"%1$d ກິໂລແມັດ/ຊົ່ວໂມງ "</string>
+    <string name="logging_progress_msg">"ຄວາມຄືບຫນ້າໃນການບັນທຶກ! "</string>
+    <string name="cancel_logging_question">"ຍົກເລີກການບັນທຶກ "</string>
+    <string name="cancel_logging_msg">"%1$s ການບັນທຶກຖືກຍົກເລີກ "</string>
+    <string name="not_logged_yet">"%1$s ການບັນທຶກບໍ່ສຳເລັດ "</string>
+    <string name="area_info">"ເນື້ອທີ່: %1$f ເຮັກຕາ "</string>
+    <string name="save_polygon_alertdialog_title">"ບັນທຶກ%1$s ຕອນ? "</string>
+    <string name="save_polygon_alertdialog_msg">"ທ່ານບໍ່ສາມາດບັນທຶກ%1$sຕອນດິນໄດ້ "</string>
+    <string name="close">"ປິດ "</string>
+    <string name="saved_successfully_msg">"%1$s ການບັນທຶກປະສົບຜົນສຳເລັດ "</string>
+    <string name="confirm">"ຍືນຍັນ "</string>
+    <string name="plot_location_confirmation">"ທ່ານຢູ່ທີ່ %1$s ສະຖານທີ່? "</string>
+    <string name="logging_not_started_msg">"\"ບໍ່ສາມາດເລີ່ມຕົ້ນການບັນທຶກ! \" "</string>
+    <string name="edit_plot_dialog_title">"ເລືອກຈຳນວນຕອນດິນ "</string>
+    <string name="existing_plots">ຈຳນວນຕອນດິນທີ່ມີຢູ່ແລ້ວ %1$d</string>
+    <string name="existing_plots_logged">ບັນດາຕອນດິນທີ່ບັນທຶກແລ້ວ %1$d</string>
+    <string name="send_button">"ສົ່ງ "</string>
+    <string name="duplicate_phone_number">"ເບີໂທລະສັບຊ້ຳ. ກະລຸນາກວດສອບຄືນອີກຄັ້ງ "</string>
+    <string name="record_polygon_input_messege">"ຕອນດິນທີ່ແຕກຕ່າງຂອງລາວມີແນວໃດແດ່? "</string>
+    <string name="record_polygon_input_title">"ລະດັບເນື້ອທີ່ການວິເຄາະ "</string>
+    <string name="record_polygon_input_hint">"ກະລຸນາໃສ່ຈໍານວນຂອງຕອນດິນ "</string>
+    <string name="camera_and_gallery_permission_denial_msg">"ກ້ອງຖ່າຍຮູບ ແລະ ຮູບພາບຈະມີຄຸນສົມບັດບໍ່ເຮັດວຽກໂດຍບໍ່ໄດ້ຮັບການອະນຸຍາດ "</string>
+    <string name="gps_permission_denial_msg">"ບໍ່ມີການສະແດງສະຖານທີ່ໂດຍບໍ່ມີການອະນຸຍາດ "</string>
+    <string name="phone_state_permission_denial_msg">"ຕ້ອງມີການອະນຸຍາດເພື່ອໃຫ້ໂທລະສັບຮູ້ IMEI ຂອງອຸປະກອນທີ່ຕ້ອງການ "</string>
+    <string name="permission_permanent_denial_title">"ການອະນຸຍາດຖືກປະຕິເສດ "</string>
+    <string name="permission_permanent_denial_msg">"ການອະນຸຍາດແມ່ນຖືກປະຕິເສດ. ກະລຸນາຕັ້ງຄ່າຈາກລະບົບ "</string>
+    <string name="go_to_settings_msg">"ອະນຸຍາດການຕັ້ງຄ່າລະບົບ. ໄປທີ່ການຕັ້ງຄ່າ? "</string>
+    <string name="record_farm_polygon">"ການບັນທຶກຕອນສວນ "</string>
+    <string name="record_farm_polygon_hint">ເແຕະເພື່ອບັນທຶກຕອນສວນ</string>
+    <string name="record_farm_polygon_complete">"ຕອນທີ່ບັນທຶກໄວ້ "</string>
+    <string name="submit">"ສະເໜີ "</string>
+    <string name="cancel">"ຍົກເລີກ "</string>
+    <string name="valid_count_msg">"ໃສ່ຈໍານວນທີ່ຖືກຕ້ອງ! "</string>
+    <string name="plot_recording_module_finished">"ການບັນທຶກຕອນດິນແລ້ວໆ "</string>
+    <string name="untick_task">"ບໍ່ເລືອກວຽກງານ "</string>
+    <string name="untick_task_msg">"ກະລຸນາຢືນຢັນວ່າທ່ານຕ້ອງການທີ່ຈະຫມາຍເຖິງວຽກງານນີ້ບໍ່ຄົບຖ້ວນບໍ? "</string>
+    <string name="previous_plot_not_recorded_msg">"ຕອນດິນ %1$s ຍັງບໍ່ໄດ້ຖືກບັນທຶກໄວ້. ກະລຸນາບັນທຶກກ່ອນ. "</string>
+    <string name="updating_master_details">Downloading master details</string>
+</resources>

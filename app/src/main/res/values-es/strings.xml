@@ -1,0 +1,464 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!--
+         DICTIONARY FILE, in order to translate just change the value not the key
+         ie, <string name="Settings">Paramètres</string>
+    -->
+    <!-- action bar and activity titles -->
+    <string name="ofis_action_bar_home">Inicio</string>
+    <string name="ofis_action_bar_settings">Ajustes</string>
+    <string name="title_activity_settings">Ajustes</string>
+    <string name="title_activity_add_farmer">Agregar nuevo agricultor</string>
+    <string name="title_activity_add_infrastructure">Añadir infraestructura comunitaria</string>
+    <string name="title_activity_find_farmer">Encontrar agricultor</string>
+    <string name="title_activity_view_farmer">Detalles del agricultor</string>
+    <string name="title_activity_complete_module">Completar cuestionario</string>
+
+    <!-- main stuff -->
+    <string name="app_name">OFIS - Asistente en Campo Debug</string>
+    <string name="cd_topSectionColour">Fondo coloreado de la sección</string>
+    <string name="ofis_switch_text_yes">Si</string>
+    <string name="ofis_switch_text_no">No</string>
+
+    <!-- Home screen related -->
+    <string name="Retrieving_data">Buscando actualizaciones</string>
+    <string name="importing_string">Importando %% de || registros</string>
+    <string name="spinners_up_to_date">Datos de formulario actualizados</string>
+    <string name="updating_modules">Bajando información de cuestionario</string>
+    <string name="modules_up_to_date">Cuestionario actualizado</string>
+    <string name="updating_farmers">Bajando información del agricultor</string>
+    <string name="farmers_up_to_date">Información de agricultor actualizado</string>
+    <string name="update_complete">Actualizaciones completas</string>
+    <string name="new_farmer">Nuevo agricultor</string>
+    <!-- module row stuff -->
+    <string name="Awaiting_Sync">Sincronización en espera</string>
+    <!-- in XML -->
+    <string name="ofis_complete_questionnaire">Completar cuestionario</string>
+    <string name="ofis_add_infrastructure">Añadir infraestructura comunitaria</string>
+    <string name="ofis_add_new_farmer">Agregar nuevo agricultor</string>
+    <string name="Modules_to_submit">Elementos a cargar</string>
+    <string name="item_synced">Elemento(s) sincronizado(s) con éxito</string>
+    <string name="item_sync_error">Error de sincronización. Favor contáctenos para soporte</string>
+    <string name="ofis_first_run_intro">No ha estado aquí antes, verdad? Podría compartirnos algunos  detalles?</string>
+    <string name="ofis_first_run_save_update">Guardar y actualizar</string>
+
+    <!-- Settings screen related -->
+    <!-- in XML -->
+    <string name="Enumerator_ID">Identificación Enumerador</string>
+
+    <!-- ADD POI related -->
+    <string name="Successfully_added">Añadido exitosamente!</string>
+    <string name="Successfully_updated">Actualizado exitosmente!</string>
+    <string name="ofis_select_gender">Sexo</string>
+    <string name="ofis_olam_funded">Financiado por Olam??</string>
+    <string name="ofis_select_year_opened">Año de apertura</string>
+    <string name="ofis_select_education_level">Nivel de educación</string>
+    <string name="ofis_select_product">Producto comprado</string>
+    <string name="ofis_select_supply_type">Tipo de abastecimiento de agua</string>
+    <string name="location_not_available">Ubicación no disponible</string>
+
+    <!-- in XML -->
+    <string name="Add_Point_of_Interest">Añadir infraestructura comunitaria</string>
+    <string name="Name">Nombre</string>
+    <string name="GPS_Position">Posición GPS</string>
+
+    <!-- in XML includes -->
+    <string name="Capacity">Cantidad máxima de alumnos</string>
+    <string name="Number_of_Classrooms">Número de aulas</string>
+
+    <!-- Add farmer related -->
+    <!-- in code -->
+    <string name="Select_picture_from">Seleccionar fotografía desde:</string>
+    <string name="Camera">Cámara</string>
+    <string name="Gallery">Galería</string>
+    <string name="Please_wait">Favor espere…</string>
+    <string name="Please_fill_all_fields">Por favor llene todos los campos</string>
+    <string name="id_not_unique">Identificación de agricultor NO es ÚNICA, por favor intente otra vez</string>
+    <string name="Submitting_data">Enviando información…</string>
+    <string name="Farmer_Added">Agricultor agregado!</string>
+    <string name="Farmer_Updated">Agricultor actualizado</string>
+    <string name="are_you_at_the_farm">Se encuentra usted en la finca?</string>
+    <string name="yes">Si</string>
+    <string name="no">No</string>
+    <string name="searching_for_loc">Buscando ubicación</string>
+    <string name="ofis_farmer_id_hint">AA-0000-AAAA-</string>
+
+    <!-- in XML -->
+    <string name="Add_Farmer">Agregar agricultor</string>
+    <string name="Farmer_Name">Nombre del agricultor</string>
+    <string name="Date_of_Birth">Fecha de nacimiento</string>
+    <string name="Country">País</string>
+    <string name="New_place_name">Nombre del nuevo lugar</string>
+    <string name="new_place_name_placeholder">Nuevo lugar</string>
+    <string name="Olam_Farmer_ID">Identificación de agricultor Olam</string>
+    <string name="Save">Guardar</string>
+    <string name="Add_Signature">Firma</string>
+
+    <!-- Find a farmer related -->
+    <!-- in XML -->
+    <string name="Select_Farmer">Seleccionar agricultor</string>
+    <string name="Search">Búsqueda</string>
+
+    <!-- View farmer related -->
+    <!-- in XML -->
+    <string name="View_Farmer">Ver agricultor</string>
+    <string name="Farmer_Photo">Foto del agricultor</string>
+    <string name="Task_list_header">Lista de tareas</string>
+    <string name="record_farm_location">Registro de ubicación de finca</string>
+    <string name="record_farm_location_hint">Toque para obtener GPS</string>
+    <string name="record_farm_location_complete">Ubicación registrada</string>
+    <string name="record_location_timeout">No se puede encontrar ubicación, por favor intente otra vez</string>
+    <string name="enabled_string">true</string>
+
+    <!-- For View Sub Module - questionnaire default values -->
+    <string name="ModuleTitle">Título del módulo aquí</string>
+    <string name="ModuleSubTitle">Subtítulo del módulo aquí</string>
+    <string name="ModuleStatus">Nueva tarea</string>
+    <string name="module_in_progress">En progreso: </string>
+    <string name="module_finished">Completado pero NO Enviado</string>
+    <string name="ModuleAnswerHint">Respuesta</string>
+
+    <!-- module action buttons -->
+    <string name="ModuleBackButton">Atrás</string>
+    <string name="ModuleNextButton">Siguiente</string>
+    <string name="ModuleSaveButton">Guardar</string>
+
+    <!-- errors -->
+    <string name="Internet_not_available">Red internet no disponible - debe estar conectado a la red para completar esta tarea</string>
+    <string name="networking_error">Error . Esto puede ser un error de tiempo de espera , por favor vuelva a intentarlo o póngase en contacto con soporte</string>
+
+    <!-- upgrade -->
+    <string name="upgrade_message">La aplicación se ha actualizado, la actualización de los datos locales de nuevo.</string>
+
+    <!-- SPINNERS -->
+
+
+    <!-- spinner default values -->
+    <string name="spinner_country_default">Seleccionar país</string>
+    <string name="spinner_region_default">Seleccionar provincia</string>
+    <string name="spinner_district_default">Seleccionar canton</string>
+    <string name="spinner_place_default">Seleccionar parroquia</string>
+    <string name="spinner_farmergroup_default">Seleccionar grupo de agricultores</string>
+    <string name="spinner_section_default">Seleccionar sección</string>
+    <string name="spinner_product_default">Seleccionar producto</string>
+
+    <string-array name="poitypes">
+        <item>Centro Escolar</item>
+        <item>Centro de Salud</item>
+        <item>Abastecimiento de agua potable</item>
+        <item>Centro de Acopio</item>
+    </string-array>
+    <string name="poitype_school">Centro Escolar</string>
+    <string name="poitype_healthcentre">Centro de Salud</string>
+    <string name="poitype_cleanwatersupply">Abastecimiento de agua potable</string>
+    <string name="poitype_buyingcentre">Centro de Acopio</string>
+    <string-array name="genders">
+        <item>Masculino</item>
+        <item>Femenino</item>
+    </string-array>
+    <string name="gender_male">Masculino</string>
+    <string name="gender_female">Femenino</string>
+    <string-array name="genders_2">
+        <item>Masculino</item>
+        <item>Femenino</item>
+        <item>Mixto</item>
+    </string-array>
+    <string name="gender_school_male">Masculino</string>
+    <string name="gender_school_female">Femenino</string>
+    <string name="gender_school_coeducational">Mixto</string>
+    <string-array name="educationlevels">
+        <item>Guarderia</item>
+        <item>Escuela</item>
+        <item>Secunadaria Básica</item>
+        <item>Secunadaria Diversificado</item>
+        <item>Universidad</item>
+    </string-array>
+    <string name="educationlevel_nursery">Guarderia</string>
+    <string name="educationlevel_primary">Escuela</string>
+    <string name="educationlevel_juniorsecondary">Secunadaria Básica</string>
+    <string name="educationlevel_seniorsecondary">Secunadaria Diversificado</string>
+    <string name="educationlevel_graduate">Universidad</string>
+    <string-array name="clean_water_types">
+        <item>Pozo clavado (sondeo)</item>
+        <item>Pozo natural</item>
+        <item>Tubería</item>
+        <item>Manantial</item>
+    </string-array>
+    <string name="cleanwatertype_borehole">Pozo clavado (sondeo)</string>
+    <string name="cleanwatertype_well">Pozo natural</string>
+    <string name="cleanwatertype_pipe">Tubería</string>
+    <string name="cleanwatertype_spring">Manantial</string>
+    <string-array name="plotvariants">
+        <item>Igual</item>
+        <item>Mayor</item>
+        <item>Menor</item>
+    </string-array>
+    <string name="plotvariant_thesame">Igual</string>
+    <string name="plotvariant_more">Mayor</string>
+    <string name="plotvariant_less">Menor</string>
+
+    <!-- content descriptions -->
+    <string name="ofis_cd_hierarchy_arrow">Flecha indicando a la derecha</string>
+    <string name="ofis_cd_info_icon">Ícono: Información</string>
+    <string name="ofis_cd_submit_all_icon">Subir todo</string>
+    <string name="module_density_plot_question">¿Es la densidad de este lote, mayor, menor o igual al lote principal?</string>
+    <string name="module_density_plot_question_intro">Lotes adicionales</string>
+    <string name="module_density_plot_question_result_intro">Resultado:</string>
+    <string name="app_updated_generic_message">Hay una actualización disponible para la aplicación. Haga click en "ok" para descargarla.</string>
+    <string name="app_update_ok">OK</string>
+    <string name="app_update_cancel">Cancelar</string>
+    <string name="farmer_not_synced">El productor no ha sido sincronizado. Por favor sincronice antes de proceder</string>
+    <string name="review_farm_management_plan">Revisión del Plan de Acción</string>
+    <string name="review_farm_management_plan_hint">Pulse aquí para guardar retroalimentación</string>
+    <string name="title_activity_review_farm_management_plan">Revisión del Plan de Acción</string>
+    <string name="updating_fmps">Actualizando Planes de Acción</string>
+    <string name="fmps_up_to_date">Plan de Acción actualizado</string>
+    <string name="review_farm_management_plan_complete">Retroalimentación enviada</string>
+    <string name="review_farm_management_plan_in_progress">Revisión en progreso</string>
+    <string name="fmp_redo_baseline">Quiere revisar la informacion del Encuesta del Productor?</string>
+    <string name="hpQId">1</string>
+    <string name="hpAId">2</string>
+    <string name="hpPqId">3</string>
+    <string name="hpRiP">4</string>
+    <string name="hpD">5</string>
+    <string name="fullreview_farm_management_plan">Revision de Plan de Acción</string>
+    <string name="fullreview_farm_management_plan_in_progress">Revisión en proceso</string>
+    <string name="fmp_are_you_sure" tools:ignore="Typos">Si se ajusta este información, se debe entregar un nuevo plan de accion. Está seguro que desea proceder?</string>
+    <string name="complete_all_required_fields">Debe completar todos los campos requeridos antes de enviar este item (en este caso, todas las preguntas con un * rojo)</string>
+    <string name="ReadAndAgreeConsent">Por favor lea y acepte los términos y condiciones</string>
+    <string name="consentStatementMain1">Es necesario que usted nos provea de sus datos personales en conexión con el programa de sostenibilidad de Olam del cual es ahora es usted parte. Dichos datos personales serán recolectados y almacenados en el Sistema de Información de Agricultores Olam ("OFIS" por sus siglas en inglés). Usted puede consecuentemente, retirar cualquier consentimiento dado de la divulgación de sus datos personales. Sin embargo, información falsa en sus datos personales y/o el subsecuente retiro de su consentimiento en el uso de sus datos personales podría resultar en que usted NO SEA tomado en cuenta para participar en el programa de sostenibilidad.</string>
+    <string name="consentStatementMain2">
+        Sus datos personales serán utilizados en OFIS para ayudar a construir información en cuanto a:
+    </string>
+    <string name="consentStatementMain2a">
+        Software de mapeo. Está diseñado para exhibir la finca y lugares de infraestructura, además de contener información más detallada acerca de los Agricultores vinculados a su ubicación geográfica
+    </string>
+    <string name="consentStatementMain2b">
+        Software de análisis. Examina la información personal de un Agricultor con los datos ingresados en orden de ayudar a determinar la dirección futura del programa de sostenibilidad. Los usuarios de OFIS pueden exportar el análisis (y los datos que soportan el análisis, tales como los datos personales del Agricultor). Esta función de exportación permite a los Usuarios identificar Agricultores específicos con, por ejemplo, los más altos o los más bajos niveles de productividad en el programa de sostenibilidad.
+    </string>
+    <string name="consentStatementMain2c">
+        Plan de Acción. Es un plan elaborado para cada agricultor indicando los cambios que deben ser realizados en la finca por los siguientes 3-5 años para alcanzar el máximo potencial de productividad.
+    </string>
+    <string name="consentStatementMain3">
+        Los usuarios de OFIS incluyen empleados de Olam, personal responsable del manejo de grupos de agricultores y clientes a nivel mundial en concondancia con el software de mapeo, software de análisis y los planes de acción mencionados anteriormente.
+    </string>
+    <string name="consentStatementMain4">
+        Sus datos personales, los cuales son administrados por nosotros, serán mantenidos de forma confidencial. Sin embargo serán compartidos con los Usuarios de OFIS como mencionado anteriormente. Sus datos personales podrían ser transferidos a un lugar fuera de su jurisdicción local. Donde lo hacemos así, sujeto a la ley de privacidad aplicable, tomaremos las medidas para asegurar que el estándar de protección otorgado a sus datos personales transferidos sea comparable a la protección bajo la ley de privacidad aplicable en su jurisdicción local.
+    </string>
+    <string name="consentStatementMain5">
+        Usted puede retirar cualquier consentimiento dado, requerimiento de acceso y/o corrección de su información personal y/o requerimiento de información considerando nuestras políticas y prácticas a través del contacto con nuestro Oficial de Protección de Datos en ofis@olamnet.com
+    </string>
+    <string name="consentStatementCheck1">Yo confirmo que el Agricultor ha escuchado al Enumerador leer la Notificación de Recopilación de Información Personal y él ha dado su expreso consentimiento para la recolección, uso y transferencia de sus datos personales a Olam para los propósitos aquí establecidos.</string>
+    <string name="consentStatementCheck2">Yo confirmo que el Agicultor ha escuchado al Enumerador leer la Notificación de Recopilación de Información Personal y él ha confirmado que él tiene el expreso consentimiento de todos los otros individuos de quienes sus datos personales han sido provistos para ser recolectados, utilizados y divulgados para los propósitos establecidos.</string>
+    <string name="consentStatementTitle">Aviso de Recopilación de Información Personal</string>
+    <string name="Please_accept_both_consents">Hay que aceptar los términos y condiciones para guardar la información del agricultor</string>
+    <string name="farmer_id_min">El número de identificación del agricultor debe tener un máximo de 4 digitos</string>
+    <string name="app_updated_upload_first_message">Hay una nueva versión disponible. Antes de descargarla debes sincronizar todo. Favor hacer click en OK para sincronizar todo, luego anda a Ajustes para actualizar la aplicación.</string>
+    <string name="please_sync_before_update">Hay algo pendiente de sincronizar. Antes de actualizar la aplicación debes sincronizar todo.</string>
+    <string name="ofis_update_overdue">Esta versión está desactualizada, debes actualizarla para seguir utilizándola. Toca el ícono de Ajustes en la parte superior derecha para actualizarla.</string>
+    <string name="ofis_request_help">Ayuda</string>
+    <string name="Your_Name">Tu nombre</string>
+    <string name="problem_description">Describe el problema que tienes</string>
+    <plurals name="days_left_to_update">
+        <item quantity="one">La aplicación debe ser actualizada cada 30 días. Tienes %1d día para actualizarla</item>
+        <item quantity="other">La aplicación debe ser actualizada cada 30 días. Tienes %1d días para actualizarla</item>
+    </plurals>
+    <string name="record_transaction_button_text">Registrar información</string>
+    <string name="record_training_button">Registrar capacitación</string>
+    <string name="ViewTransactionsTitle">Transacciones</string>
+    <string name="Add">Agregar  </string>
+    <string name="AddTransactionItemTitle">Item de transacción</string>
+    <string name="please_select">Favor seleccionar</string>
+    <string name="select_transaction_item_type">Tipo</string>
+    <string name="ofis_select_item_product_grade">Nivel de producto</string>
+    <string name="select_currency">Frecuencia</string>
+    <string name="enter_quantity">Cantidad máxima de alumnos</string>
+    <string name="select_units">Unidades</string>
+    <string name="updating_transaction_data">Actualizando datos de transacción</string>
+    <string name="Transaction_item_added">Item de transacción agregada</string>
+    <string name="Delete_Item">Item borrado</string>
+    <string name="Transaction_default">Transacción</string>
+    <string name="transaction_are_you_sure">Estás seguro que deseas borrar esta transacción?</string>
+    <string name="transaction_deleted">Transacción borrada exitosamente</string>
+    <string name="complete_transaction">Transacción completa</string>
+    <string name="Farmer_Group_Name">Nombre de grupo de agricultor</string>
+    <string name="direction_hint">Usted lo está dando o recibiendo?</string>
+    <string name="transaction_added_to_queue">Transacción confirmada para cargar</string>
+    <string name="Transaction_network_queue_title">Transacción</string>
+    <string name="transaction_confirmed">Transacción confirmada</string>
+    <string name="ofis_no_transactions_text" tools:ignore="Typos">Cuando tu agregues transacciones, ellos aparecerán aquí</string>
+    <string name="ofis_no_trainingrecords_text" tools:ignore="Typos">Cuando tu agregues registros de capacitaciones, ellos aparecerán aquí</string>
+    <string name="TrainingRecordsTitle">Registro de capacitación</string>
+    <string name="select_course">Curso</string>
+    <string name="TrainingAttendees">Asistentes a capacitación</string>
+    <string name="complete_record">Registro completo</string>
+    <string name="TrainingRecordTitle">Manejo de registro de capacitación</string>
+    <string name="select_training_module">Seleccionar informacón de título de transacción</string>
+    <string name="Training_Photo">Foto de entrenamiento</string>
+    <string name="TrainingRecordConfirmationTitle">Confirmación de registro de capacitación</string>
+    <string name="TrainingRecordConfirmationSubTitle">Confirmar el registro de capacitación para confirmación</string>
+    <string name="confirm_training_record">Confirmar regsitro de capacitación</string>
+    <string name="Select_Attendees">Seleccionar asistentes</string>
+    <string name="Attendee_Name">Nombre de asistente</string>
+    <string name="selected">Seleccionado</string>
+    <string name="save_selected_attendees">Grabar asistentes seleccionados</string>
+    <string name="Training_select_course_module_first">Por favor seleccionar un curso, módulo y tomar una foto primero</string>
+    <string name="add_attendee_scores">Agregar calificación</string>
+    <string name="attendees_saved">Asistentes grabados</string>
+    <string name="Training_Record_Edited">Registro de capacitación actualizado</string>
+    <string name="Training_Record_Added">Regisstro de capacitación agregado</string>
+    <string name="Add_one_attendee_to_continue">Agregar al menos un asistente para continuar</string>
+    <string name="updating_training">Actualizando información de capacitación</string>
+    <string name="Attendees">Asistentes</string>
+    <string name="trainingrecord_are_you_sure">Está seguro que desea borrar este registro de capacitación</string>
+    <string name="trainingrecord_deleted">Registro de capacitación borrado</string>
+    <string name="trainingattendee_are_you_sure">Está seguro que desea borrar este asistente?</string>
+    <string name="trainingattendee_deleted">Asistente borrado</string>
+    <string name="TrainingAttendeeScores">Calificación de asistente</string>
+    <string name="TrainingAttendeeScoresSubTitle">Agregar o editar calificaciones de asistentes</string>
+    <string name="save_scores">Grabar calificaciones de asistentes</string>
+    <string name="attendees_scores_updated">Calificación de asistente cargada</string>
+    <string name="trainingrecord_added_to_queue">Registro de capacitación confirmado para cargar</string>
+    <string name="trainingrecord_confirmed">Registro de capacitación confirmado  </string>
+    <string name="checkbox_image">Caja de image</string>
+    <string name="PhoneNumberHint">Número de teléfono</string>
+    <string name="PhoneNumbers">Números de teléfono</string>
+    <string name="main_number">Número principal</string>
+    <string name="location">Ubicación</string>
+    <string name="update_phone_numbers">Actualizar número de teléfono</string>
+    <string name="update_phone_numbers_hint">Pulsa para actualizar</string>
+    <string name="select_transactee">Con quien está usted negociando? / Con quién está usted realizando la transacción?</string>
+    <string name="price_per_unit">precio por</string>
+    <string name="total_price">Precio total</string>
+    <string name="amount_paid">Monto pagado a</string>
+    <string name="amount_loaned">Monto prestado a</string>
+    <string name="amount_gifted">Cantidad donada a</string>
+    <string name="Transaction_item_updated">Item de transacción actualizado</string>
+    <string name="amount_repaid">Monto reembolsado a</string>
+    <plurals name="trainingAttendeesCount">
+        <item quantity="one">%1d Asistente</item>
+        <item quantity="other">%1d Asistentes</item>
+    </plurals>
+    <string name="registeredForNotifications">Usted ahora está registrado para recibir notificaciones de tareas</string>
+    <string name="registerForNotificationsFailed">Registro de notificación de tareas fallido. Esto se reintentará automáticamente más tarde. Si usted continúa recibiendo este mensaje por favor contacte a Soporte</string>
+    <string name="NewTaskReceivedTitle">Nueva tarea recibida</string>
+    <string name="title_activity_tasks">Tareas</string>
+    <string name="updating_tasks">Actualizando Tareas</string>
+    <string name="TaskUpdatedTitle">Tarea actualizada</string>
+    <string name="TaskDeletedTitle">Tarea eliminada</string>
+    <string name="take_photo">Tomar foto</string>
+    <string name="set_auto_time_message">Su configuración de hora y zona horariano están en modo automático. Por favor configúrelas como Automático.</string>
+    <string name="buyingagent">Agente Comprador</string>
+    <string name="credit_balance">Le debe</string>
+    <string name="ChooseBuyingAgent">Elegir Agente Comprador</string>
+    <string name="WhoTransacting">En nombre de quién está usted realizando la transacción?</string>
+    <string name="PickAgentFirst">Usted debe elegir un agente primero</string>
+    <string name="farmer_or_buying_agent_name">Nombre del Productor o Agente Comprador</string>
+    <string name="title_activity_find_transactee">Encontrar la persona con quien se está realizando la transacción</string>
+    <string name="amount_repaid_and_loaned">Monto reembolsado y prestado a</string>
+    <string name="amount_loaned_by">Monto prestado por</string>
+    <string name="amount_repaid_by">Monto reembolsado por</string>
+    <string name="amount_repaid_and_loaned_by">Monto reembolsado y prestado por</string>
+    <string name="amount_paid_by">Monto pagado por</string>
+    <string name="amount_gifted_by">Cantidad donada por</string>
+    <string name="debit_balance">Usted debe</string>
+    <string name="cannotTransactNothingToRepay">Usted no debe dinero así que no puede completar esta transacción</string>
+    <string name="cannotTransactUnableToLoan">Usted debe dinero así que no puede completar esta transacción</string>
+    <string name="cannotRepayNotOwedMoney">A usted no le deben dinero así que no puede completar esta transacción</string>
+    <string name="cannotLoanOwedMoney">A usted le deben dinero así que no puede completar esta transacción</string>
+    <string name="ensure_totals_match">Por favor asegúrese que el total de todos los campos de pago coincidan con el precio total</string>
+    <string name="price_per_unit_default">unidad</string>
+    <string name="input_crop_finance">Insumo, Financiamiento o Cosecha?</string>
+    <string name="input_crop">Insumo o Cosecha?</string>
+    <string name="input_finance">Insumo o Financiamiento?</string>
+    <string name="finance_crop">Financiamiento o Cosecha?</string>
+    <string name="task_mark_complete">Terminado?</string>
+    <string name="transaction_notes">Notas</string>
+    <string name="cannotRepayMoreThanOwe">Usted no puede reembolsar más de lo que debe</string>
+    <string name="cannotRepayMoreThanTheyOwe">Ellos no pueden reembolsar más de lo que deben</string>
+    <string name="item_in_progress">En progreso</string>
+    <string name="cannot_do_mobile_money_non_farmer">Usted no puede comprar a un agente comprador usando Dinero Móvil</string>
+    <string name="pay_using_mobile_money_or_cash">Pagar usando Dinero Móvil o efectivo?</string>
+    <string-array name="mmCash">
+        <item>Efectivo</item>
+        <item>Dinero Móvil</item>
+    </string-array>
+    <string name="mmCash_mobilemoney">Dinero Móvil</string>
+    <string name="mmCash_cash">Efectivo</string>
+    <string name="mobile_money_suffix">Usando Dinero Móvil</string>
+    <string name="mm_transaction_initiated">La transacción en Dinero Móvil inició, por favor espere…</string>
+    <string name="mm_transaction_checking">Verificando estado de la transacción</string>
+    <string name="mm_transaction_timedout">Su transacción en Dinero Móvil no se completó a tiempo, por favor use efectivo</string>
+    <string name="mm_transaction_awaiting_response">La transacción en Dinero Móvil está pendiente de respuesta</string>
+    <string name="mm_transaction_inprogress">La transacción en Dinero Móvil está en proceso</string>
+    <string name="mm_transaction_complete">La transacción de Dinero Móvil fue completada y sincronizada</string>
+    <string name="mm_transaction_failed">La transacción en Dinero Móvil falló. Por favor intente usando efectivo.</string>
+    <string name="mm_transaction_confirmation">Usted está por pagar %1$s %2$s usando Dinero Móvil. Por favor confirme esta transacción</string>
+    <string name="mm_transaction_confirm">Confirmar</string>
+    <string name="place_name_not_unique">Este nombre de sitio ya existe dentro del distrito. Por favor seleccione el sitio existente de la lista</string>
+    <string name="title_activity_record_polygon">Registrar polígono del lote</string>
+    <string name="loading">"Cargando "</string>
+    <string name="wait">Por favor espere</string>
+    <string name="save_button_text">Guardar</string>
+    <string name="start_logging_button_text">"Empezar medición "</string>
+    <string name="stop_logging_button_text">"Detener medición "</string>
+    <string name="pause_button_text">"Pausa "</string>
+    <string name="resume_button_text">"Resumir "</string>
+    <string name="plot">Lote No. %1$d</string>
+    <string name="plot_already_logged">"Lote No. %1$s "</string>
+    <string name="location_permission_alertdialog_title">"Se necesitan permisos de Ubicación para acceder al GPS "</string>
+    <string name="open_application_settings_msg">"ir a configuración de la APP "</string>
+    <string name="ready_to_save">"Lote No. %1$s listo para ser guardado "</string>
+    <string name="restart_logging">"Quiere reiniciar la medición? "</string>
+    <string name="save_existing_logs">"Guardar registros existentes! "</string>
+    <string name="already_logged_and_saved">"Lote No. %1$s Registrado y Guardado! "</string>
+    <string name="try_again_later_msg">"Por favor intente de nuevo en unos minutos "</string>
+    <string name="location_not_yet_logged">"Usted no ha registrado ninguna Ubicación todavía! "</string>
+    <string name="fetch_location_msg">"Buscando Ubicación. Por favor espere! "</string>
+    <string name="gps_manager_msg">"Administrador GPS "</string>
+    <string name="enable_gps_msg">"Quiere habilitar el GPS? "</string>
+    <string name="gps_turned_on">"Active el GPS! "</string>
+    <string name="storage_permission_explanation">"Se requiere permiso de almacenamiento para almacenar mapas y reducir el uso de datos y para uso fuera de línea  "</string>
+    <string name="location_permission_explanation">"Se necesita permiso de Ubicación para colectar datos geográficos del lote. "</string>
+    <string name="speed_unit_kmph">"%1$d Km/h "</string>
+    <string name="logging_progress_msg">"Registro en proceso "</string>
+    <string name="cancel_logging_question">"Cancelar registro "</string>
+    <string name="cancel_logging_msg">"Registro %1$s cancelado "</string>
+    <string name="not_logged_yet">" %1$s  no registrado aún "</string>
+    <string name="area_info">"Área %1$f Ha "</string>
+    <string name="save_polygon_alertdialog_title">"Guardar el polígono %1$s? "</string>
+    <string name="save_polygon_alertdialog_msg">"Usted no podrá registrar el lote %1$s de nuevo "</string>
+    <string name="close">"Cerrar "</string>
+    <string name="saved_successfully_msg">"%1$s Guardado exitosamente! "</string>
+    <string name="confirm">"Confirmar "</string>
+    <string name="plot_location_confirmation">"Usted está en el lote %1$s? "</string>
+    <string name="logging_not_started_msg">"El registro no puede iniciarse "</string>
+    <string name="edit_plot_dialog_title">"Seleccione el número de lotes "</string>
+    <string name="existing_plots">Número de lote existente %1$d</string>
+    <string name="existing_plots_logged">Lotes ya registrados. %1$d</string>
+    <string name="previous_plot_not_recorded_msg">"Lote %1$s no ha sido registrado. Por favor registre el lote %1$s primero. "</string>
+    <string name="send_button">"Enviar "</string>
+    <string name="duplicate_phone_number">"No se permiten números de teléfono duplicados. Por favor revise las entradas de teléfonos "</string>
+    <string name="record_polygon_input_messege">"Cuántos lotes diferentes tiene este productor? "</string>
+    <string name="record_polygon_input_title">"Análisis de lotes "</string>
+    <string name="record_polygon_input_hint">"Ingresar Número de Lotes "</string>
+    <string name="camera_and_gallery_permission_denial_msg">La cámara y la galería no funcionarán sin este permiso</string>
+    <string name="gps_permission_denial_msg">"La función de Ubicación no funcionará sin este permiso "</string>
+    <string name="phone_state_permission_denial_msg">"El permiso de teléfono es necesario para obtener el número IMEI del dispositivo "</string>
+    <string name="permission_permanent_denial_title">"El permiso fue negado permanentemente "</string>
+    <string name="permission_permanent_denial_msg">"La solicitud de permiso es negada permanentemente. Por favor provea los permisos desde Configuración de la App "</string>
+    <string name="go_to_settings_msg">"Habilitar permisos desde Configuración de la App. Ir a Configuración? "</string>
+    <string name="record_farm_polygon">"Registrar polígono de la finca "</string>
+    <string name="record_farm_polygon_hint">"Pulse para Registrar Polígono de la Finca "</string>
+    <string name="record_farm_polygon_complete">"Polígono registrado "</string>
+    <string name="submit">"Enviar "</string>
+    <string name="cancel">"Cancelar "</string>
+    <string name="valid_count_msg">"Ingrese un número válido "</string>
+    <string name="plot_recording_module_finished">"Registro de lotes completado "</string>
+    <string name="untick_task">"Desmarcar tarea "</string>
+    <string name="untick_task_msg">"Por favor confirme que quiere marcar esta tarea como incompleta "</string>
+    <string name="current_track_name">"Pista OFIS "</string>
+    <string name="loggin_In">Logging in</string>
+    <string name="updating_master_details">Downloading master details</string>
+</resources>

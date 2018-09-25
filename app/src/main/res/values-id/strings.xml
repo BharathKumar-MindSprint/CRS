@@ -1,0 +1,463 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!--
+         DICTIONARY FILE, in order to translate just change the value not the key
+         ie, <string name="Settings">Paramètres</string>
+    -->
+    <!-- action bar and activity titles -->
+    <string name="ofis_action_bar_home">Tampilan awal</string>
+    <string name="ofis_action_bar_settings">Pengaturan</string>
+    <string name="title_activity_settings">Pengaturan</string>
+    <string name="title_activity_add_farmer">Tambahkan Petani Baru</string>
+    <string name="title_activity_add_infrastructure">Tambahkan Infrastruktur Sosial</string>
+    <string name="title_activity_find_farmer">Temukan Petani</string>
+    <string name="title_activity_view_farmer">Detail petani</string>
+    <string name="title_activity_complete_module">Selesaikan modul kusioner</string>
+
+    <!-- main stuff -->
+    <string name="app_name">OFIS Debug</string>
+    <string name="cd_topSectionColour">Latar berwarna untuk setiap bagian</string>
+    <string name="ofis_switch_text_yes">Ya</string>
+    <string name="ofis_switch_text_no">Tidak</string>
+
+    <!-- Home screen related -->
+    <string name="Retrieving_data">Memeriksa Perbaruan</string>
+    <string name="importing_string">%% Penting dari || catatan</string>
+    <string name="spinners_up_to_date">Dari data up to date</string>
+    <string name="updating_modules">Mengunduh data pertanyaan</string>
+    <string name="modules_up_to_date">Pertanyaan up to date</string>
+    <string name="updating_farmers">Mengunduh data petani</string>
+    <string name="farmers_up_to_date">Petani up to date</string>
+    <string name="update_complete">Update lengkap</string>
+    <string name="new_farmer">Petani Baru</string>
+    <!-- module row stuff -->
+    <string name="Awaiting_Sync">Menunggu sinkronisasi</string>
+    <!-- in XML -->
+    <string name="ofis_complete_questionnaire">Selesaikan modul kusioner</string>
+    <string name="ofis_add_infrastructure">Tambahkan Infrastruktur Sosial</string>
+    <string name="ofis_add_new_farmer">Tambahkan Petani Baru</string>
+    <string name="Modules_to_submit">Item yang dimasukkan</string>
+    <string name="item_synced">Item item yang sukses di sinkronisasi</string>
+    <string name="item_sync_error">Sinkronisasi Error. Mohon hubungi kami untuk bantuan</string>
+    <string name="ofis_first_run_intro">Anda belum pernah berada disekitar sini sebelumnya, ya? Boleh kami minta beberapa keterangan?</string>
+    <string name="ofis_first_run_save_update">Simpan dan Update</string>
+
+    <!-- Settings screen related -->
+    <!-- in XML -->
+    <string name="Enumerator_ID">ID Enumerator</string>
+
+    <!-- ADD POI related -->
+    <string name="Successfully_added">Sukses ditambahkan</string>
+    <string name="Successfully_updated">Sukses di perbarui</string>
+    <string name="ofis_select_gender">Jenis Kelamin</string>
+    <string name="ofis_olam_funded">Apakah didanai oleh Olam?</string>
+    <string name="ofis_select_year_opened">Tahun Mulai</string>
+    <string name="ofis_select_education_level">Tingkat Pendidikan</string>
+    <string name="ofis_select_product">Produk yang dibeli</string>
+    <string name="ofis_select_supply_type">Tipe dari supply air</string>
+    <string name="location_not_available">Lokasi tidak tersedia</string>
+
+    <!-- in XML -->
+    <string name="Add_Point_of_Interest">Tambahkan Infrastruktur Sosial</string>
+    <string name="Name">Nama</string>
+    <string name="GPS_Position">Posisi GPS</string>
+
+    <!-- in XML includes -->
+    <string name="Capacity">Kapasitas Murid/Siswa</string>
+    <string name="Number_of_Classrooms">Jumlah Kelas</string>
+
+    <!-- Add farmer related -->
+    <!-- in code -->
+    <string name="Select_picture_from">Memilih gambar dari</string>
+    <string name="Camera">Kamera</string>
+    <string name="Gallery">Galeri</string>
+    <string name="Please_wait">Mohon Tunggu</string>
+    <string name="Please_fill_all_fields">Mohon diisi semua kolom</string>
+    <string name="id_not_unique">ID Petani tidak unik, Mohon dicoba lagi</string>
+    <string name="Submitting_data">Memasukkan data…</string>
+    <string name="Farmer_Added">Petani ditambahkan!</string>
+    <string name="Farmer_Updated">Petani Update</string>
+    <string name="are_you_at_the_farm">Apakah anda berada di kebun?</string>
+    <string name="yes">Ya</string>
+    <string name="no">Tidak</string>
+    <string name="searching_for_loc">Mencari Lokasi</string>
+    <string name="ofis_farmer_id_hint">AA-0000-AAAA-</string>
+
+    <!-- in XML -->
+    <string name="Add_Farmer">Tambahkan Petani</string>
+    <string name="Farmer_Name">Nama Petani</string>
+    <string name="Date_of_Birth">Tanggal Lahir</string>
+    <string name="Country">Negara</string>
+    <string name="New_place_name">Nama tempat baru</string>
+    <string name="new_place_name_placeholder">Tempat baru</string>
+    <string name="Olam_Farmer_ID">ID Petani Olam</string>
+    <string name="Save">Simpan</string>
+    <string name="Add_Signature">Tanda tangan</string>
+
+    <!-- Find a farmer related -->
+    <!-- in XML -->
+    <string name="Select_Farmer">Memilih Petani</string>
+    <string name="Search">Pencarian</string>
+
+    <!-- View farmer related -->
+    <!-- in XML -->
+    <string name="View_Farmer">Tampilkan Petani</string>
+    <string name="Farmer_Photo">Foto Petani</string>
+    <string name="Task_list_header">Daftar Tugas</string>
+    <string name="record_farm_location">Catatan lokasi kebun</string>
+    <string name="record_farm_location_hint">Tap untuk mendapatkan GPS</string>
+    <string name="record_farm_location_complete">Lokasi tercatat</string>
+    <string name="record_location_timeout">Lokasi tidak ditemukan, mohon coba kembali</string>
+    <string name="enabled_string">true</string>
+    <string name="review_farm_management_plan">Rencana Ulasan Usaha tani</string>
+    <string name="review_farm_management_plan_hint">Ketuk untuk merekam tanggapan</string>
+
+    <!-- For View Sub Module - questionnaire default values -->
+    <string name="ModuleTitle">Judul Modul dimasukkan disini</string>
+    <string name="ModuleSubTitle">Judul sub Modul dimasukkan disini</string>
+    <string name="ModuleStatus">Tugas baru</string>
+    <string name="module_in_progress">Dalam tahapan </string>
+    <string name="module_finished">Selesai tapi belum dimasukkan</string>
+    <string name="ModuleAnswerHint">Jawaban</string>
+
+    <!-- module action buttons -->
+    <string name="ModuleBackButton">Kembali</string>
+    <string name="ModuleNextButton">Selanjutnya</string>
+    <string name="ModuleSaveButton">Simpan</string>
+
+    <!-- errors -->
+    <string name="Internet_not_available">Internet tidak tersedia-Online untuk menyelesaikan tugas ini</string>
+    <string name="networking_error">Error. Waktu Habis, mohon coba lagi, atau kontak bantuan</string>
+    <string name="farmer_not_synced">Maaf, Petani belum disinkronisasi. Sinkronisasi petani terlebih dahulu</string>
+
+    <!-- upgrade -->
+    <string name="upgrade_message">Aplikasi sementara sedang diperbarui, perbarui lokal data sekali lagi</string>
+
+    <!-- SPINNERS -->
+
+
+    <!-- spinner default values -->
+    <string name="spinner_country_default">Pilih negara</string>
+    <string name="spinner_region_default">Pilih Provinsi</string>
+    <string name="spinner_district_default">Pilih Kabupaten/Kota</string>
+    <string name="spinner_place_default">Pilih Kecamatan</string>
+    <string name="spinner_farmergroup_default">Pilih Kelompok Tani</string>
+    <string name="spinner_section_default">Pilih Bagian</string>
+    <string name="spinner_product_default">Pilih produk</string>
+
+    <string-array name="poitypes">
+        <item>Sekolah</item>
+        <item>Pusat Kesahatan</item>
+        <item>Supply air bersih</item>
+        <item>Pusat pembelian</item>
+    </string-array>
+    <string name="poitype_school">Sekolah</string>
+    <string name="poitype_healthcentre">Pusat Kesahatan</string>
+    <string name="poitype_cleanwatersupply">Supply air bersih</string>
+    <string name="poitype_buyingcentre">Pusat pembelian</string>
+    <string-array name="genders">
+        <item>Laki-laki</item>
+        <item>Perempuan</item>
+    </string-array>
+    <string name="gender_male">Laki-laki</string>
+    <string name="gender_female">Perempuan</string>
+    <string-array name="genders_2">
+        <item>Laki-laki</item>
+        <item>Perempuan</item>
+        <item>Coeducational</item>
+    </string-array>
+    <string name="gender_school_male">Laki-laki</string>
+    <string name="gender_school_female">Perempuan</string>
+    <string name="gender_school_coeducational">Coeducational</string>
+    <string-array name="educationlevels">
+        <item>Nursery</item>
+        <item>SD</item>
+        <item>SMP</item>
+        <item>SMU</item>
+        <item>S1</item>
+    </string-array>
+    <string name="educationlevel_nursery">Nursery</string>
+    <string name="educationlevel_primary">SD</string>
+    <string name="educationlevel_juniorsecondary">SMP</string>
+    <string name="educationlevel_seniorsecondary">SMU</string>
+    <string name="educationlevel_graduate">S1</string>
+    <string-array name="clean_water_types">
+        <item>Lubang</item>
+        <item>Sumur</item>
+        <item>Pipa</item>
+        <item>Musim semi</item>
+    </string-array>
+    <string name="cleanwatertype_borehole">Lubang</string>
+    <string name="cleanwatertype_well">Sumur</string>
+    <string name="cleanwatertype_pipe">Pipa</string>
+    <string name="cleanwatertype_spring">Musim semi</string>
+    <string-array name="plotvariants">
+        <item>Sama</item>
+        <item>Lebih</item>
+        <item>Kurang</item>
+    </string-array>
+    <string name="plotvariant_thesame">Sama</string>
+    <string name="plotvariant_more">Lebih</string>
+    <string name="plotvariant_less">Kurang</string>
+
+    <!-- content descriptions -->
+    <string name="ofis_cd_hierarchy_arrow">Arrow pointing right</string>
+    <string name="ofis_cd_info_icon">Information icon</string>
+    <string name="ofis_cd_submit_all_icon">Submit all</string>
+    <string name="module_density_plot_question">Apakah kepadatan dari plot ini lebih, kurang atau sama dengan plot utama?</string>
+    <string name="module_density_plot_question_intro">Plot tambahan</string>
+    <string name="module_density_plot_question_result_intro">Hasil: </string>
+    <string name="app_updated_generic_message">Update terbaru tersedia. Mohon di klik untuk mengunduh</string>
+    <string name="app_update_ok">Ok</string>
+    <string name="app_update_cancel">Batalkan</string>
+    <string name="title_activity_review_farm_management_plan">Rencana Ulasan Usaha tani</string>
+    <string name="updating_fmps">Memperbarui Rencana Manajemen Pertanian</string>
+    <string name="fmps_up_to_date">Rencana Manajemen pertanian up to date</string>
+    <string name="review_farm_management_plan_complete">Masukan yang disampaikan</string>
+    <string name="review_farm_management_plan_in_progress">Proses Ulasan</string>
+    <string name="fmp_redo_baseline">Merevisi data dasar ?</string>
+    <string name="hpQId">1</string>
+    <string name="hpAId">2</string>
+    <string name="hpPqId">3</string>
+    <string name="hpRiP">4</string>
+    <string name="hpD">5</string>
+    <string name="fullreview_farm_management_plan">Review Rencana Pengelolaan pertanian</string>
+    <string name="fullreview_farm_management_plan_in_progress">Ulasan lengkap berlangsung</string>
+    <string name="fmp_are_you_sure">Hal ini akan membutuhkan rencana baru yang akan dicetak , apakah Anda yakin Anda ingin melanjutkan ?</string>
+    <string name="complete_all_required_fields">Anda Harus menyelesaikan semua bagian yang diperlukan sebelum anda dapat mengirimkan item ini (yaitu: bagian yg dimaksud adalah yang bertanda merah*)</string>
+    <string name="ReadAndAgreeConsent">Baca dan Setuju dengan perjanjian</string>
+    <string name="consentStatementMain1">Hal ini diperlukan bagi Anda untuk memasok kami dengan data pribadi sehubungan dengan program keberlanjutan Olam yang Anda adalah bagian dari ini. Data pribadi ini akan dikumpulkan dan disimpan pada Sistem Informasi Petani Olam ( " OFIS " ) . Anda kemudian dapat menarik setiap persetujuan yang diberikan untuk koleksi kami , penggunaan dan pengungkapan data pribadi Anda . Namun, kegagalan untuk menyediakan data pribadi Anda dan / atau penarikan berikutnya persetujuan Anda dapat mengakibatkan Anda tidak mampu untuk berpartisipasi dalam program keberlanjutan .</string>
+    <string name="consentStatementMain2">
+        Data pribadi Anda akan digunakan pada OFIS untuk membantu mengisi informasi tentang :
+    </string>
+    <string name="consentStatementMain2a">
+        Perangkat lunak pemetaan . Ini dirancang untuk menampilkan lokasi pertanian dan infrastruktur dan memiliki informasi lebih rinci tentang Petani terkait dengan lokasi geografis mereka .
+    </string>
+    <string name="consentStatementMain2b">
+        Perangkat lunak analisis . Hal ini terlihat pada data pribadi Petani  terhadap data agregat untuk membantu menentukan arah masa depan program . Pengguna OFIS mampu mengekspor analisis ( dan data di belakang analisis , seperti data pribadi Farmer baik menjadi  PDF atau unggul spreadsheet . Fungsi ekspor ini memungkinkan Pengguna untuk mengidentifikasi Petani tertentu , dengan , misalnya, tingkat produktivitas tertinggi atau terendah dalam program ini.
+    </string>
+    <string name="consentStatementMain2c">
+        Rencana Pengelolaan pertanian . Rencana Ini akan dibuat untuk Petani individu menyoroti perubahan perlu dibuat di pertanian selama 3-5 tahun untuk mencapai potensi produktivitas penuh .
+    </string>
+    <string name="consentStatementMain3">
+        Pengguna dari OFIS termasuk karyawan Olam , staf manajemen kelompok tani dan pelanggan di seluruh dunia , sesuai dengan perangkat lunak pemetaan , perangkat lunak analisis dan manajemen pertanian rencana dalam ayat 2 di atas .
+    </string>
+    <string name="consentStatementMain4">
+        Data pribadi Anda yang diadakan oleh kami akan dirahasiakan , tetapi akan dibagi dengan Pengguna OFIS sebagai disorot di atas . Data pribadi Anda dapat ditransfer ke tempat di luar yurisdiksi lokal Anda . Dimana kita melakukannya , tunduk pada hukum privasi yang berlaku , kami akan mengambil langkah-langkah untuk memastikan bahwa standar perlindungan yang diberikan kepada data pribadi Anda ditransfer adalah sebanding dengan perlindungan di bawah hukum privasi yang berlaku di wilayah hukum setempat .
+    </string>
+    <string name="consentStatementMain5">
+        Anda dapat menarik setiap persetujuan yang diberikan , meminta akses dan / atau koreksi data pribadi Anda dan / atau permintaan untuk informasi mengenai kebijakan dan praktik kami , dengan menghubungi Petugas Perlindungan Data kami melalui ofis@olamnet.com .
+    </string>
+    <string name="consentStatementCheck1">Saya mengkonfirmasi bahwa petani telah mendengarkan Enumerator membacakan Informasi Tagihan Pribadi dan ia tegas memberikan persetujuan untuk pengumpulan, penggunaan , transfer di luar yurisdiksi dan pengungkapan data pribadinya oleh Olam untuk tujuan yang ditetapkan di dalamnya.</string>
+    <string name="consentStatementCheck2">Saya mengkonfirmasi bahwa petani telah mendengarkan Enumerator membacakan Informasi Tagihan Pribadi dan dia telah mengkonfirmasi bahwa ia memiliki persetujuan tertulis dari semua individu lain yang data pribadi ia telah sediakan untuk dikumpulkan , digunakan dan diungkapkan untuk tujuan lain.</string>
+    <string name="consentStatementTitle">Pemberitahuan Informasi Koleksi Pribadi</string>
+    <string name="Please_accept_both_consents">Harap menerima baik persetujuan</string>
+    <string name="farmer_id_min">ID petani  Olam harus empat digit</string>
+    <string name="app_updated_upload_first_message">Update terbaru telah tersedia untuk applikasi.  Untuk mengunduh, Sikronisasikan semua data.  Mohon di klik ok untuk sinkronisasi semua item, dan pilih  pengaturan untuk memperbaharui aplikasi Anda.</string>
+    <string name="please_sync_before_update">Ada item yang perlu disinkronisasikan.  Mohon sinkronisasikan item sebelum memperbaharui data aplikasi</string>
+    <string name="ofis_update_overdue">Versi dari aplikasi ini sudah tidak dapat digunakan, Anda harus memperbaharui applikasi sebelum menggunakannya.  Klik ikon pengaturan disebelah kanan atas untuk memperbaharui.</string>
+    <string name="ofis_request_help">Minta bantuan</string>
+    <string name="Your_Name">Nama Anda</string>
+    <string name="problem_description">Jelaskan Masalah yang dialami</string>
+    <plurals name="days_left_to_update" tools:ignore="UnusedQuantity">
+        <item quantity="one">Pembaharuan versi diperlukan setelah 30 hari. Anda memiliki %1d hari tersisa untuk memperbaharui</item>
+        <item quantity="other">Pembaharuan versi diperlukan setelah 30 hari. Anda memiliki %1d hari tersisa untuk memperbaharui</item>
+    </plurals>
+    <string name="record_transaction_button_text">Catatan transaksi</string>
+    <string name="record_training_button">Catatan pelatihan</string>
+    <string name="ViewTransactionsTitle">Transaksi</string>
+    <string name="Add">Tambahkan</string>
+    <string name="AddTransactionItemTitle">Item transaksi</string>
+    <string name="please_select">Silakan pilih</string>
+    <string name="select_transaction_item_type">Tipe</string>
+    <string name="ofis_select_item_product_grade">Tingkat produk</string>
+    <string name="select_currency">Mata uang</string>
+    <string name="enter_quantity">Jumlah</string>
+    <string name="select_units">Unit</string>
+    <string name="updating_transaction_data">Memperbarui data transaksi</string>
+    <string name="Transaction_item_added">Item transaksi ditambahkan</string>
+    <string name="Delete_Item">Hapus item</string>
+    <string name="Transaction_default">Transaksi</string>
+    <string name="transaction_are_you_sure">Apakah Anda yakin ingin menghapus transaksi ini?</string>
+    <string name="transaction_deleted">Transaksi berhasil dihapus</string>
+    <string name="complete_transaction">Transaksi selesai</string>
+    <string name="Farmer_Group_Name">Nama kelompok petani</string>
+    <string name="direction_hint">Apakah anda yang memberikan atau yang menerima?</string>
+    <string name="transaction_added_to_queue">Transaksi telah dikonfirmasi untuk mengunggah</string>
+    <string name="Transaction_network_queue_title">Transaksi</string>
+    <string name="transaction_confirmed">Transaksi dikonfirmasi</string>
+    <string name="ofis_no_transactions_text">Ketika Anda menambahkan transaksi,maka akan muncul disini</string>
+    <string name="ofis_no_trainingrecords_text">Ketika Anda menambahkan catatan pelatihan,maka akan muncul disini</string>
+    <string name="TrainingRecordsTitle">Catatan pelatihan</string>
+    <string name="select_course">Kursus</string>
+    <string name="TrainingAttendees">Peserta pelatihan</string>
+    <string name="complete_record">Catatan lengkap</string>
+    <string name="TrainingRecordTitle">Mengatur catatan pelatihan</string>
+    <string name="select_training_module">Modul pelatihan</string>
+    <string name="Training_Photo">Photo Pelatihan</string>
+    <string name="TrainingRecordConfirmationTitle">Konfirmasi catatan pelatihan</string>
+    <string name="TrainingRecordConfirmationSubTitle">Konfirmasi catatan pelatihan untuk konfirmasi</string>
+    <string name="confirm_training_record">Konfirmasi catatan pelatihan</string>
+    <string name="Select_Attendees">Pilih Peserta</string>
+    <string name="Attendee_Name">Nama peserta</string>
+    <string name="selected">Dipilih:</string>
+    <string name="save_selected_attendees">Simpan peserta yang dipilih</string>
+    <string name="Training_select_course_module_first">Silakan pilih kursus dan module dan pertama ambillah gambar</string>
+    <string name="add_attendee_scores">Tambahkan skor</string>
+    <string name="attendees_saved">Peserta disimpan</string>
+    <string name="Training_Record_Edited">Catatan pelatihan diperbarui</string>
+    <string name="Training_Record_Added">Catatan pelatihan ditambahkan</string>
+    <string name="Add_one_attendee_to_continue">Tambah paling tidak satu peserta untuk melanjutkan</string>
+    <string name="updating_training">Memperbarui data peserta pelatihan</string>
+    <string name="Attendees">Peserta</string>
+    <string name="trainingrecord_are_you_sure">Apakah Anda yakin ingin menghapus catatan pelatihan ini?</string>
+    <string name="trainingrecord_deleted">Catatan pelatihan dihapus</string>
+    <string name="trainingattendee_are_you_sure">Apakah Anda yakin ingin menghapus peserta ini?</string>
+    <string name="trainingattendee_deleted">Peserta dihapus</string>
+    <string name="TrainingAttendeeScores">Skor peserta</string>
+    <string name="TrainingAttendeeScoresSubTitle">Tambah atau edit skor peserta</string>
+    <string name="save_scores">Simpan skor peserta</string>
+    <string name="attendees_scores_updated">Skor peserta diperbarui</string>
+    <string name="trainingrecord_added_to_queue">Catatan pelatihan dikonfirmasi untuk unggah</string>
+    <string name="trainingrecord_confirmed">Catatan pelatihan dikonfirmasi</string>
+    <string name="checkbox_image">Photo checkbox</string>
+    <string name="PhoneNumberHint">Nomor telepon</string>
+    <string name="PhoneNumbers">Nomor telepon utama</string>
+    <string name="main_number">Utama?</string>
+    <string name="location">Lokasi</string>
+    <string name="update_phone_numbers">Perbarui nomor telepon</string>
+    <string name="update_phone_numbers_hint">Tekan untuk perbarui</string>
+    <string name="select_transactee">Dengan siapa anda bertransaksi?</string>
+    <string name="price_per_unit">Harga per</string>
+    <string name="total_price">Total harga</string>
+    <string name="amount_paid">Jumlah yang dibayarkan kepada</string>
+    <string name="amount_loaned">Jumlah yang dipinjamkan kepada</string>
+    <string name="amount_gifted">Jumlah yang diberikan kepada</string>
+    <string name="Transaction_item_updated">Item transaksi diperbarui</string>
+    <string name="amount_repaid">Jumlah yang dibayarkan kembali kepada</string>
+    <plurals name="trainingAttendeesCount" tools:ignore="UnusedQuantity">
+        <item quantity="one">%1d peserta</item>
+        <item quantity="other">%1d peserta-peserta</item>
+    </plurals>
+    <string name="registeredForNotifications">Anda telah terdaftar untuk menerima pemberitahuan tugas</string>
+    <string name="registerForNotificationsFailed">Tugas Pemberitahuan Pendaftaran Gagal. Akan mencoba secara otomatis lagi. Jika Anda terus mendapatkan pesan ini, hubungi dukungan</string>
+    <string name="NewTaskReceivedTitle">Tugas baru telah diterima</string>
+    <string name="title_activity_tasks">Tugas-Tugas</string>
+    <string name="updating_tasks">Mengupdate tugas-tugas</string>
+    <string name="TaskUpdatedTitle">Tugas telah diupdate</string>
+    <string name="TaskDeletedTitle">Tugas terhapus</string>
+    <string name="take_photo">Ambil Foto</string>
+    <string name="set_auto_time_message">Waktu dan zona waktu Anda tidak diatur otomatis. Silakan atur ke otomatis.</string>
+    <string name="buyingagent">Agen Pembelian</string>
+    <string name="credit_balance">Piutang</string>
+    <string name="ChooseBuyingAgent">Pilih Agen Pembelian</string>
+    <string name="WhoTransacting">atas nama siapa Anda bertransaksi?</string>
+    <string name="PickAgentFirst">Anda harus memilih agen terlebih dahulu</string>
+    <string name="farmer_or_buying_agent_name">Nama Petani atau nama agen pembelian</string>
+    <string name="title_activity_find_transactee">Temukan Transaksi</string>
+    <string name="amount_repaid_and_loaned">Jumlah yang dibayarkan kembali dan dipijamkan kepada</string>
+    <string name="amount_loaned_by">Jumlah yang dipinjamkan oleh</string>
+    <string name="amount_repaid_by">Jumlah yang dibayarkan kepada</string>
+    <string name="amount_repaid_and_loaned_by">Jumlah yang dibayarkan kembali dan dipijamkan oleh</string>
+    <string name="amount_paid_by">Jumlah yang dibayarkan oleh</string>
+    <string name="amount_gifted_by">Jumlah yang diberikan oleh</string>
+    <string name="debit_balance">Utang</string>
+    <string name="cannotTransactNothingToRepay">Anda tidak mempunyai utang sehingga tidak dapat menyelesaikan transaksi ini</string>
+    <string name="cannotTransactUnableToLoan">Anda mempunyai utang sehingga tidak dapat menyelesaikan transaksi ini</string>
+    <string name="cannotRepayNotOwedMoney">Anda tidak berutang sehingga tidak dapat menyelesaikan transaksi ini</string>
+    <string name="cannotLoanOwedMoney">Anda telah mempunyai utang sehingga tidak dapat menyelesaikan transaksi ini</string>
+    <string name="ensure_totals_match">Pastian bahwa semua total item pembayaran sesuai dengan total harga</string>
+    <string name="price_per_unit_default">Unit</string>
+    <string name="input_crop_finance">Input, keuangan atau tanaman?</string>
+    <string name="input_crop">Input atau Tanaman?</string>
+    <string name="input_finance">Input atau keuangan?</string>
+    <string name="finance_crop">Keuangan atau Tanaman?</string>
+    <string name="task_mark_complete">Selasai</string>
+    <string name="transaction_notes">Catatan</string>
+    <string name="cannotRepayMoreThanOwe">Anda tidak dapat membayar lebih dari yang Anda pinjam</string>
+    <string name="cannotRepayMoreThanTheyOwe">Mereka tidak dapat membayar lebih dari yang mereka pinjam</string>
+    <string name="item_in_progress">Dalam tahapan</string>
+    <string name="cannot_do_mobile_money_non_farmer">Anda tidak bisa membeli dari pedagang lokal menggunakan aplikasi \"Mobile Money\"</string>
+    <string name="pay_using_mobile_money_or_cash">Pembayaran secara Mobile money atau tunai?</string>
+    <string-array name="mmCash">
+        <item>Tunai</item>
+        <item>Mobile Money</item>
+    </string-array>
+    <string name="mmCash_mobilemoney">Mobile Money</string>
+    <string name="mmCash_cash">Tunai</string>
+    <string name="mobile_money_suffix">Menggunakan \"mobile money\'\'</string>
+    <string name="mm_transaction_initiated">Transaksi Mobile Money telah dimulai, mohon tunggu….</string>
+    <string name="mm_transaction_checking">Mengecek status transaksi</string>
+    <string name="mm_transaction_timedout">Transaksi Mobile Money tidak bisa selesai sesuai waktu yang diberikan, mohon gunakan tunai</string>
+    <string name="mm_transaction_awaiting_response">Transaksi Mobile Money menunggu respon</string>
+    <string name="mm_transaction_inprogress">Transaksi Mobile Money sedang dalam proses</string>
+    <string name="mm_transaction_complete">"Transaksi Mobile Money selesai dan disinkronisasi "</string>
+    <string name="mm_transaction_failed">Transaksi Mobile Money gagal. mohon gunakan transaksi secara tunai</string>
+    <string name="mm_transaction_confirmation">Anda akan membayar %1$s %2$s menggunakan Mobile money. mohon konfimrasi transaksi ini</string>
+    <string name="mm_transaction_confirm">Konfirmasi</string>
+    <string name="place_name_not_unique">Nama tempat ini telah terdaftar di kecamatan. Mohon pilih nama yang telah terdaftar di list</string>
+    <string name="title_activity_record_polygon">"Mencatat poligon plot "</string>
+    <string name="loading">"Sedang memuat "</string>
+    <string name="wait">"Harap tunggu "</string>
+    <string name="save_button_text">Simpan</string>
+    <string name="start_logging_button_text">"Mulai merekam  plot "</string>
+    <string name="stop_logging_button_text">"Berhenti merekam "</string>
+    <string name="pause_button_text">"Pause "</string>
+    <string name="resume_button_text">"Lanjutkan "</string>
+    <string name="plot">"Plot %1$d "</string>
+    <string name="current_track_name">"Trek OFIS "</string>
+    <string name="plot_already_logged">"%1$s telah direkam! "</string>
+    <string name="location_permission_alertdialog_title">"Aplikasi ini memerlukan izin lokasi untuk mengakses GPS! "</string>
+    <string name="open_application_settings_msg">"Buka pengaturan Aplikasi? "</string>
+    <string name="ready_to_save">"%1$s siap untuk disimpan! "</string>
+    <string name="restart_logging">"Apakah Anda ingin mengulang untuk merekam? "</string>
+    <string name="save_existing_logs">"Simpan data yang ada! "</string>
+    <string name="already_logged_and_saved">"%1$s telah direkam dan disimpan! "</string>
+    <string name="try_again_later_msg">"Silahkan coba lagi setelah beberapa menit! "</string>
+    <string name="location_not_yet_logged">"Anda belum merekam plot lokasi apapun! "</string>
+    <string name="fetch_location_msg">"Mengambil lokasi. Harap tunggu! "</string>
+    <string name="gps_manager_msg">"Kelola GPS "</string>
+    <string name="enable_gps_msg">"Apakah Anda ingin mengaktifkan GPS? "</string>
+    <string name="gps_turned_on">"Aktifkan GPS! "</string>
+    <string name="storage_permission_explanation">"Izin Penyimpanan diperlukan untuk menyimpan peta untuk mengurangi penggunaan data dan penggunaan offline. "</string>
+    <string name="location_permission_explanation">"Izin Lokasi diperlukan untuk mengumpulkan data geografis plot. "</string>
+    <string name="speed_unit_kmph">"%1$d km/jam "</string>
+    <string name="logging_progress_msg">"Merekam plot sedang berlangsung! "</string>
+    <string name="cancel_logging_question">"Batalkan merekam plot! "</string>
+    <string name="cancel_logging_msg">"Merekam %1$s dibatalkan! "</string>
+    <string name="not_logged_yet">"%1$s belum direkam! "</string>
+    <string name="area_info">"Area: %1$f ha "</string>
+    <string name="save_polygon_alertdialog_title">"Simpan poligon %1$s? "</string>
+    <string name="save_polygon_alertdialog_msg">"Anda tidak bisa merekam %1$s lagi "</string>
+    <string name="close">"Tutup "</string>
+    <string name="saved_successfully_msg">"%1$s berhasil disimpan! "</string>
+    <string name="confirm">"Konfirmasi "</string>
+    <string name="plot_location_confirmation">"Apakah Anda berada di lokasi %1$s? "</string>
+    <string name="logging_not_started_msg">"Merekam plot tidak dapat dilakukan! "</string>
+    <string name="edit_plot_dialog_title">"Pilih nomor Plot "</string>
+    <string name="existing_plots">Nomor Plot yang ada %1$d</string>
+    <string name="existing_plots_logged">Plot telah direkam %1$d</string>
+    <string name="send_button">"Kirim "</string>
+    <string name="duplicate_phone_number">"Duplikat nomor telepon tidak diperbolehkan. Silahkan periksa entri nomor telepon. "</string>
+    <string name="record_polygon_input_messege">"Berapa banyak plot lain yang dia miliki? "</string>
+    <string name="record_polygon_input_title">"Analisis Tingkat Plot "</string>
+    <string name="record_polygon_input_hint">"Masukkan Jumlah plot "</string>
+    <string name="camera_and_gallery_permission_denial_msg">"Fitur kamera dan galeri tidak berfungsi tanpa izin ini! "</string>
+    <string name="gps_permission_denial_msg">"Fitur Lokasi tidak berfungsi tanpa izin ini! "</string>
+    <string name="phone_state_permission_denial_msg">"Izin Telepon diperlukan untuk mendapatkan nomor IMEI perangkat "</string>
+    <string name="permission_permanent_denial_title">"Izin ditolak secara permanen "</string>
+    <string name="permission_permanent_denial_msg">"Permintaan izin ditolak. Harap berikan izin dari pengaturan aplikasi. "</string>
+    <string name="go_to_settings_msg">"Akses izin dari pengaturan aplikasi. Pergi ke pengaturan? "</string>
+    <string name="record_farm_polygon">"Catat Poligon Kebun "</string>
+    <string name="record_farm_polygon_hint">"Ketuk untuk mencatat poligon kebun "</string>
+    <string name="record_farm_polygon_complete">"Poligon telah dicatat "</string>
+    <string name="submit">"Kirim "</string>
+    <string name="cancel">"Batal "</string>
+    <string name="valid_count_msg">"Masukkan nomor yang valid! "</string>
+    <string name="plot_recording_module_finished">"Pencatatan Plot selesai "</string>
+    <string name="untick_task">"Hilangkan centang pada tugas "</string>
+    <string name="untick_task_msg">"Harap konfirmasi apakah Anda ingin menandai ini sebagai tugas yang belum selesai? "</string>
+    <string name="previous_plot_not_recorded_msg">"Plot %1$s belum direkam. Silahkan merekam Plot %1$s terlebih dahulu. "</string>
+    <string name="updating_master_details">Downloading master details</string>
+</resources>
