@@ -60,19 +60,15 @@ public class Utilities {
 
 public  static String base64ConversionForImage(String filepath) {
 
-
     File photo = new File(filepath);
     Bitmap bitmap = BitmapFactory.decodeFile(photo.getAbsolutePath());
+    Bitmap compressedBitmap=ImageCompressionUtil.imageCompress(bitmap);
     ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-    bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+    compressedBitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
     byte[] byteArray = byteArrayOutputStream.toByteArray();
     String encoded = Base64.encodeToString(byteArray, Base64.DEFAULT);
     return encoded;
 }
-
-
-
-
 
 
     public static String getLocaleSuffix(Resources res) {

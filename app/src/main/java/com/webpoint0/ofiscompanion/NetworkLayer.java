@@ -1248,7 +1248,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             FirebaseCrash.report(new Exception("NetworkLayer: Error creating full fmp review post object", e));
             e.printStackTrace();
         }
-
     }
 
     private void postModule(final int networkQueueItemId, final Handler handler, final Message msg, final int total, final int progress, final Integer originalSyncRequestItemId) {
@@ -1316,7 +1315,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     submission.put("upload_date", timestamp.toString());
                     submission.put("olam_enumerator_id", enumeratorId);
                     submission.put("imei_number", IMEI);
-                    submission.put("fmpreview", true);
+                    submission.put("fmpreview", false);
                     submission.put(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_FARMER_ID, farmerModule.getInt(farmerModule.getColumnIndex(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_FARMER_ID)));
                     submission.put(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_FARM_ID, farmerModule.getInt(farmerModule.getColumnIndex(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_FARM_ID)));
                     submission.put("recorded_lat", networkQueueItems.getDouble(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LAT)));
@@ -1363,10 +1362,11 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                                         if ((cursor.getString(cursor.getColumnIndex(OFISDBContract.Subquestionanswer.COLUMN_NAME_POSITION))).equalsIgnoreCase("photo")) {
                                             sub_answersjson.put("answer", Utilities.base64ConversionForImage(cursor.getString(cursor.getColumnIndex(OFISDBContract.Subquestionanswer.COLUMN_NAME_QUESTION_ANSWER))));
-
+                                            sub_answersjson.put("has_photo_upload",true);
                                         } else
                                             sub_answersjson.put("answer", cursor.getString(cursor.getColumnIndex(OFISDBContract.Subquestionanswer.COLUMN_NAME_QUESTION_ANSWER)));
                                         sub_answers.put(sub_answersjson);
+                                        sub_answersjson.put("has_photo_upload",false);
                                     } while (cursor.moveToNext());
                                 }
                                 String questions_included_output = sub_questions_included.toString();
@@ -1423,6 +1423,9 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                         storageDir
                                         + "/"
                                         + moduleAnswers.getString(moduleAnswers.getColumnIndex("answer_" + datatype))));
+                                answer.put("has_photo_upload",true);
+                            }else{
+                                answer.put("has_photo_upload",false);
                             }
 
                             if (moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE)).equalsIgnoreCase("repeater")) {
@@ -1462,10 +1465,13 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                             JSONObject display = displayConfig.getJSONObject("display");
                                             if (display.optString("repeateritem_display_type", "").equalsIgnoreCase("photoupload")) {
                                                 hasPhotos = true;
+                                                subAnswer.put("has_photo_upload",true);
 //                                                File photo = new File(storageDir + "/" + subAnswers.getString(subAnswers.getColumnIndex("answer_" + subAnswerDatatype)));
                                                 subAnswer.put("answer", Utilities.base64ConversionForImage(
                                                         storageDir + "/" +
                                                                 subAnswers.getString(subAnswers.getColumnIndex("answer_" + subAnswerDatatype))));
+                                            }else{
+                                                subAnswer.put("has_photo_upload",false);
                                             }
                                         }
 
@@ -2301,7 +2307,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         File photo = new File(farmerPhotoPath);
                         Bitmap bitmap = BitmapFactory.decodeFile(photo.getAbsolutePath());
                         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+                        bitmap.compress(Bitmap.CompressFormat.PNG, 20, byteArrayOutputStream);
                         byte[] byteArray = byteArrayOutputStream.toByteArray();
                         String encoded = Base64.encodeToString(byteArray, Base64.DEFAULT);
                         params.put("photo", encoded);
