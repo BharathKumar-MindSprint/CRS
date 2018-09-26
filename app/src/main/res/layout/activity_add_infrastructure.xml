@@ -8,7 +8,7 @@
 
     <ImageView
         android:layout_width="match_parent"
-        android:layout_height="140dp"
+        android:layout_height="170dp"
         android:id="@+id/topSectionBackground"
         android:background="@color/ofis_poi_screen_top_background_school"
         android:contentDescription="@string/cd_topSectionColour" />
@@ -37,7 +37,15 @@
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:id="@+id/questionsSection"/>
+
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:id="@+id/olamFundedWrapper"
+                android:visibility="gone"
                 android:paddingLeft="@dimen/ofis_large_pad"
                 android:paddingRight="@dimen/ofis_large_pad"
                 android:paddingBottom="@dimen/activity_vertical_margin"
@@ -59,27 +67,31 @@
             </LinearLayout>
 
             <include
+                android:visibility="gone"
                 android:id="@+id/additional_components_school"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 layout="@layout/include_additional_components_school" />
             <include
+                android:visibility="gone"
                 android:id="@+id/additional_components_buyingcentre"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 layout="@layout/include_additional_components_buyingcentre" />
             <include
+                android:visibility="gone"
                 android:id="@+id/additional_components_cleanwatersupply"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 layout="@layout/include_additional_components_cleanwatersupply" />
             <include
+                android:visibility="gone"
                 android:id="@+id/additional_components_healthcentre"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 layout="@layout/include_additional_components_healthcentre" />
 
-
+            <!--This applicable for all SIP -->
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="match_parent"
@@ -211,9 +223,16 @@
             <Spinner
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/spinner_poitype"
+                android:id="@+id/spinner_modules"
                 android:textColor="@color/ofis_base_font_white"
-                android:entries="@array/poitypes"
+                style="@style/Spinner"/>
+
+            <!--android:entries="@array/poitypes"-->
+            <Spinner
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/spinner_submodules"
+                android:textColor="@color/ofis_base_font_white"
                 style="@style/Spinner"/>
 
             <EditText

@@ -3004,4 +3004,472 @@ class DynamicQuestions {
 
         resourcesforyesno = res;
     }
+
+    void renderCheckBoxQuestionForSIP(Cursor questions, LinearLayout parentLayout) {
+        LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
+        renderQuestion(questions, false, questionWrapper);
+
+        final String datatype = questions.getString(questions.getColumnIndex("datatype_name"));
+        final int questionId = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionSipEntry.COLUMN_NAME_ID));
+        final boolean singleSelect;
+        boolean tempSingleSelect = false;
+
+        Cursor checkboxes = dl.getSpinnerData(OFISDBContract.LookupValuesSipEntry.TABLE_NAME, true, OFISDBContract.LookupValuesSipEntry.COLUMN_NAME_QUESTION_ID, questionId, true, OFISDBContract.LookupValuesSipEntry.COLUMN_NAME_POSITION);
+
+        // is this a question we can only select one answer to?
+        // get display config
+        try {
+            JSONObject displayConfig = new JSONObject(questions.getString(questions.getColumnIndex(OFISDBContract.QuestionSipEntry.COLUMN_NAME_DISPLAY_CONFIGURATION)));
+            if (displayConfig.has("display")) {
+                JSONObject display = displayConfig.getJSONObject("display");
+                tempSingleSelect = display.optBoolean("single_select", false);
+            }
+        } catch (JSONException e) {
+            FirebaseCrash.report(new Exception("DynamicQuestions: Error getting checkbox display config", e));
+            e.printStackTrace();
+        }
+
+        singleSelect = tempSingleSelect;
+
+        if (checkboxes.getCount() > 0) {
+            // add the table layout to the screen
+            final TableLayout tl = (TableLayout) inflater.inflate(R.layout.module_checkbox_table, questionWrapper, false);
+            tl.setSaveEnabled(true);
+
+            while (checkboxes.moveToNext()) {
+                // generate row item
+                TableRow tr = (TableRow) inflater.inflate(R.layout.module_checkbox_table_row, tl, false);
+
+                TextView tvId = (TextView) tr.findViewById(R.id.cbId);
+                TextView tv = (TextView) tr.findViewById(R.id.cbTitle);
+
+                final int cbId = checkboxes.getInt(checkboxes.getColumnIndex("_id"));
+
+                tvId.setText(String.valueOf(cbId));
+
+                int columnIndex = (checkboxes.getColumnIndex(OFISDBContract.LookupValuesSipEntry.COLUMN_NAME_VALUE + questionColumnSuffix) != -1) ? checkboxes.getColumnIndex(OFISDBContract.LookupValuesSipEntry.COLUMN_NAME_VALUE + questionColumnSuffix) : checkboxes.getColumnIndex(OFISDBContract.LookupValuesSipEntry.COLUMN_NAME_VALUE);
+                tv.setText(checkboxes.getString(columnIndex));
+
+                CheckBox cb = (CheckBox) tr.findViewById(R.id.cbCheckBox);
+                tl.addView(tr);
+
+                // pre-fill checkboxes that have been previously ticked
+               /* if (hasAnswers && cbAnswers.getCount() > 0) {
+                    while (cbAnswers.moveToNext()) {
+                        if (cbAnswers.getInt(cbAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_INT)) == cbId) {
+                            cb.setChecked(true);
+                        }
+                    }
+                    cbAnswers.moveToPosition(-1);
+                }
+*/
+                tr.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        CheckBox checkbox = (CheckBox) view.findViewById(R.id.cbCheckBox);
+
+                        checkbox.setChecked(!checkbox.isChecked());
+                        checkbox.callOnClick();
+                    }
+
+                });
+
+                //stick the answer in the question itself
+                cb.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (singleSelect) {
+                            int ssTableRows = tl.getChildCount();
+                            for (int j = 0; j < ssTableRows; j++) {
+                                TableRow ssTr = (TableRow) tl.getChildAt(j);
+                                CheckBox ssTcb = (CheckBox) ssTr.findViewById(R.id.cbCheckBox);
+
+                                ssTcb.setChecked(false);
+                            }
+                            CheckBox clickedCb = (CheckBox) view;
+                            clickedCb.setChecked(true);
+                        }
+                        saveMultipleAnswerEntry(questionId, 0, datatype, tl);
+                    }
+                });
+
+
+            }
+
+            questionWrapper.addView(tl);
+            parentLayout.addView(questionWrapper);
+
+            saveMultipleAnswerEntry(questionId, 0, datatype, tl);
+        }
+    }
+
+    public void renderDatePickerQuestionForSip(Cursor qCursor, boolean isRepeaterItem, LinearLayout parentLayout, final int parentQuestionId, final int repeaterItemPosition, Cursor repeaterAnswers) {
+        LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
+        renderQuestion(qCursor, isRepeaterItem, (isRepeaterItem) ? parentLayout : questionWrapper);
+
+        final String datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
+        final int questionId = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionSipEntry.COLUMN_NAME_ID));
+        int answerIdTemp = 0;
+        if (hasAnswers) {
+            if (isRepeaterItem && repeaterAnswers != null && repeaterAnswers.getCount() > 0) {
+                answerIdTemp = repeaterAnswers.getInt(repeaterAnswers.getColumnIndex(OFISDBContract.AnswerSipEntry.COLUMN_NAME_ID));
+            } else {
+                if (qCursor.getColumnIndex("answer_id") != -1) {
+                    answerIdTemp = qCursor.getInt(qCursor.getColumnIndex("answer_id"));
+                }
+            }
+        }
+        final int answerId = answerIdTemp;
+
+        // get display config
+        try {
+            JSONObject displayConfig = new JSONObject(qCursor.getString(qCursor.getColumnIndex(OFISDBContract.QuestionSipEntry.COLUMN_NAME_DISPLAY_CONFIGURATION)));
+            if (displayConfig.has("display")) {
+                JSONObject display = displayConfig.getJSONObject("display");
+                boolean showDay = display.getBoolean("show_day");
+                boolean showMonth = display.getBoolean("show_month");
+                boolean showyear = display.getBoolean("show_year");
+
+                if ( (!showDay) && (!showMonth) && (showyear) ) {
+                    // just the year, show the fifty year dropdown instead
+                    final Spinner spinner = (Spinner) inflater.inflate(R.layout.module_spinner,(isRepeaterItem) ? parentLayout : questionWrapper,false);
+                    String[] since1950 = Utilities.since1950();
+                    ArrayAdapter<String> adapter = new ArrayAdapter<>(context, R.layout.spinner_item, since1950);
+                    adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+                    spinner.setAdapter(adapter);
+
+                    if (hasAnswers) {
+                        String currentAnswerValue = null;
+                        if (isRepeaterItem && repeaterAnswers != null && repeaterAnswers.getCount() > 0) {
+                            currentAnswerValue = repeaterAnswers.getString(repeaterAnswers.getColumnIndex("answer_" + datatype));
+                        } else {
+                            if (qCursor.getColumnIndex("answer_" + datatype) != -1) {
+                                currentAnswerValue = qCursor.getString(qCursor.getColumnIndex("answer_" + datatype));
+                            }
+                        }
+                        if (currentAnswerValue != null) {
+                            for (int i = 0; i < spinner.getCount(); i++) {
+                                if (spinner.getItemAtPosition(i).toString().equalsIgnoreCase(currentAnswerValue.substring(0, 4))) {
+                                    spinner.setSelection(i);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                        @Override
+                        public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
+                            saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, spinner.getSelectedItem().toString()+"-01-01");
+                        }
+
+                        @Override
+                        public void onNothingSelected(AdapterView<?> adapterView) {
+
+                        }
+                    });
+
+                    if (isRepeaterItem) {
+                        parentLayout.addView(spinner);
+                    } else {
+                        questionWrapper.addView(spinner);
+                        parentLayout.addView(questionWrapper);
+                    }
+                } else {
+                    Calendar today = Calendar.getInstance();
+                    DatePicker dp = (DatePicker) inflater.inflate(R.layout.module_datepicker, questionWrapper, false);
+                    final SimpleDateFormat serverDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+
+                    if (hasAnswers) {
+                        String answerDateString = null;
+                        if (isRepeaterItem && repeaterAnswers != null) {
+                            if (repeaterAnswers.getCount() > 0) {
+                                answerDateString = repeaterAnswers.getString(repeaterAnswers.getColumnIndex("answer_" + datatype));
+                            }
+                        } else {
+                            answerDateString = qCursor.getString(qCursor.getColumnIndex("answer_" + datatype));
+                        }
+                        if (answerDateString != null) {
+                            today.setTime(serverDateFormat.parse(answerDateString));
+                            saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, answerDateString);
+                        }
+                    }
+
+                    dp.init(
+                            today.get(Calendar.YEAR),
+                            today.get(Calendar.MONTH),
+                            today.get(Calendar.DAY_OF_MONTH),
+                            new DatePicker.OnDateChangedListener() {
+                                @Override
+                                public void onDateChanged(DatePicker datePicker, int selectedYear, int selectedMonth, int selectedDay) {
+                                    // get the date
+                                    Calendar cal = Calendar.getInstance();
+                                    cal.set(selectedYear, selectedMonth, selectedDay);
+                                    saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, serverDateFormat.format(cal.getTime()));
+                                }
+                            }
+                    );
+
+                    if (isRepeaterItem) {
+                        parentLayout.addView(dp);
+                    } else {
+                        questionWrapper.addView(dp);
+                        parentLayout.addView(questionWrapper);
+                    }
+                }
+            }
+
+
+        } catch (JSONException | ParseException e) {
+            FirebaseCrash.report(new Exception("DynamicQuestions: Error creating date picker display", e));
+            e.printStackTrace();
+        }
+    }
+
+    public
+    void renderPhotoCheckboxQuestionForSIP(Cursor questions, Resources res, String packageName) {
+        LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, questionsSection, false);
+        renderQuestion(questions, false, questionWrapper);
+
+        final String datatype = questions.getString(questions.getColumnIndex("datatype_name"));
+        final int questionId = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
+        final boolean singleSelect;
+        boolean tempSingleSelect = false;
+
+        Cursor photoCheckboxes = dl.getSpinnerData(OFISDBContract.LookupValuesEntry.TABLE_NAME, true, OFISDBContract.LookupValuesEntry.COLUMN_NAME_QUESTION_ID, questionId, true, OFISDBContract.LookupValuesEntry.COLUMN_NAME_POSITION);
+//        Cursor photoCbAnswers = dl.getAnswersForQuestionByFarmer(questionId, farmerId, farmerModuleId);
+
+        // is this a question we can only select one answer to?
+        // get display config
+        try {
+            JSONObject displayConfig = new JSONObject(questions.getString(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION)));
+            if (displayConfig.has("display")) {
+                JSONObject display = displayConfig.getJSONObject("display");
+                tempSingleSelect = display.optBoolean("single_select", false);
+            }
+        } catch (JSONException e) {
+            FirebaseCrash.report(new Exception("DynamicQuestions: Error getting photo checkbox display config", e));
+            e.printStackTrace();
+        }
+
+        singleSelect = tempSingleSelect;
+
+        if (photoCheckboxes.getCount() > 0) {
+            // add the table layout to the screen
+            final TableLayout tl = (TableLayout) inflater.inflate(R.layout.module_photo_table, questionWrapper, false);
+
+            while (photoCheckboxes.moveToNext()) {
+                // generate row item
+                TableRow tr = (TableRow) inflater.inflate(R.layout.module_photo_row, tl, false);
+
+                TextView tvId = (TextView) tr.findViewById(R.id.cbId);
+                TextView tv = (TextView) tr.findViewById(R.id.cbTitle);
+                ImageView iv = (ImageView) tr.findViewById(R.id.photo);
+
+                int cbId = photoCheckboxes.getInt(photoCheckboxes.getColumnIndex("_id"));
+
+                tvId.setText(String.valueOf(cbId));
+
+                int columnIndex = (photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) != -1) ? photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) : photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE);
+                tv.setText(photoCheckboxes.getString(columnIndex));
+
+                int imageId = res.getIdentifier("cbimage_" + photoCheckboxes.getString(photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_PHOTO)), "drawable", packageName);
+                if (imageId != 0) {
+                    iv.setImageDrawable(ContextCompat.getDrawable(context, imageId));
+                } else {
+                    iv.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.photo_checkbox_no_image));
+                }
+
+                final CheckBox cb = (CheckBox) tr.findViewById(R.id.cbCheckBox);
+
+                // pre-fill checkboxes that have been previously ticked
+                /*if (hasAnswers && photoCbAnswers.getCount() > 0) {
+                    while (photoCbAnswers.moveToNext()) {
+                        if (photoCbAnswers.getInt(photoCbAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_INT)) == cbId) {
+                            cb.setChecked(true);
+                        }
+                    }
+                    photoCbAnswers.moveToPosition(-1);
+                }*/
+
+                tr.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        cb.setChecked(!cb.isChecked());
+                        cb.callOnClick();
+                    }
+
+                });
+
+                //stick the answer in the question itself
+                cb.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (singleSelect) {
+                            int ssTableRows = tl.getChildCount();
+                            for (int j = 0; j < ssTableRows; j++) {
+                                TableRow ssTr = (TableRow) tl.getChildAt(j);
+                                CheckBox ssTcb = (CheckBox) ssTr.findViewById(R.id.cbCheckBox);
+
+                                ssTcb.setChecked(false);
+                            }
+                            CheckBox clickedCb = (CheckBox) view;
+                            clickedCb.setChecked(true);
+                        }
+
+                        saveMultipleAnswerEntry(questionId, 0, datatype, tl);
+                    }
+                });
+
+                tl.addView(tr);
+            }
+
+            questionWrapper.addView(tl);
+            questionsSection.addView(questionWrapper);
+
+            saveMultipleAnswerEntry(questionId, 0, datatype, tl);
+        }
+
+    }
+
+    public void renderRepeaterQuestionForSIP(Cursor questions, final Resources res) {
+        LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, questionsSection, false);
+        renderQuestion(questions, false, questionWrapper);
+
+        final String datatype = questions.getString(questions.getColumnIndex("datatype_name"));
+        final int questionId = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
+        final int answerId = (hasAnswers) ? questions.getInt(questions.getColumnIndex("answer_id")) : 0;
+        final Spinner spinner = (Spinner) inflater.inflate(R.layout.module_spinner, questionWrapper, false);
+
+        // get display config
+        try {
+            JSONObject displayConfig = new JSONObject(questions.getString(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION)));
+            if (displayConfig.has("display")) {
+                JSONObject display = displayConfig.getJSONObject("display");
+                int maxrepeats = display.getInt("maxrepeats");
+                ArrayList<String> repeatOptions = new ArrayList<>(maxrepeats);
+                for (int i = 0; i < maxrepeats; i++) {
+                    repeatOptions.add(String.valueOf(i));
+                }
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(context, R.layout.spinner_item, repeatOptions);
+                adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+                spinner.setAdapter(adapter);
+
+                final boolean zeroAcceptable = (display.has("zeroacceptable") && (display.getBoolean("zeroacceptable")));
+
+                if (hasAnswers) {
+                    int answer = (!questions.isNull(questions.getColumnIndex("answer_" + datatype))) ? questions.getInt(questions.getColumnIndex("answer_"+datatype)) : 0;
+                    spinner.setSelection(answer);
+                }
+
+                questionWrapper.addView(spinner);
+                final LinearLayout repeaterItemsWrapper = (LinearLayout) inflater.inflate(R.layout.module_repeater_container, questionWrapper, false);
+                questionWrapper.addView(repeaterItemsWrapper);
+                questionsSection.addView(questionWrapper);
+
+                spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                        if (id > 0 || zeroAcceptable) {
+                            saveAnswerEntry(questionId, answerId, 0, -1, datatype, spinner.getSelectedItem().toString());
+                            if (id > 0) {
+                                renderRepeaterItemsForSIP(questionId, id, repeaterItemsWrapper, res);
+                            } else {
+                                removeRepeaterAnswers(questionId);
+                                repeaterItemsWrapper.removeAllViews();
+                            }
+                        } else {
+                            removeAnswerEntry(questionId, answerId);
+                            removeRepeaterAnswers(questionId);
+                            repeaterItemsWrapper.removeAllViews();
+                        }
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parent) {
+
+                    }
+                });
+            }
+        } catch (JSONException e) {
+            FirebaseCrash.report(new Exception("DynamicQuestions: Error getting repeater display config", e));
+            e.printStackTrace();
+        }
+    }
+
+
+    private void renderRepeaterItemsForSIP(int questionId, long repetitions, LinearLayout repeaterItemsWrapper, Resources res) {
+        Cursor repeaterQuestions = dl.getRepeaterItemsForQuestion(questionId);
+
+        if (repetitions > 0) {
+            final int existingItemsSize = repeaterItemsWrapper.getChildCount();
+            if (repeaterQuestions.getCount() > 0 && repetitions > existingItemsSize) {
+                for (int i = 1; i<=repetitions; i++) {
+
+                    if (i > existingItemsSize) {
+                        LinearLayout repeateritemWrapper = (LinearLayout) inflater.inflate(R.layout.module_repeater_item, repeaterItemsWrapper, false);
+                        LinearLayout repeaterItemsInner = (LinearLayout) repeateritemWrapper.findViewById(R.id.repeater_item);
+
+                        // add a text view with the item number in it
+                        TextView tv = (TextView) repeateritemWrapper.findViewById(R.id.repeater_item_number);
+                        tv.setText(String.valueOf(i));
+
+/*
+                        while (repeaterQuestions.moveToNext()) {
+                            String displayType = repeaterItemDisplayType(repeaterQuestions);
+
+                            Cursor repeaterAnswers = dl.getRepeaterAnswersForQuestionByPosition(repeaterQuestions.getInt(repeaterQuestions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID)), i, farmerId, farmerModuleId);
+                            if (repeaterAnswers.getCount() > 0) {
+                                repeaterAnswers.moveToFirst();
+                            }
+
+                            if (displayType.toLowerCase().equals("datepicker")) {
+                                renderDatePickerQuestion(repeaterQuestions, true, repeaterItemsInner, questionId, i, repeaterAnswers);
+                            } else if (displayType.toLowerCase().equals("decimal")) {
+                                renderTextBoxQuestion(repeaterQuestions, true, repeaterItemsInner, questionId, i, repeaterAnswers);
+                            } else if (displayType.toLowerCase().equals("dropdown")) {
+                                renderDropDownQuestion(repeaterQuestions, true, repeaterItemsInner, questionId, i, repeaterAnswers, res);
+                            } else if (displayType.toLowerCase().equals("textbox")) {
+                                renderTextBoxQuestion(repeaterQuestions, true, repeaterItemsInner, questionId, i, repeaterAnswers);
+                            } else if (displayType.toLowerCase().equals("yesno")) {
+                                renderYesNoQuestion(repeaterQuestions, true, repeaterItemsInner, questionId, i, repeaterAnswers, res);
+                            } else if (displayType.toLowerCase().equals("photoupload")) {
+                                renderPhotoUploadQuestion(repeaterQuestions, true, repeaterItemsInner, questionId, i, repeaterAnswers, res);
+                            }
+                        }
+
+                        repeaterItemsWrapper.addView(repeateritemWrapper);
+                        repeaterQuestions.moveToPosition(-1);*/
+                    }
+
+                }
+            } else {
+                if (repetitions > 0 && repetitions < existingItemsSize) {
+                    for (int j = existingItemsSize; j>repetitions; j--) {
+                        repeaterItemsWrapper.removeViewAt(j-1);
+                        removeRepeaterAnswer(questionId, j);
+                    }
+                }
+            }
+        }
+    }
+
+
+    public  boolean requiredFieldsSIPAnswered(String uploadId, int moduleId, int subModuleId) {
+        Cursor completedAnswers = dl.getAllAnswersSipByUploadId(uploadId);
+        Cursor requiredQuestions = dl.getSipRequiredQuestionIds(moduleId, subModuleId);
+        Set<Integer> completedQuestionIds = new HashSet<>();
+        Set<Integer> requiredQuestionIds = new HashSet<>();
+
+        while (completedAnswers.moveToNext()) {
+            completedQuestionIds.add(completedAnswers.getInt(completedAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID)));
+        }
+
+        while (requiredQuestions.moveToNext()) {
+            requiredQuestionIds.add(requiredQuestions.getInt(requiredQuestions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID)));
+        }
+
+        return completedQuestionIds.containsAll(requiredQuestionIds);
+    }
+
 }

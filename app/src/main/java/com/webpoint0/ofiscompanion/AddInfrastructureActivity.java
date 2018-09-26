@@ -22,6 +22,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -41,34 +42,42 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.firebase.crash.FirebaseCrash;
+import com.webpoint0.ofiscompanion.model.ModuleDTO;
+import com.webpoint0.ofiscompanion.model.SubModuleDTO;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Hashtable;
+import java.util.UUID;
 
 public class AddInfrastructureActivity extends BaseActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
-    // update
-    // for edit mode
-    public static long infrastructureID = 0;
-    public static boolean editMode = false;
-    private int selectedCountry = 0;
-    private int selectedRegion = 0;
-    private int selectedDistrict = 0;
-    private int selectedProduct = 0;
-    private int selectedFarmerGroup = 0;
+        // update
+        // for edit mode
+        public static long infrastructureID = 0;
+        public static boolean editMode = false;
+        private int selectedCountry = 0;
+        private int selectedRegion = 0;
+        private int selectedDistrict = 0;
+        private int selectedProduct = 0;
+        private int selectedFarmerGroup = 0;
 
-    // for GPS location system
-    private GoogleApiClient googleApiClient;
-    private EditText gpsField;
-    private ImageButton requestLocation;
-    private Location poiLocation;
-    private String recorded_lat, recorded_lng;
+        // for GPS location system
+        private GoogleApiClient googleApiClient;
+        private EditText gpsField;
+        private ImageButton requestLocation;
+        private Location poiLocation;
+        private String recorded_lat, recorded_lng;
 
     // colours for animation
     private static final int COLOUR_SCHOOL = 0xFF924c2e;
-    private static final int COLOUR_HEALTH_CENTRE = 0xFFbe3a34;
-    private static final int COLOUR_CLEAN_WATER_SUPPLY = 0xFF253746;
-    private static final int COLOUR_BUYING_CENTRE = 0xFFb0aa7e;
+    //    private static final int COLOUR_HEALTH_CENTRE = 0xFFbe3a34;
+    //    private static final int COLOUR_CLEAN_WATER_SUPPLY = 0xFF253746;
+    //    private static final int COLOUR_BUYING_CENTRE = 0xFFb0aa7e;
     private int currentColour = COLOUR_SCHOOL;
     private static final String CURRENT_LAT = "CURRENT_LAT";
     private static final String CURRENT_LNG = "CURRENT_LNG";
@@ -76,11 +85,11 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
 
     //types of POI, we use these to pass into various helper methods
     private static final int SCHOOL = 0;
-    private static final int HEALTH_CENTRE = 1;
-    private static final int CLEAN_WATER_SUPPLY = 2;
-    private static final int BUYING_CENTRE = 3;
+    //    private static final int HEALTH_CENTRE = 1;
+    //    private static final int CLEAN_WATER_SUPPLY = 2;
+    //    private static final int BUYING_CENTRE = 3;
     private int currentTypeOfPOI = SCHOOL;
-
+    private int currentSubTypeOfPOI = 0;
     //ui poi components
     private Spinner school_genderspinner = null;
     private Spinner school_educationlevelss = null;
@@ -100,7 +109,8 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
     private Resources res;
     private DataLayer dl;
 
-    private Spinner poispinner;
+    private Spinner subModulesSpinner;
+    private Spinner modulesSpinner;
     private boolean spinners_ready = false;
 
     // translatable dropdown values
@@ -115,6 +125,15 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
     private static final String STATE_RESOLVING_ERROR = "resolving_error";
     // Bool to track whether the app is already resolving an error
     private boolean mResolvingError = false;
+
+    private DynamicQuestions dynamicQuestions;
+    private Cursor subModules, questions,modules;
+    private int moduleId;
+    private int subModuleId;
+
+    ArrayList<SubModuleDTO> subModuleDTOS;
+    ArrayList<ModuleDTO> moduleDTOS;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -135,30 +154,33 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
         }
 
         // generate hashtable items
-        String localeSuffix = Utilities.getLocaleSuffix(res);
-        poitypes.put("School"+localeSuffix, res.getString(R.string.poitype_school));
-        poitypes.put("Health centre"+localeSuffix, res.getString(R.string.poitype_healthcentre));
-        poitypes.put("Clean water supply"+localeSuffix, res.getString(R.string.poitype_cleanwatersupply));
-        poitypes.put("Buying centre"+localeSuffix, res.getString(R.string.poitype_buyingcentre));
-
-        genders.put("Male"+localeSuffix, res.getString(R.string.gender_school_male));
-        genders.put("Female"+localeSuffix, res.getString(R.string.gender_school_female));
-        genders.put("Coeducational"+localeSuffix, res.getString(R.string.gender_school_coeducational));
-
-        educationlevels.put("Nursery"+localeSuffix, res.getString(R.string.educationlevel_nursery));
-        educationlevels.put("Primary"+localeSuffix, res.getString(R.string.educationlevel_primary));
-        educationlevels.put("Junior Secondary"+localeSuffix, res.getString(R.string.educationlevel_juniorsecondary));
-        educationlevels.put("Senior Secondary"+localeSuffix, res.getString(R.string.educationlevel_seniorsecondary));
-        educationlevels.put("Graduate"+localeSuffix, res.getString(R.string.educationlevel_graduate));
-
-        cleanwatertypes.put("Borehole"+localeSuffix, res.getString(R.string.cleanwatertype_borehole));
-        cleanwatertypes.put("Well"+localeSuffix, res.getString(R.string.cleanwatertype_well));
-        cleanwatertypes.put("Pipe"+localeSuffix, res.getString(R.string.cleanwatertype_pipe));
-        cleanwatertypes.put("Spring"+localeSuffix, res.getString(R.string.cleanwatertype_spring));
-
+//        String localeSuffix = Utilities.getLocaleSuffix(res);
+//        poitypes.put("School"+localeSuffix, res.getString(R.string.poitype_school));
+//        poitypes.put("Health centre"+localeSuffix, res.getString(R.string.poitype_healthcentre));
+//        poitypes.put("Clean water supply"+localeSuffix, res.getString(R.string.poitype_cleanwatersupply));
+//        poitypes.put("Buying centre"+localeSuffix, res.getString(R.string.poitype_buyingcentre));
+//
+//        genders.put("Male"+localeSuffix, res.getString(R.string.gender_school_male));
+//        genders.put("Female"+localeSuffix, res.getString(R.string.gender_school_female));
+//        genders.put("Coeducational"+localeSuffix, res.getString(R.string.gender_school_coeducational));
+//
+//        educationlevels.put("Nursery"+localeSuffix, res.getString(R.string.educationlevel_nursery));
+//        educationlevels.put("Primary"+localeSuffix, res.getString(R.string.educationlevel_primary));
+//        educationlevels.put("Junior Secondary"+localeSuffix, res.getString(R.string.educationlevel_juniorsecondary));
+//        educationlevels.put("Senior Secondary"+localeSuffix, res.getString(R.string.educationlevel_seniorsecondary));
+//        educationlevels.put("Graduate"+localeSuffix, res.getString(R.string.educationlevel_graduate));
+//
+//        cleanwatertypes.put("Borehole"+localeSuffix, res.getString(R.string.cleanwatertype_borehole));
+//        cleanwatertypes.put("Well"+localeSuffix, res.getString(R.string.cleanwatertype_well));
+//        cleanwatertypes.put("Pipe"+localeSuffix, res.getString(R.string.cleanwatertype_pipe));
+//        cleanwatertypes.put("Spring"+localeSuffix, res.getString(R.string.cleanwatertype_spring));
+//
+//
+//
         dl = new DataLayer(res, context);
         poiName = (EditText) findViewById(R.id.poiName);
-        poispinner = (Spinner) findViewById(R.id.spinner_poitype);
+        subModulesSpinner = (Spinner) findViewById(R.id.spinner_submodules);
+        modulesSpinner=(Spinner) findViewById(R.id.spinner_modules);
 
         requestLocation = (ImageButton) findViewById(R.id.requestLocation);
         bindGpsButton();
@@ -168,9 +190,19 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
             recorded_lng = savedInstanceState.getString(CURRENT_LNG);
         }
 
-        bindPoiSpinner();
+        //bindPoiSpinner();
+        dynamicQuestions = DynamicQuestions.getInstance(this, Utilities.getLocaleSuffix(res), dl);
+
+        dynamicQuestions.questionsSection = (LinearLayout) findViewById(R.id.questionsSection);
+        dynamicQuestions.inflater = (LayoutInflater) context.getSystemService(LAYOUT_INFLATER_SERVICE);
+        dynamicQuestions.reportingYear = getReportingYear();
+        initDynamicQuestions();
+        bindModulesSpinner();
 
         if (editMode) {
+            modulesSpinner.setEnabled(false);
+            subModulesSpinner.setEnabled(false);
+
             if (infrastructureID != 0) {
                 Cursor existingItem = dl.getNetworkQueueItem((int) infrastructureID);
 
@@ -180,12 +212,71 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
                 }
             }
         } else {
-            swapPoiType(SCHOOL);
+            dynamicQuestions.hasAnswers = false;
+            moduleId = moduleDTOS.get(0).getId();
+            bindPoiSpinner(moduleId);
+            subModuleId = subModuleDTOS.get(0).getId();
+//            swapPoiType(SCHOOL);
         }
+
 
         int selectedPlace = 0;
         dl.createGeographyHierarchySpinners(this, context, null, selectedCountry, selectedRegion, selectedDistrict, selectedPlace, null);
+
         bindSaveButton();
+
+    }
+
+
+
+
+    private void setupSubModuleQuestions() {
+        // loop through questions and generate the right control for each
+        while (questions.moveToNext()) {
+            String displayType = questions.getString(questions.getColumnIndex(OFISDBContract.QuestionSipEntry.COLUMN_NAME_DISPLAY_TYPE));
+            if (displayType.toLowerCase().equals("checkbox")) {
+                dynamicQuestions.renderCheckBoxQuestionForSIP(questions, dynamicQuestions.questionsSection);
+            } else if (displayType.toLowerCase().equals("datepicker")) {
+                dynamicQuestions.renderDatePickerQuestionForSip(questions, false, dynamicQuestions.questionsSection, 0, -1, null);
+            } else if (displayType.toLowerCase().equals("decimal")) {
+                dynamicQuestions.renderTextBoxQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null);
+            } else if (displayType.toLowerCase().equals("dropdown")) {
+                dynamicQuestions.renderDropDownQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
+            } else if (displayType.toLowerCase().equals("photocheckbox")) {
+                dynamicQuestions.renderPhotoCheckboxQuestionForSIP(questions, res, getPackageName());
+            } else if (displayType.toLowerCase().equals("repeater")) {
+                dynamicQuestions.renderRepeaterQuestionForSIP(questions, res);
+            } else if (displayType.toLowerCase().equals("textbox")) {
+                dynamicQuestions.renderTextBoxQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null);
+            } else if (displayType.toLowerCase().equals("yesno")) {
+                dynamicQuestions.renderYesNoQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
+            } else if (displayType.toLowerCase().equals("farmtreedensity")) {
+                dynamicQuestions.renderTreeDensityQuestion(questions, res);
+            } else if (displayType.toLowerCase().equals("photoupload")) {
+                dynamicQuestions.renderPhotoUploadQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
+            }
+        }
+    }
+    @SuppressWarnings("ConstantConditions")
+    private void initDynamicQuestions() {
+        DynamicQuestions.getInstance().answerSet = new ArrayList<>();
+        DynamicQuestions.getInstance().hundredpercentquestions = new ArrayList<>();
+        DynamicQuestions.getInstance().context = context;
+        DynamicQuestions.getInstance().updatingHundredPercent = false;
+        DynamicQuestions.getInstance().questionColumnSuffix = Utilities.getLocaleSuffix(res);
+    }
+
+
+    private void moveToCurrentSubModule(int subModuleId) {
+        while (subModules.moveToNext()) {
+            if (subModuleId == subModules.getInt(subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_ID))) {
+                break;
+            }
+        }
+    }
+
+    private int getReportingYear() {
+        return Calendar.getInstance().get(Calendar.YEAR);
     }
 
     @Override
@@ -323,7 +414,8 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
             }
 
             public void onFinish() {
-                spinners_ready = true;
+
+                spinners_ready = !editMode;//true;
             }
         }.start();
 
@@ -332,7 +424,26 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
     @SuppressLint("SetTextI18n")
     private void populateExistingValues(final Cursor existingItem) {
         gpsField = (EditText) findViewById(R.id.gpsPosition);
-        String currentPoiType = Utilities.getDefaultTextByLocalValue(poitypes, existingItem.getString(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE)), res);
+        int selectedModulePOI = existingItem.getInt(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE_ID));
+        int selectedSubModulePOI = existingItem.getInt(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_SUBGROUP_TYPE_ID));
+        recorded_lat = existingItem.getString(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LAT));
+        recorded_lng = existingItem.getString(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG));
+        gpsField.setText(recorded_lat + "," + recorded_lng);
+
+        poiName.setText(existingItem.getString(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME)));
+
+        String uploadId = existingItem.getString(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ID));
+        modulesSpinner.setSelection(selectedModulePOI);
+        moduleId = moduleDTOS.get(selectedModulePOI).getId();
+        subModuleId = getSubModules(moduleId).get(selectedSubModulePOI).getId();
+        bindPoiSpinner(moduleId);
+        subModulesSpinner.setSelection(selectedSubModulePOI);
+        dynamicQuestions.hasAnswers = true;
+        questions = dl.getSIPQuestionsAndAnswersByUploadId(uploadId, subModuleId);
+        dynamicQuestions.questionsSection.removeAllViews();
+//        dynamicQuestions
+        setupSubModuleQuestions();
+        /*        String currentPoiType = Utilities.getDefaultTextByLocalValue(poitypes, existingItem.getString(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE)), res);
 
         if (currentPoiType.equalsIgnoreCase("school")) {
             currentTypeOfPOI = SCHOOL;
@@ -345,7 +456,7 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
         }
 
         swapPoiType(currentTypeOfPOI);
-        poispinner.setSelection(currentTypeOfPOI);
+        subModulesSpinner.setSelection(currentTypeOfPOI);
 
         if (currentPoiType.equalsIgnoreCase("school")) {
             currentTypeOfPOI = SCHOOL;
@@ -437,7 +548,7 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
 
         recorded_lat = existingItem.getString(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LAT));
         recorded_lng = existingItem.getString(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG));
-        gpsField.setText(recorded_lat + "," + recorded_lng);
+        gpsField.setText(recorded_lat + "," + recorded_lng);*/
 
         selectedCountry = existingItem.getInt(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_COUNTRY_ID));
         selectedRegion = existingItem.getInt(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_REGION_ID));
@@ -474,7 +585,7 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
             recorded_lat = String.valueOf(poiLocation.getLatitude());
             recorded_lng = String.valueOf(poiLocation.getLongitude());
         }
-
+/*
         int olamFundedValue = 0;
         if (currentTypeOfPOI != BUYING_CENTRE) {
             Switch olamFunded = (Switch) findViewById(R.id.olamFunded);
@@ -508,23 +619,28 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
                 }
                 break;
             default:
-        }
+        }*/
 
         try {
             // common
             values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "infrastructure");
-            values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, String.valueOf(poispinner.getSelectedItem()));
-            if (currentTypeOfPOI != CLEAN_WATER_SUPPLY) {
+            values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE_ID, String.valueOf(modulesSpinner.getSelectedItemPosition()));
+            values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_MODULE_ID, String.valueOf(moduleId));
+            values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, String.valueOf(modulesSpinner.getSelectedItem()));
+            values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_SUBGROUP_TYPE_ID, String.valueOf(subModulesSpinner.getSelectedItemPosition()));
+            values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_SUBMODULE_ID, String.valueOf(subModuleId));
+            values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_SUBGROUP_TYPE, String.valueOf(subModulesSpinner.getSelectedItem()));
+            if (/*currentTypeOfPOI != CLEAN_WATER_SUPPLY | */!modulesSpinner.getSelectedItem().equals("Clean water supply")) {
                 values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, String.valueOf(poiName.getText()));
             } else {
-                values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, String.valueOf(poispinner.getSelectedItem()));
+                values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, String.valueOf(subModulesSpinner.getSelectedItem()));
             }
             values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LAT, recorded_lat);
             values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG, recorded_lng);
             values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_COUNTRY_ID, country_id);
             values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_REGION_ID, region_id);
             values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_DISTRICT_ID, district_id);
-
+/*
             switch (currentTypeOfPOI) {
                 case SCHOOL:
 
@@ -549,7 +665,7 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FUNDED, olamFundedValue);
                     break;
                 default:
-            }
+            }*/
 
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
             values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT, timestamp.toString());
@@ -570,8 +686,25 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
             public void onClick(View v) {
                 // get the entered values
                 ContentValues values = validateValues();
+//                ContentValues answerValues = answerValidateValues(dynamicQuestions.answerSet, subModuleId, 0, values);
+                String uploadId = null;
 
-                if (values.size() > 0) {
+                if (editMode) {
+                    if (infrastructureID != 0) {
+                        Cursor existingItem = dl.getNetworkQueueItem((int) infrastructureID);
+                        if (existingItem.getCount() > 0) {
+                            existingItem.moveToFirst();
+                            uploadId = existingItem.getString(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ID));
+                        }
+                    }
+                }else{
+                    uploadId = UUID.randomUUID().toString();
+
+                }
+                if(uploadId != null)
+                    dl.updateSIPSubModuleAnswers(dynamicQuestions.answerSet, subModuleId, 0, uploadId);
+
+                if (values.size() > 0 && uploadId != null &&  dynamicQuestions.requiredFieldsSIPAnswered(uploadId, moduleId, subModuleId)) {
                     if (editMode) {
                         // edit POI call
                         if (dl.updateNetworkQueueEntry(values, infrastructureID) > 0) {
@@ -580,20 +713,26 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
                             startActivity(intent);
                         }
                     } else {
+
                         // insert POI
-                        long newPoiId = dl.insertNetworkQueueEntry(values);
+//                        long newPoiId = dl.insertNetworkQueueSipEntry(dynamicQuestions.answerSet, subModuleId, 0, values, uploadId);
+                        long newPoiId = dl.insertNetworkQueueSipEntry(values, uploadId);
                         if (newPoiId != -1) {
                             Toast.makeText(context, res.getString(R.string.Successfully_added), Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(context, HomeActivity.class);
                             startActivity(intent);
+
                         }
+
                     }
+
                 } else {
                     Toast.makeText(context, res.getString(R.string.Please_fill_all_fields), Toast.LENGTH_LONG).show();
                 }
             }
         });
     }
+
 
     private ProgressDialog pd;
     private LocationListener locationListener;
@@ -705,16 +844,53 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
         colorAnimation.start();
     }
 
+    private ArrayList<ModuleDTO> getModules(){
+        modules = dl.getSIPModules();
+        moduleDTOS=new ArrayList<ModuleDTO>();
+        ModuleDTO moduleDTO;
+        while (modules.moveToNext()) {
+            moduleDTO=new ModuleDTO();
+            moduleDTO.setId(modules.getInt(modules.getColumnIndex(OFISDBContract.SipGroupEntry.COLUMN_NAME_ID)));
+            moduleDTO.setModuleName(modules.getString(modules.getColumnIndex(OFISDBContract.SipGroupEntry.COLUMN_NAME_NAME)));
+            moduleDTOS.add(moduleDTO);
+        }
+        return moduleDTOS;
+    }
+
+
+    private ArrayList<SubModuleDTO> getSubModules(long moduleId){
+        subModules = dl.getSipSubmodulesByModuleId(moduleId);
+        subModuleDTOS=new ArrayList<SubModuleDTO>();
+        SubModuleDTO subModuleDTO;
+        while (subModules.moveToNext()) {
+            subModuleDTO=new SubModuleDTO();
+            subModuleDTO.setId(subModules.getInt(subModules.getColumnIndex(OFISDBContract.SipSubGroupEntry.COLUMN_NAME_ID)));
+            subModuleDTO.setSipName(subModules.getString(subModules.getColumnIndex(OFISDBContract.SipSubGroupEntry.COLUMN_NAME_NAME)));
+            subModuleDTOS.add(subModuleDTO);
+        }
+        return subModuleDTOS;
+    }
+
+    private void getSubModuleQuestions(int subModuleId){
+        if (subModuleId != 0) {
+            questions = dl.getQuestionsSipBySubModuleId(subModuleId);
+            dynamicQuestions.hasAnswers = false;
+            moveToCurrentSubModule(subModuleId);
+        }
+        setupSubModuleQuestions();
+    }
+
     private void swapPoiType(int type) {
         ImageView topSection = (ImageView) findViewById(R.id.topSectionBackground);
-        LinearLayout olamFundedWrapper = (LinearLayout) findViewById(R.id.olamFundedWrapper);
+
+       /*  LinearLayout olamFundedWrapper = (LinearLayout) findViewById(R.id.olamFundedWrapper);
         currentTypeOfPOI=type;
 
         LinearLayout additional_school          = (LinearLayout) findViewById(R.id.additional_school);
         LinearLayout additional_cleanwater      = (LinearLayout) findViewById(R.id.additional_cleanwater);
         LinearLayout additional_buyingcentre    = (LinearLayout) findViewById(R.id.additional_buyingcentre);
         LinearLayout additional_healthcentre    = (LinearLayout) findViewById(R.id.additional_healthcentre);
-
+        dynamicQuestions.questionsSection.removeAllViews();
         switch(type)
         {
             case SCHOOL:
@@ -744,6 +920,7 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
                 school_editTextNumberOfClassrooms = (EditText) findViewById(R.id.editText_numberOfClassRooms);
                 school_editTextCapacity = (EditText) findViewById(R.id.editText_capacity);
 
+                subModuleId =175;
                 break;
             case HEALTH_CENTRE:
                 animateBetweenColours(currentColour,COLOUR_HEALTH_CENTRE,topSection);
@@ -760,6 +937,7 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
                 adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
                 healthCentre_yearOpened.setAdapter(adapter);
 
+                subModuleId =16;
                 break;
             case CLEAN_WATER_SUPPLY:
                 animateBetweenColours(currentColour,COLOUR_CLEAN_WATER_SUPPLY,topSection);
@@ -783,6 +961,7 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
                 adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
                 cleanWater_yearOpened.setAdapter(adapter);
 
+                subModuleId =17;
                 break;
             case BUYING_CENTRE:
                 animateBetweenColours(currentColour, COLOUR_BUYING_CENTRE, topSection);
@@ -806,17 +985,87 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
                     buyingCentreSpinner_farmergroup.setEnabled(false);
                 }
 
+                subModuleId =18;
                 break;
             default:
         }
+        subModules = dl.getSubmodulesByModuleId(moduleId);
+        if (subModuleId != 0) {
+            questions = dl.getQuestionsBySubModuleId(subModuleId);
+            dynamicQuestions.hasAnswers = false;
+
+            moveToCurrentSubModule(subModuleId);
+        }
+        setupSubModuleQuestions();*/
     }
 
-    private void bindPoiSpinner() {
-        poispinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+    private void bindModulesSpinner() {
+        moduleDTOS=getModules();
+        ArrayList<String> moduleNames= new ArrayList<String>();
+        if(moduleDTOS.size()>0){
+            for(ModuleDTO moduleDTO: moduleDTOS) {
+                moduleNames.add(moduleDTO.getModuleName());
+            }
+        }
+
+        ArrayAdapter adapter = new ArrayAdapter<>(context, R.layout.add_sip_spinner_item, moduleNames);
+        adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+
+        modulesSpinner.setAdapter(adapter);
+
+        modulesSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+            public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
                 if (spinners_ready) {
-                    swapPoiType(i);
+                    /*int color;
+                    ImageView topSection = (ImageView) findViewById(R.id.topSectionBackground);
+                    if(position == 0){
+                        color = currentColour;
+                        animateBetweenColours(color,currentColour, topSection);
+
+                    }else if(position > 0){
+                       color = currentColour;
+                       color +=0x2BEE06;
+                       animateBetweenColours(currentColour,color,topSection);
+
+                   }  */
+                    moduleId = moduleDTOS.get(position).getId();
+                    bindPoiSpinner(moduleId);
+//                  subModuleId = subModuleDTOS.get(0).getId();
+//                    getSubModuleQuestions(subModuleId);
+                }
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+    }
+
+    private void bindPoiSpinner(int moduleId) {
+        subModuleDTOS=getSubModules(moduleId);
+        ArrayList<String> subModuleNames= new ArrayList<String>();
+        if(subModuleDTOS.size()>0){
+            for(SubModuleDTO subModuleDTO: subModuleDTOS) {
+                subModuleNames.add(subModuleDTO.getSipName());
+            }
+        }
+
+        ArrayAdapter adapter = new ArrayAdapter<>(context, R.layout.add_sip_spinner_item, subModuleNames);
+        adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+        subModulesSpinner.setAdapter(adapter);
+
+        subModulesSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
+                if (spinners_ready) {
+//                    swapPoiType(i);
+//                }
+                    dynamicQuestions.questionsSection.removeAllViews();
+                    subModuleId = subModuleDTOS.get(position).getId();
+                    getSubModuleQuestions(subModuleId);
                 }
             }
 

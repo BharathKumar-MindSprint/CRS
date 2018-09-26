@@ -51,7 +51,7 @@ public class SyncAllTask extends SyncTask {
         CONTINUE_DOWNLOADING, START_IMPORT, ERROR_RECEIVED, NEW_UPDATE_AVAILABLE
     }
 
-    public JSONObject spinnerResponse, moduleResponse, farmerResponse, fmpResponse, transactionResponse, trainingResponse, tasksResponse;
+    public JSONObject spinnerResponse, moduleResponse, sipModuleResponse, farmerResponse, fmpResponse, transactionResponse, trainingResponse, tasksResponse;
 
     private int syncResultCount;
     public ProgressDialog pd;
@@ -104,7 +104,15 @@ public class SyncAllTask extends SyncTask {
                 e.printStackTrace();
             }
 
-        } else if (op == SyncTaskOperationType.SYNC_FARMERS) {
+        }  else if (op == SyncTaskOperationType.SYNC_SIP_MODULES) {
+                try {
+                    syncSipModules();
+                } catch (JSONException e) {
+                    FirebaseCrash.report(e);
+                    e.printStackTrace();
+                }
+
+        }else if (op == SyncTaskOperationType.SYNC_FARMERS) {
 
             try {
                 syncFarmers();
@@ -131,6 +139,59 @@ public class SyncAllTask extends SyncTask {
 
     }
 
+    private void syncSipModules() throws JSONException {
+        JSONObject inputArgs = new JSONObject();
+        String enumerator_id = Utilities.getFromSharedPrefs(context);
+        if(enumerator_id != null){
+            long enumeratorId = Integer.parseInt(enumerator_id);
+            inputArgs.put("enumeratorId", enumeratorId);
+//            inputArgs.put("enumeratorId", 125);
+        }
+
+//        String url = "http://13.76.131.132:8080/farmerdata/sipquestionnaire/getAllSIPQuestionnaireData";
+        String url = "farmer-data/farmerdata/sipquestionnaire/getAllSIPQuestionnaireData";
+        okHttpPost(context, url, inputArgs, new Callback() {
+            @Override
+            public void onResponse(Call call, final Response postResponse) {
+                try {
+                    JSONObject response = new JSONObject(postResponse.body().string());
+                    if (postResponse.isSuccessful()) {
+                        syncResultCount = syncResultCount + response.getInt("resultcount");
+                        if (response.getString("status").equals("unchanged")) {
+
+                            publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.modules_up_to_date));
+
+                        }
+                        sipModuleResponse = response;
+
+                        publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.updating_modules));
+
+                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_TRAINING);
+                    } else {
+                        postFailureMessage(response);
+                    }
+
+                } catch (JSONException | IOException e) {
+                    FirebaseCrash.report(new Exception("SyncAllTask: Error syncing modules", e));
+                    e.printStackTrace();
+                } finally {
+                    postResponse.close();
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+                String failureMessage = res.getString(R.string.networking_error);
+                if (e != null) {
+                    FirebaseCrash.report(new Exception("SyncAllTask: Error in response when syncing modules", e));
+                    failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
+                }
+
+                publishProgress(SyncOperation.ERROR_RECEIVED, failureMessage);
+            }
+
+        });
+    }
 
 
     @Override
@@ -164,6 +225,12 @@ public class SyncAllTask extends SyncTask {
             // Goes directly to the AsyncTask
             new UpdateModuleListsTask(context).execute(moduleResponse);
             moduleResponse = null;
+
+            // Goes directly to the AsyncTask
+            new UpdateSipModuleListsTask(context).execute(sipModuleResponse);
+            sipModuleResponse = null;
+
+
 
             // Goes directly to the AsyncTask
 
@@ -340,12 +407,12 @@ public class SyncAllTask extends SyncTask {
         JSONObject inputArgs = new JSONObject();
         String endPoint="";
         //old end point
-       // endPoint="sync_spinners";
+        endPoint="sync_spinners";
         // new end point
        // endPoint="farmer-data/farmerdata/getcountryspinners/1127";
-        endPoint="farmer-data/farmerdata/getcountryspinners/"+Utilities.getFromSharedPrefs(context);
+//        endPoint="farmer-data/farmerdata/getcountryspinners/"+Utilities.getFromSharedPrefs(context);
 
-        okHttpGet(context, endPoint, inputArgs, new Callback() {
+        okHttpPostPHP(context, endPoint, inputArgs, new Callback() {
             @Override
             public void onResponse(Call call, final Response postResponse) {
                 try {
@@ -418,7 +485,7 @@ public class SyncAllTask extends SyncTask {
 
                         publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.updating_training));
 
-                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_TRAINING);
+                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_SIP_MODULES);
                     } else {
                         postFailureMessage(response);
                     }
