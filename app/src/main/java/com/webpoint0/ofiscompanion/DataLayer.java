@@ -28,8 +28,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -2825,4 +2827,171 @@ public class DataLayer {
         return db.rawQuery(sql_query, null);
 
     }
+
+    public void updateSIPSubModuleAnswers(ArrayList<JSONObject> answerSet, int subModuleId, int farmId, String uploadId) {
+        try {
+            // delete existing answers_sip for this uploadId and submoduleid
+            String answerTable = OFISDBContract.AnswerSipEntry.TABLE_NAME;
+            String whereClause = OFISDBContract.AnswerSipEntry.COLUMN_NAME_SUBMODULE_ID + " = ? AND " +
+                    answerTable + "." + OFISDBContract.AnswerSipEntry.COLUMN_NAME_UPLOAD_ID + " = ?";
+            String[] whereArgs = new String[]{
+                    String.valueOf(subModuleId),
+                    uploadId,
+            };
+            db.delete(answerTable, whereClause, whereArgs);
+
+            // now add in answers_sip
+            for (int i = 0; i < answerSet.size(); i++) {
+                JSONObject currentAnswer = answerSet.get(i);
+                if (currentAnswer != null) {
+                    int currentQuestionId = currentAnswer.optInt("question_id");
+                    int parentQuestionId = currentAnswer.optInt("parent_question_id");
+                    int repeaterPosition = currentAnswer.optInt("repeater_item_position", -1);
+                    String datatype = currentAnswer.getString("datatype");
+                    String answer = currentAnswer.getString("answer");
+                    String sub_answers = currentAnswer.optString("sub_answers");
+//                    int reportingYear = currentAnswer.getInt("reporting_year");
+
+                    ContentValues values = new ContentValues();
+                    values.put(OFISDBContract.AnswerSipEntry.COLUMN_NAME_UPLOAD_ID, uploadId);
+                    values.put(OFISDBContract.AnswerSipEntry.COLUMN_NAME_QUESTION_ID, currentQuestionId);
+                    values.put(OFISDBContract.AnswerSipEntry.COLUMN_NAME_PARENT_QUESTION_ID, parentQuestionId);
+                    values.put(OFISDBContract.AnswerSipEntry.COLUMN_NAME_REPEATER_ITEM_POSITION, repeaterPosition);
+                    values.put(OFISDBContract.AnswerSipEntry.COLUMN_NAME_SUBMODULE_ID, subModuleId);
+                    values.put(OFISDBContract.AnswerSipEntry.COLUMN_NAME_FARM_ID, farmId);
+                    values.put("answer_" + datatype, answer);
+                    if (sub_answers.length() > 0 && (!datatype.equalsIgnoreCase("text"))) {
+                        values.put("answer_text", sub_answers);
+                    }
+
+                    Date today = new Date();
+                    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    String reportingYear = format.format(today);
+
+                    values.put(OFISDBContract.AnswerSipEntry.COLUMN_NAME_ANSWER_REPORTING_YEAR, reportingYear);
+
+                    db.insert(OFISDBContract.AnswerSipEntry.TABLE_NAME, null, values);
+
+                }
+            }
+        } catch (JSONException e) {
+            FirebaseCrash.report(new Exception("DataLayer: Error updating submodule answers", e));
+            e.printStackTrace();
+        }
+    }
+
+    public Cursor getAllAnswersSipByUploadId(String UploadId) {
+        String answerTable = OFISDBContract.AnswerSipEntry.TABLE_NAME;
+        String questionTable = OFISDBContract.QuestionEntry.TABLE_NAME;
+        String datatypeTable = OFISDBContract.DatatypesEntry.TABLE_NAME;
+        String sql = "SELECT " + answerTable + ".*," + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE + ", " + datatypeTable + "." + OFISDBContract.DatatypesEntry.COLUMN_NAME_DATATYPE_NAME +
+                " FROM " + answerTable + " INNER JOIN " + questionTable + " ON " + answerTable + "." + OFISDBContract.AnswerSipEntry.COLUMN_NAME_QUESTION_ID + " = " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_ID +
+                " INNER JOIN " + datatypeTable + " ON " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID + " = " + datatypeTable + "." + OFISDBContract.DatatypesEntry.COLUMN_NAME_ID +
+                " WHERE " + OFISDBContract.AnswerSipEntry.COLUMN_NAME_UPLOAD_ID + " = ? ORDER BY " + OFISDBContract.AnswerSipEntry.COLUMN_NAME_QUESTION_ID + " ASC";
+        String[] whereArgs = new String[]{String.valueOf(UploadId)};
+
+        return db.rawQuery(sql, whereArgs);
+    }
+
+    public Cursor getAnswersSipByUploadId(String UploadId) {
+        String answerTable = OFISDBContract.AnswerSipEntry.TABLE_NAME;
+        String questionTable = OFISDBContract.QuestionEntry.TABLE_NAME;
+        String datatypeTable = OFISDBContract.DatatypesEntry.TABLE_NAME;
+        String sql = "SELECT " + answerTable + ".*," + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE + ", " + datatypeTable + "." + OFISDBContract.DatatypesEntry.COLUMN_NAME_DATATYPE_NAME +
+                " FROM " + answerTable + " INNER JOIN " + questionTable + " ON " + answerTable + "." + OFISDBContract.AnswerSipEntry.COLUMN_NAME_QUESTION_ID + " = " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_ID +
+                " INNER JOIN " + datatypeTable + " ON " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID + " = " + datatypeTable + "." + OFISDBContract.DatatypesEntry.COLUMN_NAME_ID +
+                " WHERE " + OFISDBContract.AnswerSipEntry.COLUMN_NAME_PARENT_QUESTION_ID + " = 0 AND " + OFISDBContract.AnswerSipEntry.COLUMN_NAME_UPLOAD_ID + " = ? ORDER BY " + OFISDBContract.AnswerSipEntry.COLUMN_NAME_QUESTION_ID + " ASC";
+        String[] whereArgs = new String[]{String.valueOf(UploadId)};
+
+        return db.rawQuery(sql, whereArgs);
+    }
+
+    public Cursor getSipRequiredQuestionIds(int moduleId, int subModuleId) {
+        String questionTable = OFISDBContract.QuestionEntry.TABLE_NAME;
+        String submoduleTable = OFISDBContract.SubmoduleEntry.TABLE_NAME;
+        String moduleTable = OFISDBContract.ModuleEntry.TABLE_NAME;
+        String whereClause = moduleTable + "." + OFISDBContract.ModuleEntry.COLUMN_NAME_ID + " = ? AND " +submoduleTable + "." + OFISDBContract.SubmoduleEntry.COLUMN_NAME_ID + " = ? AND " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION + " LIKE ?";
+        String[] whereArgs = new String[]{
+                String.valueOf(moduleId),
+                String.valueOf(subModuleId),
+                "%\"requiredfield\":true%"
+        };
+        String sql = "SELECT " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_ID + " FROM " + questionTable + " INNER JOIN " + submoduleTable
+                + " ON " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_SUBMODULE_ID + " = " + submoduleTable + "." + OFISDBContract.SubmoduleEntry.COLUMN_NAME_ID
+                + " INNER JOIN " + moduleTable + " ON " + submoduleTable + "." + OFISDBContract.SubmoduleEntry.COLUMN_NAME_MODULE_ID + " = " + moduleTable + "."
+                + OFISDBContract.ModuleEntry.COLUMN_NAME_ID + " WHERE " + whereClause;
+
+        return db.rawQuery(sql, whereArgs);
+    }
+
+    public long insertNetworkQueueSipEntry(ContentValues values, String randomId) {
+        long newRowId;
+        if (!values.containsKey(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ID)) {
+            values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ID, randomId);
+        }
+        newRowId = db.insert(OFISDBContract.NetworkQueueEntry.TABLE_NAME, null, values);
+        return newRowId;
+    }
+
+    public Cursor getSIPModules() {
+        String[] columns = new String[]{"*"};
+        return db.query(OFISDBContract.SipGroupEntry.TABLE_NAME, columns, null, null, null, null, null);
+    }
+
+    public Cursor getSipSubmodulesByModuleId(long id) {
+        String[] columns = new String[]{"*"};
+        String whereClause = OFISDBContract.SipSubGroupEntry.COLUMN_NAME_MODULE_ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(id)};
+        String orderBy = OFISDBContract.SipSubGroupEntry.COLUMN_NAME_MODULE_ID + " ASC";//OFISDBContract.SipSubGroupEntry.COLUMN_NAME_POSITION + " ASC";
+
+        return db.query(OFISDBContract.SipSubGroupEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, orderBy);
+    }
+
+    public Cursor getQuestionsSipBySubModuleId(int id) {
+        String questionTable = OFISDBContract.QuestionSipEntry.TABLE_NAME;
+        String datatypeTable = OFISDBContract.DatatypesSipEntry.TABLE_NAME;
+        String whereClause = OFISDBContract.QuestionSipEntry.COLUMN_NAME_SUBMODULE_ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(id)};
+        String orderBy = OFISDBContract.QuestionSipEntry.COLUMN_NAME_POSITION + " ASC";
+        String sql = "SELECT " + questionTable + ".*, " + datatypeTable + "."
+                + OFISDBContract.DatatypesSipEntry.COLUMN_NAME_DATATYPE_NAME + " as datatype_name FROM " + questionTable
+                + " INNER JOIN " + datatypeTable + " ON " + questionTable + "." + OFISDBContract.QuestionSipEntry.COLUMN_NAME_DATATYPE_ID
+                + " = " + datatypeTable + "." + OFISDBContract.DatatypesSipEntry.COLUMN_NAME_ID + " WHERE "
+                + whereClause + " ORDER BY " + orderBy;
+
+        return db.rawQuery(sql, whereArgs);
+    }
+
+    public Cursor getSIPQuestionsAndAnswersByUploadId(String ulpoadID, int submoduleId/* long farmerId, long farmerModuleId*/) {
+        String questionTable = OFISDBContract.QuestionSipEntry.TABLE_NAME;
+        String datatypeTable = OFISDBContract.DatatypesSipEntry.TABLE_NAME;
+        String answerTable = OFISDBContract.AnswerSipEntry.TABLE_NAME;
+
+        String columns = questionTable + "." + OFISDBContract.QuestionSipEntry.COLUMN_NAME_ID + ", " + answerTable + "." + OFISDBContract.AnswerSipEntry.COLUMN_NAME_ID + " as answer_id, "
+                + datatypeTable + "." + OFISDBContract.DatatypesSipEntry.COLUMN_NAME_DATATYPE_NAME + " as datatype_name, " + questionTable + "." + OFISDBContract.QuestionSipEntry.COLUMN_NAME_POSITION + ", "
+                + questionTable + "." + OFISDBContract.QuestionSipEntry.COLUMN_NAME_DISPLAY_TYPE + ", " + questionTable + "." + OFISDBContract.QuestionSipEntry.COLUMN_NAME_QUESTION + ", "
+                + questionTable + "." + OFISDBContract.QuestionSipEntry.COLUMN_NAME_QUESTION_FR + ", " + questionTable + "." + OFISDBContract.QuestionSipEntry.COLUMN_NAME_QUESTION_ES + ", "
+                + questionTable + "." + OFISDBContract.QuestionSipEntry.COLUMN_NAME_QUESTION_ID + ", " + questionTable + "." + OFISDBContract.QuestionSipEntry.COLUMN_NAME_QUESTION_PT + ", "
+                + questionTable + "." + OFISDBContract.QuestionSipEntry.COLUMN_NAME_QUESTION_TR + ", " + questionTable + "." + OFISDBContract.QuestionSipEntry.COLUMN_NAME_QUESTION_LO + ", "
+                + questionTable + "." + OFISDBContract.QuestionSipEntry.COLUMN_NAME_QUESTION_VI + ", " + questionTable + "." + OFISDBContract.QuestionSipEntry.COLUMN_NAME_QUESTION_TH + ", "
+                + questionTable + "." + OFISDBContract.QuestionSipEntry.COLUMN_NAME_DISPLAY_CONFIGURATION + ", " + answerTable + "." + OFISDBContract.AnswerSipEntry.COLUMN_NAME_ANSWER_INT + ", " + answerTable + "." + OFISDBContract.AnswerSipEntry.COLUMN_NAME_ANSWER_BOOL + ", "
+                + answerTable + "." + OFISDBContract.AnswerSipEntry.COLUMN_NAME_ANSWER_DECIMAL + ", " + answerTable + "." + OFISDBContract.AnswerSipEntry.COLUMN_NAME_ANSWER_DATE + ", "
+                + answerTable + "." + OFISDBContract.AnswerSipEntry.COLUMN_NAME_ANSWER_TEXT + ", " + answerTable + "." + OFISDBContract.AnswerSipEntry.COLUMN_NAME_ANSWER_REPORTING_YEAR;
+        String Query = "" + answerTable + "." + OFISDBContract.AnswerSipEntry.COLUMN_NAME_UPLOAD_ID + " = ?"
+                + " AND " + answerTable + "." + OFISDBContract.AnswerSipEntry.COLUMN_NAME_SUBMODULE_ID + " =?";
+
+        String sql = "SELECT " + columns + " FROM " + answerTable + " LEFT OUTER JOIN " + questionTable+" INNER JOIN datatypes_sip "
+                + " ON " + questionTable + "." + OFISDBContract.QuestionSipEntry.COLUMN_NAME_DATATYPE_ID + " = " + datatypeTable + "." + OFISDBContract.DatatypesSipEntry.COLUMN_NAME_ID
+                + " AND " + questionTable + "." + OFISDBContract.QuestionSipEntry.COLUMN_NAME_ID + " = " + answerTable + "." + OFISDBContract.AnswerSipEntry.COLUMN_NAME_QUESTION_ID
+                + " WHERE " + Query +" GROUP BY "
+                + questionTable + "." + OFISDBContract.QuestionSipEntry.COLUMN_NAME_ID + " ORDER BY "
+                + questionTable + "." + OFISDBContract.QuestionSipEntry.COLUMN_NAME_POSITION + " ASC";
+        String[] whereArgs = new String[]{
+                ulpoadID,
+                String.valueOf(submoduleId)
+        };
+
+        return db.rawQuery(sql, whereArgs);
+    }
+
 }

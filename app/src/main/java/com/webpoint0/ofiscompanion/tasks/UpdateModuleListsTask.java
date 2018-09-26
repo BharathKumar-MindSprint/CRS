@@ -33,6 +33,18 @@ class UpdateModuleListsTask extends DatabaseTask {
                 JSONArray moduleArray, submoduleArray, moduelassignmentArray, datatypeArray, lookupvalueArray, questionArray;
                 try {
                     moduleArray = response.getJSONArray(OFISDBContract.ModuleEntry.TABLE_NAME);
+/*
+                    // Start SIP Filters
+          JSONArray sipModuleArray=new JSONArray();
+
+          for (int i=0;i< moduleArray.length();i++){
+              if(moduleArray.getJSONObject(i).getString("name").contains("SIP")){
+                  sipModuleArray.put(moduleArray.getJSONObject(i));
+              }
+          }
+                    fillTable(sipModuleArray, OFISDBContract.ModuleEntry.TABLE_NAME_SIP, OFISDBContract.ModuleEntry.COLUMN_LIST);
+                    // SIP End End*/
+
                     fillTable(moduleArray, OFISDBContract.ModuleEntry.TABLE_NAME, OFISDBContract.ModuleEntry.COLUMN_LIST);
                 } catch (JSONException e) {
                     FirebaseCrash.report(new Exception("UpdateModuleListsTask: Error filling modules table", e));
