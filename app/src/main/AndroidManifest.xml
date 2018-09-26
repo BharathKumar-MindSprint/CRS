@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.webpoint0.ofiscompanion">
+    package="com.olam.digital.ofis">
 
 
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -27,7 +27,7 @@
 
     <!-- updated -->
     <application
-        android:name="com.webpoint0.ofiscompanion.EnableMultiDex"
+        android:name="com.olam.digital.ofis.EnableMultiDex"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
@@ -46,17 +46,17 @@
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/ofis_poi_screen_top_background_school" />
 
-        <service android:name=".companionFirebaseInstanceIdService">
+        <service android:name="com.olam.digital.ofis.companionFirebaseInstanceIdService">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
-        <service android:name=".companionFirebaseMessagingService">
+        <service android:name="com.olam.digital.ofis.companionFirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-        <service android:name=".tasks.AuthenticatorService">
+        <service android:name="com.olam.digital.ofis.tasks.AuthenticatorService">
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator" />
             </intent-filter>
@@ -66,7 +66,7 @@
                 android:resource="@xml/authenticator" />
         </service>
         <service
-            android:name=".SyncService"
+            android:name="com.olam.digital.ofis.SyncService"
             android:exported="true"
             android:process=":sync">
             <intent-filter>
@@ -79,13 +79,13 @@
         </service>
 
         <provider
-            android:name=".tasks.StubProvider"
+            android:name="com.olam.digital.ofis.tasks.StubProvider"
             android:authorities="${applicationId}.provider"
             android:exported="false"
             android:syncable="true" />
 
         <activity
-            android:name=".HomeActivity"
+            android:name="com.olam.digital.ofis.HomeActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -95,164 +95,167 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".SettingsActivity"
+            android:name="com.olam.digital.ofis.SettingsActivity"
             android:label="@string/title_activity_settings"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".AddFarmerActivity"
+            android:name="com.olam.digital.ofis.AddFarmerActivity"
             android:label="@string/title_activity_add_farmer"
-            android:parentActivityName=".HomeActivity"
+            android:parentActivityName="com.olam.digital.ofis.HomeActivity"
             android:screenOrientation="portrait"
             tools:ignore="UnusedAttribute">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.webpoint0.ofiscompanion.HomeActivity" />
+                android:value="com.olam.digital.ofis.HomeActivity" />
         </activity>
         <activity
-            android:name=".AddInfrastructureActivity"
+            android:name="com.olam.digital.ofis.AddInfrastructureActivity"
             android:label="@string/title_activity_add_infrastructure"
-            android:parentActivityName=".HomeActivity"
+            android:parentActivityName="com.olam.digital.ofis.HomeActivity"
             android:screenOrientation="portrait"
             tools:ignore="UnusedAttribute">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.webpoint0.ofiscompanion.HomeActivity" />
+                android:value="com.olam.digital.ofis.HomeActivity" />
         </activity>
         <activity
-            android:name=".FindFarmerActivity"
+            android:name="com.olam.digital.ofis.FindFarmerActivity"
             android:label="@string/title_activity_find_farmer"
-            android:parentActivityName=".HomeActivity"
+            android:parentActivityName="com.olam.digital.ofis.HomeActivity"
             android:screenOrientation="portrait"
             tools:ignore="UnusedAttribute">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.webpoint0.ofiscompanion.HomeActivity" />
+                android:value="com.olam.digital.ofis.HomeActivity" />
         </activity>
         <activity
-            android:name=".ViewFarmerActivity"
+            android:name="com.olam.digital.ofis.ViewFarmerActivity"
             android:label="@string/title_activity_view_farmer"
-            android:parentActivityName=".FindFarmerActivity"
+            android:parentActivityName="com.olam.digital.ofis.FindFarmerActivity"
             android:screenOrientation="portrait"
             tools:ignore="UnusedAttribute">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.webpoint0.ofiscompanion.FindFarmerActivity" />
+                android:value="com.olam.digital.ofis.FindFarmerActivity" />
         </activity>
         <activity
-            android:name=".recordpolygon.RecordPolygonActivity"
+            android:name="com.olam.digital.ofis.recordpolygon.RecordPolygonActivity"
             android:label="@string/title_activity_record_polygon"
-            android:parentActivityName=".ViewFarmerActivity"
+            android:parentActivityName="com.olam.digital.ofis.ViewFarmerActivity"
             android:screenOrientation="portrait"
             tools:ignore="UnusedAttribute">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.webpoint0.ofiscompanion.ViewFarmerActivity" />
+                android:value="com.olam.digital.ofis.ViewFarmerActivity" />
         </activity>
         <activity
-            android:name=".CompleteModuleActivity"
+            android:name="com.olam.digital.ofis.CompleteModuleActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_complete_module"
-            android:parentActivityName=".ViewFarmerActivity"
+            android:parentActivityName="com.olam.digital.ofis.ViewFarmerActivity"
             android:screenOrientation="portrait"
             tools:ignore="UnusedAttribute">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.webpoint0.ofiscompanion.ViewFarmerActivity" />
+                android:value="com.olam.digital.ofis.ViewFarmerActivity" />
         </activity>
         <activity
-            android:name=".ReviewFarmManagementPlan"
+            android:name="com.olam.digital.ofis.ReviewFarmManagementPlan"
             android:label="@string/title_activity_review_farm_management_plan"
-            android:parentActivityName=".ViewFarmerActivity"
+            android:parentActivityName="com.olam.digital.ofis.ViewFarmerActivity"
             android:screenOrientation="portrait"
             tools:ignore="UnusedAttribute">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.webpoint0.ofiscompanion.ViewFarmerActivity" />
+                android:value="com.olam.digital.ofis.ViewFarmerActivity" />
         </activity>
         <activity
-            android:name=".TransactionItems"
+            android:name="com.olam.digital.ofis.TransactionItems"
             android:label="@string/ViewTransactionsTitle"
-            android:parentActivityName=".HomeActivity"
+            android:parentActivityName="com.olam.digital.ofis.HomeActivity"
             android:screenOrientation="portrait"
             tools:ignore="UnusedAttribute">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.webpoint0.ofiscompanion.HomeActivity" />
+                android:value="com.olam.digital.ofis.HomeActivity" />
         </activity>
-        <activity android:name=".BuyingAgent"
+        <activity android:name="com.olam.digital.ofis.BuyingAgent"
             android:label="@string/buyingagent"
-            android:parentActivityName=".TransactionItems"
+            android:parentActivityName="com.olam.digital.ofis.TransactionItems"
             android:screenOrientation="portrait"
             tools:ignore="UnusedAttribute">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".TransactionItems" />
+                android:value="com.olam.digital.ofis.TransactionItems" />
         </activity>
         <activity
-            android:name=".TransactionItem"
+            android:name="com.olam.digital.ofis.TransactionItem"
             android:label="@string/AddTransactionItemTitle"
-            android:parentActivityName=".TransactionItems"
+            android:parentActivityName="com.olam.digital.ofis.TransactionItems"
             android:screenOrientation="portrait"
             tools:ignore="UnusedAttribute">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".TransactionItems" />
+                android:value="com.olam.digital.ofis.TransactionItems" />
         </activity>
         <activity
-            android:name=".TrainingRecords"
+            android:name="com.olam.digital.ofis.TrainingRecords"
             android:label="@string/TrainingRecordsTitle"
-            android:parentActivityName=".HomeActivity"
+            android:parentActivityName="com.olam.digital.ofis.HomeActivity"
             android:screenOrientation="portrait"
             tools:ignore="UnusedAttribute">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.webpoint0.ofiscompanion.HomeActivity" />
+                android:value="com.olam.digital.ofis.HomeActivity" />
         </activity>
         <activity
-            android:name=".TrainingRecord"
+            android:name="com.olam.digital.ofis.TrainingRecord"
             android:label="@string/TrainingRecordTitle"
             android:launchMode="singleTop"
-            android:parentActivityName=".TrainingRecords"
+            android:parentActivityName="com.olam.digital.ofis.TrainingRecords"
             android:screenOrientation="portrait"
             tools:ignore="UnusedAttribute">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.webpoint0.ofiscompanion.TrainingRecords" />
+                android:value="com.olam.digital.ofis.TrainingRecords" />
         </activity>
         <activity
-            android:name=".TrainingRecordConfirmation"
+            android:name="com.olam.digital.ofis.TrainingRecordConfirmation"
             android:label="@string/TrainingRecordConfirmationTitle"
-            android:parentActivityName=".TrainingRecord"
+            android:parentActivityName="com.olam.digital.ofis.TrainingRecord"
             android:screenOrientation="portrait"
             tools:ignore="UnusedAttribute">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.webpoint0.ofiscompanion.TrainingRecord" />
+                android:value="com.olam.digital.ofis.TrainingRecord" />
         </activity>
         <activity
-            android:name=".TrainingAttendees"
+            android:name="com.olam.digital.ofis.TrainingAttendees"
             android:label="@string/TrainingAttendees"
-            android:parentActivityName=".TrainingRecord"
+            android:parentActivityName="com.olam.digital.ofis.TrainingRecord"
             android:screenOrientation="portrait"
             tools:ignore="UnusedAttribute">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.webpoint0.ofiscompanion.TrainingRecord" />
+                android:value="com.olam.digital.ofis.TrainingRecord" />
         </activity>
         <activity
-            android:name=".TrainingAttendeeScores"
+            android:name="com.olam.digital.ofis.TrainingAttendeeScores"
             android:label="@string/TrainingAttendeeScores"
-            android:parentActivityName=".TrainingRecord"
+            android:parentActivityName="com.olam.digital.ofis.TrainingRecord"
             android:screenOrientation="portrait"
             tools:ignore="UnusedAttribute">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.webpoint0.ofiscompanion.TrainingRecord" />
+                android:value="com.olam.digital.ofis.TrainingRecord" />
         </activity>
         <activity
-            android:name=".TasksActivity"
+            android:name="com.olam.digital.ofis.TasksActivity"
             android:label="@string/title_activity_tasks"
             android:screenOrientation="portrait" />
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="a893453713a55832cf2771ee8fbe4a68b4a3b031" />
     </application>
 
 </manifest>

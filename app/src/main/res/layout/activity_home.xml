@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:id="@+id/mainWrapper"
     android:background="@color/ofis_page_background"
-    tools:context=".HomeActivity"
+    tools:context="com.olam.digital.ofis.HomeActivity"
     tools:ignore="Overdraw">
 
 

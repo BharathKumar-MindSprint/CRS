@@ -1,0 +1,188 @@
+package com.olam.digital.ofis;
+
+import android.content.ContentValues;
+import android.content.Context;
+import android.content.Intent;
+import android.content.res.Resources;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.firebase.crash.FirebaseCrash;
+import com.olam.digital.ofis.R;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.sql.Timestamp;
+import java.util.Hashtable;
+
+public class TrainingRecordConfirmation extends BaseListActivity {
+
+    private Context context;
+    private Resources res;
+    private DataLayer dl;
+
+    private final static String EDIT_TRAININGRECORD_ID = "EDIT_TRAININGRECORD_ID";
+    private String mCurrentPhotoPath = null;
+    private long trainingRecordId;
+    private JSONObject scoringColumns;
+    private String columnSuffix, courseNameValue, moduleNameValue;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_training_record_confirmation);
+
+        //noinspection ConstantConditions
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+
+        context = this;
+        res = getResources();
+
+        dl = new DataLayer(res, context);
+
+        Intent intent = getIntent();
+        trainingRecordId = intent.getLongExtra(EDIT_TRAININGRECORD_ID, 0);
+
+        columnSuffix = Utilities.getLocaleSuffix(res);
+        if (columnSuffix.equalsIgnoreCase("_en")) {
+            columnSuffix = "";
+        }
+
+        if (trainingRecordId > 0) {
+            getTrainingRecord();
+            getTrainingAttendees();
+            bindButton();
+        }
+    }
+
+    private void getTrainingRecord() {
+        Cursor trainingRecord = dl.getTrainingRecordById(trainingRecordId, columnSuffix);
+
+        if (trainingRecord.moveToFirst()) {
+            try {
+                TextView courseName = (TextView) findViewById(R.id.courseName);
+                courseNameValue = trainingRecord.getString(trainingRecord.getColumnIndex("course_name"));
+                courseName.setText(courseNameValue);
+                TextView trainingModuleName = (TextView) findViewById(R.id.trainingModuleName);
+                moduleNameValue = trainingRecord.getString(trainingRecord.getColumnIndex("module_name"));
+                trainingModuleName.setText(moduleNameValue);
+                scoringColumns = new JSONObject(trainingRecord.getString(trainingRecord.getColumnIndex(OFISDBContract.CompletionCriteria.COLUMN_NAME_SCORING_COLUMNS)));
+                if ( (!trainingRecord.isNull(trainingRecord.getColumnIndex(OFISDBContract.TrainingRecord.COLUMN_NAME_PHOTO))) && (!trainingRecord.getString(trainingRecord.getColumnIndex(OFISDBContract.TrainingRecord.COLUMN_NAME_PHOTO)).equals("")) ) {
+                    final ImageView trainingPhoto = (ImageView) findViewById(R.id.trainingPhoto);
+                    mCurrentPhotoPath = trainingRecord.getString(trainingRecord.getColumnIndex(OFISDBContract.TrainingRecord.COLUMN_NAME_PHOTO));
+
+                    new CountDownTimer(1000, 100) {
+
+                        public void onTick(long millisUntilFinished) {
+                        }
+
+                        public void onFinish() {
+                            if (mCurrentPhotoPath != null) {
+                                displayBitmap(mCurrentPhotoPath, trainingPhoto);
+                            }
+                        }
+                    }.start();
+
+
+                }
+            } catch(JSONException e) {
+                FirebaseCrash.report(new Exception("TrainingRecordConfirmation: Error getting scoring columns from training record", e));
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void getTrainingAttendees() {
+        Cursor trainingAttendees = dl.getTrainingAttendeesByTrainingRecordId(trainingRecordId);
+
+        if (trainingAttendees.getCount() > 0) {
+            LinearLayout attendeesFooter = (LinearLayout) ((LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.training_confirmation_footer, getListView(), false);
+            getListView().addFooterView(attendeesFooter);
+
+            TextView itemCount = (TextView) findViewById(R.id.trainingAttendeesTotal);
+            String itemCountValue = res.getQuantityString(R.plurals.trainingAttendeesCount, trainingAttendees.getCount(), trainingAttendees.getCount());
+            itemCount.setText(itemCountValue);
+
+            String[] adapterCols = new String[]{
+                    "_id",
+                    OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME,
+                    OFISDBContract.TrainingAttendee.COLUMN_NAME_ATTENDED,
+                    OFISDBContract.TrainingAttendee.COLUMN_NAME_PASSED,
+                    OFISDBContract.TrainingAttendee.COLUMN_NAME_PRESCORE,
+                    OFISDBContract.TrainingAttendee.COLUMN_NAME_POSTSCORE,
+                    OFISDBContract.TrainingAttendee.COLUMN_NAME_SCORE,
+                    OFISDBContract.TrainingAttendee.COLUMN_NAME_PERCENTAGE,
+                    OFISDBContract.TrainingAttendee.COLUMN_NAME_GRADE
+            };
+            int[] adapterRowViews = new int[]{
+                    R.id.trainingAttendeeId,
+                    R.id.attendeeName,
+                    R.id.criterion_attended,
+                    R.id.criterion_passed,
+                    R.id.criterion_prescore,
+                    R.id.criterion_postscore,
+                    R.id.criterion_score,
+                    R.id.criterion_percentage,
+                    R.id.criterion_grade
+            };
+            CustomListAdapter_SelectedAttendees customListAdapter_selectedAttendees = new CustomListAdapter_SelectedAttendees(context, trainingAttendees, adapterCols, adapterRowViews, res, false, null, scoringColumns, columnSuffix);
+            setListAdapter(customListAdapter_selectedAttendees);
+            getListView().setOnItemClickListener(null);
+        }
+    }
+
+    private void bindButton() {
+        Button confirmButton = (Button) findViewById(R.id.confirmTrainingRecord);
+
+        confirmButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // add transaction to network queue
+                Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+
+                ContentValues networkQueueValues = new ContentValues();
+                networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "trainingrecord");
+                networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, res.getString(R.string.TrainingRecordConfirmationTitle));
+                networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, courseNameValue);
+                networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID, moduleNameValue);
+                networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_TRAINING_RECORD_ID, trainingRecordId);
+                networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT, timestamp.toString());
+                networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPDATED_AT, timestamp.toString());
+
+                if (dl.insertNetworkQueueEntry(networkQueueValues) != 0) {
+                    ContentValues trainingRecordValues = new ContentValues();
+                    trainingRecordValues.put(OFISDBContract.TrainingRecord.COLUMN_NAME_IN_QUEUE, 1);
+                    if (dl.updateTrainingRecord(trainingRecordValues, trainingRecordId) > 0) {
+                        Toast.makeText(context, R.string.trainingrecord_added_to_queue, Toast.LENGTH_LONG).show();
+                        Intent intent = new Intent(context, TrainingRecords.class);
+                        context.startActivity(intent);
+                    }
+                }
+            }
+        });
+    }
+
+    private void displayBitmap(String savedImagePath, ImageView target) {
+        // set our desired width and height for display
+        int baseWidth = target.getWidth();
+        int baseHeight = target.getHeight();
+
+        Hashtable dimensions = Utilities.getDimensionsForDisplayFromBase(baseWidth, baseHeight, res);
+        Integer outputWidth = Integer.parseInt(dimensions.get("width").toString());
+        Integer outputHeight = Integer.parseInt(dimensions.get("height").toString());
+
+        Bitmap bitmap = Utilities.loadSizedBitmap(savedImagePath, outputWidth, outputHeight);
+
+        target.setImageBitmap(bitmap);
+    }
+}

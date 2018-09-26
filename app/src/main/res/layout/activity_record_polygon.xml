@@ -7,7 +7,7 @@
     android:focusableInTouchMode="true"
     android:orientation="vertical"
     android:weightSum="20"
-    tools:context="com.webpoint0.ofiscompanion.recordpolygon.RecordPolygonActivity">
+    tools:context="com.olam.digital.ofis.recordpolygon.RecordPolygonActivity">
 
 
     <LinearLayout

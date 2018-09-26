@@ -1,0 +1,13 @@
+package com.olam.digital.ofis.tasks;
+
+/**
+ * Created by ben on 24/02/16.
+ */
+@SuppressWarnings("DefaultFileTemplate")
+public enum SyncTaskOperationType {
+    SYNC_MODULES,SYNC_SPINNERS, SYNC_FMP, SYNC_FARMERS, SYNC_TRANSACTIONS, SYNC_TRAINING, SYNC_TASKS, CHECK_VERSION, SYNC_SIP_MODULES
+
+
+    //CHECK_VERSION,SYNC_MODULES, SYNC_TASKS,SYNC_FMP,SYNC_SPINNERS, SYNC_FARMERS, SYNC_TRANSACTIONS, SYNC_TRAINING,
+
+}

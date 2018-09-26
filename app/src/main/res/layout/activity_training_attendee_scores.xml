@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:focusableInTouchMode="true"
-    tools:context=".TrainingAttendeeScores">
+    tools:context="com.olam.digital.ofis.TrainingAttendeeScores">
 
     <ImageView
         android:layout_width="match_parent"
