@@ -23,8 +23,8 @@ import java.io.OutputStream;
 public class ImageCompressionUtil {
 
     public static Bitmap imageCompress(Bitmap bitmap){
-        int h = 150; // Height in pixels
-        int w = 150; // Width in pixels
+        int h = 250; // Height in pixels
+        int w = 250; // Width in pixels
         Bitmap compressImg = Bitmap.createScaledBitmap(bitmap, h, w, true);
         return compressImg;
     }

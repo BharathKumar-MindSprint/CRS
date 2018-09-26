@@ -330,20 +330,18 @@ public class SyncAllTask extends SyncTask {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
-
-
-
-
+        String failureMessage=context.getString(R.string.item_sync_error);
         if (response != null) {
             try {
-                String failureMessage = response.getString("errors") + " : ";
-                publishProgress(SyncOperation.ERROR_RECEIVED, failureMessage);
+                failureMessage = response.optString("message");
+                failureMessage = response.getString("errors") + " : " ;
             } catch (JSONException e) {
                 FirebaseCrash.report(e);
                 e.printStackTrace();
             }
         }
+
+        publishProgress(SyncOperation.ERROR_RECEIVED, failureMessage);
     }
 
     private void checkVersion() throws JSONException {
@@ -705,9 +703,9 @@ public class SyncAllTask extends SyncTask {
 
         String endpoint="";
         // Old end point
-         // endpoint="farmers/listAll";
+        //  endpoint="farmers/listAll";
         // new endpoint
-      //  endpoint = "farmer-data/farmerdata/getfarmerdetailsbyenumeratorid/125";
+       // endpoint = "farmer-data/farmerdata/getfarmerdetailsbyenumeratorid/125";
          endpoint = "farmer-data/farmerdata/getfarmerdetailsbyenumeratorid/"+Utilities.getFromSharedPrefs(context);
         okHttpGet(context, endpoint, inputArgs, new Callback() {
             @Override
