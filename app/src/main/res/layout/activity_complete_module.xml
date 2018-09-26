@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/ofis_page_background"
-    tools:context="com.webpoint0.ofiscompanion.CompleteModuleActivity"
+    tools:context="com.webpoint0.ofiscompanion.com.olam.digital.ofis.CompleteModuleActivity"
     android:focusableInTouchMode="true"
     tools:ignore="Overdraw">
 

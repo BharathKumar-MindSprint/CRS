@@ -1,4 +1,18 @@
+buildscript {
+    repositories {
+        maven { url 'https://maven.fabric.io/public' }
+    }
+
+    dependencies {
+        classpath 'io.fabric.tools:gradle:1.+'
+    }
+}
 apply plugin: 'com.android.application'
+
+repositories {
+    maven { url 'https://maven.fabric.io/public' }
+}
+
 apply plugin: 'com.google.firebase.firebase-perf'
 apply plugin: 'io.fabric'
 
@@ -16,10 +30,10 @@ android {
     buildToolsVersion '27.0.3'
     flavorDimensions "default"
     defaultConfig {
-        applicationId "com.webpoint0.ofiscompanion"
+        applicationId "com.olam.digital.ofis"
         resValue "string", "contentprovider_authorities", applicationId + '.provider'
         resValue "string", "sync_account_type", applicationId
-        buildConfigField "String", "ACCOUNT_TYPE", '"com.webpoint0.ofiscompanion"'
+        buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofis"'
         minSdkVersion 15
         //noinspection OldTargetApi
         targetSdkVersion 27
@@ -43,29 +57,29 @@ android {
     productFlavors {
         //noinspection GroovyMissingReturnStatement
         local {
-            applicationId "com.webpoint0.ofiscompanionlocal"
+            applicationId "com.olam.digital.ofislocal"
             resValue "string", "contentprovider_authorities", applicationId + '.provider'
             resValue "string", "sync_account_type", applicationId
-            buildConfigField "String", "ACCOUNT_TYPE", '"com.webpoint0.ofiscompanionlocal"'
+            buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofislocal"'
             buildConfigField 'String', 'HOST', '"http://local.ofis52.com/api/v1/"'
         }
 
         dev {
-            applicationId "com.webpoint0.ofiscompaniondebug"
+            applicationId "com.olam.digital.ofisdebug"
             resValue "string", "contentprovider_authorities", applicationId + '.provider'
             resValue "string", "sync_account_type", applicationId
-            buildConfigField "String", "ACCOUNT_TYPE", '"com.webpoint0.ofiscompaniondebug"'
+            buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofisdebug"'
             buildConfigField 'String', 'HOST', '"https://testofis.olamgroup.com/api/v1/"'
         }
 
         //noinspection GroovyMissingReturnStatement
         preprod {
-            applicationId "com.webpoint0.ofiscompanionpreprod"
+            applicationId "com.olam.digital.ofispreprod"
             resValue "string", "contentprovider_authorities", applicationId + '.provider'
             resValue "string", "sync_account_type", applicationId
             resValue "string", "client_secret", 'gqYWH4dRyQST0dHHgA5iUyxkgtPxGStVd3hJop'
          //   resValue "string", "AUTH_SERVER_URL", 'http://13.67.108.216:8084/oauth/api/v1/oauth/'
-            buildConfigField "String", "ACCOUNT_TYPE", '"com.webpoint0.ofiscompanionpreprod"'
+            buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofispreprod"'
           //  buildConfigField 'String', 'HOST', '"http://13.67.108.216:8084/"'
             buildConfigField 'String', 'MICROSERVICE_HOST', '"http://137.116.145.198:8080/"'
 
@@ -84,7 +98,7 @@ android {
 
         //noinspection GroovyMissingReturnStatement
         prod {
-            applicationId "com.webpoint0.ofiscompanion"
+            applicationId "com.olam.digital.ofis"
             buildConfigField 'String', 'HOST', '"https://ofis.olamgroup.com/api/v1/"'
         }
     }
