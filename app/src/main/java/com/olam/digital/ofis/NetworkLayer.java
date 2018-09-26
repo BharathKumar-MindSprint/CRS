@@ -1,4 +1,4 @@
-package com.webpoint0.ofiscompanion;
+package com.olam.digital.ofis;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -25,13 +25,13 @@ import com.google.firebase.crash.FirebaseCrash;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.webpoint0.ofiscompanion.authentication.AccessTokenTask;
-import com.webpoint0.ofiscompanion.authentication.AuthenticationHelper;
-import com.webpoint0.ofiscompanion.model.FarmerRegistrationDTO;
-import com.webpoint0.ofiscompanion.model.FarmerRegistrationPhoneNumberDTO;
-import com.webpoint0.ofiscompanion.recordpolygon.RecordPolygonActivity;
-import com.webpoint0.ofiscompanion.tasks.SyncAllTask;
-import com.webpoint0.ofiscompanion.tasks.SyncTaskOperationType;
+import com.olam.digital.ofis.authentication.AccessTokenTask;
+import com.olam.digital.ofis.authentication.AuthenticationHelper;
+import com.olam.digital.ofis.model.FarmerRegistrationDTO;
+import com.olam.digital.ofis.model.FarmerRegistrationPhoneNumberDTO;
+import com.olam.digital.ofis.recordpolygon.RecordPolygonActivity;
+import com.olam.digital.ofis.tasks.SyncAllTask;
+import com.olam.digital.ofis.tasks.SyncTaskOperationType;
 
 import org.apache.commons.io.FilenameUtils;
 import org.json.JSONArray;
@@ -60,6 +60,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+import com.olam.digital.ofis.R;
 /**
  * Created by bengallienne on 29/11/14.
  * All network functions carried out by the application

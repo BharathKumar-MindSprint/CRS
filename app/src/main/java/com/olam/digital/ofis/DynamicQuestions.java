@@ -2326,7 +2326,7 @@ class DynamicQuestions {
                     renderDropDownQuestionSubQuestion(repeaterQuestions, true, repeaterItemsWrapper, parentid, 1, null, res);
                 } else if (displayType.toLowerCase().equals("textbox")) {
                     renderTextBoxQuestionSubQuestion(repeaterQuestions, false, repeaterItemsWrapper, parentid, -1, null);
-                } else if (displayType.toLowerCase().equals("yesno")) {
+                } else if (displayType.toLowerCase().equals("yesno") || displayType.toLowerCase().equals("Yes/No")) {
                     repeaterQuestions = dl.getRepeaterItemsForQuestion1(question_id);
                     renderYesNoQuestionSubQuestion(repeaterQuestions, true, repeaterItemsWrapper, Integer.parseInt(retval), parentid, null, res);
                 } else if (displayType.toLowerCase().equals("photoupload")) {
