@@ -446,4 +446,6 @@
     <string name="untick_task_msg">"ກະລຸນາຢືນຢັນວ່າທ່ານຕ້ອງການທີ່ຈະຫມາຍເຖິງວຽກງານນີ້ບໍ່ຄົບຖ້ວນບໍ? "</string>
     <string name="previous_plot_not_recorded_msg">"ຕອນດິນ %1$s ຍັງບໍ່ໄດ້ຖືກບັນທຶກໄວ້. ກະລຸນາບັນທຶກກ່ອນ. "</string>
     <string name="updating_master_details">Downloading master details</string>
+    <string name="authentication_failed">Authentication failed. Please try again</string>
+    <string name="enumerator_empty">Please enter the valid enumerator Id</string>
 </resources>

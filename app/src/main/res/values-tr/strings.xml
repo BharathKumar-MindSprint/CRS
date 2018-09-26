@@ -460,4 +460,6 @@
     <string name="untick_task">"İşaretlenmemiş görev "</string>
     <string name="untick_task_msg">"Bu görevi tamamlanmamış olarak işaretlemek istediğinizden emin misiniz? "</string>
     <string name="updating_master_details">Downloading master details</string>
+    <string name="authentication_failed">Authentication failed. Please try again</string>
+    <string name="enumerator_empty">Please enter the valid enumerator Id</string>
 </resources>

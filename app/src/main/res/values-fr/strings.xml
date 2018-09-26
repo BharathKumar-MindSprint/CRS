@@ -461,4 +461,6 @@
     <string name="untick_task_msg">"Veuillez confirmer que vous souhaitez marquer cette tâche comme incomplète ? "</string>
     <string name="loggin_In">Logging in</string>
     <string name="updating_master_details">Downloading master details</string>
+    <string name="authentication_failed">Authentication failed. Please try again</string>
+    <string name="enumerator_empty">Please enter the valid enumerator Id</string>
 </resources>

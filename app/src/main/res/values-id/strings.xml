@@ -460,4 +460,6 @@
     <string name="untick_task_msg">"Harap konfirmasi apakah Anda ingin menandai ini sebagai tugas yang belum selesai? "</string>
     <string name="previous_plot_not_recorded_msg">"Plot %1$s belum direkam. Silahkan merekam Plot %1$s terlebih dahulu. "</string>
     <string name="updating_master_details">Downloading master details</string>
+    <string name="authentication_failed">Authentication failed. Please try again</string>
+    <string name="enumerator_empty">Please enter the valid enumerator Id</string>
 </resources>

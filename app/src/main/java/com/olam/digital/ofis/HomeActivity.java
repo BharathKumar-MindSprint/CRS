@@ -158,20 +158,27 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         saveUpdateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String userEnumerator = enumeratorID.getText().toString().trim();
+                if (userEnumerator!=null && !userEnumerator.equalsIgnoreCase("")){
 
-               String userName = enumeratorID.getText().toString().trim();
-                AuthRequestDTO authRequestDTO = new AuthRequestDTO();
-                authRequestDTO.setLanguage(Locale.getDefault().getLanguage());
-                authRequestDTO.setApplication("ttmobile");
-                authRequestDTO.setUsername("400");
-                //authRequestDTO.setPassword("3751e350-a1d4-4db9-b045-9dc50cf544fb");
-                authRequestDTO.setPassword("pA11wX6srkWUpRQcpGjZeYcQuGUlXI6JkJxULTEeNRhNGZ1nRwVYLRNbLlyO");
-                authRequestDTO.setGrantType("password");
-                authRequestDTO.setClientId(5L);
-                authRequestDTO.setClientSecret(getString(R.string.client_secret));
-                AuthenticationInterface authenticationInterface = AuthenticationClient.createService(AuthenticationInterface.class, HomeActivity.this);
-                Call<AuthenticationDTO> authCall = authenticationInterface.getCoreAuthToken(authRequestDTO);
-                authCall.enqueue(HomeActivity.this);
+                 //   doAuthentication(userEnumerator);
+
+                    AuthRequestDTO authRequestDTO = new AuthRequestDTO();
+                    authRequestDTO.setLanguage(Locale.getDefault().getLanguage());
+                    authRequestDTO.setApplication("ttmobile");
+                    authRequestDTO.setUsername("400");
+                    //authRequestDTO.setPassword("3751e350-a1d4-4db9-b045-9dc50cf544fb");
+                    authRequestDTO.setPassword("pA11wX6srkWUpRQcpGjZeYcQuGUlXI6JkJxULTEeNRhNGZ1nRwVYLRNbLlyO");
+                    authRequestDTO.setGrantType("password");
+                    authRequestDTO.setClientId(5L);
+                    authRequestDTO.setClientSecret(getString(R.string.client_secret));
+                    AuthenticationInterface authenticationInterface = AuthenticationClient.createService(AuthenticationInterface.class, HomeActivity.this);
+                    Call<AuthenticationDTO> authCall = authenticationInterface.getCoreAuthToken(authRequestDTO);
+                    authCall.enqueue(HomeActivity.this);
+                }else{
+                    Toast.makeText(HomeActivity.this,getString(R.string.enumerator_empty),Toast.LENGTH_LONG).show();
+                }
+
             }
         });
 
@@ -216,6 +223,21 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 //            }
 //        }
 
+    }
+
+    private void doAuthentication(String userID) {
+        AuthRequestDTO authRequestDTO = new AuthRequestDTO();
+        authRequestDTO.setLanguage(Locale.getDefault().getLanguage());
+        authRequestDTO.setApplication("ttmobile");
+        authRequestDTO.setUsername(userID);
+        //authRequestDTO.setPassword("3751e350-a1d4-4db9-b045-9dc50cf544fb");
+        authRequestDTO.setPassword("pA11wX6srkWUpRQcpGjZeYcQuGUlXI6JkJxULTEeNRhNGZ1nRwVYLRNbLlyO");
+        authRequestDTO.setGrantType("password");
+        authRequestDTO.setClientId(5L);
+        authRequestDTO.setClientSecret(getString(R.string.client_secret));
+        AuthenticationInterface authenticationInterface = AuthenticationClient.createService(AuthenticationInterface.class, HomeActivity.this);
+        Call<AuthenticationDTO> authCall = authenticationInterface.getCoreAuthToken(authRequestDTO);
+        authCall.enqueue(HomeActivity.this);
     }
 
     @Override
@@ -782,7 +804,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
     @Override
     public void onFailure(Call<AuthenticationDTO> call, Throwable t) {
-              Toast.makeText(HomeActivity.this,"Error Dude",Toast.LENGTH_LONG).show();
+              Toast.makeText(HomeActivity.this,getString(R.string.authentication_failed),Toast.LENGTH_LONG).show();
         Answers.getInstance().logLogin(new LoginEvent()
                 .putMethod("first")
                 .putCustomAttribute("reason", "network error")

@@ -459,4 +459,6 @@
     <string name="untick_task">"ไม่เลือก "</string>
     <string name="untick_task_msg">"คุณต้องการทำเครื่องหมายงานนี้ว่ายังไม่สมบูรณ์ ใช่หรือไม่? "</string>
     <string name="updating_master_details">Downloading master details</string>
+    <string name="authentication_failed">Authentication failed. Please try again</string>
+    <string name="enumerator_empty">Please enter the valid enumerator Id</string>
 </resources>
