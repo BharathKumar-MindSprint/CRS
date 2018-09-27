@@ -439,7 +439,9 @@ public class AddFarmerActivity extends BaseActivity {
 
             EditText phonenumber = (EditText) phonenumberrow.findViewById(R.id.phonenumber);
             String phonenumberValue = String.valueOf(phonenumber.getText()).replace(" ", "");
-            phoneNumberList.add(phonenumberValue);
+            if(phonenumberValue.trim().length() > 0){
+                phoneNumberList.add(phonenumberValue);
+            }
         }
     }
 
@@ -456,7 +458,7 @@ public class AddFarmerActivity extends BaseActivity {
             EditText phonenumber = (EditText) phonenumberrow.findViewById(R.id.phonenumber);
             String phonenumberValue = String.valueOf(phonenumber.getText()).replace(" ", "");
 
-            if (Collections.frequency(phoneNumberList,phonenumberValue) == 1) {
+            if (Collections.frequency(phoneNumberList,phonenumberValue.trim()) == 1) {
                 duplicatePhoneNumberValidationFlag = true;
             } else {
                 duplicatePhoneNumberValidationFlag = false;

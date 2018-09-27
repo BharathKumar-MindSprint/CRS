@@ -176,6 +176,7 @@ class OFISDB extends SQLiteOpenHelper {
             " ( " + OFISDBContract.FarmerEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_ID + " INTEGER, "
             + OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID + " INTEGER, " + OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID + " INTEGER, "
             + OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME + " TEXT, " + OFISDBContract.FarmerEntry.COLUMN_NAME_GENDER + " TEXT, "
+            + OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRYID + " TEXT, "
             + OFISDBContract.FarmerEntry.COLUMN_NAME_DOB + " TEXT, " + OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID + " TEXT, "
             + OFISDBContract.FarmerEntry.COLUMN_NAME_PHOTO + " TEXT, " + OFISDBContract.FarmerEntry.COLUMN_NAME_SIGNATURE + " TEXT, "
             + OFISDBContract.FarmerEntry.COLUMN_NAME_SYNCED + " INTEGER DEFAULT 1, " + OFISDBContract.FarmerEntry.COLUMN_NAME_CREATED_LOCALLY + " INTEGER, "
