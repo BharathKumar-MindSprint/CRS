@@ -2573,6 +2573,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     jsonObject.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID, networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID)));
                 }
 
+                jsonObject.put("enumeratorId",Long.valueOf(Utilities.getFromSharedPrefs(context)));
+
             }catch (Exception e){
                 e.printStackTrace();
             }

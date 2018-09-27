@@ -40,6 +40,8 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.crash.FirebaseCrash;
 import com.olam.digital.ofis.model.ModuleDTO;
 import com.olam.digital.ofis.model.SubModuleDTO;
@@ -50,6 +52,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Hashtable;
 import java.util.UUID;
+
+import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
 
 public class AddInfrastructureActivity extends BaseActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
@@ -64,7 +68,7 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
         private int selectedFarmerGroup = 0;
 
         // for GPS location system
-        private GoogleApiClient googleApiClient;
+     //   private GoogleApiClient googleApiClient;
         private EditText gpsField;
         private ImageButton requestLocation;
         private Location poiLocation;
@@ -142,13 +146,13 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
         context = this;
         res = getResources();
 
-        if (GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context) == ConnectionResult.SUCCESS && googleApiClient == null) {
-            googleApiClient = new GoogleApiClient.Builder(this)
-                    .addConnectionCallbacks(this)
-                    .addOnConnectionFailedListener(this)
-                    .addApi(LocationServices.API)
-                    .build();
-        }
+//        if (GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context) == ConnectionResult.SUCCESS && googleApiClient == null) {
+//            googleApiClient = new GoogleApiClient.Builder(this)
+//                    .addConnectionCallbacks(this)
+//                    .addOnConnectionFailedListener(this)
+//                    .addApi(LocationServices.API)
+//                    .build();
+//        }
 
         // generate hashtable items
 //        String localeSuffix = Utilities.getLocaleSuffix(res);
@@ -210,9 +214,12 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
             }
         } else {
             dynamicQuestions.hasAnswers = false;
-            moduleId = moduleDTOS.get(0).getId();
-            bindPoiSpinner(moduleId);
-            subModuleId = subModuleDTOS.get(0).getId();
+               if(moduleDTOS!=null && moduleDTOS.size()>0) {
+                   moduleId = moduleDTOS.get(0).getId();
+                   bindPoiSpinner(moduleId);
+                   subModuleId = subModuleDTOS.get(0).getId();
+               }
+
 //            swapPoiType(SCHOOL);
         }
 
@@ -293,12 +300,12 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
     }
 
     protected void onStart() {
-        googleApiClient.connect();
+       // googleApiClient.connect();
         super.onStart();
     }
 
     protected void onStop() {
-        googleApiClient.disconnect();
+      //  googleApiClient.disconnect();
         super.onStop();
     }
 
@@ -307,9 +314,9 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
             ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION}, PERMISSIONS_ACCESS_LOCATION);
             return;
         } else {
-            if (googleApiClient != null && googleApiClient.isConnected()) {
-                poiLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
-            }
+//            if (googleApiClient != null && googleApiClient.isConnected()) {
+//                poiLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
+//            }
             if (poiLocation != null) {
                 recorded_lat = String.valueOf(poiLocation.getLatitude());
                 recorded_lng = String.valueOf(poiLocation.getLongitude());
@@ -320,7 +327,7 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
 
     @Override
     public void onConnected(Bundle connectionHint) {
-        doLocationUpdate();
+      //  doLocationUpdate();
     }
 
     private void showSettingsDialog(String msg) {
@@ -353,7 +360,7 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
                 } else {
                     if (ActivityCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED) {
                         // Permission Allowed
-                        doLocationUpdate();
+                      //  doLocationUpdate();
                     } else {
                         // Checkbox set to Never Ask Again
                         showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
@@ -365,7 +372,7 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
 
     @Override
     public void onConnectionSuspended(int i) {
-        googleApiClient.connect();
+      //  googleApiClient.connect();
     }
 
     @Override
@@ -377,7 +384,7 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
                 mResolvingError = true;
                 connectionResult.startResolutionForResult(this, REQUEST_RESOLVE_ERROR);
             } catch(IntentSender.SendIntentException e) {
-                googleApiClient.connect();
+              //  googleApiClient.connect();
             }
         } else {
             GoogleApiAvailability.getInstance().showErrorDialogFragment(this, connectionResult.getErrorCode(), REQUEST_RESOLVE_ERROR);
@@ -393,10 +400,10 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
             mResolvingError = false;
             if (resultCode == RESULT_OK) {
                 // Make sure the app is not already connected or attempting to connect
-                if (!googleApiClient.isConnecting() &&
-                        !googleApiClient.isConnected()) {
-                    googleApiClient.connect();
-                }
+//                if (!googleApiClient.isConnecting() &&
+//                        !googleApiClient.isConnected()) {
+//                    googleApiClient.connect();
+//                }
             }
         }
     }
@@ -734,15 +741,16 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
     private ProgressDialog pd;
     private LocationListener locationListener;
 
-    private void setPoiGPS(Message msg) {
+    private void setPoiGPS(Location location) {
         if (pd != null && pd.isShowing()) {
             pd.dismiss();
         }
-        if (googleApiClient != null && googleApiClient.isConnected()) {
-            LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, locationListener);
-        }
+//        if (googleApiClient != null && googleApiClient.isConnected()) {
+//            LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, locationListener);
+//        }
         try {
-            poiLocation = (Location) msg.obj;
+          //  poiLocation = (Location) msg.obj;
+            poiLocation=location;
             gpsField = (EditText) findViewById(R.id.gpsPosition);
             String locationResult;
             if (poiLocation != null) {
@@ -776,7 +784,7 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
         @SuppressLint("HandlerLeak") Handler gpsHandler = new Handler() {
             @Override
             public void handleMessage(Message msg) {
-                setPoiGPS(msg);
+              //  setPoiGPS(msg);
             }
         };
 
@@ -789,16 +797,16 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         locationListener = new getGPSLocation(gpsHandler);
 
-        if (googleApiClient != null && googleApiClient.isConnected()) {
-            LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, locationListener);
-        }
+//        if (googleApiClient != null && googleApiClient.isConnected()) {
+//            LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, locationListener);
+//        }
 
         gpsHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (googleApiClient.isConnected()) {
-                    LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, locationListener);
-                }
+//                if (googleApiClient.isConnected()) {
+//                    LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, locationListener);
+//                }
                 if (pd != null) {
                     pd.setMessage(res.getString(R.string.record_location_timeout));
                     Utilities.closeProgressDialog(pd, 3000);
@@ -812,7 +820,11 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
             @Override
             public void onClick(View view) {
                 requestLocation.setImageResource(R.drawable.ic_actionbutton_location_searching);
-                getPoiGPS();
+               // getPoiGPS();
+                if (ActivityCompat.checkSelfPermission(AddInfrastructureActivity.this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(AddInfrastructureActivity.this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    return;
+                }
+                getDeviceLocation();
             }
         });
 
@@ -1080,5 +1092,26 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
         }
         super.onDestroy();
     }
+
+
+    private void getDeviceLocation() {
+        try {
+            Task<Location> locationResult = getFusedLocationProviderClient(this).getLastLocation();
+            locationResult.addOnCompleteListener(this, new OnCompleteListener<Location>() {
+                @Override
+                public void onComplete(@NonNull Task<Location> task) {
+                    if (task.isSuccessful()) {
+                        Location location = task.getResult();
+                        setPoiGPS(location);
+                    } else {
+                        Toast.makeText(AddInfrastructureActivity.this,"No position logged",Toast.LENGTH_LONG).show();
+                    }
+                }
+            });
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        }
+    }
+
 
 }
