@@ -42,6 +42,7 @@
         android:textColor="@color/ofis_text_field"
         android:textColorHint="@color/ofis_text_field"
         android:textSize="@dimen/ofis_small_text"
+        android:digits="0123456789+-"
         android:hint="@string/PhoneNumberHint"
         android:layout_marginLeft="@dimen/ofis_small_pad"
         android:inputType="phone"/>
