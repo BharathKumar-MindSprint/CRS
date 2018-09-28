@@ -1,5 +1,6 @@
 package com.olam.digital.ofis;
 
+import android.Manifest;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
@@ -74,6 +75,7 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
         private Location poiLocation;
         private String recorded_lat, recorded_lng;
 
+    private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 6575;
     // colours for animation
     private static final int COLOUR_SCHOOL = 0xFF924c2e;
     //    private static final int COLOUR_HEALTH_CENTRE = 0xFFbe3a34;
@@ -352,11 +354,14 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        if (requestCode == 6575) {
+        if (requestCode == REQUEST_PERMISSIONS_REQUEST_CODE) {
             for (String permission : permissions) {
                 if (ActivityCompat.shouldShowRequestPermissionRationale(this, permission)) {
                     // Permission Denied
                     Toast.makeText(this, R.string.gps_permission_denial_msg, Toast.LENGTH_LONG).show();
+                    startActivity(new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                            Uri.parse("package:" + context.getPackageName())));
+
                 } else {
                     if (ActivityCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED) {
                         // Permission Allowed
@@ -822,6 +827,7 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
                 requestLocation.setImageResource(R.drawable.ic_actionbutton_location_searching);
                // getPoiGPS();
                 if (ActivityCompat.checkSelfPermission(AddInfrastructureActivity.this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(AddInfrastructureActivity.this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    startLocationPermissionRequest();
                     return;
                 }
                 getDeviceLocation();
@@ -830,6 +836,11 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
 
     }
 
+    private void startLocationPermissionRequest() {
+        ActivityCompat.requestPermissions(this,
+                new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                REQUEST_PERMISSIONS_REQUEST_CODE);
+    }
     private void animateBetweenColours(int from, final int to, final ImageView layout)
     {
         Integer colorFrom = from;
