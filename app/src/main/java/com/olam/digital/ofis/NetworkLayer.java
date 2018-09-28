@@ -2559,6 +2559,10 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 jsonObject.put(OFISDBContract.FarmerEntry.COLUMN_NAME_PLACEID, placeID);
                 long sectionID=Long.valueOf(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID)));
                 jsonObject.put(OFISDBContract.FarmerEntry.COLUMN_NAME_SECTIONID, sectionID);
+                long districtID=Long.valueOf(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_DISTRICTID)));
+                jsonObject.put("districtId",districtID);
+                long regionID=Long.valueOf(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_REGIONID)));
+                jsonObject.put("regionId",regionID);
 
 
                 // cnvert the consent to boolean
@@ -2602,10 +2606,10 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 // convert base 64 string
 
                 try {
-//                    String encodedImage=getEncodedImage(farmerPhotoPath);
-//                    jsonObject.put(OFISDBContract.FarmerEntry.COLUMN_NAME_PHOTO, encodedImage);
+                    String encodedImage=Utilities.base64ConversionForImage(farmerPhotoPath);
+                    jsonObject.put(OFISDBContract.FarmerEntry.COLUMN_NAME_PHOTO, encodedImage);
 
-                    jsonObject.put(OFISDBContract.FarmerEntry.COLUMN_NAME_PHOTO, photo.getName());
+  //                  jsonObject.put(OFISDBContract.FarmerEntry.COLUMN_NAME_PHOTO, photo.getName());
                 }catch (Exception e){
                     e.printStackTrace();
                 }
@@ -2617,9 +2621,9 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             if (farmerSignaturePath != null && farmerSignaturePath.length() > 0) {
                 File signature = new File(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_SIGNATURE)));
                 try {
-               //     String encodedImage=getEncodedImage(farmerSignaturePath);
-               //     jsonObject.put(OFISDBContract.FarmerEntry.COLUMN_NAME_SIGNATURE, encodedImage);
-                   jsonObject.put(OFISDBContract.FarmerEntry.COLUMN_NAME_SIGNATURE, signature.getName());
+                    String encodedImage=Utilities.base64ConversionForImage(farmerSignaturePath);
+                    jsonObject.put(OFISDBContract.FarmerEntry.COLUMN_NAME_SIGNATURE, encodedImage);
+//                   jsonObject.put(OFISDBContract.FarmerEntry.COLUMN_NAME_SIGNATURE, signature.getName());
                 }catch (Exception e){
                     e.printStackTrace();
                 }

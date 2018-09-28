@@ -609,6 +609,7 @@ public class AddFarmerActivity extends BaseActivity {
         boolean hasMainNumber = false;*/
         long countryId = countrySpinner.getSelectedItemId();
         long regionId = regionSpinner.getSelectedItemId();
+        long districtId=districtSpinner.getSelectedItemId();
 
         for (int j = 0; j < phonerowscount; j++) {
             LinearLayout phonenumberrow = (LinearLayout) phonenumbers.getChildAt(j);
@@ -654,6 +655,8 @@ public class AddFarmerActivity extends BaseActivity {
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_CONSENT_FARMER, 1);
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_CONSENT_OTHERS, 1);
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRYID,String.valueOf(countryId));
+            values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_REGIONID,String.valueOf(regionId));
+            values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_DISTRICTID,String.valueOf(districtId));
         } catch (Exception e) {
             FirebaseCrash.report(new Exception("AddFarmerActivity: Error creating farmer content values", e));
             values.clear();
