@@ -53,6 +53,8 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.gson.Gson;
 import com.olam.digital.ofis.recordpolygon.LocationBeanList;
@@ -79,6 +81,8 @@ import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Locale;
+
+import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
 
 
 public class ViewFarmerActivity extends BaseListActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
@@ -173,8 +177,6 @@ public class ViewFarmerActivity extends BaseListActivity implements GoogleApiCli
         if (mCapturedImageURI != null) {
             outState.putString(CAPTURED_PHOTO_URI_KEY, mCapturedImageURI.toString());
         }
-
-
     }
 
     private void setupGPS() {
@@ -363,15 +365,16 @@ public class ViewFarmerActivity extends BaseListActivity implements GoogleApiCli
     }
 
     @SuppressLint("SetTextI18n")
-    private void setFarmGPS(Message msg, View v) {
+    private void setFarmGPS(Location location, View v) {
         if (pd != null && pd.isShowing()) {
             pd.dismiss();
         }
-        if (googleApiClient != null && googleApiClient.isConnected()) {
-            LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, locationListener);
-        }
+//        if (googleApiClient != null && googleApiClient.isConnected()) {
+//            LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, locationListener);
+//        }
         try {
-            Location farmLocation = (Location) msg.obj;
+           // Location farmLocation = (Location) msg.obj;
+            Location farmLocation = location;
             int updated = dl.updateFarmerLocation(
                     farmerId,
                     farmLocation,
@@ -437,46 +440,7 @@ public class ViewFarmerActivity extends BaseListActivity implements GoogleApiCli
 
                 return;
             } else {
-                new Handler(Looper.getMainLooper()).post(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        if (pd != null) {
-                            pd = ProgressDialog.show(context, res.getString(R.string.Please_wait), res.getString(R.string.searching_for_loc), true);
-                        }
-                    }
-                });
-
-                @SuppressLint("HandlerLeak") Handler gpsHandler = new Handler() {
-                    @Override
-                    public void handleMessage(Message msg) {
-                        setFarmGPS(msg, v);
-                    }
-                };
-
-                LocationRequest locationRequest = new LocationRequest();
-                locationRequest.setInterval(10000);
-                locationRequest.setFastestInterval(5000);
-                locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-
-                locationListener = new getGPSLocation(gpsHandler);
-
-                if (googleApiClient != null && googleApiClient.isConnected()) {
-                    LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, locationListener);
-                }
-
-                gpsHandler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (googleApiClient != null && googleApiClient.isConnected()) {
-                            LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, locationListener);
-                        }
-                        if (pd != null && pd.getWindow().getDecorView().getWindowToken() != null && pd.isShowing()) {
-                            pd.setMessage(res.getString(R.string.record_location_timeout));
-                            Utilities.closeProgressDialog(pd, 3000);
-                        }
-                    }
-                }, 30000);
+                    getDevicePosition(v);
             }
         } catch (Exception e) {
             FirebaseCrash.report(new Exception("ViewFarmerActivity: Error getting farmer GPS location - enumerator " + Utilities.getFromSharedPrefs(context), e));
@@ -491,6 +455,7 @@ public class ViewFarmerActivity extends BaseListActivity implements GoogleApiCli
                 .setPositiveButton(res.getString(R.string.yes), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         getFarmGPS(v);
+
                     }
                 })
                 .setNegativeButton(res.getString(R.string.no), new DialogInterface.OnClickListener() {
@@ -501,6 +466,26 @@ public class ViewFarmerActivity extends BaseListActivity implements GoogleApiCli
                 );
         AlertDialog alert = builder.create();
         alert.show();
+    }
+
+    private void getDevicePosition(final View v) {
+        try {
+            Task<Location> locationResult = getFusedLocationProviderClient(this).getLastLocation();
+            locationResult.addOnCompleteListener(this, new OnCompleteListener<Location>() {
+                @Override
+                public void onComplete(@NonNull Task<Location> task) {
+                    if (task.isSuccessful()) {
+                        Location location = task.getResult();
+                        setFarmGPS(location, v);
+                    } else {
+
+                       Toast.makeText(ViewFarmerActivity.this,"Location not recorded",Toast.LENGTH_LONG).show();
+                    }
+                }
+            });
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        }
     }
 
     private void recordFarmPolygonTest(final View v) {
