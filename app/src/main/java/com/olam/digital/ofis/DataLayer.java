@@ -2380,7 +2380,7 @@ public class DataLayer {
         Cursor newFarmer = db.query(OFISDBContract.FarmerEntry.TABLE_NAME, new String[]{"id"}, "id = ?", new String[]{String.valueOf(id)}, null, null, null);
 
         // if not, update the farmer with the new id, and also update any other entries he might have anywhere else
-        if (newFarmer.getCount() == 0) {
+//        if (newFarmer.getCount() == 0) {
             ContentValues newValues = new ContentValues();
             newValues.put(OFISDBContract.FarmerEntry.COLUMN_NAME_ID, id);
             newValues.put(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_ID, farmId);
@@ -2439,7 +2439,7 @@ public class DataLayer {
                 // update any network queue entries using this place id
                 db.update(OFISDBContract.NetworkQueueEntry.TABLE_NAME, placeRelatedValues, OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PLACE_ID + " = ?", new String[]{String.valueOf(localPlaceId)});
             }
-        }
+//        }
         newFarmer.close();
     }
 
