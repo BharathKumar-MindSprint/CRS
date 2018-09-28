@@ -458,7 +458,15 @@ public class AddFarmerActivity extends BaseActivity {
             EditText phonenumber = (EditText) phonenumberrow.findViewById(R.id.phonenumber);
             String phonenumberValue = String.valueOf(phonenumber.getText()).replace(" ", "");
 
-            if (Collections.frequency(phoneNumberList,phonenumberValue.trim()) == 1) {
+
+            if(phonenumberValue.length()==0){
+
+                duplicatePhoneNumberValidationFlag = true;
+            }
+
+
+
+           else if (Collections.frequency(phoneNumberList,phonenumberValue.trim()) == 1) {
                 duplicatePhoneNumberValidationFlag = true;
             } else {
                 duplicatePhoneNumberValidationFlag = false;
@@ -472,19 +480,32 @@ public class AddFarmerActivity extends BaseActivity {
     private ContentValues validateValues() {
 
         ContentValues values = new ContentValues();
-        EditText farmerName = (EditText) findViewById(R.id.farmerName);
-        String farmerNameValue = String.valueOf(farmerName.getText());
-        if (farmerNameValue.equals("")) {
-            return values;
-        }
+
+
         EditText farmerIdSuffix = (EditText) findViewById(R.id.olamFarmerIdEnd);
         String farmerIdSuffixValue = String.valueOf(farmerIdSuffix.getText());
         if (farmerIdSuffixValue.equals("") || farmerIdSuffix.length() < 4) {
+            Toast.makeText(context, "Please fill the Farmer id 4 digit", Toast.LENGTH_LONG).show();
             return values;
+
+
         }
         String olamFarmerId = farmerIdPrefix.getText().toString() + farmerIdSuffixValue;
-        if (dateStrToSend == null || dateStrToSend.equals("")) {
+        EditText farmerName = (EditText) findViewById(R.id.farmerName);
+        String farmerNameValue = String.valueOf(farmerName.getText());
+        if (farmerNameValue.equals("")) {
+
+            Toast.makeText(context, "Please fill the farmer name", Toast.LENGTH_LONG).show();
             return values;
+
+
+        }
+
+        if (dateStrToSend == null || dateStrToSend.equals("")) {
+
+            Toast.makeText(context, "Please fill the Farmer data of birth", Toast.LENGTH_LONG).show();
+            return values;
+
         }
         genderspinner = (Spinner) findViewById(R.id.farmerGender);
         String genderValue = Utilities.getDefaultTextByLocalValue(genders, String.valueOf(genderspinner.getSelectedItem()), res);
@@ -493,7 +514,49 @@ public class AddFarmerActivity extends BaseActivity {
         }
         Spinner spinner_section = (Spinner) findViewById(R.id.spinner_section);
         long section_id = spinner_section.getSelectedItemId();
+
+
         if (section_id < 1) {
+
+            selectedCountry = (int) countrySpinner.getSelectedItemId();
+            selectedRegion = (int) regionSpinner.getSelectedItemId();
+            selectedDistrict = (int) districtSpinner.getSelectedItemId();
+            selectedPlace = (int) placeSpinner.getSelectedItemId();
+            selectedFarmerGroup = (int) farmerGroupSpinner.getSelectedItemId();
+            selectedSection = (int) sectionSpinner.getSelectedItemId();
+
+            String message = "";
+            if (selectedCountry == 0) {
+                message = "Country";
+            }
+
+            else if (selectedRegion == 0) {
+
+                message = "Region";
+
+            }
+            else if (selectedDistrict == 0) {
+                message = "District";
+            }
+
+            else if (selectedPlace == 0) {
+
+                message = "Place";
+
+            }
+            else if (selectedFarmerGroup == 0) {
+
+                message = "farmer group";
+
+            }
+
+            else if (selectedSection == 0) {
+                message = "section";
+
+            }
+
+
+            Toast.makeText(context, "Please select the " + message, Toast.LENGTH_LONG).show();
             return values;
         }
 
@@ -504,15 +567,22 @@ public class AddFarmerActivity extends BaseActivity {
         Spinner spinner_place = (Spinner) findViewById(R.id.spinner_place);
         long place_id = spinner_place.getSelectedItemId();
         if (place_id == 0) {
+
+            Toast.makeText(context, "select the place", Toast.LENGTH_LONG).show();
             return values;
+
         }
         String newPlaceNameValue = (place_id == -1) ? String.valueOf(newPlaceName.getText()) : "";
         if (place_id == -1) {
             if (newPlaceNameValue.length() == 0) {
+
+                Toast.makeText(context, "select the  place", Toast.LENGTH_LONG).show();
                 return values;
             } else {
                 if (dl.placeAlreadyExists(newPlaceNameValue, district_id)) {
                     Toast.makeText(context, res.getString(R.string.place_name_not_unique), Toast.LENGTH_LONG).show();
+
+
                     return values;
                 }
             }
@@ -524,11 +594,13 @@ public class AddFarmerActivity extends BaseActivity {
 
         Switch consentFarmer = (Switch) findViewById(R.id.consentFarmer);
         if (!consentFarmer.isChecked()) {
+            Toast.makeText(context, res.getString(R.string.Please_accept_both_consents), Toast.LENGTH_LONG).show();
             return values;
         }
 
         Switch consentOthers = (Switch) findViewById(R.id.consentOthers);
         if (!consentOthers.isChecked()) {
+            Toast.makeText(context, res.getString(R.string.Please_accept_both_consents), Toast.LENGTH_LONG).show();
             return values;
         }
 
@@ -763,7 +835,7 @@ public class AddFarmerActivity extends BaseActivity {
 
                             } else {
                                 if ((!consentFarmer.isChecked()) || (!consentOthers.isChecked())) {
-                                    Toast.makeText(context, res.getString(R.string.Please_accept_both_consents), Toast.LENGTH_LONG).show();
+                                    //Toast.makeText(context, res.getString(R.string.Please_accept_both_consents), Toast.LENGTH_LONG).show();
                                 } else if (farmerIdSuffix.getText().length() < 4) {
                                     Toast.makeText(context, res.getString(R.string.farmer_id_min), Toast.LENGTH_LONG).show();
                                 } else {
@@ -774,7 +846,7 @@ public class AddFarmerActivity extends BaseActivity {
                             Toast.makeText(context, res.getString(R.string.id_not_unique), Toast.LENGTH_LONG).show();
                         }
                     } else {
-                        Toast.makeText(context, res.getString(R.string.Please_fill_all_fields), Toast.LENGTH_LONG).show();
+                        Toast.makeText(context, "Please fill " + res.getString(R.string.Olam_Farmer_ID), Toast.LENGTH_LONG).show();
                     }
                 } else {
                     Toast.makeText(context, res.getString(R.string.duplicate_phone_number), Toast.LENGTH_LONG).show();
