@@ -2381,6 +2381,8 @@ public class DataLayer {
 
         // if not, update the farmer with the new id, and also update any other entries he might have anywhere else
 //        if (newFarmer.getCount() == 0) {
+
+        try {
             ContentValues newValues = new ContentValues();
             newValues.put(OFISDBContract.FarmerEntry.COLUMN_NAME_ID, id);
             newValues.put(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_ID, farmId);
@@ -2440,6 +2442,9 @@ public class DataLayer {
                 db.update(OFISDBContract.NetworkQueueEntry.TABLE_NAME, placeRelatedValues, OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PLACE_ID + " = ?", new String[]{String.valueOf(localPlaceId)});
             }
 //        }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         newFarmer.close();
     }
 
