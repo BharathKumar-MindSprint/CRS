@@ -173,6 +173,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                     authRequestDTO.setClientId(5L);
                     authRequestDTO.setClientSecret(getString(R.string.client_secret));
                     AuthenticationInterface authenticationInterface = AuthenticationClient.createService(AuthenticationInterface.class, HomeActivity.this);
+                    showProgress(true);
                     Call<AuthenticationDTO> authCall = authenticationInterface.getCoreAuthToken(authRequestDTO);
                     authCall.enqueue(HomeActivity.this);
                 }else{
@@ -784,6 +785,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
     @Override
     public void onResponse(Call<AuthenticationDTO> call, Response<AuthenticationDTO> response) {
+        showProgress(false);
         if (response.isSuccessful()) {
             AuthenticationDTO authenticationDTO = response.body();
             authenticationDTO.setWillExpireAt((System.currentTimeMillis() / 1000) + authenticationDTO.getExpiresIn() - 60);
@@ -804,6 +806,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
     @Override
     public void onFailure(Call<AuthenticationDTO> call, Throwable t) {
+        showProgress(false);
               Toast.makeText(HomeActivity.this,getString(R.string.authentication_failed),Toast.LENGTH_LONG).show();
         Answers.getInstance().logLogin(new LoginEvent()
                 .putMethod("first")
