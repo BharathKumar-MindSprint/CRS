@@ -2152,7 +2152,9 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             String statusMessage;
                             if (postResponse.isSuccessful()) {
 //                                dl.syncFarmerModule(farmerModuleId, farmerId, moduleId, submissionDate);
-                                dl.deleteNetworkQueueItem(networkQueueItemId);
+
+                                dl.deleteSipNetworkQueueItem(networkQueueItemId);
+
                                 statusMessage = res.getString(R.string.item_synced);
                                 msg.what = 1;
                                 msg.arg1 = total;

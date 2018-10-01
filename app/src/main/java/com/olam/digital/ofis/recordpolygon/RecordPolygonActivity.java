@@ -807,17 +807,21 @@ public class RecordPolygonActivity extends Activity implements AdapterView.OnIte
                     perms.put(permissions[i], grantResults[i]);
                 }
 
-                // Check for WRITE_EXTERNAL_STORAGE
-                Boolean storage = perms.get(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
-                if (!storage) {
-                    // Permission Denied
-                    Toast.makeText(this, R.string.storage_permission_explanation, Toast.LENGTH_LONG).show();
-                } // else: permission was granted, yay!
+                try{
+                    // Check for WRITE_EXTERNAL_STORAGE
+                    Boolean storage = perms.get(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+                    if (!storage) {
+                        // Permission Denied
+                        Toast.makeText(this, R.string.storage_permission_explanation, Toast.LENGTH_LONG).show();
+                    } // else: permission was granted, yay!
 
-                Boolean locationPerm = perms.get(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
-                if (!locationPerm) {
-                    // Permission Denied
-                    Toast.makeText(this, R.string.location_permission_explanation, Toast.LENGTH_LONG).show();
+                    Boolean locationPerm = perms.get(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+                    if (!locationPerm) {
+                        // Permission Denied
+                        Toast.makeText(this, R.string.location_permission_explanation, Toast.LENGTH_LONG).show();
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
                 }
             }
         }

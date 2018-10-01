@@ -2064,6 +2064,17 @@ public class DataLayer {
         return db.query(OFISDBContract.LookupValuesEntry.TABLE_NAME, tableColumns, querySelection, querySelectionValue, null, null, orderByValue);
     }
 
+    // SIP Modules tasks
+    Cursor getSipLookupValuesForQuestion(int questionId, String questionColumn) {
+        String[] tableColumns = new String[]{questionColumn, "id as _id", OFISDBContract.LookupValuesSipEntry.COLUMN_NAME_POSITION};
+
+        String querySelection = OFISDBContract.LookupValuesSipEntry.COLUMN_NAME_QUESTION_ID + " = ?";
+        String[] querySelectionValue = new String[]{String.valueOf(questionId)};
+        String orderByValue = OFISDBContract.LookupValuesSipEntry.COLUMN_NAME_POSITION + " ASC";
+
+        return db.query(OFISDBContract.LookupValuesSipEntry.TABLE_NAME, tableColumns, querySelection, querySelectionValue, null, null, orderByValue);
+    }
+
     Cursor getSubmodulesByModuleId(long id) {
         String[] columns = new String[]{"*"};
         String whereClause = OFISDBContract.SubmoduleEntry.COLUMN_NAME_MODULE_ID + " = ?";
@@ -2362,6 +2373,12 @@ public class DataLayer {
         db.delete(OFISDBContract.NetworkQueueEntry.TABLE_NAME, whereClause, whereArgs);
     }
 
+    void deleteSipNetworkQueueItem(int networkQueueItemId) {
+        String whereClause = OFISDBContract.AnswerSipEntry.COLUMN_NAME_UPLOAD_ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(networkQueueItemId)};
+        db.delete(OFISDBContract.AnswerSipEntry.TABLE_NAME, whereClause, whereArgs);
+        deleteNetworkQueueItem(networkQueueItemId);
+    }
     void deleteNetworkQueueItemByFarmerModuleId(int farmerModuleId) {
         String whereClause = OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_MODULE_ID + " = ?";
         String[] whereArgs = new String[]{String.valueOf(farmerModuleId)};

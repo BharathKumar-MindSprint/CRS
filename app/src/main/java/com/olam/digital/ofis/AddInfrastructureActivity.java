@@ -247,7 +247,7 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
             } else if (displayType.toLowerCase().equals("decimal")) {
                 dynamicQuestions.renderTextBoxQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null);
             } else if (displayType.toLowerCase().equals("dropdown")) {
-                dynamicQuestions.renderDropDownQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
+                dynamicQuestions.renderSipDropDownQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
             } else if (displayType.toLowerCase().equals("photocheckbox")) {
                 dynamicQuestions.renderPhotoCheckboxQuestionForSIP(questions, res, getPackageName());
             } else if (displayType.toLowerCase().equals("repeater")) {

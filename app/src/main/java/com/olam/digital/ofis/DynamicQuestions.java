@@ -1361,6 +1361,130 @@ class DynamicQuestions {
         }
 
     }
+    void renderSipDropDownQuestion(Cursor qCursor, boolean isRepeaterItem, LinearLayout parentLayout, final int parentQuestionId, final int repeaterItemPosition, Cursor repeaterAnswers, final Resources res) {
+        final LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
+        renderQuestion(qCursor, isRepeaterItem, (isRepeaterItem) ? parentLayout : questionWrapper);
+        resources = res;
+        final String datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
+        final int questionId = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionSipEntry.COLUMN_NAME_ID));
+
+        int answerIdTemp = 0;
+        if (hasAnswers) {
+            if (isRepeaterItem && repeaterAnswers != null && repeaterAnswers.getCount() > 0) {
+                answerIdTemp = repeaterAnswers.getInt(repeaterAnswers.getColumnIndex(OFISDBContract.AnswerSipEntry.COLUMN_NAME_ID));
+            } else {
+                if (qCursor.getColumnIndex("answer_id") != -1) {
+                    answerIdTemp = qCursor.getInt(qCursor.getColumnIndex("answer_id"));
+                }
+            }
+        }
+        final int answerId = answerIdTemp;
+
+        final Spinner spinner = (Spinner) inflater.inflate(R.layout.module_spinner, (isRepeaterItem) ? parentLayout : questionWrapper, false);
+        Cursor spinnervalues;
+
+        // get display config
+        try {
+            JSONObject displayConfig = new JSONObject(qCursor.getString(qCursor.getColumnIndex(OFISDBContract.QuestionSipEntry.COLUMN_NAME_DISPLAY_CONFIGURATION)));
+            final String columnName = (qCursor.getColumnIndex(OFISDBContract.QuestionSipEntry.COLUMN_NAME_QUESTION + questionColumnSuffix) != -1) ? OFISDBContract.LookupValuesSipEntry.COLUMN_NAME_VALUE + questionColumnSuffix : OFISDBContract.LookupValuesSipEntry.COLUMN_NAME_VALUE;
+
+            if (displayConfig.has("lookuptable")) {
+                spinnervalues = dl.getSpinnerData(displayConfig.getString("lookuptable"), false, null, null, true, "name");
+            } else {
+                spinnervalues = dl.getSipLookupValuesForQuestion(qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionSipEntry.COLUMN_NAME_ID)), columnName);
+            }
+
+            final boolean isDensityQuestion = (displayConfig.has("densityquestionparent") && (displayConfig.getBoolean("densityquestionparent")));
+
+            dl.bindDataDrivenSpinner(spinner, spinnervalues, context, R.string.ModuleAnswerHint, columnName, false);
+
+            if (hasAnswers) {
+                if (datatype.equals("int") && (!isDensityQuestion)) {
+                    Integer currentAnswerInt = -1;
+                    if (isRepeaterItem && repeaterAnswers != null && repeaterAnswers.getCount() > 0) {
+                        currentAnswerInt = repeaterAnswers.getInt(repeaterAnswers.getColumnIndex(OFISDBContract.AnswerSipEntry.COLUMN_NAME_ANSWER_INT));
+                    } else {
+                        if (qCursor.getColumnIndex(OFISDBContract.AnswerSipEntry.COLUMN_NAME_ANSWER_INT) != -1) {
+                            currentAnswerInt = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.AnswerSipEntry.COLUMN_NAME_ANSWER_INT));
+                        }
+                    }
+
+                    for (int i = 0; i < spinner.getCount(); i++) {
+                        if (spinner.getItemIdAtPosition(i) == currentAnswerInt) {
+                            spinner.setSelection(i);
+                            break;
+                        }
+                    }
+
+                } else {
+                    String currentAnswerValue;
+                    if (isRepeaterItem && repeaterAnswers != null) {
+                        currentAnswerValue = repeaterAnswers.getString(repeaterAnswers.getColumnIndex("answer_" + datatype));
+                    } else {
+                        currentAnswerValue = qCursor.getString(qCursor.getColumnIndex("answer_" + datatype));
+                    }
+
+                    for (int i = 0; i < spinner.getCount(); i++) {
+                        Cursor currentItem = (Cursor) spinner.getItemAtPosition(i);
+                        if (currentItem.getString(currentItem.getColumnIndex(columnName)).equalsIgnoreCase(currentAnswerValue)) {
+                            spinner.setSelection(i);
+                            break;
+                        }
+                    }
+                }
+            }
+
+
+            spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
+
+
+                    //renderRepeaterItems(questionId, id, repeaterItemsWrapper, farmerId, olamFarmerId, farmerModuleId, res);
+
+
+                    //renderRepeaterItems(questionId, id, repeaterItemsWrapper, farmerId, olamFarmerId, farmerModuleId, res);
+                    if (id > 0) {
+                        if (datatype.equals("int") && (!isDensityQuestion)) {
+                            saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, String.valueOf(id));
+
+                            long h = Long.parseLong("0026");
+
+
+                        } else {
+                            Cursor selecteditem = (Cursor) spinner.getSelectedItem();
+                            saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, selecteditem.getString(selecteditem.getColumnIndex(columnName)));
+                        }
+                    } else {
+                        removeAnswerEntry(questionId, answerId);
+                    }
+                    if (isDensityQuestion) {
+                        renderTreeDensityPlots(position, res);
+                    }
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> adapterView) {
+                    if (isDensityQuestion) {
+                        renderTreeDensityPlots(0, res);
+                    }
+                }
+            });
+
+            if (isRepeaterItem) {
+                parentLayout.addView(spinner);
+            } else {
+                questionWrapper.addView(spinner);
+                parentLayout.addView(questionWrapper);
+            }
+
+
+        } catch (JSONException e) {
+            FirebaseCrash.report(new Exception("DynamicQuestions: Error gettign dropdown display config", e));
+            e.printStackTrace();
+        }
+
+    }
 
     void renderDropDownQuestionSubQuestion(Cursor qCursor, boolean isRepeaterItem, LinearLayout parentLayout, final int parentQuestionId, final int repeaterItemPosition, Cursor repeaterAnswers, final Resources res) {
         final LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
