@@ -75,7 +75,6 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
         private Location poiLocation;
         private String recorded_lat, recorded_lng;
 
-    private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 6575;
     // colours for animation
     private static final int COLOUR_SCHOOL = 0xFF924c2e;
     //    private static final int COLOUR_HEALTH_CENTRE = 0xFFbe3a34;
@@ -354,7 +353,7 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        if (requestCode == REQUEST_PERMISSIONS_REQUEST_CODE) {
+        if (requestCode == PERMISSIONS_ACCESS_LOCATION) {
             for (String permission : permissions) {
                 if (ActivityCompat.shouldShowRequestPermissionRationale(this, permission)) {
                     // Permission Denied
@@ -839,7 +838,7 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
     private void startLocationPermissionRequest() {
         ActivityCompat.requestPermissions(this,
                 new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                REQUEST_PERMISSIONS_REQUEST_CODE);
+                PERMISSIONS_ACCESS_LOCATION);
     }
     private void animateBetweenColours(int from, final int to, final ImageView layout)
     {
@@ -1073,6 +1072,8 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
             }
         }
 
+
+
         ArrayAdapter adapter = new ArrayAdapter<>(context, R.layout.add_sip_spinner_item, subModuleNames);
         adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         subModulesSpinner.setAdapter(adapter);
@@ -1094,6 +1095,8 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
 
             }
         });
+
+
     }
 
     @Override
