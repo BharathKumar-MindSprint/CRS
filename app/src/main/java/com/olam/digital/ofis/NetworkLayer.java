@@ -1594,6 +1594,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                             postFailureMessage(handler, response, msg, 2, total, progress, null, "submitting survey module");
                                             FirebaseCrash.report(new Exception(response.optString("errors", res.getString(R.string.item_sync_error)) + " : submitting survey module"));
                                         } catch (JSONException | IOException e) {
+
                                             FirebaseCrash.report(new Exception("NetworkLayer: Error getting module posting failure response", e));
                                             e.printStackTrace();
                                         }
@@ -2369,7 +2370,12 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             } else {
                                 try {
                                     JSONObject response = new JSONObject(postResponse.body().string());
-                              /*      long server_item_id = 0, fully_synced = 0;
+                                    recordFailedUpload(0, 0, networkQueueItemId);
+                                    String failureMessage = res.getString(R.string.networking_error);
+                                    postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting farmer photo failed");
+                                    FirebaseCrash.report(new Exception(response.optString("errors", res.getString(R.string.item_sync_error)) + " : submitting farmer photo"));
+
+                                    /*      long server_item_id = 0, fully_synced = 0;
                                     if (response.optJSONObject("farm") != null) {
                                         JSONObject farm = response.getJSONObject("farm");
                                         server_item_id = farm.getLong("id");
@@ -2380,6 +2386,13 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                     FirebaseCrash.report(new Exception(response.optString("errors", res.getString(R.string.item_sync_error)) + " : submitting farmer photo"));
                               */
                                 } catch (JSONException | IOException e) {
+                                    recordFailedUpload(0, 0, networkQueueItemId);
+                                    String failureMessage = res.getString(R.string.networking_error);
+                                    if (e != null) {
+                                        failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
+                                    }
+                                    postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting farmer photo failed");
+
                                     FirebaseCrash.report(new Exception("NetworkLayer: Error getting farmer photo  failure response", e));
                                     e.printStackTrace();
                                 }
