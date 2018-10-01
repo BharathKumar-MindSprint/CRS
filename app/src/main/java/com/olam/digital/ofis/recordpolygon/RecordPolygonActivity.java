@@ -22,7 +22,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.Looper;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NavUtils;
 import android.support.v4.content.ContextCompat;
@@ -41,6 +43,11 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.gson.Gson;
 import com.olam.digital.ofis.DataLayer;
 import com.olam.digital.ofis.OFISDBContract;
@@ -84,6 +91,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
+
+import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
 
 public class RecordPolygonActivity extends Activity implements AdapterView.OnItemSelectedListener, MapEventsReceiver, LocationListener {
 
@@ -154,6 +163,18 @@ public class RecordPolygonActivity extends Activity implements AdapterView.OnIte
 
     ArrayAdapter<String> spinnerArrayAdapter;
 
+    private static final long INTERVAL = 1000 * 3;
+    private static final long FASTEST_INTERVAL = 1000 * 2;
+    private static final int REQUEST_MSG_PERMISSION = 1004;
+    private static final int REQUEST_LOCATION_CODE = 1001;
+    private static int DISPLACEMENT = 5;
+    private LocationCallback locationCallback = new LocationCallback() {
+        @Override
+        public void onLocationResult(LocationResult locationResult) {
+            onLocationChanged(locationResult.getLastLocation());
+        }
+    };
+    private LocationRequest locationRequest;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -272,17 +293,32 @@ public class RecordPolygonActivity extends Activity implements AdapterView.OnIte
         if (savedInstanceState == null) {
             Location location = null;
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                if (location == null)
-                    location = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-            }
-            if (location != null) {
-                //location known:
-                onLocationChanged(location);
-            } else {
-                //no location known: hide myLocationOverlay
-                myLocationOverlay.setEnabled(false);
-            }
+              //  location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+//                if (location == null)
+//                    location = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                try {
+                    Task<Location> locationResult = getFusedLocationProviderClient(this).getLastLocation();
+                    locationResult.addOnCompleteListener(this, new OnCompleteListener<Location>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Location> task) {
+                            if (task.isSuccessful()) {
+                                Location location = task.getResult();
+                                if (location != null) {
+                                    //location known:
+                                    onLocationChanged(location);
+                                } else {
+                                    //no location known: hide myLocationOverlay
+                                    myLocationOverlay.setEnabled(false);
+                                }
+                            }
+                        }
+                    });
+                } catch (SecurityException e) {
+                    e.printStackTrace();
+                }
+
+           }
+
             startPoint = null;
             destinationPoint = null;
             viaPoints = new ArrayList<GeoPoint>();
@@ -370,6 +406,7 @@ public class RecordPolygonActivity extends Activity implements AdapterView.OnIte
         }
         initializeLoggingVariables();
     }
+
 
     /**
      * Whenever user start polygon recording at that time will fetch last known location from Android API and put location marker in center of Map UI.
@@ -545,15 +582,30 @@ public class RecordPolygonActivity extends Activity implements AdapterView.OnIte
             if (startLocationUpdates()) {
                 Location location = null;
                 if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                    location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                    if (location == null)
-                        location = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-                }
-                if (location != null) {
-                    GeoPoint newLocation = new GeoPoint(location);
-                    map.getController().animateTo(newLocation);
-                    //location known:
-                    onLocationChanged(location);
+//                    location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+//                    if (location == null)
+//                        location = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                    try {
+                        Task<Location> locationResult = getFusedLocationProviderClient(this).getLastLocation();
+                        locationResult.addOnCompleteListener(this, new OnCompleteListener<Location>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Location> task) {
+                                if (task.isSuccessful()) {
+                                    Location location = task.getResult();
+                                    if (location != null) {
+                                        GeoPoint newLocation = new GeoPoint(location);
+                                        map.getController().animateTo(newLocation);
+                                        //location known:
+                                        onLocationChanged(location);
+                                    }
+                                }
+                            }
+                        });
+                    } catch (SecurityException e) {
+                        e.printStackTrace();
+                    }
+
+
                 }
             }
 
@@ -571,7 +623,7 @@ public class RecordPolygonActivity extends Activity implements AdapterView.OnIte
             showChangeSettingsDialog();
             return;
         }
-        if (startLocationUpdates()) {
+        if (startUpdate()) {
             final Handler handler = new Handler();
             handler.postDelayed(new Runnable() {
                 int count = 0;
@@ -836,7 +888,8 @@ public class RecordPolygonActivity extends Activity implements AdapterView.OnIte
         boolean result = false;
         for (final String provider : mLocationManager.getProviders(true)) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                mLocationManager.requestLocationUpdates(provider, 0, 0, this);
+             //   mLocationManager.requestLocationUpdates(provider, 0, 0, this);
+                startUpdate();
                 result = true;
             }
         }
@@ -1394,5 +1447,29 @@ public class RecordPolygonActivity extends Activity implements AdapterView.OnIte
     public void onBackPressed() {
         super.onBackPressed();
         NavUtils.navigateUpFromSameTask(this);
+    }
+
+    private void stopUpdate() {
+        getFusedLocationProviderClient(this).removeLocationUpdates(locationCallback);
+
+    }
+
+    private boolean startUpdate() {
+        locationRequest = new LocationRequest();
+        locationRequest.setInterval(INTERVAL);
+        locationRequest.setFastestInterval(FASTEST_INTERVAL);
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        locationRequest.setSmallestDisplacement(DISPLACEMENT);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            Toast.makeText(this,"Permission Required", Toast.LENGTH_SHORT).show();
+            return false;
+        }else {
+
+            getFusedLocationProviderClient(this).requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper());
+            return true;
+        }
+
     }
 }

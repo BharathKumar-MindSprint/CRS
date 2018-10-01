@@ -646,11 +646,15 @@ public class TrainingRecord extends BaseListActivity {
                     e.printStackTrace();
                 }
             }
-            Uri fileUri = Uri.fromFile(photoFile);
-            setCapturedImageURI(fileUri);
-            setCurrentPhotoPath(fileUri.getPath());
-            takePicture.putExtra(MediaStore.EXTRA_OUTPUT, getCapturedImageURI());
-            startActivityForResult(takePicture, REQUEST_IMAGE_CAPTURE);
+            try{
+                Uri fileUri = Uri.fromFile(photoFile);
+                setCapturedImageURI(fileUri);
+                setCurrentPhotoPath(fileUri.getPath());
+                takePicture.putExtra(MediaStore.EXTRA_OUTPUT, getCapturedImageURI());
+                startActivityForResult(takePicture, REQUEST_IMAGE_CAPTURE);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
         }
     }
 

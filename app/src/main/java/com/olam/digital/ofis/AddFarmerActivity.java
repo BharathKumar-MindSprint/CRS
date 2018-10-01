@@ -719,6 +719,17 @@ public class AddFarmerActivity extends BaseActivity {
                 bindnumberradio(numberradio);
             }
 
+            if(existingNumbers.getCount()==0){
+
+                LinearLayout phonenumberinclude = (LinearLayout) inflater.inflate(R.layout.phonenumber_entry, phonenumbers, false);
+                phonenumbers.addView(phonenumberinclude);
+                RadioButton numberradio = (RadioButton) phonenumberinclude.findViewById(R.id.primary_number);
+                ImageView numberdelete = (ImageView) phonenumberinclude.findViewById(R.id.deleteNumber);
+                numberdelete.setVisibility(View.GONE);
+                bindnumberradio(numberradio);
+                numberradio.setChecked(true);
+            }
+
         } else {
             LinearLayout phonenumberinclude = (LinearLayout) inflater.inflate(R.layout.phonenumber_entry, phonenumbers, false);
             phonenumbers.addView(phonenumberinclude);

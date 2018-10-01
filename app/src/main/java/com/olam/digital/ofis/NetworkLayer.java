@@ -2134,57 +2134,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 //                        bodyBuilder.addFormDataPart(FilenameUtils.removeExtension(photo.getName()), photo.getName(), file);
                     }
 
-     /*               if (moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE)).equalsIgnoreCase("repeater")) {
-//                        Cursor subAnswers = dl.getAnswersByModuleIdAndParentQuestionId(farmerModuleId, moduleAnswers.getInt(moduleAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID)));
-/*
-                        if (subAnswers.getCount() > 0) {
-                            JSONArray subAnswersArray = new JSONArray();
-                            JSONArray subAnswersAnswerArray = new JSONArray();
-
-                            int repeaterItemPosition = 1;
-                            while (subAnswers.moveToNext()) {
-                                questions_included.add(subAnswers.getInt(subAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID)));
-                                JSONObject subAnswer = new JSONObject();
-                                JSONObject displayConfig = new JSONObject(subAnswers.getString(subAnswers.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION)));
-
-                                if (subAnswers.getInt(subAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_REPEATER_ITEM_POSITION)) > repeaterItemPosition) {
-                                    // start new subAnswersAnswerArray
-                                    subAnswersArray.put(subAnswersAnswerArray);
-                                    subAnswersAnswerArray = new JSONArray();
-                                }
-
-                                repeaterItemPosition = subAnswers.getInt(subAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_REPEATER_ITEM_POSITION));
-
-                                subAnswer.put(OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID, subAnswers.getInt(subAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID)));
-                                subAnswer.put(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_REPORTING_YEAR, subAnswers.getInt(subAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_REPORTING_YEAR)));
-                                subAnswer.put(OFISDBContract.AnswerEntry.COLUMN_NAME_OLAM_FARMER_ID, subAnswers.getString(subAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
-                                String subAnswerDatatype = subAnswers.getString(subAnswers.getColumnIndex(OFISDBContract.DatatypesEntry.COLUMN_NAME_DATATYPE_NAME));
-                                if (subAnswerDatatype.equalsIgnoreCase("int") || subAnswerDatatype.equalsIgnoreCase("boolean")) {
-                                    subAnswer.put("answer", subAnswers.getInt(subAnswers.getColumnIndex("answer_" + subAnswerDatatype)));
-                                } else if (subAnswerDatatype.equalsIgnoreCase("decimal")) {
-                                    subAnswer.put("answer", subAnswers.getDouble(subAnswers.getColumnIndex("answer_" + subAnswerDatatype)));
-                                } else {
-                                    subAnswer.put("answer", subAnswers.getString(subAnswers.getColumnIndex("answer_" + subAnswerDatatype)));
-                                }
-
-                                if (displayConfig.has("display")) {
-                                    JSONObject display = displayConfig.getJSONObject("display");
-                                    if (display.optString("repeateritem_display_type", "").equalsIgnoreCase("photoupload")) {
-                                        hasPhotos = true;
-                                        File photo = new File(storageDir + "/" + subAnswers.getString(subAnswers.getColumnIndex("answer_" + subAnswerDatatype)));
-
-                                        RequestBody file = RequestBody.create(MEDIA_TYPE_JPG, photo);
-                                        bodyBuilder.addFormDataPart(FilenameUtils.removeExtension(photo.getName()), photo.getName(), file);
-                                    }
-                                }
-
-                                subAnswersAnswerArray.put(subAnswer);
-
-                            }
-                            subAnswersArray.put(subAnswersAnswerArray);
-                            answer.put("sub_answers", subAnswersArray);
-                        }*/
-//                    }*/
                     answers.put(answer);
                 }
 
@@ -2192,78 +2141,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 params.put("questions_included", questions_included_output.substring(1, questions_included_output.length() - 1));
                 params.put("answers", answers);
 
+            }
 
-
- /*             if (hasPhotos) {
-                   bodyBuilder.addFormDataPart("submission_date", params.getString("submission_date"));
-                    bodyBuilder.addFormDataPart("upload_date", params.getString("upload_date"));
-                    bodyBuilder.addFormDataPart("olam_enumerator_id", params.getString("olam_enumerator_id"));
-                    bodyBuilder.addFormDataPart("imei_number", params.getString("imei_number"));
-                    bodyBuilder.addFormDataPart("recorded_lat", params.getString("recorded_lat"));
-                    bodyBuilder.addFormDataPart("recorded_lng", params.getString("recorded_lng"));
-                    bodyBuilder.addFormDataPart(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ATTEMPTS, params.getString(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ATTEMPTS));
-                    bodyBuilder.addFormDataPart(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ID, networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ID)));
-
-                    if (params.optString(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID, "").length() > 0) {
-                        bodyBuilder.addFormDataPart(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID, params.optString(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID));
-                    }
-
-                    bodyBuilder.addFormDataPart("questions_included", params.getString("questions_included"));
-                    bodyBuilder.addFormDataPart("answers", answers.toString());
-                    RequestBody requestBody = bodyBuilder.build();
-
-                    okHttpMultiPartPost(context, "modules/submit", requestBody, new Callback() {
-                        @Override
-                        public void onResponse(Call call, Response postResponse) {
-                            String statusMessage;
-                            if (postResponse.isSuccessful()) {
-//                                dl.syncFarmerModule(farmerModuleId, farmerId, moduleId, submissionDate);
-                                dl.deleteNetworkQueueItem(networkQueueItemId);
-                                statusMessage = res.getString(R.string.item_synced);
-                                msg.what = 1;
-                                msg.arg1 = total;
-                                msg.arg2 = progress;
-                                msg.obj = statusMessage;
-                                handler.dispatchMessage(msg);
-                                syncNetworkQueue(originalSyncRequestItemId, handler);
-                            } else {
-                                try {
-                                    JSONObject response = new JSONObject(postResponse.body().string());
-                                    long server_item_id = 0, fully_synced = 0;
-
-                                    if (response.optJSONObject("submittedmodule") != null) {
-                                        JSONObject submittedModule = response.getJSONObject("submittedmodule");
-                                        server_item_id = submittedModule.getLong("id");
-                                        fully_synced = submittedModule.getLong(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FULLY_SYNCED);
-                                    }
-
-                                    recordFailedUpload(server_item_id, fully_synced, networkQueueItemId);
-
-                                    postFailureMessage(handler, response, msg, 2, total, progress, null, "submitting survey module");
-                                    FirebaseCrash.report(new Exception(response.optString("errors", res.getString(R.string.item_sync_error)) + " : submitting survey module"));
-                                } catch (JSONException | IOException e) {
-                                    FirebaseCrash.report(new Exception("NetworkLayer: Error getting module with photos posting failure response", e));
-                                    e.printStackTrace();
-                                }
-                            }
-                            postResponse.close();
-                        }
-
-                        @Override
-                        public void onFailure(Call call, IOException e) {
-                            recordFailedUpload(0, 0, networkQueueItemId);
-
-                            String failureMessage = res.getString(R.string.networking_error);
-                            if (e != null) {
-                                failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
-                            }
-                            postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting survey module with photos");
-                            FirebaseCrash.report(new Exception(failureMessage, e));
-                        }
-
-                    });
-
-                } else */{
 //                    String url = "http://13.76.2.201:8080/farmerdata/socialinfra/saveAllSipAnswers/";
                     String url = "farmer-data/farmerdata/socialinfra/saveAllSipAnswers/";
 
@@ -2316,10 +2195,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             FirebaseCrash.report(new Exception(failureMessage, e));
                         }
                     });
-                }
 
                 Log.i("POST", "" + params.toString());
-            }
         } catch (JSONException e) {
             FirebaseCrash.report(new Exception("NetworkLayer: Error creating module post object", e));
             e.printStackTrace();
