@@ -5,7 +5,15 @@ import android.content.Context;
 
 import com.olam.digital.ofis.R;
 
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.util.concurrent.TimeUnit;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
@@ -44,10 +52,48 @@ public class AuthenticationClient {
     public static <S> S createService(
             Class<S> serviceClass, Context context) {
         setup(context);
+        TokenInterceptor interceptor =
+                new TokenInterceptor();
         httpClient.connectTimeout(60, TimeUnit.MINUTES);
         httpClient.readTimeout(60, TimeUnit.MINUTES);
+        httpClient.addInterceptor(interceptor);
+        httpClient.sslSocketFactory(getSSLSocketFactory());
         builder.client(httpClient.build());
         retrofit = builder.build();
         return retrofit.create(serviceClass);
     }
+
+    private static SSLSocketFactory getSSLSocketFactory() {
+        try {
+            // Create a trust manager that does not validate certificate chains
+            final TrustManager[] trustAllCerts = new TrustManager[]{
+                    new X509TrustManager() {
+                        @Override
+                        public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
+                        }
+
+                        @Override
+                        public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
+                        }
+
+                        @Override
+                        public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                            return new java.security.cert.X509Certificate[]{};
+                        }
+                    }
+            };
+
+            // Install the all-trusting trust manager
+            final SSLContext sslContext = SSLContext.getInstance("SSL");
+            sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
+            // Create an ssl socket factory with our all-trusting manager
+            final SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
+
+            return sslSocketFactory;
+        } catch (KeyManagementException | NoSuchAlgorithmException e) {
+            return null;
+        }
+
+    }
+
 }

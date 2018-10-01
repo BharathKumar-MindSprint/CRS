@@ -11,10 +11,8 @@ import okhttp3.Response;
  */
 
 public class TokenInterceptor implements Interceptor {
-    private String authToken;
 
-    public TokenInterceptor(String token) {
-        this.authToken = token;
+    public TokenInterceptor() {
     }
 
     @Override
@@ -22,7 +20,9 @@ public class TokenInterceptor implements Interceptor {
         Request original = chain.request();
 
         Request.Builder builder = original.newBuilder()
-                .header("Authorization", "Bearer " + authToken);
+                .header("Content-Type","application/json")
+                .header("App-Id", "1");
+
 
         Request request = builder.build();
         return chain.proceed(request);

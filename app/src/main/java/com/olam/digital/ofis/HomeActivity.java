@@ -44,9 +44,11 @@ import android.widget.Toast;
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.LoginEvent;
 import com.google.firebase.crash.FirebaseCrash;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.olam.digital.ofis.authentication.AuthenticationClient;
 import com.olam.digital.ofis.authentication.AuthenticationHelper;
 import com.olam.digital.ofis.authentication.AuthenticationInterface;
+import com.olam.digital.ofis.authentication.DeviceIDxctractor;
 import com.olam.digital.ofis.authentication.model.AuthRequestDTO;
 import com.olam.digital.ofis.authentication.model.AuthenticationDTO;
 import com.olam.digital.ofis.recordpolygon.RecordPolygonActivity;
@@ -155,27 +157,53 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             firstRunSection.setVisibility(View.VISIBLE);
         }
 
+               // Request Permission only for Android Version Marshmallow and above
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        // Check Phone Permission
+                        if (ContextCompat.checkSelfPermission(HomeActivity.this,
+                                android.Manifest.permission.READ_PHONE_STATE)
+                                != PackageManager.PERMISSION_GRANTED) {
+
+                            //request permission
+                            ActivityCompat.requestPermissions(HomeActivity.this,
+                                    new String[]{android.Manifest.permission.READ_PHONE_STATE},
+                                    MY_PERMISSIONS_REQUEST);
+
+                        }
+                    }
+
         saveUpdateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String userEnumerator = enumeratorID.getText().toString().trim();
                 if (userEnumerator!=null && !userEnumerator.equalsIgnoreCase("")){
 
-                 //   doAuthentication(userEnumerator);
+                    if (ContextCompat.checkSelfPermission(HomeActivity.this,
+                            android.Manifest.permission.READ_PHONE_STATE)
+                            != PackageManager.PERMISSION_GRANTED) {
 
-                    AuthRequestDTO authRequestDTO = new AuthRequestDTO();
-                    authRequestDTO.setLanguage(Locale.getDefault().getLanguage());
-                    authRequestDTO.setApplication("ttmobile");
-                    authRequestDTO.setUsername("400");
-                    //authRequestDTO.setPassword("3751e350-a1d4-4db9-b045-9dc50cf544fb");
-                    authRequestDTO.setPassword("pA11wX6srkWUpRQcpGjZeYcQuGUlXI6JkJxULTEeNRhNGZ1nRwVYLRNbLlyO");
-                    authRequestDTO.setGrantType("password");
-                    authRequestDTO.setClientId(5L);
-                    authRequestDTO.setClientSecret(getString(R.string.client_secret));
-                    AuthenticationInterface authenticationInterface = AuthenticationClient.createService(AuthenticationInterface.class, HomeActivity.this);
-                    showProgress(true);
-                    Call<AuthenticationDTO> authCall = authenticationInterface.getCoreAuthToken(authRequestDTO);
-                    authCall.enqueue(HomeActivity.this);
+                        //request permission
+                        ActivityCompat.requestPermissions(HomeActivity.this,
+                                new String[]{android.Manifest.permission.READ_PHONE_STATE},
+                                MY_PERMISSIONS_REQUEST);
+
+                    }else {
+                        doAuthentication(userEnumerator);
+                    }
+
+//                    AuthRequestDTO authRequestDTO = new AuthRequestDTO();
+//                    authRequestDTO.setLanguage(Locale.getDefault().getLanguage());
+//                    authRequestDTO.setApplication("ttmobile");
+//                    authRequestDTO.setUsername("400");
+//                    //authRequestDTO.setPassword("3751e350-a1d4-4db9-b045-9dc50cf544fb");
+//                    authRequestDTO.setPassword("pA11wX6srkWUpRQcpGjZeYcQuGUlXI6JkJxULTEeNRhNGZ1nRwVYLRNbLlyO");
+//                    authRequestDTO.setGrantType("password");
+//                    authRequestDTO.setClientId(5L);
+//                    authRequestDTO.setClientSecret(getString(R.string.client_secret));
+//                    AuthenticationInterface authenticationInterface = AuthenticationClient.createService(AuthenticationInterface.class, HomeActivity.this);
+//                    showProgress(true);
+//                    Call<AuthenticationDTO> authCall = authenticationInterface.getCoreAuthToken(authRequestDTO);
+//                    authCall.enqueue(HomeActivity.this);
                 }else{
                     Toast.makeText(HomeActivity.this,getString(R.string.enumerator_empty),Toast.LENGTH_LONG).show();
                 }
@@ -229,10 +257,11 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     private void doAuthentication(String userID) {
         AuthRequestDTO authRequestDTO = new AuthRequestDTO();
         authRequestDTO.setLanguage(Locale.getDefault().getLanguage());
-        authRequestDTO.setApplication("ttmobile");
+        authRequestDTO.setApplication("ofismobile");
         authRequestDTO.setUsername(userID);
         //authRequestDTO.setPassword("3751e350-a1d4-4db9-b045-9dc50cf544fb");
-        authRequestDTO.setPassword("pA11wX6srkWUpRQcpGjZeYcQuGUlXI6JkJxULTEeNRhNGZ1nRwVYLRNbLlyO");
+        authRequestDTO.setPassword(DeviceIDxctractor.fetchDeviceID(this));
+        authRequestDTO.setFirebaseToken(FirebaseInstanceId.getInstance().getToken());
         authRequestDTO.setGrantType("password");
         authRequestDTO.setClientId(5L);
         authRequestDTO.setClientSecret(getString(R.string.client_secret));
@@ -772,7 +801,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                     } else {
                         if (ActivityCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED) {
                             // Permission Allowed
-                            firstTimeSetup();
+                           // firstTimeSetup();
                         } else {
                             // Checkbox set to Never Ask Again
                             showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
@@ -796,7 +825,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             Utilities.isAppAlive=true;
             doInitialCheck();
         } else {
-
+            Toast.makeText(HomeActivity.this,getString(R.string.authentication_failed),Toast.LENGTH_LONG).show();
             Answers.getInstance().logLogin(new LoginEvent()
                     .putMethod("first")
                     .putCustomAttribute("reason", "wrong credentials")
