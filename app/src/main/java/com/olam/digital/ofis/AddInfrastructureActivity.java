@@ -115,6 +115,7 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
     private Spinner modulesSpinner;
     private boolean spinners_ready = false;
 
+
     // translatable dropdown values
     private final Hashtable<String, String> poitypes = new Hashtable<>();
     private final Hashtable<String, String> genders = new Hashtable<>();
@@ -443,8 +444,9 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
         String uploadId = existingItem.getString(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ID));
         modulesSpinner.setSelection(selectedModulePOI);
         moduleId = moduleDTOS.get(selectedModulePOI).getId();
+        dynamicQuestions.questionsSection.removeAllViews();
         subModuleId = getSubModules(moduleId).get(selectedSubModulePOI).getId();
-        bindPoiSpinner(moduleId);
+//        bindPoiSpinner(moduleId);
         subModulesSpinner.setSelection(selectedSubModulePOI);
         dynamicQuestions.hasAnswers = true;
         questions = dl.getSIPQuestionsAndAnswersByUploadId(uploadId, subModuleId);
@@ -638,11 +640,7 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
             values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_SUBGROUP_TYPE_ID, String.valueOf(subModulesSpinner.getSelectedItemPosition()));
             values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_SUBMODULE_ID, String.valueOf(subModuleId));
             values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_SUBGROUP_TYPE, String.valueOf(subModulesSpinner.getSelectedItem()));
-            if (/*currentTypeOfPOI != CLEAN_WATER_SUPPLY | */!modulesSpinner.getSelectedItem().equals("Clean water supply")) {
-                values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, String.valueOf(poiName.getText()));
-            } else {
-                values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, String.valueOf(subModulesSpinner.getSelectedItem()));
-            }
+            values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, String.valueOf(poiName.getText()));
             values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LAT, recorded_lat);
             values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG, recorded_lng);
             values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_COUNTRY_ID, country_id);
@@ -692,6 +690,11 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(poiName.getText().toString().trim().length() == 0){
+                    Toast.makeText(context, res.getString(R.string.Please_fill_all_fields), Toast.LENGTH_LONG).show();
+                    return;
+                }
+
                 // get the entered values
                 ContentValues values = validateValues();
 //                ContentValues answerValues = answerValidateValues(dynamicQuestions.answerSet, subModuleId, 0, values);
@@ -1035,7 +1038,7 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
         modulesSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
-                if (spinners_ready) {
+//                if (spinners_ready) {
                     /*int color;
                     ImageView topSection = (ImageView) findViewById(R.id.topSectionBackground);
                     if(position == 0){
@@ -1052,7 +1055,7 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
                     bindPoiSpinner(moduleId);
 //                  subModuleId = subModuleDTOS.get(0).getId();
 //                    getSubModuleQuestions(subModuleId);
-                }
+//                }
 
             }
 
@@ -1078,13 +1081,16 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
         adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         subModulesSpinner.setAdapter(adapter);
 
+
+
         subModulesSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
-                if (spinners_ready) {
+                if (!editMode) {
 //                    swapPoiType(i);
 //                }
                     dynamicQuestions.questionsSection.removeAllViews();
+                    dynamicQuestions.answerSet.clear();
                     subModuleId = subModuleDTOS.get(position).getId();
                     getSubModuleQuestions(subModuleId);
                 }

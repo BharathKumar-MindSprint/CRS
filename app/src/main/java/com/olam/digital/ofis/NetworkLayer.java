@@ -2107,8 +2107,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 */
 
             params.put("farm_id", 0);
-            params.put("Capacity", 0);
-            params.put("Product_id", 0);
+//            params.put("Capacity", 0);
+//            params.put("Product_id", 0);
 
             if (moduleAnswers.getCount() > 0) {
 

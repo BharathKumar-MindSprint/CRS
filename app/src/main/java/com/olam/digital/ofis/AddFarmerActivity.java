@@ -853,7 +853,7 @@ public class AddFarmerActivity extends BaseActivity {
                                 } else if (farmerIdSuffix.getText().length() < 4) {
                                     Toast.makeText(context, res.getString(R.string.farmer_id_min), Toast.LENGTH_LONG).show();
                                 } else {
-                                    Toast.makeText(context, res.getString(R.string.Please_fill_all_fields), Toast.LENGTH_LONG).show();
+//                                    Toast.makeText(context, res.getString(R.string.Please_fill_all_fields), Toast.LENGTH_LONG).show();
                                 }
                             }
                         } else {
