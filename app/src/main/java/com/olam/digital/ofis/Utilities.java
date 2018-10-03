@@ -269,7 +269,7 @@ public  static String base64ConversionForImage(String filepath) {
         }
     }
 
-    static Bitmap loadSizedBitmap(String filePath, int reqWidth, int reqHeight) {
+    public static Bitmap loadSizedBitmap(String filePath, int reqWidth, int reqHeight) {
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
         options.inMutable = true;
@@ -307,7 +307,7 @@ public  static String base64ConversionForImage(String filepath) {
         return 0;
     }
 
-    static Hashtable<String, Integer> getDimensionsForDisplayFromBase(int baseWidth, int baseHeight, Resources res) {
+    public static Hashtable<String, Integer> getDimensionsForDisplayFromBase(int baseWidth, int baseHeight, Resources res) {
         Hashtable<String, Integer> dimensions = new Hashtable<>();
 
         // now we have mdpi size, scale appropriately for screen

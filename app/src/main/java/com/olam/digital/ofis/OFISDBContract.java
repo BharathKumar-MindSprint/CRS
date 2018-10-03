@@ -476,6 +476,7 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_SECTIONID = "sectionId";
         public static final String COLUMN_NAME_COUNTRYID = "countryId";
         public static final String COLUMN_NAME_DISTRICTID = "districtId";
+        public static final String COLUMN_NAME_FARMERGROUPID = "farmerGroupId";
         public static final String COLUMN_NAME_REGIONID = "regionId";
         public static final String COLUMN_NAME_CONSENTFARMER = "consentFarmer";
         public static final String COLUMN_NAME_CONSENTOTHERS = "consentOthers";
@@ -525,6 +526,7 @@ public class OFISDBContract {
                     add(COLUMN_NAME_CONSENT_OTHERS);
                     add(COLUMN_NAME_COUNTRYID);
                     add(COLUMN_NAME_DISTRICTID);
+                    add(COLUMN_NAME_FARMERGROUPID);
                     add(COLUMN_NAME_REGIONID);
 
                 }}
