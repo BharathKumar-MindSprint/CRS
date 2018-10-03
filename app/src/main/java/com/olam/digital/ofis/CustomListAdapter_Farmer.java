@@ -54,7 +54,7 @@ class CustomListAdapter_Farmer extends SimpleCursorAdapter {
                 TextView transacteetype = (TextView) view.findViewById(R.id.transacteeType);
                 transacteetype.setText(cursor.getString(cursor.getColumnIndex("transactee_type")));
             }
-
+            farmerPhoto.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_no_photo));
             if (statusColIndex != -1 && cursor.getInt(statusColIndex) == 1) {
                 farmerPhoto.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_saved));
             } else if (localColIndex != -1 && cursor.getInt(localColIndex) == 1) {
