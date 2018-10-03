@@ -3,6 +3,7 @@ package com.olam.digital.ofis.authentication;
 import android.content.Context;
 import android.os.AsyncTask;
 
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.authentication.model.AuthRequestDTO;
 import com.olam.digital.ofis.authentication.model.AuthenticationDTO;
@@ -56,11 +57,12 @@ public class AccessTokenTask extends AsyncTask<Object, Object, String> {
                     //
                     AuthRequestDTO authRequestDTO = new AuthRequestDTO();
                     authRequestDTO.setLanguage(Locale.getDefault().getLanguage());
-                    authRequestDTO.setApplication("ttmobile");
+                    authRequestDTO.setApplication("ofismobile");
                     authRequestDTO.setUsername(new AuthenticationHelper(mContext).getuserName());
                     authRequestDTO.setPassword(DeviceIDxctractor.fetchDeviceID(mContext));
+                    authRequestDTO.setFirebaseToken(FirebaseInstanceId.getInstance().getToken());
                     authRequestDTO.setGrantType("password");
-                    authRequestDTO.setClientId(2L);
+                    authRequestDTO.setClientId(5L);
                     authRequestDTO.setClientSecret(mContext.getString(R.string.client_secret));
                     AuthenticationInterface authenticationInterface =  AuthenticationClient.createService(AuthenticationInterface.class, mContext);
                     Call<AuthenticationDTO> authCall = authenticationInterface.getCoreAuthToken(authRequestDTO);

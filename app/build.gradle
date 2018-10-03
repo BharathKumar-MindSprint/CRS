@@ -78,14 +78,20 @@ android {
             resValue "string", "contentprovider_authorities", applicationId + '.provider'
             resValue "string", "sync_account_type", applicationId
             resValue "string", "client_secret", 'gqYWH4dRyQST0dHHgA5iUyxkgtPxGStVd3hJop'
-         //   resValue "string", "AUTH_SERVER_URL", 'http://13.67.108.216:8084/oauth/api/v1/oauth/'
+            //   resValue "string", "AUTH_SERVER_URL", 'http://13.67.108.216:8084/oauth/api/v1/oauth/'
             buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofispreprod"'
-          //  buildConfigField 'String', 'HOST', '"http://13.67.108.216:8084/"'
+            //  buildConfigField 'String', 'HOST', '"http://13.67.108.216:8084/"'
             buildConfigField 'String', 'MICROSERVICE_HOST', '"http://137.116.145.198:8080/"'
 
             // New Local changes - QA
-            resValue "string", "AUTH_SERVER_URL", 'http://13.67.74.207:8084/oauth/api/v1/oauth/'
-            buildConfigField 'String', 'HOST', '"http://13.67.74.207:8084/"'
+//            resValue "string", "AUTH_SERVER_URL", 'http://13.67.74.207:8084/oauth/api/v1/oauth/'
+//            buildConfigField 'String', 'HOST', '"http://13.67.74.207:8084/"'
+
+            //New UAT DNS name
+            resValue "string", "AUTH_SERVER_URL", 'https://otofis-uat-zuul.olamdigital.com/oauth/api/v1/oauth/'
+            buildConfigField 'String', 'HOST', '"https://otofis-uat-zuul.olamdigital.com/"'
+//            resValue "string", "client_secret", 'xGfAz5zSFTJDHcWWcEQR19hNx9zA30NeZOQuxdnr'
+
 
             // New Local changes - DEV
 //            resValue "string", "AUTH_SERVER_URL", 'http://13.67.108.216:8084/oauth/api/v1/oauth/'
@@ -93,7 +99,7 @@ android {
 
 
             // Exixting PHP Point
-  //          buildConfigField 'String', 'HOST', '"https://stageofis.olamgroup.com/api/v1/"'
+            //          buildConfigField 'String', 'HOST', '"https://stageofis.olamgroup.com/api/v1/"'
         }
 
         //noinspection GroovyMissingReturnStatement

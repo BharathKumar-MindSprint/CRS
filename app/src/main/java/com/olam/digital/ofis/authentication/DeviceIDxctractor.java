@@ -3,6 +3,7 @@ package com.olam.digital.ofis.authentication;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.telephony.TelephonyManager;
 
@@ -22,8 +23,10 @@ public class DeviceIDxctractor {
             deviceID= "";
         }
         else{
-            deviceID = ((TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE))
-                    .getDeviceId();
+//            deviceID = ((TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE))
+//                    .getDeviceId();
+            deviceID = Settings.Secure.getString(context.getContentResolver(),
+                    Settings.Secure.ANDROID_ID);
         }
 
 

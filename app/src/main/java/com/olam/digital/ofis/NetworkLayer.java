@@ -41,6 +41,9 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -61,6 +64,12 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import com.olam.digital.ofis.R;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+
 /**
  * Created by bengallienne on 29/11/14.
  * All network functions carried out by the application
@@ -74,6 +83,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             .connectTimeout(180, TimeUnit.SECONDS)
             .readTimeout(180, TimeUnit.SECONDS)
             .writeTimeout(180, TimeUnit.SECONDS)
+            .sslSocketFactory(getSSLSocketFactory())
             .build();
     private static final MediaType JSONBody = MediaType.parse("application/json; charset=utf-8");
     private static final MediaType MEDIA_TYPE_JPG = MediaType.parse("image/jpg");
@@ -83,6 +93,38 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
     //private Handler handler;
     private ProgressDialog pd = null;
 
+    private static SSLSocketFactory getSSLSocketFactory() {
+        try {
+            // Create a trust manager that does not validate certificate chains
+            final TrustManager[] trustAllCerts = new TrustManager[]{
+                    new X509TrustManager() {
+                        @Override
+                        public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
+                        }
+
+                        @Override
+                        public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
+                        }
+
+                        @Override
+                        public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                            return new java.security.cert.X509Certificate[]{};
+                        }
+                    }
+            };
+
+            // Install the all-trusting trust manager
+            final SSLContext sslContext = SSLContext.getInstance("SSL");
+            sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
+            // Create an ssl socket factory with our all-trusting manager
+            final SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
+
+            return sslSocketFactory;
+        } catch (KeyManagementException | NoSuchAlgorithmException e) {
+            return null;
+        }
+
+    }
     // constructor
     public NetworkLayer(Context context_, Resources res_) {
         context = context_;
@@ -223,11 +265,16 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
     }
 
     private void recordFailedUpload(long server_item_id, long fully_synced, long networkQueueItemId) {
-        ContentValues failureValues = new ContentValues();
-        failureValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID, server_item_id);
-        failureValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FULLY_SYNCED, fully_synced);
-        failureValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ATTEMPTS, networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ATTEMPTS)) + 1);
-        dl.updateNetworkQueueEntry(failureValues, networkQueueItemId);
+        try {
+            ContentValues failureValues = new ContentValues();
+            failureValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID, server_item_id);
+            failureValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FULLY_SYNCED, fully_synced);
+            failureValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ATTEMPTS, networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ATTEMPTS)) + 1);
+            dl.updateNetworkQueueEntry(failureValues, networkQueueItemId);
+        }catch (Exception e){
+
+        }
+
     }
 
     private void recordFailedMobileMoneyUpload(long server_item_id, long fully_synced, long transactionItemId) {
@@ -839,6 +886,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 postFailureMessage(handler, response, msg, 2, total, progress, null, "submitting training record");
                                 FirebaseCrash.report(new Exception(response.optString("errors", res.getString(R.string.item_sync_error)) + " : submitting training record failure response"));
                             } catch (JSONException | IOException e) {
+                                recordFailedUpload(0, 0, networkQueueItemId);
+                                postFailureMessage(handler, null, msg, 2, total, progress, null, "submitting training record");
                                 FirebaseCrash.report(new Exception("NetworkLayer: Error getting training record response", e));
                                 e.printStackTrace();
                             }
@@ -1594,7 +1643,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                             postFailureMessage(handler, response, msg, 2, total, progress, null, "submitting survey module");
                                             FirebaseCrash.report(new Exception(response.optString("errors", res.getString(R.string.item_sync_error)) + " : submitting survey module"));
                                         } catch (JSONException | IOException e) {
-
+                                            recordFailedUpload(0, 0, networkQueueItemId);
+                                            postFailureMessage(handler, null, msg, 2, total, progress, null, "submitting survey module");
                                             FirebaseCrash.report(new Exception("NetworkLayer: Error getting module posting failure response", e));
                                             e.printStackTrace();
                                         }
@@ -1619,6 +1669,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         Log.i("POST", "" + submission.toString());
                     }
                 } catch (JSONException e) {
+                    recordFailedUpload(0, 0, networkQueueItemId);
+                    postFailureMessage(handler, null, msg, 2, total, progress, null, "submitting survey module");
                     FirebaseCrash.report(new Exception("NetworkLayer: Error creating module post object", e));
                     e.printStackTrace();
                 }
@@ -1699,6 +1751,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                     postFailureMessage(handler, response, msg, 2, total, progress, null, "submitting farm polygon");
                                     FirebaseCrash.report(new Exception(response.optString("errors", res.getString(R.string.item_sync_error)) + " : submitting farm polygon"));
                                 } catch (JSONException | IOException e) {
+                                    recordFailedUpload(0, 0, networkQueueItemId);
+                                    postFailureMessage(handler, null, msg, 2, total, progress, null, "submitting farm polygon");
                                     FirebaseCrash.report(new Exception("NetworkLayer: Error getting farm polygon failure response", e));
                                     e.printStackTrace();
                                 }
@@ -1720,6 +1774,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     });
                 }
             } catch (JSONException e) {
+                recordFailedUpload(0, 0, networkQueueItemId);
+                postFailureMessage(handler, null, msg, 2, total, progress, null, "submitting farm polygon");
                 FirebaseCrash.report(new Exception("NetworkLayer: Error creating farm polygon post object", e));
                 e.printStackTrace();
             }
@@ -1783,6 +1839,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                     postFailureMessage(handler, response, msg, 2, total, progress, null, "submitting farm location");
                                     FirebaseCrash.report(new Exception(response.optString("errors", res.getString(R.string.item_sync_error)) + " : submitting farm location"));
                                 } catch (JSONException | IOException e) {
+                                    recordFailedUpload(0, 0, networkQueueItemId);
+                                    postFailureMessage(handler, null, msg, 2, total, progress, null, "submitting farm location");
                                     FirebaseCrash.report(new Exception("NetworkLayer: Error getting farm location failure response", e));
                                     e.printStackTrace();
                                 }
@@ -1804,6 +1862,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     });
                 }
             } catch (JSONException e) {
+                recordFailedUpload(0, 0, networkQueueItemId);
+                postFailureMessage(handler, null, msg, 2, total, progress, null, "submitting farm location");
                 FirebaseCrash.report(new Exception("NetworkLayer: Error creating farm location post object", e));
                 e.printStackTrace();
             }
@@ -1907,6 +1967,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                     postFailureMessage(handler, response, msg, 2, total, progress, null, "submitting farm location");
                                     FirebaseCrash.report(new Exception(response.optString("errors", res.getString(R.string.item_sync_error)) + " : submitting farm location"));
                                 } catch (JSONException | IOException e) {
+                                    recordFailedUpload(0, 0, networkQueueItemId);
+                                    postFailureMessage(handler, null, msg, 2, total, progress, null, "submitting farm location");
                                     FirebaseCrash.report(new Exception("NetworkLayer: Error getting phone numbers post failure response", e));
                                     e.printStackTrace();
                                 }
@@ -1928,6 +1990,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     });
                 }
             } catch (JSONException e) {
+                recordFailedUpload(0, 0, networkQueueItemId);
+                postFailureMessage(handler, null, msg, 2, total, progress, null, "submitting farm location");
                 FirebaseCrash.report(new Exception("NetworkLayer: Error creating phone numbers post object", e));
                 e.printStackTrace();
             }
@@ -2179,6 +2243,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                     postFailureMessage(handler, response, msg, 2, total, progress, null, "submitting survey module");
                                     FirebaseCrash.report(new Exception(response.optString("errors", res.getString(R.string.item_sync_error)) + " : submitting survey module"));
                                 } catch (JSONException | IOException e) {
+                                    recordFailedUpload(0, 0, networkQueueItemId);
+                                    postFailureMessage(handler, null, msg, 2, total, progress, null, "submitting survey module");
                                     FirebaseCrash.report(new Exception("NetworkLayer: Error getting module posting failure response", e));
                                     e.printStackTrace();
                                 }
@@ -2201,6 +2267,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                 Log.i("POST", "" + params.toString());
         } catch (JSONException e) {
+            recordFailedUpload(0, 0, networkQueueItemId);
+            postFailureMessage(handler, null, msg, 2, total, progress, null, "submitting survey module");
             FirebaseCrash.report(new Exception("NetworkLayer: Error creating module post object", e));
             e.printStackTrace();
         }
@@ -2414,6 +2482,9 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     });
                 }
             } catch (JSONException e) {
+                recordFailedUpload(0, 0, networkQueueItemId);
+                String failureMessage = res.getString(R.string.networking_error);
+                postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting farmer photo failed");
                 FirebaseCrash.report(new Exception("NetworkLayer: Error creating farm location post object", e));
                 e.printStackTrace();
             }

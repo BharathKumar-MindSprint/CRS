@@ -28,6 +28,18 @@ public class AuthRequestDTO {
     @Expose
     private String clientSecret;
 
+    @SerializedName("firebaseToken")
+    @Expose
+    private String firebaseToken;
+
+    public String getFirebaseToken() {
+        return firebaseToken;
+    }
+
+    public void setFirebaseToken(String firebaseToken) {
+        this.firebaseToken = firebaseToken;
+    }
+
     public String getLanguage() {
         return language;
     }
