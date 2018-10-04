@@ -573,7 +573,7 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
         long country_id = spinner_country.getSelectedItemId();
         if (country_id < 1) {
 
-            Toast.makeText(context, "Please fill the country", Toast.LENGTH_LONG).show();
+            Toast.makeText(context, res.getString(R.string.fill_country), Toast.LENGTH_LONG).show();
 
             return values;
         }
@@ -581,7 +581,7 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
         Spinner spinner_region = (Spinner) findViewById(R.id.spinner_region);
         long region_id = spinner_region.getSelectedItemId();
         if (region_id < 1) {
-            Toast.makeText(context, "Please fill the region", Toast.LENGTH_LONG).show();
+            Toast.makeText(context, res.getString(R.string.fill_region), Toast.LENGTH_LONG).show();
 
             return values;
         }
@@ -589,13 +589,13 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
         Spinner spinner_district = (Spinner) findViewById(R.id.spinner_district);
         long district_id = spinner_district.getSelectedItemId();
         if (district_id < 1) {
-            Toast.makeText(context, "Please fill the district", Toast.LENGTH_LONG).show();
+            Toast.makeText(context, res.getString(R.string.fill_district), Toast.LENGTH_LONG).show();
 
             return values;
         }
 
         if (poiLocation == null && !editMode) {
-            Toast.makeText(context, "Please fill the GPS position", Toast.LENGTH_LONG).show();
+            Toast.makeText(context, res.getString(R.string.fill_GPS_position), Toast.LENGTH_LONG).show();
 
             return values;
         }
@@ -699,7 +699,7 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
             @Override
             public void onClick(View v) {
                 if (poiName.getText().toString().trim().length() == 0) {
-                    Toast.makeText(context, "Please fill the name", Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, res.getString(R.string.fill_name), Toast.LENGTH_LONG).show();
                     return;
                 }
 

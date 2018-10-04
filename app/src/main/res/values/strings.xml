@@ -469,4 +469,9 @@
     <string name="updating_master_details">Downloading master details</string>
     <string name="authentication_failed">Authentication failed. Please try again</string>
     <string name="enumerator_empty">Please enter the valid enumerator Id</string>
+    <string name="fill_name">Please fill the name</string>
+    <string name="fill_country">Please fill the country</string>
+    <string name="fill_region">Please fill the region</string>
+    <string name="fill_district">Please fill the district</string>
+    <string name="fill_GPS_position">Please fill the GPS position</string>
 </resources>
