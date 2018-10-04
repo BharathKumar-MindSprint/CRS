@@ -58,22 +58,22 @@ import static com.google.android.gms.location.LocationServices.getFusedLocationP
 
 public class AddInfrastructureActivity extends BaseActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
-        // update
-        // for edit mode
-        public static long infrastructureID = 0;
-        public static boolean editMode = false;
-        private int selectedCountry = 0;
-        private int selectedRegion = 0;
-        private int selectedDistrict = 0;
-        private int selectedProduct = 0;
-        private int selectedFarmerGroup = 0;
+    // update
+    // for edit mode
+    public static long infrastructureID = 0;
+    public static boolean editMode = false;
+    private int selectedCountry = 0;
+    private int selectedRegion = 0;
+    private int selectedDistrict = 0;
+    private int selectedProduct = 0;
+    private int selectedFarmerGroup = 0;
 
-        // for GPS location system
-     //   private GoogleApiClient googleApiClient;
-        private EditText gpsField;
-        private ImageButton requestLocation;
-        private Location poiLocation;
-        private String recorded_lat, recorded_lng;
+    // for GPS location system
+    //   private GoogleApiClient googleApiClient;
+    private EditText gpsField;
+    private ImageButton requestLocation;
+    private Location poiLocation;
+    private String recorded_lat, recorded_lng;
 
     // colours for animation
     private static final int COLOUR_SCHOOL = 0xFF924c2e;
@@ -130,7 +130,7 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
     private boolean mResolvingError = false;
 
     private DynamicQuestions dynamicQuestions;
-    private Cursor subModules, questions,modules;
+    private Cursor subModules, questions, modules;
     private int moduleId;
     private int subModuleId;
 
@@ -183,7 +183,7 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
         dl = new DataLayer(res, context);
         poiName = (EditText) findViewById(R.id.poiName);
         subModulesSpinner = (Spinner) findViewById(R.id.spinner_submodules);
-        modulesSpinner=(Spinner) findViewById(R.id.spinner_modules);
+        modulesSpinner = (Spinner) findViewById(R.id.spinner_modules);
 
         requestLocation = (ImageButton) findViewById(R.id.requestLocation);
         bindGpsButton();
@@ -216,11 +216,11 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
             }
         } else {
             dynamicQuestions.hasAnswers = false;
-               if(moduleDTOS!=null && moduleDTOS.size()>0) {
-                   moduleId = moduleDTOS.get(0).getId();
-                   bindPoiSpinner(moduleId);
-                   subModuleId = subModuleDTOS.get(0).getId();
-               }
+            if (moduleDTOS != null && moduleDTOS.size() > 0) {
+                moduleId = moduleDTOS.get(0).getId();
+                bindPoiSpinner(moduleId);
+                subModuleId = subModuleDTOS.get(0).getId();
+            }
 
 //            swapPoiType(SCHOOL);
         }
@@ -232,8 +232,6 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
         bindSaveButton();
 
     }
-
-
 
 
     private void setupSubModuleQuestions() {
@@ -263,6 +261,7 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
             }
         }
     }
+
     @SuppressWarnings("ConstantConditions")
     private void initDynamicQuestions() {
         DynamicQuestions.getInstance().answerSet = new ArrayList<>();
@@ -302,12 +301,12 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
     }
 
     protected void onStart() {
-       // googleApiClient.connect();
+        // googleApiClient.connect();
         super.onStart();
     }
 
     protected void onStop() {
-      //  googleApiClient.disconnect();
+        //  googleApiClient.disconnect();
         super.onStop();
     }
 
@@ -329,7 +328,7 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
 
     @Override
     public void onConnected(Bundle connectionHint) {
-      //  doLocationUpdate();
+        //  doLocationUpdate();
     }
 
     private void showSettingsDialog(String msg) {
@@ -365,7 +364,7 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
                 } else {
                     if (ActivityCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED) {
                         // Permission Allowed
-                      //  doLocationUpdate();
+                        //  doLocationUpdate();
                     } else {
                         // Checkbox set to Never Ask Again
                         showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
@@ -377,7 +376,7 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
 
     @Override
     public void onConnectionSuspended(int i) {
-      //  googleApiClient.connect();
+        //  googleApiClient.connect();
     }
 
     @Override
@@ -388,8 +387,8 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
             try {
                 mResolvingError = true;
                 connectionResult.startResolutionForResult(this, REQUEST_RESOLVE_ERROR);
-            } catch(IntentSender.SendIntentException e) {
-              //  googleApiClient.connect();
+            } catch (IntentSender.SendIntentException e) {
+                //  googleApiClient.connect();
             }
         } else {
             GoogleApiAvailability.getInstance().showErrorDialogFragment(this, connectionResult.getErrorCode(), REQUEST_RESOLVE_ERROR);
@@ -573,22 +572,31 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
         Spinner spinner_country = (Spinner) findViewById(R.id.spinner_country);
         long country_id = spinner_country.getSelectedItemId();
         if (country_id < 1) {
+
+            Toast.makeText(context, "Please fill the country", Toast.LENGTH_LONG).show();
+
             return values;
         }
 
         Spinner spinner_region = (Spinner) findViewById(R.id.spinner_region);
         long region_id = spinner_region.getSelectedItemId();
         if (region_id < 1) {
+            Toast.makeText(context, "Please fill the region", Toast.LENGTH_LONG).show();
+
             return values;
         }
 
         Spinner spinner_district = (Spinner) findViewById(R.id.spinner_district);
         long district_id = spinner_district.getSelectedItemId();
         if (district_id < 1) {
+            Toast.makeText(context, "Please fill the district", Toast.LENGTH_LONG).show();
+
             return values;
         }
 
         if (poiLocation == null && !editMode) {
+            Toast.makeText(context, "Please fill the GPS position", Toast.LENGTH_LONG).show();
+
             return values;
         }
         if (poiLocation != null && !editMode) {
@@ -690,8 +698,8 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(poiName.getText().toString().trim().length() == 0){
-                    Toast.makeText(context, res.getString(R.string.Please_fill_all_fields), Toast.LENGTH_LONG).show();
+                if (poiName.getText().toString().trim().length() == 0) {
+                    Toast.makeText(context, "Please fill the name", Toast.LENGTH_LONG).show();
                     return;
                 }
 
@@ -708,14 +716,14 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
                             uploadId = existingItem.getString(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ID));
                         }
                     }
-                }else{
+                } else {
                     uploadId = UUID.randomUUID().toString();
 
                 }
-                if(uploadId != null)
+                if (uploadId != null)
                     dl.updateSIPSubModuleAnswers(dynamicQuestions.answerSet, subModuleId, 0, uploadId);
 
-                if (values.size() > 0 && uploadId != null &&  dynamicQuestions.requiredFieldsSIPAnswered(uploadId, moduleId, subModuleId)) {
+                if (values.size() > 0 && uploadId != null && dynamicQuestions.requiredFieldsSIPAnswered(uploadId, moduleId, subModuleId)) {
                     if (editMode) {
                         // edit POI call
                         if (dl.updateNetworkQueueEntry(values, infrastructureID) > 0) {
@@ -738,7 +746,7 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
                     }
 
                 } else {
-                    Toast.makeText(context, res.getString(R.string.Please_fill_all_fields), Toast.LENGTH_LONG).show();
+                   // Toast.makeText(context, res.getString(R.string.Please_fill_all_fields), Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -756,8 +764,8 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
 //            LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, locationListener);
 //        }
         try {
-          //  poiLocation = (Location) msg.obj;
-            poiLocation=location;
+            //  poiLocation = (Location) msg.obj;
+            poiLocation = location;
             gpsField = (EditText) findViewById(R.id.gpsPosition);
             String locationResult;
             if (poiLocation != null) {
@@ -791,7 +799,7 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
         @SuppressLint("HandlerLeak") Handler gpsHandler = new Handler() {
             @Override
             public void handleMessage(Message msg) {
-              //  setPoiGPS(msg);
+                //  setPoiGPS(msg);
             }
         };
 
@@ -827,7 +835,7 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
             @Override
             public void onClick(View view) {
                 requestLocation.setImageResource(R.drawable.ic_actionbutton_location_searching);
-               // getPoiGPS();
+                // getPoiGPS();
                 if (ActivityCompat.checkSelfPermission(AddInfrastructureActivity.this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(AddInfrastructureActivity.this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                     startLocationPermissionRequest();
                     return;
@@ -843,21 +851,19 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
                 new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                 PERMISSIONS_ACCESS_LOCATION);
     }
-    private void animateBetweenColours(int from, final int to, final ImageView layout)
-    {
+
+    private void animateBetweenColours(int from, final int to, final ImageView layout) {
         Integer colorFrom = from;
         Integer colorTo = to;
         ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
         colorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
 
             @Override
-            public void onAnimationUpdate(ValueAnimator animator)
-            {
-                Integer colour = (Integer)animator.getAnimatedValue();
+            public void onAnimationUpdate(ValueAnimator animator) {
+                Integer colour = (Integer) animator.getAnimatedValue();
                 layout.setBackgroundColor(colour);
-                if (colour==to)
-                {
-                    currentColour=to;
+                if (colour == to) {
+                    currentColour = to;
                 }
             }
 
@@ -866,12 +872,12 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
         colorAnimation.start();
     }
 
-    private ArrayList<ModuleDTO> getModules(){
+    private ArrayList<ModuleDTO> getModules() {
         modules = dl.getSIPModules();
-        moduleDTOS=new ArrayList<ModuleDTO>();
+        moduleDTOS = new ArrayList<ModuleDTO>();
         ModuleDTO moduleDTO;
         while (modules.moveToNext()) {
-            moduleDTO=new ModuleDTO();
+            moduleDTO = new ModuleDTO();
             moduleDTO.setId(modules.getInt(modules.getColumnIndex(OFISDBContract.SipGroupEntry.COLUMN_NAME_ID)));
             moduleDTO.setModuleName(modules.getString(modules.getColumnIndex(OFISDBContract.SipGroupEntry.COLUMN_NAME_NAME)));
             moduleDTOS.add(moduleDTO);
@@ -880,12 +886,12 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
     }
 
 
-    private ArrayList<SubModuleDTO> getSubModules(long moduleId){
+    private ArrayList<SubModuleDTO> getSubModules(long moduleId) {
         subModules = dl.getSipSubmodulesByModuleId(moduleId);
-        subModuleDTOS=new ArrayList<SubModuleDTO>();
+        subModuleDTOS = new ArrayList<SubModuleDTO>();
         SubModuleDTO subModuleDTO;
         while (subModules.moveToNext()) {
-            subModuleDTO=new SubModuleDTO();
+            subModuleDTO = new SubModuleDTO();
             subModuleDTO.setId(subModules.getInt(subModules.getColumnIndex(OFISDBContract.SipSubGroupEntry.COLUMN_NAME_ID)));
             subModuleDTO.setSipName(subModules.getString(subModules.getColumnIndex(OFISDBContract.SipSubGroupEntry.COLUMN_NAME_NAME)));
             subModuleDTOS.add(subModuleDTO);
@@ -893,7 +899,7 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
         return subModuleDTOS;
     }
 
-    private void getSubModuleQuestions(int subModuleId){
+    private void getSubModuleQuestions(int subModuleId) {
         if (subModuleId != 0) {
             questions = dl.getQuestionsSipBySubModuleId(subModuleId);
             dynamicQuestions.hasAnswers = false;
@@ -1022,10 +1028,10 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
     }
 
     private void bindModulesSpinner() {
-        moduleDTOS=getModules();
-        ArrayList<String> moduleNames= new ArrayList<String>();
-        if(moduleDTOS.size()>0){
-            for(ModuleDTO moduleDTO: moduleDTOS) {
+        moduleDTOS = getModules();
+        ArrayList<String> moduleNames = new ArrayList<String>();
+        if (moduleDTOS.size() > 0) {
+            for (ModuleDTO moduleDTO : moduleDTOS) {
                 moduleNames.add(moduleDTO.getModuleName());
             }
         }
@@ -1051,8 +1057,8 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
                        animateBetweenColours(currentColour,color,topSection);
 
                    }  */
-                    moduleId = moduleDTOS.get(position).getId();
-                    bindPoiSpinner(moduleId);
+                moduleId = moduleDTOS.get(position).getId();
+                bindPoiSpinner(moduleId);
 //                  subModuleId = subModuleDTOS.get(0).getId();
 //                    getSubModuleQuestions(subModuleId);
 //                }
@@ -1067,20 +1073,18 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
     }
 
     private void bindPoiSpinner(int moduleId) {
-        subModuleDTOS=getSubModules(moduleId);
-        ArrayList<String> subModuleNames= new ArrayList<String>();
-        if(subModuleDTOS.size()>0){
-            for(SubModuleDTO subModuleDTO: subModuleDTOS) {
+        subModuleDTOS = getSubModules(moduleId);
+        ArrayList<String> subModuleNames = new ArrayList<String>();
+        if (subModuleDTOS.size() > 0) {
+            for (SubModuleDTO subModuleDTO : subModuleDTOS) {
                 subModuleNames.add(subModuleDTO.getSipName());
             }
         }
 
 
-
         ArrayAdapter adapter = new ArrayAdapter<>(context, R.layout.add_sip_spinner_item, subModuleNames);
         adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         subModulesSpinner.setAdapter(adapter);
-
 
 
         subModulesSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -1124,7 +1128,7 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
                         Location location = task.getResult();
                         setPoiGPS(location);
                     } else {
-                        Toast.makeText(AddInfrastructureActivity.this,"No position logged",Toast.LENGTH_LONG).show();
+                        Toast.makeText(AddInfrastructureActivity.this, "No position logged", Toast.LENGTH_LONG).show();
                     }
                 }
             });
