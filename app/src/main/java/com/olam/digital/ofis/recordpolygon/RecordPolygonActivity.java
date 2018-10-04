@@ -175,6 +175,7 @@ public class RecordPolygonActivity extends Activity implements AdapterView.OnIte
         }
     };
     private LocationRequest locationRequest;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -293,7 +294,7 @@ public class RecordPolygonActivity extends Activity implements AdapterView.OnIte
         if (savedInstanceState == null) {
             Location location = null;
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-              //  location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                //  location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 //                if (location == null)
 //                    location = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
                 try {
@@ -317,7 +318,7 @@ public class RecordPolygonActivity extends Activity implements AdapterView.OnIte
                     e.printStackTrace();
                 }
 
-           }
+            }
 
             startPoint = null;
             destinationPoint = null;
@@ -715,6 +716,7 @@ public class RecordPolygonActivity extends Activity implements AdapterView.OnIte
             setLoggingStarted(false);
             setRecordingIcon(RecordingState.STOPPED);
             mStartLoggingButton.setText(R.string.start_logging_button_text);
+            pause.setText(R.string.pause_button_text);
             pause.setEnabled(false);
         }
     }
@@ -807,7 +809,7 @@ public class RecordPolygonActivity extends Activity implements AdapterView.OnIte
                     perms.put(permissions[i], grantResults[i]);
                 }
 
-                try{
+                try {
                     // Check for WRITE_EXTERNAL_STORAGE
                     Boolean storage = perms.get(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
                     if (!storage) {
@@ -820,7 +822,7 @@ public class RecordPolygonActivity extends Activity implements AdapterView.OnIte
                         // Permission Denied
                         Toast.makeText(this, R.string.location_permission_explanation, Toast.LENGTH_LONG).show();
                     }
-                }catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
@@ -892,7 +894,7 @@ public class RecordPolygonActivity extends Activity implements AdapterView.OnIte
         boolean result = false;
         for (final String provider : mLocationManager.getProviders(true)) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-             //   mLocationManager.requestLocationUpdates(provider, 0, 0, this);
+                //   mLocationManager.requestLocationUpdates(provider, 0, 0, this);
                 startUpdate();
                 result = true;
             }
@@ -1093,8 +1095,13 @@ public class RecordPolygonActivity extends Activity implements AdapterView.OnIte
             previousTrackname = getResources().getString(R.string.plot, position);
         areaInfo.setText("");
         if (mIsLoggingStarted) {
+            String currentPlotName = "";
+            try {
+                currentPlotName = spinnerArray[currentLoggingTrackSpinnerPosition];
+            } catch (Exception e) {
 
-            String currentPlotName = spinnerArray[currentLoggingTrackSpinnerPosition];
+            }
+
             if (!currentTrackname.equals(currentPlotName)) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setTitle(R.string.logging_progress_msg);
@@ -1467,9 +1474,9 @@ public class RecordPolygonActivity extends Activity implements AdapterView.OnIte
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            Toast.makeText(this,"Permission Required", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Permission Required", Toast.LENGTH_SHORT).show();
             return false;
-        }else {
+        } else {
 
             getFusedLocationProviderClient(this).requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper());
             return true;
