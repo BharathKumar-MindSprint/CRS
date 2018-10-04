@@ -50,6 +50,7 @@ class CustomListAdapter_Attendees extends SimpleCursorAdapter {
         super.bindView(view, context, cursor);
         try {
             ImageView farmerPhoto = (ImageView) view.findViewById(R.id.farmerListIcon);
+            farmerPhoto.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_no_photo));
             long id = cursor.getLong(cursor.getColumnIndex("_id"));
             int localColIndex = cursor.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_CREATED_LOCALLY);
 

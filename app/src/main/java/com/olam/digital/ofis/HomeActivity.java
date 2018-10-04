@@ -188,6 +188,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                 MY_PERMISSIONS_REQUEST);
 
                     }else {
+                        showProgress(true);
                         doAuthentication(userEnumerator);
                     }
 
