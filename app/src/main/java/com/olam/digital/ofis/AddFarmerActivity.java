@@ -1081,17 +1081,26 @@ public class AddFarmerActivity extends BaseActivity {
             case REQUEST_IMAGE_CAPTURE:
                 if (resultCode == RESULT_OK) {
                     setFullImageFromFilePath(getCurrentPhotoPath(), farmerPhoto, "portrait");
+                }else{
+                    farmerPhoto.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.empty_farmer_photo));
+                    setCurrentPhotoPath(null);
                 }
                 break;
             case REQUEST_IMAGE_GALLERY:
                 if (resultCode == RESULT_OK) {
                     setCapturedImageURI(imageReturnedIntent.getData());
                     setFullImageFromFilePath(getFilePathUri(context, getCapturedImageURI()), farmerPhoto, "portrait");
+                }else{
+                    farmerPhoto.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.empty_farmer_photo));
+                    setCurrentPhotoPath(null);
                 }
                 break;
             case REQUEST_IMAGE_CAPTURE_SIGNATURE:
                 if (resultCode == RESULT_OK) {
                     setFullImageFromFilePath(getCurrentSignaturePhotoPath(), farmerSignature, "signature");
+                }else{
+                    farmerSignature.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.empty_signature));
+                    setCurrentSignaturePhotoPath(null);
                 }
                 break;
             default:
