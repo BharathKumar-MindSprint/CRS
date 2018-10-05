@@ -89,13 +89,10 @@ public class SyncAllTask extends SyncTask {
                 }
 
             }
-        } else
-            if (op == SyncTaskOperationType.SYNC_SPINNERS) {
+        } else if (op == SyncTaskOperationType.SYNC_SPINNERS) {
             syncSpinners();
 
-        } else
-
-            if (op == SyncTaskOperationType.SYNC_MODULES) {
+        } else if (op == SyncTaskOperationType.SYNC_MODULES) {
             try {
                 syncModules();
             } catch (JSONException e) {
@@ -711,7 +708,7 @@ public class SyncAllTask extends SyncTask {
                 try {
                     JSONObject response = new JSONObject(postResponse.body().string());
                     if (postResponse.isSuccessful()) {
-
+                        Utilities.isAppAlive = true;
                         syncResultCount = syncResultCount + response.getInt("resultcount");
 
                         if (response.getString("status").equals("unchanged")) {

@@ -602,7 +602,9 @@ public class TrainingRecord extends BaseListActivity {
             completeTrainingRecord.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (trainingAttendees == null || trainingAttendees.getCount() == 0) {
+                    if (courseId == 0 || trainingModuleId == 0 || mCurrentPhotoPath == null) {
+                        Toast.makeText(context, res.getString(R.string.Training_select_course_module_first), Toast.LENGTH_LONG).show();
+                    }else if (trainingAttendees == null || trainingAttendees.getCount() == 0) {
                         Toast.makeText(context, res.getString(R.string.Add_one_attendee_to_continue), Toast.LENGTH_LONG).show();
                     } else {
                         addOrUpdateTrainingRecord();

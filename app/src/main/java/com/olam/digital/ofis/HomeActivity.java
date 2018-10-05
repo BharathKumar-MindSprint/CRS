@@ -823,7 +823,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             new AuthenticationHelper(this).setUserName(enumeratorID.getText().toString());
           //  new AppUtils().AppStatic="LogIn";
             // Do initial check for App
-            Utilities.isAppAlive=true;
+//            Utilities.isAppAlive=true;
             doInitialCheck();
         } else {
             Toast.makeText(HomeActivity.this,getString(R.string.authentication_failed),Toast.LENGTH_LONG).show();
@@ -877,7 +877,8 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 Toast.makeText(context, res.getString(R.string.upgrade_message), Toast.LENGTH_LONG).show();
                 Utilities.saveLongToSharedPrefs(context, "VERSION_NUM", BuildConfig.VERSION_CODE);
                 nl.syncData();
-            }
+
+            }else{Utilities.isAppAlive=true;}
         }
 
         Account mAccount = CreateSyncAcount();
