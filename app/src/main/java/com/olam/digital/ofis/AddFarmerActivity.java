@@ -73,6 +73,7 @@ public class AddFarmerActivity extends BaseActivity {
 
     ImageButton farmerPhotoActionButton;
     Button captureSignature;
+    EditText newPlaceName;
 
     private final static int REQUEST_IMAGE_CAPTURE = 1;
     private final static int REQUEST_IMAGE_GALLERY = 2;
@@ -252,6 +253,8 @@ public class AddFarmerActivity extends BaseActivity {
         selectedPlace = (int) placeSpinner.getSelectedItemId();
         selectedFarmerGroup = (int) farmerGroupSpinner.getSelectedItemId();
         selectedSection = (int) sectionSpinner.getSelectedItemId();
+
+
 
         savedInstanceState.putInt(CAPTURED_SELECTED_COUNTRY, selectedCountry);
         savedInstanceState.putInt(CAPTURED_SELECTED_REGION, selectedRegion);
@@ -563,7 +566,7 @@ public class AddFarmerActivity extends BaseActivity {
         Spinner districtSpinner = (Spinner) findViewById(R.id.spinner_district);
         long district_id = districtSpinner.getSelectedItemId();
 
-        EditText newPlaceName = (EditText) findViewById(R.id.newPlaceName);
+         newPlaceName = (EditText) findViewById(R.id.newPlaceName);
         Spinner spinner_place = (Spinner) findViewById(R.id.spinner_place);
         long place_id = spinner_place.getSelectedItemId();
         if (place_id == 0) {

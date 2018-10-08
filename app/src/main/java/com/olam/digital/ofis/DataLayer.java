@@ -1287,23 +1287,28 @@ public class DataLayer {
     }
 
     void bindDataDrivenSpinner(Spinner spinner, Cursor cursor, Context context, int placeholderTextResId, String textColumnName, boolean showAsWhite) {
-        if (textColumnName == null) {
-            textColumnName = "name";
-        }
-        String[] adapterCols = new String[]{textColumnName, "_id", "code", "dialling_code"};
-        MatrixCursor mc = new MatrixCursor(adapterCols);
-        mc.addRow(new String[]{res.getString(placeholderTextResId), "0", "", ""});
-        if (spinner.getId() == R.id.spinner_place && cursor.getCount() > 0) {
-            mc.addRow(new String[]{res.getString(R.string.new_place_name_placeholder), "-1", "", ""});
-        }
-        Cursor[] cursors = {mc, cursor};
-        Cursor output = new MergeCursor(cursors);
+        try {
+            if (textColumnName == null) {
+                textColumnName = "name";
+            }
+            String[] adapterCols = new String[]{textColumnName, "_id", "code", "dialling_code"};
+            MatrixCursor mc = new MatrixCursor(adapterCols);
+            mc.addRow(new String[]{res.getString(placeholderTextResId), "0", "", ""});
+            if (spinner.getId() == R.id.spinner_place && cursor.getCount() != 1) {
+                mc.addRow(new String[]{res.getString(R.string.new_place_name_placeholder), "-1", "", ""});
 
-        int[] adapterRowViews = new int[]{R.id.ofis_spinner_text_view};
-        int spinnerItemLayout = (showAsWhite) ? R.layout.spinner_item_white : R.layout.spinner_item;
-        SimpleCursorAdapter simpleCursorAdapter = new SimpleCursorAdapter(context, spinnerItemLayout, output, adapterCols, adapterRowViews, 0);
-        simpleCursorAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
-        spinner.setAdapter(simpleCursorAdapter);
+            }
+            Cursor[] cursors = {mc, cursor};
+            Cursor output = new MergeCursor(cursors);
+
+            int[] adapterRowViews = new int[]{R.id.ofis_spinner_text_view};
+            int spinnerItemLayout = (showAsWhite) ? R.layout.spinner_item_white : R.layout.spinner_item;
+            SimpleCursorAdapter simpleCursorAdapter = new SimpleCursorAdapter(context, spinnerItemLayout, output, adapterCols, adapterRowViews, 0);
+            simpleCursorAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+            spinner.setAdapter(simpleCursorAdapter);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     Cursor getSimpleSpinnerData(String table, Boolean getByRelationship, String getByColumnName, Integer getByColumnValue, @SuppressWarnings("SameParameterValue") Boolean orderByColumn, String orderByColumnName, String textColumnName) {
@@ -1458,6 +1463,8 @@ public class DataLayer {
         final Spinner districtSpinner = (Spinner) activity.findViewById(R.id.spinner_district);
         final Spinner placeSpinner = (Spinner) activity.findViewById(R.id.spinner_place);
 
+       final EditText newplace =(EditText) activity.findViewById(R.id.newPlaceName);
+
         Cursor countries = getSpinnerData(OFISDBContract.CountriesEntry.TABLE_NAME, true, OFISDBContract.CountriesEntry.COLUMN_NAME_ENUMERATOR_COUNTRY, 1, true, OFISDBContract.CountriesEntry.COLUMN_NAME_COUNTRY_NAME);
         bindDataDrivenSpinner(countrySpinner, countries, context, R.string.spinner_country_default, null, false);
 
@@ -1549,9 +1556,19 @@ public class DataLayer {
                         setSpinnerSelectionById(placeSelection, placeSpinner);
                     } else {
                         if (places.getCount() == 1) {
-                            placeSpinner.setSelection(2, false);
+                            try {
+                                placeSpinner.setSelection(2, false);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+
+
                         }
+
+
                     }
+
+
                 }
 
                 @Override
@@ -1565,10 +1582,14 @@ public class DataLayer {
                 placeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long id) {
-                        if (id == -1) {
-                            newPlaceName.setVisibility(View.VISIBLE);
-                        } else {
-                            newPlaceName.setVisibility(View.GONE);
+                        try {
+                            if (id == -1) {
+                                newPlaceName.setVisibility(View.VISIBLE);
+                            } else {
+                                newPlaceName.setVisibility(View.GONE);
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
                     }
 
