@@ -274,16 +274,16 @@ public class SyncAllTask extends SyncTask {
             try {
 
                 final JSONObject response = new JSONObject((String) values[1]);
-                String columnname = "message" + Utilities.getLocaleSuffix(res);
-                if (columnname.equalsIgnoreCase("message_en")) {
-                    columnname = "message";
+                String columnname = "responseMessage" + Utilities.getLocaleSuffix(res);
+                if (columnname.equalsIgnoreCase("responseMessage_en")) {
+                    columnname = "responseMessage";
                 }
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
                 builder.setMessage(response.optString(columnname, res.getString(R.string.app_updated_generic_message)))
                         .setCancelable(true)
                         .setPositiveButton(res.getString(R.string.app_update_ok), new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(response.optString("download_url", "https://ofis.olamgroup.com/downloads/app-release.apk")));
+                                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(response.optString("downloadUrl", "https://ofis.olamgroup.com/downloads/app-release.apk")));
                                 context.startActivity(intent);
                             }
                         })
@@ -296,7 +296,7 @@ public class SyncAllTask extends SyncTask {
                                     dialog.cancel();
                                     if (daysLeftToUpdate > 0) {
                                         pd = Utilities.openProgressDialog(context, res.getString(R.string.Retrieving_data), false);
-                                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_SPINNERS);
+                                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_MODULES);
                                     }
                                 }
                             }
@@ -345,8 +345,16 @@ public class SyncAllTask extends SyncTask {
         long timestampUpdated = System.currentTimeMillis();
         Utilities.saveLongToSharedPrefs(context, "version_checked", timestampUpdated);
         JSONObject inputArgs = new JSONObject();
+        inputArgs.put("enumerator_id",Long.valueOf(Utilities.getFromSharedPrefs(context)));
         inputArgs.put("current_version", BuildConfig.VERSION_NAME);
-        okHttpPost(context, "check_version", inputArgs, new Callback() {
+
+        String endPoint="";
+        // Old end point
+        //   endPoint="check_version";
+        // new end point
+        endPoint="ofismaster/master/checkAppVersion";
+
+        okHttpPost(context, endPoint, inputArgs, new Callback() {
             @Override
             public void onResponse(Call call, final Response postResponse) {
                 try {
@@ -371,7 +379,7 @@ public class SyncAllTask extends SyncTask {
 
                             publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.Retrieving_data));
 
-                            delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_SPINNERS);
+                            delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_MODULES);
 
                         }
                     } else {

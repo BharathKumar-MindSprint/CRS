@@ -105,6 +105,7 @@ abstract class SyncTask extends AsyncTask<SyncTaskOperationType, Object, String>
                 .header("unique-id", base64UniqueId)
                 .header("app-version", BuildConfig.VERSION_NAME)
                 .header("App-Id","1")
+                .header("Content-Type","application/json")
                 .header("Authorization", "Bearer " + new AuthenticationHelper(context).getAuthenticationDTO().getAccessToken())
                 .url(fullUrl);
 
