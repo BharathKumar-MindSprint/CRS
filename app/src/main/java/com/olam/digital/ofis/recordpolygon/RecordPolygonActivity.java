@@ -270,7 +270,16 @@ public class RecordPolygonActivity extends Activity implements AdapterView.OnIte
         mStartLoggingButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                handleStartStopLoggingButton();
+                if(pause.getText().toString().equalsIgnoreCase("resume")){
+
+
+                    Toast.makeText(RecordPolygonActivity.this, "Please remove pause state first", Toast.LENGTH_SHORT).show();
+
+                }
+                else{
+                    handleStartStopLoggingButton();
+                }
+
             }
         });
         pause.setOnClickListener(new View.OnClickListener() {
@@ -693,10 +702,15 @@ public class RecordPolygonActivity extends Activity implements AdapterView.OnIte
                                 bttnSave.setEnabled(true);
                                 setButtonsLoggingState(false);
                             } else {
-                                showToastMessage(getResources().getString(R.string.location_not_yet_logged));
-                                pause.setEnabled(false);
-                                bttnSave.setEnabled(false);
-                                setButtonsLoggingState(false);
+
+
+
+
+                                    showToastMessage(getResources().getString(R.string.location_not_yet_logged));
+                                    pause.setEnabled(false);
+                                    bttnSave.setEnabled(false);
+                                    setButtonsLoggingState(false);
+
                             }
                         }
                     } else {
@@ -750,17 +764,23 @@ public class RecordPolygonActivity extends Activity implements AdapterView.OnIte
     }
 
     private void setButtonsLoggingState(boolean aIsLoggingStarted) {
+
         if (aIsLoggingStarted) {
+
             mStartLoggingButton.setText(R.string.stop_logging_button_text);
             setLoggingStarted(true);
             setRecordingIcon(RecordingState.RECORDING);
             pause.setEnabled(true);
+
         } else {
+
+
             setLoggingStarted(false);
             setRecordingIcon(RecordingState.STOPPED);
             mStartLoggingButton.setText(R.string.start_logging_button_text);
             pause.setText(R.string.pause_button_text);
             pause.setEnabled(false);
+
         }
     }
 

@@ -48,10 +48,12 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
@@ -1361,6 +1363,7 @@ class DynamicQuestions {
         }
 
     }
+
     void renderSipDropDownQuestion(Cursor qCursor, boolean isRepeaterItem, LinearLayout parentLayout, final int parentQuestionId, final int repeaterItemPosition, Cursor repeaterAnswers, final Resources res) {
         final LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
         renderQuestion(qCursor, isRepeaterItem, (isRepeaterItem) ? parentLayout : questionWrapper);
@@ -2535,12 +2538,24 @@ class DynamicQuestions {
         String question1 = "", question2 = "";
         final String datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
         final int questionId = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
-        final String is_subset_questions_required = qCursor.getString(qCursor.getColumnIndex("is_subset_questions_required"));
-        //final String is_subset_questions_required = "true";
-        final String condition = qCursor.getString(qCursor.getColumnIndex("conditional_questions"));
-       // final String condition = "[{\"question\":\"125,109,162\",\"conditionCheck\":\"==NO\"},{\"question\":\"117,1173,119,67\",\"conditionCheck\":\"==YES\"}]";
-        int answerIdTemp = 0;
+        String[] coloumnames = qCursor.getColumnNames();
 
+        List<String> nameList = Arrays.asList(coloumnames);
+
+        String is_subset_questions_requiredduplicate = "";
+        String condition = "";
+        if (nameList.contains("is_subset_questions_required")) {
+            is_subset_questions_requiredduplicate = qCursor.getString(qCursor.getColumnIndex("is_subset_questions_required"));
+
+
+            //final String is_subset_questions_required = "true";
+            condition = qCursor.getString(qCursor.getColumnIndex("conditional_questions"));
+
+            // final String condition = "[{\"question\":\"125,109,162\",\"conditionCheck\":\"==NO\"},{\"question\":\"117,1173,119,67\",\"conditionCheck\":\"==YES\"}]";
+
+        }
+        int answerIdTemp = 0;
+        final String is_subset_questions_required = is_subset_questions_requiredduplicate;
         if (hasAnswers) {
             if (isRepeaterItem && repeaterAnswers != null && repeaterAnswers.getCount() > 0) {
                 answerIdTemp = repeaterAnswers.getInt(repeaterAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ID));
@@ -3253,9 +3268,9 @@ class DynamicQuestions {
                 boolean showMonth = display.getBoolean("show_month");
                 boolean showyear = display.getBoolean("show_year");
 
-                if ( (!showDay) && (!showMonth) && (showyear) ) {
+                if ((!showDay) && (!showMonth) && (showyear)) {
                     // just the year, show the fifty year dropdown instead
-                    final Spinner spinner = (Spinner) inflater.inflate(R.layout.module_spinner,(isRepeaterItem) ? parentLayout : questionWrapper,false);
+                    final Spinner spinner = (Spinner) inflater.inflate(R.layout.module_spinner, (isRepeaterItem) ? parentLayout : questionWrapper, false);
                     String[] since1950 = Utilities.since1950();
                     ArrayAdapter<String> adapter = new ArrayAdapter<>(context, R.layout.spinner_item, since1950);
                     adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
@@ -3283,7 +3298,7 @@ class DynamicQuestions {
                     spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                         @Override
                         public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
-                            saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, spinner.getSelectedItem().toString()+"-01-01");
+                            saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, spinner.getSelectedItem().toString() + "-01-01");
                         }
 
                         @Override
@@ -3349,8 +3364,7 @@ class DynamicQuestions {
         }
     }
 
-    public
-    void renderPhotoCheckboxQuestionForSIP(Cursor questions, Resources res, String packageName) {
+    public void renderPhotoCheckboxQuestionForSIP(Cursor questions, Resources res, String packageName) {
         LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, questionsSection, false);
         renderQuestion(questions, false, questionWrapper);
 
@@ -3481,7 +3495,7 @@ class DynamicQuestions {
                 final boolean zeroAcceptable = (display.has("zeroacceptable") && (display.getBoolean("zeroacceptable")));
 
                 if (hasAnswers) {
-                    int answer = (!questions.isNull(questions.getColumnIndex("answer_" + datatype))) ? questions.getInt(questions.getColumnIndex("answer_"+datatype)) : 0;
+                    int answer = (!questions.isNull(questions.getColumnIndex("answer_" + datatype))) ? questions.getInt(questions.getColumnIndex("answer_" + datatype)) : 0;
                     spinner.setSelection(answer);
                 }
 
@@ -3527,7 +3541,7 @@ class DynamicQuestions {
         if (repetitions > 0) {
             final int existingItemsSize = repeaterItemsWrapper.getChildCount();
             if (repeaterQuestions.getCount() > 0 && repetitions > existingItemsSize) {
-                for (int i = 1; i<=repetitions; i++) {
+                for (int i = 1; i <= repetitions; i++) {
 
                     if (i > existingItemsSize) {
                         LinearLayout repeateritemWrapper = (LinearLayout) inflater.inflate(R.layout.module_repeater_item, repeaterItemsWrapper, false);
@@ -3568,8 +3582,8 @@ class DynamicQuestions {
                 }
             } else {
                 if (repetitions > 0 && repetitions < existingItemsSize) {
-                    for (int j = existingItemsSize; j>repetitions; j--) {
-                        repeaterItemsWrapper.removeViewAt(j-1);
+                    for (int j = existingItemsSize; j > repetitions; j--) {
+                        repeaterItemsWrapper.removeViewAt(j - 1);
                         removeRepeaterAnswer(questionId, j);
                     }
                 }
@@ -3578,7 +3592,7 @@ class DynamicQuestions {
     }
 
 
-    public  boolean requiredFieldsSIPAnswered(String uploadId, int moduleId, int subModuleId) {
+    public boolean requiredFieldsSIPAnswered(String uploadId, int moduleId, int subModuleId) {
         Cursor completedAnswers = dl.getAllAnswersSipByUploadId(uploadId);
         Cursor requiredQuestions = dl.getSipRequiredQuestionIds(moduleId, subModuleId);
         Set<Integer> completedQuestionIds = new HashSet<>();
