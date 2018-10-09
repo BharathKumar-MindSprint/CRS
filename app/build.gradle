@@ -139,6 +139,9 @@ dependencies {
     compile 'com.google.firebase:firebase-core:11.8.0'
 
     compile 'com.github.MKergall:osmbonuspack:6.4'
+
+    // dexter runtime permissions
+    compile 'com.karumi:dexter:4.2.0'
 }
 
 apply plugin: 'com.google.gms.google-services'
