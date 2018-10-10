@@ -1557,7 +1557,7 @@ public class DataLayer {
                     } else {
                         if (places.getCount() == 1) {
                             try {
-                                placeSpinner.setSelection(2, false);
+                                placeSpinner.setSelection(1, false);
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
