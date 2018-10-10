@@ -1294,7 +1294,7 @@ public class DataLayer {
             String[] adapterCols = new String[]{textColumnName, "_id", "code", "dialling_code"};
             MatrixCursor mc = new MatrixCursor(adapterCols);
             mc.addRow(new String[]{res.getString(placeholderTextResId), "0", "", ""});
-            if (spinner.getId() == R.id.spinner_place && cursor.getCount() > 0) {
+            if (spinner.getId() == R.id.spinner_place) {
                 mc.addRow(new String[]{res.getString(R.string.new_place_name_placeholder), "-1", "", ""});
 
             }
@@ -1756,7 +1756,7 @@ public class DataLayer {
                 OFISDBContract.FarmerGroupsEntry.COLUMN_NAME_ID + whereClause + " order by " + farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME + " ASC";
 
         // code hardcorded for get some farmers - Remove at last minute
-       sql="SELECT farmers.id AS _id, farmers.name, farmers.photo, farmers.olam_farmer_id, farmers.created_on_this_phone FROM farmers";// LIMIT 5";
+//       sql="SELECT farmers.id AS _id, farmers.name, farmers.photo, farmers.olam_farmer_id, farmers.created_on_this_phone FROM farmers";// LIMIT 5";
         return db.rawQuery(sql, null);
     }
 

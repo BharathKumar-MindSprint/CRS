@@ -730,7 +730,14 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
                 if (uploadId != null)
                     dl.updateSIPSubModuleAnswers(dynamicQuestions.answerSet, subModuleId, 0, uploadId);
 
-                if (values.size() > 0 && uploadId != null && dynamicQuestions.requiredFieldsSIPAnswered(uploadId, moduleId, subModuleId)) {
+                // check below also
+             //
+                /*if(!dynamicQuestions.requiredFieldsSIPAnswered(uploadId, moduleId, subModuleId)){
+                    Toast.makeText(AddInfrastructureActivity.this,getString(R.string.please_answer_all_questions),Toast.LENGTH_LONG).show();
+                    return;
+                }*/
+
+                if (values.size() > 0 && uploadId != null ) {
                     if (editMode) {
                         // edit POI call
                         if (dl.updateNetworkQueueEntry(values, infrastructureID) > 0) {
