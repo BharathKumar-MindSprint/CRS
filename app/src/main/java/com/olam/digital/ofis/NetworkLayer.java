@@ -422,11 +422,25 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         RequestBody requestBody;
 
         final Message msg = handler.obtainMessage();
-        String endpoint = "requesthelp";
+        String endpoint = "ofismaster/master/requestHelp";
 
-        bodyBuilder.addFormDataPart("UserName", helpName);
-        bodyBuilder.addFormDataPart("FaultDescription", helpDescription);
+        bodyBuilder.addFormDataPart("username", helpName);
+        bodyBuilder.addFormDataPart("faultDescription", helpDescription);
         bodyBuilder.addFormDataPart("SQLiteDb", dbFile.getName(), file);
+        bodyBuilder.addFormDataPart("enumeratorId", Utilities.getFromSharedPrefs(context));
+        bodyBuilder.addFormDataPart("appVersion", BuildConfig.VERSION_NAME);
+        //bodyBuilder.addFormDataPart("zippedDebugLog", dbFile.getName(), file);
+        // Get length of file in bytes
+        long fileSizeInBytes = dbFile.length();
+// Convert the bytes to Kilobytes (1 KB = 1024 Bytes)
+        long fileSizeInKB = fileSizeInBytes / 1024;
+// Convert the KB to MegaBytes (1 MB = 1024 KBytes)
+        long fileSizeInMB = fileSizeInKB / 1024;
+
+
+
+
+
 
         requestBody = bodyBuilder.build();
 
