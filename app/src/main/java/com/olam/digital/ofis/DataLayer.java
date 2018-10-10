@@ -1294,7 +1294,7 @@ public class DataLayer {
             String[] adapterCols = new String[]{textColumnName, "_id", "code", "dialling_code"};
             MatrixCursor mc = new MatrixCursor(adapterCols);
             mc.addRow(new String[]{res.getString(placeholderTextResId), "0", "", ""});
-            if (spinner.getId() == R.id.spinner_place && cursor.getCount() != 1) {
+            if (spinner.getId() == R.id.spinner_place && cursor.getCount() > 0) {
                 mc.addRow(new String[]{res.getString(R.string.new_place_name_placeholder), "-1", "", ""});
 
             }
