@@ -2545,6 +2545,9 @@ class DynamicQuestions {
         String is_subset_questions_requiredduplicate = "";
         String condition = "";
         if (nameList.contains("is_subset_questions_required")) {
+
+
+
             is_subset_questions_requiredduplicate = qCursor.getString(qCursor.getColumnIndex("is_subset_questions_required"));
 
 
@@ -2555,6 +2558,19 @@ class DynamicQuestions {
 
         }
         int answerIdTemp = 0;
+
+        try {
+            if(is_subset_questions_requiredduplicate!=null){
+
+
+            }
+            else if(is_subset_questions_requiredduplicate==null){
+
+                is_subset_questions_requiredduplicate="";
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         final String is_subset_questions_required = is_subset_questions_requiredduplicate;
         if (hasAnswers) {
             if (isRepeaterItem && repeaterAnswers != null && repeaterAnswers.getCount() > 0) {
@@ -2631,55 +2647,59 @@ class DynamicQuestions {
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (id > 0) {
-                    //renderRepeaterItemstest(109, 2,  (isRepeaterItem) ? parentLayout : questionWrapper, 183488, "BR-0710-SM41-0003", 6, res);
-                    // renderRepeaterItemstest(109, 2, questionWrapper, 183488, "BR-0710-SM41-0003", 6, resources);
+                try {
+                    if (id > 0) {
+                        //renderRepeaterItemstest(109, 2,  (isRepeaterItem) ? parentLayout : questionWrapper, 183488, "BR-0710-SM41-0003", 6, res);
+                        // renderRepeaterItemstest(109, 2, questionWrapper, 183488, "BR-0710-SM41-0003", 6, resources);
 
-                    //renderQuestion(qCursor, isRepeaterItem, (isRepeaterItem) ? parentLayout : questionWrapper);
-
-
-                    if (is_subset_questions_required.equalsIgnoreCase("true")) {
-
-                        try {
+                        //renderQuestion(qCursor, isRepeaterItem, (isRepeaterItem) ? parentLayout : questionWrapper);
 
 
-                            if (id == 1) {
+                        if (is_subset_questions_required.equalsIgnoreCase("true")) {
 
-                                //renderRepeaterItemstest(Integer.parseInt(question1), 2, questionWrapper, 183488, "BR-0710-SM41-0003", 6, resources);
-
-                                //Cursor repeaterQuestions = dl.getConditionallogic(questionId);
-                                // Cursor repeaterQuestions=    dl.getQuestionsAndAnswersBySubModuleId(16, 186862, 4);
+                            try {
 
 
-                                // renderRepeaterItemstest(question1, 3, questionWrapper, 183488, "BR-0710-SM41-0003", 6, resources);
-                                dl.deleteDataYesOrONSelect(questionId, Utilities.subModuleId);
+                                if (id == 1) {
+
+                                    //renderRepeaterItemstest(Integer.parseInt(question1), 2, questionWrapper, 183488, "BR-0710-SM41-0003", 6, resources);
+
+                                    //Cursor repeaterQuestions = dl.getConditionallogic(questionId);
+                                    // Cursor repeaterQuestions=    dl.getQuestionsAndAnswersBySubModuleId(16, 186862, 4);
 
 
-                                renderRepeaterItemstest(yesQuestion, questionId, questionWrapper, Utilities.farmerId, Utilities.olamFarmerId, Utilities.farmerModuleId, resources, true);
+                                    // renderRepeaterItemstest(question1, 3, questionWrapper, 183488, "BR-0710-SM41-0003", 6, resources);
+                                    dl.deleteDataYesOrONSelect(questionId, Utilities.subModuleId);
 
-                                //renderYesNoQuestion(repeaterQuestions, false, questionWrapper, 0, -1, null, res);
+
+                                    renderRepeaterItemstest(yesQuestion, questionId, questionWrapper, Utilities.farmerId, Utilities.olamFarmerId, Utilities.farmerModuleId, resources, true);
+
+                                    //renderYesNoQuestion(repeaterQuestions, false, questionWrapper, 0, -1, null, res);
 
 
-                            } else if (id == 2) {
+                                } else if (id == 2) {
 
-                                dl.deleteDataYesOrONSelect(questionId, Utilities.subModuleId);
+                                    dl.deleteDataYesOrONSelect(questionId, Utilities.subModuleId);
 
-                                renderRepeaterItemstest(noqQuestion, questionId, questionWrapper, Utilities.farmerId, Utilities.olamFarmerId, Utilities.farmerModuleId, resources, true);
+                                    renderRepeaterItemstest(noqQuestion, questionId, questionWrapper, Utilities.farmerId, Utilities.olamFarmerId, Utilities.farmerModuleId, resources, true);
 
+                                }
+
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
                             }
 
-
-                        } catch (Exception e) {
-                            e.printStackTrace();
                         }
+                        Cursor selecteditem = (Cursor) spinner.getSelectedItem();
+                        saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, selecteditem.getString(selecteditem.getColumnIndex("code")));
+                    } else {
+                        removeAnswerEntry(questionId, answerId);
+                        renderRepeaterItemstest(null, 2, questionWrapper, Utilities.farmerId, Utilities.olamFarmerId, Utilities.farmerModuleId, resources, false);
 
                     }
-                    Cursor selecteditem = (Cursor) spinner.getSelectedItem();
-                    saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, selecteditem.getString(selecteditem.getColumnIndex("code")));
-                } else {
-                    removeAnswerEntry(questionId, answerId);
-                    renderRepeaterItemstest(null, 2, questionWrapper, Utilities.farmerId, Utilities.olamFarmerId, Utilities.farmerModuleId, resources, false);
-
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
 
