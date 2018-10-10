@@ -553,6 +553,9 @@ public class ViewFarmerActivity extends BaseListActivity implements GoogleApiCli
                 .setNegativeButton(res.getString(R.string.no), new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 dialog.cancel();
+                                if(pd!=null && pd.isShowing()){
+                                    pd.dismiss();
+                                }
                             }
                         }
                 );
