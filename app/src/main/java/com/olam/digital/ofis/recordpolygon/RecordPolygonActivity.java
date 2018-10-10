@@ -49,6 +49,13 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.gson.Gson;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.PermissionDeniedResponse;
+import com.karumi.dexter.listener.PermissionGrantedResponse;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.single.PermissionListener;
+import com.olam.digital.ofis.BuildConfig;
 import com.olam.digital.ofis.DataLayer;
 import com.olam.digital.ofis.OFISDBContract;
 import com.olam.digital.ofis.R;
@@ -175,7 +182,8 @@ public class RecordPolygonActivity extends Activity implements AdapterView.OnIte
         }
     };
     private LocationRequest locationRequest;
-
+    // boolean flag to toggle the ui
+//    private Boolean mRequestingLocationUpdates;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -192,6 +200,30 @@ public class RecordPolygonActivity extends Activity implements AdapterView.OnIte
 
         mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
+
+        Dexter.withActivity(this)
+                .withPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+                .withListener(new PermissionListener() {
+                    @Override
+                    public void onPermissionGranted(PermissionGrantedResponse response) {
+//                        mRequestingLocationUpdates = true;
+                        startLocationUpdates();
+                    }
+
+                    @Override
+                    public void onPermissionDenied(PermissionDeniedResponse response) {
+                        if (response.isPermanentlyDenied()) {
+                            // open device settings when the permission is
+                            // denied permanently
+                            openSettings();
+                        }
+                    }
+
+                    @Override
+                    public void onPermissionRationaleShouldBeShown(PermissionRequest permission, PermissionToken token) {
+                        token.continuePermissionRequest();
+                    }
+                }).check();
         if (!isGPSProviderEnabled()) {
             showTurnOnGPSDialog();
         } else {
@@ -415,6 +447,17 @@ public class RecordPolygonActivity extends Activity implements AdapterView.OnIte
             checkPermissions();
         }
         initializeLoggingVariables();
+    }
+
+    private void openSettings() {
+        Intent intent = new Intent();
+        intent.setAction(
+                Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+        Uri uri = Uri.fromParts("package",
+                BuildConfig.APPLICATION_ID, null);
+        intent.setData(uri);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 
 
@@ -1125,7 +1168,7 @@ public class RecordPolygonActivity extends Activity implements AdapterView.OnIte
             if (!currentTrackname.equals(currentPlotName)) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setTitle(R.string.logging_progress_msg);
-                builder.setMessage(R.string.cancel_logging_question + currentPlotName + "?");
+                builder.setMessage(getResources().getString(R.string.cancel_logging_question) +" "+ currentPlotName + "?");
                 builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {

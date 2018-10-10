@@ -80,9 +80,9 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
     private static String AccessToken;
     private static final String BASE_URL = BuildConfig.HOST;
     private static final OkHttpClient okHttpClient = new OkHttpClient.Builder()
-            .connectTimeout(180, TimeUnit.SECONDS)
-            .readTimeout(180, TimeUnit.SECONDS)
-            .writeTimeout(180, TimeUnit.SECONDS)
+            .connectTimeout(10, TimeUnit.SECONDS)
+            .readTimeout(30, TimeUnit.SECONDS)
+            .writeTimeout(30, TimeUnit.SECONDS)
             .sslSocketFactory(getSSLSocketFactory())
             .build();
     private static final MediaType JSONBody = MediaType.parse("application/json; charset=utf-8");
@@ -2376,7 +2376,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         syncAllTask.setProgressDialog(pd);
         syncAllTask.setResources(res);
         syncAllTask.setDelegate(this);
-        syncAllTask.execute(SyncTaskOperationType.SYNC_MODULES);
+        syncAllTask.execute(SyncTaskOperationType.CHECK_VERSION);
 
     }
 

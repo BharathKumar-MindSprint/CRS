@@ -336,11 +336,11 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 public void handleMessage(Message msg) {
                     if (msg.what == 4) {
                         final JSONObject response = (JSONObject) msg.obj;
-                        String columnname = "message" + Utilities.getLocaleSuffix(res);
-                        if (columnname.equalsIgnoreCase("message_en")) {
-                            columnname = "message";
+                        String columnname = "responseMessage" + Utilities.getLocaleSuffix(res);
+                        if (columnname.equalsIgnoreCase("responseMessage_en")) {
+                            columnname = "responseMessage";
                         }
-                        if (response.has("download_url")) {
+                        if (response.has("downloadUrl")) {
                             AlertDialog.Builder builder = new AlertDialog.Builder(context);
                             builder.setCancelable(true);
                             builder.setNegativeButton(res.getString(R.string.app_update_cancel), new DialogInterface.OnClickListener() {
@@ -352,7 +352,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                 builder.setMessage(response.optString(columnname, res.getString(R.string.app_updated_generic_message)))
                                         .setPositiveButton(res.getString(R.string.app_update_ok), new DialogInterface.OnClickListener() {
                                             public void onClick(DialogInterface dialog, int id) {
-                                                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(response.optString("download_url", "https://ofisstaging.usertestingarea.com/downloads/app-debug.apk")));
+                                                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(response.optString("downloadUrl", "https://ofisstaging.usertestingarea.com/downloads/app-debug.apk")));
                                                 startActivity(intent);
                                             }
                                         })

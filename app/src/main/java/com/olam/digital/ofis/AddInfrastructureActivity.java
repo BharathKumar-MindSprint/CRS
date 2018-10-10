@@ -21,6 +21,7 @@ import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.view.LayoutInflater;
@@ -37,13 +38,30 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResolvableApiException;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResponse;
+import com.google.android.gms.location.LocationSettingsStatusCodes;
+import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.crash.FirebaseCrash;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.PermissionDeniedResponse;
+import com.karumi.dexter.listener.PermissionGrantedResponse;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.single.PermissionListener;
 import com.olam.digital.ofis.model.ModuleDTO;
 import com.olam.digital.ofis.model.SubModuleDTO;
 import com.olam.digital.ofis.R;
@@ -74,6 +92,20 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
     private ImageButton requestLocation;
     private Location poiLocation;
     private String recorded_lat, recorded_lng;
+
+
+    // location last updated time
+    private String mLastUpdateTime;
+
+    // location updates interval - 2sec
+    private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 2000;
+
+    // fastest updates interval - 1 sec
+    // location updates will be received if another app is requesting the locations
+    // than your app can handle
+    private static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = 1000;
+
+    private static final int REQUEST_CHECK_SETTINGS = 100;
 
     // colours for animation
     private static final int COLOUR_SCHOOL = 0xFF924c2e;
@@ -137,6 +169,16 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
     ArrayList<SubModuleDTO> subModuleDTOS;
     ArrayList<ModuleDTO> moduleDTOS;
 
+    // bunch of location related apis
+    private FusedLocationProviderClient mFusedLocationClient;
+    private SettingsClient mSettingsClient;
+    private LocationRequest mLocationRequest;
+    private LocationSettingsRequest mLocationSettingsRequest;
+    private LocationCallback mLocationCallback;
+    private Location mCurrentLocation;
+
+    // boolean flag to toggle the ui
+    private Boolean mRequestingLocationUpdates;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -148,38 +190,32 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
         context = this;
         res = getResources();
 
-//        if (GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context) == ConnectionResult.SUCCESS && googleApiClient == null) {
-//            googleApiClient = new GoogleApiClient.Builder(this)
-//                    .addConnectionCallbacks(this)
-//                    .addOnConnectionFailedListener(this)
-//                    .addApi(LocationServices.API)
-//                    .build();
-//        }
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        mSettingsClient = LocationServices.getSettingsClient(this);
 
-        // generate hashtable items
-//        String localeSuffix = Utilities.getLocaleSuffix(res);
-//        poitypes.put("School"+localeSuffix, res.getString(R.string.poitype_school));
-//        poitypes.put("Health centre"+localeSuffix, res.getString(R.string.poitype_healthcentre));
-//        poitypes.put("Clean water supply"+localeSuffix, res.getString(R.string.poitype_cleanwatersupply));
-//        poitypes.put("Buying centre"+localeSuffix, res.getString(R.string.poitype_buyingcentre));
-//
-//        genders.put("Male"+localeSuffix, res.getString(R.string.gender_school_male));
-//        genders.put("Female"+localeSuffix, res.getString(R.string.gender_school_female));
-//        genders.put("Coeducational"+localeSuffix, res.getString(R.string.gender_school_coeducational));
-//
-//        educationlevels.put("Nursery"+localeSuffix, res.getString(R.string.educationlevel_nursery));
-//        educationlevels.put("Primary"+localeSuffix, res.getString(R.string.educationlevel_primary));
-//        educationlevels.put("Junior Secondary"+localeSuffix, res.getString(R.string.educationlevel_juniorsecondary));
-//        educationlevels.put("Senior Secondary"+localeSuffix, res.getString(R.string.educationlevel_seniorsecondary));
-//        educationlevels.put("Graduate"+localeSuffix, res.getString(R.string.educationlevel_graduate));
-//
-//        cleanwatertypes.put("Borehole"+localeSuffix, res.getString(R.string.cleanwatertype_borehole));
-//        cleanwatertypes.put("Well"+localeSuffix, res.getString(R.string.cleanwatertype_well));
-//        cleanwatertypes.put("Pipe"+localeSuffix, res.getString(R.string.cleanwatertype_pipe));
-//        cleanwatertypes.put("Spring"+localeSuffix, res.getString(R.string.cleanwatertype_spring));
-//
-//
-//
+        mLocationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                super.onLocationResult(locationResult);
+                // location is received
+                mCurrentLocation = locationResult.getLastLocation();
+//                mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
+
+//                updateLocationUI();
+            }
+        };
+
+        mRequestingLocationUpdates = false;
+
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(UPDATE_INTERVAL_IN_MILLISECONDS);
+        mLocationRequest.setFastestInterval(FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
+        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder();
+        builder.addLocationRequest(mLocationRequest);
+        mLocationSettingsRequest = builder.build();
+
         dl = new DataLayer(res, context);
         poiName = (EditText) findViewById(R.id.poiName);
         subModulesSpinner = (Spinner) findViewById(R.id.spinner_submodules);
@@ -189,6 +225,13 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
         bindGpsButton();
 
         if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey("is_requesting_updates")) {
+                mRequestingLocationUpdates = savedInstanceState.getBoolean("is_requesting_updates");
+            }
+
+            if (savedInstanceState.containsKey("last_known_location")) {
+                mCurrentLocation = savedInstanceState.getParcelable("last_known_location");
+            }
             recorded_lat = savedInstanceState.getString(CURRENT_LAT);
             recorded_lng = savedInstanceState.getString(CURRENT_LNG);
         }
@@ -221,16 +264,13 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
                 bindPoiSpinner(moduleId);
                 subModuleId = subModuleDTOS.get(0).getId();
             }
-
-//            swapPoiType(SCHOOL);
         }
 
 
         int selectedPlace = 0;
         dl.createGeographyHierarchySpinners(this, context, null, selectedCountry, selectedRegion, selectedDistrict, selectedPlace, null);
-
         bindSaveButton();
-
+//        openSettings();
     }
 
 
@@ -284,8 +324,20 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
         return Calendar.getInstance().get(Calendar.YEAR);
     }
 
+    private void openSettings() {
+        Intent intent = new Intent();
+        intent.setAction(
+                Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+        Uri uri = Uri.fromParts("package",
+                BuildConfig.APPLICATION_ID, null);
+        intent.setData(uri);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+    }
     @Override
     public void onSaveInstanceState(@NonNull Bundle savedInstanceState) {
+        savedInstanceState.putBoolean("is_requesting_updates", mRequestingLocationUpdates);
+        savedInstanceState.putParcelable("last_known_location", mCurrentLocation);
         if (poiLocation != null) {
             recorded_lat = String.valueOf(poiLocation.getLatitude());
             recorded_lng = String.valueOf(poiLocation.getLongitude());
@@ -307,6 +359,10 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
 
     protected void onStop() {
         //  googleApiClient.disconnect();
+        if (mRequestingLocationUpdates) {
+            // pausing location updates
+            stopLocationUpdates();
+        }
         super.onStop();
     }
 
@@ -415,6 +471,13 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
     @Override
     protected void onResume() {
         super.onResume();
+        // Resuming location updates depending on button state and
+        // allowed permissions
+        if (mRequestingLocationUpdates && checkPermissions()) {
+            startLocationUpdates();
+        }
+        if(mCurrentLocation != null)
+            setPoiGPS(mCurrentLocation);
 
         new CountDownTimer(100, 100) {
 
@@ -427,6 +490,11 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
             }
         }.start();
 
+    }
+    private boolean checkPermissions() {
+        int permissionState = ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION);
+        return permissionState == PackageManager.PERMISSION_GRANTED;
     }
 
     @SuppressLint("SetTextI18n")
@@ -603,41 +671,6 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
             recorded_lat = String.valueOf(poiLocation.getLatitude());
             recorded_lng = String.valueOf(poiLocation.getLongitude());
         }
-/*
-        int olamFundedValue = 0;
-        if (currentTypeOfPOI != BUYING_CENTRE) {
-            Switch olamFunded = (Switch) findViewById(R.id.olamFunded);
-            olamFundedValue = (olamFunded.isChecked()) ? 1 : 0;
-        }
-
-        switch (currentTypeOfPOI) {
-            case SCHOOL:
-                if (String.valueOf(poiName.getText()).equals("")) {
-                    return values;
-                }
-                school_editTextCapacity = (EditText) findViewById(R.id.editText_capacity);
-                if (String.valueOf(school_editTextCapacity.getText()).equals("")) {
-                    return values;
-                }
-                school_editTextNumberOfClassrooms = (EditText) findViewById(R.id.editText_numberOfClassRooms);
-                if (String.valueOf(school_editTextNumberOfClassrooms.getText()).equals("")) {
-                    return values;
-                }
-                break;
-            case BUYING_CENTRE:
-                Spinner spinner_farmergroup = (Spinner) findViewById(R.id.spinner_farmergroup);
-                long farmergroup_id = spinner_farmergroup.getSelectedItemId();
-                if (farmergroup_id < 1) {
-                    return values;
-                }
-                break;
-            case HEALTH_CENTRE:
-                if (String.valueOf(poiName.getText()).equals("")) {
-                    return values;
-                }
-                break;
-            default:
-        }*/
 
         try {
             // common
@@ -654,32 +687,6 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
             values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_COUNTRY_ID, country_id);
             values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_REGION_ID, region_id);
             values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_DISTRICT_ID, district_id);
-/*
-            switch (currentTypeOfPOI) {
-                case SCHOOL:
-
-                    values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CAPACITY, String.valueOf(school_editTextCapacity.getText()));
-                    values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_NUM_CLASSROOMS, String.valueOf(school_editTextNumberOfClassrooms.getText()));
-                    values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_GENDER_MIX, Utilities.getDefaultTextByLocalValue(genders, String.valueOf(school_genderspinner.getSelectedItem()), res));
-                    values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SCHOOL_TYPE, Utilities.getDefaultTextByLocalValue(educationlevels, String.valueOf(school_educationlevelss.getSelectedItem()), res));
-                    values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_YEAR_OPENED, Integer.valueOf(school_yearOpened.getSelectedItem().toString()));
-                    values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FUNDED, olamFundedValue);
-                    break;
-                case BUYING_CENTRE:
-                    values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PRODUCT_ID, buyingCentreSpinner_product.getSelectedItemId());
-                    values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMERGROUP_ID, buyingCentreSpinner_farmergroup.getSelectedItemId());
-                    break;
-                case HEALTH_CENTRE:
-                    values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_YEAR_OPENED, Integer.valueOf(healthCentre_yearOpened.getSelectedItem().toString()));
-                    values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FUNDED, olamFundedValue);
-                    break;
-                case CLEAN_WATER_SUPPLY:
-                    values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CWS_TYPE, Utilities.getDefaultTextByLocalValue(cleanwatertypes, String.valueOf(spinner_typeOfCleanWater.getSelectedItem()), res));
-                    values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_YEAR_OPENED, Integer.valueOf(cleanWater_yearOpened.getSelectedItem().toString()));
-                    values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FUNDED, olamFundedValue);
-                    break;
-                default:
-            }*/
 
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
             values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT, timestamp.toString());
@@ -718,8 +725,8 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
                     }
                 } else {
                     uploadId = UUID.randomUUID().toString();
-
                 }
+
                 if (uploadId != null)
                     dl.updateSIPSubModuleAnswers(dynamicQuestions.answerSet, subModuleId, 0, uploadId);
 
@@ -840,6 +847,11 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
                     startLocationPermissionRequest();
                     return;
                 }
+                pd = new ProgressDialog(AddInfrastructureActivity.this);
+                pd.setCancelable(false);
+                pd.setIndeterminate(false);
+                pd.setMessage("Location fetching...");
+                pd.show();
                 getDeviceLocation();
             }
         });
@@ -1116,25 +1128,124 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
         }
         super.onDestroy();
     }
+    public void stopLocationUpdates() {
+        // Removing location updates
+        mFusedLocationClient
+                .removeLocationUpdates(mLocationCallback)
+                .addOnCompleteListener(this, new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+//                        Toast.makeText(getApplicationContext(), "Location updates stopped!", Toast.LENGTH_SHORT).show();
+//                        toggleButtons();
+                    }
+                });
+    }
 
+    /**
+     * Starting location updates
+     * Check whether location settings are satisfied and then
+     * location updates will be requested
+     */
+    private void startLocationUpdates() {
+        mSettingsClient
+                .checkLocationSettings(mLocationSettingsRequest)
+                .addOnSuccessListener(this, new OnSuccessListener<LocationSettingsResponse>() {
+                    @SuppressLint("MissingPermission")
+                    @Override
+                    public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
+//                        Log.i(TAG, "All location settings are satisfied.");
+
+//                        Toast.makeText(getApplicationContext(), "Started location updates!", Toast.LENGTH_SHORT).show();
+
+                        //noinspection MissingPermission
+                        mFusedLocationClient.requestLocationUpdates(mLocationRequest,
+                                mLocationCallback, Looper.myLooper());
+
+                        Handler handler = new Handler(Looper.getMainLooper());
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (pd != null && pd.getWindow().getDecorView().getWindowToken() != null && pd.isShowing()) {
+                                    pd.dismiss();
+                                }
+                                if(mCurrentLocation != null)
+                                    setPoiGPS(mCurrentLocation);
+                            }
+                        }, 3000);
+                    }
+                })
+                .addOnFailureListener(this, new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        int statusCode = ((ApiException) e).getStatusCode();
+                        switch (statusCode) {
+                            case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+//                                Log.i(TAG, "Location settings are not satisfied. Attempting to upgrade " +
+//                                        "location settings ");
+                                try {
+                                    // Show the dialog by calling startResolutionForResult(), and check the
+                                    // result in onActivityResult().
+                                    ResolvableApiException rae = (ResolvableApiException) e;
+                                    rae.startResolutionForResult(AddInfrastructureActivity.this, REQUEST_CHECK_SETTINGS);
+                                } catch (IntentSender.SendIntentException sie) {
+//                                    Log.i(TAG, "PendingIntent unable to execute request.");
+                                }
+                                break;
+                            case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+                                String errorMessage = "Location settings are inadequate, and cannot be " +
+                                        "fixed here. Fix in Settings.";
+//                                Log.e(TAG, errorMessage);
+
+                                Toast.makeText(AddInfrastructureActivity.this, errorMessage, Toast.LENGTH_LONG).show();
+                        }
+                        if(mCurrentLocation != null)
+                            setPoiGPS(mCurrentLocation);
+//                        else
+//                            requestLocation.callOnClick();
+//                        updateLocationUI();
+                    }
+                });
+    }
 
     private void getDeviceLocation() {
-        try {
+        /*try {
             Task<Location> locationResult = getFusedLocationProviderClient(this).getLastLocation();
-            locationResult.addOnCompleteListener(this, new OnCompleteListener<Location>() {
+            locationResult.addOnSuccessListener(this, new OnSuccessListener<Location>() {
                 @Override
-                public void onComplete(@NonNull Task<Location> task) {
-                    if (task.isSuccessful()) {
-                        Location location = task.getResult();
-                        setPoiGPS(location);
-                    } else {
-                        Toast.makeText(AddInfrastructureActivity.this, "No position logged", Toast.LENGTH_LONG).show();
-                    }
+                public void onSuccess(Location location) {
+                    setPoiGPS(location);
                 }
             });
         } catch (SecurityException e) {
             e.printStackTrace();
-        }
+        }*/
+        // Requesting ACCESS_FINE_LOCATION using Dexter library
+        Dexter.withActivity(this)
+                .withPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+                .withListener(new PermissionListener() {
+                    @Override
+                    public void onPermissionGranted(PermissionGrantedResponse response) {
+                        mRequestingLocationUpdates = true;
+                        startLocationUpdates();
+                    }
+
+                    @Override
+                    public void onPermissionDenied(PermissionDeniedResponse response) {
+                        if (pd != null && pd.getWindow().getDecorView().getWindowToken() != null && pd.isShowing()) {
+                            pd.dismiss();
+                        }
+                        if (response.isPermanentlyDenied()) {
+                            // open device settings when the permission is
+                            // denied permanently
+                            openSettings();
+                        }
+                    }
+
+                    @Override
+                    public void onPermissionRationaleShouldBeShown(PermissionRequest permission, PermissionToken token) {
+                        token.continuePermissionRequest();
+                    }
+                }).check();
     }
 
 

@@ -1,5 +1,6 @@
 package com.olam.digital.ofis;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -21,6 +22,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.os.StrictMode;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NavUtils;
@@ -49,14 +51,31 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResolvableApiException;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResponse;
+import com.google.android.gms.location.LocationSettingsStatusCodes;
+import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.gson.Gson;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.PermissionDeniedResponse;
+import com.karumi.dexter.listener.PermissionGrantedResponse;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.single.PermissionListener;
 import com.olam.digital.ofis.recordpolygon.LocationBeanList;
 import com.olam.digital.ofis.recordpolygon.PlotsList;
 import com.olam.digital.ofis.recordpolygon.RecordPolygonActivity;
@@ -74,6 +93,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.sql.Timestamp;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -117,9 +137,34 @@ public class ViewFarmerActivity extends BaseListActivity implements GoogleApiCli
     private long farmerPlaceId;
 
     // for GPS location system
-    private GoogleApiClient googleApiClient;
+//    private GoogleApiClient googleApiClient;
     private ProgressDialog pd;
     private LocationListener locationListener;
+
+    // location last updated time
+    private String mLastUpdateTime;
+
+    // location updates interval - 2sec
+    private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 2000;
+
+    // fastest updates interval - 1 sec
+    // location updates will be received if another app is requesting the locations
+    // than your app can handle
+    private static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = 1000;
+
+    private static final int REQUEST_CHECK_SETTINGS = 100;
+
+
+    // bunch of location related apis
+    private FusedLocationProviderClient mFusedLocationClient;
+    private SettingsClient mSettingsClient;
+    private LocationRequest mLocationRequest;
+    private LocationSettingsRequest mLocationSettingsRequest;
+    private LocationCallback mLocationCallback;
+    private Location mCurrentLocation;
+
+    // boolean flag to toggle the ui
+    private Boolean mRequestingLocationUpdates;
 
     // Request code to use when launching the resolution activity
     private static final int REQUEST_RESOLVE_ERROR = 1001;
@@ -180,22 +225,47 @@ public class ViewFarmerActivity extends BaseListActivity implements GoogleApiCli
     }
 
     private void setupGPS() {
-        if (googleApiClient == null) {
+       /* if (googleApiClient == null) {
             googleApiClient = new GoogleApiClient.Builder(this)
                     .addConnectionCallbacks(this)
                     .addOnConnectionFailedListener(this)
                     .addApi(LocationServices.API)
                     .build();
-        }
+        }*/
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        mSettingsClient = LocationServices.getSettingsClient(this);
+
+        mLocationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                super.onLocationResult(locationResult);
+                // location is received
+                mCurrentLocation = locationResult.getLastLocation();
+                mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
+//                setFarmGPS(mCurrentLocation, clickedLocationItem);
+//                updateLocationUI();
+            }
+        };
+
+        mRequestingLocationUpdates = false;
+
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(UPDATE_INTERVAL_IN_MILLISECONDS);
+        mLocationRequest.setFastestInterval(FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
+        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder();
+        builder.addLocationRequest(mLocationRequest);
+        mLocationSettingsRequest = builder.build();
     }
 
     protected void onStart() {
-        googleApiClient.connect();
+//        googleApiClient.connect();
         super.onStart();
     }
 
     protected void onStop() {
-        googleApiClient.disconnect();
+//        googleApiClient.disconnect();
         super.onStop();
     }
 
@@ -204,13 +274,13 @@ public class ViewFarmerActivity extends BaseListActivity implements GoogleApiCli
     }
 
     @Override
-    public void onConnectionSuspended(int i) {
+    public void onConnectionSuspended(int i){}/* {
         googleApiClient.connect();
-    }
+    }*/
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        if (mResolvingError) {
+      /*  if (mResolvingError) {
             return;
         } else if (connectionResult.hasResolution()) {
             try {
@@ -224,7 +294,7 @@ public class ViewFarmerActivity extends BaseListActivity implements GoogleApiCli
             mResolvingError = true;
         }
         FirebaseCrash.report(new Throwable("Location connection failed adding farm : code: " + connectionResult.getErrorCode() + " | message: " + connectionResult.getErrorMessage()));
-    }
+*/    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -258,10 +328,10 @@ public class ViewFarmerActivity extends BaseListActivity implements GoogleApiCli
             case REQUEST_RESOLVE_ERROR:
                 mResolvingError = false;
                 // Make sure the app is not already connected or attempting to connect
-                if (!googleApiClient.isConnecting() &&
+                /*if (!googleApiClient.isConnecting() &&
                         !googleApiClient.isConnected()) {
                     googleApiClient.connect();
-                }
+                }*/
                 break;
             default:
         }
@@ -366,9 +436,7 @@ public class ViewFarmerActivity extends BaseListActivity implements GoogleApiCli
 
     @SuppressLint("SetTextI18n")
     private void setFarmGPS(Location location, View v) {
-        if (pd != null && pd.isShowing()) {
-            pd.dismiss();
-        }
+
 //        if (googleApiClient != null && googleApiClient.isConnected()) {
 //            LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, locationListener);
 //        }
@@ -400,6 +468,9 @@ public class ViewFarmerActivity extends BaseListActivity implements GoogleApiCli
             e.printStackTrace();
         }
 
+        if (pd != null && pd.isShowing()) {
+            pd.dismiss();
+        }
     }
 
     @Override
@@ -431,17 +502,34 @@ public class ViewFarmerActivity extends BaseListActivity implements GoogleApiCli
 
     private void getFarmGPS(final View v) {
         try {
-            if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                if (pd != null && pd.getWindow().getDecorView().getWindowToken() != null) {
-                    Utilities.closeProgressDialog(pd, 10);
-                }
-                clickedLocationItem = v;
-                ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION}, PERMISSIONS_ACCESS_LOCATION);
+            Dexter.withActivity(this)
+                    .withPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+                    .withListener(new PermissionListener() {
+                        @Override
+                        public void onPermissionGranted(PermissionGrantedResponse response) {
+                            mRequestingLocationUpdates = true;
+                            startLocationUpdates(v);
+                        }
 
-                return;
-            } else {
-                    getDevicePosition(v);
-            }
+                        @Override
+                        public void onPermissionDenied(PermissionDeniedResponse response) {
+
+                            if (response.isPermanentlyDenied()) {
+                                // open device settings when the permission is
+                                // denied permanently
+                                if (pd != null && pd.isShowing()) {
+                                    pd.dismiss();
+                                }
+                                openSettings();
+                            }
+                        }
+
+                        @Override
+                        public void onPermissionRationaleShouldBeShown(PermissionRequest permission, PermissionToken token) {
+                            token.continuePermissionRequest();
+                        }
+                    }).check();
+
         } catch (Exception e) {
             FirebaseCrash.report(new Exception("ViewFarmerActivity: Error getting farmer GPS location - enumerator " + Utilities.getFromSharedPrefs(context), e));
             e.printStackTrace();
@@ -449,13 +537,17 @@ public class ViewFarmerActivity extends BaseListActivity implements GoogleApiCli
     }
 
     private void recordFarmLocation(final View v) {
+        pd = new ProgressDialog(ViewFarmerActivity.this);
+        pd.setCancelable(false);
+        pd.setIndeterminate(false);
+        pd.setMessage("Location fetching...");
+        pd.show();
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setMessage(res.getString(R.string.are_you_at_the_farm))
                 .setCancelable(true)
                 .setPositiveButton(res.getString(R.string.yes), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         getFarmGPS(v);
-
                     }
                 })
                 .setNegativeButton(res.getString(R.string.no), new DialogInterface.OnClickListener() {
@@ -468,25 +560,84 @@ public class ViewFarmerActivity extends BaseListActivity implements GoogleApiCli
         alert.show();
     }
 
-    private void getDevicePosition(final View v) {
-        try {
-            Task<Location> locationResult = getFusedLocationProviderClient(this).getLastLocation();
-            locationResult.addOnCompleteListener(this, new OnCompleteListener<Location>() {
-                @Override
-                public void onComplete(@NonNull Task<Location> task) {
-                    if (task.isSuccessful()) {
-                        Location location = task.getResult();
-                        setFarmGPS(location, v);
-                    } else {
-
-                       Toast.makeText(ViewFarmerActivity.this,"Location not recorded",Toast.LENGTH_LONG).show();
-                    }
-                }
-            });
-        } catch (SecurityException e) {
-            e.printStackTrace();
-        }
+    private void openSettings() {
+        Intent intent = new Intent();
+        intent.setAction(
+                Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+        Uri uri = Uri.fromParts("package",
+                BuildConfig.APPLICATION_ID, null);
+        intent.setData(uri);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
+
+    /**
+     * Starting location updates
+     * Check whether location settings are satisfied and then
+     * location updates will be requested
+     */
+    private void startLocationUpdates(final View v) {
+        mSettingsClient
+                .checkLocationSettings(mLocationSettingsRequest)
+                .addOnSuccessListener(this, new OnSuccessListener<LocationSettingsResponse>() {
+                    @SuppressLint("MissingPermission")
+                    @Override
+                    public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
+//                        Log.i(TAG, "All location settings are satisfied.");
+
+//                        Toast.makeText(getApplicationContext(), "Started location updates!", Toast.LENGTH_SHORT).show();
+
+                        //noinspection MissingPermission
+                        mFusedLocationClient.requestLocationUpdates(mLocationRequest,
+                                mLocationCallback, Looper.myLooper());
+                        Handler handler = new Handler(Looper.getMainLooper());
+
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                if(mCurrentLocation != null)
+                                    setFarmGPS(mCurrentLocation, v);
+                            }
+                        }, 3000);
+
+                    }
+                })
+                .addOnFailureListener(this, new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        int statusCode = ((ApiException) e).getStatusCode();
+                        switch (statusCode) {
+                            case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+//                                Log.i(TAG, "Location settings are not satisfied. Attempting to upgrade " +
+//                                        "location settings ");
+                                try {
+                                    // Show the dialog by calling startResolutionForResult(), and check the
+                                    // result in onActivityResult().
+                                    ResolvableApiException rae = (ResolvableApiException) e;
+                                    rae.startResolutionForResult(ViewFarmerActivity.this, REQUEST_CHECK_SETTINGS);
+                                } catch (IntentSender.SendIntentException sie) {
+//                                    Log.i(TAG, "PendingIntent unable to execute request.");
+                                }
+                                break;
+                            case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+                                String errorMessage = "Location settings are inadequate, and cannot be " +
+                                        "fixed here. Fix in Settings.";
+//                                Log.e(TAG, errorMessage);
+
+                                Toast.makeText(ViewFarmerActivity.this, errorMessage, Toast.LENGTH_LONG).show();
+                        }
+                        Handler handler = new Handler(Looper.getMainLooper());
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                 if(mCurrentLocation != null)
+                                    setFarmGPS(mCurrentLocation, v);
+                            }
+                        }, 3000);
+                    }
+                });
+    }
+
 
     private void recordFarmPolygonTest(final View v) {
         SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmID("41526");
@@ -858,7 +1009,6 @@ public class ViewFarmerActivity extends BaseListActivity implements GoogleApiCli
                 if (DynamicQuestions.getInstance() != null) {
                     DynamicQuestions.clearInstance();
                 }
-
                 context.startActivity(intent);
             } else {
                 if (id == 0) {
