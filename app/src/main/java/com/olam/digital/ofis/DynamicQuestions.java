@@ -2560,11 +2560,7 @@ class DynamicQuestions {
         int answerIdTemp = 0;
 
         try {
-            if(is_subset_questions_requiredduplicate!=null){
-
-
-            }
-            else if(is_subset_questions_requiredduplicate==null){
+          if(is_subset_questions_requiredduplicate==null){
 
                 is_subset_questions_requiredduplicate="";
             }
