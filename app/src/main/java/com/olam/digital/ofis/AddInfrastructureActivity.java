@@ -511,121 +511,16 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
         String uploadId = existingItem.getString(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ID));
         modulesSpinner.setSelection(selectedModulePOI);
         moduleId = moduleDTOS.get(selectedModulePOI).getId();
-        dynamicQuestions.questionsSection.removeAllViews();
         subModuleId = getSubModules(moduleId).get(selectedSubModulePOI).getId();
 //        bindPoiSpinner(moduleId);
+
         subModulesSpinner.setSelection(selectedSubModulePOI);
+//        subModulesSpinner.setEnabled(false);
         dynamicQuestions.hasAnswers = true;
         questions = dl.getSIPQuestionsAndAnswersByUploadId(uploadId, subModuleId);
         dynamicQuestions.questionsSection.removeAllViews();
 //        dynamicQuestions
         setupSubModuleQuestions();
-        /*        String currentPoiType = Utilities.getDefaultTextByLocalValue(poitypes, existingItem.getString(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE)), res);
-
-        if (currentPoiType.equalsIgnoreCase("school")) {
-            currentTypeOfPOI = SCHOOL;
-        } else if (currentPoiType.equalsIgnoreCase("buying centre")) {
-            currentTypeOfPOI = BUYING_CENTRE;
-        } else if (currentPoiType.equalsIgnoreCase("health centre")) {
-            currentTypeOfPOI = HEALTH_CENTRE;
-        } else if (currentPoiType.equalsIgnoreCase("clean water supply")) {
-            currentTypeOfPOI = CLEAN_WATER_SUPPLY;
-        }
-
-        swapPoiType(currentTypeOfPOI);
-        subModulesSpinner.setSelection(currentTypeOfPOI);
-
-        if (currentPoiType.equalsIgnoreCase("school")) {
-            currentTypeOfPOI = SCHOOL;
-            poiName.setText(existingItem.getString(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME)));
-            school_editTextCapacity.setText(existingItem.getString(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CAPACITY)));
-            school_editTextNumberOfClassrooms.setText(existingItem.getString(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_NUM_CLASSROOMS)));
-
-            new CountDownTimer(1000, 100) {
-
-                public void onTick(long millisUntilFinished) {
-                }
-
-                public void onFinish() {
-                    String existingGenderMix = existingItem.getString(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_GENDER_MIX));
-                    String existingGenderMixKey = existingGenderMix + Utilities.getLocaleSuffix(res);
-                    if (genders.containsKey(existingGenderMixKey)) {
-                        existingGenderMix = genders.get(existingGenderMixKey);
-                    }
-
-                    Utilities.setSpinnerSelectionByValue(existingGenderMix, school_genderspinner);
-                    String existingEducationLevel = existingItem.getString(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SCHOOL_TYPE));
-                    String existingEducationLevelKey = existingEducationLevel + Utilities.getLocaleSuffix(res);
-                    if (educationlevels.containsKey(existingEducationLevelKey)) {
-                        existingEducationLevel = educationlevels.get(existingEducationLevelKey);
-                    }
-
-                    Utilities.setSpinnerSelectionByValue(existingEducationLevel, school_educationlevelss);
-                    Utilities.setSpinnerSelectionByValue(existingItem.getString(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_YEAR_OPENED)), school_yearOpened);
-                }
-            }.start();
-
-
-        } else if (currentPoiType.equalsIgnoreCase("buying centre")) {
-            currentTypeOfPOI = BUYING_CENTRE;
-            poiName.setText(existingItem.getString(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME)));
-            selectedProduct = existingItem.getInt(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PRODUCT_ID));
-            selectedFarmerGroup = existingItem.getInt(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMERGROUP_ID));
-
-            new CountDownTimer(1000, 100) {
-
-                public void onTick(long millisUntilFinished) {
-                }
-
-                public void onFinish() {
-                    dl.setSpinnerSelectionById(selectedProduct, buyingCentreSpinner_product);
-                    dl.setSpinnerSelectionById(selectedFarmerGroup, buyingCentreSpinner_farmergroup);
-                }
-            }.start();
-
-
-        } else if (currentPoiType.equalsIgnoreCase("health centre")) {
-            currentTypeOfPOI = HEALTH_CENTRE;
-            poiName.setText(existingItem.getString(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME)));
-
-            new CountDownTimer(1000, 100) {
-
-                public void onTick(long millisUntilFinished) {
-                }
-
-                public void onFinish() {
-                    Utilities.setSpinnerSelectionByValue(existingItem.getString(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_YEAR_OPENED)), healthCentre_yearOpened);
-                }
-            }.start();
-        } else if (currentPoiType.equalsIgnoreCase("clean water supply")) {
-            currentTypeOfPOI = CLEAN_WATER_SUPPLY;
-            new CountDownTimer(1000, 100) {
-
-                public void onTick(long millisUntilFinished) {
-                }
-
-                public void onFinish() {
-                    String existingCwsType = existingItem.getString(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CWS_TYPE));
-                    String existingCwsTypeKey = existingCwsType + Utilities.getLocaleSuffix(res);
-                    if (cleanwatertypes.containsKey(existingCwsTypeKey)) {
-                        existingCwsType = cleanwatertypes.get(existingCwsTypeKey);
-                    }
-
-                    Utilities.setSpinnerSelectionByValue(existingCwsType, spinner_typeOfCleanWater);
-                    Utilities.setSpinnerSelectionByValue(existingItem.getString(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_YEAR_OPENED)), cleanWater_yearOpened);
-                }
-            }.start();
-        }
-
-        // set in all cases except buying centres
-        if (!currentPoiType.equalsIgnoreCase("buying centre")) {
-            Switch olamFunded = (Switch) findViewById(R.id.olamFunded);
-            olamFunded.setChecked((existingItem.getInt(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FUNDED)) != 0));
-        }
-
-        recorded_lat = existingItem.getString(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LAT));
-        recorded_lng = existingItem.getString(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG));
-        gpsField.setText(recorded_lat + "," + recorded_lng);*/
 
         selectedCountry = existingItem.getInt(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_COUNTRY_ID));
         selectedRegion = existingItem.getInt(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_REGION_ID));

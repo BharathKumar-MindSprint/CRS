@@ -466,7 +466,7 @@ public class DataLayer {
                 OFISDBContract.Task.COLUMN_NAME_COMPLETED,
                 OFISDBContract.Task.COLUMN_NAME_COMPLETED_DATE
         };
-        String orderBy = OFISDBContract.Task.COLUMN_NAME_COMPLETED + " ASC, " + OFISDBContract.Task.COLUMN_NAME_ID + " DESC";
+        String orderBy = /*OFISDBContract.Task.COLUMN_NAME_COMPLETED + " ASC, " +*/ OFISDBContract.Task.COLUMN_NAME_ID + " DESC";
         return db.query(OFISDBContract.Task.TABLE_NAME, columns, null, null, null, null, orderBy);
     }
 
@@ -1294,7 +1294,7 @@ public class DataLayer {
             String[] adapterCols = new String[]{textColumnName, "_id", "code", "dialling_code"};
             MatrixCursor mc = new MatrixCursor(adapterCols);
             mc.addRow(new String[]{res.getString(placeholderTextResId), "0", "", ""});
-            if (spinner.getId() == R.id.spinner_place) {
+            if (spinner.getId() == R.id.spinner_place ) {
                 mc.addRow(new String[]{res.getString(R.string.new_place_name_placeholder), "-1", "", ""});
 
             }
@@ -2937,11 +2937,11 @@ public class DataLayer {
 
     public Cursor getAnswersSipByUploadId(String UploadId) {
         String answerTable = OFISDBContract.AnswerSipEntry.TABLE_NAME;
-        String questionTable = OFISDBContract.QuestionEntry.TABLE_NAME;
-        String datatypeTable = OFISDBContract.DatatypesEntry.TABLE_NAME;
-        String sql = "SELECT " + answerTable + ".*," + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE + ", " + datatypeTable + "." + OFISDBContract.DatatypesEntry.COLUMN_NAME_DATATYPE_NAME +
-                " FROM " + answerTable + " INNER JOIN " + questionTable + " ON " + answerTable + "." + OFISDBContract.AnswerSipEntry.COLUMN_NAME_QUESTION_ID + " = " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_ID +
-                " INNER JOIN " + datatypeTable + " ON " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID + " = " + datatypeTable + "." + OFISDBContract.DatatypesEntry.COLUMN_NAME_ID +
+        String questionTable = OFISDBContract.QuestionSipEntry.TABLE_NAME;
+        String datatypeTable = OFISDBContract.DatatypesSipEntry.TABLE_NAME;
+        String sql = "SELECT " + answerTable + ".*," + questionTable + "." + OFISDBContract.QuestionSipEntry.COLUMN_NAME_DISPLAY_TYPE + ", " + datatypeTable + "." + OFISDBContract.DatatypesSipEntry.COLUMN_NAME_DATATYPE_NAME +
+                " FROM " + answerTable + " INNER JOIN " + questionTable + " ON " + answerTable + "." + OFISDBContract.AnswerSipEntry.COLUMN_NAME_QUESTION_ID + " = " + questionTable + "." + OFISDBContract.QuestionSipEntry.COLUMN_NAME_ID +
+                " INNER JOIN " + datatypeTable + " ON " + questionTable + "." + OFISDBContract.QuestionSipEntry.COLUMN_NAME_DATATYPE_ID + " = " + datatypeTable + "." + OFISDBContract.DatatypesSipEntry.COLUMN_NAME_ID +
                 " WHERE " + OFISDBContract.AnswerSipEntry.COLUMN_NAME_PARENT_QUESTION_ID + " = 0 AND " + OFISDBContract.AnswerSipEntry.COLUMN_NAME_UPLOAD_ID + " = ? ORDER BY " + OFISDBContract.AnswerSipEntry.COLUMN_NAME_QUESTION_ID + " ASC";
         String[] whereArgs = new String[]{String.valueOf(UploadId)};
 
@@ -2949,19 +2949,20 @@ public class DataLayer {
     }
 
     public Cursor getSipRequiredQuestionIds(int moduleId, int subModuleId) {
-        String questionTable = OFISDBContract.QuestionEntry.TABLE_NAME;
-        String submoduleTable = OFISDBContract.SubmoduleEntry.TABLE_NAME;
-        String moduleTable = OFISDBContract.ModuleEntry.TABLE_NAME;
-        String whereClause = moduleTable + "." + OFISDBContract.ModuleEntry.COLUMN_NAME_ID + " = ? AND " +submoduleTable + "." + OFISDBContract.SubmoduleEntry.COLUMN_NAME_ID + " = ? AND " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION + " LIKE ?";
+        String questionTable = OFISDBContract.QuestionSipEntry.TABLE_NAME;
+        String submoduleTable = OFISDBContract.SipSubGroupEntry.TABLE_NAME;
+        String moduleTable = OFISDBContract.SipGroupEntry.TABLE_NAME;
+        String whereClause = moduleTable + "." + OFISDBContract.SipGroupEntry.COLUMN_NAME_ID + " = ? " +
+                "AND " +submoduleTable + "." + OFISDBContract.SipSubGroupEntry.COLUMN_NAME_ID + " = ? AND " + questionTable + "." + OFISDBContract.QuestionSipEntry.COLUMN_NAME_DISPLAY_CONFIGURATION + " LIKE ?";
         String[] whereArgs = new String[]{
                 String.valueOf(moduleId),
                 String.valueOf(subModuleId),
                 "%\"requiredfield\":true%"
         };
-        String sql = "SELECT " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_ID + " FROM " + questionTable + " INNER JOIN " + submoduleTable
-                + " ON " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_SUBMODULE_ID + " = " + submoduleTable + "." + OFISDBContract.SubmoduleEntry.COLUMN_NAME_ID
-                + " INNER JOIN " + moduleTable + " ON " + submoduleTable + "." + OFISDBContract.SubmoduleEntry.COLUMN_NAME_MODULE_ID + " = " + moduleTable + "."
-                + OFISDBContract.ModuleEntry.COLUMN_NAME_ID + " WHERE " + whereClause;
+        String sql = "SELECT " + questionTable + "." + OFISDBContract.QuestionSipEntry.COLUMN_NAME_ID + " FROM " + questionTable + " INNER JOIN " + submoduleTable
+                + " ON " + questionTable + "." + OFISDBContract.QuestionSipEntry.COLUMN_NAME_SUBMODULE_ID + " = " + submoduleTable + "." + OFISDBContract.SipSubGroupEntry.COLUMN_NAME_ID
+                + " INNER JOIN " + moduleTable + " ON " + submoduleTable + "." + OFISDBContract.SipSubGroupEntry.COLUMN_NAME_MODULE_ID + " = " + moduleTable + "."
+                + OFISDBContract.SipGroupEntry.COLUMN_NAME_ID + " WHERE " + whereClause;
 
         return db.rawQuery(sql, whereArgs);
     }

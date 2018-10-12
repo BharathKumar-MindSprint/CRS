@@ -20,6 +20,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.olam.digital.ofis.R;
+import com.olam.digital.ofis.model.TasksDTO;
+
+import java.util.ArrayList;
+import java.util.Date;
 
 public class TasksActivity extends ListActivity {
     private Context context;
@@ -27,8 +31,9 @@ public class TasksActivity extends ListActivity {
     private DataLayer dl;
     private Cursor tasks;
     private CustomListAdapter_Tasks customListAdapter_tasks;
+    private MyCustomListAdapter_Tasks myCustomListAdapter_tasks;
     private boolean completed = true;
-
+    private ArrayList<TasksDTO> tasksDTOArrayList = new ArrayList<>();
     private final BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -57,38 +62,61 @@ public class TasksActivity extends ListActivity {
 
     private void getTasks() {
         tasks = dl.getTasks();
-
-        if (tasks.getCount() > 0) {
+        bindListAdapter();
+      /*  if (tasks.getCount() > 0) {
             bindListAdapter();
-        }
+        }*/
     }
 
     private void bindListAdapter() {
         String[] adapterCols = new String[]{"_id", OFISDBContract.Task.COLUMN_NAME_TASKTEXT, OFISDBContract.Task.COLUMN_NAME_CREATED_DATE, OFISDBContract.Task.COLUMN_NAME_COMPLETED};
         int[] adapterRowViews = new int[]{R.id.taskId, R.id.taskListItemText, R.id.taskListItemDate, R.id.taskCompleted};
-        customListAdapter_tasks = new CustomListAdapter_Tasks(context, tasks, adapterCols, adapterRowViews, res);
-        setListAdapter(customListAdapter_tasks);
+//        customListAdapter_tasks = new CustomListAdapter_Tasks(context, tasks, adapterCols, adapterRowViews, res);
+        tasksDTOArrayList.addAll(generatetasksDTOList(tasks));
+        myCustomListAdapter_tasks = new MyCustomListAdapter_Tasks(context, tasksDTOArrayList, adapterCols, adapterRowViews, res);
+        setListAdapter(myCustomListAdapter_tasks);
+    }
+
+    private ArrayList<TasksDTO> generatetasksDTOList(Cursor tasks) {
+        ArrayList<TasksDTO> tasksDTOArrayTemp = new ArrayList<>();
+        TasksDTO tasksDTO;
+        if(tasks.getCount() > 0){
+            while(tasks.moveToNext()){
+                tasksDTO = new TasksDTO();
+                tasksDTO.setTaskId(tasks.getInt(tasks.getColumnIndex("_id")));
+                tasksDTO.setTaskCompletedStatus(String.valueOf(tasks.getInt(tasks.getColumnIndex(OFISDBContract.Task.COLUMN_NAME_COMPLETED))));
+                tasksDTO.setTaskCreator(tasks.getString(tasks.getColumnIndex(OFISDBContract.Task.COLUMN_NAME_TASK_CREATOR)));
+                tasksDTO.setTaskDate(tasks.getString(tasks.getColumnIndex(OFISDBContract.Task.COLUMN_NAME_COMPLETED_DATE)));
+                tasksDTO.setTaskName(tasks.getString(tasks.getColumnIndex(OFISDBContract.Task.COLUMN_NAME_TASKTEXT)));
+                tasksDTOArrayTemp.add(tasksDTO);
+            }
+        }
+        return tasksDTOArrayTemp;
     }
 
     private void updateTasks() {
         tasks = dl.getTasks();
-        if (tasks.getCount() > 0 && customListAdapter_tasks != null) {
+        if(tasksDTOArrayList != null && !tasksDTOArrayList.isEmpty())
+            tasksDTOArrayList.clear();
+
+        tasksDTOArrayList.addAll(generatetasksDTOList(tasks));
+        myCustomListAdapter_tasks.notifyDataSetChanged();
+       /* if (tasks.getCount() > 0 && customListAdapter_tasks != null) {
             customListAdapter_tasks.changeCursor(tasks);
         } else {
             bindListAdapter();
-        }
+        }*/
     }
 
     @Override
-    protected void onListItemClick(ListView l, View v, int position, long id) {
+    protected void onListItemClick(ListView l, View v, int position, final long id) {
+        TasksDTO tasksDTO = (TasksDTO) l.getAdapter().getItem(position);
         final ImageView imageView = (ImageView) v.findViewById(R.id.cbImage);
         final TextView completedText = (TextView) v.findViewById(R.id.taskCompleted);
         final LinearLayout linearLayout = (LinearLayout) v.findViewById(R.id.rowlin);
-        completed = "1".equals(completedText.getText().toString());
+        completed = "1".equals(tasksDTO.getTaskCompletedStatus());
 
         if (completed) {
-
-
             android.app.AlertDialog.Builder dialog = new android.app.AlertDialog.Builder(this);
             dialog.setTitle(R.string.untick_task);
             dialog.setMessage(R.string.untick_task_msg)
@@ -99,6 +127,10 @@ public class TasksActivity extends ListActivity {
                             linearLayout.setBackgroundResource(R.drawable.list_item);
                             completedText.setText("0");
                             completed = false;
+                            if (dl.updateTaskStatus(completed, id) > 0) {
+//                                myCustomListAdapter_tasks.notifyDataSetChanged();
+                                updateTasks();
+                            }
                         }
                     })
                     .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
@@ -118,11 +150,13 @@ public class TasksActivity extends ListActivity {
             linearLayout.setBackgroundResource(R.drawable.list_item_selected);
             completedText.setText("1");
             completed = true;
+            if (dl.updateTaskStatus(completed, id) > 0) {
+//                myCustomListAdapter_tasks.notifyDataSetChanged();
+                updateTasks();
+            }
         }
 
-        if (dl.updateTaskStatus(completed, id) > 0) {
-            updateTasks();
-        }
+
     }
 
     @Override

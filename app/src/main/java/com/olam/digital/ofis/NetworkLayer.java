@@ -436,12 +436,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         long fileSizeInKB = fileSizeInBytes / 1024;
 // Convert the KB to MegaBytes (1 MB = 1024 KBytes)
         long fileSizeInMB = fileSizeInKB / 1024;
-
-
-
-
-
-
         requestBody = bodyBuilder.build();
 
         okHttpMultiPartPost(context, endpoint, requestBody, new Callback() {
