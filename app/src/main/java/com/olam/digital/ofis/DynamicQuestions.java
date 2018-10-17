@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.CountDownTimer;
+import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.support.v4.content.ContextCompat;
 import android.text.Editable;
@@ -467,6 +468,9 @@ class DynamicQuestions {
 
                     takePicture.putExtra(MediaStore.EXTRA_OUTPUT, getCapturedImageURI());
                     if (context.getClass().getSimpleName().equalsIgnoreCase("CompleteModuleActivity")) {
+                        StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+                        StrictMode.setVmPolicy(builder.build());
+
                         CompleteModuleActivity completeModuleActivity = (CompleteModuleActivity) context;
                         completeModuleActivity.startActivityForResult(takePicture, REQUEST_IMAGE_CAPTURE);
                     } else {
@@ -3185,7 +3189,7 @@ class DynamicQuestions {
 
         singleSelect = tempSingleSelect;
 
-        if (checkboxes.getCount() > 0) {
+        if (checkboxes != null && checkboxes.getCount() > 0) {
             // add the table layout to the screen
             final TableLayout tl = (TableLayout) inflater.inflate(R.layout.module_checkbox_table, questionWrapper, false);
             tl.setSaveEnabled(true);

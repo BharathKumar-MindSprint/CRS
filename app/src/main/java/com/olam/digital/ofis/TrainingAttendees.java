@@ -160,6 +160,9 @@ public class TrainingAttendees extends BaseListActivity {
 
     private void bindFarmerList() {
         farmerList = dl.getTrainingAttendeeList(searchQuery,selectedFarmerGroup,selectedSection, courseId);
+        if (farmerList.getCount() == 0) {
+            farmerList = dl.getFindFarmerList(searchQuery,selectedFarmerGroup,selectedSection);
+        }
     }
 
     private void showFarmerList() {

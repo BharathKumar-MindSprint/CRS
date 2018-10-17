@@ -209,13 +209,13 @@ public class SyncAllTask extends SyncTask {
             }
         }
         else if (operation == SyncOperation.START_IMPORT) {
-            if (pd != null && pd.isShowing()) {
+            /*if (pd != null && pd.isShowing()) {
                 String pdUpdate = (String) values[1];
                 pd = Utilities.updateProgressDialog(pd, 0, 0, pdUpdate);
             }
-
+*/
             // Goes directly to the AsyncTask
-            new UpdateSpinnerListsTask(context).execute(spinnerResponse);
+            new UpdateSpinnerListsTask(context, pd).execute(spinnerResponse);
             spinnerResponse = null;
 
             // Goes directly to the AsyncTask
@@ -250,11 +250,11 @@ public class SyncAllTask extends SyncTask {
             new UpdateFarmersTask(context).execute(farmerResponse);
             farmerResponse = null;
 
-            if (pd != null && pd.isShowing()) {
+            /*if (pd != null && pd.isShowing()) {
                 String pdUpdate = res.getString(R.string.update_complete);
                 pd = Utilities.updateProgressDialog(pd, syncResultCount, syncResultCount, pdUpdate);
                 Utilities.closeProgressDialog(pd, 1000);
-            }
+            }*/
             if (Utilities.getBoolFromSharedPrefs(context, "FIRST_RUN", true)) {
                 HomeActivity.completeFirstSetup();
             }
@@ -470,7 +470,7 @@ public class SyncAllTask extends SyncTask {
         // endPoint= "sync_modules";
         //new End point  :
        // endPoint ="survey/survey/questionnaire/getAllQuestionnaireData/448";
-         endPoint ="survey/survey/questionnaire/getAllQuestionnaireData/"+Utilities.getFromSharedPrefs(context);
+         endPoint ="ofissurvey/survey/questionnaire/getAllQuestionnaireData/"+Utilities.getFromSharedPrefs(context);
        // String mUrl = "http://137.116.146.9:8080/survey/questionnaire/getAllQuestionnaireData";
         okHttpGet(context, endPoint, inputArgs, new Callback() {
             @Override

@@ -1,9 +1,11 @@
 package com.olam.digital.ofis.tasks;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 
 import com.google.firebase.crash.FirebaseCrash;
 import com.olam.digital.ofis.OFISDBContract;
+import com.olam.digital.ofis.Utilities;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -14,9 +16,18 @@ import org.json.JSONObject;
  */
 @SuppressWarnings("DefaultFileTemplate")
 class UpdateTrainingListsTask extends DatabaseTask {
-
+    ProgressDialog pd;
     public UpdateTrainingListsTask(Context context) {
         super(context);
+        this.pd = pd;
+        pd = Utilities.openProgressDialog(context, "Data initialization", false);
+
+    }
+
+    @Override
+    protected void onPostExecute(String s) {
+        super.onPostExecute(s);
+        Utilities.closeProgressDialog(pd, 2);
     }
 
     @Override

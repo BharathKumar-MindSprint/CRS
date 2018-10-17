@@ -1,9 +1,12 @@
 package com.olam.digital.ofis.tasks;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 
 import com.google.firebase.crash.FirebaseCrash;
 import com.olam.digital.ofis.OFISDBContract;
+import com.olam.digital.ofis.Utilities;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -14,8 +17,18 @@ import org.json.JSONObject;
 @SuppressWarnings("DefaultFileTemplate")
 class UpdateSpinnerListsTask extends DatabaseTask {
 
-    public UpdateSpinnerListsTask(Context context) {
+    ProgressDialog pd;
+
+    public UpdateSpinnerListsTask(Context context, ProgressDialog pd) {
         super(context);
+        this.pd = pd;
+        pd = Utilities.updateProgressDialog(pd, 0, 0, "Data initialization");
+    }
+
+    @Override
+    protected void onPostExecute(String s) {
+        super.onPostExecute(s);
+        Utilities.closeProgressDialog(pd, 2);
     }
 
     @Override

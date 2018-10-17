@@ -112,12 +112,14 @@ abstract class DatabaseTask extends AsyncTask<JSONObject, Integer, String> {
 
             // bind the columns we are after
             for (int k = 0; k < columnKeys.size(); k++) {
-                try {
-                    insertHelper.bind(columnKeys.get(k), item.getString(columnList.get(k).toString()));
-                } catch (JSONException e) {
-                    FirebaseCrash.report(new Exception("DatabaseTask: Error binding column for table filling", e));
-                    e.printStackTrace();
-                }
+//                try {
+                    if(columnList.get(k).toString() != null)
+                        insertHelper.bind(columnKeys.get(k), item.optString(columnList.get(k).toString()));
+
+//                } catch (JSONException e) {
+//                    FirebaseCrash.report(new Exception("DatabaseTask: Error binding column for table filling", e));
+//                    e.printStackTrace();
+//                }
             }
 
             insertHelper.execute();
@@ -205,7 +207,9 @@ abstract class DatabaseTask extends AsyncTask<JSONObject, Integer, String> {
             // bind the columns we are after
             for (int k = 0; k < columnKeys.size(); k++) {
                 try {
-                    insertHelper.bind(columnKeys.get(k), item.getString(columnList.get(k).toString()));
+                    if(columnList.get(k).toString()!= null)
+                        insertHelper.bind(columnKeys.get(k), item.getString(columnList.get(k).toString()));
+
                 } catch (JSONException e) {
                     FirebaseCrash.report(new Exception("DatabaseTask: Error binding column for table filling", e));
                     e.printStackTrace();

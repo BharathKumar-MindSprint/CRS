@@ -84,8 +84,8 @@ android {
             buildConfigField 'String', 'MICROSERVICE_HOST', '"http://137.116.145.198:8080/"'
 
             // New Local changes - QA
-            resValue "string", "AUTH_SERVER_URL", 'http://13.67.74.207:8084/oauth/api/v1/oauth/'
-            buildConfigField 'String', 'HOST', '"http://13.67.74.207:8084/"'
+            resValue "string", "AUTH_SERVER_URL", 'https://otofis-sit-zuul.olamdigital.com/oauth/api/v1/oauth/'
+            buildConfigField 'String', 'HOST', '"https://otofis-sit-zuul.olamdigital.com/"'
 
             //New UAT DNS name
 //            resValue "string", "AUTH_SERVER_URL", 'https://otofis-uat-zuul.olamdigital.com/oauth/api/v1/oauth/'

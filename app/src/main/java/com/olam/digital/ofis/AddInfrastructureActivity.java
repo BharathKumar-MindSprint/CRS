@@ -292,7 +292,7 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
                 dynamicQuestions.renderRepeaterQuestionForSIP(questions, res);
             } else if (displayType.toLowerCase().equals("textbox")) {
                 dynamicQuestions.renderTextBoxQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null);
-            } else if (displayType.toLowerCase().equals("yesno")) {
+            } else if (displayType.toLowerCase().equals("yesno") || displayType.toLowerCase().equals("yes/no")) {
                 dynamicQuestions.renderYesNoQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
             } else if (displayType.toLowerCase().equals("farmtreedensity")) {
                 dynamicQuestions.renderTreeDensityQuestion(questions, res);

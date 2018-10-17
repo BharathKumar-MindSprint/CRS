@@ -116,7 +116,8 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     // Runtime Permission Request Code
     private final static int MY_PERMISSIONS_REQUEST = 9999;
 
-
+    private final static int MY_PROFILE_PIC_PERMISSIONS_REQUEST = 9998;
+    private final static int MY_SIGNATURE_PIC_PERMISSIONS_REQUEST = 9997;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -144,6 +145,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         saveUpdateButton = (Button) findViewById(R.id.buttonSaveUpdate);
         topSection = (LinearLayout) findViewById(R.id.topSectionWrapper);
 
+
         checkTime();
         bindNetworkQueue();
 
@@ -157,20 +159,36 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             firstRunSection.setVisibility(View.VISIBLE);
         }
 
-               // Request Permission only for Android Version Marshmallow and above
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        // Check Phone Permission
-                        if (ContextCompat.checkSelfPermission(HomeActivity.this,
-                                android.Manifest.permission.READ_PHONE_STATE)
-                                != PackageManager.PERMISSION_GRANTED) {
+        // Request Permission only for Android Version Marshmallow and above
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            // Check Phone Permission
+            if (ContextCompat.checkSelfPermission(HomeActivity.this,
+                    android.Manifest.permission.READ_EXTERNAL_STORAGE) + ContextCompat
+                    .checkSelfPermission(HomeActivity.this,
+                            android.Manifest.permission.CAMERA)
+                    != PackageManager.PERMISSION_GRANTED) {
 
-                            //request permission
-                            ActivityCompat.requestPermissions(HomeActivity.this,
-                                    new String[]{android.Manifest.permission.READ_PHONE_STATE},
-                                    MY_PERMISSIONS_REQUEST);
 
-                        }
-                    }
+
+
+
+
+
+
+
+                ActivityCompat.requestPermissions(HomeActivity.this,
+                        new String[]{android.Manifest.permission.CAMERA,android.Manifest.permission.READ_EXTERNAL_STORAGE,android.Manifest.permission.READ_PHONE_STATE,
+                                android.Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        MY_SIGNATURE_PIC_PERMISSIONS_REQUEST);
+
+
+                //request permission
+                ActivityCompat.requestPermissions(HomeActivity.this,
+                        new String[]{android.Manifest.permission.READ_PHONE_STATE},
+                        MY_PERMISSIONS_REQUEST);
+
+            }
+        }
 
         saveUpdateButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -605,9 +623,9 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         syncAll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-            if (networkQueue.getCount() > 0) {
-                startAllItemSync();
-            }
+                if (networkQueue.getCount() > 0) {
+                    startAllItemSync();
+                }
             }
         });
 
@@ -791,7 +809,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         dialog.show();
     }
 
-    @Override
+    /*@Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST: {
@@ -811,7 +829,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 }
             }
         }
-    }
+    }*/
 
     @Override
     public void onResponse(Call<AuthenticationDTO> call, Response<AuthenticationDTO> response) {
@@ -821,7 +839,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             authenticationDTO.setWillExpireAt((System.currentTimeMillis() / 1000) + authenticationDTO.getExpiresIn() - 60);
             new AuthenticationHelper(this).setAuthenticationDTO(authenticationDTO);
             new AuthenticationHelper(this).setUserName(enumeratorID.getText().toString());
-          //  new AppUtils().AppStatic="LogIn";
+            //  new AppUtils().AppStatic="LogIn";
             // Do initial check for App
 //            Utilities.isAppAlive=true;
             doInitialCheck();
@@ -837,7 +855,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     @Override
     public void onFailure(Call<AuthenticationDTO> call, Throwable t) {
         showProgress(false);
-              Toast.makeText(HomeActivity.this,getString(R.string.authentication_failed),Toast.LENGTH_LONG).show();
+        Toast.makeText(HomeActivity.this,getString(R.string.authentication_failed),Toast.LENGTH_LONG).show();
         Answers.getInstance().logLogin(new LoginEvent()
                 .putMethod("first")
                 .putCustomAttribute("reason", "network error")
@@ -855,9 +873,9 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                         != PackageManager.PERMISSION_GRANTED) {
 
                     //request permission
-                    ActivityCompat.requestPermissions(HomeActivity.this,
+                   /* ActivityCompat.requestPermissions(HomeActivity.this,
                             new String[]{android.Manifest.permission.READ_PHONE_STATE},
-                            MY_PERMISSIONS_REQUEST);
+                            MY_PERMISSIONS_REQUEST);*/
 
                 } else {
 
@@ -905,6 +923,72 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         } else if (mDialogLoading != null) {
             mDialogLoading.dismiss();
             mDialogLoading = null;
+        }
+
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+
+
+
+            /*case MY_PERMISSIONS_REQUEST: {
+                for (String permission : permissions) {
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(this, permission)) {
+                        // Permission Denied
+                        Toast.makeText(this, R.string.phone_state_permission_denial_msg, Toast.LENGTH_LONG).show();
+                    } else {
+                        if (ActivityCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED) {
+                            // Permission Allowed
+                            // firstTimeSetup();
+                        } else {
+                            // Checkbox set to Never Ask Again
+                            showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
+                        }
+                    }
+                }
+            }*/
+
+
+            case MY_PROFILE_PIC_PERMISSIONS_REQUEST: {
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED
+                        && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+
+
+
+                } else if (Build.VERSION.SDK_INT >= 23
+                        && (!shouldShowRequestPermissionRationale(permissions[0])
+                        || !shouldShowRequestPermissionRationale(permissions[1]))) {
+                    showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
+
+                } else {
+                    Toast.makeText(this, R.string.camera_and_gallery_permission_denial_msg, Toast.LENGTH_LONG).show();
+                }
+                break;
+            }
+            case MY_SIGNATURE_PIC_PERMISSIONS_REQUEST: {
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED
+                        && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+
+
+
+                } else if (Build.VERSION.SDK_INT >= 23
+                        && (!shouldShowRequestPermissionRationale(permissions[0])
+                        || !shouldShowRequestPermissionRationale(permissions[1]))) {
+                    showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
+
+                } else {
+                    Toast.makeText(this, R.string.camera_and_gallery_permission_denial_msg, Toast.LENGTH_LONG).show();
+                }
+                break;
+            }
+
+
+
         }
     }
 }
