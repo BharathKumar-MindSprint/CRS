@@ -68,15 +68,26 @@ public class MyCustomListAdapter_Tasks extends BaseAdapter {
 
             int completed = Integer.parseInt(tasksDTO.getTaskCompletedStatus());
             taskText.setText(tasksDTO.getTaskName());
-            Date dbDate = inputFormat.parse(tasksDTO.getTaskDate());
+            Date dbDate=null;
+            try {
+                 dbDate = inputFormat.parse(tasksDTO.getTaskDate());
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
             if (completed == 1) {
                 cbImage.setImageDrawable(ContextCompat.getDrawable(context, android.R.drawable.checkbox_on_background));
                 linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
                 taskText.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
                 taskText.setTextSize(TypedValue.COMPLEX_UNIT_PX, res.getDimension(R.dimen.ofis_small_text));
                 taskDate.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-                String viewDate = outputFormat.format(dbDate);
-                taskDate.setText(viewDate);
+               try {
+                   String viewDate = outputFormat.format(dbDate);
+                   taskDate.setText(viewDate);
+               }catch (Exception e){
+
+               }
+
             } else {
                 cbImage.setImageDrawable(ContextCompat.getDrawable(context, android.R.drawable.checkbox_off_background));
                 linearLayout.setBackgroundResource(R.drawable.list_item);
