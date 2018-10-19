@@ -278,25 +278,25 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
         // loop through questions and generate the right control for each
         while (questions.moveToNext()) {
             String displayType = questions.getString(questions.getColumnIndex(OFISDBContract.QuestionSipEntry.COLUMN_NAME_DISPLAY_TYPE));
-            if (displayType.toLowerCase().trim().equals("checkbox")) {
+            if (displayType.toLowerCase().replaceAll(" ","").equals("checkbox")) {
                 dynamicQuestions.renderCheckBoxQuestionForSIP(questions, dynamicQuestions.questionsSection);
-            } else if (displayType.toLowerCase().equals("datepicker")) {
+            } else if (displayType.toLowerCase().replaceAll(" ","").equals("datepicker")) {
                 dynamicQuestions.renderDatePickerQuestionForSip(questions, false, dynamicQuestions.questionsSection, 0, -1, null);
-            } else if (displayType.toLowerCase().equals("decimal")) {
+            } else if (displayType.toLowerCase().replaceAll(" ","").equals("decimal")) {
                 dynamicQuestions.renderTextBoxQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null);
-            } else if (displayType.toLowerCase().equals("dropdown")) {
+            } else if (displayType.toLowerCase().replaceAll(" ","").equals("dropdown")) {
                 dynamicQuestions.renderSipDropDownQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
-            } else if (displayType.toLowerCase().equals("photocheckbox")) {
+            } else if (displayType.toLowerCase().replaceAll(" ","").equals("photocheckbox")) {
                 dynamicQuestions.renderPhotoCheckboxQuestionForSIP(questions, res, getPackageName());
-            } else if (displayType.toLowerCase().equals("repeater")) {
+            } else if (displayType.toLowerCase().replaceAll(" ","").equals("repeater")) {
                 dynamicQuestions.renderRepeaterQuestionForSIP(questions, res);
-            } else if (displayType.toLowerCase().trim().equals("textbox")) {
+            } else if (displayType.toLowerCase().replaceAll(" ","").equals("textbox")) {
                 dynamicQuestions.renderTextBoxQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null);
-            } else if (displayType.toLowerCase().equals("yesno") || displayType.toLowerCase().equals("yes/no")) {
+            } else if (displayType.toLowerCase().replaceAll(" ","").equals("yesno") || displayType.toLowerCase().replaceAll(" ","").equals("yes/no")) {
                 dynamicQuestions.renderYesNoQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
-            } else if (displayType.toLowerCase().equals("farmtreedensity")) {
+            } else if (displayType.toLowerCase().replaceAll(" ","").equals("farmtreedensity")) {
                 dynamicQuestions.renderTreeDensityQuestion(questions, res);
-            } else if (displayType.toLowerCase().equals("photoupload")) {
+            } else if (displayType.toLowerCase().replaceAll(" ","").equals("photoupload")) {
                 dynamicQuestions.renderPhotoUploadQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
             }
         }
