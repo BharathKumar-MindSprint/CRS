@@ -237,7 +237,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 .header("unique-id", base64UniqueId)
                 .header("app-version", BuildConfig.VERSION_NAME)
                 .header("App-Id", "1")
-                .header("AccessToken", AccessToken)
+//                .header("AccessToken", AccessToken)
+                .header("Authorization", "Bearer " + new AuthenticationHelper(context).getAuthenticationDTO().getAccessToken())
                 .url(fullUrl)
                 .post(requestBody)
                 .build();
@@ -424,7 +425,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         final Message msg = handler.obtainMessage();
         String endpoint = "ofismaster/master/requestHelp";
 
-        bodyBuilder.addFormDataPart("username", helpName);
+        bodyBuilder.addFormDataPart("userName", helpName);
         bodyBuilder.addFormDataPart("faultDescription", helpDescription);
         bodyBuilder.addFormDataPart("SQLiteDb", dbFile.getName(), file);
         bodyBuilder.addFormDataPart("enumeratorId", Utilities.getFromSharedPrefs(context));

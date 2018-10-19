@@ -1604,6 +1604,7 @@ public class OFISDBContract {
                 put(FarmerModulesEntry.TABLE_NAME, FarmerModulesEntry.COLUMN_LIST);
                 put(DatatypesEntry.TABLE_NAME, DatatypesEntry.COLUMN_LIST);
                 put(LookupValuesEntry.TABLE_NAME, LookupValuesEntry.COLUMN_LIST);
+                put(LookupValuesSipEntry.TABLE_NAME, LookupValuesSipEntry.COLUMN_LIST);
                 put(QuestionEntry.TABLE_NAME, QuestionEntry.COLUMN_LIST);
                 put(AnswerEntry.TABLE_NAME, AnswerEntry.COLUMN_LIST);
                 put(FarmerEntry.TABLE_NAME, FarmerEntry.COLUMN_LIST);

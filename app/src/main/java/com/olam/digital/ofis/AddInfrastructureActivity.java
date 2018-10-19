@@ -278,7 +278,7 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
         // loop through questions and generate the right control for each
         while (questions.moveToNext()) {
             String displayType = questions.getString(questions.getColumnIndex(OFISDBContract.QuestionSipEntry.COLUMN_NAME_DISPLAY_TYPE));
-            if (displayType.toLowerCase().equals("checkbox")) {
+            if (displayType.toLowerCase().trim().equals("checkbox")) {
                 dynamicQuestions.renderCheckBoxQuestionForSIP(questions, dynamicQuestions.questionsSection);
             } else if (displayType.toLowerCase().equals("datepicker")) {
                 dynamicQuestions.renderDatePickerQuestionForSip(questions, false, dynamicQuestions.questionsSection, 0, -1, null);
@@ -290,7 +290,7 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
                 dynamicQuestions.renderPhotoCheckboxQuestionForSIP(questions, res, getPackageName());
             } else if (displayType.toLowerCase().equals("repeater")) {
                 dynamicQuestions.renderRepeaterQuestionForSIP(questions, res);
-            } else if (displayType.toLowerCase().equals("textbox")) {
+            } else if (displayType.toLowerCase().trim().equals("textbox")) {
                 dynamicQuestions.renderTextBoxQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null);
             } else if (displayType.toLowerCase().equals("yesno") || displayType.toLowerCase().equals("yes/no")) {
                 dynamicQuestions.renderYesNoQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);

@@ -28,8 +28,10 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NavUtils;
 import android.support.v4.content.ContextCompat;
 import android.telephony.PhoneNumberUtils;
+import android.text.Editable;
 import android.text.InputType;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -697,6 +699,31 @@ public class ViewFarmerActivity extends BaseListActivity implements GoogleApiCli
             final EditText edTxtNumberOfPlots = new EditText(context);
             edTxtNumberOfPlots.setInputType(InputType.TYPE_CLASS_NUMBER);
             edTxtNumberOfPlots.setHint(res.getString(R.string.record_polygon_input_hint));
+
+            edTxtNumberOfPlots.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    String str = String.valueOf(s);
+                    if(str.length()>3){
+                        int num = Integer.parseInt(str);
+                        if(num >= 1001){
+                            edTxtNumberOfPlots.setError("We are supporting up to max 1000 plots");
+                            edTxtNumberOfPlots.findFocus();
+                            edTxtNumberOfPlots.setText("");
+                        }
+                    }
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+
+                }
+            });
             new AlertDialog.Builder(context)
                     .setTitle(res.getString(R.string.record_polygon_input_title))
                     .setMessage(res.getString(R.string.record_polygon_input_messege))
