@@ -1,7 +1,10 @@
 package com.olam.digital.ofis;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.app.ListActivity;
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -25,12 +28,13 @@ import com.olam.digital.ofis.model.TasksDTO;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class TasksActivity extends ListActivity {
+public class TasksActivity extends BaseListActivity {
     private Context context;
+    private static Context staticContext;
     private Resources res;
     private DataLayer dl;
     private Cursor tasks;
-    private CustomListAdapter_Tasks customListAdapter_tasks;
+//    private CustomListAdapter_Tasks customListAdapter_tasks;
     private MyCustomListAdapter_Tasks myCustomListAdapter_tasks;
     private boolean completed = true;
     private ArrayList<TasksDTO> tasksDTOArrayList = new ArrayList<>();
@@ -41,10 +45,18 @@ public class TasksActivity extends ListActivity {
         }
     };
 
+    private static final String AUTHORITY = BuildConfig.APPLICATION_ID + ".provider";
+    private static final String ACCOUNT_TYPE = BuildConfig.ACCOUNT_TYPE;
+    private static final String ACCOUNT = "ofis_companion";
+    private static final long SECONDS_PER_MINUTE = 60L;
+    private static final long SYNC_INTERVAL_IN_MINUTES = 1L;
+    private static final long SYNC_INTERVAL = SYNC_INTERVAL_IN_MINUTES * SECONDS_PER_MINUTE;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context = this;
+        staticContext = this;
         res = getResources();
         setContentView(R.layout.activity_tasks);
 
@@ -55,9 +67,35 @@ public class TasksActivity extends ListActivity {
 
         dl.deleteOldCompletedTasks();
         getTasks();
+        Account mAccount = CreateSyncAcount();
 
+        ContentResolver.setSyncAutomatically(
+                mAccount,
+                AUTHORITY,
+                true
+        );
+
+        ContentResolver.addPeriodicSync(
+                mAccount,
+                AUTHORITY,
+                Bundle.EMPTY,
+                SYNC_INTERVAL
+        );
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("TasksUpdated"));
 
+    }
+
+
+
+    private static Account CreateSyncAcount() {
+        Account newAccount = new Account(ACCOUNT, ACCOUNT_TYPE);
+        AccountManager accountManager = (AccountManager) staticContext.getSystemService(ACCOUNT_SERVICE);
+
+        if (accountManager.addAccountExplicitly(newAccount, null, null)) {
+            return newAccount;
+        }
+
+        return newAccount;
     }
 
     private void getTasks() {

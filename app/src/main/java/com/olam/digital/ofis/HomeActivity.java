@@ -118,6 +118,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
     private final static int MY_PROFILE_PIC_PERMISSIONS_REQUEST = 9998;
     private final static int MY_SIGNATURE_PIC_PERMISSIONS_REQUEST = 9997;
+    private static final int PERMISSIONS_ACCESS_LOCATION = 6575;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -176,6 +177,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
 
 
+
                 ActivityCompat.requestPermissions(HomeActivity.this,
                         new String[]{android.Manifest.permission.CAMERA,android.Manifest.permission.READ_EXTERNAL_STORAGE,android.Manifest.permission.READ_PHONE_STATE,
                                 android.Manifest.permission.WRITE_EXTERNAL_STORAGE},
@@ -190,42 +192,23 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             }
         }
 
+
+
         saveUpdateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String userEnumerator = enumeratorID.getText().toString().trim();
-                if (userEnumerator!=null && !userEnumerator.equalsIgnoreCase("")){
+                if (ContextCompat.checkSelfPermission(HomeActivity.this,
+                        android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                        && ContextCompat.checkSelfPermission(HomeActivity.this,
+                        android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(HomeActivity.this,
+                            new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION,
+                                    android.Manifest.permission.ACCESS_COARSE_LOCATION}, PERMISSIONS_ACCESS_LOCATION);
 
-                    if (ContextCompat.checkSelfPermission(HomeActivity.this,
-                            android.Manifest.permission.READ_PHONE_STATE)
-                            != PackageManager.PERMISSION_GRANTED) {
-
-                        //request permission
-                        ActivityCompat.requestPermissions(HomeActivity.this,
-                                new String[]{android.Manifest.permission.READ_PHONE_STATE},
-                                MY_PERMISSIONS_REQUEST);
-
-                    }else {
-                        showProgress(true);
-                        doAuthentication(userEnumerator);
-                    }
-
-//                    AuthRequestDTO authRequestDTO = new AuthRequestDTO();
-//                    authRequestDTO.setLanguage(Locale.getDefault().getLanguage());
-//                    authRequestDTO.setApplication("ttmobile");
-//                    authRequestDTO.setUsername("400");
-//                    //authRequestDTO.setPassword("3751e350-a1d4-4db9-b045-9dc50cf544fb");
-//                    authRequestDTO.setPassword("pA11wX6srkWUpRQcpGjZeYcQuGUlXI6JkJxULTEeNRhNGZ1nRwVYLRNbLlyO");
-//                    authRequestDTO.setGrantType("password");
-//                    authRequestDTO.setClientId(5L);
-//                    authRequestDTO.setClientSecret(getString(R.string.client_secret));
-//                    AuthenticationInterface authenticationInterface = AuthenticationClient.createService(AuthenticationInterface.class, HomeActivity.this);
-//                    showProgress(true);
-//                    Call<AuthenticationDTO> authCall = authenticationInterface.getCoreAuthToken(authRequestDTO);
-//                    authCall.enqueue(HomeActivity.this);
-                }else{
-                    Toast.makeText(HomeActivity.this,getString(R.string.enumerator_empty),Toast.LENGTH_LONG).show();
+                    return;
                 }
+
+                doingAuthRequest();
 
             }
         });
@@ -270,6 +253,28 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 //                nl.syncData();
 //            }
 //        }
+
+    }
+
+    private void doingAuthRequest() {
+        String userEnumerator = enumeratorID.getText().toString().trim();
+        if (userEnumerator!=null && !userEnumerator.equalsIgnoreCase("")){
+            if (ContextCompat.checkSelfPermission(HomeActivity.this,
+                    android.Manifest.permission.READ_PHONE_STATE)
+                    != PackageManager.PERMISSION_GRANTED) {
+
+                //request permission
+                ActivityCompat.requestPermissions(HomeActivity.this,
+                        new String[]{android.Manifest.permission.READ_PHONE_STATE},
+                        MY_PERMISSIONS_REQUEST);
+
+            }else {
+                showProgress(true);
+                doAuthentication(userEnumerator);
+            }
+        }else{
+            Toast.makeText(HomeActivity.this,getString(R.string.enumerator_empty),Toast.LENGTH_LONG).show();
+        }
 
     }
 
@@ -809,27 +814,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         dialog.show();
     }
 
-    /*@Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        switch (requestCode) {
-            case MY_PERMISSIONS_REQUEST: {
-                for (String permission : permissions) {
-                    if (ActivityCompat.shouldShowRequestPermissionRationale(this, permission)) {
-                        // Permission Denied
-                        Toast.makeText(this, R.string.phone_state_permission_denial_msg, Toast.LENGTH_LONG).show();
-                    } else {
-                        if (ActivityCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED) {
-                            // Permission Allowed
-                           // firstTimeSetup();
-                        } else {
-                            // Checkbox set to Never Ask Again
-                            showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
-                        }
-                    }
-                }
-            }
-        }
-    }*/
 
     @Override
     public void onResponse(Call<AuthenticationDTO> call, Response<AuthenticationDTO> response) {
@@ -950,7 +934,30 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                     }
                 }
             }*/
+            case PERMISSIONS_ACCESS_LOCATION: {
+                for (String permission : permissions) {
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(this, permission)) {
+                        // Permission Denied
+                        Toast.makeText(this, R.string.gps_permission_denial_msg, Toast.LENGTH_LONG).show();
+//                        startActivity(new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+//                                Uri.parse("package:" + context.getPackageName())));
+                        String userEnumerator = enumeratorID.getText().toString().trim();
+                        if (userEnumerator!=null && !userEnumerator.equalsIgnoreCase("")){
+                            doingAuthRequest();
+                        }
 
+                    } else {
+                        if (ActivityCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED) {
+                            // Permission Allowed
+                            doingAuthRequest();
+                        } else {
+                            // Checkbox set to Never Ask Again
+                            showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
+                        }
+                    }
+                }
+                break;
+            }
 
             case MY_PROFILE_PIC_PERMISSIONS_REQUEST: {
                 if (grantResults.length > 0
