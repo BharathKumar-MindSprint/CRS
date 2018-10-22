@@ -693,7 +693,13 @@ public class ViewFarmerActivity extends BaseListActivity implements GoogleApiCli
                 .getFarmerID(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
         //final int strFarmID = farmer.getInt(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID));
 
-        int count = SharedPreferenceUtils.getInstance(getApplicationContext()).getPlotCount(""+strFarmID);
+       // Some farm Id is getting null.
+        int count =0;
+        if(strFarmID != 0){
+            count = SharedPreferenceUtils.getInstance(getApplicationContext()).getPlotCount(""+strFarmID);
+        }
+
+
         Log.d("ViewFarmerActivity", "Plot Count = " + count);
         if (count == 0) {
             final EditText edTxtNumberOfPlots = new EditText(context);
