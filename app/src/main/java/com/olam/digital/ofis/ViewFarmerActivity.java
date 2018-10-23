@@ -546,7 +546,7 @@ public class ViewFarmerActivity extends BaseListActivity implements GoogleApiCli
         pd.show();
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setMessage(res.getString(R.string.are_you_at_the_farm))
-                .setCancelable(true)
+                .setCancelable(false)
                 .setPositiveButton(res.getString(R.string.yes), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         getFarmGPS(v);

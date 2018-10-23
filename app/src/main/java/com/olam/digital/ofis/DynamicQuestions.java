@@ -473,6 +473,12 @@ class DynamicQuestions {
 
                         CompleteModuleActivity completeModuleActivity = (CompleteModuleActivity) context;
                         completeModuleActivity.startActivityForResult(takePicture, REQUEST_IMAGE_CAPTURE);
+                    } if (context.getClass().getSimpleName().equalsIgnoreCase("AddInfrastructureActivity")) {
+                        StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+                        StrictMode.setVmPolicy(builder.build());
+
+                        AddInfrastructureActivity addInfrastructureActivity = (AddInfrastructureActivity) context;
+                        addInfrastructureActivity.startActivityForResult(takePicture, REQUEST_IMAGE_CAPTURE);
                     } else {
                         ReviewFarmManagementPlan reviewFarmManagementPlan = (ReviewFarmManagementPlan) context;
                         reviewFarmManagementPlan.startActivityForResult(takePicture, REQUEST_IMAGE_CAPTURE);
