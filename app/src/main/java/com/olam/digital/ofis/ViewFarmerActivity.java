@@ -611,6 +611,9 @@ public class ViewFarmerActivity extends BaseListActivity implements GoogleApiCli
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         int statusCode = ((ApiException) e).getStatusCode();
+                        if (pd != null && pd.isShowing()) {
+                            pd.dismiss();
+                        }
                         switch (statusCode) {
                             case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
 //                                Log.i(TAG, "Location settings are not satisfied. Attempting to upgrade " +
