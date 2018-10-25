@@ -425,7 +425,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         final Message msg = handler.obtainMessage();
         String endpoint = "ofismaster/master/requestHelp";
 
-        bodyBuilder.addFormDataPart("username", helpName);
+        bodyBuilder.addFormDataPart("userName", helpName);
         bodyBuilder.addFormDataPart("faultDescription", helpDescription);
         bodyBuilder.addFormDataPart("SQLiteDb", dbFile.getName(), file);
         bodyBuilder.addFormDataPart("enumeratorId", Utilities.getFromSharedPrefs(context));
