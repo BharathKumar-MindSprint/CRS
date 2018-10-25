@@ -107,7 +107,7 @@ import java.util.Locale;
 import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
 
 
-public class ViewFarmerActivity extends BaseListActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class ViewFarmerActivity extends BaseListActivity {
 
     public static long farmerId;
     private Cursor farmer;
@@ -227,13 +227,6 @@ public class ViewFarmerActivity extends BaseListActivity implements GoogleApiCli
     }
 
     private void setupGPS() {
-       /* if (googleApiClient == null) {
-            googleApiClient = new GoogleApiClient.Builder(this)
-                    .addConnectionCallbacks(this)
-                    .addOnConnectionFailedListener(this)
-                    .addApi(LocationServices.API)
-                    .build();
-        }*/
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         mSettingsClient = LocationServices.getSettingsClient(this);
 
@@ -244,8 +237,6 @@ public class ViewFarmerActivity extends BaseListActivity implements GoogleApiCli
                 // location is received
                 mCurrentLocation = locationResult.getLastLocation();
                 mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
-//                setFarmGPS(mCurrentLocation, clickedLocationItem);
-//                updateLocationUI();
             }
         };
 
@@ -262,58 +253,18 @@ public class ViewFarmerActivity extends BaseListActivity implements GoogleApiCli
     }
 
     protected void onStart() {
-//        googleApiClient.connect();
         super.onStart();
     }
 
     protected void onStop() {
-//        googleApiClient.disconnect();
         super.onStop();
     }
-
-    @Override
-    public void onConnected(Bundle connectionHint) {
-    }
-
-    @Override
-    public void onConnectionSuspended(int i){}/* {
-        googleApiClient.connect();
-    }*/
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-      /*  if (mResolvingError) {
-            return;
-        } else if (connectionResult.hasResolution()) {
-            try {
-                mResolvingError = true;
-                connectionResult.startResolutionForResult(this, REQUEST_RESOLVE_ERROR);
-            } catch (IntentSender.SendIntentException e) {
-                googleApiClient.connect();
-            }
-        } else {
-            GoogleApiAvailability.getInstance().showErrorDialogFragment(this, connectionResult.getErrorCode(), REQUEST_RESOLVE_ERROR);
-            mResolvingError = true;
-        }
-        FirebaseCrash.report(new Throwable("Location connection failed adding farm : code: " + connectionResult.getErrorCode() + " | message: " + connectionResult.getErrorMessage()));
-*/    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         ImageView farmerPhoto = (ImageView) findViewById(R.id.viewFarmerFarmerPhoto);
         //JIRA req OW-505
-/*
-        if (requestCode == REQUEST_RESOLVE_ERROR) {
-            mResolvingError = false;
-            if (resultCode == RESULT_OK) {
-                // Make sure the app is not already connected or attempting to connect
-                if (!googleApiClient.isConnecting() &&
-                        !googleApiClient.isConnected()) {
-                    googleApiClient.connect();
-                }
-            }
-        }*/
 
         switch (requestCode) {
             case REQUEST_IMAGE_CAPTURE:
@@ -438,10 +389,6 @@ public class ViewFarmerActivity extends BaseListActivity implements GoogleApiCli
 
     @SuppressLint("SetTextI18n")
     private void setFarmGPS(Location location, View v) {
-
-//        if (googleApiClient != null && googleApiClient.isConnected()) {
-//            LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, locationListener);
-//        }
         try {
            // Location farmLocation = (Location) msg.obj;
             Location farmLocation = location;
@@ -485,21 +432,18 @@ public class ViewFarmerActivity extends BaseListActivity implements GoogleApiCli
                 getFarmGPS(clickedLocationItem);
             }
         }else if(requestCode==MY_PROFILE_PIC_PERMISSIONS_REQUEST){
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED
-                        && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-                    bindFarmerPhotoButton();
-                } else if (Build.VERSION.SDK_INT >= 23
-                        && (!shouldShowRequestPermissionRationale(permissions[0])
-                        || !shouldShowRequestPermissionRationale(permissions[1]))) {
-                    showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
-                } else {
-                    Toast.makeText(this, R.string.camera_and_gallery_permission_denial_msg, Toast.LENGTH_LONG).show();
-                }
-
-
+            if (grantResults.length > 0
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED
+                    && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                bindFarmerPhotoButton();
+            } else if (Build.VERSION.SDK_INT >= 23
+                    && (!shouldShowRequestPermissionRationale(permissions[0])
+                    || !shouldShowRequestPermissionRationale(permissions[1]))) {
+                showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
+            } else {
+                Toast.makeText(this, R.string.camera_and_gallery_permission_denial_msg, Toast.LENGTH_LONG).show();
+            }
         }
-
     }
 
     private void getFarmGPS(final View v) {
@@ -588,10 +532,6 @@ public class ViewFarmerActivity extends BaseListActivity implements GoogleApiCli
                     @SuppressLint("MissingPermission")
                     @Override
                     public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
-//                        Log.i(TAG, "All location settings are satisfied.");
-
-//                        Toast.makeText(getApplicationContext(), "Started location updates!", Toast.LENGTH_SHORT).show();
-
                         //noinspection MissingPermission
                         mFusedLocationClient.requestLocationUpdates(mLocationRequest,
                                 mLocationCallback, Looper.myLooper());
@@ -616,8 +556,6 @@ public class ViewFarmerActivity extends BaseListActivity implements GoogleApiCli
                         }
                         switch (statusCode) {
                             case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
-//                                Log.i(TAG, "Location settings are not satisfied. Attempting to upgrade " +
-//                                        "location settings ");
                                 try {
                                     // Show the dialog by calling startResolutionForResult(), and check the
                                     // result in onActivityResult().

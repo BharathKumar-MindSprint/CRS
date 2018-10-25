@@ -67,7 +67,7 @@ public class TasksActivity extends BaseListActivity {
 
         dl.deleteOldCompletedTasks();
         getTasks();
-        Account mAccount = CreateSyncAcount();
+        /*Account mAccount = CreateSyncAcount();
 
         ContentResolver.setSyncAutomatically(
                 mAccount,
@@ -80,7 +80,7 @@ public class TasksActivity extends BaseListActivity {
                 AUTHORITY,
                 Bundle.EMPTY,
                 SYNC_INTERVAL
-        );
+        );*/
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("TasksUpdated"));
 
     }

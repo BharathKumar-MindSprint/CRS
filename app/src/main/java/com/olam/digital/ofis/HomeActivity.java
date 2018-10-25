@@ -150,6 +150,20 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         checkTime();
         bindNetworkQueue();
 
+        Account mAccount = CreateSyncAcount();
+
+        ContentResolver.setSyncAutomatically(
+                mAccount,
+                AUTHORITY,
+                true
+        );
+
+        ContentResolver.addPeriodicSync(
+                mAccount,
+                AUTHORITY,
+                Bundle.EMPTY,
+                SYNC_INTERVAL
+        );
         // logic Added for show and hide the wrapper section of first time running App
 //        if(new AppUtils().AppStatic.equalsIgnoreCase("")){
 //            firstRunSection.setVisibility(View.VISIBLE);
@@ -883,20 +897,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             }else{Utilities.isAppAlive=true;}
         }
 
-        Account mAccount = CreateSyncAcount();
-
-        ContentResolver.setSyncAutomatically(
-                mAccount,
-                AUTHORITY,
-                true
-        );
-
-        ContentResolver.addPeriodicSync(
-                mAccount,
-                AUTHORITY,
-                Bundle.EMPTY,
-                SYNC_INTERVAL
-        );
     }
 
     private void showProgress(boolean show) {
