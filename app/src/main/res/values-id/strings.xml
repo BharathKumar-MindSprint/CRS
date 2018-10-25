@@ -464,4 +464,5 @@
     <string name="enumerator_empty">Please enter the valid enumerator Id</string>
     <string name="please_answer_all_questions">Please answer all questions</string>
     <string name="please_fill_all_questions">Please fill answers for all the questions.</string>
+    <string name="updating_sip_training">Updating Social Infrastructure Points</string>
 </resources>
