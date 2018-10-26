@@ -28,12 +28,19 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.olam.digital.ofis.R;
+import com.olam.digital.ofis.authentication.AccessTokenTask;
+import com.olam.digital.ofis.authentication.DeviceIDxctractor;
+import com.olam.digital.ofis.authentication.OnAccessTokenInterface;
+import com.olam.digital.ofis.authentication.model.AuthRequestDTO;
 
 import org.json.JSONObject;
 
+import java.util.Locale;
 
-public class SettingsActivity extends Activity {
+
+public class SettingsActivity extends Activity implements OnAccessTokenInterface {
     // update
     private Context context;
     private EditText enumeratorID;
@@ -42,6 +49,7 @@ public class SettingsActivity extends Activity {
     private ProgressDialog m_ProgressDialog;
     Button buttonSave;
 
+    private boolean updateData=false;
     // Runtime Permission Request Code
     private final static int MY_PERMISSIONS_REQUEST = 9999;
 
@@ -109,21 +117,39 @@ public class SettingsActivity extends Activity {
     private void bindSaveButton() {
         Cursor networkQueue = dl.getNetworkQueue();
         if (networkQueue.getCount() == 0) {
-            if (enumeratorID.getText().length() > 0) {
-                Utilities.saveToSharedPrefs(context, "ENUMERATOR_ID", enumeratorID.getText().toString(), null);
-                NetworkLayer nl = new NetworkLayer(context, getResources());
-                nl.syncData();
-                //noinspection UnusedAssignment
-                nl = null;
-            } else {
-                Toast.makeText(context, R.string.Please_fill_all_fields, Toast.LENGTH_SHORT).show();
-            }
+            updateData=true;
+            checkAuthenticate();
         } else {
             Toast.makeText(context, R.string.please_sync_before_update, Toast.LENGTH_LONG).show();
             Intent intent = new Intent(context, HomeActivity.class);
             startActivity(intent);
         }
     }
+
+    private void checkAuthenticate(){
+       NetworkLayer nl = new NetworkLayer(context, res);
+        if (nl.isPhoneOnline()) {
+            AccessTokenTask accessTokenTask = new AccessTokenTask(context, getAuthRequestDTO(), SettingsActivity.this);
+            accessTokenTask.execute();
+        }else{
+            Toast.makeText(context, res.getString(R.string.Internet_not_available), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private AuthRequestDTO getAuthRequestDTO(){
+        AuthRequestDTO authRequestDTO = new AuthRequestDTO();
+        authRequestDTO.setLanguage(Locale.getDefault().getLanguage());
+        authRequestDTO.setApplication("ofismobile");
+        authRequestDTO.setUsername(enumeratorID.getText().toString().trim());
+        //authRequestDTO.setPassword("3751e350-a1d4-4db9-b045-9dc50cf544fb");
+        authRequestDTO.setPassword(DeviceIDxctractor.fetchDeviceID(this));
+        authRequestDTO.setFirebaseToken(FirebaseInstanceId.getInstance().getToken());
+        authRequestDTO.setGrantType("password");
+        authRequestDTO.setClientId(5L);
+        authRequestDTO.setClientSecret(getString(R.string.client_secret));
+        return authRequestDTO;
+    }
+
 
     private void bindHelpButton() {
 
@@ -155,6 +181,7 @@ public class SettingsActivity extends Activity {
         sendForHelp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 String helpName = name.getText().toString();
                 String helpDescription = faultDescription.getText().toString();
 
@@ -162,52 +189,8 @@ public class SettingsActivity extends Activity {
                     NetworkLayer nl = new NetworkLayer(context, getResources());
 
                     if (nl.isPhoneOnline()) {
-                        new Handler(Looper.getMainLooper()).post(new Runnable() {
-
-                            @Override
-                            public void run() {
-                                m_ProgressDialog = Utilities.openProgressDialog(context, res.getString(R.string.Please_wait) + " " + res.getString(R.string.Submitting_data), false);
-                            }
-                        });
-
-                        Handler helpHandler = new Handler() {
-                            @Override
-                            public void handleMessage(Message msg) {
-                                String pdUpdate = res.getString(R.string.item_synced);
-                                try {
-                                    final JSONObject response = (JSONObject) msg.obj;
-                                    String columnname = "message" + Utilities.getLocaleSuffix(res);
-                                    if (columnname.equalsIgnoreCase("message_en")) {
-                                        columnname = "message";
-                                    }
-                                    if (msg.what == 1) {
-                                        pdUpdate = response.optString(columnname, res.getString(R.string.item_synced));
-                                    } else if (msg.what == 2) {
-                                        pdUpdate = res.getString(R.string.item_sync_error);
-                                    }
-                                } catch(ClassCastException e) {
-                                    pdUpdate = res.getString(R.string.item_sync_error);
-                                } finally {
-                                    if (m_ProgressDialog != null && m_ProgressDialog.isShowing()) {
-                                        m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, msg.arg1, msg.arg2, pdUpdate);
-                                        Utilities.closeProgressDialog(m_ProgressDialog, 3000);
-
-                                        //Auto Closing of Help window after submitting
-                                        runOnUiThread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                name.setText("");
-                                                faultDescription.setText("");
-                                                helpRequestHolder.startAnimation(mSlideBottomDown);
-                                            }
-                                        });
-                                    }
-                                }
-                            }
-                        };
-
-                        nl.sendForHelp(helpName, helpDescription, helpHandler);
-
+                         updateData=false;
+                          checkAuthenticate();
                     } else {
                         Toast.makeText(context, res.getString(R.string.Internet_not_available), Toast.LENGTH_LONG).show();
                     }
@@ -316,5 +299,85 @@ public class SettingsActivity extends Activity {
                 }
             }
         }
+    }
+
+    @Override
+    public void onTokenCompleted(boolean status) {
+        if(status){
+            if(updateData){
+                if (enumeratorID.getText().length() > 0) {
+                    Utilities.saveToSharedPrefs(context, "ENUMERATOR_ID", enumeratorID.getText().toString(), null);
+                    NetworkLayer nl = new NetworkLayer(context, getResources());
+                    nl.syncData();
+                    //noinspection UnusedAssignment
+                    nl = null;
+                } else {
+                    Toast.makeText(context, R.string.Please_fill_all_fields, Toast.LENGTH_SHORT).show();
+                }
+            }else {
+                askForHelpUpdate();
+            }
+        }else{
+            Toast.makeText(SettingsActivity.this,getString(R.string.authentication_failed),Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void askForHelpUpdate() {
+
+        final EditText name = (EditText) findViewById(R.id.UserName);
+        final EditText faultDescription = (EditText) findViewById(R.id.FaultDescription);
+        final ImageButton hideHelpBox = (ImageButton) findViewById(R.id.helpCloseButton);
+        final LinearLayout helpRequestHolder = (LinearLayout) findViewById(R.id.helpRequestHolder);
+        final Animation mSlideBottomUp = AnimationUtils.loadAnimation(context, R.anim.bottom_up);
+        final Animation mSlideBottomDown = AnimationUtils.loadAnimation(context, R.anim.bottom_down);
+        NetworkLayer nl=new NetworkLayer(context,res);
+
+        String helpName = name.getText().toString();
+        String helpDescription = faultDescription.getText().toString();
+
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                m_ProgressDialog = Utilities.openProgressDialog(context, res.getString(R.string.Please_wait) + " " + res.getString(R.string.Submitting_data), false);
+            }
+        });
+
+        Handler helpHandler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                String pdUpdate = res.getString(R.string.item_synced);
+                try {
+                    final JSONObject response = (JSONObject) msg.obj;
+                    String columnname = "message" + Utilities.getLocaleSuffix(res);
+                    if (columnname.equalsIgnoreCase("message_en")) {
+                        columnname = "message";
+                    }
+                    if (msg.what == 1) {
+                        pdUpdate = response.optString(columnname, res.getString(R.string.item_synced));
+                    } else if (msg.what == 2) {
+                        pdUpdate = res.getString(R.string.item_sync_error);
+                    }
+                } catch(ClassCastException e) {
+                    pdUpdate = res.getString(R.string.item_sync_error);
+                } finally {
+                    if (m_ProgressDialog != null && m_ProgressDialog.isShowing()) {
+                        m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, msg.arg1, msg.arg2, pdUpdate);
+                        Utilities.closeProgressDialog(m_ProgressDialog, 3000);
+
+                        //Auto Closing of Help window after submitting
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                name.setText("");
+                                faultDescription.setText("");
+                                helpRequestHolder.startAnimation(mSlideBottomDown);
+                            }
+                        });
+                    }
+                }
+            }
+        };
+
+        nl.sendForHelp(helpName, helpDescription, helpHandler);
     }
 }

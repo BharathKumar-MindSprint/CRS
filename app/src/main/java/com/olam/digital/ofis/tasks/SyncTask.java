@@ -8,6 +8,7 @@ import android.provider.Settings;
 import android.util.Base64;
 import com.olam.digital.ofis.BuildConfig;
 import com.olam.digital.ofis.Utilities;
+import com.olam.digital.ofis.authentication.AccessTokenTask;
 import com.olam.digital.ofis.authentication.AuthenticationHelper;
 
 import org.json.JSONArray;
@@ -16,6 +17,7 @@ import org.json.JSONObject;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SSLContext;
@@ -98,7 +100,14 @@ abstract class SyncTask extends AsyncTask<SyncTaskOperationType, Object, String>
         String base64UniqueId = Base64.encodeToString(uniqueId.getBytes(), Base64.NO_WRAP);
         String fullUrl = getAbsoluteUrl(url);
         RequestBody body;
-
+//        String token="";
+//        try {
+//            token=new AccessTokenTask(context, null).execute().get();
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        } catch (ExecutionException e) {
+//            e.printStackTrace();
+//        }
         Request.Builder requestBuilder = new Request.Builder()
                 .header("enumerator-id", base64EnumeratorId)
                 .header("imei-number", base64ImeiNumber)
@@ -132,7 +141,14 @@ abstract class SyncTask extends AsyncTask<SyncTaskOperationType, Object, String>
         String base64UniqueId = Base64.encodeToString(uniqueId.getBytes(), Base64.NO_WRAP);
         String fullUrl = getAbsoluteUrl(url);
         RequestBody body;
-
+//        String token="";
+//        try {
+//            token=new AccessTokenTask(context, null).execute().get();
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        } catch (ExecutionException e) {
+//            e.printStackTrace();
+//        }
         Request.Builder requestBuilder = new Request.Builder()
                 .header("enumerator-id", base64EnumeratorId)
                 .header("imei-number", base64ImeiNumber)
@@ -172,7 +188,7 @@ abstract class SyncTask extends AsyncTask<SyncTaskOperationType, Object, String>
                 .header("unique-id", base64UniqueId)
                 .header("app-version", BuildConfig.VERSION_NAME)
                 .header("App-Id", "1")
-                .header("Authorization", "Bearer " + new AuthenticationHelper(context).getAuthenticationDTO().getAccessToken())
+                .header("Authorization", "Bearer " +  new AuthenticationHelper(context).getAuthenticationDTO().getAccessToken())
                 .url(url);
 
 

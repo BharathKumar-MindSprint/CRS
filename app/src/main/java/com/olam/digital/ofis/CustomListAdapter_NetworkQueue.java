@@ -44,7 +44,7 @@ class CustomListAdapter_NetworkQueue extends SimpleCursorAdapter {
             @Override
             public void onClick(View v) {
                 int itemId = Integer.parseInt(String.valueOf(networkQueueId.getText()));
-                homeActivity.startItemSync(itemId);
+                homeActivity.startItemSyncAuth(itemId);
             }
         });
     }

@@ -22,6 +22,9 @@ public interface AuthenticationInterface {
     @POST("authenticate")
     Call<AuthenticationDTO> getCoreAuthToken(@Body AuthRequestDTO authRequestDTO);
 
+    @POST("token")
+    Call<AuthenticationDTO> getRefreshToken(@Body AuthRequestDTO authRequestDTO);
+
     @POST("refresh")
     Call<AuthenticationDTO> getCoreAccessTokenFromRefreshToken(@Body RefreshTokenDTO refreshTokenDTO);
 

@@ -22,18 +22,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.crash.FirebaseCrash;
-import com.google.gson.Gson;
 import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import com.olam.digital.ofis.authentication.AccessTokenTask;
 import com.olam.digital.ofis.authentication.AuthenticationHelper;
-import com.olam.digital.ofis.model.FarmerRegistrationDTO;
-import com.olam.digital.ofis.model.FarmerRegistrationPhoneNumberDTO;
-import com.olam.digital.ofis.recordpolygon.RecordPolygonActivity;
 import com.olam.digital.ofis.tasks.SyncAllTask;
 import com.olam.digital.ofis.tasks.SyncTaskOperationType;
 
-import org.apache.commons.io.FilenameUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -48,7 +42,6 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Hashtable;
-import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ExecutionException;
@@ -62,8 +55,6 @@ import okhttp3.Callback;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-
-import com.olam.digital.ofis.R;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
@@ -152,9 +143,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
         RequestBody body = RequestBody.create(JSONBody, params.toString());
 
-        AccessToken = NetworkLayer.getAccessTokenIsAlive(context);
-
-        Log.i("fullUrlAccessToken", AccessToken + "");
 
         Request request = new Request.Builder()
                 .header("enumerator-id", base64EnumeratorId)
@@ -230,7 +218,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         String base64ImeiNumber = Base64.encodeToString(imeiNumber.getBytes(), Base64.NO_WRAP);
         String base64UniqueId = Base64.encodeToString(uniqueId.getBytes(), Base64.NO_WRAP);
         String fullUrl = getAbsoluteUrl(url);
-        AccessToken = NetworkLayer.getAccessTokenIsAlive(context);
+
+
         Request request = new Request.Builder()
                 .header("enumerator-id", base64EnumeratorId)
                 .header("imei-number", base64ImeiNumber)
@@ -251,6 +240,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
      //   String fullUrl = getMSAbsoluteUrl(url);
         String fullUrl=getAbsoluteUrl(url);
         RequestBody body = RequestBody.create(JSONBody, params.toString());
+
         Request request = new Request.Builder()
                 .header("App-Id", "1")
                 .header("Doc-Type","photo")
@@ -2709,17 +2699,5 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         return encoded;
     }
 
-
-    public static String getAccessTokenIsAlive(Context context) {
-        String key = null;
-        try {
-            key = new AccessTokenTask(context, null).execute(" ").get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-        return key;
-    }
 
 }

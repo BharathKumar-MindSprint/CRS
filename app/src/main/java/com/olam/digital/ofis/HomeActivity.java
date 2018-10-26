@@ -45,10 +45,12 @@ import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.LoginEvent;
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.olam.digital.ofis.authentication.AccessTokenTask;
 import com.olam.digital.ofis.authentication.AuthenticationClient;
 import com.olam.digital.ofis.authentication.AuthenticationHelper;
 import com.olam.digital.ofis.authentication.AuthenticationInterface;
 import com.olam.digital.ofis.authentication.DeviceIDxctractor;
+import com.olam.digital.ofis.authentication.OnAccessTokenInterface;
 import com.olam.digital.ofis.authentication.model.AuthRequestDTO;
 import com.olam.digital.ofis.authentication.model.AuthenticationDTO;
 import com.olam.digital.ofis.recordpolygon.RecordPolygonActivity;
@@ -66,7 +68,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 
-public class HomeActivity extends BaseListActivity implements Callback<AuthenticationDTO> {
+public class HomeActivity extends BaseListActivity implements Callback<AuthenticationDTO>,OnAccessTokenInterface {
 
     // update
     private Context context;
@@ -120,6 +122,9 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     private final static int MY_SIGNATURE_PIC_PERMISSIONS_REQUEST = 9997;
     private static final int PERMISSIONS_ACCESS_LOCATION = 6575;
 
+    private boolean syncOptionAll;
+    private int itemId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -150,29 +155,24 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         checkTime();
         bindNetworkQueue();
 
-        Account mAccount = CreateSyncAcount();
-
-        ContentResolver.setSyncAutomatically(
-                mAccount,
-                AUTHORITY,
-                true
-        );
-
-        ContentResolver.addPeriodicSync(
-                mAccount,
-                AUTHORITY,
-                Bundle.EMPTY,
-                SYNC_INTERVAL
-        );
-        // logic Added for show and hide the wrapper section of first time running App
-//        if(new AppUtils().AppStatic.equalsIgnoreCase("")){
-//            firstRunSection.setVisibility(View.VISIBLE);
-//        }else{
-//            firstRunSection.setVisibility(View.GONE);
-//        }
-        if (!Utilities.isAppAlive){
+        if (sharedPreferences.getBoolean("FIRST_RUN",true)) {
             firstRunSection.setVisibility(View.VISIBLE);
         }
+
+            Account mAccount = CreateSyncAcount();
+
+            ContentResolver.setSyncAutomatically(
+                    mAccount,
+                    AUTHORITY,
+                    true
+            );
+
+            ContentResolver.addPeriodicSync(
+                    mAccount,
+                    AUTHORITY,
+                    Bundle.EMPTY,
+                    SYNC_INTERVAL
+            );
 
         // Request Permission only for Android Version Marshmallow and above
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -182,15 +182,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                     .checkSelfPermission(HomeActivity.this,
                             android.Manifest.permission.CAMERA)
                     != PackageManager.PERMISSION_GRANTED) {
-
-
-
-
-
-
-
-
-
 
                 ActivityCompat.requestPermissions(HomeActivity.this,
                         new String[]{android.Manifest.permission.CAMERA,android.Manifest.permission.READ_EXTERNAL_STORAGE,android.Manifest.permission.READ_PHONE_STATE,
@@ -406,7 +397,8 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                 builder.setMessage(response.optString(columnname, res.getString(R.string.app_updated_upload_first_message)))
                                         .setPositiveButton(res.getString(R.string.app_update_ok), new DialogInterface.OnClickListener() {
                                             public void onClick(DialogInterface dialog, int id) {
-                                                startAllItemSync();
+                                                syncOptionAll=true;
+                                                checkAuthenticate();
                                             }
                                         })
                                         .setNegativeButton(R.string.app_update_cancel, new DialogInterface.OnClickListener() {
@@ -531,8 +523,33 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
     }
 
+    private void checkAuthenticate(){
+
+        if (nl.isPhoneOnline()) {
+            AccessTokenTask accessTokenTask = new AccessTokenTask(context, getAuthRequestDTO(), HomeActivity.this);
+            accessTokenTask.execute();
+        }else{
+            Toast.makeText(context, res.getString(R.string.Internet_not_available), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private AuthRequestDTO getAuthRequestDTO(){
+        AuthRequestDTO authRequestDTO = new AuthRequestDTO();
+        authRequestDTO.setLanguage(Locale.getDefault().getLanguage());
+        authRequestDTO.setApplication("ofismobile");
+        authRequestDTO.setUsername(Utilities.getFromSharedPrefs(HomeActivity.this));
+        //authRequestDTO.setPassword("3751e350-a1d4-4db9-b045-9dc50cf544fb");
+        authRequestDTO.setPassword(DeviceIDxctractor.fetchDeviceID(this));
+        authRequestDTO.setFirebaseToken(FirebaseInstanceId.getInstance().getToken());
+        authRequestDTO.setGrantType("password");
+        authRequestDTO.setClientId(5L);
+        authRequestDTO.setClientSecret(getString(R.string.client_secret));
+        return authRequestDTO;
+    }
+
     private void startAllItemSync() {
         if (nl.isPhoneOnline()) {
+
             mainHandler.post(new Runnable() {
 
                 @Override
@@ -566,6 +583,12 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         } else {
             Toast.makeText(context, res.getString(R.string.Internet_not_available), Toast.LENGTH_LONG).show();
         }
+    }
+
+    public void startItemSyncAuth(int itemId){
+          this.itemId=itemId;
+          syncOptionAll=false;
+          checkAuthenticate();
     }
 
     public void startItemSync(int itemId) {
@@ -643,7 +666,8 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             @Override
             public void onClick(View view) {
                 if (networkQueue.getCount() > 0) {
-                    startAllItemSync();
+                     syncOptionAll=true;
+                    checkAuthenticate();
                 }
             }
         });
@@ -997,5 +1021,19 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
 
         }
+    }
+
+    @Override
+    public void onTokenCompleted(boolean status) {
+        if(status){
+              if(syncOptionAll){
+                  startAllItemSync();
+              }else{
+                  startItemSync(itemId);
+              }
+        }else{
+            Toast.makeText(HomeActivity.this,getString(R.string.authentication_failed),Toast.LENGTH_LONG).show();
+        }
+
     }
 }
