@@ -71,9 +71,9 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
     private static String AccessToken;
     private static final String BASE_URL = BuildConfig.HOST;
     private static final OkHttpClient okHttpClient = new OkHttpClient.Builder()
-            .connectTimeout(10, TimeUnit.SECONDS)
-            .readTimeout(30, TimeUnit.SECONDS)
-            .writeTimeout(30, TimeUnit.SECONDS)
+            .connectTimeout(30, TimeUnit.SECONDS)
+            .readTimeout(90, TimeUnit.SECONDS)
+            .writeTimeout(90, TimeUnit.SECONDS)
             .sslSocketFactory(getSSLSocketFactory())
             .build();
     private static final MediaType JSONBody = MediaType.parse("application/json; charset=utf-8");

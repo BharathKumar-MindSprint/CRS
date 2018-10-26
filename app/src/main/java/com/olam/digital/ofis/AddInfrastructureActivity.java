@@ -366,21 +366,6 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
         super.onStop();
     }
 
-    private void doLocationUpdate() {
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION}, PERMISSIONS_ACCESS_LOCATION);
-            return;
-        } else {
-//            if (googleApiClient != null && googleApiClient.isConnected()) {
-//                poiLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
-//            }
-            if (poiLocation != null) {
-                recorded_lat = String.valueOf(poiLocation.getLatitude());
-                recorded_lng = String.valueOf(poiLocation.getLongitude());
-            }
-            requestLocation.callOnClick();
-        }
-    }
 
     @Override
     public void onConnected(Bundle connectionHint) {
@@ -1070,8 +1055,9 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
                                 if (pd != null && pd.getWindow().getDecorView().getWindowToken() != null && pd.isShowing()) {
                                     pd.dismiss();
                                 }
-                                if(mCurrentLocation != null)
+                                if(mCurrentLocation != null) {
                                     setPoiGPS(mCurrentLocation);
+                                }
                             }
                         }, 3000);
                     }
@@ -1080,6 +1066,17 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         int statusCode = ((ApiException) e).getStatusCode();
+
+                        Handler handler = new Handler(Looper.getMainLooper());
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (pd != null && pd.getWindow().getDecorView().getWindowToken() != null && pd.isShowing()) {
+                                    pd.dismiss();
+                                }
+                            }
+                        }, 1000);
+
                         switch (statusCode) {
                             case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
 //                                Log.i(TAG, "Location settings are not satisfied. Attempting to upgrade " +
@@ -1099,12 +1096,12 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
 //                                Log.e(TAG, errorMessage);
 
                                 Toast.makeText(AddInfrastructureActivity.this, errorMessage, Toast.LENGTH_LONG).show();
+
+                                break;
+                                default:
+                                    Toast.makeText(AddInfrastructureActivity.this,getResources().getString(R.string.record_location_timeout),Toast.LENGTH_LONG).show();
+
                         }
-                        if(mCurrentLocation != null)
-                            setPoiGPS(mCurrentLocation);
-//                        else
-//                            requestLocation.callOnClick();
-//                        updateLocationUI();
                     }
                 });
     }

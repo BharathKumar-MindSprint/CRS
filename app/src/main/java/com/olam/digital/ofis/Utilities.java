@@ -55,15 +55,19 @@ public class Utilities {
 
 
 
-public  static String base64ConversionForImage(String filepath) {
+public  static String base64ConversionForImage(String filepath)  {
+    String encoded="";
+    try {
+        File photo = new File(filepath);
+        Bitmap bitmap = BitmapFactory.decodeFile(photo.getAbsolutePath());
+        Bitmap compressedBitmap=ImageCompressionUtil.imageCompress(bitmap);
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        compressedBitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+        byte[] byteArray = byteArrayOutputStream.toByteArray();
+        encoded = Base64.encodeToString(byteArray, Base64.DEFAULT);
+    }catch (Exception e){
 
-    File photo = new File(filepath);
-    Bitmap bitmap = BitmapFactory.decodeFile(photo.getAbsolutePath());
-    Bitmap compressedBitmap=ImageCompressionUtil.imageCompress(bitmap);
-    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-    compressedBitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
-    byte[] byteArray = byteArrayOutputStream.toByteArray();
-    String encoded = Base64.encodeToString(byteArray, Base64.DEFAULT);
+    }
     return encoded;
 }
 

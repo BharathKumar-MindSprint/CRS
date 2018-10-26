@@ -144,10 +144,12 @@ public class CompleteModuleActivity extends BaseActivity implements GoogleApiCli
             moveToCurrentSubModule(subModuleId);
         } else {
             dynamicQuestions.hasAnswers = false;
+            try {
+                subModules.moveToFirst();
+                subModuleId = subModules.getInt(subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_ID));
+                questions = dl.getQuestionsBySubModuleId(subModuleId);
+            }catch (Exception e){}
 
-            subModules.moveToFirst();
-            subModuleId = subModules.getInt(subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_ID));
-            questions = dl.getQuestionsBySubModuleId(subModuleId);
         }
 
         initDynamicQuestions();

@@ -551,9 +551,14 @@ public class ViewFarmerActivity extends BaseListActivity {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         int statusCode = ((ApiException) e).getStatusCode();
-                        if (pd != null && pd.isShowing()) {
-                            pd.dismiss();
-                        }
+                        Handler handler = new Handler(Looper.getMainLooper());
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                if(mCurrentLocation != null)
+                                    setFarmGPS(mCurrentLocation, v);
+                            }
+                        }, 1000);
                         switch (statusCode) {
                             case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
                                 try {
@@ -571,15 +576,11 @@ public class ViewFarmerActivity extends BaseListActivity {
 //                                Log.e(TAG, errorMessage);
 
                                 Toast.makeText(ViewFarmerActivity.this, errorMessage, Toast.LENGTH_LONG).show();
+                              break;
+                            default:
+                                Toast.makeText(ViewFarmerActivity.this,getResources().getString(R.string.record_location_timeout),Toast.LENGTH_LONG).show();
                         }
-                        Handler handler = new Handler(Looper.getMainLooper());
-                        handler.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                 if(mCurrentLocation != null)
-                                    setFarmGPS(mCurrentLocation, v);
-                            }
-                        }, 3000);
+
                     }
                 });
     }
