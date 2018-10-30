@@ -552,7 +552,7 @@ public class ViewFarmerActivity extends BaseListActivity {
                                         setFarmGPS(mCurrentLocation, v);
                                     }
                             }
-                        }, 6000);
+                        }, 3000);
 
                     }
                 })
