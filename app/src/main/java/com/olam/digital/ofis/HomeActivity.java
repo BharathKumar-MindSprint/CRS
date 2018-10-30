@@ -124,6 +124,8 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
     private boolean syncOptionAll;
     private int itemId;
+    public static int totalItems;
+    public static int progressItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -486,7 +488,8 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         networkQueue = dl.getNetworkQueue();
         if (networkQueue.getCount() > 0) {
             queueCount = (TextView) findViewById(R.id.networkQueueCount);
-            String queueTotal = Integer.toString(networkQueue.getCount());
+            totalItems = networkQueue.getCount();
+            String queueTotal = Integer.toString(totalItems);
             queueCount.setText(queueTotal);
 
             nomodulestosubmittext.setVisibility(View.GONE);
@@ -550,14 +553,20 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     private void startAllItemSync() {
         if (nl.isPhoneOnline()) {
 
+
+            final String message = res.getString(R.string.Please_wait) + " " + res.getString(R.string.Submitting_data);
             mainHandler.post(new Runnable() {
 
                 @Override
                 public void run() {
-                    m_ProgressDialog = Utilities.openProgressDialog(context, res.getString(R.string.Please_wait) + " " + res.getString(R.string.Submitting_data), true);
+                    m_ProgressDialog = Utilities.openProgressDialog(context, message, true);
                     if (!farmerSynced) {
                         m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, 0, 0, res.getString(R.string.farmer_not_synced));
                         Utilities.closeProgressDialog(m_ProgressDialog, 3000);
+                    }else{
+                        totalItems = networkQueue.getCount();
+                        m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, totalItems, 0, message);
+
                     }
                 }
             });
@@ -624,7 +633,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             };
             farmerSynced = true;
             nl.getNetworkQueue(itemId);
-            nl.syncNetworkQueue(itemId, syncHandler);
+            nl.syncNetworkQueueFromHome(itemId, syncHandler);
         } else {
             Toast.makeText(context, res.getString(R.string.Internet_not_available), Toast.LENGTH_LONG).show();
         }
@@ -645,6 +654,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 customListAdapter_networkQueue.swapCursor(networkQueue);
                 String queueTotal = Integer.toString(networkQueue.getCount());
                 queueCount.setText(queueTotal);
+                totalItems = networkQueue.getCount();
                 if (networkQueue.getCount() == 0) {
                     TextView nomodulestosubmittext = (TextView) findViewById(R.id.nomodulestosubmittext);
                     nomodulestosubmittext.setVisibility(View.VISIBLE);

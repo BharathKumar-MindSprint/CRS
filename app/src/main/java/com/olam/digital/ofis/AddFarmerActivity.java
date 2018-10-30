@@ -36,6 +36,7 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.crash.FirebaseCrash;
@@ -97,7 +98,8 @@ public class AddFarmerActivity extends BaseActivity {
     private Uri mCapturedImageURI = null, mCapturedSignatureImageURI = null;
 
     private String dateStrToSend;
-    private EditText farmerDOB;
+//    private EditText farmerDOB;
+    private TextView farmerDOB;
     private EditText farmerIdPrefix;
     private LinearLayout phonenumbers;
     private LayoutInflater inflater;
@@ -340,7 +342,7 @@ public class AddFarmerActivity extends BaseActivity {
         EditText farmerName = (EditText) findViewById(R.id.farmerName);
         farmerName.setText(existingItem.getString(existingItem.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME)));
 
-        farmerDOB = (EditText) findViewById(R.id.farmerDOB);
+        farmerDOB = (TextView) findViewById(R.id.farmerDOB);
         dateStrToSend = existingItem.getString(existingItem.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_DOB));
         farmerDOB.setText(dateStrToSend);
 
@@ -910,7 +912,7 @@ public class AddFarmerActivity extends BaseActivity {
     };
 
     private void bindDateField() {
-        farmerDOB = (EditText) findViewById(R.id.farmerDOB);
+        farmerDOB = (TextView) findViewById(R.id.farmerDOB);
 
         farmerDOB.setKeyListener(null);
         farmerDOB.setOnClickListener(new View.OnClickListener() {

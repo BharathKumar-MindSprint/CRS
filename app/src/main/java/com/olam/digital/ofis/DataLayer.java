@@ -419,6 +419,7 @@ public class DataLayer {
             values.put(OFISDBContract.Task.COLUMN_NAME_TASKTEXT, TaskText);
             values.put(OFISDBContract.Task.COLUMN_NAME_TASK_CREATOR, String.valueOf(taskData.get("task_creator")));
             values.put(OFISDBContract.Task.COLUMN_NAME_CREATED_DATE, String.valueOf(taskData.get("task_created")));
+            values.put(OFISDBContract.Task.COLUMN_NAME_ENUMERATORS_TASK_ID, String.valueOf(taskData.get("enumeratorTasksId")));
 
             String[] columns = new String[]{"*"};
             String whereClause = OFISDBContract.Task.COLUMN_NAME_ID + " = ?";

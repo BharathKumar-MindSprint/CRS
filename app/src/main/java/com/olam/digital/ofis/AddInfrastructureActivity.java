@@ -497,7 +497,7 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
         modulesSpinner.setSelection(selectedModulePOI);
         moduleId = moduleDTOS.get(selectedModulePOI).getId();
         subModuleId = getSubModules(moduleId).get(selectedSubModulePOI).getId();
-//        bindPoiSpinner(moduleId);
+        bindPoiSpinner(moduleId);
 
         subModulesSpinner.setSelection(selectedSubModulePOI);
 //        subModulesSpinner.setEnabled(false);
@@ -956,8 +956,10 @@ public class AddInfrastructureActivity extends BaseActivity implements GoogleApi
                        animateBetweenColours(currentColour,color,topSection);
 
                    }  */
-                moduleId = moduleDTOS.get(position).getId();
-                bindPoiSpinner(moduleId);
+                if (!editMode) {
+                    moduleId = moduleDTOS.get(position).getId();
+                    bindPoiSpinner(moduleId);
+                }
 //                  subModuleId = subModuleDTOS.get(0).getId();
 //                    getSubModuleQuestions(subModuleId);
 //                }
