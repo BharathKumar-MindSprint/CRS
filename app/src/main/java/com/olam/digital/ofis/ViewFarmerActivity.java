@@ -191,7 +191,7 @@ public class ViewFarmerActivity extends BaseListActivity {
 
     private String farmerNameStr;
     private String olamFarmerIdStr;
-
+    private boolean polygon = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -477,6 +477,9 @@ public class ViewFarmerActivity extends BaseListActivity {
                     }).check();
 
         } catch (Exception e) {
+            if (pd != null && pd.isShowing()) {
+                pd.dismiss();
+            }
             FirebaseCrash.report(new Exception("ViewFarmerActivity: Error getting farmer GPS location - enumerator " + Utilities.getFromSharedPrefs(context), e));
             e.printStackTrace();
         }
@@ -536,14 +539,20 @@ public class ViewFarmerActivity extends BaseListActivity {
                         mFusedLocationClient.requestLocationUpdates(mLocationRequest,
                                 mLocationCallback, Looper.myLooper());
                         Handler handler = new Handler(Looper.getMainLooper());
-
                         handler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
+                                if (pd != null && pd.isShowing()) {
+                                    pd.dismiss();
+                                }
                                 if(mCurrentLocation != null)
-                                    setFarmGPS(mCurrentLocation, v);
+                                    if(polygon) {
+                                        recordFarmPolygon(v);
+                                    }else{
+                                        setFarmGPS(mCurrentLocation, v);
+                                    }
                             }
-                        }, 3000);
+                        }, 6000);
 
                     }
                 })
@@ -551,14 +560,18 @@ public class ViewFarmerActivity extends BaseListActivity {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         int statusCode = ((ApiException) e).getStatusCode();
-                        Handler handler = new Handler(Looper.getMainLooper());
-                        handler.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                if(mCurrentLocation != null)
-                                    setFarmGPS(mCurrentLocation, v);
-                            }
-                        }, 1000);
+//                        Handler handler = new Handler(Looper.getMainLooper());
+//                        handler.postDelayed(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                if(mCurrentLocation != null)
+//                                    setFarmGPS(mCurrentLocation, v);
+//                            }
+//                        }, 1000);
+                        if (pd != null && pd.isShowing()) {
+                            pd.dismiss();
+                        }
+                        Toast.makeText(ViewFarmerActivity.this,getResources().getString(R.string.record_location_timeout),Toast.LENGTH_LONG).show();
                         switch (statusCode) {
                             case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
                                 try {
@@ -585,21 +598,6 @@ public class ViewFarmerActivity extends BaseListActivity {
                 });
     }
 
-
-    private void recordFarmPolygonTest(final View v) {
-        SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmID("41526");
-        List<LocationBeanList> aLocationBeanList = SharedPreferenceUtils.getInstance(getApplicationContext()).getAllLocations();
-        String plotsJson = getPlotsJsonFromLocationBeanList(aLocationBeanList);
-        DataLayer dl = new DataLayer(getResources(), ViewFarmerActivity.this);
-        if (plotsJson != null) {
-            plotsJson = Base64.encodeToString(plotsJson.getBytes(), Base64.NO_WRAP);
-            //plotsJson = AppConstants.encodedPlots;
-            int updated = dl.updateFarmPolygon(48652, plotsJson, "CI-0006-TE47-8888", 41586, "FarmerTest");
-            if (updated > 0) {
-                Toast.makeText(getApplicationContext(), "Sync DB Updated!", Toast.LENGTH_LONG).show();
-            }
-        }
-    }
     String getPlotsJsonFromLocationBeanList(List<LocationBeanList>  aLocationBeanList) {
         PlotsList lPlotList = new PlotsList();
         List<location> lplotsList = new ArrayList<>();
@@ -619,6 +617,72 @@ public class ViewFarmerActivity extends BaseListActivity {
         lPlotList.setLocation(lplotsList);
         String json = lPlotList == null ? null : new Gson().toJson(lPlotList);
         return json;
+    }
+
+    private void enableFarmPolygon(final View v){
+        pd = new ProgressDialog(ViewFarmerActivity.this);
+        pd.setCancelable(false);
+        pd.setIndeterminate(false);
+        pd.setMessage("Location fetching for Polygon...");
+        pd.show();
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setMessage(res.getString(R.string.are_you_ready_to_polygon_record))
+                .setCancelable(false)
+                .setPositiveButton(res.getString(R.string.yes), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        getFarmGPSPolygon(v);
+                    }
+                })
+                .setNegativeButton(res.getString(R.string.no), new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                                if (pd != null && pd.isShowing()) {
+                                    pd.dismiss();
+                                }
+                            }
+                        }
+                );
+        AlertDialog alert = builder.create();
+        alert.show();
+    }
+
+    private void getFarmGPSPolygon(final View v) {
+        try {
+            Dexter.withActivity(this)
+                    .withPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+                    .withListener(new PermissionListener() {
+                        @Override
+                        public void onPermissionGranted(PermissionGrantedResponse response) {
+                            mRequestingLocationUpdates = true;
+                            startLocationUpdates(v);
+                        }
+
+                        @Override
+                        public void onPermissionDenied(PermissionDeniedResponse response) {
+
+                            if (response.isPermanentlyDenied()) {
+                                // open device settings when the permission is
+                                // denied permanently
+                                if (pd != null && pd.isShowing()) {
+                                    pd.dismiss();
+                                }
+                                openSettings();
+                            }
+                        }
+
+                        @Override
+                        public void onPermissionRationaleShouldBeShown(PermissionRequest permission, PermissionToken token) {
+                            token.continuePermissionRequest();
+                        }
+                    }).check();
+
+        } catch (Exception e) {
+            if (pd != null && pd.isShowing()) {
+                pd.dismiss();
+            }
+            FirebaseCrash.report(new Exception("ViewFarmerActivity: Error getting farmer GPS location - enumerator " + Utilities.getFromSharedPrefs(context), e));
+            e.printStackTrace();
+        }
     }
 
     private void recordFarmPolygon(final View v) {
@@ -1000,8 +1064,10 @@ public class ViewFarmerActivity extends BaseListActivity {
                         phoneNumbersHolder.setVisibility(View.VISIBLE);
                         phoneNumbersHolder.startAnimation(mSlideBottomUp);
                     } else if (recordedLng != null && recordedLng.getText().equals("farmpolygon")) {
-                        recordFarmPolygon(v);
+                        polygon=true;
+                        enableFarmPolygon(v);
                     } else {
+                        polygon=false;
                         recordFarmLocation(v);
                     }
                 } else if (id < 0) {
