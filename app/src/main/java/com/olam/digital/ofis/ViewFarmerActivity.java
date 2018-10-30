@@ -545,14 +545,17 @@ public class ViewFarmerActivity extends BaseListActivity {
                                 if (pd != null && pd.isShowing()) {
                                     pd.dismiss();
                                 }
-                                if(mCurrentLocation != null)
-                                    if(polygon) {
+                                if(mCurrentLocation != null) {
+                                    if (polygon) {
                                         recordFarmPolygon(v);
-                                    }else{
+                                    } else {
                                         setFarmGPS(mCurrentLocation, v);
                                     }
+                                }else{
+                                    Toast.makeText(ViewFarmerActivity.this,getResources().getString(R.string.record_location_timeout),Toast.LENGTH_LONG).show();
+                                }
                             }
-                        }, 3000);
+                        }, 6000);
 
                     }
                 })
