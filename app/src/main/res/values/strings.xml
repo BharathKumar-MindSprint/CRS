@@ -478,4 +478,5 @@
     <string name="please_fill_all_questions">Please fill answers for all the questions.</string>
     <string name="updating_sip_training">Updating Social Infrastructure Points</string>
     <string name="are_you_ready_to_polygon_record">Are you ready to record polygon ?</string>
+    <string name="phone_number_recorded">Phone number recorded</string>
 </resources>
