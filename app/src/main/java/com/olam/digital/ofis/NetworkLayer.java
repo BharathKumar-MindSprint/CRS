@@ -2076,7 +2076,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         String enumeratorId = Utilities.getFromSharedPrefs(context);
         String IMEI = Utilities.getIMEI(context);
         boolean hasPhotos = false;
-        MultipartBody.Builder bodyBuilder = new MultipartBody.Builder().setType(MultipartBody.FORM);
         String storageDir = (context.getExternalFilesDir(null) != null) ? context.getExternalFilesDir(null).getPath() + "/" : "/";
 
         final String uploadId = networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ID));
@@ -2132,12 +2131,10 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         answer.put("answer", moduleAnswers.getString(moduleAnswers.getColumnIndex("answer_" + datatype)));
                     }
 
-                    if (moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE)).equalsIgnoreCase("photoupload")) {
+                    if (moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE)).toLowerCase().replaceAll(" ","").equals("photoupload")) {
                         hasPhotos = true;
                         File photo = new File(storageDir + "/" + moduleAnswers.getString(moduleAnswers.getColumnIndex("answer_" + datatype)));
                         answer.put("answer", Utilities.base64ConversionForImage(storageDir + "/" + moduleAnswers.getString(moduleAnswers.getColumnIndex("answer_" + datatype))));
-//                        RequestBody file = RequestBody.create(MEDIA_TYPE_JPG, photo);
-//                        bodyBuilder.addFormDataPart(FilenameUtils.removeExtension(photo.getName()), photo.getName(), file);
                     }
 
                     answers.put(answer);
