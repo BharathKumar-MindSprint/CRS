@@ -56,7 +56,7 @@
                         android:text="@string/Date_of_Birth"
                         android:textStyle="bold"
                         android:layout_marginBottom="@dimen/ofis_med_pad"/>
-
+<!--
                     <EditText
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
@@ -67,7 +67,28 @@
                         android:hint="@string/Date_of_Birth"
                         android:inputType="none"
                         android:nextFocusDown="@+id/spinner_farmerGroup"
+                        tools:ignore="RtlHardcoded" />-->
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:textColor="@color/ofis_text_field"
+                        android:textColorHint="@color/ofis_text_field"
+                        android:textSize="@dimen/ofis_input_field_text"
+                        android:id="@+id/farmerDOB"
+                        android:hint="@string/Date_of_Birth"
+                        android:inputType="none"
+                        android:nextFocusDown="@+id/spinner_farmerGroup"
                         tools:ignore="RtlHardcoded" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:background="@android:color/holo_blue_dark"
+                        android:layout_height="@dimen/ofis_spinner_itemseparator"></LinearLayout>
+                    </LinearLayout>
                 </LinearLayout>
 
                 <LinearLayout

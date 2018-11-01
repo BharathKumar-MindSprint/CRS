@@ -124,6 +124,8 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
     private boolean syncOptionAll;
     private int itemId;
+    public static int totalItems;
+    public static int progressItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -264,7 +266,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     private void doingAuthRequest() {
         String userEnumerator = enumeratorID.getText().toString().trim();
         if (userEnumerator!=null && !userEnumerator.equalsIgnoreCase("")){
-            if (ContextCompat.checkSelfPermission(HomeActivity.this,
+           /* if (ContextCompat.checkSelfPermission(HomeActivity.this,
                     android.Manifest.permission.READ_PHONE_STATE)
                     != PackageManager.PERMISSION_GRANTED) {
 
@@ -273,7 +275,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                         new String[]{android.Manifest.permission.READ_PHONE_STATE},
                         MY_PERMISSIONS_REQUEST);
 
-            }else {
+            }else*/ {
                 showProgress(true);
                 doAuthentication(userEnumerator);
             }
@@ -486,7 +488,8 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         networkQueue = dl.getNetworkQueue();
         if (networkQueue.getCount() > 0) {
             queueCount = (TextView) findViewById(R.id.networkQueueCount);
-            String queueTotal = Integer.toString(networkQueue.getCount());
+            totalItems = networkQueue.getCount();
+            String queueTotal = Integer.toString(totalItems);
             queueCount.setText(queueTotal);
 
             nomodulestosubmittext.setVisibility(View.GONE);
@@ -550,14 +553,20 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     private void startAllItemSync() {
         if (nl.isPhoneOnline()) {
 
+
+            final String message = res.getString(R.string.Please_wait) + " " + res.getString(R.string.Submitting_data);
             mainHandler.post(new Runnable() {
 
                 @Override
                 public void run() {
-                    m_ProgressDialog = Utilities.openProgressDialog(context, res.getString(R.string.Please_wait) + " " + res.getString(R.string.Submitting_data), true);
+                    m_ProgressDialog = Utilities.openProgressDialog(context, message, true);
                     if (!farmerSynced) {
                         m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, 0, 0, res.getString(R.string.farmer_not_synced));
                         Utilities.closeProgressDialog(m_ProgressDialog, 3000);
+                    }else{
+                        totalItems = networkQueue.getCount();
+                        m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, totalItems, 0, message);
+
                     }
                 }
             });
@@ -624,7 +633,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             };
             farmerSynced = true;
             nl.getNetworkQueue(itemId);
-            nl.syncNetworkQueue(itemId, syncHandler);
+            nl.syncNetworkQueueFromHome(itemId, syncHandler);
         } else {
             Toast.makeText(context, res.getString(R.string.Internet_not_available), Toast.LENGTH_LONG).show();
         }
@@ -637,7 +646,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 if (m_ProgressDialog!=null && m_ProgressDialog.isShowing())
                 {
                     String pdUpdate = msg.obj.toString();
-                    m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, msg.arg1, msg.arg2, pdUpdate);
+                    m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, totalItems/*msg.arg1*/, progressItem/*msg.arg2*/, pdUpdate);
                     Utilities.closeProgressDialog(m_ProgressDialog, 3000);
                 }
                 networkQueue.close();
@@ -645,6 +654,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 customListAdapter_networkQueue.swapCursor(networkQueue);
                 String queueTotal = Integer.toString(networkQueue.getCount());
                 queueCount.setText(queueTotal);
+                totalItems = networkQueue.getCount();
                 if (networkQueue.getCount() == 0) {
                     TextView nomodulestosubmittext = (TextView) findViewById(R.id.nomodulestosubmittext);
                     nomodulestosubmittext.setVisibility(View.VISIBLE);
@@ -939,32 +949,11 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
-
-
-
-            /*case MY_PERMISSIONS_REQUEST: {
-                for (String permission : permissions) {
-                    if (ActivityCompat.shouldShowRequestPermissionRationale(this, permission)) {
-                        // Permission Denied
-                        Toast.makeText(this, R.string.phone_state_permission_denial_msg, Toast.LENGTH_LONG).show();
-                    } else {
-                        if (ActivityCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED) {
-                            // Permission Allowed
-                            // firstTimeSetup();
-                        } else {
-                            // Checkbox set to Never Ask Again
-                            showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
-                        }
-                    }
-                }
-            }*/
             case PERMISSIONS_ACCESS_LOCATION: {
                 for (String permission : permissions) {
                     if (ActivityCompat.shouldShowRequestPermissionRationale(this, permission)) {
                         // Permission Denied
                         Toast.makeText(this, R.string.gps_permission_denial_msg, Toast.LENGTH_LONG).show();
-//                        startActivity(new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-//                                Uri.parse("package:" + context.getPackageName())));
                         String userEnumerator = enumeratorID.getText().toString().trim();
                         if (userEnumerator!=null && !userEnumerator.equalsIgnoreCase("")){
                             doingAuthRequest();

@@ -463,6 +463,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
     }
 
+
     public void getNetworkQueue(Integer itemId) {
         if (networkQueueItems != null && networkQueueItems.getCount() > 0) {
             networkQueueItems.close();
@@ -483,11 +484,24 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             handler.dispatchMessage(msg);
         }
     }
+    void syncNetworkQueueFromHome(Integer itemId, Handler handler) {
+            if (networkQueueItems.getCount() > 0 && !networkQueueItems.isAfterLast()) {
+                if (networkQueueItems.moveToNext()) {
+                    syncNetworkQueueItem(itemId, handler);
+                } else {
+                    Message msg = handler.obtainMessage(2, HomeActivity.totalItems, HomeActivity.progressItem, res.getString(R.string.item_synced));
+                    handler.dispatchMessage(msg);
+                }
+            } else {
+                Message msg = handler.obtainMessage(2, HomeActivity.totalItems, HomeActivity.progressItem, res.getString(R.string.item_synced));
+                handler.dispatchMessage(msg);
+            }
+        }
 
     private void syncNetworkQueueItem(Integer itemId, Handler handler) {
         Message msg = handler.obtainMessage();
-        int total = networkQueueItems.getCount();
-        int progress = networkQueueItems.getPosition() + 1;
+        int total = HomeActivity.totalItems;//networkQueueItems.getCount();
+        int progress = HomeActivity.progressItem;//networkQueueItems.getPosition() + 1;
         String itemType = networkQueueItems
                 .getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE));
         int networkQueueItemId = networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_ID));
@@ -816,7 +830,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     if (!dl.isFarmerSynced(farmerId)) {
                         msg.what = 3;
                         msg.arg1 = total;
-                        msg.arg2 = progress;
+                        msg.arg2 = HomeActivity.progressItem = progress + 1;
                         msg.obj = String.valueOf(res.getString(R.string.farmer_not_synced));
                         handler.dispatchMessage(msg);
                         return;
@@ -1112,7 +1126,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         statusMessage = res.getString(R.string.item_synced);
                         msg.what = 1;
                         msg.arg1 = total;
-                        msg.arg2 = progress;
+                        msg.arg2 = HomeActivity.progressItem = progress + 1;
                         msg.obj = statusMessage;
                         handler.dispatchMessage(msg);
                         syncNetworkQueue(originalSyncRequestItemId, handler);
@@ -1255,7 +1269,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             statusMessage = res.getString(R.string.item_synced);
                             msg.what = 1;
                             msg.arg1 = total;
-                            msg.arg2 = progress;
+                            msg.arg2 = HomeActivity.progressItem = progress + 1;
                             msg.obj = statusMessage;
                             handler.dispatchMessage(msg);
                             syncNetworkQueue(originalSyncRequestItemId, handler);
@@ -1323,7 +1337,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             if (!dl.isFarmerSynced(farmerId)) {
                 msg.what = 3;
                 msg.arg1 = total;
-                msg.arg2 = progress;
+                msg.arg2 = HomeActivity.progressItem = progress + 1;
                 msg.obj = String.valueOf(res.getString(R.string.farmer_not_synced));
                 handler.dispatchMessage(msg);
             } else {
@@ -1391,8 +1405,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                             int parentid = moduleAnswers.getInt(moduleAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID));
 
-                           Cursor cursor = dl.getSubquestionAnswerSelect(Utilities.moduleId, moduleAnswers.getInt(moduleAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID)), Utilities.olamFarmerId + "");
-                                Set<Integer> sub_questions_included = new TreeSet<>();
+                            Cursor cursor = dl.getSubquestionAnswerSelect(Utilities.moduleId, moduleAnswers.getInt(moduleAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID)), Utilities.olamFarmerId + "");
+                            Set<Integer> sub_questions_included = new TreeSet<>();
 
                             if (cursor.getCount() > 0) {
 
@@ -1411,11 +1425,11 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                                         if ((cursor.getString(cursor.getColumnIndex(OFISDBContract.Subquestionanswer.COLUMN_NAME_POSITION))).equalsIgnoreCase("photo")) {
                                             sub_answersjson.put("answer", Utilities.base64ConversionForImage(cursor.getString(cursor.getColumnIndex(OFISDBContract.Subquestionanswer.COLUMN_NAME_QUESTION_ANSWER))));
-                                            sub_answersjson.put("has_photo_upload",true);
+                                            sub_answersjson.put("has_photo_upload", true);
                                         } else
                                             sub_answersjson.put("answer", cursor.getString(cursor.getColumnIndex(OFISDBContract.Subquestionanswer.COLUMN_NAME_QUESTION_ANSWER)));
                                         sub_answers.put(sub_answersjson);
-                                        sub_answersjson.put("has_photo_upload",false);
+                                        sub_answersjson.put("has_photo_upload", false);
                                     } while (cursor.moveToNext());
                                 }
                                 String questions_included_output = sub_questions_included.toString();
@@ -1470,11 +1484,11 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 File photo = new File(storageDir + "/" + moduleAnswers.getString(moduleAnswers.getColumnIndex("answer_" + datatype)));
                                 answer.put("answer", Utilities.base64ConversionForImage(
                                         storageDir
-                                        + "/"
-                                        + moduleAnswers.getString(moduleAnswers.getColumnIndex("answer_" + datatype))));
-                                answer.put("has_photo_upload",true);
-                            }else{
-                                answer.put("has_photo_upload",false);
+                                                + "/"
+                                                + moduleAnswers.getString(moduleAnswers.getColumnIndex("answer_" + datatype))));
+                                answer.put("has_photo_upload", true);
+                            } else {
+                                answer.put("has_photo_upload", false);
                             }
 
                             if (moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE)).equalsIgnoreCase("repeater")) {
@@ -1514,13 +1528,13 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                             JSONObject display = displayConfig.getJSONObject("display");
                                             if (display.optString("repeateritem_display_type", "").equalsIgnoreCase("photoupload")) {
                                                 hasPhotos = true;
-                                                subAnswer.put("has_photo_upload",true);
+                                                subAnswer.put("has_photo_upload", true);
 //                                                File photo = new File(storageDir + "/" + subAnswers.getString(subAnswers.getColumnIndex("answer_" + subAnswerDatatype)));
                                                 subAnswer.put("answer", Utilities.base64ConversionForImage(
                                                         storageDir + "/" +
                                                                 subAnswers.getString(subAnswers.getColumnIndex("answer_" + subAnswerDatatype))));
-                                            }else{
-                                                subAnswer.put("has_photo_upload",false);
+                                            } else {
+                                                subAnswer.put("has_photo_upload", false);
                                             }
                                         }
 
@@ -1537,82 +1551,13 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         submission.put("questions_included", questions_included_output.substring(1, questions_included_output.length() - 1));
                         submission.put("answers", answers);
 
-                       /* if (hasPhotos) {
-                            bodyBuilder.addFormDataPart(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_MODULE_ID, submission.getString(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_MODULE_ID));
-                            bodyBuilder.addFormDataPart("submission_date", submission.getString("submission_date"));
-                            bodyBuilder.addFormDataPart("upload_date", submission.getString("upload_date"));
-                            bodyBuilder.addFormDataPart("olam_enumerator_id", submission.getString("olam_enumerator_id"));
-                            bodyBuilder.addFormDataPart("imei_number", submission.getString("imei_number"));
-                            bodyBuilder.addFormDataPart("fmpreview", submission.getString("fmpreview"));
-                            bodyBuilder.addFormDataPart(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_FARMER_ID, submission.getString(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_FARMER_ID));
-                            bodyBuilder.addFormDataPart(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_FARM_ID, submission.getString(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_FARM_ID));
-                            bodyBuilder.addFormDataPart("recorded_lat", submission.getString("recorded_lat"));
-                            bodyBuilder.addFormDataPart("recorded_lng", submission.getString("recorded_lng"));
-                            bodyBuilder.addFormDataPart(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ATTEMPTS, submission.getString(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ATTEMPTS));
-                            bodyBuilder.addFormDataPart(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ID, networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ID)));
+                    }else{
+                        submission.put("questions_included", "");
+                        submission.put("answers", answers);
+                    }
+                    Log.i("POST", "" + submission.toString());
 
-                            if (submission.optString(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID, "").length() > 0) {
-                                bodyBuilder.addFormDataPart(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID, submission.optString(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID));
-                            }
-
-                            bodyBuilder.addFormDataPart("questions_included", submission.getString("questions_included"));
-                            bodyBuilder.addFormDataPart("answers", answers.toString());
-                            RequestBody requestBody = bodyBuilder.build();
-
-                            okHttpMultiPartPost(context, "modules/submit", requestBody, new Callback() {
-                                @Override
-                                public void onResponse(Call call, Response postResponse) {
-                                    String statusMessage;
-                                    if (postResponse.isSuccessful()) {
-                                        dl.syncFarmerModule(farmerModuleId, farmerId, moduleId, submissionDate);
-                                        dl.deleteNetworkQueueItem(networkQueueItemId);
-                                        statusMessage = res.getString(R.string.item_synced);
-                                        msg.what = 1;
-                                        msg.arg1 = total;
-                                        msg.arg2 = progress;
-                                        msg.obj = statusMessage;
-                                        handler.dispatchMessage(msg);
-                                        syncNetworkQueue(originalSyncRequestItemId, handler);
-                                    } else {
-                                        try {
-                                            JSONObject response = new JSONObject(postResponse.body().string());
-                                            long server_item_id = 0, fully_synced = 0;
-
-                                            if (response.optJSONObject("submittedmodule") != null) {
-                                                JSONObject submittedModule = response.getJSONObject("submittedmodule");
-                                                server_item_id = submittedModule.getLong("id");
-                                                fully_synced = submittedModule.getLong(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FULLY_SYNCED);
-                                            }
-
-                                            recordFailedUpload(server_item_id, fully_synced, networkQueueItemId);
-
-                                            postFailureMessage(handler, response, msg, 2, total, progress, null, "submitting survey module");
-                                            FirebaseCrash.report(new Exception(response.optString("errors", res.getString(R.string.item_sync_error)) + " : submitting survey module"));
-                                        } catch (JSONException | IOException e) {
-                                            FirebaseCrash.report(new Exception("NetworkLayer: Error getting module with photos posting failure response", e));
-                                            e.printStackTrace();
-                                        }
-                                    }
-                                    postResponse.close();
-                                }
-
-                                @Override
-                                public void onFailure(Call call, IOException e) {
-                                    recordFailedUpload(0, 0, networkQueueItemId);
-
-                                    String failureMessage = res.getString(R.string.networking_error);
-                                    if (e != null) {
-                                        failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
-                                    }
-                                    postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting survey module with photos");
-                                    FirebaseCrash.report(new Exception(failureMessage, e));
-                                }
-
-                            });
-
-                        } else */{
-
-                            okHttpPost(context, endPoint, submission, new Callback() {
+                    okHttpPost(context, endPoint, submission, new Callback() {
                                 @Override
                                 public void onResponse(Call call, Response postResponse) {
                                     String statusMessage;
@@ -1663,10 +1608,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                     FirebaseCrash.report(new Exception(failureMessage, e));
                                 }
                             });
-                        }
 
-                        Log.i("POST", "" + submission.toString());
-                    }
                 } catch (JSONException e) {
                     recordFailedUpload(0, 0, networkQueueItemId);
                     postFailureMessage(handler, null, msg, 2, total, progress, null, "submitting survey module");
@@ -1689,7 +1631,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         if (!dl.isFarmerSynced(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)))) {
             msg.what = 3;
             msg.arg1 = total;
-            msg.arg2 = progress;
+            msg.arg2 = HomeActivity.progressItem =  progress + 1;
             msg.obj = String.valueOf(res.getString(R.string.farmer_not_synced));
             handler.dispatchMessage(msg);
         } else {
@@ -1794,7 +1736,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         if (!dl.isFarmerSynced(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)))) {
             msg.what = 3;
             msg.arg1 = total;
-            msg.arg2 = progress;
+            msg.arg2 = HomeActivity.progressItem = progress + 1;
             msg.obj = String.valueOf(res.getString(R.string.farmer_not_synced));
             handler.dispatchMessage(msg);
         } else {
@@ -1925,7 +1867,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         if (!dl.isFarmerSynced(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)))) {
             msg.what = 3;
             msg.arg1 = total;
-            msg.arg2 = progress;
+            msg.arg2 = HomeActivity.progressItem = progress + 1;
             msg.obj = String.valueOf(res.getString(R.string.farmer_not_synced));
             handler.dispatchMessage(msg);
         } else {
@@ -1998,7 +1940,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
     }
 
-    private void postFarmer(final int networkQueueItemId, final Handler handler, final Message msg, final int total, final int progress, final Integer originalSyncRequestItemId) {
+   /* private void postFarmer(final int networkQueueItemId, final Handler handler, final Message msg, final int total, final int progress, final Integer originalSyncRequestItemId) {
         MultipartBody.Builder bodyBuilder = new MultipartBody.Builder().setType(MultipartBody.FORM);
         RequestBody requestBody;
         Cursor farmer = dl.getFarmerById(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
@@ -2124,7 +2066,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             }
         }
     }
-
+*/
     private void postInfrastructure(final int networkQueueItemId, final Handler handler, final Message msg, final int total, final int progress, final Integer originalSyncRequestItemId) {
         Hashtable<String, String> poitypes = new Hashtable<>();
 
@@ -2134,7 +2076,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         String enumeratorId = Utilities.getFromSharedPrefs(context);
         String IMEI = Utilities.getIMEI(context);
         boolean hasPhotos = false;
-        MultipartBody.Builder bodyBuilder = new MultipartBody.Builder().setType(MultipartBody.FORM);
         String storageDir = (context.getExternalFilesDir(null) != null) ? context.getExternalFilesDir(null).getPath() + "/" : "/";
 
         final String uploadId = networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ID));
@@ -2190,12 +2131,10 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         answer.put("answer", moduleAnswers.getString(moduleAnswers.getColumnIndex("answer_" + datatype)));
                     }
 
-                    if (moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE)).equalsIgnoreCase("photoupload")) {
+                    if (moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE)).toLowerCase().replaceAll(" ","").equals("photoupload")) {
                         hasPhotos = true;
                         File photo = new File(storageDir + "/" + moduleAnswers.getString(moduleAnswers.getColumnIndex("answer_" + datatype)));
                         answer.put("answer", Utilities.base64ConversionForImage(storageDir + "/" + moduleAnswers.getString(moduleAnswers.getColumnIndex("answer_" + datatype))));
-//                        RequestBody file = RequestBody.create(MEDIA_TYPE_JPG, photo);
-//                        bodyBuilder.addFormDataPart(FilenameUtils.removeExtension(photo.getName()), photo.getName(), file);
                     }
 
                     answers.put(answer);
@@ -2222,7 +2161,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 statusMessage = res.getString(R.string.item_synced);
                                 msg.what = 1;
                                 msg.arg1 = total;
-                                msg.arg2 = progress;
+                                msg.arg2 = HomeActivity.progressItem = progress+1;
                                 msg.obj = statusMessage;
                                 handler.dispatchMessage(msg);
                                 syncNetworkQueue(originalSyncRequestItemId, handler);
@@ -2430,7 +2369,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 statusMessage = res.getString(R.string.item_synced);
                                 msg.what = 1;
                                 msg.arg1 = total;
-                                msg.arg2 = progress;
+                                msg.arg2 = HomeActivity.progressItem = progress + 1;
                                 msg.obj = statusMessage;
                                 handler.dispatchMessage(msg);
                                 syncNetworkQueue(originalSyncRequestItemId, handler);
@@ -2636,7 +2575,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 statusMessage = res.getString(R.string.item_synced);
                                 msg.what = 1;
                                 msg.arg1 = total;
-                                msg.arg2 = progress;
+                                msg.arg2 = HomeActivity.progressItem = progress + 1;
                                 msg.obj = statusMessage;
                                 handler.dispatchMessage(msg);
                                 // update the cursor if this is part of a multi-sync
