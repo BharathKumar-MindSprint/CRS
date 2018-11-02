@@ -996,7 +996,7 @@ public class ViewFarmerActivity extends BaseListActivity {
                         linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
                         moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
                         textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-                        textView.setText(res.getString(R.string.module_finished));
+                        textView.setText(res.getString(R.string.phone_number_recorded));
 
                         phoneNumbersHolder.startAnimation(mSlideBottomDown);
                         Toast.makeText(context, res.getString(R.string.Farmer_Updated), Toast.LENGTH_LONG).show();
