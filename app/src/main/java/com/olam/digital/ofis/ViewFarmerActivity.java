@@ -489,7 +489,7 @@ public class ViewFarmerActivity extends BaseListActivity {
         pd = new ProgressDialog(ViewFarmerActivity.this);
         pd.setCancelable(false);
         pd.setIndeterminate(false);
-        pd.setMessage("Location fetching...");
+        pd.setMessage(res.getString(R.string.fetching_location));
         pd.show();
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setMessage(res.getString(R.string.are_you_at_the_farm))
@@ -626,7 +626,7 @@ public class ViewFarmerActivity extends BaseListActivity {
         pd = new ProgressDialog(ViewFarmerActivity.this);
         pd.setCancelable(false);
         pd.setIndeterminate(false);
-        pd.setMessage("Location fetching for Polygon...");
+        pd.setMessage(res.getString(R.string.fetching_location));
         pd.show();
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setMessage(res.getString(R.string.are_you_ready_to_polygon_record))

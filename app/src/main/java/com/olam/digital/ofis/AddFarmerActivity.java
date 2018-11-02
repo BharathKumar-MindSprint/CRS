@@ -40,6 +40,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.crash.FirebaseCrash;
+import com.olam.digital.ofis.authentication.AuthenticationHelper;
 import com.olam.digital.ofis.recordpolygon.SharedPreferenceUtils;
 import com.olam.digital.ofis.R;
 
@@ -487,20 +488,23 @@ public class AddFarmerActivity extends BaseActivity {
         ContentValues values = new ContentValues();
 
 
-        EditText farmerIdSuffix = (EditText) findViewById(R.id.olamFarmerIdEnd);
-        String farmerIdSuffixValue = String.valueOf(farmerIdSuffix.getText());
-        if (farmerIdSuffixValue.equals("") || farmerIdSuffix.length() < 4) {
-            Toast.makeText(context, "Please fill the Farmer id 4 digit", Toast.LENGTH_LONG).show();
-            return values;
+//        EditText farmerIdSuffix = (EditText) findViewById(R.id.olamFarmerIdEnd);
+//        String farmerIdSuffixValue = String.valueOf(farmerIdSuffix.getText());
+//        if (farmerIdSuffixValue.equals("") || farmerIdSuffix.length() < 4) {
+//            Toast.makeText(context, "Please fill the Farmer id 4 digit", Toast.LENGTH_LONG).show();
+//            return values;
+//        }
+        Long username = Long.parseLong(new AuthenticationHelper(AddFarmerActivity.this).getuserName());
+        Long time = System.currentTimeMillis();
+        String  olamFarmerId = String.valueOf(username+time);
 
+//        String olamFarmerId = farmerIdPrefix.getText().toString() + farmerIdSuffixValue;
 
-        }
-        String olamFarmerId = farmerIdPrefix.getText().toString() + farmerIdSuffixValue;
         EditText farmerName = (EditText) findViewById(R.id.farmerName);
         String farmerNameValue = String.valueOf(farmerName.getText());
         if (farmerNameValue.equals("")) {
 
-            Toast.makeText(context, "Please fill the farmer name", Toast.LENGTH_LONG).show();
+            Toast.makeText(context, res.getString(R.string.please_fill_farmer_name), Toast.LENGTH_LONG).show();
             return values;
 
 
@@ -508,7 +512,7 @@ public class AddFarmerActivity extends BaseActivity {
 
         if (dateStrToSend == null || dateStrToSend.equals("")) {
 
-            Toast.makeText(context, "Please fill the Farmer data of birth", Toast.LENGTH_LONG).show();
+            Toast.makeText(context, res.getString(R.string.please_fill_dob), Toast.LENGTH_LONG).show();
             return values;
 
         }
@@ -573,7 +577,7 @@ public class AddFarmerActivity extends BaseActivity {
         long place_id = spinner_place.getSelectedItemId();
         if (place_id == 0) {
 
-            Toast.makeText(context, "select the place", Toast.LENGTH_LONG).show();
+            Toast.makeText(context, res.getString(R.string.please_fill_the_place), Toast.LENGTH_LONG).show();
             return values;
 
         }
@@ -581,7 +585,7 @@ public class AddFarmerActivity extends BaseActivity {
         if (place_id == -1) {
             if (newPlaceNameValue.length() == 0) {
 
-                Toast.makeText(context, "select the  place", Toast.LENGTH_LONG).show();
+                Toast.makeText(context, res.getString(R.string.please_fill_the_place), Toast.LENGTH_LONG).show();
                 return values;
             } else {
                 if (dl.placeAlreadyExists(newPlaceNameValue, district_id)) {
@@ -642,11 +646,12 @@ public class AddFarmerActivity extends BaseActivity {
          * Here we used SharedPreference to map OLAM Farmer ID with UUID. It is used to find the plot count value in ViewFarmerActivity class.
          * Plot count value is important to showing alert to enter plots number of farmer at first time.
          */
+
         SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(olamFarmerId, generateUniqueLongNumber());
 
         try {
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME, farmerNameValue);
-            values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID, olamFarmerId);
+            values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID,olamFarmerId);
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_CREATED_LOCALLY, 1);
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_DOB, dateStrToSend);
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_GENDER, genderValue);
@@ -816,15 +821,11 @@ public class AddFarmerActivity extends BaseActivity {
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                EditText farmerIdSuffix = (EditText) findViewById(R.id.olamFarmerIdEnd);
-                String farmerIdSuffixValue = String.valueOf(farmerIdSuffix.getText());
-                String olamFarmerId = farmerIdPrefix.getText().toString() + farmerIdSuffixValue;
                 Switch consentFarmer = (Switch) findViewById(R.id.consentFarmer);
                 Switch consentOthers = (Switch) findViewById(R.id.consentOthers);
 
                 if (duplicatePhoneNumberValidation()) { //Duplicate Phone Number Validation....
-                    if (farmerIdSuffixValue.length() > 0) {
-                        if (dl.isFarmerIdUnique(olamFarmerId, editFarmerId)) {
+
                             // get the entered values
                             ContentValues values = validateValues();
 
@@ -856,18 +857,10 @@ public class AddFarmerActivity extends BaseActivity {
                             } else {
                                 if ((!consentFarmer.isChecked()) || (!consentOthers.isChecked())) {
                                     //Toast.makeText(context, res.getString(R.string.Please_accept_both_consents), Toast.LENGTH_LONG).show();
-                                } else if (farmerIdSuffix.getText().length() < 4) {
-                                    Toast.makeText(context, res.getString(R.string.farmer_id_min), Toast.LENGTH_LONG).show();
-                                } else {
+                                }else {
 //                                    Toast.makeText(context, res.getString(R.string.Please_fill_all_fields), Toast.LENGTH_LONG).show();
                                 }
                             }
-                        } else {
-                            Toast.makeText(context, res.getString(R.string.id_not_unique), Toast.LENGTH_LONG).show();
-                        }
-                    } else {
-                        Toast.makeText(context, "Please fill " + res.getString(R.string.Olam_Farmer_ID), Toast.LENGTH_LONG).show();
-                    }
                 } else {
                     Toast.makeText(context, res.getString(R.string.duplicate_phone_number), Toast.LENGTH_LONG).show();
                 }
@@ -875,7 +868,6 @@ public class AddFarmerActivity extends BaseActivity {
             }
         });
     }
-
     /**
      * Generate unique ID from UUID.
      * @return long value representing UUID

@@ -5,6 +5,7 @@ import android.content.Context;
 
 import com.google.firebase.crash.FirebaseCrash;
 import com.olam.digital.ofis.OFISDBContract;
+import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.Utilities;
 
 import org.json.JSONArray;
@@ -22,7 +23,7 @@ class UpdateSpinnerListsTask extends DatabaseTask {
     public UpdateSpinnerListsTask(Context context, ProgressDialog pd) {
         super(context);
         this.pd = pd;
-        pd = Utilities.updateProgressDialog(pd, 0, 0, "Data initialization");
+        pd = Utilities.updateProgressDialog(pd, 0, 0, context.getString(R.string.data_initialization));
     }
 
     @Override

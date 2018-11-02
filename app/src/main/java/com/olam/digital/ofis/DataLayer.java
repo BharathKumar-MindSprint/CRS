@@ -2414,7 +2414,7 @@ public class DataLayer {
         return farmer.moveToNext() && (farmer.getInt(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_SYNCED)) == 1);
     }
 
-    void markFarmerAsSynced(int localFarmerId, int id, int farmId, int localPlaceId, int newPlaceId) {
+    void markFarmerAsSynced(int localFarmerId, int id, int farmId, int localPlaceId, int newPlaceId,String olamId) {
         // check to see if new id is already existing
         Cursor newFarmer = db.query(OFISDBContract.FarmerEntry.TABLE_NAME, new String[]{"id"}, "id = ?", new String[]{String.valueOf(id)}, null, null, null);
 
@@ -2425,6 +2425,7 @@ public class DataLayer {
             ContentValues newValues = new ContentValues();
             newValues.put(OFISDBContract.FarmerEntry.COLUMN_NAME_ID, id);
             newValues.put(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_ID, farmId);
+            newValues.put(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID, olamId);
             newValues.put(OFISDBContract.FarmerEntry.COLUMN_NAME_SYNCED, 1);
             newValues.put(OFISDBContract.FarmerEntry.COLUMN_NAME_WEBSITE_FARMER_ID, id);
             if (newPlaceId > 0) {

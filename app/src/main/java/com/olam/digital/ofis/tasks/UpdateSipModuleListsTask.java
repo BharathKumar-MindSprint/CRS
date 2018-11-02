@@ -5,6 +5,7 @@ import android.content.Context;
 
 import com.google.firebase.crash.FirebaseCrash;
 import com.olam.digital.ofis.OFISDBContract;
+import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.Utilities;
 
 import org.json.JSONArray;
@@ -15,7 +16,7 @@ class UpdateSipModuleListsTask extends DatabaseTask {
     ProgressDialog pd;
     public UpdateSipModuleListsTask(Context context) {
             super(context);
-        pd = Utilities.openProgressDialog(context, "Data initialization", false);
+        pd = Utilities.openProgressDialog(context, context.getString(R.string.data_initialization), false);
 
     }
 

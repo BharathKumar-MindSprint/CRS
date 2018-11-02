@@ -620,7 +620,7 @@ public class AddInfrastructureActivity extends BaseActivity {
                 pd = new ProgressDialog(AddInfrastructureActivity.this);
                 pd.setCancelable(false);
                 pd.setIndeterminate(false);
-                pd.setMessage("Location fetching...");
+                pd.setMessage(res.getString(R.string.fetching_location));
                 pd.show();
                 getDeviceLocation();
             }
