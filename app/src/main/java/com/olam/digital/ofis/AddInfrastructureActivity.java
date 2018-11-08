@@ -1,8 +1,6 @@
 package com.olam.digital.ofis;
 
 import android.Manifest;
-import android.animation.ArgbEvaluator;
-import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -17,10 +15,8 @@ import android.database.Cursor;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Looper;
-import android.os.Message;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -32,7 +28,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -41,7 +36,6 @@ import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
@@ -183,8 +177,8 @@ public class AddInfrastructureActivity extends BaseActivity {
         modulesSpinner = (Spinner) findViewById(R.id.spinner_modules);
 
         requestLocation = (ImageButton) findViewById(R.id.requestLocation);
+        searchingGPS();
         bindGpsButton();
-
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey("is_requesting_updates")) {
                 mRequestingLocationUpdates = savedInstanceState.getBoolean("is_requesting_updates");
@@ -600,29 +594,32 @@ public class AddInfrastructureActivity extends BaseActivity {
             e.printStackTrace();
         }
     }
+    private void searchingGPS(){
+        requestLocation.setImageResource(R.drawable.ic_actionbutton_location_searching);
 
+        if (ContextCompat.checkSelfPermission(AddInfrastructureActivity.this,
+                android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(AddInfrastructureActivity.this,
+                android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(AddInfrastructureActivity.this,
+                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION,
+                            android.Manifest.permission.ACCESS_COARSE_LOCATION}, PERMISSIONS_ACCESS_LOCATION);
+
+            return;
+        }
+        pd = new ProgressDialog(AddInfrastructureActivity.this);
+        pd.setCancelable(false);
+        pd.setIndeterminate(false);
+        pd.setMessage(res.getString(R.string.fetching_location));
+        pd.show();
+        getDeviceLocation();
+    }
     private void bindGpsButton() {
+
         requestLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                requestLocation.setImageResource(R.drawable.ic_actionbutton_location_searching);
-
-                if (ContextCompat.checkSelfPermission(AddInfrastructureActivity.this,
-                        android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                        && ContextCompat.checkSelfPermission(AddInfrastructureActivity.this,
-                        android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(AddInfrastructureActivity.this,
-                            new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION,
-                                    android.Manifest.permission.ACCESS_COARSE_LOCATION}, PERMISSIONS_ACCESS_LOCATION);
-
-                    return;
-                }
-                pd = new ProgressDialog(AddInfrastructureActivity.this);
-                pd.setCancelable(false);
-                pd.setIndeterminate(false);
-                pd.setMessage(res.getString(R.string.fetching_location));
-                pd.show();
-                getDeviceLocation();
+                searchingGPS();
             }
         });
 

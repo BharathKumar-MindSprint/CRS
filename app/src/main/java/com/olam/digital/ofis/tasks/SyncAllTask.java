@@ -126,10 +126,10 @@ public class SyncAllTask extends SyncTask {
         } else if (op == SyncTaskOperationType.SYNC_TASKS) {
             syncTasks();
 
-        } else if (op == SyncTaskOperationType.SYNC_FMP) {
+        } /*else if (op == SyncTaskOperationType.SYNC_FMP) {
             syncFMP();
 
-        }
+        }*/
 
         return null;
 

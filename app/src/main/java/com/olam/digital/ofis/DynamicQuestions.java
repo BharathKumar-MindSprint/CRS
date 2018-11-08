@@ -280,6 +280,8 @@ class DynamicQuestions {
                     newAnswer.put("reporting_year", reportingYear);
                     answerSet.add(newAnswer);
                 }
+            } else if(answerId > 0){
+                removeAnswerEntry(questionId,answerId);
             }
 
         } catch (JSONException e) {
