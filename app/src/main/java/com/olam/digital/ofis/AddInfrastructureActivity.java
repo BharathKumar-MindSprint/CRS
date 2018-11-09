@@ -177,7 +177,9 @@ public class AddInfrastructureActivity extends BaseActivity {
         modulesSpinner = (Spinner) findViewById(R.id.spinner_modules);
 
         requestLocation = (ImageButton) findViewById(R.id.requestLocation);
-        searchingGPS();
+        if(!editMode)
+            searchingGPS();
+
         bindGpsButton();
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey("is_requesting_updates")) {
