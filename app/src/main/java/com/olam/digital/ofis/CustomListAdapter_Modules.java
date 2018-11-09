@@ -87,7 +87,19 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                     linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
                     moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
                     textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-                    textView.setText(res.getString(R.string.phone_number_recorded));
+                    try {
+                        if (currentFarmer.getInt(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_SYNCED)) == 0){
+                            if(dl.isIdAvailablePhoneDB(currentFarmer.getLong(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)))){
+                                textView.setText(res.getString(R.string.phone_number_recorded));
+                            }else{
+                                textView.setText(res.getString(R.string.module_finished));
+                            }
+                        }else{
+                            textView.setText(res.getString(R.string.phone_number_recorded));
+                        }
+                    }catch (Exception e){
+                        textView.setText(res.getString(R.string.phone_number_recorded));
+                    }
                 } else {
                     imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_update_phonenumbers));
                     enabledItem.setText("true");

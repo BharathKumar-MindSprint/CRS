@@ -1,6 +1,7 @@
 package com.olam.digital.ofis;
 
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
@@ -11,6 +12,8 @@ import android.database.MatrixCursor;
 import android.database.MergeCursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -3039,4 +3042,12 @@ public class DataLayer {
         return db.rawQuery(sql, whereArgs);
     }
 
+    public boolean isIdAvailablePhoneDB(long farmerLong) {
+        boolean available=false;
+        String sql="select * from phonenumbers where farmer_id ="+farmerLong;
+          if(db.rawQuery(sql,null).getCount()>0){
+              available=true;
+          }
+        return available;
+    }
 }
