@@ -324,6 +324,10 @@ public class ViewFarmerActivity extends BaseListActivity {
             JSONObject submittedModules;
             try {
                 String submittedModulesJSON = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_WEBSITE_SUBMITTED_MODULES));
+                String Samplestr = String.valueOf("{\"modules\":null}");
+                if(Samplestr.equals(submittedModulesJSON)){
+                    submittedModulesJSON =submittedModulesJSON.replaceAll("\"modules\":null","");
+                }
                 submittedModules = (!submittedModulesJSON.equals("null")) ? new JSONObject(submittedModulesJSON) : new JSONObject();
                 String moduleNameSuffix = Utilities.getLocaleSuffix(res);
                 Cursor moduleAssignments = dl.getFarmerModules(farmerId);
