@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 
 import com.google.firebase.crash.FirebaseCrash;
+import com.olam.digital.ofis.DataLayer;
 import com.olam.digital.ofis.OFISDBContract;
 import com.olam.digital.ofis.Utilities;
 
@@ -35,7 +36,7 @@ abstract class DatabaseTask extends AsyncTask<JSONObject, Integer, String> {
 
     void updateTasks(JSONArray jsonArray) {
         db.beginTransaction();
-
+        db.delete("tasks", null, null);
         JSONObject item;
         int length = jsonArray.length();
 
