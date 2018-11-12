@@ -157,6 +157,8 @@ public class AddInfrastructureActivity extends BaseActivity {
                 super.onLocationResult(locationResult);
                 // location is received
                 mCurrentLocation = locationResult.getLastLocation();
+                if(mCurrentLocation != null)
+                    setPoiGPS(mCurrentLocation);
             }
         };
 
@@ -369,19 +371,10 @@ public class AddInfrastructureActivity extends BaseActivity {
             dynamicQuestions.setFullImageFromFilePath(res);
         }else if (requestCode == 100 && resultCode == RESULT_OK) {
 //            Toast.makeText(AddInfrastructureActivity.this,getResources().getString(R.string.record_location_timeout),Toast.LENGTH_LONG).show();
-
-           /* if (ContextCompat.checkSelfPermission(AddInfrastructureActivity.this,
-                    android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                    && ContextCompat.checkSelfPermission(AddInfrastructureActivity.this,
-                    android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(AddInfrastructureActivity.this,
-                        new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION,
-                                android.Manifest.permission.ACCESS_COARSE_LOCATION}, PERMISSIONS_ACCESS_LOCATION);
-
-                return;
-            }*/
-
-//            getDeviceLocation();
+            startLocationUpdates();
+        }else if (requestCode == 100 && resultCode == RESULT_CANCELED) {
+//            Toast.makeText(AddInfrastructureActivity.this,getResources().getString(R.string.record_location_timeout),Toast.LENGTH_LONG).show();
+            stopLocationUpdates();
         }
 
     }
@@ -391,9 +384,9 @@ public class AddInfrastructureActivity extends BaseActivity {
         super.onResume();
         // Resuming location updates depending on button state and
         // allowed permissions
-        if (mRequestingLocationUpdates && checkPermissions()) {
+       /* if (mRequestingLocationUpdates && checkPermissions()) {
             startLocationUpdates();
-        }
+        }*/
         if(mCurrentLocation != null) {
             setPoiGPS(mCurrentLocation);
         }
@@ -567,10 +560,6 @@ public class AddInfrastructureActivity extends BaseActivity {
         });
     }
 
-
-
-//    private LocationListener locationListener;
-
     private void setPoiGPS(Location location) {
         if (pd != null && pd.isShowing()) {
             pd.dismiss();
@@ -609,11 +598,6 @@ public class AddInfrastructureActivity extends BaseActivity {
 
             return;
         }
-        pd = new ProgressDialog(AddInfrastructureActivity.this);
-        pd.setCancelable(false);
-        pd.setIndeterminate(false);
-        pd.setMessage(res.getString(R.string.fetching_location));
-        pd.show();
         getDeviceLocation();
     }
     private void bindGpsButton() {
@@ -626,29 +610,6 @@ public class AddInfrastructureActivity extends BaseActivity {
         });
 
     }
-
-/*
-
-    private void animateBetweenColours(int from, final int to, final ImageView layout) {
-        Integer colorFrom = from;
-        Integer colorTo = to;
-        ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
-        colorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-
-            @Override
-            public void onAnimationUpdate(ValueAnimator animator) {
-                Integer colour = (Integer) animator.getAnimatedValue();
-                layout.setBackgroundColor(colour);
-                if (colour == to) {
-                    currentColour = to;
-                }
-            }
-
-        });
-        colorAnimation.setDuration(690);
-        colorAnimation.start();
-    }
-*/
 
     private ArrayList<ModuleDTO> getModules() {
         modules = dl.getSIPModules();
@@ -788,6 +749,11 @@ public class AddInfrastructureActivity extends BaseActivity {
                         mFusedLocationClient.requestLocationUpdates(mLocationRequest,
                                 mLocationCallback, Looper.myLooper());
 
+                        pd = new ProgressDialog(AddInfrastructureActivity.this);
+                        pd.setCancelable(false);
+                        pd.setIndeterminate(false);
+                        pd.setMessage(res.getString(R.string.fetching_location));
+                        pd.show();
                         Handler handler = new Handler(Looper.getMainLooper());
                         handler.postDelayed(new Runnable() {
                             @Override

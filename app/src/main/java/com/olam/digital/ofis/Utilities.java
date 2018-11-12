@@ -64,7 +64,7 @@ public  static String base64ConversionForImage(String filepath)  {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         compressedBitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
         byte[] byteArray = byteArrayOutputStream.toByteArray();
-        encoded = Base64.encodeToString(byteArray, Base64.DEFAULT);
+        encoded = Base64.encodeToString(byteArray, Base64.NO_WRAP);
     }catch (Exception e){
 
     }
