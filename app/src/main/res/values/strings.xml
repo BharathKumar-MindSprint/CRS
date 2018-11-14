@@ -480,7 +480,7 @@
     <string name="are_you_ready_to_polygon_record">Are you ready to record polygon ?</string>
     <string name="fetching_location">fetching location</string>
     <string name="please_fill_farmer_name">Please fill the farmer name</string>
-    <string name="please_fill_dob">Please fill the Farmer data of birth</string>
+    <string name="please_fill_dob">Please fill the Farmer date of birth</string>
     <string name="please_fill_the">please select the place</string>
     <string name="please_fill_the_place">please select the place</string>
     <string name="data_initialization">Data initialization</string>
