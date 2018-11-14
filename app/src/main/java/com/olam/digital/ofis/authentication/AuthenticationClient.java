@@ -58,6 +58,7 @@ public class AuthenticationClient {
         httpClient.readTimeout(60, TimeUnit.MINUTES);
         httpClient.addInterceptor(interceptor);
         httpClient.sslSocketFactory(getSSLSocketFactory());
+        httpClient.retryOnConnectionFailure(true);
         builder.client(httpClient.build());
         retrofit = builder.build();
         return retrofit.create(serviceClass);

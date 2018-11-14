@@ -76,6 +76,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             .readTimeout(90, TimeUnit.SECONDS)
             .writeTimeout(90, TimeUnit.SECONDS)
             .sslSocketFactory(getSSLSocketFactory())
+            .retryOnConnectionFailure(true)
             .build();
     private static final MediaType JSONBody = MediaType.parse("application/json; charset=utf-8");
     private static final MediaType MEDIA_TYPE_JPG = MediaType.parse("image/jpg");
@@ -810,12 +811,15 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             try{
                 String trainingPhotoPath = trainingRecord.getString(trainingRecord.getColumnIndex(OFISDBContract.TrainingRecord.COLUMN_NAME_PHOTO));
                 if (trainingPhotoPath != null && trainingPhotoPath.length() > 0) {
-                    File photo = new File(trainingRecord.getString(trainingRecord.getColumnIndex(OFISDBContract.TrainingRecord.COLUMN_NAME_PHOTO)));
+                  //  File photo = new File(trainingRecord.getString(trainingRecord.getColumnIndex(OFISDBContract.TrainingRecord.COLUMN_NAME_PHOTO)));
 
  //                   RequestBody file = RequestBody.create(MEDIA_TYPE_JPG, photo);
 //                    bodyBuilder.addFormDataPart(OFISDBContract.TrainingRecord.COLUMN_NAME_PHOTO, photo.getName(), file);
   //                  String encodedImage=getEncodedImage(trainingPhotoPath);
-                    jsonObject.put(OFISDBContract.TrainingRecord.COLUMN_NAME_PHOTO, photo.getName());
+                    String encodedImage=Utilities.base64ConversionForImage(trainingPhotoPath);
+                    jsonObject.put(OFISDBContract.TrainingRecord.COLUMN_NAME_PHOTO, encodedImage);
+
+//                    jsonObject.put(OFISDBContract.TrainingRecord.COLUMN_NAME_PHOTO, photo.getName());
                 }
             }catch (Exception e){
                 e.printStackTrace();
