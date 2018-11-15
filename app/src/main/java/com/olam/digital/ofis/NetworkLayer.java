@@ -2360,15 +2360,13 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     params.put("displayFarmerId", farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)));
                     String farmerPhotoPath = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_PHOTO));
                     if (farmerPhotoPath != null && farmerPhotoPath.length() > 0) {
-                        File photo = new File(farmerPhotoPath);
-                        Bitmap bitmap = BitmapFactory.decodeFile(photo.getAbsolutePath());
-                        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                        bitmap.compress(Bitmap.CompressFormat.PNG, 20, byteArrayOutputStream);
-                        byte[] byteArray = byteArrayOutputStream.toByteArray();
-                        String encoded = Base64.encodeToString(byteArray, Base64.DEFAULT);
-                        params.put("photo", encoded);
+                        try{
+                            String encoded= Utilities.base64ConversionForImage(farmerPhotoPath);
+                            params.put("photo", encoded);
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
                     }
-
                 }
                 if (endpoint.length() > 0) {
                     okHttpMSPost(context, endpoint, params, new Callback() {
