@@ -2343,7 +2343,13 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
          // new end point
         endpoint = "utility/uploadFarmerFile";
         JSONObject params = new JSONObject();
-
+        if (!dl.isFarmerSynced(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)))) {
+            msg.what = 3;
+            msg.arg1 = total;
+            msg.arg2 = HomeActivity.progressItem =  progress + 1;
+            msg.obj = String.valueOf(res.getString(R.string.farmer_not_synced));
+            handler.dispatchMessage(msg);
+        } else {
             try {
 
                 Cursor farmer = dl.getFarmerById(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
@@ -2431,6 +2437,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 FirebaseCrash.report(new Exception("NetworkLayer: Error creating farm location post object", e));
                 e.printStackTrace();
             }
+        }
 
     }
 
