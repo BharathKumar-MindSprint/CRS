@@ -396,7 +396,12 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                     @Override
                     public void onFailure(Call call, IOException e) {
-                        FirebaseCrash.report(new Exception("NetworkLayer: Error in syncing tasks response", e));
+                        try{
+                            FirebaseCrash.report(new Exception("NetworkLayer: Error in syncing tasks response", e));
+                        }catch (Exception ex){
+                            ex.printStackTrace();
+                        }
+
                     }
 
                 });
