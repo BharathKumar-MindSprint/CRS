@@ -1007,13 +1007,15 @@ public class RecordPolygonActivity extends Activity implements AdapterView.OnIte
     }
 
     void updateUIWithKml() {
-        if (mKmlOverlay != null) {
-            mKmlOverlay.closeAllInfoWindows();
-            map.getOverlays().remove(mKmlOverlay);
-        }
-        mKmlOverlay = (FolderOverlay) mKmlDocument.mKmlRoot.buildOverlay(map, buildDefaultStyle(), null, mKmlDocument);
-        map.getOverlays().add(mKmlOverlay);
-        map.invalidate();
+        try {
+            if (mKmlOverlay != null) {
+                mKmlOverlay.closeAllInfoWindows();
+                map.getOverlays().remove(mKmlOverlay);
+            }
+            mKmlOverlay = (FolderOverlay) mKmlDocument.mKmlRoot.buildOverlay(map, buildDefaultStyle(), null, mKmlDocument);
+            map.getOverlays().add(mKmlOverlay);
+            map.invalidate();
+        }catch (Exception e){}
     }
 
     Style buildDefaultStyle() {
