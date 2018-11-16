@@ -1872,7 +1872,7 @@ public class DataLayer {
                     "(moduleassignment_type = 'Region' AND moduleassignment_id = ?) OR " +
                     "(moduleassignment_type = 'District' AND moduleassignment_id = ?) OR " +
                     "(moduleassignment_type = 'Place' AND moduleassignment_id = ?) OR " +
-                    "(moduleassignment_type = 'FarmerGroup' AND moduleassignment_id = ?) OR " +
+                    "(moduleassignment_type = 'Farmer Group' AND moduleassignment_id = ?) OR " +
                     "(moduleassignment_type = 'Section' AND moduleassignment_id = ?) OR " +
                     "(moduleassignment_type = 'Programme' AND moduleassignment_id = ?) OR " +
                     "(moduleassignment_type = 'Product' AND moduleassignment_id = ?) OR " +

@@ -52,6 +52,8 @@ class UpdateTasksListsTask extends DatabaseTask {
                     e.printStackTrace();
                 }
 
+            }else if(tasksResponse.getInt("resultcount") == 0){
+                updateTasks(null);
             }
 
         } catch (JSONException e) {

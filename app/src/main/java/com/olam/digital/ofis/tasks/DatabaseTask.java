@@ -37,50 +37,51 @@ abstract class DatabaseTask extends AsyncTask<JSONObject, Integer, String> {
     void updateTasks(JSONArray jsonArray) {
         db.beginTransaction();
         db.delete("tasks", null, null);
-        JSONObject item;
-        int length = jsonArray.length();
+        if(jsonArray!=null) {
+            JSONObject item;
+            int length = jsonArray.length();
 
-        publishProgress(0, length);
+            publishProgress(0, length);
 
-        for (int j = 0; j < length; j++) {
-            try {
-                item = jsonArray.getJSONObject(j);
-                int itemId = item.optInt(OFISDBContract.Task.COLUMN_NAME_ID, 0);
-                String itemText = item.optString(OFISDBContract.Task.COLUMN_NAME_TASKTEXT, "");
+            for (int j = 0; j < length; j++) {
+                try {
+                    item = jsonArray.getJSONObject(j);
+                    int itemId = item.optInt(OFISDBContract.Task.COLUMN_NAME_ID, 0);
+                    String itemText = item.optString(OFISDBContract.Task.COLUMN_NAME_TASKTEXT, "");
 
-                if (itemId > 0 && itemText.length() > 0) {
-                    ContentValues values = new ContentValues();
-                    values.put(OFISDBContract.Task.COLUMN_NAME_ID, itemId);
-                    values.put(OFISDBContract.Task.COLUMN_NAME_TASKTEXT, itemText);
+                    if (itemId > 0 && itemText.length() > 0) {
+                        ContentValues values = new ContentValues();
+                        values.put(OFISDBContract.Task.COLUMN_NAME_ID, itemId);
+                        values.put(OFISDBContract.Task.COLUMN_NAME_TASKTEXT, itemText);
 
-                    String[] columns = new String[]{"*"};
-                    String whereClause = OFISDBContract.Task.COLUMN_NAME_ID + " = ?";
-                    String[] whereArgs = new String[]{String.valueOf(itemId)};
+                        String[] columns = new String[]{"*"};
+                        String whereClause = OFISDBContract.Task.COLUMN_NAME_ID + " = ?";
+                        String[] whereArgs = new String[]{String.valueOf(itemId)};
 
-                    Cursor existingTask = db.query(OFISDBContract.Task.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+                        Cursor existingTask = db.query(OFISDBContract.Task.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
 
-                    if (existingTask.getCount() > 0) {
-                        db.update(OFISDBContract.Task.TABLE_NAME, values, whereClause, whereArgs);
-                    } else {
-                        values.put(OFISDBContract.Task.COLUMN_NAME_TASK_CREATOR, item.optString(OFISDBContract.Task.COLUMN_NAME_TASK_CREATOR, ""));
-                        values.put(OFISDBContract.Task.COLUMN_NAME_CREATED_DATE, item.optString(OFISDBContract.Task.COLUMN_NAME_CREATED_DATE, null));
-                        values.put(OFISDBContract.Task.COLUMN_NAME_COMPLETED, item.optInt(OFISDBContract.Task.COLUMN_NAME_COMPLETED, 0));
-                        values.put(OFISDBContract.Task.COLUMN_NAME_COMPLETED_DATE, item.optString(OFISDBContract.Task.COLUMN_NAME_COMPLETED_DATE, null));
-                        values.put(OFISDBContract.Task.COLUMN_NAME_ENUMERATORS_TASK_ID, item.optInt(OFISDBContract.Task.COLUMN_NAME_ENUMERATORS_TASK_ID, 0));
-                        db.insert(OFISDBContract.Task.TABLE_NAME, null, values);
+                        if (existingTask.getCount() > 0) {
+                            db.update(OFISDBContract.Task.TABLE_NAME, values, whereClause, whereArgs);
+                        } else {
+                            values.put(OFISDBContract.Task.COLUMN_NAME_TASK_CREATOR, item.optString(OFISDBContract.Task.COLUMN_NAME_TASK_CREATOR, ""));
+                            values.put(OFISDBContract.Task.COLUMN_NAME_CREATED_DATE, item.optString(OFISDBContract.Task.COLUMN_NAME_CREATED_DATE, null));
+                            values.put(OFISDBContract.Task.COLUMN_NAME_COMPLETED, item.optInt(OFISDBContract.Task.COLUMN_NAME_COMPLETED, 0));
+                            values.put(OFISDBContract.Task.COLUMN_NAME_COMPLETED_DATE, item.optString(OFISDBContract.Task.COLUMN_NAME_COMPLETED_DATE, null));
+                            values.put(OFISDBContract.Task.COLUMN_NAME_ENUMERATORS_TASK_ID, item.optInt(OFISDBContract.Task.COLUMN_NAME_ENUMERATORS_TASK_ID, 0));
+                            db.insert(OFISDBContract.Task.TABLE_NAME, null, values);
+                        }
+                        existingTask.close();
                     }
-                    existingTask.close();
+
+                } catch (JSONException e) {
+                    FirebaseCrash.report(new Exception("DatabaseTask: Error updating tasks", e));
+                    e.printStackTrace();
                 }
 
-            } catch (JSONException e) {
-                FirebaseCrash.report(new Exception("DatabaseTask: Error updating tasks", e));
-                e.printStackTrace();
+                publishProgress(j, length);
+
             }
-
-            publishProgress(j, length);
-
         }
-
         db.setTransactionSuccessful();
         db.endTransaction();
     }
