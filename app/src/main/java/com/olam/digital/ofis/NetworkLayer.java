@@ -396,12 +396,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                     @Override
                     public void onFailure(Call call, IOException e) {
-                        try{
-                            FirebaseCrash.report(new Exception("NetworkLayer: Error in syncing tasks response", e));
-                        }catch (Exception ex){
-                            ex.printStackTrace();
-                        }
-
+                        FirebaseCrash.report(new Exception("NetworkLayer: Error in syncing tasks response", e));
                     }
 
                 });
@@ -816,15 +811,12 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             try{
                 String trainingPhotoPath = trainingRecord.getString(trainingRecord.getColumnIndex(OFISDBContract.TrainingRecord.COLUMN_NAME_PHOTO));
                 if (trainingPhotoPath != null && trainingPhotoPath.length() > 0) {
-                  //  File photo = new File(trainingRecord.getString(trainingRecord.getColumnIndex(OFISDBContract.TrainingRecord.COLUMN_NAME_PHOTO)));
+                    File photo = new File(trainingRecord.getString(trainingRecord.getColumnIndex(OFISDBContract.TrainingRecord.COLUMN_NAME_PHOTO)));
 
  //                   RequestBody file = RequestBody.create(MEDIA_TYPE_JPG, photo);
 //                    bodyBuilder.addFormDataPart(OFISDBContract.TrainingRecord.COLUMN_NAME_PHOTO, photo.getName(), file);
   //                  String encodedImage=getEncodedImage(trainingPhotoPath);
-                    String encodedImage=Utilities.base64ConversionForImage(trainingPhotoPath);
-                    jsonObject.put(OFISDBContract.TrainingRecord.COLUMN_NAME_PHOTO, encodedImage);
-
-//                    jsonObject.put(OFISDBContract.TrainingRecord.COLUMN_NAME_PHOTO, photo.getName());
+                    jsonObject.put(OFISDBContract.TrainingRecord.COLUMN_NAME_PHOTO, photo.getName());
                 }
             }catch (Exception e){
                 e.printStackTrace();
@@ -1646,8 +1638,18 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             handler.dispatchMessage(msg);
         } else {
             try {
-                params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID, networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID)));
-                params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID, networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
+                int farmerID = networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
+                params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID, farmerID);
+                try{
+                    int farmId = dl.getFarmId(farmerID);
+                    if(farmId != 0){
+                        params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID, farmId);
+                    }else{
+                        params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID, networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID)));
+                    }
+                }catch (Exception e){
+                    params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID, networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID)));
+                }
                 params.put("farm_plots", networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_PLOTS)));
                 params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ATTEMPTS, networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ATTEMPTS)));
                 if (networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID)) > 0 && networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FULLY_SYNCED)) == 0) {
@@ -1752,8 +1754,19 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         } else {
 
             try {
-                params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID, networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID)));
-                params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID, networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
+                int farmerID = networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
+                params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID, farmerID);
+                try{
+                    int farmId = dl.getFarmId(farmerID);
+                    if(farmId != 0){
+                        params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID, farmId);
+                    }else{
+                        params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID, networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID)));
+                    }
+                }catch (Exception e){
+                    params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID, networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID)));
+                }
+
                 params.put("primary_lat", networkQueueItems.getDouble(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LAT)));
                 params.put("primary_long", networkQueueItems.getDouble(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)));
                 params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ATTEMPTS, networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ATTEMPTS)));
@@ -2348,13 +2361,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
          // new end point
         endpoint = "utility/uploadFarmerFile";
         JSONObject params = new JSONObject();
-        if (!dl.isFarmerSynced(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)))) {
-            msg.what = 3;
-            msg.arg1 = total;
-            msg.arg2 = HomeActivity.progressItem =  progress + 1;
-            msg.obj = String.valueOf(res.getString(R.string.farmer_not_synced));
-            handler.dispatchMessage(msg);
-        } else {
+
             try {
 
                 Cursor farmer = dl.getFarmerById(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
@@ -2362,16 +2369,18 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     farmer.moveToFirst();
                     params.put(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME)));
                     params.put(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
-                    params.put("displayFarmerId",  farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
+                    params.put("displayFarmerId", farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)));
                     String farmerPhotoPath = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_PHOTO));
                     if (farmerPhotoPath != null && farmerPhotoPath.length() > 0) {
-                        try{
-                            String encoded= Utilities.base64ConversionForImage(farmerPhotoPath);
-                            params.put("photo", encoded);
-                        }catch (Exception e){
-                            e.printStackTrace();
-                        }
+                        File photo = new File(farmerPhotoPath);
+                        Bitmap bitmap = BitmapFactory.decodeFile(photo.getAbsolutePath());
+                        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                        bitmap.compress(Bitmap.CompressFormat.PNG, 20, byteArrayOutputStream);
+                        byte[] byteArray = byteArrayOutputStream.toByteArray();
+                        String encoded = Base64.encodeToString(byteArray, Base64.DEFAULT);
+                        params.put("photo", encoded);
                     }
+
                 }
                 if (endpoint.length() > 0) {
                     okHttpMSPost(context, endpoint, params, new Callback() {
@@ -2440,7 +2449,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 FirebaseCrash.report(new Exception("NetworkLayer: Error creating farm location post object", e));
                 e.printStackTrace();
             }
-        }
 
     }
 

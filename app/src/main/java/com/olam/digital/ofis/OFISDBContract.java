@@ -426,6 +426,25 @@ public class OFISDBContract {
                 }}
         );
     }
+    public static abstract class countryLookUpValuesEntry implements BaseColumns {
+        public static final String TABLE_NAME = "allCountries";
+        public static final String COLUMN_NAME_ID = "country_id";
+        public static final String COLUMN_NAME_CODE = "code";
+        public static final String COLUMN_NAME_COUNTRY_NAME = "countryName";
+        public static final String COLUMN_NAME_DIALLING_CODE = "dialling_code";
+        public static final String COLUMN_NAME_OLAM_COUNTRY = "olam_country";
+        public static final String COLUMN_NAME_ENUMERATOR_COUNTRY = "enumerator_country";
+        public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
+                new ArrayList<String>() {{
+                    add(COLUMN_NAME_COUNTRY_NAME);
+                    add(COLUMN_NAME_ID);
+                    add(COLUMN_NAME_CODE);
+                    add(COLUMN_NAME_OLAM_COUNTRY);
+                    add(COLUMN_NAME_ENUMERATOR_COUNTRY);
+                    add(COLUMN_NAME_DIALLING_CODE);
+                }}
+        );
+    }
 
     public static abstract class AnswerEntry implements BaseColumns {
         public static final String TABLE_NAME = "answers";
@@ -1623,6 +1642,7 @@ public class OFISDBContract {
                 put(FarmManagementPlanValuesEntry.TABLE_NAME, FarmManagementPlanValuesEntry.COLUMN_LIST);
                 put(FarmManagementPlanCurrentValuesEntry.TABLE_NAME, FarmManagementPlanCurrentValuesEntry.COLUMN_LIST);
                 put(Subquestionanswer.TABLE_NAME, Subquestionanswer.COLUMN_LIST);
+                put(countryLookUpValuesEntry.TABLE_NAME, countryLookUpValuesEntry.COLUMN_LIST);
             }};
 
 

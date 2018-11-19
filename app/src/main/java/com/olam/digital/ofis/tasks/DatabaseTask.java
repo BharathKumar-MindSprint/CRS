@@ -37,7 +37,7 @@ abstract class DatabaseTask extends AsyncTask<JSONObject, Integer, String> {
     void updateTasks(JSONArray jsonArray) {
         db.beginTransaction();
         db.delete("tasks", null, null);
-        if(jsonArray!=null) {
+        if(jsonArray != null) {
             JSONObject item;
             int length = jsonArray.length();
 
@@ -115,9 +115,14 @@ abstract class DatabaseTask extends AsyncTask<JSONObject, Integer, String> {
             // bind the columns we are after
             for (int k = 0; k < columnKeys.size(); k++) {
 //                try {
-                    if(columnList.get(k).toString() != null)
-                        insertHelper.bind(columnKeys.get(k), item.optString(columnList.get(k).toString()));
-
+                    if(columnList.get(k).toString() != null) {
+                       /* if("countryLookUpValues".equals(tableName) && "name".equals(columnList.get(k))){
+//                            item = new JSONObject("\"name\":\"Country "+ j + "\"");;
+                            insertHelper.bind(columnKeys.get(k), "Country" + j);
+                        }else*/{
+                            insertHelper.bind(columnKeys.get(k), item.optString(columnList.get(k).toString()));
+                        }
+                    }
 //                } catch (JSONException e) {
 //                    FirebaseCrash.report(new Exception("DatabaseTask: Error binding column for table filling", e));
 //                    e.printStackTrace();

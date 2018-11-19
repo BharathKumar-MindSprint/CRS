@@ -1,7 +1,6 @@
 package com.olam.digital.ofis;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
@@ -12,8 +11,6 @@ import android.database.MatrixCursor;
 import android.database.MergeCursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
-import android.os.Build;
-import android.support.annotation.RequiresApi;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -23,7 +20,6 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 
 import com.google.firebase.crash.FirebaseCrash;
-import com.olam.digital.ofis.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -1276,10 +1272,15 @@ public class DataLayer {
         if (OFISDBContract.ALL_TABLES.containsKey(table)) {
             List<String> columnList = OFISDBContract.ALL_TABLES.get(table);
             String[] tableColumns = new String[columnList.size()];
-            for (int i = 0; i < columnList.size(); i++) {
-                tableColumns[i] = (columnList.get(i).equals("id")) ? columnList.get(i) + " AS _id" : columnList.get(i);
+            if(OFISDBContract.countryLookUpValuesEntry.TABLE_NAME.trim().toLowerCase().equals(table.trim().toLowerCase())){
+                for (int i = 0; i < columnList.size(); i++) {
+                    tableColumns[i] = (columnList.get(i).equals("country_id")) ? columnList.get(i) + " AS _id" : columnList.get(i);
+                }
+            }else {
+                for (int i = 0; i < columnList.size(); i++) {
+                    tableColumns[i] = (columnList.get(i).equals("id")) ? columnList.get(i) + " AS _id" : columnList.get(i);
+                }
             }
-
             String querySelection = (getByRelationship) ? getByColumnName + " = ?" : null;
             String[] querySelectionValue = (getByRelationship) ? new String[]{String.valueOf(getByColumnValue)} : null;
             String orderByValue = (orderByColumn) ? orderByColumnName + " " + "ASC" : null;
@@ -1837,7 +1838,21 @@ public class DataLayer {
 
         return db.query(OFISDBContract.FarmerEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
     }
+    public int getFarmId(int farmer){
+        int FarmID = 0;
+        try{
+            Cursor farmCursor  = db.rawQuery("Select farm_id from farmers where id =" + farmer,null);
+            if(farmCursor.getCount() > 0){
+                farmCursor.moveToNext();
+                FarmID = farmCursor.getInt(farmCursor.getColumnIndex("farm_id"));
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
+
+        return FarmID;
+    }
     Cursor getFlattenedFarmer(long id) {
         String farmerQuery = "SELECT farmers.*, districts.id as district_id, regions.id as region_id, countries.id as country_id, farmergroups.id as farmergroup_id, farmergroups.programme_id as programme_id, farmergroups.product_id as product_id, farmergroups.partner_id as partner_id " +
                 "FROM farmers " +

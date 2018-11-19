@@ -6,6 +6,7 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -77,7 +78,7 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
         TextView textView = (TextView) view.findViewById(R.id.moduleListModuleStatus);
         TextView enabledItem = (TextView) view.findViewById(R.id.moduleListEnabled);
         boolean submitted = false;
-
+        Log.d("CustomListAdapter", "moduleTitle"+ moduleTitle.getText().toString() + ", SecText" + textView.getText().toString());
         if (currentId == 0) {
             if (cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals("Phone")) {
                 boolean updateWaiting = dl.networkEntryTypeExistsByFarmerId("phonenumbers", currentFarmer.getLong(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)));

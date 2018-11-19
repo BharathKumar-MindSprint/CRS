@@ -42,7 +42,7 @@ class UpdateModuleListsTask extends DatabaseTask {
                 JSONObject response = moduleResponse.getJSONObject("outputdata");
 
                 // get the various sub lists
-                JSONArray moduleArray, submoduleArray, moduelassignmentArray, datatypeArray, lookupvalueArray, questionArray;
+                JSONArray moduleArray, submoduleArray, moduelassignmentArray, datatypeArray, lookupvalueArray, questionArray, countryLookUpValuesArray;
                 try {
                     moduleArray = response.getJSONArray(OFISDBContract.ModuleEntry.TABLE_NAME);
 /*
@@ -93,6 +93,13 @@ class UpdateModuleListsTask extends DatabaseTask {
                 try {
                     questionArray = response.getJSONArray(OFISDBContract.QuestionEntry.TABLE_NAME);
                     fillTable(questionArray, OFISDBContract.QuestionEntry.TABLE_NAME, OFISDBContract.QuestionEntry.COLUMN_LIST);
+                } catch (JSONException e) {
+                    FirebaseCrash.report(new Exception("UpdateModuleListsTask: Error filling questions table", e));
+                    e.printStackTrace();
+                }
+                try {
+                    countryLookUpValuesArray = response.getJSONArray(OFISDBContract.countryLookUpValuesEntry.TABLE_NAME);
+                    fillTable(countryLookUpValuesArray, OFISDBContract.countryLookUpValuesEntry.TABLE_NAME, OFISDBContract.countryLookUpValuesEntry.COLUMN_LIST);
                 } catch (JSONException e) {
                     FirebaseCrash.report(new Exception("UpdateModuleListsTask: Error filling questions table", e));
                     e.printStackTrace();

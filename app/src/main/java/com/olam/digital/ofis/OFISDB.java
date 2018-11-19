@@ -203,6 +203,11 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.CountriesEntry.COLUMN_NAME_COUNTRY_NAME + " TEXT, " + OFISDBContract.CountriesEntry.COLUMN_NAME_DIALLING_CODE + " TEXT, "
             + OFISDBContract.CountriesEntry.COLUMN_NAME_OLAM_COUNTRY + " INTEGER, " + OFISDBContract.CountriesEntry.COLUMN_NAME_ENUMERATOR_COUNTRY + " INTEGER DEFAULT 0)";
 
+    private static final String OFIS_All_COUNTRIES_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.countryLookUpValuesEntry.TABLE_NAME
+                + " ( " + OFISDBContract.countryLookUpValuesEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.countryLookUpValuesEntry.COLUMN_NAME_CODE + " TEXT, "
+                + OFISDBContract.countryLookUpValuesEntry.COLUMN_NAME_COUNTRY_NAME + " TEXT, " + OFISDBContract.countryLookUpValuesEntry.COLUMN_NAME_DIALLING_CODE + " TEXT, "
+                + OFISDBContract.countryLookUpValuesEntry.COLUMN_NAME_OLAM_COUNTRY + " INTEGER, " + OFISDBContract.countryLookUpValuesEntry.COLUMN_NAME_ENUMERATOR_COUNTRY + " INTEGER DEFAULT 0)";
+
     private static final String OFIS_REGIONS_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.RegionsEntry.TABLE_NAME
             + " ( " + OFISDBContract.RegionsEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.RegionsEntry.COLUMN_NAME_COUNTRY_ID + " INTEGER, "
             + OFISDBContract.RegionsEntry.COLUMN_NAME_REGION_NAME + " TEXT )";
@@ -536,6 +541,7 @@ class OFISDB extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(OFIS_QUESTIONSIP_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_DATATYPESSIP_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_LOOKUPVALUESSIP_TABLE_CREATE);
+        sqLiteDatabase.execSQL(OFIS_All_COUNTRIES_TABLE_CREATE);
     }
 
     @Override
@@ -598,6 +604,7 @@ class OFISDB extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL("drop table IF EXISTS trainingrecords;");
         sqLiteDatabase.execSQL("drop table IF EXISTS tasks;");
         sqLiteDatabase.execSQL("drop table IF EXISTS Subquestionanswer;");
+        sqLiteDatabase.execSQL("drop table IF EXISTS countryLookUpValues;");
         onCreate(sqLiteDatabase);
     }
 }

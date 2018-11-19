@@ -1286,7 +1286,11 @@ class DynamicQuestions {
             final String columnName = (qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION + questionColumnSuffix) != -1) ? OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix : OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE;
 
             if (displayConfig.has("lookuptable")) {
-                spinnervalues = dl.getSpinnerData(displayConfig.getString("lookuptable"), false, null, null, true, "name");
+                if(OFISDBContract.countryLookUpValuesEntry.TABLE_NAME.trim().toLowerCase().equals(displayConfig.getString("lookuptable").trim().toLowerCase())){
+                    spinnervalues = dl.getSpinnerData(OFISDBContract.countryLookUpValuesEntry.TABLE_NAME, false, null, null, true, "CountryName");
+                }else{
+                    spinnervalues = dl.getSpinnerData(displayConfig.getString("lookuptable"), false, null, null, true, "name");
+                }
             } else {
                 spinnervalues = dl.getLookupValuesForQuestion(qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID)), columnName);
             }
