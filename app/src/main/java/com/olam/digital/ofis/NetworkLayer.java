@@ -396,11 +396,12 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                     @Override
                     public void onFailure(Call call, IOException e) {
-                        try{
-                            FirebaseCrash.report(new Exception("NetworkLayer: Error in syncing tasks response", e));
-                        }catch (Exception ex){
-                            ex.printStackTrace();
-                        }
+//                        try{
+//                            FirebaseCrash.report(new Exception("NetworkLayer: Error in syncing tasks response", e));
+//                        }catch (Exception ex){
+//                            ex.printStackTrace();
+//                        }
+
 
                     }
 
@@ -1654,7 +1655,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ID, networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ID)));
                     params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID, networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID)));
                 }
-
+                    params.put("primary_location",false);
                 if (endpoint.length() > 0) {
                     okHttpPost(context, endpoint, params, new Callback() {
                         @Override
@@ -1755,13 +1756,13 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID, networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID)));
                 params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID, networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
                 params.put("primary_lat", networkQueueItems.getDouble(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LAT)));
-                params.put("primary_long", networkQueueItems.getDouble(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)));
+                params.put("primary_lng", networkQueueItems.getDouble(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)));
                 params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ATTEMPTS, networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ATTEMPTS)));
                 if (networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID)) > 0 && networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FULLY_SYNCED)) == 0) {
                     params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ID, networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ID)));
                     params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID, networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID)));
                 }
-
+                params.put("primary_location",true);
 
                 if (endpoint.length() > 0) {
                     okHttpPost(context, endpoint, params, new Callback() {
