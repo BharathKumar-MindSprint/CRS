@@ -837,6 +837,7 @@ public class AddFarmerActivity extends BaseActivity {
                                         Toast.makeText(context, res.getString(R.string.Farmer_Updated), Toast.LENGTH_LONG).show();
                                         ViewFarmerActivity.farmerId = editFarmerId;
                                         //SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(editFarmerId);
+                                        finish();
                                         Intent intent = new Intent(context, ViewFarmerActivity.class);
                                         startActivity(intent);
                                     }
@@ -848,7 +849,7 @@ public class AddFarmerActivity extends BaseActivity {
 
                                         ViewFarmerActivity.farmerId = newFarmerId;
                                         //SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(newFarmerId);
-
+                                        finish();
                                         Intent intent = new Intent(context, ViewFarmerActivity.class);
                                         startActivity(intent);
                                     }

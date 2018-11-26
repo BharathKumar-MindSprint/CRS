@@ -564,7 +564,9 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                         m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, 0, 0, res.getString(R.string.farmer_not_synced));
                         Utilities.closeProgressDialog(m_ProgressDialog, 3000);
                     }else{
-                        totalItems = networkQueue.getCount();
+                        if(totalItems == 0)
+                            totalItems = networkQueue.getCount();
+
                         m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, totalItems, 0, message);
 
                     }
@@ -587,6 +589,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 }
             };
             farmerSynced = true;
+
             nl.getNetworkQueue(null);
             nl.syncNetworkQueue(null, syncHandler);
         } else {
@@ -639,6 +642,16 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         }
     }
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        try{
+            bindNetworkQueue();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
     private void finishItemSync(final Message msg) {
         mainHandler.post(new Runnable() {
             @Override
@@ -646,7 +659,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 if (m_ProgressDialog!=null && m_ProgressDialog.isShowing())
                 {
                     String pdUpdate = msg.obj.toString();
-                    m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, totalItems/*msg.arg1*/, progressItem/*msg.arg2*/, pdUpdate);
+                    m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, totalItems/*msg.arg1*/, /*progressItem*/msg.arg2, pdUpdate);
                     Utilities.closeProgressDialog(m_ProgressDialog, 3000);
                 }
                 networkQueue.close();

@@ -2400,11 +2400,15 @@ public class DataLayer {
         if (id != null) {
             whereClause = OFISDBContract.NetworkQueueEntry.COLUMN_NAME_ID + " = ?";
             whereArgs = new String[]{String.valueOf(id)};
+            return db.query(OFISDBContract.NetworkQueueEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, orderBy);
         } else {
-            orderBy = OFISDBContract.NetworkQueueEntry.COLUMN_NAME_ID + " ASC";
+//            orderBy = OFISDBContract.NetworkQueueEntry.COLUMN_NAME_ID + " ASC";
+            return db.rawQuery("select * from " + OFISDBContract.NetworkQueueEntry.TABLE_NAME +
+                    " order by case when " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE +" = 'New farmer' " +
+                    " THEN 1 ELSE 2 END, "+ OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE ,
+                    null);
         }
 
-        return db.query(OFISDBContract.NetworkQueueEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, orderBy);
     }
 
     void deleteNetworkQueueItem(int networkQueueItemId) {
@@ -3065,4 +3069,6 @@ public class DataLayer {
           }
         return available;
     }
+
+
 }

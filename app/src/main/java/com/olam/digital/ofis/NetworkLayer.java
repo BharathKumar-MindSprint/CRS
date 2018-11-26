@@ -72,9 +72,9 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
     private static String AccessToken;
     private static final String BASE_URL = BuildConfig.HOST;
     private static final OkHttpClient okHttpClient = new OkHttpClient.Builder()
-            .connectTimeout(30, TimeUnit.SECONDS)
-            .readTimeout(90, TimeUnit.SECONDS)
-            .writeTimeout(90, TimeUnit.SECONDS)
+            .connectTimeout(90, TimeUnit.SECONDS)
+            .readTimeout(180, TimeUnit.SECONDS)
+            .writeTimeout(180, TimeUnit.SECONDS)
             .sslSocketFactory(getSSLSocketFactory())
             .retryOnConnectionFailure(true)
             .build();
@@ -508,7 +508,9 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
     private void syncNetworkQueueItem(Integer itemId, Handler handler) {
         Message msg = handler.obtainMessage();
-        int total = networkQueueItems.getCount();
+        msg.obj =  res.getString(R.string.Please_wait) + " " + res.getString(R.string.Submitting_data);
+        handler.dispatchMessage(msg);
+        int total = HomeActivity.totalItems;//networkQueueItems.getCount();
         int progress = networkQueueItems.getPosition() + 1;
         String itemType = networkQueueItems
                 .getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE));
@@ -921,13 +923,21 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                     @Override
                     public void onFailure(Call call, IOException e) {
-                        recordFailedUpload(0, 0, networkQueueItemId);
-                        String failureMessage = res.getString(R.string.networking_error);
-                        if (e != null) {
-                            failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
+                        try{
+                            recordFailedUpload(0, 0, networkQueueItemId);
+
+                            String failureMessage = res.getString(R.string.networking_error);
+                            if (e != null) {
+                                failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
+                            }
+                            postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting survey module");
+                            FirebaseCrash.report(new Exception(failureMessage, e));
+                        }catch(Exception onfailEx){
+                            String failureMessage = res.getString(R.string.networking_error);
+                            postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting survey module");
+                            FirebaseCrash.report(new Exception(failureMessage, e));
+                            onfailEx.printStackTrace();
                         }
-                        postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting training record");
-                        FirebaseCrash.report(new Exception(failureMessage, e));
                     }
 
                 });
@@ -1163,13 +1173,21 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                 @Override
                 public void onFailure(Call call, IOException e) {
-                    recordFailedUpload(0, 0, networkQueueItemId);
-                    String failureMessage = res.getString(R.string.networking_error);
-                    if (e != null) {
-                        failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
+                    try{
+                        recordFailedUpload(0, 0, networkQueueItemId);
+
+                        String failureMessage = res.getString(R.string.networking_error);
+                        if (e != null) {
+                            failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
+                        }
+                        postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting survey module");
+                        FirebaseCrash.report(new Exception(failureMessage, e));
+                    }catch(Exception onfailEx){
+                        String failureMessage = res.getString(R.string.networking_error);
+                        postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting survey module");
+                        FirebaseCrash.report(new Exception(failureMessage, e));
+                        onfailEx.printStackTrace();
                     }
-                    postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting FMP review");
-                    FirebaseCrash.report(new Exception(failureMessage, e));
                 }
 
             });
@@ -1306,13 +1324,21 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                     @Override
                     public void onFailure(Call call, IOException e) {
-                        recordFailedUpload(0, 0, networkQueueItemId);
-                        String failureMessage = res.getString(R.string.networking_error);
-                        if (e != null) {
-                            failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
+                        try{
+                            recordFailedUpload(0, 0, networkQueueItemId);
+
+                            String failureMessage = res.getString(R.string.networking_error);
+                            if (e != null) {
+                                failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
+                            }
+                            postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting survey module");
+                            FirebaseCrash.report(new Exception(failureMessage, e));
+                        }catch(Exception onfailEx){
+                            String failureMessage = res.getString(R.string.networking_error);
+                            postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting survey module");
+                            FirebaseCrash.report(new Exception(failureMessage, e));
+                            onfailEx.printStackTrace();
                         }
-                        postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting FMP review");
-                        FirebaseCrash.report(new Exception(failureMessage, e));
                     }
 
                 });
@@ -1609,14 +1635,21 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                                 @Override
                                 public void onFailure(Call call, IOException e) {
-                                    recordFailedUpload(0, 0, networkQueueItemId);
+                                    try{
+                                        recordFailedUpload(0, 0, networkQueueItemId);
 
-                                    String failureMessage = res.getString(R.string.networking_error);
-                                    if (e != null) {
-                                        failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
+                                        String failureMessage = res.getString(R.string.networking_error);
+                                        if (e != null) {
+                                            failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
+                                        }
+                                        postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting survey module");
+                                        FirebaseCrash.report(new Exception(failureMessage, e));
+                                    }catch(Exception onfailEx){
+                                        String failureMessage = res.getString(R.string.networking_error);
+                                        postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting survey module");
+                                        FirebaseCrash.report(new Exception(failureMessage, e));
+                                        onfailEx.printStackTrace();
                                     }
-                                    postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting survey module");
-                                    FirebaseCrash.report(new Exception(failureMessage, e));
                                 }
                             });
 
@@ -1724,13 +1757,21 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                         @Override
                         public void onFailure(Call call, IOException e) {
-                            recordFailedUpload(0, 0, networkQueueItemId);
-                            String failureMessage = res.getString(R.string.networking_error);
-                            if (e != null) {
-                                failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
+                            try{
+                                recordFailedUpload(0, 0, networkQueueItemId);
+
+                                String failureMessage = res.getString(R.string.networking_error);
+                                if (e != null) {
+                                    failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
+                                }
+                                postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting survey module");
+                                FirebaseCrash.report(new Exception(failureMessage, e));
+                            }catch(Exception onfailEx){
+                                String failureMessage = res.getString(R.string.networking_error);
+                                postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting survey module");
+                                FirebaseCrash.report(new Exception(failureMessage, e));
+                                onfailEx.printStackTrace();
                             }
-                            postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting farm polygon");
-                            FirebaseCrash.report(new Exception(failureMessage, e));
                         }
 
                     });
@@ -1823,13 +1864,21 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                         @Override
                         public void onFailure(Call call, IOException e) {
-                            recordFailedUpload(0, 0, networkQueueItemId);
-                            String failureMessage = res.getString(R.string.networking_error);
-                            if (e != null) {
-                                failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
+                            try{
+                                recordFailedUpload(0, 0, networkQueueItemId);
+
+                                String failureMessage = res.getString(R.string.networking_error);
+                                if (e != null) {
+                                    failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
+                                }
+                                postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting survey module");
+                                FirebaseCrash.report(new Exception(failureMessage, e));
+                            }catch(Exception onfailEx){
+                                String failureMessage = res.getString(R.string.networking_error);
+                                postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting survey module");
+                                FirebaseCrash.report(new Exception(failureMessage, e));
+                                onfailEx.printStackTrace();
                             }
-                            postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting farm location");
-                            FirebaseCrash.report(new Exception(failureMessage, e));
                         }
 
                     });
@@ -1951,13 +2000,21 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                         @Override
                         public void onFailure(Call call, IOException e) {
-                            recordFailedUpload(0, 0, networkQueueItemId);
-                            String failureMessage = res.getString(R.string.networking_error);
-                            if (e != null) {
-                                failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
+                            try{
+                                recordFailedUpload(0, 0, networkQueueItemId);
+
+                                String failureMessage = res.getString(R.string.networking_error);
+                                if (e != null) {
+                                    failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
+                                }
+                                postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting survey module");
+                                FirebaseCrash.report(new Exception(failureMessage, e));
+                            }catch(Exception onfailEx){
+                                String failureMessage = res.getString(R.string.networking_error);
+                                postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting survey module");
+                                FirebaseCrash.report(new Exception(failureMessage, e));
+                                onfailEx.printStackTrace();
                             }
-                            postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting farm location");
-                            FirebaseCrash.report(new Exception(failureMessage, e));
                         }
 
                     });
@@ -2224,14 +2281,21 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                         @Override
                         public void onFailure(Call call, IOException e) {
-                            recordFailedUpload(0, 0, networkQueueItemId);
+                            try{
+                                recordFailedUpload(0, 0, networkQueueItemId);
 
-                            String failureMessage = res.getString(R.string.networking_error);
-                            if (e != null) {
-                                failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
+                                String failureMessage = res.getString(R.string.networking_error);
+                                if (e != null) {
+                                    failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
+                                }
+                                postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting survey module");
+                                FirebaseCrash.report(new Exception(failureMessage, e));
+                            }catch(Exception onfailEx){
+                                String failureMessage = res.getString(R.string.networking_error);
+                                postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting survey module");
+                                FirebaseCrash.report(new Exception(failureMessage, e));
+                                onfailEx.printStackTrace();
                             }
-                            postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting survey module");
-                            FirebaseCrash.report(new Exception(failureMessage, e));
                         }
                     });
 
@@ -2444,13 +2508,21 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                         @Override
                         public void onFailure(Call call, IOException e) {
-                            recordFailedUpload(0, 0, networkQueueItemId);
-                            String failureMessage = res.getString(R.string.networking_error);
-                            if (e != null) {
-                                failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
+                            try{
+                                recordFailedUpload(0, 0, networkQueueItemId);
+
+                                String failureMessage = res.getString(R.string.networking_error);
+                                if (e != null) {
+                                    failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
+                                }
+                                postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting survey module");
+                                FirebaseCrash.report(new Exception(failureMessage, e));
+                            }catch(Exception onfailEx){
+                                String failureMessage = res.getString(R.string.networking_error);
+                                postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting survey module");
+                                FirebaseCrash.report(new Exception(failureMessage, e));
+                                onfailEx.printStackTrace();
                             }
-                            postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting farmer photo failed");
-                            FirebaseCrash.report(new Exception(failureMessage, e));
                         }
 
                     });
@@ -2657,13 +2729,21 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                     @Override
                     public void onFailure(Call call, IOException e) {
-                        recordFailedUpload(0, 0, networkQueueItemId);
-                        String failureMessage = res.getString(R.string.networking_error);
-                        if (e != null) {
-                            failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
+                        try{
+                            recordFailedUpload(0, 0, networkQueueItemId);
+
+                            String failureMessage = res.getString(R.string.networking_error);
+                            if (e != null) {
+                                failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
+                            }
+                            postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting survey module");
+                            FirebaseCrash.report(new Exception(failureMessage, e));
+                        }catch(Exception onfailEx){
+                            String failureMessage = res.getString(R.string.networking_error);
+                            postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting survey module");
+                            FirebaseCrash.report(new Exception(failureMessage, e));
+                            onfailEx.printStackTrace();
                         }
-                        postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting submitting farmer");
-                        FirebaseCrash.report(new Exception(failureMessage, e));
                     }
 
                 });
