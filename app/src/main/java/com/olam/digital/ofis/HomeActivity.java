@@ -20,10 +20,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.os.SystemClock;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -126,6 +128,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     private int itemId;
     public static int totalItems;
     public static int progressItem;
+    private long lastClickTime = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -399,8 +402,13 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                 builder.setMessage(response.optString(columnname, res.getString(R.string.app_updated_upload_first_message)))
                                         .setPositiveButton(res.getString(R.string.app_update_ok), new DialogInterface.OnClickListener() {
                                             public void onClick(DialogInterface dialog, int id) {
-                                                syncOptionAll=true;
-                                                checkAuthenticate();
+                                                if (SystemClock.elapsedRealtime() - lastClickTime < 3000){
+                                                    return;
+                                                }else {
+                                                    syncOptionAll = true;
+                                                    checkAuthenticate();
+                                                }
+                                                lastClickTime=SystemClock.elapsedRealtime();
                                             }
                                         })
                                         .setNegativeButton(R.string.app_update_cancel, new DialogInterface.OnClickListener() {
@@ -598,9 +606,14 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     }
 
     public void startItemSyncAuth(int itemId){
-          this.itemId=itemId;
-          syncOptionAll=false;
-          checkAuthenticate();
+        if (SystemClock.elapsedRealtime() - lastClickTime < 3000){
+            return;
+        }else {
+            this.itemId = itemId;
+            syncOptionAll = false;
+            checkAuthenticate();
+        }
+        lastClickTime = SystemClock.elapsedRealtime();
     }
 
     public void startItemSync(int itemId) {
@@ -688,10 +701,15 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         syncAll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (networkQueue.getCount() > 0) {
-                     syncOptionAll=true;
-                    checkAuthenticate();
+                if (SystemClock.elapsedRealtime() - lastClickTime < 3000){
+                    return;
+                }else{
+                    if (networkQueue.getCount() > 0) {
+                        syncOptionAll=true;
+                        checkAuthenticate();
+                    }
                 }
+                lastClickTime=SystemClock.elapsedRealtime();
             }
         });
 

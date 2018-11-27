@@ -73,8 +73,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
     private static final String BASE_URL = BuildConfig.HOST;
     private static final OkHttpClient okHttpClient = new OkHttpClient.Builder()
             .connectTimeout(90, TimeUnit.SECONDS)
-            .readTimeout(180, TimeUnit.SECONDS)
-            .writeTimeout(180, TimeUnit.SECONDS)
+            .readTimeout(720, TimeUnit.SECONDS)
+            .writeTimeout(720, TimeUnit.SECONDS)
             .sslSocketFactory(getSSLSocketFactory())
             .retryOnConnectionFailure(true)
             .build();
@@ -508,8 +508,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
     private void syncNetworkQueueItem(Integer itemId, Handler handler) {
         Message msg = handler.obtainMessage();
-        msg.obj =  res.getString(R.string.Please_wait) + " " + res.getString(R.string.Submitting_data);
-        handler.dispatchMessage(msg);
+//        msg.obj =  res.getString(R.string.Please_wait) + " " + res.getString(R.string.Submitting_data);
+//        handler.dispatchMessage(msg);
         int total = HomeActivity.totalItems;//networkQueueItems.getCount();
         int progress = networkQueueItems.getPosition() + 1;
         String itemType = networkQueueItems
