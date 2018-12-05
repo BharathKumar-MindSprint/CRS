@@ -106,18 +106,24 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     }
             };
 
-            // Install the all-trusting trust manager
-            final SSLContext sslContext = SSLContext.getInstance("SSL");
-            sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
-            // Create an ssl socket factory with our all-trusting manager
-            final SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
+//            final SSLContext sslContext = SSLContext.getInstance("SSL");
+//            sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
+//            final SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
+//            return sslSocketFactory;
 
+            SSLContext sslcontext = SSLContext.getInstance("TLSv1.2");
+            sslcontext.init(null, trustAllCerts, new java.security.SecureRandom());
+            // SSLSocketFactory NoSSLv3Factory = new NoSSLv3SocketFactory(sslcontext.getSocketFactory());
+            final SSLSocketFactory sslSocketFactory = sslcontext.getSocketFactory();
             return sslSocketFactory;
+
+
         } catch (KeyManagementException | NoSuchAlgorithmException e) {
             return null;
         }
 
     }
+
     // constructor
     public NetworkLayer(Context context_, Resources res_) {
         context = context_;

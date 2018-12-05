@@ -45,6 +45,7 @@ import android.widget.Toast;
 
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.LoginEvent;
+import com.google.android.gms.security.ProviderInstaller;
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.olam.digital.ofis.authentication.AccessTokenTask;
@@ -63,7 +64,12 @@ import com.olam.digital.ofis.R;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Locale;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLEngine;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -134,6 +140,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+        checkTls();
         staticContext = this;
         context = me = this;
         staticRes = getResources();
@@ -286,6 +293,35 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             Toast.makeText(HomeActivity.this,getString(R.string.enumerator_empty),Toast.LENGTH_LONG).show();
         }
 
+    }
+
+
+    protected void checkTls() {
+        if (android.os.Build.VERSION.SDK_INT < 21) {
+            try {
+                ProviderInstaller.installIfNeededAsync(this, new ProviderInstaller.ProviderInstallListener() {
+                    @Override
+                    public void onProviderInstalled() {
+                        SSLContext sslContext = null;
+                        try {
+                            sslContext = SSLContext.getInstance("TLSv1.2");
+                            sslContext.init(null, null, null);
+                            SSLEngine engine = sslContext.createSSLEngine();
+                        } catch (NoSuchAlgorithmException e) {
+                            e.printStackTrace();
+                        } catch (KeyManagementException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void onProviderInstallFailed(int i, Intent intent) {
+                    }
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private void doAuthentication(String userID) {
