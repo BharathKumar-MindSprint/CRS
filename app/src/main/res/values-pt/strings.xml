@@ -459,13 +459,18 @@
     <string name="plot_recording_module_finished">"Area gravada "</string>
     <string name="untick_task">"Desmarcar tarefa "</string>
     <string name="untick_task_msg">"Por favor confirme se voce deseja marcar essa tarefa como incompleta. "</string>
-    <string name="updating_master_details">Downloading master details</string>
-    <string name="authentication_failed">Authentication failed. Please try again</string>
-    <string name="enumerator_empty">Please enter the valid enumerator Id</string>
-    <string name="please_answer_all_questions">Please answer all questions</string>
-    <string name="please_fill_all_questions">Please fill answers for all the questions.</string>
-    <string name="updating_sip_training">Updating Social Infrastructure Points</string>
-    <string name="are_you_ready_to_polygon_record">Are you ready to record polygon ?</string>
-    <string name="phone_number_recorded">Phone number recorded</string>
+    <string name="updating_master_details">Baixando principais detalhes</string>
+    <string name="authentication_failed">Falha na autenticação. Por favor tente novamente</string>
+    <string name="enumerator_empty">Por favor, entre com um enumerator ID válido</string>
+    <string name="please_answer_all_questions">Por favor, responda todas as perguntas</string>
+    <string name="updating_sip_training">Pontos de infra estrutura social</string>
+    <string name="phone_number_recorded">Número do telefone gravado.</string>
     <string name="survey_data">Downloading Survey Data</string>
+    <string name="loggin_In">Entrando</string>
+    <string name="are_you_ready_to_polygon_record">Você está pronto para gravar o polígono?</string>
+    <string name="data_initialization">Inicialização de dados</string>
+    <string name="fetching_location">Buscando localização</string>
+    <string name="please_fill_dob">Por favor, preencha a data de aniversário do agricultor</string>
+    <string name="please_fill_farmer_name">Por favor, preencha o nome do agricultor</string>
+    <string name="please_fill_the">Por favor, selecione o local</string>
 </resources>
