@@ -2562,6 +2562,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             try {
 
                 tempOlamFarmerID=farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID));
+                jsonObject.put("tempFarmerId",tempOlamFarmerID);
                 jsonObject.put(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERNAME,farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME)));
                 jsonObject.put(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID_DISPLAY, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
                 jsonObject.put(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));

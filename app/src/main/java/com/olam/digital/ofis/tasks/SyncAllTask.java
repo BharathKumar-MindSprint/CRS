@@ -377,7 +377,7 @@ public class SyncAllTask extends SyncTask {
                             Utilities.removeFromSharedPrefs(context, "version_update_notified_on");
                             Utilities.removeFromSharedPrefs(context, "upgrade_by");
 
-                            publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.Retrieving_data));
+                            publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.survey_data));
 
                             delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_MODULES);
 

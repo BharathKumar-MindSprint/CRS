@@ -218,7 +218,9 @@ public class AddInfrastructureActivity extends BaseActivity {
             if (moduleDTOS != null && moduleDTOS.size() > 0) {
                 moduleId = moduleDTOS.get(0).getId();
                 bindPoiSpinner(moduleId);
-                subModuleId = subModuleDTOS.get(0).getId();
+                try {
+                    subModuleId = subModuleDTOS.get(0).getId();
+                }catch(Exception e){e.printStackTrace();}
             }
         }
 
