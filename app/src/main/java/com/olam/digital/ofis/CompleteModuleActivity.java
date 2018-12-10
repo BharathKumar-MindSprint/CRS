@@ -1,6 +1,8 @@
 package com.olam.digital.ofis;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -9,10 +11,13 @@ import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.view.LayoutInflater;
@@ -20,6 +25,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -28,18 +34,37 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResolvableApiException;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResponse;
+import com.google.android.gms.location.LocationSettingsStatusCodes;
+import com.google.android.gms.location.SettingsClient;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.crash.FirebaseCrash;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.PermissionDeniedResponse;
+import com.karumi.dexter.listener.PermissionGrantedResponse;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.single.PermissionListener;
 import com.olam.digital.ofis.R;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-public class CompleteModuleActivity extends BaseActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class CompleteModuleActivity extends BaseActivity {
 
     private long farmerId;
     private long moduleId;
@@ -74,9 +99,24 @@ public class CompleteModuleActivity extends BaseActivity implements GoogleApiCli
     private long networkQueueId = 0;
 
     // for GPS location system
-    private GoogleApiClient googleApiClient;
-    private LocationListener locationListener;
+//    private GoogleApiClient googleApiClient;
+//    private LocationListener locationListener;
+    private FusedLocationProviderClient mFusedLocationClient;
+    private SettingsClient mSettingsClient;
+    private LocationRequest mLocationRequest;
+    private LocationSettingsRequest mLocationSettingsRequest;
+    private LocationCallback mLocationCallback;
+    private Location mCurrentLocation;
+    private Boolean mRequestingLocationUpdates;
+    // location updates interval - 2sec
+    private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 2000;
 
+    // fastest updates interval - 1 sec
+    // location updates will be received if another app is requesting the locations
+    // than your app can handle
+    private static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = 1000;
+
+    private static final int REQUEST_CHECK_SETTINGS = 100;
     // Request code to use when launching the resolution activity
     private static final int REQUEST_RESOLVE_ERROR = 1001;
     // Unique tag for the error dialog fragment
@@ -187,54 +227,91 @@ public class CompleteModuleActivity extends BaseActivity implements GoogleApiCli
     }
 
     private void setupGPS() {
-        if (googleApiClient == null) {
+        /*if (googleApiClient == null) {
             googleApiClient = new GoogleApiClient.Builder(this)
                     .addConnectionCallbacks(this)
                     .addOnConnectionFailedListener(this)
                     .addApi(LocationServices.API)
                     .build();
+        }*/
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        mSettingsClient = LocationServices.getSettingsClient(this);
+
+        mLocationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                super.onLocationResult(locationResult);
+                // location is received
+                mCurrentLocation = locationResult.getLastLocation();
+                if(mCurrentLocation != null)
+                    setPoiGPS(mCurrentLocation);
+            }
+        };
+        mRequestingLocationUpdates = false;
+
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(UPDATE_INTERVAL_IN_MILLISECONDS);
+        mLocationRequest.setFastestInterval(FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
+
+        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder();
+        builder.addLocationRequest(mLocationRequest);
+        mLocationSettingsRequest = builder.build();
+    }
+
+    private void setPoiGPS(Location location) {
+        try {/*
+
+            poiLocation = location;
+            gpsField = (EditText) findViewById(R.id.gpsPosition);
+            String locationResult;
+            if (poiLocation != null) {
+                double latitude = poiLocation.getLatitude();
+                double longitude = poiLocation.getLongitude();
+                locationResult = latitude + "," + longitude;
+                requestLocation.setImageResource(R.drawable.ic_actionbutton_location_found);
+            } else {
+                locationResult = res.getString(R.string.location_not_available);
+                requestLocation.setImageResource(R.drawable.ic_actionbutton_location_searching);
+            }
+            gpsField.setText(locationResult);*/
+            Location moduleLocation = location;
+            recordedLat = String.valueOf(moduleLocation.getLatitude());
+            recordedLng = String.valueOf(moduleLocation.getLongitude());
+
+        } catch (Exception e) {
+            FirebaseCrash.report(new Exception("AddInfrastructureActivity: Error setting POI location", e));
+            e.printStackTrace();
         }
     }
 
+
     protected void onStart() {
-        googleApiClient.connect();
+//        googleApiClient.connect();
         super.onStart();
     }
 
     protected void onStop() {
-        googleApiClient.disconnect();
+        if (mRequestingLocationUpdates) {
+            // pausing location updates
+            stopLocationUpdates();
+        }
+//        googleApiClient.disconnect();
         super.onStop();
     }
 
-    @Override
-    public void onConnected(Bundle connectionHint) {
-        if (recordedLat.equalsIgnoreCase("") || recordedLng.equalsIgnoreCase("")) {
-            recordCurrentGps();
-        }
+    public void stopLocationUpdates() {
+        // Removing location updates
+        mFusedLocationClient
+                .removeLocationUpdates(mLocationCallback)
+                .addOnCompleteListener(this, new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                    }
+                });
     }
 
-    @Override
-    public void onConnectionSuspended(int i) {
-        googleApiClient.connect();
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        if (mResolvingError) {
-            return;
-        } else if (connectionResult.hasResolution()) {
-            try {
-                mResolvingError = true;
-                connectionResult.startResolutionForResult(this, REQUEST_RESOLVE_ERROR);
-            } catch (IntentSender.SendIntentException e) {
-                googleApiClient.connect();
-            }
-        } else {
-            GoogleApiAvailability.getInstance().showErrorDialogFragment(this, connectionResult.getErrorCode(), REQUEST_RESOLVE_ERROR);
-            mResolvingError = true;
-        }
-        FirebaseCrash.report(new Throwable("Location connection failed adding infrastructure : code: " + connectionResult.getErrorCode() + " | message: " + connectionResult.getErrorMessage()));
-    }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -259,50 +336,9 @@ public class CompleteModuleActivity extends BaseActivity implements GoogleApiCli
 
     }
 
-    private void setCurrentGPS(Message msg) {
-        if (googleApiClient != null && googleApiClient.isConnected()) {
-            LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, locationListener);
-        }
-        try {
-            Location moduleLocation = (Location) msg.obj;
-            recordedLat = String.valueOf(moduleLocation.getLatitude());
-            recordedLng = String.valueOf(moduleLocation.getLongitude());
-        } catch (Exception e) {
-            FirebaseCrash.report(new Exception("CompleteModuleActivity: Error setting GPS values", e));
-            e.printStackTrace();
-        }
-    }
 
-    private void recordCurrentGps() {
-        @SuppressLint("HandlerLeak") Handler gpsHandler = new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-                setCurrentGPS(msg);
-            }
-        };
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
-        LocationRequest locationRequest = new LocationRequest();
-        locationRequest.setInterval(10000);
-        locationRequest.setFastestInterval(5000);
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        locationListener = new getGPSLocation(gpsHandler);
 
-        if (googleApiClient != null && googleApiClient.isConnected()) {
-            LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, locationListener);
-        }
-
-        gpsHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (googleApiClient.isConnected()) {
-                    LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, locationListener);
-                }
-            }
-        }, 30000);
-    }
-
+   
     private void moveToCurrentSubModule(int subModuleId) {
         while (subModules.moveToNext()) {
             if (subModuleId == subModules.getInt(subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_ID))) {
@@ -327,6 +363,7 @@ public class CompleteModuleActivity extends BaseActivity implements GoogleApiCli
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
         super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
+/*
 
         if (requestCode == REQUEST_RESOLVE_ERROR) {
             mResolvingError = false;
@@ -337,6 +374,15 @@ public class CompleteModuleActivity extends BaseActivity implements GoogleApiCli
                     googleApiClient.connect();
                 }
             }
+        }
+*/
+
+        if (requestCode == 100 && resultCode == RESULT_OK) {
+//            Toast.makeText(AddInfrastructureActivity.this,getResources().getString(R.string.record_location_timeout),Toast.LENGTH_LONG).show();
+            startLocationUpdates();
+        }else if (requestCode == 100 && resultCode == RESULT_CANCELED) {
+//            Toast.makeText(AddInfrastructureActivity.this,getResources().getString(R.string.record_location_timeout),Toast.LENGTH_LONG).show();
+            stopLocationUpdates();
         }
 
         if (resultCode == RESULT_OK) {
@@ -512,4 +558,128 @@ public class CompleteModuleActivity extends BaseActivity implements GoogleApiCli
 
         }
     }
+
+    /**
+     * Starting location updates
+     * Check whether location settings are satisfied and then
+     * location updates will be requested
+     */
+    private void startLocationUpdates() {
+        mSettingsClient
+                .checkLocationSettings(mLocationSettingsRequest)
+                .addOnSuccessListener(this, new OnSuccessListener<LocationSettingsResponse>() {
+                    @SuppressLint("MissingPermission")
+                    @Override
+                    public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
+                        //noinspection MissingPermission
+                        mFusedLocationClient.requestLocationUpdates(mLocationRequest,
+                                mLocationCallback, Looper.myLooper());
+/*
+                        pd = new ProgressDialog(AddInfrastructureActivity.this);
+                        pd.setCancelable(false);
+                        pd.setIndeterminate(false);
+                        pd.setMessage(res.getString(R.string.fetching_location));
+                        pd.show();*/
+                        Handler handler = new Handler(Looper.getMainLooper());
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                if(mCurrentLocation != null) {
+                                    setPoiGPS(mCurrentLocation);
+                                }else{
+                                   /* if (pd != null && pd.getWindow().getDecorView().getWindowToken() != null && pd.isShowing()) {
+                                        pd.dismiss();
+                                    }*/
+                                    Toast.makeText(CompleteModuleActivity.this,getResources().getString(R.string.record_location_timeout),Toast.LENGTH_LONG).show();
+                                }
+                            }
+                        }, 6000);
+                    }
+                })
+                .addOnFailureListener(this, new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        int statusCode = ((ApiException) e).getStatusCode();
+
+                        Handler handler = new Handler(Looper.getMainLooper());
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                               /* if (pd != null && pd.getWindow().getDecorView().getWindowToken() != null && pd.isShowing()) {
+                                    pd.dismiss();
+                                }*/
+                                Toast.makeText(CompleteModuleActivity.this,getResources().getString(R.string.record_location_timeout),Toast.LENGTH_LONG).show();
+                            }
+                        }, 1000);
+
+                        switch (statusCode) {
+                            case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+                                try {
+                                    // Show the dialog by calling startResolutionForResult(), and check the
+                                    // result in onActivityResult().
+                                    ResolvableApiException rae = (ResolvableApiException) e;
+                                    rae.startResolutionForResult(CompleteModuleActivity.this, REQUEST_CHECK_SETTINGS);
+                                } catch (IntentSender.SendIntentException sie) {
+//                                    Log.i(TAG, "PendingIntent unable to execute request.");
+                                }
+                                break;
+                            case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+                                String errorMessage = "Location settings are inadequate, and cannot be " +
+                                        "fixed here. Fix in Settings.";
+//                                Log.e(TAG, errorMessage);
+
+                                Toast.makeText(CompleteModuleActivity.this, errorMessage, Toast.LENGTH_LONG).show();
+
+                                break;
+                            default:
+                                Toast.makeText(CompleteModuleActivity.this,getResources().getString(R.string.record_location_timeout),Toast.LENGTH_LONG).show();
+
+                        }
+                    }
+                });
+    }
+
+    private void getDeviceLocation() {
+
+        // Requesting ACCESS_FINE_LOCATION using Dexter library
+        Dexter.withActivity(this)
+                .withPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+                .withListener(new PermissionListener() {
+                    @Override
+                    public void onPermissionGranted(PermissionGrantedResponse response) {
+                        mRequestingLocationUpdates = true;
+                        startLocationUpdates();
+                    }
+
+                    @Override
+                    public void onPermissionDenied(PermissionDeniedResponse response) {
+                        /*if (pd != null && pd.getWindow().getDecorView().getWindowToken() != null && pd.isShowing()) {
+                            pd.dismiss();
+                        }*/
+                        if (response.isPermanentlyDenied()) {
+                            // open device settings when the permission is
+                            // denied permanently
+                            openSettings();
+                        }
+                    }
+
+                    @Override
+                    public void onPermissionRationaleShouldBeShown(PermissionRequest permission, PermissionToken token) {
+                        token.continuePermissionRequest();
+                    }
+                }).check();
+    }
+
+    private void openSettings() {
+        Intent intent = new Intent();
+        intent.setAction(
+                Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+        Uri uri = Uri.fromParts("package",
+                BuildConfig.APPLICATION_ID, null);
+        intent.setData(uri);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+    }
+
 }

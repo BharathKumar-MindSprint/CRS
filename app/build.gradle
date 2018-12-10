@@ -89,10 +89,14 @@ android {
 //            resValue "string", "client_secret", 'gqYWH4dRyQST0dHHgA5iUyxkgtPxGStVd3hJop'
 
             //New UAT DNS name
-            resValue "string", "AUTH_SERVER_URL", 'https://otofis-uat-zuul.olamdigital.com/oauth/api/v1/oauth/'
-            buildConfigField 'String', 'HOST', '"https://otofis-uat-zuul.olamdigital.com/"'
-            resValue "string", "client_secret", 'xGfAz5zSFTJDHcWWcEQR19hNx9zA30NeZOQuxdnr'
+//            resValue "string", "AUTH_SERVER_URL", 'https://otofis-uat-zuul.olamdigital.com/oauth/api/v1/oauth/'
+//            buildConfigField 'String', 'HOST', '"https://otofis-uat-zuul.olamdigital.com/"'
+//            resValue "string", "client_secret", 'xGfAz5zSFTJDHcWWcEQR19hNx9zA30NeZOQuxdnr'
 
+            //New DEV DNS name
+            resValue "string", "AUTH_SERVER_URL", 'https://otofis-dev-zuul.olamdigital.com/oauth/api/v1/oauth/'
+            buildConfigField 'String', 'HOST', '"https://otofis-dev-zuul.olamdigital.com/"'
+            resValue "string", "client_secret", 'xGfAz5zSFTJDHcWWcEQR19hNx9zA30NeZOQuxdnr'
 
             // New Local changes - DEV
 //            resValue "string", "AUTH_SERVER_URL", 'http://13.67.108.216:8084/oauth/api/v1/oauth/'
