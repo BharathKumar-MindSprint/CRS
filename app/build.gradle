@@ -85,15 +85,15 @@ android {
             buildConfigField 'String', 'MICROSERVICE_HOST', '"http://137.116.145.198:8080/"'
 
             // New Local changes - QA
-            resValue "string", "applicationName", "OFIS SIT"
-            resValue "string", "AUTH_SERVER_URL", 'https://otofis-sit-zuul.olamdigital.com/oauth/api/v1/oauth/'
-            buildConfigField 'String', 'HOST', '"https://otofis-sit-zuul.olamdigital.com/"'
+//            resValue "string", "applicationName", "OFIS SIT"
+//            resValue "string", "AUTH_SERVER_URL", 'https://otofis-sit-zuul.olamdigital.com/oauth/api/v1/oauth/'
+//            buildConfigField 'String', 'HOST', '"https://otofis-sit-zuul.olamdigital.com/"'
 //            resValue "string", "client_secret", 'gqYWH4dRyQST0dHHgA5iUyxkgtPxGStVd3hJop'
 
             //New UAT DNS name
-//            resValue "string", "applicationName", "OFIS UAT"
-//            resValue "string", "AUTH_SERVER_URL", 'https://otofis-uat-zuul.olamdigital.com/oauth/api/v1/oauth/'
-//            buildConfigField 'String', 'HOST', '"https://otofis-uat-zuul.olamdigital.com/"'
+            resValue "string", "applicationName", "OFIS UAT"
+            resValue "string", "AUTH_SERVER_URL", 'https://otofis-uat-zuul.olamdigital.com/oauth/api/v1/oauth/'
+            buildConfigField 'String', 'HOST', '"https://otofis-uat-zuul.olamdigital.com/"'
 //            resValue "string", "client_secret", 'xGfAz5zSFTJDHcWWcEQR19hNx9zA30NeZOQuxdnr'
 
             //New DEV DNS name

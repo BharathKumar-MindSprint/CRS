@@ -672,6 +672,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                     if (msg.what == 1) {
                         if (m_ProgressDialog != null && m_ProgressDialog.isShowing()) {
                             String pdUpdate = msg.obj.toString();
+                            Log.d("HomeActivity", "msg.arg1 : " + msg.arg1 + ",msg.arg2 : " + ",networkQueue.getCount() : " + networkQueue.getCount());
                             m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, msg.arg1, msg.arg2, pdUpdate);
                         }
                     } else if (msg.what == 2) {
