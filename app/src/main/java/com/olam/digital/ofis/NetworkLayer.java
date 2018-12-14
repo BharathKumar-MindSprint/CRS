@@ -1380,7 +1380,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             if (!dl.isFarmerSynced(farmerId)) {
                 msg.what = 3;
                 msg.arg1 = total;
-                msg.arg2 = HomeActivity.progressItem = progress + 1;
+                msg.arg2 =  progress;
                 msg.obj = String.valueOf(res.getString(R.string.farmer_not_synced));
                 handler.dispatchMessage(msg);
             } else {
@@ -1610,7 +1610,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                         statusMessage = res.getString(R.string.item_synced);
                                         msg.what = 1;
                                         msg.arg1 = total;
-                                        msg.arg2 = progress;
+                                        msg.arg2 = HomeActivity.progressItem = progress+1;
                                         msg.obj = statusMessage;
                                         handler.dispatchMessage(msg);
                                         syncNetworkQueue(originalSyncRequestItemId, handler);
