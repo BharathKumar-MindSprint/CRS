@@ -52,6 +52,8 @@ public class Utilities {
     public  static  String packagename;
     public static boolean isAppAlive;
 
+    public static  int minProgressCount=0;
+
 
 
 
@@ -224,6 +226,7 @@ public  static String base64ConversionForImage(String filepath)  {
             @Override
             public void run() {
                 if (pd != null && pd.getWindow().getDecorView().getWindowToken() != null) {
+                    minProgressCount=progress;
                     if (max != 0 && progress != 0 && pd.isIndeterminate()) {
                         pd.setIndeterminate(false);
                     }

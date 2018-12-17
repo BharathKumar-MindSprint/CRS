@@ -623,7 +623,12 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                     if (msg.what == 1) {
                         if (m_ProgressDialog != null && m_ProgressDialog.isShowing()) {
                             String pdUpdate = msg.obj.toString();
-                            m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, msg.arg1, msg.arg2, pdUpdate);
+                            int storedCount=Utilities.minProgressCount;
+                            int min = storedCount+1;
+                            int max = networkQueue.getCount();
+                            Log.d("HomeActivity", "min : " + min  + ",  max : " + max);
+                            m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, max, min, pdUpdate);
+                          //  m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, msg.arg1, msg.arg2, pdUpdate);
                         }
                     } else if (msg.what == 2) {
                         finishItemSync(msg);
@@ -669,10 +674,17 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             Handler syncHandler = new Handler() {
                 @Override
                 public void handleMessage(Message msg) {
+
                     if (msg.what == 1) {
                         if (m_ProgressDialog != null && m_ProgressDialog.isShowing()) {
                             String pdUpdate = msg.obj.toString();
+                            Log.d("HomeActivity", "msg.arg1 : " + msg.arg1 + ",msg.arg2 : " + ",networkQueue.getCount() : " + networkQueue.getCount());
+//                            int storedCount=Utilities.minProgressID;
+//                            int min = storedCount+1;
+//                            int max = networkQueue.getCount();
+//                            m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, max, min, pdUpdate);
                             m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, msg.arg1, msg.arg2, pdUpdate);
+
                         }
                     } else if (msg.what == 2) {
                         finishItemSync(msg);
@@ -706,9 +718,10 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             @Override
             public void run() {
                 if (m_ProgressDialog!=null && m_ProgressDialog.isShowing())
-                {
-                    String pdUpdate = msg.obj.toString();
-                    m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, totalItems/*msg.arg1*/, /*progressItem*/msg.arg2, pdUpdate);
+                { String pdUpdate = msg.obj.toString();
+                 m_ProgressDialog.setMessage(pdUpdate);
+                  //  String pdUpdate = msg.obj.toString();
+                //    m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, totalItems/*msg.arg1*/, /*progressItem*/msg.arg2, pdUpdate);
                     Utilities.closeProgressDialog(m_ProgressDialog, 3000);
                 }
                 networkQueue.close();
@@ -1082,6 +1095,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     @Override
     public void onTokenCompleted(boolean status) {
         if(status){
+            Utilities.minProgressCount=0;
                if(syncOptionAll){
                   startAllItemSync();
               }else{
