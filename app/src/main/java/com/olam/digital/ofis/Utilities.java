@@ -38,7 +38,7 @@ import java.util.concurrent.TimeUnit;
 public class Utilities {
     // update
     private static final String SHARED_PREFS_NAME = "com.olam.digital.ofis.app_prefs";
-
+    private static final String SHARED_FIREBASE_TOKEN_UPDATED = "firebase_token_updated";
    public static int syctask=0;
 
 
@@ -178,6 +178,14 @@ public  static String base64ConversionForImage(String filepath)  {
         return sharedPreferences.getString("ENUMERATOR_ID", "");
     }
 
+
+    public static String getFirebaseTokenSharedPrefs(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
+
+        return sharedPreferences.getString(SHARED_FIREBASE_TOKEN_UPDATED, "");
+    }
+
+
     public static boolean getBoolFromSharedPrefs(Context context, String prefName, boolean defaultResponse) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
 
@@ -189,6 +197,7 @@ public  static String base64ConversionForImage(String filepath)  {
 
         return sharedPreferences.getLong(prefName, 0);
     }
+
 
     public static String getStringFromSharedPrefs(Context context, String prefName) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);

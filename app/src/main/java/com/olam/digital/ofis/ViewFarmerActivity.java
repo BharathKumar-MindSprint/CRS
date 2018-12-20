@@ -1155,7 +1155,16 @@ public class ViewFarmerActivity extends BaseListActivity {
 
                 } else if (items[item].equals(res.getString(R.string.Gallery))) {
                     Intent pickPhoto = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                    startActivityForResult(pickPhoto, REQUEST_IMAGE_GALLERY);
+                    try {
+                        if(pickPhoto.resolveActivity(getPackageManager()) != null) {
+                            startActivityForResult(pickPhoto, REQUEST_IMAGE_GALLERY);
+                        }else {
+                            Toast.makeText(ViewFarmerActivity.this,"Gallery is not available in Mobile",Toast.LENGTH_LONG).show();
+                        }
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+
                 }
             }
         });

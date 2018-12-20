@@ -98,6 +98,8 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     private static CardView recordTransactionWrapper;
     private static CardView recordTrainingWrapper;
     private SharedPreferences sharedPreferences;
+    private static final String SHARED_PREFS_NAME = "com.olam.digital.ofis.app_prefs";
+    private static final String SHARED_FIREBASE_TOKEN_UPDATED = "firebase_token_updated";
     private static MenuItem settingsButton, tasksButton;
     private Handler mainHandler;
 
@@ -331,7 +333,8 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         authRequestDTO.setUsername(userID);
         //authRequestDTO.setPassword("3751e350-a1d4-4db9-b045-9dc50cf544fb");
         authRequestDTO.setPassword(DeviceIDxctractor.fetchDeviceID(this));
-        authRequestDTO.setFirebaseToken(FirebaseInstanceId.getInstance().getToken());
+        String firebasetoken=FirebaseInstanceId.getInstance().getToken();
+        authRequestDTO.setFirebaseToken(Utilities.getFirebaseTokenSharedPrefs(HomeActivity.this));
         authRequestDTO.setGrantType("password");
         authRequestDTO.setClientId(5L);
         authRequestDTO.setClientSecret(getString(R.string.client_secret));
@@ -587,7 +590,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         authRequestDTO.setUsername(Utilities.getFromSharedPrefs(HomeActivity.this));
         //authRequestDTO.setPassword("3751e350-a1d4-4db9-b045-9dc50cf544fb");
         authRequestDTO.setPassword(DeviceIDxctractor.fetchDeviceID(this));
-        authRequestDTO.setFirebaseToken(FirebaseInstanceId.getInstance().getToken());
+        authRequestDTO.setFirebaseToken(Utilities.getFirebaseTokenSharedPrefs(HomeActivity.this));
         authRequestDTO.setGrantType("password");
         authRequestDTO.setClientId(5L);
         authRequestDTO.setClientSecret(getString(R.string.client_secret));

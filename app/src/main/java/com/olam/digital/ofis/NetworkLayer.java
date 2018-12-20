@@ -1600,6 +1600,9 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     }
                     Log.i("POST", "" + submission.toString());
 
+                    //increase the count - Adjustment code
+                    recordFailedUpload(0, 0, networkQueueItemId);
+
                     okHttpPost(context, endPoint, submission, new Callback() {
                                 @Override
                                 public void onResponse(Call call, Response postResponse) {

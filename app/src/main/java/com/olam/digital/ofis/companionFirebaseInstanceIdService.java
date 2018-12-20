@@ -1,6 +1,7 @@
 package com.olam.digital.ofis;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 
 import com.google.firebase.iid.FirebaseInstanceId;
@@ -11,6 +12,9 @@ import com.google.firebase.iid.FirebaseInstanceIdService;
  */
 public class companionFirebaseInstanceIdService extends FirebaseInstanceIdService {
 
+    private static final String SHARED_PREFS_NAME = "com.olam.digital.ofis.app_prefs";
+    private static final String SHARED_FIREBASE_TOKEN_UPDATED = "firebase_token_updated";
+    private SharedPreferences sharedPreferences;
     @Override
     public void onTokenRefresh() {
         // Get updated InstanceID token.
@@ -21,10 +25,16 @@ public class companionFirebaseInstanceIdService extends FirebaseInstanceIdServic
     private void sendRegistrationToServer(final String token) {
         Context context = getApplicationContext();
         Resources res = getResources();
-        NetworkLayer nl = new NetworkLayer(context, res);
+//        NetworkLayer nl = new NetworkLayer(context, res);
+////
+////        if (nl.isPhoneOnline()) {
+////            nl.postFirebaseToken(token);
+////        }
+        // use shared preferences
+        sharedPreferences = getSharedPreferences(SHARED_PREFS_NAME, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(SHARED_FIREBASE_TOKEN_UPDATED, token);
+        editor.commit();
 
-        if (nl.isPhoneOnline()) {
-            nl.postFirebaseToken(token);
-        }
     }
 }
