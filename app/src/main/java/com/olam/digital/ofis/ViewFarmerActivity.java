@@ -269,13 +269,21 @@ public class ViewFarmerActivity extends BaseListActivity {
         switch (requestCode) {
             case REQUEST_IMAGE_CAPTURE:
                 if (resultCode == RESULT_OK) {
-                    setFullImageFromFilePath(getCurrentPhotoPath(), farmerPhoto, "portrait");
+                    if(getCurrentPhotoPath() != null){
+                        setFullImageFromFilePath(getCurrentPhotoPath(), farmerPhoto, "portrait");
+                    }else {
+                        Toast.makeText(ViewFarmerActivity.this, "Something went wrong, please try again", Toast.LENGTH_LONG).show();
+                    }
                 }
                 break;
             case REQUEST_IMAGE_GALLERY:
                 if (resultCode == RESULT_OK) {
                     setCapturedImageURI(data.getData());
-                    setFullImageFromFilePath(getFilePathUri(context, getCapturedImageURI()), farmerPhoto, "portrait");
+                    if(getFilePathUri(context, getCapturedImageURI()) != null){
+                        setFullImageFromFilePath(getFilePathUri(context, getCapturedImageURI()), farmerPhoto, "portrait");
+                    }else{
+                        Toast.makeText(ViewFarmerActivity.this, "Something went wrong, please try again", Toast.LENGTH_LONG).show();
+                    }
                 }
                 break;
             case REQUEST_RESOLVE_ERROR:
@@ -1229,6 +1237,7 @@ public class ViewFarmerActivity extends BaseListActivity {
 
 
     private void setFullImageFromFilePath(String imagePath, ImageView target, String portraitOrSignature) {
+
         String savedImagePath = Utilities.scaleRotateAndSaveImage(imagePath, portraitOrSignature);
         if (savedImagePath != null) {
             if (portraitOrSignature.equalsIgnoreCase("portrait")) {
