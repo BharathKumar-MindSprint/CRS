@@ -647,9 +647,11 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     }
 
     public void startItemSyncAuth(int itemId){
+
         if (SystemClock.elapsedRealtime() - lastClickTime < 3000){
             return;
         }else {
+            checkTls();
             this.itemId = itemId;
             syncOptionAll = false;
             checkAuthenticate();
@@ -1096,6 +1098,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     public void onTokenCompleted(boolean status) {
         if(status){
             Utilities.minProgressCount=0;
+            checkTls();
                if(syncOptionAll){
                   startAllItemSync();
               }else{
