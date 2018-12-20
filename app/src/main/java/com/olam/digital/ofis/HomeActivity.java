@@ -574,7 +574,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     }
 
     private void checkAuthenticate(){
-
+            checkTls();
         if (nl.isPhoneOnline()) {
             AccessTokenTask accessTokenTask = new AccessTokenTask(context, getAuthRequestDTO(), HomeActivity.this);
             accessTokenTask.execute();

@@ -3,6 +3,7 @@ package com.olam.digital.ofis;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.util.Log;
 
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.FirebaseInstanceIdService;
@@ -19,6 +20,7 @@ public class companionFirebaseInstanceIdService extends FirebaseInstanceIdServic
     public void onTokenRefresh() {
         // Get updated InstanceID token.
         String refreshedToken = FirebaseInstanceId.getInstance().getToken();
+        Log.d("FirebaseInstIdService", "refreshedToken : " + refreshedToken);
         sendRegistrationToServer(refreshedToken);
     }
 

@@ -1150,7 +1150,15 @@ public class ViewFarmerActivity extends BaseListActivity {
                         setCapturedImageURI(fileUri);
                         setCurrentPhotoPath(fileUri.getPath());
                         takePicture.putExtra(MediaStore.EXTRA_OUTPUT, getCapturedImageURI());
-                        startActivityForResult(takePicture, REQUEST_IMAGE_CAPTURE);
+                        try {
+                            if(takePicture.resolveActivity(getPackageManager()) != null) {
+                                startActivityForResult(takePicture, REQUEST_IMAGE_CAPTURE);
+                            }else {
+                                Toast.makeText(ViewFarmerActivity.this,"Gallery is not available in Mobile",Toast.LENGTH_LONG).show();
+                            }
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
                     }
 
                 } else if (items[item].equals(res.getString(R.string.Gallery))) {
