@@ -48,7 +48,8 @@ public class SettingsActivity extends Activity implements OnAccessTokenInterface
     private DataLayer dl;
     private ProgressDialog m_ProgressDialog;
     Button buttonSave;
-
+    private static final String SHARED_PREFS_NAME = "com.olam.digital.ofis.app_prefs";
+    private static final String SHARED_FIREBASE_TOKEN_UPDATED = "firebase_token_updated";
     private boolean updateData=false;
     // Runtime Permission Request Code
     private final static int MY_PERMISSIONS_REQUEST = 9999;
@@ -143,7 +144,7 @@ public class SettingsActivity extends Activity implements OnAccessTokenInterface
         authRequestDTO.setUsername(enumeratorID.getText().toString().trim());
         //authRequestDTO.setPassword("3751e350-a1d4-4db9-b045-9dc50cf544fb");
         authRequestDTO.setPassword(DeviceIDxctractor.fetchDeviceID(this));
-        authRequestDTO.setFirebaseToken(FirebaseInstanceId.getInstance().getToken());
+        authRequestDTO.setFirebaseToken(Utilities.getFirebaseTokenSharedPrefs(SettingsActivity.this));
         authRequestDTO.setGrantType("password");
         authRequestDTO.setClientId(5L);
         authRequestDTO.setClientSecret(getString(R.string.client_secret));
