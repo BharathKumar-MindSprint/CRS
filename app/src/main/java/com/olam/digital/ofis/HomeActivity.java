@@ -301,25 +301,31 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     protected void checkTls() {
         if (android.os.Build.VERSION.SDK_INT < 21) {
             try {
-                ProviderInstaller.installIfNeededAsync(this, new ProviderInstaller.ProviderInstallListener() {
-                    @Override
-                    public void onProviderInstalled() {
-                        SSLContext sslContext = null;
-                        try {
-                            sslContext = SSLContext.getInstance("TLSv1.2");
-                            sslContext.init(null, null, null);
-                            SSLEngine engine = sslContext.createSSLEngine();
-                        } catch (NoSuchAlgorithmException e) {
-                            e.printStackTrace();
-                        } catch (KeyManagementException e) {
-                            e.printStackTrace();
-                        }
-                    }
+                ProviderInstaller.installIfNeeded(HomeActivity.this);
 
-                    @Override
-                    public void onProviderInstallFailed(int i, Intent intent) {
-                    }
-                });
+//                ProviderInstaller.installIfNeededAsync(this, new ProviderInstaller.ProviderInstallListener() {
+//                    @Override
+//                    public void onProviderInstalled() {
+//                        SSLContext sslContext = null;
+//                        try {
+//                            sslContext = SSLContext.getInstance("TLSv1.2");
+//                            sslContext.init(null, null, null);
+//                            SSLEngine engine = sslContext.createSSLEngine();
+//                        } catch (NoSuchAlgorithmException e) {
+//                            e.printStackTrace();
+//                        } catch (KeyManagementException e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onProviderInstallFailed(int i, Intent intent) {
+//                    }
+//                });
+              SSLContext  sslContext = SSLContext.getInstance("TLSv1.2");
+              sslContext.init(null, null, null);
+               SSLEngine engine = sslContext.createSSLEngine();
+               engine.setEnabledProtocols(new String[]{"TLSv1.2"});
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -574,7 +580,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     }
 
     private void checkAuthenticate(){
-            checkTls();
+
         if (nl.isPhoneOnline()) {
             AccessTokenTask accessTokenTask = new AccessTokenTask(context, getAuthRequestDTO(), HomeActivity.this);
             accessTokenTask.execute();
@@ -654,7 +660,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         if (SystemClock.elapsedRealtime() - lastClickTime < 3000){
             return;
         }else {
-            checkTls();
             this.itemId = itemId;
             syncOptionAll = false;
             checkAuthenticate();
@@ -1101,7 +1106,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     public void onTokenCompleted(boolean status) {
         if(status){
             Utilities.minProgressCount=0;
-            checkTls();
                if(syncOptionAll){
                   startAllItemSync();
               }else{

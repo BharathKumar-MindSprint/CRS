@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -21,6 +22,9 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.security.ProviderInstaller;
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.gson.JsonArray;
 import com.olam.digital.ofis.authentication.AccessTokenTask;
@@ -58,6 +62,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLEngine;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
@@ -117,11 +122,9 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             final SSLSocketFactory sslSocketFactory = sslcontext.getSocketFactory();
             return sslSocketFactory;
 
-
         } catch (KeyManagementException | NoSuchAlgorithmException e) {
             return null;
         }
-
     }
 
     // constructor
@@ -511,6 +514,39 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 handler.dispatchMessage(msg);
             }
         }
+
+    private void checkTls() {
+        if (android.os.Build.VERSION.SDK_INT < 21) {
+//            try {
+//                ProviderInstaller.installIfNeededAsync(context, new ProviderInstaller.ProviderInstallListener() {
+//                    @Override
+//                    public void onProviderInstalled() {
+//                        SSLContext sslContext = null;
+//                        try {
+//                            sslContext = SSLContext.getInstance("TLSv1.2");
+//                            sslContext.init(null, null, null);
+//                            SSLEngine engine = sslContext.createSSLEngine();
+//                        } catch (NoSuchAlgorithmException e) {
+//                            e.printStackTrace();
+//                        } catch (KeyManagementException e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onProviderInstallFailed(int i, Intent intent) {
+//                    }
+//                });
+            try{
+                ProviderInstaller.installIfNeeded(context);
+                SSLContext  sslContext = SSLContext.getInstance("TLSv1.2");
+                sslContext.init(null, null, null);
+                SSLEngine engine = sslContext.createSSLEngine();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
     private void syncNetworkQueueItem(Integer itemId, Handler handler) {
         Message msg = handler.obtainMessage();
