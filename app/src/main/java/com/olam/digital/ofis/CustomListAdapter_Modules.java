@@ -208,7 +208,7 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                                             calculationDate.set(Calendar.DAY_OF_MONTH, calculationDate.getActualMaximum(Calendar.DAY_OF_MONTH));
                                         } else if (recurrence_type.equalsIgnoreCase("weeks")) {
                                             calculationDate.add(Calendar.WEEK_OF_YEAR, -recurrence_frequency);
-                                            calculationDate.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
+                                            calculationDate.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
                                         } else {
                                             // must be days
                                             calculationDate.add(Calendar.DAY_OF_YEAR, -recurrence_frequency);
