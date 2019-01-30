@@ -1,5 +1,7 @@
 package com.olam.digital.ofis;
 
+import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -7,6 +9,7 @@ import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
@@ -47,16 +50,37 @@ public class companionFirebaseMessagingService extends FirebaseMessagingService 
                 messageBody=remoteMessage.getNotification().getBody();
             }
             Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
+            NotificationCompat.Builder notificationBuilder = null;/* = new NotificationCompat.Builder(this,"OFIS_ch_id")
                     .setSmallIcon(R.drawable.ic_notification_icon)
                     .setContentTitle(messageTitle)
                     .setContentText(messageBody)
                     .setAutoCancel(true)
                     .setSound(defaultSoundUri)
-                    .setContentIntent(pendingIntent);
+                    .setContentIntent(pendingIntent)
+                    .setDefaults(Notification.DEFAULT_ALL);*/
+
 
             NotificationManager notificationManager =
                     (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                int importance = NotificationManager.IMPORTANCE_DEFAULT;
+                NotificationChannel notificationChannel = new NotificationChannel("ID", "Name", importance);
+                notificationManager.createNotificationChannel(notificationChannel);
+                notificationBuilder = new NotificationCompat.Builder(getApplicationContext(), notificationChannel.getId());
+            } else {
+                notificationBuilder = new NotificationCompat.Builder(getApplicationContext());
+            }
+
+            notificationBuilder = notificationBuilder
+                    .setSmallIcon(R.drawable.ic_notification_icon)
+                    .setContentTitle(messageTitle)
+                    .setContentText(messageBody)
+                    .setAutoCancel(true)
+                    .setSound(defaultSoundUri)
+                    .setContentIntent(pendingIntent)
+                    .setDefaults(Notification.DEFAULT_ALL);
+
 
             notificationManager.notify(6575, notificationBuilder.build());
 
