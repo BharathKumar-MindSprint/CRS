@@ -23,8 +23,7 @@ android {
         javaMaxHeapSize "4G"
     }
     signingConfigs {
-        release {
-        }
+
     }
     compileSdkVersion 27
     buildToolsVersion '27.0.3'
@@ -43,17 +42,23 @@ android {
     }
 
     buildTypes {
-        debug {
+       /* debug {
             minifyEnabled false
             shrinkResources false
             //proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
+        }*/
         release {
+            lintOptions {
+                disable 'MissingTranslation'
+                checkReleaseBuilds false
+                abortOnError false
+            }
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
     productFlavors {
         //noinspection GroovyMissingReturnStatement
         local {
@@ -85,15 +90,15 @@ android {
             buildConfigField 'String', 'MICROSERVICE_HOST', '"http://137.116.145.198:8080/"'
 
             // New Local changes - QA
-            resValue "string", "applicationName", "OFIS SIT"
-            resValue "string", "AUTH_SERVER_URL", 'https://otofis-sit-zuul.olamdigital.com/oauth/api/v1/oauth/'
-            buildConfigField 'String', 'HOST', '"https://otofis-sit-zuul.olamdigital.com/"'
+//            resValue "string", "applicationName", "OFIS SIT"
+//            resValue "string", "AUTH_SERVER_URL", 'https://otofis-sit-zuul.olamdigital.com/oauth/api/v1/oauth/'
+//            buildConfigField 'String', 'HOST', '"https://otofis-sit-zuul.olamdigital.com/"'
 //            resValue "string", "client_secret", 'gqYWH4dRyQST0dHHgA5iUyxkgtPxGStVd3hJop'
 
             //New UAT DNS name
-//            resValue "string", "applicationName", "OFIS UAT"
-//            resValue "string", "AUTH_SERVER_URL", 'https://otofis-uat-zuul.olamdigital.com/oauth/api/v1/oauth/'
-//            buildConfigField 'String', 'HOST', '"https://otofis-uat-zuul.olamdigital.com/"'
+            resValue "string", "applicationName", "OFIS UAT"
+            resValue "string", "AUTH_SERVER_URL", 'https://otofis-uat-zuul.olamdigital.com/oauth/api/v1/oauth/'
+            buildConfigField 'String', 'HOST', '"https://otofis-uat-zuul.olamdigital.com/"'
 //            resValue "string", "client_secret", 'xGfAz5zSFTJDHcWWcEQR19hNx9zA30NeZOQuxdnr'
 
             //New DEV DNS name
@@ -121,7 +126,6 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-
     //compile project(":OSMBonusPack")
     compile 'com.squareup.okhttp3:okhttp:3.7.0'
     compile 'com.squareup.retrofit2:converter-gson:2.1.0'
@@ -139,16 +143,12 @@ dependencies {
     compile 'org.mapsforge:mapsforge-map-android:0.6.1'
     compile 'org.mapsforge:mapsforge-map:0.6.1'
     compile 'com.google.android.gms:play-services-location:11.8.0'
-
     compile 'com.android.support:multidex:1.0.2'
-
     compile('com.crashlytics.sdk.android:crashlytics:2.7.1@aar') {
         transitive = true
     }
     compile 'com.google.firebase:firebase-core:11.8.0'
-
     compile 'com.github.MKergall:osmbonuspack:6.4'
-
     // dexter runtime permissions
     compile 'com.karumi:dexter:4.2.0'
 }
