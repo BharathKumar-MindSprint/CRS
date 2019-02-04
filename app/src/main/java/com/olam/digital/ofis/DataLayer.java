@@ -2405,7 +2405,9 @@ public class DataLayer {
 //            orderBy = OFISDBContract.NetworkQueueEntry.COLUMN_NAME_ID + " ASC";
             return db.rawQuery("select * from " + OFISDBContract.NetworkQueueEntry.TABLE_NAME +
                     " order by case when " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE +" = 'New farmer' " +
-                    " THEN 1 ELSE 2 END, "+ OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE ,
+                    "THEN 1 when " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE +" = 'Polygon recorded' " +
+                    "THEN 2 when " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE +" = 'Location recorded' " +
+                    "THEN 3 ELSE 4 END, "+ OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE ,
                     null);
         }
 
