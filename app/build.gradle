@@ -75,11 +75,18 @@ android {
             resValue "string", "contentprovider_authorities", applicationId + '.provider'
             resValue "string", "sync_account_type", applicationId
             buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofisdebug"'
-            buildConfigField 'String', 'HOST', '"https://testofis.olamgroup.com/api/v1/"'
+//            buildConfigField 'String', 'HOST', '"https://testofis.olamgroup.com/api/v1/"'
+
+            buildConfigField 'String', 'MICROSERVICE_HOST', '"http://137.116.145.198:8080/"'
+            resValue "string", "applicationName", "OFIS DEV"
+            resValue "string", "AUTH_SERVER_URL", 'https://otofis-dev-zuul.olamdigital.com/oauth/api/v1/oauth/'
+            buildConfigField 'String', 'HOST', '"https://otofis-dev-zuul.olamdigital.com/"'
+            resValue "string", "client_secret", 'xGfAz5zSFTJDHcWWcEQR19hNx9zA30NeZOQuxdnr'
+
         }
 
         //noinspection GroovyMissingReturnStatement
-        preprod {
+        /*preprod {
             applicationId "com.olam.digital.ofispreprod"
 
             resValue "string", "contentprovider_authorities", applicationId + '.provider'
@@ -96,18 +103,49 @@ android {
 //            buildConfigField 'String', 'HOST', '"https://otofis-sit-zuul.olamdigital.com/"'
 //            resValue "string", "client_secret", 'gqYWH4dRyQST0dHHgA5iUyxkgtPxGStVd3hJop'
 
-           /* //New UAT DNS name
+           *//* //New UAT DNS name
             resValue "string", "applicationName", "OFIS UAT"
             resValue "string", "AUTH_SERVER_URL", 'https://otofis-uat-zuul.olamdigital.com/oauth/api/v1/oauth/'
             buildConfigField 'String', 'HOST', '"https://otofis-uat-zuul.olamdigital.com/"'
 //            resValue "string", "client_secret", 'xGfAz5zSFTJDHcWWcEQR19hNx9zA30NeZOQuxdnr'
-*/
+*//*
             //New DEV DNS name
             resValue "string", "applicationName", "OFIS UAT"
             resValue "string", "AUTH_SERVER_URL", 'https://otofis-dev-zuul.olamdigital.com/oauth/api/v1/oauth/'
             buildConfigField 'String', 'HOST', '"https://otofis-dev-zuul.olamdigital.com/"'
             resValue "string", "client_secret", 'xGfAz5zSFTJDHcWWcEQR19hNx9zA30NeZOQuxdnr'
 
+        }*/
+
+        uat{
+            applicationId "com.olam.digital.ofispreprod"
+
+            resValue "string", "contentprovider_authorities", applicationId + '.provider'
+            resValue "string", "sync_account_type", applicationId
+            buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofispreprod"'
+            buildConfigField 'String', 'MICROSERVICE_HOST', '"http://137.116.145.198:8080/"'
+
+            //New UAT DNS name
+            resValue "string", "applicationName", "OFIS UAT"
+            resValue "string", "AUTH_SERVER_URL", 'https://otofis-uat-zuul.olamdigital.com/oauth/api/v1/oauth/'
+            buildConfigField 'String', 'HOST', '"https://otofis-uat-zuul.olamdigital.com/"'
+            resValue "string", "client_secret", 'xGfAz5zSFTJDHcWWcEQR19hNx9zA30NeZOQuxdnr'
+
+        }
+
+        sit {
+            applicationId "com.olam.digital.ofispreprod"
+
+            resValue "string", "contentprovider_authorities", applicationId + '.provider'
+            resValue "string", "sync_account_type", applicationId
+            buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofispreprod"'
+            buildConfigField 'String', 'MICROSERVICE_HOST', '"http://137.116.145.198:8080/"'
+
+            // New SIT DNS name
+            resValue "string", "applicationName", "OFIS SIT"
+            resValue "string", "AUTH_SERVER_URL", 'https://otofis-sit-zuul.olamdigital.com/oauth/api/v1/oauth/'
+            buildConfigField 'String', 'HOST', '"https://otofis-sit-zuul.olamdigital.com/"'
+            resValue "string", "client_secret", 'xGfAz5zSFTJDHcWWcEQR19hNx9zA30NeZOQuxdnr'
         }
 
         //noinspection GroovyMissingReturnStatement
