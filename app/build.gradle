@@ -43,11 +43,11 @@ android {
     }
 
     buildTypes {
-       /* debug {
+        debug {
             minifyEnabled false
             shrinkResources false
             //proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }*/
+        }
         release {
             lintOptions {
                 disable 'MissingTranslation'
