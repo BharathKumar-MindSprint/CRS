@@ -62,14 +62,14 @@ android {
 
     productFlavors {
         //noinspection GroovyMissingReturnStatement
-        local {
+      /*  local {
             applicationId "com.olam.digital.ofislocal"
             resValue "string", "contentprovider_authorities", applicationId + '.provider'
             resValue "string", "sync_account_type", applicationId
             buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofislocal"'
             buildConfigField 'String', 'HOST', '"http://local.ofis52.com/api/v1/"'
         }
-
+*/
         dev {
             applicationId "com.olam.digital.ofisdebug"
             resValue "string", "contentprovider_authorities", applicationId + '.provider'
@@ -151,10 +151,15 @@ android {
         //noinspection GroovyMissingReturnStatement
         prod {
             applicationId "com.olam.digital.ofis"
-            buildConfigField 'String', 'HOST', '"https://ofis.olamgroup.com/api/v1/"'
 
+            resValue "string", "contentprovider_authorities", applicationId + '.provider'
+            resValue "string", "sync_account_type", applicationId
+            buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofis"'
             buildConfigField 'String', 'MICROSERVICE_HOST', '"http://137.116.145.198:8080/"'
+            // New SIT DNS name
+            resValue "string", "applicationName", "OFIS PROD"
             resValue "string", "AUTH_SERVER_URL", 'https://otofis-uat-zuul.olamdigital.com/oauth/api/v1/oauth/'
+            buildConfigField 'String', 'HOST', '"https://ofis.olamgroup.com/api/v1/"'
             resValue "string", "client_secret", 'xGfAz5zSFTJDHcWWcEQR19hNx9zA30NeZOQuxdnr'
         }
     }
