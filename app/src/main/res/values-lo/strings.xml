@@ -459,4 +459,5 @@
     <string name="please_fill_dob"> ກະລຸນາຂຍນວັນທີເກີດຂອງຊາວສວນ.</string>
     <string name="please_fill_farmer_name">ກະລຸນາຂຽນລາຍຊື່ຊາວສວນ.</string>
     <string name="please_fill_the">ກະລຸນາເລືອກສະຖານທີ່.</string>
+    <string name="invalid_imei_msg">ການກວດສອບໄດ້ລົ້ມເຫລວ. ກະລຸນາຕິດຕໍ່ພວກເຮົາເພື່ອຂໍຄວາມຊ່ວຍເຫຼືອ</string>
 </resources>

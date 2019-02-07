@@ -472,4 +472,5 @@
     <string name="please_fill_dob">โปรดระบุวันเกิดของเกษตรกร</string>
     <string name="please_fill_farmer_name">โปรดระบุชื่อเกษตรกร</string>
     <string name="please_fill_the">โปรดเลือกสถานที่</string>
+    <string name="invalid_imei_msg">รับรองความถูกต้องล้มเหลว. กรุณาติดต่อเราเพื่อขอความช่วยเหลือ</string>
 </resources>

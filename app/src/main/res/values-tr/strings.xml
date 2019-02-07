@@ -473,4 +473,5 @@
     <string name="please_fill_farmer_name">Lütfen üretici adını doldurun</string>
     <string name="please_fill_the">Lütfen yer seçin</string>
     <string name="updating_sip_training">Sosyal altyapı noktaları</string>
+    <string name="invalid_imei_msg">Kimlik doğrulama başarısız oldu. Lütfen yardım için bize ulaşın</string>
 </resources>

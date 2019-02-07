@@ -473,4 +473,5 @@
     <string name="please_fill_farmer_name">Điền tên nông dân.</string>
     <string name="please_fill_the">Chọn địa điểm.</string>
     <string name="updating_sip_training">Địa điểm cơ sở hạ tầng.</string>
+    <string name="invalid_imei_msg">Lỗi xác thực . Vui lòng liên hệ với chúng tôi để được hỗ trợ</string>
 </resources>

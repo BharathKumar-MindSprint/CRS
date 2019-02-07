@@ -473,4 +473,5 @@
     <string name="please_fill_dob">Por favor, preencha a data de aniversário do agricultor</string>
     <string name="please_fill_farmer_name">Por favor, preencha o nome do agricultor</string>
     <string name="please_fill_the">Por favor, selecione o local</string>
+    <string name="invalid_imei_msg">Falha na autenticação. Por favor, entre em contato conosco para assistência</string>
 </resources>

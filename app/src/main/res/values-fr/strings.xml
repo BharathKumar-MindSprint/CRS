@@ -474,4 +474,5 @@
     <string name="data_initialization">Data initialization</string>
     <string name="phone_number_recorded">Numéro de téléphone enregistré.</string>
     <string name="survey_data">Downloading Survey Data</string>
+    <string name="invalid_imei_msg">Authentification échouée. Veuillez nous contacter pour obtenir de assistance</string>
 </resources>

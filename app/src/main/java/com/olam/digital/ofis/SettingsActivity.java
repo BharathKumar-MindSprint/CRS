@@ -116,6 +116,14 @@ public class SettingsActivity extends Activity implements OnAccessTokenInterface
     }
 
     private void bindSaveButton() {
+
+        if(enumeratorID.getText().toString().trim().equalsIgnoreCase(Utilities.getFromSharedPrefs(context))){
+
+        }else{
+            Toast.makeText(this, R.string.invalid_imei_msg, Toast.LENGTH_LONG).show();
+            return ;
+        }
+
         Cursor networkQueue = dl.getNetworkQueue();
         if (networkQueue.getCount() == 0) {
             updateData=true;

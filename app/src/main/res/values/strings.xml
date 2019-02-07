@@ -136,6 +136,7 @@
 
     <string name="gps_permission_denial_msg">Location Feature will not work without this Permission</string>
     <string name="phone_state_permission_denial_msg">Telephone Permission is required to get the IMEI Number of the device</string>
+    <string name="invalid_imei_msg">Authentication failed. Please contact us for assistance</string>
 
     <string name="permission_permanent_denial_title">Permission was permanently denied</string>
     <string name="permission_permanent_denial_msg">Permission request is permanently denied. Please provide permissions from Application Settings.</string>
