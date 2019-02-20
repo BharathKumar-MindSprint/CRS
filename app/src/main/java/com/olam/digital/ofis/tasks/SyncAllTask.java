@@ -12,10 +12,12 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.google.firebase.crash.FirebaseCrash;
+import com.google.gson.Gson;
 import com.olam.digital.ofis.BuildConfig;
 import com.olam.digital.ofis.HomeActivity;
 import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.Utilities;
+import com.olam.digital.ofis.logging.FabricLogsWriter;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -49,7 +51,7 @@ public class SyncAllTask extends SyncTask {
 
         CONTINUE_DOWNLOADING, START_IMPORT, ERROR_RECEIVED, NEW_UPDATE_AVAILABLE
     }
-
+    public static final String TAG = "SyncAllTask";
     public JSONObject spinnerResponse, moduleResponse, sipModuleResponse, farmerResponse, fmpResponse, transactionResponse, trainingResponse, tasksResponse;
 
     private int syncResultCount;
@@ -354,6 +356,7 @@ public class SyncAllTask extends SyncTask {
         // new end point
         endPoint="ofismaster/master/checkAppVersion";
 
+        final String finalEndPoint = endPoint;
         okHttpPost(context, endPoint, inputArgs, new Callback() {
             @Override
             public void onResponse(Call call, final Response postResponse) {
@@ -383,6 +386,9 @@ public class SyncAllTask extends SyncTask {
 
                         }
                     } else {
+                        try {
+                            FabricLogsWriter.printCrashLog(TAG, finalEndPoint,postResponse.code(),postResponse.networkResponse().toString(),context);
+                        }catch (Exception e){}
                         postFailureMessage(response);
                     }
 
@@ -415,6 +421,7 @@ public class SyncAllTask extends SyncTask {
         // new end point
        // endPoint="farmer-data/farmerdata/getcountryspinners/1127";
         endPoint="farmer-data/farmerdata/getcountryspinners/"+Utilities.getFromSharedPrefs(context);
+        final String finalEndPoint = endPoint;
         okHttpGet(context, endPoint, inputArgs, new Callback() {
             @Override
             public void onResponse(Call call, final Response postResponse) {
@@ -433,6 +440,9 @@ public class SyncAllTask extends SyncTask {
 
                         delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_FARMERS);
                     } else {
+                        try {
+                            FabricLogsWriter.printCrashLog(TAG, finalEndPoint,postResponse.code(),postResponse.networkResponse().toString(),context);
+                        }catch (Exception e){}
                         postFailureMessage(response);
                     }
 
@@ -472,6 +482,7 @@ public class SyncAllTask extends SyncTask {
        // endPoint ="survey/survey/questionnaire/getAllQuestionnaireData/448";
          endPoint ="ofissurvey/survey/questionnaire/getAllQuestionnaireData/"+Utilities.getFromSharedPrefs(context);
        // String mUrl = "http://137.116.146.9:8080/survey/questionnaire/getAllQuestionnaireData";
+        final String finalEndPoint = endPoint;
         okHttpGet(context, endPoint, inputArgs, new Callback() {
             @Override
             public void onResponse(Call call, final Response postResponse) {
@@ -490,6 +501,9 @@ public class SyncAllTask extends SyncTask {
 
                         delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_SIP_MODULES);
                     } else {
+                        try {
+                            FabricLogsWriter.printCrashLog(TAG, finalEndPoint,postResponse.code(),postResponse.networkResponse().toString(),context);
+                        }catch (Exception e){}
                         postFailureMessage(response);
                     }
 
@@ -612,6 +626,7 @@ public class SyncAllTask extends SyncTask {
         // New Java End point MS
        // endpoint="ofistraining/training/synctrainingdata?enumeratorLoginId=100305";
         endpoint="ofistraining/training/synctrainingdata?enumeratorLoginId="+Utilities.getFromSharedPrefs(context);
+        final String finalEndpoint = endpoint;
         okHttpGet(context, endpoint, null, new Callback() {
             @Override
             public void onResponse(Call call, final Response postResponse) {
@@ -626,6 +641,9 @@ public class SyncAllTask extends SyncTask {
 
                         delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_TASKS);
                     } else {
+                        try {
+                            FabricLogsWriter.printCrashLog(TAG, finalEndpoint,postResponse.code(),postResponse.networkResponse().toString(),context);
+                        }catch (Exception e){}
                         postFailureMessage(response);
                     }
                 } catch (JSONException | IOException e) {
@@ -658,6 +676,7 @@ public class SyncAllTask extends SyncTask {
         // new end point
      //   endPoint="ofistasks/activities/tasks/sync_tasks?enumeraorLoginId=100305";
            endPoint = "ofistasks/activities/tasks/sync_tasks?enumeraorLoginId="+Utilities.getFromSharedPrefs(context);
+        final String finalEndPoint = endPoint;
         okHttpGet(context, endPoint, null, new Callback() {
             @Override
             public void onResponse(Call call, final Response postResponse) {
@@ -672,6 +691,9 @@ public class SyncAllTask extends SyncTask {
 
                         delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_SPINNERS);
                     } else {
+                        try {
+                            FabricLogsWriter.printCrashLog(TAG, finalEndPoint,postResponse.code(),postResponse.networkResponse().toString(),context);
+                        }catch (Exception e){}
                         postFailureMessage(response);
                     }
                 } catch (JSONException | IOException e) {
@@ -710,6 +732,7 @@ public class SyncAllTask extends SyncTask {
         // new endpoint
        // endpoint = "farmer-data/farmerdata/getfarmerdetailsbyenumeratorid/125";
          endpoint = "farmer-data/farmerdata/getfarmerdetailsbyenumeratorid/"+Utilities.getFromSharedPrefs(context);
+        final String finalEndpoint = endpoint;
         okHttpGet(context, endpoint, inputArgs, new Callback() {
             @Override
             public void onResponse(Call call, final Response postResponse) {
@@ -731,6 +754,9 @@ public class SyncAllTask extends SyncTask {
 
                         publishProgress(SyncOperation.START_IMPORT, progress, syncResultCount);
                     } else {
+                        try {
+                            FabricLogsWriter.printCrashLog(TAG, finalEndpoint,postResponse.code(),postResponse.networkResponse().toString(),context);
+                        }catch (Exception e){}
                         postFailureMessage(response);
                     }
                 } catch (JSONException | IOException e) {

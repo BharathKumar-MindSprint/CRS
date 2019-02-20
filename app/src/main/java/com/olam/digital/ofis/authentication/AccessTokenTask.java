@@ -3,12 +3,16 @@ package com.olam.digital.ofis.authentication;
 import android.content.Context;
 import android.os.AsyncTask;
 
+import com.google.gson.Gson;
 import com.olam.digital.ofis.authentication.model.AuthRequestDTO;
 import com.olam.digital.ofis.authentication.model.AuthenticationDTO;
+import com.olam.digital.ofis.logging.FabricLogsWriter;
 
 
 import retrofit2.Call;
 import retrofit2.Response;
+
+import static com.olam.digital.ofis.HomeActivity.TAG;
 
 public class AccessTokenTask extends AsyncTask<Object, Object, String> {
 
@@ -45,6 +49,9 @@ public class AccessTokenTask extends AsyncTask<Object, Object, String> {
                     new AuthenticationHelper(mContext).setAuthenticationDTO(authenticationDTO);
                     return authenticationDTO.getAccessToken();
                 } else {
+                    try {
+                        FabricLogsWriter.printCrashLog(TAG, "oAuth/authenticate",authResponse.code(), "Request : "+  new Gson().toJson(authRequestDTO) +"Response  : "+authResponse.raw().networkResponse().toString(),mContext);
+                    }catch (Exception e){}
                     int statusCode = authResponse.code();
                     return null;
                 }
@@ -67,6 +74,10 @@ public class AccessTokenTask extends AsyncTask<Object, Object, String> {
                         new AuthenticationHelper(mContext).setAuthenticationDTO(newAuthDTO);
                         return newAuthDTO.getAccessToken();
                     } else {
+                        try {
+                            FabricLogsWriter.printCrashLog(TAG, "oAuth/authenticate",authResponse.code(), "Request : "+  new Gson().toJson(authRequestDTO) +"Response  : "+authResponse.raw().networkResponse().toString(),mContext);
+                        }catch (Exception e){}
+
                         int statusCode = authResponse.code();
                         return null;
                     }

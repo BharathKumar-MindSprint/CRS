@@ -29,6 +29,7 @@ import com.google.firebase.crash.FirebaseCrash;
 import com.google.gson.JsonArray;
 import com.olam.digital.ofis.authentication.AccessTokenTask;
 import com.olam.digital.ofis.authentication.AuthenticationHelper;
+import com.olam.digital.ofis.logging.FabricLogsWriter;
 import com.olam.digital.ofis.recordpolygon.SharedPreferenceUtils;
 import com.olam.digital.ofis.tasks.SyncAllTask;
 import com.olam.digital.ofis.tasks.SyncTaskOperationType;
@@ -76,6 +77,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
     private final Resources res;
     private static String AccessToken;
     private static final String BASE_URL = BuildConfig.HOST;
+    public static final String TAG = "NetworkLayer";
     private static final OkHttpClient okHttpClient = new OkHttpClient.Builder()
             .connectTimeout(90, TimeUnit.SECONDS)
             .readTimeout(720, TimeUnit.SECONDS)
@@ -430,7 +432,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         RequestBody requestBody;
 
         final Message msg = handler.obtainMessage();
-        String endpoint = "ofismaster/master/requestHelp";
+        final String endpoint = "ofismaster/master/requestHelp";
 
         bodyBuilder.addFormDataPart("userName", helpName);
         bodyBuilder.addFormDataPart("faultDescription", helpDescription);
@@ -456,6 +458,9 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         msg.obj = response;
                         handler.dispatchMessage(msg);
                     } else {
+                        try {
+                            FabricLogsWriter.printCrashLog(TAG, endpoint,postResponse.code(),postResponse.networkResponse().toString(),context);
+                        }catch (Exception e){}
                         postFailureMessage(handler, response, msg, 2, 0, 0, null, "submitting help request");
                         FirebaseCrash.report(new Exception(response.optString("errors", res.getString(R.string.item_sync_error)) + " : submitting help request failed response"));
                     }
@@ -823,7 +828,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
         if (trainingRecord.getCount() > 0) {
             trainingRecord.moveToFirst();
-            JSONObject jsonObject=new JSONObject();
+            final JSONObject jsonObject=new JSONObject();
 
             // new code
             try {
@@ -919,6 +924,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             }
 
             if (endpoint.length() > 0) {
+                final String finalEndpoint = endpoint;
                 okHttpPost(context, endpoint, jsonObject, new Callback() {
                     @Override
                     public void onResponse(Call call, Response postResponse) {
@@ -942,6 +948,9 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             handler.dispatchMessage(msg);
                             syncNetworkQueue(originalSyncRequestItemId, handler);
                         } else {
+                            try {
+                                FabricLogsWriter.printCrashLog(TAG, finalEndpoint,postResponse.code(), "Request : "+jsonObject.toString() + "Response : "+ postResponse.networkResponse().toString(),context);
+                            }catch (Exception e){}
                             try {
                                 JSONObject response = new JSONObject(postResponse.body().string());
                                 long server_item_id = 0, fully_synced = 0;
@@ -1403,7 +1412,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         endPoint="ofissurvey/survey/submitSurveyAppModule";
 
         // create the JSON object required to sync this module
-        JSONObject submission = new JSONObject();
+        final JSONObject submission = new JSONObject();
         JSONArray answers = new JSONArray();
         Set<Integer> questions_included = new TreeSet<>();
         String enumeratorId = Utilities.getFromSharedPrefs(context);
@@ -1639,6 +1648,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     //increase the count - Adjustment code
                     recordFailedUpload(0, 0, networkQueueItemId);
 
+                    final String finalEndPoint = endPoint;
                     okHttpPost(context, endPoint, submission, new Callback() {
                                 @Override
                                 public void onResponse(Call call, Response postResponse) {
@@ -1654,6 +1664,9 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                         handler.dispatchMessage(msg);
                                         syncNetworkQueue(originalSyncRequestItemId, handler);
                                     } else {
+                                        try {
+                                            FabricLogsWriter.printCrashLog(TAG, finalEndPoint,postResponse.code(), "Request : " +submission.toString() +"Response : "+ postResponse.networkResponse().toString(),context);
+                                        }catch (Exception e){}
                                         try {
                                             JSONObject response = new JSONObject(postResponse.body().string());
                                             long server_item_id = 0, fully_synced = 0;
@@ -1715,7 +1728,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         // endpoint = "poi/add/farm";
         // new End point
         endpoint = "ofisfarmer/farmer/addfarm";
-        JSONObject params = new JSONObject();
+        final JSONObject params = new JSONObject();
 
         if (!dl.isFarmerSynced(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)))) {
             msg.what = 3;
@@ -1745,6 +1758,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 }
                     params.put("primary_location",false);
                 if (endpoint.length() > 0) {
+                    final String finalEndpoint = endpoint;
                     okHttpPost(context, endpoint, params, new Callback() {
                         @Override
                         public void onResponse(Call call, Response postResponse) throws IOException {
@@ -1779,6 +1793,9 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 handler.dispatchMessage(msg);
                                 syncNetworkQueue(originalSyncRequestItemId, handler);
                             } else {
+                                try {
+                                    FabricLogsWriter.printCrashLog(TAG, finalEndpoint,postResponse.code(), "Request : "+params.toString() + "Response : "+postResponse.networkResponse().toString(),context);
+                                }catch (Exception e){}
                                 try {
                                     JSONObject response = new JSONObject(postResponse.body().string());
                                     long server_item_id = 0, fully_synced = 0;
@@ -1838,7 +1855,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         // new
         endpoint = "ofisfarmer/farmer/addfarm";
 
-        JSONObject params = new JSONObject();
+        final JSONObject params = new JSONObject();
 
         if (!dl.isFarmerSynced(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)))) {
             msg.what = 3;
@@ -1872,6 +1889,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 params.put("primary_location",true);
 
                 if (endpoint.length() > 0) {
+                    final String finalEndpoint = endpoint;
                     okHttpPost(context, endpoint, params, new Callback() {
                         @Override
                         public void onResponse(Call call, Response postResponse) {
@@ -1886,6 +1904,9 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 handler.dispatchMessage(msg);
                                 syncNetworkQueue(originalSyncRequestItemId, handler);
                             } else {
+                                try {
+                                    FabricLogsWriter.printCrashLog(TAG, finalEndpoint,postResponse.code(),"Request : " +params.toString() +" Response "+postResponse.networkResponse().toString(),context);
+                                }catch (Exception e){}
                                 try {
                                     JSONObject response = new JSONObject(postResponse.body().string());
                                     long server_item_id = 0, fully_synced = 0;
@@ -1985,7 +2006,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         // endpoint = "updatephonenumbers";
         // new end point
         endpoint="ofisfarmer/farmer/updatephonenumbers";
-        JSONObject params = new JSONObject();
+        final JSONObject params = new JSONObject();
         JSONArray numberstosend = farmerPhoneNumbers(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
 
 //        List<FarmerRegistrationPhoneNumberDTO> farmerRegistrationPhoneNumberDTOList = farmerPhoneNumbers(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
@@ -2008,6 +2029,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 }
 
                 if (numberstosend != null && endpoint.length() > 0) {
+                    final String finalEndpoint = endpoint;
                     okHttpPost(context, endpoint, params, new Callback() {
                         @Override
                         public void onResponse(Call call, Response postResponse) {
@@ -2022,6 +2044,9 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 handler.dispatchMessage(msg);
                                 syncNetworkQueue(originalSyncRequestItemId, handler);
                             } else {
+                                try {
+                                    FabricLogsWriter.printCrashLog(TAG, finalEndpoint,postResponse.code(), "Request : "+params.toString()+"Response : "+postResponse.networkResponse().toString(),context);
+                                }catch (Exception e){}
                                 try {
                                     JSONObject response = new JSONObject(postResponse.body().string());
                                     long server_item_id = 0, fully_synced = 0;
@@ -2204,7 +2229,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
     private void postInfrastructure(final int networkQueueItemId, final Handler handler, final Message msg, final int total, final int progress, final Integer originalSyncRequestItemId) {
         Hashtable<String, String> poitypes = new Hashtable<>();
 
-        JSONObject params = new JSONObject();
+        final JSONObject params = new JSONObject();
         JSONArray answers = new JSONArray();
         Set<Integer> questions_included = new TreeSet<>();
         String enumeratorId = Utilities.getFromSharedPrefs(context);
@@ -2281,7 +2306,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             }
 
 //                    String url = "http://13.76.2.201:8080/farmerdata/socialinfra/saveAllSipAnswers/";
-                    String url = "farmer-data/farmerdata/socialinfra/saveAllSipAnswers/";
+                    final String url = "farmer-data/farmerdata/socialinfra/saveAllSipAnswers/";
 
                     okHttpPost(context, url, params, new Callback() {
                         @Override
@@ -2300,6 +2325,9 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 handler.dispatchMessage(msg);
                                 syncNetworkQueue(originalSyncRequestItemId, handler);
                             } else {
+                                try {
+                                    FabricLogsWriter.printCrashLog(TAG, url,postResponse.code(),"Request : "+params.toString()+ " Response  : "+ postResponse.networkResponse().toString(),context);
+                                }catch (Exception e){}
                                 try {
                                     JSONObject response = new JSONObject(postResponse.body().string());
                                     long server_item_id = 0, fully_synced = 0;
@@ -2478,7 +2506,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         // endpoint = "uploadFarmerFile";
          // new end point
         endpoint = "utility/uploadFarmerFile";
-        JSONObject params = new JSONObject();
+        final JSONObject params = new JSONObject();
         if (!dl.isFarmerSynced(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)))) {
             msg.what = 3;
             msg.arg1 = total;
@@ -2505,6 +2533,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     }
                 }
                 if (endpoint.length() > 0) {
+                    final String finalEndpoint = endpoint;
                     okHttpMSPost(context, endpoint, params, new Callback() {
                         @Override
                         public void onResponse(Call call, Response postResponse) {
@@ -2519,6 +2548,9 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 handler.dispatchMessage(msg);
                                 syncNetworkQueue(originalSyncRequestItemId, handler);
                             } else {
+                                try {
+                                    FabricLogsWriter.printCrashLog(TAG, finalEndpoint,postResponse.code(),"Request : "+params.toString()+" Response : "+postResponse.networkResponse().toString(),context);
+                                }catch (Exception e){}
                                 try {
                                     JSONObject response = new JSONObject(postResponse.body().string());
                                     recordFailedUpload(0, 0, networkQueueItemId);
@@ -2593,7 +2625,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         //old end point
          // String endpoint = "farmers/add";
         // New End point
-        String endpoint="ofisfarmer/farmer/registerFarmer";
+        final String endpoint="ofisfarmer/farmer/registerFarmer";
         String tempOlamFarmerID=null;
         if (farmer.getCount() > 0) {
             farmer.moveToFirst();
@@ -2707,7 +2739,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 e.printStackTrace();
             }
 
-            JSONArray jsonArray=new JSONArray();
+            final JSONArray jsonArray=new JSONArray();
             jsonArray.put(jsonObject);
             // String requestData=jsonArray.toString();
             if (endpoint.length() > 0) {
@@ -2745,6 +2777,9 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 }
                                 syncNetworkQueue(originalSyncRequestItemId, handler);
                             } else {
+                                try {
+                                    FabricLogsWriter.printCrashLog(TAG, endpoint,postResponse.code(),"Request : "+jsonArray.toString() + " Response  " +postResponse.networkResponse().toString(),context);
+                                }catch (Exception e){}
                                 long server_item_id = 0, fully_synced = 0;
 
                                 // Added
