@@ -435,7 +435,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                 builder.setMessage(response.optString(columnname, res.getString(R.string.app_updated_generic_message)))
                                         .setPositiveButton(res.getString(R.string.app_update_ok), new DialogInterface.OnClickListener() {
                                             public void onClick(DialogInterface dialog, int id) {
-                                                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(response.optString("downloadUrl", "https://ofisstaging.usertestingarea.com/downloads/app-debug.apk")));
+                                                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(response.optString("downloadUrl", "https://otstgprd1001.blob.core.windows.net/mobileapp-download/OFIS-2.0-release.apk")));
                                                 startActivity(intent);
                                             }
                                         })

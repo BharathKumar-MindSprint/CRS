@@ -275,7 +275,12 @@ public class SyncAllTask extends SyncTask {
             }
             try {
 
-                final JSONObject response = new JSONObject((String) values[1]);
+                // new Code
+                JSONObject rawResponse = new JSONObject((String) values[1]);
+                String responseVal=rawResponse.getString("app_Data");
+                final JSONObject response = new JSONObject(responseVal);
+
+            //    final JSONObject response = new JSONObject((String) values[1]);
                 String columnname = "responseMessage" + Utilities.getLocaleSuffix(res);
                 if (columnname.equalsIgnoreCase("responseMessage_en")) {
                     columnname = "responseMessage";
@@ -285,7 +290,7 @@ public class SyncAllTask extends SyncTask {
                         .setCancelable(true)
                         .setPositiveButton(res.getString(R.string.app_update_ok), new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(response.optString("downloadUrl", "https://ofis.olamgroup.com/downloads/app-release.apk")));
+                                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(response.optString("downloadUrl", "https://otstgprd1001.blob.core.windows.net/mobileapp-download/OFIS-2.0-release.apk")));
                                 context.startActivity(intent);
                             }
                         })
