@@ -32,7 +32,7 @@
 -keep class com.google.appengine.** { *; }
 -keepattributes *Annotation*
 -keepattributes Signature
--dontwarn com.squareup.okhttp.*
+-dontwarn com.squareup.okhttp3.*
 -dontwarn rx.**
 -dontwarn javax.xml.stream.**
 -dontwarn com.google.appengine.**
