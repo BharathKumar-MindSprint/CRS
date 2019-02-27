@@ -2733,6 +2733,10 @@ public class DataLayer {
                 newModule.put("module", newModuleEntry);
 
                 String submittedModulesJSON = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_WEBSITE_SUBMITTED_MODULES));
+                String Samplestr = String.valueOf("{\"modules\":null}");
+                if(Samplestr.equals(submittedModulesJSON)){
+                    submittedModulesJSON =submittedModulesJSON.replaceAll("\"modules\":null","");
+                }
                 JSONObject submittedModules = (!submittedModulesJSON.equals("null")) ? new JSONObject(submittedModulesJSON) : new JSONObject();
                 if (submittedModules.has("modules")) {
                     JSONArray modules = submittedModules.getJSONArray("modules");
