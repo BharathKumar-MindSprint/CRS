@@ -43,6 +43,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.auth0.android.jwt.JWT;
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.LoginEvent;
 import com.google.android.gms.security.ProviderInstaller;
@@ -381,6 +382,8 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 auto_time_enabled = Settings.Global.getInt(getContentResolver(), Settings.Global.AUTO_TIME, 0);
                 auto_time_zone_enabled = Settings.Global.getInt(getContentResolver(), Settings.Global.AUTO_TIME_ZONE, 0);
             }
+
+//
             if (auto_time_enabled == 0 || auto_time_zone_enabled == 0) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
                 builder.setCancelable(false);
@@ -441,11 +444,11 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                         })
                                         .setNegativeButton(R.string.app_update_cancel, new DialogInterface.OnClickListener() {
                                             public void onClick(DialogInterface dialog, int id) {
-                                                long daysLeftToUpdate = Utilities.daysToUpdate(context);
+                                               /* long daysLeftToUpdate = Utilities.daysToUpdate(context);
                                                 if (daysLeftToUpdate >= 0) {
                                                     String reminder = res.getQuantityString(R.plurals.days_left_to_update, (int) daysLeftToUpdate, (int) daysLeftToUpdate);
                                                     Toast.makeText(context, reminder, Toast.LENGTH_LONG).show();
-                                                }
+                                                }*/
                                             }
                                         });
                             } else {
@@ -463,11 +466,12 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                         })
                                         .setNegativeButton(R.string.app_update_cancel, new DialogInterface.OnClickListener() {
                                             public void onClick(DialogInterface dialog, int id) {
-                                                long daysLeftToUpdate = Utilities.daysToUpdate(context);
+                                               /* long daysLeftToUpdate = Utilities.daysToUpdate(context);
                                                 if (daysLeftToUpdate >= 0) {
                                                     String reminder = res.getQuantityString(R.plurals.days_left_to_update, (int) daysLeftToUpdate, (int) daysLeftToUpdate);
                                                     Toast.makeText(context, reminder, Toast.LENGTH_LONG).show();
-                                                }
+                                                }*/
+                                               dialog.cancel();
                                             }
                                         });
 
@@ -963,7 +967,16 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         showProgress(false);
         if (response.isSuccessful()) {
             AuthenticationDTO authenticationDTO = response.body();
-            authenticationDTO.setWillExpireAt((System.currentTimeMillis() / 1000) + authenticationDTO.getExpiresIn() - 60);
+            authenticationDTO.setWillExpireAt((System.currentTimeMillis() / 1000) + authenticationDTO.getExpiresIn() / 1000);
+           /* JWT jwt = new JWT(authenticationDTO.getAccessToken());
+            long expireAt =  jwt.getExpiresAt().getTime();
+
+            System.out.print("JWTTest: Current time (in ms)" + System.currentTimeMillis()
+            + "\n Current time (in sec)" + (System.currentTimeMillis() / 1000)
+            + "\n getExpiresIn" + (authenticationDTO.getExpiresIn())
+            + "\n getExpiresIn - 60" + (authenticationDTO.getExpiresIn() -60)
+            + "\n From JWT expireAt:" + expireAt );*/
+//            authenticationDTO.setWillExpireAt(expireAt);
             new AuthenticationHelper(this).setAuthenticationDTO(authenticationDTO);
             new AuthenticationHelper(this).setUserName(enumeratorID.getText().toString());
             //  new AppUtils().AppStatic="LogIn";
@@ -1111,8 +1124,8 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     }
 
     @Override
-    public void onTokenCompleted(boolean status) {
-        if(status){
+    public void onTokenCompleted(String status) {
+        if(! status.equalsIgnoreCase("false")){
             Utilities.minProgressCount=0;
                if(syncOptionAll){
                   startAllItemSync();
@@ -1124,4 +1137,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         }
 
     }
+
+
+
 }

@@ -348,9 +348,17 @@ public class DataLayer {
                 submission_type,
                 String.valueOf(farmerId)
         };
-        Cursor nqi = db.query(OFISDBContract.NetworkQueueEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
-        int nqicount = nqi.getCount();
-        nqi.close();
+
+//      Changes - For SQLite Android Database Cursor window allocation of 2048 kb failed
+        Cursor nqi = null;
+        int nqicount = 0;
+        try {
+            nqi = db.query(OFISDBContract.NetworkQueueEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+            nqicount = nqi.getCount();
+        }finally {
+            if(nqi != null)
+                nqi.close();
+        }
         return (nqicount > 0);
     }
 
@@ -475,9 +483,16 @@ public class DataLayer {
         String whereClause = OFISDBContract.Task.COLUMN_NAME_COMPLETED + " = ?";
         String[] whereArgs = new String[]{"0"};
 
-        Cursor activeTasks = db.query(OFISDBContract.Task.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
-        int activeTaskCount = activeTasks.getCount();
-        activeTasks.close();
+        // Changes - For SQLite Android Database Cursor window allocation of 2048 kb failed issue
+        Cursor activeTasks = null;
+        int activeTaskCount = 0;
+        try {
+            activeTasks = db.query(OFISDBContract.Task.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+            activeTaskCount = activeTasks.getCount();
+        } finally {
+            if(activeTasks != null)
+                activeTasks.close();
+        }
 
         return activeTaskCount;
     }

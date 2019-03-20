@@ -29,3 +29,4 @@ public class EnableMultiDex extends MultiDexApplication {
         Timber.plant(BuildConfig.DEBUG ? new CrashReportingTree() :  new Timber.DebugTree());
     }
 }
+

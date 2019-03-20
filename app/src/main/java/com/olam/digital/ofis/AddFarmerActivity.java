@@ -20,6 +20,8 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.telephony.PhoneNumberUtils;
+import android.text.InputFilter;
+import android.text.Spanned;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -115,6 +117,19 @@ public class AddFarmerActivity extends BaseActivity {
     private final static int MY_SIGNATURE_PIC_PERMISSIONS_REQUEST = 9999;
 
     ArrayList<String> phoneNumberList;
+
+    private String blockCharacterSet = "~#^|$%&*!'\"";
+    private InputFilter filter = new InputFilter() {
+
+        @Override
+        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+
+            if (source != null && blockCharacterSet.contains(("" + source))) {
+                return "";
+            }
+            return null;
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -342,7 +357,7 @@ public class AddFarmerActivity extends BaseActivity {
     private void populateExistingValues(final Cursor existingItem) {
         EditText farmerName = (EditText) findViewById(R.id.farmerName);
         farmerName.setText(existingItem.getString(existingItem.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME)));
-
+        farmerName.setFilters(new InputFilter[] { filter });
         farmerDOB = (TextView) findViewById(R.id.farmerDOB);
         dateStrToSend = existingItem.getString(existingItem.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_DOB));
         farmerDOB.setText(dateStrToSend);

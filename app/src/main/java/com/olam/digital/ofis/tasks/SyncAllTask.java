@@ -17,6 +17,11 @@ import com.olam.digital.ofis.BuildConfig;
 import com.olam.digital.ofis.HomeActivity;
 import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.Utilities;
+import com.olam.digital.ofis.authentication.AuthenticationClient;
+import com.olam.digital.ofis.authentication.AuthenticationHelper;
+import com.olam.digital.ofis.authentication.AuthenticationInterface;
+import com.olam.digital.ofis.authentication.model.AuthRequestDTO;
+import com.olam.digital.ofis.authentication.model.AuthenticationDTO;
 import com.olam.digital.ofis.logging.FabricLogsWriter;
 
 import org.json.JSONException;
@@ -298,13 +303,13 @@ public class SyncAllTask extends SyncTask {
                             public void onClick(DialogInterface dialog, int id) {
                                 long daysLeftToUpdate = Utilities.daysToUpdate(context);
                                 if (daysLeftToUpdate >= 0) {
-                                    String reminder = res.getQuantityString(R.plurals.days_left_to_update, (int) daysLeftToUpdate, (int) daysLeftToUpdate);
-                                    Toast.makeText(context, reminder, Toast.LENGTH_LONG).show();
+                                    /*String reminder = res.getQuantityString(R.plurals.days_left_to_update, (int) daysLeftToUpdate, (int) daysLeftToUpdate);
+                                    Toast.makeText(context, reminder, Toast.LENGTH_LONG).show();*/
                                     dialog.cancel();
-                                    if (daysLeftToUpdate > 0) {
+                                   /* if (daysLeftToUpdate > 0) {
                                         pd = Utilities.openProgressDialog(context, res.getString(R.string.Retrieving_data), false);
                                         delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_MODULES);
-                                    }
+                                    }*/
                                 }
                             }
                         });
@@ -332,6 +337,8 @@ public class SyncAllTask extends SyncTask {
             Log.d("Testing Message","Post Failure-----"+response.getString("errors"));
         } catch (JSONException e) {
             e.printStackTrace();
+        } catch (Exception e){
+            e.printStackTrace();
         }
         String failureMessage=context.getString(R.string.item_sync_error);
         if (response != null) {
@@ -340,6 +347,8 @@ public class SyncAllTask extends SyncTask {
                 failureMessage = response.getString("errors") + " : " ;
             } catch (JSONException e) {
                 FirebaseCrash.report(e);
+                e.printStackTrace();
+            } catch (Exception e){
                 e.printStackTrace();
             }
         }
@@ -353,6 +362,7 @@ public class SyncAllTask extends SyncTask {
         Utilities.saveLongToSharedPrefs(context, "version_checked", timestampUpdated);
         JSONObject inputArgs = new JSONObject();
         inputArgs.put("enumerator_id",Long.valueOf(Utilities.getFromSharedPrefs(context)));
+//        inputArgs.put("enumerator_id",Utilities.getFromSharedPrefs(context));
         inputArgs.put("current_version", BuildConfig.VERSION_NAME);
 
         String endPoint="";
@@ -366,37 +376,45 @@ public class SyncAllTask extends SyncTask {
             @Override
             public void onResponse(Call call, final Response postResponse) {
                 try {
-                    JSONObject response = new JSONObject(postResponse.body().string());
-                    if (postResponse.isSuccessful()) {
-                        if (response.getString("status").equals("updated")) {
-                            if (Utilities.getLongFromSharedPrefs(context, "version_update_notified_on") == 0) {
-                                Calendar upgradeDate = Calendar.getInstance();
-                                long timenow = upgradeDate.getTimeInMillis();
-                                upgradeDate.add(Calendar.DATE, 31);
-                                long lastUpgradeDate = upgradeDate.getTimeInMillis();
-                                Utilities.saveLongToSharedPrefs(context, "version_update_notified_on", timenow);
-                                Utilities.saveLongToSharedPrefs(context, "upgrade_by", lastUpgradeDate);
+                    if(postResponse.code() == 401 && postResponse.headers().toString().contains("invalid_token")){
+                        FailureGetRefreshToken(null);
+                    }else {
+                        JSONObject response = new JSONObject(postResponse.body().string());
+                        if (postResponse.isSuccessful()) {
+                            if (response.getString("status").equals("updated")) {
+                                if (Utilities.getLongFromSharedPrefs(context, "version_update_notified_on") == 0) {
+                                    Calendar upgradeDate = Calendar.getInstance();
+                                    long timenow = upgradeDate.getTimeInMillis();
+                                    upgradeDate.add(Calendar.DATE, 31);
+                                    long lastUpgradeDate = upgradeDate.getTimeInMillis();
+                                    Utilities.saveLongToSharedPrefs(context, "version_update_notified_on", timenow);
+                                    Utilities.saveLongToSharedPrefs(context, "upgrade_by", lastUpgradeDate);
+                                }
+
+                                // Checked Version
+                                publishProgress(SyncOperation.NEW_UPDATE_AVAILABLE, response.toString());
+
+                            } else {
+                                Utilities.removeFromSharedPrefs(context, "version_update_notified_on");
+                                Utilities.removeFromSharedPrefs(context, "upgrade_by");
+
+                                publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.survey_data));
+
+                                delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_MODULES);
+
                             }
-
-                            // Checked Version
-                            publishProgress(SyncOperation.NEW_UPDATE_AVAILABLE, response.toString());
-
                         } else {
-                            Utilities.removeFromSharedPrefs(context, "version_update_notified_on");
-                            Utilities.removeFromSharedPrefs(context, "upgrade_by");
-
-                            publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.survey_data));
-
-                            delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_MODULES);
-
+                            try {
+                                FabricLogsWriter.printCrashLog(TAG, finalEndPoint, postResponse.code(), postResponse.networkResponse().toString(), context);
+                            } catch (Exception e) {
+                            }
+                            if (postResponse.code() == 401) {
+                                FailureGetRefreshToken(response);
+                            } else {
+                                postFailureMessage(response);
+                            }
                         }
-                    } else {
-                        try {
-                            FabricLogsWriter.printCrashLog(TAG, finalEndPoint,postResponse.code(),postResponse.networkResponse().toString(),context);
-                        }catch (Exception e){}
-                        postFailureMessage(response);
                     }
-
                 } catch (JSONException | IOException e) {
 
                     FirebaseCrash.report(new Exception("SyncAllTask: Error checking app version", e));
@@ -416,6 +434,42 @@ public class SyncAllTask extends SyncTask {
 
             }
         });
+    }
+
+    private void FailureGetRefreshToken(JSONObject response) throws IOException, JSONException {
+        /*try {
+            Log.d("Testing Message","Post Failure-----"+response.getString("errors"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        String failureMessage=context.getString(R.string.item_sync_error);
+        if (response != null) {
+            try {
+                failureMessage = response.optString("message");
+                failureMessage = response.getString("errors") + " : " ;
+            } catch (JSONException e) {
+                FirebaseCrash.report(e);
+                e.printStackTrace();
+            }
+        }*/
+        AuthenticationDTO authenticationDTO = new AuthenticationHelper(context).getAuthenticationDTO();
+        //
+        AuthRequestDTO authRequestDTO = new AuthRequestDTO();
+        authRequestDTO.setGrantType("refreshToken");
+        authRequestDTO.setToken(authenticationDTO.getRefreshToken());
+        AuthenticationInterface authenticationInterface =  AuthenticationClient.createService(AuthenticationInterface.class, context);
+        retrofit2.Call<AuthenticationDTO> authCall = authenticationInterface.getRefreshToken(authRequestDTO);
+        retrofit2.Response authResponse = authCall.execute();
+        if (authResponse.isSuccessful()) {
+            AuthenticationDTO newAuthDTO = (AuthenticationDTO) authResponse.body();
+//            newAuthDTO.setWillExpireAt((System.currentTimeMillis()/1000) + newAuthDTO.getExpiresIn() /1000);
+            new AuthenticationHelper(context).setAuthenticationDTO(newAuthDTO);
+            checkVersion();
+
+        }else{
+            postFailureMessage(response);
+        }
+
     }
 
     private void syncSpinners() {

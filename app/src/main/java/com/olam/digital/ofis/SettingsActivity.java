@@ -311,8 +311,8 @@ public class SettingsActivity extends Activity implements OnAccessTokenInterface
     }
 
     @Override
-    public void onTokenCompleted(boolean status) {
-        if(status){
+    public void onTokenCompleted(String status) {
+        if(! status.equalsIgnoreCase("false")){
             if(updateData){
                 if (enumeratorID.getText().length() > 0) {
                     Utilities.saveToSharedPrefs(context, "ENUMERATOR_ID", enumeratorID.getText().toString(), null);

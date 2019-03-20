@@ -45,7 +45,7 @@ public class AccessTokenTask extends AsyncTask<Object, Object, String> {
                 Response authResponse = authCall.execute();
                 if (authResponse.isSuccessful()) {
                     authenticationDTO = (AuthenticationDTO) authResponse.body();
-                    authenticationDTO.setWillExpireAt((System.currentTimeMillis()/1000) + authenticationDTO.getExpiresIn() -60);
+                    authenticationDTO.setWillExpireAt((System.currentTimeMillis()/1000) + authenticationDTO.getExpiresIn() /1000);
                     new AuthenticationHelper(mContext).setAuthenticationDTO(authenticationDTO);
                     return authenticationDTO.getAccessToken();
                 } else {
@@ -55,7 +55,8 @@ public class AccessTokenTask extends AsyncTask<Object, Object, String> {
                     int statusCode = authResponse.code();
                     return null;
                 }
-            } else {
+            }else {
+           /* else {
                 //check is about to expire -> refresh -> update willExpireAt and return auth token
                 //if time left for expire -> Simply give the token back
                 Long currentTime = System.currentTimeMillis()/1000;
@@ -70,7 +71,7 @@ public class AccessTokenTask extends AsyncTask<Object, Object, String> {
                     Response authResponse = authCall.execute();
                     if (authResponse.isSuccessful()) {
                         AuthenticationDTO newAuthDTO = (AuthenticationDTO) authResponse.body();
-                        newAuthDTO.setWillExpireAt((System.currentTimeMillis()/1000) + newAuthDTO.getExpiresIn() -60);
+//                        newAuthDTO.setWillExpireAt((System.currentTimeMillis()/1000) + newAuthDTO.getExpiresIn() /1000);
                         new AuthenticationHelper(mContext).setAuthenticationDTO(newAuthDTO);
                         return newAuthDTO.getAccessToken();
                     } else {
@@ -104,9 +105,11 @@ public class AccessTokenTask extends AsyncTask<Object, Object, String> {
                 } else {
                     return authenticationDTO.getAccessToken();
                 }
+            }*/
+                return "error";
             }
         } catch (Exception e) {
-          //  Timber.d(e.getMessage());
+            //  Timber.d(e.getMessage());
             return null;
         }
     }
@@ -115,9 +118,10 @@ public class AccessTokenTask extends AsyncTask<Object, Object, String> {
     protected void onPostExecute(String s) {
 
         if (s!=null){
-          onAccessTokenInterface.onTokenCompleted(true);
+
+            onAccessTokenInterface.onTokenCompleted(s);
         }else{
-            onAccessTokenInterface.onTokenCompleted(false);
+            onAccessTokenInterface.onTokenCompleted("false");
         }
 
     }

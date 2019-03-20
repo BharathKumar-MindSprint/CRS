@@ -28,7 +28,11 @@ import com.google.android.gms.security.ProviderInstaller;
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.gson.JsonArray;
 import com.olam.digital.ofis.authentication.AccessTokenTask;
+import com.olam.digital.ofis.authentication.AuthenticationClient;
 import com.olam.digital.ofis.authentication.AuthenticationHelper;
+import com.olam.digital.ofis.authentication.AuthenticationInterface;
+import com.olam.digital.ofis.authentication.model.AuthRequestDTO;
+import com.olam.digital.ofis.authentication.model.AuthenticationDTO;
 import com.olam.digital.ofis.logging.FabricLogsWriter;
 import com.olam.digital.ofis.recordpolygon.SharedPreferenceUtils;
 import com.olam.digital.ofis.tasks.SyncAllTask;
@@ -168,6 +172,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 .post(body)
                 .build();
 
+        System.out.println("okHttpArrayPost_Request:" + request);
         okHttpClient.newCall(request).enqueue(callback);
     }
 
@@ -195,6 +200,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 .post(body)
                 .build();
 
+        System.out.println("okhttppost_Request:" + request);
         okHttpClient.newCall(request).enqueue(callback);
     }
 
@@ -219,7 +225,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 .url(fullUrl)
                 .put(body)
                 .build();
-
+        System.out.println("okHttpPut_Request:" + request);
         okHttpClient.newCall(request).enqueue(callback);
     }
 
@@ -244,7 +250,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 .url(fullUrl)
                 .post(requestBody)
                 .build();
-
+        System.out.println("okHttpMultiPartPost_Request:" + request);
         okHttpClient.newCall(request).enqueue(callback);
     }
 
@@ -261,6 +267,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 .url(fullUrl)
                 .post(body)
                 .build();
+        System.out.println("okHttpMSPost_Request:" + request);
         okHttpClient.newCall(request).enqueue(callback);
     }
 
@@ -307,6 +314,85 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         msg.arg2 = progress;
         msg.obj = failureMessage;
         handler.dispatchMessage(msg);
+    }
+
+    private void FailureGetRefreshToken(Handler handler, int originalSyncRequestItemId) throws IOException {
+
+        AuthenticationDTO authenticationDTO = new AuthenticationHelper(context).getAuthenticationDTO();
+        AuthRequestDTO authRequestDTO = new AuthRequestDTO();
+        authRequestDTO.setGrantType("refreshToken");
+        authRequestDTO.setToken(authenticationDTO.getRefreshToken());
+        AuthenticationInterface authenticationInterface =  AuthenticationClient.createService(AuthenticationInterface.class, context);
+        retrofit2.Call<AuthenticationDTO> authCall = authenticationInterface.getRefreshToken(authRequestDTO);
+        retrofit2.Response authResponse = authCall.execute();
+        if (authResponse.isSuccessful()) {
+            AuthenticationDTO newAuthDTO = (AuthenticationDTO) authResponse.body();
+            newAuthDTO.setWillExpireAt((System.currentTimeMillis()/1000) + newAuthDTO.getExpiresIn() /1000);
+            new AuthenticationHelper(context).setAuthenticationDTO(newAuthDTO);
+            postData(originalSyncRequestItemId, handler);
+
+        }else{
+            System.out.println("Recheck_testsip");
+        }
+    }
+
+    private void FailureGetRefreshToken(Handler handler, Integer originalSyncRequestItemId,Message msg, int msgWhat, int total, int progress, String baseMessage, String failedOperation) throws IOException {
+
+        AuthenticationDTO authenticationDTO = new AuthenticationHelper(context).getAuthenticationDTO();
+        //
+        AuthRequestDTO authRequestDTO = new AuthRequestDTO();
+        authRequestDTO.setGrantType("refreshToken");
+        authRequestDTO.setToken(authenticationDTO.getRefreshToken());
+        AuthenticationInterface authenticationInterface =  AuthenticationClient.createService(AuthenticationInterface.class, context);
+        retrofit2.Call<AuthenticationDTO> authCall = authenticationInterface.getRefreshToken(authRequestDTO);
+        retrofit2.Response authResponse = authCall.execute();
+        if (authResponse.isSuccessful()) {
+            AuthenticationDTO newAuthDTO = (AuthenticationDTO) authResponse.body();
+            newAuthDTO.setWillExpireAt((System.currentTimeMillis()/1000) + newAuthDTO.getExpiresIn() /1000);
+            new AuthenticationHelper(context).setAuthenticationDTO(newAuthDTO);
+            postData(originalSyncRequestItemId, handler);
+
+        }else{
+            String failureMessage = res.getString(R.string.item_sync_error);
+            if (baseMessage != null) {
+                failureMessage = baseMessage;
+            }
+
+            msg.what = msgWhat;
+            msg.arg1 = total;
+            msg.arg2 = progress;
+            msg.obj = failureMessage;
+            handler.dispatchMessage(msg);
+        }
+    }
+
+    private void FailureGetRefreshToken(Handler handler, String helpname, String helpDes,Message msg, int msgWhat, int total, int progress, String baseMessage, String failedOperation) throws IOException {
+
+        AuthenticationDTO authenticationDTO = new AuthenticationHelper(context).getAuthenticationDTO();
+        AuthRequestDTO authRequestDTO = new AuthRequestDTO();
+        authRequestDTO.setGrantType("refreshToken");
+        authRequestDTO.setToken(authenticationDTO.getRefreshToken());
+        AuthenticationInterface authenticationInterface =  AuthenticationClient.createService(AuthenticationInterface.class, context);
+        retrofit2.Call<AuthenticationDTO> authCall = authenticationInterface.getRefreshToken(authRequestDTO);
+        retrofit2.Response authResponse = authCall.execute();
+        if (authResponse.isSuccessful()) {
+            AuthenticationDTO newAuthDTO = (AuthenticationDTO) authResponse.body();
+            newAuthDTO.setWillExpireAt((System.currentTimeMillis()/1000) + newAuthDTO.getExpiresIn() /1000);
+            new AuthenticationHelper(context).setAuthenticationDTO(newAuthDTO);
+            sendForHelp(helpname, helpDes, handler);
+
+        }else{
+            String failureMessage = res.getString(R.string.item_sync_error);
+            if (baseMessage != null) {
+                failureMessage = baseMessage;
+            }
+
+            msg.what = msgWhat;
+            msg.arg1 = total;
+            msg.arg2 = progress;
+            msg.obj = failureMessage;
+            handler.dispatchMessage(msg);
+        }
     }
 
     void postFirebaseToken(final String token) {
@@ -389,13 +475,17 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     @Override
                     public void onResponse(Call call, final Response postResponse) {
                         try {
-                            JSONObject response = new JSONObject(postResponse.body().string());
-                            JSONObject outputdata = response.optJSONObject("outputdata");
-                            if (outputdata != null) {
-                                //JSONArray taskIds = outputdata.optJSONArray("task_ids");
-                                JSONArray taskIds = outputdata.optJSONArray("tasks");
-                                if (taskIds != null && taskIds.length() > 0) {
-                                    dl.markTasksAsSyncedOrDelivered(taskIds, syncedOrDelivered);
+                            if(postResponse.code() == 401 && postResponse.headers().toString().contains("invalid_token")){
+
+                            }else {
+                                JSONObject response = new JSONObject(postResponse.body().string());
+                                JSONObject outputdata = response.optJSONObject("outputdata");
+                                if (outputdata != null) {
+                                    //JSONArray taskIds = outputdata.optJSONArray("task_ids");
+                                    JSONArray taskIds = outputdata.optJSONArray("tasks");
+                                    if (taskIds != null && taskIds.length() > 0) {
+                                        dl.markTasksAsSyncedOrDelivered(taskIds, syncedOrDelivered);
+                                    }
                                 }
                             }
                         } catch (JSONException | IOException e) {
@@ -424,7 +514,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         }
     }
 
-    void sendForHelp(String helpName, String helpDescription, final Handler handler) {
+    void sendForHelp(final String helpName, final String helpDescription, final Handler handler) {
         String dbName = "ofismobile";
         File dbFile = context.getDatabasePath(dbName);
         RequestBody file = RequestBody.create(MEDIA_TYPE_SQLITE, dbFile);
@@ -452,17 +542,22 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             @Override
             public void onResponse(Call call, Response postResponse) {
                 try {
-                    JSONObject response = new JSONObject(postResponse.body().string());
-                    if (postResponse.isSuccessful()) {
-                        msg.what = 1;
-                        msg.obj = response;
-                        handler.dispatchMessage(msg);
-                    } else {
-                        try {
-                            FabricLogsWriter.printCrashLog(TAG, endpoint,postResponse.code(),postResponse.networkResponse().toString(),context);
-                        }catch (Exception e){}
-                        postFailureMessage(handler, response, msg, 2, 0, 0, null, "submitting help request");
-                        FirebaseCrash.report(new Exception(response.optString("errors", res.getString(R.string.item_sync_error)) + " : submitting help request failed response"));
+                    if(postResponse.code() == 401 && postResponse.headers().toString().contains("invalid_token")){
+                        FailureGetRefreshToken(handler,helpName,helpDescription, msg, 2, 0, 0, null, "submitting help request");
+                    }else {
+                        JSONObject response = new JSONObject(postResponse.body().string());
+                        if (postResponse.isSuccessful()) {
+                            msg.what = 1;
+                            msg.obj = response;
+                            handler.dispatchMessage(msg);
+                        } else {
+                            try {
+                                FabricLogsWriter.printCrashLog(TAG, endpoint, postResponse.code(), postResponse.networkResponse().toString(), context);
+                            } catch (Exception e) {
+                            }
+                            postFailureMessage(handler, response, msg, 2, 0, 0, null, "submitting help request");
+                            FirebaseCrash.report(new Exception(response.optString("errors", res.getString(R.string.item_sync_error)) + " : submitting help request failed response"));
+                        }
                     }
                 } catch (JSONException | IOException e) {
                     FirebaseCrash.report(new Exception("NetworkLayer: Error in help request response", e));
@@ -554,6 +649,11 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
     }
 
     private void syncNetworkQueueItem(Integer itemId, Handler handler) {
+
+       postData(itemId,handler);
+    }
+
+    private void postData(Integer itemId, Handler handler) {
         Message msg = handler.obtainMessage();
 //        msg.obj =  res.getString(R.string.Please_wait) + " " + res.getString(R.string.Submitting_data);
 //        handler.dispatchMessage(msg);
@@ -952,16 +1052,20 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 FabricLogsWriter.printCrashLog(TAG, finalEndpoint,postResponse.code(), "Request : "+jsonObject.toString() + "Response : "+ postResponse.networkResponse().toString(),context);
                             }catch (Exception e){}
                             try {
-                                JSONObject response = new JSONObject(postResponse.body().string());
-                                long server_item_id = 0, fully_synced = 0;
-                                if (response.optJSONObject("trainingrecord") != null) {
-                                    JSONObject trainingrecord = response.getJSONObject("trainingrecord");
-                                    server_item_id = trainingrecord.getLong("id");
-                                    fully_synced = trainingrecord.getLong(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FULLY_SYNCED);
+                                if(postResponse.code() == 401 && postResponse.headers().toString().contains("invalid_token")){
+                                    FailureGetRefreshToken(handler,originalSyncRequestItemId, msg, 2, total, progress, null, "submitting training record" );
+                                }else {
+                                    JSONObject response = new JSONObject(postResponse.body().string());
+                                    long server_item_id = 0, fully_synced = 0;
+                                    if (response.optJSONObject("trainingrecord") != null) {
+                                        JSONObject trainingrecord = response.getJSONObject("trainingrecord");
+                                        server_item_id = trainingrecord.getLong("id");
+                                        fully_synced = trainingrecord.getLong(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FULLY_SYNCED);
+                                    }
+                                    recordFailedUpload(server_item_id, fully_synced, networkQueueItemId);
+                                    postFailureMessage(handler, response, msg, 2, total, progress, null, "submitting training record");
+                                    FirebaseCrash.report(new Exception(response.optString("errors", res.getString(R.string.item_sync_error)) + " : submitting training record failure response"));
                                 }
-                                recordFailedUpload(server_item_id, fully_synced, networkQueueItemId);
-                                postFailureMessage(handler, response, msg, 2, total, progress, null, "submitting training record");
-                                FirebaseCrash.report(new Exception(response.optString("errors", res.getString(R.string.item_sync_error)) + " : submitting training record failure response"));
                             } catch (JSONException | IOException e) {
                                 recordFailedUpload(0, 0, networkQueueItemId);
                                 postFailureMessage(handler, null, msg, 2, total, progress, null, "submitting training record");
@@ -995,6 +1099,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             }
         }
     }
+
+
 
     private void postTransaction(final int networkQueueItemId, final Handler handler, final Message msg, final int total, final int progress, final Integer originalSyncRequestItemId) {
         // create json objects
@@ -1204,16 +1310,20 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         syncNetworkQueue(originalSyncRequestItemId, handler);
                     } else {
                         try {
-                            JSONObject response = new JSONObject(postResponse.body().string());
-                            long server_item_id = 0, fully_synced = 0;
-                            if (response.optJSONObject("fmpreview") != null) {
-                                JSONObject fmpreview = response.getJSONObject("fmpreview");
-                                server_item_id = fmpreview.getLong("id");
-                                fully_synced = fmpreview.getLong(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FULLY_SYNCED);
+                            if(postResponse.code() == 401 && postResponse.headers().toString().contains("invalid_token")){
+                                FailureGetRefreshToken(handler,originalSyncRequestItemId, msg, 2, total, progress, null, "submitting FMP review");
+                            }else {
+                                JSONObject response = new JSONObject(postResponse.body().string());
+                                long server_item_id = 0, fully_synced = 0;
+                                if (response.optJSONObject("fmpreview") != null) {
+                                    JSONObject fmpreview = response.getJSONObject("fmpreview");
+                                    server_item_id = fmpreview.getLong("id");
+                                    fully_synced = fmpreview.getLong(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FULLY_SYNCED);
+                                }
+                                recordFailedUpload(server_item_id, fully_synced, networkQueueItemId);
+                                postFailureMessage(handler, response, msg, 2, total, progress, null, "submitting FMP review");
+                                FirebaseCrash.report(new Exception(response.optString("errors", res.getString(R.string.item_sync_error)) + " : submitting FMP review"));
                             }
-                            recordFailedUpload(server_item_id, fully_synced, networkQueueItemId);
-                            postFailureMessage(handler, response, msg, 2, total, progress, null, "submitting FMP review");
-                            FirebaseCrash.report(new Exception(response.optString("errors", res.getString(R.string.item_sync_error)) + " : submitting FMP review"));
                         } catch (JSONException | IOException e) {
                             FirebaseCrash.report(new Exception("NetworkLayer: Error getting FMP review failure response", e));
                             e.printStackTrace();
@@ -1355,6 +1465,9 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             syncNetworkQueue(originalSyncRequestItemId, handler);
                         } else {
                             try {
+                                if (postResponse.code() == 401 && postResponse.headers().toString().contains("invalid_token")){
+                                    FailureGetRefreshToken(handler,originalSyncRequestItemId, msg, 2, total, progress, null, "submitting FMP review");
+                                }else{
                                 JSONObject response = new JSONObject(postResponse.body().string());
                                 long server_item_id = 0, fully_synced = 0;
                                 if (response.optJSONObject("submittedmodule") != null) {
@@ -1365,6 +1478,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 recordFailedUpload(server_item_id, fully_synced, networkQueueItemId);
                                 postFailureMessage(handler, response, msg, 2, total, progress, null, "submitting FMP review");
                                 FirebaseCrash.report(new Exception(response.optString("errors", res.getString(R.string.item_sync_error)) + " : submitting FMP review"));
+                                }
                             } catch (JSONException | IOException e) {
                                 FirebaseCrash.report(new Exception("NetworkLayer: Error getting module submission failure response", e));
                                 e.printStackTrace();
@@ -1668,19 +1782,23 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                             FabricLogsWriter.printCrashLog(TAG, finalEndPoint,postResponse.code(), "Request : " +submission.toString() +"Response : "+ postResponse.networkResponse().toString(),context);
                                         }catch (Exception e){}
                                         try {
-                                            JSONObject response = new JSONObject(postResponse.body().string());
-                                            long server_item_id = 0, fully_synced = 0;
+                                            if(postResponse.code() == 401 && postResponse.headers().toString().contains("invalid_token")){
+                                                FailureGetRefreshToken(handler,originalSyncRequestItemId, msg, 2, total, progress, null, "submitting survey module");
+                                            }else {
+                                                JSONObject response = new JSONObject(postResponse.body().string());
+                                                long server_item_id = 0, fully_synced = 0;
 
-                                            if (response.optJSONObject("submittedmodule") != null) {
-                                                JSONObject submittedModule = response.getJSONObject("submittedmodule");
-                                                server_item_id = submittedModule.getLong("id");
-                                                fully_synced = submittedModule.getLong(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FULLY_SYNCED);
+                                                if (response.optJSONObject("submittedmodule") != null) {
+                                                    JSONObject submittedModule = response.getJSONObject("submittedmodule");
+                                                    server_item_id = submittedModule.getLong("id");
+                                                    fully_synced = submittedModule.getLong(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FULLY_SYNCED);
+                                                }
+
+                                                recordFailedUpload(server_item_id, fully_synced, networkQueueItemId);
+
+                                                postFailureMessage(handler, response, msg, 2, total, progress, null, "submitting survey module");
+                                                FirebaseCrash.report(new Exception(response.optString("errors", res.getString(R.string.item_sync_error)) + " : submitting survey module"));
                                             }
-
-                                            recordFailedUpload(server_item_id, fully_synced, networkQueueItemId);
-
-                                            postFailureMessage(handler, response, msg, 2, total, progress, null, "submitting survey module");
-                                            FirebaseCrash.report(new Exception(response.optString("errors", res.getString(R.string.item_sync_error)) + " : submitting survey module"));
                                         } catch (JSONException | IOException e) {
                                             recordFailedUpload(0, 0, networkQueueItemId);
                                             postFailureMessage(handler, null, msg, 2, total, progress, null, "submitting survey module");
@@ -1797,16 +1915,20 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                     FabricLogsWriter.printCrashLog(TAG, finalEndpoint,postResponse.code(), "Request : "+params.toString() + "Response : "+postResponse.networkResponse().toString(),context);
                                 }catch (Exception e){}
                                 try {
-                                    JSONObject response = new JSONObject(postResponse.body().string());
-                                    long server_item_id = 0, fully_synced = 0;
-                                    if (response.optJSONObject("farm") != null) {
-                                        JSONObject farm = response.getJSONObject("farm");
-                                        server_item_id = farm.getLong("id");
-                                        fully_synced = farm.getLong(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FULLY_SYNCED);
+                                    if(postResponse.code() == 401 && postResponse.headers().toString().contains("invalid_token")){
+                                        FailureGetRefreshToken(handler,originalSyncRequestItemId, msg, 2, total, progress, null, "submitting farm polygon");
+                                    }else {
+                                        JSONObject response = new JSONObject(postResponse.body().string());
+                                        long server_item_id = 0, fully_synced = 0;
+                                        if (response.optJSONObject("farm") != null) {
+                                            JSONObject farm = response.getJSONObject("farm");
+                                            server_item_id = farm.getLong("id");
+                                            fully_synced = farm.getLong(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FULLY_SYNCED);
+                                        }
+                                        recordFailedUpload(server_item_id, fully_synced, networkQueueItemId);
+                                        postFailureMessage(handler, response, msg, 2, total, progress, null, "submitting farm polygon");
+                                        FirebaseCrash.report(new Exception(response.optString("errors", res.getString(R.string.item_sync_error)) + " : submitting farm polygon"));
                                     }
-                                    recordFailedUpload(server_item_id, fully_synced, networkQueueItemId);
-                                    postFailureMessage(handler, response, msg, 2, total, progress, null, "submitting farm polygon");
-                                    FirebaseCrash.report(new Exception(response.optString("errors", res.getString(R.string.item_sync_error)) + " : submitting farm polygon"));
                                 } catch (JSONException | IOException e) {
                                     recordFailedUpload(0, 0, networkQueueItemId);
                                     postFailureMessage(handler, null, msg, 2, total, progress, null, "submitting farm polygon");
@@ -1908,16 +2030,20 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                     FabricLogsWriter.printCrashLog(TAG, finalEndpoint,postResponse.code(),"Request : " +params.toString() +" Response "+postResponse.networkResponse().toString(),context);
                                 }catch (Exception e){}
                                 try {
-                                    JSONObject response = new JSONObject(postResponse.body().string());
-                                    long server_item_id = 0, fully_synced = 0;
-                                    if (response.optJSONObject("farm") != null) {
-                                        JSONObject farm = response.getJSONObject("farm");
-                                        server_item_id = farm.getLong("id");
-                                        fully_synced = farm.getLong(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FULLY_SYNCED);
+                                    if(postResponse.code() == 401 && postResponse.headers().toString().contains("invalid_token")){
+                                        FailureGetRefreshToken(handler,originalSyncRequestItemId, msg, 2, total, progress, null, "submitting farm location");
+                                    }else {
+                                        JSONObject response = new JSONObject(postResponse.body().string());
+                                        long server_item_id = 0, fully_synced = 0;
+                                        if (response.optJSONObject("farm") != null) {
+                                            JSONObject farm = response.getJSONObject("farm");
+                                            server_item_id = farm.getLong("id");
+                                            fully_synced = farm.getLong(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FULLY_SYNCED);
+                                        }
+                                        recordFailedUpload(server_item_id, fully_synced, networkQueueItemId);
+                                        postFailureMessage(handler, response, msg, 2, total, progress, null, "submitting farm location");
+                                        FirebaseCrash.report(new Exception(response.optString("errors", res.getString(R.string.item_sync_error)) + " : submitting farm location"));
                                     }
-                                    recordFailedUpload(server_item_id, fully_synced, networkQueueItemId);
-                                    postFailureMessage(handler, response, msg, 2, total, progress, null, "submitting farm location");
-                                    FirebaseCrash.report(new Exception(response.optString("errors", res.getString(R.string.item_sync_error)) + " : submitting farm location"));
                                 } catch (JSONException | IOException e) {
                                     recordFailedUpload(0, 0, networkQueueItemId);
                                     postFailureMessage(handler, null, msg, 2, total, progress, null, "submitting farm location");
@@ -2048,16 +2174,20 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                     FabricLogsWriter.printCrashLog(TAG, finalEndpoint,postResponse.code(), "Request : "+params.toString()+"Response : "+postResponse.networkResponse().toString(),context);
                                 }catch (Exception e){}
                                 try {
-                                    JSONObject response = new JSONObject(postResponse.body().string());
-                                    long server_item_id = 0, fully_synced = 0;
-                                    if (response.optJSONObject("phonenumbers") != null) {
-                                        JSONObject phonenumbers = response.getJSONObject("phonenumbers");
-                                        server_item_id = phonenumbers.getLong("id");
-                                        fully_synced = phonenumbers.getLong(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FULLY_SYNCED);
+                                    if(postResponse.code() == 401 && postResponse.headers().toString().contains("invalid_token")){
+                                        FailureGetRefreshToken(handler,originalSyncRequestItemId, msg, 2, total, progress, null, "submitting farm location");
+                                    }else {
+                                        JSONObject response = new JSONObject(postResponse.body().string());
+                                        long server_item_id = 0, fully_synced = 0;
+                                        if (response.optJSONObject("phonenumbers") != null) {
+                                            JSONObject phonenumbers = response.getJSONObject("phonenumbers");
+                                            server_item_id = phonenumbers.getLong("id");
+                                            fully_synced = phonenumbers.getLong(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FULLY_SYNCED);
+                                        }
+                                        recordFailedUpload(server_item_id, fully_synced, networkQueueItemId);
+                                        postFailureMessage(handler, response, msg, 2, total, progress, null, "submitting farm location");
+                                        FirebaseCrash.report(new Exception(response.optString("errors", res.getString(R.string.item_sync_error)) + " : submitting farm location"));
                                     }
-                                    recordFailedUpload(server_item_id, fully_synced, networkQueueItemId);
-                                    postFailureMessage(handler, response, msg, 2, total, progress, null, "submitting farm location");
-                                    FirebaseCrash.report(new Exception(response.optString("errors", res.getString(R.string.item_sync_error)) + " : submitting farm location"));
                                 } catch (JSONException | IOException e) {
                                     recordFailedUpload(0, 0, networkQueueItemId);
                                     postFailureMessage(handler, null, msg, 2, total, progress, null, "submitting farm location");
@@ -2329,19 +2459,23 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                     FabricLogsWriter.printCrashLog(TAG, url,postResponse.code(),"Request : "+params.toString()+ " Response  : "+ postResponse.networkResponse().toString(),context);
                                 }catch (Exception e){}
                                 try {
-                                    JSONObject response = new JSONObject(postResponse.body().string());
-                                    long server_item_id = 0, fully_synced = 0;
+                                    if(postResponse.code() == 401 && postResponse.headers().toString().contains("invalid_token")){
+                                        FailureGetRefreshToken(handler,originalSyncRequestItemId, msg, 2, total, progress, null, "submitting survey module");
+                                    }else {
+                                        JSONObject response = new JSONObject(postResponse.body().string());
+                                        long server_item_id = 0, fully_synced = 0;
 
-                                    if (response.optJSONObject("submittedmodule") != null) {
-                                        JSONObject submittedModule = response.getJSONObject("submittedmodule");
-                                        server_item_id = submittedModule.getLong("id");
-                                        fully_synced = submittedModule.getLong(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FULLY_SYNCED);
+                                        if (response.optJSONObject("submittedmodule") != null) {
+                                            JSONObject submittedModule = response.getJSONObject("submittedmodule");
+                                            server_item_id = submittedModule.getLong("id");
+                                            fully_synced = submittedModule.getLong(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FULLY_SYNCED);
+                                        }
+
+                                        recordFailedUpload(server_item_id, fully_synced, networkQueueItemId);
+
+                                        postFailureMessage(handler, response, msg, 2, total, progress, null, "submitting survey module");
+                                        FirebaseCrash.report(new Exception(response.optString("errors", res.getString(R.string.item_sync_error)) + " : submitting survey module"));
                                     }
-
-                                    recordFailedUpload(server_item_id, fully_synced, networkQueueItemId);
-
-                                    postFailureMessage(handler, response, msg, 2, total, progress, null, "submitting survey module");
-                                    FirebaseCrash.report(new Exception(response.optString("errors", res.getString(R.string.item_sync_error)) + " : submitting survey module"));
                                 } catch (JSONException | IOException e) {
                                     recordFailedUpload(0, 0, networkQueueItemId);
                                     postFailureMessage(handler, null, msg, 2, total, progress, null, "submitting survey module");
@@ -2552,11 +2686,15 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                     FabricLogsWriter.printCrashLog(TAG, finalEndpoint,postResponse.code(),"Request : "+params.toString()+" Response : "+postResponse.networkResponse().toString(),context);
                                 }catch (Exception e){}
                                 try {
-                                    JSONObject response = new JSONObject(postResponse.body().string());
-                                    recordFailedUpload(0, 0, networkQueueItemId);
                                     String failureMessage = res.getString(R.string.networking_error);
-                                    postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting farmer photo failed");
-                                    FirebaseCrash.report(new Exception(response.optString("errors", res.getString(R.string.item_sync_error)) + " : submitting farmer photo"));
+                                    if(postResponse.code() == 401 && postResponse.headers().toString().contains("invalid_token")){
+                                        FailureGetRefreshToken(handler,originalSyncRequestItemId, msg, 2, total, progress, failureMessage, "submitting farmer photo failed");
+                                    }else {
+                                        JSONObject response = new JSONObject(postResponse.body().string());
+                                        recordFailedUpload(0, 0, networkQueueItemId);
+
+                                        postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting farmer photo failed");
+                                        FirebaseCrash.report(new Exception(response.optString("errors", res.getString(R.string.item_sync_error)) + " : submitting farmer photo"));
 
                                     /*      long server_item_id = 0, fully_synced = 0;
                                     if (response.optJSONObject("farm") != null) {
@@ -2568,6 +2706,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                     postFailureMessage(handler, response, msg, 2, total, progress, null, "submitting farm location");
                                     FirebaseCrash.report(new Exception(response.optString("errors", res.getString(R.string.item_sync_error)) + " : submitting farmer photo"));
                               */
+                                    }
                                 } catch (JSONException | IOException e) {
                                     recordFailedUpload(0, 0, networkQueueItemId);
                                     String failureMessage = res.getString(R.string.networking_error);
@@ -2669,6 +2808,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 }
 
                 jsonObject.put("enumeratorId",Long.valueOf(Utilities.getFromSharedPrefs(context)));
+//                jsonObject.put("enumeratorId",Utilities.getFromSharedPrefs(context));
 
             }catch (Exception e){
                 e.printStackTrace();
@@ -2783,16 +2923,20 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 long server_item_id = 0, fully_synced = 0;
 
                                 // Added
-                                JSONArray jsonResponse=new JSONArray(postResponse.body().string());
-                                JSONObject response=jsonResponse.getJSONObject(0);
+                                if(postResponse.code() == 401 && postResponse.headers().toString().contains("invalid_token")){
+                                    FailureGetRefreshToken(handler,originalSyncRequestItemId, msg, 2, total, progress, null, "submitting farmer");
+                                }else {
+                                    JSONArray jsonResponse = new JSONArray(postResponse.body().string());
+                                    JSONObject response = jsonResponse.getJSONObject(0);
 
-                                if (response != null) {
-                                    server_item_id = response.optLong("id", 0);
-                                    fully_synced = response.getLong(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FULLY_SYNCED);
+                                    if (response != null) {
+                                        server_item_id = response.optLong("id", 0);
+                                        fully_synced = response.getLong(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FULLY_SYNCED);
+                                    }
+                                    recordFailedUpload(server_item_id, fully_synced, networkQueueItemId);
+                                    postFailureMessage(handler, response, msg, 2, total, progress, null, "submitting farmer");
+                                    FirebaseCrash.report(new Exception(response.optString("errors", res.getString(R.string.item_sync_error)) + " : submitting submitting farmer"));
                                 }
-                                recordFailedUpload(server_item_id, fully_synced, networkQueueItemId);
-                                postFailureMessage(handler, response, msg, 2, total, progress, null, "submitting farmer");
-                                FirebaseCrash.report(new Exception(response.optString("errors", res.getString(R.string.item_sync_error)) + " : submitting submitting farmer"));
                             }
                             postResponse.close();
                         } catch (JSONException | IOException e) {
@@ -2801,7 +2945,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             //Same farmer ID on different devices
                             recordFailedUpload(0, 0, networkQueueItemId);
                             String failureMessage = res.getString(R.string.item_sync_error);
-                            postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting submitting farmer");
+                            postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting farmer");
 
                             FirebaseCrash.report(new Exception("NetworkLayer: Error getting farmer post failure response", e));
                             e.printStackTrace();

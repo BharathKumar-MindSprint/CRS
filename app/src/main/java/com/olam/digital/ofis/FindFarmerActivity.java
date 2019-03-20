@@ -7,6 +7,8 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.text.Editable;
+import android.text.InputFilter;
+import android.text.Spanned;
 import android.text.TextWatcher;
 import android.view.MenuItem;
 import android.view.View;
@@ -41,6 +43,18 @@ public class FindFarmerActivity extends BaseListActivity {
     private final static String BACK_TO_FINDER = "BACK_TO_FINDER";
     private boolean transactionMode = false, backtoFinder = false;
     private long transactionItemId, buyingAgentId;
+    private String blockCharacterSet = "~#^|$%&*!'\"";
+    private InputFilter filter = new InputFilter() {
+
+        @Override
+        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+
+            if (source != null && blockCharacterSet.contains(("" + source))) {
+                return "";
+            }
+            return null;
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +71,7 @@ public class FindFarmerActivity extends BaseListActivity {
         farmerGroupSpinner = (Spinner) findViewById(R.id.spinner_farmerGroup);
         sectionSpinner = (Spinner) findViewById(R.id.spinner_section);
         ed = (EditText) findViewById(R.id.findFarmerSearchBox);
-
+        ed.setFilters(new InputFilter[] { filter });
         Intent intent = this.getIntent();
         transactionMode = intent.getBooleanExtra(TRANSACTION_MODE, false);
         backtoFinder = intent.getBooleanExtra(BACK_TO_FINDER, false);

@@ -79,12 +79,18 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
         TextView enabledItem = (TextView) view.findViewById(R.id.moduleListEnabled);
         boolean submitted = false;
         Log.d("CustomListAdapter", "moduleTitle"+ moduleTitle.getText().toString() + ", SecText" + textView.getText().toString());
+
+
         if (currentId == 0) {
             if (cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals("Phone")) {
                 boolean updateWaiting = dl.networkEntryTypeExistsByFarmerId("phonenumbers", currentFarmer.getLong(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)));
                 if (updateWaiting || currentFarmer.getInt(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_SYNCED)) == 0) {
+
+                    System.out.println("IssueChecking:" +updateWaiting + currentFarmer.getInt(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_SYNCED)));
+
                     imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_completed));
                     enabledItem.setText("false");
+                    System.out.println("IssueChecking1:" + "moduleTitle"+ moduleTitle.getText().toString() + ", SecText" + textView.getText().toString());
                     linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
                     moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
                     textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
@@ -104,6 +110,7 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                 } else {
                     imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_update_phonenumbers));
                     enabledItem.setText("true");
+                    System.out.println("IssueChecking2:" + "moduleTitle"+ moduleTitle.getText().toString() + ", SecText" + textView.getText().toString());
                     linearLayout.setBackgroundResource(R.drawable.list_item);
                     moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
                     textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
@@ -126,6 +133,7 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                 } else {*/
                     imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_record_polygon));
                     enabledItem.setText("true");
+                System.out.println("IssueChecking3:" + "moduleTitle"+ moduleTitle.getText().toString() + ", SecText" + textView.getText().toString());
                     linearLayout.setBackgroundResource(R.drawable.list_item);
                     moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
                     textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
@@ -137,6 +145,7 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                 if (currentLat != null && currentLat.length() > 0 && (!currentLat.equalsIgnoreCase("null")) && currentLng != null && currentLng.length() > 0 && (!currentLng.equalsIgnoreCase("null"))) {
                     imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_location_found));
                     enabledItem.setText("false");
+                    System.out.println("IssueChecking4:" + "moduleTitle"+ moduleTitle.getText().toString() + ", SecText" + textView.getText().toString());
                     linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
                     moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
                     textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
@@ -144,6 +153,7 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                 } else {
                     imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_location_searching));
                     enabledItem.setText("true");
+                    System.out.println("IssueChecking5:" + "moduleTitle"+ moduleTitle.getText().toString() + ", SecText" + textView.getText().toString());
                     linearLayout.setBackgroundResource(R.drawable.list_item);
                     moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
                     textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
@@ -154,6 +164,7 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
             if (cursor.getInt(cursor.getColumnIndex(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_STATUS_FINISHED)) == 1) {
                 imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_submitted));
                 enabledItem.setText("false");
+                System.out.println("IssueChecking6:" + "moduleTitle"+ moduleTitle.getText().toString() + ", SecText" + textView.getText().toString());
                 linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
                 moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
                 textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
@@ -161,6 +172,7 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
             } else if ((cursor.getInt(cursor.getColumnIndex(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_STATUS_STARTED)) == 1) && (cursor.getInt(cursor.getColumnIndex(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_STATUS_FINISHED)) == 0)) {
                 imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_saved));
                 enabledItem.setText("true");
+                System.out.println("IssueChecking7:" + "moduleTitle"+ moduleTitle.getText().toString() + ", SecText" + textView.getText().toString());
                 linearLayout.setBackgroundResource(R.drawable.list_item);
                 moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
                 textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
@@ -168,6 +180,7 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
             } else {
                 imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_fmp_available));
                 enabledItem.setText("true");
+                System.out.println("IssueChecking8:" + "moduleTitle"+ moduleTitle.getText().toString() + ", SecText" + textView.getText().toString());
                 linearLayout.setBackgroundResource(R.drawable.list_item);
                 moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
                 textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
@@ -197,7 +210,12 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                                     // get last submitted date
                                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
                                     Calendar lastSubmittedDate = Calendar.getInstance();
-                                    lastSubmittedDate.setTime(sdf.parse(submittedModuleDetails.getString("created_at")));
+                                    try {
+                                        lastSubmittedDate.setTime(sdf.parse(submittedModuleDetails.getString("created_at")));
+                                    } catch (ParseException e){
+                                        FirebaseCrash.report(new Exception("CustomListAdapter_Modules: Error setting recurrence date values", e));
+                                        e.printStackTrace();
+                                    }
                                     if (recurrence_type != null) {
                                         if (recurrence_type.equalsIgnoreCase("years")) {
                                             calculationDate.add(Calendar.YEAR, -recurrence_frequency);
@@ -223,12 +241,14 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                                         // force the recalculation
                                         calculationDate.get(Calendar.DAY_OF_MONTH);
 
+                                        System.out.println("IssueCheckingfinal-lastSubmittedDate:" + lastSubmittedDate);
+                                        System.out.println("calculationDate:" + calculationDate);
+                                        System.out.println("value is:" + lastSubmittedDate.after(calculationDate));
                                         if (lastSubmittedDate.after(calculationDate)) {
                                             disable_entry = true;
                                         }
                                     }
-                                } catch (ParseException e) {
-                                    FirebaseCrash.report(new Exception("CustomListAdapter_Modules: Error setting recurrence date values", e));
+                                } catch (Exception e){
                                     e.printStackTrace();
                                 }
                             } else {
@@ -240,6 +260,7 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                                 textView.setText(submittedModuleDetails.getString("created_at"));
                                 submittedModuleDetails.put("marked", true);
                                 imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_submitted));
+                                System.out.println("IssueChecking9:" + "moduleTitle"+ moduleTitle.getText().toString() + ", SecText" + textView.getText().toString());
                                 linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
                                 moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
                                 textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
@@ -252,10 +273,13 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                 } catch (JSONException e) {
                     FirebaseCrash.report(new Exception("CustomListAdapter_Modules: Error setting recurrence values", e));
                     e.printStackTrace();
+                } catch (Exception e){
+                    e.printStackTrace();
                 }
             }
             if (!submitted) {
                 enabledItem.setText("true");
+                System.out.println("IssueChecking10:" + "moduleTitle"+ moduleTitle.getText().toString() + ", SecText" + textView.getText().toString());
                 linearLayout.setBackgroundResource(R.drawable.list_item);
                 moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
                 textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
@@ -270,6 +294,7 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                     imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_new));
                     textView.setText(res.getString(R.string.ModuleStatus));
                     if (disabled_months.contains(String.valueOf(currentDate.get(Calendar.MONTH)))) {
+                        System.out.println("IssueChecking11:" + "moduleTitle"+ moduleTitle.getText().toString() + ", SecText" + textView.getText().toString());
                         linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
                         moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
                         textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
