@@ -42,8 +42,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
@@ -56,6 +60,8 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import okhttp3.Call;
 import okhttp3.MediaType;
@@ -77,6 +83,7 @@ import javax.net.ssl.X509TrustManager;
  * All network functions carried out by the application
  */
 public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
+    private static final int BUFFER = 15*1024;
     private final Context context;
     private final Resources res;
     private static String AccessToken;
@@ -366,7 +373,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         }
     }
 
-    private void FailureGetRefreshToken(Handler handler, String helpname, String helpDes,Message msg, int msgWhat, int total, int progress, String baseMessage, String failedOperation) throws IOException {
+    private void FailureGetRefreshToken(Handler handler, String helpname, String countryId,String helpPhone, String helpDes,Message msg, int msgWhat, int total, int progress, String baseMessage, String failedOperation) throws IOException {
 
         AuthenticationDTO authenticationDTO = new AuthenticationHelper(context).getAuthenticationDTO();
         AuthRequestDTO authRequestDTO = new AuthRequestDTO();
@@ -379,7 +386,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             AuthenticationDTO newAuthDTO = (AuthenticationDTO) authResponse.body();
             newAuthDTO.setWillExpireAt((System.currentTimeMillis()/1000) + newAuthDTO.getExpiresIn() /1000);
             new AuthenticationHelper(context).setAuthenticationDTO(newAuthDTO);
-            sendForHelp(helpname, helpDes, handler);
+            sendForHelp(helpname, countryId, helpPhone, helpDes, handler);
 
         }else{
             String failureMessage = res.getString(R.string.item_sync_error);
@@ -514,10 +521,20 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         }
     }
 
-    void sendForHelp(final String helpName, final String helpDescription, final Handler handler) {
+    void sendForHelp(final String helpName, final String countryId, final String helpPhoneNo, final String helpDescription, final Handler handler) {
         String dbName = "ofismobile";
         File dbFile = context.getDatabasePath(dbName);
         RequestBody file = RequestBody.create(MEDIA_TYPE_SQLITE, dbFile);
+
+         /*  String backupDBPath = Environment.getExternalStorageDirectory().getPath() + "/OFIS-Filebackup";
+        final File backupDBFolder = new File(backupDBPath);
+        backupDBFolder.mkdirs();
+        File appDirectory = new File(Environment.getExternalStorageDirectory() + "/OFIS_V2/logs");
+        String[] s = new String[1];
+        s[0] = dbFile.getAbsolutePath();
+        s[1] = appDirectory.getAbsolutePath();
+        zip(s, backupDBPath + "/SQLiteDbAndText.zip");*/
+
         MultipartBody.Builder bodyBuilder = new MultipartBody.Builder().setType(MultipartBody.FORM);
         RequestBody requestBody;
 
@@ -525,8 +542,11 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         final String endpoint = "ofismaster/master/requestHelp";
 
         bodyBuilder.addFormDataPart("userName", helpName);
+        bodyBuilder.addFormDataPart("userCountryId", String.valueOf(countryId));
+        bodyBuilder.addFormDataPart("userPhoneNo", helpPhoneNo);
         bodyBuilder.addFormDataPart("faultDescription", helpDescription);
         bodyBuilder.addFormDataPart("SQLiteDb", dbFile.getName(), file);
+//        bodyBuilder.addFormDataPart("SQLiteDbAndTextZip", dbFile.getName(), file);
         bodyBuilder.addFormDataPart("enumeratorId", Utilities.getFromSharedPrefs(context));
         bodyBuilder.addFormDataPart("appVersion", BuildConfig.VERSION_NAME);
         //bodyBuilder.addFormDataPart("zippedDebugLog", dbFile.getName(), file);
@@ -543,7 +563,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             public void onResponse(Call call, Response postResponse) {
                 try {
                     if(postResponse.code() == 401 && postResponse.headers().toString().contains("invalid_token")){
-                        FailureGetRefreshToken(handler,helpName,helpDescription, msg, 2, 0, 0, null, "submitting help request");
+                        FailureGetRefreshToken(handler,helpName, countryId, helpPhoneNo, helpDescription, msg, 2, 0, 0, null, "submitting help request");
                     }else {
                         JSONObject response = new JSONObject(postResponse.body().string());
                         if (postResponse.isSuccessful()) {
@@ -579,7 +599,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         });
 
     }
-
 
     public void getNetworkQueue(Integer itemId) {
         if (networkQueueItems != null && networkQueueItems.getCount() > 0) {
@@ -2986,5 +3005,32 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         return encoded;
     }
 
+    public void zip(String[] _files, String zipFileName) {
+        try {
+            BufferedInputStream origin = null;
+            FileOutputStream dest = new FileOutputStream(zipFileName);
+            ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(
+                    dest));
+            byte data[] = new byte[BUFFER];
 
+            for (int i = 0; i < _files.length; i++) {
+                Log.v("Compress", "Adding: " + _files[i]);
+                FileInputStream fi = new FileInputStream(_files[i]);
+                origin = new BufferedInputStream(fi, BUFFER);
+
+                ZipEntry entry = new ZipEntry(_files[i].substring(_files[i].lastIndexOf("/") + 1));
+                out.putNextEntry(entry);
+                int count;
+
+                while ((count = origin.read(data, 0, BUFFER)) != -1) {
+                    out.write(data, 0, count);
+                }
+                origin.close();
+            }
+
+            out.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

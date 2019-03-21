@@ -7,48 +7,48 @@
     tools:ignore="Overdraw">
 
     <LinearLayout
-        android:orientation="vertical"
+        android:id="@+id/middleSection"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/middleSection"
         android:background="@color/ofis_farmer_screen_actions_background"
-        android:paddingTop="@dimen/activity_vertical_margin"
+        android:orientation="vertical"
         android:paddingBottom="@dimen/activity_vertical_margin"
         android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin">
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin">
 
         <LinearLayout
-            android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
 
             <TextView
+                android:id="@+id/pageTitle"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
+                android:layout_weight="1"
                 android:text="@string/Enumerator_ID"
-                android:id="@+id/pageTitle"
                 android:textColor="@color/ofis_base_font_white"
-                android:textSize="@dimen/ofis_large_text"
-                android:layout_weight="1" />
+                android:textSize="@dimen/ofis_large_text" />
 
         </LinearLayout>
 
         <LinearLayout
-            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
             <EditText
+                android:id="@+id/enumeratorID"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:inputType="number"
-                android:textColorHint="@color/ofis_base_font_white"
-                android:textSize="@dimen/ofis_input_field_text"
-                android:id="@+id/enumeratorID"
                 android:layout_weight="1"
-                android:textColor="@color/ofis_base_font_white"
+                android:background="@drawable/ofis_edit_text_holo_dark"
                 android:hint="@string/Enumerator_ID"
-                android:background="@drawable/ofis_edit_text_holo_dark"/>
+                android:inputType="number"
+                android:textColor="@color/ofis_base_font_white"
+                android:textColorHint="@color/ofis_base_font_white"
+                android:textSize="@dimen/ofis_input_field_text" />
 
         </LinearLayout>
 
@@ -60,76 +60,78 @@
         android:layout_below="@+id/middleSection">
 
         <LinearLayout
-            android:orientation="vertical"
+            android:id="@+id/bottomSection"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/bottomSection"
-            android:paddingTop="@dimen/activity_vertical_margin"
+            android:gravity="end"
+            android:orientation="vertical"
             android:paddingBottom="@dimen/activity_vertical_margin"
             android:paddingLeft="@dimen/activity_horizontal_margin"
             android:paddingRight="@dimen/activity_horizontal_margin"
-            android:gravity="end">
+            android:paddingTop="@dimen/activity_vertical_margin">
 
             <Button
+                android:id="@+id/buttonSave"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/ofis_first_run_save_update"
-                android:id="@+id/buttonSave"
+                android:layout_marginBottom="@dimen/ofis_large_pad"
                 android:background="@color/ofis_action_button_background"
-                android:textColor="@color/ofis_base_font_white"
                 android:paddingLeft="15dp"
                 android:paddingRight="15dp"
-                android:layout_marginBottom="@dimen/ofis_large_pad"/>
+                android:text="@string/ofis_first_run_save_update"
+                android:textColor="@color/ofis_base_font_white" />
 
             <Button
+                android:id="@+id/buttonAssistance"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/ofis_request_help"
-                android:id="@+id/buttonAssistance"
                 android:background="@color/ofis_action_button_background"
-                android:textColor="@color/ofis_base_font_white"
                 android:paddingLeft="15dp"
-                android:paddingRight="15dp" />
+                android:paddingRight="15dp"
+                android:text="@string/ofis_request_help"
+                android:textColor="@color/ofis_base_font_white" />
 
         </LinearLayout>
 
     </ScrollView>
     <!-- updated -->
     <LinearLayout
+        android:id="@+id/helpRequestHolder"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/helpRequestHolder"
-        android:orientation="vertical"
         android:layout_margin="@dimen/ofis_input_field_bottom_margin"
         android:background="@drawable/border"
+        android:orientation="vertical"
         android:visibility="gone">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@drawable/bottom_border"
+            android:paddingBottom="8dp"
             android:paddingLeft="@dimen/ofis_bottom_section_padding_vertical"
             android:paddingTop="10dp"
-            android:paddingBottom="8dp"
-            android:weightSum="10"
-            android:background="@drawable/bottom_border">
+            android:weightSum="10">
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:layout_gravity="start|top"
+                android:layout_weight="9"
                 android:text="@string/ofis_request_help"
                 android:textSize="@dimen/ofis_med_text"
-                android:layout_weight="9"
-                android:layout_gravity="start|top"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
+
             <ImageButton
+                android:id="@+id/helpCloseButton"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:id="@+id/helpCloseButton"
-                android:src="@drawable/ic_consent_close"
-                android:background="@android:color/transparent"
-                android:layout_weight="1"
                 android:layout_gravity="end|top"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
                 android:contentDescription="@string/ofis_switch_text_no"
-                android:scaleType="fitStart" />
+                android:scaleType="fitStart"
+                android:src="@drawable/ic_consent_close" />
         </LinearLayout>
 
         <ScrollView
@@ -140,47 +142,88 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingBottom="8dp"
                 android:paddingLeft="@dimen/ofis_bottom_section_padding_horizontal"
                 android:paddingRight="@dimen/ofis_bottom_section_padding_horizontal"
-                android:paddingTop="10dp"
-                android:paddingBottom="8dp"
-                android:orientation="vertical">
+                android:paddingTop="10dp">
 
                 <EditText
+                    android:id="@+id/UserName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/ofis_input_field_bottom_margin"
+                    android:hint="@string/Your_Name"
                     android:inputType="textCapWords"
-                    android:id="@+id/UserName"
                     android:textColor="@color/ofis_text_field"
                     android:textColorHint="@color/ofis_text_field"
-                    android:textSize="@dimen/ofis_input_field_text"
-                    android:hint="@string/Your_Name"
-                    android:layout_marginBottom="@dimen/ofis_input_field_bottom_margin"/>
+                    android:textSize="@dimen/ofis_input_field_text" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <!--<android.support.v7.widget.AppCompatSpinner
+                        android:id="@+id/spinner_country"
+                        android:layout_toRightOf="@+id/icon"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="4"
+                        android:textColor="@color/ofis_base_font_dark"
+                        android:layout_marginBottom="@dimen/ofis_input_field_bottom_margin"
+
+                        style="@style/AppTheme"
+                          >
+                    </android.support.v7.widget.AppCompatSpinner>
+-->                    <Spinner
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/spinner_country"
+                    android:hint="@string/Country"
+                    android:layout_weight="4"
+                    android:layout_marginBottom="@dimen/ofis_input_field_bottom_margin"
+
+                    android:textColor="@color/ofis_base_font_dark"
+                    style="@style/AppTheme" />
+                    <EditText
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="6"
+                        android:id="@+id/UserPhoneNo"
+                        android:textColor="@color/ofis_text_field"
+                        android:textColorHint="@color/ofis_text_field"
+                        android:digits="0123456789"
+                        android:layout_marginBottom="@dimen/ofis_input_field_bottom_margin"
+                        android:hint="@string/Your_phone_number"
+                        android:layout_marginLeft="@dimen/ofis_small_pad"
+                        android:textSize="@dimen/ofis_input_field_text"
+                        android:inputType="phone"/>
+
+                </LinearLayout>
 
                 <EditText
+                    android:id="@+id/FaultDescription"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/ofis_multiline_help_height"
-                    android:inputType="textMultiLine"
                     android:layout_gravity="start"
-                    android:id="@+id/FaultDescription"
+                    android:layout_marginBottom="@dimen/ofis_input_field_bottom_margin"
+                    android:hint="@string/problem_description"
+                    android:inputType="textMultiLine"
                     android:textColor="@color/ofis_text_field"
                     android:textColorHint="@color/ofis_text_field"
-                    android:textSize="@dimen/ofis_input_field_text"
-                    android:hint="@string/problem_description"
-                    android:layout_marginBottom="@dimen/ofis_input_field_bottom_margin"/>
+                    android:textSize="@dimen/ofis_input_field_text" />
 
                 <Button
+                    android:id="@+id/buttonAssistanceSend"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/send_button"
-                    android:id="@+id/buttonAssistanceSend"
-                    android:background="@color/ofis_action_button_background"
-                    android:textColor="@color/ofis_base_font_white"
-                    android:paddingLeft="15dp"
-                    android:paddingRight="15dp"
+                    android:layout_gravity="bottom|end"
                     android:layout_marginLeft="10dp"
                     android:layout_marginStart="10dp"
-                    android:layout_gravity="bottom|end" />
+                    android:background="@color/ofis_action_button_background"
+                    android:paddingLeft="15dp"
+                    android:paddingRight="15dp"
+                    android:text="@string/send_button"
+                    android:textColor="@color/ofis_base_font_white" />
             </LinearLayout>
         </ScrollView>
 

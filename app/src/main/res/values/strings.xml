@@ -324,6 +324,7 @@
     <string name="ofis_update_overdue">This version of the app is now out of date, you must update the app before you can continue to use it. Tap the settings icon in the top right to update</string>
     <string name="ofis_request_help">Ask for Help</string>
     <string name="Your_Name">Your Name</string>
+    <string name="Your_phone_number">Your Phone Number</string>
     <string name="problem_description">Describe the problem you are having</string>
     <plurals name="days_left_to_update">
         <item quantity="one">Version updates are required after 30 days. You have %1d day left to update</item>

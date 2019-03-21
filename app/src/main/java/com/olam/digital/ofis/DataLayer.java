@@ -3091,5 +3091,7 @@ public class DataLayer {
         return available;
     }
 
-
+    public Cursor getEnumeratorCountries() {
+        return db.rawQuery("SELECT * FROM countries", null);
+    }
 }
