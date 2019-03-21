@@ -22,10 +22,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.google.firebase.iid.FirebaseInstanceId;
@@ -34,9 +37,12 @@ import com.olam.digital.ofis.authentication.AccessTokenTask;
 import com.olam.digital.ofis.authentication.DeviceIDxctractor;
 import com.olam.digital.ofis.authentication.OnAccessTokenInterface;
 import com.olam.digital.ofis.authentication.model.AuthRequestDTO;
+import com.olam.digital.ofis.model.CountriesDTO;
 
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 
@@ -136,7 +142,7 @@ public class SettingsActivity extends Activity implements OnAccessTokenInterface
     }
 
     private void checkAuthenticate(){
-       NetworkLayer nl = new NetworkLayer(context, res);
+        NetworkLayer nl = new NetworkLayer(context, res);
         if (nl.isPhoneOnline()) {
             AccessTokenTask accessTokenTask = new AccessTokenTask(context, getAuthRequestDTO(), SettingsActivity.this);
             accessTokenTask.execute();
@@ -165,12 +171,45 @@ public class SettingsActivity extends Activity implements OnAccessTokenInterface
         Button askForHelp = (Button) findViewById(R.id.buttonAssistance);
         Button sendForHelp = (Button) findViewById(R.id.buttonAssistanceSend);
         final EditText name = (EditText) findViewById(R.id.UserName);
+        final Spinner countrySpinner = (Spinner) this.findViewById(R.id.spinner_country);
+        final EditText phoneNo = (EditText) findViewById(R.id.UserPhoneNo);
         final EditText faultDescription = (EditText) findViewById(R.id.FaultDescription);
         final ImageButton hideHelpBox = (ImageButton) findViewById(R.id.helpCloseButton);
         final LinearLayout helpRequestHolder = (LinearLayout) findViewById(R.id.helpRequestHolder);
         final Animation mSlideBottomUp = AnimationUtils.loadAnimation(context, R.anim.bottom_up);
         final Animation mSlideBottomDown = AnimationUtils.loadAnimation(context, R.anim.bottom_down);
 
+        Cursor CountriesDialCodes = dl.getEnumeratorCountries();
+
+
+        List<CountriesDTO> DialCodes = new ArrayList<>();
+        while (CountriesDialCodes.moveToNext()) {
+            CountriesDTO countriesDTO = new CountriesDTO();
+            countriesDTO.setDialingCodeId (CountriesDialCodes.getInt(CountriesDialCodes.getColumnIndex(OFISDBContract.CountriesEntry.COLUMN_NAME_ID)));
+            countriesDTO.setDialingCode(CountriesDialCodes.getString(CountriesDialCodes.getColumnIndex(OFISDBContract.CountriesEntry.COLUMN_NAME_DIALLING_CODE)));
+            countriesDTO.setCountry(CountriesDialCodes.getString(CountriesDialCodes.getColumnIndex(OFISDBContract.CountriesEntry.COLUMN_NAME_COUNTRY_NAME)));
+            DialCodes.add(countriesDTO);
+        }
+
+
+        CustomListAdapter_CountriesCode customSpinnerAdapter=new CustomListAdapter_CountriesCode(context, DialCodes);
+        countrySpinner.setAdapter(customSpinnerAdapter);
+
+
+
+        countrySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                long myId = id;
+
+//                doSearch();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
         askForHelp.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -192,14 +231,18 @@ public class SettingsActivity extends Activity implements OnAccessTokenInterface
             public void onClick(View v) {
 
                 String helpName = name.getText().toString();
+                CountriesDTO countriesDTO = (CountriesDTO) countrySpinner.getSelectedItem();
+                String countryId = countriesDTO.getDialingCode();
+
+                String helpPhoneNo = phoneNo.getText().toString();
                 String helpDescription = faultDescription.getText().toString();
 
-                if (helpName.length() > 0 && helpDescription.length() > 0) {
+                if (helpName.length() > 0 && helpPhoneNo.length() > 0 && helpDescription.length() > 0) {
                     NetworkLayer nl = new NetworkLayer(context, getResources());
 
                     if (nl.isPhoneOnline()) {
-                         updateData=false;
-                          checkAuthenticate();
+                        updateData=false;
+                        checkAuthenticate();
                     } else {
                         Toast.makeText(context, res.getString(R.string.Internet_not_available), Toast.LENGTH_LONG).show();
                     }
@@ -334,6 +377,8 @@ public class SettingsActivity extends Activity implements OnAccessTokenInterface
     private void askForHelpUpdate() {
 
         final EditText name = (EditText) findViewById(R.id.UserName);
+        Spinner countrySpinner = (Spinner) this.findViewById(R.id.spinner_country);
+        final EditText phoneNo = (EditText) findViewById(R.id.UserPhoneNo);
         final EditText faultDescription = (EditText) findViewById(R.id.FaultDescription);
         final ImageButton hideHelpBox = (ImageButton) findViewById(R.id.helpCloseButton);
         final LinearLayout helpRequestHolder = (LinearLayout) findViewById(R.id.helpRequestHolder);
@@ -342,7 +387,11 @@ public class SettingsActivity extends Activity implements OnAccessTokenInterface
         NetworkLayer nl=new NetworkLayer(context,res);
 
         String helpName = name.getText().toString();
+        String helpPhoneNo = phoneNo.getText().toString();
         String helpDescription = faultDescription.getText().toString();
+
+        CountriesDTO countriesDTO = (CountriesDTO) countrySpinner.getSelectedItem();
+        String countryId = countriesDTO.getDialingCode();
 
         new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
@@ -387,6 +436,6 @@ public class SettingsActivity extends Activity implements OnAccessTokenInterface
             }
         };
 
-        nl.sendForHelp(helpName, helpDescription, helpHandler);
+        nl.sendForHelp(helpName, countryId, helpPhoneNo, helpDescription, helpHandler);
     }
 }
