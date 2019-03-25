@@ -259,6 +259,7 @@
     <string name="ofis_update_overdue">Versi dari aplikasi ini sudah tidak dapat digunakan, Anda harus memperbaharui applikasi sebelum menggunakannya.  Klik ikon pengaturan disebelah kanan atas untuk memperbaharui.</string>
     <string name="ofis_request_help">Minta bantuan</string>
     <string name="Your_Name">Nama Anda</string>
+    <string name="Your_phone_number">Nama Nomor telepon</string>
     <string name="problem_description">Jelaskan Masalah yang dialami</string>
     <plurals name="days_left_to_update" tools:ignore="UnusedQuantity">
         <item quantity="one">Pembaharuan versi diperlukan setelah 30 hari. Anda memiliki %1d hari tersisa untuk memperbaharui</item>

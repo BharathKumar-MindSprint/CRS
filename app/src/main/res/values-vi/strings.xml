@@ -259,6 +259,7 @@
     <string name="ofis_update_overdue">Phiên bản này của ứng dụng hiện đã hết hạn, bạn phải cập nhật ứng dụng trước khi có thể sử dụng nó. Chọn biểu tượng cài đặt ở phía trên bên phải để cập nhật</string>
     <string name="ofis_request_help">Xin giúp đỡ</string>
     <string name="Your_Name">Tên của bạn</string>
+    <string name="Your_phone_number">Tên Số điện thoại</string>
     <string name="problem_description">Mô tả vấn đề mà bạn đang gặp phải</string>
     <plurals name="days_left_to_update">
         <item quantity="one">Phiên bản cập nhật được yêu cầu sau 30 ngày. Bạn có %1d ngày còn lại để cập nhật.</item>

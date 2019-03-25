@@ -245,6 +245,7 @@
     <string name="ofis_update_overdue">ເວີ​ຊັນ​ຂອງແອບນີ້ດ່ຽວນີ້​ແມ່ນ​ລ້າ​ສະ​ໄໝ​ແລ້ວ, ເຈົ້າ​ຕ້ອງ​ອັບ​ເດດ​ແອບ​ກ່ອນ​ເຈົ້າ​ຈະ​ສືບ​ຕໍ່​ນຳ​ໃຊ້​ມັນ. ແທບ​ຄື​ການ​ຕັ້ງ​ຄ່​ໄອ​ຄອນ​ຢູ່​ໃການ​ອັບ​ເດດ​ຂອງ​ຂັ້ນ​ເທີ່ງ​ທີ່​ຖືກ​ຕ້ອງ</string>
     <string name="ofis_request_help">ຖາມ​ເພືອ​ໃຫ້​ຊ່ວຍ</string>
     <string name="Your_Name">ຊື່​ເຈົ້າ</string>
+    <string name="Your_phone_number">ເບີໂທລະສັບ</string>
     <string name="problem_description">ອະ​ທິ​ບາຍ​ບັນ​ຫາ​ທີ່​ເຈົ້າ​ກຳ​ລັງ​ພົບ​ຢູ່</string>
     <plurals name="days_left_to_update">
         <item quantity="one">​ເວີ​ຊັນ​ທີ່​ຕ້ອງ​ການ​ອັບ​ເດດ​ຫຼັງ​ຈາກ 30 ວັນ ເຈົ້າ​ມີ​ເປີ​ເຊັນ%1dຕໍ່​ມື້​ຂອງ​ການ​ອັບ​ເດດ​ຝ່າຍ​ຊ້າຍ</item>

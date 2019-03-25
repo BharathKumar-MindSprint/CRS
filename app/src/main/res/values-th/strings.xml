@@ -258,6 +258,7 @@
     <string name="ofis_update_overdue">เวอร์ชั่นนี้ได้หมดอายุลงแล้ว ท่านต้องอัพเดทแอปพลิเคชั่นก่อนจึงจะสามารถใช้งานต่อได้ กรุณากดปุ่มที่ด้านบนขวาเพื่ออัพเดท</string>
     <string name="ofis_request_help">ขอความช่วยเหลือ</string>
     <string name="Your_Name"> ชื่อ</string>
+    <string name="Your_phone_number">เบอร์โทร</string>
     <string name="problem_description">ระบุปัญหาที่พบ</string>
     <plurals name="days_left_to_update">
         <item quantity="one">เวอร์ชั่นล่าสุดจะต้องได้รับการอัพเดทหลังจาก 30 วัน ท่านยังมีเวลาอีก %1 วัน สำหรับการอัพเดท</item>

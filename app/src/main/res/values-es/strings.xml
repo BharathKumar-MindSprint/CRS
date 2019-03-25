@@ -259,6 +259,7 @@
     <string name="ofis_update_overdue">Esta versión está desactualizada, debes actualizarla para seguir utilizándola. Toca el ícono de Ajustes en la parte superior derecha para actualizarla.</string>
     <string name="ofis_request_help">Ayuda</string>
     <string name="Your_Name">Tu nombre</string>
+    <string name="Your_phone_number">Tu Número de teléfono</string>
     <string name="problem_description">Describe el problema que tienes</string>
     <plurals name="days_left_to_update">
         <item quantity="one">La aplicación debe ser actualizada cada 30 días. Tienes %1d día para actualizarla</item>

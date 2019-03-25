@@ -259,6 +259,7 @@
     <string name="ofis_update_overdue">Bu uygulama versiyonu şu anda güncel değil. Kullanmaya devam etmeden önce uygulamayı güncellemeniz gerekiyor. Güncellemek için sağ üst taraftaki ayarlar ikonuna dokunun</string>
     <string name="ofis_request_help">Yardım İsteyin</string>
     <string name="Your_Name">Adınız</string>
+    <string name="Your_phone_number">Telefon numarası</string>
     <string name="problem_description">Probleminizi açıklayın</string>
     <plurals name="days_left_to_update">
         <item quantity="one">30 gün sonra versiyon güncellemesi gerekmektedir. Güncelleme için %1d gününüz kaldı</item>
