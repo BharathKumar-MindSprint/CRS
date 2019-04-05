@@ -160,6 +160,22 @@ android {
             resValue "string", "client_secret", 'xGfAz5zSFTJDHcWWcEQR19hNx9zA30NeZOQuxdnr'
         }
 
+        preprod {
+            applicationId "com.olam.digital.ofispreprod"
+
+            resValue "string", "contentprovider_authorities", applicationId + '.provider'
+            resValue "string", "sync_account_type", applicationId
+            buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofispreprod"'
+            buildConfigField 'String', 'MICROSERVICE_HOST', '"http://137.116.145.198:8080/"'
+            // New SIT DNS name
+            // https://otofis-zuul.olamdigital.com/
+
+            resValue "string", "applicationName", "OFIS Preprod"
+            resValue "string", "AUTH_SERVER_URL", 'https://ofisot-zuul-preprod.olamdigital.com/oauth/api/v1/oauth/'
+            buildConfigField 'String', 'HOST', '"https://ofisot-zuul-preprod.olamdigital.com/"'
+            resValue "string", "client_secret", 'xGfAz5zSFTJDHcWWcEQR19hNx9zA30NeZOQuxdnr'
+        }
+
         //noinspection GroovyMissingReturnStatement
         prod {
             applicationId "com.olam.digital.ofis"
