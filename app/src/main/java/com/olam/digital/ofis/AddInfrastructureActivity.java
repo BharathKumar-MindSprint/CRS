@@ -61,6 +61,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Hashtable;
+import java.util.Locale;
 import java.util.UUID;
 
 public class AddInfrastructureActivity extends BaseActivity {
@@ -626,19 +627,54 @@ public class AddInfrastructureActivity extends BaseActivity {
         return moduleDTOS;
     }
 
+  /*
+  Old submodule code
+   */
+//    private ArrayList<SubModuleDTO> getSubModules(long moduleId) {
+//        subModules = dl.getSipSubmodulesByModuleId(moduleId);
+//        subModuleDTOS = new ArrayList<SubModuleDTO>();
+//        SubModuleDTO subModuleDTO;
+//        while (subModules.moveToNext()) {
+//            subModuleDTO = new SubModuleDTO();
+//            subModuleDTO.setId(subModules.getInt(subModules.getColumnIndex(OFISDBContract.SipSubGroupEntry.COLUMN_NAME_ID)));
+//            subModuleDTO.setSipName(subModules.getString(subModules.getColumnIndex(OFISDBContract.SipSubGroupEntry.COLUMN_NAME_NAME)));
+//            subModuleDTOS.add(subModuleDTO);
+//        }
+//        return subModuleDTOS;
+//    }
 
+    /*
+      Old submodule code - O20HS-57
+       */
     private ArrayList<SubModuleDTO> getSubModules(long moduleId) {
         subModules = dl.getSipSubmodulesByModuleId(moduleId);
         subModuleDTOS = new ArrayList<SubModuleDTO>();
         SubModuleDTO subModuleDTO;
+
+
+        // Code added for support multiple language
+        String local_language=OFISDBContract.SipSubGroupEntry.COLUMN_NAME_NAME+"_"+ Locale.getDefault().getLanguage();
+        boolean available=false;
+        int length=subModules.getColumnCount();
+        for (int i=0;i < length;i++){
+            if(subModules.getColumnName(i).trim().toString().equalsIgnoreCase(local_language)){
+                available=true;
+            }
+        }
+        if(!available){
+            local_language=OFISDBContract.SipSubGroupEntry.COLUMN_NAME_NAME;
+        }
+
         while (subModules.moveToNext()) {
             subModuleDTO = new SubModuleDTO();
             subModuleDTO.setId(subModules.getInt(subModules.getColumnIndex(OFISDBContract.SipSubGroupEntry.COLUMN_NAME_ID)));
-            subModuleDTO.setSipName(subModules.getString(subModules.getColumnIndex(OFISDBContract.SipSubGroupEntry.COLUMN_NAME_NAME)));
+//            subModuleDTO.setSipName(subModules.getString(subModules.getColumnIndex(OFISDBContract.SipSubGroupEntry.COLUMN_NAME_NAME)));
+            subModuleDTO.setSipName(subModules.getString(subModules.getColumnIndex(local_language)));
             subModuleDTOS.add(subModuleDTO);
         }
         return subModuleDTOS;
     }
+
 
     private void getSubModuleQuestions(int subModuleId) {
         if (subModuleId != 0) {

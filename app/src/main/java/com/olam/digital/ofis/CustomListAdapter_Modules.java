@@ -210,6 +210,11 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                                     // get last submitted date
                                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
                                     Calendar lastSubmittedDate = Calendar.getInstance();
+
+                                    //O20HS-84 - To enable the annual survey.
+                                    calculationDate = (Calendar) currentDate.clone();
+                                    //
+
                                     try {
                                         lastSubmittedDate.setTime(sdf.parse(submittedModuleDetails.getString("created_at")));
                                     } catch (ParseException e){
