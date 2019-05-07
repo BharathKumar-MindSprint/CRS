@@ -237,7 +237,8 @@ public class SettingsActivity extends Activity implements OnAccessTokenInterface
                 String helpPhoneNo = phoneNo.getText().toString();
                 String helpDescription = faultDescription.getText().toString();
 
-                if (helpName.length() > 0 && helpPhoneNo.length() > 0 && helpDescription.length() > 0) {
+
+                if (helpName.length() > 0 && helpDescription.length() > 0) {
                     NetworkLayer nl = new NetworkLayer(context, getResources());
 
                     if (nl.isPhoneOnline()) {
@@ -248,7 +249,7 @@ public class SettingsActivity extends Activity implements OnAccessTokenInterface
                     }
 
                 } else {
-                    Toast.makeText(context, R.string.Please_fill_all_fields, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, R.string.Please_fill_required_fields, Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -428,6 +429,7 @@ public class SettingsActivity extends Activity implements OnAccessTokenInterface
                             public void run() {
                                 name.setText("");
                                 faultDescription.setText("");
+                                phoneNo.setText("");
                                 helpRequestHolder.startAnimation(mSlideBottomDown);
                             }
                         });

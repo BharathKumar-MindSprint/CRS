@@ -74,6 +74,7 @@
     <string name="Gallery">Galeri</string>
     <string name="Please_wait">Mohon Tunggu</string>
     <string name="Please_fill_all_fields">Mohon diisi semua kolom</string>
+    <string name="Please_fill_required_fields">PSilakan isi Nama dan Deskripsi</string>
     <string name="id_not_unique">ID Petani tidak unik, Mohon dicoba lagi</string>
     <string name="Submitting_data">Memasukkan data…</string>
     <string name="Farmer_Added">Petani ditambahkan!</string>

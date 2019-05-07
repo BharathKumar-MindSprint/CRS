@@ -74,6 +74,7 @@
     <string name="Gallery">Galería</string>
     <string name="Please_wait">Favor espere…</string>
     <string name="Please_fill_all_fields">Por favor llene todos los campos</string>
+    <string name="Please_fill_required_fields">Por favor llene Nombre y Descripción</string>
     <string name="id_not_unique">Identificación de agricultor NO es ÚNICA, por favor intente otra vez</string>
     <string name="Submitting_data">Enviando información…</string>
     <string name="Farmer_Added">Agricultor agregado!</string>

@@ -74,6 +74,8 @@
     <string name="Gallery">คลังภาพ</string>
     <string name="Please_wait">โปรดรอซักครู่</string>
     <string name="Please_fill_all_fields">กรุณากรอกข้อมูลทั้งหมด</string>
+    <string name="Please_fill_required_fields">กรุณากรอกชื่อและรายละเอียด</string>
+
     <string name="id_not_unique">รหัสเกษตรกรซ้ำกับรายอื่น โปรดลองอีกครั้ง</string>
     <string name="Submitting_data">กำลังส่งข้อมูล</string>
     <string name="Farmer_Added">เพิ่มเกษตรกรสำเร็จ!</string>
