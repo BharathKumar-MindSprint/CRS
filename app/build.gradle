@@ -32,7 +32,7 @@ android {
         config {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
-            storeFile file('debug.keystore')
+            storeFile file('debug-uat.keystore')
             storePassword 'android'
         }
     }
