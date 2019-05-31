@@ -37,7 +37,7 @@ class UpdateSipModuleListsTask extends DatabaseTask {
                 JSONObject response = sipModuleResponse.getJSONObject("outputdata");
 
                 // get the various sub lists
-                JSONArray sipGroupArray, sipSubGroupArray, moduelassignmentArray, datatypeArray, lookupvalueArray, questionArray;
+                JSONArray sipGroupArray, sipSubGroupArray, moduelassignmentArray, datatypeArray, lookupvalueArray, questionArray, productArray;
                 try {
                     sipGroupArray = response.getJSONArray(OFISDBContract.SipGroupEntry.TABLE_NAME);
                     fillTable(sipGroupArray, OFISDBContract.SipGroupEntry.TABLE_NAME, OFISDBContract.SipGroupEntry.COLUMN_LIST);
@@ -77,6 +77,14 @@ class UpdateSipModuleListsTask extends DatabaseTask {
                     questionArray = response.getJSONArray("sipQuestions");
                     fillTable(questionArray, OFISDBContract.QuestionSipEntry.TABLE_NAME, OFISDBContract.QuestionSipEntry.COLUMN_LIST);
                 } catch (JSONException e) {
+                    FirebaseCrash.report(new Exception("UpdateModuleListsTask: Error filling questions table", e));
+                    e.printStackTrace();
+                }
+                try {
+                    productArray = response.getJSONArray("products");
+                    fillTable(productArray, OFISDBContract.productSipEntry.TABLE_NAME, OFISDBContract.productSipEntry.COLUMN_LIST);
+                } catch (JSONException e) {
+                    System.out.println("Error while adding ProductSIP");
                     FirebaseCrash.report(new Exception("UpdateModuleListsTask: Error filling questions table", e));
                     e.printStackTrace();
                 }
