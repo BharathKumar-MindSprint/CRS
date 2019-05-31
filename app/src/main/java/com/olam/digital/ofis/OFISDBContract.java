@@ -184,6 +184,27 @@ public class OFISDBContract {
         );
     }
 
+
+    public static abstract class productSipEntry implements BaseColumns {
+        public static final String TABLE_NAME = "products_sip";
+        public static final String COLUMN_NAME_ID = "id";
+        public static final String COLUMN_NAME_PRODUCT_ID = "productId";
+        public static final String COLUMN_NAME_PRODUCT_NAME = "productName";
+//        public static final String COLUMN_NAME_DELETED_FLAG = "deletedFlag";
+//        public static final String COLUMN_NAME_TRANS_LIST = "translationsList";
+
+        public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
+                new ArrayList<String>() {{
+                    add(COLUMN_NAME_ID);
+                    add(COLUMN_NAME_PRODUCT_ID);
+                    add(COLUMN_NAME_PRODUCT_NAME);
+//                    add(COLUMN_NAME_DELETED_FLAG);
+//                    add(COLUMN_NAME_TRANS_LIST);
+
+                }}
+        );
+    }
+
     public static abstract class AnswerSipEntry implements BaseColumns {
         public static final String TABLE_NAME = "answers_sip";
         public static final String COLUMN_NAME_ID = "id";
@@ -1643,6 +1664,7 @@ public class OFISDBContract {
                 put(FarmManagementPlanCurrentValuesEntry.TABLE_NAME, FarmManagementPlanCurrentValuesEntry.COLUMN_LIST);
                 put(Subquestionanswer.TABLE_NAME, Subquestionanswer.COLUMN_LIST);
                 put(countryLookUpValuesEntry.TABLE_NAME, countryLookUpValuesEntry.COLUMN_LIST);
+                put(productSipEntry.TABLE_NAME, productSipEntry.COLUMN_LIST);
             }};
 
 

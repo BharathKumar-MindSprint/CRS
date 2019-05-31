@@ -111,6 +111,7 @@ public class AddInfrastructureActivity extends BaseActivity {
 
     private Spinner subModulesSpinner;
     private Spinner modulesSpinner;
+    private Spinner productSpinner;
 //    private boolean spinners_ready = false;
 
 
@@ -178,7 +179,7 @@ public class AddInfrastructureActivity extends BaseActivity {
         poiName = (EditText) findViewById(R.id.poiName);
         subModulesSpinner = (Spinner) findViewById(R.id.spinner_submodules);
         modulesSpinner = (Spinner) findViewById(R.id.spinner_modules);
-
+        productSpinner = (Spinner) findViewById(R.id.spinner_product);
         requestLocation = (ImageButton) findViewById(R.id.requestLocation);
         if(!editMode)
             searchingGPS();
@@ -485,7 +486,7 @@ public class AddInfrastructureActivity extends BaseActivity {
             values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_COUNTRY_ID, country_id);
             values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_REGION_ID, region_id);
             values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_DISTRICT_ID, district_id);
-
+            values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PRODUCT_ID, String.valueOf(productSpinner.getSelectedItem()));
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
             values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT, timestamp.toString());
             values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPDATED_AT, timestamp.toString());
