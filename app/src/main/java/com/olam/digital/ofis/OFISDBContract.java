@@ -195,9 +195,9 @@ public class OFISDBContract {
 
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
+                    add(COLUMN_NAME_PRODUCT_NAME);
                     add(COLUMN_NAME_ID);
                     add(COLUMN_NAME_PRODUCT_ID);
-                    add(COLUMN_NAME_PRODUCT_NAME);
 //                    add(COLUMN_NAME_DELETED_FLAG);
 //                    add(COLUMN_NAME_TRANS_LIST);
 
