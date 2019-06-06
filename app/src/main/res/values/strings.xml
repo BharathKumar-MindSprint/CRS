@@ -477,6 +477,7 @@
     <string name="fill_country">Please fill the country</string>
     <string name="fill_region">Please fill the region</string>
     <string name="fill_district">Please fill the district</string>
+    <string name="fill_farmergroup_name">Please fill the farmer group name</string>
     <string name="fill_GPS_position">Please fill the GPS position</string>
     <string name="please_answer_all_questions">Please answer all questions</string>
     <string name="updating_sip_training">Updating Social Infrastructure Points</string>
