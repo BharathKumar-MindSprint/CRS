@@ -297,7 +297,7 @@
                 android:id="@+id/poiName"
                 android:textColor="@color/ofis_base_font_white"
                 android:textSize="@dimen/ofis_input_field_text"
-                android:maxLength="100"
+                android:maxLength="50"
                 android:layout_marginBottom="@dimen/ofis_input_field_bottom_margin"
                 android:hint="@string/Name"
                 android:textColorHint="@color/ofis_base_font_white"
