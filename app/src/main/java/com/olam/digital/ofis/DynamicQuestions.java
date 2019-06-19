@@ -58,6 +58,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import okhttp3.internal.Util;
+
 /**
  * Created by ben on 02/06/2015.
  */
@@ -751,8 +753,10 @@ class DynamicQuestions {
                 if ((!showDay) && (!showMonth) && (showyear)) {
                     // just the year, show the fifty year dropdown instead
                     final Spinner spinner = (Spinner) inflater.inflate(R.layout.module_spinner, (isRepeaterItem) ? parentLayout : questionWrapper, false);
-                    String[] since1950 = Utilities.since1950();
-                    ArrayAdapter<String> adapter = new ArrayAdapter<>(context, R.layout.spinner_item, since1950);
+                  //  String[] since1950 = Utilities.since1950();
+                    String[] since1900= Utilities.since1900();
+
+                    ArrayAdapter<String> adapter = new ArrayAdapter<>(context, R.layout.spinner_item, since1900);
                     adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
                     spinner.setAdapter(adapter);
 
@@ -907,8 +911,9 @@ class DynamicQuestions {
                 if ((!showDay) && (!showMonth) && (showyear)) {
                     // just the year, show the fifty year dropdown instead
                     final Spinner spinner = (Spinner) inflater.inflate(R.layout.module_spinner, (isRepeaterItem) ? parentLayout : questionWrapper, false);
-                    String[] since1950 = Utilities.since1950();
-                    ArrayAdapter<String> adapter = new ArrayAdapter<>(context, R.layout.spinner_item, since1950);
+                  //  String[] since1950 = Utilities.since1950();
+                    String[] since1900= Utilities.since1900();
+                    ArrayAdapter<String> adapter = new ArrayAdapter<>(context, R.layout.spinner_item, since1900);
                     adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
                     spinner.setAdapter(adapter);
 
@@ -3324,8 +3329,9 @@ class DynamicQuestions {
                 if ((!showDay) && (!showMonth) && (showyear)) {
                     // just the year, show the fifty year dropdown instead
                     final Spinner spinner = (Spinner) inflater.inflate(R.layout.module_spinner, (isRepeaterItem) ? parentLayout : questionWrapper, false);
-                    String[] since1950 = Utilities.since1950();
-                    ArrayAdapter<String> adapter = new ArrayAdapter<>(context, R.layout.spinner_item, since1950);
+                   // String[] since1950 = Utilities.since1950();
+                    String[] since1900= Utilities.since1900();
+                    ArrayAdapter<String> adapter = new ArrayAdapter<>(context, R.layout.spinner_item, since1900);
                     adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
                     spinner.setAdapter(adapter);
 
