@@ -39,11 +39,11 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
     private final LayoutInflater inflater;
     private final Resources res;
     private final boolean hasSubmittedModules;
-    private JSONArray submittedModulesArray;
-    private String moduleColumnSuffix = "";
     private final Calendar currentDate;
     private final DataLayer dl;
     private final Context mContext;
+    private JSONArray submittedModulesArray;
+    private String moduleColumnSuffix = "";
 
     CustomListAdapter_Modules(Context c, Cursor cursor, String[] adapterCols, int[] adapterRowViews, Resources res_, Cursor farmer, JSONObject submittedModules_) throws JSONException {
         super(c, R.layout.listview_module_list, cursor, adapterCols, adapterRowViews, 0);
@@ -78,7 +78,7 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
         TextView textView = (TextView) view.findViewById(R.id.moduleListModuleStatus);
         TextView enabledItem = (TextView) view.findViewById(R.id.moduleListEnabled);
         boolean submitted = false;
-        Log.d("CustomListAdapter", "moduleTitle"+ moduleTitle.getText().toString() + ", SecText" + textView.getText().toString());
+        Log.d("CustomListAdapter", "moduleTitle" + moduleTitle.getText().toString() + ", SecText" + textView.getText().toString());
 
 
         if (currentId == 0) {
@@ -95,16 +95,16 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                     moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
                     textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
                     try {
-                        if (currentFarmer.getInt(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_SYNCED)) == 0){
-                            if(dl.isIdAvailablePhoneDB(currentFarmer.getLong(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)))){
+                        if (currentFarmer.getInt(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_SYNCED)) == 0) {
+                            if (dl.isIdAvailablePhoneDB(currentFarmer.getLong(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)))) {
                                 textView.setText(res.getString(R.string.phone_number_recorded));
-                            }else{
+                            } else {
                                 textView.setText(res.getString(R.string.module_finished));
                             }
-                        }else{
+                        } else {
                             textView.setText(res.getString(R.string.phone_number_recorded));
                         }
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         textView.setText(res.getString(R.string.phone_number_recorded));
                     }
                 } else {
@@ -131,13 +131,13 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                     textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
                     textView.setText(res.getString(R.string.plot_recording_module_finished));
                 } else {*/
-                    imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_record_polygon));
-                    enabledItem.setText("true");
+                imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_record_polygon));
+                enabledItem.setText("true");
 
-                    linearLayout.setBackgroundResource(R.drawable.list_item);
-                    moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
-                    textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
-                    textView.setText(res.getString(R.string.update_phone_numbers_hint));
+                linearLayout.setBackgroundResource(R.drawable.list_item);
+                moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
+                textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
+                textView.setText(res.getString(R.string.update_phone_numbers_hint));
                 //}
             } else {
                 String currentLat = currentFarmer.getString(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_PRIMARY_LAT));
@@ -217,7 +217,7 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
 
                                     try {
                                         lastSubmittedDate.setTime(sdf.parse(submittedModuleDetails.getString("created_at")));
-                                    } catch (ParseException e){
+                                    } catch (ParseException e) {
                                         FirebaseCrash.report(new Exception("CustomListAdapter_Modules: Error setting recurrence date values", e));
                                         e.printStackTrace();
                                     }
@@ -251,7 +251,7 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                                             disable_entry = true;
                                         }
                                     }
-                                } catch (Exception e){
+                                } catch (Exception e) {
                                     e.printStackTrace();
                                 }
                             } else {
@@ -276,7 +276,7 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                 } catch (JSONException e) {
                     FirebaseCrash.report(new Exception("CustomListAdapter_Modules: Error setting recurrence values", e));
                     e.printStackTrace();
-                } catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }

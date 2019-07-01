@@ -10,7 +10,7 @@ import android.database.sqlite.SQLiteOpenHelper;
  */
 class OFISDB extends SQLiteOpenHelper {
     private static OFISDB sInstance;
-    private static final int DATABASE_VERSION = 82;
+    private static final int DATABASE_VERSION = 81;
     private static final String DATABASE_NAME = "ofismobile";
 
     // create tables
