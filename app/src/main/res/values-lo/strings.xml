@@ -74,6 +74,7 @@
     <string name="Gallery">ຮູບ​</string>
     <string name="Please_wait">ກະ​ລຸ​ນາ​ລໍ​ຖ້າ</string>
     <string name="Please_fill_all_fields">ກະ​ລຸ​ນາ​ເຕີມ​​ບ່ອນຫ່​ວາ​ງ​ທັງ​ໝົດ​ຂອງ​ສະ​ໜາມ</string>
+    <string name="Please_fill_required_fields">ກະລຸນາຕື່ມຊື່ແລະຄໍາອະທິບາຍ</string>
     <string name="id_not_unique">ເລກ​ບັດ​ຊາວ​ສວນນັ້ນ​ບໍ່​ຄື​ກັນ, ກ​ະ​ລຸ​ນາ​ລອງ​ອີກ​ຄັ້ງ</string>
     <string name="Submitting_data">ການ​ຍືນ​ຢັນ​ຂໍ້​ມູນ</string>
     <string name="Farmer_Added">​ເອົ​າ​ຊື່​ຊາວ​ສວນ​ເຂົ້າ​ແລ້ວ</string>

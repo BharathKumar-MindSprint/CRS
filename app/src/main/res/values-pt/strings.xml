@@ -74,6 +74,7 @@
     <string name="Gallery">Galeria</string>
     <string name="Please_wait">Aguarde um momento por favor…</string>
     <string name="Please_fill_all_fields">Pro favor, preencha todos os campos</string>
+    <string name="Please_fill_required_fields">Por favor, preencha o Nome e Descrição</string>
     <string name="id_not_unique">Este ID do produtor não é único, tente novamente</string>
     <string name="Submitting_data">Submetendo dados…</string>
     <string name="Farmer_Added">Produtor adicionado!</string>

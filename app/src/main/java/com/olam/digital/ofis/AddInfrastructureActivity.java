@@ -61,6 +61,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Hashtable;
+import java.util.Locale;
 import java.util.UUID;
 
 public class AddInfrastructureActivity extends BaseActivity {
@@ -73,6 +74,7 @@ public class AddInfrastructureActivity extends BaseActivity {
     private int selectedDistrict = 0;
     private int selectedProduct = 0;
     private int selectedFarmerGroup = 0;
+    private int selectedSection=0;
 
     // for GPS location system
     private EditText gpsField;
@@ -226,6 +228,7 @@ public class AddInfrastructureActivity extends BaseActivity {
 
         int selectedPlace = 0;
         dl.createGeographyHierarchySpinners(this, context, null, selectedCountry, selectedRegion, selectedDistrict, selectedPlace, null);
+        dl.createBusinessHierarchySpinners(this, context, null, selectedFarmerGroup, selectedSection);
         bindSaveButton();
     }
 
@@ -428,6 +431,8 @@ public class AddInfrastructureActivity extends BaseActivity {
         selectedRegion = existingItem.getInt(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_REGION_ID));
         selectedDistrict = existingItem.getInt(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_DISTRICT_ID));
         selectedProduct = existingItem.getInt(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PRODUCT_ID));
+        selectedFarmerGroup = existingItem.getInt(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMERGROUP_ID));
+
     }
 
     private ContentValues validateValues() {
@@ -459,6 +464,16 @@ public class AddInfrastructureActivity extends BaseActivity {
             return values;
         }
 
+        Spinner spinner_farmer_group = (Spinner) findViewById(R.id.spinner_farmerGroup);
+        long farmergroup_id = spinner_farmer_group.getSelectedItemId();
+        if (farmergroup_id < 1) {
+
+            Toast.makeText(context, res.getString(R.string.fill_farmergroup_name), Toast.LENGTH_LONG).show();
+
+            return values;
+        }
+
+
         if (poiLocation == null && !editMode) {
             Toast.makeText(context, res.getString(R.string.fill_GPS_position), Toast.LENGTH_LONG).show();
 
@@ -484,6 +499,7 @@ public class AddInfrastructureActivity extends BaseActivity {
             values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_COUNTRY_ID, country_id);
             values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_REGION_ID, region_id);
             values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_DISTRICT_ID, district_id);
+            values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMERGROUP_ID, farmergroup_id);
 
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
             values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT, timestamp.toString());
@@ -626,19 +642,54 @@ public class AddInfrastructureActivity extends BaseActivity {
         return moduleDTOS;
     }
 
+  /*
+  Old submodule code
+   */
+//    private ArrayList<SubModuleDTO> getSubModules(long moduleId) {
+//        subModules = dl.getSipSubmodulesByModuleId(moduleId);
+//        subModuleDTOS = new ArrayList<SubModuleDTO>();
+//        SubModuleDTO subModuleDTO;
+//        while (subModules.moveToNext()) {
+//            subModuleDTO = new SubModuleDTO();
+//            subModuleDTO.setId(subModules.getInt(subModules.getColumnIndex(OFISDBContract.SipSubGroupEntry.COLUMN_NAME_ID)));
+//            subModuleDTO.setSipName(subModules.getString(subModules.getColumnIndex(OFISDBContract.SipSubGroupEntry.COLUMN_NAME_NAME)));
+//            subModuleDTOS.add(subModuleDTO);
+//        }
+//        return subModuleDTOS;
+//    }
 
+    /*
+      Old submodule code - O20HS-57
+       */
     private ArrayList<SubModuleDTO> getSubModules(long moduleId) {
         subModules = dl.getSipSubmodulesByModuleId(moduleId);
         subModuleDTOS = new ArrayList<SubModuleDTO>();
         SubModuleDTO subModuleDTO;
+
+
+        // Code added for support multiple language
+        String local_language=OFISDBContract.SipSubGroupEntry.COLUMN_NAME_NAME+"_"+ Locale.getDefault().getLanguage();
+        boolean available=false;
+        int length=subModules.getColumnCount();
+        for (int i=0;i < length;i++){
+            if(subModules.getColumnName(i).trim().toString().equalsIgnoreCase(local_language)){
+                available=true;
+            }
+        }
+        if(!available){
+            local_language=OFISDBContract.SipSubGroupEntry.COLUMN_NAME_NAME;
+        }
+
         while (subModules.moveToNext()) {
             subModuleDTO = new SubModuleDTO();
             subModuleDTO.setId(subModules.getInt(subModules.getColumnIndex(OFISDBContract.SipSubGroupEntry.COLUMN_NAME_ID)));
-            subModuleDTO.setSipName(subModules.getString(subModules.getColumnIndex(OFISDBContract.SipSubGroupEntry.COLUMN_NAME_NAME)));
+//            subModuleDTO.setSipName(subModules.getString(subModules.getColumnIndex(OFISDBContract.SipSubGroupEntry.COLUMN_NAME_NAME)));
+            subModuleDTO.setSipName(subModules.getString(subModules.getColumnIndex(local_language)));
             subModuleDTOS.add(subModuleDTO);
         }
         return subModuleDTOS;
     }
+
 
     private void getSubModuleQuestions(int subModuleId) {
         if (subModuleId != 0) {
