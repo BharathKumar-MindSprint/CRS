@@ -74,6 +74,7 @@
     <string name="Gallery">Galerie</string>
     <string name="Please_wait">Veuillez patienter</string>
     <string name="Please_fill_all_fields">Veuillez remplir tous les champs</string>
+    <string name="Please_fill_required_fields">S\'il vous plaît remplir Nom et Description</string>
     <string name="id_not_unique">Le numéro de référence du planteur n\'est pas unique. Veuillez réessayer svp</string>
     <string name="Submitting_data">Transmission de données…</string>
     <string name="Farmer_Added">Planteur ajouté</string>

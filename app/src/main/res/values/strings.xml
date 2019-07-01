@@ -119,6 +119,8 @@
     <string name="Gallery">Gallery</string>
     <string name="Please_wait">Please wait…</string>
     <string name="Please_fill_all_fields">Please fill all fields</string>
+    <string name="Please_fill_required_fields">Please fill Name and Description</string>
+
     <string name="duplicate_phone_number">Duplicate Phone number is not allow. Please check Phone number entries</string>
     <string name="id_not_unique">That farmer id is not unique, please try again</string>
     <string name="Submitting_data">Submitting data …</string>
@@ -475,6 +477,7 @@
     <string name="fill_country">Please fill the country</string>
     <string name="fill_region">Please fill the region</string>
     <string name="fill_district">Please fill the district</string>
+    <string name="fill_farmergroup_name">Please fill the farmer group name</string>
     <string name="fill_GPS_position">Please fill the GPS position</string>
     <string name="please_answer_all_questions">Please answer all questions</string>
     <string name="updating_sip_training">Updating Social Infrastructure Points</string>

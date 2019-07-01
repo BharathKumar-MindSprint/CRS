@@ -74,6 +74,7 @@
     <string name="Gallery">Galeri</string>
     <string name="Please_wait">Lütfen bekleyin…</string>
     <string name="Please_fill_all_fields">Lütfen bütün sahaları doldurun</string>
+    <string name="Please_fill_required_fields">Lütfen Ad ve Açıklama\'yı doldurun</string>
     <string name="id_not_unique">Çiftçi kimlik numarası özgün değil, tekrar deneyin</string>
     <string name="Submitting_data">Veri iletiyor…</string>
     <string name="Farmer_Added">Çiftçi Eklendi!</string>

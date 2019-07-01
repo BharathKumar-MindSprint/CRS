@@ -74,6 +74,7 @@
     <string name="Gallery">Thư viện</string>
     <string name="Please_wait">Xin chờ trong giây lát…</string>
     <string name="Please_fill_all_fields">Hãy điền vào tất cả các trường</string>
+    <string name="Please_fill_required_fields">Vui lòng điền tên và mô tả</string>
     <string name="id_not_unique">Mã số nông hộ này không phải duy nhất, hãy thử lại</string>
     <string name="Submitting_data">Đang gửi dữ liệu…</string>
     <string name="Farmer_Added">Nông hộ đã được thêm !</string>

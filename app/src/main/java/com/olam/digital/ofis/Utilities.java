@@ -117,6 +117,17 @@ public  static String base64ConversionForImage(String filepath)  {
         return since1950;
     }
 
+    static String[] since1900() {
+        int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+        int difference = currentYear - 1900;
+        String[] since1900 = new String[difference];
+
+        for (int i = 0; i < difference; i++) {
+            since1900[i] = String.valueOf(currentYear - i);
+        }
+        return since1900;
+    }
+
     public static SQLiteDatabase getWriteableDb(Context context) {
         OFISDB ofisdb = OFISDB.getInstance(context);
         return ofisdb.getWritableDatabase();

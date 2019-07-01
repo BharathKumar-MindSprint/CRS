@@ -1291,15 +1291,26 @@ public class DataLayer {
                 for (int i = 0; i < columnList.size(); i++) {
                     tableColumns[i] = (columnList.get(i).equals("country_id")) ? columnList.get(i) + " AS _id" : columnList.get(i);
                 }
-            }else {
+            }
+            else if(OFISDBContract.productSipEntry.TABLE_NAME.trim().toLowerCase().equals(table.trim().toLowerCase())){
+                for (int i = 0; i < columnList.size(); i++) {
+                    tableColumns[i] = (columnList.get(i).equals("productId")) ? columnList.get(i) + " AS _id" : columnList.get(i);
+//                    tableColumns[i] = columnList.get(i);
+                }
+            }
+            else {
                 for (int i = 0; i < columnList.size(); i++) {
                     tableColumns[i] = (columnList.get(i).equals("id")) ? columnList.get(i) + " AS _id" : columnList.get(i);
                 }
             }
             String querySelection = (getByRelationship) ? getByColumnName + " = ?" : null;
             String[] querySelectionValue = (getByRelationship) ? new String[]{String.valueOf(getByColumnValue)} : null;
-            String orderByValue = (orderByColumn) ? orderByColumnName + " " + "ASC" : null;
-
+            String orderByValue;
+            if(OFISDBContract.productSipEntry.TABLE_NAME.trim().toLowerCase().equals(table.trim().toLowerCase())){
+                orderByValue = OFISDBContract.productSipEntry.COLUMN_NAME_PRODUCT_NAME + " " + "ASC";
+            }else{
+                orderByValue = (orderByColumn) ? orderByColumnName + " " + "ASC" : null;
+            }
             return db.query(table, tableColumns, querySelection, querySelectionValue, null, null, orderByValue);
         }
 
@@ -1649,7 +1660,7 @@ public class DataLayer {
     void createProductSpinner(Activity activity, final Context context, int productSelection) {
         final Spinner productSpinner = (Spinner) activity.findViewById(R.id.spinner_product);
 
-        Cursor products = getSpinnerData(OFISDBContract.ProductsEntry.TABLE_NAME, false, null, null, true, OFISDBContract.ProductsEntry.COLUMN_NAME_PRODUCT_NAME);
+        Cursor products = getSpinnerData(OFISDBContract.productSipEntry.TABLE_NAME, false, null, null, true, OFISDBContract.productSipEntry.COLUMN_NAME_PRODUCT_NAME);
         bindDataDrivenSpinner(productSpinner, products, context, R.string.spinner_product_default, null, false);
 
         if (productSelection != 0) {
