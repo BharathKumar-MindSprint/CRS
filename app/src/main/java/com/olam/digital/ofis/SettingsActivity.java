@@ -39,6 +39,7 @@ import com.olam.digital.ofis.authentication.OnAccessTokenInterface;
 import com.olam.digital.ofis.authentication.model.AuthRequestDTO;
 import com.olam.digital.ofis.model.CountriesDTO;
 
+import org.apache.commons.io.FileUtils;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -76,6 +77,8 @@ public class SettingsActivity extends Activity implements OnAccessTokenInterface
         buttonSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // For clear cache functionality
+                FileUtils.deleteQuietly(context.getCacheDir());
                 // Request Permission only for Android Version Marshmallow and above
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     // Check Phone Permission

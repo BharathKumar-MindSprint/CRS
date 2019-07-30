@@ -17,7 +17,7 @@ apply plugin: 'com.google.firebase.firebase-perf'
 apply plugin: 'io.fabric'
 
 
-apply plugin: 'com.dynatrace.tools.android'
+/*apply plugin: 'com.dynatrace.tools.android'
 
 dynatrace {
     defaultConfig {
@@ -31,7 +31,7 @@ dynatrace {
         agentProperties 'DTXLogLevel' : 'debug'
 
     }
-}
+}*/
 
 
 //noinspection GroovyMissingReturnStatement
@@ -50,7 +50,7 @@ android {
         config {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
-            storeFile file('debug-uat.keystore')
+            storeFile file('debug.keystore')
             storePassword 'android'
         }
     }
@@ -66,8 +66,8 @@ android {
         //noinspection OldTargetApi
         targetSdkVersion 27
         multiDexEnabled true
-        versionCode 14
-        versionName "10.0.7"
+        versionCode 15
+        versionName "10.0.8"
     }
 
     buildTypes {
@@ -245,7 +245,7 @@ dependencies {
     implementation 'com.karumi:dexter:4.2.0'
     implementation 'com.jakewharton.timber:timber:4.1.0'
     //    implementation 'com.auth0.android:jwtdecode:1.2.0'
-    implementation 'com.dynatrace.agent:agent-android:7.+'
+//    implementation 'com.dynatrace.agent:agent-android:7.+'
 }
 
 apply plugin: 'com.google.gms.google-services'

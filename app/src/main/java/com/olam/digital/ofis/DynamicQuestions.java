@@ -38,6 +38,7 @@ import android.widget.TextView;
 import com.google.firebase.crash.FirebaseCrash;
 import com.olam.digital.ofis.R;
 
+import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -1299,8 +1300,9 @@ class DynamicQuestions {
             if (displayConfig.has("lookuptable")) {
                 if(OFISDBContract.countryLookUpValuesEntry.TABLE_NAME.trim().toLowerCase().equals(displayConfig.getString("lookuptable").trim().toLowerCase())){
                     spinnervalues = dl.getSpinnerData(OFISDBContract.countryLookUpValuesEntry.TABLE_NAME, false, null, null, true, "CountryName");
-                }else if(OFISDBContract.productSipEntry.TABLE_NAME.trim().toLowerCase().equals(displayConfig.getString("lookuptable").trim().toLowerCase())){
-                    spinnervalues = dl.getSpinnerData(OFISDBContract.productSipEntry.TABLE_NAME, false, null, null, true, "productName");
+               /* }else if(OFISDBContract.productSipEntry.TABLE_NAME.trim().toLowerCase().equals(displayConfig.getString("lookuptable").trim().toLowerCase())){
+                    spinnervalues = dl.getSpinnerData(OFISDBContract.productSipEntry.TABLE_NAME, false, null, null, true, "productName");*/
+
                 }
                 else{
                     spinnervalues = dl.getSpinnerData(displayConfig.getString("lookuptable"), false, null, null, true, "name");
