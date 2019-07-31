@@ -49,6 +49,26 @@ public class AuthenticationHelper {
         }
     }
 
+    //    Passcode added - Penetrsation testing
+    public void setPassode(String passcode) {
+        context.getSharedPreferences(AT_PREFS, Context.MODE_PRIVATE)
+                .edit().putString(AT_USER_PREFS, passcode).apply();
+    }
+
+    public String getPasscode() {
+        String s = context.getSharedPreferences(AT_PREFS, Context.MODE_PRIVATE)
+                .getString(AT_USER_PREFS, "");
+        if (s.equals("")) {
+            return null;
+        } else {
+            try {
+                return s;
+            } catch (Exception e) {
+                return null;
+            }
+        }
+    }
+
     public void setAuthenticationDTO(AuthenticationDTO authenticationDTO) {
         if (authenticationDTO == null) {
             context.getSharedPreferences(AT_PREFS, Context.MODE_PRIVATE)
