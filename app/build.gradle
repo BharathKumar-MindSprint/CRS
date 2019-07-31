@@ -32,7 +32,7 @@ android {
         config {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
-            storeFile file('debug-uat.keystore')
+            storeFile file('debug.keystore')
             storePassword 'android'
         }
     }
@@ -48,8 +48,8 @@ android {
         //noinspection OldTargetApi
         targetSdkVersion 27
         multiDexEnabled true
-        versionCode 13
-        versionName "10.0.6"
+        versionCode 15
+        versionName "10.0.8"
     }
 
     buildTypes {
