@@ -245,6 +245,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         String base64UniqueId = Base64.encodeToString(uniqueId.getBytes(), Base64.NO_WRAP);
         String fullUrl = getAbsoluteUrl(url);
 
+
         Request request = new Request.Builder()
                 .header("enumerator-id", base64EnumeratorId)
                 .header("imei-number", base64ImeiNumber)
@@ -256,6 +257,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 .url(fullUrl)
                 .post(requestBody)
                 .build();
+        System.out.println("okHttpMultiPartPost_Request:" + request);
         okHttpClient.newCall(request).enqueue(callback);
     }
 

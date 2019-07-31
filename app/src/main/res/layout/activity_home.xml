@@ -55,26 +55,13 @@
                 android:layout_marginBottom="@dimen/activity_vertical_margin"
                 android:hint="@string/Enumerator_ID"/>
 
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColorHint="@color/ofis_base_font_white"
-                android:textSize="@dimen/ofis_input_field_text"
-                android:id="@+id/passcode"
-                android:layout_below="@+id/enumeratorID"
-                android:textColor="@color/ofis_base_font_white"
-                android:background="@drawable/ofis_edit_text_holo_dark"
-                android:layout_marginBottom="@dimen/activity_vertical_margin"
-                android:maxLength="5"
-                android:hint="@string/Passcode"/>
-
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/ofis_first_run_save_update"
                 android:id="@+id/buttonSaveUpdate"
                 android:layout_alignParentRight="true"
-                android:layout_below="@+id/passcode"
+                android:layout_below="@+id/enumeratorID"
                 android:background="@color/ofis_action_button_background"
                 android:textColor="@color/ofis_base_font_white"
                 android:paddingLeft="15dp"

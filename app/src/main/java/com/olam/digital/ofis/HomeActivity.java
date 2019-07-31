@@ -93,7 +93,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     private NetworkLayer nl;
     private ProgressDialog m_ProgressDialog = null;
     private ProgressDialog mDialogLoading=null;
-    int checkvalue = 0;
     private boolean farmerSynced = true, autotimeEnabled = false;
     private Cursor networkQueue;
     private CustomListAdapter_NetworkQueue customListAdapter_networkQueue;
@@ -129,8 +128,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     private static final long SYNC_INTERVAL = SYNC_INTERVAL_IN_MINUTES * SECONDS_PER_MINUTE;
 
     private EditText enumeratorID;
-//    Passcode added - Penetration test
-    private EditText passcode;
     private Button saveUpdateButton;
 
     // Runtime Permission Request Code
@@ -170,8 +167,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         recordTrainingWrapper = (CardView) findViewById(R.id.recordTrainingWrapper);
 
         enumeratorID = (EditText) findViewById(R.id.enumeratorID);
-//        Passcode added - Penetration testing
-        passcode = (EditText) findViewById(R.id.passcode);
         saveUpdateButton = (Button) findViewById(R.id.buttonSaveUpdate);
         topSection = (LinearLayout) findViewById(R.id.topSectionWrapper);
 
@@ -235,10 +230,10 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                     android.Manifest.permission.ACCESS_COARSE_LOCATION}, PERMISSIONS_ACCESS_LOCATION);
 
                     return;
-                }else {
-                    System.out.println("doingAuthRequest 1");
-                    doingAuthRequest();
                 }
+
+                doingAuthRequest();
+
             }
         });
 
@@ -286,12 +281,8 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     }
 
     private void doingAuthRequest() {
-        System.out.println("doingAuthRequest");
         String userEnumerator = enumeratorID.getText().toString().trim();
-//        Passcode validation - Penetration testing
-        String userpasscode = passcode.getText().toString().trim();
-        if (userEnumerator!=null && !userEnumerator.equalsIgnoreCase("") &&
-                userpasscode!=null && !userpasscode.equalsIgnoreCase("") ){
+        if (userEnumerator!=null && !userEnumerator.equalsIgnoreCase("")){
            /* if (ContextCompat.checkSelfPermission(HomeActivity.this,
                     android.Manifest.permission.READ_PHONE_STATE)
                     != PackageManager.PERMISSION_GRANTED) {
@@ -303,7 +294,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
             }else*/ {
                 showProgress(true);
-                doAuthentication(userEnumerator,userpasscode);
+                doAuthentication(userEnumerator);
             }
         }else{
             Toast.makeText(HomeActivity.this,getString(R.string.enumerator_empty),Toast.LENGTH_LONG).show();
@@ -346,13 +337,12 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         }
     }
 
-    private void doAuthentication(String userID, String passCode) {
+    private void doAuthentication(String userID) {
         AuthRequestDTO authRequestDTO = new AuthRequestDTO();
         authRequestDTO.setLanguage(Locale.getDefault().getLanguage());
         authRequestDTO.setApplication("ofismobile");
         authRequestDTO.setUsername(userID);
-//        Passcode added - Penetration testing
-        authRequestDTO.setPasscode(passCode);
+        //authRequestDTO.setPassword("3751e350-a1d4-4db9-b045-9dc50cf544fb");
         authRequestDTO.setPassword(DeviceIDxctractor.fetchDeviceID(this));
         String firebasetoken=FirebaseInstanceId.getInstance().getToken();
         authRequestDTO.setFirebaseToken(Utilities.getFirebaseTokenSharedPrefs(HomeActivity.this));
@@ -503,10 +493,9 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
     private void firstTimeSetup() {
 
-        if (enumeratorID.getText().length() > 0 && passcode.getText().length() >0) {
+        if (enumeratorID.getText().length() > 0) {
             Utilities.saveLongToSharedPrefs(context, "VERSION_NUM", BuildConfig.VERSION_CODE);
             Utilities.saveToSharedPrefs(context, "ENUMERATOR_ID", enumeratorID.getText().toString(), null);
-            Utilities.saveToSharedPrefs(context, "PASSCODE", passcode.getText().toString(), null);
             nl.syncData();
             //nl.postFirebaseToken(FirebaseInstanceId.getInstance().getToken());
         } else {
@@ -613,8 +602,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         authRequestDTO.setLanguage(Locale.getDefault().getLanguage());
         authRequestDTO.setApplication("ofismobile");
         authRequestDTO.setUsername(Utilities.getFromSharedPrefs(HomeActivity.this));
-//      Passcode added - Penetration testing
-        authRequestDTO.setPasscode(Utilities.getFromSharedPrefs(HomeActivity.this));
+        //authRequestDTO.setPassword("3751e350-a1d4-4db9-b045-9dc50cf544fb");
         authRequestDTO.setPassword(DeviceIDxctractor.fetchDeviceID(this));
         authRequestDTO.setFirebaseToken(Utilities.getFirebaseTokenSharedPrefs(HomeActivity.this));
         authRequestDTO.setGrantType("password");
@@ -979,16 +967,22 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         if (response.isSuccessful()) {
             AuthenticationDTO authenticationDTO = response.body();
             authenticationDTO.setWillExpireAt((System.currentTimeMillis() / 1000) + authenticationDTO.getExpiresIn() / 1000);
+           /* JWT jwt = new JWT(authenticationDTO.getAccessToken());
+            long expireAt =  jwt.getExpiresAt().getTime();
 
+            System.out.print("JWTTest: Current time (in ms)" + System.currentTimeMillis()
+            + "\n Current time (in sec)" + (System.currentTimeMillis() / 1000)
+            + "\n getExpiresIn" + (authenticationDTO.getExpiresIn())
+            + "\n getExpiresIn - 60" + (authenticationDTO.getExpiresIn() -60)
+            + "\n From JWT expireAt:" + expireAt );*/
+//            authenticationDTO.setWillExpireAt(expireAt);
             new AuthenticationHelper(this).setAuthenticationDTO(authenticationDTO);
             new AuthenticationHelper(this).setUserName(enumeratorID.getText().toString());
-//           Passcode validation - Penetration testing
-            new AuthenticationHelper(this).setPassode(passcode.getText().toString());
+            //  new AppUtils().AppStatic="LogIn";
+            // Do initial check for App
+//            Utilities.isAppAlive=true;
             doInitialCheck();
-        }else if(response.code() == 423){
-            Toast.makeText(HomeActivity.this,getString(R.string.authentication_attempt),Toast.LENGTH_LONG).show();
-        }
-        else {
+        } else {
             try {
                 FabricLogsWriter.printCrashLog(TAG,"oauth/authenticate",response.code(),"Request : :  "+new Gson().toJson(getAuthRequestDTO()).toString() +"   Response :  "+response.raw().networkResponse().toString() + "user Id :" +enumeratorID.getText().toString().trim(),context);
             }catch (Exception e){}
@@ -1072,18 +1066,13 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                         Toast.makeText(this, R.string.gps_permission_denial_msg, Toast.LENGTH_LONG).show();
                         String userEnumerator = enumeratorID.getText().toString().trim();
                         if (userEnumerator!=null && !userEnumerator.equalsIgnoreCase("")){
-                            System.out.println("doingAuthRequest 2");
                             doingAuthRequest();
                         }
 
                     } else {
                         if (ActivityCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED) {
                             // Permission Allowed
-                            System.out.println("doingAuthRequest 3");
-                            if(checkvalue == 0) {
-                                checkvalue++;
-                                doingAuthRequest();
-                            }
+                            doingAuthRequest();
                         } else {
                             // Checkbox set to Never Ask Again
                             showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
