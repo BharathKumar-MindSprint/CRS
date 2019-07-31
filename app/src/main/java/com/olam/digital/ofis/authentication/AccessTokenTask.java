@@ -56,9 +56,60 @@ public class AccessTokenTask extends AsyncTask<Object, Object, String> {
                     return null;
                 }
             }else {
+           /* else {
+                //check is about to expire -> refresh -> update willExpireAt and return auth token
+                //if time left for expire -> Simply give the token back
+                Long currentTime = System.currentTimeMillis()/1000;
+                if(currentTime >= authenticationDTO.getWillExpireAt()) {
+                    AuthenticationDTO authenticationDTO = new AuthenticationHelper(mContext).getAuthenticationDTO();
+                    //
+                    AuthRequestDTO authRequestDTO = new AuthRequestDTO();
+                    authRequestDTO.setGrantType("refreshToken");
+                    authRequestDTO.setToken(authenticationDTO.getRefreshToken());
+                    AuthenticationInterface authenticationInterface =  AuthenticationClient.createService(AuthenticationInterface.class, mContext);
+                    Call<AuthenticationDTO> authCall = authenticationInterface.getRefreshToken(authRequestDTO);
+                    Response authResponse = authCall.execute();
+                    if (authResponse.isSuccessful()) {
+                        AuthenticationDTO newAuthDTO = (AuthenticationDTO) authResponse.body();
+//                        newAuthDTO.setWillExpireAt((System.currentTimeMillis()/1000) + newAuthDTO.getExpiresIn() /1000);
+                        new AuthenticationHelper(mContext).setAuthenticationDTO(newAuthDTO);
+                        return newAuthDTO.getAccessToken();
+                    } else {
+                        try {
+                            FabricLogsWriter.printCrashLog(TAG, "oAuth/authenticate",authResponse.code(), "Request : "+  new Gson().toJson(authRequestDTO) +"Response  : "+authResponse.raw().networkResponse().toString(),mContext);
+                        }catch (Exception e){}
+
+                        int statusCode = authResponse.code();
+                        return null;
+                    }
+//                    AuthRequestDTO authRequestDTO = new AuthRequestDTO();
+//                    authRequestDTO.setLanguage(Locale.getDefault().getLanguage());
+//                    authRequestDTO.setApplication("ttmobile");
+//                    authRequestDTO.setUsername(new AuthenticationHelper(mContext).getuserName());
+//                    authRequestDTO.setPassword(DeviceIDxctractor.fetchDeviceID(mContext));
+//                    authRequestDTO.setGrantType("password");
+//                    authRequestDTO.setClientId(2L);
+//                    authRequestDTO.setClientSecret(mContext.getString(R.string.client_secret));
+//                    AuthenticationInterface authenticationInterface =  AuthenticationClient.createService(AuthenticationInterface.class, mContext);
+//                    Call<AuthenticationDTO> authCall = authenticationInterface.getCoreAuthToken(authRequestDTO);
+//                    Response authResponse = authCall.execute();
+//                    if (authResponse.isSuccessful()) {
+//                        AuthenticationDTO newAuthDTO = (AuthenticationDTO) authResponse.body();
+//                        newAuthDTO.setWillExpireAt((System.currentTimeMillis()/1000) + newAuthDTO.getExpiresIn() -60);
+//                        new AuthenticationHelper(mContext).setAuthenticationDTO(newAuthDTO);
+//                        return newAuthDTO.getAccessToken();
+//                    } else {
+//                        int statusCode = authResponse.code();
+//                        return null;
+//                    }
+                } else {
+                    return authenticationDTO.getAccessToken();
+                }
+            }*/
                 return "error";
             }
         } catch (Exception e) {
+            //  Timber.d(e.getMessage());
             return null;
         }
     }
