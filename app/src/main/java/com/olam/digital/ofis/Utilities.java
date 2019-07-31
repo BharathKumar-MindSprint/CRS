@@ -164,15 +164,11 @@ public  static String base64ConversionForImage(String filepath)  {
         }
 
         editor.apply();
-//        Passcode added - Penetration testing
-        FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(context);
+
         if (prefName.equalsIgnoreCase("ENUMERATOR_ID")) {
+            FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(context);
             if (mFirebaseAnalytics != null) {
                 mFirebaseAnalytics.setUserProperty("Enumerator", value);
-            }
-        }else if(prefName.equalsIgnoreCase("PASSCODE")){
-            if (mFirebaseAnalytics != null) {
-                mFirebaseAnalytics.setUserProperty("Passcode", value);
             }
         }
     }
@@ -192,12 +188,7 @@ public  static String base64ConversionForImage(String filepath)  {
 
         return sharedPreferences.getString("ENUMERATOR_ID", "");
     }
-//  getPasscode from sharedPref - Penetration testing
-    public static String getPasscodeFromSharedPrefs(Context context) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
 
-        return sharedPreferences.getString("PASSCODE", "");
-    }
 
     public static String getFirebaseTokenSharedPrefs(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);

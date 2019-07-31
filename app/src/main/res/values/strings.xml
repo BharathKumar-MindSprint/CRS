@@ -90,7 +90,6 @@
     <!-- Settings screen related -->
     <!-- in XML -->
     <string name="Enumerator_ID">Enumerator ID</string>
-    <string name="Passcode">Passcode</string>
     <string name="send_button">Send</string>
 
     <!-- ADD POI related -->
@@ -473,8 +472,7 @@
     <string name="loggin_In">Logging In</string>
     <string name="updating_master_details">Downloading master details</string>
     <string name="authentication_failed">Authentication failed. Please try again</string>
-    <string name="authentication_attempt">Please wait for 30 minutes for your login to be enabled and try again with your same enumerator ID and Passcode</string>
-    <string name="enumerator_empty">Please enter the valid enumerator Id &amp; Passcode</string>
+    <string name="enumerator_empty">Please enter the valid enumerator Id</string>
     <string name="fill_name">Please fill the name</string>
     <string name="fill_country">Please fill the country</string>
     <string name="fill_region">Please fill the region</string>
