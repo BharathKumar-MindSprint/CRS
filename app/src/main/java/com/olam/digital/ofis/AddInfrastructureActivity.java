@@ -74,7 +74,7 @@ public class AddInfrastructureActivity extends BaseActivity {
     private int selectedDistrict = 0;
     private int selectedProduct = 0;
     private int selectedFarmerGroup = 0;
-    private int selectedSection=0;
+//    private int selectedSection=0;
 
     // for GPS location system
     private EditText gpsField;
@@ -228,7 +228,7 @@ public class AddInfrastructureActivity extends BaseActivity {
 
         int selectedPlace = 0;
         dl.createGeographyHierarchySpinners(this, context, null, selectedCountry, selectedRegion, selectedDistrict, selectedPlace, null);
-        dl.createBusinessHierarchySpinners(this, context, null, selectedFarmerGroup, selectedSection);
+//        dl.createBusinessHierarchySpinners(this, context, null, selectedFarmerGroup, selectedSection);
         bindSaveButton();
     }
 
@@ -431,7 +431,7 @@ public class AddInfrastructureActivity extends BaseActivity {
         selectedRegion = existingItem.getInt(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_REGION_ID));
         selectedDistrict = existingItem.getInt(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_DISTRICT_ID));
         selectedProduct = existingItem.getInt(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PRODUCT_ID));
-        selectedFarmerGroup = existingItem.getInt(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMERGROUP_ID));
+//        selectedFarmerGroup = existingItem.getInt(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMERGROUP_ID));
 
     }
 
@@ -464,14 +464,14 @@ public class AddInfrastructureActivity extends BaseActivity {
             return values;
         }
 
-        Spinner spinner_farmer_group = (Spinner) findViewById(R.id.spinner_farmerGroup);
+       /* Spinner spinner_farmer_group = (Spinner) findViewById(R.id.spinner_farmerGroup);
         long farmergroup_id = spinner_farmer_group.getSelectedItemId();
         if (farmergroup_id < 1) {
 
             Toast.makeText(context, res.getString(R.string.fill_farmergroup_name), Toast.LENGTH_LONG).show();
 
             return values;
-        }
+        }*/
 
 
         if (poiLocation == null && !editMode) {
@@ -499,7 +499,7 @@ public class AddInfrastructureActivity extends BaseActivity {
             values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_COUNTRY_ID, country_id);
             values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_REGION_ID, region_id);
             values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_DISTRICT_ID, district_id);
-            values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMERGROUP_ID, farmergroup_id);
+//            values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMERGROUP_ID, farmergroup_id);
 
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
             values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT, timestamp.toString());

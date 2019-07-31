@@ -16,6 +16,24 @@ repositories {
 apply plugin: 'com.google.firebase.firebase-perf'
 apply plugin: 'io.fabric'
 
+
+/*apply plugin: 'com.dynatrace.tools.android'
+
+dynatrace {
+    defaultConfig {
+//        applicationId '814a3aea-ad69-40d3-8435-f5df3a151116'
+//        beaconURL 'https://dynatrace-server.olamdigital.com:9999/mbeacon/82203a30-a89c-4afb-8009-c475586c3488'
+//        beaconURL 'https://bf78264ctr.bf.dynatrace.com/mbeacon'
+//        beaconURL 'https://52.163.121.203:9999/mbeacon/82203a30-a89c-4afb-8009-c475586c3488'
+        beaconURL 'https://eok851.dynatrace-managed.com:9999/mbeacon/82203a30-a89c-4afb-8009-c475586c3488'
+        applicationId '1bd3a5cf-7c8d-49ae-8452-7116cfccb064'
+//        agentProperties 'DTXLogLevel' : 'debug', 'DTXPrimaryDexLimit': '30000', 'DTXSecondaryDexLimit': '65000'
+        agentProperties 'DTXLogLevel' : 'debug'
+
+    }
+}*/
+
+
 //noinspection GroovyMissingReturnStatement
 android {
     dexOptions {
@@ -32,7 +50,7 @@ android {
         config {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
-            storeFile file('debug-uat.keystore')
+            storeFile file('debug.keystore')
             storePassword 'android'
         }
     }
@@ -48,8 +66,8 @@ android {
         //noinspection OldTargetApi
         targetSdkVersion 27
         multiDexEnabled true
-        versionCode 13
-        versionName "10.0.6"
+        versionCode 15
+        versionName "10.0.8"
     }
 
     buildTypes {
@@ -74,14 +92,14 @@ android {
 
     productFlavors {
         //noinspection GroovyMissingReturnStatement
-      /*  local {
-            applicationId "com.olam.digital.ofislocal"
-            resValue "string", "contentprovider_authorities", applicationId + '.provider'
-            resValue "string", "sync_account_type", applicationId
-            buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofislocal"'
-            buildConfigField 'String', 'HOST', '"http://local.ofis52.com/api/v1/"'
-        }
-*/
+        /*  local {
+              applicationId "com.olam.digital.ofislocal"
+              resValue "string", "contentprovider_authorities", applicationId + '.provider'
+              resValue "string", "sync_account_type", applicationId
+              buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofislocal"'
+              buildConfigField 'String', 'HOST', '"http://local.ofis52.com/api/v1/"'
+          }
+  */
         dev {
             applicationId "com.olam.digital.ofisdebug"
             resValue "string", "contentprovider_authorities", applicationId + '.provider'
@@ -185,7 +203,7 @@ android {
             buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofis"'
             buildConfigField 'String', 'MICROSERVICE_HOST', '"http://137.116.145.198:8080/"'
             // New SIT DNS name
-           // https://otofis-zuul.olamdigital.com/
+            // https://otofis-zuul.olamdigital.com/
 
             resValue "string", "applicationName", "OFIS Companion"
             resValue "string", "AUTH_SERVER_URL", 'https://otofis-zuul.olamdigital.com/oauth/api/v1/oauth/'
@@ -227,6 +245,7 @@ dependencies {
     implementation 'com.karumi:dexter:4.2.0'
     implementation 'com.jakewharton.timber:timber:4.1.0'
     //    implementation 'com.auth0.android:jwtdecode:1.2.0'
+//    implementation 'com.dynatrace.agent:agent-android:7.+'
 }
 
 apply plugin: 'com.google.gms.google-services'
