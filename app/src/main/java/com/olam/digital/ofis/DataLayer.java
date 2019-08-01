@@ -1305,7 +1305,7 @@ public class DataLayer {
             }
             String querySelection = (getByRelationship) ? getByColumnName + " = ?" : null;
             String[] querySelectionValue = (getByRelationship) ? new String[]{String.valueOf(getByColumnValue)} : null;
-            String orderByValue;
+            String orderByValue = (orderByColumn) ? orderByColumnName + " " + "ASC" : null;
             if(OFISDBContract.productSipEntry.TABLE_NAME.trim().toLowerCase().equals(table.trim().toLowerCase())){
                 orderByValue = OFISDBContract.productSipEntry.COLUMN_NAME_PRODUCT_NAME + " " + "ASC";
             }else{
