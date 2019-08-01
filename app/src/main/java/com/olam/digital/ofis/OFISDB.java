@@ -61,12 +61,12 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.QuestionSipEntry.COLUMN_NAME_QUESTION_VI + " TEXT, " + OFISDBContract.QuestionSipEntry.COLUMN_NAME_QUESTION_TH + " TEXT, "
             + OFISDBContract.QuestionSipEntry.COLUMN_NAME_DISPLAY_CONFIGURATION + " TEXT)";
 
-/*// SIP - product list table
+// SIP - product list table
     private static final String OFIS_PRODUCTLIST_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.productSipEntry.TABLE_NAME +
             " ( " + OFISDBContract.productSipEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + OFISDBContract.productSipEntry.COLUMN_NAME_PRODUCT_ID + " INTEGER, "
             + OFISDBContract.productSipEntry.COLUMN_NAME_PRODUCT_NAME + " TEXT)";
 //        ", " + OFISDBContract.productSipEntry.COLUMN_NAME_DELETED_FLAG + " TEXT, "
-//            + OFISDBContract.productSipEntry.COLUMN_NAME_TRANS_LIST + " TEXT)";*/
+//            + OFISDBContract.productSipEntry.COLUMN_NAME_TRANS_LIST + " TEXT)";
 
     //  Create SIP Answers Table
     private static final String OFIS_ANSWERSIP_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.AnswerSipEntry.TABLE_NAME +
@@ -545,7 +545,7 @@ class OFISDB extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(OFIS_SIPSUBGROUP_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_ANSWERSIP_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_QUESTIONSIP_TABLE_CREATE);
-//        sqLiteDatabase.execSQL(OFIS_PRODUCTLIST_TABLE_CREATE);
+        sqLiteDatabase.execSQL(OFIS_PRODUCTLIST_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_DATATYPESSIP_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_LOOKUPVALUESSIP_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_All_COUNTRIES_TABLE_CREATE);

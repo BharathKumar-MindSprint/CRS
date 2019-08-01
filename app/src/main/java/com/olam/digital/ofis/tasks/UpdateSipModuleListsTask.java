@@ -80,14 +80,14 @@ class UpdateSipModuleListsTask extends DatabaseTask {
                     FirebaseCrash.report(new Exception("UpdateModuleListsTask: Error filling questions table", e));
                     e.printStackTrace();
                 }
-                /*try {
+                try {
                     productArray = response.getJSONArray("products");
                     fillTable(productArray, OFISDBContract.productSipEntry.TABLE_NAME, OFISDBContract.productSipEntry.COLUMN_LIST);
                 } catch (JSONException e) {
                     System.out.println("Error while adding ProductSIP");
                     FirebaseCrash.report(new Exception("UpdateModuleListsTask: Error filling questions table", e));
                     e.printStackTrace();
-                }*/
+                }
             }
         } catch(JSONException e){
             FirebaseCrash.report(new Exception("UpdateModuleListsTask: Error getting module lists table response", e));
