@@ -614,7 +614,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         authRequestDTO.setApplication("ofismobile");
         authRequestDTO.setUsername(Utilities.getFromSharedPrefs(HomeActivity.this));
 //      Passcode added - Penetration testing
-        authRequestDTO.setPasscode(Utilities.getFromSharedPrefs(HomeActivity.this));
+        authRequestDTO.setPasscode(Utilities.getPasscodeFromSharedPrefs(HomeActivity.this));
         authRequestDTO.setPassword(DeviceIDxctractor.fetchDeviceID(this));
         authRequestDTO.setFirebaseToken(Utilities.getFirebaseTokenSharedPrefs(HomeActivity.this));
         authRequestDTO.setGrantType("password");
