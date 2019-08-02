@@ -10,6 +10,7 @@ public class AuthenticationHelper {
     public static final String AT_PREFS = "ATPREFS";
     public static final String AT_DATA_PREFS = "ATDATAPREFS";
     public static final String AT_USER_PREFS = "ATUSERPREFS";
+    public static final String AT_USER_PREFS_PASS = "ATUSERPREFS_PASS";
 
     public AuthenticationHelper(Context context) {
         this.context = context;
@@ -52,12 +53,12 @@ public class AuthenticationHelper {
     //    Passcode added - Penetrsation testing
     public void setPassode(String passcode) {
         context.getSharedPreferences(AT_PREFS, Context.MODE_PRIVATE)
-                .edit().putString(AT_USER_PREFS, passcode).apply();
+                .edit().putString(AT_USER_PREFS_PASS, passcode).apply();
     }
 
     public String getPasscode() {
         String s = context.getSharedPreferences(AT_PREFS, Context.MODE_PRIVATE)
-                .getString(AT_USER_PREFS, "");
+                .getString(AT_USER_PREFS_PASS, "");
         if (s.equals("")) {
             return null;
         } else {
