@@ -162,7 +162,7 @@
 
 
                 <!-- Farmer group view incorporated -Starts-->
-                <!--<TextView
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/ofis_text_field"
@@ -207,7 +207,7 @@
                         android:focusable="true"
                         android:focusableInTouchMode="true" />
 
-                </LinearLayout>-->
+                </LinearLayout>
 
 
                 <!-- Farmer group view incorporated -Ends-->

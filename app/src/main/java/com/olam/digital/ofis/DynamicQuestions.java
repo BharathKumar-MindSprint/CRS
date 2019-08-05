@@ -352,12 +352,17 @@ class DynamicQuestions {
         // get disp"lay config to see if question is required
         try {
             JSONObject displayConfig = new JSONObject(qCursor.getString(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION)));
+            if (displayConfig.has("surveyrange")) {
+                tv.setText(Html.fromHtml(tv.getText().toString() + "(Minimum range " + String.valueOf(displayConfig.getJSONObject("surveyrange").getInt("min") +
+                        " Maximum range " + String.valueOf(displayConfig.getJSONObject("surveyrange").getInt("max")) + ")" )), TextView.BufferType.SPANNABLE);
+            }
             if (displayConfig.has("display")) {
                 JSONObject display = displayConfig.getJSONObject("display");
                 if (display.optBoolean("requiredfield", false)) {
                     tv.setText(Html.fromHtml(tv.getText().toString() + "&nbsp;<sup><font color='red'>*</font></sup>"), TextView.BufferType.SPANNABLE);
                 }
             }
+
         } catch (JSONException e) {
             String questionId = "0";
             if ((qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID) != -1)) {
@@ -1300,8 +1305,8 @@ class DynamicQuestions {
             if (displayConfig.has("lookuptable")) {
                 if(OFISDBContract.countryLookUpValuesEntry.TABLE_NAME.trim().toLowerCase().equals(displayConfig.getString("lookuptable").trim().toLowerCase())){
                     spinnervalues = dl.getSpinnerData(OFISDBContract.countryLookUpValuesEntry.TABLE_NAME, false, null, null, true, "CountryName");
-               /* }else if(OFISDBContract.productSipEntry.TABLE_NAME.trim().toLowerCase().equals(displayConfig.getString("lookuptable").trim().toLowerCase())){
-                    spinnervalues = dl.getSpinnerData(OFISDBContract.productSipEntry.TABLE_NAME, false, null, null, true, "productName");*/
+                }else if(OFISDBContract.productSipEntry.TABLE_NAME.trim().toLowerCase().equals(displayConfig.getString("lookuptable").trim().toLowerCase())){
+                    spinnervalues = dl.getSpinnerData(OFISDBContract.productSipEntry.TABLE_NAME, false, null, null, true, "productName");
 
                 }
                 else{

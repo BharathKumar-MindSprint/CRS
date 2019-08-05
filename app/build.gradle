@@ -17,21 +17,18 @@ apply plugin: 'com.google.firebase.firebase-perf'
 apply plugin: 'io.fabric'
 
 
-/*apply plugin: 'com.dynatrace.tools.android'
+apply plugin: 'com.dynatrace.tools.android'
 
 dynatrace {
     defaultConfig {
-//        applicationId '814a3aea-ad69-40d3-8435-f5df3a151116'
-//        beaconURL 'https://dynatrace-server.olamdigital.com:9999/mbeacon/82203a30-a89c-4afb-8009-c475586c3488'
-//        beaconURL 'https://bf78264ctr.bf.dynatrace.com/mbeacon'
-//        beaconURL 'https://52.163.121.203:9999/mbeacon/82203a30-a89c-4afb-8009-c475586c3488'
         beaconURL 'https://eok851.dynatrace-managed.com:9999/mbeacon/82203a30-a89c-4afb-8009-c475586c3488'
         applicationId '1bd3a5cf-7c8d-49ae-8452-7116cfccb064'
-//        agentProperties 'DTXLogLevel' : 'debug', 'DTXPrimaryDexLimit': '30000', 'DTXSecondaryDexLimit': '65000'
+       /* beaconURL 'https://eok851.dynatrace-managed.com:9999/mbeacon/8f745a3a-ca48-40b4-aec4-a663c087c19f'
+        applicationId '037a8683-44f6-4b8b-ba26-5c8bd021d473'*/
         agentProperties 'DTXLogLevel' : 'debug'
 
     }
-}*/
+}
 
 
 //noinspection GroovyMissingReturnStatement
@@ -50,7 +47,7 @@ android {
         config {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
-            storeFile file('debug.keystore')
+            storeFile file('debug-uat.keystore')
             storePassword 'android'
         }
     }
@@ -245,7 +242,7 @@ dependencies {
     implementation 'com.karumi:dexter:4.2.0'
     implementation 'com.jakewharton.timber:timber:4.1.0'
     //    implementation 'com.auth0.android:jwtdecode:1.2.0'
-//    implementation 'com.dynatrace.agent:agent-android:7.+'
+    implementation 'com.dynatrace.agent:agent-android:7.+'
 }
 
 apply plugin: 'com.google.gms.google-services'
