@@ -462,4 +462,16 @@
     <string name="please_fill_farmer_name">ກະລຸນາຂຽນລາຍຊື່ຊາວສວນ.</string>
     <string name="please_fill_the">ກະລຸນາເລືອກສະຖານທີ່.</string>
     <string name="invalid_imei_msg">ການກວດສອບໄດ້ລົ້ມເຫລວ. ກະລຸນາຕິດຕໍ່ພວກເຮົາເພື່ອຂໍຄວາມຊ່ວຍເຫຼືອ</string>
+    <string name="household_question">Farmer has any children under 18 doing household?</string>
+    <string name="title_child_labour">Register Child</string>
+    <string name="inspection_question" />
+    <string name="followup_question">Any children found during follow-up?</string>
+    <string name="add_child">Add Child</string>
+    <string name="full_name">Full name</string>
+    <string name="age">Age</string>
+    <string name="add">Add</string>
+    <string name="checking_child_enumerator">Checking Child Enumerator</string>
+    <string name="visit_detail">Visit Detail</string>
+    <string name="child_visit_details_inserted" />
+    <string name="child_register_successfully">Child registered Successfully</string>
 </resources>

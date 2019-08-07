@@ -257,6 +257,22 @@
             android:name="com.olam.digital.ofis.TasksActivity"
             android:label="@string/title_activity_tasks"
             android:screenOrientation="portrait" />
+        <activity
+            android:name="com.olam.digital.ofis.childlabour.RegisterChildActivity"
+            android:label="@string/title_child_labour"
+            android:theme="@style/Theme.AppCompat"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.olam.digital.ofis.childlabour.AddNewChildActivity"
+            android:label="@string/title_child_labour"
+            android:theme="@style/Theme.AppCompat"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name="com.olam.digital.ofis.childlabour.ChildVisitDetailActivity"
+            android:label="@string/visit_detail"
+            android:theme="@style/Theme.AppCompat"
+            android:screenOrientation="portrait" />
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="a893453713a55832cf2771ee8fbe4a68b4a3b031" />

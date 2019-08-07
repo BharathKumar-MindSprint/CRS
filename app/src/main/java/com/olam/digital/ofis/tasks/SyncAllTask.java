@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.net.Uri;
 
@@ -22,6 +23,7 @@ import com.olam.digital.ofis.authentication.AuthenticationHelper;
 import com.olam.digital.ofis.authentication.AuthenticationInterface;
 import com.olam.digital.ofis.authentication.model.AuthRequestDTO;
 import com.olam.digital.ofis.authentication.model.AuthenticationDTO;
+import com.olam.digital.ofis.childlabour.ChildLabourUtils;
 import com.olam.digital.ofis.logging.FabricLogsWriter;
 
 import org.json.JSONException;
@@ -133,10 +135,14 @@ public class SyncAllTask extends SyncTask {
         } else if (op == SyncTaskOperationType.SYNC_TASKS) {
             syncTasks();
 
-        } /*else if (op == SyncTaskOperationType.SYNC_FMP) {
-            syncFMP();
+        } else if (op == SyncTaskOperationType.CHILD_ENUMERATOR) {
+            try {
+                syncChildEnumerator();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
-        }*/
+        }
 
         return null;
 
@@ -398,9 +404,8 @@ public class SyncAllTask extends SyncTask {
                                 Utilities.removeFromSharedPrefs(context, "version_update_notified_on");
                                 Utilities.removeFromSharedPrefs(context, "upgrade_by");
 
-                                publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.survey_data));
-
-                                delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_MODULES);
+                                publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.checking_child_enumerator));
+                                delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.CHILD_ENUMERATOR);
 
                             }
                         } else {
@@ -676,6 +681,54 @@ public class SyncAllTask extends SyncTask {
 
         });
     }
+
+    private void syncChildEnumerator(){
+        String endpoint="";
+        endpoint= ChildLabourUtils.CHILD_LABOUR_ENDPOINT+Utilities.getFromSharedPrefs(context);
+        final String finalEndpoint = endpoint;
+        okHttpGet(context, endpoint, null, new Callback() {
+            @Override
+            public void onResponse(Call call, final Response postResponse) {
+                try {
+                   // JSONObject response = new JSONObject(postResponse.body().string());
+                    String output=postResponse.body().string();
+                    if (postResponse.isSuccessful()) {
+                        // store the value in Child labour preferences
+                        Boolean isChild=Boolean.parseBoolean(output.trim());
+                        Utilities.setChildLabourPref(context,ChildLabourUtils.IS_CHILD_ENUMERATOR,isChild);
+
+                        publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.survey_data));
+                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_MODULES);
+                    } else {
+                        try {
+                            FabricLogsWriter.printCrashLog(TAG, finalEndpoint,postResponse.code(),postResponse.networkResponse().toString(),context);
+                        }catch (Exception e){}
+                        postFailureMessage(null);
+                    }
+                } catch (IOException e) {
+                    FirebaseCrash.report(new Exception("SyncAllTask: Error syncing Child Enumerator data", e));
+                    e.printStackTrace();
+                } finally {
+                    postResponse.close();
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+                String failureMessage = res.getString(R.string.networking_error);
+                if (e != null) {
+                    FirebaseCrash.report(new Exception("SyncAllTask: Error in response when syncing training data", e));
+                    failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
+                }
+
+                publishProgress(SyncOperation.ERROR_RECEIVED, failureMessage);
+
+            }
+
+        });
+    }
+
+
 
     private void syncTraining() {
 

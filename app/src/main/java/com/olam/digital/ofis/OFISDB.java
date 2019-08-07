@@ -13,6 +13,30 @@ class OFISDB extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 81;
     private static final String DATABASE_NAME = "ofismobile";
 
+    // Child Labour Table Creation
+    private static final String OFIS_CHILD_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS "
+            + OFISDBContract.ChildEntry.TABLE_NAME
+            + " ( " + OFISDBContract.ChildEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+            + OFISDBContract.ChildEntry.COLUMN_NAME_FARMER_ID + " INTEGER, "
+            + OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_NAME + " TEXT, "
+            + OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_AGE + " INTEGER, "
+            + OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_GENDER + " TEXT, "
+            + OFISDBContract.ChildEntry.COLUMN_NAME_ACTION_FLAG + " INTEGER, "
+            + OFISDBContract.ChildEntry.COLUMN_NAME_STATUS + " TEXT, "
+            + OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_AGE_ON_YEAR + " INTEGER, "
+            + OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_SYNCED + " INTEGER DEFAULT 1)";
+
+    private static final String OFIS_CHILD_VIST_DETAILS_CREATE = "CREATE TABLE IF NOT EXISTS "
+            + OFISDBContract.ChildVisitDetailsEntry.TABLE_NAME
+            + " ( " + OFISDBContract.ChildVisitDetailsEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+            + OFISDBContract.ChildVisitDetailsEntry.COLUMN_NAME_FARMER_ID + " INTEGER, "
+            + OFISDBContract.ChildVisitDetailsEntry.COLUMN_HOUSEHOLD + " INTEGER, "
+            + OFISDBContract.ChildVisitDetailsEntry.COLUMN_INSPECTION + " INTEGER, "
+            + OFISDBContract.ChildVisitDetailsEntry.COLUMN_FOLLOWUP + " INTEGER, "
+            + OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_SYNCED + " INTEGER DEFAULT 1)";
+
+    //Child Labour Table end
+
     // create tables
     private static final String OFIS_MODULES_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.ModuleEntry.TABLE_NAME +
             " ( " + OFISDBContract.ModuleEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.ModuleEntry.COLUMN_NAME_NAME + " TEXT, "
@@ -549,6 +573,8 @@ class OFISDB extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(OFIS_DATATYPESSIP_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_LOOKUPVALUESSIP_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_All_COUNTRIES_TABLE_CREATE);
+        sqLiteDatabase.execSQL(OFIS_CHILD_TABLE_CREATE);
+        sqLiteDatabase.execSQL(OFIS_CHILD_VIST_DETAILS_CREATE);
     }
 
     @Override
@@ -612,6 +638,8 @@ class OFISDB extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL("drop table IF EXISTS tasks;");
         sqLiteDatabase.execSQL("drop table IF EXISTS Subquestionanswer;");
         sqLiteDatabase.execSQL("drop table IF EXISTS allCountries;");
+        sqLiteDatabase.execSQL("drop table IF EXISTS children;");
+        sqLiteDatabase.execSQL("drop table IF EXISTS child_visit_details;");
 //        sqLiteDatabase.execSQL("drop table IF EXISTS products_sip;");
         onCreate(sqLiteDatabase);
     }
