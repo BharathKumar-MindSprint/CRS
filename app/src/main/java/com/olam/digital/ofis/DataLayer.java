@@ -3117,4 +3117,50 @@ public class DataLayer {
     public Cursor getEnumeratorCountries() {
         return db.rawQuery("SELECT * FROM countries", null);
     }
+
+    public Cursor getAllPlaces(){return db.rawQuery("SELECT * FROM places", null);}
+
+    public long insertChild(ContentValues contentValues) {
+        long newRowId;
+        newRowId = db.insert(OFISDBContract.ChildEntry.TABLE_NAME, null, contentValues);
+
+        if (newRowId != -1) {
+            // add a network queue entry
+            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+
+            ContentValues networkQueueValues = new ContentValues();
+            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "children");
+            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, "Child Registered");
+            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, "Child Name");
+            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID, contentValues.getAsString(OFISDBContract.ChildEntry.COLUMN_NAME_FARMER_ID));
+            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT, timestamp.toString());
+            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPDATED_AT, timestamp.toString());
+            insertNetworkQueueEntry(networkQueueValues);
+        }
+
+        return newRowId;
+    }
+
+    public long insertChildVisitDetails(ContentValues contentValues) {
+        long newRowId;
+        newRowId = db.insert(OFISDBContract.ChildVisitDetailsEntry.TABLE_NAME, null, contentValues);
+        if (newRowId != -1) {
+            // add a network queue entry
+            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+
+            ContentValues networkQueueValues = new ContentValues();
+            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "child_visit_details");
+            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, "Child Visit Detail Registered");
+            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, "Child Name");
+            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID, contentValues.getAsString(OFISDBContract.ChildVisitDetailsEntry.COLUMN_NAME_FARMER_ID));
+            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT, timestamp.toString());
+            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPDATED_AT, timestamp.toString());
+            insertNetworkQueueEntry(networkQueueValues);
+        }
+        return  newRowId;
+    }
+
+    public Cursor getChildDetailsById(int farmerId) {
+       return db.rawQuery("SELECT * FROM children where farmer_id="+farmerId, null);
+    }
 }

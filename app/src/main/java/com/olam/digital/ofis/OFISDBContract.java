@@ -507,6 +507,59 @@ public class OFISDBContract {
         );
     }
 
+    // Child Registration Table Start
+
+    public static abstract class ChildEntry implements BaseColumns {
+        public static final String TABLE_NAME = "children";
+        public static final String COLUMN_NAME_ID = "id";
+        public static final String COLUMN_NAME_FARMER_ID = "farmer_id";
+        public static final String COLUMN_NAME_CHILD_NAME = "name";
+        public static final String COLUMN_NAME_CHILD_AGE = "age";
+        public static final String COLUMN_NAME_CHILD_GENDER = "gender";
+        public static final String COLUMN_NAME_ACTION_FLAG = "action_flag";
+        public static final String COLUMN_NAME_STATUS = "status";
+        public static final String COLUMN_NAME_CHILD_AGE_ON_YEAR = "age_on_year";
+        public static final String COLUMN_NAME_CHILD_SYNCED = "synced";
+
+        public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
+                new ArrayList<String>() {{
+                    add(COLUMN_NAME_ID);
+                    add(COLUMN_NAME_FARMER_ID);
+                    add(COLUMN_NAME_CHILD_NAME);
+                    add(COLUMN_NAME_CHILD_AGE);
+                    add(COLUMN_NAME_CHILD_GENDER);
+                    add(COLUMN_NAME_ACTION_FLAG);
+                    add(COLUMN_NAME_STATUS);
+                    add(COLUMN_NAME_CHILD_AGE_ON_YEAR);
+                    add(COLUMN_NAME_CHILD_SYNCED);
+                }}
+        );
+    }
+
+    public static abstract class ChildVisitDetailsEntry implements BaseColumns {
+        public static final String TABLE_NAME = "child_visit_details";
+        public static final String COLUMN_NAME_ID = "id";
+        public static final String COLUMN_NAME_FARMER_ID = "farmer_id";
+        public static final String COLUMN_HOUSEHOLD = "household";
+        public static final String COLUMN_INSPECTION = "inspection";
+        public static final String COLUMN_FOLLOWUP = "followup";
+        public static final String COLUMN_NAME_VISIT_DETAIL_SYNCED = "synced";
+
+        public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
+                new ArrayList<String>() {{
+                    add(COLUMN_NAME_ID);
+                    add(COLUMN_NAME_FARMER_ID);
+                    add(COLUMN_HOUSEHOLD);
+                    add(COLUMN_INSPECTION);
+                    add(COLUMN_FOLLOWUP);
+                    add(COLUMN_NAME_VISIT_DETAIL_SYNCED);
+                }}
+        );
+    }
+    // Child Registration Table End
+
+
+
     public static abstract class FarmerEntry implements BaseColumns {
         public static final String TABLE_NAME = "farmers";
 

@@ -2410,6 +2410,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
 //            if (!networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE)).equalsIgnoreCase("Clean water supply")) {
                 params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME)));
+                params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PLACE_ID,networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PLACE_ID)));
 //            }
 /*
 
