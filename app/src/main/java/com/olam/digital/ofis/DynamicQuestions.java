@@ -34,9 +34,11 @@ import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.crash.FirebaseCrash;
 import com.olam.digital.ofis.R;
+import com.olam.digital.ofis.recordpolygon.AppConstants;
 
 import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
@@ -352,9 +354,10 @@ class DynamicQuestions {
         // get disp"lay config to see if question is required
         try {
             JSONObject displayConfig = new JSONObject(qCursor.getString(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION)));
+
             if (displayConfig.has("surveyrange")) {
-                tv.setText(Html.fromHtml(tv.getText().toString() + "(Minimum range " + String.valueOf(displayConfig.getJSONObject("surveyrange").getInt("min") +
-                        " Maximum range " + String.valueOf(displayConfig.getJSONObject("surveyrange").getInt("max")) + ")" )), TextView.BufferType.SPANNABLE);
+                tv.setText(Html.fromHtml(tv.getText().toString() + "(Min Value: " + String.valueOf(displayConfig.getJSONObject("surveyrange").getInt("min") +
+                        "\tMax value: " + String.valueOf(displayConfig.getJSONObject("surveyrange").getInt("max")) +")" )), TextView.BufferType.SPANNABLE);
             }
             if (displayConfig.has("display")) {
                 JSONObject display = displayConfig.getJSONObject("display");
@@ -1031,7 +1034,7 @@ class DynamicQuestions {
         }
     }
 
-    void renderTextBoxQuestion(Cursor qCursor, boolean isRepeaterItem, LinearLayout parentLayout, final int parentQuestionId, final int repeaterItemPosition, Cursor repeaterAnswers) {
+    void renderTextBoxQuestion(final Cursor qCursor, boolean isRepeaterItem, LinearLayout parentLayout, final int parentQuestionId, final int repeaterItemPosition, Cursor repeaterAnswers) {
         LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
         renderQuestion(qCursor, isRepeaterItem, (isRepeaterItem) ? parentLayout : questionWrapper);
 
@@ -1076,9 +1079,9 @@ class DynamicQuestions {
         // add tv to array if this is a 100% group question
         // get display config
         boolean isHPQTemp = false;
-
+        JSONObject displayConfig = new JSONObject();
         try {
-            JSONObject displayConfig = new JSONObject(qCursor.getString(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION)));
+            displayConfig = new JSONObject(qCursor.getString(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION)));
 
             if (displayConfig.has("hundredpercentgroup") && (displayConfig.getBoolean("hundredpercentgroup"))) {
                 et.setBackgroundResource(R.drawable.percent_edit_text);
@@ -1103,6 +1106,7 @@ class DynamicQuestions {
         }
         final boolean isHundredPercentQuestion = isHPQTemp;
 
+        final JSONObject finalDisplayConfig = displayConfig;
         et.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
@@ -1111,11 +1115,24 @@ class DynamicQuestions {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-
+                try {
+                    if(datatype.equals("int")) {
+                        if (fetchMinMaxValue(finalDisplayConfig, AppConstants.RANGE_MAX) != 0
+                                || fetchMinMaxValue(finalDisplayConfig, AppConstants.RANGE_MIN) != 0 ? true : false) {
+                            if (Integer.parseInt(et.getText().toString()) > fetchMinMaxValue(finalDisplayConfig, AppConstants.RANGE_MAX)) {
+                                et.setText("");
+                                Toast.makeText(context, R.string.valid_range, Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
             }
 
             @Override
             public void afterTextChanged(Editable editable) {
+
                 if ((isHundredPercentQuestion) && (!updatingHundredPercent)) {
                     autofill100Percent(et);
                 }
@@ -1129,6 +1146,19 @@ class DynamicQuestions {
             questionWrapper.addView(et);
             parentLayout.addView(questionWrapper);
         }
+    }
+
+    private int fetchMinMaxValue(JSONObject displayConfig, String rangeMinMax) {
+        // get disp"lay config to see if question has display range
+        try {
+            if (displayConfig.has("surveyrange")) {
+                    return displayConfig.getJSONObject("surveyrange").getInt(rangeMinMax);
+            }
+
+        } catch (JSONException e) {
+           e.printStackTrace();
+        }
+        return 0;
     }
 
     void renderTextBoxQuestionSubQuestion(Cursor qCursor, boolean isRepeaterItem, LinearLayout parentLayout, final int parentQuestionId, final int repeaterItemPosition, Cursor repeaterAnswers) {
