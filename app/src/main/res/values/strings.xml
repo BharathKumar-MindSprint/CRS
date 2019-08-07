@@ -396,7 +396,9 @@
     <string name="main_number">Main?</string>
     <string name="location">Location</string>
     <string name="update_phone_numbers">Update Phone Numbers</string>
+    <string name="register_child">Register Child</string>
     <string name="update_phone_numbers_hint">Tap to update</string>
+    <string name="update_childlabour_hint">Tap to Register</string>
     <string name="select_transactee">Who are you transacting with?</string>
     <string name="price_per_unit">Price per </string>
     <string name="total_price">Total Price</string>
@@ -475,6 +477,7 @@
     <string name="authentication_failed">Authentication failed. Please try again</string>
     <string name="authentication_attempt">Please wait for 30 minutes for your login to be enabled and try again with your same enumerator ID and Passcode</string>
     <string name="enumerator_empty">Please enter the valid enumerator Id &amp; Passcode</string>
+    <string name="valid_range">The data you have entered is outside the range</string>
     <string name="fill_name">Please fill the name</string>
     <string name="fill_country">Please fill the country</string>
     <string name="fill_region">Please fill the region</string>
