@@ -638,6 +638,7 @@ class OFISDB extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL("drop table IF EXISTS tasks;");
         sqLiteDatabase.execSQL("drop table IF EXISTS Subquestionanswer;");
         sqLiteDatabase.execSQL("drop table IF EXISTS allCountries;");
+        sqLiteDatabase.execSQL("drop table IF EXISTS products_sip;");
         sqLiteDatabase.execSQL("drop table IF EXISTS children;");
         sqLiteDatabase.execSQL("drop table IF EXISTS child_visit_details;");
 //        sqLiteDatabase.execSQL("drop table IF EXISTS products_sip;");

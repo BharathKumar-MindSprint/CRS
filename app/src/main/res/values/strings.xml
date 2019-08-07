@@ -397,6 +397,7 @@
     <string name="location">Location</string>
     <string name="update_phone_numbers">Update Phone Numbers</string>
     <string name="register_child">Register Child</string>
+    <string name="child_labour_survey">Child Labour Survey</string>
     <string name="update_phone_numbers_hint">Tap to update</string>
     <string name="update_childlabour_hint">Tap to Register</string>
     <string name="select_transactee">Who are you transacting with?</string>

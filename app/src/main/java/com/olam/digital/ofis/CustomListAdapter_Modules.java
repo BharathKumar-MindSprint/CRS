@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.google.firebase.crash.FirebaseCrash;
 import com.olam.digital.ofis.R;
+import com.olam.digital.ofis.childlabour.ChildLabourUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -138,6 +139,26 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                 moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
                 textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
                 textView.setText(res.getString(R.string.update_phone_numbers_hint));
+                //}
+            }else if (cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals(ChildLabourUtils.REG_CHILD)) {
+
+                imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.reg_child));
+                enabledItem.setText("true");
+
+                linearLayout.setBackgroundResource(R.drawable.list_item);
+                moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
+                textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
+                textView.setText(res.getString(R.string.update_childlabour_hint));
+
+            }else if (cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals(ChildLabourUtils.CHILDLABOUR_SURVEY)) {
+
+                imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.reg_child));
+                enabledItem.setText("true");
+
+                linearLayout.setBackgroundResource(R.drawable.list_item);
+                moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
+                textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
+                textView.setText(res.getString(R.string.ModuleStatus));
                 //}
             } else {
                 String currentLat = currentFarmer.getString(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_PRIMARY_LAT));

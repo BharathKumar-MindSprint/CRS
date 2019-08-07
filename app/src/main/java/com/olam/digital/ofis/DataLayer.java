@@ -20,6 +20,7 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 
 import com.google.firebase.crash.FirebaseCrash;
+import com.olam.digital.ofis.childlabour.ChildLabourUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -2071,6 +2072,8 @@ public class DataLayer {
                         "Phone"
                 });
 
+
+
                 Cursor fmp = getFmpByFarmerId(id);
                 if (fmp.getCount() > 0) {
                     fmp.moveToFirst();
@@ -2116,6 +2119,75 @@ public class DataLayer {
                             ""
                     });
                 }
+
+                // add register child
+                mc.addRow(new String[]{
+                        "1000",
+                        res.getString(R.string.register_child),
+                        res.getString(R.string.register_child),
+                        res.getString(R.string.register_child),
+                        res.getString(R.string.register_child),
+                        res.getString(R.string.register_child),
+                        res.getString(R.string.register_child),
+                        res.getString(R.string.register_child),
+                        res.getString(R.string.register_child),
+                        res.getString(R.string.register_child),
+                        "0",
+                        "",
+                        "",
+                        "",
+                        res.getString(R.string.update_childlabour_hint),
+                        res.getString(R.string.update_childlabour_hint),
+                        res.getString(R.string.update_childlabour_hint),
+                        res.getString(R.string.update_childlabour_hint),
+                        res.getString(R.string.update_childlabour_hint),
+                        res.getString(R.string.update_childlabour_hint),
+                        res.getString(R.string.update_childlabour_hint),
+                        res.getString(R.string.update_childlabour_hint),
+                        res.getString(R.string.update_childlabour_hint),
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        ChildLabourUtils.REG_CHILD
+                });
+
+                // child labour survey
+                mc.addRow(new String[]{
+                        "1001",
+                        res.getString(R.string.child_labour_survey),
+                        res.getString(R.string.child_labour_survey),
+                        res.getString(R.string.child_labour_survey),
+                        res.getString(R.string.child_labour_survey),
+                        res.getString(R.string.child_labour_survey),
+                        res.getString(R.string.child_labour_survey),
+                        res.getString(R.string.child_labour_survey),
+                        res.getString(R.string.child_labour_survey),
+                        res.getString(R.string.child_labour_survey),
+                        "0",
+                        "",
+                        "",
+                        "",
+                        res.getString(R.string.ModuleStatus),
+                        res.getString(R.string.ModuleStatus),
+                        res.getString(R.string.ModuleStatus),
+                        res.getString(R.string.ModuleStatus),
+                        res.getString(R.string.ModuleStatus),
+                        res.getString(R.string.ModuleStatus),
+                        res.getString(R.string.ModuleStatus),
+                        res.getString(R.string.ModuleStatus),
+                        res.getString(R.string.ModuleStatus),
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        ChildLabourUtils.CHILDLABOUR_SURVEY
+                });
+
                 Cursor[] cursors = {mc, farmerModules};
                 output = new MergeCursor(cursors);
             }
