@@ -860,6 +860,7 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_UPDATED_AT = "updated_at";
         //JIRA req OW-505
         public static final String COLUMN_NAME_FARMER_PHOTO = "farmer_photourl";
+        public static final String COLUMN_NAME_FARMER_CHILD_ID = "farmer_child_id";
 
 
 
@@ -906,6 +907,7 @@ public class OFISDBContract {
                     add(COLUMN_NAME_CREATED_AT);
                     add(COLUMN_NAME_UPDATED_AT);
                     add(COLUMN_NAME_FARMER_PHOTO);
+                    add(COLUMN_NAME_FARMER_CHILD_ID);
                 }}
         );
 
