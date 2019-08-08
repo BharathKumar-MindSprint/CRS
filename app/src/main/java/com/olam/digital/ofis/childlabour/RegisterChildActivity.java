@@ -26,13 +26,14 @@ public class RegisterChildActivity extends AppCompatActivity implements View.OnC
     private  AppCompatButton childVisitDetailButton;
     private ChildLabourRecyclerAdapter childLabourRecyclerAdapter;
 
-    int farmerId=411359;
+    Long farmerId;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register_child);
         initComponents();
         initEvents();
+        farmerId=getIntent().getExtras().getLong(ChildLabourUtils.CHILD_FARMER_ID);
         populateChildList();
     }
 
@@ -47,7 +48,6 @@ public class RegisterChildActivity extends AppCompatActivity implements View.OnC
             ((LinearLayoutManager) reLayoutManager).setReverseLayout(true);
             childRecyclerView.setAdapter(childLabourRecyclerAdapter);
         }
-
     }
 
     private void initEvents() {

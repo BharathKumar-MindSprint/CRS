@@ -1098,7 +1098,9 @@ public class ViewFarmerActivity extends BaseListActivity {
                         enableFarmPolygon(v);
                     } else if (recordedLng != null && recordedLng.getText().equals(ChildLabourUtils.REG_CHILD)) {
                        Intent in = new Intent(this, RegisterChildActivity.class);
-                       in.putExtra(ChildLabourUtils.CHILD_FARMER_ID, farmerId);
+                       Bundle bundle=new Bundle();
+                       bundle.putLong(ChildLabourUtils.CHILD_FARMER_ID, farmerId);
+                       in.putExtras(bundle);
                        startActivity(in);
                     } else if (recordedLng != null && recordedLng.getText().equals(ChildLabourUtils.CHILDLABOUR_SURVEY)) {
                         Intent in = new Intent(this, RegisterChildActivity.class);

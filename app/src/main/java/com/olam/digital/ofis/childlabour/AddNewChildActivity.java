@@ -17,9 +17,11 @@ import android.widget.Toast;
 import com.olam.digital.ofis.DataLayer;
 import com.olam.digital.ofis.OFISDBContract;
 import com.olam.digital.ofis.R;
+import com.olam.digital.ofis.Utilities;
 import com.olam.digital.ofis.childlabour.businesslogic.ChildLabourLogic;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class AddNewChildActivity extends AppCompatActivity implements  View.OnClickListener{
 
@@ -100,13 +102,14 @@ public class AddNewChildActivity extends AppCompatActivity implements  View.OnCl
 
     private void submitChild(String name) {
         ContentValues contentValues=new ContentValues();
-        contentValues.put(OFISDBContract.ChildEntry.COLUMN_NAME_FARMER_ID, 411359);
+        contentValues.put(OFISDBContract.ChildEntry.COLUMN_NAME_FARMER_ID, farmerId);
         contentValues.put(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_NAME, name);
         contentValues.put(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_AGE, Integer.parseInt(age));
         contentValues.put(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_GENDER, gender);
+        contentValues.put(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_AGE_ON_YEAR, Calendar.getInstance().get(Calendar.YEAR));
         contentValues.put(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_SYNCED, 0);
 
-       long newChildId= new ChildLabourLogic().insertFarmerDetails(this,contentValues);
+       long newChildId= new ChildLabourLogic().insertChildDetails(this,contentValues);
        if (newChildId != -1){
            Toast.makeText(this,getResources().getString(R.string.child_register_successfully),Toast.LENGTH_LONG).show();
            finish();
