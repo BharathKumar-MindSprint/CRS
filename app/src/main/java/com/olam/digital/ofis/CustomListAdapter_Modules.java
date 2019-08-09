@@ -81,7 +81,6 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
         boolean submitted = false;
         Log.d("CustomListAdapter", "moduleTitle" + moduleTitle.getText().toString() + ", SecText" + textView.getText().toString());
 
-
         if (currentId == 0) {
             if (cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals("Phone")) {
                 boolean updateWaiting = dl.networkEntryTypeExistsByFarmerId("phonenumbers", currentFarmer.getLong(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)));
@@ -142,7 +141,7 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                 //}
             }else if (cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals(ChildLabourUtils.REG_CHILD)) {
 
-                imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.reg_child));
+                imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.childlabour));
                 enabledItem.setText("true");
 
                 linearLayout.setBackgroundResource(R.drawable.list_item);

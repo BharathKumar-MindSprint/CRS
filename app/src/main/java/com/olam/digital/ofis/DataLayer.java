@@ -2122,7 +2122,7 @@ public class DataLayer {
 
                 // add register child
                 mc.addRow(new String[]{
-                        "1000",
+                        "0",
                         res.getString(R.string.register_child),
                         res.getString(R.string.register_child),
                         res.getString(R.string.register_child),
@@ -2156,7 +2156,7 @@ public class DataLayer {
 
                 // child labour survey
                 mc.addRow(new String[]{
-                        "1001",
+                        "0",
                         res.getString(R.string.child_labour_survey),
                         res.getString(R.string.child_labour_survey),
                         res.getString(R.string.child_labour_survey),

@@ -10,6 +10,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.LinearLayout;
 
 import com.olam.digital.ofis.DataLayer;
 import com.olam.digital.ofis.R;
@@ -22,8 +23,8 @@ import java.util.List;
 public class RegisterChildActivity extends AppCompatActivity implements View.OnClickListener{
 
     private RecyclerView childRecyclerView;
-    private AppCompatButton addChildButton;
-    private  AppCompatButton childVisitDetailButton;
+    private LinearLayout addChildButton;
+    private  LinearLayout childVisitDetailButton;
     private ChildLabourRecyclerAdapter childLabourRecyclerAdapter;
 
     int farmerId=411359;

@@ -2,21 +2,93 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/clmrs_bg">
 
-    <android.support.v7.widget.AppCompatButton
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="180dp"
+        android:orientation="vertical"
+        android:background="@color/clmrs_bg_gray">
+
+    <LinearLayout
+        android:orientation="horizontal"
         android:id="@+id/childVisitDetailButton"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="52dp"
         android:layout_margin="20dp"
-        android:text="@string/visit_detail"/>
+        android:drawableLeft=""
+        android:weightSum="3"
+        android:background="@drawable/border_white_bg">
 
-    <android.support.v7.widget.AppCompatButton
-        android:id="@+id/addChildButton"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_margin="20dp"
-        android:text="@string/add_child"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/detail_view"
+            android:layout_gravity="center|left"
+            android:paddingLeft="20dp"
+            android:textStyle="bold"
+            android:textSize="16dp"
+            android:layout_weight="3"
+            android:textColor="@color/clmrs_tv_green" />
+
+        <View
+            android:layout_width="2dp"
+            android:layout_height="match_parent"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:background="@color/clmrs_tv_green"/>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:paddingLeft="25dp"
+            android:paddingRight="25dp"
+            android:src="@android:drawable/arrow_down_float"/>
+
+    </LinearLayout>
+
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:id="@+id/addChildButton"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:layout_margin="20dp"
+            android:drawableLeft=""
+            android:weightSum="3"
+            android:background="@drawable/border_green_bg">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/register_child"
+                android:layout_gravity="center|left"
+                android:paddingLeft="20dp"
+                android:textStyle="bold"
+                android:textSize="16dp"
+                android:layout_weight="3"
+                android:textColor="@color/ofis_base_font_white" />
+
+            <View
+                android:layout_width="2dp"
+                android:layout_height="match_parent"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:background="@color/ofis_base_font_white"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:src="@drawable/ic_registerchild_white"/>
+
+        </LinearLayout>
+    </LinearLayout>
+
 
 
     <android.support.v7.widget.RecyclerView

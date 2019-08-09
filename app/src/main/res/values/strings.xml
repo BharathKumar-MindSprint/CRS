@@ -508,4 +508,5 @@
     <string name="visit_detail">Visit Detail</string>
     <string name="child_visit_details_inserted">Child Visit Details Successfully Registered</string>
     <string name="child_register_successfully">Child registered Successfully</string>
+    <string name="detail_view">Detail View</string>
 </resources>
