@@ -3193,24 +3193,25 @@ public class DataLayer {
     public Cursor getAllPlaces(){return db.rawQuery("SELECT * FROM places", null);}
 
     public long insertChild(ContentValues contentValues) {
-        long newRowId;
-        newRowId = db.insert(OFISDBContract.ChildEntry.TABLE_NAME, null, contentValues);
+        long newChildId;
+        newChildId = db.insert(OFISDBContract.ChildEntry.TABLE_NAME, null, contentValues);
 
-        if (newRowId != -1) {
+        if (newChildId != -1) {
             // add a network queue entry
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 
             ContentValues networkQueueValues = new ContentValues();
             networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "children");
             networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, "Child Registered");
-            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, "Child Name");
+            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, contentValues.getAsString(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_NAME));
             networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID, contentValues.getAsString(OFISDBContract.ChildEntry.COLUMN_NAME_FARMER_ID));
+            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_CHILD_ID, newChildId);
             networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT, timestamp.toString());
             networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPDATED_AT, timestamp.toString());
             insertNetworkQueueEntry(networkQueueValues);
         }
 
-        return newRowId;
+        return newChildId;
     }
 
     public long insertChildVisitDetails(ContentValues contentValues) {
@@ -3232,7 +3233,24 @@ public class DataLayer {
         return  newRowId;
     }
 
-    public Cursor getChildDetailsById(int farmerId) {
+    public Cursor getChildDetailsById(Long farmerId) {
        return db.rawQuery("SELECT * FROM children where farmer_id="+farmerId, null);
+    }
+
+    public Cursor getChildById(long id) {
+        String[] columns = new String[]{"*"};
+        String whereClause = OFISDBContract.ChildEntry.COLUMN_NAME_ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(id)};
+        return db.query(OFISDBContract.ChildEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+    }
+
+    public void updateChildId(int tempChildId, int generatedChildId) {
+
+
+        ContentValues cv = new ContentValues();
+        cv.put(OFISDBContract.ChildEntry.COLUMN_NAME_ID,generatedChildId); //These Fields should be your String values of actual column names
+        cv.put(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_SYNCED,1);
+        db.update(OFISDBContract.ChildEntry.TABLE_NAME, cv, "id="+tempChildId, null);
+
     }
 }

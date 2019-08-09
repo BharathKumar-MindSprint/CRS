@@ -32,13 +32,13 @@ public class ChildLabourLogic {
         return newVisitDetaisId;
     }
 
-    public long insertFarmerDetails(Context context, ContentValues contentValues) {
+    public long insertChildDetails(Context context, ContentValues contentValues) {
         dataLayer=new DataLayer(context.getResources(),context);
         long newChildId = dataLayer.insertChild(contentValues);
         return  newChildId;
     }
 
-    public List<ChildrenDTO> getChildDetailsById(Context context, int farmerId) {
+    public List<ChildrenDTO> getChildDetailsById(Context context, Long farmerId) {
         dataLayer=new DataLayer(context.getResources(),context);
         List<ChildrenDTO> clildrenList=new ArrayList<ChildrenDTO>();
         Cursor cursor= dataLayer.getChildDetailsById(farmerId);
