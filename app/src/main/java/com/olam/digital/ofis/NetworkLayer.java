@@ -2798,11 +2798,40 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 jsonObject.put("gender",child.getString(child.getColumnIndex(OFISDBContract.ChildEntry.COLUMN_NAME_ID)));
                 jsonObject.put("ageOnYear",child.getString(child.getColumnIndex(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_AGE_ON_YEAR)));
 
+                // farmer Details
+
+                Cursor farmer = dl.getFarmerById(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
+
+                if(farmer!=null && farmer.getCount()>0){
+                    farmer.moveToFirst();
+                    try {
+                        jsonObject.put(OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRYID, Long.valueOf(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRYID))));
+                        long placeID= Long.valueOf(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID)));
+                        jsonObject.put(OFISDBContract.FarmerEntry.COLUMN_NAME_PLACEID, placeID);
+                        long sectionID=Long.valueOf(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID)));
+                        jsonObject.put(OFISDBContract.FarmerEntry.COLUMN_NAME_SECTIONID, sectionID);
+                        long districtID=Long.valueOf(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_DISTRICTID)));
+                        jsonObject.put("districtId",districtID);
+                        long regionID=Long.valueOf(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_REGIONID)));
+                        jsonObject.put("regionId",regionID);
+                        long farmerGroupID=Long.valueOf(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID)));
+                        jsonObject.put(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID,farmerGroupID);
+                    }catch (Exception e){
+
+                    }finally {
+                        farmer.close();
+                    }
+                }
+
+
 //                if (networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID)) > 0 && networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FULLY_SYNCED)) == 0) {
 //                    jsonObject.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID, networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID)));
 //                }
-            }catch (Exception e){
+            }
+            catch (Exception e){
                 e.printStackTrace();
+            }finally {
+                child.close();
             }
 
 
@@ -2897,7 +2926,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             recordFailedUpload(0, 0, networkQueueItemId);
 
                             String failureMessage = res.getString(R.string.networking_error);
-                            if (e != null) {
+                                    if (e != null) {
                                 failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
                             }
                             postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting survey module");
