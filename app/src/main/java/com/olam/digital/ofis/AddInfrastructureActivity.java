@@ -54,6 +54,9 @@ import com.karumi.dexter.listener.PermissionDeniedResponse;
 import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.PermissionListener;
+import com.olam.digital.ofis.childlabour.ChildLabourUtils;
+import com.olam.digital.ofis.childlabour.businesslogic.SipLogic;
+import com.olam.digital.ofis.childlabour.dto.VillageDTO;
 import com.olam.digital.ofis.model.ModuleDTO;
 import com.olam.digital.ofis.model.SubModuleDTO;
 
@@ -61,6 +64,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 
@@ -74,6 +78,7 @@ public class AddInfrastructureActivity extends BaseActivity {
     private int selectedDistrict = 0;
     private int selectedProduct = 0;
     private int selectedFarmerGroup = 0;
+    private int selectedPlace = 0;
     private int selectedSection=0;
 
     // for GPS location system
@@ -112,6 +117,9 @@ public class AddInfrastructureActivity extends BaseActivity {
 
     private Spinner subModulesSpinner;
     private Spinner modulesSpinner;
+    private Spinner villageSpinner;
+    private String moduleName;
+    List<VillageDTO> villageList;
 //    private boolean spinners_ready = false;
 
 
@@ -179,6 +187,8 @@ public class AddInfrastructureActivity extends BaseActivity {
         poiName = (EditText) findViewById(R.id.poiName);
         subModulesSpinner = (Spinner) findViewById(R.id.spinner_submodules);
         modulesSpinner = (Spinner) findViewById(R.id.spinner_modules);
+        villageSpinner=(Spinner) findViewById(R.id.villageSpinner);
+
 
         requestLocation = (ImageButton) findViewById(R.id.requestLocation);
         if(!editMode)
@@ -226,7 +236,7 @@ public class AddInfrastructureActivity extends BaseActivity {
             }
         }
 
-        int selectedPlace = 0;
+      //  int selectedPlace = 0;
         dl.createGeographyHierarchySpinners(this, context, null, selectedCountry, selectedRegion, selectedDistrict, selectedPlace, null);
         dl.createBusinessHierarchySpinners(this, context, null, selectedFarmerGroup, selectedSection);
         bindSaveButton();
@@ -412,7 +422,10 @@ public class AddInfrastructureActivity extends BaseActivity {
         recorded_lng = existingItem.getString(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG));
         gpsField.setText(recorded_lat + "," + recorded_lng);
 
+
         poiName.setText(existingItem.getString(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME)));
+
+
 
         String uploadId = existingItem.getString(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ID));
         modulesSpinner.setSelection(selectedModulePOI);
@@ -432,6 +445,7 @@ public class AddInfrastructureActivity extends BaseActivity {
         selectedDistrict = existingItem.getInt(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_DISTRICT_ID));
         selectedProduct = existingItem.getInt(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PRODUCT_ID));
         selectedFarmerGroup = existingItem.getInt(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMERGROUP_ID));
+        selectedPlace=existingItem.getInt(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMERGROUP_ID));
 
     }
 
@@ -473,6 +487,14 @@ public class AddInfrastructureActivity extends BaseActivity {
             return values;
         }
 
+        Spinner spinner_place = (Spinner) findViewById(R.id.spinner_place);
+        long place_id = spinner_place.getSelectedItemId();
+        if (place_id < 1) {
+
+            Toast.makeText(context, res.getString(R.string.please_fill_the_place), Toast.LENGTH_LONG).show();
+
+            return values;
+        }
 
         if (poiLocation == null && !editMode) {
             Toast.makeText(context, res.getString(R.string.fill_GPS_position), Toast.LENGTH_LONG).show();
@@ -483,6 +505,7 @@ public class AddInfrastructureActivity extends BaseActivity {
             recorded_lat = String.valueOf(poiLocation.getLatitude());
             recorded_lng = String.valueOf(poiLocation.getLongitude());
         }
+
 
         try {
             // common
@@ -500,6 +523,7 @@ public class AddInfrastructureActivity extends BaseActivity {
             values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_REGION_ID, region_id);
             values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_DISTRICT_ID, district_id);
             values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMERGROUP_ID, farmergroup_id);
+            values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PLACE_ID,place_id);
 
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
             values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT, timestamp.toString());
@@ -518,10 +542,17 @@ public class AddInfrastructureActivity extends BaseActivity {
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (poiName.getText().toString().trim().length() == 0) {
-                    Toast.makeText(context, res.getString(R.string.fill_name), Toast.LENGTH_LONG).show();
-                    return;
+                if (moduleName.equalsIgnoreCase(ChildLabourUtils.VILLAGE_NAME)){
+                     if(villageSpinner.getSelectedItemId() < 1){
+
+                     }
+                }else{
+                    if (poiName.getText().toString().trim().length() == 0) {
+                        Toast.makeText(context, res.getString(R.string.fill_name), Toast.LENGTH_LONG).show();
+                        return;
+                    }
                 }
+
 
                 // get the entered values
                 ContentValues values = validateValues();
@@ -730,6 +761,26 @@ public class AddInfrastructureActivity extends BaseActivity {
         });
     }
 
+    private void showPoiName() {
+        poiName.setVisibility(View.VISIBLE);
+        villageSpinner.setVisibility(View.GONE);
+    }
+
+    private void showVillageDropdown() {
+        poiName.setVisibility(View.GONE);
+        villageSpinner.setVisibility(View.VISIBLE);
+        villageList= SipLogic.getAllPlaces(this);
+        List<String> villageNameList=new ArrayList<String>();
+        for (VillageDTO village: villageList) {
+            villageNameList.add(village.getVillageName());
+        }
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_item, villageNameList);
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        villageSpinner.setAdapter(dataAdapter);
+    }
+
+
     private void bindPoiSpinner(int moduleId) {
         subModuleDTOS = getSubModules(moduleId);
         ArrayList<String> subModuleNames = new ArrayList<String>();
@@ -751,6 +802,12 @@ public class AddInfrastructureActivity extends BaseActivity {
                 if (!editMode) {
 //                    swapPoiType(i);
 //                }
+                    moduleName=subModuleDTOS.get(position).getSipName().trim().toLowerCase();
+                    if (moduleName.equalsIgnoreCase(ChildLabourUtils.VILLAGE_NAME)){
+                        showVillageDropdown();
+                    }else{
+                        showPoiName();
+                    }
                     dynamicQuestions.questionsSection.removeAllViews();
                     dynamicQuestions.answerSet.clear();
                     subModuleId = subModuleDTOS.get(position).getId();

@@ -17,6 +17,7 @@ import android.support.v4.content.ContextCompat;
 import android.telephony.TelephonyManager;
 import android.util.Base64;
 import android.util.DisplayMetrics;
+import android.widget.EditText;
 import android.widget.Spinner;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
@@ -164,11 +165,15 @@ public  static String base64ConversionForImage(String filepath)  {
         }
 
         editor.apply();
-
+//        Passcode added - Penetration testing
+        FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(context);
         if (prefName.equalsIgnoreCase("ENUMERATOR_ID")) {
-            FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(context);
             if (mFirebaseAnalytics != null) {
                 mFirebaseAnalytics.setUserProperty("Enumerator", value);
+            }
+        }else if(prefName.equalsIgnoreCase("PASSCODE")){
+            if (mFirebaseAnalytics != null) {
+                mFirebaseAnalytics.setUserProperty("Passcode", value);
             }
         }
     }
@@ -188,13 +193,30 @@ public  static String base64ConversionForImage(String filepath)  {
 
         return sharedPreferences.getString("ENUMERATOR_ID", "");
     }
+//  getPasscode from sharedPref - Penetration testing
+    public static String getPasscodeFromSharedPrefs(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
 
+        return sharedPreferences.getString("PASSCODE", "");
+    }
 
     public static String getFirebaseTokenSharedPrefs(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
 
         return sharedPreferences.getString(SHARED_FIREBASE_TOKEN_UPDATED, "");
     }
+
+   public static boolean getChildLabourPref(Context context,String prefName){
+       SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
+       return sharedPreferences.getBoolean(prefName, false);
+   }
+
+   public static void setChildLabourPref(Context context,String prefName,boolean prefValue){
+       SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
+       SharedPreferences.Editor editor=sharedPreferences.edit();
+       editor.putBoolean(prefName,prefValue);
+       editor.commit();
+   }
 
 
     public static boolean getBoolFromSharedPrefs(Context context, String prefName, boolean defaultResponse) {

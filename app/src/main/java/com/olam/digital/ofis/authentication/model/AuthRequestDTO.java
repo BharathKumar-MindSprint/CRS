@@ -15,6 +15,10 @@ public class AuthRequestDTO {
     @SerializedName("username")
     @Expose
     private String username;
+//    Passcode added - Penetration testing
+    @SerializedName("passcode")
+    @Expose
+    private String passcode;
     @SerializedName("password")
     @Expose
     private String password;
@@ -74,6 +78,14 @@ public class AuthRequestDTO {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+//  Passcode added - Penetration testing
+    public String getPasscode() {
+        return passcode;
+    }
+
+    public void setPasscode(String passcode) {
+        this.passcode = passcode;
     }
 
     public String getPassword() {
