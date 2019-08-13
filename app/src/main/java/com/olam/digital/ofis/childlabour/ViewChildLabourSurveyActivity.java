@@ -98,6 +98,12 @@ public class ViewChildLabourSurveyActivity extends AppCompatActivity{
 
         intent.putExtra(FARMER_ID, farmerID);
         intent.putExtra(MODULE_ID, Long.parseLong(childModuleDto.get_id()));
+        intent.putExtra(FARMER_MODULE_ID, childModuleDto.getFarmer_module_id());
+        intent.putExtra(SUB_MODULE_ID, childModuleDto.getCurrent_submodule_id());
+        intent.putExtra(STATUS_STARTED,childModuleDto.getStatus_started());
+        intent.putExtra(STATUS_FINISHED, childModuleDto.getStatus_finished());
+        intent.putExtra(RECORDED_LAT, childModuleDto.getRecorded_lat());
+        intent.putExtra(RECORDED_LNG, childModuleDto.getRecorded_lng());
 
         Cursor farmer=dataLayer.getFarmerById(farmerID);
         if(farmer!=null && farmer.getCount()>0){
@@ -128,7 +134,9 @@ public class ViewChildLabourSurveyActivity extends AppCompatActivity{
         if (bundle != null) {
             children = (ChildrenDTO) bundle.getSerializable("children");
         }
-        farmerID=Long.parseLong(bundle.getString(ChildLabourUtils.CHILD_FARMER_ID));
+        try {
+            farmerID=Long.parseLong(bundle.getString(ChildLabourUtils.CHILD_FARMER_ID));
+        }catch (Exception e){}
     }
 
     private void initComponents() {
