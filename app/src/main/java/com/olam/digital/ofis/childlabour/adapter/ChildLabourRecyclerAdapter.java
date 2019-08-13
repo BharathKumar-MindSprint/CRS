@@ -2,6 +2,7 @@ package com.olam.digital.ofis.childlabour.adapter;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,11 +38,18 @@ public class ChildLabourRecyclerAdapter extends RecyclerView.Adapter<ChildLabour
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ChildHolder holder, int position) {
-        ChildrenDTO childrenDTO=childrenList.get(position);
+    public void onBindViewHolder(@NonNull ChildHolder holder, final int position) {
+        final ChildrenDTO childrenDTO=childrenList.get(position);
         holder.name.setText(childrenDTO.getName());
         holder.gender.setText(childrenDTO.getGender());
         holder.age.setText(childrenDTO.getAge());
+
+        holder.rowItem.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onItemChildClickListener.onChildClick(v,position,childrenDTO);
+            }
+        });
     }
 
     @Override
@@ -51,8 +59,10 @@ public class ChildLabourRecyclerAdapter extends RecyclerView.Adapter<ChildLabour
 
     public class ChildHolder extends RecyclerView.ViewHolder {
         TextView name,gender,age;
+        CardView rowItem;
         public ChildHolder(View itemView) {
             super(itemView);
+            rowItem=(CardView)itemView.findViewById(R.id.itemCardView);
             name = (TextView) itemView.findViewById(R.id.name);
             gender = (TextView) itemView.findViewById(R.id.gender);
             age = (TextView) itemView.findViewById(R.id.age);

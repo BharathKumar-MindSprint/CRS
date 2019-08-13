@@ -67,17 +67,17 @@ import okhttp3.internal.Util;
  * Created by ben on 02/06/2015.
  */
 @SuppressWarnings("DefaultFileTemplate")
-class DynamicQuestions {
+public class DynamicQuestions {
     static Resources resourcesforyesno;
-    ArrayList<JSONObject> answerSet;
-    ArrayList<EditText> hundredpercentquestions;
-    int reportingYear;
-    boolean updatingHundredPercent;
-    boolean hasAnswers;
-    LayoutInflater inflater;
-    String questionColumnSuffix;
-    LinearLayout questionsSection;
-    Context context;
+    public ArrayList<JSONObject> answerSet;
+    public ArrayList<EditText> hundredpercentquestions;
+    public int reportingYear;
+    public boolean updatingHundredPercent;
+    public boolean hasAnswers;
+    public LayoutInflater inflater;
+    public String questionColumnSuffix;
+    public LinearLayout questionsSection;
+    public Context context;
     private final DataLayer dl;
     private String mCurrentPhotoPath = null, mCurrentPhotoFileName = null;
     private Uri mCapturedImageURI = null;
@@ -104,21 +104,21 @@ class DynamicQuestions {
     }
 
 
-    static DynamicQuestions getInstance(Context context, String questionColumnSuffix, DataLayer dl) {
+    public static DynamicQuestions getInstance(Context context, String questionColumnSuffix, DataLayer dl) {
         if (instance == null) {
             instance = new DynamicQuestions(context, questionColumnSuffix, dl);
         }
         return instance;
     }
 
-    static DynamicQuestions getInstance() {
+    public static DynamicQuestions getInstance() {
         if (instance == null) {
             return null;
         }
         return instance;
     }
 
-    static void clearInstance() {
+   public static void clearInstance() {
         instance = null;
     }
 
@@ -134,7 +134,7 @@ class DynamicQuestions {
         densitySubAnswers = new String[]{};
     }
 
-    boolean requiredFieldsAnswered(int farmerModuleId, int moduleId) {
+    public boolean requiredFieldsAnswered(int farmerModuleId, int moduleId) {
         Cursor completedAnswers = dl.getAllAnswersByFarmerModuleId(farmerModuleId);
         Cursor requiredQuestions = dl.getRequiredQuestionIds(moduleId);
         Set<Integer> completedQuestionIds = new HashSet<>();
@@ -415,7 +415,7 @@ class DynamicQuestions {
         parentLayout.addView(tv);
     }
 
-    void renderPhotoUploadQuestion(Cursor qCursor, boolean isRepeaterItem, LinearLayout parentLayout, final int parentQuestionId, final int repeaterItemPosition, Cursor repeaterAnswers, final Resources res) {
+    public void renderPhotoUploadQuestion(Cursor qCursor, boolean isRepeaterItem, LinearLayout parentLayout, final int parentQuestionId, final int repeaterItemPosition, Cursor repeaterAnswers, final Resources res) {
         LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
         renderQuestion(qCursor, isRepeaterItem, (isRepeaterItem) ? parentLayout : questionWrapper);
 
@@ -689,7 +689,7 @@ class DynamicQuestions {
         this.mCapturedImageURI = mCapturedImageURI;
     }
 
-    void setFullImageFromFilePath(Resources res) {
+    public void setFullImageFromFilePath(Resources res) {
         String imagePath = getCurrentPhotoPath();
         ImageView target = getCurrentImageView();
         String savedImagePath = Utilities.scaleRotateAndSaveImage(imagePath, "modulephoto");
@@ -732,7 +732,7 @@ class DynamicQuestions {
         target.setImageBitmap(bitmap);
     }
 
-    void renderDatePickerQuestion(Cursor qCursor, boolean isRepeaterItem, LinearLayout parentLayout, final int parentQuestionId, final int repeaterItemPosition, Cursor repeaterAnswers) {
+    public void renderDatePickerQuestion(Cursor qCursor, boolean isRepeaterItem, LinearLayout parentLayout, final int parentQuestionId, final int repeaterItemPosition, Cursor repeaterAnswers) {
         LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
         renderQuestion(qCursor, isRepeaterItem, (isRepeaterItem) ? parentLayout : questionWrapper);
 
@@ -1034,7 +1034,7 @@ class DynamicQuestions {
         }
     }
 
-    void renderTextBoxQuestion(final Cursor qCursor, boolean isRepeaterItem, LinearLayout parentLayout, final int parentQuestionId, final int repeaterItemPosition, Cursor repeaterAnswers) {
+    public void renderTextBoxQuestion(final Cursor qCursor, boolean isRepeaterItem, LinearLayout parentLayout, final int parentQuestionId, final int repeaterItemPosition, Cursor repeaterAnswers) {
         LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
         renderQuestion(qCursor, isRepeaterItem, (isRepeaterItem) ? parentLayout : questionWrapper);
 
@@ -1319,7 +1319,7 @@ class DynamicQuestions {
         }
     }
 
-    void renderDropDownQuestion(Cursor qCursor, boolean isRepeaterItem, LinearLayout parentLayout, final int parentQuestionId, final int repeaterItemPosition, Cursor repeaterAnswers, final Resources res) {
+    public void renderDropDownQuestion(Cursor qCursor, boolean isRepeaterItem, LinearLayout parentLayout, final int parentQuestionId, final int repeaterItemPosition, Cursor repeaterAnswers, final Resources res) {
         final LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
         renderQuestion(qCursor, isRepeaterItem, (isRepeaterItem) ? parentLayout : questionWrapper);
         resources = res;
@@ -1762,7 +1762,7 @@ class DynamicQuestions {
     }
 
 
-    void renderCheckBoxQuestion(Cursor questions, LinearLayout parentLayout, long farmerId, long farmerModuleId) {
+    public void renderCheckBoxQuestion(Cursor questions, LinearLayout parentLayout, long farmerId, long farmerModuleId) {
         LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
         renderQuestion(questions, false, questionWrapper);
 
@@ -2140,7 +2140,7 @@ class DynamicQuestions {
     }
 
 
-    void renderPhotoCheckboxQuestion(Cursor questions, long farmerId, long farmerModuleId, Resources res, String packageName) {
+    public void renderPhotoCheckboxQuestion(Cursor questions, long farmerId, long farmerModuleId, Resources res, String packageName) {
         LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, questionsSection, false);
         renderQuestion(questions, false, questionWrapper);
 
@@ -2246,7 +2246,7 @@ class DynamicQuestions {
     }
 
 
-    void renderRepeaterQuestion(Cursor questions, final long farmerId, final String olamFarmerId, final long farmerModuleId, final Resources res) {
+    public void renderRepeaterQuestion(Cursor questions, final long farmerId, final String olamFarmerId, final long farmerModuleId, final Resources res) {
         LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, questionsSection, false);
         renderQuestion(questions, false, questionWrapper);
         resources = res;
@@ -2625,7 +2625,7 @@ class DynamicQuestions {
 
     }
 
-    void renderYesNoQuestion(final Cursor qCursor, final boolean isRepeaterItem, final LinearLayout parentLayout, final int parentQuestionId, final int repeaterItemPosition, Cursor repeaterAnswers, final Resources res) {
+    public void renderYesNoQuestion(final Cursor qCursor, final boolean isRepeaterItem, final LinearLayout parentLayout, final int parentQuestionId, final int repeaterItemPosition, Cursor repeaterAnswers, final Resources res) {
         final LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
         renderQuestion(qCursor, isRepeaterItem, (isRepeaterItem) ? parentLayout : questionWrapper);
         String question1 = "", question2 = "";
@@ -3128,7 +3128,7 @@ class DynamicQuestions {
     }
 
     @SuppressLint("SetTextI18n")
-    void renderTreeDensityQuestion(Cursor questions, final Resources res) {
+    public void renderTreeDensityQuestion(Cursor questions, final Resources res) {
         // special case to determine tree density stuff
         setupPlotVariants(res);
 

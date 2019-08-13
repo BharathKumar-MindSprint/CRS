@@ -273,9 +273,25 @@
             android:label="@string/visit_detail"
             android:theme="@style/Theme.AppCompat"
             android:screenOrientation="portrait" />
-        <meta-data
-            android:name="io.fabric.ApiKey"
-            android:value="a893453713a55832cf2771ee8fbe4a68b4a3b031" />
+        <activity
+            android:name="com.olam.digital.ofis.childlabour.ChildLabourDetailsActivity"
+            android:label="@string/child_details"
+            android:theme="@style/Theme.AppCompat"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name="com.olam.digital.ofis.childlabour.ViewChildLabourSurveyActivity"
+            android:label="@string/child_details"
+            android:theme="@style/Theme.AppCompat"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.olam.digital.ofis.childlabour.ChildLabourCompleteModuleActivity"
+            android:label="@string/child_details"
+            android:theme="@style/Theme.AppCompat"
+            android:screenOrientation="portrait" />
+        <!--<meta-data-->
+            <!--android:name="io.fabric.ApiKey"-->
+            <!--android:value="a893453713a55832cf2771ee8fbe4a68b4a3b031" />-->
     </application>
 
 </manifest>

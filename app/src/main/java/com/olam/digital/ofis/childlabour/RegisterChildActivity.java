@@ -10,6 +10,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.Toast;
 import android.widget.LinearLayout;
 
 import com.olam.digital.ofis.DataLayer;
@@ -17,6 +18,7 @@ import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.childlabour.adapter.ChildLabourRecyclerAdapter;
 import com.olam.digital.ofis.childlabour.businesslogic.ChildLabourLogic;
 import com.olam.digital.ofis.childlabour.dto.ChildrenDTO;
+import com.olam.digital.ofis.childlabour.listener.OnItemChildClickListener;
 
 import java.util.List;
 
@@ -26,7 +28,6 @@ public class RegisterChildActivity extends AppCompatActivity implements View.OnC
     private LinearLayout addChildButton;
     private  LinearLayout childVisitDetailButton;
     private ChildLabourRecyclerAdapter childLabourRecyclerAdapter;
-
     Long farmerId;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -36,6 +37,7 @@ public class RegisterChildActivity extends AppCompatActivity implements View.OnC
         initEvents();
         farmerId=getIntent().getExtras().getLong(ChildLabourUtils.CHILD_FARMER_ID);
         populateChildList();
+
     }
 
     private void populateChildList() {
@@ -48,6 +50,14 @@ public class RegisterChildActivity extends AppCompatActivity implements View.OnC
             childRecyclerView.setItemAnimator(new DefaultItemAnimator());
             ((LinearLayoutManager) reLayoutManager).setReverseLayout(true);
             childRecyclerView.setAdapter(childLabourRecyclerAdapter);
+
+            childLabourRecyclerAdapter.setOnItemChildClickListener(new OnItemChildClickListener() {
+                @Override
+                public void onChildClick(View view, int position,ChildrenDTO childrenDTO) {
+                    // Edit functionalities
+                    Toast.makeText(RegisterChildActivity.this,String.valueOf(position),Toast.LENGTH_LONG).show();
+                }
+            });
         }
     }
 

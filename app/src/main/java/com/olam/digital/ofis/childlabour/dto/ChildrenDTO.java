@@ -1,6 +1,8 @@
 package com.olam.digital.ofis.childlabour.dto;
 
-public class ChildrenDTO {
+import java.io.Serializable;
+
+public class ChildrenDTO implements Serializable {
 
     private  String id;
     private  String farmerId;

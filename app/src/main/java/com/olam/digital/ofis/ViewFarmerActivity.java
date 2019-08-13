@@ -79,6 +79,7 @@ import com.karumi.dexter.listener.PermissionDeniedResponse;
 import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.PermissionListener;
+import com.olam.digital.ofis.childlabour.ChildLabourDetailsActivity;
 import com.olam.digital.ofis.childlabour.ChildLabourUtils;
 import com.olam.digital.ofis.childlabour.RegisterChildActivity;
 import com.olam.digital.ofis.recordpolygon.LocationBeanList;
@@ -1103,8 +1104,10 @@ public class ViewFarmerActivity extends BaseListActivity {
                        in.putExtras(bundle);
                        startActivity(in);
                     } else if (recordedLng != null && recordedLng.getText().equals(ChildLabourUtils.CHILDLABOUR_SURVEY)) {
-                        Intent in = new Intent(this, RegisterChildActivity.class);
-                        in.putExtra(ChildLabourUtils.CHILD_FARMER_ID, farmerId);
+                        Intent in = new Intent(this, ChildLabourDetailsActivity.class);
+                        Bundle bundle=new Bundle();
+                        bundle.putLong(ChildLabourUtils.CHILD_FARMER_ID, farmerId);
+                        in.putExtras(bundle);
                         startActivity(in);
                     } else {
                         polygon=false;
