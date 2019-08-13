@@ -1116,14 +1116,13 @@ class DynamicQuestions {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
                 try {
-                    if(datatype.equals("int")) {
-                        if (fetchMinMaxValue(finalDisplayConfig, AppConstants.RANGE_MAX) != 0
+                    if (fetchMinMaxValue(finalDisplayConfig, AppConstants.RANGE_MAX) != 0
                                 || fetchMinMaxValue(finalDisplayConfig, AppConstants.RANGE_MIN) != 0 ? true : false) {
-                            if (Integer.parseInt(et.getText().toString()) > fetchMinMaxValue(finalDisplayConfig, AppConstants.RANGE_MAX)) {
-                                et.setText("");
-                                Toast.makeText(context, R.string.valid_range, Toast.LENGTH_LONG).show();
-                            }
-                        }
+                      if (Integer.parseInt(et.getText().toString()) > fetchMinMaxValue(finalDisplayConfig, AppConstants.RANGE_MAX)) {
+                          et.setText("");
+                          Toast.makeText(context, R.string.valid_range, Toast.LENGTH_LONG).show();
+                      }
+
                     }
                 }catch (Exception e){
                     e.printStackTrace();
@@ -1137,6 +1136,21 @@ class DynamicQuestions {
                     autofill100Percent(et);
                 }
                 saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, et.getText().toString());
+            }
+        });
+
+        et.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(et.getText().toString().length() > 0) {
+                    if (fetchMinMaxValue(finalDisplayConfig, AppConstants.RANGE_MAX) != 0
+                            || fetchMinMaxValue(finalDisplayConfig, AppConstants.RANGE_MIN) != 0 ? true : false) {
+                        if (Integer.parseInt(et.getText().toString()) < fetchMinMaxValue(finalDisplayConfig, AppConstants.RANGE_MIN)) {
+                            et.setText("");
+                            Toast.makeText(context, R.string.valid_range, Toast.LENGTH_LONG).show();
+                        }
+                    }
+                }
             }
         });
 
