@@ -5,6 +5,7 @@
     <color name="ofis_base_font_dark">#222222</color>
     <color name="ofis_base_font_white">#ffffff</color>
     <color name="ofis_text_field">#DE000000</color>
+    <color name="colorBackroundWhite">#f0f2ea</color>
     <color name="ofis_text_field_read_only">#80000000</color>
     <color name="ofis_input_field_separator">#26000000</color>
     <color name="ofis_list_header_text">#DE000000</color>

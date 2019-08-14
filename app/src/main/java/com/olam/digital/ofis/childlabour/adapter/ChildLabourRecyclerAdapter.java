@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.olam.digital.ofis.R;
@@ -59,10 +60,10 @@ public class ChildLabourRecyclerAdapter extends RecyclerView.Adapter<ChildLabour
 
     public class ChildHolder extends RecyclerView.ViewHolder {
         TextView name,gender,age;
-        CardView rowItem;
+        LinearLayout rowItem;
         public ChildHolder(View itemView) {
             super(itemView);
-            rowItem=(CardView)itemView.findViewById(R.id.itemCardView);
+            rowItem=(LinearLayout)itemView.findViewById(R.id.itemCardView);
             name = (TextView) itemView.findViewById(R.id.name);
             gender = (TextView) itemView.findViewById(R.id.gender);
             age = (TextView) itemView.findViewById(R.id.age);

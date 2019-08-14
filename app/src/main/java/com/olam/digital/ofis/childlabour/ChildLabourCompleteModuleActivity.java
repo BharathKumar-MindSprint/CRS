@@ -327,13 +327,13 @@ public class ChildLabourCompleteModuleActivity extends Activity {
         if (action.equalsIgnoreCase("exit")) {
             ViewFarmerActivity.farmerId = farmerId;
             //SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(farmerId);
-            Intent intent = new Intent(context, ViewChildLabourSurveyActivity.class);
+            Intent intent = new Intent(context, ViewFarmerActivity.class);
             context.startActivity(intent);
         } else if (action.equalsIgnoreCase("finish")) {
             if (canSaveAndFinish) {
                 ViewFarmerActivity.farmerId = farmerId;
                 //SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(farmerId);
-                Intent intent = new Intent(context, ViewChildLabourSurveyActivity.class);
+                Intent intent = new Intent(context, ViewFarmerActivity.class);
                 context.startActivity(intent);
             }
         } else {

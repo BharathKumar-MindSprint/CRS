@@ -35,6 +35,17 @@ public class ChildModuleDto implements Serializable {
     private String recorded_lat;
     private String recorded_lng;
 
+    private String moduleCode;
+
+    public String getModuleCode() {
+        return moduleCode;
+    }
+
+    public void setModuleCode(String moduleCode) {
+        this.moduleCode = moduleCode;
+    }
+
+
     public String get_id() {
         return _id;
     }

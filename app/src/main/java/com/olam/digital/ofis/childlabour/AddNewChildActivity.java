@@ -19,6 +19,7 @@ import com.olam.digital.ofis.OFISDBContract;
 import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.Utilities;
 import com.olam.digital.ofis.childlabour.businesslogic.ChildLabourLogic;
+import com.olam.digital.ofis.childlabour.dto.ChildrenDTO;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -34,6 +35,8 @@ public class AddNewChildActivity extends AppCompatActivity implements  View.OnCl
     private ArrayList<String> ageList;
     DataLayer dataLayer;
     String farmerId;
+    String action;
+    ChildrenDTO childrenDTO;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -117,8 +120,20 @@ public class AddNewChildActivity extends AppCompatActivity implements  View.OnCl
     }
 
     public void getBundleValues() {
-        Bundle bundle = getIntent().getExtras();
-        farmerId=bundle.getString(ChildLabourUtils.CHILD_FARMER_ID);
+        try{
+            Bundle bundle = getIntent().getExtras();
+            action=bundle.getString("action");
+                if (action.equalsIgnoreCase("new")){
+                    farmerId=bundle.getString(ChildLabourUtils.CHILD_FARMER_ID);
+                }else if(action.equalsIgnoreCase("edit")){
+                    farmerId=bundle.getString(ChildLabourUtils.CHILD_FARMER_ID);
+                    childrenDTO= (ChildrenDTO) bundle.getSerializable("children");
+                    fullnameEditText.setText(childrenDTO.getName());
+                }
+        }catch (Exception e){
+
+        }
+
     }
 
 }
