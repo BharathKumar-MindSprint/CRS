@@ -27,6 +27,8 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_NAME_TH = "name_th";
         public static final String COLUMN_NAME_EXPIRES = "expires";
         public static final String COLUMN_NAME_ANNUAL_SURVEY = "annual_survey";
+        public static final String COLUMN_NAME_MODULE_CODE = "moduleCode";
+
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
                     add(COLUMN_NAME_ID);
@@ -41,6 +43,7 @@ public class OFISDBContract {
                     add(COLUMN_NAME_NAME_TH);
                     add(COLUMN_NAME_EXPIRES);
                     add(COLUMN_NAME_ANNUAL_SURVEY);
+                    add(COLUMN_NAME_MODULE_CODE);
                 }}
         );
     }
@@ -592,7 +595,6 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_CHILD_SYNCED = "synced";
         public static final String COLUMN_NAME_CHILD_SUBMITTED_MODULES = "submitted_modules";
 
-
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
                     add(COLUMN_NAME_ID);
@@ -608,6 +610,27 @@ public class OFISDBContract {
                 }}
         );
     }
+
+    public static abstract class ChildVisitDetails implements BaseColumns {
+        public static final String TABLE_NAME = "child_visit";
+        public static final String COLUMN_NAME_ID = "id";
+        public static final String COLUMN_NAME_FARMER_ID = "farmerId";
+        public static final String COLUMN_NAME_SURVEY_CODE = "surveyCode";
+        public static final String COLUMN_NAME_SURVEY_DESCRIPTION = "surveyDescription";
+        public static final String COLUMN_NAME_SURVEY_VISIT_SYNCED = "synced";
+
+        public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
+                new ArrayList<String>() {{
+                    add(COLUMN_NAME_ID);
+                    add(COLUMN_NAME_FARMER_ID);
+                    add(COLUMN_NAME_SURVEY_CODE);
+                    add(COLUMN_NAME_SURVEY_DESCRIPTION);
+                    add(COLUMN_NAME_SURVEY_VISIT_SYNCED);
+                }}
+        );
+    }
+
+
 
     public static abstract class ChildVisitDetailsEntry implements BaseColumns {
         public static final String TABLE_NAME = "child_visit_details";
@@ -942,8 +965,6 @@ public class OFISDBContract {
         //JIRA req OW-505
         public static final String COLUMN_NAME_FARMER_PHOTO = "farmer_photourl";
         public static final String COLUMN_NAME_FARMER_CHILD_ID = "farmer_child_id";
-
-
 
 
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(

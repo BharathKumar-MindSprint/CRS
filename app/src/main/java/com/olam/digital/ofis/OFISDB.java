@@ -27,6 +27,14 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_AGE_ON_YEAR + " INTEGER, "
             + OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_SYNCED + " INTEGER DEFAULT 1)";
 
+    private static final String OFIS_CHILD_INDIVIDUAL_SURVEY_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS "
+            + OFISDBContract.ChildVisitDetails.TABLE_NAME
+            + " ( " + OFISDBContract.ChildVisitDetails.COLUMN_NAME_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+            + OFISDBContract.ChildVisitDetails.COLUMN_NAME_FARMER_ID + " INTEGER, "
+            + OFISDBContract.ChildVisitDetails.COLUMN_NAME_SURVEY_CODE + " INTEGER, "
+            + OFISDBContract.ChildVisitDetails.COLUMN_NAME_SURVEY_DESCRIPTION  + " TEXT, "
+            + OFISDBContract.ChildVisitDetails.COLUMN_NAME_SURVEY_VISIT_SYNCED + " INTEGER DEFAULT 1)";
+
     private static final String OFIS_CHILD_VIST_DETAILS_CREATE = "CREATE TABLE IF NOT EXISTS "
             + OFISDBContract.ChildVisitDetailsEntry.TABLE_NAME
             + " ( " + OFISDBContract.ChildVisitDetailsEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -45,6 +53,7 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.ModuleEntry.COLUMN_NAME_NAME_ID + " TEXT, " + OFISDBContract.ModuleEntry.COLUMN_NAME_NAME_PT + " TEXT, "
             + OFISDBContract.ModuleEntry.COLUMN_NAME_NAME_TR + " TEXT, " + OFISDBContract.ModuleEntry.COLUMN_NAME_NAME_LO + " TEXT, "
             + OFISDBContract.ModuleEntry.COLUMN_NAME_NAME_VI + " TEXT, " + OFISDBContract.ModuleEntry.COLUMN_NAME_NAME_TH + " TEXT, "
+            + OFISDBContract.ModuleEntry.COLUMN_NAME_MODULE_CODE + " TEXT, "
             + OFISDBContract.ModuleEntry.COLUMN_NAME_EXPIRES + " TEXT, " + OFISDBContract.ModuleEntry.COLUMN_NAME_ANNUAL_SURVEY + " INTEGER )";
     // create SubModules
     private static final String OFIS_SUBMODULES_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.SubmoduleEntry.TABLE_NAME
@@ -605,6 +614,7 @@ class OFISDB extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(OFIS_CHILD_VIST_DETAILS_CREATE);
         sqLiteDatabase.execSQL(OFIS_FARMERCHILD_MODULES_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_ANSWER_CHILD_TABLE_CREATE);
+        sqLiteDatabase.execSQL(OFIS_CHILD_INDIVIDUAL_SURVEY_TABLE_CREATE);
     }
 
     @Override
@@ -674,6 +684,7 @@ class OFISDB extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL("drop table IF EXISTS child_visit_details;");
         sqLiteDatabase.execSQL("drop table IF EXISTS farmer_child_modules;");
         sqLiteDatabase.execSQL("drop table IF EXISTS child_answers");
+        sqLiteDatabase.execSQL("drop table IF EXISTS child_visit");
         onCreate(sqLiteDatabase);
     }
 }
