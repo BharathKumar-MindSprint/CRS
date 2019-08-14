@@ -34,9 +34,11 @@ import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.crash.FirebaseCrash;
 import com.olam.digital.ofis.R;
+import com.olam.digital.ofis.recordpolygon.AppConstants;
 
 import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
@@ -65,17 +67,17 @@ import okhttp3.internal.Util;
  * Created by ben on 02/06/2015.
  */
 @SuppressWarnings("DefaultFileTemplate")
-class DynamicQuestions {
+public class DynamicQuestions {
     static Resources resourcesforyesno;
-    ArrayList<JSONObject> answerSet;
-    ArrayList<EditText> hundredpercentquestions;
-    int reportingYear;
-    boolean updatingHundredPercent;
-    boolean hasAnswers;
-    LayoutInflater inflater;
-    String questionColumnSuffix;
-    LinearLayout questionsSection;
-    Context context;
+    public ArrayList<JSONObject> answerSet;
+    public ArrayList<EditText> hundredpercentquestions;
+    public int reportingYear;
+    public boolean updatingHundredPercent;
+    public boolean hasAnswers;
+    public LayoutInflater inflater;
+    public String questionColumnSuffix;
+    public LinearLayout questionsSection;
+    public Context context;
     private final DataLayer dl;
     private String mCurrentPhotoPath = null, mCurrentPhotoFileName = null;
     private Uri mCapturedImageURI = null;
@@ -102,21 +104,21 @@ class DynamicQuestions {
     }
 
 
-    static DynamicQuestions getInstance(Context context, String questionColumnSuffix, DataLayer dl) {
+    public static DynamicQuestions getInstance(Context context, String questionColumnSuffix, DataLayer dl) {
         if (instance == null) {
             instance = new DynamicQuestions(context, questionColumnSuffix, dl);
         }
         return instance;
     }
 
-    static DynamicQuestions getInstance() {
+    public static DynamicQuestions getInstance() {
         if (instance == null) {
             return null;
         }
         return instance;
     }
 
-    static void clearInstance() {
+    public static void clearInstance() {
         instance = null;
     }
 
@@ -132,7 +134,7 @@ class DynamicQuestions {
         densitySubAnswers = new String[]{};
     }
 
-    boolean requiredFieldsAnswered(int farmerModuleId, int moduleId) {
+    public boolean requiredFieldsAnswered(int farmerModuleId, int moduleId) {
         Cursor completedAnswers = dl.getAllAnswersByFarmerModuleId(farmerModuleId);
         Cursor requiredQuestions = dl.getRequiredQuestionIds(moduleId);
         Set<Integer> completedQuestionIds = new HashSet<>();
@@ -352,9 +354,10 @@ class DynamicQuestions {
         // get disp"lay config to see if question is required
         try {
             JSONObject displayConfig = new JSONObject(qCursor.getString(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION)));
+
             if (displayConfig.has("surveyrange")) {
-                tv.setText(Html.fromHtml(tv.getText().toString() + "(Minimum range " + String.valueOf(displayConfig.getJSONObject("surveyrange").getInt("min") +
-                        " Maximum range " + String.valueOf(displayConfig.getJSONObject("surveyrange").getInt("max")) + ")" )), TextView.BufferType.SPANNABLE);
+                tv.setText(Html.fromHtml(tv.getText().toString() + "(Min Value: " + String.valueOf(displayConfig.getJSONObject("surveyrange").getInt("min") +
+                        "\tMax value: " + String.valueOf(displayConfig.getJSONObject("surveyrange").getInt("max")) +")" )), TextView.BufferType.SPANNABLE);
             }
             if (displayConfig.has("display")) {
                 JSONObject display = displayConfig.getJSONObject("display");
@@ -412,7 +415,7 @@ class DynamicQuestions {
         parentLayout.addView(tv);
     }
 
-    void renderPhotoUploadQuestion(Cursor qCursor, boolean isRepeaterItem, LinearLayout parentLayout, final int parentQuestionId, final int repeaterItemPosition, Cursor repeaterAnswers, final Resources res) {
+    public void renderPhotoUploadQuestion(Cursor qCursor, boolean isRepeaterItem, LinearLayout parentLayout, final int parentQuestionId, final int repeaterItemPosition, Cursor repeaterAnswers, final Resources res) {
         LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
         renderQuestion(qCursor, isRepeaterItem, (isRepeaterItem) ? parentLayout : questionWrapper);
 
@@ -686,7 +689,7 @@ class DynamicQuestions {
         this.mCapturedImageURI = mCapturedImageURI;
     }
 
-    void setFullImageFromFilePath(Resources res) {
+    public void setFullImageFromFilePath(Resources res) {
         String imagePath = getCurrentPhotoPath();
         ImageView target = getCurrentImageView();
         String savedImagePath = Utilities.scaleRotateAndSaveImage(imagePath, "modulephoto");
@@ -729,7 +732,7 @@ class DynamicQuestions {
         target.setImageBitmap(bitmap);
     }
 
-    void renderDatePickerQuestion(Cursor qCursor, boolean isRepeaterItem, LinearLayout parentLayout, final int parentQuestionId, final int repeaterItemPosition, Cursor repeaterAnswers) {
+    public void renderDatePickerQuestion(Cursor qCursor, boolean isRepeaterItem, LinearLayout parentLayout, final int parentQuestionId, final int repeaterItemPosition, Cursor repeaterAnswers) {
         LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
         renderQuestion(qCursor, isRepeaterItem, (isRepeaterItem) ? parentLayout : questionWrapper);
 
@@ -759,7 +762,7 @@ class DynamicQuestions {
                 if ((!showDay) && (!showMonth) && (showyear)) {
                     // just the year, show the fifty year dropdown instead
                     final Spinner spinner = (Spinner) inflater.inflate(R.layout.module_spinner, (isRepeaterItem) ? parentLayout : questionWrapper, false);
-                  //  String[] since1950 = Utilities.since1950();
+                    //  String[] since1950 = Utilities.since1950();
                     String[] since1900= Utilities.since1900();
 
                     ArrayAdapter<String> adapter = new ArrayAdapter<>(context, R.layout.spinner_item, since1900);
@@ -917,7 +920,7 @@ class DynamicQuestions {
                 if ((!showDay) && (!showMonth) && (showyear)) {
                     // just the year, show the fifty year dropdown instead
                     final Spinner spinner = (Spinner) inflater.inflate(R.layout.module_spinner, (isRepeaterItem) ? parentLayout : questionWrapper, false);
-                  //  String[] since1950 = Utilities.since1950();
+                    //  String[] since1950 = Utilities.since1950();
                     String[] since1900= Utilities.since1900();
                     ArrayAdapter<String> adapter = new ArrayAdapter<>(context, R.layout.spinner_item, since1900);
                     adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
@@ -1031,7 +1034,7 @@ class DynamicQuestions {
         }
     }
 
-    void renderTextBoxQuestion(Cursor qCursor, boolean isRepeaterItem, LinearLayout parentLayout, final int parentQuestionId, final int repeaterItemPosition, Cursor repeaterAnswers) {
+    public void renderTextBoxQuestion(final Cursor qCursor, boolean isRepeaterItem, LinearLayout parentLayout, final int parentQuestionId, final int repeaterItemPosition, Cursor repeaterAnswers) {
         LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
         renderQuestion(qCursor, isRepeaterItem, (isRepeaterItem) ? parentLayout : questionWrapper);
 
@@ -1076,9 +1079,9 @@ class DynamicQuestions {
         // add tv to array if this is a 100% group question
         // get display config
         boolean isHPQTemp = false;
-
+        JSONObject displayConfig = new JSONObject();
         try {
-            JSONObject displayConfig = new JSONObject(qCursor.getString(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION)));
+            displayConfig = new JSONObject(qCursor.getString(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION)));
 
             if (displayConfig.has("hundredpercentgroup") && (displayConfig.getBoolean("hundredpercentgroup"))) {
                 et.setBackgroundResource(R.drawable.percent_edit_text);
@@ -1103,6 +1106,7 @@ class DynamicQuestions {
         }
         final boolean isHundredPercentQuestion = isHPQTemp;
 
+        final JSONObject finalDisplayConfig = displayConfig;
         et.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
@@ -1111,15 +1115,42 @@ class DynamicQuestions {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+                try {
+                    if (fetchMinMaxValue(finalDisplayConfig, AppConstants.RANGE_MAX) != 0
+                            || fetchMinMaxValue(finalDisplayConfig, AppConstants.RANGE_MIN) != 0 ? true : false) {
+                        if (Integer.parseInt(et.getText().toString()) > fetchMinMaxValue(finalDisplayConfig, AppConstants.RANGE_MAX)) {
+                            et.setText("");
+                            Toast.makeText(context, R.string.valid_range, Toast.LENGTH_LONG).show();
+                        }
 
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
             }
 
             @Override
             public void afterTextChanged(Editable editable) {
+
                 if ((isHundredPercentQuestion) && (!updatingHundredPercent)) {
                     autofill100Percent(et);
                 }
                 saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, et.getText().toString());
+            }
+        });
+
+        et.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(et.getText().toString().length() > 0) {
+                    if (fetchMinMaxValue(finalDisplayConfig, AppConstants.RANGE_MAX) != 0
+                            || fetchMinMaxValue(finalDisplayConfig, AppConstants.RANGE_MIN) != 0 ? true : false) {
+                        if (Integer.parseInt(et.getText().toString()) < fetchMinMaxValue(finalDisplayConfig, AppConstants.RANGE_MIN)) {
+                            et.setText("");
+                            Toast.makeText(context, R.string.valid_range, Toast.LENGTH_LONG).show();
+                        }
+                    }
+                }
             }
         });
 
@@ -1129,6 +1160,19 @@ class DynamicQuestions {
             questionWrapper.addView(et);
             parentLayout.addView(questionWrapper);
         }
+    }
+
+    private int fetchMinMaxValue(JSONObject displayConfig, String rangeMinMax) {
+        // get disp"lay config to see if question has display range
+        try {
+            if (displayConfig.has("surveyrange")) {
+                return displayConfig.getJSONObject("surveyrange").getInt(rangeMinMax);
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 
     void renderTextBoxQuestionSubQuestion(Cursor qCursor, boolean isRepeaterItem, LinearLayout parentLayout, final int parentQuestionId, final int repeaterItemPosition, Cursor repeaterAnswers) {
@@ -1275,7 +1319,7 @@ class DynamicQuestions {
         }
     }
 
-    void renderDropDownQuestion(Cursor qCursor, boolean isRepeaterItem, LinearLayout parentLayout, final int parentQuestionId, final int repeaterItemPosition, Cursor repeaterAnswers, final Resources res) {
+    public void renderDropDownQuestion(Cursor qCursor, boolean isRepeaterItem, LinearLayout parentLayout, final int parentQuestionId, final int repeaterItemPosition, Cursor repeaterAnswers, final Resources res) {
         final LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
         renderQuestion(qCursor, isRepeaterItem, (isRepeaterItem) ? parentLayout : questionWrapper);
         resources = res;
@@ -1718,7 +1762,7 @@ class DynamicQuestions {
     }
 
 
-    void renderCheckBoxQuestion(Cursor questions, LinearLayout parentLayout, long farmerId, long farmerModuleId) {
+    public void renderCheckBoxQuestion(Cursor questions, LinearLayout parentLayout, long farmerId, long farmerModuleId) {
         LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
         renderQuestion(questions, false, questionWrapper);
 
@@ -2096,7 +2140,7 @@ class DynamicQuestions {
     }
 
 
-    void renderPhotoCheckboxQuestion(Cursor questions, long farmerId, long farmerModuleId, Resources res, String packageName) {
+    public void renderPhotoCheckboxQuestion(Cursor questions, long farmerId, long farmerModuleId, Resources res, String packageName) {
         LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, questionsSection, false);
         renderQuestion(questions, false, questionWrapper);
 
@@ -2202,7 +2246,7 @@ class DynamicQuestions {
     }
 
 
-    void renderRepeaterQuestion(Cursor questions, final long farmerId, final String olamFarmerId, final long farmerModuleId, final Resources res) {
+    public void renderRepeaterQuestion(Cursor questions, final long farmerId, final String olamFarmerId, final long farmerModuleId, final Resources res) {
         LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, questionsSection, false);
         renderQuestion(questions, false, questionWrapper);
         resources = res;
@@ -2581,7 +2625,7 @@ class DynamicQuestions {
 
     }
 
-    void renderYesNoQuestion(final Cursor qCursor, final boolean isRepeaterItem, final LinearLayout parentLayout, final int parentQuestionId, final int repeaterItemPosition, Cursor repeaterAnswers, final Resources res) {
+    public void renderYesNoQuestion(final Cursor qCursor, final boolean isRepeaterItem, final LinearLayout parentLayout, final int parentQuestionId, final int repeaterItemPosition, Cursor repeaterAnswers, final Resources res) {
         final LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
         renderQuestion(qCursor, isRepeaterItem, (isRepeaterItem) ? parentLayout : questionWrapper);
         String question1 = "", question2 = "";
@@ -2609,7 +2653,7 @@ class DynamicQuestions {
         int answerIdTemp = 0;
 
         try {
-          if(is_subset_questions_requiredduplicate==null){
+            if(is_subset_questions_requiredduplicate==null){
 
                 is_subset_questions_requiredduplicate="";
             }
@@ -3084,7 +3128,7 @@ class DynamicQuestions {
     }
 
     @SuppressLint("SetTextI18n")
-    void renderTreeDensityQuestion(Cursor questions, final Resources res) {
+    public void renderTreeDensityQuestion(Cursor questions, final Resources res) {
         // special case to determine tree density stuff
         setupPlotVariants(res);
 
@@ -3336,7 +3380,7 @@ class DynamicQuestions {
                 if ((!showDay) && (!showMonth) && (showyear)) {
                     // just the year, show the fifty year dropdown instead
                     final Spinner spinner = (Spinner) inflater.inflate(R.layout.module_spinner, (isRepeaterItem) ? parentLayout : questionWrapper, false);
-                   // String[] since1950 = Utilities.since1950();
+                    // String[] since1950 = Utilities.since1950();
                     String[] since1900= Utilities.since1900();
                     ArrayAdapter<String> adapter = new ArrayAdapter<>(context, R.layout.spinner_item, since1900);
                     adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
