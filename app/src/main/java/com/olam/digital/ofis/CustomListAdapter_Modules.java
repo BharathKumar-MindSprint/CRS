@@ -141,7 +141,7 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                 //}
             }else if (cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals(ChildLabourUtils.REG_CHILD)) {
 
-                imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.childlabour));
+                imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_child));
                 enabledItem.setText("true");
 
                 linearLayout.setBackgroundResource(R.drawable.list_item);
@@ -151,7 +151,7 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
 
             }else if (cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals(ChildLabourUtils.CHILDLABOUR_SURVEY)) {
 
-                imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.reg_child));
+                imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_childsurvey));
                 enabledItem.setText("true");
 
                 linearLayout.setBackgroundResource(R.drawable.list_item);

@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_margin="@dimen/activity_vertical_margin"
+    android:background="@color/clmrs_bg"
     android:orientation="vertical">
 
     <LinearLayout
@@ -10,6 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
+        android:background="@color/clmrs_bg"
         android:orientation="vertical">
 
         <TextView
@@ -25,6 +27,7 @@
             android:layout_height="52dp"
             android:background="@drawable/border_white_bg"
             android:hint="@string/full_name"
+            android:textColor="@android:color/black"
             android:paddingLeft="5dp" />
 
     </LinearLayout>
@@ -34,6 +37,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
+        android:background="@color/clmrs_bg"
         android:orientation="vertical">
 
         <TextView
@@ -76,6 +80,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
+        android:background="@color/clmrs_bg"
         android:orientation="vertical">
 
         <TextView
@@ -84,11 +89,12 @@
             android:textColor="@color/clmrs_tv_grey"
             android:text="@string/age" />
 
-        z<android.support.v7.widget.AppCompatSpinner
+        <android.support.v7.widget.AppCompatSpinner
             android:id="@+id/ageSpinner"
             android:layout_width="match_parent"
             android:layout_height="52dp"
             android:layout_marginTop="10dp"
+            android:textColor="@android:color/black"
             android:background="@drawable/border_white_bg" />
 
     </LinearLayout>
@@ -96,6 +102,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/clmrs_bg"
         android:orientation="horizontal">
 
         <android.support.v7.widget.AppCompatButton
