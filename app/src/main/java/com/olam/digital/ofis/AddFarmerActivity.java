@@ -517,9 +517,9 @@ public class AddFarmerActivity extends BaseActivity {
 //        String olamFarmerId = farmerIdPrefix.getText().toString() + farmerIdSuffixValue;
 
         EditText farmerName = (EditText) findViewById(R.id.farmerName);
-        String farmerNameValue = String.valueOf(farmerName.getText());
+        String farmerNameValue = String.valueOf(farmerName.getText()).trim();
         if (farmerNameValue.equals("")) {
-
+            farmerName.setText("");
             Toast.makeText(context, res.getString(R.string.please_fill_farmer_name), Toast.LENGTH_LONG).show();
             return values;
 
