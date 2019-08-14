@@ -61,7 +61,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-public class ChildLabourCompleteModuleActivity extends AppCompatActivity {
+public class ChildLabourCompleteModuleActivity extends Activity {
 
     private Long farmerID;
     private ChildrenDTO children;
@@ -179,7 +179,7 @@ public class ChildLabourCompleteModuleActivity extends AppCompatActivity {
         if (statusStarted != 0 || statusFinished != 0) {
 
             dynamicQuestions.hasAnswers = true;
-            questions = dl.getQuestionsAndAnswersBySubModuleId(subModuleId, farmerId, farmerModuleId);
+            questions = dl.getChildQuestionsAndAnswersBySubModuleId(subModuleId, farmerId, farmerModuleId);
 
             moveToCurrentSubModule(subModuleId);
         } else if (subModuleId != 0) {
@@ -259,7 +259,7 @@ public class ChildLabourCompleteModuleActivity extends AppCompatActivity {
                 if (isLastPage) {
                     ContentValues values = new ContentValues();
                     Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-                    values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "module");
+                    values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "childmodule");
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, moduleName);
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, farmerName);
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID, farmerId);
@@ -288,14 +288,13 @@ public class ChildLabourCompleteModuleActivity extends AppCompatActivity {
     private void saveSubModule(String action) {
 
         // returning now to avoid the duplicates
-        return;
 
         boolean canSaveAndFinish = true;
 
         // first time saving this module?
         if (farmerModuleId == 0) {
             statusStarted = 1;
-            farmerModuleId = dl.insertFarmerModule(moduleId, farmerId, olamFarmerId, farmId, subModuleId, statusStarted, recordedLat, recordedLng);
+            farmerModuleId = dl.insertFarmerChildModule(moduleId, farmerId, olamFarmerId, farmId, subModuleId, statusStarted, recordedLat, recordedLng);
             if (isLastPage && networkQueueId > 0) {
                 ContentValues values = new ContentValues();
                 values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_MODULE_ID, farmerModuleId);
@@ -304,7 +303,7 @@ public class ChildLabourCompleteModuleActivity extends AppCompatActivity {
         }
 
 
-        dl.updateSubModuleAnswers(dynamicQuestions.answerSet, farmerModuleId, subModuleId, farmerId, olamFarmerId, farmId, "module");
+        dl.updateSubModuleChildAnswers(dynamicQuestions.answerSet, farmerModuleId, subModuleId, farmerId, olamFarmerId, farmId, "module");
 
         if (action.equalsIgnoreCase("next")) {
             subModules.moveToNext();
@@ -318,23 +317,23 @@ public class ChildLabourCompleteModuleActivity extends AppCompatActivity {
             if (!dynamicQuestions.requiredFieldsAnswered((int) farmerModuleId, (int) moduleId)) {
                 statusFinished = 0;
                 canSaveAndFinish = false;
-                dl.deleteNetworkQueueItemByFarmerModuleId((int) farmerModuleId);
+                dl.deleteNetworkQueueItemByFarmerChildModuleId((int) farmerModuleId);
                 Toast.makeText(context, res.getString(R.string.complete_all_required_fields), Toast.LENGTH_LONG).show();
             }
         }
 
-        dl.updateFarmerModule(farmerModuleId, subModuleId, statusStarted, statusFinished);
+        dl.updateFarmerChildModule(farmerModuleId, subModuleId, statusStarted, statusFinished);
 
         if (action.equalsIgnoreCase("exit")) {
             ViewFarmerActivity.farmerId = farmerId;
             //SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(farmerId);
-            Intent intent = new Intent(context, ChildLabourDetailsActivity.class);
+            Intent intent = new Intent(context, ViewChildLabourSurveyActivity.class);
             context.startActivity(intent);
         } else if (action.equalsIgnoreCase("finish")) {
             if (canSaveAndFinish) {
                 ViewFarmerActivity.farmerId = farmerId;
                 //SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(farmerId);
-                Intent intent = new Intent(context, ChildLabourDetailsActivity.class);
+                Intent intent = new Intent(context, ViewChildLabourSurveyActivity.class);
                 context.startActivity(intent);
             }
         } else {
@@ -351,7 +350,6 @@ public class ChildLabourCompleteModuleActivity extends AppCompatActivity {
             intent.putExtra(RECORDED_LAT, recordedLat);
             intent.putExtra(RECORDED_LNG, recordedLng);
             intent.putExtra(FARMER_NAME, farmerName);
-
             startActivity(intent);
 
             finish();

@@ -295,6 +295,36 @@ public class OFISDBContract {
         );
     }
 
+    public static abstract class FarmerChildModulesEntry implements BaseColumns {
+        public static final String TABLE_NAME = "farmer_child_modules";
+        public static final String COLUMN_NAME_ID = "id";
+        public static final String COLUMN_NAME_MODULE_ID = "module_id";
+        public static final String COLUMN_NAME_FARMER_ID = "farmer_id";
+        public static final String COLUMN_NAME_OLAM_FARMER_ID = "olam_farmer_id";
+        public static final String COLUMN_NAME_FARM_ID = "farm_id";
+        public static final String COLUMN_NAME_CURRENT_SUBMODULE_ID = "current_submodule_id";
+        public static final String COLUMN_NAME_STATUS_STARTED = "status_started";
+        public static final String COLUMN_NAME_STATUS_FINISHED = "status_finished";
+        public static final String COLUMN_NAME_RECORDED_LAT = "recorded_lat";
+        public static final String COLUMN_NAME_RECORDED_LNG = "recorded_lng";
+        public static final String COLUMN_NAME_STARTED_DATE = "started_date";
+        public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
+                new ArrayList<String>() {{
+                    add(COLUMN_NAME_ID);
+                    add(COLUMN_NAME_MODULE_ID);
+                    add(COLUMN_NAME_FARMER_ID);
+                    add(COLUMN_NAME_OLAM_FARMER_ID);
+                    add(COLUMN_NAME_FARM_ID);
+                    add(COLUMN_NAME_CURRENT_SUBMODULE_ID);
+                    add(COLUMN_NAME_STATUS_STARTED);
+                    add(COLUMN_NAME_STATUS_FINISHED);
+                    add(COLUMN_NAME_RECORDED_LAT);
+                    add(COLUMN_NAME_RECORDED_LNG);
+                    add(COLUMN_NAME_STARTED_DATE);
+                }}
+        );
+    }
+
     public static abstract class DatatypesEntry implements BaseColumns {
         public static final String TABLE_NAME = "datatypes";
         public static final String COLUMN_NAME_ID = "id";
@@ -507,8 +537,48 @@ public class OFISDBContract {
         );
     }
 
-    // Child Registration Table Start
 
+    public static abstract class AnswerChildEntry implements BaseColumns {
+        public static final String TABLE_NAME = "child_answers";
+        public static final String COLUMN_NAME_ID = "id";
+        public static final String COLUMN_NAME_QUESTION_ID = "question_id";
+        public static final String COLUMN_NAME_PARENT_QUESTION_ID = "parent_question_id";
+        public static final String COLUMN_NAME_REPEATER_ITEM_POSITION = "repeater_item_position";
+        public static final String COLUMN_NAME_SUBMODULE_ID = "submodule_id";
+        public static final String COLUMN_NAME_FARMER_MODULE_ID = "farmer_module_id";
+        public static final String COLUMN_NAME_FMP_ID = "fmp_id";
+        public static final String COLUMN_NAME_FARMER_ID = "farmer_id";
+        public static final String COLUMN_NAME_OLAM_FARMER_ID = "olam_farmer_id";
+        public static final String COLUMN_NAME_FARM_ID = "farm_id";
+        public static final String COLUMN_NAME_ANSWER_INT = "answer_int";
+        public static final String COLUMN_NAME_ANSWER_BOOL = "answer_boolean";
+        public static final String COLUMN_NAME_ANSWER_DECIMAL = "answer_decimal";
+        public static final String COLUMN_NAME_ANSWER_DATE = "answer_date";
+        public static final String COLUMN_NAME_ANSWER_TEXT = "answer_text";
+        public static final String COLUMN_NAME_ANSWER_REPORTING_YEAR = "reporting_year";
+        public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
+                new ArrayList<String>() {{
+                    add(COLUMN_NAME_ID);
+                    add(COLUMN_NAME_QUESTION_ID);
+                    add(COLUMN_NAME_PARENT_QUESTION_ID);
+                    add(COLUMN_NAME_REPEATER_ITEM_POSITION);
+                    add(COLUMN_NAME_SUBMODULE_ID);
+                    add(COLUMN_NAME_FARMER_MODULE_ID);
+                    add(COLUMN_NAME_FMP_ID);
+                    add(COLUMN_NAME_FARMER_ID);
+                    add(COLUMN_NAME_OLAM_FARMER_ID);
+                    add(COLUMN_NAME_FARM_ID);
+                    add(COLUMN_NAME_ANSWER_INT);
+                    add(COLUMN_NAME_ANSWER_BOOL);
+                    add(COLUMN_NAME_ANSWER_DECIMAL);
+                    add(COLUMN_NAME_ANSWER_DATE);
+                    add(COLUMN_NAME_ANSWER_TEXT);
+                    add(COLUMN_NAME_ANSWER_REPORTING_YEAR);
+                }}
+        );
+    }
+
+    // Child Registration Table Start
     public static abstract class ChildEntry implements BaseColumns {
         public static final String TABLE_NAME = "children";
         public static final String COLUMN_NAME_ID = "id";
@@ -520,6 +590,8 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_STATUS = "status";
         public static final String COLUMN_NAME_CHILD_AGE_ON_YEAR = "age_on_year";
         public static final String COLUMN_NAME_CHILD_SYNCED = "synced";
+        public static final String COLUMN_NAME_CHILD_SUBMITTED_MODULES = "submitted_modules";
+
 
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
@@ -532,6 +604,7 @@ public class OFISDBContract {
                     add(COLUMN_NAME_STATUS);
                     add(COLUMN_NAME_CHILD_AGE_ON_YEAR);
                     add(COLUMN_NAME_CHILD_SYNCED);
+                    add(COLUMN_NAME_CHILD_SUBMITTED_MODULES);
                 }}
         );
     }
@@ -574,13 +647,15 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_CONSENTFARMER = "consentFarmer";
         public static final String COLUMN_NAME_CONSENTOTHERS = "consentOthers";
         public static final String COLUMN_NAME_DATE_OF_BIRTH = "dateOfBirth";
-
+        public static final String COLUMN_NAME_PRODUCT_ID = "productId";
 
         public static final String BACKUP_TABLE_NAME = "farmers_backup";
         public static final String COLUMN_NAME_ID = "id";
         public static final String COLUMN_NAME_FARM_ID = "farm_id";
         public static final String COLUMN_NAME_PLACE_ID = "place_id";
         public static final String COLUMN_NAME_SECTION_ID = "section_id";
+        public static final String COLUMN_NAME_COUNTRY_ID = "country_id";
+
         public static final String COLUMN_NAME_FARMER_NAME = "name";
         public static final String COLUMN_NAME_GENDER = "gender";
         public static final String COLUMN_NAME_DOB = "dob";
@@ -617,10 +692,11 @@ public class OFISDBContract {
                     add(COLUMN_NAME_FARM_PLOTS);
                     add(COLUMN_NAME_CONSENT_FARMER);
                     add(COLUMN_NAME_CONSENT_OTHERS);
-                    add(COLUMN_NAME_COUNTRYID);
+                    add(COLUMN_NAME_COUNTRY_ID);
                     add(COLUMN_NAME_DISTRICTID);
                     add(COLUMN_NAME_FARMERGROUPID);
                     add(COLUMN_NAME_REGIONID);
+                    add(COLUMN_NAME_PRODUCT_ID);
 
                 }}
         );
@@ -636,6 +712,11 @@ public class OFISDBContract {
                     add(COLUMN_NAME_FARM_PRIMARY_LAT);
                     add(COLUMN_NAME_FARM_PRIMARY_LNG);
                     add(COLUMN_NAME_FARM_PLOTS);
+                    add(COLUMN_NAME_COUNTRY_ID);
+                    add(COLUMN_NAME_DISTRICTID);
+                    add(COLUMN_NAME_FARMERGROUPID);
+                    add(COLUMN_NAME_REGIONID);
+                    add(COLUMN_NAME_PRODUCT_ID);
                 }}
         );
         public static final String COLUMN_NAME_OLAM_FARMER_ID_DISPLAY = "displayFarmerId";
@@ -1720,6 +1801,10 @@ public class OFISDBContract {
                 put(Subquestionanswer.TABLE_NAME, Subquestionanswer.COLUMN_LIST);
                 put(countryLookUpValuesEntry.TABLE_NAME, countryLookUpValuesEntry.COLUMN_LIST);
                 put(productSipEntry.TABLE_NAME, productSipEntry.COLUMN_LIST);
+                put(ChildEntry.TABLE_NAME,ChildEntry.COLUMN_LIST);
+                put(ChildVisitDetailsEntry.TABLE_NAME,ChildVisitDetailsEntry.COLUMN_LIST);
+                put(FarmerChildModulesEntry.TABLE_NAME,FarmerChildModulesEntry.COLUMN_LIST);
+                put(AnswerChildEntry.TABLE_NAME,AnswerChildEntry.COLUMN_LIST);
             }};
 
 

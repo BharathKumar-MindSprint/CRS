@@ -40,6 +40,15 @@ public class RegisterChildActivity extends AppCompatActivity implements View.OnC
 
     }
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        try {
+            populateChildList();
+        }catch (Exception e){}
+
+    }
+
     private void populateChildList() {
         ChildLabourLogic childLabourLogic=new ChildLabourLogic();
         List<ChildrenDTO> childrenList=childLabourLogic.getChildDetailsById(this,farmerId);

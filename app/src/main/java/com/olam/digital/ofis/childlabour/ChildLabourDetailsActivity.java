@@ -30,7 +30,9 @@ public class ChildLabourDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_child_labour_details);
         initComponents();
-        farmerId=getIntent().getExtras().getLong(ChildLabourUtils.CHILD_FARMER_ID);
+        try {
+            farmerId=getIntent().getExtras().getLong(ChildLabourUtils.CHILD_FARMER_ID);
+        }catch (Exception e){}
         populateChildList();
     }
     private void populateChildList() {

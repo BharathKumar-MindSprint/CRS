@@ -65,6 +65,16 @@ public class ChildLabourLogic {
                     ChildModuleDto childModuleDto = new ChildModuleDto();
                     childModuleDto.set_id(moduleAssignments.getString(moduleAssignments.getColumnIndex("_id")));
                     childModuleDto.setName(moduleAssignments.getString(moduleAssignments.getColumnIndex("name")));
+                    childModuleDto.setStatus_started(moduleAssignments.getString(moduleAssignments.getColumnIndex("status_started")));
+                    childModuleDto.setStatus_finished(moduleAssignments.getString(moduleAssignments.getColumnIndex("status_finished")));
+                    childModuleDto.setFarmer_module_id(moduleAssignments.getString(moduleAssignments.getColumnIndex("farmer_module_id")));
+                    childModuleDto.setCurrent_submodule_id(moduleAssignments.getString(moduleAssignments.getColumnIndex("current_submodule_id")));
+
+                    childModuleDto.setRecorded_lat(moduleAssignments.getString(moduleAssignments.getColumnIndex("recorded_lat")));
+                    childModuleDto.setRecorded_lng(moduleAssignments.getString(moduleAssignments.getColumnIndex("recorded_lng")));
+
+
+
                     childModuleDtoList.add(childModuleDto);
                 }
             } finally {

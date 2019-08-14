@@ -17,6 +17,7 @@
         android:layout_width="match_parent"
         android:layout_height="52dp"
         android:layout_margin="20dp"
+
         android:weightSum="3"
         android:background="@drawable/border_white_bg">
 

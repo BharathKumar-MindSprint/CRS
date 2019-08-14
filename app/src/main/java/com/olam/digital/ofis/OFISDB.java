@@ -23,6 +23,7 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_GENDER + " TEXT, "
             + OFISDBContract.ChildEntry.COLUMN_NAME_ACTION_FLAG + " INTEGER, "
             + OFISDBContract.ChildEntry.COLUMN_NAME_STATUS + " TEXT, "
+            + OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_SUBMITTED_MODULES + " TEXT, "
             + OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_AGE_ON_YEAR + " INTEGER, "
             + OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_SYNCED + " INTEGER DEFAULT 1)";
 
@@ -131,6 +132,15 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.FarmerModulesEntry.COLUMN_NAME_RECORDED_LAT + " TEXT, " + OFISDBContract.FarmerModulesEntry.COLUMN_NAME_RECORDED_LNG + " TEXT, "
             + OFISDBContract.FarmerModulesEntry.COLUMN_NAME_STARTED_DATE + " TEXT )";
 
+    private static final String OFIS_FARMERCHILD_MODULES_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.FarmerChildModulesEntry.TABLE_NAME
+            + " ( " + OFISDBContract.FarmerChildModulesEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + OFISDBContract.FarmerChildModulesEntry.COLUMN_NAME_MODULE_ID + " INTEGER, "
+            + OFISDBContract.FarmerChildModulesEntry.COLUMN_NAME_FARMER_ID + " INTEGER, " + OFISDBContract.FarmerChildModulesEntry.COLUMN_NAME_OLAM_FARMER_ID + " TEXT, "
+            + OFISDBContract.FarmerChildModulesEntry.COLUMN_NAME_FARM_ID + " INTEGER, " + OFISDBContract.FarmerChildModulesEntry.COLUMN_NAME_CURRENT_SUBMODULE_ID + " INTEGER, "
+            + OFISDBContract.FarmerChildModulesEntry.COLUMN_NAME_STATUS_STARTED + " INTEGER, " + OFISDBContract.FarmerChildModulesEntry.COLUMN_NAME_STATUS_FINISHED + " INTEGER, "
+            + OFISDBContract.FarmerChildModulesEntry.COLUMN_NAME_RECORDED_LAT + " TEXT, " + OFISDBContract.FarmerChildModulesEntry.COLUMN_NAME_RECORDED_LNG + " TEXT, "
+            + OFISDBContract.FarmerChildModulesEntry.COLUMN_NAME_STARTED_DATE + " TEXT )";
+
+
     private static final String OFIS_PLOT_GEO_DATA_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.PlotGeoData.TABLE_NAME
             + " ( " + OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
             + OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_NAME + " TEXT, "
@@ -189,14 +199,29 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_DECIMAL + " NUMERIC, " + OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_DATE + " TEXT, "
             + OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_TEXT + " TEXT, " + OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_REPORTING_YEAR + " TEXT )";
 
+
+    private static final String OFIS_ANSWER_CHILD_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.AnswerChildEntry.TABLE_NAME +
+            " ( " + OFISDBContract.AnswerChildEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + OFISDBContract.AnswerChildEntry.COLUMN_NAME_QUESTION_ID + " INTEGER, "
+            + OFISDBContract.AnswerChildEntry.COLUMN_NAME_PARENT_QUESTION_ID + " INTEGER, " + OFISDBContract.AnswerChildEntry.COLUMN_NAME_REPEATER_ITEM_POSITION + " INTEGER, "
+            + OFISDBContract.AnswerChildEntry.COLUMN_NAME_SUBMODULE_ID + " INTEGER, " + OFISDBContract.AnswerChildEntry.COLUMN_NAME_FARMER_MODULE_ID + " INTEGER, "
+            + OFISDBContract.AnswerChildEntry.COLUMN_NAME_FMP_ID + " INTEGER, " + OFISDBContract.AnswerChildEntry.COLUMN_NAME_FARMER_ID + " INTEGER, "
+            + OFISDBContract.AnswerChildEntry.COLUMN_NAME_OLAM_FARMER_ID + " TEXT, " + OFISDBContract.AnswerChildEntry.COLUMN_NAME_FARM_ID + " INTEGER, "
+            + OFISDBContract.AnswerChildEntry.COLUMN_NAME_ANSWER_INT + " INTEGER, " + OFISDBContract.AnswerChildEntry.COLUMN_NAME_ANSWER_BOOL + " INTEGER, "
+            + OFISDBContract.AnswerChildEntry.COLUMN_NAME_ANSWER_DECIMAL + " NUMERIC, " + OFISDBContract.AnswerChildEntry.COLUMN_NAME_ANSWER_DATE + " TEXT, "
+            + OFISDBContract.AnswerChildEntry.COLUMN_NAME_ANSWER_TEXT + " TEXT, " + OFISDBContract.AnswerChildEntry.COLUMN_NAME_ANSWER_REPORTING_YEAR + " TEXT )";
+
+
+
+
     private static final String OFIS_FARMER_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.FarmerEntry.TABLE_NAME +
             " ( " + OFISDBContract.FarmerEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_ID + " INTEGER, "
             + OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID + " INTEGER, " + OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID + " INTEGER, "
             + OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME + " TEXT, " + OFISDBContract.FarmerEntry.COLUMN_NAME_GENDER + " TEXT, "
-            + OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRYID + " TEXT, "
+            + OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID + " TEXT, "
             + OFISDBContract.FarmerEntry.COLUMN_NAME_REGIONID + " TEXT, "
             + OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID + " TEXT, "
             + OFISDBContract.FarmerEntry.COLUMN_NAME_DISTRICTID + " TEXT, "
+            + OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID+ " TEXT, "
             + OFISDBContract.FarmerEntry.COLUMN_NAME_DOB + " TEXT, " + OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID + " TEXT, "
             + OFISDBContract.FarmerEntry.COLUMN_NAME_PHOTO + " TEXT, " + OFISDBContract.FarmerEntry.COLUMN_NAME_SIGNATURE + " TEXT, "
             + OFISDBContract.FarmerEntry.COLUMN_NAME_SYNCED + " INTEGER DEFAULT 1, " + OFISDBContract.FarmerEntry.COLUMN_NAME_CREATED_LOCALLY + " INTEGER, "
@@ -209,7 +234,7 @@ class OFISDB extends SQLiteOpenHelper {
             " ( " + OFISDBContract.FarmerEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_ID + " INTEGER, "
             + OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID + " INTEGER, " + OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID + " INTEGER, "
             + OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME + " TEXT, " + OFISDBContract.FarmerEntry.COLUMN_NAME_GENDER + " TEXT, "
-            + OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRYID + " TEXT, "
+            + OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID + " TEXT, "
             + OFISDBContract.FarmerEntry.COLUMN_NAME_REGIONID + " TEXT, "
             + OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID + " TEXT, "
             + OFISDBContract.FarmerEntry.COLUMN_NAME_DISTRICTID + " TEXT, "
@@ -574,8 +599,12 @@ class OFISDB extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(OFIS_DATATYPESSIP_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_LOOKUPVALUESSIP_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_All_COUNTRIES_TABLE_CREATE);
+
+        // child lab
         sqLiteDatabase.execSQL(OFIS_CHILD_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_CHILD_VIST_DETAILS_CREATE);
+        sqLiteDatabase.execSQL(OFIS_FARMERCHILD_MODULES_TABLE_CREATE);
+        sqLiteDatabase.execSQL(OFIS_ANSWER_CHILD_TABLE_CREATE);
     }
 
     @Override
@@ -640,9 +669,11 @@ class OFISDB extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL("drop table IF EXISTS Subquestionanswer;");
         sqLiteDatabase.execSQL("drop table IF EXISTS allCountries;");
         sqLiteDatabase.execSQL("drop table IF EXISTS products_sip;");
+
         sqLiteDatabase.execSQL("drop table IF EXISTS children;");
         sqLiteDatabase.execSQL("drop table IF EXISTS child_visit_details;");
-//        sqLiteDatabase.execSQL("drop table IF EXISTS products_sip;");
+        sqLiteDatabase.execSQL("drop table IF EXISTS farmer_child_modules;");
+        sqLiteDatabase.execSQL("drop table IF EXISTS child_answers");
         onCreate(sqLiteDatabase);
     }
 }
