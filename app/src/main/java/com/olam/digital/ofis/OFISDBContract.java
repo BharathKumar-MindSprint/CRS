@@ -302,6 +302,7 @@ public class OFISDBContract {
         public static final String TABLE_NAME = "farmer_child_modules";
         public static final String COLUMN_NAME_ID = "id";
         public static final String COLUMN_NAME_MODULE_ID = "module_id";
+        public static final String COLUMN_NAME_CHILD_ID = "child_id";
         public static final String COLUMN_NAME_FARMER_ID = "farmer_id";
         public static final String COLUMN_NAME_OLAM_FARMER_ID = "olam_farmer_id";
         public static final String COLUMN_NAME_FARM_ID = "farm_id";
@@ -324,6 +325,7 @@ public class OFISDBContract {
                     add(COLUMN_NAME_RECORDED_LAT);
                     add(COLUMN_NAME_RECORDED_LNG);
                     add(COLUMN_NAME_STARTED_DATE);
+                    add(COLUMN_NAME_CHILD_ID);
                 }}
         );
     }

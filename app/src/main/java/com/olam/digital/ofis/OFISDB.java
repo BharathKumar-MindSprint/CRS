@@ -143,9 +143,13 @@ class OFISDB extends SQLiteOpenHelper {
 
     private static final String OFIS_FARMERCHILD_MODULES_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.FarmerChildModulesEntry.TABLE_NAME
             + " ( " + OFISDBContract.FarmerChildModulesEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + OFISDBContract.FarmerChildModulesEntry.COLUMN_NAME_MODULE_ID + " INTEGER, "
-            + OFISDBContract.FarmerChildModulesEntry.COLUMN_NAME_FARMER_ID + " INTEGER, " + OFISDBContract.FarmerChildModulesEntry.COLUMN_NAME_OLAM_FARMER_ID + " TEXT, "
-            + OFISDBContract.FarmerChildModulesEntry.COLUMN_NAME_FARM_ID + " INTEGER, " + OFISDBContract.FarmerChildModulesEntry.COLUMN_NAME_CURRENT_SUBMODULE_ID + " INTEGER, "
-            + OFISDBContract.FarmerChildModulesEntry.COLUMN_NAME_STATUS_STARTED + " INTEGER, " + OFISDBContract.FarmerChildModulesEntry.COLUMN_NAME_STATUS_FINISHED + " INTEGER, "
+            + OFISDBContract.FarmerChildModulesEntry.COLUMN_NAME_FARMER_ID + " INTEGER, "
+            + OFISDBContract.FarmerChildModulesEntry.COLUMN_NAME_OLAM_FARMER_ID + " TEXT, "
+            + OFISDBContract.FarmerChildModulesEntry.COLUMN_NAME_CHILD_ID + " TEXT, "
+            + OFISDBContract.FarmerChildModulesEntry.COLUMN_NAME_FARM_ID + " INTEGER, "
+            + OFISDBContract.FarmerChildModulesEntry.COLUMN_NAME_CURRENT_SUBMODULE_ID + " INTEGER, "
+            + OFISDBContract.FarmerChildModulesEntry.COLUMN_NAME_STATUS_STARTED + " INTEGER, "
+            + OFISDBContract.FarmerChildModulesEntry.COLUMN_NAME_STATUS_FINISHED + " INTEGER, "
             + OFISDBContract.FarmerChildModulesEntry.COLUMN_NAME_RECORDED_LAT + " TEXT, " + OFISDBContract.FarmerChildModulesEntry.COLUMN_NAME_RECORDED_LNG + " TEXT, "
             + OFISDBContract.FarmerChildModulesEntry.COLUMN_NAME_STARTED_DATE + " TEXT )";
 

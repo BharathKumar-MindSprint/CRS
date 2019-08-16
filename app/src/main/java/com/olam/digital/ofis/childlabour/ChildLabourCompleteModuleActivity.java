@@ -69,6 +69,7 @@ public class ChildLabourCompleteModuleActivity extends Activity {
 
     private long farmerId;
     private long moduleId;
+    private long childId;
     private long farmerModuleId;
     private int subModuleId;
     private int farmId;
@@ -97,6 +98,7 @@ public class ChildLabourCompleteModuleActivity extends Activity {
     private static final String RECORDED_LAT = "RECORDED_LAT";
     private static final String RECORDED_LNG = "RECORDED_LNG";
     private static final String FARMER_NAME = "FARMER_NAME";
+    private static final String CHILD_ID="CHILD_ID";
     private long networkQueueId = 0;
 
     // for GPS location system
@@ -137,7 +139,6 @@ public class ChildLabourCompleteModuleActivity extends Activity {
         Intent intent = getIntent();
         farmerId = intent.getLongExtra(FARMER_ID,0);
         moduleId = intent.getLongExtra(MODULE_ID, 0);
-
         farmerModuleId = intent.getLongExtra(FARMER_MODULE_ID, 0);
         subModuleId = intent.getIntExtra(SUB_MODULE_ID, 0);
         farmId = intent.getIntExtra(FARM_ID, 0);
@@ -294,7 +295,7 @@ public class ChildLabourCompleteModuleActivity extends Activity {
         // first time saving this module?
         if (farmerModuleId == 0) {
             statusStarted = 1;
-            farmerModuleId = dl.insertFarmerChildModule(moduleId, farmerId, olamFarmerId, farmId, subModuleId, statusStarted, recordedLat, recordedLng);
+            farmerModuleId = dl.insertFarmerChildModule(moduleId, farmerId, olamFarmerId, farmId, subModuleId, statusStarted, recordedLat, recordedLng,children.getId());
             if (isLastPage && networkQueueId > 0) {
                 ContentValues values = new ContentValues();
                 values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_MODULE_ID, farmerModuleId);

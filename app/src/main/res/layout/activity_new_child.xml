@@ -19,6 +19,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="5dp"
             android:text="@string/full_name"
+            android:maxLength="150"
             android:textColor="@color/clmrs_tv_grey"/>
 
         <EditText

@@ -2495,7 +2495,7 @@ public class DataLayer {
         return db.insert(OFISDBContract.FarmerModulesEntry.TABLE_NAME, null, farmerModuleValues);
     }
 
-    public long insertFarmerChildModule(long moduleId, long farmerId, String olamFarmerId, int farmId, int subModuleId, int statusStarted, String recordedLat, String recordedLng) {
+    public long insertFarmerChildModule(long moduleId, long farmerId, String olamFarmerId, int farmId, int subModuleId, int statusStarted, String recordedLat, String recordedLng,String childId) {
         ContentValues farmerChildModuleValues = new ContentValues();
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         farmerChildModuleValues.put(OFISDBContract.FarmerChildModulesEntry.COLUMN_NAME_MODULE_ID, moduleId);
@@ -2508,6 +2508,7 @@ public class DataLayer {
         farmerChildModuleValues.put(OFISDBContract.FarmerChildModulesEntry.COLUMN_NAME_RECORDED_LAT, recordedLat);
         farmerChildModuleValues.put(OFISDBContract.FarmerChildModulesEntry.COLUMN_NAME_RECORDED_LNG, recordedLng);
         farmerChildModuleValues.put(OFISDBContract.FarmerChildModulesEntry.COLUMN_NAME_STARTED_DATE, timestamp.toString());
+        farmerChildModuleValues.put(OFISDBContract.FarmerChildModulesEntry.COLUMN_NAME_CHILD_ID,childId);
         return db.insert(OFISDBContract.FarmerChildModulesEntry.TABLE_NAME, null, farmerChildModuleValues);
     }
 
@@ -3119,7 +3120,7 @@ public class DataLayer {
 
 
     // Remove and update after sync
-    void syncChildFarmerModule(int farmerModuleId, long farmerId, int moduleId, String submissionDate) {
+    void syncChildFarmerModule(int farmerModuleId, long childId, int moduleId, String submissionDate) {
         String whereClause = OFISDBContract.AnswerChildEntry.COLUMN_NAME_FARMER_MODULE_ID + " = ?";
         String[] whereArgs = new String[]{String.valueOf(farmerModuleId)};
 
@@ -3131,7 +3132,7 @@ public class DataLayer {
 
         // Instead of farmer, remove from child submitted modules thing
         // Remove Later (Didn't change for now ) chamge to child id
-        Cursor child = getChildById(farmerId);
+        Cursor child = getChildById(childId);
         if (child.getCount() > 0) {
             child.moveToFirst();
             try {
@@ -3140,26 +3141,37 @@ public class DataLayer {
                 newModuleEntry.put("created_at", submissionDate);
                 JSONObject newModule = new JSONObject();
                 newModule.put("module", newModuleEntry);
-
                 String submittedModulesJSON = child.getString(child.getColumnIndex(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_SUBMITTED_MODULES));
-                String Samplestr = String.valueOf("{\"modules\":null}");
-                if(Samplestr.equals(submittedModulesJSON)){
-                    submittedModulesJSON =submittedModulesJSON.replaceAll("\"modules\":null","");
-                }
-                JSONObject submittedModules = (!submittedModulesJSON.equals("null")) ? new JSONObject(submittedModulesJSON) : new JSONObject();
-                if (submittedModules.has("modules")) {
-                    JSONArray modules = submittedModules.getJSONArray("modules");
-                    modules.put(newModule);
-                } else {
+                JSONObject submittedModules=null;
+                if(submittedModulesJSON==null){
+                     submittedModules=new JSONObject();
                     JSONArray newModules = new JSONArray();
                     newModules.put(newModule);
                     submittedModules.put("modules", newModules);
+
+                }else {
+                    // this section we need to work for multiple survey entries.
+                    String Samplestr = String.valueOf("{\"modules\":null}");
+                    if(Samplestr.equals(submittedModulesJSON)){
+                        submittedModulesJSON =submittedModulesJSON.replaceAll("\"modules\":null","");
+                    }
+                     submittedModules = (!submittedModulesJSON.equals("null")) ? new JSONObject(submittedModulesJSON) : new JSONObject();
+                    if (submittedModules.has("modules")) {
+                        JSONArray modules = submittedModules.getJSONArray("modules");
+                        modules.put(newModule);
+                    } else {
+                        JSONArray newModules = new JSONArray();
+                        newModules.put(newModule);
+                        submittedModules.put("modules", newModules);
+                    }
                 }
+
+
 
                 ContentValues updateValues = new ContentValues();
                 updateValues.put(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_SUBMITTED_MODULES, submittedModules.toString());
 
-                db.update(OFISDBContract.ChildEntry.TABLE_NAME, updateValues, "id = ?", new String[]{String.valueOf(farmerId)});
+                db.update(OFISDBContract.ChildEntry.TABLE_NAME, updateValues, "id = ?", new String[]{String.valueOf(childId)});
 
                 // no backup table for child
 //                db.update(OFISDBContract.FarmerEntry.BACKUP_TABLE_NAME, updateValues, "id = ?", new String[]{String.valueOf(farmerId)});

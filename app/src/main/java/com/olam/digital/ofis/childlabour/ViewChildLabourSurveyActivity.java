@@ -44,6 +44,7 @@ public class ViewChildLabourSurveyActivity extends AppCompatActivity{
     private static final String RECORDED_LAT = "RECORDED_LAT";
     private static final String RECORDED_LNG = "RECORDED_LNG";
     private static final String FARMER_NAME = "FARMER_NAME";
+    private static final String CHILD_ID="CHILD_ID";
     private static final String PLOT_COUNT = "PLOT_COUNT";
     private static final int PERMISSIONS_ACCESS_LOCATION = 6575;
 
@@ -104,6 +105,7 @@ public class ViewChildLabourSurveyActivity extends AppCompatActivity{
         intent.putExtra(STATUS_FINISHED, childModuleDto.getStatus_finished());
         intent.putExtra(RECORDED_LAT, childModuleDto.getRecorded_lat());
         intent.putExtra(RECORDED_LNG, childModuleDto.getRecorded_lng());
+        intent.putExtra(CHILD_ID,children.getId());
 
         Cursor farmer=dataLayer.getFarmerById(farmerID);
         if(farmer!=null && farmer.getCount()>0){
