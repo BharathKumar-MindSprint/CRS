@@ -1909,8 +1909,8 @@ public class DataLayer {
             farmer.moveToFirst();
             String modulesQuery = "SELECT modules.id as _id, modules.name, modules.name_fr, modules.name_es, modules.name_id, modules.name_pt, modules.name_tr, modules.name_lo, modules.name_vi, modules.name_th,modules.annual_survey, " +
                     "submodules.name as submodule_name, submodules.name_fr as submodule_name_fr, submodules.name_es as submodule_name_es, submodules.name_id as submodule_name_id, submodules.name_pt as submodule_name_pt, submodules.name_tr as submodule_name_tr, submodules.name_lo as submodule_name_lo, submodules.name_vi as submodule_name_vi, submodules.name_th as submodule_name_th, " +
-                    "modules.expires, " + "moduleassignments.recurrence_frequency, moduleassignments.recurrence_type, moduleassignments.disabled_months, " +
-                    " farmer_child_modules.id as farmer_module_id, farmer_child_modules.status_started, farmer_child_modules.status_finished, farmer_child_modules.current_submodule_id, farmer_child_modules.recorded_lat, farmer_child_modules.recorded_lng,modules.moduleCode FROM moduleassignments " +
+                    "modules.expires, " + "moduleassignments.recurrence_frequency, moduleassignments.recurrence_type,moduleassignments.surveyCode,moduleassignments.childLabour, moduleassignments.disabled_months, " +
+                    " farmer_child_modules.id as farmer_module_id, farmer_child_modules.status_started, farmer_child_modules.status_finished, farmer_child_modules.current_submodule_id, farmer_child_modules.recorded_lat, farmer_child_modules.recorded_lng,modules.moduleCode FROM moduleassignments" +
                     " INNER JOIN modules ON moduleassignments.module_id = modules.id " +
                     " LEFT OUTER JOIN farmer_child_modules ON modules.id = farmer_child_modules.module_id AND " +
                     "(farmer_child_modules.farmer_id = ? OR farmer_child_modules.olam_farmer_id = ?) " +
@@ -1924,6 +1924,7 @@ public class DataLayer {
                     "(moduleassignment_type = 'Programme' AND moduleassignment_id = ?) OR " +
                     "(moduleassignment_type = 'Product' AND moduleassignment_id = ?) OR " +
                     "(moduleassignment_type = 'Partner' AND moduleassignment_id = ?)";
+
             String[] modulesQueryValues = new String[]{
                     farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)),
                     farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)),
@@ -3002,6 +3003,18 @@ public class DataLayer {
         return db.query(OFISDBContract.FarmManagementPlanValuesEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, orderBy);
     }
 
+    Cursor getCheckVisitEntry(long fmpId, String surveyCode) {
+        String[] columns = new String[]{"*"};
+        String whereClause = OFISDBContract.ChildVisitDetails.COLUMN_NAME_FARMER_ID + " = ?  AND " + OFISDBContract.ChildVisitDetails.COLUMN_NAME_SURVEY_CODE + " = ?";
+
+        String[] whereArgs = new String[]{
+                String.valueOf(fmpId),
+                surveyCode
+        };
+        String orderBy = OFISDBContract.ChildVisitDetails.COLUMN_NAME_ID + " ASC";
+        return db.query(OFISDBContract.ChildVisitDetails.TABLE_NAME, columns, whereClause, whereArgs, null, null, orderBy);
+    }
+
     Cursor getCurrentValuesByFmpId(long fmpId) {
         String fe = OFISDBContract.FarmManagementPlanEntriesEntry.TABLE_NAME;
         String fv = OFISDBContract.FarmManagementPlanCurrentValuesEntry.TABLE_NAME;
@@ -3547,6 +3560,27 @@ public class DataLayer {
         return  newRowId;
     }
 
+    public long insertChildVisitSurveyDetails(ContentValues contentValues) {
+        long newRowId;
+        newRowId = db.insert(OFISDBContract.ChildVisitDetails.TABLE_NAME, null, contentValues);
+        if (newRowId != -1) {
+            // add a network queue entry
+            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+
+            ContentValues networkQueueValues = new ContentValues();
+            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "child_visit");
+            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, "Child Visit Detail Registered");
+            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_SURVEY_CODE, contentValues.getAsString(OFISDBContract.ChildVisitDetails.COLUMN_NAME_SURVEY_CODE));
+            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, contentValues.getAsString(OFISDBContract.ChildVisitDetails.COLUMN_NAME_SURVEY_DESCRIPTION) +"\n"
+                    + contentValues.getAsString(OFISDBContract.ChildVisitDetails.COLUMN_NAME_FARMER_ID));
+            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID, contentValues.getAsString(OFISDBContract.ChildVisitDetails.COLUMN_NAME_FARMER_ID));
+            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT, timestamp.toString());
+            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPDATED_AT, timestamp.toString());
+            insertNetworkQueueEntry(networkQueueValues);
+        }
+        return  newRowId;
+    }
+
     public Cursor getChildDetailsById(Long farmerId) {
        return db.rawQuery("SELECT * FROM children where farmer_id="+farmerId, null);
     }
@@ -3565,6 +3599,23 @@ public class DataLayer {
         cv.put(OFISDBContract.ChildEntry.COLUMN_NAME_ID,generatedChildId); //These Fields should be your String values of actual column names
         cv.put(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_SYNCED,1);
         db.update(OFISDBContract.ChildEntry.TABLE_NAME, cv, "id="+tempChildId, null);
+
+    }
+
+    public void updateCheckdetails(int fmpId, int surveyCode) {
+
+
+        ContentValues cv = new ContentValues();
+        cv.put(OFISDBContract.ChildVisitDetails.COLUMN_NAME_SURVEY_VISIT_SYNCED,1);
+        String whereClause = OFISDBContract.ChildVisitDetails.COLUMN_NAME_FARMER_ID + " = ?  AND " + OFISDBContract.ChildVisitDetails.COLUMN_NAME_SURVEY_CODE + " = ?";
+
+        String[] whereArgs = new String[]{
+                String.valueOf(fmpId),
+                String.valueOf(surveyCode)
+        };
+
+
+        db.update(OFISDBContract.ChildVisitDetails.TABLE_NAME, cv, whereClause, whereArgs);
 
     }
 }

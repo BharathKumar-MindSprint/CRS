@@ -255,6 +255,8 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_RECURRENCE_FREQUENCY = "recurrence_frequency";
         public static final String COLUMN_NAME_RECURRENCE_TYPE = "recurrence_type";
         public static final String COLUMN_NAME_DISABLED_MONTHS = "disabled_months";
+        public static final String COLUMN_NAME_SURVEY_CODE = "surveyCode";
+        public static final String COLUMN_NAME_IS_CHILD_LABOUR = "childLabour";
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
                     add(COLUMN_NAME_ID);
@@ -264,6 +266,8 @@ public class OFISDBContract {
                     add(COLUMN_NAME_RECURRENCE_FREQUENCY);
                     add(COLUMN_NAME_RECURRENCE_TYPE);
                     add(COLUMN_NAME_DISABLED_MONTHS);
+                    add(COLUMN_NAME_SURVEY_CODE);
+                    add(COLUMN_NAME_IS_CHILD_LABOUR);
                 }}
         );
     }
@@ -967,6 +971,7 @@ public class OFISDBContract {
         //JIRA req OW-505
         public static final String COLUMN_NAME_FARMER_PHOTO = "farmer_photourl";
         public static final String COLUMN_NAME_FARMER_CHILD_ID = "farmer_child_id";
+        public static final String COLUMN_NAME_FARMER_SURVEY_CODE = "survey_code";
 
 
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
@@ -1012,6 +1017,7 @@ public class OFISDBContract {
                     add(COLUMN_NAME_UPDATED_AT);
                     add(COLUMN_NAME_FARMER_PHOTO);
                     add(COLUMN_NAME_FARMER_CHILD_ID);
+                    add(COLUMN_NAME_FARMER_SURVEY_CODE);
                 }}
         );
 
@@ -1828,6 +1834,7 @@ public class OFISDBContract {
                 put(ChildVisitDetailsEntry.TABLE_NAME,ChildVisitDetailsEntry.COLUMN_LIST);
                 put(FarmerChildModulesEntry.TABLE_NAME,FarmerChildModulesEntry.COLUMN_LIST);
                 put(AnswerChildEntry.TABLE_NAME,AnswerChildEntry.COLUMN_LIST);
+                put(ChildVisitDetails.TABLE_NAME, ChildVisitDetails.COLUMN_LIST);
             }};
 
 
