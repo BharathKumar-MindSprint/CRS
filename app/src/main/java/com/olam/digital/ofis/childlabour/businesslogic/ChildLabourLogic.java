@@ -28,6 +28,12 @@ public class ChildLabourLogic {
         return newVisitDetaisId;
     }
 
+    public long insertVisitSurveyDetails(Context context, ContentValues contentValues) {
+        dataLayer = new DataLayer(context.getResources(), context);
+        long newVisitDetaisId = dataLayer.insertChildVisitSurveyDetails(contentValues);
+        return newVisitDetaisId;
+    }
+
     public long insertChildDetails(Context context, ContentValues contentValues) {
         dataLayer = new DataLayer(context.getResources(), context);
         long newChildId = dataLayer.insertChild(contentValues);

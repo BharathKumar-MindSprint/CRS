@@ -3000,6 +3000,18 @@ public class DataLayer {
         return db.query(OFISDBContract.FarmManagementPlanValuesEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, orderBy);
     }
 
+    Cursor getCheckVisitEntry(long fmpId, String surveyCode) {
+        String[] columns = new String[]{"*"};
+        String whereClause = OFISDBContract.ChildVisitDetails.COLUMN_NAME_FARMER_ID + " = ?  AND " + OFISDBContract.ChildVisitDetails.COLUMN_NAME_SURVEY_CODE + " = ?";
+
+        String[] whereArgs = new String[]{
+                String.valueOf(fmpId),
+                surveyCode
+        };
+        String orderBy = OFISDBContract.ChildVisitDetails.COLUMN_NAME_ID + " ASC";
+        return db.query(OFISDBContract.ChildVisitDetails.TABLE_NAME, columns, whereClause, whereArgs, null, null, orderBy);
+    }
+
     Cursor getCurrentValuesByFmpId(long fmpId) {
         String fe = OFISDBContract.FarmManagementPlanEntriesEntry.TABLE_NAME;
         String fv = OFISDBContract.FarmManagementPlanCurrentValuesEntry.TABLE_NAME;
@@ -3545,6 +3557,27 @@ public class DataLayer {
         return  newRowId;
     }
 
+    public long insertChildVisitSurveyDetails(ContentValues contentValues) {
+        long newRowId;
+        newRowId = db.insert(OFISDBContract.ChildVisitDetails.TABLE_NAME, null, contentValues);
+        if (newRowId != -1) {
+            // add a network queue entry
+            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+
+            ContentValues networkQueueValues = new ContentValues();
+            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "child_visit");
+            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, "Child Visit Detail Registered");
+            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_SURVEY_CODE, contentValues.getAsString(OFISDBContract.ChildVisitDetails.COLUMN_NAME_SURVEY_CODE));
+            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, contentValues.getAsString(OFISDBContract.ChildVisitDetails.COLUMN_NAME_SURVEY_DESCRIPTION) +"\n"
+                    + contentValues.getAsString(OFISDBContract.ChildVisitDetails.COLUMN_NAME_FARMER_ID));
+            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID, contentValues.getAsString(OFISDBContract.ChildVisitDetails.COLUMN_NAME_FARMER_ID));
+            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT, timestamp.toString());
+            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPDATED_AT, timestamp.toString());
+            insertNetworkQueueEntry(networkQueueValues);
+        }
+        return  newRowId;
+    }
+
     public Cursor getChildDetailsById(Long farmerId) {
        return db.rawQuery("SELECT * FROM children where farmer_id="+farmerId, null);
     }
@@ -3563,6 +3596,23 @@ public class DataLayer {
         cv.put(OFISDBContract.ChildEntry.COLUMN_NAME_ID,generatedChildId); //These Fields should be your String values of actual column names
         cv.put(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_SYNCED,1);
         db.update(OFISDBContract.ChildEntry.TABLE_NAME, cv, "id="+tempChildId, null);
+
+    }
+
+    public void updateCheckdetails(int fmpId, int surveyCode) {
+
+
+        ContentValues cv = new ContentValues();
+        cv.put(OFISDBContract.ChildVisitDetails.COLUMN_NAME_SURVEY_VISIT_SYNCED,1);
+        String whereClause = OFISDBContract.ChildVisitDetails.COLUMN_NAME_FARMER_ID + " = ?  AND " + OFISDBContract.ChildVisitDetails.COLUMN_NAME_SURVEY_CODE + " = ?";
+
+        String[] whereArgs = new String[]{
+                String.valueOf(fmpId),
+                String.valueOf(surveyCode)
+        };
+
+
+        db.update(OFISDBContract.ChildVisitDetails.TABLE_NAME, cv, whereClause, whereArgs);
 
     }
 }
