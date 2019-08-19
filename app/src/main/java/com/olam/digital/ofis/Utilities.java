@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.SyncRequest;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.database.sqlite.SQLiteDatabase;
@@ -27,6 +28,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -480,6 +482,15 @@ public  static String base64ConversionForImage(String filepath)  {
             consent=true;
         }
         return consent;
+    }
+
+    public static String convertTimeFormat(String date){
+       String dateString ="";
+        String pattern = "yyyy-MM-dd";
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+        dateString = simpleDateFormat.format(date);
+        return  dateString;
+
     }
 
     public static String Moduleresponse = "{\n" +
