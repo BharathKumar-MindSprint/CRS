@@ -66,17 +66,23 @@ public class RegisterChildActivity extends AppCompatActivity implements View.OnC
                 @Override
                 public void onChildClick(View view, int position,ChildrenDTO childrenDTO) {
                     // Edit functionalities
-                    Toast.makeText(RegisterChildActivity.this,String.valueOf(position),Toast.LENGTH_LONG).show();
 
-                    Intent newChildIntent=new Intent(RegisterChildActivity.this,AddNewChildActivity.class);
-                    Bundle childBundle=new Bundle();
-                    newChildIntent.putExtra("action","edit");
-                    childBundle.putSerializable("children",childrenDTO);
-                    childBundle.putString(ChildLabourUtils.CHILD_FARMER_ID,String.valueOf(farmerId));
-                    startActivity(newChildIntent);
-
+                    if(childrenDTO.getSynced()!="1"){
+                        Intent newChildIntent=new Intent(RegisterChildActivity.this,AddNewChildActivity.class);
+                        Bundle childBundle=new Bundle();
+                        newChildIntent.putExtra("action","edit");
+                        childBundle.putSerializable("children",childrenDTO);
+                        childBundle.putString(ChildLabourUtils.CHILD_FARMER_ID,String.valueOf(farmerId));
+                        startActivity(newChildIntent);
+                    }
                 }
             });
+        }
+
+        if (childLabourRecyclerAdapter !=null) {
+            if (childLabourRecyclerAdapter.getItemCount() >= 30) {
+                addChildButton.setEnabled(false);
+            }
         }
     }
 
@@ -98,10 +104,14 @@ public class RegisterChildActivity extends AppCompatActivity implements View.OnC
         childBundle.putString(ChildLabourUtils.CHILD_FARMER_ID,String.valueOf(farmerId));
 
         if(v.getId() == R.id.addChildButton){
-            Intent newChildIntent=new Intent(RegisterChildActivity.this,AddNewChildActivity.class);
-            newChildIntent.putExtras(childBundle);
-            newChildIntent.putExtra("action","new");
-            startActivity(newChildIntent);
+            if (childLabourRecyclerAdapter!=null && childLabourRecyclerAdapter.getItemCount()>= 30){
+                return;
+            }
+                Intent newChildIntent = new Intent(RegisterChildActivity.this, AddNewChildActivity.class);
+                newChildIntent.putExtras(childBundle);
+                newChildIntent.putExtra("action", "new");
+                startActivity(newChildIntent);
+
         }else if(v.getId()==R.id.childVisitDetailButton){
             Intent childVisitIntent=new Intent(RegisterChildActivity.this,ChildVisitDetailActivity.class);
             childVisitIntent.putExtras(childBundle);

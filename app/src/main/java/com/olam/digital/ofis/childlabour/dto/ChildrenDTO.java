@@ -9,6 +9,15 @@ public class ChildrenDTO implements Serializable {
     private  String name;
     private  String age;
     private  String gender;
+    private String submittedModules;
+
+    public String getSubmittedModules() {
+        return submittedModules;
+    }
+
+    public void setSubmittedModules(String submittedModules) {
+        this.submittedModules = submittedModules;
+    }
 
     public String getId() {
         return id;
