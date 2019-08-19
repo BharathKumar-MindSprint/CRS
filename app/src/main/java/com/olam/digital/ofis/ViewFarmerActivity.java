@@ -204,8 +204,8 @@ public class ViewFarmerActivity extends BaseListActivity {
         //noinspection ConstantConditions
         getActionBar().setDisplayHomeAsUpEnabled(true);
         mResolvingError = savedInstanceState != null && savedInstanceState.getBoolean(STATE_RESOLVING_ERROR, false);
-
         context = this;
+        ChildLabourUtils.isChildEnumerator=Utilities.getChildLabourPref(context,ChildLabourUtils.IS_CHILD_ENUMERATOR);
         res = getResources();
         dl = new DataLayer(res, context);
         pd = new ProgressDialog(context);
