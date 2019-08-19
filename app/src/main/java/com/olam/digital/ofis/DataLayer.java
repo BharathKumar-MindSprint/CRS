@@ -1909,8 +1909,8 @@ public class DataLayer {
             farmer.moveToFirst();
             String modulesQuery = "SELECT modules.id as _id, modules.name, modules.name_fr, modules.name_es, modules.name_id, modules.name_pt, modules.name_tr, modules.name_lo, modules.name_vi, modules.name_th,modules.annual_survey, " +
                     "submodules.name as submodule_name, submodules.name_fr as submodule_name_fr, submodules.name_es as submodule_name_es, submodules.name_id as submodule_name_id, submodules.name_pt as submodule_name_pt, submodules.name_tr as submodule_name_tr, submodules.name_lo as submodule_name_lo, submodules.name_vi as submodule_name_vi, submodules.name_th as submodule_name_th, " +
-                    "modules.expires, " + "moduleassignments.recurrence_frequency, moduleassignments.recurrence_type, moduleassignments.disabled_months, " +
-                    " farmer_child_modules.id as farmer_module_id, farmer_child_modules.status_started, farmer_child_modules.status_finished, farmer_child_modules.current_submodule_id, farmer_child_modules.recorded_lat, farmer_child_modules.recorded_lng,modules.moduleCode FROM moduleassignments " +
+                    "modules.expires, " + "moduleassignments.recurrence_frequency, moduleassignments.recurrence_type,moduleassignments.surveyCode,moduleassignments.childLabour, moduleassignments.disabled_months, " +
+                    " farmer_child_modules.id as farmer_module_id, farmer_child_modules.status_started, farmer_child_modules.status_finished, farmer_child_modules.current_submodule_id, farmer_child_modules.recorded_lat, farmer_child_modules.recorded_lng,modules.moduleCode FROM moduleassignments" +
                     " INNER JOIN modules ON moduleassignments.module_id = modules.id " +
                     " LEFT OUTER JOIN farmer_child_modules ON modules.id = farmer_child_modules.module_id AND " +
                     "(farmer_child_modules.farmer_id = ? OR farmer_child_modules.olam_farmer_id = ?) " +
@@ -1924,6 +1924,7 @@ public class DataLayer {
                     "(moduleassignment_type = 'Programme' AND moduleassignment_id = ?) OR " +
                     "(moduleassignment_type = 'Product' AND moduleassignment_id = ?) OR " +
                     "(moduleassignment_type = 'Partner' AND moduleassignment_id = ?)";
+
             String[] modulesQueryValues = new String[]{
                     farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)),
                     farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)),
@@ -2209,8 +2210,10 @@ public class DataLayer {
                     });
                 }
 
+                MatrixCursor childOptionsCursor = new MatrixCursor(mcColumns);
+
                 // add register child
-                mc.addRow(new String[]{
+                childOptionsCursor.addRow(new String[]{
                         "0",
                         res.getString(R.string.register_child),
                         res.getString(R.string.register_child),
@@ -2244,7 +2247,7 @@ public class DataLayer {
                 });
 
                 // child labour survey
-                mc.addRow(new String[]{
+                childOptionsCursor.addRow(new String[]{
                         "0",
                         res.getString(R.string.child_labour_survey),
                         res.getString(R.string.child_labour_survey),
@@ -2277,7 +2280,7 @@ public class DataLayer {
                         ChildLabourUtils.CHILDLABOUR_SURVEY
                 });
 
-                Cursor[] cursors = {mc, farmerModules};
+                Cursor[] cursors = {mc, farmerModules,childOptionsCursor};
                 output = new MergeCursor(cursors);
             }
             return output;

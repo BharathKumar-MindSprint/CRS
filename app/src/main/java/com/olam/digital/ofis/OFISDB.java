@@ -130,6 +130,7 @@ class OFISDB extends SQLiteOpenHelper {
     private static final String OFIS_MODULEASSIGNMENTS_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.ModuleAssignmentsEntry.TABLE_NAME
             + " ( " + OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_MODULE_ID + " INTEGER, "
             + OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_MODULEASSIGNMENT_ID + " INTEGER, " + OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_MODULEASSIGNMENT_TYPE + " TEXT, "
+            + OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_IS_CHILD_LABOUR + " TEXT, " + OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_SURVEY_CODE + " TEXT, "
             + OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_RECURRENCE_FREQUENCY + " INTEGER, " + OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_RECURRENCE_TYPE + " TEXT, "
             + OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_DISABLED_MONTHS + " TEXT)";
 

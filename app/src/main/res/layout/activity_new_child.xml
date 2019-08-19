@@ -1,121 +1,150 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/clmrs_bg"
-    android:orientation="vertical">
+    android:padding="@dimen/activity_vertical_margin">
 
     <LinearLayout
-        android:id="@+id/fullnameLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="20dp"
-        android:background="@color/clmrs_bg"
+        android:layout_above="@+id/addNewChildButton"
+        android:layout_alignParentTop="true"
         android:orientation="vertical">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
-            android:text="@string/full_name"
-            android:maxLength="150"
-            android:textColor="@color/clmrs_tv_grey"/>
-
-        <EditText
-            android:id="@+id/fullnameEditText"
-            android:layout_width="match_parent"
-            android:layout_height="45dp"
-            android:background="@drawable/border_white_bg"
-            android:hint="@string/full_name"
-            android:textColor="@android:color/black"
-            android:paddingLeft="5dp" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/genderLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="20dp"
-        android:background="@color/clmrs_bg"
-        android:orientation="vertical">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
-            android:textColor="@color/clmrs_tv_grey"
-            android:text="@string/ofis_select_gender" />
 
         <LinearLayout
+            android:id="@+id/fullnameLayout"
             android:layout_width="match_parent"
-            android:layout_height="45dp"
-            android:background="@drawable/border_white_bg"
-            android:orientation="horizontal"
-            android:weightSum="2">
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:background="@color/clmrs_bg"
+            android:orientation="vertical">
 
-            <Button
-                android:id="@+id/maleButton"
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:text="@string/full_name"
+                android:textColor="@color/clmrs_tv_grey" />
+
+            <EditText
+                android:id="@+id/fullnameEditText"
                 android:layout_width="match_parent"
                 android:layout_height="52dp"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="@string/gender_male" />
+                android:background="@drawable/border_grey_bg"
+                android:hint="@string/full_name"
+                android:inputType="textPersonName"
+                android:paddingLeft="5dp"
+                android:textColor="@android:color/black" />
 
-            <Button
-                android:id="@+id/femaleButton"
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/genderLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:background="@color/clmrs_bg"
+            android:orientation="vertical">
+
+            <TextView
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="@string/gender_female" />
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:text="@string/ofis_select_gender"
+                android:textColor="@color/clmrs_tv_grey" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:background="@drawable/border_grey_bg"
+                android:orientation="horizontal"
+                android:padding="1dp"
+                android:weightSum="2">
+
+                <android.support.v7.widget.AppCompatButton
+                    android:id="@+id/maleButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:background="@android:color/white"
+                    android:gravity="center"
+                    android:textColor="@android:color/black"
+                    android:text="@string/gender_male" />
+
+                <android.support.v7.widget.AppCompatButton
+                    android:id="@+id/femaleButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:layout_gravity="center"
+                    android:textColor="@android:color/black"
+                    android:layout_weight="1"
+                    android:background="@android:color/white"
+                    android:gravity="center"
+                    android:text="@string/gender_female" />
+
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ageLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+
+            android:background="@color/clmrs_bg"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/age"
+                android:textColor="@color/clmrs_tv_grey" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/border_grey_bg"
+                android:padding="1dp"
+                android:layout_height="52dp">
+
+                <Spinner
+                    android:id="@+id/ageSpinner"
+                    android:layout_width="match_parent"
+                    android:background="@android:color/white"
+                    android:layout_height="match_parent"
+                    android:textColor="@android:color/black" />
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:src="@drawable/ic_dropdown_arrow"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="20dp"
+                    android:layout_centerVertical="true"
+                    android:layout_height="wrap_content" />
+
+            </RelativeLayout>
 
         </LinearLayout>
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/ageLayout"
+
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/addNewChildButton"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="20dp"
-        android:background="@color/clmrs_bg"
-        android:orientation="vertical">
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="center"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginBottom="40dp"
+        android:background="@drawable/btn_bg_add_child"
+        android:gravity="center"
+        android:text="@string/add"
+        android:textAllCaps="true"
+        android:textColor="@color/ofis_base_font_white"
+        android:textSize="20dp"
+        android:textStyle="bold" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/clmrs_tv_grey"
-            android:text="@string/age" />
-
-        <Spinner
-            android:id="@+id/ageSpinner"
-            android:layout_width="match_parent"
-            android:layout_height="45dp"
-            android:layout_marginTop="10dp"
-            android:textColor="@android:color/black"
-            android:background="@drawable/border_white_bg" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/clmrs_bg"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/addNewChildButton"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_gravity="center"
-            android:layout_margin="20dp"
-            android:background="@drawable/border_green_bg"
-            android:gravity="center"
-            android:text="@string/add"
-            android:textColor="@color/ofis_base_font_white"
-            android:textSize="20dp"
-            android:textStyle="bold" />
-    </LinearLayout>
-</LinearLayout>
+</RelativeLayout>
