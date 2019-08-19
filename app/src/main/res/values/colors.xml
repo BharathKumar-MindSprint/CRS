@@ -33,5 +33,10 @@
     <color name="clmrs_tv_green">#0B4B52</color>
     <color name="clmrs_yellow">#FD8104</color>
     <color name="clmrs_tv_grey">#6C5D56</color>
+
+
+    <color name="gender_selected">#DEDAD4</color>
+    <color name="gender_selected_text">#6C5D56</color>
+
     <!-- updated -->
 </resources>

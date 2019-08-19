@@ -65,6 +65,7 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
         femaleButton.setOnClickListener(this);
         maleButton.setOnClickListener(this);
         addNewChildButton.setOnClickListener(this);
+        maleButton.performClick();
     }
 
     private void initComponents() {
@@ -79,11 +80,23 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
     public void onClick(View v) {
          if (v.getId() == R.id.addNewChildButton){
              addNewChild();
-         }else if(v.getId() == R.id.maleButton){
-              gender=ChildLabourUtils.MALE;
-        }else if(v.getId() == R.id.femaleButton){
-             gender=ChildLabourUtils.FEMALE;
-        }
+         }else if (v.getId() == R.id.maleButton) {
+             gender = ChildLabourUtils.MALE;
+             maleButton.setBackgroundColor(getResources().getColor(R.color.gender_selected));
+             femaleButton.setBackgroundColor(getResources().getColor(android.R.color.white));
+
+             maleButton.setTextColor(getResources().getColor(R.color.gender_selected_text));
+             femaleButton.setTextColor(getResources().getColor(android.R.color.black));
+
+         } else if (v.getId() == R.id.femaleButton) {
+             gender = ChildLabourUtils.FEMALE;
+             femaleButton.setBackgroundColor(getResources().getColor(R.color.gender_selected));
+             maleButton.setBackgroundColor(getResources().getColor(android.R.color.white));
+
+             maleButton.setTextColor(getResources().getColor(android.R.color.black));
+             femaleButton.setTextColor(getResources().getColor(R.color.gender_selected_text));
+
+         }
     }
 
     private void setAgeSpinner() {
@@ -91,7 +104,9 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
         for (int i = 0; i <= 17; i++) {
             ageList.add(Integer.toString(i));
         }
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, ageList);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.rowview_age_spinner, ageList);
+        adapter.setDropDownViewResource(R.layout.rowview_age_spinner);
+
         ageSpinner.setAdapter(adapter);
     }
 
