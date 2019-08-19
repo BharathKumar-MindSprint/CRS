@@ -2209,8 +2209,10 @@ public class DataLayer {
                     });
                 }
 
+                MatrixCursor childOptionsCursor = new MatrixCursor(mcColumns);
+
                 // add register child
-                mc.addRow(new String[]{
+                childOptionsCursor.addRow(new String[]{
                         "0",
                         res.getString(R.string.register_child),
                         res.getString(R.string.register_child),
@@ -2244,7 +2246,7 @@ public class DataLayer {
                 });
 
                 // child labour survey
-                mc.addRow(new String[]{
+                childOptionsCursor.addRow(new String[]{
                         "0",
                         res.getString(R.string.child_labour_survey),
                         res.getString(R.string.child_labour_survey),
@@ -2277,7 +2279,7 @@ public class DataLayer {
                         ChildLabourUtils.CHILDLABOUR_SURVEY
                 });
 
-                Cursor[] cursors = {mc, farmerModules};
+                Cursor[] cursors = {mc, farmerModules,childOptionsCursor};
                 output = new MergeCursor(cursors);
             }
             return output;
