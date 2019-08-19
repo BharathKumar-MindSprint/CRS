@@ -7,17 +7,19 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatCheckBox;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.Toast;
 
+import com.olam.digital.ofis.BaseActivity;
 import com.olam.digital.ofis.OFISDBContract;
 import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.childlabour.businesslogic.ChildLabourLogic;
 
 
-public class ChildVisitDetailActivity  extends AppCompatActivity implements View.OnClickListener{
+public class ChildVisitDetailActivity  extends BaseActivity implements View.OnClickListener{
 
     private AppCompatButton saveVisitDetailButton;
-    private AppCompatCheckBox houseHoldCheckBox, inspectionCheckBox, followUpCheckBox;
+    private CheckBox houseHoldCheckBox, inspectionCheckBox, followUpCheckBox;
     private int household=0;
     private int inspection=0;
     private int followup=0;
@@ -28,6 +30,8 @@ public class ChildVisitDetailActivity  extends AppCompatActivity implements View
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_child_visit_detail);
+        //noinspection ConstantConditions
+        getActionBar().setDisplayHomeAsUpEnabled(true);
         initComponents();
         initEvents();
         getBundleValues();

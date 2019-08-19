@@ -2,7 +2,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="@dimen/activity_vertical_margin"
     android:background="@color/clmrs_bg"
     android:orientation="vertical">
 
@@ -24,7 +23,7 @@
         <EditText
             android:id="@+id/fullnameEditText"
             android:layout_width="match_parent"
-            android:layout_height="52dp"
+            android:layout_height="45dp"
             android:background="@drawable/border_white_bg"
             android:hint="@string/full_name"
             android:textColor="@android:color/black"
@@ -49,12 +48,12 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="52dp"
+            android:layout_height="45dp"
             android:background="@drawable/border_white_bg"
             android:orientation="horizontal"
             android:weightSum="2">
 
-            <android.support.v7.widget.AppCompatButton
+            <Button
                 android:id="@+id/maleButton"
                 android:layout_width="match_parent"
                 android:layout_height="52dp"
@@ -63,10 +62,10 @@
                 android:gravity="center"
                 android:text="@string/gender_male" />
 
-            <android.support.v7.widget.AppCompatButton
+            <Button
                 android:id="@+id/femaleButton"
                 android:layout_width="match_parent"
-                android:layout_height="52dp"
+                android:layout_height="50dp"
                 android:layout_gravity="center"
                 android:layout_weight="1"
                 android:gravity="center"
@@ -89,10 +88,10 @@
             android:textColor="@color/clmrs_tv_grey"
             android:text="@string/age" />
 
-        <android.support.v7.widget.AppCompatSpinner
+        <Spinner
             android:id="@+id/ageSpinner"
             android:layout_width="match_parent"
-            android:layout_height="52dp"
+            android:layout_height="45dp"
             android:layout_marginTop="10dp"
             android:textColor="@android:color/black"
             android:background="@drawable/border_white_bg" />
@@ -105,7 +104,7 @@
         android:background="@color/clmrs_bg"
         android:orientation="horizontal">
 
-        <android.support.v7.widget.AppCompatButton
+        <Button
             android:id="@+id/addNewChildButton"
             android:layout_width="match_parent"
             android:layout_height="50dp"

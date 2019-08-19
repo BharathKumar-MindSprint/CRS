@@ -26,6 +26,7 @@
     <color name="ofis_consent_statement_background">@color/ofis_actionbar_background</color>
     <color name="light_cream">#EDE5DC</color>
     <color name="ofis_red">#be3a34</color>
+    <color name="clmrs_green">#A0C800</color>
 
     <color name="clmrs_bg">#FAFAFA</color>
     <color name="clmrs_bg_gray">#DEDAD4</color>

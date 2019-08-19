@@ -34,8 +34,12 @@ public class ChildLabourRecyclerAdapter extends RecyclerView.Adapter<ChildLabour
     @NonNull
     @Override
     public ChildHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.child_list_row,null);
-        return new ChildHolder(view);
+        /*View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.child_list_row,null);
+        return new ChildHolder(view);*/
+        View rootView = LayoutInflater.from(parent.getContext()).inflate(R.layout.child_list_row, null, false);
+        RecyclerView.LayoutParams lp = new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        rootView.setLayoutParams(lp);
+        return new ChildHolder(rootView);
     }
 
     @Override
@@ -60,10 +64,10 @@ public class ChildLabourRecyclerAdapter extends RecyclerView.Adapter<ChildLabour
 
     public class ChildHolder extends RecyclerView.ViewHolder {
         TextView name,gender,age;
-        LinearLayout rowItem;
+        CardView rowItem;
         public ChildHolder(View itemView) {
             super(itemView);
-            rowItem=(LinearLayout)itemView.findViewById(R.id.itemCardView);
+            rowItem=(CardView)itemView.findViewById(R.id.itemCardView);
             name = (TextView) itemView.findViewById(R.id.name);
             gender = (TextView) itemView.findViewById(R.id.gender);
             age = (TextView) itemView.findViewById(R.id.age);

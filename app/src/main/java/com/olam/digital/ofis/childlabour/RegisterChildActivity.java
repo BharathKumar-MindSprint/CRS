@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.Toast;
 import android.widget.LinearLayout;
 
+import com.olam.digital.ofis.BaseActivity;
 import com.olam.digital.ofis.DataLayer;
 import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.childlabour.adapter.ChildLabourRecyclerAdapter;
@@ -22,7 +23,7 @@ import com.olam.digital.ofis.childlabour.listener.OnItemChildClickListener;
 
 import java.util.List;
 
-public class RegisterChildActivity extends AppCompatActivity implements View.OnClickListener{
+public class RegisterChildActivity extends BaseActivity implements View.OnClickListener{
 
     private RecyclerView childRecyclerView;
     private LinearLayout addChildButton;
@@ -33,6 +34,8 @@ public class RegisterChildActivity extends AppCompatActivity implements View.OnC
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register_child);
+        //noinspection ConstantConditions
+        getActionBar().setDisplayHomeAsUpEnabled(true);
         initComponents();
         initEvents();
         try {
