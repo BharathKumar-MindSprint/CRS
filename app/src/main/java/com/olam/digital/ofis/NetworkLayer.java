@@ -2797,7 +2797,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 jsonObject.put("farmerId", child.getString(child.getColumnIndex(OFISDBContract.ChildEntry.COLUMN_NAME_FARMER_ID)));
                 jsonObject.put("name", child.getString(child.getColumnIndex(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_NAME)));
                 jsonObject.put("age", child.getString(child.getColumnIndex(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_AGE)));
-                jsonObject.put("gender", child.getString(child.getColumnIndex(OFISDBContract.ChildEntry.COLUMN_NAME_ID)));
+                jsonObject.put("gender", child.getString(child.getColumnIndex(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_GENDER)));
                 jsonObject.put("ageOnYear", child.getString(child.getColumnIndex(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_AGE_ON_YEAR)));
             } catch (Exception e) {
 
@@ -3234,7 +3234,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         // old end point
         // endPoint="modules/submit";
         //New endPoint
-        endPoint="ofischild/survey/save";
+        endPoint="ofischildsurvey/ofischildsurvey/childsurvey/save";
 
         // create the JSON object required to sync this module
         final JSONObject submission = new JSONObject();
@@ -3291,10 +3291,10 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                   //  submission.put(OFISDBContract.FarmerChildModulesEntry.COLUMN_NAME_MODULE_ID, moduleId);
 
 
-                    submission.put("submittedDatexcv/.,mLKT:Y", submissionDate);
+                    submission.put("submittedDate",submissionDate.substring(0,10));
                     Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-                    submission.put("uploadDate", timestamp.toString());
-                    submission.put("reportedData",timestamp.toString());
+                    submission.put("uploadDate", timestamp.toString().substring(0,10));
+                    submission.put("reportedData",timestamp.toString().substring(0,10));
                     submission.put("enumeratorId", Long.valueOf(enumeratorId));
 //                    submission.put("imei_number", IMEI);
 //                    submission.put("fmpreview", false);
@@ -3469,7 +3469,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         @Override
                         public void onResponse(Call call, Response postResponse) {
                             String statusMessage;
-                            if (!postResponse.isSuccessful()) {
+                            if (postResponse.isSuccessful()) {
                                 // should pass the Child Id instead of farmer ID
                                 dl.syncChildFarmerModule(farmerModuleId, childId, moduleId, submissionDate);
                                 dl.deleteNetworkQueueItem(networkQueueItemId);

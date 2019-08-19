@@ -10,6 +10,7 @@ import android.widget.Toast;
 import com.olam.digital.ofis.DataLayer;
 import com.olam.digital.ofis.OFISDBContract;
 import com.olam.digital.ofis.Utilities;
+import com.olam.digital.ofis.childlabour.ChildLabourUtils;
 import com.olam.digital.ofis.childlabour.dto.ChildModuleDto;
 import com.olam.digital.ofis.childlabour.dto.ChildrenDTO;
 
@@ -64,8 +65,9 @@ public class ChildLabourLogic {
         if (moduleAssignments != null && moduleAssignments.getCount() > 0) {
             try {
                 while (moduleAssignments.moveToNext()) {
-                    String moduleCode = moduleAssignments.getString(moduleAssignments.getColumnIndex("moduleCode"));
-                    if (moduleCode.equalsIgnoreCase("01") || moduleCode.equalsIgnoreCase("02") || moduleCode.equalsIgnoreCase("03")) {
+                    String surveyCode = moduleAssignments.getString(moduleAssignments.getColumnIndex("surveyCode"));
+                    String isChildLabour=moduleAssignments.getString(moduleAssignments.getColumnIndex("childLabour"));
+                    if ((surveyCode.equalsIgnoreCase(ChildLabourUtils.HOUSEHOLD_SURVEY_CODE) || surveyCode.equalsIgnoreCase(ChildLabourUtils.INSPECTION_SURVEY_CODE) || surveyCode.equalsIgnoreCase(ChildLabourUtils.FOLLOWUP_SURVEY_CODE)) && isChildLabour.equalsIgnoreCase("true")) {
                         ChildModuleDto childModuleDto = new ChildModuleDto();
                         childModuleDto.set_id(moduleAssignments.getString(moduleAssignments.getColumnIndex("_id")));
                         childModuleDto.setName(moduleAssignments.getString(moduleAssignments.getColumnIndex("name")));
@@ -76,7 +78,7 @@ public class ChildLabourLogic {
 
                         childModuleDto.setRecorded_lat(moduleAssignments.getString(moduleAssignments.getColumnIndex("recorded_lat")));
                         childModuleDto.setRecorded_lng(moduleAssignments.getString(moduleAssignments.getColumnIndex("recorded_lng")));
-                        childModuleDto.setModuleCode(moduleCode);
+                        childModuleDto.setSurveyCode(surveyCode);
                         childModuleDtoList.add(childModuleDto);
                     }
                 }
