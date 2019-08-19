@@ -46,6 +46,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.crash.FirebaseCrash;
+import com.olam.digital.ofis.BaseActivity;
 import com.olam.digital.ofis.BuildConfig;
 import com.olam.digital.ofis.CompleteModuleActivity;
 import com.olam.digital.ofis.DataLayer;
@@ -61,7 +62,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-public class ChildLabourCompleteModuleActivity extends Activity {
+public class ChildLabourCompleteModuleActivity extends BaseActivity {
 
     private Long farmerID;
     private ChildrenDTO children;

@@ -65,7 +65,6 @@ public class ChildLabourLogic {
             try {
                 while (moduleAssignments.moveToNext()) {
                     String moduleCode = moduleAssignments.getString(moduleAssignments.getColumnIndex("moduleCode"));
-                    if (moduleCode.equalsIgnoreCase("01") || moduleCode.equalsIgnoreCase("02") || moduleCode.equalsIgnoreCase("03")) {
                         ChildModuleDto childModuleDto = new ChildModuleDto();
                         childModuleDto.set_id(moduleAssignments.getString(moduleAssignments.getColumnIndex("_id")));
                         childModuleDto.setName(moduleAssignments.getString(moduleAssignments.getColumnIndex("name")));
@@ -79,7 +78,6 @@ public class ChildLabourLogic {
                         childModuleDto.setModuleCode(moduleCode);
                         childModuleDtoList.add(childModuleDto);
                     }
-                }
             } finally {
                 moduleAssignments.close();
             }

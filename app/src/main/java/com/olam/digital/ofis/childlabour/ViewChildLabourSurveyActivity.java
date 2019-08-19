@@ -11,6 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
+import com.olam.digital.ofis.BaseActivity;
 import com.olam.digital.ofis.DataLayer;
 import com.olam.digital.ofis.DynamicQuestions;
 import com.olam.digital.ofis.OFISDBContract;
@@ -23,7 +24,7 @@ import com.olam.digital.ofis.childlabour.listener.OnItemSurveyListener;
 
 import java.util.List;
 
-public class ViewChildLabourSurveyActivity extends AppCompatActivity{
+public class ViewChildLabourSurveyActivity extends BaseActivity {
 
     private RecyclerView surveyChildLabourRecycleView;
     private ChildSurveyRecyclerAdapter childSurveyRecyclerAdapter;
