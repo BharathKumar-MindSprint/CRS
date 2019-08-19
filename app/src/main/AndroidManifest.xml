@@ -302,12 +302,21 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".childlabour.RegisterChildActivity" />
         </activity>
-        <activity
+        <!--<activity
             android:name="com.olam.digital.ofis.childlabour.ChildLabourDetailsActivity"
             android:label="@string/child_details"
             android:theme="@style/Theme.AppCompat"
-            android:screenOrientation="portrait" />
-
+            android:screenOrientation="portrait" />-->
+        <activity
+            android:name="com.olam.digital.ofis.childlabour.ChildLabourDetailsActivity"
+            android:label="@string/child_details"
+            android:parentActivityName=".ViewFarmerActivity"
+            android:screenOrientation="portrait"
+            tools:ignore="UnusedAttribute">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ViewFarmerActivity" />
+        </activity>
         <activity
             android:name="com.olam.digital.ofis.childlabour.ViewChildLabourSurveyActivity"
             android:label="@string/child_details"

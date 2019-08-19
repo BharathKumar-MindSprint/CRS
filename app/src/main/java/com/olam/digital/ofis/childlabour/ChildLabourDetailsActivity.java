@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Toast;
 
+import com.olam.digital.ofis.BaseActivity;
 import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.childlabour.adapter.ChildLabourRecyclerAdapter;
 import com.olam.digital.ofis.childlabour.businesslogic.ChildLabourLogic;
@@ -19,7 +20,7 @@ import com.olam.digital.ofis.childlabour.listener.OnItemChildClickListener;
 import java.io.Serializable;
 import java.util.List;
 
-public class ChildLabourDetailsActivity extends AppCompatActivity {
+public class ChildLabourDetailsActivity extends BaseActivity {
 
     private RecyclerView childLabourDetailsRecyclerView;
     Long farmerId;
@@ -29,6 +30,8 @@ public class ChildLabourDetailsActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_child_labour_details);
+        //noinspection ConstantConditions
+        getActionBar().setDisplayHomeAsUpEnabled(true);
         initComponents();
         try {
             farmerId=getIntent().getExtras().getLong(ChildLabourUtils.CHILD_FARMER_ID);
