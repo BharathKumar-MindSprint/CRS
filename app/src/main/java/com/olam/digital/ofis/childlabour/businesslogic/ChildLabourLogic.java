@@ -94,6 +94,26 @@ public class ChildLabourLogic {
         return visitList;
     }
 
+    public List<ContentValues> getChildVisitDetailsById(Context context, Long farmerId) {
+        dataLayer = new DataLayer(context.getResources(), context);
+        List<ContentValues> visitList = new ArrayList<ContentValues>();
+        Cursor cursor = dataLayer.getChildVisitDetailsById(farmerId);
+        ContentValues contentValues;
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
+                contentValues = new ContentValues();
+                contentValues.put(OFISDBContract.ChildVisitDetails.COLUMN_NAME_ID,cursor.getString(cursor.getColumnIndex(OFISDBContract.ChildVisitDetails.COLUMN_NAME_ID)));
+                contentValues.put(OFISDBContract.ChildVisitDetails.COLUMN_NAME_FARMER_ID,cursor.getString(cursor.getColumnIndex(OFISDBContract.ChildVisitDetails.COLUMN_NAME_FARMER_ID)));
+                contentValues.put(OFISDBContract.ChildVisitDetails.COLUMN_NAME_SURVEY_VISIT_SYNCED,cursor.getString(cursor.getColumnIndex(OFISDBContract.ChildVisitDetails.COLUMN_NAME_SURVEY_VISIT_SYNCED)));
+                contentValues.put(OFISDBContract.ChildVisitDetails.COLUMN_NAME_SURVEY_CODE,cursor.getString(cursor.getColumnIndex(OFISDBContract.ChildVisitDetails.COLUMN_NAME_SURVEY_CODE)));
+                contentValues.put(OFISDBContract.ChildVisitDetails.COLUMN_NAME_SURVEY_DESCRIPTION,cursor.getString(cursor.getColumnIndex(OFISDBContract.ChildVisitDetails.COLUMN_NAME_SURVEY_DESCRIPTION)));
+
+                visitList.add(contentValues);
+            }
+        }
+        return visitList;
+    }
+
     public List<ChildrenDTO> getChildDetailsById(Context context, Long farmerId) {
         dataLayer = new DataLayer(context.getResources(), context);
         List<ChildrenDTO> clildrenList = new ArrayList<ChildrenDTO>();
