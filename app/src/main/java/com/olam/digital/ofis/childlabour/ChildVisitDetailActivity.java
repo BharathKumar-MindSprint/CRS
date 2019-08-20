@@ -3,10 +3,12 @@ package com.olam.digital.ofis.childlabour;
 import android.content.ContentValues;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatCheckBox;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.Toast;
@@ -28,7 +30,8 @@ public class ChildVisitDetailActivity  extends BaseActivity implements View.OnCl
     private int inspection=0;
     private int followup=0;
     private String farmerId;
-
+    private boolean b_household = true;
+    private boolean b_inspection = true;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -69,6 +72,12 @@ public class ChildVisitDetailActivity  extends BaseActivity implements View.OnCl
         }
         if(followUpCheckBox.isChecked()){
             followup=1;
+        }
+        if(! b_household){
+            household = 0;
+        }
+        if(! b_inspection){
+            inspection = 0;
         }
         long value =  new ChildLabourLogic().deleteVisitDetails(this, farmerId);
         Log.e("IsValueDeleted? ", String.valueOf(value));
@@ -125,7 +134,7 @@ public class ChildVisitDetailActivity  extends BaseActivity implements View.OnCl
         Bundle bundle = getIntent().getExtras();
         farmerId = bundle.getString(ChildLabourUtils.CHILD_FARMER_ID);
         ChildLabourLogic childLabourLogic = new ChildLabourLogic();
-        List<String> scList = childLabourLogic.getSurveyCodeDetailsById(this, Long.valueOf(farmerId));
+        /*List<String> scList = childLabourLogic.getSurveyCodeDetailsById(this, Long.valueOf(farmerId));
         if (scList.size() > 0) {
             for (String value : scList) {
                 if (value.equalsIgnoreCase("1")) {
@@ -135,6 +144,58 @@ public class ChildVisitDetailActivity  extends BaseActivity implements View.OnCl
                 }
             }
 
+        }*/
+        List<ContentValues> scList = childLabourLogic.getChildVisitDetailsById(this, Long.valueOf(farmerId));
+        if (scList.size() > 0) {
+            for (ContentValues value : scList) {
+                if (value.getAsString(OFISDBContract.ChildVisitDetails.COLUMN_NAME_SURVEY_CODE).equalsIgnoreCase("1")) {
+                    houseHoldCheckBox.setChecked(true);
+                    if(value.getAsString(OFISDBContract.ChildVisitDetails.COLUMN_NAME_SURVEY_VISIT_SYNCED).equalsIgnoreCase("1")){
+                        houseHoldCheckBox.setEnabled(false);
+                        b_household = false;
+                    }else {
+                        houseHoldCheckBox.setEnabled(true);
+                    }
+                } else if (value.getAsString(OFISDBContract.ChildVisitDetails.COLUMN_NAME_SURVEY_CODE).equalsIgnoreCase("2")) {
+                    inspectionCheckBox.setChecked(true);
+                    if(value.getAsString(OFISDBContract.ChildVisitDetails.COLUMN_NAME_SURVEY_VISIT_SYNCED).equalsIgnoreCase("1")){
+                        inspectionCheckBox.setEnabled(false);
+                        b_inspection = false;
+                    }else {
+                        inspectionCheckBox.setEnabled(true);
+                    }
+                }
+
+
+            }
+        }
+
+
+
+
     }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getBundleValues();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+
     }
 }

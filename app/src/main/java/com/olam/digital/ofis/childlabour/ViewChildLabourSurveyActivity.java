@@ -8,6 +8,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+
+import android.util.Log;
+import android.view.MenuItem;
+
 import android.view.View;
 import android.widget.TextView;
 
@@ -209,5 +213,16 @@ public class ViewChildLabourSurveyActivity extends BaseActivity {
 
     private void initComponents() {
         surveyChildLabourRecycleView=findViewById(R.id.surveyChildLabourRecycleView);;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+
     }
 }

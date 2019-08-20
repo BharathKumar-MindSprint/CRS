@@ -3651,8 +3651,8 @@ if (ChildLabourUtils.isChildEnumerator) {
     }
 
     public long deleteChildVisitDetailsById(Long farmerId) {
-        String whereClause =  OFISDBContract.ChildVisitDetails.COLUMN_NAME_FARMER_ID + " = ?";
-        String[] whereArgs = new String[]{String.valueOf(farmerId)};
+        String whereClause =  OFISDBContract.ChildVisitDetails.COLUMN_NAME_FARMER_ID + " = ? AND " + OFISDBContract.ChildVisitDetails.COLUMN_NAME_SURVEY_VISIT_SYNCED + " = ? ";
+        String[] whereArgs = new String[]{String.valueOf(farmerId),"0"};
         return db.delete(OFISDBContract.ChildVisitDetails.TABLE_NAME, whereClause, whereArgs);
     }
 
