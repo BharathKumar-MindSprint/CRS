@@ -34,8 +34,16 @@ public class ChildModuleDto implements Serializable {
     private String current_submodule_id;
     private String recorded_lat;
     private String recorded_lng;
-
     private String surveyCode;
+    private boolean enable;
+
+    public boolean isEnable() {
+        return enable;
+    }
+
+    public void setEnable(boolean enable) {
+        this.enable = enable;
+    }
 
     public String getSurveyCode() {
         return surveyCode;

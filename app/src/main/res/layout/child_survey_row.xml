@@ -40,7 +40,7 @@
                 android:id="@+id/statusIcon"
                 android:layout_centerVertical="true"
                 android:layout_width="wrap_content"
-                android:src="@drawable/ic_survey"
+                android:src="@drawable/ic_childsurvey"
                 android:layout_alignTop="@+id/surveyName"
                 android:layout_alignBottom="@+id/surveyName"
                 android:padding="10dp"
