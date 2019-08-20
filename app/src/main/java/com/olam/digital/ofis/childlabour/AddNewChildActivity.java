@@ -21,8 +21,10 @@ import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.childlabour.businesslogic.ChildLabourLogic;
 import com.olam.digital.ofis.childlabour.dto.ChildrenDTO;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 public class AddNewChildActivity extends BaseActivity implements  View.OnClickListener{
 
@@ -36,7 +38,9 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
     DataLayer dataLayer;
     String farmerId;
     String action;
+    String childId;
     ChildrenDTO childrenDTO;
+    ArrayAdapter<String> adapter;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,6 +63,11 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
 
             }
         });
+        /*if(getIntent().getStringExtra("action").equalsIgnoreCase("edit")){
+            initData();
+        }*/
+
+
     }
 
     private void initEvents() {
@@ -104,7 +113,7 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
         for (int i = 0; i <= 17; i++) {
             ageList.add(Integer.toString(i));
         }
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.rowview_age_spinner, ageList);
+        adapter = new ArrayAdapter<String>(this, R.layout.rowview_age_spinner, ageList);
         adapter.setDropDownViewResource(R.layout.rowview_age_spinner);
 
         ageSpinner.setAdapter(adapter);
@@ -116,11 +125,14 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
             Toast.makeText(AddNewChildActivity.this,getResources().getString(R.string.fill_name),Toast.LENGTH_LONG).show();
             return;
         }
-        submitChild(name);
+        if(getIntent().getStringExtra("action").equalsIgnoreCase("edit")){
+            UpdateChild(name);
+        }else {
+            submitChild(name);
+        }
     }
 
-
-    private void submitChild(String name) {
+    private void UpdateChild(String name) {
         ContentValues contentValues=new ContentValues();
         contentValues.put(OFISDBContract.ChildEntry.COLUMN_NAME_FARMER_ID, farmerId);
         contentValues.put(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_NAME, name);
@@ -128,6 +140,34 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
         contentValues.put(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_GENDER, gender);
         contentValues.put(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_AGE_ON_YEAR, Calendar.getInstance().get(Calendar.YEAR));
         contentValues.put(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_SYNCED, 0);
+        contentValues.put(OFISDBContract.ChildEntry.COLUMN_NAME_ID, childId);
+
+        ContentValues updatecontentValues=new ContentValues();
+        updatecontentValues.put(OFISDBContract.ChildEntry.COLUMN_NAME_FARMER_ID, childrenDTO.getFarmerId());
+        updatecontentValues.put(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_NAME, childrenDTO.getName());
+        updatecontentValues.put(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_AGE, Integer.parseInt(childrenDTO.getAge()));
+        updatecontentValues.put(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_GENDER, childrenDTO.getGender());
+        updatecontentValues.put(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_AGE_ON_YEAR, childrenDTO.getAgeOnYear());
+        updatecontentValues.put(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_CREATEDAT, childrenDTO.getCreatedAt());
+        long newChildId= new ChildLabourLogic().updateChildDetails(this,contentValues,updatecontentValues);
+        if (newChildId != -1){
+            Toast.makeText(this,getResources().getString(R.string.child_register_successfully),Toast.LENGTH_LONG).show();
+            finish();
+        }
+    }
+
+
+    private void submitChild(String name) {
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+
+        ContentValues contentValues=new ContentValues();
+        contentValues.put(OFISDBContract.ChildEntry.COLUMN_NAME_FARMER_ID, farmerId);
+        contentValues.put(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_NAME, name);
+        contentValues.put(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_AGE, Integer.parseInt(age));
+        contentValues.put(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_GENDER, gender);
+        contentValues.put(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_AGE_ON_YEAR, Calendar.getInstance().get(Calendar.YEAR));
+        contentValues.put(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_SYNCED, 0);
+        contentValues.put(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_CREATEDAT, timestamp.toString());
 
        long newChildId= new ChildLabourLogic().insertChildDetails(this,contentValues);
        if (newChildId != -1){
@@ -138,19 +178,46 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
 
     public void getBundleValues() {
         try{
-            Bundle bundle = getIntent().getExtras();
+            Bundle bundle = this.getIntent().getExtras();
             action=bundle.getString("action");
                 if (action.equalsIgnoreCase("new")){
+                    addNewChildButton.setText(getResources().getString(R.string.add_child));
                     farmerId=bundle.getString(ChildLabourUtils.CHILD_FARMER_ID);
                 }else if(action.equalsIgnoreCase("edit")){
+                    addNewChildButton.setText(getResources().getString(R.string.update_child));
                     farmerId=bundle.getString(ChildLabourUtils.CHILD_FARMER_ID);
                     childrenDTO= (ChildrenDTO) bundle.getSerializable("children");
+
                     fullnameEditText.setText(childrenDTO.getName());
+
+                    if(childrenDTO.getGender().equalsIgnoreCase(ChildLabourUtils.MALE)){
+                        gender = ChildLabourUtils.MALE;
+                        maleButton.setBackgroundColor(getResources().getColor(R.color.gender_selected));
+                        femaleButton.setBackgroundColor(getResources().getColor(android.R.color.white));
+
+                        maleButton.setTextColor(getResources().getColor(R.color.gender_selected_text));
+                        femaleButton.setTextColor(getResources().getColor(android.R.color.black));
+                    }else if(childrenDTO.getGender().equalsIgnoreCase(ChildLabourUtils.FEMALE)){
+                        gender = ChildLabourUtils.FEMALE;
+                        femaleButton.setBackgroundColor(getResources().getColor(R.color.gender_selected));
+                        maleButton.setBackgroundColor(getResources().getColor(android.R.color.white));
+
+                        maleButton.setTextColor(getResources().getColor(android.R.color.black));
+                        femaleButton.setTextColor(getResources().getColor(R.color.gender_selected_text));
+                    }
+                    childId = childrenDTO.getId();
+                    if (childrenDTO.getAge() != null) {
+                        int spinnerPosition = adapter.getPosition(childrenDTO.getAge());
+                        ageSpinner.setSelection(spinnerPosition);
+                    }
+
                 }
         }catch (Exception e){
-
+                e.printStackTrace();
         }
 
     }
+
+
 
 }

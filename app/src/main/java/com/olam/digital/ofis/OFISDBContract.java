@@ -600,6 +600,7 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_CHILD_AGE_ON_YEAR = "age_on_year";
         public static final String COLUMN_NAME_CHILD_SYNCED = "synced";
         public static final String COLUMN_NAME_CHILD_SUBMITTED_MODULES = "submitted_modules";
+        public static final String COLUMN_NAME_CHILD_CREATEDAT = "createdat";
 
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
@@ -613,6 +614,7 @@ public class OFISDBContract {
                     add(COLUMN_NAME_CHILD_AGE_ON_YEAR);
                     add(COLUMN_NAME_CHILD_SYNCED);
                     add(COLUMN_NAME_CHILD_SUBMITTED_MODULES);
+                    add(COLUMN_NAME_CHILD_CREATEDAT);
                 }}
         );
     }

@@ -10,6 +10,15 @@ public class ChildrenDTO implements Serializable {
     private  String age;
     private  String gender;
     private String submittedModules;
+    private String createdAt;
+
+    public String getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
+    }
 
     public String getSubmittedModules() {
         return submittedModules;

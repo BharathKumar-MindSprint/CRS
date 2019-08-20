@@ -41,6 +41,12 @@ public class ChildLabourLogic {
         return newChildId;
     }
 
+    public long updateChildDetails(Context context, ContentValues contentValues, ContentValues updateValues) {
+        dataLayer = new DataLayer(context.getResources(), context);
+        long newChildId = dataLayer.updateChild(contentValues,updateValues);
+        return newChildId;
+    }
+
     public List<ChildrenDTO> getChildDetailsById(Context context, Long farmerId) {
         dataLayer = new DataLayer(context.getResources(), context);
         List<ChildrenDTO> clildrenList = new ArrayList<ChildrenDTO>();
@@ -54,7 +60,7 @@ public class ChildLabourLogic {
                 childrenDTO.setGender(cursor.getString(cursor.getColumnIndex(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_GENDER)));
                 childrenDTO.setAge(cursor.getString(cursor.getColumnIndex(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_AGE)));
                 childrenDTO.setStatus(cursor.getString(cursor.getColumnIndex(OFISDBContract.ChildEntry.COLUMN_NAME_STATUS)));
-
+                childrenDTO.setCreatedAt(cursor.getString(cursor.getColumnIndex(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_CREATEDAT)));
                 childrenDTO.setSubmittedModules(cursor.getString(cursor.getColumnIndex(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_SUBMITTED_MODULES)));
                 clildrenList.add(childrenDTO);
             }

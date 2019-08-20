@@ -76,6 +76,7 @@ public class RegisterChildActivity extends BaseActivity implements View.OnClickL
                         newChildIntent.putExtra("action","edit");
                         childBundle.putSerializable("children",childrenDTO);
                         childBundle.putString(ChildLabourUtils.CHILD_FARMER_ID,String.valueOf(farmerId));
+                        newChildIntent.putExtras(childBundle);
                         startActivity(newChildIntent);
                     }
                 }
