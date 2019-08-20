@@ -3634,7 +3634,11 @@ if (ChildLabourUtils.isChildEnumerator) {
         return db.rawQuery("SELECT * FROM child_visit where farmerId="+farmerId, null);
     }
 
-
+    public long deleteChildVisitDetailsById(Long farmerId) {
+        String whereClause =  OFISDBContract.ChildVisitDetails.COLUMN_NAME_FARMER_ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(farmerId)};
+        return db.delete(OFISDBContract.ChildVisitDetails.TABLE_NAME, whereClause, whereArgs);
+    }
 
     public Cursor getChildDetailsById(Long farmerId) {
        return db.rawQuery("SELECT * FROM children where farmer_id="+farmerId, null);

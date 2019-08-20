@@ -45,18 +45,19 @@
             android:layout_marginTop="5dp"
             android:layout_toLeftOf="@+id/imgv_visit_detail"
             android:layout_marginBottom="5dp"
-            android:background="@color/clmrs_tv_green"/>
+            android:background="@color/ofis_base_font_white"/>
 
         <ImageView
+            android:id="@+id/imgv_visit_detail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingLeft="25dp"
-            android:id="@+id/imgv_visit_detail"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:rotation="270"
+            android:layout_marginStart="2dp"
+            android:layout_marginLeft="2dp"
+            android:paddingLeft="25dp"
             android:paddingRight="25dp"
-            android:src="@drawable/ic_detail_view"/>
+            android:src="@drawable/ic_detail_view" />
 
     </RelativeLayout>
 

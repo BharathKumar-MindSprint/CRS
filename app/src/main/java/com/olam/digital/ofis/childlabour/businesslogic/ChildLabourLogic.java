@@ -44,14 +44,19 @@ public class ChildLabourLogic {
 
     public long deleteVisitDetails(Context context, String farmerId) {
         dataLayer = new DataLayer(context.getResources(), context);
-        long value=  dataLayer.deleteNetworkQueueItemByFarmerId(Integer.parseInt(farmerId), "child_visit");
-        return value;
+        return dataLayer.deleteNetworkQueueItemByFarmerId(Integer.parseInt(farmerId), "child_visit");
+
+    }
+
+    public long deleteChildVisitDetails(Context context, String farmerId) {
+        dataLayer = new DataLayer(context.getResources(), context);
+        return dataLayer.deleteChildVisitDetailsById(Long.valueOf(farmerId));
+
     }
 
     public long updateChildDetails(Context context, ContentValues contentValues, String id) {
         dataLayer = new DataLayer(context.getResources(), context);
-        long newChildId = dataLayer.updateChild(contentValues,id);
-        return newChildId;
+        return dataLayer.updateChild(contentValues,id);
     }
 
     public ChildrenDTO getChildrenDTO(Context context, String childid) {
@@ -75,25 +80,7 @@ public class ChildLabourLogic {
         return childrenDTO;
     }
 
-    public List<ContentValues> getChildVisitDetailsById(Context context, Long farmerId) {
-        dataLayer = new DataLayer(context.getResources(), context);
-        List<ContentValues> visitList = new ArrayList<ContentValues>();
-        Cursor cursor = dataLayer.getChildVisitDetailsById(farmerId);
-        ContentValues contentValues;
-        if (cursor != null) {
-            while (cursor.moveToNext()) {
-                contentValues = new ContentValues();
-                contentValues.put(OFISDBContract.ChildVisitDetails.COLUMN_NAME_ID,cursor.getString(cursor.getColumnIndex(OFISDBContract.ChildVisitDetails.COLUMN_NAME_ID)));
-                contentValues.put(OFISDBContract.ChildVisitDetails.COLUMN_NAME_FARMER_ID,cursor.getString(cursor.getColumnIndex(OFISDBContract.ChildVisitDetails.COLUMN_NAME_FARMER_ID)));
-                contentValues.put(OFISDBContract.ChildVisitDetails.COLUMN_NAME_SURVEY_VISIT_SYNCED,cursor.getString(cursor.getColumnIndex(OFISDBContract.ChildVisitDetails.COLUMN_NAME_SURVEY_VISIT_SYNCED)));
-                contentValues.put(OFISDBContract.ChildVisitDetails.COLUMN_NAME_SURVEY_CODE,cursor.getString(cursor.getColumnIndex(OFISDBContract.ChildVisitDetails.COLUMN_NAME_SURVEY_CODE)));
-                contentValues.put(OFISDBContract.ChildVisitDetails.COLUMN_NAME_SURVEY_DESCRIPTION,cursor.getString(cursor.getColumnIndex(OFISDBContract.ChildVisitDetails.COLUMN_NAME_SURVEY_DESCRIPTION)));
 
-                visitList.add(contentValues);
-            }
-        }
-        return visitList;
-    }
 
     public List<String> getSurveyCodeDetailsById(Context context, Long farmerId) {
         dataLayer = new DataLayer(context.getResources(), context);

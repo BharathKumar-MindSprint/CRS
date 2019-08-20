@@ -72,18 +72,9 @@ public class ChildVisitDetailActivity  extends BaseActivity implements View.OnCl
         }
         long value =  new ChildLabourLogic().deleteVisitDetails(this, farmerId);
         Log.e("IsValueDeleted? ", String.valueOf(value));
-        /*ContentValues contentValues=new ContentValues();
-        contentValues.put(OFISDBContract.ChildVisitDetailsEntry.COLUMN_NAME_FARMER_ID,farmerId);
-        contentValues.put(OFISDBContract.ChildVisitDetailsEntry.COLUMN_HOUSEHOLD,household);
-        contentValues.put(OFISDBContract.ChildVisitDetailsEntry.COLUMN_INSPECTION,inspection);
-        contentValues.put(OFISDBContract.ChildVisitDetailsEntry.COLUMN_FOLLOWUP,followup);
-        contentValues.put(OFISDBContract.ChildVisitDetailsEntry.COLUMN_NAME_VISIT_DETAIL_SYNCED,0);
+        long val =  new ChildLabourLogic().deleteChildVisitDetails(this, farmerId);
+        Log.e("IsValueDeleted? ", String.valueOf(val));
 
-        long rowId= new ChildLabourLogic().insertVisitDetails(this,contentValues);
-        if (rowId != -1){
-            Toast.makeText(this, getResources().getString(R.string.child_visit_details_inserted),Toast.LENGTH_LONG).show();
-            finish();
-        }*/
         ContentValues contentValue=new ContentValues();
         contentValue.put(OFISDBContract.ChildVisitDetails.COLUMN_NAME_FARMER_ID,farmerId);
         contentValue.put(OFISDBContract.ChildVisitDetails.COLUMN_NAME_SURVEY_VISIT_SYNCED,0);
@@ -123,13 +114,16 @@ public class ChildVisitDetailActivity  extends BaseActivity implements View.OnCl
             }
         }
 
+        if(household == 0 && inspection == 0){
+            finish();
+        }
+
     }
 
     public void getBundleValues() {
 
         Bundle bundle = getIntent().getExtras();
         farmerId = bundle.getString(ChildLabourUtils.CHILD_FARMER_ID);
-
         ChildLabourLogic childLabourLogic = new ChildLabourLogic();
         List<String> scList = childLabourLogic.getSurveyCodeDetailsById(this, Long.valueOf(farmerId));
         if (scList.size() > 0) {
