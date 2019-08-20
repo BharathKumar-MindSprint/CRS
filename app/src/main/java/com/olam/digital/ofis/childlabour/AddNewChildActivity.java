@@ -128,6 +128,11 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
             Toast.makeText(AddNewChildActivity.this,getResources().getString(R.string.fill_name),Toast.LENGTH_LONG).show();
             return;
         }
+        String age = ageSpinner.getSelectedItem().toString();
+        if(age.trim().equalsIgnoreCase("0")){
+            Toast.makeText(AddNewChildActivity.this,getResources().getString(R.string.fill_age),Toast.LENGTH_LONG).show();
+            return;
+        }
         if(getIntent().getStringExtra("action").equalsIgnoreCase("new")){
             submitChild(name);
         }else {
