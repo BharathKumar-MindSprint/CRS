@@ -22,6 +22,7 @@ import com.olam.digital.ofis.childlabour.dto.ChildModuleDto;
 import com.olam.digital.ofis.childlabour.dto.ChildrenDTO;
 import com.olam.digital.ofis.childlabour.listener.OnItemSurveyListener;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ViewChildLabourSurveyActivity extends BaseActivity {
@@ -56,7 +57,6 @@ public class ViewChildLabourSurveyActivity extends BaseActivity {
         initComponents();
         initData();
         populateSurveyList();
-
     }
 
     private void populateSurveyList() {
@@ -95,15 +95,43 @@ public class ViewChildLabourSurveyActivity extends BaseActivity {
 
     }
 
+    private void AssembleSurveyByOrder() {
+        List<ChildModuleDto> unOrderedSurveyList=childModuleDtoList;
+        for (ChildModuleDto childModuleDto : unOrderedSurveyList){
+             if (childModuleDto.getSurveyCode().equalsIgnoreCase("01")){
+                 childModuleDtoList.set(0,childModuleDto);
+             }else if(childModuleDto.getSurveyCode().equalsIgnoreCase("02")){
+                 childModuleDtoList.set(1,childModuleDto);
+             }else if(childModuleDto.getSurveyCode().equalsIgnoreCase("03")){
+                 childModuleDtoList.set(2,childModuleDto);
+             }else {
+                 childModuleDtoList.add(childModuleDto);
+             }
+        }
+
+    }
+
     private void setRequiredData(Intent intent,ChildModuleDto childModuleDto) {
         DataLayer dataLayer=new DataLayer(this.getResources(),this);
 
         intent.putExtra(FARMER_ID, farmerID);
         intent.putExtra(MODULE_ID, Long.parseLong(childModuleDto.get_id()));
-        intent.putExtra(FARMER_MODULE_ID, childModuleDto.getFarmer_module_id());
-        intent.putExtra(SUB_MODULE_ID, childModuleDto.getCurrent_submodule_id());
-        intent.putExtra(STATUS_STARTED,childModuleDto.getStatus_started());
-        intent.putExtra(STATUS_FINISHED, childModuleDto.getStatus_finished());
+        try {
+            intent.putExtra(FARMER_MODULE_ID, Long.parseLong(childModuleDto.getFarmer_module_id()));
+        }catch (Exception e){}
+
+        try {
+            intent.putExtra(SUB_MODULE_ID, Integer.parseInt(childModuleDto.getCurrent_submodule_id()));
+        }catch (Exception e){}
+
+        try {
+            intent.putExtra(STATUS_STARTED,Integer.parseInt(childModuleDto.getStatus_started()));
+        }catch (Exception e){}
+
+        try {
+            intent.putExtra(STATUS_FINISHED, Integer.parseInt(childModuleDto.getStatus_finished()));
+        }catch (Exception e){}
+
         intent.putExtra(RECORDED_LAT, childModuleDto.getRecorded_lat());
         intent.putExtra(RECORDED_LNG, childModuleDto.getRecorded_lng());
         intent.putExtra(CHILD_ID,children.getId());
