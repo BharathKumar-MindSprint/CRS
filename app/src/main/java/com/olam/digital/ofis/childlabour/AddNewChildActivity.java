@@ -215,19 +215,9 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
         fullnameEditText.setText(childrenDTO.getName());
 
         if(childrenDTO.getGender().equalsIgnoreCase(ChildLabourUtils.MALE)){
-            gender = ChildLabourUtils.MALE;
-            maleButton.setBackgroundColor(getResources().getColor(R.color.gender_selected));
-            femaleButton.setBackgroundColor(getResources().getColor(android.R.color.white));
-
-            maleButton.setTextColor(getResources().getColor(R.color.gender_selected_text));
-            femaleButton.setTextColor(getResources().getColor(android.R.color.black));
+           maleButton.performClick();
         }else if(childrenDTO.getGender().equalsIgnoreCase(ChildLabourUtils.FEMALE)){
-            gender = ChildLabourUtils.FEMALE;
-            femaleButton.setBackgroundColor(getResources().getColor(R.color.gender_selected));
-            maleButton.setBackgroundColor(getResources().getColor(android.R.color.white));
-
-            maleButton.setTextColor(getResources().getColor(android.R.color.black));
-            femaleButton.setTextColor(getResources().getColor(R.color.gender_selected_text));
+           femaleButton.performClick();
         }
         childId = childrenDTO.getId();
         if (childrenDTO.getAge() != null) {
