@@ -10,6 +10,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 import android.widget.LinearLayout;
 
@@ -26,8 +27,8 @@ import java.util.List;
 public class RegisterChildActivity extends BaseActivity implements View.OnClickListener{
 
     private RecyclerView childRecyclerView;
-    private LinearLayout addChildButton;
-    private  LinearLayout childVisitDetailButton;
+    private RelativeLayout addChildButton;
+    private  RelativeLayout childVisitDetailButton;
     private ChildLabourRecyclerAdapter childLabourRecyclerAdapter;
     Long farmerId;
     @Override

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/clmrs_bg"
@@ -7,69 +7,75 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/layout_footer"
+        android:layout_alignParentTop="true"
         android:layout_margin="@dimen/activity_horizontal_margin"
         android:background="@color/clmrs_bg"
+        android:padding="10dp"
         android:orientation="vertical">
 
 
-
-            <CheckBox
-                android:id="@+id/householdCheckBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:buttonTint="@color/clmrs_green"
-                android:text="@string/household_question"
-                android:layout_margin="10dp"
-                android:textColor="@android:color/black" />
-
-
+        <CheckBox
+            android:id="@+id/householdCheckBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:buttonTint="#6C5D56"
+            android:paddingLeft="10dp"
+            android:text="@string/household_question"
+            android:textColor="@android:color/black" />
 
 
+        <CheckBox
+            android:id="@+id/inspectionCheckBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"
+            android:buttonTint="#6C5D56"
+            android:paddingLeft="10dp"
+            android:text="@string/inspection_question"
+            android:textColor="@android:color/black" />
 
-            <CheckBox
-                android:id="@+id/inspectionCheckBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_margin="10dp"
-                android:buttonTint="@color/clmrs_green"
-                android:text="@string/inspection_question"
-                android:textColor="@android:color/black" />
-
-            <CheckBox
-                android:id="@+id/followupCheckBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_margin="10dp"
-                android:text="@string/followup_question"
-                android:buttonTint="@color/clmrs_green"
-                android:textColor="@android:color/black" />
-
+        <CheckBox
+            android:id="@+id/followupCheckBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"
+            android:buttonTint="#6C5D56"
+            android:paddingLeft="10dp"
+            android:text="@string/followup_question"
+            android:textColor="@android:color/black" />
 
 
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/layout_footer"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
         android:background="@color/clmrs_bg"
         android:gravity="center">
-
 
 
         <android.support.v7.widget.AppCompatButton
             android:id="@+id/saveVisitDetailButton"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_margin="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="40dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="40dp"
             android:background="@drawable/border_yellow_background"
             android:gravity="center"
+            android:padding="15dp"
             android:text="@string/Save"
+            android:textAllCaps="true"
             android:textColor="@color/ofis_base_font_white"
-            android:textSize="20dp"
             android:textStyle="bold" />
     </LinearLayout>
-</LinearLayout>
+</RelativeLayout>

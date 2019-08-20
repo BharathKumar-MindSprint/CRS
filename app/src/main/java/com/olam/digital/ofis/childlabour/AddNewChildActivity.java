@@ -4,8 +4,6 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.AppCompatButton;
-import android.support.v7.widget.AppCompatSpinner;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.AdapterView;
@@ -25,7 +23,6 @@ import com.olam.digital.ofis.childlabour.dto.ChildrenDTO;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 
 public class AddNewChildActivity extends BaseActivity implements  View.OnClickListener{
 
@@ -92,19 +89,24 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
              addNewChild();
          }else if (v.getId() == R.id.maleButton) {
              gender = ChildLabourUtils.MALE;
-             maleButton.setBackgroundColor(getResources().getColor(R.color.gender_selected));
-             femaleButton.setBackgroundColor(getResources().getColor(android.R.color.white));
+             femaleButton.setBackgroundColor(getResources().getColor(R.color.gender_selected));
+             maleButton.setBackgroundResource(R.drawable.gender_male_selected);
 
-             maleButton.setTextColor(getResources().getColor(R.color.gender_selected_text));
-             femaleButton.setTextColor(getResources().getColor(android.R.color.black));
+             femaleButton.setTextColor(getResources().getColor(R.color.gender_selected_text));
+             maleButton.setTextColor(getResources().getColor(android.R.color.black));
 
          } else if (v.getId() == R.id.femaleButton) {
              gender = ChildLabourUtils.FEMALE;
-             femaleButton.setBackgroundColor(getResources().getColor(R.color.gender_selected));
-             maleButton.setBackgroundColor(getResources().getColor(android.R.color.white));
 
-             maleButton.setTextColor(getResources().getColor(android.R.color.black));
-             femaleButton.setTextColor(getResources().getColor(R.color.gender_selected_text));
+             femaleButton.setBackgroundResource(R.drawable.gender_female_selected);
+             femaleButton.setTextColor(getResources().getColor(android.R.color.black));
+
+             maleButton.setBackgroundColor(getResources().getColor(R.color.gender_selected));
+             maleButton.setTextColor(getResources().getColor(R.color.gender_selected_text));
+
+
+
+
 
          }
     }
