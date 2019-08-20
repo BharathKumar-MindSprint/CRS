@@ -71,7 +71,7 @@ public class RegisterChildActivity extends BaseActivity implements View.OnClickL
                 public void onChildClick(View view, int position,ChildrenDTO childrenDTO) {
                     // Edit functionalities
 
-                    if(childrenDTO.getSynced()!="1"){
+                    if(childrenDTO.getSynced().equalsIgnoreCase("0")){
                         Intent newChildIntent=new Intent(RegisterChildActivity.this,AddNewChildActivity.class);
                         Bundle childBundle=new Bundle();
                         newChildIntent.putExtra("action","edit");

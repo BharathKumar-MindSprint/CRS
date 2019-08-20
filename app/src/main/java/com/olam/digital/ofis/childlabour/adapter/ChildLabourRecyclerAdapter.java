@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -49,6 +50,12 @@ public class ChildLabourRecyclerAdapter extends RecyclerView.Adapter<ChildLabour
         holder.gender.setText(childrenDTO.getGender());
         holder.age.setText(childrenDTO.getAge());
 
+        if(childrenDTO.getSynced().equalsIgnoreCase("1")){
+            holder.arrow.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_verified));
+        }else{
+            holder.arrow.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_right_arrow));
+        }
+
         holder.rowItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -65,12 +72,14 @@ public class ChildLabourRecyclerAdapter extends RecyclerView.Adapter<ChildLabour
     public class ChildHolder extends RecyclerView.ViewHolder {
         TextView name,gender,age;
         CardView rowItem;
+        ImageView arrow;
         public ChildHolder(View itemView) {
             super(itemView);
             rowItem=(CardView)itemView.findViewById(R.id.itemCardView);
             name = (TextView) itemView.findViewById(R.id.name);
             gender = (TextView) itemView.findViewById(R.id.gender);
             age = (TextView) itemView.findViewById(R.id.age);
+            arrow = (ImageView) itemView.findViewById(R.id.arrow);
         }
     }
 }

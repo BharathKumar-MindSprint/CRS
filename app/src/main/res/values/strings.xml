@@ -480,6 +480,7 @@
     <string name="enumerator_empty">Please enter the valid enumerator Id &amp; Passcode</string>
     <string name="valid_range">The data you have entered is outside the range</string>
     <string name="fill_name">Please fill the name</string>
+    <string name="fill_age">Please select the correct age</string>
     <string name="fill_country">Please fill the country</string>
     <string name="fill_region">Please fill the region</string>
     <string name="fill_district">Please fill the district</string>
