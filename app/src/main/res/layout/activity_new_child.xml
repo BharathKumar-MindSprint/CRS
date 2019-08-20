@@ -34,7 +34,7 @@
                 android:background="@drawable/border_grey_bg"
                 android:hint="@string/full_name"
                 android:inputType="textPersonName"
-                android:paddingLeft="5dp"
+                android:paddingLeft="10dp"
                 android:textColor="@android:color/black" />
 
         </LinearLayout>
