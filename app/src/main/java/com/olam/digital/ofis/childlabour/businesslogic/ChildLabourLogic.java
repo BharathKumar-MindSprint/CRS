@@ -11,6 +11,7 @@ import com.olam.digital.ofis.DataLayer;
 import com.olam.digital.ofis.OFISDBContract;
 import com.olam.digital.ofis.Utilities;
 import com.olam.digital.ofis.childlabour.ChildLabourUtils;
+import com.olam.digital.ofis.childlabour.ChildVisitDetailActivity;
 import com.olam.digital.ofis.childlabour.dto.ChildModuleDto;
 import com.olam.digital.ofis.childlabour.dto.ChildrenDTO;
 
@@ -41,6 +42,12 @@ public class ChildLabourLogic {
         return newChildId;
     }
 
+    public long deleteVisitDetails(Context context, String farmerId) {
+        dataLayer = new DataLayer(context.getResources(), context);
+        long value=  dataLayer.deleteNetworkQueueItemByFarmerId(Integer.parseInt(farmerId), "child_visit");
+        return value;
+    }
+
     public long updateChildDetails(Context context, ContentValues contentValues, String id) {
         dataLayer = new DataLayer(context.getResources(), context);
         long newChildId = dataLayer.updateChild(contentValues,id);
@@ -66,6 +73,38 @@ public class ChildLabourLogic {
             }
 
         return childrenDTO;
+    }
+
+    public List<ContentValues> getChildVisitDetailsById(Context context, Long farmerId) {
+        dataLayer = new DataLayer(context.getResources(), context);
+        List<ContentValues> visitList = new ArrayList<ContentValues>();
+        Cursor cursor = dataLayer.getChildVisitDetailsById(farmerId);
+        ContentValues contentValues;
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
+                contentValues = new ContentValues();
+                contentValues.put(OFISDBContract.ChildVisitDetails.COLUMN_NAME_ID,cursor.getString(cursor.getColumnIndex(OFISDBContract.ChildVisitDetails.COLUMN_NAME_ID)));
+                contentValues.put(OFISDBContract.ChildVisitDetails.COLUMN_NAME_FARMER_ID,cursor.getString(cursor.getColumnIndex(OFISDBContract.ChildVisitDetails.COLUMN_NAME_FARMER_ID)));
+                contentValues.put(OFISDBContract.ChildVisitDetails.COLUMN_NAME_SURVEY_VISIT_SYNCED,cursor.getString(cursor.getColumnIndex(OFISDBContract.ChildVisitDetails.COLUMN_NAME_SURVEY_VISIT_SYNCED)));
+                contentValues.put(OFISDBContract.ChildVisitDetails.COLUMN_NAME_SURVEY_CODE,cursor.getString(cursor.getColumnIndex(OFISDBContract.ChildVisitDetails.COLUMN_NAME_SURVEY_CODE)));
+                contentValues.put(OFISDBContract.ChildVisitDetails.COLUMN_NAME_SURVEY_DESCRIPTION,cursor.getString(cursor.getColumnIndex(OFISDBContract.ChildVisitDetails.COLUMN_NAME_SURVEY_DESCRIPTION)));
+
+                visitList.add(contentValues);
+            }
+        }
+        return visitList;
+    }
+
+    public List<String> getSurveyCodeDetailsById(Context context, Long farmerId) {
+        dataLayer = new DataLayer(context.getResources(), context);
+        List<String> visitList = new ArrayList<String>();
+        Cursor cursor = dataLayer.getChildVisitDetailsById(farmerId);
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
+                visitList.add(cursor.getString(cursor.getColumnIndex(OFISDBContract.ChildVisitDetails.COLUMN_NAME_SURVEY_CODE)));
+            }
+        }
+        return visitList;
     }
 
     public List<ChildrenDTO> getChildDetailsById(Context context, Long farmerId) {
@@ -135,6 +174,7 @@ public class ChildLabourLogic {
 
             return childModuleDtoList;
         }
+
 
 
 }

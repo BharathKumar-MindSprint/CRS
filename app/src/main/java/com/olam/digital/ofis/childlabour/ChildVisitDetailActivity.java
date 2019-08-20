@@ -15,6 +15,9 @@ import com.olam.digital.ofis.BaseActivity;
 import com.olam.digital.ofis.OFISDBContract;
 import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.childlabour.businesslogic.ChildLabourLogic;
+import com.olam.digital.ofis.childlabour.dto.ChildrenDTO;
+
+import java.util.List;
 
 
 public class ChildVisitDetailActivity  extends BaseActivity implements View.OnClickListener{
@@ -67,7 +70,8 @@ public class ChildVisitDetailActivity  extends BaseActivity implements View.OnCl
         if(followUpCheckBox.isChecked()){
             followup=1;
         }
-
+        long value =  new ChildLabourLogic().deleteVisitDetails(this, farmerId);
+        Log.e("IsValueDeleted? ", String.valueOf(value));
         /*ContentValues contentValues=new ContentValues();
         contentValues.put(OFISDBContract.ChildVisitDetailsEntry.COLUMN_NAME_FARMER_ID,farmerId);
         contentValues.put(OFISDBContract.ChildVisitDetailsEntry.COLUMN_HOUSEHOLD,household);
@@ -86,6 +90,7 @@ public class ChildVisitDetailActivity  extends BaseActivity implements View.OnCl
         if(household == 1){
             contentValue.put(OFISDBContract.ChildVisitDetails.COLUMN_NAME_SURVEY_CODE,1);
             contentValue.put(OFISDBContract.ChildVisitDetails.COLUMN_NAME_SURVEY_DESCRIPTION,"HouseHold Survey");
+
             long hh_rowId= new ChildLabourLogic().insertVisitSurveyDetails(this,contentValue);
             if (hh_rowId != -1){
                 Log.e("HH_RESULT",  getResources().getString(R.string.child_visit_details_inserted));
@@ -121,7 +126,21 @@ public class ChildVisitDetailActivity  extends BaseActivity implements View.OnCl
     }
 
     public void getBundleValues() {
+
         Bundle bundle = getIntent().getExtras();
-        farmerId=bundle.getString(ChildLabourUtils.CHILD_FARMER_ID);
+        farmerId = bundle.getString(ChildLabourUtils.CHILD_FARMER_ID);
+
+        ChildLabourLogic childLabourLogic = new ChildLabourLogic();
+        List<String> scList = childLabourLogic.getSurveyCodeDetailsById(this, Long.valueOf(farmerId));
+        if (scList.size() > 0) {
+            for (String value : scList) {
+                if (value.equalsIgnoreCase("1")) {
+                    houseHoldCheckBox.setChecked(true);
+                } else if (value.equalsIgnoreCase("2")) {
+                    inspectionCheckBox.setChecked(true);
+                }
+            }
+
+    }
     }
 }

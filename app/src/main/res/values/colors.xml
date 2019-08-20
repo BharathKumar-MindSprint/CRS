@@ -38,6 +38,7 @@
     <color name="gender_selected">#DEDAD4</color>
     <color name="gender_selected_text">#6C5D56</color>
     <color name="child_survey_row">#9E948E</color>
+    <color name="child_visitdetailbg">#00869D</color>
 
     <!-- updated -->
 </resources>

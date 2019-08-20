@@ -2743,6 +2743,12 @@ if (ChildLabourUtils.isChildEnumerator) {
         db.delete(OFISDBContract.NetworkQueueEntry.TABLE_NAME, whereClause, whereArgs);
     }
 
+    public long deleteNetworkQueueItemByFarmerId(int farmerId, String type) {
+        String whereClause = OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID + " = ? AND " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(farmerId), type};
+        return db.delete(OFISDBContract.NetworkQueueEntry.TABLE_NAME, whereClause, whereArgs);
+    }
+
     public void deleteNetworkQueueItemByFarmerChildModuleId(int farmerModuleId) {
         String whereClause = OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_MODULE_ID + " = ?";
         String[] whereArgs = new String[]{String.valueOf(farmerModuleId)};
@@ -3623,6 +3629,12 @@ if (ChildLabourUtils.isChildEnumerator) {
         }
         return  newRowId;
     }
+
+    public Cursor getChildVisitDetailsById(Long farmerId) {
+        return db.rawQuery("SELECT * FROM child_visit where farmerId="+farmerId, null);
+    }
+
+
 
     public Cursor getChildDetailsById(Long farmerId) {
        return db.rawQuery("SELECT * FROM children where farmer_id="+farmerId, null);

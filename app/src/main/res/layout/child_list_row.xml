@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal" android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:id="@+id/itemCardView"
+    app:contentPaddingBottom="5dp"
+    app:contentPaddingTop="5dp"
+    app:contentPaddingRight="10dp"
+    app:contentPaddingLeft="10dp"
     android:background="@color/ofis_base_font_white">
 
 

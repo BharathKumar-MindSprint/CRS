@@ -19,8 +19,7 @@
         <CheckBox
             android:id="@+id/householdCheckBox"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_height="70dp"
             android:buttonTint="#6C5D56"
             android:paddingLeft="10dp"
             android:text="@string/household_question"
@@ -30,7 +29,7 @@
         <CheckBox
             android:id="@+id/inspectionCheckBox"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="70dp"
             android:layout_gravity="center"
             android:layout_marginTop="20dp"
             android:buttonTint="#6C5D56"
@@ -41,11 +40,13 @@
         <CheckBox
             android:id="@+id/followupCheckBox"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="70dp"
             android:layout_gravity="center"
             android:layout_marginTop="20dp"
             android:buttonTint="#6C5D56"
             android:paddingLeft="10dp"
+            android:enabled="false"
+            android:background="@color/clmrs_bg_gray"
             android:text="@string/followup_question"
             android:textColor="@android:color/black" />
 
