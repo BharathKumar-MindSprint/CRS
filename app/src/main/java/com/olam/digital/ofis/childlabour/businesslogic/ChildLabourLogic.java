@@ -41,10 +41,30 @@ public class ChildLabourLogic {
         return newChildId;
     }
 
-    public long updateChildDetails(Context context, ContentValues contentValues, ContentValues updateValues) {
+    public long updateChildDetails(Context context, ContentValues contentValues, String id) {
         dataLayer = new DataLayer(context.getResources(), context);
-        long newChildId = dataLayer.updateChild(contentValues,updateValues);
+        long newChildId = dataLayer.updateChild(contentValues,id);
         return newChildId;
+    }
+
+    public ChildrenDTO getChildrenDTO(Context context, String childid) {
+        dataLayer = new DataLayer(context.getResources(), context);
+        Cursor cursor = dataLayer.getChildById(Long.parseLong(childid));
+        ChildrenDTO childrenDTO = new ChildrenDTO();
+        if (cursor.getCount() > 0) {
+            cursor.moveToFirst();
+                childrenDTO = new ChildrenDTO();
+                childrenDTO.setId(cursor.getString(cursor.getColumnIndex(OFISDBContract.ChildEntry.COLUMN_NAME_ID)));
+                childrenDTO.setName(cursor.getString(cursor.getColumnIndex(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_NAME)));
+                childrenDTO.setGender(cursor.getString(cursor.getColumnIndex(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_GENDER)));
+                childrenDTO.setAge(cursor.getString(cursor.getColumnIndex(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_AGE)));
+                childrenDTO.setStatus(cursor.getString(cursor.getColumnIndex(OFISDBContract.ChildEntry.COLUMN_NAME_STATUS)));
+                childrenDTO.setCreatedAt(cursor.getString(cursor.getColumnIndex(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_CREATEDAT)));
+                childrenDTO.setSubmittedModules(cursor.getString(cursor.getColumnIndex(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_SUBMITTED_MODULES)));
+
+            }
+
+        return childrenDTO;
     }
 
     public List<ChildrenDTO> getChildDetailsById(Context context, Long farmerId) {

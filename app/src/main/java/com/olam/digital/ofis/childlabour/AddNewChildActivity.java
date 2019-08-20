@@ -1,6 +1,7 @@
 package com.olam.digital.ofis.childlabour;
 
 import android.content.ContentValues;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.AppCompatButton;
@@ -125,10 +126,10 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
             Toast.makeText(AddNewChildActivity.this,getResources().getString(R.string.fill_name),Toast.LENGTH_LONG).show();
             return;
         }
-        if(getIntent().getStringExtra("action").equalsIgnoreCase("edit")){
-            UpdateChild(name);
-        }else {
+        if(getIntent().getStringExtra("action").equalsIgnoreCase("new")){
             submitChild(name);
+        }else {
+            UpdateChild(name);
         }
     }
 
@@ -142,14 +143,14 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
         contentValues.put(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_SYNCED, 0);
         contentValues.put(OFISDBContract.ChildEntry.COLUMN_NAME_ID, childId);
 
-        ContentValues updatecontentValues=new ContentValues();
+       /* ContentValues updatecontentValues=new ContentValues();
         updatecontentValues.put(OFISDBContract.ChildEntry.COLUMN_NAME_FARMER_ID, childrenDTO.getFarmerId());
         updatecontentValues.put(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_NAME, childrenDTO.getName());
         updatecontentValues.put(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_AGE, Integer.parseInt(childrenDTO.getAge()));
         updatecontentValues.put(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_GENDER, childrenDTO.getGender());
         updatecontentValues.put(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_AGE_ON_YEAR, childrenDTO.getAgeOnYear());
-        updatecontentValues.put(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_CREATEDAT, childrenDTO.getCreatedAt());
-        long newChildId= new ChildLabourLogic().updateChildDetails(this,contentValues,updatecontentValues);
+        updatecontentValues.put(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_CREATEDAT, childrenDTO.getCreatedAt());*/
+        long newChildId= new ChildLabourLogic().updateChildDetails(this,contentValues,childrenDTO.getId());
         if (newChildId != -1){
             Toast.makeText(this,getResources().getString(R.string.child_register_successfully),Toast.LENGTH_LONG).show();
             finish();
@@ -187,29 +188,14 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
                     addNewChildButton.setText(getResources().getString(R.string.update_child));
                     farmerId=bundle.getString(ChildLabourUtils.CHILD_FARMER_ID);
                     childrenDTO= (ChildrenDTO) bundle.getSerializable("children");
+                    setValue(childrenDTO);
+                }else if(action.equalsIgnoreCase("sync_edit")){
+                    addNewChildButton.setText(getResources().getString(R.string.update_child));
+                    farmerId = getIntent().getStringExtra(ChildLabourUtils.CHILD_FARMER_ID);
+                    childId = getIntent().getStringExtra(ChildLabourUtils.CHILD_ID);
+                    childrenDTO= new ChildLabourLogic().getChildrenDTO(this,childId);
+                    setValue(childrenDTO);
 
-                    fullnameEditText.setText(childrenDTO.getName());
-
-                    if(childrenDTO.getGender().equalsIgnoreCase(ChildLabourUtils.MALE)){
-                        gender = ChildLabourUtils.MALE;
-                        maleButton.setBackgroundColor(getResources().getColor(R.color.gender_selected));
-                        femaleButton.setBackgroundColor(getResources().getColor(android.R.color.white));
-
-                        maleButton.setTextColor(getResources().getColor(R.color.gender_selected_text));
-                        femaleButton.setTextColor(getResources().getColor(android.R.color.black));
-                    }else if(childrenDTO.getGender().equalsIgnoreCase(ChildLabourUtils.FEMALE)){
-                        gender = ChildLabourUtils.FEMALE;
-                        femaleButton.setBackgroundColor(getResources().getColor(R.color.gender_selected));
-                        maleButton.setBackgroundColor(getResources().getColor(android.R.color.white));
-
-                        maleButton.setTextColor(getResources().getColor(android.R.color.black));
-                        femaleButton.setTextColor(getResources().getColor(R.color.gender_selected_text));
-                    }
-                    childId = childrenDTO.getId();
-                    if (childrenDTO.getAge() != null) {
-                        int spinnerPosition = adapter.getPosition(childrenDTO.getAge());
-                        ageSpinner.setSelection(spinnerPosition);
-                    }
 
                 }
         }catch (Exception e){
@@ -218,6 +204,30 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
 
     }
 
+    private void setValue(ChildrenDTO childrenDTO) {
+        fullnameEditText.setText(childrenDTO.getName());
+
+        if(childrenDTO.getGender().equalsIgnoreCase(ChildLabourUtils.MALE)){
+            gender = ChildLabourUtils.MALE;
+            maleButton.setBackgroundColor(getResources().getColor(R.color.gender_selected));
+            femaleButton.setBackgroundColor(getResources().getColor(android.R.color.white));
+
+            maleButton.setTextColor(getResources().getColor(R.color.gender_selected_text));
+            femaleButton.setTextColor(getResources().getColor(android.R.color.black));
+        }else if(childrenDTO.getGender().equalsIgnoreCase(ChildLabourUtils.FEMALE)){
+            gender = ChildLabourUtils.FEMALE;
+            femaleButton.setBackgroundColor(getResources().getColor(R.color.gender_selected));
+            maleButton.setBackgroundColor(getResources().getColor(android.R.color.white));
+
+            maleButton.setTextColor(getResources().getColor(android.R.color.black));
+            femaleButton.setTextColor(getResources().getColor(R.color.gender_selected_text));
+        }
+        childId = childrenDTO.getId();
+        if (childrenDTO.getAge() != null) {
+            int spinnerPosition = adapter.getPosition(childrenDTO.getAge());
+            ageSpinner.setSelection(spinnerPosition);
+        }
+    }
 
 
 }
