@@ -1867,6 +1867,7 @@ public class DataLayer {
     }
 
 
+
     public int getFarmId(int farmer){
         int FarmID = 0;
         try{
@@ -2717,9 +2718,10 @@ if (ChildLabourUtils.isChildEnumerator) {
 //            orderBy = OFISDBContract.NetworkQueueEntry.COLUMN_NAME_ID + " ASC";
             return db.rawQuery("select * from " + OFISDBContract.NetworkQueueEntry.TABLE_NAME +
                     " order by case when " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE +" = 'New farmer' " +
-                    "THEN 1 when " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE +" = 'Polygon recorded' " +
-                    "THEN 2 when " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE +" = 'Location recorded' " +
-                    "THEN 3 ELSE 4 END, "+ OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE ,
+                            "THEN 1 when " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE +" = 'Child Registered' " +
+                    "THEN 2 when " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE +" = 'Polygon recorded' " +
+                    "THEN 3 when " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE +" = 'Location recorded' " +
+                    "THEN 4 ELSE 5 END, "+ OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE ,
                     null);
         }
 
@@ -2768,6 +2770,18 @@ if (ChildLabourUtils.isChildEnumerator) {
 
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+    boolean isChildSynced(long childId) {
+        Cursor child = null;
+        try {
+            child = getChildById(childId);
+            return child.moveToNext() && (child.getInt(child.getColumnIndex(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_SYNCED)) == 1);
+        }finally {
+            child.close();
+        }
+
+    }
+
     void markFarmerAsSynced(int localFarmerId, int id, int farmId, int localPlaceId, int newPlaceId,String olamId) {
         // check to see if new id is already existing
         Cursor newFarmer = db.query(OFISDBContract.FarmerEntry.TABLE_NAME, new String[]{"id"}, "id = ?", new String[]{String.valueOf(id)}, null, null, null);
@@ -2795,6 +2809,8 @@ if (ChildLabourUtils.isChildEnumerator) {
                 ContentValues farmerValues = new ContentValues();
                 farmerValues.put(OFISDBContract.AnswerEntry.COLUMN_NAME_FARMER_ID, id);
                 farmerValues.put(OFISDBContract.AnswerEntry.COLUMN_NAME_FARM_ID, farmId);
+
+                // Answer ket
 
                 db.update(OFISDBContract.AnswerEntry.TABLE_NAME, farmerValues, OFISDBContract.AnswerEntry.COLUMN_NAME_FARMER_ID + " = ?", whereArgs);
 
@@ -3653,7 +3669,6 @@ if (ChildLabourUtils.isChildEnumerator) {
     }
 
     public void updateChildId(int tempChildId, int generatedChildId) {
-
 
         ContentValues cv = new ContentValues();
         cv.put(OFISDBContract.ChildEntry.COLUMN_NAME_ID,generatedChildId); //These Fields should be your String values of actual column names
