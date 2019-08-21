@@ -2819,6 +2819,7 @@ if (ChildLabourUtils.isChildEnumerator) {
 
                 // Child labour update starts
                 // child module Update values
+
                 try {
                     db.update(OFISDBContract.AnswerChildEntry.TABLE_NAME, farmerValues, OFISDBContract.AnswerChildEntry.COLUMN_NAME_FARMER_ID + " = ?", whereArgs);
                 }catch (Exception e){}
@@ -2828,9 +2829,16 @@ if (ChildLabourUtils.isChildEnumerator) {
                 }catch (Exception e){}
 
                 try {
-                    db.update(OFISDBContract.ChildVisitDetails.TABLE_NAME, farmerValues, OFISDBContract.ChildVisitDetails.COLUMN_NAME_FARMER_ID + " = ?", whereArgs);
+                    ContentValues farmerChildVisitValues = new ContentValues();
+                    farmerChildVisitValues.put(OFISDBContract.ChildVisitDetails.COLUMN_NAME_FARMER_ID, id);
+                    db.update(OFISDBContract.ChildVisitDetails.TABLE_NAME, farmerChildVisitValues, OFISDBContract.ChildVisitDetails.COLUMN_NAME_FARMER_ID + " = ?", whereArgs);
                 }catch (Exception e){}
 
+                try {
+                    ContentValues farmerChildValues = new ContentValues();
+                    farmerChildValues.put(OFISDBContract.ChildEntry.COLUMN_NAME_FARMER_ID, id);
+                    db.update(OFISDBContract.ChildEntry.TABLE_NAME, farmerChildValues, OFISDBContract.ChildEntry.COLUMN_NAME_FARMER_ID + " = ?", whereArgs);
+                }catch (Exception e){}
 
 
                 // Child labour update Ends

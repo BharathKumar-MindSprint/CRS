@@ -3323,7 +3323,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                         // child Request Body
                         submission.put("childrenId",childId);
-                        submission.put("surveyYear",2019);
+                        submission.put("surveyYear",submissionDate.substring(0,4));
                         submission.put("moduleId",moduleId);
                         submission.put("farmerId",farmerModule.getInt(farmerModule.getColumnIndex(OFISDBContract.FarmerChildModulesEntry.COLUMN_NAME_FARMER_ID)));
 
