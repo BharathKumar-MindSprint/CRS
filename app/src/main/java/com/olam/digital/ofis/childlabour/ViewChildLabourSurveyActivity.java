@@ -42,6 +42,7 @@ public class ViewChildLabourSurveyActivity extends BaseActivity {
     private Long farmerID;
     private String moduleName;
     private List<ChildModuleDto> childModuleDtoList;
+    TextView childNameTv;
 
     private static final String FARMER_ID = "FARMER_ID";
     private static final String MODULE_ID = "MODULE_ID";
@@ -58,19 +59,18 @@ public class ViewChildLabourSurveyActivity extends BaseActivity {
     private static final String CHILD_ID="CHILD_ID";
     private static final String PLOT_COUNT = "PLOT_COUNT";
     private static final int PERMISSIONS_ACCESS_LOCATION = 6575;
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_child_labour_survey);
         initComponents();
         initData();
+        childNameTv.setText(children.getName());
         populateSurveyList();
     }
 
     private void populateSurveyList() {
-        childModuleDtoList = new ChildLabourLogic().getChildSurveyModuleList(this, farmerID);
-
+        childModuleDtoList = new ChildLabourLogic().getChildSurveyModuleList(this, farmerID,String.valueOf(children.getId()));
 
         Collections.sort(childModuleDtoList, new SortbySurveyCode());
 
@@ -212,6 +212,7 @@ public class ViewChildLabourSurveyActivity extends BaseActivity {
     }
 
     private void initComponents() {
+        childNameTv=findViewById(R.id.childnameTv);
         surveyChildLabourRecycleView=findViewById(R.id.surveyChildLabourRecycleView);;
     }
 

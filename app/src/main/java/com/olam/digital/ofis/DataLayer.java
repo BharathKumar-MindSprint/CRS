@@ -1899,7 +1899,7 @@ public class DataLayer {
     }
 
 
-   public Cursor getChildModulesByFarmer(long id) {
+   public Cursor getChildModulesByFarmer(long id, String child_id) {
         Cursor farmer = null;
         Cursor farmerModules=null;
 
@@ -1914,7 +1914,8 @@ public class DataLayer {
                     " farmer_child_modules.id as farmer_module_id, farmer_child_modules.status_started, farmer_child_modules.status_finished, farmer_child_modules.current_submodule_id, farmer_child_modules.recorded_lat, farmer_child_modules.recorded_lng,modules.moduleCode FROM moduleassignments" +
                     " INNER JOIN modules ON moduleassignments.module_id = modules.id " +
                     " LEFT OUTER JOIN farmer_child_modules ON modules.id = farmer_child_modules.module_id AND " +
-                    "(farmer_child_modules.farmer_id = ? OR farmer_child_modules.olam_farmer_id = ?) " +
+                    "(farmer_child_modules.farmer_id = ? OR farmer_child_modules.olam_farmer_id = ?) AND " +
+                    "(farmer_child_modules.child_id = ?)"+
                     " LEFT OUTER JOIN " + OFISDBContract.SubmoduleEntry.TABLE_NAME + " ON farmer_child_modules.current_submodule_id = submodules.id WHERE " +
                     "(moduleassignment_type = 'Country' AND moduleassignment_id = ?) OR " +
                     "(moduleassignment_type = 'Region' AND moduleassignment_id = ?) OR " +
@@ -1929,6 +1930,7 @@ public class DataLayer {
             String[] modulesQueryValues = new String[]{
                     farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)),
                     farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)),
+                    child_id,
                     farmer.getString(farmer.getColumnIndex("country_id")),
                     farmer.getString(farmer.getColumnIndex("region_id")),
                     farmer.getString(farmer.getColumnIndex("district_id")),
@@ -2005,7 +2007,7 @@ public class DataLayer {
                         "(farmer_modules.farmer_id = ? OR farmer_modules.olam_farmer_id = ?) " +
                         " LEFT OUTER JOIN " + OFISDBContract.SubmoduleEntry.TABLE_NAME + " ON farmer_modules.current_submodule_id = submodules.id WHERE " +
                         "moduleassignments.childLabour != 'true' AND" +
-                        "(moduleassignment_type = 'Country' AND moduleassignment_id = ?) OR " +
+                        "((moduleassignment_type = 'Country' AND moduleassignment_id = ?) OR " +
                         "(moduleassignment_type = 'Region' AND moduleassignment_id = ?) OR " +
                         "(moduleassignment_type = 'District' AND moduleassignment_id = ?) OR " +
                         "(moduleassignment_type = 'Place' AND moduleassignment_id = ?) OR " +
@@ -2013,7 +2015,7 @@ public class DataLayer {
                         "(moduleassignment_type = 'Section' AND moduleassignment_id = ?) OR " +
                         "(moduleassignment_type = 'Programme' AND moduleassignment_id = ?) OR " +
                         "(moduleassignment_type = 'Product' AND moduleassignment_id = ?) OR " +
-                        "(moduleassignment_type = 'Partner' AND moduleassignment_id = ?)";
+                        "(moduleassignment_type = 'Partner' AND moduleassignment_id = ?))";
                 String[] modulesQueryValues = new String[]{
                         farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)),
                         farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)),
@@ -2811,11 +2813,29 @@ if (ChildLabourUtils.isChildEnumerator) {
                 farmerValues.put(OFISDBContract.AnswerEntry.COLUMN_NAME_FARM_ID, farmId);
 
                 // Answer ket
-
                 db.update(OFISDBContract.AnswerEntry.TABLE_NAME, farmerValues, OFISDBContract.AnswerEntry.COLUMN_NAME_FARMER_ID + " = ?", whereArgs);
-
                 // update any saved modules
                 db.update(OFISDBContract.FarmerModulesEntry.TABLE_NAME, farmerValues, OFISDBContract.FarmerModulesEntry.COLUMN_NAME_FARMER_ID + " = ?", whereArgs);
+
+                // Child labour update starts
+                // child module Update values
+                try {
+                    db.update(OFISDBContract.AnswerChildEntry.TABLE_NAME, farmerValues, OFISDBContract.AnswerChildEntry.COLUMN_NAME_FARMER_ID + " = ?", whereArgs);
+                }catch (Exception e){}
+
+                try {
+                    db.update(OFISDBContract.FarmerChildModulesEntry.TABLE_NAME, farmerValues, OFISDBContract.FarmerChildModulesEntry.COLUMN_NAME_FARMER_ID + " = ?", whereArgs);
+                }catch (Exception e){}
+
+                try {
+                    db.update(OFISDBContract.ChildVisitDetails.TABLE_NAME, farmerValues, OFISDBContract.ChildVisitDetails.COLUMN_NAME_FARMER_ID + " = ?", whereArgs);
+                }catch (Exception e){}
+
+
+
+                // Child labour update Ends
+
+
 
                 ContentValues transacteeIdValue = new ContentValues();
                 transacteeIdValue.put(OFISDBContract.TransactionItem.COLUMN_NAME_TRANSACTEE_ID, id);
@@ -3674,6 +3694,22 @@ if (ChildLabourUtils.isChildEnumerator) {
         cv.put(OFISDBContract.ChildEntry.COLUMN_NAME_ID,generatedChildId); //These Fields should be your String values of actual column names
         cv.put(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_SYNCED,1);
         db.update(OFISDBContract.ChildEntry.TABLE_NAME, cv, "id="+tempChildId, null);
+
+
+
+        String[] whereArgs = new String[]{String.valueOf(tempChildId)};
+        try {
+            ContentValues farmerValuesCv=new ContentValues();
+            farmerValuesCv.put(OFISDBContract.FarmerChildModulesEntry.COLUMN_NAME_CHILD_ID,generatedChildId);
+            db.update(OFISDBContract.FarmerChildModulesEntry.TABLE_NAME, farmerValuesCv, OFISDBContract.FarmerChildModulesEntry.COLUMN_NAME_CHILD_ID + " = ?", whereArgs);
+        }catch (Exception e){}
+
+         try {
+             ContentValues childNetworkCV=new ContentValues();
+             childNetworkCV.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_CHILD_ID,generatedChildId);
+             db.update(OFISDBContract.NetworkQueueEntry.TABLE_NAME, childNetworkCV, OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_CHILD_ID + " = ?", new String[]{String.valueOf(tempChildId)});
+         }catch (Exception e){}
+
 
     }
 

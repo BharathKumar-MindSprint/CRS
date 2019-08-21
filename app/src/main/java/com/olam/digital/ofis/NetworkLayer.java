@@ -2788,7 +2788,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
     private void postChild(final int networkQueueItemId, final Handler handler, final Message msg, final int total, final int progress, final Integer originalSyncRequestItemId) {
 
 
-
         if (!dl.isFarmerSynced(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)))) {
             msg.what = 3;
             msg.arg1 = total;
@@ -3258,6 +3257,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
         final int farmerModuleId = networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_MODULE_ID));
         final long farmerId = networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
+        final long childNwId=networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_CHILD_ID));
         Cursor moduleAnswers, extraInfo, farmerModule = dl.getFarmerChildModuleById(farmerModuleId);
 
         // farmer child register should check
@@ -3270,54 +3270,62 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 msg.obj = String.valueOf(res.getString(R.string.farmer_not_synced));
                 handler.dispatchMessage(msg);
             } else {
-                farmerModule.moveToFirst();
+                if (!dl.isChildSynced(childNwId)){
+                    msg.what = 3;
+                    msg.arg1 = total;
+                    msg.arg2 =  progress;
+                    msg.obj = String.valueOf(res.getString(R.string.child_not_synced));
+                    handler.dispatchMessage(msg);
+                }else{
 
-                try {
-                    final int moduleId = farmerModule.getInt(farmerModule.getColumnIndex(OFISDBContract.FarmerChildModulesEntry.COLUMN_NAME_MODULE_ID));
-                    final int childId=farmerModule.getInt(farmerModule.getColumnIndex(OFISDBContract.FarmerChildModulesEntry.COLUMN_NAME_CHILD_ID));
-                    Utilities.moduleId = moduleId;
-                    final String submissionDate = farmerModule.getString(farmerModule.getColumnIndex(OFISDBContract.FarmerChildModulesEntry.COLUMN_NAME_STARTED_DATE));
-                    extraInfo = dl.getExtraInfoByFarmerId(farmerId, moduleId);
-                    if(extraInfo.getCount() >0){
-                        extraInfo.moveToFirst();
+                    farmerModule.moveToFirst();
+
+                    try {
+                        final int moduleId = farmerModule.getInt(farmerModule.getColumnIndex(OFISDBContract.FarmerChildModulesEntry.COLUMN_NAME_MODULE_ID));
+                        final int childId=farmerModule.getInt(farmerModule.getColumnIndex(OFISDBContract.FarmerChildModulesEntry.COLUMN_NAME_CHILD_ID));
+                        Utilities.moduleId = moduleId;
+                        final String submissionDate = farmerModule.getString(farmerModule.getColumnIndex(OFISDBContract.FarmerChildModulesEntry.COLUMN_NAME_STARTED_DATE));
+                        extraInfo = dl.getExtraInfoByFarmerId(farmerId, moduleId);
+                        if(extraInfo.getCount() >0){
+                            extraInfo.moveToFirst();
 //                        submission.put("farmer_name", extraInfo.getString(0));
-                        submission.put("countryId", extraInfo.getInt(2));
+                            submission.put("countryId", extraInfo.getInt(2));
 //                        submission.put("country_name", extraInfo.getString(3));
 //                        submission.put("module_name", extraInfo.getString(4));
 //                        submission.put("farmer_group_name", extraInfo.getString(5));
 //                        submission.put("farmer_group_id", extraInfo.getInt(6));
-                        submission.put("productId", extraInfo.getInt(7));
+                            submission.put("productId", extraInfo.getInt(7));
 //                        submission.put("partner_id", extraInfo.getInt(8));
-                    }else{
-                        submission.put("countryId","");
+                        }else{
+                            submission.put("countryId","");
 //                        submission.put("country_name", "");
 //                        submission.put("farmer_group_id", "");
 //                        submission.put("farmer_group_name", "");
 //                        submission.put("module_name", "");
 //                        submission.put("farmer_name", "");
-                        submission.put("productId", "");
- //                       submission.put("partner_id", "");
-                    }
+                            submission.put("productId", "");
+                            //                       submission.put("partner_id", "");
+                        }
 
-                    boolean hasPhotos = false;
-                    MultipartBody.Builder bodyBuilder = new MultipartBody.Builder().setType(MultipartBody.FORM);
-                    String storageDir = (context.getExternalFilesDir(null) != null) ? context.getExternalFilesDir(null).getPath() + "/" : "/";
-                  //  submission.put(OFISDBContract.FarmerChildModulesEntry.COLUMN_NAME_MODULE_ID, moduleId);
+                        boolean hasPhotos = false;
+                        MultipartBody.Builder bodyBuilder = new MultipartBody.Builder().setType(MultipartBody.FORM);
+                        String storageDir = (context.getExternalFilesDir(null) != null) ? context.getExternalFilesDir(null).getPath() + "/" : "/";
+                        //  submission.put(OFISDBContract.FarmerChildModulesEntry.COLUMN_NAME_MODULE_ID, moduleId);
 
 
-                    submission.put("submittedDate",submissionDate.substring(0,10));
-                    Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-                    submission.put("uploadDate", timestamp.toString().substring(0,10));
-                    submission.put("reportedData",timestamp.toString().substring(0,10));
-                    submission.put("enumeratorId", Long.valueOf(enumeratorId));
+                        submission.put("submittedDate",submissionDate.substring(0,10));
+                        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                        submission.put("uploadDate", timestamp.toString().substring(0,10));
+                        submission.put("reportedData",timestamp.toString().substring(0,10));
+                        submission.put("enumeratorId", Long.valueOf(enumeratorId));
 //                    submission.put("imei_number", IMEI);
 //                    submission.put("fmpreview", false);
 
-                    // child Request Body
-                    submission.put("childrenId",childId);
-                    submission.put("surveyYear",2019);
-                    submission.put("moduleId",moduleId);
-                    submission.put("farmerId",farmerModule.getInt(farmerModule.getColumnIndex(OFISDBContract.FarmerChildModulesEntry.COLUMN_NAME_FARMER_ID)));
+                        // child Request Body
+                        submission.put("childrenId",childId);
+                        submission.put("surveyYear",2019);
+                        submission.put("moduleId",moduleId);
+                        submission.put("farmerId",farmerModule.getInt(farmerModule.getColumnIndex(OFISDBContract.FarmerChildModulesEntry.COLUMN_NAME_FARMER_ID)));
 
 
 
@@ -3326,231 +3334,235 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 //                    submission.put(OFISDBContract.FarmerChildModulesEntry.COLUMN_NAME_FARM_ID, farmerModule.getInt(farmerModule.getColumnIndex(OFISDBContract.FarmerChildModulesEntry.COLUMN_NAME_FARM_ID)));
 //                    submission.put("recorded_lat", networkQueueItems.getDouble(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LAT)));
 //                    submission.put("recorded_lng", networkQueueItems.getDouble(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)));
-                    submission.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ATTEMPTS, networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ATTEMPTS)));
-                    submission.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ID, networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ID)));
-                    if (networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID)) > 0 && networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FULLY_SYNCED)) == 0) {
-                        submission.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID, networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID)));
-                    }
+                        submission.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ATTEMPTS, networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ATTEMPTS)));
+                        submission.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ID, networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ID)));
+                        if (networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID)) > 0 && networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FULLY_SYNCED)) == 0) {
+                            submission.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID, networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID)));
+                        }
 
-                    moduleAnswers = dl.getAnswersByFarmerChildModuleId(farmerModuleId);
+                        moduleAnswers = dl.getAnswersByFarmerChildModuleId(farmerModuleId);
 
-                    if (moduleAnswers.getCount() > 0) {
+                        if (moduleAnswers.getCount() > 0) {
 
-                        while (moduleAnswers.moveToNext()) {
-                            questions_included.add(moduleAnswers.getInt(moduleAnswers.getColumnIndex(OFISDBContract.AnswerChildEntry.COLUMN_NAME_QUESTION_ID)));
-                            JSONObject answer = new JSONObject();
-                            answer.put("questionId", moduleAnswers.getInt(moduleAnswers.getColumnIndex(OFISDBContract.AnswerChildEntry.COLUMN_NAME_QUESTION_ID)));
-                            answer.put("reportingYear", moduleAnswers.getInt(moduleAnswers.getColumnIndex(OFISDBContract.AnswerChildEntry.COLUMN_NAME_ANSWER_REPORTING_YEAR)));
+                            while (moduleAnswers.moveToNext()) {
+                                questions_included.add(moduleAnswers.getInt(moduleAnswers.getColumnIndex(OFISDBContract.AnswerChildEntry.COLUMN_NAME_QUESTION_ID)));
+                                JSONObject answer = new JSONObject();
+                                answer.put("questionId", moduleAnswers.getInt(moduleAnswers.getColumnIndex(OFISDBContract.AnswerChildEntry.COLUMN_NAME_QUESTION_ID)));
+                                answer.put("reportingYear", moduleAnswers.getInt(moduleAnswers.getColumnIndex(OFISDBContract.AnswerChildEntry.COLUMN_NAME_ANSWER_REPORTING_YEAR)));
 
 //                            Utilities.olamFarmerId = moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.AnswerChildEntry.COLUMN_NAME_OLAM_FARMER_ID));
 //
 //                            answer.put(OFISDBContract.AnswerChildEntry.COLUMN_NAME_OLAM_FARMER_ID, Utilities.olamFarmerId);
 
 
-                            int parentid = moduleAnswers.getInt(moduleAnswers.getColumnIndex(OFISDBContract.AnswerChildEntry.COLUMN_NAME_QUESTION_ID));
-                            // As of now didn't consider the subQuestion Answer select ( Any subQuestion Issue please focus here)
-                            Cursor cursor = dl.getSubquestionAnswerSelect(Utilities.moduleId, moduleAnswers.getInt(moduleAnswers.getColumnIndex(OFISDBContract.AnswerChildEntry.COLUMN_NAME_QUESTION_ID)), Utilities.olamFarmerId + "");
-                            Set<Integer> sub_questions_included = new TreeSet<>();
+                                int parentid = moduleAnswers.getInt(moduleAnswers.getColumnIndex(OFISDBContract.AnswerChildEntry.COLUMN_NAME_QUESTION_ID));
+                                // As of now didn't consider the subQuestion Answer select ( Any subQuestion Issue please focus here)
+                                Cursor cursor = dl.getSubquestionAnswerSelect(Utilities.moduleId, moduleAnswers.getInt(moduleAnswers.getColumnIndex(OFISDBContract.AnswerChildEntry.COLUMN_NAME_QUESTION_ID)), Utilities.olamFarmerId + "");
+                                Set<Integer> sub_questions_included = new TreeSet<>();
 
-                            if (cursor.getCount() > 0) {
+                                if (cursor.getCount() > 0) {
 
-                                answer.put("is_subset", "true");
-                                JSONObject subset_section = new JSONObject();
-                                JSONArray sub_answers = new JSONArray();
-                                if (cursor.moveToFirst()) {
-                                    do {
-                                        JSONObject sub_answersjson = new JSONObject();
-                                        sub_questions_included.add(Integer.parseInt(cursor.getString(cursor.getColumnIndex(OFISDBContract.Subquestionanswer.COLUMN_NAME_QUESTION_ID))));
-                                        sub_answersjson.put("question_id", cursor.getString(cursor.getColumnIndex(OFISDBContract.Subquestionanswer.COLUMN_NAME_QUESTION_ID)));
-                                        sub_answersjson.put("reporting_year", cursor.getString(cursor.getColumnIndex(OFISDBContract.Subquestionanswer.COLUMN_NAME_REPORT_YEAR)));
+                                    answer.put("is_subset", "true");
+                                    JSONObject subset_section = new JSONObject();
+                                    JSONArray sub_answers = new JSONArray();
+                                    if (cursor.moveToFirst()) {
+                                        do {
+                                            JSONObject sub_answersjson = new JSONObject();
+                                            sub_questions_included.add(Integer.parseInt(cursor.getString(cursor.getColumnIndex(OFISDBContract.Subquestionanswer.COLUMN_NAME_QUESTION_ID))));
+                                            sub_answersjson.put("question_id", cursor.getString(cursor.getColumnIndex(OFISDBContract.Subquestionanswer.COLUMN_NAME_QUESTION_ID)));
+                                            sub_answersjson.put("reporting_year", cursor.getString(cursor.getColumnIndex(OFISDBContract.Subquestionanswer.COLUMN_NAME_REPORT_YEAR)));
 
-                                        sub_answersjson.put("olam_farmer_id", cursor.getString(cursor.getColumnIndex(OFISDBContract.Subquestionanswer.COLUMN_NAME_FARMER_ID)));
+                                            sub_answersjson.put("olam_farmer_id", cursor.getString(cursor.getColumnIndex(OFISDBContract.Subquestionanswer.COLUMN_NAME_FARMER_ID)));
 
 
-                                        if ((cursor.getString(cursor.getColumnIndex(OFISDBContract.Subquestionanswer.COLUMN_NAME_POSITION))).equalsIgnoreCase("photo")) {
-                                            sub_answersjson.put("answer", Utilities.base64ConversionForImage(cursor.getString(cursor.getColumnIndex(OFISDBContract.Subquestionanswer.COLUMN_NAME_QUESTION_ANSWER))));
-                                            sub_answersjson.put("has_photo_upload", true);
-                                        } else
-                                            sub_answersjson.put("answer", cursor.getString(cursor.getColumnIndex(OFISDBContract.Subquestionanswer.COLUMN_NAME_QUESTION_ANSWER)));
-                                        sub_answers.put(sub_answersjson);
-                                        sub_answersjson.put("has_photo_upload", false);
-                                    } while (cursor.moveToNext());
+                                            if ((cursor.getString(cursor.getColumnIndex(OFISDBContract.Subquestionanswer.COLUMN_NAME_POSITION))).equalsIgnoreCase("photo")) {
+                                                sub_answersjson.put("answer", Utilities.base64ConversionForImage(cursor.getString(cursor.getColumnIndex(OFISDBContract.Subquestionanswer.COLUMN_NAME_QUESTION_ANSWER))));
+                                                sub_answersjson.put("has_photo_upload", true);
+                                            } else
+                                                sub_answersjson.put("answer", cursor.getString(cursor.getColumnIndex(OFISDBContract.Subquestionanswer.COLUMN_NAME_QUESTION_ANSWER)));
+                                            sub_answers.put(sub_answersjson);
+                                            sub_answersjson.put("has_photo_upload", false);
+                                        } while (cursor.moveToNext());
+                                    }
+                                    String questions_included_output = sub_questions_included.toString();
+                                    subset_section.put("sub_questions_included", questions_included_output.substring(1, questions_included_output.length() - 1));
+                                    subset_section.put("sub_answers", sub_answers);
+                                    answer.put("subset_section", subset_section);
+                                } else {
+
+                                    answer.put("is_subset", "false");
                                 }
-                                String questions_included_output = sub_questions_included.toString();
-                                subset_section.put("sub_questions_included", questions_included_output.substring(1, questions_included_output.length() - 1));
-                                subset_section.put("sub_answers", sub_answers);
-                                answer.put("subset_section", subset_section);
-                            } else {
 
-                                answer.put("is_subset", "false");
-                            }
-
-                           // Subset Question section . Will focus if needed
-                            String subquestion = "";
+                                // Subset Question section . Will focus if needed
+                                String subquestion = "";
 
 
-                            String datatype = moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.DatatypesEntry.COLUMN_NAME_DATATYPE_NAME));
-                            if (datatype.equalsIgnoreCase("int") || datatype.equalsIgnoreCase("boolean")) {
-                                answer.put("answer", moduleAnswers.getInt(moduleAnswers.getColumnIndex("answer_" + datatype)));
-                            } else if (datatype.equalsIgnoreCase("decimal")) {
-                                answer.put("answer", moduleAnswers.getDouble(moduleAnswers.getColumnIndex("answer_" + datatype)));
-                            } else {
-                                answer.put("answer", moduleAnswers.getString(moduleAnswers.getColumnIndex("answer_" + datatype)));
-                            }
-                            if (moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE)).equalsIgnoreCase("photoupload")) {
-                                hasPhotos = true;
-                                File photo = new File(storageDir + "/" + moduleAnswers.getString(moduleAnswers.getColumnIndex("answer_" + datatype)));
-                                answer.put("answer", Utilities.base64ConversionForImage(
-                                        storageDir
-                                                + "/"
-                                                + moduleAnswers.getString(moduleAnswers.getColumnIndex("answer_" + datatype))));
-                                answer.put("has_photo_upload", true);
-                            } else {
-                                answer.put("has_photo_upload", false);
-                            }
+                                String datatype = moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.DatatypesEntry.COLUMN_NAME_DATATYPE_NAME));
+                                if (datatype.equalsIgnoreCase("int") || datatype.equalsIgnoreCase("boolean")) {
+                                    answer.put("answer", moduleAnswers.getInt(moduleAnswers.getColumnIndex("answer_" + datatype)));
+                                } else if (datatype.equalsIgnoreCase("decimal")) {
+                                    answer.put("answer", moduleAnswers.getDouble(moduleAnswers.getColumnIndex("answer_" + datatype)));
+                                } else {
+                                    answer.put("answer", moduleAnswers.getString(moduleAnswers.getColumnIndex("answer_" + datatype)));
+                                }
+                                if (moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE)).equalsIgnoreCase("photoupload")) {
+                                    hasPhotos = true;
+                                    File photo = new File(storageDir + "/" + moduleAnswers.getString(moduleAnswers.getColumnIndex("answer_" + datatype)));
+                                    answer.put("answer", Utilities.base64ConversionForImage(
+                                            storageDir
+                                                    + "/"
+                                                    + moduleAnswers.getString(moduleAnswers.getColumnIndex("answer_" + datatype))));
+                                    answer.put("has_photo_upload", true);
+                                } else {
+                                    answer.put("has_photo_upload", false);
+                                }
 
-                            if (moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE)).equalsIgnoreCase("repeater")) {
-                                Cursor subAnswers = dl.getChildAnswersByModuleIdAndParentQuestionId(farmerModuleId, moduleAnswers.getInt(moduleAnswers.getColumnIndex(OFISDBContract.AnswerChildEntry.COLUMN_NAME_QUESTION_ID)));
+                                if (moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE)).equalsIgnoreCase("repeater")) {
+                                    Cursor subAnswers = dl.getChildAnswersByModuleIdAndParentQuestionId(farmerModuleId, moduleAnswers.getInt(moduleAnswers.getColumnIndex(OFISDBContract.AnswerChildEntry.COLUMN_NAME_QUESTION_ID)));
 
-                                if (subAnswers.getCount() > 0) {
-                                    JSONArray subAnswersArray = new JSONArray();
-                                    JSONArray subAnswersAnswerArray = new JSONArray();
+                                    if (subAnswers.getCount() > 0) {
+                                        JSONArray subAnswersArray = new JSONArray();
+                                        JSONArray subAnswersAnswerArray = new JSONArray();
 
-                                    int repeaterItemPosition = 1;
-                                    while (subAnswers.moveToNext()) {
-                                        questions_included.add(subAnswers.getInt(subAnswers.getColumnIndex(OFISDBContract.AnswerChildEntry.COLUMN_NAME_QUESTION_ID)));
-                                        JSONObject subAnswer = new JSONObject();
-                                        JSONObject displayConfig = new JSONObject(subAnswers.getString(subAnswers.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION)));
+                                        int repeaterItemPosition = 1;
+                                        while (subAnswers.moveToNext()) {
+                                            questions_included.add(subAnswers.getInt(subAnswers.getColumnIndex(OFISDBContract.AnswerChildEntry.COLUMN_NAME_QUESTION_ID)));
+                                            JSONObject subAnswer = new JSONObject();
+                                            JSONObject displayConfig = new JSONObject(subAnswers.getString(subAnswers.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION)));
 
-                                        if (subAnswers.getInt(subAnswers.getColumnIndex(OFISDBContract.AnswerChildEntry.COLUMN_NAME_REPEATER_ITEM_POSITION)) > repeaterItemPosition) {
-                                            // start new subAnswersAnswerArray
-                                            subAnswersArray.put(subAnswersAnswerArray);
-                                            subAnswersAnswerArray = new JSONArray();
-                                        }
-
-                                        repeaterItemPosition = subAnswers.getInt(subAnswers.getColumnIndex(OFISDBContract.AnswerChildEntry.COLUMN_NAME_REPEATER_ITEM_POSITION));
-
-                                        subAnswer.put(OFISDBContract.AnswerChildEntry.COLUMN_NAME_QUESTION_ID, subAnswers.getInt(subAnswers.getColumnIndex(OFISDBContract.AnswerChildEntry.COLUMN_NAME_QUESTION_ID)));
-                                        subAnswer.put(OFISDBContract.AnswerChildEntry.COLUMN_NAME_ANSWER_REPORTING_YEAR, subAnswers.getInt(subAnswers.getColumnIndex(OFISDBContract.AnswerChildEntry.COLUMN_NAME_ANSWER_REPORTING_YEAR)));
-                                        subAnswer.put(OFISDBContract.AnswerChildEntry.COLUMN_NAME_OLAM_FARMER_ID, subAnswers.getString(subAnswers.getColumnIndex(OFISDBContract.AnswerChildEntry.COLUMN_NAME_OLAM_FARMER_ID)));
-                                        String subAnswerDatatype = subAnswers.getString(subAnswers.getColumnIndex(OFISDBContract.DatatypesEntry.COLUMN_NAME_DATATYPE_NAME));
-                                        if (subAnswerDatatype.equalsIgnoreCase("int") || subAnswerDatatype.equalsIgnoreCase("boolean")) {
-                                            subAnswer.put("answer", subAnswers.getInt(subAnswers.getColumnIndex("answer_" + subAnswerDatatype)));
-                                        } else if (subAnswerDatatype.equalsIgnoreCase("decimal")) {
-                                            subAnswer.put("answer", subAnswers.getDouble(subAnswers.getColumnIndex("answer_" + subAnswerDatatype)));
-                                        } else {
-                                            subAnswer.put("answer", subAnswers.getString(subAnswers.getColumnIndex("answer_" + subAnswerDatatype)));
-                                        }
-
-                                        if (displayConfig.has("display")) {
-                                            JSONObject display = displayConfig.getJSONObject("display");
-                                            if (display.optString("repeateritem_display_type", "").equalsIgnoreCase("photoupload")) {
-                                                hasPhotos = true;
-                                                subAnswer.put("has_photo_upload", true);
-//                                                File photo = new File(storageDir + "/" + subAnswers.getString(subAnswers.getColumnIndex("answer_" + subAnswerDatatype)));
-                                                subAnswer.put("answer", Utilities.base64ConversionForImage(
-                                                        storageDir + "/" +
-                                                                subAnswers.getString(subAnswers.getColumnIndex("answer_" + subAnswerDatatype))));
-                                            } else {
-                                                subAnswer.put("has_photo_upload", false);
+                                            if (subAnswers.getInt(subAnswers.getColumnIndex(OFISDBContract.AnswerChildEntry.COLUMN_NAME_REPEATER_ITEM_POSITION)) > repeaterItemPosition) {
+                                                // start new subAnswersAnswerArray
+                                                subAnswersArray.put(subAnswersAnswerArray);
+                                                subAnswersAnswerArray = new JSONArray();
                                             }
+
+                                            repeaterItemPosition = subAnswers.getInt(subAnswers.getColumnIndex(OFISDBContract.AnswerChildEntry.COLUMN_NAME_REPEATER_ITEM_POSITION));
+
+                                            subAnswer.put(OFISDBContract.AnswerChildEntry.COLUMN_NAME_QUESTION_ID, subAnswers.getInt(subAnswers.getColumnIndex(OFISDBContract.AnswerChildEntry.COLUMN_NAME_QUESTION_ID)));
+                                            subAnswer.put(OFISDBContract.AnswerChildEntry.COLUMN_NAME_ANSWER_REPORTING_YEAR, subAnswers.getInt(subAnswers.getColumnIndex(OFISDBContract.AnswerChildEntry.COLUMN_NAME_ANSWER_REPORTING_YEAR)));
+                                            subAnswer.put(OFISDBContract.AnswerChildEntry.COLUMN_NAME_OLAM_FARMER_ID, subAnswers.getString(subAnswers.getColumnIndex(OFISDBContract.AnswerChildEntry.COLUMN_NAME_OLAM_FARMER_ID)));
+                                            String subAnswerDatatype = subAnswers.getString(subAnswers.getColumnIndex(OFISDBContract.DatatypesEntry.COLUMN_NAME_DATATYPE_NAME));
+                                            if (subAnswerDatatype.equalsIgnoreCase("int") || subAnswerDatatype.equalsIgnoreCase("boolean")) {
+                                                subAnswer.put("answer", subAnswers.getInt(subAnswers.getColumnIndex("answer_" + subAnswerDatatype)));
+                                            } else if (subAnswerDatatype.equalsIgnoreCase("decimal")) {
+                                                subAnswer.put("answer", subAnswers.getDouble(subAnswers.getColumnIndex("answer_" + subAnswerDatatype)));
+                                            } else {
+                                                subAnswer.put("answer", subAnswers.getString(subAnswers.getColumnIndex("answer_" + subAnswerDatatype)));
+                                            }
+
+                                            if (displayConfig.has("display")) {
+                                                JSONObject display = displayConfig.getJSONObject("display");
+                                                if (display.optString("repeateritem_display_type", "").equalsIgnoreCase("photoupload")) {
+                                                    hasPhotos = true;
+                                                    subAnswer.put("has_photo_upload", true);
+//                                                File photo = new File(storageDir + "/" + subAnswers.getString(subAnswers.getColumnIndex("answer_" + subAnswerDatatype)));
+                                                    subAnswer.put("answer", Utilities.base64ConversionForImage(
+                                                            storageDir + "/" +
+                                                                    subAnswers.getString(subAnswers.getColumnIndex("answer_" + subAnswerDatatype))));
+                                                } else {
+                                                    subAnswer.put("has_photo_upload", false);
+                                                }
+                                            }
+
+                                            subAnswersAnswerArray.put(subAnswer);
+
                                         }
-
-                                        subAnswersAnswerArray.put(subAnswer);
-
+                                        subAnswersArray.put(subAnswersAnswerArray);
+                                        answer.put("sub_answers", subAnswersArray);
                                     }
-                                    subAnswersArray.put(subAnswersAnswerArray);
-                                    answer.put("sub_answers", subAnswersArray);
                                 }
+                                answers.put(answer);
                             }
-                            answers.put(answer);
+                            String questions_included_output = questions_included.toString();
+                            submission.put("questions_included", questions_included_output.substring(1, questions_included_output.length() - 1));
+                            submission.put("answers", answers);
+
+                        }else{
+                            submission.put("questions_included", "");
+                            submission.put("answers", answers);
                         }
-                        String questions_included_output = questions_included.toString();
-                        submission.put("questions_included", questions_included_output.substring(1, questions_included_output.length() - 1));
-                        submission.put("answers", answers);
+                        Log.i("POST", "" + submission.toString());
 
-                    }else{
-                        submission.put("questions_included", "");
-                        submission.put("answers", answers);
-                    }
-                    Log.i("POST", "" + submission.toString());
+                        //increase the count - Adjustment code
+                        recordFailedUpload(0, 0, networkQueueItemId);
 
-                    //increase the count - Adjustment code
-                    recordFailedUpload(0, 0, networkQueueItemId);
+                        final String finalEndPoint = endPoint;
+                        okHttpPost(context, endPoint, submission, new Callback() {
+                            @Override
+                            public void onResponse(Call call, Response postResponse) {
+                                String statusMessage;
+                                if (postResponse.isSuccessful()) {
+                                    // should pass the Child Id instead of farmer ID
+                                    dl.syncChildFarmerModule(farmerModuleId, childId, moduleId, submissionDate);
+                                    dl.deleteNetworkQueueItem(networkQueueItemId);
+                                    statusMessage = res.getString(R.string.item_synced);
+                                    msg.what = 1;
+                                    msg.arg1 = total;
+                                    msg.arg2 = HomeActivity.progressItem = progress+1;
+                                    msg.obj = statusMessage;
+                                    handler.dispatchMessage(msg);
+                                    syncNetworkQueue(originalSyncRequestItemId, handler);
+                                } else {
+                                    try {
+                                        FabricLogsWriter.printCrashLog(TAG, finalEndPoint,postResponse.code(), "Request : " +submission.toString() +"Response : "+ postResponse.networkResponse().toString(),context);
+                                    }catch (Exception e){}
+                                    try {
+                                        if(postResponse.code() == 401 && postResponse.headers().toString().contains("invalid_token")){
+                                            FailureGetRefreshToken(handler,originalSyncRequestItemId, msg, 2, total, progress, null, "submitting survey module");
+                                        }else {
+                                            JSONObject response = new JSONObject(postResponse.body().string());
+                                            long server_item_id = 0, fully_synced = 0;
 
-                    final String finalEndPoint = endPoint;
-                    okHttpPost(context, endPoint, submission, new Callback() {
-                        @Override
-                        public void onResponse(Call call, Response postResponse) {
-                            String statusMessage;
-                            if (postResponse.isSuccessful()) {
-                                // should pass the Child Id instead of farmer ID
-                                dl.syncChildFarmerModule(farmerModuleId, childId, moduleId, submissionDate);
-                                dl.deleteNetworkQueueItem(networkQueueItemId);
-                                statusMessage = res.getString(R.string.item_synced);
-                                msg.what = 1;
-                                msg.arg1 = total;
-                                msg.arg2 = HomeActivity.progressItem = progress+1;
-                                msg.obj = statusMessage;
-                                handler.dispatchMessage(msg);
-                                syncNetworkQueue(originalSyncRequestItemId, handler);
-                            } else {
-                                try {
-                                    FabricLogsWriter.printCrashLog(TAG, finalEndPoint,postResponse.code(), "Request : " +submission.toString() +"Response : "+ postResponse.networkResponse().toString(),context);
-                                }catch (Exception e){}
-                                try {
-                                    if(postResponse.code() == 401 && postResponse.headers().toString().contains("invalid_token")){
-                                        FailureGetRefreshToken(handler,originalSyncRequestItemId, msg, 2, total, progress, null, "submitting survey module");
-                                    }else {
-                                        JSONObject response = new JSONObject(postResponse.body().string());
-                                        long server_item_id = 0, fully_synced = 0;
+                                            if (response.optJSONObject("submittedmodule") != null) {
+                                                JSONObject submittedModule = response.getJSONObject("submittedmodule");
+                                                server_item_id = submittedModule.getLong("id");
+                                                fully_synced = submittedModule.getLong(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FULLY_SYNCED);
+                                            }
 
-                                        if (response.optJSONObject("submittedmodule") != null) {
-                                            JSONObject submittedModule = response.getJSONObject("submittedmodule");
-                                            server_item_id = submittedModule.getLong("id");
-                                            fully_synced = submittedModule.getLong(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FULLY_SYNCED);
+                                            recordFailedUpload(server_item_id, fully_synced, networkQueueItemId);
+
+                                            postFailureMessage(handler, response, msg, 2, total, progress, null, "submitting Child survey module");
+                                            FirebaseCrash.report(new Exception(response.optString("errors", res.getString(R.string.item_sync_error)) + " : submitting child survey module"));
                                         }
-
-                                        recordFailedUpload(server_item_id, fully_synced, networkQueueItemId);
-
-                                        postFailureMessage(handler, response, msg, 2, total, progress, null, "submitting Child survey module");
-                                        FirebaseCrash.report(new Exception(response.optString("errors", res.getString(R.string.item_sync_error)) + " : submitting child survey module"));
+                                    } catch (JSONException | IOException e) {
+                                        recordFailedUpload(0, 0, networkQueueItemId);
+                                        postFailureMessage(handler, null, msg, 2, total, progress, null, "submitting child survey module");
+                                        FirebaseCrash.report(new Exception("NetworkLayer: Error getting module posting failure response", e));
+                                        e.printStackTrace();
                                     }
-                                } catch (JSONException | IOException e) {
+                                }
+                                postResponse.close();
+                            }
+
+                            @Override
+                            public void onFailure(Call call, IOException e) {
+                                try{
                                     recordFailedUpload(0, 0, networkQueueItemId);
-                                    postFailureMessage(handler, null, msg, 2, total, progress, null, "submitting child survey module");
-                                    FirebaseCrash.report(new Exception("NetworkLayer: Error getting module posting failure response", e));
-                                    e.printStackTrace();
+
+                                    String failureMessage = res.getString(R.string.networking_error);
+                                    if (e != null) {
+                                        failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
+                                    }
+                                    postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting child survey module");
+                                    FirebaseCrash.report(new Exception(failureMessage, e));
+                                }catch(Exception onfailEx){
+                                    String failureMessage = res.getString(R.string.networking_error);
+                                    postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting child survey module");
+                                    FirebaseCrash.report(new Exception(failureMessage, e));
+                                    onfailEx.printStackTrace();
                                 }
                             }
-                            postResponse.close();
-                        }
+                        });
 
-                        @Override
-                        public void onFailure(Call call, IOException e) {
-                            try{
-                                recordFailedUpload(0, 0, networkQueueItemId);
+                    } catch (JSONException e) {
+                        recordFailedUpload(0, 0, networkQueueItemId);
+                        postFailureMessage(handler, null, msg, 2, total, progress, null, "submitting survey module");
+                        FirebaseCrash.report(new Exception("NetworkLayer: Error creating module post object", e));
+                        e.printStackTrace();
+                    }
 
-                                String failureMessage = res.getString(R.string.networking_error);
-                                if (e != null) {
-                                    failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
-                                }
-                                postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting child survey module");
-                                FirebaseCrash.report(new Exception(failureMessage, e));
-                            }catch(Exception onfailEx){
-                                String failureMessage = res.getString(R.string.networking_error);
-                                postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting child survey module");
-                                FirebaseCrash.report(new Exception(failureMessage, e));
-                                onfailEx.printStackTrace();
-                            }
-                        }
-                    });
 
-                } catch (JSONException e) {
-                    recordFailedUpload(0, 0, networkQueueItemId);
-                    postFailureMessage(handler, null, msg, 2, total, progress, null, "submitting survey module");
-                    FirebaseCrash.report(new Exception("NetworkLayer: Error creating module post object", e));
-                    e.printStackTrace();
+
                 }
             }
         }
@@ -3566,8 +3578,13 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
         final JSONObject params = new JSONObject();
 
-
-
+        if (!dl.isFarmerSynced(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)))) {
+            msg.what = 3;
+            msg.arg1 = total;
+            msg.arg2 = HomeActivity.progressItem = progress + 1;
+            msg.obj = String.valueOf(res.getString(R.string.farmer_not_synced));
+            handler.dispatchMessage(msg);
+        }else{
             try {
                 JSONArray checkavailstatus = new JSONArray();
                 int farmerID = networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
@@ -3663,6 +3680,9 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 FirebaseCrash.report(new Exception("NetworkLayer: Error creating farm location post object", e));
                 e.printStackTrace();
             }
+        }
+
+
 
     }
 }

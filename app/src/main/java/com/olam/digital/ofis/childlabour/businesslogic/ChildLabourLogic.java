@@ -136,10 +136,10 @@ public class ChildLabourLogic {
         return clildrenList;
     }
 
-    public List<ChildModuleDto> getChildSurveyModuleList(Context context, Long id) {
+    public List<ChildModuleDto> getChildSurveyModuleList(Context context, Long id,String childId) {
         dataLayer = new DataLayer(context.getResources(), context);
         List<ChildModuleDto> childModuleDtoList = new ArrayList<ChildModuleDto>();
-        Cursor moduleAssignments = dataLayer.getChildModulesByFarmer(id);
+        Cursor moduleAssignments = dataLayer.getChildModulesByFarmer(id,childId);
         String moduleNameSuffix = Utilities.getLocaleSuffix(context.getResources());
 
         if (moduleAssignments != null && moduleAssignments.getCount() > 0) {
