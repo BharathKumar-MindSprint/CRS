@@ -47,6 +47,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -317,6 +318,24 @@ public class DynamicQuestions {
 
     }
 
+    private String getAnswerMinMaxvalidation(int questionId, int answerId) {
+        String ans = "noval";
+        for (int i = 0; i < answerSet.size(); i++) {
+            JSONObject currentAnswer = answerSet.get(i);
+            if (currentAnswer != null) {
+                int currentQuestionId = currentAnswer.optInt("question_id");
+                int currentAnswerId = currentAnswer.optInt("answer_id");
+                if (currentQuestionId == questionId && currentAnswerId == answerId) {
+                    ans = currentAnswer.optString("answer");
+
+                    break;
+                }else
+                    ans = "noval";
+            }
+        }
+        return ans;
+    }
+
     private void removeRepeaterAnswers(int questionId) {
         for (int i = 0; i < answerSet.size(); i++) {
             JSONObject currentAnswer = answerSet.get(i);
@@ -356,8 +375,9 @@ public class DynamicQuestions {
             JSONObject displayConfig = new JSONObject(qCursor.getString(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION)));
 
             if (displayConfig.has("surveyrange")) {
-                tv.setText(Html.fromHtml(tv.getText().toString() + "(Min Value: " + String.valueOf(displayConfig.getJSONObject("surveyrange").getInt("min") +
-                        "\tMax value: " + String.valueOf(displayConfig.getJSONObject("surveyrange").getInt("max")) +")" )), TextView.BufferType.SPANNABLE);
+                tv.setText(Html.fromHtml(tv.getText().toString() + "(Min Value: " + String.valueOf(BigDecimal.valueOf(displayConfig.getJSONObject("surveyrange").getDouble("min")).floatValue()) +
+                        "\t Max value: " + String.valueOf(BigDecimal.valueOf(displayConfig.getJSONObject("surveyrange").getDouble("max")).floatValue()) +")" ), TextView.BufferType.SPANNABLE);
+
             }
             if (displayConfig.has("display")) {
                 JSONObject display = displayConfig.getJSONObject("display");
@@ -376,6 +396,53 @@ public class DynamicQuestions {
         }
 
         parentLayout.addView(tv);
+    }
+
+    public boolean CheckMinMaxforQuestion(Cursor qCursor) {
+        boolean status = true;
+
+        try {
+            if(qCursor != null && qCursor.moveToFirst()) {
+                do {
+            JSONObject displayConfig = new JSONObject(qCursor.getString(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION)));
+                    final String datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
+                    final int questionId = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
+                    int  answerId = qCursor.getInt(qCursor.getColumnIndex("answer_id"));
+
+
+
+            if (displayConfig.has("surveyrange")) {
+
+                if(getAnswerMinMaxvalidation(questionId,answerId) != "noval"){
+                    float answer = Float.parseFloat(getAnswerMinMaxvalidation(questionId,answerId));
+                    if (fetchMinMaxValue(displayConfig, AppConstants.RANGE_MAX) != 0
+                            || fetchMinMaxValue(displayConfig, AppConstants.RANGE_MIN) != 0 ? true : false) {
+                        if ((answer > fetchMinMaxValue(displayConfig, AppConstants.RANGE_MAX)) || (answer < fetchMinMaxValue(displayConfig, AppConstants.RANGE_MIN))) {
+                            removeAnswerEntry(questionId, answerId);
+                            status = false;
+                            Toast.makeText(context, R.string.valid_range, Toast.LENGTH_LONG).show();
+                        }
+                    }
+                    }
+
+
+
+            }
+
+                } while (qCursor.moveToNext());
+            }
+        } catch (JSONException e) {
+            String questionId = "0";
+            if ((qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID) != -1)) {
+                questionId = qCursor.getString(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
+            }
+            FirebaseCrash.report(new Exception("DynamicQuestions: Error getting question display config - question " + questionId, e));
+            e.printStackTrace();
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return status;
     }
 
     private void renderQuestiontest(Cursor qCursor, boolean isRepeaterItem, LinearLayout parentLayout) {
@@ -1118,7 +1185,7 @@ public class DynamicQuestions {
                 try {
                     if (fetchMinMaxValue(finalDisplayConfig, AppConstants.RANGE_MAX) != 0
                                 || fetchMinMaxValue(finalDisplayConfig, AppConstants.RANGE_MIN) != 0 ? true : false) {
-                      if (Integer.parseInt(et.getText().toString()) > fetchMinMaxValue(finalDisplayConfig, AppConstants.RANGE_MAX)) {
+                      if (Float.parseFloat(et.getText().toString()) > fetchMinMaxValue(finalDisplayConfig, AppConstants.RANGE_MAX)) {
                           et.setText("");
                           Toast.makeText(context, R.string.valid_range, Toast.LENGTH_LONG).show();
                       }
@@ -1139,20 +1206,20 @@ public class DynamicQuestions {
             }
         });
 
-        et.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+       /* et.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if(et.getText().toString().length() > 0) {
                     if (fetchMinMaxValue(finalDisplayConfig, AppConstants.RANGE_MAX) != 0
                             || fetchMinMaxValue(finalDisplayConfig, AppConstants.RANGE_MIN) != 0 ? true : false) {
-                        if (Integer.parseInt(et.getText().toString()) < fetchMinMaxValue(finalDisplayConfig, AppConstants.RANGE_MIN)) {
+                        if (Float.parseFloat(et.getText().toString()) < fetchMinMaxValue(finalDisplayConfig, AppConstants.RANGE_MIN)) {
                             et.setText("");
                             Toast.makeText(context, R.string.valid_range, Toast.LENGTH_LONG).show();
                         }
                     }
                 }
             }
-        });
+        });*/
 
         if (isRepeaterItem) {
             parentLayout.addView(et);
@@ -1162,7 +1229,7 @@ public class DynamicQuestions {
         }
     }
 
-    private int fetchMinMaxValue(JSONObject displayConfig, String rangeMinMax) {
+   /* private int fetchMinMaxValue(JSONObject displayConfig, String rangeMinMax) {
         // get disp"lay config to see if question has display range
         try {
             if (displayConfig.has("surveyrange")) {
@@ -1171,6 +1238,19 @@ public class DynamicQuestions {
 
         } catch (JSONException e) {
            e.printStackTrace();
+        }
+        return 0;
+    }*/
+
+    private float fetchMinMaxValue(JSONObject displayConfig, String rangeMinMax) {
+        // get disp"lay config to see if question has display range
+        try {
+            if (displayConfig.has("surveyrange")) {
+                return BigDecimal.valueOf(displayConfig.getJSONObject("surveyrange").getDouble(rangeMinMax)).floatValue();
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
         return 0;
     }

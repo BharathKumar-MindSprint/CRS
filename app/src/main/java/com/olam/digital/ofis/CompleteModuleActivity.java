@@ -495,6 +495,10 @@ public class CompleteModuleActivity extends BaseActivity {
     }
 
     private void saveSubModule(String action) {
+        boolean status = dynamicQuestions.CheckMinMaxforQuestion(questions);
+        if(! status){
+            return;
+        }
         boolean canSaveAndFinish = true;
 
         // first time saving this module?
@@ -510,6 +514,7 @@ public class CompleteModuleActivity extends BaseActivity {
 
 
         dl.updateSubModuleAnswers(dynamicQuestions.answerSet, farmerModuleId, subModuleId, farmerId, olamFarmerId, farmId, "module");
+
 
         if (action.equalsIgnoreCase("next")) {
             subModules.moveToNext();
