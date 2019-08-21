@@ -59,9 +59,9 @@ public class ChildLabourLogic {
         return dataLayer.updateChild(contentValues,id);
     }
 
-    public ChildrenDTO getChildrenDTO(Context context, String childid) {
+    public ChildrenDTO getChildrenDTO(Context context, String childId) {
         dataLayer = new DataLayer(context.getResources(), context);
-        Cursor cursor = dataLayer.getChildById(Long.parseLong(childid));
+        Cursor cursor = dataLayer.getChildById(Long.parseLong(childId));
         ChildrenDTO childrenDTO = new ChildrenDTO();
         if (cursor.getCount() > 0) {
             cursor.moveToFirst();

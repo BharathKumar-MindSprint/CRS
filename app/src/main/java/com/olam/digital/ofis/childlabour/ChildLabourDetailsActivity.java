@@ -55,6 +55,7 @@ public class ChildLabourDetailsActivity extends BaseActivity {
                     // Moving to Survey Part
                     Bundle bundle=new Bundle();
                     bundle.putString(ChildLabourUtils.CHILD_FARMER_ID,String.valueOf(farmerId));
+                    bundle.putString(ChildLabourUtils.CHILD_ID,String.valueOf(childrenDTO.getId()));
                     bundle.putSerializable("children", childrenDTO);
 
                     startActivity(new Intent(ChildLabourDetailsActivity.this,ViewChildLabourSurveyActivity.class).putExtras(bundle));
