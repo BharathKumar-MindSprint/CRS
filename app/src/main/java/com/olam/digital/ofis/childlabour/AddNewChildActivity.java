@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NavUtils;
+import android.text.Html;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
@@ -13,6 +14,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.olam.digital.ofis.BaseActivity;
@@ -83,6 +85,12 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
         femaleButton=findViewById(R.id.femaleButton);
         ageSpinner=findViewById(R.id.ageSpinner);
         addNewChildButton=findViewById(R.id.addNewChildButton);
+        TextView titlename = findViewById(R.id.title_name);
+        TextView titleage = findViewById(R.id.title_age);
+        TextView titlegender = findViewById(R.id.title_gender);
+        titlename.setText(Html.fromHtml(titlename.getText().toString() + "&nbsp;<sup><font color='red'>*</font></sup>"), TextView.BufferType.SPANNABLE);
+        titleage.setText(Html.fromHtml(titleage.getText().toString() + "&nbsp;<sup><font color='red'>*</font></sup>"), TextView.BufferType.SPANNABLE);
+        titlegender.setText(Html.fromHtml(titlegender.getText().toString() + "&nbsp;<sup><font color='red'>*</font></sup>"), TextView.BufferType.SPANNABLE);
     }
 
     @Override

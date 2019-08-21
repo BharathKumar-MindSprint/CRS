@@ -23,7 +23,7 @@
                 android:text="household Survey"
                 android:layout_gravity="center"
                 android:textStyle="bold"
-                android:textAppearance="?android:textAppearanceMedium"
+                android:textSize="14dp"
                 android:textColor="#6C5D56"
                 android:padding="15dp"
                 android:layout_centerVertical="true"
