@@ -16,6 +16,7 @@ import com.olam.digital.ofis.childlabour.dto.ChildModuleDto;
 import com.olam.digital.ofis.childlabour.dto.ChildrenDTO;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 
@@ -116,7 +117,7 @@ public class ChildLabourLogic {
 
     public List<ChildrenDTO> getChildDetailsById(Context context, Long farmerId) {
         dataLayer = new DataLayer(context.getResources(), context);
-        List<ChildrenDTO> clildrenList = new ArrayList<ChildrenDTO>();
+        List<ChildrenDTO> childrenList = new ArrayList<ChildrenDTO>();
         Cursor cursor = dataLayer.getChildDetailsById(farmerId);
         ChildrenDTO childrenDTO;
         if (cursor != null) {
@@ -130,10 +131,10 @@ public class ChildLabourLogic {
                 childrenDTO.setCreatedAt(cursor.getString(cursor.getColumnIndex(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_CREATEDAT)));
                 childrenDTO.setSynced(cursor.getString(cursor.getColumnIndex(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_SYNCED)));
                 childrenDTO.setSubmittedModules(cursor.getString(cursor.getColumnIndex(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_SUBMITTED_MODULES)));
-                clildrenList.add(childrenDTO);
+                childrenList.add(childrenDTO);
             }
         }
-        return clildrenList;
+        return childrenList;
     }
 
     public List<ChildModuleDto> getChildSurveyModuleList(Context context, Long id,String childId) {
@@ -150,7 +151,11 @@ public class ChildLabourLogic {
                     if ((surveyCode.equalsIgnoreCase(ChildLabourUtils.HOUSEHOLD_SURVEY_CODE) || surveyCode.equalsIgnoreCase(ChildLabourUtils.INSPECTION_SURVEY_CODE) || surveyCode.equalsIgnoreCase(ChildLabourUtils.FOLLOWUP_SURVEY_CODE)) && isChildLabour.equalsIgnoreCase("true")) {
                         ChildModuleDto childModuleDto = new ChildModuleDto();
                         childModuleDto.set_id(moduleAssignments.getString(moduleAssignments.getColumnIndex("_id")));
-                        childModuleDto.setName(moduleAssignments.getString(moduleAssignments.getColumnIndex("name")));
+
+                        // set language Module & Submodule
+
+                        childModuleDto.setName(moduleAssignments.getString(moduleAssignments.getColumnIndex((moduleAssignments.getColumnIndex(OFISDBContract.ModuleEntry.COLUMN_NAME_NAME + moduleNameSuffix) != -1) ? OFISDBContract.ModuleEntry.COLUMN_NAME_NAME + moduleNameSuffix : OFISDBContract.ModuleEntry.COLUMN_NAME_NAME)));
+
                         childModuleDto.setStatus_started(moduleAssignments.getString(moduleAssignments.getColumnIndex("status_started")));
                         childModuleDto.setStatus_finished(moduleAssignments.getString(moduleAssignments.getColumnIndex("status_finished")));
                         childModuleDto.setFarmer_module_id(moduleAssignments.getString(moduleAssignments.getColumnIndex("farmer_module_id")));
@@ -159,25 +164,18 @@ public class ChildLabourLogic {
                         childModuleDto.setRecorded_lat(moduleAssignments.getString(moduleAssignments.getColumnIndex("recorded_lat")));
                         childModuleDto.setRecorded_lng(moduleAssignments.getString(moduleAssignments.getColumnIndex("recorded_lng")));
                         childModuleDto.setSurveyCode(surveyCode);
-                        childModuleDtoList.add(childModuleDto);
+                       String startDate=moduleAssignments.getString(moduleAssignments.getColumnIndex("startDate"));
+                        if(startDate!=null && !startDate.equalsIgnoreCase("null")) {
+                            if (Utilities.currentTimeInMilliSeconds() > Utilities.dateStringToMilliSeconds(startDate)){
+                                childModuleDtoList.add(childModuleDto);
+                            }
+                        }
                     }
                 }
             } finally {
                 moduleAssignments.close();
             }
         }
-//
-//            String[] adapterCols = new String[]{
-//                    (moduleAssignments.getColumnIndex(OFISDBContract.ModuleEntry.COLUMN_NAME_NAME + moduleNameSuffix) != -1) ? OFISDBContract.ModuleEntry.COLUMN_NAME_NAME + moduleNameSuffix : OFISDBContract.ModuleEntry.COLUMN_NAME_NAME,
-//                    OFISDBContract.FarmerModulesEntry.COLUMN_NAME_CURRENT_SUBMODULE_ID,
-//                    OFISDBContract.FarmerModulesEntry.COLUMN_NAME_STATUS_STARTED,
-//                    OFISDBContract.FarmerModulesEntry.COLUMN_NAME_STATUS_FINISHED,
-//                    "farmer_module_id",
-//                    OFISDBContract.FarmerModulesEntry.COLUMN_NAME_RECORDED_LAT,
-//                    OFISDBContract.FarmerModulesEntry.COLUMN_NAME_RECORDED_LNG
-//            };
-
-
 
             return childModuleDtoList;
         }

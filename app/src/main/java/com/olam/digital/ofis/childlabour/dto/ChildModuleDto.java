@@ -35,14 +35,14 @@ public class ChildModuleDto implements Serializable {
     private String recorded_lat;
     private String recorded_lng;
     private String surveyCode;
-    private boolean enable;
+    private String startDate;
 
-    public boolean isEnable() {
-        return enable;
+    public String getStartDate() {
+        return startDate;
     }
 
-    public void setEnable(boolean enable) {
-        this.enable = enable;
+    public void setStartDate(String startDate) {
+        this.startDate = startDate;
     }
 
     public String getSurveyCode() {

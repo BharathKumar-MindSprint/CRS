@@ -3288,38 +3288,21 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         extraInfo = dl.getExtraInfoByFarmerId(farmerId, moduleId);
                         if(extraInfo.getCount() >0){
                             extraInfo.moveToFirst();
-//                        submission.put("farmer_name", extraInfo.getString(0));
                             submission.put("countryId", extraInfo.getInt(2));
-//                        submission.put("country_name", extraInfo.getString(3));
-//                        submission.put("module_name", extraInfo.getString(4));
-//                        submission.put("farmer_group_name", extraInfo.getString(5));
-//                        submission.put("farmer_group_id", extraInfo.getInt(6));
                             submission.put("productId", extraInfo.getInt(7));
-//                        submission.put("partner_id", extraInfo.getInt(8));
                         }else{
                             submission.put("countryId","");
-//                        submission.put("country_name", "");
-//                        submission.put("farmer_group_id", "");
-//                        submission.put("farmer_group_name", "");
-//                        submission.put("module_name", "");
-//                        submission.put("farmer_name", "");
                             submission.put("productId", "");
-                            //                       submission.put("partner_id", "");
                         }
 
                         boolean hasPhotos = false;
                         MultipartBody.Builder bodyBuilder = new MultipartBody.Builder().setType(MultipartBody.FORM);
                         String storageDir = (context.getExternalFilesDir(null) != null) ? context.getExternalFilesDir(null).getPath() + "/" : "/";
-                        //  submission.put(OFISDBContract.FarmerChildModulesEntry.COLUMN_NAME_MODULE_ID, moduleId);
-
-
-                        submission.put("submittedDate",submissionDate.substring(0,10));
                         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                        submission.put("reportedData",submissionDate.substring(0,10));
+                        submission.put("submittedDate",timestamp.toString().substring(0,10));
                         submission.put("uploadDate", timestamp.toString().substring(0,10));
-                        submission.put("reportedData",timestamp.toString().substring(0,10));
                         submission.put("enumeratorId", Long.valueOf(enumeratorId));
-//                    submission.put("imei_number", IMEI);
-//                    submission.put("fmpreview", false);
 
                         // child Request Body
                         submission.put("childrenId",childId);
@@ -3327,13 +3310,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         submission.put("moduleId",moduleId);
                         submission.put("farmerId",farmerModule.getInt(farmerModule.getColumnIndex(OFISDBContract.FarmerChildModulesEntry.COLUMN_NAME_FARMER_ID)));
 
-
-
-
-//                    submission.put(OFISDBContract.FarmerChildModulesEntry.COLUMN_NAME_FARMER_ID, farmerModule.getInt(farmerModule.getColumnIndex(OFISDBContract.FarmerChildModulesEntry.COLUMN_NAME_FARMER_ID)));
-//                    submission.put(OFISDBContract.FarmerChildModulesEntry.COLUMN_NAME_FARM_ID, farmerModule.getInt(farmerModule.getColumnIndex(OFISDBContract.FarmerChildModulesEntry.COLUMN_NAME_FARM_ID)));
-//                    submission.put("recorded_lat", networkQueueItems.getDouble(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LAT)));
-//                    submission.put("recorded_lng", networkQueueItems.getDouble(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)));
                         submission.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ATTEMPTS, networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ATTEMPTS)));
                         submission.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ID, networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ID)));
                         if (networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID)) > 0 && networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FULLY_SYNCED)) == 0) {
@@ -3350,12 +3326,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 answer.put("questionId", moduleAnswers.getInt(moduleAnswers.getColumnIndex(OFISDBContract.AnswerChildEntry.COLUMN_NAME_QUESTION_ID)));
                                 answer.put("reportingYear", moduleAnswers.getInt(moduleAnswers.getColumnIndex(OFISDBContract.AnswerChildEntry.COLUMN_NAME_ANSWER_REPORTING_YEAR)));
 
-//                            Utilities.olamFarmerId = moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.AnswerChildEntry.COLUMN_NAME_OLAM_FARMER_ID));
-//
-//                            answer.put(OFISDBContract.AnswerChildEntry.COLUMN_NAME_OLAM_FARMER_ID, Utilities.olamFarmerId);
-
-
                                 int parentid = moduleAnswers.getInt(moduleAnswers.getColumnIndex(OFISDBContract.AnswerChildEntry.COLUMN_NAME_QUESTION_ID));
+
                                 // As of now didn't consider the subQuestion Answer select ( Any subQuestion Issue please focus here)
                                 Cursor cursor = dl.getSubquestionAnswerSelect(Utilities.moduleId, moduleAnswers.getInt(moduleAnswers.getColumnIndex(OFISDBContract.AnswerChildEntry.COLUMN_NAME_QUESTION_ID)), Utilities.olamFarmerId + "");
                                 Set<Integer> sub_questions_included = new TreeSet<>();
