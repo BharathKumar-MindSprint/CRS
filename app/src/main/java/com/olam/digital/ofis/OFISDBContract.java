@@ -256,6 +256,7 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_RECURRENCE_TYPE = "recurrence_type";
         public static final String COLUMN_NAME_DISABLED_MONTHS = "disabled_months";
         public static final String COLUMN_NAME_SURVEY_CODE = "surveyCode";
+        public static final  String COLUMN_NAME_START_DATE="startDate";
         public static final String COLUMN_NAME_IS_CHILD_LABOUR = "childLabour";
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
@@ -268,6 +269,7 @@ public class OFISDBContract {
                     add(COLUMN_NAME_DISABLED_MONTHS);
                     add(COLUMN_NAME_SURVEY_CODE);
                     add(COLUMN_NAME_IS_CHILD_LABOUR);
+                    add(COLUMN_NAME_START_DATE);
                 }}
         );
     }
