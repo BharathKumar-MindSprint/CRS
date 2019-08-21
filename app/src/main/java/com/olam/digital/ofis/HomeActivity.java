@@ -60,6 +60,7 @@ import com.olam.digital.ofis.authentication.model.AuthenticationDTO;
 import com.olam.digital.ofis.childlabour.AddNewChildActivity;
 import com.olam.digital.ofis.childlabour.ChildLabourUtils;
 import com.olam.digital.ofis.childlabour.ChildVisitDetailActivity;
+import com.olam.digital.ofis.childlabour.ViewChildLabourSurveyActivity;
 import com.olam.digital.ofis.logging.FabricLogsWriter;
 import com.olam.digital.ofis.recordpolygon.RecordPolygonActivity;
 import com.olam.digital.ofis.recordpolygon.SharedPreferenceUtils;
@@ -148,6 +149,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     public static int totalItems;
     public static int progressItem;
     private long lastClickTime = 0;
+    private boolean isChildSynced=true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -639,7 +641,11 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                     if (!farmerSynced) {
                         m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, 0, 0, res.getString(R.string.farmer_not_synced));
                         Utilities.closeProgressDialog(m_ProgressDialog, 3000);
-                    }else{
+                    }else if(!isChildSynced){
+                        m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, 0, 0, res.getString(R.string.child_not_synced));
+                        Utilities.closeProgressDialog(m_ProgressDialog, 3000);
+                    }
+                    else{
                         if(totalItems == 0)
                             totalItems = networkQueue.getCount();
 
@@ -666,11 +672,13 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                         finishItemSync(msg);
                     } else if (msg.what == 3) {
                         farmerSynced = false;
+                    }else if (msg.what == 5){
+                        isChildSynced=false;
                     }
                 }
             };
             farmerSynced = true;
-
+            isChildSynced=true;
             nl.getNetworkQueue(null);
             nl.syncNetworkQueue(null, syncHandler);
         } else {
@@ -700,6 +708,9 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                     if (!farmerSynced) {
                         m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, 0, 0, res.getString(R.string.farmer_not_synced));
                         Utilities.closeProgressDialog(m_ProgressDialog, 3000);
+                    }else if (!isChildSynced){
+                        m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, 0, 0, res.getString(R.string.child_not_synced));
+                        Utilities.closeProgressDialog(m_ProgressDialog, 3000);
                     }
                 }
             });
@@ -723,12 +734,16 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                         finishItemSync(msg);
                     } else if (msg.what == 3) {
                         farmerSynced = false;
-                    } else {
+                    } else if (msg.what ==5){
+                        isChildSynced=false;
+                    }
+                    else {
                         finishItemSync(msg);
                     }
                 }
             };
             farmerSynced = true;
+            isChildSynced=true;
             nl.getNetworkQueue(itemId);
             nl.syncNetworkQueueFromHome(itemId, syncHandler);
         } else {
@@ -898,6 +913,13 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         } else if (itemType.equalsIgnoreCase("module")) {
             Intent intent = new Intent(this, ViewFarmerActivity.class);
             ViewFarmerActivity.farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
+            //long farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
+            //SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(farmerId);
+            startActivity(intent);
+        }  else if (itemType.equalsIgnoreCase("childmodule")) {
+            Intent intent = new Intent(this, ViewChildLabourSurveyActivity.class);
+            ViewChildLabourSurveyActivity.farmerID = Long.valueOf(networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
+            ViewChildLabourSurveyActivity.childID = Long.valueOf(networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_CHILD_ID)));
             //long farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
             //SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(farmerId);
             startActivity(intent);

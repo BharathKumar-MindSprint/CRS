@@ -3271,7 +3271,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 handler.dispatchMessage(msg);
             } else {
                 if (!dl.isChildSynced(childNwId)){
-                    msg.what = 3;
+                    msg.what = 5;
                     msg.arg1 = total;
                     msg.arg2 =  progress;
                     msg.obj = String.valueOf(res.getString(R.string.child_not_synced));
