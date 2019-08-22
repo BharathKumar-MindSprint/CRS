@@ -483,4 +483,7 @@
     <string name="child_register_successfully">Child registered Successfully</string>
     <string name="child_details">Child Details</string>
     <string name="child_not_synced">Sorry, but the child has not yet been synced. Please sync the child first</string>
+    <string name="fill_child_name">Please fill the child name</string>
+    <string name="yrs">yrs</string>
+    <string name="child_max_limit">You have allowed maximum 30 children to register per farmer.</string>
 </resources>

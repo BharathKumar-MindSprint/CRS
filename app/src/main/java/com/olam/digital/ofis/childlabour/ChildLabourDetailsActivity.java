@@ -48,6 +48,7 @@ public class ChildLabourDetailsActivity extends BaseActivity {
             childLabourDetailsRecyclerView.setItemAnimator(new DefaultItemAnimator());
             ((LinearLayoutManager) reLayoutManager).setReverseLayout(true);
             childLabourDetailsRecyclerView.setAdapter(childLabourRecyclerAdapter);
+            childLabourDetailsRecyclerView.scrollToPosition(childLabourRecyclerAdapter.getItemCount() - 1);
 
             childLabourRecyclerAdapter.setOnItemChildClickListener(new OnItemChildClickListener() {
                 @Override

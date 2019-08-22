@@ -67,6 +67,7 @@ public class RegisterChildActivity extends BaseActivity implements View.OnClickL
             childRecyclerView.setItemAnimator(new DefaultItemAnimator());
             ((LinearLayoutManager) reLayoutManager).setReverseLayout(true);
             childRecyclerView.setAdapter(childLabourRecyclerAdapter);
+            childRecyclerView.scrollToPosition(childLabourRecyclerAdapter.getItemCount() - 1);
 
             childLabourRecyclerAdapter.setOnItemChildClickListener(new OnItemChildClickListener() {
                 @Override
@@ -89,6 +90,7 @@ public class RegisterChildActivity extends BaseActivity implements View.OnClickL
         if (childLabourRecyclerAdapter !=null) {
             if (childLabourRecyclerAdapter.getItemCount() >= 30) {
                 addChildButton.setEnabled(false);
+                Toast.makeText(RegisterChildActivity.this,getResources().getString(R.string.child_max_limit),Toast.LENGTH_LONG).show();
             }
         }
     }
