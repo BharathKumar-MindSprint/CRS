@@ -454,6 +454,10 @@ public class CompleteModuleActivity extends BaseActivity {
         nextSaveSubmodule.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                boolean status = dynamicQuestions.CheckMinMaxforQuestion(questions);
+                if(! status){
+                    return;
+                }
                 if (isLastPage) {
                     ContentValues values = new ContentValues();
                     Timestamp timestamp = new Timestamp(System.currentTimeMillis());

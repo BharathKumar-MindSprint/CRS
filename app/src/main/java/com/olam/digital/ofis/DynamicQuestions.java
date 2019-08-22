@@ -80,6 +80,7 @@ public class DynamicQuestions {
     public LinearLayout questionsSection;
     public Context context;
     private final DataLayer dl;
+
     private String mCurrentPhotoPath = null, mCurrentPhotoFileName = null;
     private Uri mCapturedImageURI = null;
     private ImageView mCurrentImageView = null;
@@ -263,6 +264,7 @@ public class DynamicQuestions {
                     if (currentAnswer != null) {
                         int currentQuestionId = currentAnswer.optInt("question_id");
                         int currentAnswerId = currentAnswer.optInt("answer_id");
+
                         if (currentQuestionId == questionId && currentAnswerId == answerId) {
                             if (repeaterItemPosition != -1) {
                                 int currentRepeaterItemPosition = currentAnswer.optInt("repeater_item_position");
@@ -302,6 +304,72 @@ public class DynamicQuestions {
         }
     }
 
+    private void saveAnswerEntry(int questionId, int answerId, int parentQuestionId, int repeaterItemPosition, String datatype, String answer, float min, float max) {
+        try {
+            if (answer.length() > 0) {
+                boolean isNew = true;
+                for (int i = 0; i < answerSet.size(); i++) {
+                    JSONObject currentAnswer = answerSet.get(i);
+                    if (currentAnswer != null) {
+                        int currentQuestionId = currentAnswer.optInt("question_id");
+                        int currentAnswerId = currentAnswer.optInt("answer_id");
+
+                        if (currentQuestionId == questionId && currentAnswerId == answerId) {
+                            if(checkvalues(min,max,answer)){
+                                answerSet.remove(i);
+                            }
+                            if (repeaterItemPosition != -1) {
+                                int currentRepeaterItemPosition = currentAnswer.optInt("repeater_item_position");
+                                if (currentRepeaterItemPosition != repeaterItemPosition) {
+                                    continue;
+                                }
+                            }
+                            currentAnswer.put("answer", answer);
+                            currentAnswer.put("datatype", datatype);
+                            currentAnswer.put("parent_question_id", parentQuestionId);
+                            currentAnswer.put("repeater_item_position", repeaterItemPosition);
+                            currentAnswer.put("reporting_year", reportingYear);
+                            isNew = false;
+                            break;
+                        }
+
+                    }
+                }
+                if (isNew) {
+                    if (checkvalues(min, max, answer)) {
+                        JSONObject newAnswer = new JSONObject();
+                        newAnswer.put("question_id", questionId);
+                        newAnswer.put("answer_id", answerId);
+                        newAnswer.put("parent_question_id", parentQuestionId);
+                        newAnswer.put("repeater_item_position", repeaterItemPosition);
+                        newAnswer.put("datatype", datatype);
+                        newAnswer.put("answer", answer);
+                        newAnswer.put("reporting_year", reportingYear);
+                        answerSet.add(newAnswer);
+                    }
+                }
+            } else if(answerId > 0){
+                removeAnswerEntry(questionId,answerId);
+            }
+
+        } catch (JSONException e) {
+            FirebaseCrash.report(new Exception("DynamicQuestions: Error saving answer entry", e));
+            e.printStackTrace();
+        }
+    }
+
+    private boolean checkvalues( float min, float max, String answer) {
+        boolean val = true;
+        if (max != 0 || min != 0 ? true : false) {
+            if ((Float.parseFloat(answer) > max) || (Float.parseFloat(answer) < min)) {
+                val = false;
+
+            }
+        }
+        return val;
+    }
+
+
     private void removeAnswerEntry(int questionId, int answerId) {
         for (int i = 0; i < answerSet.size(); i++) {
             JSONObject currentAnswer = answerSet.get(i);
@@ -325,7 +393,8 @@ public class DynamicQuestions {
             if (currentAnswer != null) {
                 int currentQuestionId = currentAnswer.optInt("question_id");
                 int currentAnswerId = currentAnswer.optInt("answer_id");
-                if (currentQuestionId == questionId && currentAnswerId == answerId) {
+//                if (currentQuestionId == questionId && currentAnswerId == answerId) {
+                if (currentQuestionId == questionId) {
                     ans = currentAnswer.optString("answer");
 
                     break;
@@ -366,7 +435,7 @@ public class DynamicQuestions {
         tv = (TextView) inflater.inflate((isRepeaterItem) ? R.layout.module_repeater_item_question : R.layout.module_question, parentLayout, false);
 
         int columnIndex = (qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION + questionColumnSuffix) != -1) ? qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION + questionColumnSuffix) : qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION);
-
+        final String datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
         tv.setText(Html.fromHtml(qCursor.getString(columnIndex)));
         String hh = Html.fromHtml(qCursor.getString(columnIndex)) + "";
 
@@ -375,8 +444,15 @@ public class DynamicQuestions {
             JSONObject displayConfig = new JSONObject(qCursor.getString(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION)));
 
             if (displayConfig.has("surveyrange")) {
-                tv.setText(Html.fromHtml(tv.getText().toString() + "(Min Value: " + String.valueOf(BigDecimal.valueOf(displayConfig.getJSONObject("surveyrange").getDouble("min")).floatValue()) +
-                        "\t Max value: " + String.valueOf(BigDecimal.valueOf(displayConfig.getJSONObject("surveyrange").getDouble("max")).floatValue()) +")" ), TextView.BufferType.SPANNABLE);
+                if (datatype.equals("decimal")) {
+                    tv.setText(Html.fromHtml(tv.getText().toString() + "(Min Value: " + String.valueOf(BigDecimal.valueOf(displayConfig.getJSONObject("surveyrange").getDouble("min")).floatValue()) +
+                            "\t Max value: " + String.valueOf(BigDecimal.valueOf(displayConfig.getJSONObject("surveyrange").getDouble("max")).floatValue()) +")" ), TextView.BufferType.SPANNABLE);
+
+                } else if (datatype.equals("int")) {
+                    tv.setText(Html.fromHtml(tv.getText().toString() + "(Min Value: " + String.valueOf(displayConfig.getJSONObject("surveyrange").getInt("min") +
+                            "\tMax value: " + String.valueOf(displayConfig.getJSONObject("surveyrange").getInt("max")) +")" )), TextView.BufferType.SPANNABLE);
+
+                }
 
             }
             if (displayConfig.has("display")) {
@@ -397,6 +473,8 @@ public class DynamicQuestions {
 
         parentLayout.addView(tv);
     }
+
+
 
     public boolean CheckMinMaxforQuestion(Cursor qCursor) {
         boolean status = true;
@@ -420,12 +498,12 @@ public class DynamicQuestions {
                         if ((answer > fetchMinMaxValue(displayConfig, AppConstants.RANGE_MAX)) || (answer < fetchMinMaxValue(displayConfig, AppConstants.RANGE_MIN))) {
                             removeAnswerEntry(questionId, answerId);
                             status = false;
+
                             Toast.makeText(context, R.string.valid_range, Toast.LENGTH_LONG).show();
+                            break;
                         }
                     }
                     }
-
-
 
             }
 
@@ -1202,11 +1280,11 @@ public class DynamicQuestions {
                 if ((isHundredPercentQuestion) && (!updatingHundredPercent)) {
                     autofill100Percent(et);
                 }
-                saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, et.getText().toString());
+                saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, et.getText().toString(),fetchMinMaxValue(finalDisplayConfig, AppConstants.RANGE_MIN),fetchMinMaxValue(finalDisplayConfig, AppConstants.RANGE_MAX));
             }
         });
 
-       /* et.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        et.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if(et.getText().toString().length() > 0) {
@@ -1219,7 +1297,7 @@ public class DynamicQuestions {
                     }
                 }
             }
-        });*/
+        });
 
         if (isRepeaterItem) {
             parentLayout.addView(et);
