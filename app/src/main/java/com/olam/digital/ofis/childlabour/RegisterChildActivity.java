@@ -72,7 +72,6 @@ public class RegisterChildActivity extends BaseActivity implements View.OnClickL
             childLabourRecyclerAdapter.setOnItemChildClickListener(new OnItemChildClickListener() {
                 @Override
                 public void onChildClick(View view, int position,ChildrenDTO childrenDTO) {
-                    // Edit functionalities
 
                     if(childrenDTO.getSynced().equalsIgnoreCase("0")){
                         Intent newChildIntent=new Intent(RegisterChildActivity.this,AddNewChildActivity.class);
@@ -89,7 +88,7 @@ public class RegisterChildActivity extends BaseActivity implements View.OnClickL
 
         if (childLabourRecyclerAdapter !=null) {
             if (childLabourRecyclerAdapter.getItemCount() >= 30) {
-                addChildButton.setEnabled(false);
+               // addChildButton.setEnabled(false);
                 Toast.makeText(RegisterChildActivity.this,getResources().getString(R.string.child_max_limit),Toast.LENGTH_LONG).show();
             }
         }
@@ -114,6 +113,8 @@ public class RegisterChildActivity extends BaseActivity implements View.OnClickL
 
         if(v.getId() == R.id.addChildButton){
             if (childLabourRecyclerAdapter!=null && childLabourRecyclerAdapter.getItemCount()>= 30){
+
+                        Toast.makeText(RegisterChildActivity.this,getResources().getString(R.string.child_max_limit),Toast.LENGTH_LONG).show();
                 return;
             }
                 Intent newChildIntent = new Intent(RegisterChildActivity.this, AddNewChildActivity.class);

@@ -592,7 +592,8 @@ public class OFISDBContract {
     // Child Registration Table Start
     public static abstract class ChildEntry implements BaseColumns {
         public static final String TABLE_NAME = "children";
-        public static final String COLUMN_NAME_ID = "id";
+        public static final String COLUMN_NAME_ID = "tmpId";
+        public static final String COLUMN_NAME_ONLINE_ID = "id";
         public static final String COLUMN_NAME_FARMER_ID = "farmer_id";
         public static final String COLUMN_NAME_CHILD_NAME = "name";
         public static final String COLUMN_NAME_CHILD_AGE = "age";
@@ -607,6 +608,7 @@ public class OFISDBContract {
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
                     add(COLUMN_NAME_ID);
+                    add(COLUMN_NAME_ONLINE_ID);
                     add(COLUMN_NAME_FARMER_ID);
                     add(COLUMN_NAME_CHILD_NAME);
                     add(COLUMN_NAME_CHILD_AGE);

@@ -475,7 +475,7 @@ public class CompleteModuleActivity extends BaseActivity {
                         values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT, timestamp.toString());
                         networkQueueId = dl.insertNetworkQueueEntry(values);
                     } else {
-                        dl.updateNetworkQueueFarmerModuleEntry(values, farmerModuleId);
+                        dl.updateNetworkQueueFarmerAndChildModuleEntry(values, farmerModuleId,"module");
                     }
                     statusFinished = 1;
                     saveSubModule("finish");

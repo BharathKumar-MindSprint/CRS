@@ -3277,7 +3277,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     msg.obj = String.valueOf(res.getString(R.string.child_not_synced));
                     handler.dispatchMessage(msg);
                 }else{
-
+                    final Long childRegisteredId=dl.getChildServerId(childNwId);
                     farmerModule.moveToFirst();
 
                     try {
@@ -3305,13 +3305,13 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         submission.put("enumeratorId", Long.valueOf(enumeratorId));
 
                         // child Request Body
-                        submission.put("childrenId",childId);
+                        submission.put("childrenId",childRegisteredId);
                         submission.put("surveyYear",submissionDate.substring(0,4));
                         submission.put("moduleId",moduleId);
                         submission.put("farmerId",farmerModule.getInt(farmerModule.getColumnIndex(OFISDBContract.FarmerChildModulesEntry.COLUMN_NAME_FARMER_ID)));
 
-                        submission.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ATTEMPTS, networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ATTEMPTS)));
-                        submission.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ID, networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ID)));
+                        submission.put("uploadAttempts", networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ATTEMPTS)));
+                        submission.put("uploadId", networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ID)));
                         if (networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID)) > 0 && networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FULLY_SYNCED)) == 0) {
                             submission.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID, networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID)));
                         }
@@ -3446,11 +3446,11 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 answers.put(answer);
                             }
                             String questions_included_output = questions_included.toString();
-                            submission.put("questions_included", questions_included_output.substring(1, questions_included_output.length() - 1));
+                            submission.put("questionsIncluded", questions_included_output.substring(1, questions_included_output.length() - 1));
                             submission.put("answers", answers);
 
                         }else{
-                            submission.put("questions_included", "");
+                            submission.put("questionsIncluded", "");
                             submission.put("answers", answers);
                         }
                         Log.i("POST", "" + submission.toString());

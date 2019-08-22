@@ -10,6 +10,7 @@ import android.widget.Toast;
 import com.olam.digital.ofis.DataLayer;
 import com.olam.digital.ofis.OFISDBContract;
 import com.olam.digital.ofis.Utilities;
+import com.olam.digital.ofis.childlabour.AddNewChildActivity;
 import com.olam.digital.ofis.childlabour.ChildLabourUtils;
 import com.olam.digital.ofis.childlabour.ChildVisitDetailActivity;
 import com.olam.digital.ofis.childlabour.dto.ChildModuleDto;
@@ -31,15 +32,15 @@ public class ChildLabourLogic {
         return newVisitDetaisId;
     }
 
-    public long insertVisitSurveyDetails(Context context, ContentValues contentValues) {
+    public long insertVisitSurveyDetails(Context context, ContentValues contentValues,String name,String type) {
         dataLayer = new DataLayer(context.getResources(), context);
-        long newVisitDetaisId = dataLayer.insertChildVisitSurveyDetails(contentValues);
+        long newVisitDetaisId = dataLayer.insertChildVisitSurveyDetails(contentValues,name,type);
         return newVisitDetaisId;
     }
 
-    public long insertChildDetails(Context context, ContentValues contentValues) {
+    public long insertChildDetails(Context context, ContentValues contentValues,String name) {
         dataLayer = new DataLayer(context.getResources(), context);
-        long newChildId = dataLayer.insertChild(contentValues);
+        long newChildId = dataLayer.insertChild(context,contentValues, name);
         return newChildId;
     }
 
@@ -55,9 +56,9 @@ public class ChildLabourLogic {
 
     }
 
-    public long updateChildDetails(Context context, ContentValues contentValues, String id) {
+    public long updateChildDetails(Context context, ContentValues contentValues, String id,String name) {
         dataLayer = new DataLayer(context.getResources(), context);
-        return dataLayer.updateChild(contentValues,id);
+        return dataLayer.updateChild(context,contentValues,id,name);
     }
 
     public ChildrenDTO getChildrenDTO(Context context, String childId) {
@@ -124,6 +125,7 @@ public class ChildLabourLogic {
             while (cursor.moveToNext()) {
                 childrenDTO = new ChildrenDTO();
                 childrenDTO.setId(cursor.getString(cursor.getColumnIndex(OFISDBContract.ChildEntry.COLUMN_NAME_ID)));
+                childrenDTO.setServerId(cursor.getString(cursor.getColumnIndex(OFISDBContract.ChildEntry.COLUMN_NAME_ONLINE_ID)));
                 childrenDTO.setName(cursor.getString(cursor.getColumnIndex(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_NAME)));
                 childrenDTO.setGender(cursor.getString(cursor.getColumnIndex(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_GENDER)));
                 childrenDTO.setAge(cursor.getString(cursor.getColumnIndex(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_AGE)));
@@ -181,5 +183,14 @@ public class ChildLabourLogic {
         }
 
 
-
+    public String getFarmerName(Context context, String farmerId) {
+        String farmerName=null;
+        dataLayer = new DataLayer(context.getResources(), context);
+        Cursor  farmer=dataLayer.getFarmerById(Long.valueOf(farmerId));
+        if (farmer.getCount() > 0) {
+            farmer.moveToFirst();
+            farmerName= farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME));
+        }
+        return  farmerName;
+    }
 }

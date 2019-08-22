@@ -516,6 +516,12 @@
     <string name="fill_child_name">Please fill the child name</string>
     <string name="yrs">yrs</string>
     <string name="child_max_limit">You have allowed maximum 30 children to register per farmer.</string>
+    <string name="new_child">New Child</string>
+    <string name="child">Child</string>
+    <string name="farmer">Farmer</string>
+    <string name="household">Household Visit Detail</string>
+    <string name="inspection">Inspection Visit Detail</string>
+    <string name="followup">FollowUp</string>
 
 
 </resources>

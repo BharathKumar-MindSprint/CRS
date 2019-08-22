@@ -4,7 +4,12 @@ import java.io.Serializable;
 
 public class ChildrenDTO implements Serializable {
 
+    // server id
+    private  String serverId;
+
+    // online id
     private  String id;
+
     private  String farmerId;
     private  String name;
     private  String age;
@@ -12,6 +17,13 @@ public class ChildrenDTO implements Serializable {
     private String submittedModules;
     private String createdAt;
 
+    public String getServerId() {
+        return serverId;
+    }
+
+    public void setServerId(String serverId) {
+        this.serverId = serverId;
+    }
     public String getCreatedAt() {
         return createdAt;
     }

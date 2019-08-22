@@ -331,8 +331,13 @@
         <activity
             android:name="com.olam.digital.ofis.childlabour.ChildLabourCompleteModuleActivity"
             android:label="@string/child_details"
-            android:theme="@style/Theme.AppCompat"
-            android:screenOrientation="portrait" />
+            android:parentActivityName=".childlabour.ChildLabourCompleteModuleActivity"
+            android:screenOrientation="portrait"
+            tools:ignore="UnusedAttribute">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".childlabour.ChildLabourCompleteModuleActivity" />
+        </activity>
         <!--<meta-data-->
             <!--android:name="io.fabric.ApiKey"-->
             <!--android:value="a893453713a55832cf2771ee8fbe4a68b4a3b031" />-->
