@@ -98,7 +98,7 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
          if (v.getId() == R.id.addNewChildButton){
              addNewChild();
          }else if (v.getId() == R.id.maleButton) {
-             gender = ChildLabourUtils.MALE;
+             gender = getResources().getString(R.string.gender_male);
              femaleButton.setBackgroundColor(getResources().getColor(R.color.gender_selected));
              maleButton.setBackgroundResource(R.drawable.gender_male_selected);
 
@@ -106,17 +106,13 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
              maleButton.setTextColor(getResources().getColor(android.R.color.black));
 
          } else if (v.getId() == R.id.femaleButton) {
-             gender = ChildLabourUtils.FEMALE;
+             gender = getResources().getString(R.string.gender_female);
 
              femaleButton.setBackgroundResource(R.drawable.gender_female_selected);
              femaleButton.setTextColor(getResources().getColor(android.R.color.black));
 
              maleButton.setBackgroundColor(getResources().getColor(R.color.gender_selected));
              maleButton.setTextColor(getResources().getColor(R.color.gender_selected_text));
-
-
-
-
 
          }
     }
@@ -135,14 +131,10 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
     private void addNewChild() {
         String name=fullnameEditText.getText().toString().trim();
         if (TextUtils.isEmpty(name)){
-            Toast.makeText(AddNewChildActivity.this,getResources().getString(R.string.fill_name),Toast.LENGTH_LONG).show();
+            Toast.makeText(AddNewChildActivity.this,getResources().getString(R.string.fill_child_name),Toast.LENGTH_LONG).show();
             return;
         }
         String age = ageSpinner.getSelectedItem().toString();
-        if(age.trim().equalsIgnoreCase("0")){
-            Toast.makeText(AddNewChildActivity.this,getResources().getString(R.string.fill_age),Toast.LENGTH_LONG).show();
-            return;
-        }
         if(getIntent().getStringExtra("action").equalsIgnoreCase("new")){
             submitChild(name);
         }else {

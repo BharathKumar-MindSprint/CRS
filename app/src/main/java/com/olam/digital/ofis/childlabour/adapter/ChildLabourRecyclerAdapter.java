@@ -48,7 +48,7 @@ public class ChildLabourRecyclerAdapter extends RecyclerView.Adapter<ChildLabour
         final ChildrenDTO childrenDTO=childrenList.get(position);
         holder.name.setText(childrenDTO.getName());
         holder.gender.setText(childrenDTO.getGender());
-        holder.age.setText(childrenDTO.getAge());
+        holder.age.setText(childrenDTO.getAge() + " "+mContext.getResources().getString(R.string.yrs) );
 
         if(childrenDTO.getSynced().equalsIgnoreCase("1")){
             holder.arrow.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_verified));
