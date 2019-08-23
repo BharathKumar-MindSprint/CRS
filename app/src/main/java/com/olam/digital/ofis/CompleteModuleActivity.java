@@ -454,10 +454,10 @@ public class CompleteModuleActivity extends BaseActivity {
         nextSaveSubmodule.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                boolean status = dynamicQuestions.CheckMinMaxforQuestion(questions);
+               /* boolean status = dynamicQuestions.CheckMinMaxforQuestion(questions);
                 if(! status){
                     return;
-                }
+                }*/
                 if (isLastPage) {
                     ContentValues values = new ContentValues();
                     Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -499,10 +499,10 @@ public class CompleteModuleActivity extends BaseActivity {
     }
 
     private void saveSubModule(String action) {
-        boolean status = dynamicQuestions.CheckMinMaxforQuestion(questions);
+        /*boolean status = dynamicQuestions.CheckMinMaxforQuestion(questions);
         if(! status){
             return;
-        }
+        }*/
         boolean canSaveAndFinish = true;
 
         // first time saving this module?
@@ -529,11 +529,18 @@ public class CompleteModuleActivity extends BaseActivity {
         }
 
         if (action.equalsIgnoreCase("exit") || action.equalsIgnoreCase("finish")) {
+//            if (!dynamicQuestions.requiredFieldsAnswered((int) farmerModuleId, (int) moduleId) || ! dynamicQuestions.requiredFieldsMinMaxAnswered((int) farmerModuleId, (int) moduleId)) {
             if (!dynamicQuestions.requiredFieldsAnswered((int) farmerModuleId, (int) moduleId)) {
                 statusFinished = 0;
                 canSaveAndFinish = false;
                 dl.deleteNetworkQueueItemByFarmerModuleId((int) farmerModuleId);
                 Toast.makeText(context, res.getString(R.string.complete_all_required_fields), Toast.LENGTH_LONG).show();
+            }
+            if(! dynamicQuestions.requiredFieldsMinMaxAnswered((int) farmerModuleId, (int) moduleId)){
+                statusFinished = 0;
+                canSaveAndFinish = false;
+                dl.deleteNetworkQueueItemByFarmerModuleId((int) farmerModuleId);
+                Toast.makeText(context, res.getString(R.string.valid_range), Toast.LENGTH_LONG).show();
             }
         }
 

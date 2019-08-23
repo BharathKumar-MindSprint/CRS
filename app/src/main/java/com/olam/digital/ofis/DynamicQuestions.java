@@ -82,6 +82,7 @@ public class DynamicQuestions {
     private final DataLayer dl;
     public static String SurveyType="";
 
+    public ArrayList<EditText> et_list;
     private String mCurrentPhotoPath = null, mCurrentPhotoFileName = null;
     private Uri mCapturedImageURI = null;
     private ImageView mCurrentImageView = null;
@@ -159,6 +160,68 @@ public class DynamicQuestions {
         }
         return completedQuestionIds.containsAll(requiredQuestionIds);
     }
+
+
+    public boolean requiredFieldsMinMaxAnswered(int farmerModuleId, int moduleId) {
+        boolean status = true;
+        Cursor completedAnswers = dl.getAllAnswersByFarmerModuleId(farmerModuleId);
+        Cursor requiredQuestions = dl.getRequiredSurveyRangeQuestionIds(moduleId);
+//        CheckMinMaxforQuestion(requiredQuestions);
+        try {
+            if(requiredQuestions != null && requiredQuestions.moveToFirst()) {
+                do {
+                    JSONObject displayConfig = new JSONObject(requiredQuestions.getString(requiredQuestions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION)));
+                    final String datatype = requiredQuestions.getString(requiredQuestions.getColumnIndex("datatype_id"));
+//                    final int questionId = requiredQuestions.getInt(requiredQuestions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
+//                    int  answerId = requiredQuestions.getInt(requiredQuestions.getColumnIndex("answer_id"));
+                    if(datatype.equalsIgnoreCase("1") || datatype.equalsIgnoreCase("3")){
+                    if (displayConfig.has("surveyrange")) {
+
+//                        if (getAnswerMinMaxvalidation(questionId, answerId) != "noval") {
+//                            float answer = Float.parseFloat(getAnswerMinMaxvalidation(questionId,answerId));
+                            float answer = Float.valueOf(getAnswer(completedAnswers, datatype));
+                            if (String.valueOf(answer) != "noval") {
+                                if (fetchMinMaxValue(displayConfig, AppConstants.RANGE_MAX) != 0 || fetchMinMaxValue(displayConfig, AppConstants.RANGE_MIN) != 0 ? true : false) {
+                                    if ((answer > fetchMinMaxValue(displayConfig, AppConstants.RANGE_MAX)) || (answer < fetchMinMaxValue(displayConfig, AppConstants.RANGE_MIN))) {
+                                        status = false;
+
+//                            Toast.makeText(context, R.string.valid_range, Toast.LENGTH_LONG).show();
+                                        break;
+                                    }
+                                }
+                            }
+//                        }
+                    }
+                    }
+
+                } while (requiredQuestions.moveToNext());
+            }
+        } catch (JSONException e) {
+           e.printStackTrace();
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return status;
+    }
+
+    private String getAnswer(Cursor completedAnswers, String datatype) {
+        String ans = "noval";
+        try {
+            while (completedAnswers.moveToNext()) {
+                if(datatype.equalsIgnoreCase("3")) {
+
+                   ans = String.valueOf(BigDecimal.valueOf(completedAnswers.getDouble(completedAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_DECIMAL))).floatValue());
+                }else if(datatype.equalsIgnoreCase("1")){
+                    ans = String.valueOf(completedAnswers.getInt(completedAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_INT)));
+                }
+            }
+        }finally {
+            completedAnswers.close();
+        }
+        return ans;
+    }
+
 
     public boolean requiredFieldsAnsweredChild(int farmerModuleId, int moduleId) {
         Cursor completedAnswers = dl.getAllAnswersByFarmerChildModuleId(farmerModuleId);
@@ -384,11 +447,17 @@ public class DynamicQuestions {
 
     private boolean checkvalues( float min, float max, String answer) {
         boolean val = true;
+        try {
+
         if (max != 0 || min != 0 ? true : false) {
             if ((Float.parseFloat(answer) > max) || (Float.parseFloat(answer) < min)) {
                 val = false;
 
             }
+        }
+
+        }catch (Exception e){
+            return false;
         }
         return val;
     }
@@ -520,10 +589,9 @@ public class DynamicQuestions {
                     if (fetchMinMaxValue(displayConfig, AppConstants.RANGE_MAX) != 0
                             || fetchMinMaxValue(displayConfig, AppConstants.RANGE_MIN) != 0 ? true : false) {
                         if ((answer > fetchMinMaxValue(displayConfig, AppConstants.RANGE_MAX)) || (answer < fetchMinMaxValue(displayConfig, AppConstants.RANGE_MIN))) {
-                            removeAnswerEntry(questionId, answerId);
-                            status = false;
 
-                            Toast.makeText(context, R.string.valid_range, Toast.LENGTH_LONG).show();
+                            status = false;
+//                            Toast.makeText(context, R.string.valid_range, Toast.LENGTH_LONG).show();
                             break;
                         }
                     }
@@ -1223,6 +1291,7 @@ public class DynamicQuestions {
 
         final EditText et = (EditText) inflater.inflate(R.layout.module_edit_text, (isRepeaterItem) ? parentLayout : questionWrapper, false);
 
+        et.setTag(questionId);
         if (hasAnswers) {
             String currentAnswerValue = null;
             if (isRepeaterItem && repeaterAnswers != null && repeaterAnswers.getCount() > 0) {
@@ -1285,14 +1354,14 @@ public class DynamicQuestions {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
                 try {
-                    if (fetchMinMaxValue(finalDisplayConfig, AppConstants.RANGE_MAX) != 0
+                    /*if (fetchMinMaxValue(finalDisplayConfig, AppConstants.RANGE_MAX) != 0
                                 || fetchMinMaxValue(finalDisplayConfig, AppConstants.RANGE_MIN) != 0 ? true : false) {
                       if (Float.parseFloat(et.getText().toString()) > fetchMinMaxValue(finalDisplayConfig, AppConstants.RANGE_MAX)) {
                           et.setText("");
                           Toast.makeText(context, R.string.valid_range, Toast.LENGTH_LONG).show();
                       }
 
-                    }
+                    }*/
                 }catch (Exception e){
                     e.printStackTrace();
                 }
@@ -1304,17 +1373,17 @@ public class DynamicQuestions {
                 if ((isHundredPercentQuestion) && (!updatingHundredPercent)) {
                     autofill100Percent(et);
                 }
-                if (SurveyType.equalsIgnoreCase("child")){
+//                if (SurveyType.equalsIgnoreCase("child")){
                     saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, et.getText().toString());
-                }else{
+               /* }else{
                     saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, et.getText().toString(),fetchMinMaxValue(finalDisplayConfig, AppConstants.RANGE_MIN),fetchMinMaxValue(finalDisplayConfig, AppConstants.RANGE_MAX));
-                }
+                }*/
 
 
             }
         });
 
-        et.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+       /* et.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if(et.getText().toString().length() > 0) {
@@ -1327,7 +1396,7 @@ public class DynamicQuestions {
                     }
                 }
             }
-        });
+        });*/
 
         if (isRepeaterItem) {
             parentLayout.addView(et);

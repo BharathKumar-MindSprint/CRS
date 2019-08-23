@@ -2354,6 +2354,23 @@ if (ChildLabourUtils.isChildEnumerator) {
         return db.rawQuery(sql, whereArgs);
     }
 
+    Cursor getRequiredSurveyRangeQuestionIds(int moduleId) {
+        String questionTable = OFISDBContract.QuestionEntry.TABLE_NAME;
+        String submoduleTable = OFISDBContract.SubmoduleEntry.TABLE_NAME;
+        String moduleTable = OFISDBContract.ModuleEntry.TABLE_NAME;
+        String whereClause = moduleTable + "." + OFISDBContract.ModuleEntry.COLUMN_NAME_ID + " = ? AND " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION + " LIKE ?";
+        String[] whereArgs = new String[]{
+                String.valueOf(moduleId),
+                "%surveyrange%"
+        };
+        String sql = "SELECT " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_ID +", " + OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID +", " +  OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION + " FROM " + questionTable + " INNER JOIN " + submoduleTable
+                + " ON " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_SUBMODULE_ID + " = " + submoduleTable + "." + OFISDBContract.SubmoduleEntry.COLUMN_NAME_ID
+                + " INNER JOIN " + moduleTable + " ON " + submoduleTable + "." + OFISDBContract.SubmoduleEntry.COLUMN_NAME_MODULE_ID + " = " + moduleTable + "."
+                + OFISDBContract.ModuleEntry.COLUMN_NAME_ID + " WHERE " + whereClause;
+
+        return db.rawQuery(sql, whereArgs);
+    }
+
     public Cursor getQuestionsBySubModuleId(int id) {
         String questionTable = OFISDBContract.QuestionEntry.TABLE_NAME;
         String datatypeTable = OFISDBContract.DatatypesEntry.TABLE_NAME;
