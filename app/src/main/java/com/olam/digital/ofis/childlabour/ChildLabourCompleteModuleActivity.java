@@ -137,6 +137,7 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
         initData();
         initSetup();
         getChildAndFarmerName();
+        dynamicQuestions.SurveyType="child";
     }
 
     private void getChildAndFarmerName() {
@@ -325,7 +326,7 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
         }
 
         if (action.equalsIgnoreCase("exit") || action.equalsIgnoreCase("finish")) {
-            if (!dynamicQuestions.requiredFieldsAnswered((int) farmerModuleId, (int) moduleId)) {
+            if (!dynamicQuestions.requiredFieldsAnsweredChild((int) farmerModuleId, (int) moduleId)) {
                 statusFinished = 0;
                 canSaveAndFinish = false;
                 dl.deleteNetworkQueueItemByFarmerChildModuleId((int) farmerModuleId);
