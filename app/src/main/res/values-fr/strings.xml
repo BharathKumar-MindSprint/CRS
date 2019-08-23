@@ -479,6 +479,7 @@
     <string name="invalid_imei_msg">Authentification échouée. Veuillez nous contacter pour obtenir de assistance</string>
     <string name="household_question">Le producteur n\'a pas d\'enfants de moins de 18 ans (Ménage)</string>
     <string name="title_child_labour">Enregistrer un enfant</string>
+    <string name="register_child">Enregistrer un enfant</string>
     <string name="inspection_question">Aucun enfant trouvé dans la plantation (Inspection)</string>
     <string name="followup_question">Aucun enfant trouvé dans la plantation pendant le suivi</string>
     <string name="add_child">Add Child</string>
