@@ -32,6 +32,7 @@ public class ChildVisitDetailActivity  extends BaseActivity implements View.OnCl
     private String farmerId;
     private boolean b_household = true;
     private boolean b_inspection = true;
+    private String farmerName;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -42,6 +43,9 @@ public class ChildVisitDetailActivity  extends BaseActivity implements View.OnCl
         initComponents();
         initEvents();
         getBundleValues();
+        if (farmerId!=null){
+            farmerName=getResources().getString(R.string.farmer)+": "+new ChildLabourLogic().getFarmerName(this,farmerId);
+        }
 
     }
 
@@ -90,8 +94,7 @@ public class ChildVisitDetailActivity  extends BaseActivity implements View.OnCl
         if(household == 1){
             contentValue.put(OFISDBContract.ChildVisitDetails.COLUMN_NAME_SURVEY_CODE,1);
             contentValue.put(OFISDBContract.ChildVisitDetails.COLUMN_NAME_SURVEY_DESCRIPTION,"HouseHold Survey");
-
-            long hh_rowId= new ChildLabourLogic().insertVisitSurveyDetails(this,contentValue);
+            long hh_rowId= new ChildLabourLogic().insertVisitSurveyDetails(this,contentValue,farmerName, getResources().getString(R.string.household));
             if (hh_rowId != -1){
                 Log.e("HH_RESULT",  getResources().getString(R.string.child_visit_details_inserted));
                 if(inspection == 0 && followup == 0){
@@ -103,7 +106,7 @@ public class ChildVisitDetailActivity  extends BaseActivity implements View.OnCl
         if(inspection == 1){
             contentValue.put(OFISDBContract.ChildVisitDetails.COLUMN_NAME_SURVEY_CODE,2);
             contentValue.put(OFISDBContract.ChildVisitDetails.COLUMN_NAME_SURVEY_DESCRIPTION,"Inspection Survey");
-            long hh_rowId= new ChildLabourLogic().insertVisitSurveyDetails(this,contentValue);
+            long hh_rowId= new ChildLabourLogic().insertVisitSurveyDetails(this,contentValue,farmerName,getResources().getString(R.string.inspection));
             if (hh_rowId != -1){
                 Log.e("IN_RESULT",  getResources().getString(R.string.child_visit_details_inserted));
                 if(followup == 0){
@@ -115,7 +118,7 @@ public class ChildVisitDetailActivity  extends BaseActivity implements View.OnCl
         if(followup == 1){
             contentValue.put(OFISDBContract.ChildVisitDetails.COLUMN_NAME_SURVEY_CODE,3);
             contentValue.put(OFISDBContract.ChildVisitDetails.COLUMN_NAME_SURVEY_DESCRIPTION,"Followup Survey");
-            long hh_rowId= new ChildLabourLogic().insertVisitSurveyDetails(this,contentValue);
+            long hh_rowId= new ChildLabourLogic().insertVisitSurveyDetails(this,contentValue,farmerName,getResources().getString(R.string.followup));
             if (hh_rowId != -1){
                 Log.e("FU_RESULT",  getResources().getString(R.string.child_visit_details_inserted));
                 Toast.makeText(this, getResources().getString(R.string.child_visit_details_inserted),Toast.LENGTH_LONG).show();

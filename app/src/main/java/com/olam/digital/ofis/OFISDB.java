@@ -17,6 +17,7 @@ class OFISDB extends SQLiteOpenHelper {
     private static final String OFIS_CHILD_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS "
             + OFISDBContract.ChildEntry.TABLE_NAME
             + " ( " + OFISDBContract.ChildEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+            + OFISDBContract.ChildEntry.COLUMN_NAME_ONLINE_ID + " INTEGER, "
             + OFISDBContract.ChildEntry.COLUMN_NAME_FARMER_ID + " INTEGER, "
             + OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_NAME + " TEXT, "
             + OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_AGE + " INTEGER, "

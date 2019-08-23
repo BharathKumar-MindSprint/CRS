@@ -127,6 +127,8 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
     private static final String STATE_RESOLVING_ERROR = "resolving_error";
     // Bool to track whether the app is already resolving an error
     private boolean mResolvingError = false;
+    private String childNameQueue;
+    private String farmerNameQueue;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -134,6 +136,12 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
         setContentView(R.layout.activity_complete_module);
         initData();
         initSetup();
+        getChildAndFarmerName();
+    }
+
+    private void getChildAndFarmerName() {
+        childNameQueue= getResources().getString(R.string.child) + ": "+children.getName();
+        farmerNameQueue=getResources().getString(R.string.farmer)+": "+farmerName;
     }
 
     private void initSetup() {
@@ -263,9 +271,9 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
                     Timestamp timestamp = new Timestamp(System.currentTimeMillis());
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "childmodule");
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, moduleName);
-                    values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, "Child Survey Captured");
+                    values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, childNameQueue);
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID, farmerId);
-                    values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID, olamFarmerId);
+                    values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID, farmerNameQueue);
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID, farmId);
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_MODULE_ID, farmerModuleId);
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LAT, recordedLat);
@@ -276,7 +284,7 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
                         values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT, timestamp.toString());
                         networkQueueId = dl.insertNetworkQueueEntry(values);
                     } else {
-                        dl.updateNetworkQueueFarmerModuleEntry(values, farmerModuleId);
+                        dl.updateNetworkQueueFarmerAndChildModuleEntry(values, farmerModuleId,"childmodule");
                     }
                     statusFinished = 1;
                     saveSubModule("finish");

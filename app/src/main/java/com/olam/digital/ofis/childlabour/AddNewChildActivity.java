@@ -36,6 +36,7 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
     private Button addNewChildButton;
     private String gender;
     private String age;
+    private String farmerName;
     private ArrayList<String> ageList;
     DataLayer dataLayer;
     String farmerId;
@@ -54,6 +55,9 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
         initEvents();
         setAgeSpinner();
         getBundleValues();
+        if(farmerId!=null){
+            farmerName=new ChildLabourLogic().getFarmerName(this,farmerId);
+        }
         ageSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -159,7 +163,7 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
         updatecontentValues.put(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_GENDER, childrenDTO.getGender());
         updatecontentValues.put(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_AGE_ON_YEAR, childrenDTO.getAgeOnYear());
         updatecontentValues.put(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_CREATEDAT, childrenDTO.getCreatedAt());*/
-        long newChildId= new ChildLabourLogic().updateChildDetails(this,contentValues,childrenDTO.getId());
+        long newChildId= new ChildLabourLogic().updateChildDetails(this,contentValues,childrenDTO.getId(),farmerName);
         if (newChildId != -1){
             Toast.makeText(this,getResources().getString(R.string.child_register_successfully),Toast.LENGTH_LONG).show();
             finish();
@@ -179,7 +183,7 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
         contentValues.put(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_SYNCED, 0);
         contentValues.put(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_CREATEDAT, timestamp.toString());
 
-       long newChildId= new ChildLabourLogic().insertChildDetails(this,contentValues);
+       long newChildId= new ChildLabourLogic().insertChildDetails(this,contentValues,farmerName);
        if (newChildId != -1){
            Toast.makeText(this,getResources().getString(R.string.child_register_successfully),Toast.LENGTH_LONG).show();
            finish();

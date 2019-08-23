@@ -21,6 +21,7 @@ import android.widget.Spinner;
 
 import com.google.firebase.crash.FirebaseCrash;
 import com.olam.digital.ofis.childlabour.ChildLabourUtils;
+import com.olam.digital.ofis.childlabour.dto.ChildrenDTO;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -306,10 +307,20 @@ public class DataLayer {
         db.update(OFISDBContract.NetworkQueueEntry.TABLE_NAME, values, whereClause, whereArgs);
     }
 
-    public void updateNetworkQueueFarmerModuleEntry(ContentValues values, long farmerModuleId) {
-        String whereClause = OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_MODULE_ID + " = ?";
-        String[] whereArgs = new String[]{String.valueOf(farmerModuleId)};
+//    public void updateNetworkQueueFarmerModuleEntry(ContentValues values, long farmerModuleId) {
+//        String whereClause = OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_MODULE_ID + " = ?";
+//        String[] whereArgs = new String[]{String.valueOf(farmerModuleId)};
+//
+//        db.update(OFISDBContract.NetworkQueueEntry.TABLE_NAME, values, whereClause, whereArgs);
+//    }
 
+    public void updateNetworkQueueFarmerAndChildModuleEntry(ContentValues values, long farmerModuleId, String type) {
+
+        String whereClause = OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_MODULE_ID + " = ? AND " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE + " = ?";
+        String[] whereArgs = new String[]{
+                String.valueOf(farmerModuleId),
+                type
+        };
         db.update(OFISDBContract.NetworkQueueEntry.TABLE_NAME, values, whereClause, whereArgs);
     }
 
@@ -3198,7 +3209,7 @@ if (ChildLabourUtils.isChildEnumerator) {
 
 
         // Instead of farmer, remove from child submitted modules thing
-        // Remove Later (Didn't change for now ) chamge to child id
+
         Cursor child = getChildById(childId);
         if (child.getCount() > 0) {
             child.moveToFirst();
@@ -3571,7 +3582,7 @@ if (ChildLabourUtils.isChildEnumerator) {
 
     public Cursor getAllPlaces(){return db.rawQuery("SELECT * FROM places", null);}
 
-    public long insertChild(ContentValues contentValues) {
+    public long insertChild(Context context,ContentValues contentValues,String name) {
         long newChildId;
         newChildId = db.insert(OFISDBContract.ChildEntry.TABLE_NAME, null, contentValues);
 
@@ -3581,19 +3592,20 @@ if (ChildLabourUtils.isChildEnumerator) {
 
             ContentValues networkQueueValues = new ContentValues();
             networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "children");
-            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, "Child Registered");
+            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, context.getResources().getString(R.string.new_child));
             networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, contentValues.getAsString(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_NAME));
             networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID, contentValues.getAsString(OFISDBContract.ChildEntry.COLUMN_NAME_FARMER_ID));
             networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_CHILD_ID, newChildId);
             networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT, contentValues.getAsString(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_CREATEDAT));
             networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPDATED_AT, contentValues.getAsString(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_CREATEDAT));
+            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID,name);
             insertNetworkQueueEntry(networkQueueValues);
         }
 
         return newChildId;
     }
 
-    public long updateChild(ContentValues contentValues, String id) {
+    public long updateChild(Context context,ContentValues contentValues, String id,String name) {
         long newChildId;
         long update_nq = 0;
         String whereClause = OFISDBContract.ChildEntry.COLUMN_NAME_ID + " = ?";
@@ -3605,11 +3617,12 @@ if (ChildLabourUtils.isChildEnumerator) {
         if (newChildId != -1) {
             ContentValues networkQueueValues = new ContentValues();
             networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "children");
-            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, "Child Registered");
+            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE,context.getResources().getString(R.string.new_child));
             networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, contentValues.getAsString(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_NAME));
             networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID, contentValues.getAsString(OFISDBContract.ChildEntry.COLUMN_NAME_FARMER_ID));
            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT, contentValues.getAsString(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_CREATEDAT));
             networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPDATED_AT, contentValues.getAsString(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_CREATEDAT));
+            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID,name);
 
             // update data from network queue entry
             String d_whereClause = OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_CHILD_ID + " = ? ";
@@ -3653,7 +3666,7 @@ if (ChildLabourUtils.isChildEnumerator) {
         return  newRowId;
     }
 
-    public long insertChildVisitSurveyDetails(ContentValues contentValues) {
+    public long insertChildVisitSurveyDetails(ContentValues contentValues,String name,String type) {
         long newRowId;
         newRowId = db.insert(OFISDBContract.ChildVisitDetails.TABLE_NAME, null, contentValues);
         if (newRowId != -1) {
@@ -3662,11 +3675,11 @@ if (ChildLabourUtils.isChildEnumerator) {
 
             ContentValues networkQueueValues = new ContentValues();
             networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "child_visit");
-            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, "Child Visit Detail Registered");
+            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, name);
             networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_SURVEY_CODE, contentValues.getAsString(OFISDBContract.ChildVisitDetails.COLUMN_NAME_SURVEY_CODE));
-            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, contentValues.getAsString(OFISDBContract.ChildVisitDetails.COLUMN_NAME_SURVEY_DESCRIPTION) +"\n"
-                    + contentValues.getAsString(OFISDBContract.ChildVisitDetails.COLUMN_NAME_FARMER_ID));
+            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, type);
             networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID, contentValues.getAsString(OFISDBContract.ChildVisitDetails.COLUMN_NAME_FARMER_ID));
+            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID, "");
             networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT, timestamp.toString());
             networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPDATED_AT, timestamp.toString());
             insertNetworkQueueEntry(networkQueueValues);
@@ -3699,24 +3712,24 @@ if (ChildLabourUtils.isChildEnumerator) {
     public void updateChildId(int tempChildId, int generatedChildId) {
         
         ContentValues cv = new ContentValues();
-        cv.put(OFISDBContract.ChildEntry.COLUMN_NAME_ID,generatedChildId); //These Fields should be your String values of actual column names
+        cv.put(OFISDBContract.ChildEntry.COLUMN_NAME_ONLINE_ID,generatedChildId); //These Fields should be your String values of actual column names
         cv.put(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_SYNCED,1);
-        db.update(OFISDBContract.ChildEntry.TABLE_NAME, cv, "id="+tempChildId, null);
+        db.update(OFISDBContract.ChildEntry.TABLE_NAME, cv, "tmpId="+tempChildId, null);
 
 
 
-        String[] whereArgs = new String[]{String.valueOf(tempChildId)};
-        try {
-            ContentValues farmerValuesCv=new ContentValues();
-            farmerValuesCv.put(OFISDBContract.FarmerChildModulesEntry.COLUMN_NAME_CHILD_ID,generatedChildId);
-            db.update(OFISDBContract.FarmerChildModulesEntry.TABLE_NAME, farmerValuesCv, OFISDBContract.FarmerChildModulesEntry.COLUMN_NAME_CHILD_ID + " = ?", whereArgs);
-        }catch (Exception e){}
-
-         try {
-             ContentValues childNetworkCV=new ContentValues();
-             childNetworkCV.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_CHILD_ID,generatedChildId);
-             db.update(OFISDBContract.NetworkQueueEntry.TABLE_NAME, childNetworkCV, OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_CHILD_ID + " = ?", new String[]{String.valueOf(tempChildId)});
-         }catch (Exception e){}
+//        String[] whereArgs = new String[]{String.valueOf(tempChildId)};
+//        try {
+//            ContentValues farmerValuesCv=new ContentValues();
+//            farmerValuesCv.put(OFISDBContract.FarmerChildModulesEntry.COLUMN_NAME_CHILD_ID,generatedChildId);
+//            db.update(OFISDBContract.FarmerChildModulesEntry.TABLE_NAME, farmerValuesCv, OFISDBContract.FarmerChildModulesEntry.COLUMN_NAME_CHILD_ID + " = ?", whereArgs);
+//        }catch (Exception e){}
+//
+//         try {
+//             ContentValues childNetworkCV=new ContentValues();
+//             childNetworkCV.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_CHILD_ID,generatedChildId);
+//             db.update(OFISDBContract.NetworkQueueEntry.TABLE_NAME, childNetworkCV, OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_CHILD_ID + " = ?", new String[]{String.valueOf(tempChildId)});
+//         }catch (Exception e){}
 
 
     }
@@ -3737,4 +3750,16 @@ if (ChildLabourUtils.isChildEnumerator) {
         db.update(OFISDBContract.ChildVisitDetails.TABLE_NAME, cv, whereClause, whereArgs);
 
     }
+
+    public Long getChildServerId(long childNwId) {
+        Long serverId = null;
+        Cursor cursor = db.rawQuery("SELECT * FROM children where tmpId=" + childNwId, null);
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
+                serverId = Long.valueOf(cursor.getString(cursor.getColumnIndex(OFISDBContract.ChildEntry.COLUMN_NAME_ONLINE_ID)));
+            }
+        }
+        return  serverId;
+    }
+
 }
