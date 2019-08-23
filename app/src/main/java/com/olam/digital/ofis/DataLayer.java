@@ -2730,8 +2730,8 @@ if (ChildLabourUtils.isChildEnumerator) {
         } else {
 //            orderBy = OFISDBContract.NetworkQueueEntry.COLUMN_NAME_ID + " ASC";
             return db.rawQuery("select * from " + OFISDBContract.NetworkQueueEntry.TABLE_NAME +
-                    " order by case when " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE +" = 'New farmer' " +
-                            "THEN 1 when " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE +" = 'Child Registered' " +
+                    " order by case when " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE +" = 'farmer' " +
+                            "THEN 1 when " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE +" = 'children' " +
                     "THEN 2 when " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE +" = 'Polygon recorded' " +
                     "THEN 3 when " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE +" = 'Location recorded' " +
                     "THEN 4 ELSE 5 END, "+ OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE ,
@@ -2921,6 +2921,19 @@ if (ChildLabourUtils.isChildEnumerator) {
                 " FROM " + answerTable + " INNER JOIN " + questionTable + " ON " + answerTable + "." + OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID + " = " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_ID +
                 " INNER JOIN " + datatypeTable + " ON " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID + " = " + datatypeTable + "." + OFISDBContract.DatatypesEntry.COLUMN_NAME_ID +
                 " WHERE " + OFISDBContract.AnswerEntry.COLUMN_NAME_FARMER_MODULE_ID + " = ? ORDER BY " + OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID + " ASC";
+        String[] whereArgs = new String[]{String.valueOf(farmerModuleId)};
+
+        return db.rawQuery(sql, whereArgs);
+    }
+
+    Cursor getAllAnswersByFarmerChildModuleId(int farmerModuleId) {
+        String answerTable = OFISDBContract.AnswerChildEntry.TABLE_NAME;
+        String questionTable = OFISDBContract.QuestionEntry.TABLE_NAME;
+        String datatypeTable = OFISDBContract.DatatypesEntry.TABLE_NAME;
+        String sql = "SELECT " + answerTable + ".*," + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE + ", " + datatypeTable + "." + OFISDBContract.DatatypesEntry.COLUMN_NAME_DATATYPE_NAME +
+                " FROM " + answerTable + " INNER JOIN " + questionTable + " ON " + answerTable + "." + OFISDBContract.AnswerChildEntry.COLUMN_NAME_QUESTION_ID + " = " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_ID +
+                " INNER JOIN " + datatypeTable + " ON " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID + " = " + datatypeTable + "." + OFISDBContract.DatatypesEntry.COLUMN_NAME_ID +
+                " WHERE " + OFISDBContract.AnswerChildEntry.COLUMN_NAME_FARMER_MODULE_ID + " = ? ORDER BY " + OFISDBContract.AnswerChildEntry.COLUMN_NAME_QUESTION_ID + " ASC";
         String[] whereArgs = new String[]{String.valueOf(farmerModuleId)};
 
         return db.rawQuery(sql, whereArgs);

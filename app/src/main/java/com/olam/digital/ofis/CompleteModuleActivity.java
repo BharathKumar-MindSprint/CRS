@@ -130,7 +130,6 @@ public class CompleteModuleActivity extends BaseActivity {
         setContentView(R.layout.activity_complete_module);
         //noinspection ConstantConditions
         getActionBar().setDisplayHomeAsUpEnabled(true);
-
         Intent intent = getIntent();
         farmerId = intent.getLongExtra(FARMER_ID, 0);
         moduleId = intent.getLongExtra(MODULE_ID, 0);
@@ -215,6 +214,7 @@ public class CompleteModuleActivity extends BaseActivity {
 
         bindSaveButton();
         setupFooter();
+        dynamicQuestions.SurveyType="other";
     }
 
     @SuppressWarnings("ConstantConditions")

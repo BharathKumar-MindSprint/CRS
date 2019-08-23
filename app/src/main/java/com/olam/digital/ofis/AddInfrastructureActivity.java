@@ -154,7 +154,6 @@ public class AddInfrastructureActivity extends BaseActivity {
         setContentView(R.layout.activity_add_infrastructure);
         //noinspection ConstantConditions
         getActionBar().setDisplayHomeAsUpEnabled(true);
-
         context = this;
         res = getResources();
 
@@ -240,6 +239,7 @@ public class AddInfrastructureActivity extends BaseActivity {
         dl.createGeographyHierarchySpinners(this, context, null, selectedCountry, selectedRegion, selectedDistrict, selectedPlace, null);
         dl.createBusinessHierarchySpinners(this, context, null, selectedFarmerGroup, selectedSection);
         bindSaveButton();
+        dynamicQuestions.SurveyType="other";
     }
 
 

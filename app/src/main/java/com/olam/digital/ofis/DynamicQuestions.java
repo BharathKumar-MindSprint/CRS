@@ -80,6 +80,7 @@ public class DynamicQuestions {
     public LinearLayout questionsSection;
     public Context context;
     private final DataLayer dl;
+    public static String SurveyType="";
 
     private String mCurrentPhotoPath = null, mCurrentPhotoFileName = null;
     private Uri mCapturedImageURI = null;
@@ -138,6 +139,29 @@ public class DynamicQuestions {
 
     public boolean requiredFieldsAnswered(int farmerModuleId, int moduleId) {
         Cursor completedAnswers = dl.getAllAnswersByFarmerModuleId(farmerModuleId);
+        Cursor requiredQuestions = dl.getRequiredQuestionIds(moduleId);
+        Set<Integer> completedQuestionIds = new HashSet<>();
+        Set<Integer> requiredQuestionIds = new HashSet<>();
+
+        try {
+            while (completedAnswers.moveToNext()) {
+                completedQuestionIds.add(completedAnswers.getInt(completedAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID)));
+            }
+        }finally {
+            completedAnswers.close();
+        }
+        try {
+            while (requiredQuestions.moveToNext()) {
+                requiredQuestionIds.add(requiredQuestions.getInt(requiredQuestions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID)));
+            }
+        }finally {
+            requiredQuestions.close();
+        }
+        return completedQuestionIds.containsAll(requiredQuestionIds);
+    }
+
+    public boolean requiredFieldsAnsweredChild(int farmerModuleId, int moduleId) {
+        Cursor completedAnswers = dl.getAllAnswersByFarmerChildModuleId(farmerModuleId);
         Cursor requiredQuestions = dl.getRequiredQuestionIds(moduleId);
         Set<Integer> completedQuestionIds = new HashSet<>();
         Set<Integer> requiredQuestionIds = new HashSet<>();
@@ -1280,7 +1304,13 @@ public class DynamicQuestions {
                 if ((isHundredPercentQuestion) && (!updatingHundredPercent)) {
                     autofill100Percent(et);
                 }
-                saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, et.getText().toString(),fetchMinMaxValue(finalDisplayConfig, AppConstants.RANGE_MIN),fetchMinMaxValue(finalDisplayConfig, AppConstants.RANGE_MAX));
+                if (SurveyType.equalsIgnoreCase("child")){
+                    saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, et.getText().toString());
+                }else{
+                    saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, et.getText().toString(),fetchMinMaxValue(finalDisplayConfig, AppConstants.RANGE_MIN),fetchMinMaxValue(finalDisplayConfig, AppConstants.RANGE_MAX));
+                }
+
+
             }
         });
 

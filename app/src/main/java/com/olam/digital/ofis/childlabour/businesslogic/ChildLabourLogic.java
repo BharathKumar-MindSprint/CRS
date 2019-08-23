@@ -7,6 +7,7 @@ import android.content.pm.LabeledIntent;
 import android.database.Cursor;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.olam.digital.ofis.DataLayer;
 import com.olam.digital.ofis.OFISDBContract;
 import com.olam.digital.ofis.Utilities;
