@@ -3279,7 +3279,7 @@ if (ChildLabourUtils.isChildEnumerator) {
                 ContentValues updateValues = new ContentValues();
                 updateValues.put(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_SUBMITTED_MODULES, submittedModules.toString());
 
-                db.update(OFISDBContract.ChildEntry.TABLE_NAME, updateValues, "id = ?", new String[]{String.valueOf(childId)});
+                db.update(OFISDBContract.ChildEntry.TABLE_NAME, updateValues, "tmpId = ?", new String[]{String.valueOf(childId)});
 
                 // no backup table for child
 //                db.update(OFISDBContract.FarmerEntry.BACKUP_TABLE_NAME, updateValues, "id = ?", new String[]{String.valueOf(farmerId)});
@@ -3655,8 +3655,8 @@ if (ChildLabourUtils.isChildEnumerator) {
             networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID,name);
 
             // update data from network queue entry
-            String d_whereClause = OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_CHILD_ID + " = ? ";
-            String[] d_whereArgs = new String[]{String.valueOf(id)};
+            String d_whereClause = OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_CHILD_ID + " = ? AND " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE + " = ?";;
+            String[] d_whereArgs = new String[]{String.valueOf(id),"children"};
             update_nq = db.update(OFISDBContract.NetworkQueueEntry.TABLE_NAME, networkQueueValues,d_whereClause, d_whereArgs);
 
            /* long d_status = db.delete(nqValuesTable, d_whereClause, d_whereArgs);

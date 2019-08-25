@@ -165,7 +165,11 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
         updatecontentValues.put(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_CREATEDAT, childrenDTO.getCreatedAt());*/
         long newChildId= new ChildLabourLogic().updateChildDetails(this,contentValues,childrenDTO.getId(),farmerName);
         if (newChildId != -1){
-            Toast.makeText(this,getResources().getString(R.string.child_register_successfully),Toast.LENGTH_LONG).show();
+            if(action.equalsIgnoreCase("new")){
+                Toast.makeText(this,getResources().getString(R.string.child_register_successfully),Toast.LENGTH_LONG).show();
+            }else{
+                Toast.makeText(this,getResources().getString(R.string.child_updated_successfully),Toast.LENGTH_LONG).show();
+            }
             finish();
         }
     }
@@ -185,7 +189,11 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
 
        long newChildId= new ChildLabourLogic().insertChildDetails(this,contentValues,farmerName);
        if (newChildId != -1){
-           Toast.makeText(this,getResources().getString(R.string.child_register_successfully),Toast.LENGTH_LONG).show();
+           if(action.equalsIgnoreCase("new")){
+               Toast.makeText(this,getResources().getString(R.string.child_register_successfully),Toast.LENGTH_LONG).show();
+           }else{
+               Toast.makeText(this,getResources().getString(R.string.child_updated_successfully),Toast.LENGTH_LONG).show();
+           }
            finish();
        }
     }

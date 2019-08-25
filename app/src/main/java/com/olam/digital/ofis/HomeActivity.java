@@ -563,6 +563,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     private void bindNetworkQueue() {
         TextView nomodulestosubmittext = (TextView) findViewById(R.id.nomodulestosubmittext);
         networkQueue = dl.getNetworkQueue();
+
         if (networkQueue.getCount() > 0) {
             queueCount = (TextView) findViewById(R.id.networkQueueCount);
             totalItems = networkQueue.getCount();
@@ -595,6 +596,8 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
         } else {
             getListView().setAdapter(null);
+            queueCount = (TextView) findViewById(R.id.networkQueueCount);
+            queueCount.setText("0");
             if (Utilities.daysToUpdate(context) <= 0) {
                 nomodulestosubmittext.setText(R.string.ofis_update_overdue);
                 nomodulestosubmittext.setTypeface(Typeface.DEFAULT_BOLD);

@@ -499,8 +499,11 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
             if (bundle != null) {
                 children = (ChildrenDTO) bundle.getSerializable("children");
                 childModuleDto= (ChildModuleDto) bundle.getSerializable("childModule");
+                try {
+                    farmerID=Long.parseLong(bundle.getString(ChildLabourUtils.CHILD_FARMER_ID));
+                }catch (Exception e){}
             }
-            farmerID=Long.parseLong(bundle.getString(ChildLabourUtils.CHILD_FARMER_ID));
+
 
     }
 
