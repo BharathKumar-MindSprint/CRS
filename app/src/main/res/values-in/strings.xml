@@ -492,6 +492,6 @@
     <string name="household">Household Visit Detail</string>
     <string name="inspection">Inspection Visit Detail</string>
     <string name="followup">FollowUp</string>
-    <string name="child_updated_successfully">Child Updted Successfully</string>
+    <string name="child_updated_successfully">Child Updated Successfully</string>
     <string name="downloading_child_data">Downloading Child Data</string>
 </resources>

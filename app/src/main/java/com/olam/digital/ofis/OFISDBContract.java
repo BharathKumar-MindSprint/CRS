@@ -594,20 +594,21 @@ public class OFISDBContract {
         public static final String TABLE_NAME = "children";
         public static final String COLUMN_NAME_ID = "tmpId";
         public static final String COLUMN_NAME_ONLINE_ID = "id";
-        public static final String COLUMN_NAME_FARMER_ID = "farmer_id";
+//        public static final String COLUMN_NAME_FARMER_ID = "farmer_id";
+        public static final String COLUMN_NAME_FARMER_ID = "farmerId";
         public static final String COLUMN_NAME_CHILD_NAME = "name";
         public static final String COLUMN_NAME_CHILD_AGE = "age";
         public static final String COLUMN_NAME_CHILD_GENDER = "gender";
-        public static final String COLUMN_NAME_ACTION_FLAG = "action_flag";
+        public static final String COLUMN_NAME_ACTION_FLAG = "actionFlag";
         public static final String COLUMN_NAME_STATUS = "status";
-        public static final String COLUMN_NAME_CHILD_AGE_ON_YEAR = "age_on_year";
+        public static final String COLUMN_NAME_CHILD_AGE_ON_YEAR = "ageOnYear";
         public static final String COLUMN_NAME_CHILD_SYNCED = "synced";
-        public static final String COLUMN_NAME_CHILD_SUBMITTED_MODULES = "submitted_modules";
+//        public static final String COLUMN_NAME_CHILD_SUBMITTED_MODULES = "submitted_modules";
+        public static final String COLUMN_NAME_CHILD_SUBMITTED_MODULES = "submittedModule";
         public static final String COLUMN_NAME_CHILD_CREATEDAT = "createdat";
 
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
-                    add(COLUMN_NAME_ID);
                     add(COLUMN_NAME_ONLINE_ID);
                     add(COLUMN_NAME_FARMER_ID);
                     add(COLUMN_NAME_CHILD_NAME);
@@ -616,7 +617,6 @@ public class OFISDBContract {
                     add(COLUMN_NAME_ACTION_FLAG);
                     add(COLUMN_NAME_STATUS);
                     add(COLUMN_NAME_CHILD_AGE_ON_YEAR);
-                    add(COLUMN_NAME_CHILD_SYNCED);
                     add(COLUMN_NAME_CHILD_SUBMITTED_MODULES);
                     add(COLUMN_NAME_CHILD_CREATEDAT);
                 }}

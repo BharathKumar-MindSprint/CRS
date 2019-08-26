@@ -13,6 +13,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.firebase.crash.FirebaseCrash;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.olam.digital.ofis.OFISDBContract;
 import com.olam.digital.ofis.R;
@@ -40,14 +41,14 @@ public class ChildSurveyRecyclerAdapter extends RecyclerView.Adapter<ChildSurvey
     private  boolean hasSubmittedModules=false;
     private JSONArray submittedModulesArray;
 
-    public ChildSurveyRecyclerAdapter(List<ChildModuleDto> childModuleDtoList, Context context, JSONObject submittedModules) throws JSONException {
+    public ChildSurveyRecyclerAdapter(List<ChildModuleDto> childModuleDtoList, Context context, JSONArray submittedModules) throws JSONException {
         this.childModuleList = childModuleDtoList;
         this.currentDate=Calendar.getInstance();
         this.mContext = context;
-        if (submittedModules !=null) {
-            hasSubmittedModules = (submittedModules.has("modules"));
+        if (submittedModules !=null && submittedModules.length()>0) {
+            hasSubmittedModules = true;
             if (hasSubmittedModules) {
-                submittedModulesArray = submittedModules.getJSONArray("modules");
+                submittedModulesArray = submittedModules;
             }
         }
     }
@@ -109,10 +110,10 @@ public class ChildSurveyRecyclerAdapter extends RecyclerView.Adapter<ChildSurvey
 
                 for (int i = 0; i < submittedModulesArray.length(); i++) {
                     JSONObject submittedModule = submittedModulesArray.getJSONObject(i);
-                    JSONObject submittedModuleDetails = submittedModule.getJSONObject("module");
+                 //   JSONObject submittedModuleDetails = submittedModule.getJSONObject("module");
 
 
-                    if (submittedModuleDetails.has("id") && submittedModuleDetails.getInt("id") == currentId) {
+                    if (submittedModule.has("id") && submittedModule.getInt("id") == currentId) {
                         disable_entry = true;
 
                         if (disable_entry) {

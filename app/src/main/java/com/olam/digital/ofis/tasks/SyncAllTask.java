@@ -63,8 +63,8 @@ public class SyncAllTask extends SyncTask {
 
     public static final String TAG = "SyncAllTask";
     public JSONObject spinnerResponse, moduleResponse, sipModuleResponse, farmerResponse, fmpResponse, transactionResponse, trainingResponse, tasksResponse;
-    public JSONArray childResponse;
 
+    public static JSONObject childResponse;
     private int syncResultCount;
     public ProgressDialog pd;
     private Resources res;
@@ -268,6 +268,9 @@ public class SyncAllTask extends SyncTask {
             // Goes directly to the AsyncTask
             new UpdateFarmersTask(context).execute(farmerResponse);
             farmerResponse = null;
+
+            new UpdateChildrenTask(context).execute(childResponse);
+            childResponse=null;
 
 
 
@@ -705,13 +708,13 @@ public class SyncAllTask extends SyncTask {
                         Boolean isChild = Boolean.parseBoolean(output.trim());
                         Utilities.setChildLabourPref(context, ChildLabourUtils.IS_CHILD_ENUMERATOR, isChild);
 
-//                        if (isChild) {
-//                            publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.downloading_child_data));
-//                            delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_CHILD);
-//                        } else {
+                        if (isChild) {
+                            publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.downloading_child_data));
+                            delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_CHILD);
+                        } else {
                             publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.survey_data));
                             delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_MODULES);
-//                        }
+                       }
 
 
                     } else {
@@ -919,7 +922,7 @@ public class SyncAllTask extends SyncTask {
         String endpoint = "";
         endpoint = "ofischild/child/findsubmittedmodulesbyenumeter/" + Utilities.getFromSharedPrefs(context);
         final String finalEndpoint = endpoint;
-        okHttpGetChild(context, endpoint, inputArgs, new Callback() {
+        okHttpGet(context, endpoint, inputArgs, new Callback() {
             @Override
             public void onResponse(Call call, final Response postResponse) {
                 try {
@@ -936,8 +939,13 @@ public class SyncAllTask extends SyncTask {
 //
 //                        }
      //                   http://www.mocky.io/v2/5d619ffb32000059008e6134
-                        childResponse = response;
-
+                        JSONObject jsonObject=new JSONObject();
+                        try {
+                            jsonObject.put("child",response);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        childResponse=jsonObject;
                         publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.survey_data));
                         delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_MODULES);
                     } else {

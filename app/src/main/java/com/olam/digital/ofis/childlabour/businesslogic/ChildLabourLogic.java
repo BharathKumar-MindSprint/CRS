@@ -57,9 +57,9 @@ public class ChildLabourLogic {
 
     }
 
-    public long updateChildDetails(Context context, ContentValues contentValues, String id,String name) {
+    public long updateChildDetails(Context context, ContentValues contentValues, String id,String name,String childName) {
         dataLayer = new DataLayer(context.getResources(), context);
-        return dataLayer.updateChild(context,contentValues,id,name);
+        return dataLayer.updateChild(context,contentValues,id,name,childName);
     }
 
     public ChildrenDTO getChildrenDTO(Context context, String childId) {

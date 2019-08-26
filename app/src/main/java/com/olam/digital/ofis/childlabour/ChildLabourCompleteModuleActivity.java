@@ -19,6 +19,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -207,12 +208,14 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
             }catch (Exception e){
 
             }
-
         }
 
         initDynamicQuestions();
         setupSubModuleQuestions();
-        setupTopSection();
+        try {
+            setupTopSection();
+        }catch (Exception e){}
+
 
         final ScrollView mainScroll = (ScrollView) findViewById(R.id.scrollView);
         mainScroll.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -388,12 +391,17 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
     }
 
     private void setupTopSection() {
-        TextView moduleNameTv = (TextView) findViewById(R.id.completeModuleModuleTitle);
-        TextView subModuleNameTv = (TextView) findViewById(R.id.completeModuleSubModuleTitle);
+        if (moduleName!=null && subModules!=null) {
+            try {
+                TextView moduleNameTv = (TextView) findViewById(R.id.completeModuleModuleTitle);
+                TextView subModuleNameTv = (TextView) findViewById(R.id.completeModuleSubModuleTitle);
+                moduleNameTv.setText(moduleName);
+                int columnIndex = (subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME + dynamicQuestions.questionColumnSuffix) != -1) ? subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME + dynamicQuestions.questionColumnSuffix) : subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME);
+                subModuleNameTv.setText(subModules.getString(columnIndex));
+            } catch (Exception e) {
+            }
+        }
 
-        moduleNameTv.setText(moduleName);
-        int columnIndex = (subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME + dynamicQuestions.questionColumnSuffix) != -1) ? subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME + dynamicQuestions.questionColumnSuffix) : subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME);
-        subModuleNameTv.setText(subModules.getString(columnIndex));
     }
 
     private void setupSubModuleQuestions() {
@@ -678,6 +686,15 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
         bottomSection.addView(questionsSection, 0, questionsSection.getLayoutParams());
 
     }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
 
+    }
 
 }

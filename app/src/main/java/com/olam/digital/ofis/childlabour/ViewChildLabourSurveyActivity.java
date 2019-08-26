@@ -26,6 +26,7 @@ import com.olam.digital.ofis.childlabour.dto.ChildModuleDto;
 import com.olam.digital.ofis.childlabour.dto.ChildrenDTO;
 import com.olam.digital.ofis.childlabour.listener.OnItemSurveyListener;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -88,20 +89,17 @@ public class ViewChildLabourSurveyActivity extends BaseActivity {
         Collections.sort(childModuleDtoList, new SortbySurveyCode());
 
         JSONObject submittedModules = null;
+        JSONArray modulesArray=null;
         try {
             String submittedModulesJSON = children.getSubmittedModules();
-            //   String Samplestr = String.valueOf("{\"modules\":null}");
-//            if (Samplestr.equals(submittedModulesJSON)) {
-//                submittedModulesJSON = submittedModulesJSON.replaceAll("\"modules\":null", "");
-//            }
-//            submittedModules = (!submittedModulesJSON.equals("null")) ? new JSONObject(submittedModulesJSON) : new JSONObject();
             submittedModules=new JSONObject(submittedModulesJSON);
+            modulesArray= submittedModules.getJSONArray("modules");
 
         }catch (Exception e){}
 
         if (childModuleDtoList != null && childModuleDtoList.size() > 0) {
             try {
-                childSurveyRecyclerAdapter = new ChildSurveyRecyclerAdapter(childModuleDtoList,this,submittedModules);
+                childSurveyRecyclerAdapter = new ChildSurveyRecyclerAdapter(childModuleDtoList,this,modulesArray);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
