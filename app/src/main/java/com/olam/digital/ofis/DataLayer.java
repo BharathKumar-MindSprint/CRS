@@ -105,7 +105,7 @@ public class DataLayer {
         return db.query(OFISDBContract.PlacesEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
     }
 
-    public int updateFarmPolygon(long farmerId, String plotJson, String olamFarmerId, int farmId, String farmerName) {
+    public int updateFarmPolygon(long farmerId, String plotJson, String olamFarmerId, String farmerName) {
         int updated;
         ContentValues values = new ContentValues();
         values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_PLOTS, plotJson);
@@ -131,7 +131,7 @@ public class DataLayer {
                 nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, res.getString(R.string.record_farm_polygon_complete));
                 nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID, farmerId);
                 nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID, olamFarmerId);
-                nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID, farmId);
+//                nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID, farmId);
                 nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_PLOTS, plotJson);
                 nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT, timestamp.toString());
                 nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPDATED_AT, timestamp.toString());
@@ -149,7 +149,7 @@ public class DataLayer {
      * @param plotName    plot name (Ex: plot1_farmid, plot2_farmid)
      * @param plotGeoData plot geo data json
      */
-    public void updatePlotGeoData(int farmerId, String plotName, String plotGeoData) {
+    public void updatePlotGeoData(String farmerId, String plotName, String plotGeoData) {
 
         ContentValues plotGeoValues = new ContentValues();
         plotGeoValues.put(OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_NAME, plotName);

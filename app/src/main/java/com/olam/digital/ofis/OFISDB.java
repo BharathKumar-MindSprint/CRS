@@ -161,7 +161,7 @@ class OFISDB extends SQLiteOpenHelper {
     private static final String OFIS_PLOT_GEO_DATA_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.PlotGeoData.TABLE_NAME
             + " ( " + OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
             + OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_NAME + " TEXT, "
-            + OFISDBContract.PlotGeoData.COLUMN_NAME_FARM_ID + " INTEGER, "
+            + OFISDBContract.PlotGeoData.COLUMN_NAME_FARM_ID + " TEXT, "
             + OFISDBContract.PlotGeoData.COLUMN_NAME_SERVER_ID + " TEXT, "
             + OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_JSON + " TEXT, "
             + OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_SYNC_FLAG + " INTEGER )";
