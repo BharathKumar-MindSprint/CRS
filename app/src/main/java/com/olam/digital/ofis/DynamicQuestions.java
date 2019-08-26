@@ -164,7 +164,7 @@ public class DynamicQuestions {
 
     public boolean requiredFieldsMinMaxAnswered(int farmerModuleId, int moduleId) {
         boolean status = true;
-        Cursor completedAnswers = dl.getAllAnswersByFarmerModuleId(farmerModuleId);
+
         Cursor requiredQuestions = dl.getRequiredSurveyRangeQuestionIds(moduleId);
 //        CheckMinMaxforQuestion(requiredQuestions);
         try {
@@ -172,15 +172,21 @@ public class DynamicQuestions {
                 do {
                     JSONObject displayConfig = new JSONObject(requiredQuestions.getString(requiredQuestions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION)));
                     final String datatype = requiredQuestions.getString(requiredQuestions.getColumnIndex("datatype_id"));
-//                    final int questionId = requiredQuestions.getInt(requiredQuestions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
+                    final String displaytype = requiredQuestions.getString(requiredQuestions.getColumnIndex("display_type"));
+                    final int questionId = requiredQuestions.getInt(requiredQuestions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
+                    Cursor completedAnswers = dl.getAllAnswersByFarmerModuleId(farmerModuleId);
 //                    int  answerId = requiredQuestions.getInt(requiredQuestions.getColumnIndex("answer_id"));
+//                    if(displaytype.equalsIgnoreCase("textbox")){
                     if(datatype.equalsIgnoreCase("1") || datatype.equalsIgnoreCase("3")){
                     if (displayConfig.has("surveyrange")) {
 
 //                        if (getAnswerMinMaxvalidation(questionId, answerId) != "noval") {
 //                            float answer = Float.parseFloat(getAnswerMinMaxvalidation(questionId,answerId));
-                            float answer = Float.valueOf(getAnswer(completedAnswers, datatype));
-                            if (String.valueOf(answer) != "noval") {
+//                            String ans = (getAnswer(completedAnswers, datatype, questionId));
+//                            if (String.valueOf(ans) != "noval") {
+                                String ans = (getAnswer(completedAnswers, datatype, questionId));
+                        if (String.valueOf(ans) != "null") {
+                            float answer = Float.valueOf(ans);
                                 if (fetchMinMaxValue(displayConfig, AppConstants.RANGE_MAX) != 0 || fetchMinMaxValue(displayConfig, AppConstants.RANGE_MIN) != 0 ? true : false) {
                                     if ((answer > fetchMinMaxValue(displayConfig, AppConstants.RANGE_MAX)) || (answer < fetchMinMaxValue(displayConfig, AppConstants.RANGE_MIN))) {
                                         status = false;
@@ -189,8 +195,8 @@ public class DynamicQuestions {
                                         break;
                                     }
                                 }
-                            }
-//                        }
+//                            }
+                        }
                     }
                     }
 
@@ -205,19 +211,26 @@ public class DynamicQuestions {
         return status;
     }
 
-    private String getAnswer(Cursor completedAnswers, String datatype) {
-        String ans = "noval";
+    private String getAnswer(Cursor completedAnswers, String datatype, int questionId) {
+        String ans = "null";
         try {
             while (completedAnswers.moveToNext()) {
-                if(datatype.equalsIgnoreCase("3")) {
+                int question_id = completedAnswers.getInt(completedAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID));
+                if (question_id == questionId) {
+                    if (datatype.equalsIgnoreCase("3")) {
 
-                   ans = String.valueOf(BigDecimal.valueOf(completedAnswers.getDouble(completedAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_DECIMAL))).floatValue());
-                }else if(datatype.equalsIgnoreCase("1")){
-                    ans = String.valueOf(completedAnswers.getInt(completedAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_INT)));
+                        ans = String.valueOf(BigDecimal.valueOf(completedAnswers.getDouble(completedAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_DECIMAL))).floatValue());
+                        break;
+                    } else if (datatype.equalsIgnoreCase("1")) {
+                        ans = String.valueOf(completedAnswers.getInt(completedAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_INT)));
+                        break;
+                    }
                 }
             }
+        }catch (Exception e){
+            e.printStackTrace();
         }finally {
-            completedAnswers.close();
+//            completedAnswers.close();
         }
         return ans;
     }

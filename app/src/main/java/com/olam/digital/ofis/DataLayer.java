@@ -2363,7 +2363,7 @@ if (ChildLabourUtils.isChildEnumerator) {
                 String.valueOf(moduleId),
                 "%surveyrange%"
         };
-        String sql = "SELECT " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_ID +", " + OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID +", " +  OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION + " FROM " + questionTable + " INNER JOIN " + submoduleTable
+        String sql = "SELECT " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_ID +", " + OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID +", " +  OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION+", " +  OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE + " FROM " + questionTable + " INNER JOIN " + submoduleTable
                 + " ON " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_SUBMODULE_ID + " = " + submoduleTable + "." + OFISDBContract.SubmoduleEntry.COLUMN_NAME_ID
                 + " INNER JOIN " + moduleTable + " ON " + submoduleTable + "." + OFISDBContract.SubmoduleEntry.COLUMN_NAME_MODULE_ID + " = " + moduleTable + "."
                 + OFISDBContract.ModuleEntry.COLUMN_NAME_ID + " WHERE " + whereClause;
