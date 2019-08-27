@@ -3119,10 +3119,10 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 //new
                                 JSONArray jsonResponse=new JSONArray(postResponse.body().string());
                                 JSONObject jsonObject1=jsonResponse.getJSONObject(0);
-                                long farmUniqueID=SharedPreferenceUtils
+                                /*String farmUniqueID=SharedPreferenceUtils
                                         .getInstance(context)
-                                        .getFarmerID(finalTempOlamFarmerID);
-                                SharedPreferenceUtils.getInstance(context).setFarmerID(jsonObject1.getString("olamFarmerId"), farmUniqueID);
+                                        .getFarmerID(finalTempOlamFarmerID);*/
+//                                SharedPreferenceUtils.getInstance(context).setFarmerID(jsonObject1.getString("olamFarmerId"), String.valueOf(farmUniqueID));
 
                                 dl.markFarmerAsSynced(localFarmerId, jsonObject1.getInt("id"), jsonObject1.getInt("farmId"), localPlaceId, jsonObject1.getInt("placeId"),jsonObject1.getString("olamFarmerId"));
                                 dl.deleteNetworkQueueItem(networkQueueItemId);

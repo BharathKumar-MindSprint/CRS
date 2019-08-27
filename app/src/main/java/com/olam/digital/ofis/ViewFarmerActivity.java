@@ -721,15 +721,21 @@ public class ViewFarmerActivity extends BaseListActivity {
          * Here we used SharedPreference to map OLAM Farmer ID with UUID.
          * Plot count value is important to showing alert to enter plots number of farmer at first time.
          */
-        final int strFarmID = (int) SharedPreferenceUtils
+        /*final String strFarmID =  SharedPreferenceUtils
                 .getInstance(getApplicationContext())
-                .getFarmerID(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
-        //final int strFarmID = farmer.getInt(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID));
+                .getFarmerID(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));*/
+        final String strFarmID = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID));
 
        // Some farm Id is getting null.
+        DataLayer dl = new DataLayer(getResources(), ViewFarmerActivity.this);
+        dl.fetchPlotData(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
         int count =0;
-        if(strFarmID != 0){
-            count = SharedPreferenceUtils.getInstance(getApplicationContext()).getPlotCount(""+strFarmID);
+//        if(strFarmID != "0"){
+        try{
+//            count = SharedPreferenceUtils.getInstance(getApplicationContext()).getPlotCount(""+strFarmID);
+           count = dl.fetchPlotData(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
+        }catch (Exception e){
+            count = 0;
         }
 
 

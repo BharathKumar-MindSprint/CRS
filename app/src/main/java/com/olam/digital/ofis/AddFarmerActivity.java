@@ -663,7 +663,7 @@ public class AddFarmerActivity extends BaseActivity {
          * Plot count value is important to showing alert to enter plots number of farmer at first time.
          */
 
-        SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(olamFarmerId, generateUniqueLongNumber());
+//        SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(olamFarmerId, String.valueOf(generateUniqueLongNumber()));
 
         try {
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME, farmerNameValue);
