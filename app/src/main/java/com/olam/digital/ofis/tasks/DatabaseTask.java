@@ -86,6 +86,7 @@ abstract class DatabaseTask extends AsyncTask<JSONObject, Integer, String> {
         db.endTransaction();
     }
 
+
     void fillTable(JSONArray jsonArray, String tableName, List columnList) {
         db.delete(tableName, null, null);
 

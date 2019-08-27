@@ -14,6 +14,7 @@ import org.json.JSONObject;
 
 public class UpdateChildrenTask extends DatabaseTask {
     ProgressDialog pd;
+
     public UpdateChildrenTask(Context context) {
         super(context);
         pd = Utilities.openProgressDialog(context, context.getString(R.string.data_initialization), false);
@@ -29,28 +30,17 @@ public class UpdateChildrenTask extends DatabaseTask {
     @Override
     protected String doInBackground(JSONObject... params) {
         try {
+            JSONObject childResponse = params[0];
 
-            JSONObject ChildResponse = params[0];
-
-            if (ChildResponse.getInt("resultcount") > 0) {
-
-                JSONObject response = ChildResponse.getJSONObject("outputdata");
-
-                // get the various sub lists
-                JSONArray sipGroupArray, sipSubGroupArray, moduelassignmentArray, datatypeArray, lookupvalueArray, questionArray, productArray;
-                try {
-                    sipGroupArray = response.getJSONArray(OFISDBContract.SipGroupEntry.TABLE_NAME);
-                    fillTable(sipGroupArray, OFISDBContract.SipGroupEntry.TABLE_NAME, OFISDBContract.SipGroupEntry.COLUMN_LIST);
-                } catch (JSONException e) {
-                    FirebaseCrash.report(new Exception("UpdateSipModuleListsTask: Error filling modules table", e));
-                    e.printStackTrace();
-                }
+            JSONArray childArray;
+            try {
+                childArray = childResponse.getJSONArray("child");
+                fillTable(childArray, OFISDBContract.ChildEntry.TABLE_NAME, OFISDBContract.ChildEntry.COLUMN_LIST);
+            } catch (JSONException e) {
+                FirebaseCrash.report(new Exception("UpdateChildrenTask: Error filling children table", e));
+                e.printStackTrace();
             }
-        } catch(JSONException e){
-            FirebaseCrash.report(new Exception("UpdateModuleListsTask: Error getting module lists table response", e));
-            e.printStackTrace();
-        }
-
-        return null;
+        } catch (Exception e){}
+          return null;
     }
 }

@@ -503,6 +503,6 @@
     <string name="followup">FollowUp Visit Detail</string>
     <string name="child_labour_survey">Enquête sur le travail des enfants</string>
     <string name="update_childlabour_hint">Cliquer pour Enregistrer</string>
-    <string name="child_updated_successfully">Child Updted Successfully</string>
+    <string name="child_updated_successfully">Child Updated Successfully</string>
     <string name="downloading_child_data">Downloading Child Data</string>
 </resources>

@@ -20,6 +20,7 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 
 import com.google.firebase.crash.FirebaseCrash;
+import com.google.gson.JsonObject;
 import com.olam.digital.ofis.childlabour.ChildLabourUtils;
 import com.olam.digital.ofis.childlabour.dto.ChildrenDTO;
 
@@ -3244,35 +3245,52 @@ if (ChildLabourUtils.isChildEnumerator) {
         if (child.getCount() > 0) {
             child.moveToFirst();
             try {
+
+
                 JSONObject newModuleEntry = new JSONObject();
                 newModuleEntry.put("id", moduleId);
                 newModuleEntry.put("created_at", submissionDate);
-                JSONObject newModule = new JSONObject();
-                newModule.put("module", newModuleEntry);
+
+//                JSONObject newModule = new JSONObject();
+//                newModule.put("module", newModuleEntry);
+
                 String submittedModulesJSON = child.getString(child.getColumnIndex(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_SUBMITTED_MODULES));
+                // New Approach
                 JSONObject submittedModules=null;
                 if(submittedModulesJSON==null){
                      submittedModules=new JSONObject();
-                    JSONArray newModules = new JSONArray();
-                    newModules.put(newModule);
-                    submittedModules.put("modules", newModules);
+                    JSONArray moduleArray=new JSONArray();
+                    moduleArray.put(newModuleEntry);
+                    submittedModules.put("modules", moduleArray);
 
                 }else {
-                    // this section we need to work for multiple survey entries.
-                    String Samplestr = String.valueOf("{\"modules\":null}");
-                    if(Samplestr.equals(submittedModulesJSON)){
-                        submittedModulesJSON =submittedModulesJSON.replaceAll("\"modules\":null","");
-                    }
-                     submittedModules = (!submittedModulesJSON.equals("null")) ? new JSONObject(submittedModulesJSON) : new JSONObject();
-                    if (submittedModules.has("modules")) {
-                        JSONArray modules = submittedModules.getJSONArray("modules");
-                        modules.put(newModule);
-                    } else {
-                        JSONArray newModules = new JSONArray();
-                        newModules.put(newModule);
-                        submittedModules.put("modules", newModules);
-                    }
+                     submittedModules=new JSONObject(submittedModulesJSON);
+                   JSONArray modulesArray= submittedModules.getJSONArray("modules");
+                    modulesArray.put(newModuleEntry);
                 }
+
+//                if(submittedModulesJSON==null){
+//                     submittedModules=new JSONObject();
+//                    JSONArray newModules = new JSONArray();
+//                    newModules.put(newModule);
+//                    submittedModules.put("modules", newModules);
+//
+//                }else {
+//                    // this section we need to work for multiple survey entries.
+//                    String Samplestr = String.valueOf("{\"modules\":null}");
+//                    if(Samplestr.equals(submittedModulesJSON)){
+//                        submittedModulesJSON =submittedModulesJSON.replaceAll("\"modules\":null","");
+//                    }
+//                     submittedModules = (!submittedModulesJSON.equals("null")) ? new JSONObject(submittedModulesJSON) : new JSONObject();
+//                    if (submittedModules.has("modules")) {
+//                        JSONArray modules = submittedModules.getJSONArray("modules");
+//                        modules.put(newModule);
+//                    } else {
+//                        JSONArray newModules = new JSONArray();
+//                        newModules.put(newModule);
+//                        submittedModules.put("modules", newModules);
+//                    }
+//                }
 
 
 
@@ -3635,7 +3653,7 @@ if (ChildLabourUtils.isChildEnumerator) {
         return newChildId;
     }
 
-    public long updateChild(Context context,ContentValues contentValues, String id,String name) {
+    public long updateChild(Context context,ContentValues contentValues, String id,String name,String childName) {
         long newChildId;
         long update_nq = 0;
         String whereClause = OFISDBContract.ChildEntry.COLUMN_NAME_ID + " = ?";
@@ -3674,6 +3692,16 @@ if (ChildLabourUtils.isChildEnumerator) {
                 insertNetworkQueueEntry(networkQueueValues);
             }*/
         }
+try {
+            ContentValues networkQueueValuesChildModule=new ContentValues();
+    networkQueueValuesChildModule.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE,context.getResources().getString(R.string.child) + ": "+childName);
+    String d_whereClause = OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_CHILD_ID + " = ? AND " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE + " = ?";;
+    String[] d_whereArgs = new String[]{String.valueOf(id),"childmodule"};
+    update_nq = db.update(OFISDBContract.NetworkQueueEntry.TABLE_NAME, networkQueueValuesChildModule,d_whereClause, d_whereArgs);
+}catch (Exception e){}
+
+
+
         return update_nq;
     }
 
@@ -3728,7 +3756,7 @@ if (ChildLabourUtils.isChildEnumerator) {
     }
 
     public Cursor getChildDetailsById(Long farmerId) {
-       return db.rawQuery("SELECT * FROM children where farmer_id="+farmerId, null);
+       return db.rawQuery("SELECT * FROM children where farmerId="+farmerId, null);
     }
 
 

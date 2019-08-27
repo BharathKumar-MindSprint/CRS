@@ -3,6 +3,7 @@ package com.olam.digital.ofis.childlabour;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NavUtils;
 import android.text.Html;
@@ -44,6 +45,7 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
     String childId;
     ChildrenDTO childrenDTO;
     ArrayAdapter<String> adapter;
+    private long lastClickTime = 0;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -100,7 +102,12 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
     @Override
     public void onClick(View v) {
          if (v.getId() == R.id.addNewChildButton){
-             addNewChild();
+             if (SystemClock.elapsedRealtime() - lastClickTime < 3000){
+                 return;
+             }else{
+                 addNewChild();
+             }
+            lastClickTime=SystemClock.elapsedRealtime();
          }else if (v.getId() == R.id.maleButton) {
              gender = getResources().getString(R.string.gender_male);
              femaleButton.setBackgroundColor(getResources().getColor(R.color.gender_selected));
@@ -163,7 +170,7 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
         updatecontentValues.put(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_GENDER, childrenDTO.getGender());
         updatecontentValues.put(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_AGE_ON_YEAR, childrenDTO.getAgeOnYear());
         updatecontentValues.put(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_CREATEDAT, childrenDTO.getCreatedAt());*/
-        long newChildId= new ChildLabourLogic().updateChildDetails(this,contentValues,childrenDTO.getId(),farmerName);
+        long newChildId= new ChildLabourLogic().updateChildDetails(this,contentValues,childrenDTO.getId(),farmerName,name);
         if (newChildId != -1){
             if(action.equalsIgnoreCase("new")){
                 Toast.makeText(this,getResources().getString(R.string.child_register_successfully),Toast.LENGTH_LONG).show();
