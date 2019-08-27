@@ -502,4 +502,5 @@
     <string name="followup">FollowUp</string>
     <string name="child_updated_successfully">Child Updated Successfully</string>
     <string name="downloading_child_data">Downloading Child Data</string>
+    <string name="no_child_registered">Register Child to enable the surveys</string>
 </resources>

@@ -3,11 +3,13 @@ package com.olam.digital.ofis.childlabour;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.olam.digital.ofis.BaseActivity;
@@ -25,7 +27,7 @@ public class ChildLabourDetailsActivity extends BaseActivity {
     private RecyclerView childLabourDetailsRecyclerView;
     Long farmerId;
     private ChildLabourRecyclerAdapter childLabourRecyclerAdapter;
-
+    TextView noChildRegisterInfoTv;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,7 +39,15 @@ public class ChildLabourDetailsActivity extends BaseActivity {
             farmerId=getIntent().getExtras().getLong(ChildLabourUtils.CHILD_FARMER_ID);
         }catch (Exception e){}
         populateChildList();
+        childLimit();
     }
+
+    private void childLimit() {
+        if (childLabourRecyclerAdapter!=null && childLabourRecyclerAdapter.getItemCount()> 0){
+              noChildRegisterInfoTv.setVisibility(View.GONE);
+        }
+    }
+
     private void populateChildList() {
         ChildLabourLogic childLabourLogic=new ChildLabourLogic();
         List<ChildrenDTO> childrenList=childLabourLogic.getChildDetailsById(this,farmerId);
@@ -66,5 +76,6 @@ public class ChildLabourDetailsActivity extends BaseActivity {
     }
     private void initComponents() {
         childLabourDetailsRecyclerView=findViewById(R.id.childLabourDetailsRecycleView);
+        noChildRegisterInfoTv=findViewById(R.id.noChildInfoTv);
     }
 }

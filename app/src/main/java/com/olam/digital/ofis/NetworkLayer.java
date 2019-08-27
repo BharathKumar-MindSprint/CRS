@@ -212,31 +212,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         okHttpClient.newCall(request).enqueue(callback);
     }
 
-    private static void okHttpPostChild(Context context, String url, JSONObject params, Callback callback) {
-        String enumeratorId = Utilities.getFromSharedPrefs(context);
-        String imeiNumber = Utilities.getIMEI(context);
-        String uniqueId = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
-        String base64EnumeratorId = Base64.encodeToString(enumeratorId.getBytes(), Base64.NO_WRAP);
-        String base64ImeiNumber = Base64.encodeToString(imeiNumber.getBytes(), Base64.NO_WRAP);
-        String base64UniqueId = Base64.encodeToString(uniqueId.getBytes(), Base64.NO_WRAP);
-        String fullUrl = getAbsoluteUrl(url);
 
-        RequestBody body = RequestBody.create(JSONBody, params.toString());
-
-        Request request = new Request.Builder()
-                .header("enumerator-id", base64EnumeratorId)
-                .header("imei-number", base64ImeiNumber)
-                .header("unique-id", base64UniqueId)
-                .header("app-version", BuildConfig.VERSION_NAME)
-                .header("App-Id","1")
-                .header("Authorization", "Bearer " + new AuthenticationHelper(context).getAuthenticationDTO().getAccessToken())
-                .url("http://www.mocky.io/v2/5d6182853200005e008e611b")
-                .post(body)
-                .build();
-
-        System.out.println("okhttppost_Request:" + request);
-        okHttpClient.newCall(request).enqueue(callback);
-    }
 
     private static void okHttpPut(Context context, String url, JSONObject params, Callback callback) {
         String enumeratorId = Utilities.getFromSharedPrefs(context);
