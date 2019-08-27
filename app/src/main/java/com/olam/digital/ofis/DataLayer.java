@@ -168,6 +168,15 @@ public class DataLayer {
         }
     }
 
+    public int fetchPlotData(String id){
+        String[] columns = new String[]{"*"};
+        String whereClause = OFISDBContract.PlotGeoData.COLUMN_NAME_FARM_ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(id)};
+        Cursor data = db.query(OFISDBContract.PlotGeoData.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+        return data.getCount();
+
+    }
+
     //------------------------Temp Functions for DB data check - Start-----------------------------
     public Cursor getTempData() {
         String[] columns = new String[]{"*"};

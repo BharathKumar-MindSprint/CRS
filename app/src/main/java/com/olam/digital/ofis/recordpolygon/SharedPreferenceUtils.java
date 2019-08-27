@@ -89,13 +89,13 @@ public class SharedPreferenceUtils {
         return null;
     }
 
-    public void setFarmerID(String key, long value) {
-        mSharedPreferencesEditor.putLong(key, value);
+    public void setFarmerID(String key, String value) {
+        mSharedPreferencesEditor.putString(key, value);
         mSharedPreferencesEditor.commit();
     }
 
-    public long getFarmerID(String key) {
-        return mSharedPreferences.getLong(key, 0L);
+    public String getFarmerID(String key) {
+        return mSharedPreferences.getString(key, "0");
     }
 
     public void setFarmID(String aFarmID) {

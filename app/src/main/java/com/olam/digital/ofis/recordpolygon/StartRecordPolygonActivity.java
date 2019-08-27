@@ -39,7 +39,7 @@ public class StartRecordPolygonActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_record_polygon);
         res = getResources();
-        SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmID("41526");
+//        SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmID("41526");
         List<LocationBeanList>  aLocationBeanList = SharedPreferenceUtils.getInstance(getApplicationContext()).getAllLocations();
         String s = getPlotsJsonFromLocationBeanList(aLocationBeanList);
         Log.v("PLOTS", s);
