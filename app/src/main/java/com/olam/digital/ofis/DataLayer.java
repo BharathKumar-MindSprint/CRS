@@ -13,11 +13,13 @@ import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.gson.JsonObject;
@@ -1347,13 +1349,35 @@ public class DataLayer {
 
             int[] adapterRowViews = new int[]{R.id.ofis_spinner_text_view};
             int spinnerItemLayout = (showAsWhite) ? R.layout.spinner_item_white : R.layout.spinner_item;
-            SimpleCursorAdapter simpleCursorAdapter = new SimpleCursorAdapter(context, spinnerItemLayout, output, adapterCols, adapterRowViews, 0);
+            SimpleCursorAdapter simpleCursorAdapter = new SimpleCursorAdapter(context, spinnerItemLayout, output, adapterCols, adapterRowViews, 0)
+            {
+                @Override
+                public View getDropDownView(int position, View convertView, ViewGroup parent) {
+                    final View v=super.getDropDownView(position,convertView,parent);
+                    v.post(new Runnable()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            ((TextView)v.findViewById(R.id.ofis_spinner_text_view)).setSingleLine(false);
+                        }
+                    });
+                    return v;
+                }
+            };
+
             simpleCursorAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+
             spinner.setAdapter(simpleCursorAdapter);
+
+
+
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
+
 
     Cursor getSimpleSpinnerData(String table, Boolean getByRelationship, String getByColumnName, Integer getByColumnValue, @SuppressWarnings("SameParameterValue") Boolean orderByColumn, String orderByColumnName, String textColumnName) {
         if (OFISDBContract.ALL_TABLES.containsKey(table)) {

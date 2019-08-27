@@ -1592,6 +1592,7 @@ public class DynamicQuestions {
     public void renderDropDownQuestion(Cursor qCursor, boolean isRepeaterItem, LinearLayout parentLayout, final int parentQuestionId, final int repeaterItemPosition, Cursor repeaterAnswers, final Resources res) {
         final LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
         renderQuestion(qCursor, isRepeaterItem, (isRepeaterItem) ? parentLayout : questionWrapper);
+
         resources = res;
         final String datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
         final int questionId = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
@@ -1608,7 +1609,11 @@ public class DynamicQuestions {
         }
         final int answerId = answerIdTemp;
 
-        final Spinner spinner = (Spinner) inflater.inflate(R.layout.module_spinner, (isRepeaterItem) ? parentLayout : questionWrapper, false);
+//        final Spinner spinner = (Spinner) inflater.inflate(R.layout.module_spinner, (isRepeaterItem) ? parentLayout : questionWrapper, false);
+        final Spinner spinner = (Spinner) inflater.inflate(R.layout.module_spinner, questionWrapper, false);
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(context, R.layout.spinner_item, res.getStringArray(R.array.plotvariants));
+        spinnerAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+        spinner.setAdapter(spinnerAdapter);
         Cursor spinnervalues;
 
         // get display config
@@ -1890,7 +1895,11 @@ public class DynamicQuestions {
         //  answerIdTemp = repeaterAnswers.getInt(repeaterAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ID));
         final int answerId = answerIdTemp;
 
-        final Spinner spinner = (Spinner) inflater.inflate(R.layout.module_spinner, (isRepeaterItem) ? parentLayout : questionWrapper, false);
+//        final Spinner spinner = (Spinner) inflater.inflate(R.layout.module_spinner, (isRepeaterItem) ? parentLayout : questionWrapper, false);
+        final Spinner spinner = (Spinner) inflater.inflate(R.layout.module_spinner, questionWrapper, false);
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(context, R.layout.spinner_item, res.getStringArray(R.array.plotvariants));
+        spinnerAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+        spinner.setAdapter(spinnerAdapter);
         Cursor spinnervalues;
 
         // get display config
@@ -3988,5 +3997,8 @@ public class DynamicQuestions {
 
         return completedQuestionIds.containsAll(requiredQuestionIds);
     }
+
+
+
 
 }
