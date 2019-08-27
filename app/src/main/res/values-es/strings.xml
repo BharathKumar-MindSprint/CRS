@@ -482,7 +482,7 @@
     <string name="inspection_question" />
     <string name="followup_question">Any children found during follow-up?</string>
     <string name="add_child">Add Child</string>
-    <string name="full_name">Full name</string>
+    <string name="full_name">Child name</string>
     <string name="age">Age</string>
     <string name="add">Add</string>
     <string name="checking_child_enumerator">Checking Child Enumerator</string>
@@ -502,4 +502,5 @@
     <string name="followup">FollowUp</string>
     <string name="child_updated_successfully">Child Updated Successfully</string>
     <string name="downloading_child_data">Downloading Child Data</string>
+    <string name="no_child_registered">Register Child to enable the surveys</string>
 </resources>

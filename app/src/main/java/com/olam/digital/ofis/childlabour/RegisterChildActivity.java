@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NavUtils;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatCheckBox;
@@ -45,7 +46,13 @@ public class RegisterChildActivity extends BaseActivity implements View.OnClickL
             farmerId=getIntent().getExtras().getLong(ChildLabourUtils.CHILD_FARMER_ID);
         }catch (Exception e){}
         populateChildList();
+        childLimit();
+    }
 
+    private void childLimit() {
+        if (childLabourRecyclerAdapter!=null && childLabourRecyclerAdapter.getItemCount()>= 30){
+            addChildButton.setBackgroundColor(ContextCompat.getColor(this, R.color.child_survey_row));
+        }
     }
 
     @Override
@@ -85,13 +92,6 @@ public class RegisterChildActivity extends BaseActivity implements View.OnClickL
                 }
             });
         }
-
-//        if (childLabourRecyclerAdapter !=null) {
-//            if (childLabourRecyclerAdapter.getItemCount() >= 30) {
-//               // addChildButton.setEnabled(false);
-//                Toast.makeText(RegisterChildActivity.this,getResources().getString(R.string.child_max_limit),Toast.LENGTH_LONG).show();
-//            }
-//        }
     }
 
     private void initEvents() {
@@ -113,8 +113,6 @@ public class RegisterChildActivity extends BaseActivity implements View.OnClickL
 
         if(v.getId() == R.id.addChildButton){
             if (childLabourRecyclerAdapter!=null && childLabourRecyclerAdapter.getItemCount()>= 30){
-
-                        Toast.makeText(RegisterChildActivity.this,getResources().getString(R.string.child_max_limit),Toast.LENGTH_LONG).show();
                 return;
             }
                 Intent newChildIntent = new Intent(RegisterChildActivity.this, AddNewChildActivity.class);
