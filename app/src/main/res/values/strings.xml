@@ -503,7 +503,7 @@
     <string name="followup_question">No children found during followup</string>
     <string name="add_child">Add Child</string>
     <string name="update_child">Update Child</string>
-    <string name="full_name">Full name</string>
+    <string name="full_name">Child name</string>
     <string name="age">Age</string>
     <string name="add">Add</string>
     <string name="checking_child_enumerator">Checking Child Enumerator</string>
