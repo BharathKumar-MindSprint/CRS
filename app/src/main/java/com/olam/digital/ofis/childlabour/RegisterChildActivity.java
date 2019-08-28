@@ -91,6 +91,7 @@ public class RegisterChildActivity extends BaseActivity implements View.OnClickL
                     }
                 }
             });
+            childLimit();
         }
     }
 

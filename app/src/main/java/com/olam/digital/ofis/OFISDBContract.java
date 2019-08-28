@@ -637,7 +637,6 @@ public class OFISDBContract {
                     add(COLUMN_NAME_FARMER_ID);
                     add(COLUMN_NAME_SURVEY_CODE);
                     add(COLUMN_NAME_SURVEY_DESCRIPTION);
-                    add(COLUMN_NAME_SURVEY_VISIT_SYNCED);
                 }}
         );
     }
