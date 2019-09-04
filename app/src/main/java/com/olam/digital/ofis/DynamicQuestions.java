@@ -122,7 +122,9 @@ public class DynamicQuestions {
         return instance;
     }
 
+
    public static void clearInstance() {
+
         instance = null;
     }
 
@@ -550,6 +552,7 @@ public class DynamicQuestions {
             JSONObject displayConfig = new JSONObject(qCursor.getString(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION)));
 
             if (displayConfig.has("surveyrange")) {
+
                 if (datatype.equals("decimal")) {
                     tv.setText(Html.fromHtml(tv.getText().toString() + "(Min Value: " + String.valueOf(BigDecimal.valueOf(displayConfig.getJSONObject("surveyrange").getDouble("min")).floatValue()) +
                             "\t Max value: " + String.valueOf(BigDecimal.valueOf(displayConfig.getJSONObject("surveyrange").getDouble("max")).floatValue()) +")" ), TextView.BufferType.SPANNABLE);
@@ -560,6 +563,8 @@ public class DynamicQuestions {
 
                 }
 
+
+               
             }
             if (displayConfig.has("display")) {
                 JSONObject display = displayConfig.getJSONObject("display");
@@ -1012,7 +1017,7 @@ public class DynamicQuestions {
                 if ((!showDay) && (!showMonth) && (showyear)) {
                     // just the year, show the fifty year dropdown instead
                     final Spinner spinner = (Spinner) inflater.inflate(R.layout.module_spinner, (isRepeaterItem) ? parentLayout : questionWrapper, false);
-                  //  String[] since1950 = Utilities.since1950();
+                    //  String[] since1950 = Utilities.since1950();
                     String[] since1900= Utilities.since1900();
 
                     ArrayAdapter<String> adapter = new ArrayAdapter<>(context, R.layout.spinner_item, since1900);
@@ -1170,7 +1175,7 @@ public class DynamicQuestions {
                 if ((!showDay) && (!showMonth) && (showyear)) {
                     // just the year, show the fifty year dropdown instead
                     final Spinner spinner = (Spinner) inflater.inflate(R.layout.module_spinner, (isRepeaterItem) ? parentLayout : questionWrapper, false);
-                  //  String[] since1950 = Utilities.since1950();
+                    //  String[] since1950 = Utilities.since1950();
                     String[] since1900= Utilities.since1900();
                     ArrayAdapter<String> adapter = new ArrayAdapter<>(context, R.layout.spinner_item, since1900);
                     adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
@@ -1367,6 +1372,7 @@ public class DynamicQuestions {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
                 try {
+
                     /*if (fetchMinMaxValue(finalDisplayConfig, AppConstants.RANGE_MAX) != 0
                                 || fetchMinMaxValue(finalDisplayConfig, AppConstants.RANGE_MIN) != 0 ? true : false) {
                       if (Float.parseFloat(et.getText().toString()) > fetchMinMaxValue(finalDisplayConfig, AppConstants.RANGE_MAX)) {
@@ -1375,6 +1381,7 @@ public class DynamicQuestions {
                       }
 
                     }*/
+
                 }catch (Exception e){
                     e.printStackTrace();
                 }
@@ -1396,20 +1403,26 @@ public class DynamicQuestions {
             }
         });
 
+
        /* et.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if(et.getText().toString().length() > 0) {
                     if (fetchMinMaxValue(finalDisplayConfig, AppConstants.RANGE_MAX) != 0
                             || fetchMinMaxValue(finalDisplayConfig, AppConstants.RANGE_MIN) != 0 ? true : false) {
+
                         if (Float.parseFloat(et.getText().toString()) < fetchMinMaxValue(finalDisplayConfig, AppConstants.RANGE_MIN)) {
+
                             et.setText("");
                             Toast.makeText(context, R.string.valid_range, Toast.LENGTH_LONG).show();
                         }
                     }
                 }
             }
+
         });*/
+
 
         if (isRepeaterItem) {
             parentLayout.addView(et);
@@ -1418,6 +1431,7 @@ public class DynamicQuestions {
             parentLayout.addView(questionWrapper);
         }
     }
+
 
    /* private int fetchMinMaxValue(JSONObject displayConfig, String rangeMinMax) {
         // get disp"lay config to see if question has display range
@@ -1437,6 +1451,7 @@ public class DynamicQuestions {
         try {
             if (displayConfig.has("surveyrange")) {
                 return BigDecimal.valueOf(displayConfig.getJSONObject("surveyrange").getDouble(rangeMinMax)).floatValue();
+
             }
 
         } catch (JSONException e) {
@@ -2932,7 +2947,7 @@ public class DynamicQuestions {
         int answerIdTemp = 0;
 
         try {
-          if(is_subset_questions_requiredduplicate==null){
+            if(is_subset_questions_requiredduplicate==null){
 
                 is_subset_questions_requiredduplicate="";
             }
@@ -3659,7 +3674,7 @@ public class DynamicQuestions {
                 if ((!showDay) && (!showMonth) && (showyear)) {
                     // just the year, show the fifty year dropdown instead
                     final Spinner spinner = (Spinner) inflater.inflate(R.layout.module_spinner, (isRepeaterItem) ? parentLayout : questionWrapper, false);
-                   // String[] since1950 = Utilities.since1950();
+                    // String[] since1950 = Utilities.since1950();
                     String[] since1900= Utilities.since1900();
                     ArrayAdapter<String> adapter = new ArrayAdapter<>(context, R.layout.spinner_item, since1900);
                     adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
