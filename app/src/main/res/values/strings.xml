@@ -456,6 +456,7 @@
         <item>Cash</item>
         <item>Mobile Money</item>
     </string-array>
+    <string name="valid_range">The data you have entered is outside the range</string>
     <string name="mmCash_mobilemoney">Mobile Money</string>
     <string name="mmCash_cash">Cash</string>
     <string name="mobile_money_suffix">using Mobile Money</string>
