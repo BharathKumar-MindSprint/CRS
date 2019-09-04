@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 
 import com.google.firebase.crash.FirebaseCrash;
+import com.google.gson.JsonArray;
 import com.olam.digital.ofis.OFISDBContract;
 import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.Utilities;
@@ -39,7 +40,19 @@ class UpdateFarmersTask extends DatabaseTask {
 
                 JSONObject response = farmerResponse.getJSONObject("outputData");
 
+
                 JSONArray farmerArray, phonenumbersArray;
+                // child visit array start
+                try {
+                    JSONArray childvisitArray = farmerResponse.getJSONArray("childrenVisit");
+                    if (childvisitArray.length()>0) {
+                        fillTable(childvisitArray, OFISDBContract.ChildVisitDetails.TABLE_NAME, OFISDBContract.ChildVisitDetails.COLUMN_LIST);
+                    }
+                } catch (JSONException e) {
+                    FirebaseCrash.report(new Exception("UpdateFarmersTask: Error filling farmers table", e));
+                    e.printStackTrace();
+                }
+                //// child visit array End
 
                 try {
                     farmerArray = response.getJSONArray(OFISDBContract.FarmerEntry.TABLE_NAME);

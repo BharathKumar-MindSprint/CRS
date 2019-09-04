@@ -79,6 +79,9 @@ import com.karumi.dexter.listener.PermissionDeniedResponse;
 import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.PermissionListener;
+import com.olam.digital.ofis.childlabour.ChildLabourDetailsActivity;
+import com.olam.digital.ofis.childlabour.ChildLabourUtils;
+import com.olam.digital.ofis.childlabour.RegisterChildActivity;
 import com.olam.digital.ofis.recordpolygon.LocationBeanList;
 import com.olam.digital.ofis.recordpolygon.PlotsList;
 import com.olam.digital.ofis.recordpolygon.RecordPolygonActivity;
@@ -201,8 +204,8 @@ public class ViewFarmerActivity extends BaseListActivity {
         //noinspection ConstantConditions
         getActionBar().setDisplayHomeAsUpEnabled(true);
         mResolvingError = savedInstanceState != null && savedInstanceState.getBoolean(STATE_RESOLVING_ERROR, false);
-
         context = this;
+        ChildLabourUtils.isChildEnumerator=Utilities.getChildLabourPref(context,ChildLabourUtils.IS_CHILD_ENUMERATOR);
         res = getResources();
         dl = new DataLayer(res, context);
         pd = new ProgressDialog(context);
@@ -718,15 +721,21 @@ public class ViewFarmerActivity extends BaseListActivity {
          * Here we used SharedPreference to map OLAM Farmer ID with UUID.
          * Plot count value is important to showing alert to enter plots number of farmer at first time.
          */
-        final int strFarmID = (int) SharedPreferenceUtils
+        /*final String strFarmID =  SharedPreferenceUtils
                 .getInstance(getApplicationContext())
-                .getFarmerID(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
-        //final int strFarmID = farmer.getInt(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID));
+                .getFarmerID(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));*/
+        final String strFarmID = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID));
 
        // Some farm Id is getting null.
+        DataLayer dl = new DataLayer(getResources(), ViewFarmerActivity.this);
+        dl.fetchPlotData(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
         int count =0;
-        if(strFarmID != 0){
-            count = SharedPreferenceUtils.getInstance(getApplicationContext()).getPlotCount(""+strFarmID);
+//        if(strFarmID != "0"){
+        try{
+//            count = SharedPreferenceUtils.getInstance(getApplicationContext()).getPlotCount(""+strFarmID);
+           count = dl.fetchPlotData(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
+        }catch (Exception e){
+            count = 0;
         }
 
 
@@ -774,7 +783,7 @@ public class ViewFarmerActivity extends BaseListActivity {
                             if (lPlotCount > 0) {
                                 Intent recordPolygonIntent = new Intent(context, RecordPolygonActivity.class);
                                 recordPolygonIntent.putExtra(FARMER_ID, farmerId);
-                                recordPolygonIntent.putExtra(FARM_ID, strFarmID);
+                                recordPolygonIntent.putExtra(FARM_ID, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
                                 recordPolygonIntent.putExtra(OLAM_FARMER_ID, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
                                 recordPolygonIntent.putExtra(FARMER_NAME, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME)));
                                 recordPolygonIntent.putExtra(PLOT_COUNT, lPlotCount);
@@ -794,7 +803,7 @@ public class ViewFarmerActivity extends BaseListActivity {
         } else {
             Intent recordPolygonIntent = new Intent(context, RecordPolygonActivity.class);
             recordPolygonIntent.putExtra(FARMER_ID, farmerId);
-            recordPolygonIntent.putExtra(FARM_ID, strFarmID);
+            recordPolygonIntent.putExtra(FARM_ID,  farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
             recordPolygonIntent.putExtra(OLAM_FARMER_ID, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
             recordPolygonIntent.putExtra(FARMER_NAME, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME)));
             recordPolygonIntent.putExtra(PLOT_COUNT, count);
@@ -1067,7 +1076,7 @@ public class ViewFarmerActivity extends BaseListActivity {
                 intent.putExtra(MODULE_ID, id);
                 intent.putExtra(FARMER_MODULE_ID, (String.valueOf(farmerModuleIdTv.getText()).equals("")) ? 0 : Long.parseLong(String.valueOf(farmerModuleIdTv.getText())));
                 intent.putExtra(SUB_MODULE_ID, (String.valueOf(subModuleTv.getText()).equals("")) ? 0 : Integer.parseInt(String.valueOf(subModuleTv.getText())));
-                intent.putExtra(FARM_ID, farmer.getInt(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_ID)));
+                intent.putExtra(FARM_ID, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
                 intent.putExtra(STATUS_STARTED, (String.valueOf(statusStartedTv.getText()).equals("")) ? 0 : Integer.parseInt(String.valueOf(statusStartedTv.getText())));
                 intent.putExtra(STATUS_FINISHED, (String.valueOf(statusFinishedTv.getText()).equals("")) ? 0 : Integer.parseInt(String.valueOf(statusFinishedTv.getText())));
                 intent.putExtra(OLAM_FARMER_ID, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
@@ -1094,6 +1103,18 @@ public class ViewFarmerActivity extends BaseListActivity {
                     } else if (recordedLng != null && recordedLng.getText().equals("farmpolygon")) {
                         polygon=true;
                         enableFarmPolygon(v);
+                    } else if (recordedLng != null && recordedLng.getText().equals(ChildLabourUtils.REG_CHILD)) {
+                       Intent in = new Intent(this, RegisterChildActivity.class);
+                       Bundle bundle=new Bundle();
+                       bundle.putLong(ChildLabourUtils.CHILD_FARMER_ID, farmerId);
+                       in.putExtras(bundle);
+                       startActivity(in);
+                    } else if (recordedLng != null && recordedLng.getText().equals(ChildLabourUtils.CHILDLABOUR_SURVEY)) {
+                        Intent in = new Intent(this, ChildLabourDetailsActivity.class);
+                        Bundle bundle=new Bundle();
+                        bundle.putLong(ChildLabourUtils.CHILD_FARMER_ID, farmerId);
+                        in.putExtras(bundle);
+                        startActivity(in);
                     } else {
                         polygon=false;
                         recordFarmLocation(v);

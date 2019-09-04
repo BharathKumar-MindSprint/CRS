@@ -236,7 +236,7 @@ public class RecordPolygonActivity extends Activity implements AdapterView.OnIte
         mOlamFarmerId = getIntent().getStringExtra(OLAM_FARMER_ID);
         mFarmerName = getIntent().getStringExtra(FARMER_NAME);
         lPlotCount = getIntent().getIntExtra(PLOT_COUNT, 0);
-        SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmID("" + mFarmId);
+        SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmID("" + mOlamFarmerId);
 
         farmerName = (TextView) findViewById(R.id.farmer_name);
         olamFarmerId = (TextView) findViewById(R.id.olam_farmer_id);
@@ -1286,7 +1286,7 @@ public class RecordPolygonActivity extends Activity implements AdapterView.OnIte
 
                 String plotGeoJson = SharedPreferenceUtils.getInstance(getApplicationContext()).setLocationBeanList(currentTrackname, lLocationBeanList);
 
-                String plotId = currentTrackname.toLowerCase().replace(" ", "").toString().concat("_" + mFarmId);
+                String plotId = currentTrackname.toLowerCase().replace(" ", "").toString().concat("_" + mOlamFarmerId);
                 savePlotGeoDataJsonToDatabase(plotGeoJson, plotId);
 
                 try {
@@ -1330,7 +1330,7 @@ public class RecordPolygonActivity extends Activity implements AdapterView.OnIte
             //plotGeoJson = Base64.encodeToString(plotGeoJson.getBytes(), Base64.NO_WRAP);
 
             if (plotName != null && plotGeoJson != null) {
-                dl.updatePlotGeoData(mFarmId, plotName, plotGeoJson);
+                dl.updatePlotGeoData(mOlamFarmerId, plotName, plotGeoJson);
             }
         }
     }
@@ -1357,11 +1357,11 @@ public class RecordPolygonActivity extends Activity implements AdapterView.OnIte
             JSONArray plotsArray = new JSONArray();
 
             for (int i = 0; i < c.getCount(); i++) {
-                int farmId = c.getInt(c.getColumnIndex(OFISDBContract.PlotGeoData.COLUMN_NAME_FARM_ID));
+                String farmId = c.getString(c.getColumnIndex(OFISDBContract.PlotGeoData.COLUMN_NAME_FARM_ID));
 
                 String syncFlag = c.getString(c.getColumnIndex(OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_SYNC_FLAG));
 
-                if (farmId == mFarmId && syncFlag.equals("false")) {
+                if (farmId.equalsIgnoreCase(mOlamFarmerId) && syncFlag.equals("false")) {
                     JSONObject plotsObj = new JSONObject(c.getString(c.getColumnIndex(OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_JSON)));
                     plotsObj.putOpt("plotid", c.getString(c.getColumnIndex(OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_NAME)));
 
@@ -1391,7 +1391,7 @@ public class RecordPolygonActivity extends Activity implements AdapterView.OnIte
         DataLayer dl = new DataLayer(getResources(), RecordPolygonActivity.this);
         if (plotsJson != null) {
             plotsJson = Base64.encodeToString(plotsJson.getBytes(), Base64.NO_WRAP);
-            dl.updateFarmPolygon(mFarmerId, plotsJson, mOlamFarmerId, mFarmId, mFarmerName);
+            dl.updateFarmPolygon(mFarmerId, plotsJson, mOlamFarmerId, mFarmerName);
         }
     }
 
@@ -1485,7 +1485,7 @@ public class RecordPolygonActivity extends Activity implements AdapterView.OnIte
                 spinnerArrayAdapter.setDropDownViewResource(android.R.layout
                         .simple_spinner_dropdown_item);
                 spinnerPlotList.setAdapter(spinnerArrayAdapter);
-                SharedPreferenceUtils.getInstance(getApplicationContext()).setPlotCount("" + mFarmId, lPlotCount);
+                SharedPreferenceUtils.getInstance(getApplicationContext()).setPlotCount("" + mOlamFarmerId, lPlotCount);
                 dialog.dismiss();
             }
         });

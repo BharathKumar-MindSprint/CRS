@@ -39,7 +39,7 @@ public class StartRecordPolygonActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_record_polygon);
         res = getResources();
-        SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmID("41526");
+//        SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmID("41526");
         List<LocationBeanList>  aLocationBeanList = SharedPreferenceUtils.getInstance(getApplicationContext()).getAllLocations();
         String s = getPlotsJsonFromLocationBeanList(aLocationBeanList);
         Log.v("PLOTS", s);
@@ -73,7 +73,7 @@ public class StartRecordPolygonActivity extends Activity {
         DataLayer dl = new DataLayer(getResources(), StartRecordPolygonActivity.this);
         if (plotsJson != null) {
             plotsJson = Base64.encodeToString(plotsJson.getBytes(), Base64.NO_WRAP);
-            int updated = dl.updateFarmPolygon(48592, plotsJson, "VI-1358-CO38", 41526, "BUI MANH HUNG");
+            int updated = dl.updateFarmPolygon(48592, plotsJson, "VI-1358-CO38", "BUI MANH HUNG");
         }
     }
 
