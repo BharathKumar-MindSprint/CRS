@@ -294,6 +294,7 @@
     <string name="fullreview_farm_management_plan_in_progress">Full Review in Progress</string>
     <string name="fmp_are_you_sure">This will require a new plan to be printed, are you sure you want to proceed?</string>
     <string name="complete_all_required_fields">You must complete all required fields before you can submit this item (i.e. questions displaying a red *)</string>
+    <string name="complete_all_required_fields_mandatry">Survey Configuration Error. Please submit an Ask for help.</string>
     <string name="ReadAndAgreeConsent">Read and agree to consent statement</string>
     <string name="consentStatementMain1">It is necessary for you to supply us with personal data in connection with the Olam sustainability programme of which you are part of. This personal data will be collected and stored on the Olam Farmer Information System ("<strong>OFIS</strong>"). You may subsequently withdraw any consent given for our collection, use and disclosure of your personal data. However, failure to supply your personal data and/or subsequent withdrawal of your consent may result in you being unable to participate in the sustainability programme.</string>
     <string name="consentStatementMain2">
@@ -456,7 +457,6 @@
         <item>Cash</item>
         <item>Mobile Money</item>
     </string-array>
-    <string name="valid_range">The data you have entered is outside the range</string>
     <string name="mmCash_mobilemoney">Mobile Money</string>
     <string name="mmCash_cash">Cash</string>
     <string name="mobile_money_suffix">using Mobile Money</string>
