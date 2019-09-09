@@ -3313,6 +3313,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         submission.put("surveyYear",submissionDate.substring(0,4));
                         submission.put("moduleId",moduleId);
                         submission.put("farmerId",farmerModule.getInt(farmerModule.getColumnIndex(OFISDBContract.FarmerChildModulesEntry.COLUMN_NAME_FARMER_ID)));
+                        submission.put("surveyCode",surveyCode);
 
                         submission.put("uploadAttempts", networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ATTEMPTS)));
                         submission.put("uploadId", networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ID)));
