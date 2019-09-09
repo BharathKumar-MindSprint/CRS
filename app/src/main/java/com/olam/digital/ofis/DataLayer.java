@@ -3275,7 +3275,7 @@ if (ChildLabourUtils.isChildEnumerator) {
 
 
     // Remove and update after sync
-    void syncChildFarmerModule(int farmerModuleId, long childId, int moduleId, String submissionDate) {
+    void syncChildFarmerModule(int farmerModuleId, long childId, int moduleId, String submissionDate,String surveyCode) {
         String whereClause = OFISDBContract.AnswerChildEntry.COLUMN_NAME_FARMER_MODULE_ID + " = ?";
         String[] whereArgs = new String[]{String.valueOf(farmerModuleId)};
 
@@ -3295,6 +3295,7 @@ if (ChildLabourUtils.isChildEnumerator) {
 
                 JSONObject newModuleEntry = new JSONObject();
                 newModuleEntry.put("id", moduleId);
+                newModuleEntry.put("surveyCode",surveyCode);
                 newModuleEntry.put("created_at", submissionDate);
 
 //                JSONObject newModule = new JSONObject();

@@ -46,6 +46,22 @@ public class ChildVisitDetailActivity  extends BaseActivity implements View.OnCl
         if (farmerId!=null){
             farmerName=getResources().getString(R.string.farmer)+": "+new ChildLabourLogic().getFarmerName(this,farmerId);
         }
+        getSubmittedSurveyDetails();
+    }
+
+    private void getSubmittedSurveyDetails() {
+        List<String>  submittedModuleCodes = new ChildLabourLogic().getAllChildSubmittedModulesDetails(this, Long.valueOf(farmerId));
+        if (submittedModuleCodes.contains(ChildLabourUtils.HOUSEHOLD_SURVEY_CODE)){
+            houseHoldCheckBox.setEnabled(false);
+            b_household = false;
+        }
+        if (submittedModuleCodes.contains(ChildLabourUtils.INSPECTION_SURVEY_CODE)){
+            inspectionCheckBox.setEnabled(false);
+            b_inspection=false;
+        }
+        if (submittedModuleCodes.contains(ChildLabourUtils.FOLLOWUP_SURVEY_CODE)){
+            followUpCheckBox.setEnabled(false);
+        }
 
     }
 
@@ -183,6 +199,7 @@ public class ChildVisitDetailActivity  extends BaseActivity implements View.OnCl
     protected void onResume() {
         super.onResume();
         getBundleValues();
+        getSubmittedSurveyDetails();
     }
 
     @Override
