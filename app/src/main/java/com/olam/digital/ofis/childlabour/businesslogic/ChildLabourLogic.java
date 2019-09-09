@@ -5,17 +5,22 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.LabeledIntent;
 import android.database.Cursor;
+import android.support.v4.content.ContextCompat;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.olam.digital.ofis.DataLayer;
 import com.olam.digital.ofis.OFISDBContract;
+import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.Utilities;
 import com.olam.digital.ofis.childlabour.AddNewChildActivity;
 import com.olam.digital.ofis.childlabour.ChildLabourUtils;
 import com.olam.digital.ofis.childlabour.ChildVisitDetailActivity;
 import com.olam.digital.ofis.childlabour.dto.ChildModuleDto;
 import com.olam.digital.ofis.childlabour.dto.ChildrenDTO;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -115,6 +120,38 @@ public class ChildLabourLogic {
             }
         }
         return visitList;
+    }
+
+    public List<String> getAllChildSubmittedModulesDetails(Context context, Long farmerId) {
+        dataLayer = new DataLayer(context.getResources(), context);
+        List<String> submittedModulesList = new ArrayList<String>();
+        Cursor cursor = dataLayer.getChildDetailsById(farmerId);
+
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
+
+                JSONObject submittedModules = null;
+                JSONArray submittedModulesArray=null;
+                try {
+                    String submittedModulesJSON = cursor.getString(cursor.getColumnIndex(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_SUBMITTED_MODULES));
+                    submittedModules=new JSONObject(submittedModulesJSON);
+                    submittedModulesArray= submittedModules.getJSONArray("modules");
+
+                    for (int i = 0; i < submittedModulesArray.length(); i++) {
+                        JSONObject submittedModule = submittedModulesArray.getJSONObject(i);
+
+                        if (submittedModule.has("surveyCode")) {
+                            String surveyCode=submittedModule.getString("surveyCode");
+                            if (surveyCode!=null && !surveyCode.equalsIgnoreCase("") )
+                            submittedModulesList.add(surveyCode);
+                        }
+                    }
+
+                }catch (Exception e){}
+
+            }
+        }
+        return submittedModulesList;
     }
 
     public List<ChildrenDTO> getChildDetailsById(Context context, Long farmerId) {
