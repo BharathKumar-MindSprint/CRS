@@ -2350,6 +2350,16 @@ if (ChildLabourUtils.isChildEnumerator) {
 
         return db.query(OFISDBContract.LookupValuesEntry.TABLE_NAME, tableColumns, querySelection, querySelectionValue, null, null, orderByValue);
     }
+    //check for lookupvalue for the question id
+    boolean getLookupValuesForQuestion(int questionId) {
+        String querySelection = OFISDBContract.LookupValuesEntry.COLUMN_NAME_QUESTION_ID + " = ?";
+        String[] querySelectionValue = new String[]{String.valueOf(questionId)};
+        int count = db.query(OFISDBContract.LookupValuesEntry.TABLE_NAME, null, querySelection, querySelectionValue, null, null, null).getCount();
+        if(count >0){
+            return true;
+        }else
+            return false;
+    }
 
     // SIP Modules tasks
     Cursor getSipLookupValuesForQuestion(int questionId, String questionColumn) {
@@ -2380,7 +2390,10 @@ if (ChildLabourUtils.isChildEnumerator) {
                 String.valueOf(moduleId),
                 "%\"requiredfield\":true%"
         };
-        String sql = "SELECT " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_ID + " FROM " + questionTable + " INNER JOIN " + submoduleTable
+        String sql = "SELECT " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_ID
+                + ", " + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION
+                + ", " + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE
+                + " FROM " + questionTable + " INNER JOIN " + submoduleTable
                 + " ON " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_SUBMODULE_ID + " = " + submoduleTable + "." + OFISDBContract.SubmoduleEntry.COLUMN_NAME_ID
                 + " INNER JOIN " + moduleTable + " ON " + submoduleTable + "." + OFISDBContract.SubmoduleEntry.COLUMN_NAME_MODULE_ID + " = " + moduleTable + "."
                 + OFISDBContract.ModuleEntry.COLUMN_NAME_ID + " WHERE " + whereClause;
@@ -3262,7 +3275,7 @@ if (ChildLabourUtils.isChildEnumerator) {
 
 
     // Remove and update after sync
-    void syncChildFarmerModule(int farmerModuleId, long childId, int moduleId, String submissionDate) {
+    void syncChildFarmerModule(int farmerModuleId, long childId, int moduleId, String submissionDate,String surveyCode) {
         String whereClause = OFISDBContract.AnswerChildEntry.COLUMN_NAME_FARMER_MODULE_ID + " = ?";
         String[] whereArgs = new String[]{String.valueOf(farmerModuleId)};
 
@@ -3282,6 +3295,7 @@ if (ChildLabourUtils.isChildEnumerator) {
 
                 JSONObject newModuleEntry = new JSONObject();
                 newModuleEntry.put("id", moduleId);
+                newModuleEntry.put("surveyCode",surveyCode);
                 newModuleEntry.put("created_at", submissionDate);
 
 //                JSONObject newModule = new JSONObject();
