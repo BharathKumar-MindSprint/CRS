@@ -140,6 +140,38 @@ public class DynamicQuestions {
         densitySubAnswers = new String[]{};
     }
 
+    public boolean checkDisplayStatus(int module) {
+        boolean value = true;
+        Cursor requiredQuestions = dl.getRequiredQuestionIds(module);
+        try {
+            if (requiredQuestions != null) {
+                if (requiredQuestions.moveToFirst()) {
+                    do {
+                        JSONObject displayConfig = new JSONObject(requiredQuestions.getString(requiredQuestions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION)));
+                        if (displayConfig.has("display")) {
+                            JSONObject display = displayConfig.getJSONObject("display");
+                            if (display.optBoolean("requiredfield", false)) {
+                                String type = requiredQuestions.getString(requiredQuestions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE));
+                                if(type.equalsIgnoreCase("DropDown") || type.equalsIgnoreCase("checkbox")){
+                                    int question_id = requiredQuestions.getInt(requiredQuestions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
+                                    if(!dl.getLookupValuesForQuestion(question_id)){
+                                        value = false;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    } while (requiredQuestions.moveToNext());
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            requiredQuestions.close();
+        }
+        return value;
+    }
+
     public boolean requiredFieldsAnswered(int farmerModuleId, int moduleId) {
         Cursor completedAnswers = dl.getAllAnswersByFarmerModuleId(farmerModuleId);
         Cursor requiredQuestions = dl.getRequiredQuestionIds(moduleId);

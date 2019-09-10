@@ -3261,6 +3261,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         final int farmerModuleId = networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_MODULE_ID));
         final long farmerId = networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
         final long childNwId=networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_CHILD_ID));
+        final String surveyCode=networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_SURVEY_CODE));
         Cursor moduleAnswers, extraInfo, farmerModule = dl.getFarmerChildModuleById(farmerModuleId);
 
         // farmer child register should check
@@ -3303,7 +3304,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         String storageDir = (context.getExternalFilesDir(null) != null) ? context.getExternalFilesDir(null).getPath() + "/" : "/";
                         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
                         submission.put("reportedData",submissionDate.substring(0,10));
-                        submission.put("submittedDate",timestamp.toString().substring(0,10));
+                        submission.put("submittedDate",submissionDate.substring(0,10));
                         submission.put("uploadDate", timestamp.toString().substring(0,10));
                         submission.put("enumeratorId", Long.valueOf(enumeratorId));
 
@@ -3312,6 +3313,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         submission.put("surveyYear",submissionDate.substring(0,4));
                         submission.put("moduleId",moduleId);
                         submission.put("farmerId",farmerModule.getInt(farmerModule.getColumnIndex(OFISDBContract.FarmerChildModulesEntry.COLUMN_NAME_FARMER_ID)));
+                        submission.put("surveyCode",surveyCode);
 
                         submission.put("uploadAttempts", networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ATTEMPTS)));
                         submission.put("uploadId", networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ID)));
@@ -3468,7 +3470,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 String statusMessage;
                                 if (postResponse.isSuccessful()) {
                                     // should pass the Child Id instead of farmer ID
-                                    dl.syncChildFarmerModule(farmerModuleId, childId, moduleId, submissionDate);
+                                    dl.syncChildFarmerModule(farmerModuleId, childId, moduleId, submissionDate,surveyCode);
                                     dl.deleteNetworkQueueItem(networkQueueItemId);
                                     statusMessage = res.getString(R.string.item_synced);
                                     msg.what = 1;
