@@ -114,6 +114,7 @@ public class RegisterChildActivity extends BaseActivity implements View.OnClickL
 
         if(v.getId() == R.id.addChildButton){
             if (childLabourRecyclerAdapter!=null && childLabourRecyclerAdapter.getItemCount()>= 30){
+                Toast.makeText(RegisterChildActivity.this,getResources().getString(R.string.child_max_limit),Toast.LENGTH_LONG).show();
                 return;
             }
                 Intent newChildIntent = new Intent(RegisterChildActivity.this, AddNewChildActivity.class);

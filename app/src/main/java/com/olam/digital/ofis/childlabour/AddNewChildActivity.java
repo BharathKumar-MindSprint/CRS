@@ -109,7 +109,8 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
              }
             lastClickTime=SystemClock.elapsedRealtime();
          }else if (v.getId() == R.id.maleButton) {
-             gender = getResources().getString(R.string.gender_male);
+             gender=ChildLabourUtils.MALE;
+            // gender = getResources().getString(R.string.gender_male);
              femaleButton.setBackgroundColor(getResources().getColor(R.color.gender_selected));
              maleButton.setBackgroundResource(R.drawable.gender_male_selected);
 
@@ -117,7 +118,8 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
              maleButton.setTextColor(getResources().getColor(android.R.color.black));
 
          } else if (v.getId() == R.id.femaleButton) {
-             gender = getResources().getString(R.string.gender_female);
+             gender=ChildLabourUtils.FEMALE;
+            // gender = getResources().getString(R.string.gender_female);
 
              femaleButton.setBackgroundResource(R.drawable.gender_female_selected);
              femaleButton.setTextColor(getResources().getColor(android.R.color.black));
