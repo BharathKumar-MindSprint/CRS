@@ -495,7 +495,7 @@
     <string name="child_not_synced">Désolé, l\'enfant n\'a pas encore été synchronisé. Veuillez synchroniser l\'enfant en premier s\’il vous plaît.</string>
     <string name="fill_child_name">Veuillez entrer le nom de l\’enfant s\’il vous plaît</string>
     <string name="yrs">Années</string>
-    <string name="child_max_limit">Vous êtes autorisé à enregistrer un maximum de 30 enfants par producteur.</string>
+    <string name="child_max_limit">Vous êtes autorisé à enregistrer un maximum de 30 enfants par producteur</string>
     <string name="new_child">Nouvel enfant</string>
     <string name="child">Enfant</string>
     <string name="farmer">Producteur</string>
