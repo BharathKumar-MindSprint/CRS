@@ -1,5 +1,9 @@
 package com.olam.digital.ofis.childlabour;
 
+import android.content.Context;
+
+import com.olam.digital.ofis.R;
+
 public class ChildLabourUtils {
 
     public static final String VILLAGE_NAME="village";
@@ -18,4 +22,16 @@ public class ChildLabourUtils {
 
     public static boolean isChildEnumerator=false;
 
+    public static String getTranslatedGender(Context mContext, String gender) {
+        String sex;
+        if (gender.equalsIgnoreCase(MALE)){
+            sex=mContext.getResources().getString(R.string.gender_male);
+        }else if (gender.equalsIgnoreCase(FEMALE)){
+            sex=mContext.getResources().getString(R.string.gender_female);
+        }else {
+            sex="";
+        }
+
+        return sex;
+    }
 }
