@@ -22,6 +22,11 @@ public class ChildLabourUtils {
 
     public static boolean isChildEnumerator=false;
 
+    public static final String ACTION="action";
+    public static final String NEW="new";
+    public static final String EDIT="edit";
+    public static final String SYNC_EDIT="sync_edit";
+
     public static String getTranslatedGender(Context mContext, String gender) {
         String sex;
         if (gender.equalsIgnoreCase(MALE)){

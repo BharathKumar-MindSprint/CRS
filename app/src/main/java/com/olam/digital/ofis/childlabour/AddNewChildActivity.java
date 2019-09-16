@@ -132,6 +132,7 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
 
     private void setAgeSpinner() {
         ageList = new ArrayList<String>();
+        ageList.add(getResources().getString(R.string.please_select));
         for (int i = 0; i <= 17; i++) {
             ageList.add(Integer.toString(i));
         }
@@ -147,8 +148,14 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
             Toast.makeText(AddNewChildActivity.this,getResources().getString(R.string.fill_child_name),Toast.LENGTH_LONG).show();
             return;
         }
-        String age = ageSpinner.getSelectedItem().toString();
-        if(getIntent().getStringExtra("action").equalsIgnoreCase("new")){
+       // String age = ageSpinner.getSelectedItem().toString();
+
+        if (ageSpinner.getSelectedItemId()==0){
+            Toast.makeText(AddNewChildActivity.this,getResources().getString(R.string.please_select_Age),Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        if(getIntent().getStringExtra(ChildLabourUtils.ACTION).equalsIgnoreCase(ChildLabourUtils.NEW)){
             submitChild(name);
         }else {
             UpdateChild(name);
@@ -174,7 +181,7 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
         updatecontentValues.put(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_CREATEDAT, childrenDTO.getCreatedAt());*/
         long newChildId= new ChildLabourLogic().updateChildDetails(this,contentValues,childrenDTO.getId(),farmerName,name);
         if (newChildId != -1){
-            if(action.equalsIgnoreCase("new")){
+            if(action.equalsIgnoreCase(ChildLabourUtils.NEW)){
                 Toast.makeText(this,getResources().getString(R.string.child_register_successfully),Toast.LENGTH_LONG).show();
             }else{
                 Toast.makeText(this,getResources().getString(R.string.child_updated_successfully),Toast.LENGTH_LONG).show();
@@ -198,7 +205,7 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
 
         long newChildId= new ChildLabourLogic().insertChildDetails(this,contentValues,farmerName);
         if (newChildId != -1){
-            if(action.equalsIgnoreCase("new")){
+            if(action.equalsIgnoreCase(ChildLabourUtils.NEW)){
                 Toast.makeText(this,getResources().getString(R.string.child_register_successfully),Toast.LENGTH_LONG).show();
             }else{
                 Toast.makeText(this,getResources().getString(R.string.child_updated_successfully),Toast.LENGTH_LONG).show();
@@ -210,16 +217,16 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
     public void getBundleValues() {
         try{
             Bundle bundle = this.getIntent().getExtras();
-            action=bundle.getString("action");
-            if (action.equalsIgnoreCase("new")){
+            action=bundle.getString(ChildLabourUtils.ACTION);
+            if (action.equalsIgnoreCase(ChildLabourUtils.NEW)){
                 addNewChildButton.setText(getResources().getString(R.string.add_child));
                 farmerId=bundle.getString(ChildLabourUtils.CHILD_FARMER_ID);
-            }else if(action.equalsIgnoreCase("edit")){
+            }else if(action.equalsIgnoreCase(ChildLabourUtils.EDIT)){
                 addNewChildButton.setText(getResources().getString(R.string.update_child));
                 farmerId=bundle.getString(ChildLabourUtils.CHILD_FARMER_ID);
                 childrenDTO= (ChildrenDTO) bundle.getSerializable("children");
                 setValue(childrenDTO);
-            }else if(action.equalsIgnoreCase("sync_edit")){
+            }else if(action.equalsIgnoreCase(ChildLabourUtils.SYNC_EDIT)){
                 addNewChildButton.setText(getResources().getString(R.string.update_child));
                 farmerId = getIntent().getStringExtra(ChildLabourUtils.CHILD_FARMER_ID);
                 childId = getIntent().getStringExtra(ChildLabourUtils.CHILD_ID);
