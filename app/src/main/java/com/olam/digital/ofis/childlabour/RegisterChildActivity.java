@@ -83,7 +83,7 @@ public class RegisterChildActivity extends BaseActivity implements View.OnClickL
                     if(childrenDTO.getSynced().equalsIgnoreCase("0")){
                         Intent newChildIntent=new Intent(RegisterChildActivity.this,AddNewChildActivity.class);
                         Bundle childBundle=new Bundle();
-                        newChildIntent.putExtra("action","edit");
+                        newChildIntent.putExtra(ChildLabourUtils.ACTION,ChildLabourUtils.EDIT);
                         childBundle.putSerializable("children",childrenDTO);
                         childBundle.putString(ChildLabourUtils.CHILD_FARMER_ID,String.valueOf(farmerId));
                         newChildIntent.putExtras(childBundle);
@@ -119,7 +119,7 @@ public class RegisterChildActivity extends BaseActivity implements View.OnClickL
             }
                 Intent newChildIntent = new Intent(RegisterChildActivity.this, AddNewChildActivity.class);
                 newChildIntent.putExtras(childBundle);
-                newChildIntent.putExtra("action", "new");
+                newChildIntent.putExtra(ChildLabourUtils.ACTION, ChildLabourUtils.NEW);
                 startActivity(newChildIntent);
 
         }else if(v.getId()==R.id.childVisitDetailButton){
