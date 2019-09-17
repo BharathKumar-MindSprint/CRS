@@ -101,35 +101,38 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
 
     @Override
     public void onClick(View v) {
-         if (v.getId() == R.id.addNewChildButton){
-             if (SystemClock.elapsedRealtime() - lastClickTime < 3000){
-                 return;
-             }else{
-                 addNewChild();
-             }
+        if (v.getId() == R.id.addNewChildButton){
+            if (SystemClock.elapsedRealtime() - lastClickTime < 3000){
+                return;
+            }else{
+                addNewChild();
+            }
             lastClickTime=SystemClock.elapsedRealtime();
-         }else if (v.getId() == R.id.maleButton) {
-             gender = getResources().getString(R.string.gender_male);
-             femaleButton.setBackgroundColor(getResources().getColor(R.color.gender_selected));
-             maleButton.setBackgroundResource(R.drawable.gender_male_selected);
+        }else if (v.getId() == R.id.maleButton) {
+             gender=ChildLabourUtils.MALE;
+//            gender = getResources().getString(R.string.gender_male);
+            femaleButton.setBackgroundColor(getResources().getColor(R.color.gender_selected));
+            maleButton.setBackgroundResource(R.drawable.gender_male_selected);
 
-             femaleButton.setTextColor(getResources().getColor(R.color.gender_selected_text));
-             maleButton.setTextColor(getResources().getColor(android.R.color.black));
+            femaleButton.setTextColor(getResources().getColor(R.color.gender_selected_text));
+            maleButton.setTextColor(getResources().getColor(android.R.color.black));
 
-         } else if (v.getId() == R.id.femaleButton) {
-             gender = getResources().getString(R.string.gender_female);
+        } else if (v.getId() == R.id.femaleButton) {
+             gender=ChildLabourUtils.FEMALE;
+    //        gender = getResources().getString(R.string.gender_female);
 
-             femaleButton.setBackgroundResource(R.drawable.gender_female_selected);
-             femaleButton.setTextColor(getResources().getColor(android.R.color.black));
+            femaleButton.setBackgroundResource(R.drawable.gender_female_selected);
+            femaleButton.setTextColor(getResources().getColor(android.R.color.black));
 
-             maleButton.setBackgroundColor(getResources().getColor(R.color.gender_selected));
-             maleButton.setTextColor(getResources().getColor(R.color.gender_selected_text));
+            maleButton.setBackgroundColor(getResources().getColor(R.color.gender_selected));
+            maleButton.setTextColor(getResources().getColor(R.color.gender_selected_text));
 
-         }
+        }
     }
 
     private void setAgeSpinner() {
-         ageList = new ArrayList<String>();
+        ageList = new ArrayList<String>();
+        ageList.add(getResources().getString(R.string.please_select));
         for (int i = 0; i <= 17; i++) {
             ageList.add(Integer.toString(i));
         }
@@ -145,8 +148,14 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
             Toast.makeText(AddNewChildActivity.this,getResources().getString(R.string.fill_child_name),Toast.LENGTH_LONG).show();
             return;
         }
-        String age = ageSpinner.getSelectedItem().toString();
-        if(getIntent().getStringExtra("action").equalsIgnoreCase("new")){
+       // String age = ageSpinner.getSelectedItem().toString();
+
+        if (ageSpinner.getSelectedItemId()==0){
+            Toast.makeText(AddNewChildActivity.this,getResources().getString(R.string.please_select_Age),Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        if(getIntent().getStringExtra(ChildLabourUtils.ACTION).equalsIgnoreCase(ChildLabourUtils.NEW)){
             submitChild(name);
         }else {
             UpdateChild(name);
@@ -172,7 +181,7 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
         updatecontentValues.put(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_CREATEDAT, childrenDTO.getCreatedAt());*/
         long newChildId= new ChildLabourLogic().updateChildDetails(this,contentValues,childrenDTO.getId(),farmerName,name);
         if (newChildId != -1){
-            if(action.equalsIgnoreCase("new")){
+            if(action.equalsIgnoreCase(ChildLabourUtils.NEW)){
                 Toast.makeText(this,getResources().getString(R.string.child_register_successfully),Toast.LENGTH_LONG).show();
             }else{
                 Toast.makeText(this,getResources().getString(R.string.child_updated_successfully),Toast.LENGTH_LONG).show();
@@ -194,40 +203,40 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
         contentValues.put(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_SYNCED, 0);
         contentValues.put(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_CREATEDAT, timestamp.toString());
 
-       long newChildId= new ChildLabourLogic().insertChildDetails(this,contentValues,farmerName);
-       if (newChildId != -1){
-           if(action.equalsIgnoreCase("new")){
-               Toast.makeText(this,getResources().getString(R.string.child_register_successfully),Toast.LENGTH_LONG).show();
-           }else{
-               Toast.makeText(this,getResources().getString(R.string.child_updated_successfully),Toast.LENGTH_LONG).show();
-           }
-           finish();
-       }
+        long newChildId= new ChildLabourLogic().insertChildDetails(this,contentValues,farmerName);
+        if (newChildId != -1){
+            if(action.equalsIgnoreCase(ChildLabourUtils.NEW)){
+                Toast.makeText(this,getResources().getString(R.string.child_register_successfully),Toast.LENGTH_LONG).show();
+            }else{
+                Toast.makeText(this,getResources().getString(R.string.child_updated_successfully),Toast.LENGTH_LONG).show();
+            }
+            finish();
+        }
     }
 
     public void getBundleValues() {
         try{
             Bundle bundle = this.getIntent().getExtras();
-            action=bundle.getString("action");
-                if (action.equalsIgnoreCase("new")){
-                    addNewChildButton.setText(getResources().getString(R.string.add_child));
-                    farmerId=bundle.getString(ChildLabourUtils.CHILD_FARMER_ID);
-                }else if(action.equalsIgnoreCase("edit")){
-                    addNewChildButton.setText(getResources().getString(R.string.update_child));
-                    farmerId=bundle.getString(ChildLabourUtils.CHILD_FARMER_ID);
-                    childrenDTO= (ChildrenDTO) bundle.getSerializable("children");
-                    setValue(childrenDTO);
-                }else if(action.equalsIgnoreCase("sync_edit")){
-                    addNewChildButton.setText(getResources().getString(R.string.update_child));
-                    farmerId = getIntent().getStringExtra(ChildLabourUtils.CHILD_FARMER_ID);
-                    childId = getIntent().getStringExtra(ChildLabourUtils.CHILD_ID);
-                    childrenDTO= new ChildLabourLogic().getChildrenDTO(this,childId);
-                    setValue(childrenDTO);
+            action=bundle.getString(ChildLabourUtils.ACTION);
+            if (action.equalsIgnoreCase(ChildLabourUtils.NEW)){
+                addNewChildButton.setText(getResources().getString(R.string.add_child));
+                farmerId=bundle.getString(ChildLabourUtils.CHILD_FARMER_ID);
+            }else if(action.equalsIgnoreCase(ChildLabourUtils.EDIT)){
+                addNewChildButton.setText(getResources().getString(R.string.update_child));
+                farmerId=bundle.getString(ChildLabourUtils.CHILD_FARMER_ID);
+                childrenDTO= (ChildrenDTO) bundle.getSerializable("children");
+                setValue(childrenDTO);
+            }else if(action.equalsIgnoreCase(ChildLabourUtils.SYNC_EDIT)){
+                addNewChildButton.setText(getResources().getString(R.string.update_child));
+                farmerId = getIntent().getStringExtra(ChildLabourUtils.CHILD_FARMER_ID);
+                childId = getIntent().getStringExtra(ChildLabourUtils.CHILD_ID);
+                childrenDTO= new ChildLabourLogic().getChildrenDTO(this,childId);
+                setValue(childrenDTO);
 
 
-                }
+            }
         }catch (Exception e){
-                e.printStackTrace();
+            e.printStackTrace();
         }
 
     }
@@ -236,9 +245,9 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
         fullnameEditText.setText(childrenDTO.getName());
 
         if(childrenDTO.getGender().equalsIgnoreCase(ChildLabourUtils.MALE)){
-           maleButton.performClick();
+            maleButton.performClick();
         }else if(childrenDTO.getGender().equalsIgnoreCase(ChildLabourUtils.FEMALE)){
-           femaleButton.performClick();
+            femaleButton.performClick();
         }
         childId = childrenDTO.getId();
         if (childrenDTO.getAge() != null) {
