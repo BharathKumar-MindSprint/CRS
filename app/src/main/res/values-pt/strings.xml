@@ -492,7 +492,7 @@
     <string name="child_not_synced">Sorry, but the child has not yet been synced. Please sync the child first</string>
     <string name="fill_child_name">Please fill the child name</string>
     <string name="yrs">yrs</string>
-    <string name="child_max_limit">You have allowed maximum 30 children to register per farmer.</string>
+    <string name="child_max_limit">You have allowed maximum 30 children to register per farmer</string>
     <string name="new_child">New Child</string>
     <string name="child">Child</string>
     <string name="farmer">Farmer</string>
@@ -502,4 +502,5 @@
     <string name="child_updated_successfully">Child Updated Successfully</string>
     <string name="downloading_child_data">Downloading Child Enumerator Details</string>
     <string name="no_child_registered">Register Child to enable the surveys</string>
+    <string name="please_select_Age">Please select Age</string>
 </resources>

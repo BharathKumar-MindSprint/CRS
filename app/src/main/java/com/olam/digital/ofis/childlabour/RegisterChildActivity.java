@@ -83,7 +83,7 @@ public class RegisterChildActivity extends BaseActivity implements View.OnClickL
                     if(childrenDTO.getSynced().equalsIgnoreCase("0")){
                         Intent newChildIntent=new Intent(RegisterChildActivity.this,AddNewChildActivity.class);
                         Bundle childBundle=new Bundle();
-                        newChildIntent.putExtra("action","edit");
+                        newChildIntent.putExtra(ChildLabourUtils.ACTION,ChildLabourUtils.EDIT);
                         childBundle.putSerializable("children",childrenDTO);
                         childBundle.putString(ChildLabourUtils.CHILD_FARMER_ID,String.valueOf(farmerId));
                         newChildIntent.putExtras(childBundle);
@@ -114,11 +114,12 @@ public class RegisterChildActivity extends BaseActivity implements View.OnClickL
 
         if(v.getId() == R.id.addChildButton){
             if (childLabourRecyclerAdapter!=null && childLabourRecyclerAdapter.getItemCount()>= 30){
+                Toast.makeText(RegisterChildActivity.this,getResources().getString(R.string.child_max_limit),Toast.LENGTH_LONG).show();
                 return;
             }
                 Intent newChildIntent = new Intent(RegisterChildActivity.this, AddNewChildActivity.class);
                 newChildIntent.putExtras(childBundle);
-                newChildIntent.putExtra("action", "new");
+                newChildIntent.putExtra(ChildLabourUtils.ACTION, ChildLabourUtils.NEW);
                 startActivity(newChildIntent);
 
         }else if(v.getId()==R.id.childVisitDetailButton){

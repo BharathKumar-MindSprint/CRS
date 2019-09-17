@@ -588,6 +588,9 @@ public class CompleteModuleActivity extends BaseActivity {
                     Toast.makeText(context, res.getString(R.string.complete_all_required_fields), Toast.LENGTH_LONG).show();
                 }
             }else{
+                statusFinished = 0;
+                canSaveAndFinish = false;
+                dl.deleteNetworkQueueItemByFarmerModuleId((int) farmerModuleId);
                 Toast.makeText(context, res.getString(R.string.complete_all_required_fields_mandatry), Toast.LENGTH_LONG).show();
             }
         }

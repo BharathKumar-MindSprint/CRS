@@ -12,6 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.olam.digital.ofis.R;
+import com.olam.digital.ofis.childlabour.ChildLabourUtils;
 import com.olam.digital.ofis.childlabour.dto.ChildrenDTO;
 import com.olam.digital.ofis.childlabour.listener.OnItemChildClickListener;
 
@@ -47,7 +48,7 @@ public class ChildLabourRecyclerAdapter extends RecyclerView.Adapter<ChildLabour
     public void onBindViewHolder(@NonNull ChildHolder holder, final int position) {
         final ChildrenDTO childrenDTO=childrenList.get(position);
         holder.name.setText(childrenDTO.getName());
-        holder.gender.setText(childrenDTO.getGender());
+        holder.gender.setText(ChildLabourUtils.getTranslatedGender(mContext,childrenDTO.getGender()));
         holder.age.setText(childrenDTO.getAge() + " "+mContext.getResources().getString(R.string.yrs) );
 
         if(childrenDTO.getSynced().equalsIgnoreCase("1")){
