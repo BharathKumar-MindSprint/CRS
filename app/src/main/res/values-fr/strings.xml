@@ -507,6 +507,6 @@
     <string name="child_updated_successfully">Enfant mis à jour avec succès</string>
     <string name="downloading_child_data">Téléchargement des informations de l\’enumérateur</string>
     <string name="no_child_registered">Enregistrer l\'enfant pour activer les enquêtes</string>
-    <string name="please_select_Age">Please select Age</string>
+    <string name="please_select_Age">Veuillez selectionner l\'âge</string>
 
 </resources>
