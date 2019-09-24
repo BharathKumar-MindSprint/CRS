@@ -314,6 +314,7 @@
                 android:id="@+id/villageSpinner"
                 android:textColor="@color/ofis_base_font_white"
                 android:textSize="@dimen/ofis_input_field_text"
+                android:visibility="gone"
                 android:layout_marginBottom="@dimen/ofis_input_field_bottom_margin"
                 style="@style/Spinner"
                 />
