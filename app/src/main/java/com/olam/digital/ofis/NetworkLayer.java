@@ -34,6 +34,7 @@ import com.olam.digital.ofis.authentication.AuthenticationHelper;
 import com.olam.digital.ofis.authentication.AuthenticationInterface;
 import com.olam.digital.ofis.authentication.model.AuthRequestDTO;
 import com.olam.digital.ofis.authentication.model.AuthenticationDTO;
+import com.olam.digital.ofis.childlabour.ChildLabourUtils;
 import com.olam.digital.ofis.logging.FabricLogsWriter;
 import com.olam.digital.ofis.recordpolygon.SharedPreferenceUtils;
 import com.olam.digital.ofis.tasks.SyncAllTask;
@@ -3310,7 +3311,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                         // child Request Body
                         submission.put("childrenId",childRegisteredId);
-                        submission.put("surveyYear",submissionDate.substring(0,4));
+//                        submission.put("surveyYear",submissionDate.substring(0,4));
+                        submission.put("surveyYear", ChildLabourUtils.SURVEY_YEAR);
                         submission.put("moduleId",moduleId);
                         submission.put("farmerId",farmerModule.getInt(farmerModule.getColumnIndex(OFISDBContract.FarmerChildModulesEntry.COLUMN_NAME_FARMER_ID)));
                         submission.put("surveyCode",surveyCode);
@@ -3573,6 +3575,9 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     value.put("farmerId",reviewValues.getInt(reviewValues.getColumnIndex(OFISDBContract.ChildVisitDetails.COLUMN_NAME_FARMER_ID)));
                     value.put("surveyCode",reviewValues.getInt(reviewValues.getColumnIndex(OFISDBContract.ChildVisitDetails.COLUMN_NAME_SURVEY_CODE)));
                     value.put("surveyDescription",reviewValues.getString(reviewValues.getColumnIndex(OFISDBContract.ChildVisitDetails.COLUMN_NAME_SURVEY_DESCRIPTION)));
+                    String enumeratorId = Utilities.getFromSharedPrefs(context);
+                    value.put("enumeratorId",Integer.parseInt(enumeratorId));
+
                     checkavailstatus.put(value);
                 }
                 params.put("childAvailabilityStatus", checkavailstatus);

@@ -19,6 +19,7 @@ public class ChildLabourUtils {
     public static final String HOUSEHOLD_SURVEY_CODE="01";
     public static final String INSPECTION_SURVEY_CODE="02";
     public static final String FOLLOWUP_SURVEY_CODE="03";
+    public static final String SURVEY_YEAR ="2019";
 
     public static boolean isChildEnumerator=false;
 
