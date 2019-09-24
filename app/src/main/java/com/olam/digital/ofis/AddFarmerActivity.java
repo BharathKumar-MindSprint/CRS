@@ -175,7 +175,7 @@ public class AddFarmerActivity extends BaseActivity {
         sectionSpinner = (Spinner) this.findViewById(R.id.spinner_section);
 
         dl.createBusinessHierarchySpinners(this, context, farmerIdPrefix, selectedFarmerGroup, selectedSection);
-        dl.createGeographyHierarchySpinners(this, context, farmerIdPrefix, selectedCountry, selectedRegion, selectedDistrict, selectedPlace, phonenumbers);
+        dl.createGeographyHierarchySpinners(this, context, farmerIdPrefix, selectedCountry, selectedRegion, selectedDistrict, selectedPlace, phonenumbers,true);
 
         farmerPhotoActionButton = (ImageButton) findViewById(R.id.farmerPhotoActionButton);
         farmerPhotoActionButton.setOnClickListener(new View.OnClickListener() {
@@ -318,7 +318,7 @@ public class AddFarmerActivity extends BaseActivity {
         selectedSection = savedInstanceState.getInt(CAPTURED_SELECTED_SECTION, 0);
 
         dl.createBusinessHierarchySpinners(this, context, farmerIdPrefix, selectedFarmerGroup, selectedSection);
-        dl.createGeographyHierarchySpinners(this, context, farmerIdPrefix, selectedCountry, selectedRegion, selectedDistrict, selectedPlace, phonenumbers);
+        dl.createGeographyHierarchySpinners(this, context, farmerIdPrefix, selectedCountry, selectedRegion, selectedDistrict, selectedPlace, phonenumbers,true);
 
         super.onRestoreInstanceState(savedInstanceState);
     }

@@ -83,6 +83,7 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.SipSubGroupEntry.COLUMN_NAME_NAME_TR + " TEXT, " + OFISDBContract.SipSubGroupEntry.COLUMN_NAME_NAME_LO + " TEXT, "
             + OFISDBContract.SipSubGroupEntry.COLUMN_NAME_NAME_VI + " TEXT, " + OFISDBContract.SipSubGroupEntry.COLUMN_NAME_NAME_TH + " TEXT,"
             + OFISDBContract.SipSubGroupEntry.COLUMN_NAME_PHOTO + " TEXT, " + OFISDBContract.SipSubGroupEntry.COLUMN_NAME_SHOWIN + " TEXT, "
+            + OFISDBContract.SipSubGroupEntry.COLUMN_NAME_VILLAGE + " TEXT, "
             + OFISDBContract.SipSubGroupEntry.COLUMN_NAME_IMAGE_ENCODSTR + " TEXT)";
 
 
@@ -319,6 +320,7 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME + " TEXT, "
             + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_CHILD_ID + " TEXT, "
             + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_SURVEY_CODE + " TEXT, "
+            + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_IS_VILLAGE + " TEXT, "
             + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID + " INTEGER, " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID + " TEXT, "
             + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID + " INTEGER, " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_MODULE_ID + " INTEGER, "
             + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FMP_ID + " INTEGER, " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_TRANSACTION_ITEM_ID + " INTEGER, "
