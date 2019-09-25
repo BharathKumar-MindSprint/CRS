@@ -477,4 +477,36 @@
     <string name="phone_number_recorded">Numéro de téléphone enregistré.</string>
     <string name="survey_data">Downloading Survey Data</string>
     <string name="invalid_imei_msg">Authentification échouée. Veuillez nous contacter pour obtenir de assistance</string>
+    <string name="household_question">Le producteur n\'a pas d\'enfants de moins de 18 ans (Ménage)</string>
+    <string name="title_child_labour">Enregistrer un enfant</string>
+    <string name="register_child">Enregistrer un enfant</string>
+    <string name="inspection_question">Aucun enfant trouvé dans la plantation (Inspection)</string>
+    <string name="followup_question">Aucun enfant trouvé dans la plantation pendant le suivi</string>
+    <string name="add_child">Ajouter un enfant</string>
+    <string name="update_child">Mettre à jour des informations sur l\’enfant</string>
+    <string name="full_name">Nom de l\'enfant</string>
+    <string name="age">Age</string>
+    <string name="add">Ajouter</string>
+    <string name="checking_child_enumerator">Vérification de l’enumérateur </string>
+    <string name="visit_detail">Détails de la visite</string>
+    <string name="child_visit_details_inserted">Détails de la visite d\'enfant enregistrés avec succès</string>
+    <string name="child_register_successfully">Enfant enregistré avec succès</string>
+    <string name="child_details">Informations sur l’enfant</string>
+    <string name="child_not_synced">Désolé, l\'enfant n\'a pas encore été synchronisé. Veuillez synchroniser l\'enfant en premier s\’il vous plaît.</string>
+    <string name="fill_child_name">Veuillez entrer le nom de l\’enfant s\’il vous plaît</string>
+    <string name="yrs">ans</string>
+    <string name="child_max_limit">Vous êtes autorisé à enregistrer un maximum de 30 enfants par producteur</string>
+    <string name="new_child">Nouvel enfant</string>
+    <string name="child">Enfant</string>
+    <string name="farmer">Producteur</string>
+    <string name="household">Détails de la visite du ménage</string>
+    <string name="inspection">Détails de l\’inspection</string>
+    <string name="followup">Détails du suivi</string>
+    <string name="child_labour_survey">Enquête sur le travail des enfants</string>
+    <string name="update_childlabour_hint">Cliquer pour Enregistrer</string>
+    <string name="child_updated_successfully">Enfant mis à jour avec succès</string>
+    <string name="downloading_child_data">Téléchargement des informations de l\’enumérateur</string>
+    <string name="no_child_registered">Enregistrer l\'enfant pour activer les enquêtes</string>
+    <string name="please_select_Age">Veuillez selectionner l\'âge</string>
+
 </resources>

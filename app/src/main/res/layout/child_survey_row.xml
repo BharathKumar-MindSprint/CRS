@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/rowCardView"
+        android:layout_width="match_parent"
+        android:layout_margin="10dp"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:id="@+id/rl_child_survey_row"
+            android:background="@drawable/sel_survey_item_bg"
+            android:gravity="center_vertical"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/surveyName"
+                android:layout_width="wrap_content"
+                android:text="household Survey"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:textSize="14dp"
+                android:textColor="#6C5D56"
+                android:padding="15dp"
+                android:layout_centerVertical="true"
+                android:layout_height="wrap_content" />
+            <View
+                android:layout_width="1dp"
+                android:layout_toLeftOf="@+id/statusIcon"
+                android:layout_height="match_parent"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:background="#6C5D56"
+                />
+            <ImageView
+                android:id="@+id/statusIcon"
+                android:layout_centerVertical="true"
+                android:layout_width="wrap_content"
+                android:src="@drawable/ic_childsurvey"
+                android:layout_alignTop="@+id/surveyName"
+                android:layout_alignBottom="@+id/surveyName"
+                android:padding="10dp"
+                android:layout_alignParentRight="true"
+                android:layout_height="match_parent" />
+
+        </RelativeLayout>
+
+    </android.support.v7.widget.CardView>
+
+
+</LinearLayout>

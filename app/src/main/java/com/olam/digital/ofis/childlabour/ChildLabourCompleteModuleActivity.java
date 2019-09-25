@@ -1,0 +1,701 @@
+package com.olam.digital.ofis.childlabour;
+
+import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.ContentValues;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentSender;
+import android.content.res.Resources;
+import android.database.Cursor;
+import android.location.Location;
+import android.net.Uri;
+import android.os.Build;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
+import android.view.LayoutInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.common.api.ResolvableApiException;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResponse;
+import com.google.android.gms.location.LocationSettingsStatusCodes;
+import com.google.android.gms.location.SettingsClient;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.crash.FirebaseCrash;
+import com.olam.digital.ofis.BaseActivity;
+import com.olam.digital.ofis.BuildConfig;
+import com.olam.digital.ofis.CompleteModuleActivity;
+import com.olam.digital.ofis.DataLayer;
+import com.olam.digital.ofis.DynamicQuestions;
+import com.olam.digital.ofis.OFISDBContract;
+import com.olam.digital.ofis.R;
+import com.olam.digital.ofis.Utilities;
+import com.olam.digital.ofis.ViewFarmerActivity;
+import com.olam.digital.ofis.childlabour.dto.ChildModuleDto;
+import com.olam.digital.ofis.childlabour.dto.ChildrenDTO;
+
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Calendar;
+
+public class ChildLabourCompleteModuleActivity extends BaseActivity {
+
+    private Long farmerID;
+    private ChildrenDTO children;
+    private ChildModuleDto childModuleDto;
+
+    private long farmerId;
+    private long moduleId;
+    private long childId;
+    private long farmerModuleId;
+    private int subModuleId;
+    private int farmId;
+    private int statusStarted;
+    private int statusFinished;
+    private String olamFarmerId;
+    private String moduleName;
+    private String recordedLat;
+    private String recordedLng;
+    private String farmerName;
+    private Cursor subModules, questions;
+    private Context context;
+    private Resources res;
+    private DataLayer dl;
+    private boolean isLastPage;
+    private DynamicQuestions dynamicQuestions;
+    private static final String FARMER_ID = "FARMER_ID";
+    private static final String MODULE_ID = "MODULE_ID";
+    private static final String FARMER_MODULE_ID = "FARMER_MODULE_ID";
+    private static final String SUB_MODULE_ID = "SUB_MODULE";
+    private static final String FARM_ID = "FARM_ID";
+    private static final String STATUS_STARTED = "STATUS_STARTED";
+    private static final String STATUS_FINISHED = "STATUS_FINISHED";
+    private static final String OLAM_FARMER_ID = "OLAM_FARMER_ID";
+    private static final String MODULE_NAME = "MODULE_NAME";
+    private static final String RECORDED_LAT = "RECORDED_LAT";
+    private static final String RECORDED_LNG = "RECORDED_LNG";
+    private static final String FARMER_NAME = "FARMER_NAME";
+    private static final String CHILD_ID="CHILD_ID";
+    private long networkQueueId = 0;
+
+    // for GPS location system
+//    private GoogleApiClient googleApiClient;
+//    private LocationListener locationListener;
+    private FusedLocationProviderClient mFusedLocationClient;
+    private SettingsClient mSettingsClient;
+    private LocationRequest mLocationRequest;
+    private LocationSettingsRequest mLocationSettingsRequest;
+    private LocationCallback mLocationCallback;
+    private Location mCurrentLocation;
+    private Boolean mRequestingLocationUpdates;
+    // location updates interval - 2sec
+    private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 2000;
+
+    // fastest updates interval - 1 sec
+    // location updates will be received if another app is requesting the locations
+    // than your app can handle
+    private static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = 1000;
+
+    private static final int REQUEST_CHECK_SETTINGS = 100;
+    // Request code to use when launching the resolution activity
+    private static final int REQUEST_RESOLVE_ERROR = 1001;
+    // Unique tag for the error dialog fragment
+    private static final String STATE_RESOLVING_ERROR = "resolving_error";
+    // Bool to track whether the app is already resolving an error
+    private boolean mResolvingError = false;
+    private String childNameQueue;
+    private String farmerNameQueue;
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_complete_module);
+        initData();
+        initSetup();
+        getChildAndFarmerName();
+        dynamicQuestions.SurveyType="child";
+    }
+
+    private void getChildAndFarmerName() {
+        childNameQueue= getResources().getString(R.string.child) + ": "+children.getName();
+        farmerNameQueue=getResources().getString(R.string.farmer)+": "+farmerName;
+    }
+
+    private void initSetup() {
+        Intent intent = getIntent();
+        farmerId = intent.getLongExtra(FARMER_ID,0);
+        moduleId = intent.getLongExtra(MODULE_ID, 0);
+        farmerModuleId = intent.getLongExtra(FARMER_MODULE_ID, 0);
+        subModuleId = intent.getIntExtra(SUB_MODULE_ID, 0);
+        farmId = intent.getIntExtra(FARM_ID, 0);
+        statusStarted = intent.getIntExtra(STATUS_STARTED, 0);
+        statusFinished = intent.getIntExtra(STATUS_FINISHED, 0);
+
+        olamFarmerId = intent.getStringExtra(OLAM_FARMER_ID);
+        moduleName = intent.getStringExtra(MODULE_NAME);
+        recordedLat = intent.getStringExtra(RECORDED_LAT);
+        recordedLng = intent.getStringExtra(RECORDED_LNG);
+        farmerName = intent.getStringExtra(FARMER_NAME);
+
+        context = this;
+        res = getResources();
+        dl = new DataLayer(res, context);
+
+
+        DynamicQuestions.resource(res);
+        setupGPS();
+
+        dynamicQuestions = DynamicQuestions.getInstance(this, Utilities.getLocaleSuffix(res), dl);
+
+        dynamicQuestions.questionsSection = (LinearLayout) findViewById(R.id.questionsSection);
+        dynamicQuestions.inflater = (LayoutInflater) context.getSystemService(LAYOUT_INFLATER_SERVICE);
+        dynamicQuestions.reportingYear = getReportingYear();
+
+
+        subModules = dl.getSubmodulesByModuleId(moduleId);
+
+        Utilities.subModuleId = subModuleId;
+        Utilities.farmerId = farmerId;
+        Utilities.olamFarmerId = olamFarmerId;
+        Utilities.moduleId = (int)moduleId;
+
+        Utilities.farmerModuleId = farmerModuleId;
+
+        Utilities.packagename=getPackageName();
+
+        if (statusStarted != 0 || statusFinished != 0) {
+
+            dynamicQuestions.hasAnswers = true;
+            questions = dl.getChildQuestionsAndAnswersBySubModuleId(subModuleId, farmerId, farmerModuleId);
+
+            moveToCurrentSubModule(subModuleId);
+        } else if (subModuleId != 0) {
+            questions = dl.getQuestionsBySubModuleId(subModuleId);
+            dynamicQuestions.hasAnswers = false;
+
+            moveToCurrentSubModule(subModuleId);
+        } else {
+            dynamicQuestions.hasAnswers = false;
+            try {
+                subModules.moveToFirst();
+                subModuleId = subModules.getInt(subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_ID));
+                questions = dl.getQuestionsBySubModuleId(subModuleId);
+            }catch (Exception e){
+
+            }
+        }
+
+        initDynamicQuestions();
+        setupSubModuleQuestions();
+        try {
+            setupTopSection();
+        }catch (Exception e){}
+
+
+        final ScrollView mainScroll = (ScrollView) findViewById(R.id.scrollView);
+        mainScroll.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                mainScroll.scrollTo(0, 0);
+                if (Build.VERSION.SDK_INT < 16) {
+                    //noinspection deprecation
+                    mainScroll.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                } else {
+                    mainScroll.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                }
+            }
+        });
+        bindSaveButton();
+        setupFooter();
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    private void initDynamicQuestions() {
+        DynamicQuestions.getInstance().answerSet = new ArrayList<>();
+        DynamicQuestions.getInstance().hundredpercentquestions = new ArrayList<>();
+        DynamicQuestions.getInstance().context = context;
+        DynamicQuestions.getInstance().updatingHundredPercent = false;
+        DynamicQuestions.getInstance().questionColumnSuffix = Utilities.getLocaleSuffix(res);
+    }
+
+    private void setupFooter() {
+        Button prevSubmodule = (Button) findViewById(R.id.prevSubmodule);
+        Button nextSaveSubmodule = (Button) findViewById(R.id.nextSaveSubmodule);
+        isLastPage = false;
+
+        if (subModules.isLast()) {
+            isLastPage = true;
+            nextSaveSubmodule.setText(res.getString(R.string.ModuleSaveButton));
+        }
+
+        if (subModules.isFirst()) {
+            prevSubmodule.setVisibility(View.GONE);
+        } else {
+            prevSubmodule.setVisibility(View.VISIBLE);
+        }
+
+        prevSubmodule.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                isLastPage = false;
+                saveSubModule("back");
+            }
+        });
+
+        nextSaveSubmodule.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (isLastPage) {
+                    ContentValues values = new ContentValues();
+                    Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                    values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "childmodule");
+                    values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, moduleName);
+                    values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, childNameQueue);
+                    values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID, farmerId);
+                    values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID, farmerNameQueue);
+                    values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID, farmId);
+                    values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_MODULE_ID, farmerModuleId);
+                    values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LAT, recordedLat);
+                    values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG, recordedLng);
+                    values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPDATED_AT, timestamp.toString());
+                    values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_CHILD_ID, children.getId());
+                    values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_SURVEY_CODE,childModuleDto.getSurveyCode()) ;
+                    if (statusFinished == 0) {
+                        values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT, timestamp.toString());
+                        networkQueueId = dl.insertNetworkQueueEntry(values);
+                    } else {
+                        dl.updateNetworkQueueFarmerAndChildModuleEntry(values, farmerModuleId,"childmodule");
+                    }
+                    statusFinished = 1;
+                    saveSubModule("finish");
+                } else {
+                    saveSubModule("next");
+                }
+            }
+        });
+
+    }
+
+    private void saveSubModule(String action) {
+
+        // returning now to avoid the duplicates
+
+        boolean canSaveAndFinish = true;
+
+        // first time saving this module?
+        if (farmerModuleId == 0) {
+            statusStarted = 1;
+            farmerModuleId = dl.insertFarmerChildModule(moduleId, farmerId, olamFarmerId, farmId, subModuleId, statusStarted, recordedLat, recordedLng,children.getId());
+            if (isLastPage && networkQueueId > 0) {
+                ContentValues values = new ContentValues();
+                values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_MODULE_ID, farmerModuleId);
+                dl.updateNetworkQueueEntry(values, networkQueueId);
+            }
+        }
+
+
+        dl.updateSubModuleChildAnswers(dynamicQuestions.answerSet, farmerModuleId, subModuleId, farmerId, olamFarmerId, farmId, "module");
+
+        if (action.equalsIgnoreCase("next")) {
+            subModules.moveToNext();
+            subModuleId = subModules.getInt(subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_ID));
+        } else if (action.equalsIgnoreCase("back")) {
+            subModules.moveToPrevious();
+            subModuleId = subModules.getInt(subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_ID));
+        }
+
+        if (action.equalsIgnoreCase("exit") || action.equalsIgnoreCase("finish")) {
+            if (!dynamicQuestions.requiredFieldsAnsweredChild((int) farmerModuleId, (int) moduleId)) {
+                statusFinished = 0;
+                canSaveAndFinish = false;
+                dl.deleteNetworkQueueItemByFarmerChildModuleId((int) farmerModuleId);
+                Toast.makeText(context, res.getString(R.string.complete_all_required_fields), Toast.LENGTH_LONG).show();
+            }
+        }
+
+        dl.updateFarmerChildModule(farmerModuleId, subModuleId, statusStarted, statusFinished);
+
+        if (action.equalsIgnoreCase("exit")) {
+            ViewFarmerActivity.farmerId = farmerId;
+            //SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(farmerId);
+            Intent intent = new Intent(context, ViewFarmerActivity.class);
+            context.startActivity(intent);
+        } else if (action.equalsIgnoreCase("finish")) {
+            if (canSaveAndFinish) {
+                ViewFarmerActivity.farmerId = farmerId;
+                //SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(farmerId);
+                Intent intent = new Intent(context, ViewFarmerActivity.class);
+                context.startActivity(intent);
+            }
+        } else {
+            Intent intent = getIntent();
+            intent.putExtra(FARMER_ID, farmerId);
+            intent.putExtra(MODULE_ID, moduleId);
+            intent.putExtra(FARMER_MODULE_ID, farmerModuleId);
+            intent.putExtra(SUB_MODULE_ID, subModuleId);
+            intent.putExtra(FARM_ID, farmId);
+            intent.putExtra(STATUS_STARTED, statusStarted);
+            intent.putExtra(STATUS_FINISHED, statusFinished);
+            intent.putExtra(OLAM_FARMER_ID, olamFarmerId);
+            intent.putExtra(MODULE_NAME, moduleName);
+            intent.putExtra(RECORDED_LAT, recordedLat);
+            intent.putExtra(RECORDED_LNG, recordedLng);
+            intent.putExtra(FARMER_NAME, farmerName);
+            startActivity(intent);
+
+            finish();
+
+        }
+    }
+
+    private void bindSaveButton() {
+        ImageButton saveButton = (ImageButton) findViewById(R.id.saveProgress);
+
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                saveSubModule("exit");
+            }
+        });
+    }
+    private void moveToCurrentSubModule(int subModuleId) {
+        while (subModules.moveToNext()) {
+            if (subModuleId == subModules.getInt(subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_ID))) {
+                break;
+            }
+        }
+    }
+
+    private void setupTopSection() {
+        if (moduleName!=null && subModules!=null) {
+            try {
+                TextView moduleNameTv = (TextView) findViewById(R.id.completeModuleModuleTitle);
+                TextView subModuleNameTv = (TextView) findViewById(R.id.completeModuleSubModuleTitle);
+                moduleNameTv.setText(moduleName);
+                int columnIndex = (subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME + dynamicQuestions.questionColumnSuffix) != -1) ? subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME + dynamicQuestions.questionColumnSuffix) : subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME);
+                subModuleNameTv.setText(subModules.getString(columnIndex));
+            } catch (Exception e) {
+            }
+        }
+
+    }
+
+    private void setupSubModuleQuestions() {
+        // loop through questions and generate the right control for each
+//        while (questions.moveToNext()) {
+        if(questions != null && questions.moveToFirst()) {
+            do {
+                String displayType = questions.getString(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE));
+
+                if (displayType.replaceAll(" ", "").toLowerCase().equals("checkbox")) {
+                    dynamicQuestions.renderCheckBoxQuestion(questions, dynamicQuestions.questionsSection, farmerId, farmerModuleId);
+                } else if (displayType.replaceAll(" ", "").toLowerCase().equals("datepicker")) {
+                    dynamicQuestions.renderDatePickerQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null);
+                } else if (displayType.replaceAll(" ", "").toLowerCase().equals("decimal")) {
+                    dynamicQuestions.renderTextBoxQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null);
+                } else if (displayType.replaceAll(" ", "").toLowerCase().equals("dropdown")) {
+                    dynamicQuestions.renderDropDownQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
+                } else if (displayType.replaceAll(" ", "").toLowerCase().equals("photocheckbox")) {
+                    dynamicQuestions.renderPhotoCheckboxQuestion(questions, farmerId, farmerModuleId, res, getPackageName());
+                } else if (displayType.replaceAll(" ", "").toLowerCase().equals("repeater")) {
+                    dynamicQuestions.renderRepeaterQuestion(questions, farmerId, olamFarmerId, farmerModuleId, res);
+                } else if (displayType.replaceAll(" ", "").toLowerCase().equals("textbox")) {
+                    dynamicQuestions.renderTextBoxQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null);
+                } else if (displayType.replaceAll(" ", "").toLowerCase().equals("yesno") || displayType.replaceAll(" ", "").toLowerCase().equals("yes/no")) {
+                    dynamicQuestions.renderYesNoQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
+                } else if (displayType.replaceAll(" ", "").toLowerCase().equals("farmtreedensity")) {
+                    dynamicQuestions.renderTreeDensityQuestion(questions, res);
+                } else if (displayType.replaceAll(" ", "").toLowerCase().equals("photoupload")) {
+                    dynamicQuestions.renderPhotoUploadQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
+                }
+            } while (questions.moveToNext());
+        }
+
+
+    }
+    private int getReportingYear() {
+        return Calendar.getInstance().get(Calendar.YEAR);
+    }
+
+
+    private void setupGPS() {
+        /*if (googleApiClient == null) {
+            googleApiClient = new GoogleApiClient.Builder(this)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .addApi(LocationServices.API)
+                    .build();
+        }*/
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        mSettingsClient = LocationServices.getSettingsClient(this);
+
+        mLocationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                super.onLocationResult(locationResult);
+                // location is received
+                mCurrentLocation = locationResult.getLastLocation();
+                if(mCurrentLocation != null)
+                    setPoiGPS(mCurrentLocation);
+            }
+        };
+        mRequestingLocationUpdates = false;
+
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(UPDATE_INTERVAL_IN_MILLISECONDS);
+        mLocationRequest.setFastestInterval(FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
+
+        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder();
+        builder.addLocationRequest(mLocationRequest);
+        mLocationSettingsRequest = builder.build();
+    }
+
+    private void setPoiGPS(Location location) {
+        try {/*
+
+            poiLocation = location;
+            gpsField = (EditText) findViewById(R.id.gpsPosition);
+            String locationResult;
+            if (poiLocation != null) {
+                double latitude = poiLocation.getLatitude();
+                double longitude = poiLocation.getLongitude();
+                locationResult = latitude + "," + longitude;
+                requestLocation.setImageResource(R.drawable.ic_actionbutton_location_found);
+            } else {
+                locationResult = res.getString(R.string.location_not_available);
+                requestLocation.setImageResource(R.drawable.ic_actionbutton_location_searching);
+            }
+            gpsField.setText(locationResult);*/
+            Location moduleLocation = location;
+            recordedLat = String.valueOf(moduleLocation.getLatitude());
+            recordedLng = String.valueOf(moduleLocation.getLongitude());
+
+        } catch (Exception e) {
+            FirebaseCrash.report(new Exception("AddInfrastructureActivity: Error setting POI location", e));
+            e.printStackTrace();
+        }
+    }
+
+    private void initData() {
+            Bundle bundle = this.getIntent().getExtras();
+            if (bundle != null) {
+                children = (ChildrenDTO) bundle.getSerializable("children");
+                childModuleDto= (ChildModuleDto) bundle.getSerializable("childModule");
+                try {
+                    farmerID=Long.parseLong(bundle.getString(ChildLabourUtils.CHILD_FARMER_ID));
+                }catch (Exception e){}
+            }
+
+
+    }
+
+    protected void onStart() {
+//        googleApiClient.connect();
+        super.onStart();
+    }
+
+    protected void onStop() {
+        if (mRequestingLocationUpdates) {
+            // pausing location updates
+            stopLocationUpdates();
+        }
+//        googleApiClient.disconnect();
+        super.onStop();
+    }
+
+
+    private void openSettings() {
+        Intent intent = new Intent();
+        intent.setAction(
+                Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+        Uri uri = Uri.fromParts("package",
+                BuildConfig.APPLICATION_ID, null);
+        intent.setData(uri);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
+        super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
+/*
+
+        if (requestCode == REQUEST_RESOLVE_ERROR) {
+            mResolvingError = false;
+            if (resultCode == RESULT_OK) {
+                // Make sure the app is not already connected or attempting to connect
+                if (!googleApiClient.isConnecting() &&
+                        !googleApiClient.isConnected()) {
+                    googleApiClient.connect();
+                }
+            }
+        }
+*/
+
+        if (requestCode == 100 && resultCode == RESULT_OK) {
+//            Toast.makeText(AddInfrastructureActivity.this,getResources().getString(R.string.record_location_timeout),Toast.LENGTH_LONG).show();
+            startLocationUpdates();
+        }else if (requestCode == 100 && resultCode == RESULT_CANCELED) {
+//            Toast.makeText(AddInfrastructureActivity.this,getResources().getString(R.string.record_location_timeout),Toast.LENGTH_LONG).show();
+            stopLocationUpdates();
+        }
+
+        if (resultCode == RESULT_OK) {
+            dynamicQuestions.setFullImageFromFilePath(res);
+        }
+    }
+    /**
+     * Starting location updates
+     * Check whether location settings are satisfied and then
+     * location updates will be requested
+     */
+    private void startLocationUpdates() {
+        mSettingsClient
+                .checkLocationSettings(mLocationSettingsRequest)
+                .addOnSuccessListener(this, new OnSuccessListener<LocationSettingsResponse>() {
+                    @SuppressLint("MissingPermission")
+                    @Override
+                    public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
+                        //noinspection MissingPermission
+                        mFusedLocationClient.requestLocationUpdates(mLocationRequest,
+                                mLocationCallback, Looper.myLooper());
+/*
+                        pd = new ProgressDialog(AddInfrastructureActivity.this);
+                        pd.setCancelable(false);
+                        pd.setIndeterminate(false);
+                        pd.setMessage(res.getString(R.string.fetching_location));
+                        pd.show();*/
+                        Handler handler = new Handler(Looper.getMainLooper());
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                if(mCurrentLocation != null) {
+                                    setPoiGPS(mCurrentLocation);
+                                }else{
+                                   /* if (pd != null && pd.getWindow().getDecorView().getWindowToken() != null && pd.isShowing()) {
+                                        pd.dismiss();
+                                    }*/
+                                    Toast.makeText(ChildLabourCompleteModuleActivity.this,getResources().getString(R.string.record_location_timeout),Toast.LENGTH_LONG).show();
+                                }
+                            }
+                        }, 6000);
+                    }
+                })
+                .addOnFailureListener(this, new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        int statusCode = ((ApiException) e).getStatusCode();
+
+                        Handler handler = new Handler(Looper.getMainLooper());
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                               /* if (pd != null && pd.getWindow().getDecorView().getWindowToken() != null && pd.isShowing()) {
+                                    pd.dismiss();
+                                }*/
+                                Toast.makeText(ChildLabourCompleteModuleActivity.this,getResources().getString(R.string.record_location_timeout),Toast.LENGTH_LONG).show();
+                            }
+                        }, 1000);
+
+                        switch (statusCode) {
+                            case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+                                try {
+                                    // Show the dialog by calling startResolutionForResult(), and check the
+                                    // result in onActivityResult().
+                                    ResolvableApiException rae = (ResolvableApiException) e;
+                                    rae.startResolutionForResult(ChildLabourCompleteModuleActivity.this, REQUEST_CHECK_SETTINGS);
+                                } catch (IntentSender.SendIntentException sie) {
+//                                    Log.i(TAG, "PendingIntent unable to execute request.");
+                                }
+                                break;
+                            case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+                                String errorMessage = "Location settings are inadequate, and cannot be " +
+                                        "fixed here. Fix in Settings.";
+//                                Log.e(TAG, errorMessage);
+
+                                Toast.makeText(ChildLabourCompleteModuleActivity.this, errorMessage, Toast.LENGTH_LONG).show();
+
+                                break;
+                            default:
+                                Toast.makeText(ChildLabourCompleteModuleActivity.this,getResources().getString(R.string.record_location_timeout),Toast.LENGTH_LONG).show();
+
+                        }
+                    }
+                });
+    }
+
+
+    public void stopLocationUpdates() {
+        // Removing location updates
+        mFusedLocationClient
+                .removeLocationUpdates(mLocationCallback)
+                .addOnCompleteListener(this, new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                    }
+                });
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        dynamicQuestions.questionsSection = (LinearLayout) findViewById(R.id.questionsSection);
+
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        LinearLayout questionsSection;
+
+        LinearLayout bottomSection = (LinearLayout) findViewById(R.id.bottomSection);
+
+        questionsSection = dynamicQuestions.questionsSection;
+
+        ((ViewGroup) questionsSection.getParent()).removeView(questionsSection);
+        bottomSection.addView(questionsSection, 0, questionsSection.getLayoutParams());
+
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+
+    }
+
+}

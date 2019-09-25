@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/clmrs_bg">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingLeft="20dp"
+        android:paddingTop="25dp"
+        android:paddingBottom="25dp"
+        android:paddingRight="20dp"
+        android:background="@color/clmrs_bg_gray">
+
+    <RelativeLayout
+        android:orientation="horizontal"
+        android:id="@+id/childVisitDetailButton"
+        android:layout_width="match_parent"
+        android:gravity="center_vertical"
+        android:layout_height="52dp"
+        android:weightSum="3"
+        android:background="@drawable/border_visit_detail_bg">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/visit_detail"
+            android:layout_gravity="center|left"
+            android:paddingLeft="20dp"
+            android:textStyle="bold"
+            android:layout_centerVertical="true"
+            android:layout_alignParentLeft="true"
+            android:layout_toLeftOf="@+id/view_line_visit_detail"
+            android:textSize="16dp"
+            android:layout_weight="3"
+            android:textColor="@color/ofis_base_font_white" />
+
+        <View
+            android:layout_width="2dp"
+            android:layout_height="match_parent"
+            android:id="@+id/view_line_visit_detail"
+            android:layout_marginTop="5dp"
+            android:layout_toLeftOf="@+id/imgv_visit_detail"
+            android:layout_marginBottom="5dp"
+            android:background="@color/ofis_base_font_white"/>
+
+        <ImageView
+            android:id="@+id/imgv_visit_detail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="2dp"
+            android:layout_marginLeft="2dp"
+            android:paddingLeft="25dp"
+            android:paddingRight="25dp"
+            android:src="@drawable/ic_detail_view" />
+
+    </RelativeLayout>
+
+        <RelativeLayout
+            android:orientation="horizontal"
+            android:id="@+id/addChildButton"
+            android:layout_width="match_parent"
+            android:gravity="center_vertical"
+            android:layout_height="52dp"
+            android:layout_marginTop="20dp"
+            android:weightSum="3"
+            android:background="@drawable/border_green_bg">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/register_child"
+                android:layout_gravity="center|left"
+                android:paddingLeft="20dp"
+                android:textStyle="bold"
+                android:textColor="@color/ofis_base_font_white"
+                android:layout_centerVertical="true"
+                android:layout_alignParentLeft="true"
+                android:layout_toLeftOf="@+id/view_line_register_child"
+                android:textSize="16dp"
+                android:layout_weight="3"/>
+
+            <View
+                android:layout_width="2dp"
+                android:layout_height="match_parent"
+                android:id="@+id/view_line_register_child"
+                android:layout_marginTop="5dp"
+                android:layout_toLeftOf="@+id/imgv_register_child"
+                android:layout_marginBottom="5dp"
+                android:background="@color/ofis_base_font_white"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="25dp"
+                android:id="@+id/imgv_register_child"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:paddingRight="25dp"
+                android:src="@drawable/ic_reg_child"/>
+
+        </RelativeLayout>
+    </LinearLayout>
+
+
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/registerChildRecycleView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    </android.support.v7.widget.RecyclerView>
+
+</LinearLayout>
