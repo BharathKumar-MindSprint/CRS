@@ -51,7 +51,7 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_child);
         //noinspection ConstantConditions
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         dataLayer = new DataLayer(getResources(), this);
         initComponents();
         initEvents();

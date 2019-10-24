@@ -17,6 +17,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -47,7 +48,7 @@ import java.util.List;
 import java.util.Locale;
 
 
-public class SettingsActivity extends Activity implements OnAccessTokenInterface {
+public class SettingsActivity extends AppCompatActivity implements OnAccessTokenInterface {
     // update
     private Context context;
     private EditText enumeratorID;
@@ -71,7 +72,7 @@ public class SettingsActivity extends Activity implements OnAccessTokenInterface
         dl = new DataLayer(res, context);
 
         //noinspection ConstantConditions
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         buttonSave = (Button) findViewById(R.id.buttonSave);
         buttonSave.setOnClickListener(new View.OnClickListener() {

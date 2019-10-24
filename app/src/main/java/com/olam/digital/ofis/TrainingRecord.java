@@ -23,6 +23,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -41,7 +42,7 @@ import java.util.Date;
 import java.util.Hashtable;
 import java.util.Locale;
 
-public class TrainingRecord extends BaseListActivity {
+public class TrainingRecord extends BaseListActivity{
 
     private Context context;
     private Resources res;
@@ -75,14 +76,14 @@ public class TrainingRecord extends BaseListActivity {
 
     // Runtime Permission Request Code
     private final static int MY_PERMISSIONS_REQUEST = 9999;
-    
+    ListView listView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_training_record);
-
+        listView=findViewById(R.id.list);
         //noinspection ConstantConditions
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         context = me = this;
         res = getResources();
@@ -305,7 +306,8 @@ public class TrainingRecord extends BaseListActivity {
                     R.id.criterion_grade
             };
             customListAdapter_selectedAttendees = new CustomListAdapter_SelectedAttendees(context, trainingAttendees, adapterCols, adapterRowViews, res, readOnlyMode, me, scoringColumns, columnSuffix);
-            setListAdapter(customListAdapter_selectedAttendees);
+            listView.setAdapter(customListAdapter_selectedAttendees);
+            //setListAdapter(customListAdapter_selectedAttendees);
         }
     }
 

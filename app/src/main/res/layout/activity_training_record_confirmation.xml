@@ -127,7 +127,7 @@
             <ListView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@android:id/list"
+                android:id="@+id/list"
                 android:divider="@color/ofis_input_field_separator"
                 android:listSelector="@android:color/transparent"
                 android:dividerHeight="@dimen/ofis_list_itemborder" />

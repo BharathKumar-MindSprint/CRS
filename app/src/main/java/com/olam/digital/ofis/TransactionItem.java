@@ -102,7 +102,7 @@ public class TransactionItem extends BaseActivity {
         setContentView(R.layout.activity_transaction_item);
 
         //noinspection ConstantConditions
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         context = this;
         res = getResources();

@@ -158,7 +158,7 @@ public class AddInfrastructureActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_infrastructure);
         //noinspection ConstantConditions
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         context = this;
         res = getResources();
          spinner_place = (Spinner) findViewById(R.id.spinner_place);

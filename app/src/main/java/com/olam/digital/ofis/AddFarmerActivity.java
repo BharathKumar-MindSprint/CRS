@@ -138,7 +138,7 @@ public class AddFarmerActivity extends BaseActivity {
         setContentView(R.layout.activity_add_farmer);
 
         //noinspection ConstantConditions
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         context = this;
         res = getResources();
