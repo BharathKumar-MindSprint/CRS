@@ -2401,7 +2401,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 long enumerator_Id = Integer.parseInt(enumeratorId);
                 params.put("enumerator_id", enumeratorId);
             }
-            params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PLACE_ID, 0);
+          //  params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PLACE_ID, 0);
             params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_DISTRICT_ID, networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_DISTRICT_ID)));
             params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_REGION_ID, networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_REGION_ID)));
             params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_COUNTRY_ID, networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_COUNTRY_ID)));
@@ -3581,6 +3581,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     checkavailstatus.put(value);
                 }
                 params.put("childAvailabilityStatus", checkavailstatus);
+
+
 
 
 
