@@ -1386,6 +1386,50 @@ public class DataLayer {
         }
     }
 
+    void bindDataDrivenSpinnerSIP(Spinner spinner, Cursor cursor, Context context, int placeholderTextResId, String textColumnName, boolean showAsWhite) {
+        try {
+            if (textColumnName == null) {
+                textColumnName = "name";
+            }
+            String[] adapterCols = new String[]{textColumnName, "_id", "code", "dialling_code"};
+            MatrixCursor mc = new MatrixCursor(adapterCols);
+            mc.addRow(new String[]{res.getString(placeholderTextResId), "0", "", ""});
+//            if (spinner.getId() == R.id.spinner_place ) {
+////                mc.addRow(new String[]{res.getString(R.string.new_place_name_placeholder), "-1", "", ""});
+////
+////            }
+            Cursor[] cursors = {mc, cursor};
+            Cursor output = new MergeCursor(cursors);
+
+            int[] adapterRowViews = new int[]{R.id.ofis_spinner_text_view};
+            int spinnerItemLayout = (showAsWhite) ? R.layout.spinner_item_white : R.layout.spinner_item;
+            SimpleCursorAdapter simpleCursorAdapter = new SimpleCursorAdapter(context, spinnerItemLayout, output, adapterCols, adapterRowViews, 0)
+            {
+                @Override
+                public View getDropDownView(int position, View convertView, ViewGroup parent) {
+                    final View v=super.getDropDownView(position,convertView,parent);
+                    v.post(new Runnable()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            ((TextView)v.findViewById(R.id.ofis_spinner_text_view)).setSingleLine(false);
+                        }
+                    });
+                    return v;
+                }
+            };
+
+            simpleCursorAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+
+            spinner.setAdapter(simpleCursorAdapter);
+
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
 
     Cursor getSimpleSpinnerData(String table, Boolean getByRelationship, String getByColumnName, Integer getByColumnValue, @SuppressWarnings("SameParameterValue") Boolean orderByColumn, String orderByColumnName, String textColumnName) {
@@ -1534,7 +1578,7 @@ public class DataLayer {
 
     }
 
-    void createGeographyHierarchySpinners(final Activity activity, final Context context, final EditText farmerIdPrefix, int countrySelection, final int regionSelection, final int districtSelection, final int placeSelection, final LinearLayout phonenumbers) {
+    void createGeographyHierarchySpinners(final Activity activity, final Context context, final EditText farmerIdPrefix, int countrySelection, final int regionSelection, final int districtSelection, final int placeSelection, final LinearLayout phonenumbers,final boolean newPlace) {
         final Spinner countrySpinner = (Spinner) activity.findViewById(R.id.spinner_country);
         final Spinner regionSpinner = (Spinner) activity.findViewById(R.id.spinner_region);
         final Spinner districtSpinner = (Spinner) activity.findViewById(R.id.spinner_district);
@@ -1627,22 +1671,25 @@ public class DataLayer {
                 public void onItemSelected(AdapterView<?> adapterView, View view, int i, long id) {
 
                     Cursor places = getSpinnerData(OFISDBContract.PlacesEntry.TABLE_NAME, true, OFISDBContract.PlacesEntry.COLUMN_NAME_DISTRICT_ID, ((int) id), true, OFISDBContract.PlacesEntry.COLUMN_NAME_PLACE_NAME);
-                    bindDataDrivenSpinner(placeSpinner, places, context, R.string.spinner_place_default, null, false);
+                   if (!newPlace) {
+                       bindDataDrivenSpinnerSIP(placeSpinner, places, context, R.string.spinner_place_default, null, false);
+                   }else{
+                       bindDataDrivenSpinner(placeSpinner, places, context, R.string.spinner_place_default, null, false);
+                   }
 
                     if (placeSelection != 0) {
                         setSpinnerSelectionById(placeSelection, placeSpinner);
                     } else {
-                        if (places.getCount() == 1) {
-                            try {
-                                placeSpinner.setSelection(2, false);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
+                       if (newPlace) {
+                           if (places.getCount() == 1) {
+                               try {
+                                   placeSpinner.setSelection(2, false);
+                               } catch (Exception e) {
+                                   e.printStackTrace();
+                               }
+                           }
 
-
-                        }
-
-
+                       }
                     }
 
 
