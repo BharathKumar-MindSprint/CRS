@@ -29,6 +29,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NavUtils;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.view.View;
@@ -101,7 +102,7 @@ import java.util.Stack;
 
 import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
 
-public class RecordPolygonActivity extends Activity implements AdapterView.OnItemSelectedListener, MapEventsReceiver, LocationListener {
+public class RecordPolygonActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, MapEventsReceiver, LocationListener {
 
     private static final String TAG = RecordPolygonActivity.class.getSimpleName();
 
