@@ -13,6 +13,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.olam.digital.ofis.R;
+import com.olam.digital.ofis.authentication.AuthenticationHelper;
+import com.olam.inapp.InApp;
 
 /**
  * Base Activity Created by ben on 13/11/2016.
@@ -26,10 +28,12 @@ public class BaseActivity extends AppCompatActivity {
         }
     };
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("TasksUpdated"));
+        InApp.identifiedUserWithEnvironment(new AuthenticationHelper(this).getuserName(), BuildConfig.FLAVOR);
     }
 
     @Override

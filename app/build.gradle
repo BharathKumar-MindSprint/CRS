@@ -59,7 +59,7 @@ android {
         resValue "string", "contentprovider_authorities", applicationId + '.provider'
         resValue "string", "sync_account_type", applicationId
         buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofis"'
-        minSdkVersion 15
+        minSdkVersion 19
         //noinspection OldTargetApi
         targetSdkVersion 27
         multiDexEnabled true
@@ -266,6 +266,16 @@ dependencies {
     testImplementation 'org.mockito:mockito-core:1.10.19'
     // Optional - Mock the JSON Object. Because jsonobject will come under instrumentation test.
     testImplementation 'org.json:json:20140107'
+    implementation project(path: ':InAppLib_1.4')
+
+    implementation('com.github.danysantiago:sendgrid-android:1') {
+        exclude group: 'org.apache.httpcomponents', module: 'httpclient'
+    }
+    implementation "com.github.tarek360:instacapture:2.0.1"
+    implementation "android.arch.lifecycle:extensions:1.1.1"
+    implementation 'com.github.bumptech.glide:glide:4.8.0'
+    implementation 'com.google.code.gson:gson:2.8.5'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.2'
 
 
 }
