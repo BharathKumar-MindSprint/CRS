@@ -129,7 +129,7 @@ public class CompleteModuleActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_complete_module);
         //noinspection ConstantConditions
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         Intent intent = getIntent();
         farmerId = intent.getLongExtra(FARMER_ID, 0);
         moduleId = intent.getLongExtra(MODULE_ID, 0);

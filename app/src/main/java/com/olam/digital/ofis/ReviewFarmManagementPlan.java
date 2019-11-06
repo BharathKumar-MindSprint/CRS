@@ -63,7 +63,7 @@ public class ReviewFarmManagementPlan extends BaseActivity {
         setContentView(R.layout.activity_review_farm_management_plan);
 
         //noinspection ConstantConditions
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         context = this;
         res = getResources();

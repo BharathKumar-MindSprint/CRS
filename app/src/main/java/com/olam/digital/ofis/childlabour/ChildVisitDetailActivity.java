@@ -39,7 +39,7 @@ public class ChildVisitDetailActivity  extends BaseActivity implements View.OnCl
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_child_visit_detail);
         //noinspection ConstantConditions
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         initComponents();
         initEvents();
         getBundleValues();
