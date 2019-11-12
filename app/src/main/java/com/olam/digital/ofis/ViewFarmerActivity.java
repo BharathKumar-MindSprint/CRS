@@ -745,9 +745,20 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
 
         Log.d("ViewFarmerActivity", "Plot Count = " + count);
         if (count == 0) {
+
+            LinearLayout parentLayout=new LinearLayout(context);
+            parentLayout.setOrientation(LinearLayout.HORIZONTAL);
+
             final EditText edTxtNumberOfPlots = new EditText(context);
             edTxtNumberOfPlots.setInputType(InputType.TYPE_CLASS_NUMBER);
             edTxtNumberOfPlots.setHint(res.getString(R.string.record_polygon_input_hint));
+
+            LinearLayout.LayoutParams rLp= new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT);
+            rLp.setMargins(40,0,40,0);
+            edTxtNumberOfPlots.setLayoutParams(rLp);
+
+            parentLayout.addView(edTxtNumberOfPlots);
 
             edTxtNumberOfPlots.addTextChangedListener(new TextWatcher() {
                 @Override
@@ -776,7 +787,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
             new AlertDialog.Builder(context)
                     .setTitle(res.getString(R.string.record_polygon_input_title))
                     .setMessage(res.getString(R.string.record_polygon_input_messege))
-                    .setView(edTxtNumberOfPlots)
+                    .setView(parentLayout)
                     .setPositiveButton(R.string.submit, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
                             String lPlotCountString = edTxtNumberOfPlots.getText().toString();

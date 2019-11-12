@@ -841,7 +841,7 @@ public class AddInfrastructureActivity extends BaseActivity {
         }
 
 
-        ArrayAdapter adapter = new ArrayAdapter<>(context, R.layout.add_sip_spinner_item, subModuleNames);
+        ArrayAdapter adapter = new ArrayAdapter<>(context, R.layout.spinner_dropdown_item_single_line, subModuleNames);
         adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         subModulesSpinner.setAdapter(adapter);
 
