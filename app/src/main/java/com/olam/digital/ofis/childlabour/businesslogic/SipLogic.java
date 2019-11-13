@@ -8,6 +8,8 @@ import com.olam.digital.ofis.OFISDBContract;
 import com.olam.digital.ofis.childlabour.dto.VillageDTO;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class SipLogic {
@@ -23,6 +25,15 @@ public class SipLogic {
             villageDTO.setVillageName(cursor.getString(cursor.getColumnIndex(OFISDBContract.PlacesEntry.COLUMN_NAME_PLACE_NAME)));
             villageList.add(villageDTO);
         }
+
+        // min sdk version is 19. After API 24 we can use lambda expression
+        Collections.sort(villageList, new Comparator<VillageDTO>() {
+            @Override
+            public int compare(final VillageDTO object1, final VillageDTO object2) {
+                return object1.getVillageName().compareTo(object2.getVillageName());
+            }
+        });
+
         return  villageList;
 
     }
