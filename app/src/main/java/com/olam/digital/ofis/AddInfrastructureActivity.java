@@ -158,7 +158,7 @@ public class AddInfrastructureActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_infrastructure);
         //noinspection ConstantConditions
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         context = this;
         res = getResources();
          spinner_place = (Spinner) findViewById(R.id.spinner_place);
@@ -841,7 +841,7 @@ public class AddInfrastructureActivity extends BaseActivity {
         }
 
 
-        ArrayAdapter adapter = new ArrayAdapter<>(context, R.layout.add_sip_spinner_item, subModuleNames);
+        ArrayAdapter adapter = new ArrayAdapter<>(context, R.layout.spinner_dropdown_item_single_line, subModuleNames);
         adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         subModulesSpinner.setAdapter(adapter);
 

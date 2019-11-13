@@ -8,6 +8,7 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -17,7 +18,7 @@ import com.olam.digital.ofis.R;
  * Base list activity Created by ben on 13/11/2016.
  */
 
-public class BaseListActivity extends ListActivity {
+public class BaseListActivity extends AppCompatActivity {
 
     private final BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
