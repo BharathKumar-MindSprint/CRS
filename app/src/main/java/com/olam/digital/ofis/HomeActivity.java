@@ -1123,66 +1123,74 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
             case PERMISSIONS_ACCESS_LOCATION: {
-                for (String permission : permissions) {
-                    if (ActivityCompat.shouldShowRequestPermissionRationale(this, permission)) {
-                        // Permission Denied
-                        Toast.makeText(this, R.string.gps_permission_denial_msg, Toast.LENGTH_LONG).show();
-                        String userEnumerator = enumeratorID.getText().toString().trim();
-                        if (userEnumerator!=null && !userEnumerator.equalsIgnoreCase("")){
-                            System.out.println("doingAuthRequest 2");
-                            doingAuthRequest();
-                        }
-
-                    } else {
-                        if (ActivityCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED) {
-                            // Permission Allowed
-                            System.out.println("doingAuthRequest 3");
-                            if(checkvalue == 0) {
-                                checkvalue++;
+                try {
+                    for (String permission : permissions) {
+                        if (ActivityCompat.shouldShowRequestPermissionRationale(this, permission)) {
+                            // Permission Denied
+                            Toast.makeText(this, R.string.gps_permission_denial_msg, Toast.LENGTH_LONG).show();
+                            String userEnumerator = enumeratorID.getText().toString().trim();
+                            if (userEnumerator!=null && !userEnumerator.equalsIgnoreCase("")){
                                 doingAuthRequest();
                             }
+
                         } else {
-                            // Checkbox set to Never Ask Again
-                            showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
+                            if (ActivityCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED) {
+                                // Permission Allowed
+                                if(checkvalue == 0) {
+                                    checkvalue++;
+                                    doingAuthRequest();
+                                }
+                            } else {
+                                // Checkbox set to Never Ask Again
+                                showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
+                            }
                         }
                     }
-                }
-                break;
+                    break;
+            }catch (Exception e ){}
+
             }
 
             case MY_PROFILE_PIC_PERMISSIONS_REQUEST: {
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED
-                        && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                try{
+                    if (grantResults.length > 0
+                            && grantResults[0] == PackageManager.PERMISSION_GRANTED
+                            && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
 
 
 
-                } else if (Build.VERSION.SDK_INT >= 23
-                        && (!shouldShowRequestPermissionRationale(permissions[0])
-                        || !shouldShowRequestPermissionRationale(permissions[1]))) {
-                    showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
+                    } else if (Build.VERSION.SDK_INT >= 23
+                            && (!shouldShowRequestPermissionRationale(permissions[0])
+                            || !shouldShowRequestPermissionRationale(permissions[1]))) {
+                        showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
 
-                } else {
-                    Toast.makeText(this, R.string.camera_and_gallery_permission_denial_msg, Toast.LENGTH_LONG).show();
-                }
-                break;
+                    } else {
+                        Toast.makeText(this, R.string.camera_and_gallery_permission_denial_msg, Toast.LENGTH_LONG).show();
+                    }
+                    break;
+                }catch (Exception e){}
+
             }
             case MY_SIGNATURE_PIC_PERMISSIONS_REQUEST: {
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED
-                        && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+
+                try {
+                    if (grantResults.length > 0
+                            && grantResults[0] == PackageManager.PERMISSION_GRANTED
+                            && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
 
 
 
-                } else if (Build.VERSION.SDK_INT >= 23
-                        && (!shouldShowRequestPermissionRationale(permissions[0])
-                        || !shouldShowRequestPermissionRationale(permissions[1]))) {
-                    showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
+                    } else if (Build.VERSION.SDK_INT >= 23
+                            && (!shouldShowRequestPermissionRationale(permissions[0])
+                            || !shouldShowRequestPermissionRationale(permissions[1]))) {
+                        showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
 
-                } else {
-                    Toast.makeText(this, R.string.camera_and_gallery_permission_denial_msg, Toast.LENGTH_LONG).show();
-                }
-                break;
+                    } else {
+                        Toast.makeText(this, R.string.camera_and_gallery_permission_denial_msg, Toast.LENGTH_LONG).show();
+                    }
+                    break;
+
+                }catch (Exception e){}
             }
 
 
