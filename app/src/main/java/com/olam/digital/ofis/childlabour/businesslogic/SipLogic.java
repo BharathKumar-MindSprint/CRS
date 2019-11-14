@@ -30,7 +30,7 @@ public class SipLogic {
         Collections.sort(villageList, new Comparator<VillageDTO>() {
             @Override
             public int compare(final VillageDTO object1, final VillageDTO object2) {
-                return object1.getVillageName().compareTo(object2.getVillageName());
+                return object1.getVillageName().compareToIgnoreCase(object2.getVillageName());
             }
         });
 
