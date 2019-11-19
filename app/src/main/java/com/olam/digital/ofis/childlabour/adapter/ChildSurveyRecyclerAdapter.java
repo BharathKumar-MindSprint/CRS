@@ -40,11 +40,13 @@ public class ChildSurveyRecyclerAdapter extends RecyclerView.Adapter<ChildSurvey
     private final Calendar currentDate;
     private  boolean hasSubmittedModules=false;
     private JSONArray submittedModulesArray;
+    private ChildrenDTO childrenDTO;
 
-    public ChildSurveyRecyclerAdapter(List<ChildModuleDto> childModuleDtoList, Context context, JSONArray submittedModules) throws JSONException {
+    public ChildSurveyRecyclerAdapter(List<ChildModuleDto> childModuleDtoList, Context context, JSONArray submittedModules,ChildrenDTO childrenDTO) throws JSONException {
         this.childModuleList = childModuleDtoList;
         this.currentDate=Calendar.getInstance();
         this.mContext = context;
+        this.childrenDTO=childrenDTO;
         if (submittedModules !=null && submittedModules.length()>0) {
             hasSubmittedModules = true;
             if (hasSubmittedModules) {
@@ -161,6 +163,15 @@ public class ChildSurveyRecyclerAdapter extends RecyclerView.Adapter<ChildSurvey
 //            holder.surveyLayout.setEnabled(true);
 //        else
 //            holder.surveyLayout.setEnabled(false);
+
+        try{
+            if (childrenDTO.getAge() != null) {
+                if (Integer.parseInt(childrenDTO.getAge()) >= 18) {
+                    holder.surveyLayout.setEnabled(false);
+                }
+            }
+        }catch (Exception e){}
+
 
         if (holder.surveyLayout.isEnabled()){
         holder.rowItem.setOnClickListener(new View.OnClickListener() {
