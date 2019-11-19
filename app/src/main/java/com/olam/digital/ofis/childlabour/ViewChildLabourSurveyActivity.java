@@ -99,7 +99,7 @@ public class ViewChildLabourSurveyActivity extends BaseActivity {
 
         if (childModuleDtoList != null && childModuleDtoList.size() > 0) {
             try {
-                childSurveyRecyclerAdapter = new ChildSurveyRecyclerAdapter(childModuleDtoList,this,modulesArray);
+                childSurveyRecyclerAdapter = new ChildSurveyRecyclerAdapter(childModuleDtoList,this,modulesArray,children);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
