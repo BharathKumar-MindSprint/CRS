@@ -38,35 +38,40 @@ public class ChildLabourLogic {
         return newVisitDetaisId;
     }
 
+    // Inserting the child survey visit details to the database
     public long insertVisitSurveyDetails(Context context, ContentValues contentValues,String name,String type) {
         dataLayer = new DataLayer(context.getResources(), context);
         long newVisitDetaisId = dataLayer.insertChildVisitSurveyDetails(contentValues,name,type);
         return newVisitDetaisId;
     }
 
+    // Inserting the child enroll details to the database
     public long insertChildDetails(Context context, ContentValues contentValues,String name) {
         dataLayer = new DataLayer(context.getResources(), context);
         long newChildId = dataLayer.insertChild(context,contentValues, name);
         return newChildId;
     }
 
+    // Deleting the child survey visit details from the network queue table in db
     public long deleteVisitDetails(Context context, String farmerId) {
         dataLayer = new DataLayer(context.getResources(), context);
         return dataLayer.deleteNetworkQueueItemByFarmerId(Integer.parseInt(farmerId), "child_visit");
 
     }
 
+    // Deleting the child survey visit details from the database
     public long deleteChildVisitDetails(Context context, String farmerId) {
         dataLayer = new DataLayer(context.getResources(), context);
         return dataLayer.deleteChildVisitDetailsById(Long.valueOf(farmerId));
 
     }
-
+     // Update the child info in local db before sync the data to server
     public long updateChildDetails(Context context, ContentValues contentValues, String id,String name,String childName) {
         dataLayer = new DataLayer(context.getResources(), context);
         return dataLayer.updateChild(context,contentValues,id,name,childName);
     }
 
+    // get the child details by child Id from the local database
     public ChildrenDTO getChildrenDTO(Context context, String childId) {
         dataLayer = new DataLayer(context.getResources(), context);
         Cursor cursor = dataLayer.getChildById(Long.parseLong(childId));
@@ -89,7 +94,6 @@ public class ChildLabourLogic {
     }
 
 
-
     public List<String> getSurveyCodeDetailsById(Context context, Long farmerId) {
         dataLayer = new DataLayer(context.getResources(), context);
         List<String> visitList = new ArrayList<String>();
@@ -102,6 +106,7 @@ public class ChildLabourLogic {
         return visitList;
     }
 
+    // Getting the child visit details by the farmer Id from local db
     public List<ContentValues> getChildVisitDetailsById(Context context, Long farmerId) {
         dataLayer = new DataLayer(context.getResources(), context);
         List<ContentValues> visitList = new ArrayList<ContentValues>();
@@ -122,6 +127,7 @@ public class ChildLabourLogic {
         return visitList;
     }
 
+    // Collecting the submitted modules details by farmer Id from local db
     public List<String> getAllChildSubmittedModulesDetails(Context context, Long farmerId) {
         dataLayer = new DataLayer(context.getResources(), context);
         List<String> submittedModulesList = new ArrayList<String>();
@@ -154,6 +160,7 @@ public class ChildLabourLogic {
         return submittedModulesList;
     }
 
+    // Collecting list of child details for the given farmer Id from local db
     public List<ChildrenDTO> getChildDetailsById(Context context, Long farmerId) {
         dataLayer = new DataLayer(context.getResources(), context);
         List<ChildrenDTO> childrenList = new ArrayList<ChildrenDTO>();
@@ -177,6 +184,7 @@ public class ChildLabourLogic {
         return childrenList;
     }
 
+    // Collecting the list of survey needed to be shown to the child
     public List<ChildModuleDto> getChildSurveyModuleList(Context context, Long id,String childId) {
         dataLayer = new DataLayer(context.getResources(), context);
         List<ChildModuleDto> childModuleDtoList = new ArrayList<ChildModuleDto>();
@@ -193,7 +201,6 @@ public class ChildLabourLogic {
                         childModuleDto.set_id(moduleAssignments.getString(moduleAssignments.getColumnIndex("_id")));
 
                         // set language Module & Submodule
-
                         childModuleDto.setName(moduleAssignments.getString(moduleAssignments.getColumnIndex((moduleAssignments.getColumnIndex(OFISDBContract.ModuleEntry.COLUMN_NAME_NAME + moduleNameSuffix) != -1) ? OFISDBContract.ModuleEntry.COLUMN_NAME_NAME + moduleNameSuffix : OFISDBContract.ModuleEntry.COLUMN_NAME_NAME)));
 
                         childModuleDto.setStatus_started(moduleAssignments.getString(moduleAssignments.getColumnIndex("status_started")));
@@ -220,7 +227,7 @@ public class ChildLabourLogic {
             return childModuleDtoList;
         }
 
-
+// getting farmer name by farmer Id from local db
     public String getFarmerName(Context context, String farmerId) {
         String farmerName=null;
         dataLayer = new DataLayer(context.getResources(), context);

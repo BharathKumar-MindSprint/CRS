@@ -1,7 +1,7 @@
 package com.olam.digital.ofis.childlabour.dto;
 
 import java.io.Serializable;
-
+// Pojo class for children details
 public class ChildrenDTO implements Serializable {
 
     // server id

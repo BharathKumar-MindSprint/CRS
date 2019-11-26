@@ -32,6 +32,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
+// Child Survey is populated and handles the visibility,active /Inactive in this adapter.
 public class ChildSurveyRecyclerAdapter extends RecyclerView.Adapter<ChildSurveyRecyclerAdapter.ChildSurveyHolder> {
 
     private OnItemSurveyListener onItemSurveyListener;
