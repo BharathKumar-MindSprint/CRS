@@ -27,6 +27,7 @@ import com.olam.digital.ofis.childlabour.listener.OnItemChildClickListener;
 
 import java.util.List;
 
+// Handles the child register activities in screen
 public class RegisterChildActivity extends BaseActivity implements View.OnClickListener{
 
     private RecyclerView childRecyclerView;
@@ -49,6 +50,7 @@ public class RegisterChildActivity extends BaseActivity implements View.OnClickL
         childLimit();
     }
 
+    // method to check the child registered count
     private void childLimit() {
         if (childLabourRecyclerAdapter!=null && childLabourRecyclerAdapter.getItemCount()>= 30){
             addChildButton.setBackgroundColor(ContextCompat.getColor(this, R.color.child_survey_row));
@@ -64,6 +66,7 @@ public class RegisterChildActivity extends BaseActivity implements View.OnClickL
 
     }
 
+    //method to Populate the child list.
     private void populateChildList() {
         ChildLabourLogic childLabourLogic=new ChildLabourLogic();
         List<ChildrenDTO> childrenList=childLabourLogic.getChildDetailsById(this,farmerId);

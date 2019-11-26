@@ -21,7 +21,7 @@ import com.olam.digital.ofis.childlabour.dto.ChildrenDTO;
 
 import java.util.List;
 
-
+// Handles the child visit details in screen.
 public class ChildVisitDetailActivity  extends BaseActivity implements View.OnClickListener{
 
     private AppCompatButton saveVisitDetailButton;
@@ -49,6 +49,7 @@ public class ChildVisitDetailActivity  extends BaseActivity implements View.OnCl
         getSubmittedSurveyDetails();
     }
 
+    // method to collect the submitted child module list
     private void getSubmittedSurveyDetails() {
         List<String>  submittedModuleCodes = new ChildLabourLogic().getAllChildSubmittedModulesDetails(this, Long.valueOf(farmerId));
         if (submittedModuleCodes.contains(ChildLabourUtils.HOUSEHOLD_SURVEY_CODE)){
@@ -83,6 +84,7 @@ public class ChildVisitDetailActivity  extends BaseActivity implements View.OnCl
         }
     }
 
+    // method to save the child survey visit details
     private void saveVisitDetails() {
         if(houseHoldCheckBox.isChecked()){
             household=1;
@@ -148,6 +150,7 @@ public class ChildVisitDetailActivity  extends BaseActivity implements View.OnCl
 
     }
 
+    // collecting the bundles from the previous activity and the verifying the survey already visited in child place
     public void getBundleValues() {
 
         Bundle bundle = getIntent().getExtras();

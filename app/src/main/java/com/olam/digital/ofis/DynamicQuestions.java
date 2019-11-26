@@ -2188,6 +2188,110 @@ public class DynamicQuestions {
         }
     }
 
+
+    // populate the child answers from dropdown and show
+    public void renderCheckBoxQuestionChild(Cursor questions, LinearLayout parentLayout, long farmerId, long farmerModuleId) {
+        LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
+        renderQuestion(questions, false, questionWrapper);
+
+        final String datatype = questions.getString(questions.getColumnIndex("datatype_name"));
+        final int questionId = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
+        final boolean singleSelect;
+        boolean tempSingleSelect = false;
+
+        Cursor checkboxes = dl.getSpinnerData(OFISDBContract.LookupValuesEntry.TABLE_NAME, true, OFISDBContract.LookupValuesEntry.COLUMN_NAME_QUESTION_ID, questionId, true, OFISDBContract.LookupValuesEntry.COLUMN_NAME_POSITION);
+
+        Cursor cbAnswers = dl.getAnswersForQuestionByChild(questionId, farmerId, farmerModuleId);
+
+        // is this a question we can only select one answer to?
+        // get display config
+        try {
+            JSONObject displayConfig = new JSONObject(questions.getString(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION)));
+            if (displayConfig.has("display")) {
+                JSONObject display = displayConfig.getJSONObject("display");
+                tempSingleSelect = display.optBoolean("single_select", false);
+            }
+        } catch (JSONException e) {
+            FirebaseCrash.report(new Exception("DynamicQuestions: Error getting checkbox display config", e));
+            e.printStackTrace();
+        }
+
+        singleSelect = tempSingleSelect;
+
+        if (checkboxes != null && checkboxes.getCount() > 0) {
+            // add the table layout to the screen
+            final TableLayout tl = (TableLayout) inflater.inflate(R.layout.module_checkbox_table, questionWrapper, false);
+            tl.setSaveEnabled(true);
+
+            while (checkboxes.moveToNext()) {
+                // generate row item
+                TableRow tr = (TableRow) inflater.inflate(R.layout.module_checkbox_table_row, tl, false);
+
+                TextView tvId = (TextView) tr.findViewById(R.id.cbId);
+                TextView tv = (TextView) tr.findViewById(R.id.cbTitle);
+
+                final int cbId = checkboxes.getInt(checkboxes.getColumnIndex("_id"));
+
+                tvId.setText(String.valueOf(cbId));
+
+                int columnIndex = (checkboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) != -1) ? checkboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) : checkboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE);
+                tv.setText(checkboxes.getString(columnIndex));
+
+                CheckBox cb = (CheckBox) tr.findViewById(R.id.cbCheckBox);
+                tl.addView(tr);
+
+                // pre-fill checkboxes that have been previously ticked
+                if (hasAnswers && cbAnswers.getCount() > 0) {
+                    while (cbAnswers.moveToNext()) {
+                        if (cbAnswers.getInt(cbAnswers.getColumnIndex(OFISDBContract.AnswerChildEntry.COLUMN_NAME_ANSWER_INT)) == cbId) {
+                            cb.setChecked(true);
+                        }
+                    }
+                    cbAnswers.moveToPosition(-1);
+                }
+
+                tr.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        CheckBox checkbox = (CheckBox) view.findViewById(R.id.cbCheckBox);
+
+                        checkbox.setChecked(!checkbox.isChecked());
+                        checkbox.callOnClick();
+                    }
+
+                });
+
+                //stick the answer in the question itself
+                cb.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (singleSelect) {
+                            int ssTableRows = tl.getChildCount();
+                            for (int j = 0; j < ssTableRows; j++) {
+                                TableRow ssTr = (TableRow) tl.getChildAt(j);
+                                CheckBox ssTcb = (CheckBox) ssTr.findViewById(R.id.cbCheckBox);
+
+                                ssTcb.setChecked(false);
+                            }
+                            CheckBox clickedCb = (CheckBox) view;
+                            clickedCb.setChecked(true);
+                        }
+                        saveMultipleAnswerEntry(questionId, 0, datatype, tl);
+                    }
+                });
+
+
+            }
+
+            questionWrapper.addView(tl);
+            parentLayout.addView(questionWrapper);
+
+            saveMultipleAnswerEntry(questionId, 0, datatype, tl);
+        }
+    }
+
+
+
     void renderCheckBoxQuestionSubQuestion(Cursor questions, LinearLayout parentLayout, long farmerId, long farmerModuleId, final int parentid) {
         LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
         // renderQuestion(questions, false, questionWrapper);

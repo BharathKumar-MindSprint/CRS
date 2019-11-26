@@ -1,5 +1,5 @@
 package com.olam.digital.ofis.childlabour.dto;
-
+// Pojo class for village details
 public class VillageDTO {
 
     private String id;
