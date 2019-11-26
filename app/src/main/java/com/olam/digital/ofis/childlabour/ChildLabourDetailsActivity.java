@@ -48,6 +48,7 @@ public class ChildLabourDetailsActivity extends BaseActivity {
         }
     }
 
+    // method to populate the children list from db
     private void populateChildList() {
         ChildLabourLogic childLabourLogic=new ChildLabourLogic();
         List<ChildrenDTO> childrenList=childLabourLogic.getChildDetailsById(this,farmerId);

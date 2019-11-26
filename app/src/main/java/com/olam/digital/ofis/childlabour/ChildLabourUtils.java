@@ -3,7 +3,7 @@ package com.olam.digital.ofis.childlabour;
 import android.content.Context;
 
 import com.olam.digital.ofis.R;
-
+//  Static text mapped in object
 public class ChildLabourUtils {
 
     public static final String VILLAGE_NAME="village";

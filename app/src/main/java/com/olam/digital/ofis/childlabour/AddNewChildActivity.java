@@ -130,6 +130,7 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
         }
     }
 
+    // Age shows from 0 to 17.
     private void setAgeSpinner() {
         ageList = new ArrayList<String>();
         ageList.add(getResources().getString(R.string.please_select));
@@ -142,6 +143,7 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
         ageSpinner.setAdapter(adapter);
     }
 
+    // Method to enroll the new child
     private void addNewChild() {
         String name=fullnameEditText.getText().toString().trim();
         if (TextUtils.isEmpty(name)){
@@ -162,6 +164,7 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
         }
     }
 
+    // Method to update the new child before sync
     private void UpdateChild(String name) {
         ContentValues contentValues=new ContentValues();
         contentValues.put(OFISDBContract.ChildEntry.COLUMN_NAME_FARMER_ID, farmerId);
@@ -214,6 +217,7 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
         }
     }
 
+    // Getting the data from bundle from the old activity
     public void getBundleValues() {
         try{
             Bundle bundle = this.getIntent().getExtras();
@@ -241,6 +245,7 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
 
     }
 
+    // Method to set the value from db to edit the child
     private void setValue(ChildrenDTO childrenDTO) {
         fullnameEditText.setText(childrenDTO.getName());
 

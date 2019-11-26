@@ -18,6 +18,7 @@ import com.olam.digital.ofis.childlabour.listener.OnItemChildClickListener;
 
 import java.util.List;
 
+// Child List is populated and handles the active /Inactive child list in this adapter.
 public class ChildLabourRecyclerAdapter extends RecyclerView.Adapter<ChildLabourRecyclerAdapter.ChildHolder>{
 
     private OnItemChildClickListener onItemChildClickListener;
