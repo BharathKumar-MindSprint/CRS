@@ -413,7 +413,7 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
                 String displayType = questions.getString(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE));
 
                 if (displayType.replaceAll(" ", "").toLowerCase().equals("checkbox")) {
-                    dynamicQuestions.renderCheckBoxQuestion(questions, dynamicQuestions.questionsSection, farmerId, farmerModuleId);
+                    dynamicQuestions.renderCheckBoxQuestionChild(questions, dynamicQuestions.questionsSection, farmerId, farmerModuleId);
                 } else if (displayType.replaceAll(" ", "").toLowerCase().equals("datepicker")) {
                     dynamicQuestions.renderDatePickerQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null);
                 } else if (displayType.replaceAll(" ", "").toLowerCase().equals("decimal")) {

@@ -2609,6 +2609,24 @@ if (ChildLabourUtils.isChildEnumerator) {
         return db.query(OFISDBContract.AnswerEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
     }
 
+    // get the child answers from dropdown
+    Cursor getAnswersForQuestionByChild(int questionId, long farmerId, long farmerModuleId) {
+        String[] columns = new String[]{"*"};
+        String farmerQuery = OFISDBContract.AnswerChildEntry.COLUMN_NAME_FARMER_ID + " = ? ";
+        String farmerQueryValue = String.valueOf(farmerId);
+
+        String whereClause = OFISDBContract.AnswerChildEntry.COLUMN_NAME_QUESTION_ID + " = ? AND " + farmerQuery + " AND "
+                + OFISDBContract.AnswerChildEntry.COLUMN_NAME_FARMER_MODULE_ID + " = ?";
+        String[] whereArgs = new String[]{
+                String.valueOf(questionId),
+                farmerQueryValue,
+                String.valueOf(farmerModuleId)
+        };
+
+        return db.query(OFISDBContract.AnswerChildEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+    }
+
+
     public long insertFarmerModule(long moduleId, long farmerId, String olamFarmerId, int farmId, int subModuleId, int statusStarted, String recordedLat, String recordedLng) {
         ContentValues farmerModuleValues = new ContentValues();
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
