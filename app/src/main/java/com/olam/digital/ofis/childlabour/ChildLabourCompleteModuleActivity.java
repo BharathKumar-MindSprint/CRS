@@ -62,7 +62,8 @@ import com.olam.digital.ofis.childlabour.dto.ChildrenDTO;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
-
+// handling all survey Questions for child survey.
+//Capture all the collected answers and store in database.
 public class ChildLabourCompleteModuleActivity extends BaseActivity {
 
     private Long farmerID;
@@ -405,6 +406,7 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
 
     }
 
+    // method to setup submodule questions
     private void setupSubModuleQuestions() {
         // loop through questions and generate the right control for each
 //        while (questions.moveToNext()) {
