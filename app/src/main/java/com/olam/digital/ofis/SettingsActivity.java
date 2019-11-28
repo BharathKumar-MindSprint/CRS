@@ -17,6 +17,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -39,6 +40,7 @@ import com.olam.digital.ofis.authentication.OnAccessTokenInterface;
 import com.olam.digital.ofis.authentication.model.AuthRequestDTO;
 import com.olam.digital.ofis.model.CountriesDTO;
 
+import org.apache.commons.io.FileUtils;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -46,7 +48,7 @@ import java.util.List;
 import java.util.Locale;
 
 
-public class SettingsActivity extends Activity implements OnAccessTokenInterface {
+public class SettingsActivity extends AppCompatActivity implements OnAccessTokenInterface {
     // update
     private Context context;
     private EditText enumeratorID;
@@ -70,12 +72,14 @@ public class SettingsActivity extends Activity implements OnAccessTokenInterface
         dl = new DataLayer(res, context);
 
         //noinspection ConstantConditions
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         buttonSave = (Button) findViewById(R.id.buttonSave);
         buttonSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // For clear cache functionality
+                FileUtils.deleteQuietly(context.getCacheDir());
                 // Request Permission only for Android Version Marshmallow and above
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     // Check Phone Permission
@@ -156,6 +160,8 @@ public class SettingsActivity extends Activity implements OnAccessTokenInterface
         authRequestDTO.setLanguage(Locale.getDefault().getLanguage());
         authRequestDTO.setApplication("ofismobile");
         authRequestDTO.setUsername(enumeratorID.getText().toString().trim());
+//        Passcode added - Penetration testing
+        authRequestDTO.setPasscode(Utilities.getPasscodeFromSharedPrefs(SettingsActivity.this));
         //authRequestDTO.setPassword("3751e350-a1d4-4db9-b045-9dc50cf544fb");
         authRequestDTO.setPassword(DeviceIDxctractor.fetchDeviceID(this));
         authRequestDTO.setFirebaseToken(Utilities.getFirebaseTokenSharedPrefs(SettingsActivity.this));

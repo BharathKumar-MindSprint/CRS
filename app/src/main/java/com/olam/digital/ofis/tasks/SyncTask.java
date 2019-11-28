@@ -323,4 +323,46 @@ abstract class SyncTask extends AsyncTask<SyncTaskOperationType, Object, String>
         okHttpClient.newCall(request).enqueue(callback);
     }
 
+    void okHttpGetChild(Context context, String url, JSONObject params, Callback callback) {
+        okHttpClient.readTimeoutMillis();
+        String enumeratorId = Utilities.getFromSharedPrefs(context);
+        String imeiNumber = Utilities.getIMEI(context);
+        String uniqueId = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
+        String base64EnumeratorId = Base64.encodeToString(enumeratorId.getBytes(), Base64.NO_WRAP);
+        String base64ImeiNumber = Base64.encodeToString(imeiNumber.getBytes(), Base64.NO_WRAP);
+        String base64UniqueId = Base64.encodeToString(uniqueId.getBytes(), Base64.NO_WRAP);
+        String fullUrl = getAbsoluteUrl(url);
+        RequestBody body;
+//        String token="";
+//        try {
+//            token=new AccessTokenTask(context, null).execute().get();
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        } catch (ExecutionException e) {
+//            e.printStackTrace();
+//        }
+        Request.Builder requestBuilder = new Request.Builder()
+                .header("enumerator-id", base64EnumeratorId)
+                .header("imei-number", base64ImeiNumber)
+                .header("unique-id", base64UniqueId)
+                .header("app-version", BuildConfig.VERSION_NAME)
+                .header("App-Id", "1")
+                .header("Authorization", "Bearer " + new AuthenticationHelper(context).getAuthenticationDTO().getAccessToken())
+                .url("http://www.mocky.io/v2/5d619ffb32000059008e6134");
+
+
+//        if (params != null) {
+//            body = RequestBody.create(JSONBody, params.toString());
+//        } else {
+//            body = RequestBody.create(JSONBody, "");
+//        }
+
+        requestBuilder.get();
+
+        Request request = requestBuilder.build();
+
+        okHttpClient.newCall(request).enqueue(callback);
+    }
+
+
 }

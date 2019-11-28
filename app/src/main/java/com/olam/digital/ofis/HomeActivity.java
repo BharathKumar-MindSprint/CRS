@@ -33,6 +33,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -57,6 +58,10 @@ import com.olam.digital.ofis.authentication.DeviceIDxctractor;
 import com.olam.digital.ofis.authentication.OnAccessTokenInterface;
 import com.olam.digital.ofis.authentication.model.AuthRequestDTO;
 import com.olam.digital.ofis.authentication.model.AuthenticationDTO;
+import com.olam.digital.ofis.childlabour.AddNewChildActivity;
+import com.olam.digital.ofis.childlabour.ChildLabourUtils;
+import com.olam.digital.ofis.childlabour.ChildVisitDetailActivity;
+import com.olam.digital.ofis.childlabour.ViewChildLabourSurveyActivity;
 import com.olam.digital.ofis.logging.FabricLogsWriter;
 import com.olam.digital.ofis.recordpolygon.RecordPolygonActivity;
 import com.olam.digital.ofis.recordpolygon.SharedPreferenceUtils;
@@ -80,7 +85,7 @@ import retrofit2.Response;
 import static io.fabric.sdk.android.Fabric.TAG;
 
 
-public class HomeActivity extends BaseListActivity implements Callback<AuthenticationDTO>,OnAccessTokenInterface {
+public class HomeActivity extends BaseListActivity implements Callback<AuthenticationDTO>,OnAccessTokenInterface, AdapterView.OnItemClickListener {
 
     // update
     public static final String TAG = "HomeActivity";
@@ -93,6 +98,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     private NetworkLayer nl;
     private ProgressDialog m_ProgressDialog = null;
     private ProgressDialog mDialogLoading=null;
+    int checkvalue = 0;
     private boolean farmerSynced = true, autotimeEnabled = false;
     private Cursor networkQueue;
     private CustomListAdapter_NetworkQueue customListAdapter_networkQueue;
@@ -128,6 +134,8 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     private static final long SYNC_INTERVAL = SYNC_INTERVAL_IN_MINUTES * SECONDS_PER_MINUTE;
 
     private EditText enumeratorID;
+//    Passcode added - Penetration test
+    private EditText passcode;
     private Button saveUpdateButton;
 
     // Runtime Permission Request Code
@@ -142,11 +150,14 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     public static int totalItems;
     public static int progressItem;
     private long lastClickTime = 0;
-
+    private boolean isChildSynced=true;
+    ListView listView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+        listView=findViewById(R.id.list);
+        listView.setOnItemClickListener(this);
         checkTls();
         staticContext = this;
         context = me = this;
@@ -158,8 +169,8 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         mainHandler = new Handler(Looper.getMainLooper());
         sharedPreferences = getSharedPreferences("com.olam.digital.ofis.app_prefs", MODE_PRIVATE);
 
-        LinearLayout itemsHeader = (LinearLayout) ((LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.home_header_buttons, getListView(), false);
-        getListView().addHeaderView(itemsHeader);
+        LinearLayout itemsHeader = (LinearLayout) ((LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.home_header_buttons, listView, false);
+        listView.addHeaderView(itemsHeader);
 
         firstRunSection = (ScrollView) findViewById(R.id.firstRunWrapper);
         mainSection = (RelativeLayout) findViewById(R.id.mainWrapper);
@@ -167,6 +178,8 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         recordTrainingWrapper = (CardView) findViewById(R.id.recordTrainingWrapper);
 
         enumeratorID = (EditText) findViewById(R.id.enumeratorID);
+//        Passcode added - Penetration testing
+        passcode = (EditText) findViewById(R.id.passcode);
         saveUpdateButton = (Button) findViewById(R.id.buttonSaveUpdate);
         topSection = (LinearLayout) findViewById(R.id.topSectionWrapper);
 
@@ -230,10 +243,10 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                     android.Manifest.permission.ACCESS_COARSE_LOCATION}, PERMISSIONS_ACCESS_LOCATION);
 
                     return;
+                }else {
+                    System.out.println("doingAuthRequest 1");
+                    doingAuthRequest();
                 }
-
-                doingAuthRequest();
-
             }
         });
 
@@ -281,8 +294,12 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     }
 
     private void doingAuthRequest() {
+        System.out.println("doingAuthRequest");
         String userEnumerator = enumeratorID.getText().toString().trim();
-        if (userEnumerator!=null && !userEnumerator.equalsIgnoreCase("")){
+//        Passcode validation - Penetration testing
+        String userpasscode = passcode.getText().toString().trim();
+        if (userEnumerator!=null && !userEnumerator.equalsIgnoreCase("") &&
+                userpasscode!=null && !userpasscode.equalsIgnoreCase("") ){
            /* if (ContextCompat.checkSelfPermission(HomeActivity.this,
                     android.Manifest.permission.READ_PHONE_STATE)
                     != PackageManager.PERMISSION_GRANTED) {
@@ -294,7 +311,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
             }else*/ {
                 showProgress(true);
-                doAuthentication(userEnumerator);
+                doAuthentication(userEnumerator,userpasscode);
             }
         }else{
             Toast.makeText(HomeActivity.this,getString(R.string.enumerator_empty),Toast.LENGTH_LONG).show();
@@ -337,12 +354,13 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         }
     }
 
-    private void doAuthentication(String userID) {
+    private void doAuthentication(String userID, String passCode) {
         AuthRequestDTO authRequestDTO = new AuthRequestDTO();
         authRequestDTO.setLanguage(Locale.getDefault().getLanguage());
         authRequestDTO.setApplication("ofismobile");
         authRequestDTO.setUsername(userID);
-        //authRequestDTO.setPassword("3751e350-a1d4-4db9-b045-9dc50cf544fb");
+//        Passcode added - Penetration testing
+        authRequestDTO.setPasscode(passCode);
         authRequestDTO.setPassword(DeviceIDxctractor.fetchDeviceID(this));
         String firebasetoken=FirebaseInstanceId.getInstance().getToken();
         authRequestDTO.setFirebaseToken(Utilities.getFirebaseTokenSharedPrefs(HomeActivity.this));
@@ -493,9 +511,10 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
     private void firstTimeSetup() {
 
-        if (enumeratorID.getText().length() > 0) {
+        if (enumeratorID.getText().length() > 0 && passcode.getText().length() >0) {
             Utilities.saveLongToSharedPrefs(context, "VERSION_NUM", BuildConfig.VERSION_CODE);
             Utilities.saveToSharedPrefs(context, "ENUMERATOR_ID", enumeratorID.getText().toString(), null);
+            Utilities.saveToSharedPrefs(context, "PASSCODE", passcode.getText().toString(), null);
             nl.syncData();
             //nl.postFirebaseToken(FirebaseInstanceId.getInstance().getToken());
         } else {
@@ -547,6 +566,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     private void bindNetworkQueue() {
         TextView nomodulestosubmittext = (TextView) findViewById(R.id.nomodulestosubmittext);
         networkQueue = dl.getNetworkQueue();
+
         if (networkQueue.getCount() > 0) {
             queueCount = (TextView) findViewById(R.id.networkQueueCount);
             totalItems = networkQueue.getCount();
@@ -557,7 +577,8 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             String[] adapterCols = new String[]{"_id", OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID};
             int[] adapterRowViews = new int[]{R.id.networkQueueId, R.id.networkQueueName, R.id.networkQueuePoiType, R.id.networkQueueOlamFarmerId};
             customListAdapter_networkQueue = new CustomListAdapter_NetworkQueue(context, networkQueue, adapterCols, adapterRowViews, me);
-            setListAdapter(customListAdapter_networkQueue);
+            listView.setAdapter(customListAdapter_networkQueue);
+            //setListAdapter(customListAdapter_networkQueue);
 
             if (Utilities.daysToUpdate(context) <= 0) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -578,7 +599,9 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             }
 
         } else {
-            getListView().setAdapter(null);
+            listView.setAdapter(null);
+            queueCount = (TextView) findViewById(R.id.networkQueueCount);
+            queueCount.setText("0");
             if (Utilities.daysToUpdate(context) <= 0) {
                 nomodulestosubmittext.setText(R.string.ofis_update_overdue);
                 nomodulestosubmittext.setTypeface(Typeface.DEFAULT_BOLD);
@@ -602,7 +625,8 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         authRequestDTO.setLanguage(Locale.getDefault().getLanguage());
         authRequestDTO.setApplication("ofismobile");
         authRequestDTO.setUsername(Utilities.getFromSharedPrefs(HomeActivity.this));
-        //authRequestDTO.setPassword("3751e350-a1d4-4db9-b045-9dc50cf544fb");
+//      Passcode added - Penetration testing
+        authRequestDTO.setPasscode(Utilities.getPasscodeFromSharedPrefs(HomeActivity.this));
         authRequestDTO.setPassword(DeviceIDxctractor.fetchDeviceID(this));
         authRequestDTO.setFirebaseToken(Utilities.getFirebaseTokenSharedPrefs(HomeActivity.this));
         authRequestDTO.setGrantType("password");
@@ -624,7 +648,11 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                     if (!farmerSynced) {
                         m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, 0, 0, res.getString(R.string.farmer_not_synced));
                         Utilities.closeProgressDialog(m_ProgressDialog, 3000);
-                    }else{
+                    }else if(!isChildSynced){
+                        m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, 0, 0, res.getString(R.string.child_not_synced));
+                        Utilities.closeProgressDialog(m_ProgressDialog, 3000);
+                    }
+                    else{
                         if(totalItems == 0)
                             totalItems = networkQueue.getCount();
 
@@ -651,11 +679,13 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                         finishItemSync(msg);
                     } else if (msg.what == 3) {
                         farmerSynced = false;
+                    }else if (msg.what == 5){
+                        isChildSynced=false;
                     }
                 }
             };
             farmerSynced = true;
-
+            isChildSynced=true;
             nl.getNetworkQueue(null);
             nl.syncNetworkQueue(null, syncHandler);
         } else {
@@ -685,6 +715,9 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                     if (!farmerSynced) {
                         m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, 0, 0, res.getString(R.string.farmer_not_synced));
                         Utilities.closeProgressDialog(m_ProgressDialog, 3000);
+                    }else if (!isChildSynced){
+                        m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, 0, 0, res.getString(R.string.child_not_synced));
+                        Utilities.closeProgressDialog(m_ProgressDialog, 3000);
                     }
                 }
             });
@@ -708,12 +741,16 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                         finishItemSync(msg);
                     } else if (msg.what == 3) {
                         farmerSynced = false;
-                    } else {
+                    } else if (msg.what ==5){
+                        isChildSynced=false;
+                    }
+                    else {
                         finishItemSync(msg);
                     }
                 }
             };
             farmerSynced = true;
+            isChildSynced=true;
             nl.getNetworkQueue(itemId);
             nl.syncNetworkQueueFromHome(itemId, syncHandler);
         } else {
@@ -846,71 +883,103 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         }
     }
 
-    @Override
-    protected void onListItemClick (ListView l, View v, int position, long id) {
-        // carry out relevant action based on item clicked
-        if (networkQueue.getCount() > 1) {
-            networkQueue.moveToPosition(position-1);
-        }
-        String itemType = networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE));
-        if (itemType.equalsIgnoreCase("infrastructure")) {
-            Intent intent = new Intent(this, AddInfrastructureActivity.class);
-            AddInfrastructureActivity.infrastructureID = id;
-            AddInfrastructureActivity.editMode = true;
-            startActivity(intent);
-        } else if (itemType.equalsIgnoreCase("farmer")) {
-            Intent intent = new Intent(this, AddFarmerActivity.class);
-            intent.putExtra(EDIT_FARMER_ID, (long) networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
-            intent.putExtra(EDIT_MODE, true);
-            startActivity(intent);
-        } else if (itemType.equalsIgnoreCase("farmlocation")) {
-            Intent intent = new Intent(this, ViewFarmerActivity.class);
-            ViewFarmerActivity.farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
-            //long farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
-            //SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(farmerId);
-            startActivity(intent);
-        }  else if (itemType.equalsIgnoreCase("farmpolygon")) {
-            Intent recordPolygonIntent = new Intent(this, RecordPolygonActivity.class);
-            final int lFarmID = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID));
-            int count = SharedPreferenceUtils.getInstance(getApplicationContext()).getPlotCount(""+lFarmID);
-            recordPolygonIntent.putExtra(FARMER_ID, networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
-            recordPolygonIntent.putExtra(FARM_ID, lFarmID);
-            recordPolygonIntent.putExtra(OLAM_FARMER_ID, networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID)));
-            recordPolygonIntent.putExtra(FARMER_NAME, networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME)));
-            recordPolygonIntent.putExtra(PLOT_COUNT, count);
-            recordPolygonIntent.setAction(Intent.ACTION_DEFAULT);
-            startActivity(recordPolygonIntent);
-        } else if (itemType.equalsIgnoreCase("module")) {
-            Intent intent = new Intent(this, ViewFarmerActivity.class);
-            ViewFarmerActivity.farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
-            //long farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
-            //SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(farmerId);
-            startActivity(intent);
-        } else if (itemType.equalsIgnoreCase("fmpreview") || itemType.equalsIgnoreCase("fullfmpreview")) {
-            Intent intent = new Intent(this, ViewFarmerActivity.class);
-            ViewFarmerActivity.farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
-            //long farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
-            //SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(farmerId);
-            startActivity(intent);
-        } else if (itemType.equalsIgnoreCase("transaction")) {
-            Intent intent = new Intent(context, TransactionItem.class);
-            intent.putExtra(EDIT_TRANSACTION_ITEM_ID, networkQueue.getLong(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_TRANSACTION_ITEM_ID)));
-            intent.putExtra(EDIT_MODE, true);
-            intent.putExtra(READ_ONLY_MODE, true);
-            startActivity(intent);
-        } else if (itemType.equalsIgnoreCase("trainingrecord")) {
-            Intent intent = new Intent(context, TrainingRecord.class);
-            intent.putExtra(EDIT_TRAININGRECORD_ID, networkQueue.getLong(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_TRAINING_RECORD_ID)));
-            intent.putExtra(EDIT_MODE, true);
-            intent.putExtra(READ_ONLY_MODE, true);
-            startActivity(intent);
-        }else if (itemType.equalsIgnoreCase("farmer_photo")) {
-            //JIRA req OW-505
-            Intent intent = new Intent(this, ViewFarmerActivity.class);
-            ViewFarmerActivity.farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
-            startActivity(intent);
-        }
-    }
+//    @Override
+//    protected void onListItemClick (ListView l, View v, int position, long id) {
+//        // carry out relevant action based on item clicked
+//        if (networkQueue.getCount() > 1) {
+//            networkQueue.moveToPosition(position-1);
+//        }
+//        String itemType = networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE));
+//        if (itemType.equalsIgnoreCase("infrastructure")) {
+//            Intent intent = new Intent(this, AddInfrastructureActivity.class);
+//            AddInfrastructureActivity.infrastructureID = id;
+//            AddInfrastructureActivity.editMode = true;
+//            startActivity(intent);
+//        } else if (itemType.equalsIgnoreCase("farmer")) {
+//            Intent intent = new Intent(this, AddFarmerActivity.class);
+//            intent.putExtra(EDIT_FARMER_ID, (long) networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
+//            intent.putExtra(EDIT_MODE, true);
+//            startActivity(intent);
+//        } else if (itemType.equalsIgnoreCase("farmlocation")) {
+//            Intent intent = new Intent(this, ViewFarmerActivity.class);
+//            ViewFarmerActivity.farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
+//            //long farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
+//            //SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(farmerId);
+//            startActivity(intent);
+//        }  else if (itemType.equalsIgnoreCase("farmpolygon")) {
+//            Intent recordPolygonIntent = new Intent(this, RecordPolygonActivity.class);
+//            final int lFarmID = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID));
+////            int count = SharedPreferenceUtils.getInstance(getApplicationContext()).getPlotCount(""+lFarmID);
+//            DataLayer dl = new DataLayer(getResources(), HomeActivity.this);
+//            dl.fetchPlotData(networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
+//            int count =0;
+////        if(strFarmID != "0"){
+//            try{
+////            count = SharedPreferenceUtils.getInstance(getApplicationContext()).getPlotCount(""+strFarmID);
+//                count = dl.fetchPlotData(networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
+//            }catch (Exception e){
+//                count = 0;
+//            }
+//            recordPolygonIntent.putExtra(FARMER_ID, networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
+//            recordPolygonIntent.putExtra(FARM_ID, lFarmID);
+//            recordPolygonIntent.putExtra(OLAM_FARMER_ID, networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID)));
+//            recordPolygonIntent.putExtra(FARMER_NAME, networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME)));
+//            recordPolygonIntent.putExtra(PLOT_COUNT, count);
+//            recordPolygonIntent.setAction(Intent.ACTION_DEFAULT);
+//            startActivity(recordPolygonIntent);
+//        } else if (itemType.equalsIgnoreCase("module")) {
+//            Intent intent = new Intent(this, ViewFarmerActivity.class);
+//            ViewFarmerActivity.farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
+//            //long farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
+//            //SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(farmerId);
+//            startActivity(intent);
+//        }  else if (itemType.equalsIgnoreCase("childmodule")) {
+//            Intent intent = new Intent(this, ViewChildLabourSurveyActivity.class);
+//            ViewChildLabourSurveyActivity.farmerID = Long.valueOf(networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
+//            ViewChildLabourSurveyActivity.childID = Long.valueOf(networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_CHILD_ID)));
+//            //long farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
+//            //SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(farmerId);
+//            startActivity(intent);
+//        } else if (itemType.equalsIgnoreCase("fmpreview") || itemType.equalsIgnoreCase("fullfmpreview")) {
+//            Intent intent = new Intent(this, ViewFarmerActivity.class);
+//            ViewFarmerActivity.farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
+//            //long farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
+//            //SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(farmerId);
+//            startActivity(intent);
+//        } else if (itemType.equalsIgnoreCase("transaction")) {
+//            Intent intent = new Intent(context, TransactionItem.class);
+//            intent.putExtra(EDIT_TRANSACTION_ITEM_ID, networkQueue.getLong(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_TRANSACTION_ITEM_ID)));
+//            intent.putExtra(EDIT_MODE, true);
+//            intent.putExtra(READ_ONLY_MODE, true);
+//            startActivity(intent);
+//        } else if (itemType.equalsIgnoreCase("trainingrecord")) {
+//            Intent intent = new Intent(context, TrainingRecord.class);
+//            intent.putExtra(EDIT_TRAININGRECORD_ID, networkQueue.getLong(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_TRAINING_RECORD_ID)));
+//            intent.putExtra(EDIT_MODE, true);
+//            intent.putExtra(READ_ONLY_MODE, true);
+//            startActivity(intent);
+//        }else if (itemType.equalsIgnoreCase("farmer_photo")) {
+//            //JIRA req OW-505
+//            Intent intent = new Intent(this, ViewFarmerActivity.class);
+//            ViewFarmerActivity.farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
+//            startActivity(intent);
+//        }else if (itemType.equalsIgnoreCase("children")) {
+//            Intent intent = new Intent(this, AddNewChildActivity.class);
+//            intent.putExtra("action","sync_edit");
+//            intent.putExtra(ChildLabourUtils.CHILD_FARMER_ID, String.valueOf(networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID))));
+//            intent.putExtra(ChildLabourUtils.CHILD_ID, networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_CHILD_ID)));
+//            startActivity(intent);
+//        }else if (itemType.equalsIgnoreCase("child_visit")){
+//            Bundle childBundle=new Bundle();
+//            childBundle.putString(ChildLabourUtils.CHILD_FARMER_ID,String.valueOf(networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID))));
+//            Intent intent = new Intent(this, ChildVisitDetailActivity.class);
+//            intent.putExtras(childBundle);
+////            intent.putExtra(ChildLabourUtils.CHILD_FARMER_ID, String.valueOf(networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID))));
+////            intent.putExtra(ChildLabourUtils.CHILDLABOUR_SURVEY, networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_SURVEY_CODE)));
+//            startActivity(intent);
+//
+//        }
+//    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -967,22 +1036,16 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         if (response.isSuccessful()) {
             AuthenticationDTO authenticationDTO = response.body();
             authenticationDTO.setWillExpireAt((System.currentTimeMillis() / 1000) + authenticationDTO.getExpiresIn() / 1000);
-           /* JWT jwt = new JWT(authenticationDTO.getAccessToken());
-            long expireAt =  jwt.getExpiresAt().getTime();
 
-            System.out.print("JWTTest: Current time (in ms)" + System.currentTimeMillis()
-            + "\n Current time (in sec)" + (System.currentTimeMillis() / 1000)
-            + "\n getExpiresIn" + (authenticationDTO.getExpiresIn())
-            + "\n getExpiresIn - 60" + (authenticationDTO.getExpiresIn() -60)
-            + "\n From JWT expireAt:" + expireAt );*/
-//            authenticationDTO.setWillExpireAt(expireAt);
             new AuthenticationHelper(this).setAuthenticationDTO(authenticationDTO);
             new AuthenticationHelper(this).setUserName(enumeratorID.getText().toString());
-            //  new AppUtils().AppStatic="LogIn";
-            // Do initial check for App
-//            Utilities.isAppAlive=true;
+//           Passcode validation - Penetration testing
+            new AuthenticationHelper(this).setPassode(passcode.getText().toString());
             doInitialCheck();
-        } else {
+        }else if(response.code() == 423){
+            Toast.makeText(HomeActivity.this,getString(R.string.authentication_attempt),Toast.LENGTH_LONG).show();
+        }
+        else {
             try {
                 FabricLogsWriter.printCrashLog(TAG,"oauth/authenticate",response.code(),"Request : :  "+new Gson().toJson(getAuthRequestDTO()).toString() +"   Response :  "+response.raw().networkResponse().toString() + "user Id :" +enumeratorID.getText().toString().trim(),context);
             }catch (Exception e){}
@@ -1060,61 +1123,74 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
             case PERMISSIONS_ACCESS_LOCATION: {
-                for (String permission : permissions) {
-                    if (ActivityCompat.shouldShowRequestPermissionRationale(this, permission)) {
-                        // Permission Denied
-                        Toast.makeText(this, R.string.gps_permission_denial_msg, Toast.LENGTH_LONG).show();
-                        String userEnumerator = enumeratorID.getText().toString().trim();
-                        if (userEnumerator!=null && !userEnumerator.equalsIgnoreCase("")){
-                            doingAuthRequest();
-                        }
+                try {
+                    for (String permission : permissions) {
+                        if (ActivityCompat.shouldShowRequestPermissionRationale(this, permission)) {
+                            // Permission Denied
+                            Toast.makeText(this, R.string.gps_permission_denial_msg, Toast.LENGTH_LONG).show();
+                            String userEnumerator = enumeratorID.getText().toString().trim();
+                            if (userEnumerator!=null && !userEnumerator.equalsIgnoreCase("")){
+                                doingAuthRequest();
+                            }
 
-                    } else {
-                        if (ActivityCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED) {
-                            // Permission Allowed
-                            doingAuthRequest();
                         } else {
-                            // Checkbox set to Never Ask Again
-                            showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
+                            if (ActivityCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED) {
+                                // Permission Allowed
+                                if(checkvalue == 0) {
+                                    checkvalue++;
+                                    doingAuthRequest();
+                                }
+                            } else {
+                                // Checkbox set to Never Ask Again
+                                showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
+                            }
                         }
                     }
-                }
-                break;
+                    break;
+            }catch (Exception e ){}
+
             }
 
             case MY_PROFILE_PIC_PERMISSIONS_REQUEST: {
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED
-                        && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                try{
+                    if (grantResults.length > 0
+                            && grantResults[0] == PackageManager.PERMISSION_GRANTED
+                            && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
 
 
 
-                } else if (Build.VERSION.SDK_INT >= 23
-                        && (!shouldShowRequestPermissionRationale(permissions[0])
-                        || !shouldShowRequestPermissionRationale(permissions[1]))) {
-                    showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
+                    } else if (Build.VERSION.SDK_INT >= 23
+                            && (!shouldShowRequestPermissionRationale(permissions[0])
+                            || !shouldShowRequestPermissionRationale(permissions[1]))) {
+                        showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
 
-                } else {
-                    Toast.makeText(this, R.string.camera_and_gallery_permission_denial_msg, Toast.LENGTH_LONG).show();
-                }
-                break;
+                    } else {
+                        Toast.makeText(this, R.string.camera_and_gallery_permission_denial_msg, Toast.LENGTH_LONG).show();
+                    }
+                    break;
+                }catch (Exception e){}
+
             }
             case MY_SIGNATURE_PIC_PERMISSIONS_REQUEST: {
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED
-                        && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+
+                try {
+                    if (grantResults.length > 0
+                            && grantResults[0] == PackageManager.PERMISSION_GRANTED
+                            && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
 
 
 
-                } else if (Build.VERSION.SDK_INT >= 23
-                        && (!shouldShowRequestPermissionRationale(permissions[0])
-                        || !shouldShowRequestPermissionRationale(permissions[1]))) {
-                    showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
+                    } else if (Build.VERSION.SDK_INT >= 23
+                            && (!shouldShowRequestPermissionRationale(permissions[0])
+                            || !shouldShowRequestPermissionRationale(permissions[1]))) {
+                        showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
 
-                } else {
-                    Toast.makeText(this, R.string.camera_and_gallery_permission_denial_msg, Toast.LENGTH_LONG).show();
-                }
-                break;
+                    } else {
+                        Toast.makeText(this, R.string.camera_and_gallery_permission_denial_msg, Toast.LENGTH_LONG).show();
+                    }
+                    break;
+
+                }catch (Exception e){}
             }
 
 
@@ -1138,5 +1214,101 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     }
 
 
+    @Override
+    public void onItemClick(AdapterView<?> l, View v, int position, long id) {
+        // carry out relevant action based on item clicked
+        if (networkQueue.getCount() > 1) {
+            networkQueue.moveToPosition(position-1);
+        }
+        String itemType = networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE));
+        if (itemType.equalsIgnoreCase("infrastructure")) {
+            Intent intent = new Intent(this, AddInfrastructureActivity.class);
+            AddInfrastructureActivity.infrastructureID = id;
+            AddInfrastructureActivity.editMode = true;
+            startActivity(intent);
+        } else if (itemType.equalsIgnoreCase("farmer")) {
+            Intent intent = new Intent(this, AddFarmerActivity.class);
+            intent.putExtra(EDIT_FARMER_ID, (long) networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
+            intent.putExtra(EDIT_MODE, true);
+            startActivity(intent);
+        } else if (itemType.equalsIgnoreCase("farmlocation")) {
+            Intent intent = new Intent(this, ViewFarmerActivity.class);
+            ViewFarmerActivity.farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
+            //long farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
+            //SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(farmerId);
+            startActivity(intent);
+        }  else if (itemType.equalsIgnoreCase("farmpolygon")) {
+            Intent recordPolygonIntent = new Intent(this, RecordPolygonActivity.class);
+            final int lFarmID = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID));
+//            int count = SharedPreferenceUtils.getInstance(getApplicationContext()).getPlotCount(""+lFarmID);
+            DataLayer dl = new DataLayer(getResources(), HomeActivity.this);
+            dl.fetchPlotData(networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
+            int count =0;
+//        if(strFarmID != "0"){
+            try{
+//            count = SharedPreferenceUtils.getInstance(getApplicationContext()).getPlotCount(""+strFarmID);
+                count = dl.fetchPlotData(networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
+            }catch (Exception e){
+                count = 0;
+            }
+            recordPolygonIntent.putExtra(FARMER_ID, networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
+            recordPolygonIntent.putExtra(FARM_ID, lFarmID);
+            recordPolygonIntent.putExtra(OLAM_FARMER_ID, networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID)));
+            recordPolygonIntent.putExtra(FARMER_NAME, networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME)));
+            recordPolygonIntent.putExtra(PLOT_COUNT, count);
+            recordPolygonIntent.setAction(Intent.ACTION_DEFAULT);
+            startActivity(recordPolygonIntent);
+        } else if (itemType.equalsIgnoreCase("module")) {
+            Intent intent = new Intent(this, ViewFarmerActivity.class);
+            ViewFarmerActivity.farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
+            //long farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
+            //SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(farmerId);
+            startActivity(intent);
+        }  else if (itemType.equalsIgnoreCase("childmodule")) {
+            Intent intent = new Intent(this, ViewChildLabourSurveyActivity.class);
+            ViewChildLabourSurveyActivity.farmerID = Long.valueOf(networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
+            ViewChildLabourSurveyActivity.childID = Long.valueOf(networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_CHILD_ID)));
+            //long farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
+            //SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(farmerId);
+            startActivity(intent);
+        } else if (itemType.equalsIgnoreCase("fmpreview") || itemType.equalsIgnoreCase("fullfmpreview")) {
+            Intent intent = new Intent(this, ViewFarmerActivity.class);
+            ViewFarmerActivity.farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
+            //long farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
+            //SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(farmerId);
+            startActivity(intent);
+        } else if (itemType.equalsIgnoreCase("transaction")) {
+            Intent intent = new Intent(context, TransactionItem.class);
+            intent.putExtra(EDIT_TRANSACTION_ITEM_ID, networkQueue.getLong(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_TRANSACTION_ITEM_ID)));
+            intent.putExtra(EDIT_MODE, true);
+            intent.putExtra(READ_ONLY_MODE, true);
+            startActivity(intent);
+        } else if (itemType.equalsIgnoreCase("trainingrecord")) {
+            Intent intent = new Intent(context, TrainingRecord.class);
+            intent.putExtra(EDIT_TRAININGRECORD_ID, networkQueue.getLong(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_TRAINING_RECORD_ID)));
+            intent.putExtra(EDIT_MODE, true);
+            intent.putExtra(READ_ONLY_MODE, true);
+            startActivity(intent);
+        }else if (itemType.equalsIgnoreCase("farmer_photo")) {
+            //JIRA req OW-505
+            Intent intent = new Intent(this, ViewFarmerActivity.class);
+            ViewFarmerActivity.farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
+            startActivity(intent);
+        }else if (itemType.equalsIgnoreCase("children")) {
+            Intent intent = new Intent(this, AddNewChildActivity.class);
+            intent.putExtra("action","sync_edit");
+            intent.putExtra(ChildLabourUtils.CHILD_FARMER_ID, String.valueOf(networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID))));
+            intent.putExtra(ChildLabourUtils.CHILD_ID, networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_CHILD_ID)));
+            startActivity(intent);
+        }else if (itemType.equalsIgnoreCase("child_visit")){
+            Bundle childBundle=new Bundle();
+            childBundle.putString(ChildLabourUtils.CHILD_FARMER_ID,String.valueOf(networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID))));
+            Intent intent = new Intent(this, ChildVisitDetailActivity.class);
+            intent.putExtras(childBundle);
+//            intent.putExtra(ChildLabourUtils.CHILD_FARMER_ID, String.valueOf(networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID))));
+//            intent.putExtra(ChildLabourUtils.CHILDLABOUR_SURVEY, networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_SURVEY_CODE)));
+            startActivity(intent);
 
+        }
+    }
 }

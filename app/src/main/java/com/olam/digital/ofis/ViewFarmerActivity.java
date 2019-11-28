@@ -40,6 +40,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -79,6 +80,9 @@ import com.karumi.dexter.listener.PermissionDeniedResponse;
 import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.PermissionListener;
+import com.olam.digital.ofis.childlabour.ChildLabourDetailsActivity;
+import com.olam.digital.ofis.childlabour.ChildLabourUtils;
+import com.olam.digital.ofis.childlabour.RegisterChildActivity;
 import com.olam.digital.ofis.recordpolygon.LocationBeanList;
 import com.olam.digital.ofis.recordpolygon.PlotsList;
 import com.olam.digital.ofis.recordpolygon.RecordPolygonActivity;
@@ -108,7 +112,7 @@ import java.util.Locale;
 import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
 
 
-public class ViewFarmerActivity extends BaseListActivity {
+public class ViewFarmerActivity extends BaseListActivity implements AdapterView.OnItemClickListener {
 
     public static long farmerId;
     private Cursor farmer;
@@ -193,16 +197,18 @@ public class ViewFarmerActivity extends BaseListActivity {
     private String farmerNameStr;
     private String olamFarmerIdStr;
     private boolean polygon = false;
+    private ListView listView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_farmer);
         //noinspection ConstantConditions
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        listView=findViewById(R.id.list);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         mResolvingError = savedInstanceState != null && savedInstanceState.getBoolean(STATE_RESOLVING_ERROR, false);
-
         context = this;
+        ChildLabourUtils.isChildEnumerator=Utilities.getChildLabourPref(context,ChildLabourUtils.IS_CHILD_ENUMERATOR);
         res = getResources();
         dl = new DataLayer(res, context);
         pd = new ProgressDialog(context);
@@ -212,6 +218,7 @@ public class ViewFarmerActivity extends BaseListActivity {
         setupGPS();
         setupUI();
         setupPhoneNumberDialog();
+        listView.setOnItemClickListener(this);
     }
 
     @Override
@@ -361,7 +368,7 @@ public class ViewFarmerActivity extends BaseListActivity {
 
                     CustomListAdapter_Modules customListAdapter_modulesAdapter =
                             new CustomListAdapter_Modules(context, moduleAssignments, adapterCols, adapterRowViews, res, farmer, submittedModules);
-                    setListAdapter(customListAdapter_modulesAdapter);
+                    listView.setAdapter(customListAdapter_modulesAdapter);
                 }
             } catch (JSONException e) {
                 FirebaseCrash.report(new Exception("ViewFarmerActivity: Error getting module assignments for farmer", e));
@@ -718,23 +725,40 @@ public class ViewFarmerActivity extends BaseListActivity {
          * Here we used SharedPreference to map OLAM Farmer ID with UUID.
          * Plot count value is important to showing alert to enter plots number of farmer at first time.
          */
-        final int strFarmID = (int) SharedPreferenceUtils
+        /*final String strFarmID =  SharedPreferenceUtils
                 .getInstance(getApplicationContext())
-                .getFarmerID(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
-        //final int strFarmID = farmer.getInt(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID));
+                .getFarmerID(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));*/
+        final String strFarmID = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID));
 
        // Some farm Id is getting null.
+        DataLayer dl = new DataLayer(getResources(), ViewFarmerActivity.this);
+        dl.fetchPlotData(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
         int count =0;
-        if(strFarmID != 0){
-            count = SharedPreferenceUtils.getInstance(getApplicationContext()).getPlotCount(""+strFarmID);
+//        if(strFarmID != "0"){
+        try{
+//            count = SharedPreferenceUtils.getInstance(getApplicationContext()).getPlotCount(""+strFarmID);
+           count = dl.fetchPlotData(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
+        }catch (Exception e){
+            count = 0;
         }
 
 
         Log.d("ViewFarmerActivity", "Plot Count = " + count);
         if (count == 0) {
+
+            LinearLayout parentLayout=new LinearLayout(context);
+            parentLayout.setOrientation(LinearLayout.HORIZONTAL);
+
             final EditText edTxtNumberOfPlots = new EditText(context);
             edTxtNumberOfPlots.setInputType(InputType.TYPE_CLASS_NUMBER);
             edTxtNumberOfPlots.setHint(res.getString(R.string.record_polygon_input_hint));
+
+            LinearLayout.LayoutParams rLp= new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT);
+            rLp.setMargins(40,0,40,0);
+            edTxtNumberOfPlots.setLayoutParams(rLp);
+
+            parentLayout.addView(edTxtNumberOfPlots);
 
             edTxtNumberOfPlots.addTextChangedListener(new TextWatcher() {
                 @Override
@@ -763,7 +787,7 @@ public class ViewFarmerActivity extends BaseListActivity {
             new AlertDialog.Builder(context)
                     .setTitle(res.getString(R.string.record_polygon_input_title))
                     .setMessage(res.getString(R.string.record_polygon_input_messege))
-                    .setView(edTxtNumberOfPlots)
+                    .setView(parentLayout)
                     .setPositiveButton(R.string.submit, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
                             String lPlotCountString = edTxtNumberOfPlots.getText().toString();
@@ -774,7 +798,7 @@ public class ViewFarmerActivity extends BaseListActivity {
                             if (lPlotCount > 0) {
                                 Intent recordPolygonIntent = new Intent(context, RecordPolygonActivity.class);
                                 recordPolygonIntent.putExtra(FARMER_ID, farmerId);
-                                recordPolygonIntent.putExtra(FARM_ID, strFarmID);
+                                recordPolygonIntent.putExtra(FARM_ID, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
                                 recordPolygonIntent.putExtra(OLAM_FARMER_ID, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
                                 recordPolygonIntent.putExtra(FARMER_NAME, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME)));
                                 recordPolygonIntent.putExtra(PLOT_COUNT, lPlotCount);
@@ -794,7 +818,7 @@ public class ViewFarmerActivity extends BaseListActivity {
         } else {
             Intent recordPolygonIntent = new Intent(context, RecordPolygonActivity.class);
             recordPolygonIntent.putExtra(FARMER_ID, farmerId);
-            recordPolygonIntent.putExtra(FARM_ID, strFarmID);
+            recordPolygonIntent.putExtra(FARM_ID,  farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
             recordPolygonIntent.putExtra(OLAM_FARMER_ID, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
             recordPolygonIntent.putExtra(FARMER_NAME, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME)));
             recordPolygonIntent.putExtra(PLOT_COUNT, count);
@@ -1050,73 +1074,85 @@ public class ViewFarmerActivity extends BaseListActivity {
         });
     }
 
-    @Override
-    protected void onListItemClick(ListView l, View v, int position, long id) {
-        TextView enabled = (TextView) v.findViewById(R.id.moduleListEnabled);
-        if (enabled.getText().toString().equalsIgnoreCase("true")) {
-            if (id > 0) {
-                TextView subModuleTv = (TextView) v.findViewById(R.id.moduleListCurrentSubModuleId);
-                TextView moduleNameTv = (TextView) v.findViewById(R.id.moduleListModuleName);
-                TextView statusStartedTv = (TextView) v.findViewById(R.id.moduleListStatusStarted);
-                TextView statusFinishedTv = (TextView) v.findViewById(R.id.moduleListStatusFinished);
-                TextView farmerModuleIdTv = (TextView) v.findViewById(R.id.moduleListFarmerModuleId);
-                TextView farmerModuleLatTv = (TextView) v.findViewById(R.id.moduleListRecordedLat);
-                TextView farmerModuleLngTv = (TextView) v.findViewById(R.id.moduleListRecordedLng);
-                Intent intent = new Intent(context, CompleteModuleActivity.class);
-                intent.putExtra(FARMER_ID, farmerId);
-                intent.putExtra(MODULE_ID, id);
-                intent.putExtra(FARMER_MODULE_ID, (String.valueOf(farmerModuleIdTv.getText()).equals("")) ? 0 : Long.parseLong(String.valueOf(farmerModuleIdTv.getText())));
-                intent.putExtra(SUB_MODULE_ID, (String.valueOf(subModuleTv.getText()).equals("")) ? 0 : Integer.parseInt(String.valueOf(subModuleTv.getText())));
-                intent.putExtra(FARM_ID, farmer.getInt(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_ID)));
-                intent.putExtra(STATUS_STARTED, (String.valueOf(statusStartedTv.getText()).equals("")) ? 0 : Integer.parseInt(String.valueOf(statusStartedTv.getText())));
-                intent.putExtra(STATUS_FINISHED, (String.valueOf(statusFinishedTv.getText()).equals("")) ? 0 : Integer.parseInt(String.valueOf(statusFinishedTv.getText())));
-                intent.putExtra(OLAM_FARMER_ID, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
-                intent.putExtra(MODULE_NAME, String.valueOf(moduleNameTv.getText()));
-                intent.putExtra(RECORDED_LAT, (String.valueOf(farmerModuleLatTv.getText()).equals("")) ? "" : String.valueOf(farmerModuleLatTv.getText()));
-                intent.putExtra(RECORDED_LNG, (String.valueOf(farmerModuleLatTv.getText()).equals("")) ? "" : String.valueOf(farmerModuleLngTv.getText()));
-                intent.putExtra(FARMER_NAME, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME)));
-
-                if (DynamicQuestions.getInstance() != null) {
-                    DynamicQuestions.clearInstance();
-                }
-                context.startActivity(intent);
-            } else {
-                if (id == 0) {
-                    // record farm location if necessary
-                    TextView recordedLng = (TextView) v.findViewById(R.id.moduleListRecordedLng);
-                    if (recordedLng != null && recordedLng.getText().equals("Phone")) {
-                        if (phoneNumbersListItem == null) {
-                            phoneNumbersListItem = v;
-                        }
-                        populatephoneNumberDialog();
-                        phoneNumbersHolder.setVisibility(View.VISIBLE);
-                        phoneNumbersHolder.startAnimation(mSlideBottomUp);
-                    } else if (recordedLng != null && recordedLng.getText().equals("farmpolygon")) {
-                        polygon=true;
-                        enableFarmPolygon(v);
-                    } else {
-                        polygon=false;
-                        recordFarmLocation(v);
-                    }
-                } else if (id < 0) {
-                    // go to fmp review page
-                    TextView startYearTv = (TextView) v.findViewById(R.id.moduleListCurrentSubModuleId);
-                    TextView statusStartedTv = (TextView) v.findViewById(R.id.moduleListStatusStarted);
-                    TextView fmpIdTv = (TextView) v.findViewById(R.id.moduleListFarmerModuleId);
-                    TextView fmpModeTv = (TextView) v.findViewById(R.id.moduleListRecordedLat);
-                    ReviewFarmManagementPlan.fmpId = (String.valueOf(fmpIdTv.getText()).equals("")) ? 0 : Long.parseLong(String.valueOf(fmpIdTv.getText()));
-                    ReviewFarmManagementPlan.fullReviewMode = !String.valueOf(fmpModeTv.getText()).equalsIgnoreCase("summary");
-                    ReviewFarmManagementPlan.farmerId = farmerId;
-                    ReviewFarmManagementPlan.fmpStartYear = (String.valueOf(startYearTv.getText()).equals("")) ? 0 : Integer.parseInt(String.valueOf(startYearTv.getText()));
-                    ReviewFarmManagementPlan.statusStarted = (String.valueOf(statusStartedTv.getText()).equals("")) ? 0 : Integer.parseInt(String.valueOf(statusStartedTv.getText()));
-                    ReviewFarmManagementPlan.olamFarmerId = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID));
-                    ReviewFarmManagementPlan.farmId = farmer.getInt(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_ID));
-                    Intent intent = new Intent(context, ReviewFarmManagementPlan.class);
-                    context.startActivity(intent);
-                }
-            }
-        }
-    }
+//    @Override
+//    protected void onListItemClick(ListView l, View v, int position, long id) {
+//        TextView enabled = (TextView) v.findViewById(R.id.moduleListEnabled);
+//        if (enabled.getText().toString().equalsIgnoreCase("true")) {
+//            if (id > 0) {
+//                TextView subModuleTv = (TextView) v.findViewById(R.id.moduleListCurrentSubModuleId);
+//                TextView moduleNameTv = (TextView) v.findViewById(R.id.moduleListModuleName);
+//                TextView statusStartedTv = (TextView) v.findViewById(R.id.moduleListStatusStarted);
+//                TextView statusFinishedTv = (TextView) v.findViewById(R.id.moduleListStatusFinished);
+//                TextView farmerModuleIdTv = (TextView) v.findViewById(R.id.moduleListFarmerModuleId);
+//                TextView farmerModuleLatTv = (TextView) v.findViewById(R.id.moduleListRecordedLat);
+//                TextView farmerModuleLngTv = (TextView) v.findViewById(R.id.moduleListRecordedLng);
+//                Intent intent = new Intent(context, CompleteModuleActivity.class);
+//                intent.putExtra(FARMER_ID, farmerId);
+//                intent.putExtra(MODULE_ID, id);
+//                intent.putExtra(FARMER_MODULE_ID, (String.valueOf(farmerModuleIdTv.getText()).equals("")) ? 0 : Long.parseLong(String.valueOf(farmerModuleIdTv.getText())));
+//                intent.putExtra(SUB_MODULE_ID, (String.valueOf(subModuleTv.getText()).equals("")) ? 0 : Integer.parseInt(String.valueOf(subModuleTv.getText())));
+//                intent.putExtra(FARM_ID, farmer.getInt(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_ID)));
+//                intent.putExtra(STATUS_STARTED, (String.valueOf(statusStartedTv.getText()).equals("")) ? 0 : Integer.parseInt(String.valueOf(statusStartedTv.getText())));
+//                intent.putExtra(STATUS_FINISHED, (String.valueOf(statusFinishedTv.getText()).equals("")) ? 0 : Integer.parseInt(String.valueOf(statusFinishedTv.getText())));
+//                intent.putExtra(OLAM_FARMER_ID, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
+//                intent.putExtra(MODULE_NAME, String.valueOf(moduleNameTv.getText()));
+//                intent.putExtra(RECORDED_LAT, (String.valueOf(farmerModuleLatTv.getText()).equals("")) ? "" : String.valueOf(farmerModuleLatTv.getText()));
+//                intent.putExtra(RECORDED_LNG, (String.valueOf(farmerModuleLatTv.getText()).equals("")) ? "" : String.valueOf(farmerModuleLngTv.getText()));
+//                intent.putExtra(FARMER_NAME, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME)));
+//
+//                if (DynamicQuestions.getInstance() != null) {
+//                    DynamicQuestions.clearInstance();
+//                }
+//                context.startActivity(intent);
+//            } else {
+//                if (id == 0) {
+//                    // record farm location if necessary
+//                    TextView recordedLng = (TextView) v.findViewById(R.id.moduleListRecordedLng);
+//                    if (recordedLng != null && recordedLng.getText().equals("Phone")) {
+//                        if (phoneNumbersListItem == null) {
+//                            phoneNumbersListItem = v;
+//                        }
+//                        populatephoneNumberDialog();
+//                        phoneNumbersHolder.setVisibility(View.VISIBLE);
+//                        phoneNumbersHolder.startAnimation(mSlideBottomUp);
+//                    } else if (recordedLng != null && recordedLng.getText().equals("farmpolygon")) {
+//                        polygon=true;
+//                        enableFarmPolygon(v);
+//                    } else if (recordedLng != null && recordedLng.getText().equals(ChildLabourUtils.REG_CHILD)) {
+//                       Intent in = new Intent(this, RegisterChildActivity.class);
+//                       Bundle bundle=new Bundle();
+//                       bundle.putLong(ChildLabourUtils.CHILD_FARMER_ID, farmerId);
+//                       in.putExtras(bundle);
+//                       startActivity(in);
+//                    } else if (recordedLng != null && recordedLng.getText().equals(ChildLabourUtils.CHILDLABOUR_SURVEY)) {
+//                        Intent in = new Intent(this, ChildLabourDetailsActivity.class);
+//                        Bundle bundle=new Bundle();
+//                        bundle.putLong(ChildLabourUtils.CHILD_FARMER_ID, farmerId);
+//                        in.putExtras(bundle);
+//                        startActivity(in);
+//                    } else {
+//                        polygon=false;
+//                        recordFarmLocation(v);
+//                    }
+//                } else if (id < 0) {
+//                    // go to fmp review page
+//                    TextView startYearTv = (TextView) v.findViewById(R.id.moduleListCurrentSubModuleId);
+//                    TextView statusStartedTv = (TextView) v.findViewById(R.id.moduleListStatusStarted);
+//                    TextView fmpIdTv = (TextView) v.findViewById(R.id.moduleListFarmerModuleId);
+//                    TextView fmpModeTv = (TextView) v.findViewById(R.id.moduleListRecordedLat);
+//                    ReviewFarmManagementPlan.fmpId = (String.valueOf(fmpIdTv.getText()).equals("")) ? 0 : Long.parseLong(String.valueOf(fmpIdTv.getText()));
+//                    ReviewFarmManagementPlan.fullReviewMode = !String.valueOf(fmpModeTv.getText()).equalsIgnoreCase("summary");
+//                    ReviewFarmManagementPlan.farmerId = farmerId;
+//                    ReviewFarmManagementPlan.fmpStartYear = (String.valueOf(startYearTv.getText()).equals("")) ? 0 : Integer.parseInt(String.valueOf(startYearTv.getText()));
+//                    ReviewFarmManagementPlan.statusStarted = (String.valueOf(statusStartedTv.getText()).equals("")) ? 0 : Integer.parseInt(String.valueOf(statusStartedTv.getText()));
+//                    ReviewFarmManagementPlan.olamFarmerId = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID));
+//                    ReviewFarmManagementPlan.farmId = farmer.getInt(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_ID));
+//                    Intent intent = new Intent(context, ReviewFarmManagementPlan.class);
+//                    context.startActivity(intent);
+//                }
+//            }
+//        }
+//    }
 
     @Override
     protected void onDestroy() {
@@ -1281,5 +1317,85 @@ public class ViewFarmerActivity extends BaseListActivity {
             cursor.close();
         }
         return filePathUri + "";
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> l, View v, int position, long id) {
+        TextView enabled = (TextView) v.findViewById(R.id.moduleListEnabled);
+        if (enabled.getText().toString().equalsIgnoreCase("true")) {
+            if (id > 0) {
+                TextView subModuleTv = (TextView) v.findViewById(R.id.moduleListCurrentSubModuleId);
+                TextView moduleNameTv = (TextView) v.findViewById(R.id.moduleListModuleName);
+                TextView statusStartedTv = (TextView) v.findViewById(R.id.moduleListStatusStarted);
+                TextView statusFinishedTv = (TextView) v.findViewById(R.id.moduleListStatusFinished);
+                TextView farmerModuleIdTv = (TextView) v.findViewById(R.id.moduleListFarmerModuleId);
+                TextView farmerModuleLatTv = (TextView) v.findViewById(R.id.moduleListRecordedLat);
+                TextView farmerModuleLngTv = (TextView) v.findViewById(R.id.moduleListRecordedLng);
+                Intent intent = new Intent(context, CompleteModuleActivity.class);
+                intent.putExtra(FARMER_ID, farmerId);
+                intent.putExtra(MODULE_ID, id);
+                intent.putExtra(FARMER_MODULE_ID, (String.valueOf(farmerModuleIdTv.getText()).equals("")) ? 0 : Long.parseLong(String.valueOf(farmerModuleIdTv.getText())));
+                intent.putExtra(SUB_MODULE_ID, (String.valueOf(subModuleTv.getText()).equals("")) ? 0 : Integer.parseInt(String.valueOf(subModuleTv.getText())));
+                intent.putExtra(FARM_ID, farmer.getInt(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_ID)));
+                intent.putExtra(STATUS_STARTED, (String.valueOf(statusStartedTv.getText()).equals("")) ? 0 : Integer.parseInt(String.valueOf(statusStartedTv.getText())));
+                intent.putExtra(STATUS_FINISHED, (String.valueOf(statusFinishedTv.getText()).equals("")) ? 0 : Integer.parseInt(String.valueOf(statusFinishedTv.getText())));
+                intent.putExtra(OLAM_FARMER_ID, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
+                intent.putExtra(MODULE_NAME, String.valueOf(moduleNameTv.getText()));
+                intent.putExtra(RECORDED_LAT, (String.valueOf(farmerModuleLatTv.getText()).equals("")) ? "" : String.valueOf(farmerModuleLatTv.getText()));
+                intent.putExtra(RECORDED_LNG, (String.valueOf(farmerModuleLatTv.getText()).equals("")) ? "" : String.valueOf(farmerModuleLngTv.getText()));
+                intent.putExtra(FARMER_NAME, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME)));
+
+                if (DynamicQuestions.getInstance() != null) {
+                    DynamicQuestions.clearInstance();
+                }
+                context.startActivity(intent);
+            } else {
+                if (id == 0) {
+                    // record farm location if necessary
+                    TextView recordedLng = (TextView) v.findViewById(R.id.moduleListRecordedLng);
+                    if (recordedLng != null && recordedLng.getText().equals("Phone")) {
+                        if (phoneNumbersListItem == null) {
+                            phoneNumbersListItem = v;
+                        }
+                        populatephoneNumberDialog();
+                        phoneNumbersHolder.setVisibility(View.VISIBLE);
+                        phoneNumbersHolder.startAnimation(mSlideBottomUp);
+                    } else if (recordedLng != null && recordedLng.getText().equals("farmpolygon")) {
+                        polygon=true;
+                        enableFarmPolygon(v);
+                    } else if (recordedLng != null && recordedLng.getText().equals(ChildLabourUtils.REG_CHILD)) {
+                        Intent in = new Intent(this, RegisterChildActivity.class);
+                        Bundle bundle=new Bundle();
+                        bundle.putLong(ChildLabourUtils.CHILD_FARMER_ID, farmerId);
+                        in.putExtras(bundle);
+                        startActivity(in);
+                    } else if (recordedLng != null && recordedLng.getText().equals(ChildLabourUtils.CHILDLABOUR_SURVEY)) {
+                        Intent in = new Intent(this, ChildLabourDetailsActivity.class);
+                        Bundle bundle=new Bundle();
+                        bundle.putLong(ChildLabourUtils.CHILD_FARMER_ID, farmerId);
+                        in.putExtras(bundle);
+                        startActivity(in);
+                    } else {
+                        polygon=false;
+                        recordFarmLocation(v);
+                    }
+                } else if (id < 0) {
+                    // go to fmp review page
+                    TextView startYearTv = (TextView) v.findViewById(R.id.moduleListCurrentSubModuleId);
+                    TextView statusStartedTv = (TextView) v.findViewById(R.id.moduleListStatusStarted);
+                    TextView fmpIdTv = (TextView) v.findViewById(R.id.moduleListFarmerModuleId);
+                    TextView fmpModeTv = (TextView) v.findViewById(R.id.moduleListRecordedLat);
+                    ReviewFarmManagementPlan.fmpId = (String.valueOf(fmpIdTv.getText()).equals("")) ? 0 : Long.parseLong(String.valueOf(fmpIdTv.getText()));
+                    ReviewFarmManagementPlan.fullReviewMode = !String.valueOf(fmpModeTv.getText()).equalsIgnoreCase("summary");
+                    ReviewFarmManagementPlan.farmerId = farmerId;
+                    ReviewFarmManagementPlan.fmpStartYear = (String.valueOf(startYearTv.getText()).equals("")) ? 0 : Integer.parseInt(String.valueOf(startYearTv.getText()));
+                    ReviewFarmManagementPlan.statusStarted = (String.valueOf(statusStartedTv.getText()).equals("")) ? 0 : Integer.parseInt(String.valueOf(statusStartedTv.getText()));
+                    ReviewFarmManagementPlan.olamFarmerId = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID));
+                    ReviewFarmManagementPlan.farmId = farmer.getInt(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_ID));
+                    Intent intent = new Intent(context, ReviewFarmManagementPlan.class);
+                    context.startActivity(intent);
+                }
+            }
+        }
     }
 }

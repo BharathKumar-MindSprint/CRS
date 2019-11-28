@@ -35,7 +35,8 @@
         android:supportsRtl="false"
         android:largeHeap="true"
         android:hardwareAccelerated="false"
-        android:theme="@style/AppTheme"
+        android:theme="@style/AppCompactTheme"
+        tools:replace="android:supportsRtl,android:allowBackup,android:theme"
         tools:ignore="GoogleAppIndexingWarning,UnusedAttribute">
         <meta-data
             android:name="com.google.android.gms.version"
@@ -257,9 +258,90 @@
             android:name="com.olam.digital.ofis.TasksActivity"
             android:label="@string/title_activity_tasks"
             android:screenOrientation="portrait" />
-        <meta-data
-            android:name="io.fabric.ApiKey"
-            android:value="a893453713a55832cf2771ee8fbe4a68b4a3b031" />
+        <!--<activity
+            android:name="com.olam.digital.ofis.childlabour.RegisterChildActivity"
+            android:label="@string/title_child_labour"
+            android:theme="@style/Theme.AppCompat"
+            android:screenOrientation="portrait" />-->
+        <activity
+            android:name="com.olam.digital.ofis.childlabour.RegisterChildActivity"
+            android:label="@string/title_child_labour"
+            android:parentActivityName=".ViewFarmerActivity"
+            android:screenOrientation="portrait"
+            tools:ignore="UnusedAttribute">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ViewFarmerActivity" />
+        </activity>
+       <!-- <activity
+            android:name="com.olam.digital.ofis.childlabour.AddNewChildActivity"
+            android:label="@string/title_child_labour"
+            android:theme="@style/Theme.AppCompat"
+            android:screenOrientation="portrait" />-->
+        <activity
+            android:name="com.olam.digital.ofis.childlabour.AddNewChildActivity"
+            android:label="@string/title_child_labour"
+            android:parentActivityName=".childlabour.RegisterChildActivity"
+            android:screenOrientation="portrait"
+            tools:ignore="UnusedAttribute">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".childlabour.RegisterChildActivity" />
+        </activity>
+        <!--<activity
+            android:name="com.olam.digital.ofis.childlabour.ChildVisitDetailActivity"
+            android:label="@string/visit_detail"
+            android:theme="@style/Theme.AppCompat"
+            android:screenOrientation="portrait" />-->
+        <activity
+            android:name="com.olam.digital.ofis.childlabour.ChildVisitDetailActivity"
+            android:label="@string/visit_detail"
+            android:parentActivityName=".childlabour.RegisterChildActivity"
+            android:screenOrientation="portrait"
+            tools:ignore="UnusedAttribute">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".childlabour.RegisterChildActivity" />
+        </activity>
+        <!--<activity
+            android:name="com.olam.digital.ofis.childlabour.ChildLabourDetailsActivity"
+            android:label="@string/child_details"
+            android:theme="@style/Theme.AppCompat"
+            android:screenOrientation="portrait" />-->
+        <activity
+            android:name="com.olam.digital.ofis.childlabour.ChildLabourDetailsActivity"
+            android:label="@string/child_details"
+            android:parentActivityName=".ViewFarmerActivity"
+            android:screenOrientation="portrait"
+            tools:ignore="UnusedAttribute">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ViewFarmerActivity" />
+        </activity>
+
+        <activity
+            android:name="com.olam.digital.ofis.childlabour.ViewChildLabourSurveyActivity"
+            android:label="@string/child_details"
+            android:parentActivityName=".childlabour.ChildLabourDetailsActivity"
+            android:screenOrientation="portrait"
+            tools:ignore="UnusedAttribute">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".childlabour.ChildLabourDetailsActivity" />
+        </activity>
+        <activity
+            android:name="com.olam.digital.ofis.childlabour.ChildLabourCompleteModuleActivity"
+            android:label="@string/child_details"
+            android:parentActivityName=".childlabour.ChildLabourCompleteModuleActivity"
+            android:screenOrientation="portrait"
+            tools:ignore="UnusedAttribute">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".childlabour.ChildLabourCompleteModuleActivity" />
+        </activity>
+        <!--<meta-data-->
+            <!--android:name="io.fabric.ApiKey"-->
+            <!--android:value="a893453713a55832cf2771ee8fbe4a68b4a3b031" />-->
     </application>
 
 </manifest>

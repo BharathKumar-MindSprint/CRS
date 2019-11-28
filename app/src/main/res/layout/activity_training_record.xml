@@ -171,7 +171,7 @@
     <ListView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@android:id/list"
+        android:id="@+id/list"
         android:divider="@android:color/transparent"
         android:layout_below="@+id/trainingAttendeesHeader"
         android:layout_above="@+id/buttonContainer"

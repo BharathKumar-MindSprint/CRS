@@ -129,8 +129,7 @@ public class CompleteModuleActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_complete_module);
         //noinspection ConstantConditions
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         Intent intent = getIntent();
         farmerId = intent.getLongExtra(FARMER_ID, 0);
         moduleId = intent.getLongExtra(MODULE_ID, 0);
@@ -215,6 +214,7 @@ public class CompleteModuleActivity extends BaseActivity {
 
         bindSaveButton();
         setupFooter();
+        dynamicQuestions.SurveyType="other";
     }
 
     @SuppressWarnings("ConstantConditions")
@@ -454,6 +454,10 @@ public class CompleteModuleActivity extends BaseActivity {
         nextSaveSubmodule.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+               /* boolean status = dynamicQuestions.CheckMinMaxforQuestion(questions);
+                if(! status){
+                    return;
+                }*/
                 if (isLastPage) {
                     ContentValues values = new ContentValues();
                     Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -471,7 +475,7 @@ public class CompleteModuleActivity extends BaseActivity {
                         values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT, timestamp.toString());
                         networkQueueId = dl.insertNetworkQueueEntry(values);
                     } else {
-                        dl.updateNetworkQueueFarmerModuleEntry(values, farmerModuleId);
+                        dl.updateNetworkQueueFarmerAndChildModuleEntry(values, farmerModuleId,"module");
                     }
                     statusFinished = 1;
                     saveSubModule("finish");
@@ -495,6 +499,10 @@ public class CompleteModuleActivity extends BaseActivity {
     }
 
     private void saveSubModule(String action) {
+        /*boolean status = dynamicQuestions.CheckMinMaxforQuestion(questions);
+        if(! status){
+            return;
+        }*/
         boolean canSaveAndFinish = true;
 
         // first time saving this module?
@@ -511,6 +519,7 @@ public class CompleteModuleActivity extends BaseActivity {
 
         dl.updateSubModuleAnswers(dynamicQuestions.answerSet, farmerModuleId, subModuleId, farmerId, olamFarmerId, farmId, "module");
 
+
         if (action.equalsIgnoreCase("next")) {
             subModules.moveToNext();
             subModuleId = subModules.getInt(subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_ID));
@@ -519,12 +528,19 @@ public class CompleteModuleActivity extends BaseActivity {
             subModuleId = subModules.getInt(subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_ID));
         }
 
-        if (action.equalsIgnoreCase("exit") || action.equalsIgnoreCase("finish")) {
+        /*if (action.equalsIgnoreCase("exit") || action.equalsIgnoreCase("finish")) {
+//            if (!dynamicQuestions.requiredFieldsAnswered((int) farmerModuleId, (int) moduleId) || ! dynamicQuestions.requiredFieldsMinMaxAnswered((int) farmerModuleId, (int) moduleId)) {
             if (!dynamicQuestions.requiredFieldsAnswered((int) farmerModuleId, (int) moduleId)) {
                 statusFinished = 0;
                 canSaveAndFinish = false;
                 dl.deleteNetworkQueueItemByFarmerModuleId((int) farmerModuleId);
                 Toast.makeText(context, res.getString(R.string.complete_all_required_fields), Toast.LENGTH_LONG).show();
+            }
+            if(! dynamicQuestions.requiredFieldsMinMaxAnswered((int) farmerModuleId, (int) moduleId)){
+                statusFinished = 0;
+                canSaveAndFinish = false;
+                dl.deleteNetworkQueueItemByFarmerModuleId((int) farmerModuleId);
+                Toast.makeText(context, res.getString(R.string.valid_range), Toast.LENGTH_LONG).show();
             }
         }
 
@@ -561,6 +577,57 @@ public class CompleteModuleActivity extends BaseActivity {
 
             finish();
 
+        }*/
+        boolean bool=dynamicQuestions.checkDisplayStatus((int) moduleId);
+        if (action.equalsIgnoreCase("exit") || action.equalsIgnoreCase("finish")) {
+            if(bool){
+                if (!dynamicQuestions.requiredFieldsAnswered((int) farmerModuleId, (int) moduleId)) {
+                    statusFinished = 0;
+                    canSaveAndFinish = false;
+                    dl.deleteNetworkQueueItemByFarmerModuleId((int) farmerModuleId);
+                    Toast.makeText(context, res.getString(R.string.complete_all_required_fields), Toast.LENGTH_LONG).show();
+                }
+            }else{
+                statusFinished = 0;
+                canSaveAndFinish = false;
+                dl.deleteNetworkQueueItemByFarmerModuleId((int) farmerModuleId);
+                Toast.makeText(context, res.getString(R.string.complete_all_required_fields_mandatry), Toast.LENGTH_LONG).show();
+            }
+        }
+        dl.updateFarmerModule(farmerModuleId, subModuleId, statusStarted, statusFinished);
+        if (action.equalsIgnoreCase("exit")) {
+            if(bool){
+                ViewFarmerActivity.farmerId = farmerId;
+
+                //SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(farmerId);
+                Intent intent = new Intent(context, ViewFarmerActivity.class);
+                context.startActivity(intent);
+            }
+        } else if (action.equalsIgnoreCase("finish")) {
+            if(bool){
+                if (canSaveAndFinish) {
+                    ViewFarmerActivity.farmerId = farmerId;
+                    //SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(farmerId);
+                    Intent intent = new Intent(context, ViewFarmerActivity.class);
+                    context.startActivity(intent);
+                }
+            }
+        } else {
+            Intent intent = getIntent();
+            intent.putExtra(FARMER_ID, farmerId);
+            intent.putExtra(MODULE_ID, moduleId);
+            intent.putExtra(FARMER_MODULE_ID, farmerModuleId);
+            intent.putExtra(SUB_MODULE_ID, subModuleId);
+            intent.putExtra(FARM_ID, farmId);
+            intent.putExtra(STATUS_STARTED, statusStarted);
+            intent.putExtra(STATUS_FINISHED, statusFinished);
+            intent.putExtra(OLAM_FARMER_ID, olamFarmerId);
+            intent.putExtra(MODULE_NAME, moduleName);
+            intent.putExtra(RECORDED_LAT, recordedLat);
+            intent.putExtra(RECORDED_LNG, recordedLng);
+            intent.putExtra(FARMER_NAME, farmerName);
+            startActivity(intent);
+            finish();
         }
     }
 

@@ -8,6 +8,7 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -15,7 +16,7 @@ import android.widget.Toast;
 
 import com.olam.digital.ofis.R;
 
-public class TransactionItems extends BaseListActivity {
+public class TransactionItems extends BaseListActivity implements AdapterView.OnItemClickListener {
 
     private Context context;
     private Resources res;
@@ -35,14 +36,16 @@ public class TransactionItems extends BaseListActivity {
 
     private Cursor transactionItems;
     private TextView noTransactionsText;
+    ListView listView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_transactionitems);
-
+        listView=findViewById(R.id.list);
+        listView.setOnItemClickListener(this);
         //noinspection ConstantConditions
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         context = me = this;
         res = getResources();
@@ -63,7 +66,8 @@ public class TransactionItems extends BaseListActivity {
             String[] adapterCols = new String[]{"_id", OFISDBContract.TransactionItem.COLUMN_NAME_TRANSACTEE_ID, OFISDBContract.TransactionItem.COLUMN_NAME_TRANSACTEE_TYPE, OFISDBContract.TransactionItem.COLUMN_NAME_IN_QUEUE ,OFISDBContract.BuyingAgent.COLUMN_NAME_NAME, "transactee_name"};
             int[] adapterRowViews = new int[]{R.id.transactionItemId, R.id.transacteeId, R.id.transacteeType, R.id.readOnlyMode, R.id.transactionBuyingAgent, R.id.transactionTransactee};
             customListAdapter_transactionItems = new CustomListAdapter_TransactionItems(context, transactionItems, adapterCols, adapterRowViews, res, me);
-            setListAdapter(customListAdapter_transactionItems);
+            listView.setAdapter(customListAdapter_transactionItems);
+            //setListAdapter(customListAdapter_transactionItems);
         } else {
             noTransactionsText.setVisibility(View.VISIBLE);
         }
@@ -98,25 +102,25 @@ public class TransactionItems extends BaseListActivity {
         alert.show();
     }
 
-    @Override
-    protected void onListItemClick (ListView l, View v, int position, long id) {
-        TextView transacteeId = (TextView) v.findViewById(R.id.transacteeId);
-        TextView transacteeType = (TextView) v.findViewById(R.id.transacteeType);
-
-        //we now view this transaction
-        Intent intent = new Intent(context, TransactionItem.class);
-        intent.putExtra(EDIT_TRANSACTION_ITEM_ID, id);
-        intent.putExtra(TRANSACTEE_ID, Long.parseLong(transacteeId.getText().toString()));
-        intent.putExtra(TRANSACTEE_TYPE, transacteeType.getText().toString());
-        intent.putExtra(EDIT_MODE, true);
-
-        TextView readOnlyValue = (TextView) v.findViewById(R.id.readOnlyMode);
-        if (readOnlyValue.getText().equals("1")) {
-            intent.putExtra(READ_ONLY_MODE, true);
-        }
-
-        context.startActivity(intent);
-    }
+//    @Override
+//    protected void onListItemClick (ListView l, View v, int position, long id) {
+//        TextView transacteeId = (TextView) v.findViewById(R.id.transacteeId);
+//        TextView transacteeType = (TextView) v.findViewById(R.id.transacteeType);
+//
+//        //we now view this transaction
+//        Intent intent = new Intent(context, TransactionItem.class);
+//        intent.putExtra(EDIT_TRANSACTION_ITEM_ID, id);
+//        intent.putExtra(TRANSACTEE_ID, Long.parseLong(transacteeId.getText().toString()));
+//        intent.putExtra(TRANSACTEE_TYPE, transacteeType.getText().toString());
+//        intent.putExtra(EDIT_MODE, true);
+//
+//        TextView readOnlyValue = (TextView) v.findViewById(R.id.readOnlyMode);
+//        if (readOnlyValue.getText().equals("1")) {
+//            intent.putExtra(READ_ONLY_MODE, true);
+//        }
+//
+//        context.startActivity(intent);
+//    }
 
     private void bindButtons() {
         ImageButton addTransaction = (ImageButton) findViewById(R.id.addTransaction);
@@ -138,5 +142,25 @@ public class TransactionItems extends BaseListActivity {
                 }
             }
         });
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> l, View v, int position, long id) {
+        TextView transacteeId = (TextView) v.findViewById(R.id.transacteeId);
+        TextView transacteeType = (TextView) v.findViewById(R.id.transacteeType);
+
+        //we now view this transaction
+        Intent intent = new Intent(context, TransactionItem.class);
+        intent.putExtra(EDIT_TRANSACTION_ITEM_ID, id);
+        intent.putExtra(TRANSACTEE_ID, Long.parseLong(transacteeId.getText().toString()));
+        intent.putExtra(TRANSACTEE_TYPE, transacteeType.getText().toString());
+        intent.putExtra(EDIT_MODE, true);
+
+        TextView readOnlyValue = (TextView) v.findViewById(R.id.readOnlyMode);
+        if (readOnlyValue.getText().equals("1")) {
+            intent.putExtra(READ_ONLY_MODE, true);
+        }
+
+        context.startActivity(intent);
     }
 }

@@ -138,7 +138,7 @@ public class AddFarmerActivity extends BaseActivity {
         setContentView(R.layout.activity_add_farmer);
 
         //noinspection ConstantConditions
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         context = this;
         res = getResources();
@@ -175,7 +175,7 @@ public class AddFarmerActivity extends BaseActivity {
         sectionSpinner = (Spinner) this.findViewById(R.id.spinner_section);
 
         dl.createBusinessHierarchySpinners(this, context, farmerIdPrefix, selectedFarmerGroup, selectedSection);
-        dl.createGeographyHierarchySpinners(this, context, farmerIdPrefix, selectedCountry, selectedRegion, selectedDistrict, selectedPlace, phonenumbers);
+        dl.createGeographyHierarchySpinners(this, context, farmerIdPrefix, selectedCountry, selectedRegion, selectedDistrict, selectedPlace, phonenumbers,true);
 
         farmerPhotoActionButton = (ImageButton) findViewById(R.id.farmerPhotoActionButton);
         farmerPhotoActionButton.setOnClickListener(new View.OnClickListener() {
@@ -318,7 +318,7 @@ public class AddFarmerActivity extends BaseActivity {
         selectedSection = savedInstanceState.getInt(CAPTURED_SELECTED_SECTION, 0);
 
         dl.createBusinessHierarchySpinners(this, context, farmerIdPrefix, selectedFarmerGroup, selectedSection);
-        dl.createGeographyHierarchySpinners(this, context, farmerIdPrefix, selectedCountry, selectedRegion, selectedDistrict, selectedPlace, phonenumbers);
+        dl.createGeographyHierarchySpinners(this, context, farmerIdPrefix, selectedCountry, selectedRegion, selectedDistrict, selectedPlace, phonenumbers,true);
 
         super.onRestoreInstanceState(savedInstanceState);
     }
@@ -517,9 +517,9 @@ public class AddFarmerActivity extends BaseActivity {
 //        String olamFarmerId = farmerIdPrefix.getText().toString() + farmerIdSuffixValue;
 
         EditText farmerName = (EditText) findViewById(R.id.farmerName);
-        String farmerNameValue = String.valueOf(farmerName.getText());
+        String farmerNameValue = String.valueOf(farmerName.getText()).trim();
         if (farmerNameValue.equals("")) {
-
+            farmerName.setText("");
             Toast.makeText(context, res.getString(R.string.please_fill_farmer_name), Toast.LENGTH_LONG).show();
             return values;
 
@@ -663,7 +663,7 @@ public class AddFarmerActivity extends BaseActivity {
          * Plot count value is important to showing alert to enter plots number of farmer at first time.
          */
 
-        SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(olamFarmerId, generateUniqueLongNumber());
+//        SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(olamFarmerId, String.valueOf(generateUniqueLongNumber()));
 
         try {
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME, farmerNameValue);
@@ -680,7 +680,7 @@ public class AddFarmerActivity extends BaseActivity {
             values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_DISTRICT_ID, district_id);
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_CONSENT_FARMER, 1);
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_CONSENT_OTHERS, 1);
-            values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRYID,String.valueOf(countryId));
+            values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID,String.valueOf(countryId));
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_REGIONID,String.valueOf(regionId));
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_DISTRICTID,String.valueOf(districtId));
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID,String.valueOf(farmerGroupId));

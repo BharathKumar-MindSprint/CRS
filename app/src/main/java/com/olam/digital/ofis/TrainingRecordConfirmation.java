@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,14 +37,15 @@ public class TrainingRecordConfirmation extends BaseListActivity {
     private long trainingRecordId;
     private JSONObject scoringColumns;
     private String columnSuffix, courseNameValue, moduleNameValue;
+    ListView listView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_training_record_confirmation);
-
+        listView=findViewById(R.id.list);
         //noinspection ConstantConditions
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         context = this;
         res = getResources();
@@ -106,8 +108,8 @@ public class TrainingRecordConfirmation extends BaseListActivity {
         Cursor trainingAttendees = dl.getTrainingAttendeesByTrainingRecordId(trainingRecordId);
 
         if (trainingAttendees.getCount() > 0) {
-            LinearLayout attendeesFooter = (LinearLayout) ((LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.training_confirmation_footer, getListView(), false);
-            getListView().addFooterView(attendeesFooter);
+            LinearLayout attendeesFooter = (LinearLayout) ((LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.training_confirmation_footer, listView, false);
+            listView.addFooterView(attendeesFooter);
 
             TextView itemCount = (TextView) findViewById(R.id.trainingAttendeesTotal);
             String itemCountValue = res.getQuantityString(R.plurals.trainingAttendeesCount, trainingAttendees.getCount(), trainingAttendees.getCount());
@@ -136,8 +138,11 @@ public class TrainingRecordConfirmation extends BaseListActivity {
                     R.id.criterion_grade
             };
             CustomListAdapter_SelectedAttendees customListAdapter_selectedAttendees = new CustomListAdapter_SelectedAttendees(context, trainingAttendees, adapterCols, adapterRowViews, res, false, null, scoringColumns, columnSuffix);
-            setListAdapter(customListAdapter_selectedAttendees);
-            getListView().setOnItemClickListener(null);
+
+            listView.setAdapter(customListAdapter_selectedAttendees);
+            listView.setOnItemClickListener(null);
+//            setListAdapter(customListAdapter_selectedAttendees);
+//            getListView().setOnItemClickListener(null);
         }
     }
 
