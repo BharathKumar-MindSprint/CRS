@@ -11,6 +11,7 @@ import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -44,6 +45,11 @@ import android.widget.Toast;
 
 import com.google.firebase.crash.FirebaseCrash;
 import com.olam.digital.ofis.authentication.AuthenticationHelper;
+import com.olam.digital.ofis.gps.GPSListener;
+import com.olam.digital.ofis.gps.GPSTracker;
+import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
+import com.olam.digital.ofis.gps.utils.GPSConstants;
+import com.olam.digital.ofis.gps.utils.GPSUtils;
 import com.olam.digital.ofis.recordpolygon.SharedPreferenceUtils;
 import com.olam.digital.ofis.R;
 
@@ -56,6 +62,7 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -102,7 +109,7 @@ public class AddFarmerActivity extends BaseActivity {
     private Uri mCapturedImageURI = null, mCapturedSignatureImageURI = null;
 
     private String dateStrToSend;
-//    private EditText farmerDOB;
+    //    private EditText farmerDOB;
     private TextView farmerDOB;
     private EditText farmerIdPrefix;
     private LinearLayout phonenumbers;
@@ -116,6 +123,7 @@ public class AddFarmerActivity extends BaseActivity {
     // Runtime Permission Request Code
     private final static int MY_PROFILE_PIC_PERMISSIONS_REQUEST = 9998;
     private final static int MY_SIGNATURE_PIC_PERMISSIONS_REQUEST = 9999;
+    private static final int REQUEST_CHECK_SETTINGS = 100;
 
     ArrayList<String> phoneNumberList;
 
@@ -132,17 +140,21 @@ public class AddFarmerActivity extends BaseActivity {
         }
     };
 
+
+    // Location captured related variable
+    private Location mCurrentLocation = null;
+    GPSListener gpsListener = null;
+    private GPSTracker gpsTracker = null;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_farmer);
-
         //noinspection ConstantConditions
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
         context = this;
         res = getResources();
-
         Intent intent = getIntent();
         editFarmerId = intent.getLongExtra(EDIT_FARMER_ID, 0);
         editMode = intent.getBooleanExtra(EDIT_MODE, false);
@@ -175,7 +187,7 @@ public class AddFarmerActivity extends BaseActivity {
         sectionSpinner = (Spinner) this.findViewById(R.id.spinner_section);
 
         dl.createBusinessHierarchySpinners(this, context, farmerIdPrefix, selectedFarmerGroup, selectedSection);
-        dl.createGeographyHierarchySpinners(this, context, farmerIdPrefix, selectedCountry, selectedRegion, selectedDistrict, selectedPlace, phonenumbers,true);
+        dl.createGeographyHierarchySpinners(this, context, farmerIdPrefix, selectedCountry, selectedRegion, selectedDistrict, selectedPlace, phonenumbers, true);
 
         farmerPhotoActionButton = (ImageButton) findViewById(R.id.farmerPhotoActionButton);
         farmerPhotoActionButton.setOnClickListener(new View.OnClickListener() {
@@ -246,6 +258,17 @@ public class AddFarmerActivity extends BaseActivity {
         bindSaveButton();
         bindConsentButton();
 
+        gpsListener = new GPSListener() {
+            @Override
+            public void onGPSClick(Location location) {
+                if (location != null) {
+                    mCurrentLocation = location;
+                }
+            }
+        };
+        gpsTracker = new GPSTracker(this, gpsListener);
+        gpsTracker.getDeviceLocation();
+
     }
 
     @Override
@@ -272,7 +295,6 @@ public class AddFarmerActivity extends BaseActivity {
         selectedPlace = (int) placeSpinner.getSelectedItemId();
         selectedFarmerGroup = (int) farmerGroupSpinner.getSelectedItemId();
         selectedSection = (int) sectionSpinner.getSelectedItemId();
-
 
 
         savedInstanceState.putInt(CAPTURED_SELECTED_COUNTRY, selectedCountry);
@@ -318,7 +340,7 @@ public class AddFarmerActivity extends BaseActivity {
         selectedSection = savedInstanceState.getInt(CAPTURED_SELECTED_SECTION, 0);
 
         dl.createBusinessHierarchySpinners(this, context, farmerIdPrefix, selectedFarmerGroup, selectedSection);
-        dl.createGeographyHierarchySpinners(this, context, farmerIdPrefix, selectedCountry, selectedRegion, selectedDistrict, selectedPlace, phonenumbers,true);
+        dl.createGeographyHierarchySpinners(this, context, farmerIdPrefix, selectedCountry, selectedRegion, selectedDistrict, selectedPlace, phonenumbers, true);
 
         super.onRestoreInstanceState(savedInstanceState);
     }
@@ -358,7 +380,7 @@ public class AddFarmerActivity extends BaseActivity {
     private void populateExistingValues(final Cursor existingItem) {
         EditText farmerName = (EditText) findViewById(R.id.farmerName);
         farmerName.setText(existingItem.getString(existingItem.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME)));
-        farmerName.setFilters(new InputFilter[] { filter });
+        farmerName.setFilters(new InputFilter[]{filter});
         farmerDOB = (TextView) findViewById(R.id.farmerDOB);
         dateStrToSend = existingItem.getString(existingItem.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_DOB));
         farmerDOB.setText(dateStrToSend);
@@ -452,7 +474,7 @@ public class AddFarmerActivity extends BaseActivity {
     }
 
     private void getAllPhoneNumbers() {
-        phoneNumberList = new ArrayList<String> ();
+        phoneNumberList = new ArrayList<String>();
 
         int phonerowscount = phonenumbers.getChildCount();
 
@@ -461,7 +483,7 @@ public class AddFarmerActivity extends BaseActivity {
 
             EditText phonenumber = (EditText) phonenumberrow.findViewById(R.id.phonenumber);
             String phonenumberValue = String.valueOf(phonenumber.getText()).replace(" ", "");
-            if(phonenumberValue.trim().length() > 0){
+            if (phonenumberValue.trim().length() > 0) {
                 phoneNumberList.add(phonenumberValue);
             }
         }
@@ -481,14 +503,10 @@ public class AddFarmerActivity extends BaseActivity {
             String phonenumberValue = String.valueOf(phonenumber.getText()).replace(" ", "");
 
 
-            if(phonenumberValue.length()==0){
+            if (phonenumberValue.length() == 0) {
 
                 duplicatePhoneNumberValidationFlag = true;
-            }
-
-
-
-           else if (Collections.frequency(phoneNumberList,phonenumberValue.trim()) == 1) {
+            } else if (Collections.frequency(phoneNumberList, phonenumberValue.trim()) == 1) {
                 duplicatePhoneNumberValidationFlag = true;
             } else {
                 duplicatePhoneNumberValidationFlag = false;
@@ -512,7 +530,7 @@ public class AddFarmerActivity extends BaseActivity {
 //        }
         Long username = Long.parseLong(new AuthenticationHelper(AddFarmerActivity.this).getuserName());
         Long time = System.currentTimeMillis();
-        String  olamFarmerId = String.valueOf(username+time);
+        String olamFarmerId = String.valueOf(username + time);
 
 //        String olamFarmerId = farmerIdPrefix.getText().toString() + farmerIdSuffixValue;
 
@@ -553,29 +571,21 @@ public class AddFarmerActivity extends BaseActivity {
             String message = "";
             if (selectedCountry == 0) {
                 message = "Country";
-            }
-
-            else if (selectedRegion == 0) {
+            } else if (selectedRegion == 0) {
 
                 message = "Region";
 
-            }
-            else if (selectedDistrict == 0) {
+            } else if (selectedDistrict == 0) {
                 message = "District";
-            }
-
-            else if (selectedPlace == 0) {
+            } else if (selectedPlace == 0) {
 
                 message = "Place";
 
-            }
-            else if (selectedFarmerGroup == 0) {
+            } else if (selectedFarmerGroup == 0) {
 
                 message = "farmer group";
 
-            }
-
-            else if (selectedSection == 0) {
+            } else if (selectedSection == 0) {
                 message = "section";
 
             }
@@ -588,7 +598,7 @@ public class AddFarmerActivity extends BaseActivity {
         Spinner districtSpinner = (Spinner) findViewById(R.id.spinner_district);
         long district_id = districtSpinner.getSelectedItemId();
 
-         newPlaceName = (EditText) findViewById(R.id.newPlaceName);
+        newPlaceName = (EditText) findViewById(R.id.newPlaceName);
         Spinner spinner_place = (Spinner) findViewById(R.id.spinner_place);
         long place_id = spinner_place.getSelectedItemId();
         if (place_id == 0) {
@@ -634,7 +644,7 @@ public class AddFarmerActivity extends BaseActivity {
         boolean hasMainNumber = false;*/
         long countryId = countrySpinner.getSelectedItemId();
         long regionId = regionSpinner.getSelectedItemId();
-        long districtId=districtSpinner.getSelectedItemId();
+        long districtId = districtSpinner.getSelectedItemId();
         long farmerGroupId = farmerGroupSpinner.getSelectedItemId();
         for (int j = 0; j < phonerowscount; j++) {
             LinearLayout phonenumberrow = (LinearLayout) phonenumbers.getChildAt(j);
@@ -667,7 +677,7 @@ public class AddFarmerActivity extends BaseActivity {
 
         try {
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME, farmerNameValue);
-            values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID,olamFarmerId);
+            values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID, olamFarmerId);
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_CREATED_LOCALLY, 1);
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_DOB, dateStrToSend);
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_GENDER, genderValue);
@@ -680,10 +690,10 @@ public class AddFarmerActivity extends BaseActivity {
             values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_DISTRICT_ID, district_id);
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_CONSENT_FARMER, 1);
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_CONSENT_OTHERS, 1);
-            values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID,String.valueOf(countryId));
-            values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_REGIONID,String.valueOf(regionId));
-            values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_DISTRICTID,String.valueOf(districtId));
-            values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID,String.valueOf(farmerGroupId));
+            values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID, String.valueOf(countryId));
+            values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_REGIONID, String.valueOf(regionId));
+            values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_DISTRICTID, String.valueOf(districtId));
+            values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID, String.valueOf(farmerGroupId));
         } catch (Exception e) {
             FirebaseCrash.report(new Exception("AddFarmerActivity: Error creating farmer content values", e));
             values.clear();
@@ -746,7 +756,7 @@ public class AddFarmerActivity extends BaseActivity {
                 bindnumberradio(numberradio);
             }
 
-            if(existingNumbers.getCount()==0){
+            if (existingNumbers.getCount() == 0) {
 
                 LinearLayout phonenumberinclude = (LinearLayout) inflater.inflate(R.layout.phonenumber_entry, phonenumbers, false);
                 phonenumbers.addView(phonenumberinclude);
@@ -773,10 +783,10 @@ public class AddFarmerActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 LinearLayout phonenumberinclude = (LinearLayout) inflater.inflate(R.layout.phonenumber_entry, phonenumbers, false);
-                EditText diallingCode=null;
+                EditText diallingCode = null;
                 try {
-                     diallingCode = (EditText) phonenumbers.getChildAt(0).findViewById(R.id.dialling_code);
-                }catch (Exception e){
+                    diallingCode = (EditText) phonenumbers.getChildAt(0).findViewById(R.id.dialling_code);
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
                 if (diallingCode != null) {
@@ -842,42 +852,55 @@ public class AddFarmerActivity extends BaseActivity {
 
                 if (duplicatePhoneNumberValidation()) { //Duplicate Phone Number Validation....
 
-                            // get the entered values
-                            ContentValues values = validateValues();
+                    // get the entered values
+                    ContentValues values = validateValues();
 
-                            if (values.size() > 0) {
-                                if (editMode) {
-                                    long updFarmerId = dl.updateFarmer(values, editFarmerId);
-                                    dl.updateFarmerPhoneNumbers(editFarmerId, storeableNumbers);
-                                    if (updFarmerId > 0) {
-                                        Toast.makeText(context, res.getString(R.string.Farmer_Updated), Toast.LENGTH_LONG).show();
-                                        ViewFarmerActivity.farmerId = editFarmerId;
-                                        //SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(editFarmerId);
-                                        finish();
-                                        Intent intent = new Intent(context, ViewFarmerActivity.class);
-                                        startActivity(intent);
-                                    }
-                                } else {
-                                    long newFarmerId = dl.insertFarmer(values);
-                                    if (newFarmerId != -1) {
-                                        dl.addFarmerPhoneNumbers(newFarmerId, storeableNumbers);
-                                        Toast.makeText(context, res.getString(R.string.Farmer_Added), Toast.LENGTH_LONG).show();
-
-                                        ViewFarmerActivity.farmerId = newFarmerId;
-                                        //SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(newFarmerId);
-                                        finish();
-                                        Intent intent = new Intent(context, ViewFarmerActivity.class);
-                                        startActivity(intent);
-                                    }
-                                }
-
-                            } else {
-                                if ((!consentFarmer.isChecked()) || (!consentOthers.isChecked())) {
-                                    //Toast.makeText(context, res.getString(R.string.Please_accept_both_consents), Toast.LENGTH_LONG).show();
-                                }else {
-//                                    Toast.makeText(context, res.getString(R.string.Please_fill_all_fields), Toast.LENGTH_LONG).show();
-                                }
+                    if (values.size() > 0) {
+                        if (editMode) {
+                            long updFarmerId = dl.updateFarmer(values, editFarmerId);
+                            dl.updateFarmerPhoneNumbers(editFarmerId, storeableNumbers);
+                            if (updFarmerId > 0) {
+                                Toast.makeText(context, res.getString(R.string.Farmer_Updated), Toast.LENGTH_LONG).show();
+                                ViewFarmerActivity.farmerId = editFarmerId;
+                                //SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(editFarmerId);
+                                finish();
+                                Intent intent = new Intent(context, ViewFarmerActivity.class);
+                                startActivity(intent);
                             }
+                        } else {
+
+                            // check the current location
+                            if (mCurrentLocation == null) {
+                                gpsTracker.getDeviceLocation();
+                                return;
+                            }
+
+                            long newFarmerId = dl.insertFarmer(values);
+                            if (newFarmerId != -1) {
+                                dl.addFarmerPhoneNumbers(newFarmerId, storeableNumbers);
+                                Toast.makeText(context, res.getString(R.string.Farmer_Added), Toast.LENGTH_LONG).show();
+
+                                if (mCurrentLocation != null) {
+                                    collectGPSPoint();
+                                }
+
+
+                                ViewFarmerActivity.farmerId = newFarmerId;
+                                //SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(newFarmerId);
+
+                                finish();
+                                Intent intent = new Intent(context, ViewFarmerActivity.class);
+                                startActivity(intent);
+                            }
+                        }
+
+                    } else {
+                        if ((!consentFarmer.isChecked()) || (!consentOthers.isChecked())) {
+                            //Toast.makeText(context, res.getString(R.string.Please_accept_both_consents), Toast.LENGTH_LONG).show();
+                        } else {
+//                                    Toast.makeText(context, res.getString(R.string.Please_fill_all_fields), Toast.LENGTH_LONG).show();
+                        }
+                    }
                 } else {
                     Toast.makeText(context, res.getString(R.string.duplicate_phone_number), Toast.LENGTH_LONG).show();
                 }
@@ -885,8 +908,19 @@ public class AddFarmerActivity extends BaseActivity {
             }
         });
     }
+
+
+    private void collectGPSPoint() {
+        ContentValues geoContentValues = new GPSUtils().getGeoContentValues(GPSConstants.MODULE_CAPTURE_ADD_FARMER, String.valueOf(mCurrentLocation.getLatitude()), String.valueOf(mCurrentLocation.getLongitude()), new Timestamp(System.currentTimeMillis()).toString());
+        Long newTrackId = new GpsTrackerLogic().insertGeoDataDetails(context, geoContentValues);
+
+        gpsTracker.stopLocationUpdates();
+        gpsTracker.setNullGPSListener();
+    }
+
     /**
      * Generate unique ID from UUID.
+     *
      * @return long value representing UUID
      */
     private static Long generateUniqueLongNumber() {
@@ -1059,12 +1093,12 @@ public class AddFarmerActivity extends BaseActivity {
                         setCurrentPhotoPath(fileUri.getPath());
                         takePicture.putExtra(MediaStore.EXTRA_OUTPUT, getCapturedImageURI());
                         try {
-                            if(takePicture.resolveActivity(getPackageManager()) != null) {
+                            if (takePicture.resolveActivity(getPackageManager()) != null) {
                                 startActivityForResult(takePicture, REQUEST_IMAGE_CAPTURE);
-                            }else {
-                                Toast.makeText(AddFarmerActivity.this,"Gallery is not available in Mobile",Toast.LENGTH_LONG).show();
+                            } else {
+                                Toast.makeText(AddFarmerActivity.this, "Gallery is not available in Mobile", Toast.LENGTH_LONG).show();
                             }
-                        }catch (Exception e){
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
@@ -1072,12 +1106,12 @@ public class AddFarmerActivity extends BaseActivity {
                 } else if (items[item].equals(res.getString(R.string.Gallery))) {
                     Intent pickPhoto = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                     try {
-                        if(pickPhoto.resolveActivity(getPackageManager()) != null) {
+                        if (pickPhoto.resolveActivity(getPackageManager()) != null) {
                             startActivityForResult(pickPhoto, REQUEST_IMAGE_GALLERY);
-                        }else {
-                            Toast.makeText(AddFarmerActivity.this,"Gallery is not available in Mobile",Toast.LENGTH_LONG).show();
+                        } else {
+                            Toast.makeText(AddFarmerActivity.this, "Gallery is not available in Mobile", Toast.LENGTH_LONG).show();
                         }
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
 
@@ -1105,38 +1139,43 @@ public class AddFarmerActivity extends BaseActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
         super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
-        if(resultCode == Activity.RESULT_CANCELED) return;
-            ImageButton farmerPhoto = (ImageButton) findViewById(R.id.farmerPhoto);
-            ImageButton farmerSignature = (ImageButton) findViewById(R.id.farmerSignature);
+        if (resultCode == Activity.RESULT_CANCELED) return;
+        ImageButton farmerPhoto = (ImageButton) findViewById(R.id.farmerPhoto);
+        ImageButton farmerSignature = (ImageButton) findViewById(R.id.farmerSignature);
 
-            switch (requestCode) {
-                case REQUEST_IMAGE_CAPTURE:
-                    if (resultCode == RESULT_OK) {
-                        setFullImageFromFilePath(getCurrentPhotoPath(), farmerPhoto, "portrait");
-                    } else {
-                        farmerPhoto.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.empty_farmer_photo));
-                        setCurrentPhotoPath(null);
-                    }
-                    break;
-                case REQUEST_IMAGE_GALLERY:
-                    if (resultCode == RESULT_OK) {
-                        setCapturedImageURI(imageReturnedIntent.getData());
-                        setFullImageFromFilePath(getFilePathUri(context, getCapturedImageURI()), farmerPhoto, "portrait");
-                    } else {
-                        farmerPhoto.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.empty_farmer_photo));
-                        setCurrentPhotoPath(null);
-                    }
-                    break;
-                case REQUEST_IMAGE_CAPTURE_SIGNATURE:
-                    if (resultCode == RESULT_OK) {
-                        setFullImageFromFilePath(getCurrentSignaturePhotoPath(), farmerSignature, "signature");
-                    } else {
-                        farmerSignature.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.empty_signature));
-                        setCurrentSignaturePhotoPath(null);
-                    }
-                    break;
-                default:
-            }
+        switch (requestCode) {
+            case REQUEST_CHECK_SETTINGS:
+                if (resultCode == -1) {
+                    gpsTracker.getDeviceLocation();
+                }
+                break;
+            case REQUEST_IMAGE_CAPTURE:
+                if (resultCode == RESULT_OK) {
+                    setFullImageFromFilePath(getCurrentPhotoPath(), farmerPhoto, "portrait");
+                } else {
+                    farmerPhoto.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.empty_farmer_photo));
+                    setCurrentPhotoPath(null);
+                }
+                break;
+            case REQUEST_IMAGE_GALLERY:
+                if (resultCode == RESULT_OK) {
+                    setCapturedImageURI(imageReturnedIntent.getData());
+                    setFullImageFromFilePath(getFilePathUri(context, getCapturedImageURI()), farmerPhoto, "portrait");
+                } else {
+                    farmerPhoto.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.empty_farmer_photo));
+                    setCurrentPhotoPath(null);
+                }
+                break;
+            case REQUEST_IMAGE_CAPTURE_SIGNATURE:
+                if (resultCode == RESULT_OK) {
+                    setFullImageFromFilePath(getCurrentSignaturePhotoPath(), farmerSignature, "signature");
+                } else {
+                    farmerSignature.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.empty_signature));
+                    setCurrentSignaturePhotoPath(null);
+                }
+                break;
+            default:
+        }
     }
 
     private void showSettingsDialog(String msg) {

@@ -23,6 +23,7 @@ import android.widget.Spinner;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.crash.FirebaseCrash;
+import com.olam.digital.ofis.gps.utils.GPSConstants;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -198,6 +199,25 @@ public  static String base64ConversionForImage(String filepath)  {
 
         return sharedPreferences.getString("ENUMERATOR_ID", "");
     }
+
+
+    /**
+     * get and set the enumerator Name
+     * @param context
+     * @param prefName
+     * @param prefValue
+     */
+    public static void setEnumeratorNameSharedPrefs(Context context,String prefName,String prefValue){
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor=sharedPreferences.edit();
+        editor.putString(prefName,prefValue);
+        editor.commit();
+    }
+    public static String getEnumeratorNameSharedPrefs(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
+        return sharedPreferences.getString(GPSConstants.COLUMN_ENUMERATOR_NAME, "");
+    }
+
 //  getPasscode from sharedPref - Penetration testing
     public static String getPasscodeFromSharedPrefs(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);

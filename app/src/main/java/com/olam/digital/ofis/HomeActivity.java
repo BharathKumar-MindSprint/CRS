@@ -6,6 +6,7 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -14,6 +15,7 @@ import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Typeface;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -62,6 +64,11 @@ import com.olam.digital.ofis.childlabour.AddNewChildActivity;
 import com.olam.digital.ofis.childlabour.ChildLabourUtils;
 import com.olam.digital.ofis.childlabour.ChildVisitDetailActivity;
 import com.olam.digital.ofis.childlabour.ViewChildLabourSurveyActivity;
+import com.olam.digital.ofis.gps.GPSListener;
+import com.olam.digital.ofis.gps.GPSTracker;
+import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
+import com.olam.digital.ofis.gps.utils.GPSConstants;
+import com.olam.digital.ofis.gps.utils.GPSUtils;
 import com.olam.digital.ofis.logging.FabricLogsWriter;
 import com.olam.digital.ofis.recordpolygon.RecordPolygonActivity;
 import com.olam.digital.ofis.recordpolygon.SharedPreferenceUtils;
@@ -73,6 +80,7 @@ import org.json.JSONObject;
 
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
+import java.sql.Timestamp;
 import java.util.Locale;
 
 import javax.net.ssl.SSLContext;
@@ -85,7 +93,7 @@ import retrofit2.Response;
 import static io.fabric.sdk.android.Fabric.TAG;
 
 
-public class HomeActivity extends BaseListActivity implements Callback<AuthenticationDTO>,OnAccessTokenInterface, AdapterView.OnItemClickListener {
+public class HomeActivity extends BaseListActivity implements Callback<AuthenticationDTO>,OnAccessTokenInterface, AdapterView.OnItemClickListener{
 
     // update
     public static final String TAG = "HomeActivity";
@@ -106,7 +114,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     private static RelativeLayout mainSection;
     private static ScrollView firstRunSection;
     private static TextView queueCount;
-    private static CardView recordTransactionWrapper;
+    private static CardView captureMyLocationWrapper;
     private static CardView recordTrainingWrapper;
     private SharedPreferences sharedPreferences;
     private static final String SHARED_PREFS_NAME = "com.olam.digital.ofis.app_prefs";
@@ -144,6 +152,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     private final static int MY_PROFILE_PIC_PERMISSIONS_REQUEST = 9998;
     private final static int MY_SIGNATURE_PIC_PERMISSIONS_REQUEST = 9997;
     private static final int PERMISSIONS_ACCESS_LOCATION = 6575;
+    private static final int REQUEST_CHECK_SETTINGS = 100;
 
     private boolean syncOptionAll;
     private int itemId;
@@ -152,6 +161,12 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     private long lastClickTime = 0;
     private boolean isChildSynced=true;
     ListView listView;
+
+    private Location mCurrentLocation=null;
+    GPSListener gpsListener=null;
+    private GPSTracker gpsTracker=null;
+    private Boolean newGps;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -174,7 +189,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
         firstRunSection = (ScrollView) findViewById(R.id.firstRunWrapper);
         mainSection = (RelativeLayout) findViewById(R.id.mainWrapper);
-        recordTransactionWrapper = (CardView) findViewById(R.id.recordTransactionWrapper);
+        captureMyLocationWrapper = (CardView) findViewById(R.id.captureLocationWrapper);
         recordTrainingWrapper = (CardView) findViewById(R.id.recordTrainingWrapper);
 
         enumeratorID = (EditText) findViewById(R.id.enumeratorID);
@@ -244,7 +259,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
                     return;
                 }else {
-                    System.out.println("doingAuthRequest 1");
                     doingAuthRequest();
                 }
             }
@@ -290,6 +304,30 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 //                nl.syncData();
 //            }
 //        }
+
+        gpsListener=new GPSListener() {
+            @Override
+            public void onGPSClick(Location location) {
+                if (location!=null){
+                    mCurrentLocation=location;
+                    ContentValues geoContentValues=new GPSUtils().getGeoContentValues(GPSConstants.MODULE_CAPTURE_CAPTURE_MY_LOCATION,String.valueOf(mCurrentLocation.getLatitude()),String.valueOf(mCurrentLocation.getLongitude()),new Timestamp(System.currentTimeMillis()).toString());
+                    gpsTracker.stopLocationUpdates();
+
+                    if (newGps) {
+                        long newGpsQueueId = new GpsTrackerLogic().insertGPSDetailsToQueue(context, geoContentValues);
+                        if (newGpsQueueId != -1) {
+                            try{
+                                bindNetworkQueue();
+                            }catch (Exception e){
+                                e.printStackTrace();
+                            }
+                        }
+                        newGps=false;
+                    }
+                }
+            }
+        };
+        gpsTracker=new GPSTracker(this,gpsListener);
 
     }
 
@@ -427,8 +465,16 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 6575) {
-            checkTime();
+        switch (requestCode) {
+            case REQUEST_CHECK_SETTINGS:
+                if (resultCode == -1) {
+                    gpsTracker.getDeviceLocation();
+                }
+                break;
+            default:
+                if (requestCode == 6575) {
+                    checkTime();
+                }
         }
     }
 
@@ -534,13 +580,13 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         if (tasksButton != null) {
             tasksButton.setVisible(true);
         }
-        boolean can_transact = Utilities.getBoolFromSharedPrefs(staticContext, "can_transact", false);
 
-        if (!can_transact) {
-            recordTransactionWrapper.setVisibility(View.GONE);
-            ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) recordTrainingWrapper.getLayoutParams();
-            lp.setMargins(0,0,0,0);
-        }
+//        boolean can_transact = Utilities.getBoolFromSharedPrefs(staticContext, "can_transact", false);
+//        if (!can_transact) {
+//            recordTransactionWrapper.setVisibility(View.GONE);
+//            ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) recordTrainingWrapper.getLayoutParams();
+//            lp.setMargins(0,0,0,0);
+//        }
 
         firstRunSection.startAnimation(mSlideOutBottom);
         topSection.startAnimation(mSlideInTop);
@@ -797,7 +843,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         Button addNewFarmer = (Button) findViewById(R.id.AddNewFarmer);
         Button completeModule = (Button) findViewById(R.id.CompleteQuestionnaireModule);
         Button addSocialInfra = (Button) findViewById(R.id.AddSocialInfrastructure);
-        Button recordTransaction = (Button) findViewById(R.id.RecordTransaction);
+        Button captureLocation = (Button) findViewById(R.id.captureLocation);
         Button recordTraining = (Button) findViewById(R.id.RecordFarmerTraining);
         ImageButton syncAll = (ImageButton) findViewById(R.id.syncAll);
         boolean can_transact = Utilities.getBoolFromSharedPrefs(context, "can_transact", false);
@@ -837,6 +883,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 }
             });
 
+
             addSocialInfra.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -847,19 +894,31 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 }
             });
 
-            if (can_transact || sharedPreferences.getBoolean("FIRST_RUN",true)) {
-                recordTransaction.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent intent = new Intent(context, TransactionItems.class);
-                        context.startActivity(intent);
-                    }
-                });
-            } else {
-                recordTransactionWrapper.setVisibility(View.GONE);
-                ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) recordTrainingWrapper.getLayoutParams();
-                lp.setMargins(0,0,0,0);
-            }
+            // Hiding the record transaction section
+//            if (can_transact || sharedPreferences.getBoolean("FIRST_RUN",true)) {
+//                recordTransaction.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        Intent intent = new Intent(context, TransactionItems.class);
+//                        context.startActivity(intent);
+//                    }
+//                });
+//            } else {
+//                recordTransactionWrapper.setVisibility(View.GONE);
+//                ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) recordTrainingWrapper.getLayoutParams();
+//                lp.setMargins(0,0,0,0);
+//            }
+
+            captureLocation.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+//                    Toast.makeText(HomeActivity.this,"Captured Location",Toast.LENGTH_LONG).show();
+                    newGps=true;
+                    gpsTracker.getDeviceLocation();
+
+                  //  nl.syncGPSData();
+                }
+            });
 
             recordTraining.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -876,110 +935,13 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             completeModule.setClickable(false);
             addSocialInfra.setAlpha(.5f);
             addSocialInfra.setClickable(false);
-            recordTransaction.setAlpha(.5f);
-            recordTransaction.setClickable(false);
+            captureLocation.setAlpha(.5f);
+            captureLocation.setClickable(false);
             recordTraining.setAlpha(.5f);
             recordTraining.setClickable(false);
         }
     }
 
-//    @Override
-//    protected void onListItemClick (ListView l, View v, int position, long id) {
-//        // carry out relevant action based on item clicked
-//        if (networkQueue.getCount() > 1) {
-//            networkQueue.moveToPosition(position-1);
-//        }
-//        String itemType = networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE));
-//        if (itemType.equalsIgnoreCase("infrastructure")) {
-//            Intent intent = new Intent(this, AddInfrastructureActivity.class);
-//            AddInfrastructureActivity.infrastructureID = id;
-//            AddInfrastructureActivity.editMode = true;
-//            startActivity(intent);
-//        } else if (itemType.equalsIgnoreCase("farmer")) {
-//            Intent intent = new Intent(this, AddFarmerActivity.class);
-//            intent.putExtra(EDIT_FARMER_ID, (long) networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
-//            intent.putExtra(EDIT_MODE, true);
-//            startActivity(intent);
-//        } else if (itemType.equalsIgnoreCase("farmlocation")) {
-//            Intent intent = new Intent(this, ViewFarmerActivity.class);
-//            ViewFarmerActivity.farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
-//            //long farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
-//            //SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(farmerId);
-//            startActivity(intent);
-//        }  else if (itemType.equalsIgnoreCase("farmpolygon")) {
-//            Intent recordPolygonIntent = new Intent(this, RecordPolygonActivity.class);
-//            final int lFarmID = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID));
-////            int count = SharedPreferenceUtils.getInstance(getApplicationContext()).getPlotCount(""+lFarmID);
-//            DataLayer dl = new DataLayer(getResources(), HomeActivity.this);
-//            dl.fetchPlotData(networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
-//            int count =0;
-////        if(strFarmID != "0"){
-//            try{
-////            count = SharedPreferenceUtils.getInstance(getApplicationContext()).getPlotCount(""+strFarmID);
-//                count = dl.fetchPlotData(networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
-//            }catch (Exception e){
-//                count = 0;
-//            }
-//            recordPolygonIntent.putExtra(FARMER_ID, networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
-//            recordPolygonIntent.putExtra(FARM_ID, lFarmID);
-//            recordPolygonIntent.putExtra(OLAM_FARMER_ID, networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID)));
-//            recordPolygonIntent.putExtra(FARMER_NAME, networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME)));
-//            recordPolygonIntent.putExtra(PLOT_COUNT, count);
-//            recordPolygonIntent.setAction(Intent.ACTION_DEFAULT);
-//            startActivity(recordPolygonIntent);
-//        } else if (itemType.equalsIgnoreCase("module")) {
-//            Intent intent = new Intent(this, ViewFarmerActivity.class);
-//            ViewFarmerActivity.farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
-//            //long farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
-//            //SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(farmerId);
-//            startActivity(intent);
-//        }  else if (itemType.equalsIgnoreCase("childmodule")) {
-//            Intent intent = new Intent(this, ViewChildLabourSurveyActivity.class);
-//            ViewChildLabourSurveyActivity.farmerID = Long.valueOf(networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
-//            ViewChildLabourSurveyActivity.childID = Long.valueOf(networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_CHILD_ID)));
-//            //long farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
-//            //SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(farmerId);
-//            startActivity(intent);
-//        } else if (itemType.equalsIgnoreCase("fmpreview") || itemType.equalsIgnoreCase("fullfmpreview")) {
-//            Intent intent = new Intent(this, ViewFarmerActivity.class);
-//            ViewFarmerActivity.farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
-//            //long farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
-//            //SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(farmerId);
-//            startActivity(intent);
-//        } else if (itemType.equalsIgnoreCase("transaction")) {
-//            Intent intent = new Intent(context, TransactionItem.class);
-//            intent.putExtra(EDIT_TRANSACTION_ITEM_ID, networkQueue.getLong(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_TRANSACTION_ITEM_ID)));
-//            intent.putExtra(EDIT_MODE, true);
-//            intent.putExtra(READ_ONLY_MODE, true);
-//            startActivity(intent);
-//        } else if (itemType.equalsIgnoreCase("trainingrecord")) {
-//            Intent intent = new Intent(context, TrainingRecord.class);
-//            intent.putExtra(EDIT_TRAININGRECORD_ID, networkQueue.getLong(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_TRAINING_RECORD_ID)));
-//            intent.putExtra(EDIT_MODE, true);
-//            intent.putExtra(READ_ONLY_MODE, true);
-//            startActivity(intent);
-//        }else if (itemType.equalsIgnoreCase("farmer_photo")) {
-//            //JIRA req OW-505
-//            Intent intent = new Intent(this, ViewFarmerActivity.class);
-//            ViewFarmerActivity.farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
-//            startActivity(intent);
-//        }else if (itemType.equalsIgnoreCase("children")) {
-//            Intent intent = new Intent(this, AddNewChildActivity.class);
-//            intent.putExtra("action","sync_edit");
-//            intent.putExtra(ChildLabourUtils.CHILD_FARMER_ID, String.valueOf(networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID))));
-//            intent.putExtra(ChildLabourUtils.CHILD_ID, networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_CHILD_ID)));
-//            startActivity(intent);
-//        }else if (itemType.equalsIgnoreCase("child_visit")){
-//            Bundle childBundle=new Bundle();
-//            childBundle.putString(ChildLabourUtils.CHILD_FARMER_ID,String.valueOf(networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID))));
-//            Intent intent = new Intent(this, ChildVisitDetailActivity.class);
-//            intent.putExtras(childBundle);
-////            intent.putExtra(ChildLabourUtils.CHILD_FARMER_ID, String.valueOf(networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID))));
-////            intent.putExtra(ChildLabourUtils.CHILDLABOUR_SURVEY, networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_SURVEY_CODE)));
-//            startActivity(intent);
-//
-//        }
-//    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -1202,6 +1164,12 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     public void onTokenCompleted(String status) {
         if(! status.equalsIgnoreCase("false")){
             Utilities.minProgressCount=0;
+            try{
+                if (GpsTrackerLogic.getGeoPointCount(context) >0 ){
+                    nl.syncGPSData();
+                }
+            }catch (Exception e){}
+
                if(syncOptionAll){
                   startAllItemSync();
               }else{
@@ -1311,4 +1279,5 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
         }
     }
+
 }

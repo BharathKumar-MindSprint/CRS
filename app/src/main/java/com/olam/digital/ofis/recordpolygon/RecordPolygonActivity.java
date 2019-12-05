@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -60,6 +61,10 @@ import com.olam.digital.ofis.BuildConfig;
 import com.olam.digital.ofis.DataLayer;
 import com.olam.digital.ofis.OFISDBContract;
 import com.olam.digital.ofis.R;
+import com.olam.digital.ofis.ViewFarmerActivity;
+import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
+import com.olam.digital.ofis.gps.utils.GPSConstants;
+import com.olam.digital.ofis.gps.utils.GPSUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -93,6 +98,7 @@ import org.osmdroid.views.overlay.infowindow.InfoWindow;
 import org.osmdroid.views.overlay.mylocation.DirectedLocationOverlay;
 
 import java.io.File;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -1284,7 +1290,9 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
 
                 LocationBeanList lLocationBeanList = new LocationBeanList();
                 lLocationBeanList.setLocationBean(mLocationBeanList);
-
+               try {
+                  collectGPSPoint();
+               }catch (Exception e){}
                 String plotGeoJson = SharedPreferenceUtils.getInstance(getApplicationContext()).setLocationBeanList(currentTrackname, lLocationBeanList);
 
                 String plotId = currentTrackname.toLowerCase().replace(" ", "").toString().concat("_" + mOlamFarmerId);
@@ -1317,6 +1325,20 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
         });
         builder.create().show();
 
+    }
+
+    private void collectGPSPoint() {
+
+        if ( mLocationBeanList.size()>0){
+            if(mLocationBeanList.get(0) != null){
+              String latitude= String.valueOf(mLocationBeanList.get(0).getLat());
+              String longitude=String.valueOf(mLocationBeanList.get(0).getLng());
+
+                ContentValues geoContentValues=new GPSUtils().getGeoContentValues(GPSConstants.MODULE_CAPTURE_FARM_POLYGON,latitude,longitude,new Timestamp(System.currentTimeMillis()).toString());
+                Long newTrackId= new GpsTrackerLogic().insertGeoDataDetails(RecordPolygonActivity.this,geoContentValues);
+
+            }
+        }
     }
 
     /**

@@ -33,7 +33,7 @@ public class BaseActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("TasksUpdated"));
-        InApp.identifiedUserWithEnvironment(new AuthenticationHelper(this).getuserName(), BuildConfig.FLAVOR);
+      //  InApp.identifiedUserWithEnvironment(new AuthenticationHelper(this).getuserName(), BuildConfig.FLAVOR);
     }
 
     @Override
