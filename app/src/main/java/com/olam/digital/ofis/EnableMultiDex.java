@@ -2,6 +2,7 @@ package com.olam.digital.ofis;
 
 import android.content.Context;
 import android.support.multidex.MultiDexApplication;
+import android.view.Gravity;
 
 import com.crashlytics.android.Crashlytics;
 //import com.dynatrace.android.agent.Dynatrace;
@@ -38,6 +39,7 @@ public class EnableMultiDex extends MultiDexApplication {
 
         Toast.makeText(this,"Test Dynatrace", Toast.LENGTH_LONG).show();
         dtxAction.leaveAction();*/
+
     }
 
 

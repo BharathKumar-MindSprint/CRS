@@ -103,30 +103,6 @@
         android:paddingRight="@dimen/home_activity_horizontal_margin"
         android:paddingTop="0dp">
 
-        <android.support.v7.widget.CardView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:id="@+id/recordTransactionWrapper"
-            card_view:cardBackgroundColor="@color/ofis_home_screen_midsection_background"
-            card_view:cardElevation="@dimen/ofis_elevation_height"
-            android:layout_marginTop="-4dp"
-            card_view:cardUseCompatPadding="true">
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:text="@string/record_transaction_button_text"
-                android:id="@+id/RecordTransaction"
-                android:textColor="@color/ofis_base_font_white"
-                android:drawableTop="@drawable/ic_record_transaction"
-                android:drawablePadding="10dp"
-                android:textSize="@dimen/ofis_micro_text"
-                android:background="@android:color/transparent"
-                tools:ignore="ButtonStyle"
-                android:paddingBottom="16dp"
-                android:paddingTop="16dp" />
-        </android.support.v7.widget.CardView>
 
         <android.support.v7.widget.CardView
             android:layout_width="0dp"
@@ -153,6 +129,32 @@
                 android:paddingTop="16dp"
                 android:paddingBottom="16dp" />
         </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:id="@+id/captureLocationWrapper"
+            card_view:cardBackgroundColor="@color/ofis_home_screen_midsection_background"
+            card_view:cardElevation="@dimen/ofis_elevation_height"
+            android:layout_marginTop="-4dp"
+            card_view:cardUseCompatPadding="true">
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="@string/capture_my_location_button_text"
+                android:id="@+id/captureLocation"
+                android:textColor="@color/ofis_base_font_white"
+                android:drawableTop="@drawable/ic_captureloc"
+                android:drawablePadding="10dp"
+                android:textSize="@dimen/ofis_micro_text"
+                android:background="@android:color/transparent"
+                tools:ignore="ButtonStyle"
+                android:paddingBottom="16dp"
+                android:paddingTop="16dp" />
+        </android.support.v7.widget.CardView>
+
 
     </LinearLayout>
 
@@ -188,7 +190,7 @@
                 tools:ignore="RtlHardcoded"/>
 
             <TextView
-                android:layout_width="20dp"
+                android:layout_width="wrap_content"
                 android:layout_height="20dp"
                 android:background="@drawable/itemlist_total_background"
                 android:id="@+id/networkQueueCount"
@@ -198,7 +200,7 @@
                 android:gravity="center"
                 android:layout_marginTop="@dimen/ofis_micro_pad"
                 android:layout_toRightOf="@+id/textView4"
-                android:padding="0dp"
+                android:padding="2dp"
                 android:layout_marginLeft="@dimen/ofis_small_pad"
                 tools:ignore="HardcodedText" />
 

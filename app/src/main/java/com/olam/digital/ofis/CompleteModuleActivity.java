@@ -59,6 +59,11 @@ import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.PermissionListener;
 import com.olam.digital.ofis.R;
+import com.olam.digital.ofis.gps.GPSListener;
+import com.olam.digital.ofis.gps.GPSTracker;
+import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
+import com.olam.digital.ofis.gps.utils.GPSConstants;
+import com.olam.digital.ofis.gps.utils.GPSUtils;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -123,6 +128,11 @@ public class CompleteModuleActivity extends BaseActivity {
     private static final String STATE_RESOLVING_ERROR = "resolving_error";
     // Bool to track whether the app is already resolving an error
     private boolean mResolvingError = false;
+
+    private Location mCurrentCapturedLocation=null;
+    GPSListener gpsListener=null;
+    private GPSTracker gpsTracker=null;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -215,6 +225,19 @@ public class CompleteModuleActivity extends BaseActivity {
         bindSaveButton();
         setupFooter();
         dynamicQuestions.SurveyType="other";
+
+        gpsListener=new GPSListener() {
+            @Override
+            public void onGPSClick(Location location) {
+                if (location!=null){
+                    mCurrentCapturedLocation=location;
+                }
+            }
+        };
+        gpsTracker=new GPSTracker(this,gpsListener);
+        gpsTracker.getDeviceLocation();
+
+
     }
 
     @SuppressWarnings("ConstantConditions")
@@ -505,6 +528,12 @@ public class CompleteModuleActivity extends BaseActivity {
         }*/
         boolean canSaveAndFinish = true;
 
+        // check location
+        if (mCurrentCapturedLocation==null){
+            gpsTracker.getDeviceLocation();
+            return;
+        }
+
         // first time saving this module?
         if (farmerModuleId == 0) {
             statusStarted = 1;
@@ -604,6 +633,11 @@ public class CompleteModuleActivity extends BaseActivity {
                 context.startActivity(intent);
             }
         } else if (action.equalsIgnoreCase("finish")) {
+
+            collectGPSPoint(mCurrentCapturedLocation);
+            gpsTracker.stopLocationUpdates();
+            gpsTracker.setNullGPSListener();
+
             if(bool){
                 if (canSaveAndFinish) {
                     ViewFarmerActivity.farmerId = farmerId;
@@ -629,6 +663,14 @@ public class CompleteModuleActivity extends BaseActivity {
             startActivity(intent);
             finish();
         }
+    }
+
+
+    private void collectGPSPoint(Location farmLocation) {
+        String lat=String.valueOf(farmLocation.getLatitude());
+        String lon=String.valueOf(farmLocation.getLongitude());
+        ContentValues geoContentValues=new GPSUtils().getGeoContentValues(GPSConstants.MODULE_CAPTURE_FARMER_SURVEY,lat,lon,new Timestamp(System.currentTimeMillis()).toString());
+        Long newTrackId= new GpsTrackerLogic().insertGeoDataDetails(context,geoContentValues);
     }
 
     /**

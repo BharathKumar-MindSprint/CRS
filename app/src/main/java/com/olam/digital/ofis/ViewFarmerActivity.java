@@ -82,6 +82,11 @@ import com.karumi.dexter.listener.single.PermissionListener;
 import com.olam.digital.ofis.childlabour.ChildLabourDetailsActivity;
 import com.olam.digital.ofis.childlabour.ChildLabourUtils;
 import com.olam.digital.ofis.childlabour.RegisterChildActivity;
+import com.olam.digital.ofis.gps.GPSListener;
+import com.olam.digital.ofis.gps.GPSTracker;
+import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
+import com.olam.digital.ofis.gps.utils.GPSConstants;
+import com.olam.digital.ofis.gps.utils.GPSUtils;
 import com.olam.digital.ofis.recordpolygon.LocationBeanList;
 import com.olam.digital.ofis.recordpolygon.PlotsList;
 import com.olam.digital.ofis.recordpolygon.RecordPolygonActivity;
@@ -174,6 +179,7 @@ public class ViewFarmerActivity extends BaseListActivity {
 
     // Request code to use when launching the resolution activity
     private static final int REQUEST_RESOLVE_ERROR = 1001;
+
     // Unique tag for the error dialog fragment
     private static final String STATE_RESOLVING_ERROR = "resolving_error";
     // Bool to track whether the app is already resolving an error
@@ -197,6 +203,11 @@ public class ViewFarmerActivity extends BaseListActivity {
     private String olamFarmerIdStr;
     private boolean polygon = false;
 
+    // Location captured related variable
+    private Location mCurrentCapturedLocation=null;
+    GPSListener gpsListener=null;
+    private GPSTracker gpsTracker=null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -215,6 +226,20 @@ public class ViewFarmerActivity extends BaseListActivity {
         setupGPS();
         setupUI();
         setupPhoneNumberDialog();
+
+
+        gpsListener=new GPSListener() {
+            @Override
+            public void onGPSClick(Location location) {
+                if (location!=null){
+                    mCurrentCapturedLocation=location;
+                }
+            }
+        };
+        gpsTracker=new GPSTracker(this,gpsListener);
+        gpsTracker.getDeviceLocation();
+
+
     }
 
     @Override
@@ -262,6 +287,10 @@ public class ViewFarmerActivity extends BaseListActivity {
 
     protected void onStop() {
         super.onStop();
+        if (gpsTracker!=null) {
+            gpsTracker.stopLocationUpdates();
+        }
+
     }
 
     @Override
@@ -272,6 +301,13 @@ public class ViewFarmerActivity extends BaseListActivity {
         //JIRA req OW-505
 
         switch (requestCode) {
+
+            case REQUEST_CHECK_SETTINGS:
+                if (resultCode == -1) {
+                    gpsTracker.getDeviceLocation();
+                }
+                break;
+
             case REQUEST_IMAGE_CAPTURE:
                 if (resultCode == RESULT_OK) {
                     if(getCurrentPhotoPath() != null){
@@ -379,6 +415,12 @@ public class ViewFarmerActivity extends BaseListActivity {
             @Override
             public void onClick(View v) {
                 // Request Permission only for Android Version Marshmallow and above
+
+                if (mCurrentCapturedLocation==null) {
+                    gpsTracker.getDeviceLocation();
+                    return;
+                }
+
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     // Check Camera & Storage Permission
                     if (ContextCompat.checkSelfPermission(ViewFarmerActivity.this,
@@ -435,6 +477,10 @@ public class ViewFarmerActivity extends BaseListActivity {
                 moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
                 textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
                 textView.setText(res.getString(R.string.record_farm_location_complete));
+
+                // capturing the geo point track
+                collectGPSPoint(GPSConstants.MODULE_CAPTURE_FARM_LOCATION,farmLocation);
+
             }
         } catch (Exception e) {
             FirebaseCrash.report(new Exception("ViewFarmerActivity: Error setting farmer GPS location", e));
@@ -445,6 +491,15 @@ public class ViewFarmerActivity extends BaseListActivity {
             pd.dismiss();
         }
     }
+
+    private void collectGPSPoint(String module,Location farmLocation) {
+        String lat=String.valueOf(farmLocation.getLatitude());
+        String lon=String.valueOf(farmLocation.getLongitude());
+        ContentValues geoContentValues=new GPSUtils().getGeoContentValues(module,lat,lon,new Timestamp(System.currentTimeMillis()).toString());
+        Long newTrackId= new GpsTrackerLogic().insertGeoDataDetails(context,geoContentValues);
+
+    }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
@@ -1009,6 +1064,7 @@ public class ViewFarmerActivity extends BaseListActivity {
                         dl.updateFarmerPhoneNumbers(farmerId, storeableNumbers);
                         ContentValues nqiValues = new ContentValues();
 
+                        collectGPSPoint(GPSConstants.MODULE_UPDATE_PHONE_NUMBER,mCurrentCapturedLocation);
                         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
                         nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "phonenumbers");
                         nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, res.getString(R.string.update_phone_numbers));
@@ -1289,6 +1345,14 @@ public class ViewFarmerActivity extends BaseListActivity {
         Bitmap bitmap = Utilities.loadSizedBitmap(savedImagePath, outputWidth, outputHeight);
         target.setImageBitmap(bitmap);
         dl.updateFarmerPhoto(farmerId,savedImagePath,olamFarmerIdStr,farmerNameStr);
+
+        // Collect the GPS Point
+        if (mCurrentCapturedLocation==null){
+            gpsTracker.getDeviceLocation();
+            return;
+        }else{
+            collectGPSPoint(GPSConstants.MODULE_CAPTURE_UPDATE_PHOTO,mCurrentCapturedLocation);
+        }
     }
     private static String getFilePathUri(Context context, Uri uri) {
         Uri filePathUri = uri;
@@ -1303,4 +1367,95 @@ public class ViewFarmerActivity extends BaseListActivity {
         }
         return filePathUri + "";
     }
+
+
+   /* @Override
+    public void onItemClick(AdapterView<?> l, View v, int position, long id) {
+        TextView enabled = (TextView) v.findViewById(R.id.moduleListEnabled);
+        if (enabled.getText().toString().equalsIgnoreCase("true")) {
+            if (id > 0) {
+                TextView subModuleTv = (TextView) v.findViewById(R.id.moduleListCurrentSubModuleId);
+                TextView moduleNameTv = (TextView) v.findViewById(R.id.moduleListModuleName);
+                TextView statusStartedTv = (TextView) v.findViewById(R.id.moduleListStatusStarted);
+                TextView statusFinishedTv = (TextView) v.findViewById(R.id.moduleListStatusFinished);
+                TextView farmerModuleIdTv = (TextView) v.findViewById(R.id.moduleListFarmerModuleId);
+                TextView farmerModuleLatTv = (TextView) v.findViewById(R.id.moduleListRecordedLat);
+                TextView farmerModuleLngTv = (TextView) v.findViewById(R.id.moduleListRecordedLng);
+                Intent intent = new Intent(context, CompleteModuleActivity.class);
+                intent.putExtra(FARMER_ID, farmerId);
+                intent.putExtra(MODULE_ID, id);
+                intent.putExtra(FARMER_MODULE_ID, (String.valueOf(farmerModuleIdTv.getText()).equals("")) ? 0 : Long.parseLong(String.valueOf(farmerModuleIdTv.getText())));
+                intent.putExtra(SUB_MODULE_ID, (String.valueOf(subModuleTv.getText()).equals("")) ? 0 : Integer.parseInt(String.valueOf(subModuleTv.getText())));
+                intent.putExtra(FARM_ID, farmer.getInt(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_ID)));
+                intent.putExtra(STATUS_STARTED, (String.valueOf(statusStartedTv.getText()).equals("")) ? 0 : Integer.parseInt(String.valueOf(statusStartedTv.getText())));
+                intent.putExtra(STATUS_FINISHED, (String.valueOf(statusFinishedTv.getText()).equals("")) ? 0 : Integer.parseInt(String.valueOf(statusFinishedTv.getText())));
+                intent.putExtra(OLAM_FARMER_ID, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
+                intent.putExtra(MODULE_NAME, String.valueOf(moduleNameTv.getText()));
+                intent.putExtra(RECORDED_LAT, (String.valueOf(farmerModuleLatTv.getText()).equals("")) ? "" : String.valueOf(farmerModuleLatTv.getText()));
+                intent.putExtra(RECORDED_LNG, (String.valueOf(farmerModuleLatTv.getText()).equals("")) ? "" : String.valueOf(farmerModuleLngTv.getText()));
+                intent.putExtra(FARMER_NAME, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME)));
+
+                if (DynamicQuestions.getInstance() != null) {
+                    DynamicQuestions.clearInstance();
+                }
+                context.startActivity(intent);
+            } else {
+                if (id == 0) {
+                    // record farm location if necessary
+                    TextView recordedLng = (TextView) v.findViewById(R.id.moduleListRecordedLng);
+                    if (recordedLng != null && recordedLng.getText().equals("Phone")) {
+                        if (phoneNumbersListItem == null) {
+                            phoneNumbersListItem = v;
+                        }
+                        populatephoneNumberDialog();
+                        phoneNumbersHolder.setVisibility(View.VISIBLE);
+                        phoneNumbersHolder.startAnimation(mSlideBottomUp);
+                    } else if (recordedLng != null && recordedLng.getText().equals("farmpolygon")) {
+                        polygon=true;
+                        enableFarmPolygon(v);
+                    } else if (recordedLng != null && recordedLng.getText().equals(ChildLabourUtils.REG_CHILD)) {
+                        Intent in = new Intent(this, RegisterChildActivity.class);
+                        Bundle bundle=new Bundle();
+                        bundle.putLong(ChildLabourUtils.CHILD_FARMER_ID, farmerId);
+                        in.putExtras(bundle);
+                        startActivity(in);
+                    } else if (recordedLng != null && recordedLng.getText().equals(ChildLabourUtils.CHILDLABOUR_SURVEY)) {
+                        Intent in = new Intent(this, ChildLabourDetailsActivity.class);
+                        Bundle bundle=new Bundle();
+                        bundle.putLong(ChildLabourUtils.CHILD_FARMER_ID, farmerId);
+                        in.putExtras(bundle);
+                        startActivity(in);
+                    } else {
+                        polygon=false;
+                        recordFarmLocation(v);
+                    }
+                } else if (id < 0) {
+                    // go to fmp review page
+                    TextView startYearTv = (TextView) v.findViewById(R.id.moduleListCurrentSubModuleId);
+                    TextView statusStartedTv = (TextView) v.findViewById(R.id.moduleListStatusStarted);
+                    TextView fmpIdTv = (TextView) v.findViewById(R.id.moduleListFarmerModuleId);
+                    TextView fmpModeTv = (TextView) v.findViewById(R.id.moduleListRecordedLat);
+                    ReviewFarmManagementPlan.fmpId = (String.valueOf(fmpIdTv.getText()).equals("")) ? 0 : Long.parseLong(String.valueOf(fmpIdTv.getText()));
+                    ReviewFarmManagementPlan.fullReviewMode = !String.valueOf(fmpModeTv.getText()).equalsIgnoreCase("summary");
+                    ReviewFarmManagementPlan.farmerId = farmerId;
+                    ReviewFarmManagementPlan.fmpStartYear = (String.valueOf(startYearTv.getText()).equals("")) ? 0 : Integer.parseInt(String.valueOf(startYearTv.getText()));
+                    ReviewFarmManagementPlan.statusStarted = (String.valueOf(statusStartedTv.getText()).equals("")) ? 0 : Integer.parseInt(String.valueOf(statusStartedTv.getText()));
+                    ReviewFarmManagementPlan.olamFarmerId = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID));
+                    ReviewFarmManagementPlan.farmId = farmer.getInt(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_ID));
+                    Intent intent = new Intent(context, ReviewFarmManagementPlan.class);
+                    context.startActivity(intent);
+                }
+            }
+        }
+    }
+*/
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+//        if (gpsListener!=null){
+//            gpsTracker.setNullGPSListener();
+//        }
+    }
+
 }

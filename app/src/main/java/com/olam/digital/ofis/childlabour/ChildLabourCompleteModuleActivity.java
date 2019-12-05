@@ -58,6 +58,11 @@ import com.olam.digital.ofis.Utilities;
 import com.olam.digital.ofis.ViewFarmerActivity;
 import com.olam.digital.ofis.childlabour.dto.ChildModuleDto;
 import com.olam.digital.ofis.childlabour.dto.ChildrenDTO;
+import com.olam.digital.ofis.gps.GPSListener;
+import com.olam.digital.ofis.gps.GPSTracker;
+import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
+import com.olam.digital.ofis.gps.utils.GPSConstants;
+import com.olam.digital.ofis.gps.utils.GPSUtils;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -132,6 +137,11 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
     private String childNameQueue;
     private String farmerNameQueue;
 
+    private Location mCurrentCapturedLocation=null;
+    GPSListener gpsListener=null;
+    private GPSTracker gpsTracker=null;
+
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -140,6 +150,21 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
         initSetup();
         getChildAndFarmerName();
         dynamicQuestions.SurveyType="child";
+        initGPSListener();
+    }
+
+    private void initGPSListener() {
+        gpsListener=new GPSListener() {
+            @Override
+            public void onGPSClick(Location location) {
+                if (location!=null){
+                    mCurrentCapturedLocation=location;
+                }
+            }
+        };
+        gpsTracker=new GPSTracker(this,gpsListener);
+        gpsTracker.getDeviceLocation();
+
     }
 
     private void getChildAndFarmerName() {
@@ -308,6 +333,12 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
 
         boolean canSaveAndFinish = true;
 
+        // check location
+        if (mCurrentCapturedLocation==null){
+            gpsTracker.getDeviceLocation();
+            return;
+        }
+
         // first time saving this module?
         if (farmerModuleId == 0) {
             statusStarted = 1;
@@ -347,6 +378,9 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
             Intent intent = new Intent(context, ViewFarmerActivity.class);
             context.startActivity(intent);
         } else if (action.equalsIgnoreCase("finish")) {
+            collectGPSPoint();
+            gpsTracker.stopLocationUpdates();
+            gpsTracker.setNullGPSListener();
             if (canSaveAndFinish) {
                 ViewFarmerActivity.farmerId = farmerId;
                 //SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(farmerId);
@@ -372,6 +406,13 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
             finish();
 
         }
+    }
+
+    private void collectGPSPoint() {
+        String lat=String.valueOf(mCurrentCapturedLocation.getLatitude());
+        String lon=String.valueOf(mCurrentCapturedLocation.getLongitude());
+        ContentValues geoContentValues=new GPSUtils().getGeoContentValues(GPSConstants.COLUMN_NAME_CHILD_SURVEY,lat,lon,new Timestamp(System.currentTimeMillis()).toString());
+        Long newTrackId= new GpsTrackerLogic().insertGeoDataDetails(this,geoContentValues);
     }
 
     private void bindSaveButton() {
@@ -548,6 +589,8 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
         super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
+
+
 /*
 
         if (requestCode == REQUEST_RESOLVE_ERROR) {
