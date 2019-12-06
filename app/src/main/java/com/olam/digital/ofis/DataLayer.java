@@ -25,6 +25,7 @@ import com.google.firebase.crash.FirebaseCrash;
 import com.google.gson.JsonObject;
 import com.olam.digital.ofis.childlabour.ChildLabourUtils;
 import com.olam.digital.ofis.childlabour.dto.ChildrenDTO;
+import com.olam.digital.ofis.gps.dto.TrackDetailsDTO;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -3932,4 +3933,39 @@ try {
         return  serverId;
     }
 
+    public long insertGeoData(Context context, ContentValues contentValues) {
+        long newGeoId;
+        newGeoId = db.insert(OFISDBContract.GPSDetails.TABLE_NAME, null, contentValues);
+        return newGeoId;
+    }
+
+    public Cursor getGeoTrackList() {
+        return db.rawQuery("SELECT * FROM "+OFISDBContract.GPSDetails.TABLE_NAME, null);
+    }
+
+    public long insertGPSDetailsNetworkQueue(Context context,ContentValues contentValues) {
+
+            long newGpsEntry;
+            ContentValues networkQueueValues = new ContentValues();
+            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "gps_track");
+            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, Utilities.getEnumeratorNameSharedPrefs(context));
+            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, context.getResources().getString(R.string.enumerator_location_capture));
+            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID, Utilities.getFromSharedPrefs(context));
+
+
+            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LAT, contentValues.getAsString(OFISDBContract.GPSDetails.COLUMN_NAME_LATITUDE));
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG, contentValues.getAsString(OFISDBContract.GPSDetails.COLUMN_NAME_LONGITUDE));
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT,timestamp.toString());
+
+           newGpsEntry= insertNetworkQueueEntry(networkQueueValues);
+
+           return newGpsEntry;
+
+    }
+
+
+    public void deleteGeoPoints() {
+        db.delete(OFISDBContract.GPSDetails.TABLE_NAME, null, null);
+    }
 }
