@@ -589,32 +589,21 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
         super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
-
-
-/*
-
-        if (requestCode == REQUEST_RESOLVE_ERROR) {
-            mResolvingError = false;
-            if (resultCode == RESULT_OK) {
-                // Make sure the app is not already connected or attempting to connect
-                if (!googleApiClient.isConnecting() &&
-                        !googleApiClient.isConnected()) {
-                    googleApiClient.connect();
+        switch (requestCode) {
+            case REQUEST_CHECK_SETTINGS:
+                if (requestCode == 100 && resultCode == RESULT_OK) {
+//            Toast.makeText(AddInfrastructureActivity.this,getResources().getString(R.string.record_location_timeout),Toast.LENGTH_LONG).show();
+                    gpsTracker.getDeviceLocation();
+                    startLocationUpdates();
+                } else if (requestCode == 100 && resultCode == RESULT_CANCELED) {
+//            Toast.makeText(AddInfrastructureActivity.this,getResources().getString(R.string.record_location_timeout),Toast.LENGTH_LONG).show();
+                    stopLocationUpdates();
                 }
-            }
-        }
-*/
-
-        if (requestCode == 100 && resultCode == RESULT_OK) {
-//            Toast.makeText(AddInfrastructureActivity.this,getResources().getString(R.string.record_location_timeout),Toast.LENGTH_LONG).show();
-            startLocationUpdates();
-        }else if (requestCode == 100 && resultCode == RESULT_CANCELED) {
-//            Toast.makeText(AddInfrastructureActivity.this,getResources().getString(R.string.record_location_timeout),Toast.LENGTH_LONG).show();
-            stopLocationUpdates();
-        }
-
-        if (resultCode == RESULT_OK) {
-            dynamicQuestions.setFullImageFromFilePath(res);
+                break;
+            default:
+                if (resultCode == RESULT_OK) {
+                    dynamicQuestions.setFullImageFromFilePath(res);
+                }
         }
     }
     /**
