@@ -85,9 +85,9 @@ public class TrainingRecord extends BaseListActivity{
     private static final int REQUEST_CHECK_SETTINGS = 100;
     ListView listView;
 
-    private Location mCurrentLocation=null;
-    GPSListener gpsListener=null;
-    private GPSTracker gpsTracker=null;
+//    private Location mCurrentLocation=null;
+//    GPSListener gpsListener=null;
+//    private GPSTracker gpsTracker=null;
 
 
     @Override
@@ -160,16 +160,16 @@ public class TrainingRecord extends BaseListActivity{
         bindSpinners();
         bindButtons();
 
-        gpsListener=new GPSListener() {
-            @Override
-            public void onGPSClick(Location location) {
-                if (location!=null){
-                    mCurrentLocation=location;
-                }
-            }
-        };
-        gpsTracker=new GPSTracker(this,gpsListener);
-        gpsTracker.getDeviceLocation();
+//        gpsListener=new GPSListener() {
+//            @Override
+//            public void onGPSClick(Location location) {
+//                if (location!=null){
+//                    mCurrentLocation=location;
+//                }
+//            }
+//        };
+//        gpsTracker=new GPSTracker(this,gpsListener);
+//        gpsTracker.getDeviceLocation();
 
 
     }
@@ -549,10 +549,10 @@ public class TrainingRecord extends BaseListActivity{
         } else {
             // insert
 
-            if (mCurrentLocation==null){
-                gpsTracker.getDeviceLocation();
-                return;
-            }
+//            if (mCurrentLocation==null){
+//                gpsTracker.getDeviceLocation();
+//                return;
+//            }
 
             trainingRecordId = dl.insertTrainingRecord(values);
             if (trainingRecordId != 0) {
@@ -561,7 +561,7 @@ public class TrainingRecord extends BaseListActivity{
             }
 
             // collect GPS Record
-            collectGPSPoint(GPSConstants.MODULE_CAPTURE_TRAINING_RECORD,mCurrentLocation);
+          //  collectGPSPoint(GPSConstants.MODULE_CAPTURE_TRAINING_RECORD,mCurrentLocation);
 
         }
     }
@@ -671,7 +671,7 @@ public class TrainingRecord extends BaseListActivity{
         switch (requestCode) {
             case REQUEST_CHECK_SETTINGS:
                 if (resultCode == -1) {
-                    gpsTracker.getDeviceLocation();
+                  //  gpsTracker.getDeviceLocation();
                 }
                 break;
             default:
@@ -733,13 +733,7 @@ public class TrainingRecord extends BaseListActivity{
         dialog.show();
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if (gpsTracker!=null){
-            gpsTracker.stopLocationUpdates();
-        }
-    }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
