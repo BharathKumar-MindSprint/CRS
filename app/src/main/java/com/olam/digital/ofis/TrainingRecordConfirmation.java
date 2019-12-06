@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.location.Location;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.LayoutInflater;
@@ -18,6 +19,11 @@ import android.widget.Toast;
 
 import com.google.firebase.crash.FirebaseCrash;
 import com.olam.digital.ofis.R;
+import com.olam.digital.ofis.gps.GPSListener;
+import com.olam.digital.ofis.gps.GPSTracker;
+import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
+import com.olam.digital.ofis.gps.utils.GPSConstants;
+import com.olam.digital.ofis.gps.utils.GPSUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -36,6 +42,12 @@ public class TrainingRecordConfirmation extends BaseListActivity {
     private long trainingRecordId;
     private JSONObject scoringColumns;
     private String columnSuffix, courseNameValue, moduleNameValue;
+
+    private Location mCurrentLocation=null;
+    GPSListener gpsListener=null;
+    private GPSTracker gpsTracker=null;
+
+    private static final int REQUEST_CHECK_SETTINGS = 100;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +75,17 @@ public class TrainingRecordConfirmation extends BaseListActivity {
             getTrainingAttendees();
             bindButton();
         }
+
+        gpsListener=new GPSListener() {
+            @Override
+            public void onGPSClick(Location location) {
+                if (location!=null){
+                    mCurrentLocation=location;
+                }
+            }
+        };
+        gpsTracker=new GPSTracker(this,gpsListener);
+        gpsTracker.getDeviceLocation();
     }
 
     private void getTrainingRecord() {
@@ -99,6 +122,27 @@ public class TrainingRecordConfirmation extends BaseListActivity {
                 FirebaseCrash.report(new Exception("TrainingRecordConfirmation: Error getting scoring columns from training record", e));
                 e.printStackTrace();
             }
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
+        super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
+
+        switch (requestCode) {
+            case REQUEST_CHECK_SETTINGS:
+                if (resultCode == -1) {
+                    gpsTracker.getDeviceLocation();
+                }
+                break;
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (gpsTracker!=null){
+            gpsTracker.stopLocationUpdates();
         }
     }
 
@@ -144,10 +188,19 @@ public class TrainingRecordConfirmation extends BaseListActivity {
     private void bindButton() {
         Button confirmButton = (Button) findViewById(R.id.confirmTrainingRecord);
 
+
+
         confirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // add transaction to network queue
+
+                if (mCurrentLocation==null){
+                    gpsTracker.getDeviceLocation();
+                    return;
+                }
+
+
                 Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 
                 ContentValues networkQueueValues = new ContentValues();
@@ -160,6 +213,8 @@ public class TrainingRecordConfirmation extends BaseListActivity {
                 networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPDATED_AT, timestamp.toString());
 
                 if (dl.insertNetworkQueueEntry(networkQueueValues) != 0) {
+                    // collect GPS Record
+                    collectGPSPoint(GPSConstants.MODULE_CAPTURE_TRAINING_RECORD,mCurrentLocation);
                     ContentValues trainingRecordValues = new ContentValues();
                     trainingRecordValues.put(OFISDBContract.TrainingRecord.COLUMN_NAME_IN_QUEUE, 1);
                     if (dl.updateTrainingRecord(trainingRecordValues, trainingRecordId) > 0) {
@@ -170,6 +225,14 @@ public class TrainingRecordConfirmation extends BaseListActivity {
                 }
             }
         });
+    }
+
+    private void collectGPSPoint(String module, Location farmLocation) {
+        String lat=String.valueOf(farmLocation.getLatitude());
+        String lon=String.valueOf(farmLocation.getLongitude());
+        ContentValues geoContentValues=new GPSUtils().getGeoContentValues(module,lat,lon,new Timestamp(System.currentTimeMillis()).toString());
+        Long newTrackId= new GpsTrackerLogic().insertGeoDataDetails(context,geoContentValues);
+        gpsTracker.stopLocationUpdates();
     }
 
     private void displayBitmap(String savedImagePath, ImageView target) {
