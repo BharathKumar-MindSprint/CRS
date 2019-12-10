@@ -4,6 +4,12 @@ import android.content.Context;
 
 import com.olam.digital.ofis.R;
 //  Static text mapped in object
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
 public class ChildLabourUtils {
 
     public static final String VILLAGE_NAME="village";
@@ -22,6 +28,8 @@ public class ChildLabourUtils {
     public static final String SURVEY_YEAR ="2019";
     public static final String TRUE = "true";
     public static final String FALSE = "false";
+    public static final String ACTION_DATE = "actionDate";
+    public static final String CHILD_LABOUR_ACTION_TICK_LIST = "actionTickList";
 
     public static boolean isChildEnumerator=false;
 
@@ -41,5 +49,20 @@ public class ChildLabourUtils {
         }
 
         return sex;
+    }
+
+    public static String getAfterThreeMonths(String actionTickDate) {
+        String actionTickString=actionTickDate.substring(0,10);
+        Calendar cal=Calendar.getInstance();
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        String date3Months=null;
+        try {
+            Date date = formatter.parse(actionTickString);
+            cal.setTime(date);
+            cal.add(Calendar.MONTH, 3);
+            Date MonthsDate=cal.getTime();
+            date3Months=formatter.format(MonthsDate);
+        } catch (ParseException e) {e.printStackTrace();}
+        return date3Months;
     }
 }

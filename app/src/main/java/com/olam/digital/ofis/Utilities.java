@@ -512,6 +512,24 @@ public  static String base64ConversionForImage(String filepath)  {
         return calendar.getTimeInMillis();
     }
 
+    public static Long currentDateStringToMilliSeconds(){
+
+        Calendar cal=Calendar.getInstance();
+        Date currentDate=cal.getTime();
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        Long timeInSeconds=0L;
+        try{
+            String strCurrentDate=formatter.format(currentDate);
+            Date date = formatter.parse(strCurrentDate);
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(date);
+            timeInSeconds= calendar.getTimeInMillis();
+        }catch(ParseException e){
+            e.printStackTrace();
+        }
+        return timeInSeconds;
+    }
+
     public static Long dateStringToMilliSeconds(String dateStr){
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
