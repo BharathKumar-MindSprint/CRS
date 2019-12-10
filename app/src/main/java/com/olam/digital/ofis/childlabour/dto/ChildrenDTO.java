@@ -16,6 +16,15 @@ public class ChildrenDTO implements Serializable {
     private  String gender;
     private String submittedModules;
     private String createdAt;
+    private String actionTicked;
+
+    public String getActionTicked() {
+        return actionTicked;
+    }
+
+    public void setActionTicked(String actionTicked) {
+        this.actionTicked = actionTicked;
+    }
 
     public String getServerId() {
         return serverId;
