@@ -10,7 +10,7 @@ import android.database.sqlite.SQLiteOpenHelper;
  */
 class OFISDB extends SQLiteOpenHelper {
     private static OFISDB sInstance;
-    private static final int DATABASE_VERSION = 87;
+    private static final int DATABASE_VERSION = 88;
     private static final String DATABASE_NAME = "ofismobile";
 
     // Child Labour Table Creation
@@ -26,6 +26,7 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.ChildEntry.COLUMN_NAME_STATUS + " TEXT, "
             + OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_CREATEDAT + " TEXT, "
             + OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_SUBMITTED_MODULES + " TEXT, "
+            + OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_ACTION_TICKED+ " TEXT, "
             + OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_AGE_ON_YEAR + " INTEGER, "
             + OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_SYNCED + " INTEGER DEFAULT 1)";
 
