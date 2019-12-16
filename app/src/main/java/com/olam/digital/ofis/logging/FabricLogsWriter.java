@@ -14,4 +14,10 @@ public class FabricLogsWriter {
         Timber.e(TAG+" - " + "EnumeratorID : " + new AuthenticationHelper(context).getuserName()+ ", "+ serviceName
                 + " --- code : " + statusCode + ", " + " Request/Response : " + request);
     }
+
+    public static void printGpsCrashLog(String serviceName,Context context) {
+
+        Timber.e("EnumeratorID : " + new AuthenticationHelper(context).getuserName()+ "   ,"
+                + " --- serviceName : " + serviceName +" failed to insert in gps table" );
+    }
 }

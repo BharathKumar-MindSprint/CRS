@@ -311,8 +311,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 if (location!=null){
                     mCurrentLocation=location;
                     ContentValues geoContentValues=new GPSUtils().getGeoContentValues(GPSConstants.MODULE_CAPTURE_CAPTURE_MY_LOCATION,String.valueOf(mCurrentLocation.getLatitude()),String.valueOf(mCurrentLocation.getLongitude()),new Timestamp(System.currentTimeMillis()).toString());
-                    gpsTracker.stopLocationUpdates();
-
                     if (newGps) {
                         long newGpsQueueId = new GpsTrackerLogic().insertGPSDetailsToQueue(context, geoContentValues);
                         if (newGpsQueueId != -1) {
@@ -327,12 +325,11 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 }
             }
         };
-        gpsTracker=new GPSTracker(this,gpsListener);
+        gpsTracker=new GPSTracker(this,gpsListener,true);
 
     }
 
     private void doingAuthRequest() {
-        System.out.println("doingAuthRequest");
         String userEnumerator = enumeratorID.getText().toString().trim();
 //        Passcode validation - Penetration testing
         String userpasscode = passcode.getText().toString().trim();
@@ -912,11 +909,13 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             captureLocation.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-//                    Toast.makeText(HomeActivity.this,"Captured Location",Toast.LENGTH_LONG).show();
-                    newGps=true;
-                    gpsTracker.getDeviceLocation();
-
-                  //  nl.syncGPSData();
+                    if (SystemClock.elapsedRealtime() - lastClickTime < 3000){
+                        return;
+                    }else {
+                        newGps=true;
+                        gpsTracker.getDeviceLocation();
+                    }
+                    lastClickTime=SystemClock.elapsedRealtime();
                 }
             });
 
