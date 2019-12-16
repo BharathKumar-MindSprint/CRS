@@ -237,7 +237,10 @@ public class ViewFarmerActivity extends BaseListActivity {
             }
         };
         gpsTracker=new GPSTracker(this,gpsListener);
-        gpsTracker.getDeviceLocation();
+     //   gpsTracker.getDeviceLocation();
+        if (gpsTracker.isGpsEnabled()){
+            gpsTracker.startLocationUpdateInitially();
+        }
 
 
     }
@@ -287,9 +290,12 @@ public class ViewFarmerActivity extends BaseListActivity {
 
     protected void onStop() {
         super.onStop();
-        if (gpsTracker!=null) {
-            gpsTracker.stopLocationUpdates();
-        }
+        try {
+            if (gpsTracker!=null) {
+                gpsTracker.stopLocationUpdates();
+            }
+        }catch (Exception e){}
+
 
     }
 
@@ -416,7 +422,7 @@ public class ViewFarmerActivity extends BaseListActivity {
             public void onClick(View v) {
                 // Request Permission only for Android Version Marshmallow and above
 
-                if (mCurrentCapturedLocation==null) {
+                if (mCurrentCapturedLocation==null || !gpsTracker.isGpsEnabled()) {
                     gpsTracker.getDeviceLocation();
                     return;
                 }
@@ -1347,7 +1353,7 @@ public class ViewFarmerActivity extends BaseListActivity {
         dl.updateFarmerPhoto(farmerId,savedImagePath,olamFarmerIdStr,farmerNameStr);
 
         // Collect the GPS Point
-        if (mCurrentCapturedLocation==null){
+        if (mCurrentCapturedLocation==null || !gpsTracker.isGpsEnabled()){
             gpsTracker.getDeviceLocation();
             return;
         }else{
@@ -1448,6 +1454,7 @@ public class ViewFarmerActivity extends BaseListActivity {
             }
         }
     }
+
 */
 
     @Override
@@ -1457,5 +1464,6 @@ public class ViewFarmerActivity extends BaseListActivity {
 //            gpsTracker.setNullGPSListener();
 //        }
     }
+
 
 }

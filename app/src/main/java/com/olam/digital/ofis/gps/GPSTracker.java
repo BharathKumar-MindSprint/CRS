@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationManager;
 import android.media.tv.TvContract;
 import android.net.Uri;
 import android.os.Handler;
@@ -53,6 +54,7 @@ import com.olam.digital.ofis.childlabour.listener.OnItemSurveyListener;
 
 import java.util.List;
 
+import static android.content.Context.LOCATION_SERVICE;
 import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
 
 public class GPSTracker {
@@ -72,10 +74,11 @@ public class GPSTracker {
     // App handle time
     private static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = 5000;
     private static final int REQUEST_CHECK_SETTINGS = 100;
-    // location updates interval - 2sec
     private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 3000;
 
     private GPSListener gpsListener;
+    private boolean showDialog=false;
+
 
     public GPSTracker(Activity mActivity,GPSListener gpsListener){
         this.mActivity= mActivity;
@@ -84,16 +87,18 @@ public class GPSTracker {
         init();
     }
 
-    public GPSTracker(){}
-//    public void setOnGPSClickListener(GPSListener gpsListener) {
-//        this.gpsListener = gpsListener;
-//    }
-
-
-    public void setNullGPSListener(){
-        gpsListener =null;
+    public GPSTracker(Activity mActivity,GPSListener gpsListener, boolean showDialog){
+        this.mActivity= mActivity;
+        this.gpsListener = gpsListener;
+        progressDialog=new ProgressDialog(mActivity);
+        this.showDialog=showDialog;
+        init();
     }
 
+    /**
+     * Initialize the location call back and pass the current locations to activity
+     * build the location request to periodic location update
+     */
     public void init() {
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(mActivity);
         mSettingsClient = LocationServices.getSettingsClient(mActivity);
@@ -109,7 +114,6 @@ public class GPSTracker {
                         gpsListener.onGPSClick(mCurrentLocation);
                     }
                 }
-                 //   setPoiGPS(mCurrentLocation);
                 if (progressDialog!=null && progressDialog.isShowing()){
                     progressDialog.dismiss();
                 }
@@ -127,37 +131,31 @@ public class GPSTracker {
         mLocationSettingsRequest = builder.build();
     }
 
-    //requestMultiplePermissions
-    public void getDeviceLocation1() {
-        // Requesting ACCESS_FINE_LOCATION using Dexter library
-        Dexter.withActivity(mActivity)
-                .withPermission(Manifest.permission.ACCESS_FINE_LOCATION)
-                .withListener(new PermissionListener() {
-                    @Override
-                    public void onPermissionGranted(PermissionGrantedResponse response) {
-                        startLocationUpdates();
-                    }
+    /**
+     * method to identify the GPS status in device. Check if enabled and if not send user to the GPS settings
+     * @return
+     * true - yes, GPS is turned on
+     * false - No, GPS is turned off
+     */
+    public boolean isGpsEnabled(){
+        boolean gpsEnabled=false;
+        if (ActivityCompat.checkSelfPermission(mActivity, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(mActivity, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
 
-                    @Override
-                    public void onPermissionDenied(PermissionDeniedResponse response) {
-                        if (progressDialog != null && progressDialog.getWindow().getDecorView().getWindowToken() != null && progressDialog.isShowing()) {
-                            progressDialog.dismiss();
-                        }
-                        if (response.isPermanentlyDenied()) {
-                            // open device settings when the permission is
-                            // denied permanently
-                            openSettings();
-                        }
-                    }
-
-                    @Override
-                    public void onPermissionRationaleShouldBeShown(PermissionRequest permission, PermissionToken token) {
-                        token.continuePermissionRequest();
-                    }
-                }).check();
+            LocationManager service = (LocationManager) mActivity.getSystemService(LOCATION_SERVICE);
+            boolean enabled = service.isProviderEnabled(LocationManager.GPS_PROVIDER);
+            if (enabled) {
+                gpsEnabled=true;
+            }
+        }
+        return gpsEnabled;
     }
 
 
+    /**
+     * get Device location, Dexter library initially checked the permissions
+     * Location update method would be called if permission accepted already
+     *If permission denied, settings page will open.
+     */
     public void getDeviceLocation(){
         Dexter.withActivity(mActivity)
                 .withPermissions(
@@ -169,9 +167,7 @@ public class GPSTracker {
                         // check if all permissions are granted
                         if (report.areAllPermissionsGranted()) {
                             startLocationUpdates();
-                            //Toast.makeText(mActivity, "All permissions are granted by user!", Toast.LENGTH_SHORT).show();
                         }
-
                         // check for permanent denial of any permission
                         if (report.isAnyPermissionPermanentlyDenied()) {
                             // show alert dialog navigating to Settings
@@ -199,7 +195,56 @@ public class GPSTracker {
 
 
     /**
-     * Starting location updates
+     * Starting location updates only gps is turned off.
+     * No negative scenario handled. it will run in background without user knowlwdge.
+     * Check whether location settings are satisfied and then
+     * location updates will be requested
+     */
+    public void startLocationUpdateInitially() {
+        mSettingsClient
+                .checkLocationSettings(mLocationSettingsRequest)
+                .addOnSuccessListener(mActivity, new OnSuccessListener<LocationSettingsResponse>() {
+                    @SuppressLint("MissingPermission")
+                    @Override
+                    public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
+                        //noinspection MissingPermission
+                        mFusedLocationClient.requestLocationUpdates(mLocationRequest,
+                                mLocationCallback, Looper.myLooper());
+
+                        progressDialog = new ProgressDialog(mActivity);
+                        progressDialog.setCancelable(false);
+                        progressDialog.setIndeterminate(false);
+                        progressDialog.setMessage(mActivity.getResources().getString(R.string.fetching_location));
+                        if (showDialog) {
+                            progressDialog.show();
+                        }
+                        Handler handler = new Handler(Looper.getMainLooper());
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                if(mCurrentLocation != null) {
+                                    if (progressDialog!=null && progressDialog.isShowing()){
+                                        progressDialog.dismiss();
+                                    }
+                                    if(gpsListener!=null) {
+                                        gpsListener.onGPSClick(mCurrentLocation);
+                                    }
+                                }else{
+                                    if (progressDialog != null && progressDialog.getWindow().getDecorView().getWindowToken() != null && progressDialog.isShowing()) {
+                                        progressDialog.dismiss();
+                                    }
+                                    Toast.makeText(mActivity,mActivity.getResources().getString(R.string.record_location_timeout),Toast.LENGTH_LONG).show();
+                                }
+                            }
+                        }, 3000);
+                    }
+                });
+    }
+
+
+    /**
+     * Starting location updates. handled negative scenario also while save/submit for each activity if GPS not enabled.
      * Check whether location settings are satisfied and then
      * location updates will be requested
      */
@@ -218,14 +263,15 @@ public class GPSTracker {
                         progressDialog.setCancelable(false);
                         progressDialog.setIndeterminate(false);
                         progressDialog.setMessage(mActivity.getResources().getString(R.string.fetching_location));
-                        progressDialog.show();
+                        if (showDialog) {
+                            progressDialog.show();
+                        }
                         Handler handler = new Handler(Looper.getMainLooper());
                         handler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
 
                                 if(mCurrentLocation != null) {
-                                   // setPoiGPS(mCurrentLocation);
                                     if (progressDialog!=null && progressDialog.isShowing()){
                                         progressDialog.dismiss();
                                     }
@@ -239,7 +285,7 @@ public class GPSTracker {
                                     Toast.makeText(mActivity,mActivity.getResources().getString(R.string.record_location_timeout),Toast.LENGTH_LONG).show();
                                 }
                             }
-                        }, 6000);
+                        }, 3000);
                     }
                 })
                 .addOnFailureListener(mActivity, new OnFailureListener() {
@@ -282,7 +328,8 @@ public class GPSTracker {
 
                         }
                     }
-                });
+                }
+                );
     }
 
     private void openSettings() {
@@ -297,8 +344,11 @@ public class GPSTracker {
     }
 
 
+    /**
+     * Remove the location updates
+     * calling this method in every activities onStop() method.
+     */
     public void stopLocationUpdates() {
-        // Removing location updates
         mFusedLocationClient
                 .removeLocationUpdates(mLocationCallback)
                 .addOnCompleteListener(mActivity, new OnCompleteListener<Void>() {

@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import com.google.firebase.crash.FirebaseCrash;
 import com.olam.digital.ofis.R;
+import com.olam.digital.ofis.childlabour.AddNewChildActivity;
 import com.olam.digital.ofis.gps.GPSListener;
 import com.olam.digital.ofis.gps.GPSTracker;
 import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
@@ -85,7 +86,10 @@ public class TrainingRecordConfirmation extends BaseListActivity {
             }
         };
         gpsTracker=new GPSTracker(this,gpsListener);
-        gpsTracker.getDeviceLocation();
+        //gpsTracker.getDeviceLocation();
+        if (gpsTracker.isGpsEnabled()){
+            gpsTracker.startLocationUpdateInitially();
+        }
     }
 
     private void getTrainingRecord() {
@@ -195,7 +199,7 @@ public class TrainingRecordConfirmation extends BaseListActivity {
             public void onClick(View v) {
                 // add transaction to network queue
 
-                if (mCurrentLocation==null){
+                if (mCurrentLocation==null || !gpsTracker.isGpsEnabled()){
                     gpsTracker.getDeviceLocation();
                     return;
                 }
@@ -232,7 +236,6 @@ public class TrainingRecordConfirmation extends BaseListActivity {
         String lon=String.valueOf(farmLocation.getLongitude());
         ContentValues geoContentValues=new GPSUtils().getGeoContentValues(module,lat,lon,new Timestamp(System.currentTimeMillis()).toString());
         Long newTrackId= new GpsTrackerLogic().insertGeoDataDetails(context,geoContentValues);
-        gpsTracker.stopLocationUpdates();
     }
 
     private void displayBitmap(String savedImagePath, ImageView target) {

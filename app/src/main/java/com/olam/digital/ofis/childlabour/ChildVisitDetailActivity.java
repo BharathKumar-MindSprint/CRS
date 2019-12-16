@@ -73,9 +73,10 @@ public class ChildVisitDetailActivity  extends BaseActivity implements View.OnCl
             }
         };
         gpsTracker=new GPSTracker(this,gpsListener);
-        gpsTracker.getDeviceLocation();
-
-
+     //   gpsTracker.getDeviceLocation();
+        if (gpsTracker.isGpsEnabled()){
+            gpsTracker.startLocationUpdateInitially();
+        }
     }
 
     @Override
@@ -131,7 +132,7 @@ public class ChildVisitDetailActivity  extends BaseActivity implements View.OnCl
     // method to save the child survey visit details
     private void saveVisitDetails() {
 
-        if (mCurrentLocation==null){
+        if (mCurrentLocation==null || !gpsTracker.isGpsEnabled()){
             gpsTracker.getDeviceLocation();
             return;
         }
@@ -208,8 +209,14 @@ public class ChildVisitDetailActivity  extends BaseActivity implements View.OnCl
         String lon=String.valueOf(location.getLongitude());
         ContentValues geoContentValues=new GPSUtils().getGeoContentValues(module,lat,lon,new Timestamp(System.currentTimeMillis()).toString());
         Long newTrackId= new GpsTrackerLogic().insertGeoDataDetails(this,geoContentValues);
-        gpsTracker.stopLocationUpdates();
-        gpsTracker.setNullGPSListener();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        try {
+            gpsTracker.stopLocationUpdates();
+        }catch (Exception e){}
 
     }
 

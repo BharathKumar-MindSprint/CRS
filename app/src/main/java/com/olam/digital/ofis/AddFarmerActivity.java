@@ -50,6 +50,7 @@ import com.olam.digital.ofis.gps.GPSTracker;
 import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
 import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.gps.utils.GPSUtils;
+import com.olam.digital.ofis.logging.FabricLogsWriter;
 import com.olam.digital.ofis.recordpolygon.SharedPreferenceUtils;
 import com.olam.digital.ofis.R;
 
@@ -269,7 +270,9 @@ public class AddFarmerActivity extends BaseActivity {
             }
         };
         gpsTracker = new GPSTracker(this, gpsListener);
-        gpsTracker.getDeviceLocation();
+        if (gpsTracker.isGpsEnabled()){
+            gpsTracker.startLocationUpdateInitially();
+        }
 
     }
 
@@ -872,7 +875,7 @@ public class AddFarmerActivity extends BaseActivity {
                         } else {
 
                             // check the current location
-                            if (mCurrentLocation == null) {
+                            if (mCurrentLocation == null || !gpsTracker.isGpsEnabled()) {
                                 gpsTracker.getDeviceLocation();
                                 return;
                             }
@@ -915,9 +918,20 @@ public class AddFarmerActivity extends BaseActivity {
     private void collectGPSPoint() {
         ContentValues geoContentValues = new GPSUtils().getGeoContentValues(GPSConstants.MODULE_CAPTURE_ADD_FARMER, String.valueOf(mCurrentLocation.getLatitude()), String.valueOf(mCurrentLocation.getLongitude()), new Timestamp(System.currentTimeMillis()).toString());
         Long newTrackId = new GpsTrackerLogic().insertGeoDataDetails(context, geoContentValues);
+//        if (newTrackId==-1){
+//            try {
+//                FabricLogsWriter.printGpsCrashLog(GPSConstants.MODULE_CAPTURE_ADD_FARMER ,context);
+//            }catch (Exception e){}
+//        }
+    }
 
-        gpsTracker.stopLocationUpdates();
-        gpsTracker.setNullGPSListener();
+    @Override
+    protected void onStop() {
+        super.onStop();
+        try {
+            gpsTracker.stopLocationUpdates();
+        }catch (Exception e){}
+
     }
 
     /**
