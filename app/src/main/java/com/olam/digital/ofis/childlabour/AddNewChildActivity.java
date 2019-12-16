@@ -22,6 +22,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.olam.digital.ofis.AddFarmerActivity;
 import com.olam.digital.ofis.BaseActivity;
 import com.olam.digital.ofis.DataLayer;
 import com.olam.digital.ofis.OFISDBContract;
@@ -98,7 +99,10 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
             }
         };
         gpsTracker=new GPSTracker(this,gpsListener);
-        gpsTracker.getDeviceLocation();
+       // gpsTracker.getDeviceLocation();
+        if (gpsTracker.isGpsEnabled()){
+            gpsTracker.startLocationUpdateInitially();
+        }
 
 
     }
@@ -182,7 +186,8 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
         }
 
         if(getIntent().getStringExtra(ChildLabourUtils.ACTION).equalsIgnoreCase(ChildLabourUtils.NEW)){
-            if (mCurrentLocation==null){
+
+            if (mCurrentLocation==null || !gpsTracker.isGpsEnabled()){
                 gpsTracker.getDeviceLocation();
                 return;
             }
@@ -249,9 +254,16 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
         private void collectGPSPoint() {
             ContentValues geoContentValues=new GPSUtils().getGeoContentValues(GPSConstants.MODULE_CAPTURE_ADD_CHILD,String.valueOf(mCurrentLocation.getLatitude()),String.valueOf(mCurrentLocation.getLongitude()),new Timestamp(System.currentTimeMillis()).toString());
             Long newTrackId= new GpsTrackerLogic().insertGeoDataDetails(this,geoContentValues);
-            gpsTracker.stopLocationUpdates();
-            gpsTracker.setNullGPSListener();
         }
+
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        try {
+            gpsTracker.stopLocationUpdates();
+        }catch (Exception e){}
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
