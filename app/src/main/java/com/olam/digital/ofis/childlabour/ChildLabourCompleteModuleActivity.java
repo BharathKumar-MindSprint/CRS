@@ -163,7 +163,10 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
             }
         };
         gpsTracker=new GPSTracker(this,gpsListener);
-        gpsTracker.getDeviceLocation();
+       // gpsTracker.getDeviceLocation();
+        if (gpsTracker.isGpsEnabled()){
+            gpsTracker.startLocationUpdateInitially();
+        }
 
     }
 
@@ -334,9 +337,11 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
         boolean canSaveAndFinish = true;
 
         // check location
-        if (mCurrentCapturedLocation==null){
-            gpsTracker.getDeviceLocation();
-            return;
+        if (action.equalsIgnoreCase("finish")) {
+            if (mCurrentCapturedLocation == null || !gpsTracker.isGpsEnabled()) {
+                gpsTracker.getDeviceLocation();
+                return;
+            }
         }
 
         // first time saving this module?
@@ -380,7 +385,6 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
         } else if (action.equalsIgnoreCase("finish")) {
             collectGPSPoint();
             gpsTracker.stopLocationUpdates();
-            gpsTracker.setNullGPSListener();
             if (canSaveAndFinish) {
                 ViewFarmerActivity.farmerId = farmerId;
                 //SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(farmerId);
