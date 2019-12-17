@@ -254,7 +254,9 @@ public class AddInfrastructureActivity extends BaseActivity {
         villageSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    villageDetails = villageList.get(position);
+                if (position>0) {
+                    villageDetails = villageList.get(position-1);
+                }
             }
 
             @Override
@@ -602,6 +604,12 @@ public class AddInfrastructureActivity extends BaseActivity {
                         Toast.makeText(context, res.getString(R.string.fill_name), Toast.LENGTH_LONG).show();
                         return;
                     }
+                }else{
+                    long villageNameId=villageSpinner.getSelectedItemId();
+                    if(villageNameId < 1){
+                        Toast.makeText(context, res.getString(R.string.fill_name), Toast.LENGTH_LONG).show();
+                        return;
+                    }
                 }
 
 
@@ -834,6 +842,7 @@ public class AddInfrastructureActivity extends BaseActivity {
         villageSpinner.setVisibility(View.VISIBLE);
         villageList= SipLogic.getAllPlaces(this);
         List<String> villageNameList=new ArrayList<String>();
+        villageNameList.add(context.getResources().getString(R.string.Name));
         for (VillageDTO village: villageList) {
             villageNameList.add(village.getVillageName());
         }
