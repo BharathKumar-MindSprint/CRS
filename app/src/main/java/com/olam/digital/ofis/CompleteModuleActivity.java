@@ -102,6 +102,7 @@ public class CompleteModuleActivity extends BaseActivity {
     private static final String RECORDED_LNG = "RECORDED_LNG";
     private static final String FARMER_NAME = "FARMER_NAME";
     private long networkQueueId = 0;
+    public static boolean editMode = false;
 
     // for GPS location system
 //    private GoogleApiClient googleApiClient;
@@ -630,12 +631,14 @@ public class CompleteModuleActivity extends BaseActivity {
                 context.startActivity(intent);
             }
         } else if (action.equalsIgnoreCase("finish")) {
-
-            collectGPSPoint(mCurrentCapturedLocation);
-            gpsTracker.stopLocationUpdates();
-
             if(bool){
                 if (canSaveAndFinish) {
+
+                    if (dynamicQuestions.requiredFieldsAnswered((int) farmerModuleId, (int) moduleId) && !editMode) {
+                        collectGPSPoint(mCurrentCapturedLocation);
+                        gpsTracker.stopLocationUpdates();
+                    }
+
                     ViewFarmerActivity.farmerId = farmerId;
                     //SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(farmerId);
                     Intent intent = new Intent(context, ViewFarmerActivity.class);
