@@ -74,6 +74,7 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
     private Long farmerID;
     private ChildrenDTO children;
     private ChildModuleDto childModuleDto;
+    public static boolean editMode = false;
 
     private long farmerId;
     private long moduleId;
@@ -383,9 +384,14 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
             Intent intent = new Intent(context, ViewFarmerActivity.class);
             context.startActivity(intent);
         } else if (action.equalsIgnoreCase("finish")) {
-            collectGPSPoint();
-            gpsTracker.stopLocationUpdates();
+
             if (canSaveAndFinish) {
+
+                if (dynamicQuestions.requiredFieldsAnsweredChild((int) farmerModuleId, (int) moduleId) && !editMode) {
+                    collectGPSPoint();
+                    gpsTracker.stopLocationUpdates();
+                }
+
                 ViewFarmerActivity.farmerId = farmerId;
                 //SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(farmerId);
                 Intent intent = new Intent(context, ViewFarmerActivity.class);

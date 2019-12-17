@@ -61,6 +61,7 @@ import com.olam.digital.ofis.authentication.OnAccessTokenInterface;
 import com.olam.digital.ofis.authentication.model.AuthRequestDTO;
 import com.olam.digital.ofis.authentication.model.AuthenticationDTO;
 import com.olam.digital.ofis.childlabour.AddNewChildActivity;
+import com.olam.digital.ofis.childlabour.ChildLabourCompleteModuleActivity;
 import com.olam.digital.ofis.childlabour.ChildLabourUtils;
 import com.olam.digital.ofis.childlabour.ChildVisitDetailActivity;
 import com.olam.digital.ofis.childlabour.ViewChildLabourSurveyActivity;
@@ -1227,12 +1228,14 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             startActivity(recordPolygonIntent);
         } else if (itemType.equalsIgnoreCase("module")) {
             Intent intent = new Intent(this, ViewFarmerActivity.class);
+            CompleteModuleActivity.editMode = true;
             ViewFarmerActivity.farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
             //long farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
             //SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(farmerId);
             startActivity(intent);
         }  else if (itemType.equalsIgnoreCase("childmodule")) {
             Intent intent = new Intent(this, ViewChildLabourSurveyActivity.class);
+            ChildLabourCompleteModuleActivity.editMode = true;
             ViewChildLabourSurveyActivity.farmerID = Long.valueOf(networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
             ViewChildLabourSurveyActivity.childID = Long.valueOf(networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_CHILD_ID)));
             //long farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
