@@ -234,7 +234,7 @@ public class GPSTracker {
                                     if (progressDialog != null && progressDialog.getWindow().getDecorView().getWindowToken() != null && progressDialog.isShowing()) {
                                         progressDialog.dismiss();
                                     }
-                                    Toast.makeText(mActivity,mActivity.getResources().getString(R.string.record_location_timeout),Toast.LENGTH_LONG).show();
+//                                    Toast.makeText(mActivity,mActivity.getResources().getString(R.string.record_location_timeout),Toast.LENGTH_LONG).show();
                                 }
                             }
                         }, 3000);
