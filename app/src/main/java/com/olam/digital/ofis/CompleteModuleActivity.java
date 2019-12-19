@@ -478,6 +478,14 @@ public class CompleteModuleActivity extends BaseActivity {
                     return;
                 }*/
                 if (isLastPage) {
+
+                    try{
+                        if (mCurrentCapturedLocation == null || !gpsTracker.isGpsEnabled()) {
+                            gpsTracker.getDeviceLocation();
+                            return;
+                        }
+                    }catch (Exception e){}
+
                     ContentValues values = new ContentValues();
                     Timestamp timestamp = new Timestamp(System.currentTimeMillis());
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "module");

@@ -301,6 +301,14 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 if (isLastPage) {
+
+                    try{
+                        if (mCurrentCapturedLocation == null || !gpsTracker.isGpsEnabled()) {
+                            gpsTracker.getDeviceLocation();
+                            return;
+                        }
+                    }catch (Exception e){}
+
                     ContentValues values = new ContentValues();
                     Timestamp timestamp = new Timestamp(System.currentTimeMillis());
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "childmodule");
