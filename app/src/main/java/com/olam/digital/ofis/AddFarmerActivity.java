@@ -169,7 +169,7 @@ public class AddFarmerActivity extends BaseActivity {
         farmerIdPrefix = (EditText) findViewById(R.id.olamFarmerIdStart);
         phonenumbers = (LinearLayout) findViewById(R.id.phonenumbers);
         bindphonenumbers();
-
+        bindnationalid();
         if (editMode) {
             if (editFarmerId != 0) {
                 Cursor existingItem = dl.getFlattenedFarmer(editFarmerId);
@@ -799,6 +799,17 @@ public class AddFarmerActivity extends BaseActivity {
                 phonenumbers.addView(phonenumberinclude);
                 bindnumberdelete((ImageView) phonenumberinclude.findViewById(R.id.deleteNumber));
                 bindnumberradio((RadioButton) phonenumberinclude.findViewById(R.id.primary_number));
+            }
+        });
+    }
+
+    private void bindnationalid() {
+        ImageButton addNationId = (ImageButton) findViewById(R.id.addnid);
+
+        addNationId.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
             }
         });
     }
