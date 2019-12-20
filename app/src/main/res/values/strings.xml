@@ -527,6 +527,10 @@
     <string name="downloading_child_data">Downloading Child Enumerator Details</string>
     <string name="no_child_registered">Register Child to enable the surveys</string>
     <string name="please_select_Age">Please select Age</string>
+    <string name="nationalid">National ID</string>
+    <string name="idtype">ID Type</string>
+    <string name="nationalidno">National ID no.</string>
+    <string name="captureid">Capture ID</string>
 
 
 </resources>
