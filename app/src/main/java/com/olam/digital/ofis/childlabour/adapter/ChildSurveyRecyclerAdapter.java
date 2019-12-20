@@ -17,6 +17,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.olam.digital.ofis.OFISDBContract;
 import com.olam.digital.ofis.R;
+import com.olam.digital.ofis.Utilities;
+import com.olam.digital.ofis.childlabour.ChildLabourUtils;
 import com.olam.digital.ofis.childlabour.dto.ChildModuleDto;
 import com.olam.digital.ofis.childlabour.dto.ChildrenDTO;
 import com.olam.digital.ofis.childlabour.listener.OnItemSurveyListener;
@@ -42,8 +44,9 @@ public class ChildSurveyRecyclerAdapter extends RecyclerView.Adapter<ChildSurvey
     private  boolean hasSubmittedModules=false;
     private JSONArray submittedModulesArray;
     private ChildrenDTO childrenDTO;
+    private JSONArray actionTickedArray;
 
-    public ChildSurveyRecyclerAdapter(List<ChildModuleDto> childModuleDtoList, Context context, JSONArray submittedModules,ChildrenDTO childrenDTO) throws JSONException {
+    public ChildSurveyRecyclerAdapter(List<ChildModuleDto> childModuleDtoList, Context context, JSONArray submittedModules,ChildrenDTO childrenDTO,JSONArray actionTickedArray) throws JSONException {
         this.childModuleList = childModuleDtoList;
         this.currentDate=Calendar.getInstance();
         this.mContext = context;
@@ -53,6 +56,9 @@ public class ChildSurveyRecyclerAdapter extends RecyclerView.Adapter<ChildSurvey
             if (hasSubmittedModules) {
                 submittedModulesArray = submittedModules;
             }
+        }
+        if (actionTickedArray !=null && actionTickedArray.length()>0){
+            this.actionTickedArray=actionTickedArray;
         }
     }
 
@@ -104,6 +110,33 @@ public class ChildSurveyRecyclerAdapter extends RecyclerView.Adapter<ChildSurvey
 //                String disabled_months_string = childModuleDto.getDisabled_months();
 //                List<String> disabled_months = Arrays.asList(disabled_months_string.split("\\s*,\\s*"));
 
+
+        // check after 3 months scenerio
+        // Migrating code to above submitted modules
+        if (childModuleDto.getSurveyCode().equalsIgnoreCase(ChildLabourUtils.FOLLOWUP_SURVEY_CODE)) {
+            if (actionTickedArray != null) {
+                if (actionTickedArray.length() > 0) {
+                    try {
+                        JSONObject actionTick = actionTickedArray.getJSONObject(0);
+                        String actionTickDate = actionTick.getString(ChildLabourUtils.ACTION_DATE);
+                        String after3MonthsDate = ChildLabourUtils.getAfterThreeMonths(actionTickDate);
+                        if (Utilities.dateStringToMilliSeconds(after3MonthsDate) < Utilities.currentDateStringToMilliSeconds()) {
+                            holder.surveyLayout.setEnabled(true);
+                        } else {
+                            holder.surveyLayout.setEnabled(false);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    holder.surveyLayout.setEnabled(false);
+                }
+            } else {
+                holder.surveyLayout.setEnabled(false);
+            }
+        }
+
+
         if (hasSubmittedModules) {
             try {
 //                        int recurrence_frequency =Integer.parseInt(childModuleDto.getRecurrence_frequency());
@@ -153,9 +186,7 @@ public class ChildSurveyRecyclerAdapter extends RecyclerView.Adapter<ChildSurvey
             }
         }
 
-        if (childModuleDto.getSurveyCode().equalsIgnoreCase("03")){
-            holder.surveyLayout.setEnabled(false);
-        }
+
 
         // deal submitted and disabled here
 

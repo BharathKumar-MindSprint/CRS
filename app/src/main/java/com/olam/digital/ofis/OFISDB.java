@@ -10,7 +10,7 @@ import android.database.sqlite.SQLiteOpenHelper;
  */
 class OFISDB extends SQLiteOpenHelper {
     private static OFISDB sInstance;
-    private static final int DATABASE_VERSION = 85;
+    private static final int DATABASE_VERSION = 88;
     private static final String DATABASE_NAME = "ofismobile";
 
     // Child Labour Table Creation
@@ -26,6 +26,7 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.ChildEntry.COLUMN_NAME_STATUS + " TEXT, "
             + OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_CREATEDAT + " TEXT, "
             + OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_SUBMITTED_MODULES + " TEXT, "
+            + OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_ACTION_TICKED+ " TEXT, "
             + OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_AGE_ON_YEAR + " INTEGER, "
             + OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_SYNCED + " INTEGER DEFAULT 1)";
 
@@ -36,6 +37,15 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.ChildVisitDetails.COLUMN_NAME_SURVEY_CODE + " INTEGER, "
             + OFISDBContract.ChildVisitDetails.COLUMN_NAME_SURVEY_DESCRIPTION  + " TEXT, "
             + OFISDBContract.ChildVisitDetails.COLUMN_NAME_SURVEY_VISIT_SYNCED + " INTEGER DEFAULT 1)";
+
+    private static final String OFIS_GPS_MONITOR_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS "
+            + OFISDBContract.GPSDetails.TABLE_NAME
+            + " ( " + OFISDBContract.GPSDetails.COLUMN_NAME_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+            + OFISDBContract.GPSDetails.COLUMN_NAME_LATITUDE + " TEXT, "
+            + OFISDBContract.GPSDetails.COLUMN_NAME_LONGITUDE + " TEXT, "
+            + OFISDBContract.GPSDetails.COLUMN_NAME_RECORDED_DATE  + " TEXT, "
+            + OFISDBContract.GPSDetails.COLUMN_NAME_SUBMITTED_DATE  + " TEXT, "
+            + OFISDBContract.GPSDetails.COLUMN_NAME_CAPTURED_MODULE + " TEXT)";
 
     private static final String OFIS_CHILD_VIST_DETAILS_CREATE = "CREATE TABLE IF NOT EXISTS "
             + OFISDBContract.ChildVisitDetailsEntry.TABLE_NAME
@@ -626,6 +636,7 @@ class OFISDB extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(OFIS_FARMERCHILD_MODULES_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_ANSWER_CHILD_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_CHILD_INDIVIDUAL_SURVEY_TABLE_CREATE);
+        sqLiteDatabase.execSQL(OFIS_GPS_MONITOR_TABLE_CREATE);
     }
 
     @Override

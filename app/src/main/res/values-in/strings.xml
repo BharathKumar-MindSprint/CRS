@@ -496,4 +496,6 @@
     <string name="downloading_child_data">Downloading Child Enumerator Details</string>
     <string name="no_child_registered">Register Child to enable the surveys</string>
     <string name="please_select_Age">Please select Age</string>
+    <string name="capture_my_location_button_text">Capture My location</string>
+    <string name="enumerator_location_capture">Enumerator Location Capture</string>
 </resources>

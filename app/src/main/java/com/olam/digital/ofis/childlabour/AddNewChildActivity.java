@@ -1,7 +1,10 @@
 package com.olam.digital.ofis.childlabour;
 
+import android.app.Activity;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
+import android.location.Location;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
@@ -14,16 +17,23 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.olam.digital.ofis.AddFarmerActivity;
 import com.olam.digital.ofis.BaseActivity;
 import com.olam.digital.ofis.DataLayer;
 import com.olam.digital.ofis.OFISDBContract;
 import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.childlabour.businesslogic.ChildLabourLogic;
 import com.olam.digital.ofis.childlabour.dto.ChildrenDTO;
+import com.olam.digital.ofis.gps.GPSListener;
+import com.olam.digital.ofis.gps.GPSTracker;
+import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
+import com.olam.digital.ofis.gps.utils.GPSConstants;
+import com.olam.digital.ofis.gps.utils.GPSUtils;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -46,6 +56,14 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
     ChildrenDTO childrenDTO;
     ArrayAdapter<String> adapter;
     private long lastClickTime = 0;
+
+    private Location mCurrentLocation=null;
+    GPSListener gpsListener=null;
+    private GPSTracker gpsTracker=null;
+
+    private static final int REQUEST_CHECK_SETTINGS = 100;
+
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,9 +89,20 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
 
             }
         });
-        /*if(getIntent().getStringExtra("action").equalsIgnoreCase("edit")){
-            initData();
-        }*/
+
+        gpsListener=new GPSListener() {
+            @Override
+            public void onGPSClick(Location location) {
+                if (location!=null){
+                    mCurrentLocation=location;
+                }
+            }
+        };
+        gpsTracker=new GPSTracker(this,gpsListener);
+       // gpsTracker.getDeviceLocation();
+        if (gpsTracker.isGpsEnabled()){
+            gpsTracker.startLocationUpdateInitially();
+        }
 
 
     }
@@ -110,7 +139,6 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
             lastClickTime=SystemClock.elapsedRealtime();
         }else if (v.getId() == R.id.maleButton) {
              gender=ChildLabourUtils.MALE;
-//            gender = getResources().getString(R.string.gender_male);
             femaleButton.setBackgroundColor(getResources().getColor(R.color.gender_selected));
             maleButton.setBackgroundResource(R.drawable.gender_male_selected);
 
@@ -158,6 +186,11 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
         }
 
         if(getIntent().getStringExtra(ChildLabourUtils.ACTION).equalsIgnoreCase(ChildLabourUtils.NEW)){
+
+            if (mCurrentLocation==null || !gpsTracker.isGpsEnabled()){
+                gpsTracker.getDeviceLocation();
+                return;
+            }
             submitChild(name);
         }else {
             UpdateChild(name);
@@ -209,6 +242,7 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
         long newChildId= new ChildLabourLogic().insertChildDetails(this,contentValues,farmerName);
         if (newChildId != -1){
             if(action.equalsIgnoreCase(ChildLabourUtils.NEW)){
+                collectGPSPoint();
                 Toast.makeText(this,getResources().getString(R.string.child_register_successfully),Toast.LENGTH_LONG).show();
             }else{
                 Toast.makeText(this,getResources().getString(R.string.child_updated_successfully),Toast.LENGTH_LONG).show();
@@ -217,7 +251,35 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
         }
     }
 
-    // Getting the data from bundle from the old activity
+        private void collectGPSPoint() {
+            ContentValues geoContentValues=new GPSUtils().getGeoContentValues(GPSConstants.MODULE_CAPTURE_ADD_CHILD,String.valueOf(mCurrentLocation.getLatitude()),String.valueOf(mCurrentLocation.getLongitude()),new Timestamp(System.currentTimeMillis()).toString());
+            Long newTrackId= new GpsTrackerLogic().insertGeoDataDetails(this,geoContentValues);
+        }
+
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        try {
+            gpsTracker.stopLocationUpdates();
+        }catch (Exception e){}
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_CANCELED) return;
+
+        switch (requestCode) {
+            case REQUEST_CHECK_SETTINGS:
+                if (resultCode == -1) {
+                    gpsTracker.getDeviceLocation();
+                }
+                break;
+                default:
+        }
+    }
+
     public void getBundleValues() {
         try{
             Bundle bundle = this.getIntent().getExtras();
