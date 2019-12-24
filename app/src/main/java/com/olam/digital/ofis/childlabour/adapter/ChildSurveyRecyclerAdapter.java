@@ -78,6 +78,7 @@ public class ChildSurveyRecyclerAdapter extends RecyclerView.Adapter<ChildSurvey
         final ChildModuleDto childModuleDto = childModuleList.get(position);
         holder.surveyName.setText(childModuleDto.getName());
         boolean submitted = false;
+        boolean enabledFollowUp=false;
         int currentId = Integer.parseInt(childModuleDto.get_id());
 //        holder.surveyLayout.clearFocus();
 //        if (position != 2)
@@ -122,6 +123,7 @@ public class ChildSurveyRecyclerAdapter extends RecyclerView.Adapter<ChildSurvey
                         String after3MonthsDate = ChildLabourUtils.getAfterThreeMonths(actionTickDate);
                         if (Utilities.dateStringToMilliSeconds(after3MonthsDate) < Utilities.currentDateStringToMilliSeconds()) {
                             holder.surveyLayout.setEnabled(true);
+                            enabledFollowUp=true;
                         } else {
                             holder.surveyLayout.setEnabled(false);
                         }
@@ -185,6 +187,15 @@ public class ChildSurveyRecyclerAdapter extends RecyclerView.Adapter<ChildSurvey
                 holder.statusIcon.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_childsurvey));
             }
         }
+
+        // disable in follow up survey while register new child
+        try {
+            if (childModuleDto.getSurveyCode().equalsIgnoreCase(ChildLabourUtils.FOLLOWUP_SURVEY_CODE)) {
+                if (!submitted && !enabledFollowUp){
+                    holder.surveyLayout.setEnabled(false);
+                }
+            }
+        }catch (Exception e){}
 
 
 
