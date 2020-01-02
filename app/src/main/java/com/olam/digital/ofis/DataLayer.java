@@ -22,9 +22,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.google.firebase.crash.FirebaseCrash;
-import com.google.gson.JsonObject;
 import com.olam.digital.ofis.childlabour.ChildLabourUtils;
-import com.olam.digital.ofis.childlabour.dto.ChildrenDTO;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -1272,11 +1270,39 @@ public class DataLayer {
 
     }
 
+    void addFarmerNationalids(long farmerId, JSONArray storeableNationalids) {
+        int arrayLength = storeableNationalids.length();
+
+        try {
+            for (int i = 0; i < arrayLength; i++) {
+                JSONObject storeableNumber = storeableNationalids.getJSONObject(i);
+                ContentValues values = new ContentValues();
+                values.put(OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID, farmerId);
+                values.put(OFISDBContract.FarmerNationalIDs.COLUMN_NID_TYPE, storeableNumber.getInt("nationalidtype"));
+                values.put(OFISDBContract.FarmerNationalIDs.COLUMN_NID_NUMBER, storeableNumber.getString("nationalidNumber"));
+                values.put(OFISDBContract.FarmerNationalIDs.COLUMN_NID_PHOTO, storeableNumber.getString("photo"));
+                db.insert(OFISDBContract.FarmerNationalIDs.TABLE_NAME, null, values);
+            }
+        } catch (JSONException e) {
+            FirebaseCrash.report(new Exception("DataLayer: Error setting phone number storage values", e));
+            e.printStackTrace();
+        }
+
+    }
+
     void updateFarmerPhoneNumbers(long farmerId, JSONArray storeableNumbers) {
         String whereClause = OFISDBContract.PhoneNumber.COLUMN_NAME_FARMER_ID + " = ?";
         String[] whereArgs = new String[]{String.valueOf(farmerId)};
         db.delete(OFISDBContract.PhoneNumber.TABLE_NAME, whereClause, whereArgs);
         addFarmerPhoneNumbers(farmerId, storeableNumbers);
+    }
+
+
+    void updateFarmerNationalids(long farmerId, JSONArray storeableNationalids) {
+        String whereClause = OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(farmerId)};
+        db.delete(OFISDBContract.FarmerNationalIDs.TABLE_NAME, whereClause, whereArgs);
+        addFarmerNationalids(farmerId, storeableNationalids);
     }
 
     Cursor getDiallingCodeByPlaceId(long placeId) {
@@ -1958,7 +1984,21 @@ public class DataLayer {
         return db.query(OFISDBContract.FarmerEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
     }
 
+    public Cursor getNIDByName(String type) {
+        String[] columns = new String[]{"*"};
+        String whereClause = OFISDBContract.NationalIDEntry.COLUMN_NAME_NID_TYPE + " = ? ";
+        String[] whereArgs = new String[]{type};
 
+        return db.query(OFISDBContract.NationalIDEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+    }
+
+    public Cursor getNIDPhotostatusByName(String type) {
+        String[] columns = new String[]{"*"};
+        String whereClause = OFISDBContract.NationalIDEntry.COLUMN_NAME_NID_TYPE + " = ? ";
+        String[] whereArgs = new String[]{type};
+
+        return db.query(OFISDBContract.NationalIDEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+    }
 
     public int getFarmId(int farmer){
         int FarmID = 0;
@@ -2258,7 +2298,39 @@ public class DataLayer {
                         "Phone"
                 });
 
-
+// add new national id for existing farmers
+                mc.addRow(new String[]{
+                        "0",
+                        res.getString(R.string.update_signature),
+                        res.getString(R.string.update_signature),
+                        res.getString(R.string.update_signature),
+                        res.getString(R.string.update_signature),
+                        res.getString(R.string.update_signature),
+                        res.getString(R.string.update_signature),
+                        res.getString(R.string.update_signature),
+                        res.getString(R.string.update_signature),
+                        res.getString(R.string.update_signature),
+                        "0",
+                        "",
+                        "",
+                        "",
+                        res.getString(R.string.update_signature_hint),
+                        res.getString(R.string.update_signature_hint),
+                        res.getString(R.string.update_signature_hint),
+                        res.getString(R.string.update_signature_hint),
+                        res.getString(R.string.update_signature_hint),
+                        res.getString(R.string.update_signature_hint),
+                        res.getString(R.string.update_signature_hint),
+                        res.getString(R.string.update_signature_hint),
+                        res.getString(R.string.update_signature_hint),
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "Signature"
+                });
 
                 Cursor fmp = getFmpByFarmerId(id);
                 if (fmp.getCount() > 0) {
@@ -2426,6 +2498,26 @@ if (ChildLabourUtils.isChildEnumerator) {
         String orderBy = OFISDBContract.SubmoduleEntry.COLUMN_NAME_POSITION + " ASC";
 
         return db.query(OFISDBContract.SubmoduleEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, orderBy);
+    }
+
+//    get nationalids list
+    public Cursor getnationalids() {
+        String[] columns = new String[]{"*"};
+//        String whereClause = OFISDBContract.NationalIDEntry.COLUMN_NAME_NID_TYPE + " = ?";
+//        String[] whereArgs = new String[]{String.valueOf(id)};
+        String orderBy = OFISDBContract.NationalIDEntry.COLUMN_NAME_ID + " ASC";
+
+        return db.query(OFISDBContract.NationalIDEntry.TABLE_NAME, columns, null, null, null, null, orderBy);
+    }
+
+
+    public Cursor getnationalidsbyfarmerid(long farmerid) {
+        String[] columns = new String[]{"*"};
+        String whereClause = OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(farmerid)};
+        String orderBy = OFISDBContract.FarmerNationalIDs.COLUMN_NAME_ID + " ASC";
+
+        return db.query(OFISDBContract.FarmerNationalIDs.TABLE_NAME, columns, whereClause, whereArgs, null, null, orderBy);
     }
 
     Cursor getRequiredQuestionIds(int moduleId) {
@@ -3932,4 +4024,28 @@ try {
         return  serverId;
     }
 
+    public long updateSignature(Context context, long farmerId, String signature) {
+        ContentValues values = new ContentValues();
+        values.put(OFISDBContract.SignatureEntry.COLUMN_NAME_FAMRERID, farmerId);
+        values.put(OFISDBContract.SignatureEntry.COLUMN_NAME_SIGNATURE, signature);
+        updateNetworkQueueSignatureEntry(context, farmerId, signature);
+        return db.insert(OFISDBContract.SignatureEntry.TABLE_NAME, null, values);
+
+    }
+
+    private long updateNetworkQueueSignatureEntry(Context context, long farmerId, String signature) {
+        long newEntry;
+        ContentValues networkQueueValues = new ContentValues();
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "gps_track");
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, context.getResources().getString(R.string.enumerator_location_capture));
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID, Utilities.getFromSharedPrefs(context));
+
+
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT,timestamp.toString());
+
+        newEntry= insertNetworkQueueEntry(networkQueueValues);
+
+        return newEntry;
+    }
 }
