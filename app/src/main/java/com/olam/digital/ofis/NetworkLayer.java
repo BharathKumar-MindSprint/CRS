@@ -736,9 +736,14 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             postChildModule(networkQueueItemId, handler, msg, total, progress, itemId);
         }else if(itemType.equalsIgnoreCase("child_visit")){
             postVisitDetails(networkQueueItemId, handler, msg, total, progress, itemId);
+        }else if(itemType.equalsIgnoreCase("signature")){
+            postSignatureDetails(networkQueueItemId, handler, msg, total, progress, itemId);
+        }else if(itemType.equalsIgnoreCase("National_ID")){
+            postFarmerNationalids(networkQueueItemId, handler, msg, total, progress, itemId);
         }else if(itemType.equalsIgnoreCase("gps_track")){
             postGpsNetworkQueue(networkQueueItemId, handler, msg, total, progress, itemId);
         }
+
     }
 
     void initiateMobileMoneyTransaction(final Handler handler, final long transactionItemId, final long farmerId) {
@@ -2175,6 +2180,43 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         return null;
     }
 
+    // get farmer national ids
+    private JSONArray farmernationalids(long farmerId) {
+        Cursor nids = dl.getnationalidsbyfarmerid(farmerId);
+        JSONArray numbersarray = new JSONArray();
+
+        try {
+            while (nids.moveToNext()) {
+                JSONObject nationalids = new JSONObject();
+
+                nationalids.put("farmerId", new Long(nids.getInt(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID))));
+                nationalids.put("nationalIdType", new Long(nids.getInt(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_TYPE))));
+                nationalids.put("nationalIdNumber", nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_NUMBER)));
+
+                String farmerNIDPath = nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_PHOTO));
+                if (farmerNIDPath != null && farmerNIDPath.length() > 0) {
+
+                    try {
+                        String encodedImage=Utilities.base64ConversionForImage(farmerNIDPath);
+                        nationalids.put("photo",encodedImage);
+//                   jsonObject.put(OFISDBContract.FarmerEntry.COLUMN_NAME_SIGNATURE, signature.getName());
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+
+                }
+
+
+                numbersarray.put(nationalids);
+ }
+            return numbersarray;
+        } catch (JSONException e) {
+            FirebaseCrash.report(new Exception("NetworkLayer: Error creating farmer phone numbers object", e));
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     private void postPhoneNumbers(final int networkQueueItemId, final Handler handler, final Message msg, final int total, final int progress, final Integer originalSyncRequestItemId) {
 
         String endpoint="";
@@ -3040,7 +3082,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 long farmerGroupID=Long.valueOf(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID)));
                 jsonObject.put(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID,farmerGroupID);
 
-
+                String regdate=farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_REGISTER_DATE));
+                jsonObject.put(OFISDBContract.FarmerEntry.COLUMN_NAME_REGISTER_DATE, regdate);
                 // cnvert the consent to boolean
                 jsonObject.put(OFISDBContract.FarmerEntry.COLUMN_NAME_CONSENTFARMER,Utilities.convertDT(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_CONSENT_FARMER))));
                 jsonObject.put(OFISDBContract.FarmerEntry.COLUMN_NAME_CONSENTOTHERS, Utilities.convertDT(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_CONSENT_OTHERS))));
@@ -3113,12 +3156,24 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             JSONArray numberstosend = farmerPhoneNumbers(networkQueueItems
                     .getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
 
+            JSONArray nidstosend = farmernationalids(networkQueueItems
+                    .getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
+
 //            JSONArray farmerRegistrationPhoneNumberDTOList = farmerPhoneNumbers(networkQueueItems
 //                    .getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
 
             try {
                 if (numberstosend != null) {
                   jsonObject.put("phoneNumbers", numberstosend);
+                }
+
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
+            try {
+                if (nidstosend != null) {
+                    jsonObject.put("nationalIDs", nidstosend);
                 }
 
             }catch (Exception e){
@@ -3688,88 +3743,264 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 e.printStackTrace();
             }
         }
+
+
+
     }
 
-    public void syncGPSData() {
-            try {
-                final String endpoint = GPSConstants.SYNC_END_POINT;
-                final JSONArray jsonArray = new JSONArray();
-                if(gpsSynced){
-                    return;
-                }
-                Cursor gpsData = dl.getGeoTrackList();
-                if (gpsData.getCount() > 0) {
-                    while (gpsData.moveToNext()) {
-                        try {
-                            JSONObject jsonObject = new JSONObject();
-//                jsonObject.put("id",child.getString(child.getColumnIndex(OFISDBContract.ChildEntry.COLUMN_NAME_ID)));
-                            jsonObject.put(OFISDBContract.GPSDetails.COLUMN_NAME_CAPTURED_MODULE, gpsData.getString(gpsData.getColumnIndex(OFISDBContract.GPSDetails.COLUMN_NAME_CAPTURED_MODULE)));
-                            jsonObject.put(OFISDBContract.GPSDetails.COLUMN_NAME_LATITUDE, gpsData.getString(gpsData.getColumnIndex(OFISDBContract.GPSDetails.COLUMN_NAME_LATITUDE)));
-                            jsonObject.put(OFISDBContract.GPSDetails.COLUMN_NAME_LONGITUDE, gpsData.getString(gpsData.getColumnIndex(OFISDBContract.GPSDetails.COLUMN_NAME_LONGITUDE)));
-                            jsonObject.put(OFISDBContract.GPSDetails.COLUMN_NAME_RECORDED_DATE, gpsData.getString(gpsData.getColumnIndex(OFISDBContract.GPSDetails.COLUMN_NAME_RECORDED_DATE)).substring(0,19));
 
+    //  Post signature details
+    private void postSignatureDetails(final int networkQueueItemId, final Handler handler, final Message msg, final int total, final int progress, final Integer originalSyncRequestItemId) {
+
+        String endPoint="";
+
+        endPoint="ofisfarmer/farmer/saveFarmerSignature";
+
+        final JSONObject params = new JSONObject();
+
+        if (!dl.isFarmerSynced(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)))) {
+            msg.what = 3;
+            msg.arg1 = total;
+            msg.arg2 = HomeActivity.progressItem = progress + 1;
+            msg.obj = String.valueOf(res.getString(R.string.farmer_not_synced));
+            handler.dispatchMessage(msg);
+        }else{
+            int farmerID = networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
+            String signaturepath = networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SIGNATURE));
+
+            if (signaturepath != null && signaturepath.length() > 0) {
+
+                try {
+                    params.put("farmerId",farmerID);
+                    String encodedImage=Utilities.base64ConversionForImage(signaturepath);
+                    params.put("signature",encodedImage);
+//                   jsonObject.put(OFISDBContract.FarmerEntry.COLUMN_NAME_SIGNATURE, signature.getName());
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+
+            }
+
+
+            if (endPoint.length() > 0) {
+                final String finalEndpoint = endPoint;
+                okHttpPost(context, endPoint, params, new Callback() {
+                    @Override
+                    public void onResponse(Call call, Response postResponse) {
+                        String statusMessage;
+                        if (postResponse.isSuccessful()) {
+
+                            dl.deleteNetworkQueueItem(networkQueueItemId);
+                            statusMessage = res.getString(R.string.item_synced);
+                            msg.what = 1;
+                            msg.arg1 = total;
+                            msg.arg2 = progress;
+                            msg.obj = statusMessage;
+                            handler.dispatchMessage(msg);
+                            syncNetworkQueue(originalSyncRequestItemId, handler);
+                        } else {
                             try {
-                                String submittedTimeStamp = new Timestamp(System.currentTimeMillis()).toString();
-                                jsonObject.put(OFISDBContract.GPSDetails.COLUMN_NAME_SUBMITTED_DATE, submittedTimeStamp.substring(0,19));
+                                FabricLogsWriter.printCrashLog(TAG, finalEndpoint,postResponse.code(),"Request : " +params.toString() +" Response "+postResponse.networkResponse().toString(),context);
                             }catch (Exception e){}
-
-                           jsonArray.put(jsonObject);
-                        } catch (Exception e) { }
-                    }
-                }
-                    JSONObject requstBody = new JSONObject();
-                    try {
-                        requstBody.put(GPSConstants.GPS_TRACK_DETAILS, jsonArray);
-                        requstBody.put(GPSConstants.OLAM_ENUMERATOR_ID, Long.valueOf(Utilities.getFromSharedPrefs(context)));
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    // String requestData=jsonArray.toString();
-                    if (endpoint.length() > 0) {
-
-                        okHttpPost(context, endpoint, requstBody, new Callback() {
-                            @Override
-                            public void onResponse(Call call, Response postResponse) {
-
-                                if (postResponse.isSuccessful()) {
-                                    new GpsTrackerLogic().deleteGeoDetails(context);
-                                    gpsSynced=true;
-                                } else {
-                                    gpsSynced=false;
-                                    // Added
-                                    if (postResponse.code() == 401 && postResponse.headers().toString().contains("invalid_token")) {
-                                       try {
-                                           FailureGetRefreshToken();
-                                       }catch (Exception e){}
-
-                                    } else {
+                            try {
+                                if(postResponse.code() == 401 && postResponse.headers().toString().contains("invalid_token")){
+                                    FailureGetRefreshToken(handler,originalSyncRequestItemId, msg, 2, total, progress, null, "submitting farm location");
+                                }else {
+                                    JSONObject response = new JSONObject(postResponse.body().string());
+                                    long server_item_id = 0, fully_synced = 0;
+                                    if (response.optJSONObject("farm") != null) {
+                                        JSONObject farm = response.getJSONObject("farm");
+                                        server_item_id = farm.getLong("id");
+                                        fully_synced = farm.getLong(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FULLY_SYNCED);
                                     }
+                                    recordFailedUpload(server_item_id, fully_synced, networkQueueItemId);
+                                    postFailureMessage(handler, response, msg, 2, total, progress, null, "submitting farm location");
+                                    FirebaseCrash.report(new Exception(response.optString("errors", res.getString(R.string.item_sync_error)) + " : submitting farm location"));
                                 }
-                                postResponse.close();
+                            } catch (JSONException | IOException e) {
+                                recordFailedUpload(0, 0, networkQueueItemId);
+                                postFailureMessage(handler, null, msg, 2, total, progress, null, "submitting farm location");
+                                FirebaseCrash.report(new Exception("NetworkLayer: Error getting farm location failure response", e));
+                                e.printStackTrace();
                             }
-                            @Override
-                            public void onFailure(Call call, IOException e) {
-                                gpsSynced=false;
-                            }
-                        });
+                        }
+                        postResponse.close();
                     }
-                }
-            catch (Exception e){
+
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                        try{
+                            recordFailedUpload(0, 0, networkQueueItemId);
+
+                            String failureMessage = res.getString(R.string.networking_error);
+                            if (e != null) {
+                                failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
+                            }
+                            postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting survey module");
+                            FirebaseCrash.report(new Exception(failureMessage, e));
+                        }catch(Exception onfailEx){
+                            String failureMessage = res.getString(R.string.networking_error);
+                            postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting survey module");
+                            FirebaseCrash.report(new Exception(failureMessage, e));
+                            onfailEx.printStackTrace();
+                        }
+                    }
+
+                });
             }
         }
 
-    public void postGpsNetworkQueue(final int networkQueueItemId, final Handler handler, final Message msg, final int total, final int progress, final Integer originalSyncRequestItemId) {
+
+
+    }
+
+
+    private void postFarmerNationalids(final int networkQueueItemId, final Handler handler, final Message msg, final int total, final int progress, final Integer originalSyncRequestItemId) {
+        Cursor farmer = dl.getFarmerById(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
+        //old end point
+        // String endpoint = "farmers/add";
+        // New End point
+        final String endpoint="ofisfarmer/farmer/saveFarmerUniqueId";
+        String tempOlamFarmerID=null;
+        if (farmer.getCount() > 0) {
+            farmer.moveToFirst();
+            JSONObject jsonObject=new JSONObject();
+
+
+
+
+
+            final int localFarmerId = farmer.getInt(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID));
+
+            JSONArray nidstosend = farmernationalids(networkQueueItems
+                    .getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
+
+//            JSONArray farmerRegistrationPhoneNumberDTOList = farmerPhoneNumbers(networkQueueItems
+//                    .getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
+
+
+            /*try {
+                if (nidstosend != null) {
+                    jsonObject.put("nationalIDs", nidstosend);
+                }
+
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+*/
+            final JSONArray jsonArray=new JSONArray();
+            jsonArray.put(jsonObject);
+            // String requestData=jsonArray.toString();
+            if (endpoint.length() > 0) {
+
+                final String finalTempOlamFarmerID = tempOlamFarmerID;
+                okHttpArrayPost(context, endpoint, nidstosend, new Callback() {
+                    @Override
+                    public void onResponse(Call call, Response postResponse) {
+                        try {
+                            String statusMessage;
+
+                            //     JSONObject response = new JSONObject(postResponse.body().string());
+                            if (postResponse.isSuccessful()) {
+                                // JSONObject farmerResponse = response.getJSONObject("farmer");
+
+                                //new
+                                JSONArray jsonResponse=new JSONArray(postResponse.body().string());
+                                JSONObject jsonObject1=jsonResponse.getJSONObject(0);
+                                /*String farmUniqueID=SharedPreferenceUtils
+                                        .getInstance(context)
+                                        .getFarmerID(finalTempOlamFarmerID);*/
+//                                SharedPreferenceUtils.getInstance(context).setFarmerID(jsonObject1.getString("olamFarmerId"), String.valueOf(farmUniqueID));
+
+                                dl.deleteNetworkQueueItem(networkQueueItemId);
+                                statusMessage = res.getString(R.string.item_synced);
+                                msg.what = 1;
+                                msg.arg1 = total;
+                                msg.arg2 = HomeActivity.progressItem = progress + 1;
+                                msg.obj = statusMessage;
+                                handler.dispatchMessage(msg);
+                                // update the cursor if this is part of a multi-sync
+                                if (originalSyncRequestItemId == null) {
+                                    getNetworkQueue(null);
+                                }
+                                syncNetworkQueue(originalSyncRequestItemId, handler);
+                            } else {
+                                try {
+                                    FabricLogsWriter.printCrashLog(TAG, endpoint,postResponse.code(),"Request : "+jsonArray.toString() + " Response  " +postResponse.networkResponse().toString(),context);
+                                }catch (Exception e){}
+                                long server_item_id = 0, fully_synced = 0;
+
+                                // Added
+                                if(postResponse.code() == 401 && postResponse.headers().toString().contains("invalid_token")){
+                                    FailureGetRefreshToken(handler,originalSyncRequestItemId, msg, 2, total, progress, null, "submitting farmer");
+                                }else {
+                                    JSONArray jsonResponse = new JSONArray(postResponse.body().string());
+                                    JSONObject response = jsonResponse.getJSONObject(0);
+
+                                    if (response != null) {
+                                        server_item_id = response.optLong("id", 0);
+                                        fully_synced = response.getLong(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FULLY_SYNCED);
+                                    }
+                                    recordFailedUpload(server_item_id, fully_synced, networkQueueItemId);
+                                    postFailureMessage(handler, response, msg, 2, total, progress, null, "submitting farmer");
+                                    FirebaseCrash.report(new Exception(response.optString("errors", res.getString(R.string.item_sync_error)) + " : submitting submitting farmer"));
+                                }
+                            }
+                            postResponse.close();
+                        } catch (JSONException | IOException e) {
+
+                            // OW-752 - fixed
+                            //Same farmer ID on different devices
+                            recordFailedUpload(0, 0, networkQueueItemId);
+                            String failureMessage = res.getString(R.string.item_sync_error);
+                            postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting farmer");
+
+                            FirebaseCrash.report(new Exception("NetworkLayer: Error getting farmer post failure response", e));
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                        try{
+                            recordFailedUpload(0, 0, networkQueueItemId);
+
+                            String failureMessage = res.getString(R.string.networking_error);
+                            if (e != null) {
+                                failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
+                            }
+                            postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting survey module");
+                            FirebaseCrash.report(new Exception(failureMessage, e));
+                        }catch(Exception onfailEx){
+                            String failureMessage = res.getString(R.string.networking_error);
+                            postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting survey module");
+                            FirebaseCrash.report(new Exception(failureMessage, e));
+                            onfailEx.printStackTrace();
+                        }
+                    }
+
+                });
+            }
+        }
+    }
+
+    public void syncGPSData() {
+        try {
             final String endpoint = GPSConstants.SYNC_END_POINT;
             final JSONArray jsonArray = new JSONArray();
-
+            if(gpsSynced){
+                return;
+            }
+            Cursor gpsData = dl.getGeoTrackList();
+            if (gpsData.getCount() > 0) {
+                while (gpsData.moveToNext()) {
                     try {
                         JSONObject jsonObject = new JSONObject();
-                        jsonObject.put(OFISDBContract.GPSDetails.COLUMN_NAME_CAPTURED_MODULE, GPSConstants.MODULE_CAPTURE_CAPTURE_MY_LOCATION);
-                        jsonObject.put(OFISDBContract.GPSDetails.COLUMN_NAME_LATITUDE, networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LAT)));
-                        jsonObject.put(OFISDBContract.GPSDetails.COLUMN_NAME_LONGITUDE, networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)));
-                        try{
-                            jsonObject.put(OFISDBContract.GPSDetails.COLUMN_NAME_RECORDED_DATE, networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT)).substring(0,19));
-                        }catch (Exception e){}
+//                jsonObject.put("id",child.getString(child.getColumnIndex(OFISDBContract.ChildEntry.COLUMN_NAME_ID)));
+                        jsonObject.put(OFISDBContract.GPSDetails.COLUMN_NAME_CAPTURED_MODULE, gpsData.getString(gpsData.getColumnIndex(OFISDBContract.GPSDetails.COLUMN_NAME_CAPTURED_MODULE)));
+                        jsonObject.put(OFISDBContract.GPSDetails.COLUMN_NAME_LATITUDE, gpsData.getString(gpsData.getColumnIndex(OFISDBContract.GPSDetails.COLUMN_NAME_LATITUDE)));
+                        jsonObject.put(OFISDBContract.GPSDetails.COLUMN_NAME_LONGITUDE, gpsData.getString(gpsData.getColumnIndex(OFISDBContract.GPSDetails.COLUMN_NAME_LONGITUDE)));
+                        jsonObject.put(OFISDBContract.GPSDetails.COLUMN_NAME_RECORDED_DATE, gpsData.getString(gpsData.getColumnIndex(OFISDBContract.GPSDetails.COLUMN_NAME_RECORDED_DATE)).substring(0,19));
 
                         try {
                             String submittedTimeStamp = new Timestamp(System.currentTimeMillis()).toString();
@@ -3777,83 +4008,146 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         }catch (Exception e){}
 
                         jsonArray.put(jsonObject);
-
-
-                        JSONObject requstBody = new JSONObject();
-                        try {
-                            requstBody.put(GPSConstants.GPS_TRACK_DETAILS, jsonArray);
-                            requstBody.put(GPSConstants.OLAM_ENUMERATOR_ID, Long.valueOf(Utilities.getFromSharedPrefs(context)));
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                        // String requestData=jsonArray.toString();
-                        if (endpoint.length() > 0) {
-
-                            okHttpPost(context, endpoint, requstBody, new Callback() {
-                                @Override
-                                public void onResponse(Call call, Response postResponse) {
-                                    String statusMessage;
-                                    if (postResponse.isSuccessful()) {
-                                        dl.deleteNetworkQueueItem(networkQueueItemId);
-                                        statusMessage = res.getString(R.string.item_synced);
-                                        msg.what = 1;
-                                        msg.arg1 = total;
-                                        msg.arg2 = HomeActivity.progressItem = progress + 1;
-                                        msg.obj = statusMessage;
-                                        handler.dispatchMessage(msg);
-                                        syncNetworkQueue(originalSyncRequestItemId, handler);
-                                    } else {
-                                        try {
-                                            FabricLogsWriter.printCrashLog(TAG, endpoint, postResponse.code(), "Request : " + new Timestamp(System.currentTimeMillis()).toString() + "Response : " + postResponse.networkResponse().toString(), context);
-                                        } catch (Exception e) {
-                                        }
-                                        try {
-                                            if (postResponse.code() == 401 && postResponse.headers().toString().contains("invalid_token")) {
-                                                FailureGetRefreshToken(handler, originalSyncRequestItemId, msg, 2, total, progress, null, "submitting GPS track module");
-                                            } else {
-                                                JSONObject response = new JSONObject(postResponse.body().string());
-                                                long server_item_id = 0, fully_synced = 0;
-                                                recordFailedUpload(server_item_id, fully_synced, networkQueueItemId);
-                                                postFailureMessage(handler, response, msg, 2, total, progress, null, "submitting GPS track module");
-                                                FirebaseCrash.report(new Exception(response.optString("errors", res.getString(R.string.item_sync_error)) + " : submitting GPS track module"));
-                                            }
-                                        } catch (JSONException | IOException e) {
-                                            recordFailedUpload(0, 0, networkQueueItemId);
-                                            postFailureMessage(handler, null, msg, 2, total, progress, null, "submitting GPS track module");
-                                            FirebaseCrash.report(new Exception("NetworkLayer: Error getting GPS posting failure response", e));
-                                            e.printStackTrace();
-                                        }
-                                    }
-                                    postResponse.close();
-                                }
-
-                                @Override
-                                public void onFailure(Call call, IOException e) {
-                                    try {
-                                        recordFailedUpload(0, 0, networkQueueItemId);
-
-                                        String failureMessage = res.getString(R.string.networking_error);
-                                        if (e != null) {
-                                            failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
-                                        }
-                                        postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting GPS track module");
-                                        FirebaseCrash.report(new Exception(failureMessage, e));
-                                    } catch (Exception onfailEx) {
-                                        String failureMessage = res.getString(R.string.networking_error);
-                                        postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting GPS track module");
-                                        FirebaseCrash.report(new Exception(failureMessage, e));
-                                        onfailEx.printStackTrace();
-                                    }
-                                }
-                            });
-
-                        }
-                    }
-            catch (JSONException e) {
-                recordFailedUpload(0, 0, networkQueueItemId);
-                postFailureMessage(handler, null, msg, 2, total, progress, null, "submitting GPS track module");
-                FirebaseCrash.report(new Exception("NetworkLayer: Error creating module post object", e));
+                    } catch (Exception e) { }
+                }
+            }
+            JSONObject requstBody = new JSONObject();
+            try {
+                requstBody.put(GPSConstants.GPS_TRACK_DETAILS, jsonArray);
+                requstBody.put(GPSConstants.OLAM_ENUMERATOR_ID, Long.valueOf(Utilities.getFromSharedPrefs(context)));
+            } catch (JSONException e) {
                 e.printStackTrace();
             }
+            // String requestData=jsonArray.toString();
+            if (endpoint.length() > 0) {
+
+                okHttpPost(context, endpoint, requstBody, new Callback() {
+                    @Override
+                    public void onResponse(Call call, Response postResponse) {
+
+                        if (postResponse.isSuccessful()) {
+                            new GpsTrackerLogic().deleteGeoDetails(context);
+                            gpsSynced=true;
+                        } else {
+                            gpsSynced=false;
+                            // Added
+                            if (postResponse.code() == 401 && postResponse.headers().toString().contains("invalid_token")) {
+                                try {
+                                    FailureGetRefreshToken();
+                                }catch (Exception e){}
+
+                            } else {
+                            }
+                        }
+                        postResponse.close();
+                    }
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                        gpsSynced=false;
+                    }
+                });
+            }
         }
+        catch (Exception e){
+        }
+    }
+
+    public void postGpsNetworkQueue(final int networkQueueItemId, final Handler handler, final Message msg, final int total, final int progress, final Integer originalSyncRequestItemId) {
+        final String endpoint = GPSConstants.SYNC_END_POINT;
+        final JSONArray jsonArray = new JSONArray();
+
+        try {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put(OFISDBContract.GPSDetails.COLUMN_NAME_CAPTURED_MODULE, GPSConstants.MODULE_CAPTURE_CAPTURE_MY_LOCATION);
+            jsonObject.put(OFISDBContract.GPSDetails.COLUMN_NAME_LATITUDE, networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LAT)));
+            jsonObject.put(OFISDBContract.GPSDetails.COLUMN_NAME_LONGITUDE, networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)));
+            try{
+                jsonObject.put(OFISDBContract.GPSDetails.COLUMN_NAME_RECORDED_DATE, networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT)).substring(0,19));
+            }catch (Exception e){}
+
+            try {
+                String submittedTimeStamp = new Timestamp(System.currentTimeMillis()).toString();
+                jsonObject.put(OFISDBContract.GPSDetails.COLUMN_NAME_SUBMITTED_DATE, submittedTimeStamp.substring(0,19));
+            }catch (Exception e){}
+
+            jsonArray.put(jsonObject);
+
+
+            JSONObject requstBody = new JSONObject();
+            try {
+                requstBody.put(GPSConstants.GPS_TRACK_DETAILS, jsonArray);
+                requstBody.put(GPSConstants.OLAM_ENUMERATOR_ID, Long.valueOf(Utilities.getFromSharedPrefs(context)));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            // String requestData=jsonArray.toString();
+            if (endpoint.length() > 0) {
+
+                okHttpPost(context, endpoint, requstBody, new Callback() {
+                    @Override
+                    public void onResponse(Call call, Response postResponse) {
+                        String statusMessage;
+                        if (postResponse.isSuccessful()) {
+                            dl.deleteNetworkQueueItem(networkQueueItemId);
+                            statusMessage = res.getString(R.string.item_synced);
+                            msg.what = 1;
+                            msg.arg1 = total;
+                            msg.arg2 = HomeActivity.progressItem = progress + 1;
+                            msg.obj = statusMessage;
+                            handler.dispatchMessage(msg);
+                            syncNetworkQueue(originalSyncRequestItemId, handler);
+                        } else {
+                            try {
+                                FabricLogsWriter.printCrashLog(TAG, endpoint, postResponse.code(), "Request : " + new Timestamp(System.currentTimeMillis()).toString() + "Response : " + postResponse.networkResponse().toString(), context);
+                            } catch (Exception e) {
+                            }
+                            try {
+                                if (postResponse.code() == 401 && postResponse.headers().toString().contains("invalid_token")) {
+                                    FailureGetRefreshToken(handler, originalSyncRequestItemId, msg, 2, total, progress, null, "submitting GPS track module");
+                                } else {
+                                    JSONObject response = new JSONObject(postResponse.body().string());
+                                    long server_item_id = 0, fully_synced = 0;
+                                    recordFailedUpload(server_item_id, fully_synced, networkQueueItemId);
+                                    postFailureMessage(handler, response, msg, 2, total, progress, null, "submitting GPS track module");
+                                    FirebaseCrash.report(new Exception(response.optString("errors", res.getString(R.string.item_sync_error)) + " : submitting GPS track module"));
+                                }
+                            } catch (JSONException | IOException e) {
+                                recordFailedUpload(0, 0, networkQueueItemId);
+                                postFailureMessage(handler, null, msg, 2, total, progress, null, "submitting GPS track module");
+                                FirebaseCrash.report(new Exception("NetworkLayer: Error getting GPS posting failure response", e));
+                                e.printStackTrace();
+                            }
+                        }
+                        postResponse.close();
+                    }
+
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                        try {
+                            recordFailedUpload(0, 0, networkQueueItemId);
+
+                            String failureMessage = res.getString(R.string.networking_error);
+                            if (e != null) {
+                                failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
+                            }
+                            postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting GPS track module");
+                            FirebaseCrash.report(new Exception(failureMessage, e));
+                        } catch (Exception onfailEx) {
+                            String failureMessage = res.getString(R.string.networking_error);
+                            postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting GPS track module");
+                            FirebaseCrash.report(new Exception(failureMessage, e));
+                            onfailEx.printStackTrace();
+                        }
+                    }
+                });
+
+            }
+        }
+        catch (JSONException e) {
+            recordFailedUpload(0, 0, networkQueueItemId);
+            postFailureMessage(handler, null, msg, 2, total, progress, null, "submitting GPS track module");
+            FirebaseCrash.report(new Exception("NetworkLayer: Error creating module post object", e));
+            e.printStackTrace();
+        }
+    }
 }

@@ -1273,11 +1273,41 @@ public class DataLayer {
 
     }
 
+    void addFarmerNationalids(Context context,long farmerId, JSONArray storeableNationalids, String status) {
+        int arrayLength = storeableNationalids.length();
+
+        try {
+            for (int i = 0; i < arrayLength; i++) {
+                JSONObject storeableNumber = storeableNationalids.getJSONObject(i);
+                ContentValues values = new ContentValues();
+                values.put(OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID, farmerId);
+                values.put(OFISDBContract.FarmerNationalIDs.COLUMN_NID_TYPE, storeableNumber.getInt("nationalidtype"));
+                values.put(OFISDBContract.FarmerNationalIDs.COLUMN_NID_NUMBER, storeableNumber.getString("nationalidNumber"));
+                values.put(OFISDBContract.FarmerNationalIDs.COLUMN_NID_PHOTO, storeableNumber.getString("photo"));
+                db.insert(OFISDBContract.FarmerNationalIDs.TABLE_NAME, null, values);
+            }
+        } catch (JSONException e) {
+            FirebaseCrash.report(new Exception("DataLayer: Error setting phone number storage values", e));
+            e.printStackTrace();
+        }
+        if(status.equalsIgnoreCase("2")){
+            updateNetworkQueueNIDEntry(context, farmerId);
+        }
+    }
+
     void updateFarmerPhoneNumbers(long farmerId, JSONArray storeableNumbers) {
         String whereClause = OFISDBContract.PhoneNumber.COLUMN_NAME_FARMER_ID + " = ?";
         String[] whereArgs = new String[]{String.valueOf(farmerId)};
         db.delete(OFISDBContract.PhoneNumber.TABLE_NAME, whereClause, whereArgs);
         addFarmerPhoneNumbers(farmerId, storeableNumbers);
+    }
+
+
+    void updateFarmerNationalids(Context context,long farmerId, JSONArray storeableNationalids, String status) {
+        String whereClause = OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(farmerId)};
+        db.delete(OFISDBContract.FarmerNationalIDs.TABLE_NAME, whereClause, whereArgs);
+        addFarmerNationalids(context,farmerId, storeableNationalids,status);
     }
 
     Cursor getDiallingCodeByPlaceId(long placeId) {
@@ -1959,7 +1989,21 @@ public class DataLayer {
         return db.query(OFISDBContract.FarmerEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
     }
 
+    public Cursor getNIDByName(String type) {
+        String[] columns = new String[]{"*"};
+        String whereClause = OFISDBContract.NationalIDEntry.COLUMN_NAME_NID_TYPE + " = ? ";
+        String[] whereArgs = new String[]{type};
 
+        return db.query(OFISDBContract.NationalIDEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+    }
+
+    public Cursor getNIDPhotostatusByName(String type) {
+        String[] columns = new String[]{"*"};
+        String whereClause = OFISDBContract.NationalIDEntry.COLUMN_NAME_NID_TYPE + " = ? ";
+        String[] whereArgs = new String[]{type};
+
+        return db.query(OFISDBContract.NationalIDEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+    }
 
     public int getFarmId(int farmer){
         int FarmID = 0;
@@ -2259,7 +2303,74 @@ public class DataLayer {
                         "Phone"
                 });
 
+// add e-signature for existing farmers
+                mc.addRow(new String[]{
+                        "0",
+                        res.getString(R.string.update_signature),
+                        res.getString(R.string.update_signature),
+                        res.getString(R.string.update_signature),
+                        res.getString(R.string.update_signature),
+                        res.getString(R.string.update_signature),
+                        res.getString(R.string.update_signature),
+                        res.getString(R.string.update_signature),
+                        res.getString(R.string.update_signature),
+                        res.getString(R.string.update_signature),
+                        "0",
+                        "",
+                        "",
+                        "",
+                        res.getString(R.string.update_signature_hint),
+                        res.getString(R.string.update_signature_hint),
+                        res.getString(R.string.update_signature_hint),
+                        res.getString(R.string.update_signature_hint),
+                        res.getString(R.string.update_signature_hint),
+                        res.getString(R.string.update_signature_hint),
+                        res.getString(R.string.update_signature_hint),
+                        res.getString(R.string.update_signature_hint),
+                        res.getString(R.string.update_signature_hint),
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "Signature"
+                });
 
+
+//         add national id information
+                mc.addRow(new String[]{
+                        "0",
+                        res.getString(R.string.add_nationalid),
+                        res.getString(R.string.add_nationalid),
+                        res.getString(R.string.add_nationalid),
+                        res.getString(R.string.add_nationalid),
+                        res.getString(R.string.add_nationalid),
+                        res.getString(R.string.add_nationalid),
+                        res.getString(R.string.add_nationalid),
+                        res.getString(R.string.add_nationalid),
+                        res.getString(R.string.add_nationalid),
+                        "0",
+                        "",
+                        "",
+                        "",
+                        res.getString(R.string.update_signature_hint),
+                        res.getString(R.string.update_signature_hint),
+                        res.getString(R.string.update_signature_hint),
+                        res.getString(R.string.update_signature_hint),
+                        res.getString(R.string.update_signature_hint),
+                        res.getString(R.string.update_signature_hint),
+                        res.getString(R.string.update_signature_hint),
+                        res.getString(R.string.update_signature_hint),
+                        res.getString(R.string.update_signature_hint),
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "National_ID"
+                });
 
                 Cursor fmp = getFmpByFarmerId(id);
                 if (fmp.getCount() > 0) {
@@ -2427,6 +2538,26 @@ if (ChildLabourUtils.isChildEnumerator) {
         String orderBy = OFISDBContract.SubmoduleEntry.COLUMN_NAME_POSITION + " ASC";
 
         return db.query(OFISDBContract.SubmoduleEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, orderBy);
+    }
+
+//    get nationalids list
+    public Cursor getnationalids() {
+        String[] columns = new String[]{"*"};
+//        String whereClause = OFISDBContract.NationalIDEntry.COLUMN_NAME_NID_TYPE + " = ?";
+//        String[] whereArgs = new String[]{String.valueOf(id)};
+        String orderBy = OFISDBContract.NationalIDEntry.COLUMN_NAME_ID + " ASC";
+
+        return db.query(OFISDBContract.NationalIDEntry.TABLE_NAME, columns, null, null, null, null, orderBy);
+    }
+
+
+    public Cursor getnationalidsbyfarmerid(long farmerid) {
+        String[] columns = new String[]{"*"};
+        String whereClause = OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(farmerid)};
+        String orderBy = OFISDBContract.FarmerNationalIDs.COLUMN_NAME_ID + " ASC";
+
+        return db.query(OFISDBContract.FarmerNationalIDs.TABLE_NAME, columns, whereClause, whereArgs, null, null, orderBy);
     }
 
     Cursor getRequiredQuestionIds(int moduleId) {
@@ -3945,27 +4076,71 @@ try {
 
     public long insertGPSDetailsNetworkQueue(Context context,ContentValues contentValues) {
 
-            long newGpsEntry;
-            ContentValues networkQueueValues = new ContentValues();
-            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "gps_track");
-            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, Utilities.getEnumeratorNameSharedPrefs(context));
-            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, context.getResources().getString(R.string.enumerator_location_capture));
-            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID, Utilities.getFromSharedPrefs(context));
+        long newGpsEntry;
+        ContentValues networkQueueValues = new ContentValues();
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "gps_track");
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, Utilities.getEnumeratorNameSharedPrefs(context));
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, context.getResources().getString(R.string.enumerator_location_capture));
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID, Utilities.getFromSharedPrefs(context));
 
 
-            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LAT, contentValues.getAsString(OFISDBContract.GPSDetails.COLUMN_NAME_LATITUDE));
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LAT, contentValues.getAsString(OFISDBContract.GPSDetails.COLUMN_NAME_LATITUDE));
         networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG, contentValues.getAsString(OFISDBContract.GPSDetails.COLUMN_NAME_LONGITUDE));
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT,timestamp.toString());
 
-           newGpsEntry= insertNetworkQueueEntry(networkQueueValues);
+        newGpsEntry= insertNetworkQueueEntry(networkQueueValues);
 
-           return newGpsEntry;
+        return newGpsEntry;
 
     }
 
 
     public void deleteGeoPoints() {
         db.delete(OFISDBContract.GPSDetails.TABLE_NAME, null, null);
+    }
+
+    public long updateSignature(Context context, long farmerId, String signature) {
+        ContentValues values = new ContentValues();
+        values.put(OFISDBContract.SignatureEntry.COLUMN_NAME_FAMRERID, farmerId);
+        values.put(OFISDBContract.SignatureEntry.COLUMN_NAME_SIGNATURE, signature);
+        updateNetworkQueueSignatureEntry(context, farmerId, signature);
+        return db.insert(OFISDBContract.SignatureEntry.TABLE_NAME, null, values);
+
+    }
+
+    private long updateNetworkQueueSignatureEntry(Context context, long farmerId, String signature) {
+        long newEntry;
+        ContentValues networkQueueValues = new ContentValues();
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "signature");
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, "Enumerator Name");
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, context.getResources().getString(R.string.update_signature));
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID, Utilities.getFromSharedPrefs(context));
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID, farmerId);
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SIGNATURE, signature);
+
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT,timestamp.toString());
+
+        newEntry= insertNetworkQueueEntry(networkQueueValues);
+
+        return newEntry;
+    }
+
+    private long updateNetworkQueueNIDEntry(Context context,long farmerId) {
+        long newEntry;
+        ContentValues networkQueueValues = new ContentValues();
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "National_ID");
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, "Enumerator Name");
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, context.getResources().getString(R.string.add_nationalid));
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID, Utilities.getFromSharedPrefs(context));
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID, farmerId);
+
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT,timestamp.toString());
+
+        newEntry= insertNetworkQueueEntry(networkQueueValues);
+
+        return newEntry;
     }
 }
