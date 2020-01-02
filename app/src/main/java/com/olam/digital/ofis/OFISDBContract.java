@@ -1055,6 +1055,7 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_FARMER_CHILD_ID = "farmer_child_id";
         public static final String COLUMN_NAME_FARMER_SURVEY_CODE = "survey_code";
         public static final String COLUMN_NAME_IS_VILLAGE = "is_village";
+        public static final String COLUMN_NAME_SIGNATURE = "signature";
 
 
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
@@ -1102,6 +1103,7 @@ public class OFISDBContract {
                     add(COLUMN_NAME_FARMER_CHILD_ID);
                     add(COLUMN_NAME_FARMER_SURVEY_CODE);
                     add(COLUMN_NAME_IS_VILLAGE);
+                    add(COLUMN_NAME_SIGNATURE);
                 }}
         );
 

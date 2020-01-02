@@ -536,4 +536,5 @@
     <string name="duplicate_nationalids">Duplicate National ID TYPE is not allow. Please check national id entries</string>
     <string name="update_signature">Update Signature</string>
     <string name="update_signature_hint">Tap to update</string>
+    <string name="add_nationalid">Add National ID</string>
 </resources>

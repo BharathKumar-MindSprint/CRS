@@ -1270,7 +1270,7 @@ public class DataLayer {
 
     }
 
-    void addFarmerNationalids(long farmerId, JSONArray storeableNationalids) {
+    void addFarmerNationalids(Context context,long farmerId, JSONArray storeableNationalids, String status) {
         int arrayLength = storeableNationalids.length();
 
         try {
@@ -1287,7 +1287,9 @@ public class DataLayer {
             FirebaseCrash.report(new Exception("DataLayer: Error setting phone number storage values", e));
             e.printStackTrace();
         }
-
+        if(status.equalsIgnoreCase("2")){
+            updateNetworkQueueNIDEntry(context, farmerId);
+        }
     }
 
     void updateFarmerPhoneNumbers(long farmerId, JSONArray storeableNumbers) {
@@ -1298,11 +1300,11 @@ public class DataLayer {
     }
 
 
-    void updateFarmerNationalids(long farmerId, JSONArray storeableNationalids) {
+    void updateFarmerNationalids(Context context,long farmerId, JSONArray storeableNationalids, String status) {
         String whereClause = OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID + " = ?";
         String[] whereArgs = new String[]{String.valueOf(farmerId)};
         db.delete(OFISDBContract.FarmerNationalIDs.TABLE_NAME, whereClause, whereArgs);
-        addFarmerNationalids(farmerId, storeableNationalids);
+        addFarmerNationalids(context,farmerId, storeableNationalids,status);
     }
 
     Cursor getDiallingCodeByPlaceId(long placeId) {
@@ -2298,7 +2300,7 @@ public class DataLayer {
                         "Phone"
                 });
 
-// add new national id for existing farmers
+// add e-signature for existing farmers
                 mc.addRow(new String[]{
                         "0",
                         res.getString(R.string.update_signature),
@@ -2330,6 +2332,41 @@ public class DataLayer {
                         "",
                         "",
                         "Signature"
+                });
+
+
+//         add national id information
+                mc.addRow(new String[]{
+                        "0",
+                        res.getString(R.string.add_nationalid),
+                        res.getString(R.string.add_nationalid),
+                        res.getString(R.string.add_nationalid),
+                        res.getString(R.string.add_nationalid),
+                        res.getString(R.string.add_nationalid),
+                        res.getString(R.string.add_nationalid),
+                        res.getString(R.string.add_nationalid),
+                        res.getString(R.string.add_nationalid),
+                        res.getString(R.string.add_nationalid),
+                        "0",
+                        "",
+                        "",
+                        "",
+                        res.getString(R.string.update_signature_hint),
+                        res.getString(R.string.update_signature_hint),
+                        res.getString(R.string.update_signature_hint),
+                        res.getString(R.string.update_signature_hint),
+                        res.getString(R.string.update_signature_hint),
+                        res.getString(R.string.update_signature_hint),
+                        res.getString(R.string.update_signature_hint),
+                        res.getString(R.string.update_signature_hint),
+                        res.getString(R.string.update_signature_hint),
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "National_ID"
                 });
 
                 Cursor fmp = getFmpByFarmerId(id);
@@ -4036,10 +4073,29 @@ try {
     private long updateNetworkQueueSignatureEntry(Context context, long farmerId, String signature) {
         long newEntry;
         ContentValues networkQueueValues = new ContentValues();
-        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "gps_track");
-        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, context.getResources().getString(R.string.enumerator_location_capture));
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "signature");
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, "Enumerator Name");
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, context.getResources().getString(R.string.update_signature));
         networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID, Utilities.getFromSharedPrefs(context));
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID, farmerId);
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SIGNATURE, signature);
 
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT,timestamp.toString());
+
+        newEntry= insertNetworkQueueEntry(networkQueueValues);
+
+        return newEntry;
+    }
+
+    private long updateNetworkQueueNIDEntry(Context context,long farmerId) {
+        long newEntry;
+        ContentValues networkQueueValues = new ContentValues();
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "National_ID");
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, "Enumerator Name");
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, context.getResources().getString(R.string.add_nationalid));
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID, Utilities.getFromSharedPrefs(context));
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID, farmerId);
 
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT,timestamp.toString());

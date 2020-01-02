@@ -1381,6 +1381,12 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                         startActivity(in);
                     } else if (recordedLng != null && recordedLng.getText().equals("Signature")) {
                         showSignatureDialog();
+                    } else if (recordedLng != null && recordedLng.getText().equals("National_ID")) {
+                        Intent in = new Intent(this, AddNationalidActivity.class);
+                        Bundle bundle=new Bundle();
+                        bundle.putLong(ChildLabourUtils.CHILD_FARMER_ID, farmerId);
+                        in.putExtras(bundle);
+                        startActivity(in);
                     } else {
                         polygon=false;
                         recordFarmLocation(v);

@@ -566,9 +566,9 @@ public class AddFarmerActivity extends BaseActivity {
 
         getAllNationalIds();
 
-        int phonerowscount = phonenumbers.getChildCount();
+        int rowscount = nationalids.getChildCount();
 
-        for (int j = 0; j < phonerowscount; j++) {
+        for (int j = 0; j < rowscount; j++) {
             LinearLayout nidrow = (LinearLayout) nationalids.getChildAt(j);
 
             EditText nidnumber = (EditText) nidrow.findViewById(R.id.nidnumber);
@@ -1111,7 +1111,7 @@ public class AddFarmerActivity extends BaseActivity {
                                 if (editMode) {
                                     long updFarmerId = dl.updateFarmer(values, editFarmerId);
                                     dl.updateFarmerPhoneNumbers(editFarmerId, storeableNumbers);
-                                    dl.updateFarmerNationalids(editFarmerId, storeableNationalids);
+                                    dl.updateFarmerNationalids(context, editFarmerId, storeableNationalids,"1");
                                     if (updFarmerId > 0) {
                                         Toast.makeText(context, res.getString(R.string.Farmer_Updated), Toast.LENGTH_LONG).show();
                                         ViewFarmerActivity.farmerId = editFarmerId;
@@ -1124,7 +1124,7 @@ public class AddFarmerActivity extends BaseActivity {
                                     long newFarmerId = dl.insertFarmer(values);
                                     if (newFarmerId != -1) {
                                         dl.addFarmerPhoneNumbers(newFarmerId, storeableNumbers);
-                                        dl.addFarmerNationalids(newFarmerId, storeableNationalids);
+                                        dl.addFarmerNationalids(context, newFarmerId, storeableNationalids, "1");
                                         Toast.makeText(context, res.getString(R.string.Farmer_Added), Toast.LENGTH_LONG).show();
 
                                         ViewFarmerActivity.farmerId = newFarmerId;
