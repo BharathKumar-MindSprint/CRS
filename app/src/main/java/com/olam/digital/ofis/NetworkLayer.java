@@ -2152,6 +2152,43 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         return null;
     }
 
+    // get farmer national ids
+    private JSONArray farmernationalids(long farmerId) {
+        Cursor nids = dl.getnationalidsbyfarmerid(farmerId);
+        JSONArray numbersarray = new JSONArray();
+
+        try {
+            while (nids.moveToNext()) {
+                JSONObject nationalids = new JSONObject();
+
+                nationalids.put("farmerId", new Long(nids.getInt(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID))));
+                nationalids.put("nationalIdType", new Long(nids.getInt(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_TYPE))));
+                nationalids.put("nationalIdNumber", nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_NUMBER)));
+
+                String farmerNIDPath = nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_PHOTO));
+                if (farmerNIDPath != null && farmerNIDPath.length() > 0) {
+
+                    try {
+                        String encodedImage=Utilities.base64ConversionForImage(farmerNIDPath);
+                        nationalids.put("photo",encodedImage);
+//                   jsonObject.put(OFISDBContract.FarmerEntry.COLUMN_NAME_SIGNATURE, signature.getName());
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+
+                }
+
+
+                numbersarray.put(nationalids);
+ }
+            return numbersarray;
+        } catch (JSONException e) {
+            FirebaseCrash.report(new Exception("NetworkLayer: Error creating farmer phone numbers object", e));
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     private void postPhoneNumbers(final int networkQueueItemId, final Handler handler, final Message msg, final int total, final int progress, final Integer originalSyncRequestItemId) {
 
         String endpoint="";
@@ -3017,7 +3054,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 long farmerGroupID=Long.valueOf(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID)));
                 jsonObject.put(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID,farmerGroupID);
 
-
+                String regdate=farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_REGISTER_DATE));
+                jsonObject.put(OFISDBContract.FarmerEntry.COLUMN_NAME_REGISTER_DATE, regdate);
                 // cnvert the consent to boolean
                 jsonObject.put(OFISDBContract.FarmerEntry.COLUMN_NAME_CONSENTFARMER,Utilities.convertDT(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_CONSENT_FARMER))));
                 jsonObject.put(OFISDBContract.FarmerEntry.COLUMN_NAME_CONSENTOTHERS, Utilities.convertDT(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_CONSENT_OTHERS))));
@@ -3090,12 +3128,24 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             JSONArray numberstosend = farmerPhoneNumbers(networkQueueItems
                     .getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
 
+            JSONArray nidstosend = farmernationalids(networkQueueItems
+                    .getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
+
 //            JSONArray farmerRegistrationPhoneNumberDTOList = farmerPhoneNumbers(networkQueueItems
 //                    .getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
 
             try {
                 if (numberstosend != null) {
                   jsonObject.put("phoneNumbers", numberstosend);
+                }
+
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
+            try {
+                if (nidstosend != null) {
+                    jsonObject.put("nationalIDs", nidstosend);
                 }
 
             }catch (Exception e){

@@ -63,8 +63,8 @@ public class SyncAllTask extends SyncTask {
 
     public static final String TAG = "SyncAllTask";
     public JSONObject spinnerResponse, moduleResponse, sipModuleResponse, farmerResponse, fmpResponse, transactionResponse, trainingResponse, tasksResponse;
-
     public static JSONObject childResponse;
+    public static JSONObject nationalidresponse;
     private int syncResultCount;
     public ProgressDialog pd;
     private Resources res;
@@ -146,6 +146,13 @@ public class SyncAllTask extends SyncTask {
         } else if (op == SyncTaskOperationType.CHILD_ENUMERATOR) {
             try {
                 syncChildEnumerator();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        } else if (op == SyncTaskOperationType.SYNC_NATIONALIDS) {
+            try {
+                syncNationalIDs();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -272,7 +279,8 @@ public class SyncAllTask extends SyncTask {
             new UpdateChildrenTask(context).execute(childResponse);
             childResponse=null;
 
-
+            new UpdateNationalIdTask(context).execute(nationalidresponse);
+            nationalidresponse = null;
 
             /*if (pd != null && pd.isShowing()) {
                 String pdUpdate = res.getString(R.string.update_complete);
@@ -413,8 +421,9 @@ public class SyncAllTask extends SyncTask {
                                 Utilities.removeFromSharedPrefs(context, "version_update_notified_on");
                                 Utilities.removeFromSharedPrefs(context, "upgrade_by");
 
-                                publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.checking_child_enumerator));
-                                delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.CHILD_ENUMERATOR);
+                                publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.download_nationalid_enumerator));
+                                delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_NATIONALIDS);
+
 
                             }
                         } else {
@@ -727,6 +736,51 @@ public class SyncAllTask extends SyncTask {
                 } catch (IOException e) {
                     FirebaseCrash.report(new Exception("SyncAllTask: Error syncing Child Enumerator data", e));
                     e.printStackTrace();
+                } finally {
+                    postResponse.close();
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+                String failureMessage = res.getString(R.string.networking_error);
+                if (e != null) {
+                    FirebaseCrash.report(new Exception("SyncAllTask: Error in response when syncing training data", e));
+                    failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
+                }
+
+                publishProgress(SyncOperation.ERROR_RECEIVED, failureMessage);
+
+            }
+
+        });
+    }
+
+    private void syncNationalIDs() {
+        String endpoint = "";
+        endpoint = "ofismaster/master/nationalId/getNationalIDsByEnumerator?enumeratorLoginId=" + Utilities.getFromSharedPrefs(context);
+        final String finalEndpoint = endpoint;
+        okHttpGet(context, endpoint, null, new Callback() {
+            @Override
+            public void onResponse(Call call, final Response postResponse) {
+                try {
+                     JSONObject response = new JSONObject(postResponse.body().string());
+                    if (postResponse.isSuccessful()) {
+
+                        nationalidresponse = response;
+                        // store the value in Child labour preferences
+                        publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.checking_child_enumerator));
+                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.CHILD_ENUMERATOR);
+
+
+                    } else {
+                        try {
+                            FabricLogsWriter.printCrashLog(TAG, finalEndpoint, postResponse.code(), postResponse.networkResponse().toString(), context);
+                        } catch (Exception e) {
+                        }
+                        postFailureMessage(null);
+                    }
+                }catch (Exception e){ e.printStackTrace();
                 } finally {
                     postResponse.close();
                 }

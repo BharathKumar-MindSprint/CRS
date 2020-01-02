@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
@@ -38,6 +39,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
@@ -53,6 +55,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.gcacace.signaturepad.views.SignaturePad;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.ApiException;
@@ -97,6 +100,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.sql.Timestamp;
@@ -1375,6 +1379,8 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                         bundle.putLong(ChildLabourUtils.CHILD_FARMER_ID, farmerId);
                         in.putExtras(bundle);
                         startActivity(in);
+                    } else if (recordedLng != null && recordedLng.getText().equals("Signature")) {
+                        showSignatureDialog();
                     } else {
                         polygon=false;
                         recordFarmLocation(v);
@@ -1397,5 +1403,119 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 }
             }
         }
+    }
+
+
+    boolean isSigned = false;
+    public void showSignatureDialog() {
+
+        isSigned = false;
+
+        final Dialog signatureDialog = new Dialog(this, android.R.style.Theme_Material_Dialog_Alert);
+        signatureDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+
+        signatureDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        signatureDialog.setContentView(R.layout.dialog_signature);
+        SignaturePad mSignaturePad = signatureDialog.findViewById(R.id.signature_pad);
+
+
+
+        signatureDialog.findViewById(R.id.imgv_clear_signature).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mSignaturePad.clear();
+            }
+        });
+
+
+        mSignaturePad.setOnSignedListener(new SignaturePad.OnSignedListener() {
+
+            @Override
+            public void onStartSigning() {
+                //Event triggered when the pad is touched
+            }
+
+            @Override
+            public void onSigned() {
+                //Event triggered when the pad is signed
+                isSigned = true;
+            }
+
+            @Override
+            public void onClear() {
+                //Event triggered when the pad is cleared
+                isSigned = false;
+            }
+        });
+
+        signatureDialog.findViewById(R.id.btn_cancel_signature).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                signatureDialog.dismiss();
+
+
+            }
+        });
+
+        signatureDialog.findViewById(R.id.btn_add_signature).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                try {
+
+                    if (isSigned) {
+
+
+//                        farmerSignatureButton.setImageBitmap(mSignaturePad.getTransparentSignatureBitmap());
+
+                        File photoFile = null;
+
+                        try {
+                            photoFile = createImageFile("signature");
+                        } catch (IOException e) {
+                            FirebaseCrash.report(new Exception("AddFarmerActivity: Error creating signature image file", e));
+                            e.printStackTrace();
+                        }
+
+                        if (photoFile != null) {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                                try {
+                                    Method m = StrictMode.class.getMethod("disableDeathOnFileUriExposure");
+                                    m.invoke(null);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                            Uri fileUri = Uri.fromFile(photoFile);
+//                            setCapturedSignatureImageURI(fileUri);
+//                            setCurrentSignaturePhotoPath(fileUri.getPath());
+                            dl.updateSignature(context, farmerId, fileUri.getPath());
+
+                            try (FileOutputStream out = new FileOutputStream(photoFile)) {
+                                mSignaturePad.getTransparentSignatureBitmap().compress(Bitmap.CompressFormat.PNG, 100, out); // bmp is your Bitmap instance
+                                // PNG is a lossless format, the compression factor (100) is ignored
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+
+                        }
+
+                        signatureDialog.dismiss();
+                    } else {
+
+                        Toast.makeText(ViewFarmerActivity.this, "No signature available...", Toast.LENGTH_SHORT).show();
+                    }
+
+
+                } catch (Exception e) {
+
+                }
+
+
+            }
+        });
+
+        signatureDialog.show();
     }
 }
