@@ -59,6 +59,11 @@ import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.PermissionListener;
 import com.olam.digital.ofis.R;
+import com.olam.digital.ofis.gps.GPSListener;
+import com.olam.digital.ofis.gps.GPSTracker;
+import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
+import com.olam.digital.ofis.gps.utils.GPSConstants;
+import com.olam.digital.ofis.gps.utils.GPSUtils;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -97,6 +102,7 @@ public class CompleteModuleActivity extends BaseActivity {
     private static final String RECORDED_LNG = "RECORDED_LNG";
     private static final String FARMER_NAME = "FARMER_NAME";
     private long networkQueueId = 0;
+    public static boolean editMode = false;
 
     // for GPS location system
 //    private GoogleApiClient googleApiClient;
@@ -123,6 +129,11 @@ public class CompleteModuleActivity extends BaseActivity {
     private static final String STATE_RESOLVING_ERROR = "resolving_error";
     // Bool to track whether the app is already resolving an error
     private boolean mResolvingError = false;
+
+    private Location mCurrentCapturedLocation=null;
+    GPSListener gpsListener=null;
+    private GPSTracker gpsTracker=null;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -215,7 +226,23 @@ public class CompleteModuleActivity extends BaseActivity {
         bindSaveButton();
         setupFooter();
         dynamicQuestions.SurveyType="other";
-    }
+
+        gpsListener=new GPSListener() {
+            @Override
+            public void onGPSClick(Location location) {
+                if (location!=null){
+                    mCurrentCapturedLocation=location;
+                }
+            }
+        };
+        gpsTracker=new GPSTracker(this,gpsListener);
+       // gpsTracker.getDeviceLocation();
+        if (gpsTracker.isGpsEnabled()){
+            gpsTracker.startLocationUpdateInitially();
+        }
+
+
+}
 
     @SuppressWarnings("ConstantConditions")
     private void initDynamicQuestions() {
@@ -363,30 +390,22 @@ public class CompleteModuleActivity extends BaseActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
         super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
-/*
 
-        if (requestCode == REQUEST_RESOLVE_ERROR) {
-            mResolvingError = false;
-            if (resultCode == RESULT_OK) {
-                // Make sure the app is not already connected or attempting to connect
-                if (!googleApiClient.isConnecting() &&
-                        !googleApiClient.isConnected()) {
-                    googleApiClient.connect();
+        switch (requestCode) {
+            case REQUEST_CHECK_SETTINGS:
+                if (requestCode == 100 && resultCode == RESULT_OK) {
+//            Toast.makeText(AddInfrastructureActivity.this,getResources().getString(R.string.record_location_timeout),Toast.LENGTH_LONG).show();
+                    gpsTracker.getDeviceLocation();
+                    startLocationUpdates();
+                }else if (requestCode == 100 && resultCode == RESULT_CANCELED) {
+//            Toast.makeText(AddInfrastructureActivity.this,getResources().getString(R.string.record_location_timeout),Toast.LENGTH_LONG).show();
+                    stopLocationUpdates();
                 }
-            }
-        }
-*/
-
-        if (requestCode == 100 && resultCode == RESULT_OK) {
-//            Toast.makeText(AddInfrastructureActivity.this,getResources().getString(R.string.record_location_timeout),Toast.LENGTH_LONG).show();
-            startLocationUpdates();
-        }else if (requestCode == 100 && resultCode == RESULT_CANCELED) {
-//            Toast.makeText(AddInfrastructureActivity.this,getResources().getString(R.string.record_location_timeout),Toast.LENGTH_LONG).show();
-            stopLocationUpdates();
-        }
-
-        if (resultCode == RESULT_OK) {
-            dynamicQuestions.setFullImageFromFilePath(res);
+                break;
+            default:
+                if (resultCode == RESULT_OK) {
+                    dynamicQuestions.setFullImageFromFilePath(res);
+                }
         }
     }
 
@@ -459,6 +478,14 @@ public class CompleteModuleActivity extends BaseActivity {
                     return;
                 }*/
                 if (isLastPage) {
+
+                    try{
+                        if (mCurrentCapturedLocation == null || !gpsTracker.isGpsEnabled()) {
+                            gpsTracker.getDeviceLocation();
+                            return;
+                        }
+                    }catch (Exception e){}
+
                     ContentValues values = new ContentValues();
                     Timestamp timestamp = new Timestamp(System.currentTimeMillis());
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "module");
@@ -504,6 +531,14 @@ public class CompleteModuleActivity extends BaseActivity {
             return;
         }*/
         boolean canSaveAndFinish = true;
+
+        // check location
+        if (action.equalsIgnoreCase("finish")) {
+            if (mCurrentCapturedLocation == null || !gpsTracker.isGpsEnabled()) {
+                gpsTracker.getDeviceLocation();
+                return;
+            }
+        }
 
         // first time saving this module?
         if (farmerModuleId == 0) {
@@ -606,6 +641,12 @@ public class CompleteModuleActivity extends BaseActivity {
         } else if (action.equalsIgnoreCase("finish")) {
             if(bool){
                 if (canSaveAndFinish) {
+
+                    if (dynamicQuestions.requiredFieldsAnswered((int) farmerModuleId, (int) moduleId) && !editMode) {
+                        collectGPSPoint(mCurrentCapturedLocation);
+                        gpsTracker.stopLocationUpdates();
+                    }
+
                     ViewFarmerActivity.farmerId = farmerId;
                     //SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(farmerId);
                     Intent intent = new Intent(context, ViewFarmerActivity.class);
@@ -629,6 +670,14 @@ public class CompleteModuleActivity extends BaseActivity {
             startActivity(intent);
             finish();
         }
+    }
+
+
+    private void collectGPSPoint(Location farmLocation) {
+        String lat=String.valueOf(farmLocation.getLatitude());
+        String lon=String.valueOf(farmLocation.getLongitude());
+        ContentValues geoContentValues=new GPSUtils().getGeoContentValues(GPSConstants.MODULE_CAPTURE_FARMER_SURVEY,lat,lon,new Timestamp(System.currentTimeMillis()).toString());
+        Long newTrackId= new GpsTrackerLogic().insertGeoDataDetails(context,geoContentValues);
     }
 
     /**

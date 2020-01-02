@@ -100,9 +100,19 @@ public class ViewChildLabourSurveyActivity extends BaseActivity {
 
         }catch (Exception e){}
 
+        JSONObject actionTicked = null;
+        JSONArray actionTickedArray=null;
+        try {
+            String actionTickedJSON = children.getActionTicked();
+            actionTicked=new JSONObject(actionTickedJSON);
+            actionTickedArray= actionTicked.getJSONArray(ChildLabourUtils.CHILD_LABOUR_ACTION_TICK_LIST);
+
+        }catch (Exception e){}
+
+
         if (childModuleDtoList != null && childModuleDtoList.size() > 0) {
             try {
-                childSurveyRecyclerAdapter = new ChildSurveyRecyclerAdapter(childModuleDtoList,this,modulesArray,children);
+                childSurveyRecyclerAdapter = new ChildSurveyRecyclerAdapter(childModuleDtoList,this,modulesArray,children,actionTickedArray);
             } catch (JSONException e) {
                 e.printStackTrace();
             }

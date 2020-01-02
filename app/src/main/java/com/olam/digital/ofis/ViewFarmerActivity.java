@@ -86,6 +86,11 @@ import com.karumi.dexter.listener.single.PermissionListener;
 import com.olam.digital.ofis.childlabour.ChildLabourDetailsActivity;
 import com.olam.digital.ofis.childlabour.ChildLabourUtils;
 import com.olam.digital.ofis.childlabour.RegisterChildActivity;
+import com.olam.digital.ofis.gps.GPSListener;
+import com.olam.digital.ofis.gps.GPSTracker;
+import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
+import com.olam.digital.ofis.gps.utils.GPSConstants;
+import com.olam.digital.ofis.gps.utils.GPSUtils;
 import com.olam.digital.ofis.recordpolygon.LocationBeanList;
 import com.olam.digital.ofis.recordpolygon.PlotsList;
 import com.olam.digital.ofis.recordpolygon.RecordPolygonActivity;
@@ -179,6 +184,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
 
     // Request code to use when launching the resolution activity
     private static final int REQUEST_RESOLVE_ERROR = 1001;
+
     // Unique tag for the error dialog fragment
     private static final String STATE_RESOLVING_ERROR = "resolving_error";
     // Bool to track whether the app is already resolving an error
@@ -203,6 +209,11 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
     private boolean polygon = false;
     private ListView listView;
 
+    // Location captured related variable
+    private Location mCurrentCapturedLocation=null;
+    GPSListener gpsListener=null;
+    private GPSTracker gpsTracker=null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -223,6 +234,22 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         setupUI();
         setupPhoneNumberDialog();
         listView.setOnItemClickListener(this);
+
+        gpsListener=new GPSListener() {
+            @Override
+            public void onGPSClick(Location location) {
+                if (location!=null){
+                    mCurrentCapturedLocation=location;
+                }
+            }
+        };
+        gpsTracker=new GPSTracker(this,gpsListener);
+     //   gpsTracker.getDeviceLocation();
+        if (gpsTracker.isGpsEnabled()){
+            gpsTracker.startLocationUpdateInitially();
+        }
+
+
     }
 
     @Override
@@ -270,6 +297,13 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
 
     protected void onStop() {
         super.onStop();
+        try {
+            if (gpsTracker!=null) {
+                gpsTracker.stopLocationUpdates();
+            }
+        }catch (Exception e){}
+
+
     }
 
     @Override
@@ -280,6 +314,13 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         //JIRA req OW-505
 
         switch (requestCode) {
+
+            case REQUEST_CHECK_SETTINGS:
+                if (resultCode == -1) {
+                    gpsTracker.getDeviceLocation();
+                }
+                break;
+
             case REQUEST_IMAGE_CAPTURE:
                 if (resultCode == RESULT_OK) {
                     if(getCurrentPhotoPath() != null){
@@ -387,6 +428,12 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
             @Override
             public void onClick(View v) {
                 // Request Permission only for Android Version Marshmallow and above
+
+                if (mCurrentCapturedLocation==null || !gpsTracker.isGpsEnabled()) {
+                    gpsTracker.getDeviceLocation();
+                    return;
+                }
+
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     // Check Camera & Storage Permission
                     if (ContextCompat.checkSelfPermission(ViewFarmerActivity.this,
@@ -443,6 +490,10 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
                 textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
                 textView.setText(res.getString(R.string.record_farm_location_complete));
+
+                // capturing the geo point track
+                collectGPSPoint(GPSConstants.MODULE_CAPTURE_FARM_LOCATION,farmLocation);
+
             }
         } catch (Exception e) {
             FirebaseCrash.report(new Exception("ViewFarmerActivity: Error setting farmer GPS location", e));
@@ -453,6 +504,15 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
             pd.dismiss();
         }
     }
+
+    private void collectGPSPoint(String module,Location farmLocation) {
+        String lat=String.valueOf(farmLocation.getLatitude());
+        String lon=String.valueOf(farmLocation.getLongitude());
+        ContentValues geoContentValues=new GPSUtils().getGeoContentValues(module,lat,lon,new Timestamp(System.currentTimeMillis()).toString());
+        Long newTrackId= new GpsTrackerLogic().insertGeoDataDetails(context,geoContentValues);
+
+    }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
@@ -1028,6 +1088,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                         dl.updateFarmerPhoneNumbers(farmerId, storeableNumbers);
                         ContentValues nqiValues = new ContentValues();
 
+                        collectGPSPoint(GPSConstants.MODULE_UPDATE_PHONE_NUMBER,mCurrentCapturedLocation);
                         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
                         nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "phonenumbers");
                         nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, res.getString(R.string.update_phone_numbers));
@@ -1308,6 +1369,14 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         Bitmap bitmap = Utilities.loadSizedBitmap(savedImagePath, outputWidth, outputHeight);
         target.setImageBitmap(bitmap);
         dl.updateFarmerPhoto(farmerId,savedImagePath,olamFarmerIdStr,farmerNameStr);
+
+        // Collect the GPS Point
+        if (mCurrentCapturedLocation==null || !gpsTracker.isGpsEnabled()){
+            gpsTracker.getDeviceLocation();
+            return;
+        }else{
+            collectGPSPoint(GPSConstants.MODULE_CAPTURE_UPDATE_PHOTO,mCurrentCapturedLocation);
+        }
     }
     private static String getFilePathUri(Context context, Uri uri) {
         Uri filePathUri = uri;

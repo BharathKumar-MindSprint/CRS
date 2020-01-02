@@ -645,6 +645,7 @@ public class OFISDBContract {
 //        public static final String COLUMN_NAME_CHILD_SUBMITTED_MODULES = "submitted_modules";
         public static final String COLUMN_NAME_CHILD_SUBMITTED_MODULES = "submittedModule";
         public static final String COLUMN_NAME_CHILD_CREATEDAT = "createdat";
+        public static final String COLUMN_NAME_CHILD_ACTION_TICKED="actionTickeds";
 
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
@@ -658,6 +659,7 @@ public class OFISDBContract {
                     add(COLUMN_NAME_CHILD_AGE_ON_YEAR);
                     add(COLUMN_NAME_CHILD_SUBMITTED_MODULES);
                     add(COLUMN_NAME_CHILD_CREATEDAT);
+                    add(COLUMN_NAME_CHILD_ACTION_TICKED);
                 }}
         );
     }
@@ -1860,6 +1862,16 @@ public class OFISDBContract {
                     add(COLUMN_NAME_ENUMERATORS_TASK_ID);
                 }}
         );
+    }
+
+    public static abstract class GPSDetails implements BaseColumns {
+        public static final String TABLE_NAME = "gps_details";
+        public static final String COLUMN_NAME_ID = "id";
+        public static final String COLUMN_NAME_LATITUDE = "latitude";
+        public static final String COLUMN_NAME_LONGITUDE = "longitude";
+        public static final String COLUMN_NAME_RECORDED_DATE = "recordDate";
+        public static final String COLUMN_NAME_SUBMITTED_DATE = "submittedDate";
+        public static final String COLUMN_NAME_CAPTURED_MODULE = "module";
     }
 
     public static final LinkedHashMap<String, List<String>> ALL_TABLES =

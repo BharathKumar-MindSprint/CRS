@@ -13,6 +13,7 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.media.Image;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -50,6 +51,12 @@ import android.widget.Toast;
 import com.github.gcacace.signaturepad.views.SignaturePad;
 import com.google.firebase.crash.FirebaseCrash;
 import com.olam.digital.ofis.authentication.AuthenticationHelper;
+import com.olam.digital.ofis.gps.GPSListener;
+import com.olam.digital.ofis.gps.GPSTracker;
+import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
+import com.olam.digital.ofis.gps.utils.GPSConstants;
+import com.olam.digital.ofis.gps.utils.GPSUtils;
+import com.olam.digital.ofis.logging.FabricLogsWriter;
 import com.olam.digital.ofis.recordpolygon.SharedPreferenceUtils;
 import com.olam.digital.ofis.R;
 
@@ -65,6 +72,7 @@ import java.lang.reflect.Method;
 import java.math.BigInteger;
 import java.net.URI;
 import java.nio.ByteBuffer;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -115,7 +123,7 @@ public class AddFarmerActivity extends BaseActivity {
     private Uri mCapturedImageURI = null, mCapturedSignatureImageURI = null;
 
     private String dateStrToSend;
-//    private EditText farmerDOB;
+    //    private EditText farmerDOB;
     private TextView farmerDOB;
     private EditText farmerIdPrefix;
     private LinearLayout phonenumbers;
@@ -132,6 +140,7 @@ public class AddFarmerActivity extends BaseActivity {
     private final static int MY_PROFILE_PIC_PERMISSIONS_REQUEST = 9998;
     private final static int MY_SIGNATURE_PIC_PERMISSIONS_REQUEST = 9999;
     private final static int MY_NATIONALID_PIC_PERMISSIONS_REQUEST = 9997;
+    private static final int REQUEST_CHECK_SETTINGS = 100;
 
     ArrayList<String> phoneNumberList;
     ArrayList<String> nationalidList;
@@ -155,17 +164,21 @@ public class AddFarmerActivity extends BaseActivity {
         }
     };
 
+
+    // Location captured related variable
+    private Location mCurrentLocation = null;
+    GPSListener gpsListener = null;
+    private GPSTracker gpsTracker = null;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_farmer);
-
         //noinspection ConstantConditions
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
         context = this;
         res = getResources();
-
         Intent intent = getIntent();
         editFarmerId = intent.getLongExtra(EDIT_FARMER_ID, 0);
         editMode = intent.getBooleanExtra(EDIT_MODE, false);
@@ -201,7 +214,7 @@ public class AddFarmerActivity extends BaseActivity {
         sectionSpinner = (Spinner) this.findViewById(R.id.spinner_section);
 
         dl.createBusinessHierarchySpinners(this, context, farmerIdPrefix, selectedFarmerGroup, selectedSection);
-        dl.createGeographyHierarchySpinners(this, context, farmerIdPrefix, selectedCountry, selectedRegion, selectedDistrict, selectedPlace, phonenumbers,true);
+        dl.createGeographyHierarchySpinners(this, context, farmerIdPrefix, selectedCountry, selectedRegion, selectedDistrict, selectedPlace, phonenumbers, true);
 
         farmerPhotoActionButton = (ImageButton) findViewById(R.id.farmerPhotoActionButton);
         farmerPhotoActionButton.setOnClickListener(new View.OnClickListener() {
@@ -272,6 +285,19 @@ public class AddFarmerActivity extends BaseActivity {
         bindSaveButton();
         bindConsentButton();
 
+        gpsListener = new GPSListener() {
+            @Override
+            public void onGPSClick(Location location) {
+                if (location != null) {
+                    mCurrentLocation = location;
+                }
+            }
+        };
+        gpsTracker = new GPSTracker(this, gpsListener);
+        if (gpsTracker.isGpsEnabled()){
+            gpsTracker.startLocationUpdateInitially();
+        }
+
     }
 
 
@@ -300,7 +326,6 @@ public class AddFarmerActivity extends BaseActivity {
         selectedPlace = (int) placeSpinner.getSelectedItemId();
         selectedFarmerGroup = (int) farmerGroupSpinner.getSelectedItemId();
         selectedSection = (int) sectionSpinner.getSelectedItemId();
-
 
 
         savedInstanceState.putInt(CAPTURED_SELECTED_COUNTRY, selectedCountry);
@@ -346,7 +371,7 @@ public class AddFarmerActivity extends BaseActivity {
         selectedSection = savedInstanceState.getInt(CAPTURED_SELECTED_SECTION, 0);
 
         dl.createBusinessHierarchySpinners(this, context, farmerIdPrefix, selectedFarmerGroup, selectedSection);
-        dl.createGeographyHierarchySpinners(this, context, farmerIdPrefix, selectedCountry, selectedRegion, selectedDistrict, selectedPlace, phonenumbers,true);
+        dl.createGeographyHierarchySpinners(this, context, farmerIdPrefix, selectedCountry, selectedRegion, selectedDistrict, selectedPlace, phonenumbers, true);
 
         super.onRestoreInstanceState(savedInstanceState);
     }
@@ -403,7 +428,7 @@ public class AddFarmerActivity extends BaseActivity {
     private void populateExistingValues(final Cursor existingItem) {
         EditText farmerName = (EditText) findViewById(R.id.farmerName);
         farmerName.setText(existingItem.getString(existingItem.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME)));
-        farmerName.setFilters(new InputFilter[] { filter });
+        farmerName.setFilters(new InputFilter[]{filter});
         farmerDOB = (TextView) findViewById(R.id.farmerDOB);
         dateStrToSend = existingItem.getString(existingItem.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_DOB));
         farmerDOB.setText(dateStrToSend);
@@ -542,14 +567,10 @@ public class AddFarmerActivity extends BaseActivity {
             String phonenumberValue = String.valueOf(phonenumber.getText()).replace(" ", "");
 
 
-            if(phonenumberValue.length()==0){
+            if (phonenumberValue.length() == 0) {
 
                 duplicatePhoneNumberValidationFlag = true;
-            }
-
-
-
-           else if (Collections.frequency(phoneNumberList,phonenumberValue.trim()) == 1) {
+            } else if (Collections.frequency(phoneNumberList, phonenumberValue.trim()) == 1) {
                 duplicatePhoneNumberValidationFlag = true;
             } else {
                 duplicatePhoneNumberValidationFlag = false;
@@ -605,7 +626,7 @@ public class AddFarmerActivity extends BaseActivity {
 //        }
         Long username = Long.parseLong(new AuthenticationHelper(AddFarmerActivity.this).getuserName());
         Long time = System.currentTimeMillis();
-        String  olamFarmerId = String.valueOf(username+time);
+        String olamFarmerId = String.valueOf(username + time);
 
 //        String olamFarmerId = farmerIdPrefix.getText().toString() + farmerIdSuffixValue;
 
@@ -646,29 +667,21 @@ public class AddFarmerActivity extends BaseActivity {
             String message = "";
             if (selectedCountry == 0) {
                 message = "Country";
-            }
-
-            else if (selectedRegion == 0) {
+            } else if (selectedRegion == 0) {
 
                 message = "Region";
 
-            }
-            else if (selectedDistrict == 0) {
+            } else if (selectedDistrict == 0) {
                 message = "District";
-            }
-
-            else if (selectedPlace == 0) {
+            } else if (selectedPlace == 0) {
 
                 message = "Place";
 
-            }
-            else if (selectedFarmerGroup == 0) {
+            } else if (selectedFarmerGroup == 0) {
 
                 message = "farmer group";
 
-            }
-
-            else if (selectedSection == 0) {
+            } else if (selectedSection == 0) {
                 message = "section";
 
             }
@@ -681,7 +694,7 @@ public class AddFarmerActivity extends BaseActivity {
         Spinner districtSpinner = (Spinner) findViewById(R.id.spinner_district);
         long district_id = districtSpinner.getSelectedItemId();
 
-         newPlaceName = (EditText) findViewById(R.id.newPlaceName);
+        newPlaceName = (EditText) findViewById(R.id.newPlaceName);
         Spinner spinner_place = (Spinner) findViewById(R.id.spinner_place);
         long place_id = spinner_place.getSelectedItemId();
         if (place_id == 0) {
@@ -752,7 +765,7 @@ public class AddFarmerActivity extends BaseActivity {
         boolean hasMainNumber = false;*/
         long countryId = countrySpinner.getSelectedItemId();
         long regionId = regionSpinner.getSelectedItemId();
-        long districtId=districtSpinner.getSelectedItemId();
+        long districtId = districtSpinner.getSelectedItemId();
         long farmerGroupId = farmerGroupSpinner.getSelectedItemId();
         for (int j = 0; j < phonerowscount; j++) {
             LinearLayout phonenumberrow = (LinearLayout) phonenumbers.getChildAt(j);
@@ -785,7 +798,7 @@ public class AddFarmerActivity extends BaseActivity {
 
         try {
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME, farmerNameValue);
-            values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID,olamFarmerId);
+            values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID, olamFarmerId);
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_CREATED_LOCALLY, 1);
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_DOB, dateStrToSend);
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_GENDER, genderValue);
@@ -798,6 +811,10 @@ public class AddFarmerActivity extends BaseActivity {
             values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_DISTRICT_ID, district_id);
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_CONSENT_FARMER, 1);
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_CONSENT_OTHERS, 1);
+            values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID, String.valueOf(countryId));
+            values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_REGIONID, String.valueOf(regionId));
+            values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_DISTRICTID, String.valueOf(districtId));
+            values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID, String.valueOf(farmerGroupId));
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID,String.valueOf(countryId));
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_REGIONID,String.valueOf(regionId));
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_DISTRICTID,String.valueOf(districtId));
@@ -879,7 +896,7 @@ public class AddFarmerActivity extends BaseActivity {
                 bindnumberradio(numberradio);
             }
 
-            if(existingNumbers.getCount()==0){
+            if (existingNumbers.getCount() == 0) {
 
                 LinearLayout phonenumberinclude = (LinearLayout) inflater.inflate(R.layout.phonenumber_entry, phonenumbers, false);
                 phonenumbers.addView(phonenumberinclude);
@@ -906,10 +923,10 @@ public class AddFarmerActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 LinearLayout phonenumberinclude = (LinearLayout) inflater.inflate(R.layout.phonenumber_entry, phonenumbers, false);
-                EditText diallingCode=null;
+                EditText diallingCode = null;
                 try {
-                     diallingCode = (EditText) phonenumbers.getChildAt(0).findViewById(R.id.dialling_code);
-                }catch (Exception e){
+                    diallingCode = (EditText) phonenumbers.getChildAt(0).findViewById(R.id.dialling_code);
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
                 if (diallingCode != null) {
@@ -1104,8 +1121,8 @@ public class AddFarmerActivity extends BaseActivity {
 
                 if (duplicatePhoneNumberValidation()) { //Duplicate Phone Number Validation....
 
-                            // get the entered values
-                            ContentValues values = validateValues();
+                    // get the entered values
+                    ContentValues values = validateValues();
 
                             if (values.size() > 0) {
                                 if (editMode) {
@@ -1121,12 +1138,21 @@ public class AddFarmerActivity extends BaseActivity {
                                         startActivity(intent);
                                     }
                                 } else {
+                                    // check the current location
+                                    if (mCurrentLocation == null || !gpsTracker.isGpsEnabled()) {
+                                        gpsTracker.getDeviceLocation();
+                                        return;
+                                    }
+
                                     long newFarmerId = dl.insertFarmer(values);
                                     if (newFarmerId != -1) {
                                         dl.addFarmerPhoneNumbers(newFarmerId, storeableNumbers);
                                         dl.addFarmerNationalids(context, newFarmerId, storeableNationalids, "1");
                                         Toast.makeText(context, res.getString(R.string.Farmer_Added), Toast.LENGTH_LONG).show();
 
+                                        if (mCurrentLocation != null) {
+                                            collectGPSPoint();
+                                        }
                                         ViewFarmerActivity.farmerId = newFarmerId;
                                         //SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(newFarmerId);
                                         finish();
@@ -1134,8 +1160,6 @@ public class AddFarmerActivity extends BaseActivity {
                                         startActivity(intent);
                                     }
                                 }
-
-
 
                             } else {
                                 if ((!consentFarmer.isChecked()) || (!consentOthers.isChecked())) {
@@ -1148,15 +1172,30 @@ public class AddFarmerActivity extends BaseActivity {
                     Toast.makeText(context, res.getString(R.string.duplicate_phone_number), Toast.LENGTH_LONG).show();
                 }
 
-
-
-
-
-
-
             }
         });
     }
+
+
+    private void collectGPSPoint() {
+        ContentValues geoContentValues = new GPSUtils().getGeoContentValues(GPSConstants.MODULE_CAPTURE_ADD_FARMER, String.valueOf(mCurrentLocation.getLatitude()), String.valueOf(mCurrentLocation.getLongitude()), new Timestamp(System.currentTimeMillis()).toString());
+        Long newTrackId = new GpsTrackerLogic().insertGeoDataDetails(context, geoContentValues);
+//        if (newTrackId==-1){
+//            try {
+//                FabricLogsWriter.printGpsCrashLog(GPSConstants.MODULE_CAPTURE_ADD_FARMER ,context);
+//            }catch (Exception e){}
+//        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        try {
+            gpsTracker.stopLocationUpdates();
+        }catch (Exception e){}
+
+    }
+
     /**
      * Generate unique ID from UUID.
      * @return long value representing UUID
@@ -1371,7 +1410,7 @@ public class AddFarmerActivity extends BaseActivity {
             startActivityForResult(takePicture, REQUEST_IMAGE_CAPTURE_NATIONALID);
         }
     }
-    
+
 
 
     private void bindFarmerPhotoButton() {
@@ -1502,6 +1541,11 @@ public class AddFarmerActivity extends BaseActivity {
             ImageButton farmerSignature = (ImageButton) findViewById(R.id.farmerSignature);
 
             switch (requestCode) {
+                case REQUEST_CHECK_SETTINGS:
+                    if (resultCode == -1) {
+                        gpsTracker.getDeviceLocation();
+                    }
+                    break;
                 case REQUEST_IMAGE_CAPTURE:
                     if (resultCode == RESULT_OK) {
                         setFullImageFromFilePath(getCurrentPhotoPath(), farmerPhoto, "portrait");

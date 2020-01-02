@@ -3,6 +3,7 @@ package com.olam.digital.ofis;
 import android.app.Activity;
 import android.content.Context;
 import android.support.multidex.MultiDexApplication;
+import android.view.Gravity;
 
 import com.crashlytics.android.Crashlytics;
 //import com.dynatrace.android.agent.Dynatrace;
@@ -41,9 +42,9 @@ public class EnableMultiDex extends MultiDexApplication {
         Toast.makeText(this,"Test Dynatrace", Toast.LENGTH_LONG).show();
         dtxAction.leaveAction();*/
 
-        Activity[] permissionCheckerActs = {new HomeActivity()};
+       // Activity[] permissionCheckerActs = {new HomeActivity()};
 
-        InApp.initiateWith(this, permissionCheckerActs);
+       // InApp.initiateWith(this, permissionCheckerActs).setPosition(Gravity.RIGHT,-1400);
 
     }
 
