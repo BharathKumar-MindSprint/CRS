@@ -36,8 +36,10 @@ import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.gps.utils.GPSUtils;
 
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 public class AddNewChildActivity extends BaseActivity implements  View.OnClickListener{
 
@@ -228,7 +230,9 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
 
 
     private void submitChild(String name) {
-        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        Date today = new Date();
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        String registereddate = format.format(today);
 
         ContentValues contentValues=new ContentValues();
         contentValues.put(OFISDBContract.ChildEntry.COLUMN_NAME_FARMER_ID, farmerId);
@@ -237,7 +241,7 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
         contentValues.put(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_GENDER, gender);
         contentValues.put(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_AGE_ON_YEAR, Calendar.getInstance().get(Calendar.YEAR));
         contentValues.put(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_SYNCED, 0);
-        contentValues.put(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_CREATEDAT, timestamp.toString());
+        contentValues.put(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_CREATEDAT, registereddate);
 
         long newChildId= new ChildLabourLogic().insertChildDetails(this,contentValues,farmerName);
         if (newChildId != -1){

@@ -2880,6 +2880,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         jsonObject.put("age", child.getString(child.getColumnIndex(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_AGE)));
                         jsonObject.put("gender", child.getString(child.getColumnIndex(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_GENDER)));
                         jsonObject.put("ageOnYear", child.getString(child.getColumnIndex(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_AGE_ON_YEAR)));
+                        jsonObject.put("registeredDate", child.getString(child.getColumnIndex(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_CREATEDAT)));
                     } catch (Exception e) {
 
                     }
@@ -3905,25 +3906,24 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 // JSONObject farmerResponse = response.getJSONObject("farmer");
 
                                 //new
-                                JSONArray jsonResponse=new JSONArray(postResponse.body().string());
-                                JSONObject jsonObject1=jsonResponse.getJSONObject(0);
-                                /*String farmUniqueID=SharedPreferenceUtils
-                                        .getInstance(context)
-                                        .getFarmerID(finalTempOlamFarmerID);*/
-//                                SharedPreferenceUtils.getInstance(context).setFarmerID(jsonObject1.getString("olamFarmerId"), String.valueOf(farmUniqueID));
+                                JSONObject jsonResponse=new JSONObject(postResponse.body().string());
 
-                                dl.deleteNetworkQueueItem(networkQueueItemId);
-                                statusMessage = res.getString(R.string.item_synced);
-                                msg.what = 1;
-                                msg.arg1 = total;
-                                msg.arg2 = HomeActivity.progressItem = progress + 1;
-                                msg.obj = statusMessage;
-                                handler.dispatchMessage(msg);
-                                // update the cursor if this is part of a multi-sync
-                                if (originalSyncRequestItemId == null) {
-                                    getNetworkQueue(null);
+                                String response = jsonResponse.getString("responce");
+                                if(response.equalsIgnoreCase("200")){
+                                    dl.deleteNetworkQueueItem(networkQueueItemId);
+                                    statusMessage = res.getString(R.string.item_synced);
+                                    msg.what = 1;
+                                    msg.arg1 = total;
+                                    msg.arg2 = HomeActivity.progressItem = progress + 1;
+                                    msg.obj = statusMessage;
+                                    handler.dispatchMessage(msg);
+                                    // update the cursor if this is part of a multi-sync
+                                    if (originalSyncRequestItemId == null) {
+                                        getNetworkQueue(null);
+                                    }
+                                    syncNetworkQueue(originalSyncRequestItemId, handler);
                                 }
-                                syncNetworkQueue(originalSyncRequestItemId, handler);
+
                             } else {
                                 try {
                                     FabricLogsWriter.printCrashLog(TAG, endpoint,postResponse.code(),"Request : "+jsonArray.toString() + " Response  " +postResponse.networkResponse().toString(),context);
