@@ -149,8 +149,13 @@ public class ChildLabourLogic {
 
                         if (submittedModule.has("surveyCode")) {
                             String surveyCode=submittedModule.getString("surveyCode");
-                            if (surveyCode!=null && !surveyCode.equalsIgnoreCase("") )
-                            submittedModulesList.add(surveyCode);
+                            if (surveyCode!=null && !surveyCode.equalsIgnoreCase("") ) {
+//                          OCLMRS R2S3 - enable survey if parameter is true. If true, not add into list to enable survey
+//                            String status = submittedModule.getString("surveyEnableFlag");
+//                                if( ! status.equalsIgnoreCase("true")) {
+                                    submittedModulesList.add(surveyCode);
+//                                }
+                            }
                         }
                     }
 
