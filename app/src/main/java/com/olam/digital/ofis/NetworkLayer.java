@@ -1745,19 +1745,21 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                             if (moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE)).equalsIgnoreCase("repeater")) {
                                 Cursor subAnswers = dl.getAnswersByModuleIdAndParentQuestionId(farmerModuleId, moduleAnswers.getInt(moduleAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID)));
-
+                                int j=1;
                                 if (subAnswers.getCount() > 0) {
                                     JSONArray subAnswersArray = new JSONArray();
                                     JSONArray subAnswersAnswerArray = new JSONArray();
 
                                     int repeaterItemPosition = 1;
                                     while (subAnswers.moveToNext()) {
+
                                         questions_included.add(subAnswers.getInt(subAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID)));
                                         JSONObject subAnswer = new JSONObject();
                                         JSONObject displayConfig = new JSONObject(subAnswers.getString(subAnswers.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION)));
 
                                         if (subAnswers.getInt(subAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_REPEATER_ITEM_POSITION)) > repeaterItemPosition) {
                                             // start new subAnswersAnswerArray
+                                            j++;
                                             subAnswersArray.put(subAnswersAnswerArray);
                                             subAnswersAnswerArray = new JSONArray();
                                         }
@@ -1767,6 +1769,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                         subAnswer.put(OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID, subAnswers.getInt(subAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID)));
                                         subAnswer.put(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_REPORTING_YEAR, subAnswers.getInt(subAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_REPORTING_YEAR)));
                                         subAnswer.put(OFISDBContract.AnswerEntry.COLUMN_NAME_OLAM_FARMER_ID, subAnswers.getString(subAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
+                                        subAnswer.put("repeaterItemGroup",j);
                                         String subAnswerDatatype = subAnswers.getString(subAnswers.getColumnIndex(OFISDBContract.DatatypesEntry.COLUMN_NAME_DATATYPE_NAME));
                                         if (subAnswerDatatype.equalsIgnoreCase("int") || subAnswerDatatype.equalsIgnoreCase("boolean")) {
                                             subAnswer.put("answer", subAnswers.getInt(subAnswers.getColumnIndex("answer_" + subAnswerDatatype)));
