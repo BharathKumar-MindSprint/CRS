@@ -160,15 +160,24 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                 textView.setText(res.getString(R.string.ModuleStatus));
 
             }else if (cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals("Signature")) {
+                boolean updateWaiting = dl.networkEntryTypeExistsByFarmerId("Signature", currentFarmer.getLong(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)));
 
-                imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_childsurvey));
-                enabledItem.setText("true");
+                if(updateWaiting|| currentFarmer.getInt(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_SYNCED)) == 0) {
+                    imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_completed));
+                    enabledItem.setText("false");
 
-                linearLayout.setBackgroundResource(R.drawable.list_item);
-                moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
-                textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
-                textView.setText(res.getString(R.string.update_signature_hint));
-                //}
+                    linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
+                    moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                    textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                }else{
+                    imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_childsurvey));
+                    enabledItem.setText("true");
+
+                    linearLayout.setBackgroundResource(R.drawable.list_item);
+                    moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
+                    textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
+                    textView.setText(res.getString(R.string.update_signature_hint));
+                }
             }else if (cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals("National_ID")) {
 
                 imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_childsurvey));
