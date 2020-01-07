@@ -41,6 +41,7 @@
                         android:id="@+id/nationalidphoto"
                         android:layout_width="74dp"
                         android:tooltipText="@string/captureid"
+                        android:background="@drawable/ic_capture_id_defaulr"
                         android:layout_height="94dp"/>
 
                     <LinearLayout

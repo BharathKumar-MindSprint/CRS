@@ -68,7 +68,7 @@
             android:layout_width="match_parent"
             android:layout_above="@+id/ll_footer"
             android:layout_below="@+id/tv_info"
-            android:background="@drawable/border_signature_bg"
+            android:background="@drawable/ic_signature_bg"
             android:layout_height="match_parent"
             android:layout_margin="@dimen/margin_10"/>
 
