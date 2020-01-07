@@ -136,6 +136,9 @@ public class ChildSurveyRecyclerAdapter extends RecyclerView.Adapter<ChildSurvey
             } else {
                 holder.surveyLayout.setEnabled(false);
             }
+            if(childrenDTO.getStatus().equalsIgnoreCase(ChildLabourUtils.NOT_IN_CL)){
+                holder.surveyLayout.setEnabled(false);
+            }
         }
 
 

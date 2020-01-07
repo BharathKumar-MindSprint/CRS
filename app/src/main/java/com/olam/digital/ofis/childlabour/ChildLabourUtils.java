@@ -30,6 +30,7 @@ public class ChildLabourUtils {
     public static final String FALSE = "false";
     public static final String ACTION_DATE = "actionDate";
     public static final String CHILD_LABOUR_ACTION_TICK_LIST = "actionTickList";
+    public static final String NOT_IN_CL = "Not in CL";
 
     public static boolean isChildEnumerator=false;
 
