@@ -535,7 +535,8 @@
     <string name="nationalidno">National ID</string>
     <string name="captureid">Capture ID</string>
 
-    <string name="duplicate_nationalids">Duplicate National ID TYPE is not allow. Please check national id entries</string>
+    <string name="duplicate_nationalids">Duplicate National ID TYPE is not allowed. Please check national id entries</string>
+    <string name="enter_nationalids">Please enter National ID details</string>
     <string name="update_signature">Update Signature</string>
     <string name="update_signature_hint">Tap to update</string>
     <string name="add_nationalid">Add National ID</string>
@@ -547,6 +548,6 @@
     <string name="nid_photo_select">Please capture photo for National ID</string>
     <string name="nid_value_enter">Please enter National ID</string>
     <string name="clear">Clear</string>
-
+    <string name="nid_updated_successfully">NationalID Updated Successfully</string>
 
 </resources>

@@ -842,8 +842,8 @@ public class OFISDBContract {
         public static final String TABLE_NAME = "farmernationalids";
         public static final String COLUMN_NAME_ID = "id";
         public static final String COLUMN_NAME_FARMER_ID = "farmerId";
-        public static final String COLUMN_NID_TYPE = "nationalidtype";
-        public static final String COLUMN_NID_NUMBER = "nationalidNumber";
+        public static final String COLUMN_NID_TYPE = "nationalIdType";
+        public static final String COLUMN_NID_NUMBER = "nationalIdNumber";
         public static final String COLUMN_NID_PHOTO = "photo";
 //        public static final String COLUMN_CREATEDDATE = "createddate";
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(

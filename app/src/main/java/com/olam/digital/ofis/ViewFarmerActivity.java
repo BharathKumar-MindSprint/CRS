@@ -1453,7 +1453,14 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                     } else if (recordedLng != null && recordedLng.getText().equals("National_ID")) {
                         Intent in = new Intent(this, AddNationalidActivity.class);
                         Bundle bundle=new Bundle();
+                        bundle.putString(FARMER_NAME, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME)));
                         bundle.putLong(ChildLabourUtils.CHILD_FARMER_ID, farmerId);
+                        boolean updateWaiting = dl.networkEntryTypeExistsByFarmerId("National_ID", farmerId);
+                        if(updateWaiting){
+                            bundle.putBoolean("edit_mode", true);
+                        }else {
+                            bundle.putBoolean("edit_mode", false);
+                        }
                         in.putExtras(bundle);
                         startActivity(in);
                     } else {
@@ -1508,6 +1515,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
             @Override
             public void onStartSigning() {
                 //Event triggered when the pad is touched
+                isSigned = false;
             }
 
             @Override
