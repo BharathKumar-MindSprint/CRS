@@ -732,6 +732,7 @@ class OFISDB extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL("drop table IF EXISTS tasks;");
         sqLiteDatabase.execSQL("drop table IF EXISTS Subquestionanswer;");
         sqLiteDatabase.execSQL("drop table IF EXISTS allCountries;");
+
         sqLiteDatabase.execSQL("drop table IF EXISTS products_sip;");
 
         sqLiteDatabase.execSQL("drop table IF EXISTS children;");
@@ -739,9 +740,13 @@ class OFISDB extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL("drop table IF EXISTS farmer_child_modules;");
         sqLiteDatabase.execSQL("drop table IF EXISTS child_answers");
         sqLiteDatabase.execSQL("drop table IF EXISTS child_visit");
+
         sqLiteDatabase.execSQL("drop table IF EXISTS nationalids");
         sqLiteDatabase.execSQL("drop table IF EXISTS farmernationalids");
         sqLiteDatabase.execSQL("drop table IF EXISTS signature");
+
+
+
         onCreate(sqLiteDatabase);
     }
 }
