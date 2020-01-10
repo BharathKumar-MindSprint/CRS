@@ -63,8 +63,8 @@ android {
         //noinspection OldTargetApi
         targetSdkVersion 27
         multiDexEnabled true
-        versionCode 23
-        versionName "10.0.16"
+        versionCode 51
+        versionName "10.0.44"
     }
 
     buildTypes {
@@ -276,7 +276,7 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.8.0'
     implementation 'com.google.code.gson:gson:2.8.5'
     implementation 'com.android.support.constraint:constraint-layout:1.1.2'
-
+    implementation 'com.github.gcacace:signature-pad:1.2.1'
 
 }
 

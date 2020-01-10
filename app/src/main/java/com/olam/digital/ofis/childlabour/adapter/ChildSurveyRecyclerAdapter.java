@@ -136,6 +136,9 @@ public class ChildSurveyRecyclerAdapter extends RecyclerView.Adapter<ChildSurvey
             } else {
                 holder.surveyLayout.setEnabled(false);
             }
+            if(childrenDTO.getStatus().equalsIgnoreCase(ChildLabourUtils.NOT_IN_CL)){
+                holder.surveyLayout.setEnabled(false);
+            }
         }
 
 
@@ -149,9 +152,11 @@ public class ChildSurveyRecyclerAdapter extends RecyclerView.Adapter<ChildSurvey
                 for (int i = 0; i < submittedModulesArray.length(); i++) {
                     JSONObject submittedModule = submittedModulesArray.getJSONObject(i);
                  //   JSONObject submittedModuleDetails = submittedModule.getJSONObject("module");
-
-
-                    if (submittedModule.has("id") && submittedModule.getInt("id") == currentId) {
+                    boolean val = false;
+                    if (submittedModule.has("surveyEnableFlag")){
+                         val = submittedModule.getBoolean("surveyEnableFlag");
+                    }
+                    if (submittedModule.has("id") && submittedModule.getInt("id") == currentId && !val) {
                         disable_entry = true;
 
                         if (disable_entry) {

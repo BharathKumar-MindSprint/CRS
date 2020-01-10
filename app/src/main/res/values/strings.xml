@@ -510,6 +510,8 @@
     <string name="age">Age</string>
     <string name="add">Add</string>
     <string name="checking_child_enumerator">Checking Child Enumerator</string>
+    <string name="download_nationalid_enumerator">Downloading NationalID details</string>
+    <string name="download_nationalidtype_enumerator">Downloading NationalID Types</string>
     <string name="visit_detail">Visit Detail</string>
     <string name="child_visit_details_inserted">Child Visit Details Successfully Registered</string>
     <string name="child_register_successfully">Child registered Successfully</string>
@@ -529,8 +531,25 @@
     <string name="downloading_child_data">Downloading Child Enumerator Details</string>
     <string name="no_child_registered">Register Child to enable the surveys</string>
     <string name="please_select_Age">Please select Age</string>
+
+    <string name="nationalid">National ID</string>
+    <string name="idtype">ID Type</string>
+    <string name="nationalidno">National ID</string>
+    <string name="captureid">Capture ID</string>
+
+    <string name="duplicate_nationalids">Duplicate National ID TYPE is not allowed. Please check national id entries</string>
+    <string name="enter_nationalids">Please enter National ID details</string>
+    <string name="update_signature">Update Signature</string>
+    <string name="update_signature_hint">Tap to update</string>
+    <string name="add_nationalid">Add National ID</string>
+    <string name="view_nationalid">View National ID</string>
     <string name="capture_my_location_button_text">Capture My location</string>
     <string name="enumerator_location_capture">Enumerator Location Capture</string>
-
+    <string name="nationalidtype_selection">Please select National ID Type</string>
+    <string name="nationalidtype_alreadyselected">National ID Type already selected</string>
+    <string name="nid_photo_select">Please capture photo for National ID</string>
+    <string name="nid_value_enter">Please enter National ID</string>
+    <string name="clear">Clear</string>
+    <string name="nid_updated_successfully">NationalID Updated Successfully</string>
 
 </resources>

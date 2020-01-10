@@ -318,7 +318,16 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ViewFarmerActivity" />
         </activity>
-
+        <activity
+            android:name=".AddNationalidActivity"
+            android:label="@string/add_nationalid"
+            android:parentActivityName=".ViewFarmerActivity"
+            android:screenOrientation="portrait"
+            tools:ignore="UnusedAttribute">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ViewFarmerActivity" />
+        </activity>
         <activity
             android:name="com.olam.digital.ofis.childlabour.ViewChildLabourSurveyActivity"
             android:label="@string/child_details"

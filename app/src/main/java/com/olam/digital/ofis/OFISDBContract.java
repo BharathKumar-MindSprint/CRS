@@ -591,6 +591,43 @@ public class OFISDBContract {
         );
     }
 
+    // NationalID details Table Start
+    public static abstract class NationalIDEntry implements BaseColumns {
+        public static final String TABLE_NAME = "nationalids";
+        public static final String COLUMN_NAME_ID = "id";
+        public static final String COLUMN_NAME_NID_TYPE = "type";
+        public static final String COLUMN_NAME_NID_LIMIT = "nationalIdLimit";
+        public static final String COLUMN_NAME_PHOTO_REQUIRED = "photoRequired";
+        public static final String COLUMN_NAME_TYPE_FR = "typeFr";
+        public static final String COLUMN_NAME_TYPE_ES = "typeEs";
+        public static final String COLUMN_NAME_TYPE_PT = "typePt";
+        public static final String COLUMN_NAME_TYPE_ID = "typeId";
+        public static final String COLUMN_NAME_TYPE_TR = "typeTr";
+        public static final String COLUMN_NAME_TYPE_LO = "typeLo";
+        public static final String COLUMN_NAME_TYPE_VI = "typeVi";
+        public static final String COLUMN_NAME_TYPE_TH = "typeTh";
+        public static final String COLUMN_NAME_NID_ACTIVE = "active";
+
+
+        public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
+                new ArrayList<String>() {{
+                    add(COLUMN_NAME_ID);
+                    add(COLUMN_NAME_NID_TYPE);
+                    add(COLUMN_NAME_NID_LIMIT);
+                    add(COLUMN_NAME_PHOTO_REQUIRED);
+                    add(COLUMN_NAME_TYPE_FR);
+                    add(COLUMN_NAME_TYPE_ES);
+                    add(COLUMN_NAME_TYPE_PT);
+                    add(COLUMN_NAME_TYPE_ID);
+                    add(COLUMN_NAME_TYPE_TR);
+                    add(COLUMN_NAME_TYPE_LO);
+                    add(COLUMN_NAME_TYPE_VI);
+                    add(COLUMN_NAME_TYPE_TH);
+                    add(COLUMN_NAME_NID_ACTIVE);
+                }}
+        );
+    }
+
     // Child Registration Table Start
     public static abstract class ChildEntry implements BaseColumns {
         public static final String TABLE_NAME = "children";
@@ -709,6 +746,8 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_FARM_PLOTS = "location";
         public static final String COLUMN_NAME_CONSENT_FARMER = "consent_farmer";
         public static final String COLUMN_NAME_CONSENT_OTHERS = "consent_others";
+//        register date added - 31-12-2019 - ramesh
+        public static final String COLUMN_NAME_REGISTER_DATE = "registeredDate";
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
                     add(COLUMN_NAME_ID);
@@ -735,6 +774,7 @@ public class OFISDBContract {
                     add(COLUMN_NAME_FARMERGROUPID);
                     add(COLUMN_NAME_REGIONID);
                     add(COLUMN_NAME_PRODUCT_ID);
+                    add(COLUMN_NAME_REGISTER_DATE);
 
                 }}
         );
@@ -798,6 +838,26 @@ public class OFISDBContract {
         );
     }
 
+    public static abstract class FarmerNationalIDs implements BaseColumns {
+        public static final String TABLE_NAME = "farmernationalids";
+        public static final String COLUMN_NAME_ID = "id";
+        public static final String COLUMN_NAME_FARMER_ID = "farmerId";
+        public static final String COLUMN_NID_TYPE = "nationalIdType";
+        public static final String COLUMN_NID_NUMBER = "nationalIdNumber";
+        public static final String COLUMN_NID_PHOTO = "photo";
+//        public static final String COLUMN_CREATEDDATE = "createddate";
+        public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
+                new ArrayList<String>() {{
+                    add(COLUMN_NAME_ID);
+                    add(COLUMN_NAME_FARMER_ID);
+                    add(COLUMN_NID_TYPE);
+                    add(COLUMN_NID_NUMBER);
+                    add(COLUMN_NID_PHOTO);
+//                    add(COLUMN_CREATEDDATE);
+                }}
+        );
+    }
+
     public static abstract class Subquestionanswer implements BaseColumns {
         public static final String TABLE_NAME = "Subquestionanswer";
         public static final String COLUMN_NAME_ID = "id";
@@ -854,6 +914,21 @@ public class OFISDBContract {
                     add(COLUMN_NAME_REGION_NAME);
                     add(COLUMN_NAME_ID);
                     add(COLUMN_NAME_COUNTRY_ID);
+                }}
+        );
+    }
+
+//    update signature
+    public static abstract class SignatureEntry implements BaseColumns {
+        public static final String TABLE_NAME = "signature";
+        public static final String COLUMN_NAME_ID = "id";
+        public static final String COLUMN_NAME_FAMRERID = "farmerId";
+        public static final String COLUMN_NAME_SIGNATURE = "signature";
+        public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
+                new ArrayList<String>() {{
+                    add(COLUMN_NAME_FAMRERID);
+                    add(COLUMN_NAME_ID);
+                    add(COLUMN_NAME_SIGNATURE);
                 }}
         );
     }
@@ -982,6 +1057,7 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_FARMER_CHILD_ID = "farmer_child_id";
         public static final String COLUMN_NAME_FARMER_SURVEY_CODE = "survey_code";
         public static final String COLUMN_NAME_IS_VILLAGE = "is_village";
+        public static final String COLUMN_NAME_SIGNATURE = "signature";
 
 
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
@@ -1029,6 +1105,7 @@ public class OFISDBContract {
                     add(COLUMN_NAME_FARMER_CHILD_ID);
                     add(COLUMN_NAME_FARMER_SURVEY_CODE);
                     add(COLUMN_NAME_IS_VILLAGE);
+                    add(COLUMN_NAME_SIGNATURE);
                 }}
         );
 
@@ -1856,6 +1933,9 @@ public class OFISDBContract {
                 put(FarmerChildModulesEntry.TABLE_NAME,FarmerChildModulesEntry.COLUMN_LIST);
                 put(AnswerChildEntry.TABLE_NAME,AnswerChildEntry.COLUMN_LIST);
                 put(ChildVisitDetails.TABLE_NAME, ChildVisitDetails.COLUMN_LIST);
+                put(NationalIDEntry.TABLE_NAME, NationalIDEntry.COLUMN_LIST);
+                put(FarmerNationalIDs.TABLE_NAME, FarmerNationalIDs.COLUMN_LIST);
+                put(SignatureEntry.TABLE_NAME, SignatureEntry.COLUMN_LIST);
             }};
 
 

@@ -2857,6 +2857,23 @@ public class DynamicQuestions {
         return displayType;
     }
 
+    private boolean repeaterItemMobileVisibility(Cursor repeaterQuestions) {
+        boolean displayType = true;
+        try {
+            JSONObject displayConfig = new JSONObject(repeaterQuestions.getString(repeaterQuestions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION)));
+            if (displayConfig.has("display")) {
+                JSONObject display = displayConfig.getJSONObject("display");
+                if (display.has("mobile_visibility")) {
+                    displayType = display.getBoolean("mobile_visibility");
+                }
+            }
+        } catch (JSONException e) {
+            FirebaseCrash.report(new Exception("DynamicQuestions: Error getting repeater item type display config", e));
+            e.printStackTrace();
+        }
+        return displayType;
+    }
+
     private void renderRepeaterItems(int questionId, long repetitions, LinearLayout repeaterItemsWrapper, long farmerId, String olamFarmerId, long farmerModuleId, Resources res) {
         Cursor repeaterQuestions = dl.getRepeaterItemsForQuestion(questionId);
         // Cursor repeaterQuestions = dl.getRepeaterItemsForQuestion1(questionId);
@@ -2875,30 +2892,31 @@ public class DynamicQuestions {
                         tv.setText(String.valueOf(i));
 
                         while (repeaterQuestions.moveToNext()) {
-                            String displayType = repeaterItemDisplayType(repeaterQuestions);
-                            Cursor repeaterAnswers = null;
-                            try {
-                                repeaterAnswers = dl.getRepeaterAnswersForQuestionByPosition(repeaterQuestions.getInt(repeaterQuestions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID)), i, farmerId, farmerModuleId);
-                                if (repeaterAnswers.getCount() > 0) {
-                                    repeaterAnswers.moveToFirst();
-                                }
+                            if(repeaterItemMobileVisibility(repeaterQuestions)) {
+                                String displayType = repeaterItemDisplayType(repeaterQuestions);
+                                Cursor repeaterAnswers = null;
+                                try {
+                                    repeaterAnswers = dl.getRepeaterAnswersForQuestionByPosition(repeaterQuestions.getInt(repeaterQuestions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID)), i, farmerId, farmerModuleId);
+                                    if (repeaterAnswers.getCount() > 0) {
+                                        repeaterAnswers.moveToFirst();
+                                    }
 
-                                if (displayType.toLowerCase().equals("datepicker")) {
-                                    renderDatePickerQuestion(repeaterQuestions, true, repeaterItemsInner, questionId, i, repeaterAnswers);
-                                } else if (displayType.toLowerCase().equals("decimal")) {
-                                    renderTextBoxQuestion(repeaterQuestions, true, repeaterItemsInner, questionId, i, repeaterAnswers);
-                                } else if (displayType.toLowerCase().equals("dropdown")) {
-                                    renderDropDownQuestion(repeaterQuestions, true, repeaterItemsInner, questionId, i, repeaterAnswers, res);
-                                } else if (displayType.toLowerCase().equals("textbox")) {
-                                    renderTextBoxQuestion(repeaterQuestions, true, repeaterItemsInner, questionId, i, repeaterAnswers);
-                                } else if (displayType.toLowerCase().equals("yesno")) {
-                                    renderYesNoQuestion(repeaterQuestions, true, repeaterItemsInner, questionId, i, repeaterAnswers, res);
-                                } else if (displayType.toLowerCase().equals("photoupload")) {
-                                    renderPhotoUploadQuestion(repeaterQuestions, true, repeaterItemsInner, questionId, i, repeaterAnswers, res);
+                                    if (displayType.toLowerCase().equals("datepicker")) {
+                                        renderDatePickerQuestion(repeaterQuestions, true, repeaterItemsInner, questionId, i, repeaterAnswers);
+                                    } else if (displayType.toLowerCase().equals("decimal")) {
+                                        renderTextBoxQuestion(repeaterQuestions, true, repeaterItemsInner, questionId, i, repeaterAnswers);
+                                    } else if (displayType.toLowerCase().equals("dropdown")) {
+                                        renderDropDownQuestion(repeaterQuestions, true, repeaterItemsInner, questionId, i, repeaterAnswers, res);
+                                    } else if (displayType.toLowerCase().equals("textbox")) {
+                                        renderTextBoxQuestion(repeaterQuestions, true, repeaterItemsInner, questionId, i, repeaterAnswers);
+                                    } else if (displayType.toLowerCase().equals("yesno")) {
+                                        renderYesNoQuestion(repeaterQuestions, true, repeaterItemsInner, questionId, i, repeaterAnswers, res);
+                                    } else if (displayType.toLowerCase().equals("photoupload")) {
+                                        renderPhotoUploadQuestion(repeaterQuestions, true, repeaterItemsInner, questionId, i, repeaterAnswers, res);
+                                    }
+                                } finally {
+                                    if (repeaterAnswers != null) repeaterAnswers.close();
                                 }
-                            }finally {
-                                if(repeaterAnswers != null)
-                                    repeaterAnswers.close();
                             }
                         }
 
