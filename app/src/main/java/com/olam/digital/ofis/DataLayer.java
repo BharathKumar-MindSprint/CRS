@@ -1273,7 +1273,7 @@ public class DataLayer {
 
     }
 
-    void addFarmerNationalids(Context context,long farmerId, JSONArray storeableNationalids, String status) {
+    void addFarmerNationalids(Context context,long farmerId, JSONArray storeableNationalids, String status, String farmername) {
         int arrayLength = storeableNationalids.length();
 
         try {
@@ -1283,16 +1283,21 @@ public class DataLayer {
                 values.put(OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID, farmerId);
                 values.put(OFISDBContract.FarmerNationalIDs.COLUMN_NID_TYPE, storeableNumber.getInt("nationalidtype"));
                 values.put(OFISDBContract.FarmerNationalIDs.COLUMN_NID_NUMBER, storeableNumber.getString("nationalidNumber"));
-                values.put(OFISDBContract.FarmerNationalIDs.COLUMN_NID_PHOTO, storeableNumber.getString("photo"));
-                db.insert(OFISDBContract.FarmerNationalIDs.TABLE_NAME, null, values);
+                if(storeableNumber.has("photo")) {
+                    values.put(OFISDBContract.FarmerNationalIDs.COLUMN_NID_PHOTO, storeableNumber.getString("photo"));
+                }
+                if(storeableNumber.getInt("nationalidtype") != 0) {
+                    db.insert(OFISDBContract.FarmerNationalIDs.TABLE_NAME, null, values);
+                }
+                if(status.equalsIgnoreCase("2")){
+                    updateNetworkQueueNIDEntry(context, farmerId, storeableNumber.getInt("nationalidtype"),farmername);
+                }
             }
         } catch (JSONException e) {
             FirebaseCrash.report(new Exception("DataLayer: Error setting phone number storage values", e));
             e.printStackTrace();
         }
-        if(status.equalsIgnoreCase("2")){
-            updateNetworkQueueNIDEntry(context, farmerId);
-        }
+
     }
 
     void updateFarmerPhoneNumbers(long farmerId, JSONArray storeableNumbers) {
@@ -1303,11 +1308,11 @@ public class DataLayer {
     }
 
 
-    void updateFarmerNationalids(Context context,long farmerId, JSONArray storeableNationalids, String status) {
+    void updateFarmerNationalids(Context context,long farmerId, JSONArray storeableNationalids, String status, String farmername) {
         String whereClause = OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID + " = ?";
         String[] whereArgs = new String[]{String.valueOf(farmerId)};
         db.delete(OFISDBContract.FarmerNationalIDs.TABLE_NAME, whereClause, whereArgs);
-        addFarmerNationalids(context,farmerId, storeableNationalids,status);
+        addFarmerNationalids(context,farmerId, storeableNationalids,status,farmername);
     }
 
     Cursor getDiallingCodeByPlaceId(long placeId) {
@@ -1993,6 +1998,14 @@ public class DataLayer {
         String[] columns = new String[]{"*"};
         String whereClause = OFISDBContract.NationalIDEntry.COLUMN_NAME_NID_TYPE + " = ? ";
         String[] whereArgs = new String[]{type};
+
+        return db.query(OFISDBContract.NationalIDEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+    }
+
+    public Cursor getNIDById(int id) {
+        String[] columns = new String[]{"*"};
+        String whereClause = OFISDBContract.NationalIDEntry.COLUMN_NAME_ID + " = ? ";
+        String[] whereArgs = new String[]{String.valueOf(id)};
 
         return db.query(OFISDBContract.NationalIDEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
     }
@@ -4127,13 +4140,28 @@ try {
         return newEntry;
     }
 
-    private long updateNetworkQueueNIDEntry(Context context,long farmerId) {
+    // getting nationalids type id values
+    public String getNidTypebyid(int id) {
+        String type=null;
+        Cursor  nid=getNIDById(id);
+        if (nid.getCount() > 0) {
+            nid.moveToFirst();
+            type= nid.getString(nid.getColumnIndex(OFISDBContract.NationalIDEntry.COLUMN_NAME_NID_TYPE));
+        }
+        return  type;
+    }
+
+    private long updateNetworkQueueNIDEntry(Context context, long farmerId, int nationalidtype, String farmername) {
         long newEntry;
         ContentValues networkQueueValues = new ContentValues();
         networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "National_ID");
-        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, Utilities.getEnumeratorNameSharedPrefs(context));
+        /*networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, Utilities.getEnumeratorNameSharedPrefs(context));
         networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, context.getResources().getString(R.string.add_nationalid));
         networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID, Utilities.getFromSharedPrefs(context));
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID, farmerId);*/
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, context.getResources().getString(R.string.nationalid));
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, farmername);
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID, getNidTypebyid(nationalidtype));
         networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID, farmerId);
 
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());

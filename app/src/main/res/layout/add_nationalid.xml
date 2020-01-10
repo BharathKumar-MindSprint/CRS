@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="125dp"
     android:weightSum="13">
 
 
@@ -41,7 +41,7 @@
                         android:id="@+id/nationalidphoto"
                         android:layout_width="74dp"
                         android:tooltipText="@string/captureid"
-                        android:background="@drawable/ic_capture_id_defaulr"
+                        android:src="@drawable/ic_capture_id_defaulr"
                         android:layout_height="94dp"/>
 
                     <LinearLayout
@@ -79,6 +79,7 @@
                     android:hint="@string/idtype"
                     android:layout_weight="1"
                     android:layout_margin="@dimen/ofis_input_field_bottom_margin"
+                    android:theme="@style/AppCompactTheme"
                     android:nextFocusDown="@+id/spinner_region" />
 
                 <EditText
@@ -87,7 +88,6 @@
                     android:inputType="textCapWords"
                     android:id="@+id/nidnumber"
                     android:textSize="@dimen/ofis_input_field_text"
-                    android:digits="abcdefghijklmnopqrstuvwxyz1234567890 "
                     android:hint="@string/nationalidno"
                     android:layout_margin="@dimen/ofis_input_field_bottom_margin"/>
 
@@ -99,18 +99,18 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/deleteNationalid"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1.5"
         android:gravity="bottom|end">
     <ImageView
-        android:gravity="bottom|end"
+        android:id="@+id/deleteNationalid"
+        android:gravity="top|end"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:adjustViewBounds="true"
         android:scaleType="fitCenter"
-        android:layout_marginBottom="2dp"
+        android:layout_marginBottom="15dp"
         android:src="@drawable/ic_delete_item"
         android:contentDescription="@string/Delete_Item" />
     </LinearLayout>

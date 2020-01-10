@@ -121,7 +121,7 @@
                             android:layout_marginBottom="@dimen/ofis_med_pad"/>
 
 
-                        <LinearLayout
+                       <!-- <LinearLayout
                             android:layout_weight="10.8"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -129,7 +129,13 @@
                             android:animateLayoutChanges="true"
                             android:id="@+id/nationalids">
 
-                        </LinearLayout>
+                        </LinearLayout>-->
+
+                        <com.olam.digital.ofis.tasks.NonScrollListView
+                            android:layout_weight="10.8"
+                            android:id="@+id/list_nationalids"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"/>
                     </LinearLayout>
                     <LinearLayout
                         android:layout_width="30dp"
@@ -141,8 +147,8 @@
 
                         <ImageButton
                             android:id="@+id/addnid"
-                            android:layout_width="@dimen/small_button_width_height"
-                            android:layout_height="@dimen/small_button_width_height"
+                            android:layout_width="27dp"
+                            android:layout_height="27dp"
                             android:scaleType="fitXY"
                             android:layout_gravity="right|center"
                             android:background="@android:color/transparent"
@@ -231,8 +237,8 @@
 
                         <ImageButton
                             android:id="@+id/addNumber"
-                            android:layout_width="@dimen/small_button_width_height"
-                            android:layout_height="@dimen/small_button_width_height"
+                            android:layout_width="27dp"
+                            android:layout_height="27dp"
                             android:layout_marginTop="@dimen/phone_number_plus_offset"
                             android:layout_marginEnd="@dimen/ofis_bottom_section_padding_horizontal"
                             android:layout_marginRight="@dimen/ofis_bottom_section_padding_horizontal"
@@ -499,8 +505,8 @@
                         android:text="@string/Add_Signature"
                         android:id="@+id/captureSignature"
                         android:background="@color/ofis_action_button_background"
-                        android:drawableLeft="@drawable/ic_actionbutton_camera_small"
-                        android:drawableStart="@drawable/ic_actionbutton_camera_small"
+                        android:drawableRight="@drawable/ic_pen"
+                        android:drawableEnd="@drawable/ic_pen"
                         android:drawablePadding="2dp"
                         android:textColor="@color/ofis_base_font_white"
                         android:onClick="showSignatureDialog"
