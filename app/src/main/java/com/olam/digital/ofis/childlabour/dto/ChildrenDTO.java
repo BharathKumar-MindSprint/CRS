@@ -17,6 +17,7 @@ public class ChildrenDTO implements Serializable {
     private String submittedModules;
     private String createdAt;
     private String actionTicked;
+    private String moduleDTO;
 
     public String getModuleDTO() {
         return moduleDTO;
@@ -26,7 +27,7 @@ public class ChildrenDTO implements Serializable {
         this.moduleDTO = moduleDTO;
     }
 
-    private String moduleDTO;
+
 
     public String getActionTicked() {
         return actionTicked;
