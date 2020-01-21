@@ -121,7 +121,7 @@
                             android:layout_marginBottom="@dimen/ofis_med_pad"/>
 
 
-                       <!-- <LinearLayout
+                       <LinearLayout
                             android:layout_weight="10.8"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -129,13 +129,13 @@
                             android:animateLayoutChanges="true"
                             android:id="@+id/nationalids">
 
-                        </LinearLayout>-->
+                        </LinearLayout>
 
-                        <com.olam.digital.ofis.tasks.NonScrollListView
+                        <!--<com.olam.digital.ofis.tasks.NonScrollListView
                             android:layout_weight="10.8"
                             android:id="@+id/list_nationalids"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"/>
+                            android:layout_height="wrap_content"/>-->
                     </LinearLayout>
                     <LinearLayout
                         android:layout_width="30dp"

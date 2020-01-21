@@ -46,7 +46,13 @@ public class ChildSurveyRecyclerAdapter extends RecyclerView.Adapter<ChildSurvey
     private ChildrenDTO childrenDTO;
     private JSONArray actionTickedArray;
 
-    public ChildSurveyRecyclerAdapter(List<ChildModuleDto> childModuleDtoList, Context context, JSONArray submittedModules,ChildrenDTO childrenDTO,JSONArray actionTickedArray) throws JSONException {
+    private boolean householdFlag;
+    private boolean inspectionFlag;
+    private boolean followupFlag;
+
+
+
+    public ChildSurveyRecyclerAdapter(List<ChildModuleDto> childModuleDtoList, Context context, JSONArray submittedModules,ChildrenDTO childrenDTO,JSONArray actionTickedArray,JSONObject moduleDtoJson) throws JSONException {
         this.childModuleList = childModuleDtoList;
         this.currentDate=Calendar.getInstance();
         this.mContext = context;
@@ -60,6 +66,15 @@ public class ChildSurveyRecyclerAdapter extends RecyclerView.Adapter<ChildSurvey
         if (actionTickedArray !=null && actionTickedArray.length()>0){
             this.actionTickedArray=actionTickedArray;
         }
+
+        try {
+            if (moduleDtoJson!=null){
+                this.householdFlag=moduleDtoJson.getBoolean(ChildLabourUtils.HOUSEHOLD_ENABLED);
+                this.inspectionFlag=moduleDtoJson.getBoolean(ChildLabourUtils.INSPECTION_ENABLED);
+                this.followupFlag=moduleDtoJson.getBoolean(ChildLabourUtils.FOLLOWUP_ENABLED);
+            }
+        }catch (Exception e){}
+
     }
 
     public void setOnItemSurveyClickListener(OnItemSurveyListener clickListener) {
@@ -77,14 +92,16 @@ public class ChildSurveyRecyclerAdapter extends RecyclerView.Adapter<ChildSurvey
     public void onBindViewHolder(@NonNull ChildSurveyHolder holder, final int position) {
         final ChildModuleDto childModuleDto = childModuleList.get(position);
         holder.surveyName.setText(childModuleDto.getName());
-        boolean submitted = false;
-        boolean enabledFollowUp=false;
-        int currentId = Integer.parseInt(childModuleDto.get_id());
-//        holder.surveyLayout.clearFocus();
-//        if (position != 2)
-//            holder.surveyLayout.setEnabled(true);
-//        else
-//            holder.surveyLayout.setEnabled(false);
+
+        holder.surveyLayout.setEnabled(false);
+
+        // disable in follow up survey while register new child
+        try {
+            if (childModuleDto.getSurveyCode().equalsIgnoreCase(ChildLabourUtils.FOLLOWUP_SURVEY_CODE)) {
+                    holder.surveyLayout.setEnabled(false);
+            }
+        }catch (Exception e){}
+
 
         if(childModuleDto.getStatus_finished()!=null &&childModuleDto.getStatus_started()!=null) {
             try {
@@ -108,38 +125,37 @@ public class ChildSurveyRecyclerAdapter extends RecyclerView.Adapter<ChildSurvey
         }else{
             holder.statusIcon.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_childsurvey));
         }
+
 //                String disabled_months_string = childModuleDto.getDisabled_months();
 //                List<String> disabled_months = Arrays.asList(disabled_months_string.split("\\s*,\\s*"));
 
 
         // check after 3 months scenerio
         // Migrating code to above submitted modules
-        if (childModuleDto.getSurveyCode().equalsIgnoreCase(ChildLabourUtils.FOLLOWUP_SURVEY_CODE)) {
-            if (actionTickedArray != null) {
-                if (actionTickedArray.length() > 0) {
-                    try {
-                        JSONObject actionTick = actionTickedArray.getJSONObject(0);
-                        String actionTickDate = actionTick.getString(ChildLabourUtils.ACTION_DATE);
-                        String after3MonthsDate = ChildLabourUtils.getAfterThreeMonths(actionTickDate);
-                        if (Utilities.dateStringToMilliSeconds(after3MonthsDate) < Utilities.currentDateStringToMilliSeconds()) {
-                            holder.surveyLayout.setEnabled(true);
-                            enabledFollowUp=true;
-                        } else {
-                            holder.surveyLayout.setEnabled(false);
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    holder.surveyLayout.setEnabled(false);
-                }
-            } else {
-                holder.surveyLayout.setEnabled(false);
-            }
-            if(childrenDTO.getStatus().equalsIgnoreCase(ChildLabourUtils.NOT_IN_CL)){
-                holder.surveyLayout.setEnabled(false);
-            }
-        }
+//        if (childModuleDto.getSurveyCode().equalsIgnoreCase(ChildLabourUtils.FOLLOWUP_SURVEY_CODE)) {
+//            if (actionTickedArray != null) {
+//                if (actionTickedArray.length() > 0) {
+//                    try {
+//                        JSONObject actionTick = actionTickedArray.getJSONObject(0);
+//                        String actionTickDate = actionTick.getString(ChildLabourUtils.ACTION_DATE);
+//                        String after3MonthsDate = ChildLabourUtils.getAfterThreeMonths(actionTickDate);
+//                        if (Utilities.dateStringToMilliSeconds(after3MonthsDate) < Utilities.currentDateStringToMilliSeconds()) {
+//                            holder.surveyLayout.setEnabled(true);
+//                            enabledFollowUp=true;
+//                        } else {
+//                            holder.surveyLayout.setEnabled(false);
+//                        }
+//                    } catch (JSONException e) {
+//                        e.printStackTrace();
+//                    }
+//                } else {
+//                    holder.surveyLayout.setEnabled(false);
+//                }
+//            } else {
+//                holder.surveyLayout.setEnabled(false);
+//            }
+//
+//        }
 
 
         if (hasSubmittedModules) {
@@ -152,11 +168,7 @@ public class ChildSurveyRecyclerAdapter extends RecyclerView.Adapter<ChildSurvey
                 for (int i = 0; i < submittedModulesArray.length(); i++) {
                     JSONObject submittedModule = submittedModulesArray.getJSONObject(i);
                  //   JSONObject submittedModuleDetails = submittedModule.getJSONObject("module");
-                    boolean val = false;
-                    if (submittedModule.has("surveyEnableFlag")){
-                         val = submittedModule.getBoolean("surveyEnableFlag");
-                    }
-                    if (submittedModule.has("id") && submittedModule.getInt("id") == currentId && !val) {
+                    if (submittedModule.has("id") && submittedModule.getInt("id") == currentId) {
                         disable_entry = true;
 
                         if (disable_entry) {
@@ -167,30 +179,24 @@ public class ChildSurveyRecyclerAdapter extends RecyclerView.Adapter<ChildSurvey
                             submitted = true;
                             break;
                         }
+
                     }
                 }
-            } catch (JSONException e) {
-                FirebaseCrash.report(new Exception("CustomListAdapter_Modules: Error setting recurrence values", e));
-                e.printStackTrace();
-            } catch (Exception e) {
-                e.printStackTrace();
             }
-        }
 
-
-        if (!submitted) {
-            holder.surveyLayout.setEnabled(true);
-            if(childModuleDto.getStatus_started() !=null && childModuleDto.getStatus_finished() !=null){
-            if (childModuleDto.getStatus_started().equalsIgnoreCase("1") && childModuleDto.getStatus_finished().equalsIgnoreCase("0")) {
-                holder.statusIcon.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_status_saved));
-            } else if (childModuleDto.getStatus_started().equalsIgnoreCase("1") && childModuleDto.getStatus_finished().equalsIgnoreCase("1")) {
-                holder.statusIcon.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_status_completed));
-            } else {
-                holder.statusIcon.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_childsurvey));
+            if(position == 2) {
+                if (moduleDTO.has(ChildLabourUtils.FLWUP_SURVEY_STATUS)) {
+                    if (moduleDTO.get(ChildLabourUtils.HH_SURVEY_ENABLE).equals("true")) {
+                        holder.surveyLayout.setEnabled(true);
+                    } else {
+                        holder.surveyLayout.setEnabled(false);
+                    }
+                }
             }
-        }else{
-                holder.statusIcon.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_childsurvey));
-            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (Exception e){
+            e.printStackTrace();
         }
 
         // disable in follow up survey while register new child
@@ -202,23 +208,46 @@ public class ChildSurveyRecyclerAdapter extends RecyclerView.Adapter<ChildSurvey
             }
         }catch (Exception e){}
 
-
-
-        // deal submitted and disabled here
-
-//        holder.surveyLayout.clearFocus();
-//        if (position != 2)
-//            holder.surveyLayout.setEnabled(true);
-//        else
-//            holder.surveyLayout.setEnabled(false);
-
-        try{
-            if (childrenDTO.getAge() != null) {
-                if (Integer.parseInt(childrenDTO.getAge()) >= 18) {
-                    holder.surveyLayout.setEnabled(false);
+        // Module DTO Concepts
+        if (childrenDTO.getModuleDTO()!=null) {
+            try {
+                if (childModuleDto.getSurveyCode().equalsIgnoreCase(ChildLabourUtils.HOUSEHOLD_SURVEY_CODE)) {
+                    if (!householdFlag) {
+                        holder.surveyLayout.setEnabled(false);
+                    } else {
+                        holder.surveyLayout.setEnabled(true);
+                    }
                 }
+            } catch (Exception e) {
             }
-        }catch (Exception e){}
+
+            try {
+                if (childModuleDto.getSurveyCode().equalsIgnoreCase(ChildLabourUtils.INSPECTION_SURVEY_CODE)) {
+                    if (!inspectionFlag) {
+                        holder.surveyLayout.setEnabled(false);
+                    } else {
+                        holder.surveyLayout.setEnabled(true);
+                    }
+                }
+            } catch (Exception e) {
+            }
+
+            try {
+                if (childModuleDto.getSurveyCode().equalsIgnoreCase(ChildLabourUtils.FOLLOWUP_SURVEY_CODE)) {
+                    if (!followupFlag) {
+                        holder.surveyLayout.setEnabled(false);
+                    } else {
+                        holder.surveyLayout.setEnabled(true);
+                    }
+                }
+            } catch (Exception e) {
+            }
+        }
+
+
+
+
+
 
 
         if (holder.surveyLayout.isEnabled()){

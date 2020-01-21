@@ -31,13 +31,22 @@ public class ChildLabourUtils {
     public static final String ACTION_DATE = "actionDate";
     public static final String CHILD_LABOUR_ACTION_TICK_LIST = "actionTickList";
     public static final String NOT_IN_CL = "Not in CL";
-
+    public static final String ACTION_TICK = "Action Ticked";
+    public final static String INSP_SURVEY_STATUS = "inspectionEnabled";
+    public final static String FLWUP_SURVEY_STATUS = "followupEnabled";
+    public final static String HH_SURVEY_ENABLE  = "householdEnabled";
     public static boolean isChildEnumerator=false;
 
     public static final String ACTION="action";
     public static final String NEW="new";
     public static final String EDIT="edit";
     public static final String SYNC_EDIT="sync_edit";
+
+    public static final String HOUSEHOLD_ENABLED="householdEnabled";
+    public static final String INSPECTION_ENABLED="inspectionEnabled";
+    public static final String FOLLOWUP_ENABLED="followupEnabled";
+
+
 
     public static String getTranslatedGender(Context mContext, String gender) {
         String sex;
