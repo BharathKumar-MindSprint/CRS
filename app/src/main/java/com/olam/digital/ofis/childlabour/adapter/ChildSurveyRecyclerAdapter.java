@@ -79,6 +79,7 @@ public class ChildSurveyRecyclerAdapter extends RecyclerView.Adapter<ChildSurvey
     public void onBindViewHolder(@NonNull ChildSurveyHolder holder, final int position) {
         final ChildModuleDto childModuleDto = childModuleList.get(position);
         holder.surveyName.setText(childModuleDto.getName());
+
         holder.surveyLayout.setEnabled(false);
 
         // disable in follow up survey while register new child
@@ -87,6 +88,7 @@ public class ChildSurveyRecyclerAdapter extends RecyclerView.Adapter<ChildSurvey
                     holder.surveyLayout.setEnabled(false);
             }
         }catch (Exception e){}
+
 
         if(childModuleDto.getStatus_finished()!=null &&childModuleDto.getStatus_started()!=null) {
             try {
@@ -110,6 +112,7 @@ public class ChildSurveyRecyclerAdapter extends RecyclerView.Adapter<ChildSurvey
         }else{
             holder.statusIcon.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_childsurvey));
         }
+
 
         if(position == 2){
             holder.surveyLayout.setEnabled(false);
@@ -153,6 +156,15 @@ public class ChildSurveyRecyclerAdapter extends RecyclerView.Adapter<ChildSurvey
         } catch (Exception e){
             e.printStackTrace();
         }
+
+        // disable in follow up survey while register new child
+        try {
+            if (childModuleDto.getSurveyCode().equalsIgnoreCase(ChildLabourUtils.FOLLOWUP_SURVEY_CODE)) {
+                if (!submitted && !enabledFollowUp){
+                    holder.surveyLayout.setEnabled(false);
+                }
+            }
+        }catch (Exception e){}
 
 
 

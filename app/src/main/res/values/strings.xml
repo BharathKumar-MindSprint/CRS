@@ -479,7 +479,9 @@
     <string name="authentication_failed">Authentication failed. Please try again</string>
     <string name="authentication_attempt">Please wait for 30 minutes for your login to be enabled and try again with your same enumerator ID and Passcode</string>
     <string name="enumerator_empty">Please enter the valid enumerator Id &amp; Passcode</string>
+
     <string name="valid_range">Please specify the value within the range as mentioned</string>
+
     <string name="fill_name">Please fill the name</string>
     <string name="fill_age">Please select the correct age</string>
     <string name="fill_country">Please fill the country</string>
