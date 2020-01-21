@@ -26,6 +26,7 @@ import com.google.gson.JsonObject;
 import com.olam.digital.ofis.childlabour.ChildLabourUtils;
 import com.olam.digital.ofis.childlabour.dto.ChildrenDTO;
 import com.olam.digital.ofis.gps.dto.TrackDetailsDTO;
+import com.olam.digital.ofis.model.NationalIdDTO;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -1281,16 +1282,16 @@ public class DataLayer {
                 JSONObject storeableNumber = storeableNationalids.getJSONObject(i);
                 ContentValues values = new ContentValues();
                 values.put(OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID, farmerId);
-                values.put(OFISDBContract.FarmerNationalIDs.COLUMN_NID_TYPE, storeableNumber.getInt("nationalidtype"));
-                values.put(OFISDBContract.FarmerNationalIDs.COLUMN_NID_NUMBER, storeableNumber.getString("nationalidNumber"));
+                values.put(OFISDBContract.FarmerNationalIDs.COLUMN_NID_TYPE, storeableNumber.getInt("nationalIdType"));
+                values.put(OFISDBContract.FarmerNationalIDs.COLUMN_NID_NUMBER, storeableNumber.getString("nationalIdNumber"));
                 if(storeableNumber.has("photo")) {
                     values.put(OFISDBContract.FarmerNationalIDs.COLUMN_NID_PHOTO, storeableNumber.getString("photo"));
                 }
-                if(storeableNumber.getInt("nationalidtype") != 0) {
+                if(storeableNumber.getInt("nationalIdType") != 0) {
                     db.insert(OFISDBContract.FarmerNationalIDs.TABLE_NAME, null, values);
                 }
                 if(status.equalsIgnoreCase("2")){
-                    updateNetworkQueueNIDEntry(context, farmerId, storeableNumber.getInt("nationalidtype"),farmername);
+                    updateNetworkQueueNIDEntry(context, farmerId, storeableNumber.getInt("nationalIdType"),farmername);
                 }
             }
         } catch (JSONException e) {
@@ -1300,6 +1301,34 @@ public class DataLayer {
 
     }
 
+
+    void addLocalFarmerNationalids(ArrayList<NationalIdDTO> storeableNationalids) {
+        int arrayLength = storeableNationalids.size();
+
+            for (int i = 0; i < arrayLength; i++) {
+                ContentValues values = new ContentValues();
+                values.put(OFISDBContract.LocalFarmerNationalIDs.COLUMN_NID_TYPE, storeableNationalids.get(i).getNationalidtype());
+                values.put(OFISDBContract.LocalFarmerNationalIDs.COLUMN_NID_NUMBER, storeableNationalids.get(i).getNationalidNumber());
+                values.put(OFISDBContract.LocalFarmerNationalIDs.COLUMN_NID_PHOTO, storeableNationalids.get(i).getPhoto());
+                db.insert(OFISDBContract.LocalFarmerNationalIDs.TABLE_NAME, null, values);
+
+            }
+
+    }
+
+    void addnewLocalFarmerNationalids(NationalIdDTO storeableNationalids) {
+//        delete value if exists
+        String whereClause = OFISDBContract.LocalFarmerNationalIDs.COLUMN_NID_TYPE + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(storeableNationalids.getNationalidtype())};
+        db.delete(OFISDBContract.LocalFarmerNationalIDs.TABLE_NAME, whereClause, whereArgs);
+//        adding new values
+            ContentValues values = new ContentValues();
+            values.put(OFISDBContract.LocalFarmerNationalIDs.COLUMN_NID_TYPE, storeableNationalids.getNationalidtype());
+            values.put(OFISDBContract.LocalFarmerNationalIDs.COLUMN_NID_NUMBER, storeableNationalids.getNationalidNumber());
+            values.put(OFISDBContract.LocalFarmerNationalIDs.COLUMN_NID_PHOTO, storeableNationalids.getPhoto());
+            db.insert(OFISDBContract.LocalFarmerNationalIDs.TABLE_NAME, null, values);
+
+    }
     void updateFarmerPhoneNumbers(long farmerId, JSONArray storeableNumbers) {
         String whereClause = OFISDBContract.PhoneNumber.COLUMN_NAME_FARMER_ID + " = ?";
         String[] whereArgs = new String[]{String.valueOf(farmerId)};
@@ -1313,6 +1342,29 @@ public class DataLayer {
         String[] whereArgs = new String[]{String.valueOf(farmerId)};
         db.delete(OFISDBContract.FarmerNationalIDs.TABLE_NAME, whereClause, whereArgs);
         addFarmerNationalids(context,farmerId, storeableNationalids,status,farmername);
+    }
+
+    public Cursor getNIDPhotostatusByType(String type) {
+        String[] columns = new String[]{"*"};
+        String whereClause = OFISDBContract.FarmerNationalIDs.COLUMN_NID_TYPE + " = ? ";
+        String[] whereArgs = new String[]{type};
+
+        return db.query(OFISDBContract.FarmerNationalIDs.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+    }
+
+    void updateLocalFarmerNationalids(ArrayList<NationalIdDTO> storeableNationalids) {
+        db.delete(OFISDBContract.LocalFarmerNationalIDs.TABLE_NAME, null, null);
+        addLocalFarmerNationalids(storeableNationalids);
+    }
+
+    void deletelocalfarmervalues(int id) {
+        String whereClause = OFISDBContract.LocalFarmerNationalIDs.COLUMN_NAME_ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(id)};
+        db.delete(OFISDBContract.LocalFarmerNationalIDs.TABLE_NAME, whereClause, whereArgs);
+    }
+
+    void deletelocalfarmervalues() {
+        db.delete(OFISDBContract.LocalFarmerNationalIDs.TABLE_NAME, null, null);
     }
 
     Cursor getDiallingCodeByPlaceId(long placeId) {
@@ -2018,6 +2070,14 @@ public class DataLayer {
         return db.query(OFISDBContract.NationalIDEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
     }
 
+    public Cursor getPhotostatusByType(String type) {
+        String[] columns = new String[]{"*"};
+        String whereClause = OFISDBContract.LocalNationalIDImages.COLUMN_NID_TYPE + " = ? ";
+        String[] whereArgs = new String[]{type};
+
+        return db.query(OFISDBContract.LocalNationalIDImages.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+    }
+
     public int getFarmId(int farmer){
         int FarmID = 0;
         try{
@@ -2571,6 +2631,13 @@ if (ChildLabourUtils.isChildEnumerator) {
         String orderBy = OFISDBContract.FarmerNationalIDs.COLUMN_NAME_ID + " ASC";
 
         return db.query(OFISDBContract.FarmerNationalIDs.TABLE_NAME, columns, whereClause, whereArgs, null, null, orderBy);
+    }
+
+    public Cursor getnidsfromlocaldb() {
+        String[] columns = new String[]{"*"};
+        String orderBy = OFISDBContract.LocalFarmerNationalIDs.COLUMN_NAME_ID + " ASC";
+
+        return db.query(OFISDBContract.LocalFarmerNationalIDs.TABLE_NAME, columns, null, null, null, null, orderBy);
     }
 
     Cursor getRequiredQuestionIds(int moduleId) {
@@ -3567,6 +3634,43 @@ if (ChildLabourUtils.isChildEnumerator) {
         }
     }
 
+    void updateNIDPhoto(int id, String photo) {
+//        delete photo if exists
+        String whereClause = OFISDBContract.LocalNationalIDImages.COLUMN_NID_TYPE + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(id)};
+        db.delete(OFISDBContract.LocalNationalIDImages.TABLE_NAME, whereClause, whereArgs);
+
+        ContentValues values = new ContentValues();
+        values.put(OFISDBContract.LocalNationalIDImages.COLUMN_NID_PHOTO, photo);
+        values.put(OFISDBContract.LocalNationalIDImages.COLUMN_NID_TYPE, id);
+        db.insert(OFISDBContract.LocalNationalIDImages.TABLE_NAME,null, values);
+
+
+    }
+
+    void clearlocalniddbvalue(){
+        db.delete(OFISDBContract.LocalNationalIDImages.TABLE_NAME, null, null);
+        db.delete(OFISDBContract.LocalFarmerNationalIDs.TABLE_NAME, null, null);
+    }
+
+    void removeNIDPhoto(int id) {
+//        delete photo if exists
+        String whereClause = OFISDBContract.LocalNationalIDImages.COLUMN_NID_TYPE + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(id)};
+        db.delete(OFISDBContract.LocalNationalIDImages.TABLE_NAME, whereClause, whereArgs);
+
+
+    }
+
+    public Cursor getPhotoByType(int id) {
+        String[] columns = new String[]{"*"};
+        String whereClause = OFISDBContract.LocalNationalIDImages.COLUMN_NID_TYPE + " = ? ";
+        String[] whereArgs = new String[]{String.valueOf(id)};
+
+        return db.query(OFISDBContract.LocalNationalIDImages.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+    }
+
+
     //JIRA req OW-505
     int updateFarmerPhoto(long farmerId, String farmerPhoto, String olamFarmerId, String farmerName) {
 
@@ -4113,21 +4217,21 @@ try {
         db.delete(OFISDBContract.GPSDetails.TABLE_NAME, null, null);
     }
 
-    public long updateSignature(Context context, long farmerId, String signature) {
+    public long updateSignature(Context context, long farmerId, String signature, String farmername) {
         ContentValues values = new ContentValues();
         values.put(OFISDBContract.SignatureEntry.COLUMN_NAME_FAMRERID, farmerId);
         values.put(OFISDBContract.SignatureEntry.COLUMN_NAME_SIGNATURE, signature);
-        updateNetworkQueueSignatureEntry(context, farmerId, signature);
+        updateNetworkQueueSignatureEntry(context, farmerId, signature,farmername);
         return db.insert(OFISDBContract.SignatureEntry.TABLE_NAME, null, values);
 
     }
 
-    private long updateNetworkQueueSignatureEntry(Context context, long farmerId, String signature) {
+    private long updateNetworkQueueSignatureEntry(Context context, long farmerId, String signature, String name) {
         long newEntry;
         ContentValues networkQueueValues = new ContentValues();
         networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "signature");
-        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, Utilities.getEnumeratorNameSharedPrefs(context));
-        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, context.getResources().getString(R.string.update_signature));
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, "Signature");
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, name.trim());
         networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID, Utilities.getFromSharedPrefs(context));
         networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID, farmerId);
         networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SIGNATURE, signature);
