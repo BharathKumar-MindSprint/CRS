@@ -109,10 +109,16 @@ public class ViewChildLabourSurveyActivity extends BaseActivity {
 
         }catch (Exception e){}
 
+        JSONObject moduleDtoJson=null;
+        try {
+            String moduleDetails=children.getModuleDTO();
+            moduleDtoJson=new JSONObject(moduleDetails);
+        }catch (Exception e){}
+
 
         if (childModuleDtoList != null && childModuleDtoList.size() > 0) {
             try {
-                childSurveyRecyclerAdapter = new ChildSurveyRecyclerAdapter(childModuleDtoList,this,modulesArray,children,actionTickedArray);
+                childSurveyRecyclerAdapter = new ChildSurveyRecyclerAdapter(childModuleDtoList,this,modulesArray,children,actionTickedArray,moduleDtoJson);
             } catch (JSONException e) {
                 e.printStackTrace();
             }

@@ -88,6 +88,7 @@ public class ChildLabourLogic {
                 childrenDTO.setCreatedAt(cursor.getString(cursor.getColumnIndex(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_CREATEDAT)));
                 childrenDTO.setSubmittedModules(cursor.getString(cursor.getColumnIndex(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_SUBMITTED_MODULES)));
                 childrenDTO.setActionTicked(cursor.getString(cursor.getColumnIndex(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_ACTION_TICKED)));
+            childrenDTO.setModuleDTO(cursor.getString(cursor.getColumnIndex(OFISDBContract.ChildEntry.COLUMN_NAME_MODULE_DTO)));
 
             }
 

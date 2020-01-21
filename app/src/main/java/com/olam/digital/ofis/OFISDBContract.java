@@ -640,6 +640,7 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_CHILD_GENDER = "gender";
         public static final String COLUMN_NAME_ACTION_FLAG = "actionFlag";
         public static final String COLUMN_NAME_STATUS = "status";
+        public static final String COLUMN_NAME_MODULE_DTO = "moduleDTO";
         public static final String COLUMN_NAME_CHILD_AGE_ON_YEAR = "ageOnYear";
         public static final String COLUMN_NAME_CHILD_SYNCED = "synced";
 //        public static final String COLUMN_NAME_CHILD_SUBMITTED_MODULES = "submitted_modules";
@@ -660,6 +661,7 @@ public class OFISDBContract {
                     add(COLUMN_NAME_CHILD_SUBMITTED_MODULES);
                     add(COLUMN_NAME_CHILD_CREATEDAT);
                     add(COLUMN_NAME_CHILD_ACTION_TICKED);
+                    add(COLUMN_NAME_MODULE_DTO);
                 }}
         );
     }

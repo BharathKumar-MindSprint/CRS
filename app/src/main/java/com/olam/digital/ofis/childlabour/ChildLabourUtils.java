@@ -39,6 +39,12 @@ public class ChildLabourUtils {
     public static final String EDIT="edit";
     public static final String SYNC_EDIT="sync_edit";
 
+    public static final String HOUSEHOLD_ENABLED="householdEnabled";
+    public static final String INSPECTION_ENABLED="inspectionEnabled";
+    public static final String FOLLOWUP_ENABLED="followupEnabled";
+
+
+
     public static String getTranslatedGender(Context mContext, String gender) {
         String sex;
         if (gender.equalsIgnoreCase(MALE)){

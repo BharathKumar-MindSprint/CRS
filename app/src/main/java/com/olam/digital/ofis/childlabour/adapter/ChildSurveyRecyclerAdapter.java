@@ -45,8 +45,12 @@ public class ChildSurveyRecyclerAdapter extends RecyclerView.Adapter<ChildSurvey
     private JSONArray submittedModulesArray;
     private ChildrenDTO childrenDTO;
     private JSONArray actionTickedArray;
+    private boolean householdFlag;
+    private boolean inspectionFlag;
+    private boolean followupFlag;
 
-    public ChildSurveyRecyclerAdapter(List<ChildModuleDto> childModuleDtoList, Context context, JSONArray submittedModules,ChildrenDTO childrenDTO,JSONArray actionTickedArray) throws JSONException {
+
+    public ChildSurveyRecyclerAdapter(List<ChildModuleDto> childModuleDtoList, Context context, JSONArray submittedModules,ChildrenDTO childrenDTO,JSONArray actionTickedArray,JSONObject moduleDtoJson) throws JSONException {
         this.childModuleList = childModuleDtoList;
         this.currentDate=Calendar.getInstance();
         this.mContext = context;
@@ -60,6 +64,15 @@ public class ChildSurveyRecyclerAdapter extends RecyclerView.Adapter<ChildSurvey
         if (actionTickedArray !=null && actionTickedArray.length()>0){
             this.actionTickedArray=actionTickedArray;
         }
+
+        try {
+            if (moduleDtoJson!=null){
+                this.householdFlag=moduleDtoJson.getBoolean(ChildLabourUtils.HOUSEHOLD_ENABLED);
+                this.inspectionFlag=moduleDtoJson.getBoolean(ChildLabourUtils.INSPECTION_ENABLED);
+                this.followupFlag=moduleDtoJson.getBoolean(ChildLabourUtils.FOLLOWUP_ENABLED);
+            }
+        }catch (Exception e){}
+
     }
 
     public void setOnItemSurveyClickListener(OnItemSurveyListener clickListener) {
@@ -114,32 +127,30 @@ public class ChildSurveyRecyclerAdapter extends RecyclerView.Adapter<ChildSurvey
 
         // check after 3 months scenerio
         // Migrating code to above submitted modules
-        if (childModuleDto.getSurveyCode().equalsIgnoreCase(ChildLabourUtils.FOLLOWUP_SURVEY_CODE)) {
-            if (actionTickedArray != null) {
-                if (actionTickedArray.length() > 0) {
-                    try {
-                        JSONObject actionTick = actionTickedArray.getJSONObject(0);
-                        String actionTickDate = actionTick.getString(ChildLabourUtils.ACTION_DATE);
-                        String after3MonthsDate = ChildLabourUtils.getAfterThreeMonths(actionTickDate);
-                        if (Utilities.dateStringToMilliSeconds(after3MonthsDate) < Utilities.currentDateStringToMilliSeconds()) {
-                            holder.surveyLayout.setEnabled(true);
-                            enabledFollowUp=true;
-                        } else {
-                            holder.surveyLayout.setEnabled(false);
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    holder.surveyLayout.setEnabled(false);
-                }
-            } else {
-                holder.surveyLayout.setEnabled(false);
-            }
-            if(childrenDTO.getStatus().equalsIgnoreCase(ChildLabourUtils.NOT_IN_CL)){
-                holder.surveyLayout.setEnabled(false);
-            }
-        }
+//        if (childModuleDto.getSurveyCode().equalsIgnoreCase(ChildLabourUtils.FOLLOWUP_SURVEY_CODE)) {
+//            if (actionTickedArray != null) {
+//                if (actionTickedArray.length() > 0) {
+//                    try {
+//                        JSONObject actionTick = actionTickedArray.getJSONObject(0);
+//                        String actionTickDate = actionTick.getString(ChildLabourUtils.ACTION_DATE);
+//                        String after3MonthsDate = ChildLabourUtils.getAfterThreeMonths(actionTickDate);
+//                        if (Utilities.dateStringToMilliSeconds(after3MonthsDate) < Utilities.currentDateStringToMilliSeconds()) {
+//                            holder.surveyLayout.setEnabled(true);
+//                            enabledFollowUp=true;
+//                        } else {
+//                            holder.surveyLayout.setEnabled(false);
+//                        }
+//                    } catch (JSONException e) {
+//                        e.printStackTrace();
+//                    }
+//                } else {
+//                    holder.surveyLayout.setEnabled(false);
+//                }
+//            } else {
+//                holder.surveyLayout.setEnabled(false);
+//            }
+//
+//        }
 
 
         if (hasSubmittedModules) {
@@ -152,11 +163,7 @@ public class ChildSurveyRecyclerAdapter extends RecyclerView.Adapter<ChildSurvey
                 for (int i = 0; i < submittedModulesArray.length(); i++) {
                     JSONObject submittedModule = submittedModulesArray.getJSONObject(i);
                  //   JSONObject submittedModuleDetails = submittedModule.getJSONObject("module");
-                    boolean val = false;
-                    if (submittedModule.has("surveyEnableFlag")){
-                         val = submittedModule.getBoolean("surveyEnableFlag");
-                    }
-                    if (submittedModule.has("id") && submittedModule.getInt("id") == currentId && !val) {
+                    if (submittedModule.has("id") && submittedModule.getInt("id") == currentId) {
                         disable_entry = true;
 
                         if (disable_entry) {
@@ -201,6 +208,43 @@ public class ChildSurveyRecyclerAdapter extends RecyclerView.Adapter<ChildSurvey
                 }
             }
         }catch (Exception e){}
+
+        // Module DTO Concepts
+        if (childrenDTO.getModuleDTO()!=null) {
+            try {
+                if (childModuleDto.getSurveyCode().equalsIgnoreCase(ChildLabourUtils.HOUSEHOLD_SURVEY_CODE)) {
+                    if (!householdFlag) {
+                        holder.surveyLayout.setEnabled(false);
+                    } else {
+                        holder.surveyLayout.setEnabled(true);
+                    }
+                }
+            } catch (Exception e) {
+            }
+
+            try {
+                if (childModuleDto.getSurveyCode().equalsIgnoreCase(ChildLabourUtils.INSPECTION_SURVEY_CODE)) {
+                    if (!inspectionFlag) {
+                        holder.surveyLayout.setEnabled(false);
+                    } else {
+                        holder.surveyLayout.setEnabled(true);
+                    }
+                }
+            } catch (Exception e) {
+            }
+
+            try {
+                if (childModuleDto.getSurveyCode().equalsIgnoreCase(ChildLabourUtils.FOLLOWUP_SURVEY_CODE)) {
+                    if (!followupFlag) {
+                        holder.surveyLayout.setEnabled(false);
+                    } else {
+                        holder.surveyLayout.setEnabled(true);
+                    }
+                }
+            } catch (Exception e) {
+            }
+        }
+
 
 
 
