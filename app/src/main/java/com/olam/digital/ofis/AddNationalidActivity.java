@@ -24,6 +24,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputFilter;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -32,7 +33,6 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -46,7 +46,6 @@ import com.olam.digital.ofis.childlabour.dto.ChildrenDTO;
 import com.olam.digital.ofis.childlabour.listener.OnItemChildClickListener;
 import com.olam.digital.ofis.model.NationalIdDTO;
 import com.olam.digital.ofis.model.NationalIdTypeDTO;
-import com.olam.digital.ofis.tasks.NonScrollListView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -65,7 +64,6 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Set;
 
 public class AddNationalidActivity extends BaseActivity implements  View.OnClickListener{
@@ -74,24 +72,41 @@ public class AddNationalidActivity extends BaseActivity implements  View.OnClick
     Long farmerId;
     private Resources res;
     ImageButton addNationId;
-    private final JSONArray storeableNationalids = new JSONArray();
+    private JSONArray storeableNationalids = new JSONArray();
     private LayoutInflater inflater;
     private DataLayer dl;
     ArrayList<String> nationalidList;
     ArrayList<String> selectednationalidList = new ArrayList<String> ();;
     ArrayList<String> nidtype;
+    String farmername;
+    boolean editnidmode = false;
+    private int nidvalue;
+    private final static String LIMIT_XED = "limit";
+    private final static String DUPLICATE = "duplicate";
+    private final static String ENTER_NID = "novalues";
+    //    int count_plus = 0;
     private final static int MY_NATIONALID_PIC_PERMISSIONS_REQUEST = 9997;
     ArrayList<NationalIdTypeDTO> nidtypelist;
-    private String mCurrentPhotoPath = null, mCurrentSignaturePhotoPath = null, mCurrentNationalIdPhotoPath = null;;
-    private Uri mCapturedImageURI = null, mCapturedSignatureImageURI = null, mCapturedNationalIdImageURI = null;
-    private final static String CAPTURED_NATIONALID_PHOTO_URI_KEY = "mCapturedNationalIdImageURI";
-    private final static String CAPTURED_NATIONALID_PHOTO_PATH_KEY = "mCapturedNationalIdImageURI";
+    private String mCurrentPhotoPath = null, mCurrentSignaturePhotoPath = null;
+    private Uri mCapturedImageURI = null, mCapturedSignatureImageURI = null;
+    private final static int REQUEST_IMAGE_CAPTURE = 1;
+    private final static int REQUEST_IMAGE_GALLERY = 2;
+    private final static int REQUEST_IMAGE_CAPTURE_SIGNATURE = 3;
     private final static int REQUEST_IMAGE_CAPTURE_NATIONALID = 4;
     private final static String CAPTURED_PHOTO_PATH_KEY = "mCurrentPhotoPath";
     private final static String CAPTURED_PHOTO_URI_KEY = "mCapturedImageURI";
     private final static String CAPTURED_SIGNATURE_PHOTO_PATH_KEY = "mCurrentSignaturePhotoPath";
     private final static String CAPTURED_SIGNATURE_PHOTO_URI_KEY = "mCapturedSignatureImageURI";
-
+    private final static String CAPTURED_DATE_STR_TO_SEND = "dateStrToSend";
+    private final static String CAPTURED_SELECTED_COUNTRY = "mCapturedCountry";
+    private final static String CAPTURED_SELECTED_REGION = "mCapturedRegion";
+    private final static String CAPTURED_SELECTED_DISTRICT = "mCapturedDistrict";
+    private final static String CAPTURED_SELECTED_PLACE = "mCapturedPlace";
+    private final static String CAPTURED_SELECTED_FARMERGROUP = "mCapturedFarmerGroup";
+    private final static String CAPTURED_SELECTED_SECTION = "mCapturedSection";
+    private final static String EDIT_FARMER_ID = "EDIT_FARMER_ID";
+    private final static String EDIT_MODE = "EDIT_MODE";
+    int count_nidimg = 0;
     int currentcapture_position;
     HashMap<Integer, Uri> hm_uri = new HashMap<>();
     HashMap<Integer, String> hm_uripath = new HashMap<>();
@@ -101,25 +116,6 @@ public class AddNationalidActivity extends BaseActivity implements  View.OnClick
     ArrayAdapter<String> spinnerArrayAdapter;
     AppCompatButton save;
     boolean editmode;
-
-    // National ID releated variable
-    ListView nationalidslist;
-    Map<Integer, Integer> typeMap = new HashMap<Integer, Integer>();
-    Map<Integer, String> nidvalueMap = new HashMap<Integer, String>();
-    ArrayList<NationalIdDTO> nidDtoList = new ArrayList<NationalIdDTO> ();;
-    ImageButton showNIDImage;
-    CustomListAdapter_NationalId adapterNationalId;
-    int capture__position;
-    NationalIdDTO nidDTO;
-    HashMap<Integer, String> hm_path = new HashMap<>();
-    private final static int REQUEST_NEW_ITEM = 1;
-    private final static int REQUEST_ADDING_ITEM = 2;
-    boolean edit_signature = false;
-    private final static String LIMIT_XED = "limit";
-    private final static String DUPLICATE = "duplicate";
-    private final static String ENTER_NID = "novalues";
-    String farmername;
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -140,106 +136,33 @@ public class AddNationalidActivity extends BaseActivity implements  View.OnClick
             editmode=getIntent().getExtras().getBoolean("edit_mode");
             farmername = getIntent().getExtras().getString("FARMER_NAME");
         }catch (Exception e){}
-        refreshNationalidtype(setNationalidtype());
-
-        bindnationaiddetails();
-    }
-
-    private void addingEmptyValue(int status) {
-        NationalIdDTO idDTO = new NationalIdDTO();
-        idDTO.setNationalidNumber("");
-        idDTO.setNationalidtype(String.valueOf(0));
-        idDTO.setPhoto("");
-        nidDtoList.add(idDTO);
-        if(status == REQUEST_ADDING_ITEM) {
-            adapterNationalId.notifyDataSetChanged();
+        dl.clearlocalniddbvalue();
+        if(!editmode) {
+            bindnationalid();
+        }else{
+            bindNationalidValues();
         }
     }
 
-    private void bindnationaiddetails() {
-//        if(editmode){
-//            bindnationaidvaluesfromdb();
-//        }
-        if(nidDtoList.size() == 0) {
-            addingEmptyValue(REQUEST_NEW_ITEM);
-        }
-        adapterNationalId = new CustomListAdapter_NationalId(this, res, nidtypelist, nidDtoList, refreshNationalidtype(setNationalidtype()),typeMap, nidvalueMap, 2);
-        nationalidslist.setAdapter(adapterNationalId);
-        Utilities.setListViewHeightBasedOnChildren(nationalidslist);
-//        adapterNationalId.getValues();
-       /* nationalidslist.setOnItemClickListener(new AdapterView.OnItemClickListener(){
-
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                long viewId = view.getId();
-
-                if(viewId == R.id.deleteNationalid){
-                    nidDtoList.remove(position);
-                    adapterNationalId.notifyDataSetChanged();
-                }
-
-            }
-        });*/
-    }
-
-    private void bindnationaidvaluesfromdb() {
-        Cursor nids = dl.getnationalidsbyfarmerid(farmerId);
-
-        nidDtoList = new ArrayList<>();
-        int i=0;
-        while (nids.moveToNext()) {
-            NationalIdDTO nationalIdDTO = new NationalIdDTO();
-            nationalIdDTO.setNationalidtype(String.valueOf(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_TYPE)));
-            nationalIdDTO.setNationalidNumber(nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_NUMBER)));
-            nidvalueMap.put(i,nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_NUMBER)));
-            typeMap.put(i,nids.getInt(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_TYPE)));
-
-            String farmerNIDPath = nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_PHOTO));
-            if (farmerNIDPath != null && farmerNIDPath.length() > 0) {
-                nationalIdDTO.setPhoto(farmerNIDPath);
-            }
-            nidDtoList.add(nationalIdDTO);
-            i++;
-        }
-
-    }
-
-    private ArrayList<String> refreshNationalidtype(ArrayList<String> value){
-        for(int i=0; i < selectednationalidList.size(); i++){
-            value.remove(selectednationalidList.get(i));
-        }
-
-        return value;
-    }
-
-    public void addTypeintoSelectionList(String value){
-        selectednationalidList.add(value);
-
-    }
 
 
     private void displayBitmap(String savedImagePath, String portraitOrSignature, ImageButton target) {
-        try {
-            // set our desired width and height for display
-            int baseWidth = 100;
-            int baseHeight = 133;
+        // set our desired width and height for display
+        int baseWidth = 100;
+        int baseHeight = 133;
 
-            if (portraitOrSignature.equalsIgnoreCase("signature")) {
-                baseWidth = 82;
-                baseHeight = 28;
-            }
-
-            Hashtable dimensions = Utilities.getDimensionsForDisplayFromBase(baseWidth, baseHeight, res);
-            Integer outputWidth = Integer.parseInt(dimensions.get("width").toString());
-            Integer outputHeight = Integer.parseInt(dimensions.get("height").toString());
-
-            Bitmap bitmap = Utilities.loadSizedBitmap(savedImagePath, outputWidth, outputHeight);
-            if(nidDTO != null) {
-                nidDTO.setPhoto(getCurrentNationalIdPhotoPath());
-            }
-            target.setImageBitmap(bitmap);
-        }catch (Exception e){
+        if (portraitOrSignature.equalsIgnoreCase("signature")) {
+            baseWidth = 82;
+            baseHeight = 28;
         }
+
+        Hashtable dimensions = Utilities.getDimensionsForDisplayFromBase(baseWidth, baseHeight, res);
+        Integer outputWidth = Integer.parseInt(dimensions.get("width").toString());
+        Integer outputHeight = Integer.parseInt(dimensions.get("height").toString());
+
+        Bitmap bitmap = Utilities.loadSizedBitmap(savedImagePath, outputWidth, outputHeight);
+
+        target.setImageBitmap(bitmap);
     }
 
     // getting nationalids type id values
@@ -267,28 +190,15 @@ public class AddNationalidActivity extends BaseActivity implements  View.OnClick
         if (mCapturedSignatureImageURI != null) {
             savedInstanceState.putString(CAPTURED_SIGNATURE_PHOTO_URI_KEY, mCapturedSignatureImageURI.toString());
         }
-        if (mCurrentNationalIdPhotoPath != null) {
-            savedInstanceState.putString(CAPTURED_NATIONALID_PHOTO_PATH_KEY, mCurrentNationalIdPhotoPath);
-        }
-        if (mCapturedNationalIdImageURI != null) {
-            savedInstanceState.putString(CAPTURED_NATIONALID_PHOTO_URI_KEY, mCapturedNationalIdImageURI.toString());
-        }
+
 
         super.onSaveInstanceState(savedInstanceState);
     }
 
     @Override
     protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
-
-        if (savedInstanceState.containsKey(CAPTURED_NATIONALID_PHOTO_PATH_KEY)) {
-            mCurrentNationalIdPhotoPath = savedInstanceState.getString(CAPTURED_NATIONALID_PHOTO_PATH_KEY);
-        }
-        if (savedInstanceState.containsKey(CAPTURED_NATIONALID_PHOTO_URI_KEY)) {
-            mCapturedNationalIdImageURI = Uri.parse(savedInstanceState.getString(CAPTURED_NATIONALID_PHOTO_URI_KEY));
-        }
-        if (mCurrentNationalIdPhotoPath != null) {
-            displayBitmap(mCurrentNationalIdPhotoPath, "NationalId", showNIDImage);
-        }
+        ImageButton farmerPhotoButton = (ImageButton) findViewById(R.id.farmerPhoto);
+        ImageButton farmerSignatureButton = (ImageButton) findViewById(R.id.farmerSignature);
 
         if (savedInstanceState.containsKey(CAPTURED_PHOTO_PATH_KEY)) {
             mCurrentPhotoPath = savedInstanceState.getString(CAPTURED_PHOTO_PATH_KEY);
@@ -306,21 +216,6 @@ public class AddNationalidActivity extends BaseActivity implements  View.OnClick
         super.onRestoreInstanceState(savedInstanceState);
     }
 
-    private Uri getCapturedNationalIdImageURI() {
-        return mCapturedNationalIdImageURI;
-    }
-
-    private void setCapturedNationalIdImageURI(Uri mCapturedNationalIdImageURI) {
-        this.mCapturedNationalIdImageURI = mCapturedNationalIdImageURI;
-    }
-
-    private String getCurrentNationalIdPhotoPath() {
-        return mCurrentNationalIdPhotoPath;
-    }
-
-    private void setCurrentNationalIdPhotoPath(String mCurrentNationalIdPhotoPath) {
-        this.mCurrentNationalIdPhotoPath = mCurrentNationalIdPhotoPath;
-    }
     private String getCurrentPhotoPath() {
         return mCurrentPhotoPath;
     }
@@ -370,18 +265,328 @@ public class AddNationalidActivity extends BaseActivity implements  View.OnClick
         return hm_uri;
     }
 
+    private void bindnationalid() {
+//        if (! editMode) {
+        ArrayList<String> refreshitem = refreshNationalidtype(setNationalidtype());
+        LinearLayout nationalidinclude = (LinearLayout) inflater.inflate(R.layout.add_nationalid, nationalids, false);
+        nationalids.addView(nationalidinclude);
+
+        LinearLayout niddelete = (LinearLayout) nationalidinclude.findViewById(R.id.deleteNationalid);
+        niddelete.setVisibility(View.GONE);
+        spinner_nidtype = (Spinner) nationalidinclude.findViewById(R.id.idtypespinner);
+        LinearLayout ll_capturephoto = (LinearLayout) nationalidinclude.findViewById(R.id.ll_capturephoto);
+        spinnerArrayAdapter = new ArrayAdapter<String>(AddNationalidActivity.this, R.layout.spinner_item, refreshitem);
+        spinnerArrayAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+        spinner_nidtype.setAdapter(spinnerArrayAdapter);
+
+        EditText nidnumber = (EditText) nationalidinclude.findViewById(R.id.nidnumber);
+        ImageButton actionbtn = nationalidinclude.findViewById(R.id.nidphotoActionButton);
+        ImageButton nationalidphoto = nationalidinclude.findViewById(R.id.nationalidphoto);
+        actionbtn.setTag(nationalids.getChildCount());
+        nationalidphoto.setTag(nationalids.getChildCount());
+
+        String selected_item = spinner_nidtype.getSelectedItem().toString();
+        spinner_nidtype.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    ArrayList<String> refreshitem = refreshNationalidtype(setNationalidtype());
+                    spinnerArrayAdapter = new ArrayAdapter<String>(AddNationalidActivity.this, R.layout.spinner_item, refreshitem);
+                    spinnerArrayAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+                    spinner_nidtype.setAdapter(spinnerArrayAdapter);
+
+                }
+                return false;
+            }
+        });
+        spinner_nidtype.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (!spinner_nidtype.getSelectedItem().toString().equalsIgnoreCase(SELECT_NATIONALID)) {
+//                    selectednationalidList.add(spinner_nidtype.getSelectedItem().toString());
+
+                    int limit = getNidLimit(spinner_nidtype.getSelectedItem().toString());
+                    InputFilter[] filters = new InputFilter[1];
+                    filters[0] = new InputFilter.LengthFilter(limit); //Filter to 10 characters
+                    nidnumber.setFilters(filters);
+                    if (getNidCaptureStatus(spinner_nidtype.getSelectedItem().toString()).trim().equalsIgnoreCase("false")) {
+                        ll_capturephoto.setVisibility(View.GONE);
+                    } else {
+                        ll_capturephoto.setVisibility(View.VISIBLE);
+                    }
+                }
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        bindnationlidcapturephoto((Spinner) nationalidinclude.findViewById(R.id.idtypespinner), (ImageButton) nationalidinclude.findViewById(R.id.nidphotoActionButton));
+
+        ImageButton addNationId = (ImageButton) findViewById(R.id.addnid);
+        addNationId.setOnClickListener(this);
+
+    }
+
+    private void bindNationalidValues() {
+        if(farmerId != 0) {
+            Cursor nids = dl.getnationalidsbyfarmerid(farmerId);
+//            JSONArray nidlist = new JSONArray();
+            ArrayList<String> refreshitem = refreshNationalidtype(setNationalidtype());
+            try {
+                int i = 0;
+                while (nids.moveToNext()) {
+                    LinearLayout nationalidinclude = (LinearLayout) inflater.inflate(R.layout.add_nationalid, nationalids, false);
+                    nationalids.addView(nationalidinclude);
+                    Spinner spinner_nidtype = (Spinner) nationalidinclude.findViewById(R.id.idtypespinner);
+                    LinearLayout niddelete = (LinearLayout) nationalidinclude.findViewById(R.id.deleteNationalid);
+                    ImageButton actionbtn = nationalidinclude.findViewById(R.id.nidphotoActionButton);
+                    ImageButton nationalidphoto = nationalidinclude.findViewById(R.id.nationalidphoto);
+                    LinearLayout ll_capturephoto = (LinearLayout) nationalidinclude.findViewById(R.id.ll_capturephoto);
+                    EditText nidnumber = (EditText) nationalidinclude.findViewById(R.id.nidnumber);
+                    spinnerArrayAdapter = new ArrayAdapter<String>(AddNationalidActivity.this, R.layout.nidtype_spinner, refreshitem);
+                    spinnerArrayAdapter.setDropDownViewResource(R.layout.nidtype_spinner);
+                    spinner_nidtype.setAdapter(spinnerArrayAdapter);
+                    actionbtn.setClickable(false);
+                    spinner_nidtype.setEnabled(false);
+//                    nidnumber.setEnabled(false);
+                    if(i ==0) {
+                        niddelete.setVisibility(View.INVISIBLE);
+                    }else{
+                        niddelete.setVisibility(View.VISIBLE);
+                    }
+                    i++;
+//                    JSONObject nationalids = new JSONObject();
+
+//                    nationalids.put("farmerId", new Long(nids.getInt(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID))));
+//                    nationalids.put("nationalIdType", new Long(nids.getInt(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_TYPE))));
+//                    nationalids.put("nationalIdNumber", nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_NUMBER)));
+                    nidnumber.setText(nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_NUMBER)));
+                    String selected_item = getNidTypebyid(nids.getInt(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_TYPE)));
+                    int spinnerPosition = spinnerArrayAdapter.getPosition(selected_item);
+                    spinner_nidtype.setSelection(spinnerPosition);
+                    /*if (spinnerPosition != 0) {
+//
+                        if (getNidCaptureStatus(selected_item).equalsIgnoreCase("false")) {
+                            ll_capturephoto.setVisibility(View.GONE);
+                        } else {
+                            ll_capturephoto.setVisibility(View.VISIBLE);
+                        }
+                    }*/
+                    String farmerNIDPath = nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_PHOTO));
+                    if (farmerNIDPath != null && farmerNIDPath.length() > 0) {
+                        int baseWidth = 100;
+                        int baseHeight = 133;
 
 
+                        Hashtable dimensions = Utilities.getDimensionsForDisplayFromBase(baseWidth, baseHeight, res);
+                        Integer outputWidth = Integer.parseInt(dimensions.get("width").toString());
+                        Integer outputHeight = Integer.parseInt(dimensions.get("height").toString());
+
+                        Bitmap bitmap = Utilities.loadSizedBitmap(farmerNIDPath, outputWidth, outputHeight);
+
+                        nationalidphoto.setImageBitmap(bitmap);
+                       /* try {
+                            String encodedImage = Utilities.base64ConversionForImage(farmerNIDPath);
+                            nationalids.put("photo", encodedImage);
+//                   jsonObject.put(OFISDBContract.FarmerEntry.COLUMN_NAME_SIGNATURE, signature.getName());
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }*/
+                        nationalidphoto.setTag(nationalids.getChildCount());
+                    }
+                    actionbtn.setTag(nationalids.getChildCount());
 
 
-    private void removeSpinnerItem(LinearLayout numberrow) {
-        Spinner spinner = (Spinner) numberrow.findViewById(R.id.idtypespinner);
-        String val = spinner.getSelectedItem().toString();
-        for(int i=0; i < selectednationalidList.size(); i++){
-            if(val.equalsIgnoreCase(selectednationalidList.get(i))) {
-                selectednationalidList.remove(i);
+                    spinner_nidtype.setOnTouchListener(new View.OnTouchListener() {
+                        @Override
+                        public boolean onTouch(View v, MotionEvent event) {
+                            if (event.getAction() == MotionEvent.ACTION_UP) {
+                                ArrayList<String> refreshitem = refreshNationalidtype(setNationalidtype());
+                                spinnerArrayAdapter = new ArrayAdapter<String>(AddNationalidActivity.this, R.layout.spinner_item, refreshitem);
+                                spinnerArrayAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+                                spinner_nidtype.setAdapter(spinnerArrayAdapter);
+
+                            }
+                            return false;
+                        }
+                    });
+                    spinner_nidtype.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                        @Override
+                        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                            if (!spinner_nidtype.getSelectedItem().toString().equalsIgnoreCase(SELECT_NATIONALID)) {
+//                    selectednationalidList.add(spinner_nidtype.getSelectedItem().toString());
+
+                                int limit = getNidLimit(spinner_nidtype.getSelectedItem().toString());
+                                InputFilter[] filters = new InputFilter[1];
+                                filters[0] = new InputFilter.LengthFilter(limit); //Filter to 10 characters
+                                nidnumber.setFilters(filters);
+                                if (getNidCaptureStatus(spinner_nidtype.getSelectedItem().toString()).trim().equalsIgnoreCase("false")) {
+                                    ll_capturephoto.setVisibility(View.GONE);
+                                } else {
+                                    ll_capturephoto.setVisibility(View.VISIBLE);
+                                }
+                            }
+
+                        }
+
+                        @Override
+                        public void onNothingSelected(AdapterView<?> parent) {
+
+                        }
+                    });
+//                    nidlist.put(nationalids);
+                    bindnationlidcapturephoto((Spinner) nationalidinclude.findViewById(R.id.idtypespinner), (ImageButton) nationalidinclude.findViewById(R.id.nidphotoActionButton));
+                    bindniddelete((LinearLayout) nationalidinclude.findViewById(R.id.deleteNationalid));
+                }
+
+            } catch (Exception e) {
+                FirebaseCrash.report(new Exception("NetworkLayer: Error creating farmer phone numbers object", e));
+                e.printStackTrace();
+            }
+
+            ImageButton addNationId = (ImageButton) findViewById(R.id.addnid);
+            addNationId.setOnClickListener(this);
+
+        }
+    }
+
+    private void bindniddelete(LinearLayout trashbutton) {
+        trashbutton.setTag(nationalids.getChildCount());
+        trashbutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                showtoast((Integer) trashbutton.getTag());
+                LinearLayout numberrow = (LinearLayout) v.getParent();
+                removeSpinnerItem(numberrow);
+                ((ViewGroup) numberrow.getParent()).removeView(numberrow);
+
+                removehmvalue(hm_uripath, (int) trashbutton.getTag());
+                removehmURIvalue(hm_uri, (int) trashbutton.getTag());
+                refreshTags();
+                ValidateNIDValues();
+            }
+        });
+    }
+
+    private boolean ValidateNIDValues() {
+        boolean status = true;
+        ArrayList<String> nidtype_list = new ArrayList<>();
+        selectednationalidList = new ArrayList<String> ();;
+        int nidrowscount = nationalids.getChildCount();
+        for (int j = 0; j < nidrowscount; j++) {
+            LinearLayout nidrow = (LinearLayout) nationalids.getChildAt(j);
+            EditText nidnumber = (EditText) nidrow.findViewById(R.id.nidnumber);
+            Spinner nid_type = (Spinner) nidrow.findViewById(R.id.idtypespinner);
+            LinearLayout ll_nidview = (LinearLayout) nidrow.findViewById(R.id.ll_nidview);
+            LinearLayout deleteNationalid = (LinearLayout) nidrow.findViewById(R.id.deleteNationalid);
+            ImageButton nidphotoActionButton = (ImageButton) nidrow.findViewById(R.id.nidphotoActionButton);
+            String value = nid_type.getSelectedItem().toString();
+            int type = getNidType(value);
+            String nid = nidnumber.getText().toString();
+            /*if(j == nidrowscount-1){
+                nid_type.setEnabled(true);
+            }else {
+                nid_type.setEnabled(false);
+            }*/
+            if(nid.trim() == "" || nid.trim().equalsIgnoreCase("")){
+//                nidnumber.setEnabled(false);
+                Toast.makeText(this,getResources().getString(R.string.nid_value_enter),Toast.LENGTH_SHORT).show();
+                return false;
+            }
+            if(value.equalsIgnoreCase(SELECT_NATIONALID)){
+                Toast.makeText(this,getResources().getString(R.string.nationalidtype_selection),Toast.LENGTH_SHORT).show();
+                return false;
+            }
+            if(nidtype_list.size() != 0 && nidtype_list.contains(value)) {
+                nid_type.setEnabled(true);
+                Toast.makeText(this,getResources().getString(R.string.nationalidtype_alreadyselected),Toast.LENGTH_SHORT).show();
+                return false;
+            }else {
+                nidtype_list.add(value);
+                selectednationalidList.add(value);
+            }
+            if (getNidCaptureStatus(value).equalsIgnoreCase("true")) {
+//                if(! hm_uripath.containsKey(j+1)){
+                if(! editmode) {
+                    if (!getPhotostatusByType(String.valueOf(type))) {
+                        nidphotoActionButton.setClickable(true);
+                        Toast.makeText(this, getResources().getString(R.string.nid_photo_select), Toast.LENGTH_SHORT).show();
+                        return false;
+                    }
+                }
+                /*else {
+                    if(! hm_uripath.containsKey(j+1)){
+                        nidphotoActionButton.setClickable(true);
+                        Toast.makeText(this, getResources().getString(R.string.nid_photo_select), Toast.LENGTH_SHORT).show();
+                        return false;
+                    }
+                }*/
+
+            }
+
+            if(status){
+                NationalIdDTO idDTO = new NationalIdDTO();
+                idDTO.setNationalidNumber(nid);
+                idDTO.setNationalidtype(String.valueOf(type));
+                if (getNidCaptureStatus(value).equalsIgnoreCase("true")) {
+                    String photopath = getPhotobytype(type);
+                    idDTO.setPhoto(photopath);
+                }else{
+                    idDTO.setPhoto("");
+                }
+
+                dl.addnewLocalFarmerNationalids(idDTO);
+                nid_type.setEnabled(false);
+               /* nid_type.setEnabled(false);
+                nidnumber.setEnabled(false);
+                nidphotoActionButton.setClickable(false);
+//                deleteNationalid.setClickable(false);
+                ll_nidview.setBackgroundColor(getResources().getColor(R.color.cardview_light_background));*/
             }
         }
+        return status;
+    }
+
+    // getting nationalids type id values
+    public String getPhotobytype(int type) {
+        String photo=null;
+        Cursor  nid=dl.getPhotoByType(type);
+        if (nid.getCount() > 0) {
+            nid.moveToFirst();
+            photo= nid.getString(nid.getColumnIndex(OFISDBContract.LocalNationalIDImages.COLUMN_NID_PHOTO));
+        }
+        return photo;
+    }
+
+    private void removeSpinnerItem(LinearLayout numberrow) {
+        try {
+            Spinner spinner = (Spinner) numberrow.findViewById(R.id.idtypespinner);
+            String val = spinner.getSelectedItem().toString();
+
+            for (int i = 0; i < selectednationalidList.size(); i++) {
+                if (val.equalsIgnoreCase(selectednationalidList.get(i))) {
+                    selectednationalidList.remove(i);
+                }
+            }
+            int type = getNidType(val);
+            dl.removeNIDPhoto(type);
+        }catch (NullPointerException e){
+            e.printStackTrace();
+        }
+    }
+
+    // getting nationalids type id values
+    public boolean getPhotostatusByType(String type) {
+        boolean photostatus= false;
+        Cursor  nid=dl.getPhotostatusByType(type);
+        if (nid.getCount() > 0) {
+            photostatus= true;
+        }
+        return  photostatus;
     }
 
     private void removehmvalue(HashMap<Integer, String> hm_uripath, int val) {
@@ -421,11 +626,10 @@ public class AddNationalidActivity extends BaseActivity implements  View.OnClick
 
     private void initComponents() {
         inflater = (LayoutInflater) context.getSystemService(LAYOUT_INFLATER_SERVICE);
-        nationalidslist = (ListView) findViewById(R.id.list_nationalids);
+        nationalids = (LinearLayout) findViewById(R.id.nationalids);
         addNationId = (ImageButton) findViewById(R.id.addnid);
         save = (AppCompatButton) findViewById(R.id.save);
         save.setOnClickListener(this);
-        addNationId.setOnClickListener(this);
     }
 
     // getting nationalids type id values
@@ -443,43 +647,154 @@ public class AddNationalidActivity extends BaseActivity implements  View.OnClick
 
     @Override
     public void onClick(View v) {
-        if (v.getId() == R.id.save) {
+        int id = v.getId();
 
-            boolean status = validateValues();
-            if(status){
-                dl.updateFarmerNationalids(context, farmerId, fetchListValues(),"2",farmername);
-                Toast.makeText(this, getResources().getString(R.string.nid_updated_successfully),Toast.LENGTH_SHORT).show();
-                onBackPressed();
+        if(id == R.id.addnid) {
+            if (!ValidateNIDValues()) return;
+            try {
+                if (! validateSpinnerValues(spinner_nidtype.getSelectedItem().toString())) {
+                    Toast.makeText(AddNationalidActivity.this,getResources().getString(R.string.nationalidtype_selection),Toast.LENGTH_LONG).show();
+                    return;
+                }
+            }catch (NullPointerException e){
+                e.printStackTrace();
             }
-        }
+//            if (validateSpinnerValues(spinner_nidtype.getSelectedItem().toString())) {
+            if (validateSpinnerSelection()) {
+                ArrayList<String> refreshitem = refreshNationalidtype(setNationalidtype());
+                if (refreshitem.size() != 0) {
+                    editnidmode = true;
+                    LinearLayout nationalidinclude = (LinearLayout) inflater.inflate(R.layout.add_nationalid, nationalids, false);
+                    nationalids.addView(nationalidinclude);
+                    LinearLayout ll_capturephoto = (LinearLayout) nationalidinclude.findViewById(R.id.ll_capturephoto);
+                    Spinner spinner_nidtype = (Spinner) nationalidinclude.findViewById(R.id.idtypespinner);
 
-        if(v.getId() == R.id.addnid) {
-            if(! getSubmitStatus()) {
-                addingEmptyValue(REQUEST_ADDING_ITEM);
-            }else{
+                    ImageButton actionbtn = nationalidinclude.findViewById(R.id.nidphotoActionButton);
+                    ImageButton nationalidphoto = nationalidinclude.findViewById(R.id.nationalidphoto);
+                    actionbtn.setTag(nationalids.getChildCount());
+                    nationalidphoto.setTag(nationalids.getChildCount());
+                    EditText nidnumber = (EditText) nationalidinclude.findViewById(R.id.nidnumber);
+                    spinnerArrayAdapter = new ArrayAdapter<String>(AddNationalidActivity.this, R.layout.spinner_item, refreshitem);
+                    spinnerArrayAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+                    spinner_nidtype.setAdapter(spinnerArrayAdapter);
+                    spinner_nidtype.setOnTouchListener(new View.OnTouchListener() {
+                        @Override
+                        public boolean onTouch(View v, MotionEvent event) {
+                            if (event.getAction() == MotionEvent.ACTION_UP) {
+                                ArrayList<String> refreshitem = refreshNationalidtype(setNationalidtype());
+                                spinnerArrayAdapter = new ArrayAdapter<String>(AddNationalidActivity.this, R.layout.spinner_item, refreshitem);
+                                spinnerArrayAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+                                spinner_nidtype.setAdapter(spinnerArrayAdapter);
+
+                            }
+                            return false;
+                        }
+                    });
+                    spinner_nidtype.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                        @Override
+                        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                            if (!spinner_nidtype.getSelectedItem().toString().equalsIgnoreCase(SELECT_NATIONALID)) {
+
+//                                    selectednationalidList.add(spinner_nidtype.getSelectedItem().toString());
+
+                                int limit = getNidLimit(spinner_nidtype.getSelectedItem().toString());
+                                InputFilter[] filters = new InputFilter[1];
+                                filters[0] = new InputFilter.LengthFilter(limit); //Filter to 10 characters
+                                nidnumber.setFilters(filters);
+                                if (getNidCaptureStatus(spinner_nidtype.getSelectedItem().toString()).trim().equalsIgnoreCase("false")) {
+                                    ll_capturephoto.setVisibility(View.GONE);
+                                } else {
+                                    ll_capturephoto.setVisibility(View.VISIBLE);
+                                }
+
+                            }
+                           /* if(selectednationalidList.contains(spinner_nidtype.getSelectedItem().toString())){
+                                Toast.makeText(AddFarmerActivity.this,"Already selected",Toast.LENGTH_LONG).show();
+                                int spinnerPosition = spinnerArrayAdapter.getPosition(selected_item);
+                                spinner_nidtype.setSelection(spinnerPosition);
+                            }*/
+                        }
+
+                        @Override
+                        public void onNothingSelected(AdapterView<?> parent) {
+
+                        }
+                    });
+
+                    bindniddelete((LinearLayout) nationalidinclude.findViewById(R.id.deleteNationalid));
+//                        String value = spinner_nidtype.getSelectedItem().toString();
+//                        if (!value.equalsIgnoreCase(SELECT_NATIONALID)) {
+//                            nidvalue = getNidType(value);
+                    bindnationlidcapturephoto((Spinner) nationalidinclude.findViewById(R.id.idtypespinner), (ImageButton) nationalidinclude.findViewById(R.id.nidphotoActionButton));
+//                        }else{
+//                            Toast.makeText(AddFarmerActivity.this,getResources().getString(R.string.nationalidtype_selection),Toast.LENGTH_LONG).show();
+//                        }
+
+                }
+            }
+//            }
+
+            /*else{
+                Toast.makeText(AddFarmerActivity.this,getResources().getString(R.string.nationalidtype_selection),Toast.LENGTH_LONG).show();
+
+            }*/
+        }else if(id == R.id.save){
+            if (!ValidateNIDValues()) return;
+            try {
+                if (! validateSpinnerValues(spinner_nidtype.getSelectedItem().toString())) {
+                    Toast.makeText(AddNationalidActivity.this,getResources().getString(R.string.nationalidtype_selection),Toast.LENGTH_LONG).show();
+                    return;
+                }
+            }catch (NullPointerException e){
+                e.printStackTrace();
+            }
+            if(getnationalidSubmitStatus().equalsIgnoreCase(DUPLICATE)) {
                 Toast.makeText(this,getResources().getString(R.string.duplicate_nationalids),Toast.LENGTH_SHORT).show();
+                return ;
+            }else if(getnationalidSubmitStatus().equalsIgnoreCase(LIMIT_XED)){
+                Toast.makeText(this,getResources().getString(R.string.duplicate_nationalids),Toast.LENGTH_SHORT).show();
+                return ;
+            }else if(getnationalidSubmitStatus().equalsIgnoreCase(ENTER_NID)){
+                Toast.makeText(this,getResources().getString(R.string.enter_nationalids),Toast.LENGTH_SHORT).show();
+                return ;
             }
+
+            storeableNationalids = fetchnationalidvalues();
+            dl.updateFarmerNationalids(context, farmerId, storeableNationalids,"2",farmername);
+            onBackPressed();
+//            addNIDValues();
         }
+
+
+
     }
 
+    private JSONArray fetchnationalidvalues() {
+        Cursor nids = dl.getnidsfromlocaldb();
+        JSONArray storeableNationalids = new JSONArray();
+        try {
+            while (nids.moveToNext()) {
+                JSONObject storeableNids = new JSONObject();
+                storeableNids.put("nationalIdType", new Long(nids.getInt(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_TYPE))));
+                storeableNids.put("nationalIdNumber", nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_NUMBER)));
+                storeableNids.put("photo", nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_PHOTO)));
 
+                storeableNationalids.put(storeableNids);
 
-    // getting nationalids type id values
-    public int getNidLimit(String type) {
-        int id=0;
-        Cursor  nid=dl.getNIDByName(type);
-        if (nid.getCount() > 0) {
-            nid.moveToFirst();
-            id= nid.getInt(nid.getColumnIndex(OFISDBContract.NationalIDEntry.COLUMN_NAME_NID_LIMIT));
+            }
+        }catch (JSONException e){
+            e.printStackTrace();
         }
-        return  id;
+        return storeableNationalids;
     }
 
     private String getnationalidSubmitStatus() {
         String typeadded = "false";
+        int nidrowscount = nationalids.getChildCount();
         ArrayList<String> names = new ArrayList<>();
-        for (int i = 0; i < adapterNationalId.getCount(); i++) {
-            View view = nationalidslist.getChildAt(i);
+        for (int i = 0; i < nidrowscount; i++) {
+            LinearLayout view = (LinearLayout) nationalids.getChildAt(i);
+
             Spinner idtypespinner = view.findViewById(R.id.idtypespinner);
             EditText nidnumber = view.findViewById(R.id.nidnumber);
             String value = idtypespinner.getSelectedItem().toString();
@@ -489,7 +804,7 @@ public class AddNationalidActivity extends BaseActivity implements  View.OnClick
             if(limit < nid.length()){
                 typeadded = LIMIT_XED;
             }
-            if(adapterNationalId.getCount() == 1 && i==0){
+            if(nidrowscount == 1 && i==0){
                 if(type == 0){
                     typeadded = ENTER_NID;
                 }
@@ -506,44 +821,141 @@ public class AddNationalidActivity extends BaseActivity implements  View.OnClick
         return typeadded;
     }
 
-    private JSONArray fetchListValues() {
-        JSONArray storeableNationalids = new JSONArray();
-        for (int i = 0; i < adapterNationalId.getCount(); i++) {
-            View view = nationalidslist.getChildAt(i);
-            Spinner idtypespinner = view.findViewById(R.id.idtypespinner);
-            EditText nidnumber = view.findViewById(R.id.nidnumber);
-            String value = idtypespinner.getSelectedItem().toString();
+    private void getAllNationalIds() {
+        nationalidList = new ArrayList<String> ();
+
+        int nidrowscount = nationalids.getChildCount();
+
+        for (int j = 0; j < nidrowscount; j++) {
+            LinearLayout nidrow = (LinearLayout) nationalids.getChildAt(j);
+
+            EditText nidnumber = (EditText) nidrow.findViewById(R.id.nidnumber);
+            String nidnumberValue = String.valueOf(nidnumber.getText()).replace(" ", "");
+            if(nidnumberValue.trim().length() > 0){
+                nationalidList.add(nidnumberValue);
+            }
+        }
+    }
+
+    private boolean duplicateNationalidsValidation() {
+        boolean duplicateNationalidsValidationFlag = false;
+
+        getAllNationalIds();
+
+        int rowscount = nationalids.getChildCount();
+
+        for (int j = 0; j < rowscount; j++) {
+            LinearLayout nidrow = (LinearLayout) nationalids.getChildAt(j);
+
+            EditText nidnumber = (EditText) nidrow.findViewById(R.id.nidnumber);
+            String nidnumberValue = String.valueOf(nidnumber.getText()).replace(" ", "");
+
+            if(nidnumberValue.length()==0){
+
+                duplicateNationalidsValidationFlag = true;
+            }
+
+
+
+            else if (Collections.frequency(nationalidList,nidnumberValue.trim()) == 1) {
+                duplicateNationalidsValidationFlag = true;
+            } else {
+                duplicateNationalidsValidationFlag = false;
+                break;
+            }
+        }
+
+        return duplicateNationalidsValidationFlag;
+    }
+
+    // getting nationalids type id values
+    public int getNidLimit(String type) {
+        int id=0;
+        Cursor  nid=dl.getNIDByName(type);
+        if (nid.getCount() > 0) {
+            nid.moveToFirst();
+            id= nid.getInt(nid.getColumnIndex(OFISDBContract.NationalIDEntry.COLUMN_NAME_NID_LIMIT));
+        }
+        return  id;
+    }
+
+
+    private boolean validateSpinnerValues(String selected_item) {
+        boolean status = true;
+        if(selected_item.equalsIgnoreCase(SELECT_NATIONALID)){
+            return false;
+        }
+        int nidrowscount = nationalids.getChildCount();
+        for (int j = 0; j < nidrowscount; j++) {
+            LinearLayout nationalidinclude = (LinearLayout) nationalids.getChildAt(j);
+            Spinner spinner = nationalidinclude.findViewById(R.id.idtypespinner);
+            String val = spinner.getSelectedItem().toString();
+            if(val.equalsIgnoreCase(SELECT_NATIONALID)){
+
+                return false;
+            }
+        }
+        return status;
+    }
+
+    private boolean validateSpinnerSelection() {
+        boolean status = true;
+        ArrayList<String> values = refreshNationalidtype(setNationalidtype());
+        if(values.size() == 1){
+            return false;
+        }
+        return status;
+    }
+
+
+   /* private void addNIDValues() {
+
+        //        fetch national id values
+        int nidrowscount = nationalids.getChildCount();
+        for (int j = 0; j < nidrowscount; j++) {
+            LinearLayout nidrow = (LinearLayout) nationalids.getChildAt(j);
+            EditText nidnumber = (EditText) nidrow.findViewById(R.id.nidnumber);
+            Spinner nid_type = (Spinner) nidrow.findViewById(R.id.idtypespinner);
+
+            String value = nid_type.getSelectedItem().toString();
             int type = getNidType(value);
             String nid = nidnumber.getText().toString();
             JSONObject storeableNids = new JSONObject();
             try {
-                storeableNids.put("nationalidtype", type);
-                storeableNids.put("nationalidNumber", nid);
-                storeableNids.put("photo", nidDtoList.get(i).getPhoto());
+                storeableNids.put("nationalIdType", type);
+                storeableNids.put("nationalIdNumber", nid);
+                storeableNids.put("photo", hm_uripath.get(j+1));
                 storeableNationalids.put(storeableNids);
+
+                dl.updateFarmerNationalids(context, farmerId, storeableNationalids,"2",farmername);
             } catch (JSONException e) {
                 FirebaseCrash.report(new Exception("AddFarmerActivity: Error creating storable phone number", e));
                 e.printStackTrace();
             }
 
         }
-        Toast.makeText(this,"count:" + storeableNationalids.length(),Toast.LENGTH_SHORT).show();
-        return storeableNationalids;
+
+        onBackPressed();
+    }*/
+
+
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
     }
 
-    private boolean validateValues() {
-        if(getnationalidSubmitStatus().equalsIgnoreCase(DUPLICATE)) {
-            Toast.makeText(this,getResources().getString(R.string.duplicate_nationalids),Toast.LENGTH_SHORT).show();
-            return false;
-        }else if(getnationalidSubmitStatus().equalsIgnoreCase(LIMIT_XED)){
-            Toast.makeText(this,getResources().getString(R.string.duplicate_nationalids),Toast.LENGTH_SHORT).show();
-            return false;
-        }else if(getnationalidSubmitStatus().equalsIgnoreCase(ENTER_NID)){
-            Toast.makeText(this,getResources().getString(R.string.enter_nationalids),Toast.LENGTH_SHORT).show();
-            return false;
+
+
+    private ArrayList<String> refreshNationalidtype(ArrayList<String> value){
+        for(int i=0; i < selectednationalidList.size(); i++){
+            value.remove(selectednationalidList.get(i));
         }
-        return true;
+
+        return value;
     }
+
 
     // getting nationalids type id values
     public int getNidType(String type) {
@@ -556,40 +968,95 @@ public class AddNationalidActivity extends BaseActivity implements  View.OnClick
         return  id;
     }
 
+    private void bindnationlidcapturephoto(Spinner spinner, ImageButton actionbutton) {
 
-    private boolean getSubmitStatus() {
-        boolean typeadded = false;
-        ArrayList<String> names = new ArrayList<>();
-        for (int i = 0; i < adapterNationalId.getCount(); i++) {
-            View view = nationalidslist.getChildAt(i);
-            Spinner idtypespinner = view.findViewById(R.id.idtypespinner);
-            EditText nidnumber = view.findViewById(R.id.nidnumber);
-            String value = idtypespinner.getSelectedItem().toString();
-            int type = getNidType(value);
-            String nid = nidnumber.getText().toString();
-            nidvalueMap.put(i, nid);
-            typeMap.put(i,type);
-            names.add(String.valueOf(type));
-        }
-        Set<String> store = new HashSet<>();
-        for (String name : names) {
-            if (store.add(name) == false) {
-                typeadded = true;
+        actionbutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String value = spinner.getSelectedItem().toString();
+                nidvalue = getNidType(value);
+//                showtoast((int) actionbutton.getTag());
+//                currentcapture_position = nationalids.getChildCount();
+                currentcapture_position = (int) actionbutton.getTag();
+                // Request Permission only for Android Version Marshmallow and above
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    // Check Camera & Storage Permission
+                    if (ContextCompat.checkSelfPermission(AddNationalidActivity.this,
+                            android.Manifest.permission.READ_EXTERNAL_STORAGE) + ContextCompat
+                            .checkSelfPermission(AddNationalidActivity.this,
+                                    android.Manifest.permission.CAMERA)
+                            != PackageManager.PERMISSION_GRANTED) {
+
+                        //request permission
+                        ActivityCompat.requestPermissions(AddNationalidActivity.this,
+                                new String[]{android.Manifest.permission.CAMERA,
+                                        android.Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                                MY_NATIONALID_PIC_PERMISSIONS_REQUEST);
+
+                    } else {
+
+                        // Permission already granted
+                        bindFarmerNationalIDButton();
+                    }
+                } else {
+
+                    // Call methods directly for Android versions lower than Marshmallow
+                    bindFarmerNationalIDButton();
+                }
             }
+        });
+    }
+
+    private void bindFarmerNationalIDButton() {
+        Intent takePicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        takePicture.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        File photoFile = null;
+
+        try {
+            photoFile = createImageFile("nationalidimage_" +currentcapture_position );
+        } catch (IOException e) {
+            FirebaseCrash.report(new Exception("AddFarmerActivity: Error creating nationalid image file", e));
+            e.printStackTrace();
         }
-        return typeadded;
+
+        if (photoFile != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                try {
+                    Method m = StrictMode.class.getMethod("disableDeathOnFileUriExposure");
+                    m.invoke(null);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            Uri fileUri = Uri.fromFile(photoFile);
+            removehmURIvalue(hm_uri,currentcapture_position);
+            removehmvalue(hm_uripath,currentcapture_position);
+            hm_uri.put(currentcapture_position,fileUri);
+            hm_uripath.put(currentcapture_position,fileUri.getPath());
+            setCapturedNIDImageURI(hm_uri);
+            setCurrentNIDPhotoPath(hm_uripath);
+            takePicture.putExtra(MediaStore.EXTRA_OUTPUT, hm_uri.get(currentcapture_position));
+            startActivityForResult(takePicture, REQUEST_IMAGE_CAPTURE_NATIONALID);
+        }
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        finish();
+    private File createImageFile(String portraitOrSignature) throws IOException {
+        String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.ENGLISH).format(new Date());
+        String imageFileName;
+        if(! portraitOrSignature.contains("nationalidimage")) {
+            imageFileName = (portraitOrSignature.equalsIgnoreCase("portrait")) ? "ofis_farmer_portrait_" + timestamp + "_" : "ofis_farmer_signature_" + timestamp + "_";
+        }else{
+            imageFileName = portraitOrSignature + "_" + timestamp + "_";
+        }
+        File storageDir = getExternalFilesDir(null);
+        File image = File.createTempFile(imageFileName, ".jpg", storageDir);
+        if (portraitOrSignature.equalsIgnoreCase("portrait")) {
+            mCurrentPhotoPath = "file:" + image.getAbsolutePath();
+        } else {
+            mCurrentSignaturePhotoPath = "file:" + image.getAbsolutePath();
+        }
+        return image;
     }
-
-
-
-
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
@@ -602,43 +1069,15 @@ public class AddNationalidActivity extends BaseActivity implements  View.OnClick
 
             case REQUEST_IMAGE_CAPTURE_NATIONALID:
                 if (resultCode == RESULT_OK) {
-
-//                        setFullImageFromFilePath(getCurrentNationalIdPhotoPath(), showNIDImage, "portrait");
-                    setNIDImageFromFilePath(getCurrentNationalIdPhotoPath(), "NationalId");
+                    setNIDImageFromFilePath(hm_uripath.get(currentcapture_position), "signature");
                 } else {
-                    showNIDImage.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_capture_id_default));
-                    setCurrentNationalIdPhotoPath(null);
+//                        farmerSignature.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.empty_signature));
+//                        setCurrentSignaturePhotoPath(null);
                 }
                 break;
             default:
         }
     }
-
-    private void setNIDImageFromFilePath(String imagePath, String nid) {
-        String savedImagePath = Utilities.scaleRotateAndSaveImage(imagePath, nid);
-        if (savedImagePath != null) {
-            Uri uri = Uri.parse(savedImagePath);
-            setCapturedNationalIdImageURI(uri);
-            setCurrentNationalIdPhotoPath(savedImagePath);
-            int baseWidth = 100;
-            int baseHeight = 133;
-
-            Hashtable dimensions = Utilities.getDimensionsForDisplayFromBase(baseWidth, baseHeight, res);
-            Integer outputWidth = Integer.parseInt(dimensions.get("width").toString());
-            Integer outputHeight = Integer.parseInt(dimensions.get("height").toString());
-
-            Bitmap bitmap = Utilities.loadSizedBitmap(savedImagePath, outputWidth, outputHeight);
-            nidDTO.setPhoto(getCurrentNationalIdPhotoPath());
-            hm_path.put(capture__position, getCurrentNationalIdPhotoPath());
-            nidDtoList.set(capture__position, nidDTO);
-            adapterNationalId.notifyDataSetChanged();
-//            showNIDImage.setImageBitmap(bitmap);
-
-        }else{
-            Toast.makeText(this,"not saving", Toast.LENGTH_SHORT).show();
-        }
-    }
-
 
     private ArrayList<String> setNationalidtype(){
         nidtypelist = getModules();
@@ -682,55 +1121,51 @@ public class AddNationalidActivity extends BaseActivity implements  View.OnClick
         return nidtypelist;
     }
 
-    private File createImageFile(String portraitOrSignature) throws IOException {
-        String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.ENGLISH).format(new Date());
-        String imageFileName;
-        if(! portraitOrSignature.contains("nationalidimage")) {
-            imageFileName = (portraitOrSignature.equalsIgnoreCase("portrait")) ? "ofis_farmer_portrait_" + timestamp + "_" : "ofis_farmer_signature_" + timestamp + "_";
-        }else{
-            imageFileName = portraitOrSignature + "_" + timestamp + "_";
+    private void setNIDImageFromFilePath(String imagePath, String portraitOrSignature) {
+        String savedImagePath = Utilities.scaleRotateAndSaveImage(imagePath, portraitOrSignature);
+        if (savedImagePath != null) {
+            Uri uri = Uri.parse(savedImagePath);
+            setCapturedImageURI(uri);
+            setCurrentPhotoPath(savedImagePath);
+
+            dl.updateNIDPhoto(nidvalue, savedImagePath);
+            displayBitmapforNID(nidvalue, savedImagePath);
         }
-        File storageDir = getExternalFilesDir(null);
-        File image = File.createTempFile(imageFileName, ".jpg", storageDir);
-        if (portraitOrSignature.equalsIgnoreCase("portrait")) {
-            mCurrentPhotoPath = "file:" + image.getAbsolutePath();
-        } else {
-            mCurrentSignaturePhotoPath = "file:" + image.getAbsolutePath();
-        }
-        return image;
     }
 
+    private void displayBitmapforNID(int nidvalue, String savedImagePath) {
+        // set our desired width and height for display
+        int baseWidth = 100;
+        int baseHeight = 133;
 
-    private void bindFarmerNationalIDButton() {
-        Intent takePicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        takePicture.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        File photoFile = null;
 
-        try {
-            photoFile = createImageFile("nationalidimage" +currentcapture_position );
-        } catch (IOException e) {
-            FirebaseCrash.report(new Exception("AddFarmerActivity: Error creating nationalid image file", e));
-            e.printStackTrace();
-        }
 
-        if (photoFile != null) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                try {
-                    Method m = StrictMode.class.getMethod("disableDeathOnFileUriExposure");
-                    m.invoke(null);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+        Hashtable dimensions = Utilities.getDimensionsForDisplayFromBase(baseWidth, baseHeight, res);
+        Integer outputWidth = Integer.parseInt(dimensions.get("width").toString());
+        Integer outputHeight = Integer.parseInt(dimensions.get("height").toString());
+
+        Bitmap bitmap = Utilities.loadSizedBitmap(savedImagePath, outputWidth, outputHeight);
+
+//        target.setImageBitmap(bitmap);
+
+        int nidrowscount = nationalids.getChildCount();
+
+        for (int j = 0; j < nidrowscount; j++) {
+            LinearLayout nidrow = (LinearLayout) nationalids.getChildAt(j);
+            Spinner nid_type = (Spinner) nidrow.findViewById(R.id.idtypespinner);
+            ImageButton imageButton = (ImageButton) nidrow.findViewById(R.id.nationalidphoto);
+            String value = nid_type.getSelectedItem().toString();
+            int type = getNidType(value);
+           /* if(imageButton.getTag() == captureSignature){
+                imageButton.setImageBitmap(bitmap);
+            }*/
+            if(type == nidvalue) {
+                imageButton.setImageBitmap(bitmap);
             }
-            Uri fileUri = Uri.fromFile(photoFile);
-            setCapturedNationalIdImageURI(fileUri);
-            setCurrentNationalIdPhotoPath(fileUri.getPath());
-            takePicture.putExtra(MediaStore.EXTRA_OUTPUT, getCapturedNationalIdImageURI());
-            startActivityForResult(takePicture, REQUEST_IMAGE_CAPTURE_NATIONALID);
         }
+
+
     }
-
-
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
@@ -753,48 +1188,6 @@ public class AddNationalidActivity extends BaseActivity implements  View.OnClick
                 }
                 break;
             }
-        }
-    }
-
-    public void captureSetImage(int position, NationalIdDTO idDTO, int type, String value) {
-        capture__position = position;
-        nidDTO = idDTO;
-        typeMap.put(position, type);
-        nidvalueMap.put(position, value);
-        // Request Permission only for Android Version Marshmallow and above
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            // Check Camera & Storage Permission
-            if (ContextCompat.checkSelfPermission(AddNationalidActivity.this,
-                    android.Manifest.permission.READ_EXTERNAL_STORAGE) + ContextCompat
-                    .checkSelfPermission(AddNationalidActivity.this,
-                            android.Manifest.permission.CAMERA)
-                    != PackageManager.PERMISSION_GRANTED) {
-
-                //request permission
-                ActivityCompat.requestPermissions(AddNationalidActivity.this,
-                        new String[]{android.Manifest.permission.CAMERA,
-                                android.Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                        MY_NATIONALID_PIC_PERMISSIONS_REQUEST);
-
-            } else {
-                currentcapture_position ++;
-                // Permission already granted
-                bindFarmerNationalIDButton();
-            }
-        } else {
-            currentcapture_position ++;
-            // Call methods directly for Android versions lower than Marshmallow
-            bindFarmerNationalIDButton();
-        }
-    }
-
-    public void deleteValuesfromMap(int position,  int type, String value) {
-        capture__position = position;
-        if(typeMap.containsKey(position)) {
-            typeMap.remove(position);
-        }
-        if(nidvalueMap.containsKey(position)) {
-            nidvalueMap.remove(position);
         }
     }
 

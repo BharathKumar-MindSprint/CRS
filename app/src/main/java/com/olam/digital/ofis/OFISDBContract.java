@@ -646,6 +646,7 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_CHILD_SUBMITTED_MODULES = "submittedModule";
         public static final String COLUMN_NAME_CHILD_CREATEDAT = "createdat";
         public static final String COLUMN_NAME_CHILD_ACTION_TICKED="actionTickeds";
+        public static final String COLUMN_NAME_CHILD_MODULEDTO="moduleDTO";
 
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
@@ -660,6 +661,7 @@ public class OFISDBContract {
                     add(COLUMN_NAME_CHILD_SUBMITTED_MODULES);
                     add(COLUMN_NAME_CHILD_CREATEDAT);
                     add(COLUMN_NAME_CHILD_ACTION_TICKED);
+                    add(COLUMN_NAME_CHILD_MODULEDTO);
                 }}
         );
     }
@@ -854,6 +856,38 @@ public class OFISDBContract {
                     add(COLUMN_NID_NUMBER);
                     add(COLUMN_NID_PHOTO);
 //                    add(COLUMN_CREATEDDATE);
+                }}
+        );
+    }
+
+    public static abstract class LocalFarmerNationalIDs implements BaseColumns {
+        public static final String TABLE_NAME = "localfarmernationalids";
+        public static final String COLUMN_NAME_ID = "id";
+        public static final String COLUMN_NAME_FARMER_ID = "farmerId";
+        public static final String COLUMN_NID_TYPE = "nationalIdType";
+        public static final String COLUMN_NID_NUMBER = "nationalIdNumber";
+        public static final String COLUMN_NID_PHOTO = "photo";
+        //        public static final String COLUMN_CREATEDDATE = "createddate";
+        public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
+                new ArrayList<String>() {{
+                    add(COLUMN_NAME_ID);
+                    add(COLUMN_NAME_FARMER_ID);
+                    add(COLUMN_NID_TYPE);
+                    add(COLUMN_NID_NUMBER);
+                    add(COLUMN_NID_PHOTO);
+//                    add(COLUMN_CREATEDDATE);
+                }}
+        );
+    }
+
+    public static abstract class LocalNationalIDImages implements BaseColumns {
+        public static final String TABLE_NAME = "nationalidimages";
+        public static final String COLUMN_NID_TYPE = "nationalIdType";
+        public static final String COLUMN_NID_PHOTO = "photo";
+        public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
+                new ArrayList<String>() {{
+                    add(COLUMN_NID_TYPE);
+                    add(COLUMN_NID_PHOTO);
                 }}
         );
     }
@@ -1935,6 +1969,8 @@ public class OFISDBContract {
                 put(ChildVisitDetails.TABLE_NAME, ChildVisitDetails.COLUMN_LIST);
                 put(NationalIDEntry.TABLE_NAME, NationalIDEntry.COLUMN_LIST);
                 put(FarmerNationalIDs.TABLE_NAME, FarmerNationalIDs.COLUMN_LIST);
+                put(LocalFarmerNationalIDs.TABLE_NAME, LocalFarmerNationalIDs.COLUMN_LIST);
+                put(LocalNationalIDImages.TABLE_NAME, LocalNationalIDImages.COLUMN_LIST);
                 put(SignatureEntry.TABLE_NAME, SignatureEntry.COLUMN_LIST);
             }};
 

@@ -10,7 +10,7 @@ import android.database.sqlite.SQLiteOpenHelper;
  */
 class OFISDB extends SQLiteOpenHelper {
     private static OFISDB sInstance;
-    private static final int DATABASE_VERSION = 93;
+    private static final int DATABASE_VERSION = 96;
     private static final String DATABASE_NAME = "ofismobile";
 
     // Child Labour Table Creation
@@ -24,6 +24,7 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_GENDER + " TEXT, "
             + OFISDBContract.ChildEntry.COLUMN_NAME_ACTION_FLAG + " INTEGER, "
             + OFISDBContract.ChildEntry.COLUMN_NAME_STATUS + " TEXT, "
+            + OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_MODULEDTO + " TEXT, "
             + OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_CREATEDAT + " TEXT, "
             + OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_SUBMITTED_MODULES + " TEXT, "
             + OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_ACTION_TICKED+ " TEXT, "
@@ -299,6 +300,15 @@ class OFISDB extends SQLiteOpenHelper {
             + " ( " + OFISDBContract.FarmerNationalIDs.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID + " INTEGER, "
             + OFISDBContract.FarmerNationalIDs.COLUMN_NID_TYPE + " INTEGER, " + OFISDBContract.FarmerNationalIDs.COLUMN_NID_NUMBER + " TEXT, "
             + OFISDBContract.FarmerNationalIDs.COLUMN_NID_PHOTO + " TEXT )";
+
+    private static final String OFIS_LOCALFAMRERNATIONALIDS_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.LocalFarmerNationalIDs.TABLE_NAME
+            + " ( " + OFISDBContract.LocalFarmerNationalIDs.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.LocalFarmerNationalIDs.COLUMN_NAME_FARMER_ID + " INTEGER, "
+            + OFISDBContract.LocalFarmerNationalIDs.COLUMN_NID_TYPE + " INTEGER, " + OFISDBContract.LocalFarmerNationalIDs.COLUMN_NID_NUMBER + " TEXT, "
+            + OFISDBContract.LocalFarmerNationalIDs.COLUMN_NID_PHOTO + " TEXT )";
+
+    private static final String OFIS_LOCALNATIONALIDIMAGES_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.LocalNationalIDImages.TABLE_NAME
+            + " ( " +  OFISDBContract.LocalNationalIDImages.COLUMN_NID_TYPE + " INTEGER, "
+            + OFISDBContract.LocalNationalIDImages.COLUMN_NID_PHOTO + " TEXT )";
 
     private static final String OFIS_COUNTRIES_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.CountriesEntry.TABLE_NAME
             + " ( " + OFISDBContract.CountriesEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.CountriesEntry.COLUMN_NAME_CODE + " TEXT, "
@@ -666,6 +676,8 @@ class OFISDB extends SQLiteOpenHelper {
 //        nationalis
         sqLiteDatabase.execSQL(OFIS_NATIONALIDS_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_FAMRERNATIONALIDS_TABLE_CREATE);
+        sqLiteDatabase.execSQL(OFIS_LOCALFAMRERNATIONALIDS_TABLE_CREATE);
+        sqLiteDatabase.execSQL(OFIS_LOCALNATIONALIDIMAGES_TABLE_CREATE);
 
 //        updatesignature
         sqLiteDatabase.execSQL(OFIS_SIGNATURE_TABLE_CREATE);
@@ -741,6 +753,8 @@ class OFISDB extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL("drop table IF EXISTS child_visit");
         sqLiteDatabase.execSQL("drop table IF EXISTS nationalids");
         sqLiteDatabase.execSQL("drop table IF EXISTS farmernationalids");
+        sqLiteDatabase.execSQL("drop table IF EXISTS localfarmernationalids");
+        sqLiteDatabase.execSQL("drop table IF EXISTS nationalidimages");
         sqLiteDatabase.execSQL("drop table IF EXISTS signature");
         onCreate(sqLiteDatabase);
     }
