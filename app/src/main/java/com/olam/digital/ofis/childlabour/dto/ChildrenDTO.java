@@ -18,6 +18,16 @@ public class ChildrenDTO implements Serializable {
     private String createdAt;
     private String actionTicked;
 
+    public String getModuleDTO() {
+        return moduleDTO;
+    }
+
+    public void setModuleDTO(String moduleDTO) {
+        this.moduleDTO = moduleDTO;
+    }
+
+    private String moduleDTO;
+
     public String getActionTicked() {
         return actionTicked;
     }

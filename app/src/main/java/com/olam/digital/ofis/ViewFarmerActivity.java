@@ -1573,7 +1573,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                             Uri fileUri = Uri.fromFile(photoFile);
 //                            setCapturedSignatureImageURI(fileUri);
 //                            setCurrentSignaturePhotoPath(fileUri.getPath());
-                            dl.updateSignature(context, farmerId, fileUri.getPath());
+                            dl.updateSignature(context, farmerId, fileUri.getPath(),farmerNameStr);
 
                             try (FileOutputStream out = new FileOutputStream(photoFile)) {
                                 mSignaturePad.getTransparentSignatureBitmap().compress(Bitmap.CompressFormat.PNG, 100, out); // bmp is your Bitmap instance
