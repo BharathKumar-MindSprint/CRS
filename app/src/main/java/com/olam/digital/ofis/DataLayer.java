@@ -1344,10 +1344,10 @@ public class DataLayer {
         addFarmerNationalids(context,farmerId, storeableNationalids,status,farmername);
     }
 
-    public Cursor getNIDPhotostatusByType(String type) {
+    public Cursor getNIDPhotostatusByType(String type, long farmerid) {
         String[] columns = new String[]{"*"};
-        String whereClause = OFISDBContract.FarmerNationalIDs.COLUMN_NID_TYPE + " = ? ";
-        String[] whereArgs = new String[]{type};
+        String whereClause = OFISDBContract.FarmerNationalIDs.COLUMN_NID_TYPE + " = ? AND " +  OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID + " = ? ";
+        String[] whereArgs = new String[]{type, String.valueOf(farmerid)};
 
         return db.query(OFISDBContract.FarmerNationalIDs.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
     }
@@ -2076,6 +2076,19 @@ public class DataLayer {
         String[] whereArgs = new String[]{type};
 
         return db.query(OFISDBContract.LocalNationalIDImages.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+    }
+
+    public Cursor getNIDPhotostatusByType(String type) {
+        String[] columns = new String[]{"*"};
+        String whereClause = OFISDBContract.FarmerNationalIDs.COLUMN_NID_TYPE + " = ? ";
+        String[] whereArgs = new String[]{type};
+
+        return db.query(OFISDBContract.FarmerNationalIDs.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+    }
+
+    public Cursor getAllPhotos() {
+        String[] columns = new String[]{"*"};
+        return db.query(OFISDBContract.LocalNationalIDImages.TABLE_NAME, columns, null, null, null, null, null);
     }
 
     public int getFarmId(int farmer){
