@@ -547,7 +547,7 @@
     <string name="enumerator_location_capture">Enumerator Location Capture</string>
     <string name="nationalidtype_selection">Please select National ID Type</string>
     <string name="nationalidtype_alreadyselected">National ID Type already selected</string>
-    <string name="nid_photo_select">Please capture photo for National ID</string>
+    <string name="nid_photo_select">Please capture valid photo for National ID</string>
     <string name="nid_value_enter">Please enter National ID</string>
     <string name="clear">Clear</string>
     <string name="nid_updated_successfully">NationalID Updated Successfully</string>
