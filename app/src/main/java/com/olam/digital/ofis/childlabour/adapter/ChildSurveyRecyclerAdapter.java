@@ -45,6 +45,7 @@ public class ChildSurveyRecyclerAdapter extends RecyclerView.Adapter<ChildSurvey
     private JSONArray submittedModulesArray;
     private ChildrenDTO childrenDTO;
     private JSONArray actionTickedArray;
+
     private boolean householdFlag;
     private boolean inspectionFlag;
     private boolean followupFlag;
@@ -152,6 +153,37 @@ public class ChildSurveyRecyclerAdapter extends RecyclerView.Adapter<ChildSurvey
 //
 //        }
 
+//                String disabled_months_string = childModuleDto.getDisabled_months();
+//                List<String> disabled_months = Arrays.asList(disabled_months_string.split("\\s*,\\s*"));
+
+
+        // check after 3 months scenerio
+        // Migrating code to above submitted modules
+//        if (childModuleDto.getSurveyCode().equalsIgnoreCase(ChildLabourUtils.FOLLOWUP_SURVEY_CODE)) {
+//            if (actionTickedArray != null) {
+//                if (actionTickedArray.length() > 0) {
+//                    try {
+//                        JSONObject actionTick = actionTickedArray.getJSONObject(0);
+//                        String actionTickDate = actionTick.getString(ChildLabourUtils.ACTION_DATE);
+//                        String after3MonthsDate = ChildLabourUtils.getAfterThreeMonths(actionTickDate);
+//                        if (Utilities.dateStringToMilliSeconds(after3MonthsDate) < Utilities.currentDateStringToMilliSeconds()) {
+//                            holder.surveyLayout.setEnabled(true);
+//                            enabledFollowUp=true;
+//                        } else {
+//                            holder.surveyLayout.setEnabled(false);
+//                        }
+//                    } catch (JSONException e) {
+//                        e.printStackTrace();
+//                    }
+//                } else {
+//                    holder.surveyLayout.setEnabled(false);
+//                }
+//            } else {
+//                holder.surveyLayout.setEnabled(false);
+//            }
+//
+//        }
+
 
         if (hasSubmittedModules) {
             try {
@@ -208,6 +240,44 @@ public class ChildSurveyRecyclerAdapter extends RecyclerView.Adapter<ChildSurvey
                 }
             }
         }catch (Exception e){}
+
+        // Module DTO Concepts
+        if (childrenDTO.getModuleDTO()!=null) {
+            try {
+                if (childModuleDto.getSurveyCode().equalsIgnoreCase(ChildLabourUtils.HOUSEHOLD_SURVEY_CODE)) {
+                    if (!householdFlag) {
+                        holder.surveyLayout.setEnabled(false);
+                    } else {
+                        holder.surveyLayout.setEnabled(true);
+                    }
+                }
+            } catch (Exception e) {
+            }
+
+            try {
+                if (childModuleDto.getSurveyCode().equalsIgnoreCase(ChildLabourUtils.INSPECTION_SURVEY_CODE)) {
+                    if (!inspectionFlag) {
+                        holder.surveyLayout.setEnabled(false);
+                    } else {
+                        holder.surveyLayout.setEnabled(true);
+
+                    }
+                }
+            } catch (Exception e) {
+            }
+
+            try {
+                if (childModuleDto.getSurveyCode().equalsIgnoreCase(ChildLabourUtils.FOLLOWUP_SURVEY_CODE)) {
+                    if (!followupFlag) {
+                        holder.surveyLayout.setEnabled(false);
+                    } else {
+                        holder.surveyLayout.setEnabled(true);
+                    }
+                }
+            } catch (Exception e) {
+            }
+        }
+
 
         // Module DTO Concepts
         if (childrenDTO.getModuleDTO()!=null) {
