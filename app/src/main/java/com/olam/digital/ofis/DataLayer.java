@@ -3594,7 +3594,7 @@ if (ChildLabourUtils.isChildEnumerator) {
                 String submittedModulesJSON = child.getString(child.getColumnIndex(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_SUBMITTED_MODULES));
                 // New Approach
                 JSONObject submittedModules=null;
-                if(submittedModulesJSON==null){
+                if(submittedModulesJSON==null || submittedModulesJSON.equalsIgnoreCase("null")){
                      submittedModules=new JSONObject();
                     JSONArray moduleArray=new JSONArray();
                     moduleArray.put(newModuleEntry);
