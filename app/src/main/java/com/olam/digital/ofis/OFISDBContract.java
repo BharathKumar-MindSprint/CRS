@@ -598,14 +598,14 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_NID_TYPE = "type";
         public static final String COLUMN_NAME_NID_LIMIT = "nationalIdLimit";
         public static final String COLUMN_NAME_PHOTO_REQUIRED = "photoRequired";
-        public static final String COLUMN_NAME_TYPE_FR = "typeFr";
-        public static final String COLUMN_NAME_TYPE_ES = "typeEs";
-        public static final String COLUMN_NAME_TYPE_PT = "typePt";
-        public static final String COLUMN_NAME_TYPE_ID = "typeId";
-        public static final String COLUMN_NAME_TYPE_TR = "typeTr";
-        public static final String COLUMN_NAME_TYPE_LO = "typeLo";
-        public static final String COLUMN_NAME_TYPE_VI = "typeVi";
-        public static final String COLUMN_NAME_TYPE_TH = "typeTh";
+        public static final String COLUMN_NAME_TYPE_FR = "type_fr";
+        public static final String COLUMN_NAME_TYPE_ES = "type_es";
+        public static final String COLUMN_NAME_TYPE_PT = "type_pt";
+        public static final String COLUMN_NAME_TYPE_ID = "type_id";
+        public static final String COLUMN_NAME_TYPE_TR = "type_tr";
+        public static final String COLUMN_NAME_TYPE_LO = "type_lo";
+        public static final String COLUMN_NAME_TYPE_VI = "type_vi";
+        public static final String COLUMN_NAME_TYPE_TH = "type_th";
         public static final String COLUMN_NAME_NID_ACTIVE = "active";
 
 
