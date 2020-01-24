@@ -214,6 +214,8 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
     GPSListener gpsListener=null;
     private GPSTracker gpsTracker=null;
 
+    CustomListAdapter_Modules customListAdapter_modulesAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -244,7 +246,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
             }
         };
         gpsTracker=new GPSTracker(this,gpsListener);
-     //   gpsTracker.getDeviceLocation();
+        //   gpsTracker.getDeviceLocation();
         if (gpsTracker.isGpsEnabled()){
             gpsTracker.startLocationUpdateInitially();
         }
@@ -411,7 +413,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                     };
                     int[] adapterRowViews = new int[]{R.id.moduleListModuleName, R.id.moduleListCurrentSubModuleId, R.id.moduleListStatusStarted, R.id.moduleListStatusFinished, R.id.moduleListFarmerModuleId, R.id.moduleListRecordedLat, R.id.moduleListRecordedLng};
 
-                    CustomListAdapter_Modules customListAdapter_modulesAdapter =
+                    customListAdapter_modulesAdapter =
                             new CustomListAdapter_Modules(context, moduleAssignments, adapterCols, adapterRowViews, res, farmer, submittedModules);
                     listView.setAdapter(customListAdapter_modulesAdapter);
                 }
@@ -469,7 +471,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
     @SuppressLint("SetTextI18n")
     private void setFarmGPS(Location location, View v) {
         try {
-           // Location farmLocation = (Location) msg.obj;
+            // Location farmLocation = (Location) msg.obj;
             Location farmLocation = location;
             int updated = dl.updateFarmerLocation(
                     farmerId,
@@ -517,7 +519,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
 
-       //JIRA req OW-505 MY_PROFILE_PIC_PERMISSIONS_REQUEST
+        //JIRA req OW-505 MY_PROFILE_PIC_PERMISSIONS_REQUEST
 
         if (requestCode == 6575) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -684,7 +686,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
 //                                Log.e(TAG, errorMessage);
 
                                 Toast.makeText(ViewFarmerActivity.this, errorMessage, Toast.LENGTH_LONG).show();
-                              break;
+                                break;
                             default:
                                 Toast.makeText(ViewFarmerActivity.this,getResources().getString(R.string.record_location_timeout),Toast.LENGTH_LONG).show();
                         }
@@ -794,14 +796,14 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 .getFarmerID(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));*/
         final String strFarmID = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID));
 
-       // Some farm Id is getting null.
+        // Some farm Id is getting null.
         DataLayer dl = new DataLayer(getResources(), ViewFarmerActivity.this);
         dl.fetchPlotData(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
         int count =0;
 //        if(strFarmID != "0"){
         try{
 //            count = SharedPreferenceUtils.getInstance(getApplicationContext()).getPlotCount(""+strFarmID);
-           count = dl.fetchPlotData(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
+            count = dl.fetchPlotData(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
         }catch (Exception e){
             count = 0;
         }
@@ -1455,8 +1457,8 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                         Bundle bundle=new Bundle();
                         bundle.putString(FARMER_NAME, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME)));
                         bundle.putLong(ChildLabourUtils.CHILD_FARMER_ID, farmerId);
-                        boolean updateWaiting = dl.networkEntryTypeExistsByFarmerId("National_ID", farmerId);
-                        if(updateWaiting){
+                        boolean status = dl.isValueavailable(farmerId);
+                        if(status){
                             bundle.putBoolean("edit_mode", true);
                         }else {
                             bundle.putBoolean("edit_mode", false);
@@ -1585,6 +1587,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                         }
 
                         signatureDialog.dismiss();
+                        customListAdapter_modulesAdapter.notifyDataSetChanged();
                     } else {
 
                         Toast.makeText(ViewFarmerActivity.this, "No signature available...", Toast.LENGTH_SHORT).show();
@@ -1600,5 +1603,12 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         });
 
         signatureDialog.show();
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        customListAdapter_modulesAdapter.notifyDataSetChanged();
     }
 }

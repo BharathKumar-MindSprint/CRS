@@ -633,7 +633,7 @@ public class OFISDBContract {
         public static final String TABLE_NAME = "children";
         public static final String COLUMN_NAME_ID = "tmpId";
         public static final String COLUMN_NAME_ONLINE_ID = "id";
-//        public static final String COLUMN_NAME_FARMER_ID = "farmer_id";
+        //        public static final String COLUMN_NAME_FARMER_ID = "farmer_id";
         public static final String COLUMN_NAME_FARMER_ID = "farmerId";
         public static final String COLUMN_NAME_CHILD_NAME = "name";
         public static final String COLUMN_NAME_CHILD_AGE = "age";
@@ -643,7 +643,7 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_MODULE_DTO = "moduleDTO";
         public static final String COLUMN_NAME_CHILD_AGE_ON_YEAR = "ageOnYear";
         public static final String COLUMN_NAME_CHILD_SYNCED = "synced";
-//        public static final String COLUMN_NAME_CHILD_SUBMITTED_MODULES = "submitted_modules";
+        //        public static final String COLUMN_NAME_CHILD_SUBMITTED_MODULES = "submitted_modules";
         public static final String COLUMN_NAME_CHILD_SUBMITTED_MODULES = "submittedModule";
         public static final String COLUMN_NAME_CHILD_CREATEDAT = "createdat";
         public static final String COLUMN_NAME_CHILD_ACTION_TICKED="actionTickeds";
@@ -751,8 +751,10 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_FARM_PLOTS = "location";
         public static final String COLUMN_NAME_CONSENT_FARMER = "consent_farmer";
         public static final String COLUMN_NAME_CONSENT_OTHERS = "consent_others";
-//        register date added - 31-12-2019 - ramesh
+        //        register date added - 31-12-2019 - ramesh
         public static final String COLUMN_NAME_REGISTER_DATE = "registeredDate";
+        //        for moderation - nationalid
+        public static final String COLUMN_NAME_MODERATION_STATUS = "nidmoderation";
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
                     add(COLUMN_NAME_ID);
@@ -780,6 +782,7 @@ public class OFISDBContract {
                     add(COLUMN_NAME_REGIONID);
                     add(COLUMN_NAME_PRODUCT_ID);
                     add(COLUMN_NAME_REGISTER_DATE);
+                    add(COLUMN_NAME_MODERATION_STATUS);
 
                 }}
         );
@@ -850,7 +853,8 @@ public class OFISDBContract {
         public static final String COLUMN_NID_TYPE = "nationalIdType";
         public static final String COLUMN_NID_NUMBER = "nationalIdNumber";
         public static final String COLUMN_NID_PHOTO = "photo";
-//        public static final String COLUMN_CREATEDDATE = "createddate";
+        public static final String COLUMN_IS_SYNCED = "isSynced";
+        //        public static final String COLUMN_CREATEDDATE = "createddate";
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
                     add(COLUMN_NAME_ID);
@@ -858,6 +862,7 @@ public class OFISDBContract {
                     add(COLUMN_NID_TYPE);
                     add(COLUMN_NID_NUMBER);
                     add(COLUMN_NID_PHOTO);
+                    add(COLUMN_IS_SYNCED);
 //                    add(COLUMN_CREATEDDATE);
                 }}
         );
@@ -955,7 +960,7 @@ public class OFISDBContract {
         );
     }
 
-//    update signature
+    //    update signature
     public static abstract class SignatureEntry implements BaseColumns {
         public static final String TABLE_NAME = "signature";
         public static final String COLUMN_NAME_ID = "id";
