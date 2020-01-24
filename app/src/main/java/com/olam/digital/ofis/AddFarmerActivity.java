@@ -811,11 +811,12 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
             String registereddate = format.format(today);
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_REGISTER_DATE, registereddate);
-
-            boolean isUnique = dl.isFarmerEntryUnique(values);
-            values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_MODERATION_STATUS,isUnique);
-            if(isUnique){
-                statusmoduration = true;
+            if(! editMode) {
+                boolean isUnique = dl.isFarmerEntryUnique(values);
+                values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_MODERATION_STATUS,isUnique);
+                if (!isUnique) {
+                    statusmoduration = true;
+                }
             }
         } catch (Exception e) {
             FirebaseCrash.report(new Exception("AddFarmerActivity: Error creating farmer content values", e));

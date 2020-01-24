@@ -1346,7 +1346,6 @@ public class DataLayer {
         addFarmerPhoneNumbers(farmerId, storeableNumbers);
     }
 
-
     public boolean updateFarmerNationalids(Context context,long farmerId, JSONArray storeableNationalids, String status, String farmername) {
         String whereClause = OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID + " = ?";
         String[] whereArgs = new String[]{String.valueOf(farmerId)};
@@ -3721,9 +3720,11 @@ public class DataLayer {
                 String submittedModulesJSON = child.getString(child.getColumnIndex(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_SUBMITTED_MODULES));
                 // New Approach
                 JSONObject submittedModules=null;
-              
+
+
                 if(submittedModulesJSON==null || submittedModulesJSON.equalsIgnoreCase("null")){
-                     submittedModules=new JSONObject();
+                    submittedModules=new JSONObject();
+
 
                     JSONArray moduleArray=new JSONArray();
                     moduleArray.put(newModuleEntry);
