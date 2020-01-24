@@ -3721,8 +3721,10 @@ public class DataLayer {
                 // New Approach
                 JSONObject submittedModules=null;
 
+
                 if(submittedModulesJSON==null || submittedModulesJSON.equalsIgnoreCase("null")){
                     submittedModules=new JSONObject();
+
 
                     JSONArray moduleArray=new JSONArray();
                     moduleArray.put(newModuleEntry);
