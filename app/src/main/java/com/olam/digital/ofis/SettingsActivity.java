@@ -303,7 +303,11 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
             Intent intent = new Intent(this, TasksActivity.class);
             startActivity(intent);
             return true;
-        } else {
+        }else if (id == android.R.id.home) {
+            Intent intent = new Intent(this, HomeActivity.class);
+            startActivity(intent);
+            return true;
+        }else {
             onBackPressed();
             return true;
         }
