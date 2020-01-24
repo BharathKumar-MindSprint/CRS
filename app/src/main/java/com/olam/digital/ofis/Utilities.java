@@ -66,7 +66,15 @@ public class Utilities {
 
     public static  int minProgressCount=0;
 
-
+    public static String EN = "en";
+    public static String FR = "fr";
+    public static String ES = "es";
+    public static String PT = "pt";
+    public static String ID = "id";
+    public static String TR = "TR";
+    public static String LO = "lo";
+    public static String VI = "vi";
+    public static String TH = "th";
 
 
 public  static String base64ConversionForImage(String filepath)  {

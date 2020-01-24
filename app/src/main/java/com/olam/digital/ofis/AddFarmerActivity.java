@@ -1793,12 +1793,31 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     }
 
     private ArrayList<String> setNationalidtype(){
+        String language = Locale.getDefault().getLanguage();
         nidtypelist = getModules();
         nidtype = new ArrayList<String>();
         nidtype.add(SELECT_NATIONALID);
         if (nidtypelist.size() > 0) {
             for (NationalIdTypeDTO moduleDTO : nidtypelist) {
-                nidtype.add(moduleDTO.getType());
+                if(language.equalsIgnoreCase(Utilities.FR)){
+                    nidtype.add(moduleDTO.getTypeFr());
+                }else if(language.equalsIgnoreCase(Utilities.ES)){
+                    nidtype.add(moduleDTO.getTypeEs());
+                }else if(language.equalsIgnoreCase(Utilities.PT)){
+                    nidtype.add(moduleDTO.getTypePt());
+                }else if(language.equalsIgnoreCase(Utilities.ID)){
+                    nidtype.add(moduleDTO.getTypeId());
+                }else if(language.equalsIgnoreCase(Utilities.TR)){
+                    nidtype.add(moduleDTO.getTypeTr());
+                }else if(language.equalsIgnoreCase(Utilities.LO)){
+                    nidtype.add(moduleDTO.getTypeLo());
+                }else if(language.equalsIgnoreCase(Utilities.VI)){
+                    nidtype.add(moduleDTO.getTypeVi());
+                }else if(language.equalsIgnoreCase(Utilities.TH)){
+                    nidtype.add(moduleDTO.getTypeTh());
+                }else {
+                    nidtype.add(moduleDTO.getType());
+                }
             }
         }
 
