@@ -1850,6 +1850,24 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         if (nid.getCount() > 0) {
             nid.moveToFirst();
             type= nid.getString(nid.getColumnIndex(OFISDBContract.NationalIDEntry.COLUMN_NAME_NID_TYPE));
+            String language = Locale.getDefault().getLanguage();
+            if(language.equalsIgnoreCase(Utilities.FR)){
+                type= nid.getString(nid.getColumnIndex(OFISDBContract.NationalIDEntry.COLUMN_NAME_TYPE_FR));
+            }else if(language.equalsIgnoreCase(Utilities.ES)){
+                type= nid.getString(nid.getColumnIndex(OFISDBContract.NationalIDEntry.COLUMN_NAME_TYPE_ES));
+            }else if(language.equalsIgnoreCase(Utilities.PT)){
+                type= nid.getString(nid.getColumnIndex(OFISDBContract.NationalIDEntry.COLUMN_NAME_TYPE_PT));
+            }else if(language.equalsIgnoreCase(Utilities.ID)){
+                type= nid.getString(nid.getColumnIndex(OFISDBContract.NationalIDEntry.COLUMN_NAME_TYPE_ID));
+            }else if(language.equalsIgnoreCase(Utilities.TR)){
+                type= nid.getString(nid.getColumnIndex(OFISDBContract.NationalIDEntry.COLUMN_NAME_TYPE_TR));
+            }else if(language.equalsIgnoreCase(Utilities.LO)){
+                type= nid.getString(nid.getColumnIndex(OFISDBContract.NationalIDEntry.COLUMN_NAME_TYPE_LO));
+            }else if(language.equalsIgnoreCase(Utilities.VI)){
+                type= nid.getString(nid.getColumnIndex(OFISDBContract.NationalIDEntry.COLUMN_NAME_TYPE_VI));
+            }else if(language.equalsIgnoreCase(Utilities.TH)){
+                type= nid.getString(nid.getColumnIndex(OFISDBContract.NationalIDEntry.COLUMN_NAME_TYPE_TH));
+            }
         }
         return  type;
     }
