@@ -40,6 +40,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
@@ -2057,8 +2058,30 @@ public class DataLayer {
     }
 
     public Cursor getNIDByName(String type) {
-        String[] columns = new String[]{"*"};
+
         String whereClause = OFISDBContract.NationalIDEntry.COLUMN_NAME_NID_TYPE + " = ? ";
+        String language = Locale.getDefault().getLanguage();
+        if(language.equalsIgnoreCase(Utilities.FR)){
+            whereClause = OFISDBContract.NationalIDEntry.COLUMN_NAME_TYPE_FR + " = ? ";
+        }else if(language.equalsIgnoreCase(Utilities.ES)){
+            whereClause = OFISDBContract.NationalIDEntry.COLUMN_NAME_TYPE_ES + " = ? ";
+        }else if(language.equalsIgnoreCase(Utilities.PT)){
+            whereClause = OFISDBContract.NationalIDEntry.COLUMN_NAME_TYPE_PT + " = ? ";
+        }else if(language.equalsIgnoreCase(Utilities.ID)){
+            whereClause = OFISDBContract.NationalIDEntry.COLUMN_NAME_TYPE_ID + " = ? ";
+        }else if(language.equalsIgnoreCase(Utilities.TR)){
+            whereClause = OFISDBContract.NationalIDEntry.COLUMN_NAME_TYPE_TR + " = ? ";
+        }else if(language.equalsIgnoreCase(Utilities.LO)){
+            whereClause = OFISDBContract.NationalIDEntry.COLUMN_NAME_TYPE_LO + " = ? ";
+        }else if(language.equalsIgnoreCase(Utilities.VI)){
+            whereClause = OFISDBContract.NationalIDEntry.COLUMN_NAME_TYPE_VI + " = ? ";
+        }else if(language.equalsIgnoreCase(Utilities.TH)){
+            whereClause = OFISDBContract.NationalIDEntry.COLUMN_NAME_TYPE_TH + " = ? ";
+        }
+
+
+        String[] columns = new String[]{"*"};
+
         String[] whereArgs = new String[]{type};
 
         return db.query(OFISDBContract.NationalIDEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
@@ -2075,6 +2098,24 @@ public class DataLayer {
     public Cursor getNIDPhotostatusByName(String type) {
         String[] columns = new String[]{"*"};
         String whereClause = OFISDBContract.NationalIDEntry.COLUMN_NAME_NID_TYPE + " = ? ";
+        String language = Locale.getDefault().getLanguage();
+        if(language.equalsIgnoreCase(Utilities.FR)){
+            whereClause = OFISDBContract.NationalIDEntry.COLUMN_NAME_TYPE_FR + " = ? ";
+        }else if(language.equalsIgnoreCase(Utilities.ES)){
+            whereClause = OFISDBContract.NationalIDEntry.COLUMN_NAME_TYPE_ES + " = ? ";
+        }else if(language.equalsIgnoreCase(Utilities.PT)){
+            whereClause = OFISDBContract.NationalIDEntry.COLUMN_NAME_TYPE_PT + " = ? ";
+        }else if(language.equalsIgnoreCase(Utilities.ID)){
+            whereClause = OFISDBContract.NationalIDEntry.COLUMN_NAME_TYPE_ID + " = ? ";
+        }else if(language.equalsIgnoreCase(Utilities.TR)){
+            whereClause = OFISDBContract.NationalIDEntry.COLUMN_NAME_TYPE_TR + " = ? ";
+        }else if(language.equalsIgnoreCase(Utilities.LO)){
+            whereClause = OFISDBContract.NationalIDEntry.COLUMN_NAME_TYPE_LO + " = ? ";
+        }else if(language.equalsIgnoreCase(Utilities.VI)){
+            whereClause = OFISDBContract.NationalIDEntry.COLUMN_NAME_TYPE_VI + " = ? ";
+        }else if(language.equalsIgnoreCase(Utilities.TH)){
+            whereClause = OFISDBContract.NationalIDEntry.COLUMN_NAME_TYPE_TH + " = ? ";
+        }
         String[] whereArgs = new String[]{type};
 
         return db.query(OFISDBContract.NationalIDEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
@@ -4402,6 +4443,24 @@ public class DataLayer {
         if (nid.getCount() > 0) {
             nid.moveToFirst();
             type= nid.getString(nid.getColumnIndex(OFISDBContract.NationalIDEntry.COLUMN_NAME_NID_TYPE));
+            String language = Locale.getDefault().getLanguage();
+            if(language.equalsIgnoreCase(Utilities.FR)){
+                type= nid.getString(nid.getColumnIndex(OFISDBContract.NationalIDEntry.COLUMN_NAME_TYPE_FR));
+            }else if(language.equalsIgnoreCase(Utilities.ES)){
+                type= nid.getString(nid.getColumnIndex(OFISDBContract.NationalIDEntry.COLUMN_NAME_TYPE_ES));
+            }else if(language.equalsIgnoreCase(Utilities.PT)){
+                type= nid.getString(nid.getColumnIndex(OFISDBContract.NationalIDEntry.COLUMN_NAME_TYPE_PT));
+            }else if(language.equalsIgnoreCase(Utilities.ID)){
+                type= nid.getString(nid.getColumnIndex(OFISDBContract.NationalIDEntry.COLUMN_NAME_TYPE_ID));
+            }else if(language.equalsIgnoreCase(Utilities.TR)){
+                type= nid.getString(nid.getColumnIndex(OFISDBContract.NationalIDEntry.COLUMN_NAME_TYPE_TR));
+            }else if(language.equalsIgnoreCase(Utilities.LO)){
+                type= nid.getString(nid.getColumnIndex(OFISDBContract.NationalIDEntry.COLUMN_NAME_TYPE_LO));
+            }else if(language.equalsIgnoreCase(Utilities.VI)){
+                type= nid.getString(nid.getColumnIndex(OFISDBContract.NationalIDEntry.COLUMN_NAME_TYPE_VI));
+            }else if(language.equalsIgnoreCase(Utilities.TH)){
+                type= nid.getString(nid.getColumnIndex(OFISDBContract.NationalIDEntry.COLUMN_NAME_TYPE_TH));
+            }
         }
         return  type;
     }
