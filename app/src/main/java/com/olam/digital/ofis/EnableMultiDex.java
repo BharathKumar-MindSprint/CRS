@@ -42,9 +42,9 @@ public class EnableMultiDex extends MultiDexApplication {
         Toast.makeText(this,"Test Dynatrace", Toast.LENGTH_LONG).show();
         dtxAction.leaveAction();*/
 
-       // Activity[] permissionCheckerActs = {new HomeActivity()};
+        Activity[] permissionCheckerActs = {new HomeActivity()};
 
-       // InApp.initiateWith(this, permissionCheckerActs).setPosition(Gravity.RIGHT,-1400);
+        InApp.initiateWith(this, permissionCheckerActs).setPosition(Gravity.LEFT,100);
 
     }
 
