@@ -63,8 +63,8 @@ android {
         //noinspection OldTargetApi
         targetSdkVersion 27
         multiDexEnabled true
-        versionCode 51
-        versionName "10.0.44"
+        versionCode 61
+        versionName "10.0.54"
     }
 
     buildTypes {
@@ -266,7 +266,6 @@ dependencies {
     testImplementation 'org.mockito:mockito-core:1.10.19'
     // Optional - Mock the JSON Object. Because jsonobject will come under instrumentation test.
     testImplementation 'org.json:json:20140107'
-    implementation project(path: ':InAppLib_1.4')
 
     implementation('com.github.danysantiago:sendgrid-android:1') {
         exclude group: 'org.apache.httpcomponents', module: 'httpclient'
@@ -277,6 +276,10 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.5'
     implementation 'com.android.support.constraint:constraint-layout:1.1.2'
     implementation 'com.github.gcacace:signature-pad:1.2.1'
+    implementation project(path: ':InAppLib_1.8')
+    implementation group: 'net.lingala.zip4j', name: 'zip4j', version: '2.2.6'
+    implementation group: 'com.googlecode.libphonenumber', name: 'libphonenumber', version:'8.11.0'
+
 
 }
 
