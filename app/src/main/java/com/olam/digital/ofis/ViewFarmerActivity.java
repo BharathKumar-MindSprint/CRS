@@ -1609,6 +1609,6 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
     @Override
     protected void onResume() {
         super.onResume();
-        customListAdapter_modulesAdapter.notifyDataSetChanged();
+        setupUI();
     }
 }
