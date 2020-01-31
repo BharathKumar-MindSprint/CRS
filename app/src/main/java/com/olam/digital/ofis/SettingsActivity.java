@@ -304,14 +304,20 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
             startActivity(intent);
             return true;
         }else if (id == android.R.id.home) {
-            Intent intent = new Intent(this, HomeActivity.class);
-            startActivity(intent);
+            onBackPressed();
             return true;
         }else {
             onBackPressed();
             return true;
         }
 
+    }
+
+    @Override
+    public void onBackPressed() {
+       super.onBackPressed();
+        Intent intent = new Intent(this, HomeActivity.class);
+        startActivity(intent);
     }
 
     @Override
