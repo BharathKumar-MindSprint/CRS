@@ -784,12 +784,12 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
 //        SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(olamFarmerId, String.valueOf(generateUniqueLongNumber()));
 
         try {
-            if (editMode) {
+//            if (editMode) {
                 if (edit_signature)
                     values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_SIGNATURE, getCurrentSignaturePhotoPath());
-            }else {
-                values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_SIGNATURE, getCurrentSignaturePhotoPath());
-            }
+//            }else {
+//                values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_SIGNATURE, getCurrentSignaturePhotoPath());
+//            }
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME, farmerNameValue);
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID, olamFarmerId);
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_CREATED_LOCALLY, 1);
@@ -1042,6 +1042,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                 if (event.getAction() == MotionEvent.ACTION_UP) {
                     String selected_item = spinner_nidtype.getSelectedItem().toString();
                     int type = getNidType(selected_item);
+                    selectednationalidList.remove(selected_item);
                     ArrayList<String> refreshitem = refreshNationalidtype(setNationalidtype());
                     spinnerArrayAdapter = new ArrayAdapter<String>(AddFarmerActivity.this, R.layout.spinner_item, refreshitem);
                     spinnerArrayAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
@@ -1162,6 +1163,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                             if (event.getAction() == MotionEvent.ACTION_UP) {
                                 String selected_item = spinner_nidtype.getSelectedItem().toString();
                                 int type = getNidType(selected_item);
+                                selectednationalidList.remove(selected_item);
                                 ArrayList<String> refreshitem = refreshNationalidtype(setNationalidtype());
                                 spinnerArrayAdapter = new ArrayAdapter<String>(AddFarmerActivity.this, R.layout.spinner_item, refreshitem);
                                 spinnerArrayAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
@@ -2200,6 +2202,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                             if (event.getAction() == MotionEvent.ACTION_UP) {
                                 String selected_item = spinner_nidtype.getSelectedItem().toString();
                                 int type = getNidType(selected_item);
+                                selectednationalidList.remove(selected_item);
                                 ArrayList<String> refreshitem = refreshNationalidtype(setNationalidtype());
                                 spinnerArrayAdapter = new ArrayAdapter<String>(AddFarmerActivity.this, R.layout.spinner_item, refreshitem);
                                 spinnerArrayAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
