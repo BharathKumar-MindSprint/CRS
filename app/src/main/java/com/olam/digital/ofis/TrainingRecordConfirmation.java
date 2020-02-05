@@ -52,6 +52,12 @@ public class TrainingRecordConfirmation extends BaseListActivity {
 
     private static final int REQUEST_CHECK_SETTINGS = 100;
 
+    private Location mCurrentLocation=null;
+    GPSListener gpsListener=null;
+    private GPSTracker gpsTracker=null;
+
+    private static final int REQUEST_CHECK_SETTINGS = 100;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
