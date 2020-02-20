@@ -58,16 +58,23 @@ import com.olam.digital.ofis.Utilities;
 import com.olam.digital.ofis.ViewFarmerActivity;
 import com.olam.digital.ofis.childlabour.dto.ChildModuleDto;
 import com.olam.digital.ofis.childlabour.dto.ChildrenDTO;
+import com.olam.digital.ofis.gps.GPSListener;
+import com.olam.digital.ofis.gps.GPSTracker;
+import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
+import com.olam.digital.ofis.gps.utils.GPSConstants;
+import com.olam.digital.ofis.gps.utils.GPSUtils;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
-
+// handling all survey Questions for child survey.
+//Capture all the collected answers and store in database.
 public class ChildLabourCompleteModuleActivity extends BaseActivity {
 
     private Long farmerID;
     private ChildrenDTO children;
     private ChildModuleDto childModuleDto;
+    public static boolean editMode = false;
 
     private long farmerId;
     private long moduleId;
@@ -131,6 +138,11 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
     private String childNameQueue;
     private String farmerNameQueue;
 
+    private Location mCurrentCapturedLocation=null;
+    GPSListener gpsListener=null;
+    private GPSTracker gpsTracker=null;
+
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -139,6 +151,24 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
         initSetup();
         getChildAndFarmerName();
         dynamicQuestions.SurveyType="child";
+        initGPSListener();
+    }
+
+    private void initGPSListener() {
+        gpsListener=new GPSListener() {
+            @Override
+            public void onGPSClick(Location location) {
+                if (location!=null){
+                    mCurrentCapturedLocation=location;
+                }
+            }
+        };
+        gpsTracker=new GPSTracker(this,gpsListener);
+       // gpsTracker.getDeviceLocation();
+        if (gpsTracker.isGpsEnabled()){
+            gpsTracker.startLocationUpdateInitially();
+        }
+
     }
 
     private void getChildAndFarmerName() {
@@ -271,6 +301,14 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 if (isLastPage) {
+
+                    try{
+                        if (mCurrentCapturedLocation == null || !gpsTracker.isGpsEnabled()) {
+                            gpsTracker.getDeviceLocation();
+                            return;
+                        }
+                    }catch (Exception e){}
+
                     ContentValues values = new ContentValues();
                     Timestamp timestamp = new Timestamp(System.currentTimeMillis());
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "childmodule");
@@ -306,6 +344,14 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
         // returning now to avoid the duplicates
 
         boolean canSaveAndFinish = true;
+
+        // check location
+        if (action.equalsIgnoreCase("finish")) {
+            if (mCurrentCapturedLocation == null || !gpsTracker.isGpsEnabled()) {
+                gpsTracker.getDeviceLocation();
+                return;
+            }
+        }
 
         // first time saving this module?
         if (farmerModuleId == 0) {
@@ -346,7 +392,14 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
             Intent intent = new Intent(context, ViewFarmerActivity.class);
             context.startActivity(intent);
         } else if (action.equalsIgnoreCase("finish")) {
+
             if (canSaveAndFinish) {
+
+                if (dynamicQuestions.requiredFieldsAnsweredChild((int) farmerModuleId, (int) moduleId) && !editMode) {
+                    collectGPSPoint();
+                    gpsTracker.stopLocationUpdates();
+                }
+
                 ViewFarmerActivity.farmerId = farmerId;
                 //SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(farmerId);
                 Intent intent = new Intent(context, ViewFarmerActivity.class);
@@ -371,6 +424,13 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
             finish();
 
         }
+    }
+
+    private void collectGPSPoint() {
+        String lat=String.valueOf(mCurrentCapturedLocation.getLatitude());
+        String lon=String.valueOf(mCurrentCapturedLocation.getLongitude());
+        ContentValues geoContentValues=new GPSUtils().getGeoContentValues(GPSConstants.COLUMN_NAME_CHILD_SURVEY,lat,lon,new Timestamp(System.currentTimeMillis()).toString());
+        Long newTrackId= new GpsTrackerLogic().insertGeoDataDetails(this,geoContentValues);
     }
 
     private void bindSaveButton() {
@@ -405,6 +465,7 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
 
     }
 
+    // method to setup submodule questions
     private void setupSubModuleQuestions() {
         // loop through questions and generate the right control for each
 //        while (questions.moveToNext()) {
@@ -413,7 +474,7 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
                 String displayType = questions.getString(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE));
 
                 if (displayType.replaceAll(" ", "").toLowerCase().equals("checkbox")) {
-                    dynamicQuestions.renderCheckBoxQuestion(questions, dynamicQuestions.questionsSection, farmerId, farmerModuleId);
+                    dynamicQuestions.renderCheckBoxQuestionChild(questions, dynamicQuestions.questionsSection, farmerId, farmerModuleId);
                 } else if (displayType.replaceAll(" ", "").toLowerCase().equals("datepicker")) {
                     dynamicQuestions.renderDatePickerQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null);
                 } else if (displayType.replaceAll(" ", "").toLowerCase().equals("decimal")) {
@@ -546,30 +607,21 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
         super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
-/*
-
-        if (requestCode == REQUEST_RESOLVE_ERROR) {
-            mResolvingError = false;
-            if (resultCode == RESULT_OK) {
-                // Make sure the app is not already connected or attempting to connect
-                if (!googleApiClient.isConnecting() &&
-                        !googleApiClient.isConnected()) {
-                    googleApiClient.connect();
+        switch (requestCode) {
+            case REQUEST_CHECK_SETTINGS:
+                if (requestCode == 100 && resultCode == RESULT_OK) {
+//            Toast.makeText(AddInfrastructureActivity.this,getResources().getString(R.string.record_location_timeout),Toast.LENGTH_LONG).show();
+                    gpsTracker.getDeviceLocation();
+                    startLocationUpdates();
+                } else if (requestCode == 100 && resultCode == RESULT_CANCELED) {
+//            Toast.makeText(AddInfrastructureActivity.this,getResources().getString(R.string.record_location_timeout),Toast.LENGTH_LONG).show();
+                    stopLocationUpdates();
                 }
-            }
-        }
-*/
-
-        if (requestCode == 100 && resultCode == RESULT_OK) {
-//            Toast.makeText(AddInfrastructureActivity.this,getResources().getString(R.string.record_location_timeout),Toast.LENGTH_LONG).show();
-            startLocationUpdates();
-        }else if (requestCode == 100 && resultCode == RESULT_CANCELED) {
-//            Toast.makeText(AddInfrastructureActivity.this,getResources().getString(R.string.record_location_timeout),Toast.LENGTH_LONG).show();
-            stopLocationUpdates();
-        }
-
-        if (resultCode == RESULT_OK) {
-            dynamicQuestions.setFullImageFromFilePath(res);
+                break;
+            default:
+                if (resultCode == RESULT_OK) {
+                    dynamicQuestions.setFullImageFromFilePath(res);
+                }
         }
     }
     /**

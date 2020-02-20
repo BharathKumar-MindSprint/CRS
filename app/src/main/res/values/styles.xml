@@ -9,39 +9,59 @@
         <item name="android:actionBarStyle">@style/AppTheme.ActionBarStyle</item>
     </style>
 
-    <!-- styles the look of the Action bar text -->
-    <style name="AppTheme.ActionBarStyle" parent="android:Widget.Holo.Light.ActionBar">
+    <style name="AppCompactTheme" parent="Theme.AppCompat.Light">
+        <!-- Customize your theme here. -->
+        <item name="android:spinnerStyle">@android:style/Widget.Holo.Light.Spinner</item>
+        <item name="android:spinnerItemStyle">@style/SpinnerItem</item>
+        <item name="android:spinnerDropDownItemStyle">@style/SpinnerItem.DropDownItem</item>
+        <item name="android:dropDownListViewStyle">@style/StandardSpinner</item>
+        <item name="android:actionBarStyle">@style/AppTheme.ActionBarStyle</item>
+    </style>
+
+
+
+    <!-- styles the look of the Action bar text / Appcompact theme-->
+    <style name="AppTheme.ActionBarStyle" parent="Theme.AppCompat.Light">
         <item name="android:titleTextStyle">@style/AppTheme.ActionBar.TitleTextStyle</item>
     </style>
+
 
     <!-- styles the look of the Action bar text -->
     <style name="AppTheme.ActionBar.TitleTextStyle" parent="android:TextAppearance">
         <item name="android:textSize">@dimen/ofis_med_text</item>
     </style>
 
+
     <!-- styles the look of the list view of all spinners -->
-    <style name="StandardSpinner" parent="android:Widget.Holo.Light.ListView">
+    <style name="StandardSpinner" parent="Widget.AppCompat.ListView.DropDown">
         <item name="android:dividerHeight">@dimen/ofis_spinner_itemseparator</item>
         <item name="android:divider">@color/ofis_spinner_divider</item>
     </style>
 
-    <!-- styles the look of the list view of white spinners on coloured backgrounds -->
-    <style name="Spinner" parent="android:Widget.Holo.Spinner">
+
+    <style name="Spinner" parent="Base.Widget.AppCompat.Spinner">
+        <item name="android:spinnerStyle">@android:style/Widget.Holo.Light.Spinner</item>
+        <item name="android:background">@drawable/ofis_spinner_background_holo_dark</item>
+        <item name="android:dropDownSelector">@drawable/ofis_list_selector_holo_dark</item>
+    </style>
+
+    <style name="SpinnerUnderlined" parent="Base.Widget.AppCompat.Spinner.Underlined">
         <item name="android:background">@drawable/ofis_spinner_background_holo_dark</item>
         <item name="android:dropDownSelector">@drawable/ofis_list_selector_holo_dark</item>
     </style>
 
     <!-- styles the look of the top element of the white spinners on coloured backgrounds -->
-    <style name="SpinnerItem" parent="android:Widget.Holo.DropDownItem">
+    <style name="SpinnerItem" parent="Widget.AppCompat.TextView.SpinnerItem">
         <item name="android:textColor">@color/ofis_base_font_white</item>
         <item name="android:textSize">@dimen/ofis_spinner_text</item>
     </style>
 
     <!-- styles the look of the drop down elements of the white spinners on coloured backgrounds -->
-    <style name="SpinnerItem.DropDownItem" parent="android:Widget.Holo.DropDownItem.Spinner">
+    <style name="SpinnerItem.DropDownItem" parent="Widget.AppCompat.Light.DropDownItem.Spinner">
         <item name="android:textColor">@color/ofis_text_field</item>
         <item name="android:background">@color/ofis_spinner_item_background</item>
     </style>
+
 
     <style name="SwitchText">
         <item name="android:textSize">@dimen/ofis_med_text</item>

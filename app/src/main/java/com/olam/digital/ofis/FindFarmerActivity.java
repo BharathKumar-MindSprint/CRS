@@ -6,6 +6,7 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.Spanned;
@@ -21,7 +22,7 @@ import android.widget.TextView;
 import com.olam.digital.ofis.R;
 
 
-public class FindFarmerActivity extends BaseListActivity {
+public class FindFarmerActivity extends BaseListActivity implements AdapterView.OnItemClickListener {
 
     private Context context;
     private Resources res;
@@ -44,6 +45,7 @@ public class FindFarmerActivity extends BaseListActivity {
     private boolean transactionMode = false, backtoFinder = false;
     private long transactionItemId, buyingAgentId;
     private String blockCharacterSet = "~#^|$%&*!'\"";
+    ListView listView;
     private InputFilter filter = new InputFilter() {
 
         @Override
@@ -61,8 +63,8 @@ public class FindFarmerActivity extends BaseListActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_find_farmer);
         //noinspection ConstantConditions
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        listView=findViewById(R.id.list);
         context = this;
         res = getResources();
 
@@ -89,33 +91,34 @@ public class FindFarmerActivity extends BaseListActivity {
         bindFarmerList();
         showFarmerList();
         setUpSearchFunctionality();
+        listView.setOnItemClickListener(this);
     }
 
-    @Override
-    protected void onListItemClick (ListView l, View v, int position, long id) {
-
-        //we now view this farmer
-        Intent intent;
-
-        if (transactionMode) {
-            TextView transacteetype = (TextView) v.findViewById(R.id.transacteeType);
-            intent = new Intent(context, TransactionItem.class);
-            intent.putExtra(TRANSACTEE_TYPE, transacteetype.getText().toString());
-            intent.putExtra(TRANSACTEE_ID, id);
-            intent.putExtra(EDIT_TRANSACTION_ITEM_ID, transactionItemId);
-            intent.putExtra(BUYING_AGENT_CONTEXT, buyingAgentId);
-            intent.putExtra(BACK_TO_FINDER, backtoFinder);
-            if (transactionItemId > 0) {
-                intent.putExtra(EDIT_MODE, true);
-            }
-            intent.putExtra(FARMER_ID, id);
-        } else {
-            ViewFarmerActivity.farmerId = id;
-            //SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(id);
-            intent = new Intent(context, ViewFarmerActivity.class);
-        }
-        context.startActivity(intent);
-    }
+//    @Override
+//    protected void onListItemClick (ListView l, View v, int position, long id) {
+//
+//        //we now view this farmer
+//        Intent intent;
+//
+//        if (transactionMode) {
+//            TextView transacteetype = (TextView) v.findViewById(R.id.transacteeType);
+//            intent = new Intent(context, TransactionItem.class);
+//            intent.putExtra(TRANSACTEE_TYPE, transacteetype.getText().toString());
+//            intent.putExtra(TRANSACTEE_ID, id);
+//            intent.putExtra(EDIT_TRANSACTION_ITEM_ID, transactionItemId);
+//            intent.putExtra(BUYING_AGENT_CONTEXT, buyingAgentId);
+//            intent.putExtra(BACK_TO_FINDER, backtoFinder);
+//            if (transactionItemId > 0) {
+//                intent.putExtra(EDIT_MODE, true);
+//            }
+//            intent.putExtra(FARMER_ID, id);
+//        } else {
+//            ViewFarmerActivity.farmerId = id;
+//            //SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(id);
+//            intent = new Intent(context, ViewFarmerActivity.class);
+//        }
+//        context.startActivity(intent);
+//    }
 
     private void bindFarmerList() {
         if (transactionMode) {
@@ -133,7 +136,8 @@ public class FindFarmerActivity extends BaseListActivity {
             };
             int[] adapterRowViews = new int[]{R.id.farmerListFarmerName, R.id.farmerListOlamFarmerId};
             customListAdapter_farmerAdapter = new CustomListAdapter_Farmer(context, farmerList, adapterCols, adapterRowViews, res, transactionMode);
-            setListAdapter(customListAdapter_farmerAdapter);
+           // setListAdapter(customListAdapter_farmerAdapter);
+            listView.setAdapter(customListAdapter_farmerAdapter);
         }
     }
 
@@ -240,5 +244,30 @@ public class FindFarmerActivity extends BaseListActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> l, View v, int position, long id) {
+        //we now view this farmer
+        Intent intent;
+
+        if (transactionMode) {
+            TextView transacteetype = (TextView) v.findViewById(R.id.transacteeType);
+            intent = new Intent(context, TransactionItem.class);
+            intent.putExtra(TRANSACTEE_TYPE, transacteetype.getText().toString());
+            intent.putExtra(TRANSACTEE_ID, id);
+            intent.putExtra(EDIT_TRANSACTION_ITEM_ID, transactionItemId);
+            intent.putExtra(BUYING_AGENT_CONTEXT, buyingAgentId);
+            intent.putExtra(BACK_TO_FINDER, backtoFinder);
+            if (transactionItemId > 0) {
+                intent.putExtra(EDIT_MODE, true);
+            }
+            intent.putExtra(FARMER_ID, id);
+        } else {
+            ViewFarmerActivity.farmerId = id;
+            //SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(id);
+            intent = new Intent(context, ViewFarmerActivity.class);
+        }
+        context.startActivity(intent);
     }
 }

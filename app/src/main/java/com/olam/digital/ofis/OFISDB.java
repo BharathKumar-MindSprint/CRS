@@ -10,7 +10,7 @@ import android.database.sqlite.SQLiteOpenHelper;
  */
 class OFISDB extends SQLiteOpenHelper {
     private static OFISDB sInstance;
-    private static final int DATABASE_VERSION = 85;
+    private static final int DATABASE_VERSION = 100;
     private static final String DATABASE_NAME = "ofismobile";
 
     // Child Labour Table Creation
@@ -24,8 +24,12 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_GENDER + " TEXT, "
             + OFISDBContract.ChildEntry.COLUMN_NAME_ACTION_FLAG + " INTEGER, "
             + OFISDBContract.ChildEntry.COLUMN_NAME_STATUS + " TEXT, "
+
+            + OFISDBContract.ChildEntry.COLUMN_NAME_MODULE_DTO + " TEXT, "
+
             + OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_CREATEDAT + " TEXT, "
             + OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_SUBMITTED_MODULES + " TEXT, "
+            + OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_ACTION_TICKED+ " TEXT, "
             + OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_AGE_ON_YEAR + " INTEGER, "
             + OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_SYNCED + " INTEGER DEFAULT 1)";
 
@@ -36,6 +40,15 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.ChildVisitDetails.COLUMN_NAME_SURVEY_CODE + " INTEGER, "
             + OFISDBContract.ChildVisitDetails.COLUMN_NAME_SURVEY_DESCRIPTION  + " TEXT, "
             + OFISDBContract.ChildVisitDetails.COLUMN_NAME_SURVEY_VISIT_SYNCED + " INTEGER DEFAULT 1)";
+
+    private static final String OFIS_GPS_MONITOR_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS "
+            + OFISDBContract.GPSDetails.TABLE_NAME
+            + " ( " + OFISDBContract.GPSDetails.COLUMN_NAME_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+            + OFISDBContract.GPSDetails.COLUMN_NAME_LATITUDE + " TEXT, "
+            + OFISDBContract.GPSDetails.COLUMN_NAME_LONGITUDE + " TEXT, "
+            + OFISDBContract.GPSDetails.COLUMN_NAME_RECORDED_DATE  + " TEXT, "
+            + OFISDBContract.GPSDetails.COLUMN_NAME_SUBMITTED_DATE  + " TEXT, "
+            + OFISDBContract.GPSDetails.COLUMN_NAME_CAPTURED_MODULE + " TEXT)";
 
     private static final String OFIS_CHILD_VIST_DETAILS_CREATE = "CREATE TABLE IF NOT EXISTS "
             + OFISDBContract.ChildVisitDetailsEntry.TABLE_NAME
@@ -65,6 +78,17 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME_ID + " TEXT, " + OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME_PT + " TEXT, "
             + OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME_TR + " TEXT, " + OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME_LO + " TEXT, "
             + OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME_VI + " TEXT, " + OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME_TH + " TEXT )";
+
+    // create NationalidModules
+    private static final String OFIS_NATIONALIDS_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.NationalIDEntry.TABLE_NAME
+            + " ( " + OFISDBContract.NationalIDEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, "
+            + OFISDBContract.NationalIDEntry.COLUMN_NAME_NID_LIMIT + " INTEGER, " + OFISDBContract.NationalIDEntry.COLUMN_NAME_NID_TYPE + " TEXT, "
+            + OFISDBContract.NationalIDEntry.COLUMN_NAME_PHOTO_REQUIRED + " TEXT, " + OFISDBContract.NationalIDEntry.COLUMN_NAME_NID_ACTIVE + " TEXT, "
+            + OFISDBContract.NationalIDEntry.COLUMN_NAME_TYPE_FR + " TEXT, " + OFISDBContract.NationalIDEntry.COLUMN_NAME_TYPE_ES + " TEXT, "
+            + OFISDBContract.NationalIDEntry.COLUMN_NAME_TYPE_PT + " TEXT, " + OFISDBContract.NationalIDEntry.COLUMN_NAME_TYPE_ID + " TEXT, "
+            + OFISDBContract.NationalIDEntry.COLUMN_NAME_TYPE_TR + " TEXT, " + OFISDBContract.NationalIDEntry.COLUMN_NAME_TYPE_LO + " TEXT, "
+            + OFISDBContract.NationalIDEntry.COLUMN_NAME_TYPE_VI + " TEXT, " + OFISDBContract.NationalIDEntry.COLUMN_NAME_TYPE_TH + " TEXT )";
+
 
     // create SIP Modules
     private static final String OFIS_SIPGROUP_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.SipGroupEntry.TABLE_NAME +
@@ -98,7 +122,7 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.QuestionSipEntry.COLUMN_NAME_QUESTION_VI + " TEXT, " + OFISDBContract.QuestionSipEntry.COLUMN_NAME_QUESTION_TH + " TEXT, "
             + OFISDBContract.QuestionSipEntry.COLUMN_NAME_DISPLAY_CONFIGURATION + " TEXT)";
 
-// SIP - product list table
+    // SIP - product list table
     private static final String OFIS_PRODUCTLIST_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.productSipEntry.TABLE_NAME +
             " ( " + OFISDBContract.productSipEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + OFISDBContract.productSipEntry.COLUMN_NAME_PRODUCT_ID + " INTEGER, "
             + OFISDBContract.productSipEntry.COLUMN_NAME_PRODUCT_NAME + " TEXT)";
@@ -246,6 +270,8 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.FarmerEntry.COLUMN_NAME_WEBSITE_FARMER_ID + " INTEGER, " + OFISDBContract.FarmerEntry.COLUMN_NAME_WEBSITE_SUBMITTED_MODULES + " TEXT, "
             + OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_PRIMARY_LAT + " TEXT, " + OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_PRIMARY_LNG + " TEXT, "
             + OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_PLOTS + " TEXT, "
+            + OFISDBContract.FarmerEntry.COLUMN_NAME_REGISTER_DATE + " TEXT, "
+            + OFISDBContract.FarmerEntry.COLUMN_NAME_MODERATION_STATUS + " TEXT, "
             + OFISDBContract.FarmerEntry.COLUMN_NAME_CONSENT_FARMER + " INTEGER DEFAULT 1, " + OFISDBContract.FarmerEntry.COLUMN_NAME_CONSENT_OTHERS + " INTEGER DEFAULT 1)";
 
     private static final String OFIS_BACKUP_FARMER_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.FarmerEntry.BACKUP_TABLE_NAME +
@@ -262,6 +288,8 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.FarmerEntry.COLUMN_NAME_WEBSITE_FARMER_ID + " INTEGER, " + OFISDBContract.FarmerEntry.COLUMN_NAME_WEBSITE_SUBMITTED_MODULES + " TEXT, "
             + OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_PRIMARY_LAT + " TEXT, " + OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_PRIMARY_LNG + " TEXT, "
             + OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_PLOTS + " TEXT, "
+            + OFISDBContract.FarmerEntry.COLUMN_NAME_REGISTER_DATE + " TEXT, "
+            + OFISDBContract.FarmerEntry.COLUMN_NAME_MODERATION_STATUS + " TEXT, "
             + OFISDBContract.FarmerEntry.COLUMN_NAME_CONSENT_FARMER + " INTEGER DEFAULT 1, " + OFISDBContract.FarmerEntry.COLUMN_NAME_CONSENT_OTHERS + " INTEGER DEFAULT 1)";
 
     private static final String OFIS_FARMER_INDEX_CREATE = "CREATE INDEX IF NOT EXISTS idx_farmer_locally_created ON " + OFISDBContract.FarmerEntry.TABLE_NAME + "(" + OFISDBContract.FarmerEntry.COLUMN_NAME_CREATED_LOCALLY + ")";
@@ -271,15 +299,31 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.PhoneNumber.COLUMN_NAME_COUNTRY_ID + " INTEGER, " + OFISDBContract.PhoneNumber.COLUMN_NAME_NUMBER + " TEXT, "
             + OFISDBContract.PhoneNumber.COLUMN_NAME_PRIMARY + " INTEGER DEFAULT 0 )";
 
+
+    private static final String OFIS_FAMRERNATIONALIDS_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.FarmerNationalIDs.TABLE_NAME
+            + " ( " + OFISDBContract.FarmerNationalIDs.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID + " INTEGER, "
+            + OFISDBContract.FarmerNationalIDs.COLUMN_NID_TYPE + " INTEGER, " + OFISDBContract.FarmerNationalIDs.COLUMN_NID_NUMBER + " TEXT, "
+            + OFISDBContract.FarmerNationalIDs.COLUMN_IS_SYNCED + " TEXT, "
+            + OFISDBContract.FarmerNationalIDs.COLUMN_NID_PHOTO + " TEXT )";
+
+    private static final String OFIS_LOCALFAMRERNATIONALIDS_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.LocalFarmerNationalIDs.TABLE_NAME
+            + " ( " + OFISDBContract.LocalFarmerNationalIDs.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.LocalFarmerNationalIDs.COLUMN_NAME_FARMER_ID + " INTEGER, "
+            + OFISDBContract.LocalFarmerNationalIDs.COLUMN_NID_TYPE + " INTEGER, " + OFISDBContract.LocalFarmerNationalIDs.COLUMN_NID_NUMBER + " TEXT, "
+            + OFISDBContract.LocalFarmerNationalIDs.COLUMN_NID_PHOTO + " TEXT )";
+
+    private static final String OFIS_LOCALNATIONALIDIMAGES_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.LocalNationalIDImages.TABLE_NAME
+            + " ( " +  OFISDBContract.LocalNationalIDImages.COLUMN_NID_TYPE + " INTEGER, "
+            + OFISDBContract.LocalNationalIDImages.COLUMN_NID_PHOTO + " TEXT )";
+
     private static final String OFIS_COUNTRIES_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.CountriesEntry.TABLE_NAME
             + " ( " + OFISDBContract.CountriesEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.CountriesEntry.COLUMN_NAME_CODE + " TEXT, "
             + OFISDBContract.CountriesEntry.COLUMN_NAME_COUNTRY_NAME + " TEXT, " + OFISDBContract.CountriesEntry.COLUMN_NAME_DIALLING_CODE + " TEXT, "
             + OFISDBContract.CountriesEntry.COLUMN_NAME_OLAM_COUNTRY + " INTEGER, " + OFISDBContract.CountriesEntry.COLUMN_NAME_ENUMERATOR_COUNTRY + " INTEGER DEFAULT 0)";
 
     private static final String OFIS_All_COUNTRIES_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.countryLookUpValuesEntry.TABLE_NAME
-                + " ( " + OFISDBContract.countryLookUpValuesEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.countryLookUpValuesEntry.COLUMN_NAME_CODE + " TEXT, "
-                + OFISDBContract.countryLookUpValuesEntry.COLUMN_NAME_COUNTRY_NAME + " TEXT, " + OFISDBContract.countryLookUpValuesEntry.COLUMN_NAME_DIALLING_CODE + " TEXT, "
-                + OFISDBContract.countryLookUpValuesEntry.COLUMN_NAME_OLAM_COUNTRY + " INTEGER, " + OFISDBContract.countryLookUpValuesEntry.COLUMN_NAME_ENUMERATOR_COUNTRY + " INTEGER DEFAULT 0)";
+            + " ( " + OFISDBContract.countryLookUpValuesEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.countryLookUpValuesEntry.COLUMN_NAME_CODE + " TEXT, "
+            + OFISDBContract.countryLookUpValuesEntry.COLUMN_NAME_COUNTRY_NAME + " TEXT, " + OFISDBContract.countryLookUpValuesEntry.COLUMN_NAME_DIALLING_CODE + " TEXT, "
+            + OFISDBContract.countryLookUpValuesEntry.COLUMN_NAME_OLAM_COUNTRY + " INTEGER, " + OFISDBContract.countryLookUpValuesEntry.COLUMN_NAME_ENUMERATOR_COUNTRY + " INTEGER DEFAULT 0)";
 
     private static final String OFIS_REGIONS_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.RegionsEntry.TABLE_NAME
             + " ( " + OFISDBContract.RegionsEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.RegionsEntry.COLUMN_NAME_COUNTRY_ID + " INTEGER, "
@@ -288,6 +332,11 @@ class OFISDB extends SQLiteOpenHelper {
     private static final String OFIS_DISTRICTS_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.DistrictsEntry.TABLE_NAME
             + " ( " + OFISDBContract.DistrictsEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.DistrictsEntry.COLUMN_NAME_REGION_ID + " INTEGER, "
             + OFISDBContract.DistrictsEntry.COLUMN_NAME_DISTRICT_NAME + " TEXT )";
+
+    private static final String OFIS_SIGNATURE_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.SignatureEntry.TABLE_NAME
+            + " ( " + OFISDBContract.SignatureEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.SignatureEntry.COLUMN_NAME_FAMRERID + " INTEGER, "
+            + OFISDBContract.SignatureEntry.COLUMN_NAME_SIGNATURE + " TEXT )";
+
 
     private static final String OFIS_PLACES_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.PlacesEntry.TABLE_NAME
             + " ( " + OFISDBContract.PlacesEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + OFISDBContract.PlacesEntry.COLUMN_NAME_DISTRICT_ID + " INTEGER, "
@@ -321,6 +370,7 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_CHILD_ID + " TEXT, "
             + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_SURVEY_CODE + " TEXT, "
             + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_IS_VILLAGE + " TEXT, "
+            + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SIGNATURE + " TEXT, "
             + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID + " INTEGER, " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID + " TEXT, "
             + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID + " INTEGER, " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_MODULE_ID + " INTEGER, "
             + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FMP_ID + " INTEGER, " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_TRANSACTION_ITEM_ID + " INTEGER, "
@@ -626,6 +676,18 @@ class OFISDB extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(OFIS_FARMERCHILD_MODULES_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_ANSWER_CHILD_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_CHILD_INDIVIDUAL_SURVEY_TABLE_CREATE);
+        sqLiteDatabase.execSQL(OFIS_GPS_MONITOR_TABLE_CREATE);
+
+
+//        nationalis
+        sqLiteDatabase.execSQL(OFIS_NATIONALIDS_TABLE_CREATE);
+        sqLiteDatabase.execSQL(OFIS_FAMRERNATIONALIDS_TABLE_CREATE);
+        sqLiteDatabase.execSQL(OFIS_LOCALFAMRERNATIONALIDS_TABLE_CREATE);
+        sqLiteDatabase.execSQL(OFIS_LOCALNATIONALIDIMAGES_TABLE_CREATE);
+
+//        updatesignature
+        sqLiteDatabase.execSQL(OFIS_SIGNATURE_TABLE_CREATE);
+
     }
 
     @Override
@@ -697,6 +759,14 @@ class OFISDB extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL("drop table IF EXISTS farmer_child_modules;");
         sqLiteDatabase.execSQL("drop table IF EXISTS child_answers");
         sqLiteDatabase.execSQL("drop table IF EXISTS child_visit");
+
+        sqLiteDatabase.execSQL("drop table IF EXISTS nationalids");
+        sqLiteDatabase.execSQL("drop table IF EXISTS farmernationalids");
+        sqLiteDatabase.execSQL("drop table IF EXISTS localfarmernationalids");
+        sqLiteDatabase.execSQL("drop table IF EXISTS nationalidimages");
+        sqLiteDatabase.execSQL("drop table IF EXISTS signature");
+
+
 
         onCreate(sqLiteDatabase);
     }

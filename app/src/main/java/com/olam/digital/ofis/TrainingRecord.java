@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -23,11 +24,17 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.google.firebase.crash.FirebaseCrash;
 import com.olam.digital.ofis.R;
+import com.olam.digital.ofis.gps.GPSListener;
+import com.olam.digital.ofis.gps.GPSTracker;
+import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
+import com.olam.digital.ofis.gps.utils.GPSConstants;
+import com.olam.digital.ofis.gps.utils.GPSUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -41,7 +48,7 @@ import java.util.Date;
 import java.util.Hashtable;
 import java.util.Locale;
 
-public class TrainingRecord extends BaseListActivity {
+public class TrainingRecord extends BaseListActivity{
 
     private Context context;
     private Resources res;
@@ -75,14 +82,21 @@ public class TrainingRecord extends BaseListActivity {
 
     // Runtime Permission Request Code
     private final static int MY_PERMISSIONS_REQUEST = 9999;
-    
+    private static final int REQUEST_CHECK_SETTINGS = 100;
+    ListView listView;
+
+//    private Location mCurrentLocation=null;
+//    GPSListener gpsListener=null;
+//    private GPSTracker gpsTracker=null;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_training_record);
-
+        listView=findViewById(R.id.list);
         //noinspection ConstantConditions
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         context = me = this;
         res = getResources();
@@ -145,6 +159,18 @@ public class TrainingRecord extends BaseListActivity {
 
         bindSpinners();
         bindButtons();
+
+//        gpsListener=new GPSListener() {
+//            @Override
+//            public void onGPSClick(Location location) {
+//                if (location!=null){
+//                    mCurrentLocation=location;
+//                }
+//            }
+//        };
+//        gpsTracker=new GPSTracker(this,gpsListener);
+//        gpsTracker.getDeviceLocation();
+
 
     }
 
@@ -305,7 +331,8 @@ public class TrainingRecord extends BaseListActivity {
                     R.id.criterion_grade
             };
             customListAdapter_selectedAttendees = new CustomListAdapter_SelectedAttendees(context, trainingAttendees, adapterCols, adapterRowViews, res, readOnlyMode, me, scoringColumns, columnSuffix);
-            setListAdapter(customListAdapter_selectedAttendees);
+            listView.setAdapter(customListAdapter_selectedAttendees);
+            //setListAdapter(customListAdapter_selectedAttendees);
         }
     }
 
@@ -521,13 +548,33 @@ public class TrainingRecord extends BaseListActivity {
             }
         } else {
             // insert
+
+//            if (mCurrentLocation==null){
+//                gpsTracker.getDeviceLocation();
+//                return;
+//            }
+
             trainingRecordId = dl.insertTrainingRecord(values);
             if (trainingRecordId != 0) {
                 editMode = true;
                 Toast.makeText(context, res.getString(R.string.Training_Record_Added), Toast.LENGTH_LONG).show();
             }
+
+            // collect GPS Record
+          //  collectGPSPoint(GPSConstants.MODULE_CAPTURE_TRAINING_RECORD,mCurrentLocation);
+
         }
     }
+
+    private void collectGPSPoint(String module, Location farmLocation) {
+        String lat=String.valueOf(farmLocation.getLatitude());
+        String lon=String.valueOf(farmLocation.getLongitude());
+        ContentValues geoContentValues=new GPSUtils().getGeoContentValues(module,lat,lon,new Timestamp(System.currentTimeMillis()).toString());
+        Long newTrackId= new GpsTrackerLogic().insertGeoDataDetails(context,geoContentValues);
+//        gpsTracker.stopLocationUpdates();
+//        gpsTracker.setNullGPSListener();
+    }
+
 
     private void bindButtons() {
         ImageButton addTrainingAttendees = (ImageButton) findViewById(R.id.addTrainingAttendees);
@@ -621,12 +668,18 @@ public class TrainingRecord extends BaseListActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
         super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
         ImageView trainingPhoto = (ImageView) findViewById(R.id.trainingPhoto);
-
-        if (resultCode == RESULT_OK) {
-            setFullImageFromFilePath(getCurrentPhotoPath(),trainingPhoto);
+        switch (requestCode) {
+            case REQUEST_CHECK_SETTINGS:
+                if (resultCode == -1) {
+                  //  gpsTracker.getDeviceLocation();
+                }
+                break;
+            default:
+                if (resultCode == RESULT_OK) {
+                    setFullImageFromFilePath(getCurrentPhotoPath(), trainingPhoto);
+                }
         }
     }
-
     private void bindTrainingPhotoButton() {
         Intent takePicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         takePicture.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
@@ -679,6 +732,8 @@ public class TrainingRecord extends BaseListActivity {
                 });
         dialog.show();
     }
+
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {

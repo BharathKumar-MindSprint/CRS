@@ -25,6 +25,7 @@ import com.olam.digital.ofis.authentication.AuthenticationInterface;
 import com.olam.digital.ofis.authentication.model.AuthRequestDTO;
 import com.olam.digital.ofis.authentication.model.AuthenticationDTO;
 import com.olam.digital.ofis.childlabour.ChildLabourUtils;
+import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.logging.FabricLogsWriter;
 
 import org.json.JSONArray;
@@ -63,8 +64,8 @@ public class SyncAllTask extends SyncTask {
 
     public static final String TAG = "SyncAllTask";
     public JSONObject spinnerResponse, moduleResponse, sipModuleResponse, farmerResponse, fmpResponse, transactionResponse, trainingResponse, tasksResponse;
-
     public static JSONObject childResponse;
+    public static JSONObject nationalidresponse,enumnationalidresponse;
     private int syncResultCount;
     public ProgressDialog pd;
     private Resources res;
@@ -146,6 +147,20 @@ public class SyncAllTask extends SyncTask {
         } else if (op == SyncTaskOperationType.CHILD_ENUMERATOR) {
             try {
                 syncChildEnumerator();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        } else if (op == SyncTaskOperationType.SYNC_NATIONALIDS) {
+            try {
+                syncNationalIDs();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }else if (op == SyncTaskOperationType.SYNC_ENUM_NID) {
+            try {
+                syncEnumNationalIDs();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -272,8 +287,11 @@ public class SyncAllTask extends SyncTask {
             new UpdateChildrenTask(context).execute(childResponse);
             childResponse=null;
 
+            new UpdateNationalIdTask(context).execute(nationalidresponse);
+            nationalidresponse = null;
 
-
+            new UpdateEnumNationalIdTask(context).execute(enumnationalidresponse);
+            enumnationalidresponse = null;
             /*if (pd != null && pd.isShowing()) {
                 String pdUpdate = res.getString(R.string.update_complete);
                 pd = Utilities.updateProgressDialog(pd, syncResultCount, syncResultCount, pdUpdate);
@@ -413,8 +431,9 @@ public class SyncAllTask extends SyncTask {
                                 Utilities.removeFromSharedPrefs(context, "version_update_notified_on");
                                 Utilities.removeFromSharedPrefs(context, "upgrade_by");
 
-                                publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.checking_child_enumerator));
-                                delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.CHILD_ENUMERATOR);
+                                publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.download_nationalidtype_enumerator));
+                                delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_NATIONALIDS);
+
 
                             }
                         } else {
@@ -501,6 +520,13 @@ public class SyncAllTask extends SyncTask {
                 try {
                     JSONObject response = new JSONObject(postResponse.body().string());
                     if (postResponse.isSuccessful()) {
+
+                        try {
+                            String enumName= response.getJSONObject("outputdata").get(GPSConstants.COLUMN_ENUMERATOR_NAME).toString();
+                            Utilities.setEnumeratorNameSharedPrefs(context,GPSConstants.COLUMN_ENUMERATOR_NAME,enumName);
+                        }catch (Exception e){}
+
+
                         syncResultCount = syncResultCount + response.getInt("resultcount");
                         if (response.getString("status").equals("unchanged")) {
 
@@ -714,7 +740,7 @@ public class SyncAllTask extends SyncTask {
                         } else {
                             publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.survey_data));
                             delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_MODULES);
-                       }
+                        }
 
 
                     } else {
@@ -727,6 +753,97 @@ public class SyncAllTask extends SyncTask {
                 } catch (IOException e) {
                     FirebaseCrash.report(new Exception("SyncAllTask: Error syncing Child Enumerator data", e));
                     e.printStackTrace();
+                } finally {
+                    postResponse.close();
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+                String failureMessage = res.getString(R.string.networking_error);
+                if (e != null) {
+                    FirebaseCrash.report(new Exception("SyncAllTask: Error in response when syncing training data", e));
+                    failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
+                }
+
+                publishProgress(SyncOperation.ERROR_RECEIVED, failureMessage);
+
+            }
+
+        });
+    }
+
+    private void syncNationalIDs() {
+        String endpoint = "";
+        endpoint = "ofismaster/master/nationalId/getNationalIDsByEnumerator?enumeratorLoginId=" + Utilities.getFromSharedPrefs(context);
+        final String finalEndpoint = endpoint;
+        okHttpGet(context, endpoint, null, new Callback() {
+            @Override
+            public void onResponse(Call call, final Response postResponse) {
+                try {
+                    JSONObject response = new JSONObject(postResponse.body().string());
+                    if (postResponse.isSuccessful()) {
+
+                        nationalidresponse = response;
+                        // store the value in Child labour preferences
+                        publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.download_nationalid_enumerator));
+                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_ENUM_NID);
+
+
+                    } else {
+                        try {
+                            FabricLogsWriter.printCrashLog(TAG, finalEndpoint, postResponse.code(), postResponse.networkResponse().toString(), context);
+                        } catch (Exception e) {
+                        }
+                        postFailureMessage(null);
+                    }
+                }catch (Exception e){ e.printStackTrace();
+                } finally {
+                    postResponse.close();
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+                String failureMessage = res.getString(R.string.networking_error);
+                if (e != null) {
+                    FirebaseCrash.report(new Exception("SyncAllTask: Error in response when syncing training data", e));
+                    failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
+                }
+
+                publishProgress(SyncOperation.ERROR_RECEIVED, failureMessage);
+
+            }
+
+        });
+    }
+
+    private void syncEnumNationalIDs() {
+        String endpoint = "";
+        endpoint = "ofisfarmer/farmer/getEnumeratorFarmersUniqueId?enumeratorLoginId=" + Utilities.getFromSharedPrefs(context);
+        final String finalEndpoint = endpoint;
+        okHttpGet(context, endpoint, null, new Callback() {
+            @Override
+            public void onResponse(Call call, final Response postResponse) {
+                try {
+                    JSONObject response = new JSONObject(postResponse.body().string());
+
+                    if (postResponse.isSuccessful()) {
+
+                        enumnationalidresponse = response;
+                        // store the value in Child labour preferences
+                        publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.checking_child_enumerator));
+                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.CHILD_ENUMERATOR);
+
+
+                    } else {
+                        try {
+                            FabricLogsWriter.printCrashLog(TAG, finalEndpoint, postResponse.code(), postResponse.networkResponse().toString(), context);
+                        } catch (Exception e) {
+                        }
+                        postFailureMessage(null);
+                    }
+                }catch (Exception e){ e.printStackTrace();
                 } finally {
                     postResponse.close();
                 }
@@ -926,7 +1043,7 @@ public class SyncAllTask extends SyncTask {
             @Override
             public void onResponse(Call call, final Response postResponse) {
                 try {
-                   // JSONObject response = new JSONObject(postResponse.body().string());
+                    // JSONObject response = new JSONObject(postResponse.body().string());
                     JSONArray  response = new JSONArray(postResponse.body().string());
                     if (postResponse.isSuccessful()) {
                         Utilities.isAppAlive = true;
@@ -938,7 +1055,7 @@ public class SyncAllTask extends SyncTask {
 //                            publishProgress(SyncOperation.START_IMPORT, progress, syncResultCount);
 //
 //                        }
-     //                   http://www.mocky.io/v2/5d619ffb32000059008e6134
+                        //                   http://www.mocky.io/v2/5d619ffb32000059008e6134
                         JSONObject jsonObject=new JSONObject();
                         try {
                             jsonObject.put("child",response);
@@ -953,7 +1070,7 @@ public class SyncAllTask extends SyncTask {
                             FabricLogsWriter.printCrashLog(TAG, finalEndpoint, postResponse.code(), postResponse.networkResponse().toString(), context);
                         } catch (Exception e) {
                         }
-                      //  postFailureMessage(response);
+                        //  postFailureMessage(response);
                     }
                 } catch (JSONException | IOException e) {
                     FirebaseCrash.report(new Exception("SyncAllTask: Error syncing farmer data", e));

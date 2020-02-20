@@ -116,14 +116,14 @@ abstract class DatabaseTask extends AsyncTask<JSONObject, Integer, String> {
             // bind the columns we are after
             for (int k = 0; k < columnKeys.size(); k++) {
 //                try {
-                    if(columnList.get(k).toString() != null) {
+                if(columnList.get(k).toString() != null) {
                        /* if("countryLookUpValues".equals(tableName) && "name".equals(columnList.get(k))){
 //                            item = new JSONObject("\"name\":\"Country "+ j + "\"");;
                             insertHelper.bind(columnKeys.get(k), "Country" + j);
                         }else*/{
-                            insertHelper.bind(columnKeys.get(k), item.optString(columnList.get(k).toString()));
-                        }
+                        insertHelper.bind(columnKeys.get(k), item.optString(columnList.get(k).toString()));
                     }
+                }
 //                } catch (JSONException e) {
 //                    FirebaseCrash.report(new Exception("DatabaseTask: Error binding column for table filling", e));
 //                    e.printStackTrace();
@@ -153,6 +153,15 @@ abstract class DatabaseTask extends AsyncTask<JSONObject, Integer, String> {
                 FirebaseCrash.report(new Exception("DatabaseTask: Error creating seed for farmer table", e));
                 e.printStackTrace();
             }
+            ContentValues values = new ContentValues();
+            values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_MODERATION_STATUS, false);
+            db.update(OFISDBContract.FarmerEntry.TABLE_NAME, values, null, null);
+        }
+
+        if(tableName.equals(OFISDBContract.FarmerNationalIDs.TABLE_NAME)){
+            ContentValues values = new ContentValues();
+            values.put(OFISDBContract.FarmerNationalIDs.COLUMN_IS_SYNCED, true);
+            db.update(OFISDBContract.FarmerNationalIDs.TABLE_NAME, values, null, null);
         }
 
         if (tableName.equals(OFISDBContract.PlacesEntry.TABLE_NAME)) {
@@ -196,7 +205,7 @@ abstract class DatabaseTask extends AsyncTask<JSONObject, Integer, String> {
                     JSONArray SubQuestion = object.getJSONArray("conditional_questions");
                     for (int lengtharray = 0; lengtharray > object.length(); lengtharray++) {
 
-                      //  item =jsonArray.getJSONObject(j)
+                        //  item =jsonArray.getJSONObject(j)
                     }
 
 
@@ -265,4 +274,6 @@ abstract class DatabaseTask extends AsyncTask<JSONObject, Integer, String> {
             }
         }
     }
+
+
 }

@@ -18,11 +18,17 @@ import android.support.v4.content.ContextCompat;
 import android.telephony.TelephonyManager;
 import android.util.Base64;
 import android.util.DisplayMetrics;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.EditText;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.Spinner;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.crash.FirebaseCrash;
+import com.olam.digital.ofis.gps.utils.GPSConstants;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -60,7 +66,15 @@ public class Utilities {
 
     public static  int minProgressCount=0;
 
-
+    public static String EN = "en";
+    public static String FR = "fr";
+    public static String ES = "es";
+    public static String PT = "pt";
+    public static String ID = "id";
+    public static String TR = "TR";
+    public static String LO = "lo";
+    public static String VI = "vi";
+    public static String TH = "th";
 
 
 public  static String base64ConversionForImage(String filepath)  {
@@ -198,6 +212,25 @@ public  static String base64ConversionForImage(String filepath)  {
 
         return sharedPreferences.getString("ENUMERATOR_ID", "");
     }
+
+
+    /**
+     * get and set the enumerator Name
+     * @param context
+     * @param prefName
+     * @param prefValue
+     */
+    public static void setEnumeratorNameSharedPrefs(Context context,String prefName,String prefValue){
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor=sharedPreferences.edit();
+        editor.putString(prefName,prefValue);
+        editor.commit();
+    }
+    public static String getEnumeratorNameSharedPrefs(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
+        return sharedPreferences.getString(GPSConstants.COLUMN_ENUMERATOR_NAME, "");
+    }
+
 //  getPasscode from sharedPref - Penetration testing
     public static String getPasscodeFromSharedPrefs(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
@@ -492,6 +525,24 @@ public  static String base64ConversionForImage(String filepath)  {
         return calendar.getTimeInMillis();
     }
 
+    public static Long currentDateStringToMilliSeconds(){
+
+        Calendar cal=Calendar.getInstance();
+        Date currentDate=cal.getTime();
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        Long timeInSeconds=0L;
+        try{
+            String strCurrentDate=formatter.format(currentDate);
+            Date date = formatter.parse(strCurrentDate);
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(date);
+            timeInSeconds= calendar.getTimeInMillis();
+        }catch(ParseException e){
+            e.printStackTrace();
+        }
+        return timeInSeconds;
+    }
+
     public static Long dateStringToMilliSeconds(String dateStr){
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -505,6 +556,37 @@ public  static String base64ConversionForImage(String filepath)  {
             e.printStackTrace();
         }
         return timeInSeconds;
+    }
+
+    public static void setListViewHeightBasedOnChildren(ListView listView)
+    {
+        ListAdapter listAdapter = listView.getAdapter();
+        if (listAdapter == null)
+            return;
+
+        int desiredWidth = View.MeasureSpec.makeMeasureSpec(listView.getWidth(), View.MeasureSpec.UNSPECIFIED);
+        int totalHeight=0;
+        View view = null;
+
+        for (int i = 0; i < listAdapter.getCount(); i++)
+        {
+            view = listAdapter.getView(i, view, listView);
+
+            if (i == 0)
+                view.setLayoutParams(new ViewGroup.LayoutParams(desiredWidth,
+                        WindowManager.LayoutParams.MATCH_PARENT));
+
+            view.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
+            totalHeight += view.getMeasuredHeight();
+
+        }
+
+        ViewGroup.LayoutParams params = listView.getLayoutParams();
+        params.height = totalHeight + ((listView.getDividerHeight()) * (listAdapter.getCount()));
+
+        listView.setLayoutParams(params);
+        listView.requestLayout();
+
     }
 
 }

@@ -52,7 +52,7 @@ public class TrainingAttendeeScores extends BaseActivity {
         setContentView(R.layout.activity_training_attendee_scores);
 
         //noinspection ConstantConditions
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         context = this;
         res = getResources();

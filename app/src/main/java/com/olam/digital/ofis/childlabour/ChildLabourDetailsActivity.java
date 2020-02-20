@@ -33,7 +33,7 @@ public class ChildLabourDetailsActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_child_labour_details);
         //noinspection ConstantConditions
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         initComponents();
         try {
             farmerId=getIntent().getExtras().getLong(ChildLabourUtils.CHILD_FARMER_ID);
@@ -48,6 +48,7 @@ public class ChildLabourDetailsActivity extends BaseActivity {
         }
     }
 
+    // method to populate the children list from db
     private void populateChildList() {
         ChildLabourLogic childLabourLogic=new ChildLabourLogic();
         List<ChildrenDTO> childrenList=childLabourLogic.getChildDetailsById(this,farmerId);

@@ -1,11 +1,14 @@
 package com.olam.digital.ofis;
 
+import android.app.Activity;
 import android.content.Context;
 import android.support.multidex.MultiDexApplication;
+import android.view.Gravity;
 
 import com.crashlytics.android.Crashlytics;
 //import com.dynatrace.android.agent.Dynatrace;
 import com.olam.digital.ofis.logging.CrashReportingTree;
+import com.olam.inapp.InApp;
 
 import io.fabric.sdk.android.Fabric;
 import timber.log.Timber;
@@ -38,6 +41,8 @@ public class EnableMultiDex extends MultiDexApplication {
 
         Toast.makeText(this,"Test Dynatrace", Toast.LENGTH_LONG).show();
         dtxAction.leaveAction();*/
+
+
     }
 
 

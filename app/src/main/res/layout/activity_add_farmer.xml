@@ -91,6 +91,73 @@
                     </LinearLayout>
                 </LinearLayout>
 
+                <!-- national id implementation   -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingLeft="@dimen/ofis_large_pad"
+                    android:paddingRight="@dimen/ofis_large_pad"
+                    android:paddingBottom="@dimen/activity_vertical_margin"
+                    android:paddingTop="@dimen/activity_vertical_margin"
+                    android:background="@drawable/border_white_background"
+                    android:layout_marginTop="@dimen/ofis_med_pad"
+                    android:baselineAligned="false">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="10.8"
+
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/ofis_text_field"
+                            android:textSize="@dimen/ofis_small_text"
+                            android:text="@string/nationalid"
+                            android:textStyle="bold"
+                            android:layout_marginBottom="@dimen/ofis_med_pad"/>
+
+
+                       <LinearLayout
+                            android:layout_weight="10.8"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:animateLayoutChanges="true"
+                            android:id="@+id/nationalids">
+
+                        </LinearLayout>
+
+                        <!--<com.olam.digital.ofis.tasks.NonScrollListView
+                            android:layout_weight="10.8"
+                            android:id="@+id/list_nationalids"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"/>-->
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="30dp"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:paddingTop="@dimen/ofis_bottom_section_padding_vertical"
+                        android:layout_marginBottom="2dp"
+                        android:gravity="bottom|end">
+
+                        <ImageButton
+                            android:id="@+id/addnid"
+                            android:layout_width="27dp"
+                            android:layout_height="27dp"
+                            android:scaleType="fitXY"
+                            android:layout_gravity="right|center"
+                            android:background="@android:color/transparent"
+                            android:contentDescription="@string/Add"
+                            android:src="@drawable/ic_ofis_add" />
+
+                    </LinearLayout>
+                </LinearLayout>
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -169,17 +236,17 @@
                         android:gravity="bottom|end">
 
                         <ImageButton
-                            android:layout_width="@dimen/small_button_width_height"
-                            android:layout_height="@dimen/small_button_width_height"
                             android:id="@+id/addNumber"
-                            android:src="@drawable/ic_ofis_add"
-                            android:scaleType="fitXY"
-                            android:background="@android:color/transparent"
-                            android:layout_marginRight="@dimen/ofis_bottom_section_padding_horizontal"
-                            android:layout_marginEnd="@dimen/ofis_bottom_section_padding_horizontal"
+                            android:layout_width="27dp"
+                            android:layout_height="27dp"
                             android:layout_marginTop="@dimen/phone_number_plus_offset"
+                            android:layout_marginEnd="@dimen/ofis_bottom_section_padding_horizontal"
+                            android:layout_marginRight="@dimen/ofis_bottom_section_padding_horizontal"
+                            android:background="@android:color/transparent"
                             android:contentDescription="@string/Add"
-                            />
+                            android:scaleType="fitXY"
+                            android:layout_gravity="right|center"
+                            android:src="@drawable/ic_ofis_add" />
 
                     </LinearLayout>
 
@@ -438,10 +505,11 @@
                         android:text="@string/Add_Signature"
                         android:id="@+id/captureSignature"
                         android:background="@color/ofis_action_button_background"
-                        android:drawableLeft="@drawable/ic_actionbutton_camera_small"
-                        android:drawableStart="@drawable/ic_actionbutton_camera_small"
+                        android:drawableRight="@drawable/ic_pen"
+                        android:drawableEnd="@drawable/ic_pen"
                         android:drawablePadding="2dp"
                         android:textColor="@color/ofis_base_font_white"
+                        android:onClick="showSignatureDialog"
                         android:textSize="@dimen/ofis_med_text"
                         android:paddingLeft="15dp"
                         android:paddingRight="15dp"

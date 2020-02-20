@@ -57,6 +57,9 @@ import com.karumi.dexter.listener.single.PermissionListener;
 import com.olam.digital.ofis.childlabour.ChildLabourUtils;
 import com.olam.digital.ofis.childlabour.businesslogic.SipLogic;
 import com.olam.digital.ofis.childlabour.dto.VillageDTO;
+import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
+import com.olam.digital.ofis.gps.utils.GPSConstants;
+import com.olam.digital.ofis.gps.utils.GPSUtils;
 import com.olam.digital.ofis.model.ModuleDTO;
 import com.olam.digital.ofis.model.SubModuleDTO;
 
@@ -158,7 +161,7 @@ public class AddInfrastructureActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_infrastructure);
         //noinspection ConstantConditions
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         context = this;
         res = getResources();
          spinner_place = (Spinner) findViewById(R.id.spinner_place);
@@ -251,7 +254,9 @@ public class AddInfrastructureActivity extends BaseActivity {
         villageSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    villageDetails = villageList.get(position);
+                if (position>0) {
+                    villageDetails = villageList.get(position-1);
+                }
             }
 
             @Override
@@ -424,6 +429,8 @@ public class AddInfrastructureActivity extends BaseActivity {
        /* if (mRequestingLocationUpdates && checkPermissions()) {
             startLocationUpdates();
         }*/
+
+//        Toast.makeText(AddInfrastructureActivity.this,"Track Count : "+(new GpsTrackerLogic().getGPSTrackList(context)).size(),Toast.LENGTH_LONG).show();
         if(mCurrentLocation != null) {
             setPoiGPS(mCurrentLocation);
         }
@@ -597,6 +604,12 @@ public class AddInfrastructureActivity extends BaseActivity {
                         Toast.makeText(context, res.getString(R.string.fill_name), Toast.LENGTH_LONG).show();
                         return;
                     }
+                }else{
+                    long villageNameId=villageSpinner.getSelectedItemId();
+                    if(villageNameId < 1){
+                        Toast.makeText(context, res.getString(R.string.fill_name), Toast.LENGTH_LONG).show();
+                        return;
+                    }
                 }
 
 
@@ -641,6 +654,7 @@ public class AddInfrastructureActivity extends BaseActivity {
                         // insert POI
                         long newPoiId = dl.insertNetworkQueueSipEntry(values, uploadId);
                         if (newPoiId != -1) {
+                            collectGPSPoint();
                             Toast.makeText(context, res.getString(R.string.Successfully_added), Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(context, HomeActivity.class);
                             startActivity(intent);
@@ -654,6 +668,11 @@ public class AddInfrastructureActivity extends BaseActivity {
                 }
             }
         });
+    }
+
+    private void collectGPSPoint() {
+        ContentValues geoContentValues=new GPSUtils().getGeoContentValues(GPSConstants.MODULE_CAPTURE_SOCIAL_INFRASTRUCTURE_POINT,recorded_lat,recorded_lng,new Timestamp(System.currentTimeMillis()).toString());
+        Long newTrackId= new GpsTrackerLogic().insertGeoDataDetails(context,geoContentValues);
     }
 
     private void setPoiGPS(Location location) {
@@ -696,6 +715,8 @@ public class AddInfrastructureActivity extends BaseActivity {
         }
         getDeviceLocation();
     }
+
+
     private void bindGpsButton() {
 
         requestLocation.setOnClickListener(new View.OnClickListener() {
@@ -821,6 +842,7 @@ public class AddInfrastructureActivity extends BaseActivity {
         villageSpinner.setVisibility(View.VISIBLE);
         villageList= SipLogic.getAllPlaces(this);
         List<String> villageNameList=new ArrayList<String>();
+        villageNameList.add(context.getResources().getString(R.string.Name));
         for (VillageDTO village: villageList) {
             villageNameList.add(village.getVillageName());
         }
@@ -841,7 +863,7 @@ public class AddInfrastructureActivity extends BaseActivity {
         }
 
 
-        ArrayAdapter adapter = new ArrayAdapter<>(context, R.layout.add_sip_spinner_item, subModuleNames);
+        ArrayAdapter adapter = new ArrayAdapter<>(context, R.layout.spinner_dropdown_item_single_line, subModuleNames);
         adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         subModulesSpinner.setAdapter(adapter);
 

@@ -14,6 +14,7 @@ import java.util.List;
 
 public class SipLogic {
 
+    // Gathering all village list for the SIP. Places needs to be populated for the given country.
     public static List<VillageDTO> getAllPlaces(Context context){
         DataLayer dataLayer=new DataLayer(context.getResources(),context);
         Cursor cursor= dataLayer.getAllPlaces();

@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+// Handles and shows the child list in the screen before taking the survey
 
 public class ViewChildLabourSurveyActivity extends BaseActivity {
 
@@ -75,6 +76,7 @@ public class ViewChildLabourSurveyActivity extends BaseActivity {
         populateSurveyList();
     }
 
+    // method to get the child details by child Id
     private void getChildDetailsById() {
         if (childID != null) {
             children = new ChildLabourLogic().getChildrenDTO(this, String.valueOf(childID));
@@ -83,6 +85,7 @@ public class ViewChildLabourSurveyActivity extends BaseActivity {
         childNameTv.setText(children.getName());
     }
 
+    // method to populate the survey list
     private void populateSurveyList() {
         childModuleDtoList = new ChildLabourLogic().getChildSurveyModuleList(this, farmerID,String.valueOf(children.getId()));
 
@@ -97,9 +100,25 @@ public class ViewChildLabourSurveyActivity extends BaseActivity {
 
         }catch (Exception e){}
 
+        JSONObject actionTicked = null;
+        JSONArray actionTickedArray=null;
+        try {
+            String actionTickedJSON = children.getActionTicked();
+            actionTicked=new JSONObject(actionTickedJSON);
+            actionTickedArray= actionTicked.getJSONArray(ChildLabourUtils.CHILD_LABOUR_ACTION_TICK_LIST);
+
+        }catch (Exception e){}
+
+        JSONObject moduleDtoJson=null;
+        try {
+            String moduleDetails=children.getModuleDTO();
+            moduleDtoJson=new JSONObject(moduleDetails);
+        }catch (Exception e){}
+
+
         if (childModuleDtoList != null && childModuleDtoList.size() > 0) {
             try {
-                childSurveyRecyclerAdapter = new ChildSurveyRecyclerAdapter(childModuleDtoList,this,modulesArray);
+                childSurveyRecyclerAdapter = new ChildSurveyRecyclerAdapter(childModuleDtoList,this,modulesArray,children,actionTickedArray,moduleDtoJson);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -135,6 +154,7 @@ public class ViewChildLabourSurveyActivity extends BaseActivity {
 
     }
 
+    // method to assemble the survey by order
     private void AssembleSurveyByOrder() {
         List<ChildModuleDto> unOrderedSurveyList=childModuleDtoList;
         for (ChildModuleDto childModuleDto : unOrderedSurveyList){
@@ -151,9 +171,8 @@ public class ViewChildLabourSurveyActivity extends BaseActivity {
 
     }
 
+    // Compare the child survey code
     class SortbySurveyCode implements Comparator<ChildModuleDto> {
-
-
         // Used for sorting in ascending order of
         // roll number
         @Override
@@ -163,6 +182,7 @@ public class ViewChildLabourSurveyActivity extends BaseActivity {
     }
 
 
+    // method to set the required collected data from child survey module.
     private void setRequiredData(Intent intent,ChildModuleDto childModuleDto) {
         DataLayer dataLayer=new DataLayer(this.getResources(),this);
 
