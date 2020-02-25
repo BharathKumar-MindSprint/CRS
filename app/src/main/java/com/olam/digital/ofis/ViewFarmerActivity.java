@@ -400,7 +400,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 }
                 submittedModules = (!submittedModulesJSON.equals("null")) ? new JSONObject(submittedModulesJSON) : new JSONObject();
                 String moduleNameSuffix = Utilities.getLocaleSuffix(res);
-                Cursor moduleAssignments = dl.getFarmerModules(farmerId);
+                Cursor moduleAssignments = dl.getFarmerModules(farmerId, this);
                 if (moduleAssignments != null && moduleAssignments.getCount() > 0) {
                     String[] adapterCols = new String[]{
                             (moduleAssignments.getColumnIndex(OFISDBContract.ModuleEntry.COLUMN_NAME_NAME + moduleNameSuffix) != -1) ? OFISDBContract.ModuleEntry.COLUMN_NAME_NAME + moduleNameSuffix : OFISDBContract.ModuleEntry.COLUMN_NAME_NAME,
