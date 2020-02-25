@@ -18,8 +18,10 @@ import org.json.JSONObject;
 @SuppressWarnings("DefaultFileTemplate")
 class UpdateNationalIdTask extends DatabaseTask {
     ProgressDialog pd;
+    Context context;
     public UpdateNationalIdTask(Context context) {
         super(context);
+        this.context = context;
         pd = Utilities.openProgressDialog(context, context.getString(R.string.data_initialization), false);
     }
 
@@ -38,6 +40,9 @@ class UpdateNationalIdTask extends DatabaseTask {
                     JSONArray nationalidArray = nationalidResponse.getJSONArray("nationalids");
                     if (nationalidArray.length()>0) {
                         fillTable(nationalidArray, OFISDBContract.NationalIDEntry.TABLE_NAME, OFISDBContract.NationalIDEntry.COLUMN_LIST);
+                        Utilities.saveToSharedPrefs(context, "NationalID", null, true);
+                    }else{
+                        Utilities.saveToSharedPrefs(context, "NationalID", null, false);
                     }
                 } catch (JSONException e) {
                     FirebaseCrash.report(new Exception("UpdatenationalIdTask: Error filling nationalids table", e));

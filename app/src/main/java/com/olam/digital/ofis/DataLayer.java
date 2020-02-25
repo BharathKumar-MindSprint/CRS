@@ -2263,7 +2263,7 @@ public class DataLayer {
 
 
     // TODO remove annual survey and expires once no longer required.
-    Cursor getFarmerModules(long id) {
+    Cursor getFarmerModules(long id, Context context) {
         Cursor farmer = null;
 
         try {
@@ -2474,41 +2474,11 @@ public class DataLayer {
                         "Signature"
                 });
 
-
+                boolean isNIDAvailable = Utilities.getBoolFromSharedPrefs(context, "NationalID", false);
+                if(isNIDAvailable) {
 //         add national id information
-                mc.addRow(new String[]{
-                        "0",
-                        res.getString(R.string.add_nationalid),
-                        res.getString(R.string.add_nationalid),
-                        res.getString(R.string.add_nationalid),
-                        res.getString(R.string.add_nationalid),
-                        res.getString(R.string.add_nationalid),
-                        res.getString(R.string.add_nationalid),
-                        res.getString(R.string.add_nationalid),
-                        res.getString(R.string.add_nationalid),
-                        res.getString(R.string.add_nationalid),
-                        "0",
-                        "",
-                        "",
-                        "",
-                        res.getString(R.string.update_signature_hint),
-                        res.getString(R.string.update_signature_hint),
-                        res.getString(R.string.update_signature_hint),
-                        res.getString(R.string.update_signature_hint),
-                        res.getString(R.string.update_signature_hint),
-                        res.getString(R.string.update_signature_hint),
-                        res.getString(R.string.update_signature_hint),
-                        res.getString(R.string.update_signature_hint),
-                        res.getString(R.string.update_signature_hint),
-                        "",
-                        "",
-                        "",
-                        "",
-                        "",
-                        "",
-                        "National_ID"
-                });
-
+                    mc.addRow(new String[]{"0", res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), "0", "", "", "", res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), "", "", "", "", "", "", "National_ID"});
+                }
                 Cursor fmp = getFmpByFarmerId(id);
                 if (fmp.getCount() > 0) {
                     fmp.moveToFirst();
