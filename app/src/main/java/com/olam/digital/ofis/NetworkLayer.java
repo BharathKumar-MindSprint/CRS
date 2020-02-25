@@ -3174,8 +3174,11 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             }
 
             try {
-                if (nidstosend != null) {
-                    jsonObject.put("nationalIDs", nidstosend);
+                boolean isNIDAvailable = Utilities.getBoolFromSharedPrefs(context, "NationalID", false);
+                if(isNIDAvailable) {
+                    if (nidstosend != null) {
+                        jsonObject.put("nationalIDs", nidstosend);
+                    }
                 }
 
             }catch (Exception e){

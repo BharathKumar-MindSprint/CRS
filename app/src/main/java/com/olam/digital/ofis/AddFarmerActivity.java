@@ -173,6 +173,8 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     boolean editnidmode = false;
     boolean edit_signature = false;
     boolean statusmoduration = false;
+    boolean isNIDAvailable = false;
+    LinearLayout ll_nidview;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -193,6 +195,13 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         genders.put("Male" + localeSuffix, res.getString(R.string.gender_male));
         genders.put("Female" + localeSuffix, res.getString(R.string.gender_female));
 
+        ll_nidview = (LinearLayout) findViewById(R.id.ll_nidview);
+        isNIDAvailable = Utilities.getBoolFromSharedPrefs(context, "NationalID", false);
+        if(! isNIDAvailable){
+            ll_nidview.setVisibility(View.GONE);
+        }else {
+            ll_nidview.setVisibility(View.VISIBLE);
+        }
         dl = new DataLayer(res, context);
         farmerIdPrefix = (EditText) findViewById(R.id.olamFarmerIdStart);
         phonenumbers = (LinearLayout) findViewById(R.id.phonenumbers);
@@ -201,10 +210,12 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
 
         bindphonenumbers();
         dl.clearlocalniddbvalue();
-        if(!editMode) {
-            bindnationalid();
-        }else {
-            bindNationalidValues();
+        if(isNIDAvailable) {
+            if (!editMode) {
+                bindnationalid();
+            } else {
+                bindNationalidValues();
+            }
         }
         if (editMode) {
             if (editFarmerId != 0) {
@@ -731,21 +742,22 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             }
 
         }*/
-        if(getnationalidSubmitStatus().equalsIgnoreCase(DUPLICATE)) {
-            Toast.makeText(this,getResources().getString(R.string.duplicate_nationalids),Toast.LENGTH_SHORT).show();
-            return values;
-        }else if(getnationalidSubmitStatus().equalsIgnoreCase(LIMIT_XED)){
-            Toast.makeText(this,getResources().getString(R.string.duplicate_nationalids),Toast.LENGTH_SHORT).show();
-            return values;
-        }else if(getnationalidSubmitStatus().equalsIgnoreCase(ENTER_NID)){
-            Toast.makeText(this,getResources().getString(R.string.enter_nationalids),Toast.LENGTH_SHORT).show();
-            return values;
+        if(isNIDAvailable) {
+            if (getnationalidSubmitStatus().equalsIgnoreCase(DUPLICATE)) {
+                Toast.makeText(this, getResources().getString(R.string.duplicate_nationalids), Toast.LENGTH_SHORT).show();
+                return values;
+            } else if (getnationalidSubmitStatus().equalsIgnoreCase(LIMIT_XED)) {
+                Toast.makeText(this, getResources().getString(R.string.duplicate_nationalids), Toast.LENGTH_SHORT).show();
+                return values;
+            } else if (getnationalidSubmitStatus().equalsIgnoreCase(ENTER_NID)) {
+                Toast.makeText(this, getResources().getString(R.string.enter_nationalids), Toast.LENGTH_SHORT).show();
+                return values;
+            }
+            if (!ValidateNIDValues()) {
+                return values;
+            }
+            storeableNationalids = fetchnationalidvalues();
         }
-        if(!ValidateNIDValues()) {
-            return values;
-        }
-        storeableNationalids = fetchnationalidvalues();
-
         int phonerowscount = phonenumbers.getChildCount();
         /*boolean hasNumber = false;
         boolean hasMainNumber = false;*/
@@ -1383,10 +1395,11 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             public void onClick(View view) {
                 Switch consentFarmer = (Switch) findViewById(R.id.consentFarmer);
                 Switch consentOthers = (Switch) findViewById(R.id.consentOthers);
-
-                if (! duplicateNationalidsValidation()) { //Duplicate nationalids Validation....
-                    Toast.makeText(context, res.getString(R.string.duplicate_nationalids), Toast.LENGTH_LONG).show();
-                    return;
+                if(isNIDAvailable) {
+                    if (!duplicateNationalidsValidation()) { //Duplicate nationalids Validation....
+                        Toast.makeText(context, res.getString(R.string.duplicate_nationalids), Toast.LENGTH_LONG).show();
+                        return;
+                    }
                 }
 
                 if (duplicatePhoneNumberValidation()) { //Duplicate Phone Number Validation....
@@ -1398,9 +1411,11 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                         if (editMode) {
                             long updFarmerId = dl.updateFarmer(values, editFarmerId);
                             dl.updateFarmerPhoneNumbers(editFarmerId, storeableNumbers);
-                            boolean moduretationstatus = dl.updateFarmerNationalids(context, editFarmerId, storeableNationalids,"1","name");
-                            if(moduretationstatus){
-                                statusmoduration = true;
+                            if(isNIDAvailable) {
+                                boolean moduretationstatus = dl.updateFarmerNationalids(context, editFarmerId, storeableNationalids, "1", "name");
+                                if (moduretationstatus) {
+                                    statusmoduration = true;
+                                }
                             }
                             if (updFarmerId > 0) {
                                 Toast.makeText(context, res.getString(R.string.Farmer_Updated), Toast.LENGTH_LONG).show();
@@ -1420,9 +1435,11 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                             long newFarmerId = dl.insertFarmer(values);
                             if (newFarmerId != -1) {
                                 dl.updateFarmerPhoneNumbers(newFarmerId, storeableNumbers);
-                                boolean moduretationstatus = dl.updateFarmerNationalids(context, newFarmerId, storeableNationalids, "1","name");
-                                if(moduretationstatus){
-                                    statusmoduration = true;
+                                if(isNIDAvailable) {
+                                    boolean moduretationstatus = dl.updateFarmerNationalids(context, newFarmerId, storeableNationalids, "1", "name");
+                                    if (moduretationstatus) {
+                                        statusmoduration = true;
+                                    }
                                 }
                                 Toast.makeText(context, res.getString(R.string.Farmer_Added), Toast.LENGTH_LONG).show();
 
