@@ -360,25 +360,7 @@ public class AddInfrastructureActivity extends BaseActivity {
         super.onStop();
     }
 
-    private void showSettingsDialog(String msg) {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-        dialog.setTitle(R.string.permission_permanent_denial_title);
-        dialog.setMessage(msg)
-                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-                        startActivity(new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                                Uri.parse("package:" + context.getPackageName())));
-                    }
-                })
-                .setNegativeButton(R.string.app_update_cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-                        Toast.makeText(AddInfrastructureActivity.this, R.string.permission_permanent_denial_msg, Toast.LENGTH_LONG).show();
-                    }
-                });
-        dialog.show();
-    }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
