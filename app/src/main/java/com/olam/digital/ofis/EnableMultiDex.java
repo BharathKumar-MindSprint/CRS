@@ -9,6 +9,12 @@ import com.crashlytics.android.Crashlytics;
 //import com.dynatrace.android.agent.Dynatrace;
 import com.olam.digital.ofis.logging.CrashReportingTree;
 import com.olam.inapp.InApp;
+//import com.olam.inapp.InApp;
+
+import org.matomo.sdk.Matomo;
+import org.matomo.sdk.Tracker;
+import org.matomo.sdk.TrackerBuilder;
+import org.matomo.sdk.dispatcher.DispatchMode;
 
 import io.fabric.sdk.android.Fabric;
 import timber.log.Timber;
@@ -26,9 +32,13 @@ public class EnableMultiDex extends MultiDexApplication {
         return enableMultiDex;
     }
 
+    static Tracker tracker;
+    static EnableMultiDex instance;
+
     @Override
     public void onCreate() {
         super.onCreate();
+        instance=this;
        /* Dynatrace.startup(this, new DynatraceConfigurationBuilder("1bd3a5cf-7c8d-49ae-8452-7116cfccb064", "https://eok851.dynatrace-managed.com:9999/mbeacon/82203a30-a89c-4afb-8009-c475586c3488")
                 .buildConfiguration());
 */
@@ -46,8 +56,26 @@ public class EnableMultiDex extends MultiDexApplication {
 
         InApp.initiateWith(this, permissionCheckerActs).setPosition(Gravity.LEFT,100);
 
+        /* Matomo enabled based on the build type*/
+        if (BuildConfig.MATOMO_ENABLED) {
+            getTracker();
+        }
+
+
     }
 
+    public static Tracker getTracker() {
+        try {
+            if (tracker == null) {
+                tracker = TrackerBuilder.createDefault(BuildConfig.MATOMO_SERVER_URL, BuildConfig.MATOMO_SERVER_CODE).build(Matomo.getInstance(instance));
+                tracker.setDispatchInterval(0);
+                tracker.setDispatchMode(DispatchMode.ALWAYS);
+            }
+        } catch (UnsupportedOperationException ex) {
+            ex.getMessage();
+        }
+        return tracker;
+    }
 
 
 }

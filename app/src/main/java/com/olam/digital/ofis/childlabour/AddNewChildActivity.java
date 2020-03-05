@@ -34,6 +34,8 @@ import com.olam.digital.ofis.gps.GPSTracker;
 import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
 import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.gps.utils.GPSUtils;
+import com.olam.digital.ofis.matoma.MatomoHelper;
+import com.olam.digital.ofis.matoma.ScreenNameConstants;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -43,6 +45,7 @@ import java.util.Date;
 
 public class AddNewChildActivity extends BaseActivity implements  View.OnClickListener{
 
+    private final String MATOMOTAG = this.getClass().getSimpleName();
     private EditText fullnameEditText;
     private Button maleButton, femaleButton;
     private Spinner ageSpinner;
@@ -83,6 +86,7 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
         ageSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.SPINNER_AGE,  ScreenNameConstants.SPINNER_CHANGED);
                 age=ageList.get(position);
             }
 
@@ -116,6 +120,12 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
         maleButton.performClick();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MatomoHelper.matomoScreenTracker(ScreenNameConstants.SCREEN_REGISTER_CHILD_ACTIVITY, ScreenNameConstants.SCREEN_ADD_NEW_CHILD_ACTIVITY, ScreenNameConstants.SCREEN_ADD_NEW_CHILD);
+    }
+
     private void initComponents() {
         fullnameEditText=findViewById(R.id.fullnameEditText);
         maleButton=findViewById(R.id.maleButton);
@@ -133,6 +143,7 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.addNewChildButton){
+            MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_ADD_NEW_CHILD_NAME,  ScreenNameConstants.BUTTON_CLICKED);
             if (SystemClock.elapsedRealtime() - lastClickTime < 3000){
                 return;
             }else{
@@ -140,6 +151,7 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
             }
             lastClickTime=SystemClock.elapsedRealtime();
         }else if (v.getId() == R.id.maleButton) {
+            MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_MALE_CHILD,  ScreenNameConstants.BUTTON_CLICKED);
              gender=ChildLabourUtils.MALE;
             femaleButton.setBackgroundColor(getResources().getColor(R.color.gender_selected));
             maleButton.setBackgroundResource(R.drawable.gender_male_selected);
@@ -148,6 +160,7 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
             maleButton.setTextColor(getResources().getColor(android.R.color.black));
 
         } else if (v.getId() == R.id.femaleButton) {
+            MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_FEMALE_CHILD,  ScreenNameConstants.BUTTON_CLICKED);
              gender=ChildLabourUtils.FEMALE;
     //        gender = getResources().getString(R.string.gender_female);
 
