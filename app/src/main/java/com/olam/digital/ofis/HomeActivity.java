@@ -72,6 +72,8 @@ import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
 import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.gps.utils.GPSUtils;
 import com.olam.digital.ofis.logging.FabricLogsWriter;
+import com.olam.digital.ofis.matoma.MatomoHelper;
+import com.olam.digital.ofis.matoma.ScreenNameConstants;
 import com.olam.digital.ofis.recordpolygon.RecordPolygonActivity;
 import com.olam.digital.ofis.recordpolygon.SharedPreferenceUtils;
 import com.olam.digital.ofis.BuildConfig;
@@ -99,6 +101,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
     // update
     public static final String TAG = "HomeActivity";
+    private final String MATOMOTAG =this.getClass().getSimpleName();;
     private Context context;
     private static Context staticContext;
     private static Resources staticRes;
@@ -852,6 +855,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         syncAll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_SYNC_ALL_ITEM,  ScreenNameConstants.BUTTON_CLICKED);
                 if (SystemClock.elapsedRealtime() - lastClickTime < 3000){
                     return;
                 }else{
@@ -869,6 +873,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             addNewFarmer.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_ADD_NEW_FARMER,  ScreenNameConstants.BUTTON_CLICKED);
                     Intent intent = new Intent(context, AddFarmerActivity.class);
                     intent.putExtra(EDIT_FARMER_ID, (long) 0);
                     intent.putExtra(EDIT_MODE, false);
@@ -879,6 +884,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             completeModule.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_COMPLETE_QUESTIONNAIRE_MODULE,  ScreenNameConstants.BUTTON_CLICKED);
                     Intent intent = new Intent(context, FindFarmerActivity.class);
                     context.startActivity(intent);
                 }
@@ -888,6 +894,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             addSocialInfra.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_ADD_NEW_SIP,  ScreenNameConstants.BUTTON_CLICKED);
                     AddInfrastructureActivity.editMode = false;
                     AddInfrastructureActivity.infrastructureID = 0;
                     Intent intent = new Intent(context, AddInfrastructureActivity.class);
@@ -913,6 +920,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             captureLocation.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_CAPTURE_MY_LOCATION,  ScreenNameConstants.BUTTON_CLICKED);
                     if (SystemClock.elapsedRealtime() - lastClickTime < 3000){
                         return;
                     }else {
@@ -926,6 +934,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             recordTraining.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_RECORD_TRAINING,  ScreenNameConstants.BUTTON_CLICKED);
                     Intent intent = new Intent(context, TrainingRecords.class);
                     context.startActivity(intent);
                 }
@@ -945,6 +954,11 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MatomoHelper.matomoScreenTracker(ScreenNameConstants.SCREEN_HOME_ACTIVITY, ScreenNameConstants.SCREEN_HOME_ACTIVITY, ScreenNameConstants.SCREEN_HOME);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
