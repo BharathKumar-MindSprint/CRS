@@ -25,6 +25,8 @@ import com.olam.digital.ofis.childlabour.businesslogic.ChildLabourLogic;
 import com.olam.digital.ofis.childlabour.dto.ChildModuleDto;
 import com.olam.digital.ofis.childlabour.dto.ChildrenDTO;
 import com.olam.digital.ofis.childlabour.listener.OnItemSurveyListener;
+import com.olam.digital.ofis.matoma.MatomoHelper;
+import com.olam.digital.ofis.matoma.ScreenNameConstants;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -74,6 +76,12 @@ public class ViewChildLabourSurveyActivity extends BaseActivity {
         initData();
         getChildDetailsById();
         populateSurveyList();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MatomoHelper.matomoScreenTracker(ScreenNameConstants.SCREEN_CHILD_LABOUR_DETAILS_ACTIVITY, ScreenNameConstants.SCREEN_VIEW_CHILD_LABOUR_SURVEY_ACTIVITY, ScreenNameConstants.SCREEN_VIEW_CHILD_LABOUR_SURVEY);
     }
 
     // method to get the child details by child Id

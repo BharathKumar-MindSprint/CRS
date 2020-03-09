@@ -65,6 +65,8 @@ import com.olam.digital.ofis.ViewFarmerActivity;
 import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
 import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.gps.utils.GPSUtils;
+import com.olam.digital.ofis.matoma.MatomoHelper;
+import com.olam.digital.ofis.matoma.ScreenNameConstants;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -111,6 +113,7 @@ import static com.google.android.gms.location.LocationServices.getFusedLocationP
 public class RecordPolygonActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, MapEventsReceiver, LocationListener {
 
     private static final String TAG = RecordPolygonActivity.class.getSimpleName();
+    private  final String MATOMOTAG = this.getClass().getSimpleName();
 
     protected MapView map;
 
@@ -277,6 +280,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
         mStartLoggingButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_START_LOGGING,  ScreenNameConstants.BUTTON_CLICKED);
                 if(pause.getText().toString().equalsIgnoreCase("resume")){
 
 
@@ -292,6 +296,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
         pause.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_PAUSE_POLYGON,  ScreenNameConstants.BUTTON_CLICKED);
                 if (mIsLoggingPaused) {
                     setPauseButtonState(false);
                 } else {
@@ -303,6 +308,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
         bttnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_SAVE_POLYGON,  ScreenNameConstants.BUTTON_CLICKED);
                 setLoggingStarted(false);
                 setRecordingIcon(RecordingState.STOPPED);
                 if (!checkPlotEntryExistInPreference()) {
@@ -1497,6 +1503,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
         buttonSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_SAVE_PLOT_COUNT,  ScreenNameConstants.BUTTON_CLICKED);
                 lPlotCount = numberPicker.getValue();
                 spinnerArray = (String[]) resizeArray(spinnerArray, lPlotCount);
                 for (int i = 0; i < lPlotCount; i++) {
@@ -1516,7 +1523,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
         buttonCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_CANCEL_PLOT_COUNT,  ScreenNameConstants.BUTTON_CLICKED);
                 dialog.dismiss();
             }
         });
@@ -1570,5 +1577,12 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
             return true;
         }
 
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MatomoHelper.matomoScreenTracker(ScreenNameConstants.SCREEN_VIEW_FARMER_ACTIVITY, ScreenNameConstants.SCREEN_RECORD_POLYGON_ACTIVITY, ScreenNameConstants.SCREEN_RECORD_PLOT_POLYGON);
     }
 }

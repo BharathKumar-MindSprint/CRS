@@ -20,6 +20,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.olam.digital.ofis.R;
+import com.olam.digital.ofis.matoma.MatomoHelper;
+import com.olam.digital.ofis.matoma.ScreenNameConstants;
 
 
 public class FindFarmerActivity extends BaseListActivity implements AdapterView.OnItemClickListener {
@@ -207,6 +209,12 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
 
         }
     };
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MatomoHelper.matomoScreenTracker(ScreenNameConstants.SCREEN_HOME_ACTIVITY, ScreenNameConstants.SCREEN_FIND_FARMER_ACTIVITY, ScreenNameConstants.SCREEN_FIND_FARMER);
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

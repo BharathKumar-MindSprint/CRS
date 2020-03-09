@@ -24,6 +24,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.olam.digital.ofis.R;
+import com.olam.digital.ofis.matoma.MatomoHelper;
+import com.olam.digital.ofis.matoma.ScreenNameConstants;
 import com.olam.digital.ofis.model.TasksDTO;
 
 import java.util.ArrayList;
@@ -207,6 +209,12 @@ ListView listView;
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_tasks, menu);
         return true;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MatomoHelper.matomoScreenTracker(ScreenNameConstants.SCREEN_HOME_ACTIVITY, ScreenNameConstants.SCREEN_TASKS_ACTIVITY, ScreenNameConstants.SCREEN_TASKS);
     }
 
     @Override
