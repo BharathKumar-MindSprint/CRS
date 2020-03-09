@@ -18,6 +18,8 @@ import com.olam.digital.ofis.childlabour.adapter.ChildLabourRecyclerAdapter;
 import com.olam.digital.ofis.childlabour.businesslogic.ChildLabourLogic;
 import com.olam.digital.ofis.childlabour.dto.ChildrenDTO;
 import com.olam.digital.ofis.childlabour.listener.OnItemChildClickListener;
+import com.olam.digital.ofis.matoma.MatomoHelper;
+import com.olam.digital.ofis.matoma.ScreenNameConstants;
 
 import java.io.Serializable;
 import java.util.List;
@@ -40,6 +42,12 @@ public class ChildLabourDetailsActivity extends BaseActivity {
         }catch (Exception e){}
         populateChildList();
         childLimit();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MatomoHelper.matomoScreenTracker(ScreenNameConstants.SCREEN_VIEW_FARMER_ACTIVITY, ScreenNameConstants.SCREEN_CHILD_LABOUR_DETAILS_ACTIVITY, ScreenNameConstants.SCREEN_CHILD_LABOUR_DETAILS);
     }
 
     private void childLimit() {

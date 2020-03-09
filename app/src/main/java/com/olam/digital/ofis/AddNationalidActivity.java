@@ -31,6 +31,8 @@ import android.widget.Toast;
 
 import com.google.firebase.crash.FirebaseCrash;
 import com.olam.digital.ofis.childlabour.ChildLabourUtils;
+import com.olam.digital.ofis.matoma.MatomoHelper;
+import com.olam.digital.ofis.matoma.ScreenNameConstants;
 import com.olam.digital.ofis.model.NationalIdDTO;
 import com.olam.digital.ofis.model.NationalIdTypeDTO;
 
@@ -49,7 +51,7 @@ import java.util.Locale;
 
 
 public class AddNationalidActivity extends BaseActivity implements View.OnClickListener {
-
+    private final String MATOMOTAG = this.getClass().getSimpleName();
     private final static int MY_NATIONALID_PIC_PERMISSIONS_REQUEST = 9997;
     private final static int REQUEST_IMAGE_CAPTURE_NATIONALID = 4;
     private final static String CAPTURED_PHOTO_PATH_KEY = "mCurrentPhotoPath";
@@ -106,6 +108,11 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MatomoHelper.matomoScreenTracker(ScreenNameConstants.SCREEN_VIEW_FARMER_ACTIVITY, ScreenNameConstants.SCREEN_ADD_NATIONAL_ID_ACTIVITY, ScreenNameConstants.SCREEN_ADD_NATIONAL_ID);
+    }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle savedInstanceState) {
@@ -350,10 +357,12 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
     }
 
     private void bindniddelete(LinearLayout trashbutton) {
+
         trashbutton.setTag(nationalids.getChildCount());
         trashbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_TRASH_NATIONALID,  ScreenNameConstants.BUTTON_CLICKED);
                 LinearLayout numberrow = (LinearLayout) v.getParent();
                 removeSpinnerItem(numberrow);
                 ((ViewGroup) numberrow.getParent()).removeView(numberrow);
@@ -471,6 +480,7 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
         int id = v.getId();
 
         if (id == R.id.addnid) {
+            MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_ADD_NATIONAL_ID,  ScreenNameConstants.BUTTON_CLICKED);
             if (!ValidateNIDValues()) return;
             try {
                 if (!validateSpinnerValues(nationalids, spinner_nidtype.getSelectedItem().toString())) {
@@ -545,6 +555,7 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
             }
 
         } else if (id == R.id.save) {
+            MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_SAVE_NATIONAL_ID,  ScreenNameConstants.BUTTON_CLICKED);
             if (!ValidateNIDValues()) return;
             try {
                 if (!validateSpinnerValues(nationalids, spinner_nidtype.getSelectedItem().toString())) {
