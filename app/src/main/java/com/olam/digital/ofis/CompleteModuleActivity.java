@@ -240,9 +240,9 @@ public class CompleteModuleActivity extends BaseActivity {
         };
         gpsTracker=new GPSTracker(this,gpsListener);
        // gpsTracker.getDeviceLocation();
-        if (gpsTracker.isGpsEnabled()){
+//        if (gpsTracker.isGpsEnabled()){
             gpsTracker.startLocationUpdateInitially();
-        }
+//        }
 
 }
 
@@ -287,13 +287,14 @@ public class CompleteModuleActivity extends BaseActivity {
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(UPDATE_INTERVAL_IN_MILLISECONDS);
         mLocationRequest.setFastestInterval(FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        mLocationRequest.setPriority(new GPSTracker(this).getLocationMode());
 
 
         LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder();
         builder.addLocationRequest(mLocationRequest);
         mLocationSettingsRequest = builder.build();
     }
+
 
     private void setPoiGPS(Location location) {
         try {/*
@@ -488,9 +489,11 @@ public class CompleteModuleActivity extends BaseActivity {
                 if (isLastPage) {
 
                     try{
-                        if (mCurrentCapturedLocation == null || !gpsTracker.isGpsEnabled()) {
-                            gpsTracker.getDeviceLocation();
-                            return;
+                        if (mCurrentCapturedLocation!=null){}else {
+                            if (mCurrentCapturedLocation == null || !gpsTracker.isGpsEnabled()) {
+                                gpsTracker.getDeviceLocation();
+                                return;
+                            }
                         }
                     }catch (Exception e){}
 
@@ -543,9 +546,13 @@ public class CompleteModuleActivity extends BaseActivity {
 
         // check location
         if (action.equalsIgnoreCase("finish")) {
-            if (mCurrentCapturedLocation == null || !gpsTracker.isGpsEnabled()) {
-                gpsTracker.getDeviceLocation();
-                return;
+            if (mCurrentCapturedLocation!=null){
+
+            }else {
+                if (mCurrentCapturedLocation == null || !gpsTracker.isGpsEnabled()) {
+                    gpsTracker.getDeviceLocation();
+                    return;
+                }
             }
         }
 

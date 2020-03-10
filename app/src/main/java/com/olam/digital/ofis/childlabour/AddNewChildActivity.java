@@ -106,9 +106,9 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
         };
         gpsTracker=new GPSTracker(this,gpsListener);
        // gpsTracker.getDeviceLocation();
-        if (gpsTracker.isGpsEnabled()){
+//        if (gpsTracker.isGpsEnabled()){
             gpsTracker.startLocationUpdateInitially();
-        }
+ //       }
 
 
     }
@@ -202,9 +202,11 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
 
         if(getIntent().getStringExtra(ChildLabourUtils.ACTION).equalsIgnoreCase(ChildLabourUtils.NEW)){
 
-            if (mCurrentLocation==null || !gpsTracker.isGpsEnabled()){
-                gpsTracker.getDeviceLocation();
-                return;
+            if (mCurrentLocation!=null){}else {
+                if (mCurrentLocation == null || !gpsTracker.isGpsEnabled()) {
+                    gpsTracker.getDeviceLocation();
+                    return;
+                }
             }
             submitChild(name);
         }else {

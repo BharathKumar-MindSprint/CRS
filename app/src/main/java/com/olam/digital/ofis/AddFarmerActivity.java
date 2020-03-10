@@ -292,9 +292,9 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             }
         };
         gpsTracker = new GPSTracker(this, gpsListener);
-        if (gpsTracker.isGpsEnabled()) {
+//        if (gpsTracker.isGpsEnabled()) {
             gpsTracker.startLocationUpdateInitially();
-        }
+ //       }
 
     }
 
@@ -1261,9 +1261,13 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                             }
                         } else {
                             // check the current location
-                            if (mCurrentLocation == null || !gpsTracker.isGpsEnabled()) {
-                                gpsTracker.getDeviceLocation();
-                                return;
+                            if(mCurrentLocation != null){
+                                 // check the current location
+                            }else {
+                                if (mCurrentLocation == null || !gpsTracker.isGpsEnabled()) {
+                                    gpsTracker.getDeviceLocation();
+                                    return;
+                                }
                             }
 
                             long newFarmerId = dl.insertFarmer(values);
