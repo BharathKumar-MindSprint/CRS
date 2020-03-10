@@ -202,6 +202,10 @@ android {
             resValue "string", "AUTH_SERVER_URL", 'https://ofisot-zuul-preprod.olamdigital.com/oauth/api/v1/oauth/'
             buildConfigField 'String', 'HOST', '"https://ofisot-zuul-preprod.olamdigital.com/"'
             resValue "string", "client_secret", 'xGfAz5zSFTJDHcWWcEQR19hNx9zA30NeZOQuxdnr'
+
+            buildConfigField "String", "MATOMO_SERVER_URL", '"https://olammatomo.azurewebsites.net/matomo.php"'
+            buildConfigField "int", "MATOMO_SERVER_CODE", '35'
+            buildConfigField "boolean", "MATOMO_ENABLED", 'true'
         }
 
         //noinspection GroovyMissingReturnStatement
@@ -219,6 +223,10 @@ android {
             resValue "string", "AUTH_SERVER_URL", 'https://otofis-zuul.olamdigital.com/oauth/api/v1/oauth/'
             buildConfigField 'String', 'HOST', '"https://otofis-zuul.olamdigital.com/"'
             resValue "string", "client_secret", 'xGfAz5zSFTJDHcWWcEQR19hNx9zA30NeZOQuxdnr'
+
+            buildConfigField "String", "MATOMO_SERVER_URL", '"https://olammatomo.azurewebsites.net/matomo.php"'
+            buildConfigField "int", "MATOMO_SERVER_CODE", '39'
+            buildConfigField "boolean", "MATOMO_ENABLED", 'true'
         }
     }
 

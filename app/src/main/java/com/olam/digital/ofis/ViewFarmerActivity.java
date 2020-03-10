@@ -250,9 +250,9 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         };
         gpsTracker=new GPSTracker(this,gpsListener);
         //   gpsTracker.getDeviceLocation();
-        if (gpsTracker.isGpsEnabled()){
+//        if (gpsTracker.isGpsEnabled()){
             gpsTracker.startLocationUpdateInitially();
-        }
+  //      }
 
 
     }
@@ -289,7 +289,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(UPDATE_INTERVAL_IN_MILLISECONDS);
         mLocationRequest.setFastestInterval(FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        mLocationRequest.setPriority(new GPSTracker(this).getLocationMode());
 
         LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder();
         builder.addLocationRequest(mLocationRequest);
@@ -434,10 +434,15 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
             public void onClick(View v) {
                 // Request Permission only for Android Version Marshmallow and above
                 MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_UPDATE_PHOTO_BUTTON,  ScreenNameConstants.BUTTON_CLICKED);
-                if (mCurrentCapturedLocation==null || !gpsTracker.isGpsEnabled()) {
-                    gpsTracker.getDeviceLocation();
-                    return;
+                if (mCurrentCapturedLocation!=null){
+
+                }else{
+                    if (mCurrentCapturedLocation==null || !gpsTracker.isGpsEnabled()) {
+                        gpsTracker.getDeviceLocation();
+                        return;
+                    }
                 }
+
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     // Check Camera & Storage Permission
@@ -1380,11 +1385,14 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         dl.updateFarmerPhoto(farmerId,savedImagePath,olamFarmerIdStr,farmerNameStr);
 
         // Collect the GPS Point
-        if (mCurrentCapturedLocation==null || !gpsTracker.isGpsEnabled()){
+        if(mCurrentCapturedLocation != null){
+            // check the current location
+            collectGPSPoint(GPSConstants.MODULE_CAPTURE_UPDATE_PHOTO,mCurrentCapturedLocation);
+        }else if(mCurrentCapturedLocation==null || !gpsTracker.isGpsEnabled()){
             gpsTracker.getDeviceLocation();
             return;
         }else{
-            collectGPSPoint(GPSConstants.MODULE_CAPTURE_UPDATE_PHOTO,mCurrentCapturedLocation);
+            //
         }
     }
     private static String getFilePathUri(Context context, Uri uri) {

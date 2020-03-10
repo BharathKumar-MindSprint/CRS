@@ -173,9 +173,9 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
         };
         gpsTracker=new GPSTracker(this,gpsListener);
        // gpsTracker.getDeviceLocation();
-        if (gpsTracker.isGpsEnabled()){
+//        if (gpsTracker.isGpsEnabled()){
             gpsTracker.startLocationUpdateInitially();
-        }
+//        }
 
     }
 
@@ -311,9 +311,11 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
                 if (isLastPage) {
 
                     try{
+                        if (mCurrentCapturedLocation!=null){}else{
                         if (mCurrentCapturedLocation == null || !gpsTracker.isGpsEnabled()) {
                             gpsTracker.getDeviceLocation();
                             return;
+                        }
                         }
                     }catch (Exception e){}
 
@@ -355,9 +357,11 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
 
         // check location
         if (action.equalsIgnoreCase("finish")) {
-            if (mCurrentCapturedLocation == null || !gpsTracker.isGpsEnabled()) {
-                gpsTracker.getDeviceLocation();
-                return;
+            if (mCurrentCapturedLocation!=null){}else {
+                if (mCurrentCapturedLocation == null || !gpsTracker.isGpsEnabled()) {
+                    gpsTracker.getDeviceLocation();
+                    return;
+                }
             }
         }
 
@@ -538,7 +542,7 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(UPDATE_INTERVAL_IN_MILLISECONDS);
         mLocationRequest.setFastestInterval(FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        mLocationRequest.setPriority(new GPSTracker(this).getLocationMode());
 
 
         LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder();

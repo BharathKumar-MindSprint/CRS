@@ -77,9 +77,9 @@ public class ChildVisitDetailActivity  extends BaseActivity implements View.OnCl
         };
         gpsTracker=new GPSTracker(this,gpsListener);
      //   gpsTracker.getDeviceLocation();
-        if (gpsTracker.isGpsEnabled()){
+//        if (gpsTracker.isGpsEnabled()){
             gpsTracker.startLocationUpdateInitially();
-        }
+ //       }
     }
 
     @Override
@@ -136,10 +136,11 @@ public class ChildVisitDetailActivity  extends BaseActivity implements View.OnCl
 
     // method to save the child survey visit details
     private void saveVisitDetails() {
-
-        if (mCurrentLocation==null || !gpsTracker.isGpsEnabled()){
-            gpsTracker.getDeviceLocation();
-            return;
+        if (mCurrentLocation!=null){}else {
+            if (mCurrentLocation == null || !gpsTracker.isGpsEnabled()) {
+                gpsTracker.getDeviceLocation();
+                return;
+            }
         }
 
         if(houseHoldCheckBox.isChecked()){
