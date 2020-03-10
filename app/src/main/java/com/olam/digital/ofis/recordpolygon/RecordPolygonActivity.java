@@ -62,6 +62,7 @@ import com.olam.digital.ofis.DataLayer;
 import com.olam.digital.ofis.OFISDBContract;
 import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.ViewFarmerActivity;
+import com.olam.digital.ofis.gps.GPSTracker;
 import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
 import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.gps.utils.GPSUtils;
@@ -234,8 +235,12 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                         token.continuePermissionRequest();
                     }
                 }).check();
+
         if (!isGPSProviderEnabled()) {
-            showTurnOnGPSDialog();
+            if (locationMode() !=2){
+                showTurnOnGPSDialog();
+            }
+
         } else {
             //Go to the current location with location marker in center of map.
             centerCurrentLocation();
@@ -462,6 +467,16 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
         initializeLoggingVariables();
     }
 
+    private int locationMode(){
+        int locationMode=0;
+        try {
+            locationMode = Settings.Secure.getInt(this.getContentResolver(),Settings.Secure.LOCATION_MODE);
+        } catch (Settings.SettingNotFoundException e) {
+            e.printStackTrace();
+        }
+        return locationMode;
+    }
+
     private void openSettings() {
         Intent intent = new Intent();
         intent.setAction(
@@ -609,7 +624,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
 
     void handleStartStopLoggingButton() {
 
-        if (isGPSProviderEnabled()) {
+        if (isGPSProviderEnabled() || locationMode()==2) {
             if (!checkPlotEntryExistInPreference()) {
                 if (mLocationBeanList.size() > 0 && !mIsLoggingStarted) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -1564,7 +1579,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
         locationRequest = new LocationRequest();
         locationRequest.setInterval(INTERVAL);
         locationRequest.setFastestInterval(FASTEST_INTERVAL);
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        locationRequest.setPriority(new GPSTracker(this).getLocationMode());
         locationRequest.setSmallestDisplacement(DISPLACEMENT);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this,

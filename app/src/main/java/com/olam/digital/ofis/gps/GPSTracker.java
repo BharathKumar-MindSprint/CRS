@@ -79,6 +79,14 @@ public class GPSTracker {
     private GPSListener gpsListener;
     private boolean showDialog=false;
 
+    public static final int PRIORITY_HIGH_ACCURACY = 100;
+    public static final int PRIORITY_BALANCED_POWER_ACCURACY = 102;
+    public static final int PRIORITY_LOW_POWER = 104;
+    public static final int PRIORITY_NO_POWER = 105;
+
+    public GPSTracker(Activity mActivity){
+        this.mActivity=mActivity;
+    }
 
     public GPSTracker(Activity mActivity,GPSListener gpsListener){
         this.mActivity= mActivity;
@@ -124,12 +132,30 @@ public class GPSTracker {
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(UPDATE_INTERVAL_IN_MILLISECONDS);
         mLocationRequest.setFastestInterval(FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-
+        mLocationRequest.setPriority(getLocationMode());
         LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder();
         builder.addLocationRequest(mLocationRequest);
         mLocationSettingsRequest = builder.build();
     }
+
+    public int getLocationMode() {
+         int locationType=PRIORITY_HIGH_ACCURACY;
+         int locationMode=3;
+        try {
+             locationMode = Settings.Secure.getInt(mActivity.getContentResolver(),Settings.Secure.LOCATION_MODE);
+         } catch (Settings.SettingNotFoundException e) {
+             e.printStackTrace();
+         }
+         try {
+             if(locationMode == 3) {
+                 locationType = PRIORITY_HIGH_ACCURACY;
+             }else if(locationMode == 2) {
+                 locationType = PRIORITY_BALANCED_POWER_ACCURACY;
+             }
+         }catch (Exception e){}
+           return locationType;
+    }
+
 
     /**
      * method to identify the GPS status in device. Check if enabled and if not send user to the GPS settings
