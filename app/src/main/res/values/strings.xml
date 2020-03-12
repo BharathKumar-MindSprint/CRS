@@ -549,8 +549,6 @@
     <string name="add_nationalid">Add National ID</string>
     <string name="update_nationalid">Update National ID</string>
     <string name="view_nationalid">View National ID</string>
-    <string name="capture_my_location_button_text">Capture My location</string>
-    <string name="enumerator_location_capture">Enumerator Location Capture</string>
     <string name="nationalidtype_selection">Please select National ID Type</string>
     <string name="nationalidtype_alreadyselected">National ID Type already selected</string>
     <string name="nid_photo_select">Please capture valid photo for National ID</string>
