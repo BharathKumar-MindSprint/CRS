@@ -57,9 +57,12 @@ import com.karumi.dexter.listener.single.PermissionListener;
 import com.olam.digital.ofis.childlabour.ChildLabourUtils;
 import com.olam.digital.ofis.childlabour.businesslogic.SipLogic;
 import com.olam.digital.ofis.childlabour.dto.VillageDTO;
+import com.olam.digital.ofis.gps.GPSTracker;
 import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
 import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.gps.utils.GPSUtils;
+import com.olam.digital.ofis.matoma.MatomoHelper;
+import com.olam.digital.ofis.matoma.ScreenNameConstants;
 import com.olam.digital.ofis.model.ModuleDTO;
 import com.olam.digital.ofis.model.SubModuleDTO;
 
@@ -72,6 +75,7 @@ import java.util.Locale;
 import java.util.UUID;
 
 public class AddInfrastructureActivity extends BaseActivity {
+    private final String MATOMOTAG = this.getClass().getSimpleName();
     // update
     // for edit mode
     public static long infrastructureID = 0;
@@ -185,7 +189,7 @@ public class AddInfrastructureActivity extends BaseActivity {
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(UPDATE_INTERVAL_IN_MILLISECONDS);
         mLocationRequest.setFastestInterval(FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        mLocationRequest.setPriority(new GPSTracker(this).getLocationMode());
 
         LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder();
         builder.addLocationRequest(mLocationRequest);
@@ -254,6 +258,7 @@ public class AddInfrastructureActivity extends BaseActivity {
         villageSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.SPINNER_VILLAGE,  ScreenNameConstants.SPINNER_CHANGED);
                 if (position>0) {
                     villageDetails = villageList.get(position-1);
                 }
@@ -360,25 +365,7 @@ public class AddInfrastructureActivity extends BaseActivity {
         super.onStop();
     }
 
-    private void showSettingsDialog(String msg) {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-        dialog.setTitle(R.string.permission_permanent_denial_title);
-        dialog.setMessage(msg)
-                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-                        startActivity(new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                                Uri.parse("package:" + context.getPackageName())));
-                    }
-                })
-                .setNegativeButton(R.string.app_update_cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-                        Toast.makeText(AddInfrastructureActivity.this, R.string.permission_permanent_denial_msg, Toast.LENGTH_LONG).show();
-                    }
-                });
-        dialog.show();
-    }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
@@ -434,6 +421,7 @@ public class AddInfrastructureActivity extends BaseActivity {
         if(mCurrentLocation != null) {
             setPoiGPS(mCurrentLocation);
         }
+        MatomoHelper.matomoScreenTracker(ScreenNameConstants.SCREEN_HOME_ACTIVITY, ScreenNameConstants.SCREEN_ADD_INFRASTRUCTURE_ACTIVITY, ScreenNameConstants.SCREEN_ADD_SIP);
     }
 
     private boolean checkPermissions() {
@@ -598,6 +586,7 @@ public class AddInfrastructureActivity extends BaseActivity {
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_SAVE_INFRASTRUCTURE,  ScreenNameConstants.BUTTON_CLICKED);
                 if (!isVillage) {
 
                     if (poiName.getText().toString().trim().length() == 0) {
@@ -722,6 +711,7 @@ public class AddInfrastructureActivity extends BaseActivity {
         requestLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_GPS,  ScreenNameConstants.BUTTON_CLICKED);
                 searchingGPS();
             }
         });
@@ -873,6 +863,7 @@ public class AddInfrastructureActivity extends BaseActivity {
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
 
                 moduleName=subModuleDTOS.get(position).getSipName().trim().toLowerCase();
+                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.SPINNER_SUB_MODULES,  ScreenNameConstants.SPINNER_CHANGED);
                 if (!editMode) {
 //                    swapPoiType(i);
 //                }

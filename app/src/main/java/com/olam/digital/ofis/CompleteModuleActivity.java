@@ -64,6 +64,8 @@ import com.olam.digital.ofis.gps.GPSTracker;
 import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
 import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.gps.utils.GPSUtils;
+import com.olam.digital.ofis.matoma.MatomoHelper;
+import com.olam.digital.ofis.matoma.ScreenNameConstants;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -71,6 +73,7 @@ import java.util.Calendar;
 
 public class CompleteModuleActivity extends BaseActivity {
 
+    private  final String MATOMOTAG = this.getClass().getSimpleName();
     private long farmerId;
     private long moduleId;
     private long farmerModuleId;
@@ -237,12 +240,17 @@ public class CompleteModuleActivity extends BaseActivity {
         };
         gpsTracker=new GPSTracker(this,gpsListener);
        // gpsTracker.getDeviceLocation();
-        if (gpsTracker.isGpsEnabled()){
+//        if (gpsTracker.isGpsEnabled()){
             gpsTracker.startLocationUpdateInitially();
-        }
-
+//        }
 
 }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MatomoHelper.matomoScreenTracker(ScreenNameConstants.SCREEN_VIEW_FARMER_ACTIVITY, ScreenNameConstants.SCREEN_COMPLETE_MODULE_ACTIVITY, ScreenNameConstants.SCREEN_COMPLETE_QUESTIONARE);
+    }
 
     @SuppressWarnings("ConstantConditions")
     private void initDynamicQuestions() {
@@ -279,13 +287,14 @@ public class CompleteModuleActivity extends BaseActivity {
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(UPDATE_INTERVAL_IN_MILLISECONDS);
         mLocationRequest.setFastestInterval(FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        mLocationRequest.setPriority(new GPSTracker(this).getLocationMode());
 
 
         LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder();
         builder.addLocationRequest(mLocationRequest);
         mLocationSettingsRequest = builder.build();
     }
+
 
     private void setPoiGPS(Location location) {
         try {/*
@@ -480,9 +489,11 @@ public class CompleteModuleActivity extends BaseActivity {
                 if (isLastPage) {
 
                     try{
-                        if (mCurrentCapturedLocation == null || !gpsTracker.isGpsEnabled()) {
-                            gpsTracker.getDeviceLocation();
-                            return;
+                        if (mCurrentCapturedLocation!=null){}else {
+                            if (mCurrentCapturedLocation == null || !gpsTracker.isGpsEnabled()) {
+                                gpsTracker.getDeviceLocation();
+                                return;
+                            }
                         }
                     }catch (Exception e){}
 
@@ -520,6 +531,7 @@ public class CompleteModuleActivity extends BaseActivity {
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_SAVE_SURVEY,  ScreenNameConstants.BUTTON_CLICKED);
                 saveSubModule("exit");
             }
         });
@@ -534,9 +546,13 @@ public class CompleteModuleActivity extends BaseActivity {
 
         // check location
         if (action.equalsIgnoreCase("finish")) {
-            if (mCurrentCapturedLocation == null || !gpsTracker.isGpsEnabled()) {
-                gpsTracker.getDeviceLocation();
-                return;
+            if (mCurrentCapturedLocation!=null){
+
+            }else {
+                if (mCurrentCapturedLocation == null || !gpsTracker.isGpsEnabled()) {
+                    gpsTracker.getDeviceLocation();
+                    return;
+                }
             }
         }
 
@@ -556,9 +572,11 @@ public class CompleteModuleActivity extends BaseActivity {
 
 
         if (action.equalsIgnoreCase("next")) {
+            MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_NEXT_SUBMODULE,  ScreenNameConstants.BUTTON_CLICKED);
             subModules.moveToNext();
             subModuleId = subModules.getInt(subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_ID));
         } else if (action.equalsIgnoreCase("back")) {
+            MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_PREVIOUS_SUBMODULE,  ScreenNameConstants.BUTTON_CLICKED);
             subModules.moveToPrevious();
             subModuleId = subModules.getInt(subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_ID));
         }

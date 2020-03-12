@@ -62,9 +62,12 @@ import com.olam.digital.ofis.DataLayer;
 import com.olam.digital.ofis.OFISDBContract;
 import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.ViewFarmerActivity;
+import com.olam.digital.ofis.gps.GPSTracker;
 import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
 import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.gps.utils.GPSUtils;
+import com.olam.digital.ofis.matoma.MatomoHelper;
+import com.olam.digital.ofis.matoma.ScreenNameConstants;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -111,6 +114,7 @@ import static com.google.android.gms.location.LocationServices.getFusedLocationP
 public class RecordPolygonActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, MapEventsReceiver, LocationListener {
 
     private static final String TAG = RecordPolygonActivity.class.getSimpleName();
+    private  final String MATOMOTAG = this.getClass().getSimpleName();
 
     protected MapView map;
 
@@ -231,8 +235,12 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                         token.continuePermissionRequest();
                     }
                 }).check();
+
         if (!isGPSProviderEnabled()) {
-            showTurnOnGPSDialog();
+            if (locationMode() !=2){
+                showTurnOnGPSDialog();
+            }
+
         } else {
             //Go to the current location with location marker in center of map.
             centerCurrentLocation();
@@ -277,6 +285,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
         mStartLoggingButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_START_LOGGING,  ScreenNameConstants.BUTTON_CLICKED);
                 if(pause.getText().toString().equalsIgnoreCase("resume")){
 
 
@@ -292,6 +301,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
         pause.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_PAUSE_POLYGON,  ScreenNameConstants.BUTTON_CLICKED);
                 if (mIsLoggingPaused) {
                     setPauseButtonState(false);
                 } else {
@@ -303,6 +313,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
         bttnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_SAVE_POLYGON,  ScreenNameConstants.BUTTON_CLICKED);
                 setLoggingStarted(false);
                 setRecordingIcon(RecordingState.STOPPED);
                 if (!checkPlotEntryExistInPreference()) {
@@ -456,6 +467,16 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
         initializeLoggingVariables();
     }
 
+    private int locationMode(){
+        int locationMode=0;
+        try {
+            locationMode = Settings.Secure.getInt(this.getContentResolver(),Settings.Secure.LOCATION_MODE);
+        } catch (Settings.SettingNotFoundException e) {
+            e.printStackTrace();
+        }
+        return locationMode;
+    }
+
     private void openSettings() {
         Intent intent = new Intent();
         intent.setAction(
@@ -603,7 +624,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
 
     void handleStartStopLoggingButton() {
 
-        if (isGPSProviderEnabled()) {
+        if (isGPSProviderEnabled() || locationMode()==2) {
             if (!checkPlotEntryExistInPreference()) {
                 if (mLocationBeanList.size() > 0 && !mIsLoggingStarted) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -1497,6 +1518,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
         buttonSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_SAVE_PLOT_COUNT,  ScreenNameConstants.BUTTON_CLICKED);
                 lPlotCount = numberPicker.getValue();
                 spinnerArray = (String[]) resizeArray(spinnerArray, lPlotCount);
                 for (int i = 0; i < lPlotCount; i++) {
@@ -1516,7 +1538,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
         buttonCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_CANCEL_PLOT_COUNT,  ScreenNameConstants.BUTTON_CLICKED);
                 dialog.dismiss();
             }
         });
@@ -1557,7 +1579,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
         locationRequest = new LocationRequest();
         locationRequest.setInterval(INTERVAL);
         locationRequest.setFastestInterval(FASTEST_INTERVAL);
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        locationRequest.setPriority(new GPSTracker(this).getLocationMode());
         locationRequest.setSmallestDisplacement(DISPLACEMENT);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this,
@@ -1570,5 +1592,12 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
             return true;
         }
 
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MatomoHelper.matomoScreenTracker(ScreenNameConstants.SCREEN_VIEW_FARMER_ACTIVITY, ScreenNameConstants.SCREEN_RECORD_POLYGON_ACTIVITY, ScreenNameConstants.SCREEN_RECORD_PLOT_POLYGON);
     }
 }

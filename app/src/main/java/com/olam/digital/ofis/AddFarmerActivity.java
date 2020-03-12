@@ -9,7 +9,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.location.Location;
@@ -57,6 +56,8 @@ import com.olam.digital.ofis.gps.GPSTracker;
 import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
 import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.gps.utils.GPSUtils;
+import com.olam.digital.ofis.matoma.MatomoHelper;
+import com.olam.digital.ofis.matoma.ScreenNameConstants;
 import com.olam.digital.ofis.model.NationalIdDTO;
 import com.olam.digital.ofis.model.NationalIdTypeDTO;
 
@@ -68,8 +69,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.math.BigInteger;
-import java.nio.ByteBuffer;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -77,31 +76,14 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.Locale;
-import java.util.Set;
-import java.util.UUID;
 
 // update
-public class AddFarmerActivity extends BaseActivity implements View.OnClickListener{
+public class AddFarmerActivity extends BaseActivity implements View.OnClickListener {
 
-    private Context context;
-    private Resources res;
-    private long editFarmerId;
-    private boolean editMode;
-    private int selectedCountry = 0, selectedRegion = 0, selectedDistrict = 0, selectedPlace = 0, selectedFarmerGroup = 0, selectedSection = 0;
-    ArrayAdapter<String> spinnerArrayAdapter;
-    private Spinner genderspinner, countrySpinner, regionSpinner, districtSpinner, placeSpinner, farmerGroupSpinner, sectionSpinner;
-    Spinner spinner_nidtype;
-    ImageButton farmerPhotoActionButton;
-    ImageButton farmerSignatureButton;
-    Button captureSignature;
-    EditText newPlaceName;
-    private final static String LIMIT_XED = "limit";
-    private final static String DUPLICATE = "duplicate";
-    private final static String ENTER_NID = "novalues";
+    private final String MATOMOTAG = this.getClass().getSimpleName();
+
     private final static int REQUEST_IMAGE_CAPTURE = 1;
     private final static int REQUEST_IMAGE_GALLERY = 2;
     private final static int REQUEST_IMAGE_CAPTURE_NATIONALID = 4;
@@ -119,38 +101,69 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     private final static String EDIT_FARMER_ID = "EDIT_FARMER_ID";
     private final static String EDIT_MODE = "EDIT_MODE";
     private final static String SELECT_NATIONALID = "ID TYPE";
-
+    // Runtime Permission Request Code
+    private final static int MY_PROFILE_PIC_PERMISSIONS_REQUEST = 9998;
+    private final static int MY_NATIONALID_PIC_PERMISSIONS_REQUEST = 9997;
+    private static final int REQUEST_CHECK_SETTINGS = 100;
+    private final Hashtable<String, String> genders = new Hashtable<>();
+    ArrayAdapter<String> spinnerArrayAdapter;
+    Spinner spinner_nidtype;
+    ImageButton farmerPhotoActionButton;
+    ImageButton farmerSignatureButton;
+    EditText newPlaceName;
+    ArrayList<String> phoneNumberList;
+    ArrayList<String> nationalidList;
+    ArrayList<String> selectednationalidList = new ArrayList<String>();
+    ArrayList<String> nidtype;
+    ArrayList<NationalIdTypeDTO> nidtypelist;
+    int currentcapture_position;
+    HashMap<Integer, Uri> hm_uri = new HashMap<>();
+    HashMap<Integer, String> hm_uripath = new HashMap<>();
+    GPSListener gpsListener = null;
+    boolean editnidmode = false;
+    boolean edit_signature = false;
+    boolean statusmoduration = false;
+    boolean isNIDAvailable = false;
+    LinearLayout ll_nidview;
+    boolean isSigned = false;
+    private long editFarmerId;
+    private boolean editMode;
+    private int selectedCountry = 0, selectedRegion = 0, selectedDistrict = 0, selectedPlace = 0, selectedFarmerGroup = 0, selectedSection = 0;
+    private Spinner genderspinner, countrySpinner, regionSpinner, districtSpinner, placeSpinner, farmerGroupSpinner, sectionSpinner;
     // Required for camera operations in order to save the image file on resume.
     private String mCurrentPhotoPath = null, mCurrentSignaturePhotoPath = null;
     private Uri mCapturedImageURI = null, mCapturedSignatureImageURI = null;
-
     private String dateStrToSend;
-    //    private EditText farmerDOB;
     private TextView farmerDOB;
+    /**
+     * Generate unique ID from UUID.
+     *
+     * @return long value representing UUID
+     */
+
+    private final DatePickerDialog.OnDateSetListener pickerListener = new DatePickerDialog.OnDateSetListener() {
+        @Override
+        public void onDateSet(DatePicker datePicker, int selectedYear, int selectedMonth, int selectedDay) {
+
+            // get the date
+            Calendar cal = Calendar.getInstance();
+            cal.set(selectedYear, selectedMonth, selectedDay);
+
+            SimpleDateFormat serverDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+
+            dateStrToSend = serverDateFormat.format(cal.getTime());
+
+            String humanDate = DateFormat.getMediumDateFormat(context).format(cal.getTime());
+
+            farmerDOB.setText(humanDate);
+        }
+    };
     private EditText farmerIdPrefix;
     private LinearLayout phonenumbers;
     private LinearLayout nationalids;
     private LayoutInflater inflater;
     private JSONArray storeableNumbers;
     private JSONArray storeableNationalids = new JSONArray();
-
-    private DataLayer dl;
-
-    private final Hashtable<String, String> genders = new Hashtable<>();
-
-    // Runtime Permission Request Code
-    private final static int MY_PROFILE_PIC_PERMISSIONS_REQUEST = 9998;
-    private final static int MY_NATIONALID_PIC_PERMISSIONS_REQUEST = 9997;
-    private static final int REQUEST_CHECK_SETTINGS = 100;
-
-    ArrayList<String> phoneNumberList;
-    ArrayList<String> nationalidList;
-    ArrayList<String> selectednationalidList = new ArrayList<String> ();;
-    ArrayList<String> nidtype;
-    ArrayList<NationalIdTypeDTO> nidtypelist;
-    int currentcapture_position;
-    HashMap<Integer, Uri> hm_uri = new HashMap<>();
-    HashMap<Integer, String> hm_uripath = new HashMap<>();
     private String blockCharacterSet = "~#^|$%&*!'\"";
     private InputFilter filter = new InputFilter() {
 
@@ -163,29 +176,32 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             return null;
         }
     };
-
-
     // Location captured related variable
     private Location mCurrentLocation = null;
-    GPSListener gpsListener = null;
     private GPSTracker gpsTracker = null;
     private int nidvalue;
-    boolean editnidmode = false;
-    boolean edit_signature = false;
-    boolean statusmoduration = false;
-    boolean isNIDAvailable = false;
-    LinearLayout ll_nidview;
+
+    private static String getFilePathUri(Context context, Uri uri) {
+        Uri filePathUri = uri;
+        if (uri.getScheme().compareTo("content") == 0) {
+            Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
+            assert cursor != null;
+            if (cursor.moveToFirst()) {
+                int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+                filePathUri = Uri.parse(cursor.getString(column_index));
+            }
+            cursor.close();
+        }
+        return filePathUri + "";
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,WindowManager.LayoutParams.FLAG_SECURE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
         setContentView(R.layout.activity_add_farmer);
-
         //noinspection ConstantConditions
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        context = this;
-        res = getResources();
         Intent intent = getIntent();
         editFarmerId = intent.getLongExtra(EDIT_FARMER_ID, 0);
         editMode = intent.getBooleanExtra(EDIT_MODE, false);
@@ -195,22 +211,21 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         genders.put("Male" + localeSuffix, res.getString(R.string.gender_male));
         genders.put("Female" + localeSuffix, res.getString(R.string.gender_female));
 
-        ll_nidview = (LinearLayout) findViewById(R.id.ll_nidview);
+        ll_nidview = findViewById(R.id.ll_nidview);
         isNIDAvailable = Utilities.getBoolFromSharedPrefs(context, "NationalID", false);
-        if(! isNIDAvailable){
+        if (!isNIDAvailable) {
             ll_nidview.setVisibility(View.GONE);
-        }else {
+        } else {
             ll_nidview.setVisibility(View.VISIBLE);
         }
-        dl = new DataLayer(res, context);
-        farmerIdPrefix = (EditText) findViewById(R.id.olamFarmerIdStart);
-        phonenumbers = (LinearLayout) findViewById(R.id.phonenumbers);
-        nationalids = (LinearLayout) findViewById(R.id.nationalids);
-        farmerSignatureButton = (ImageButton) findViewById(R.id.farmerSignature);
+        farmerIdPrefix = findViewById(R.id.olamFarmerIdStart);
+        phonenumbers = findViewById(R.id.phonenumbers);
+        nationalids = findViewById(R.id.nationalids);
+        farmerSignatureButton = findViewById(R.id.farmerSignature);
 
         bindphonenumbers();
         dl.clearlocalniddbvalue();
-        if(isNIDAvailable) {
+        if (isNIDAvailable) {
             if (!editMode) {
                 bindnationalid();
             } else {
@@ -227,34 +242,28 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             }
         }
 
-        countrySpinner = (Spinner) this.findViewById(R.id.spinner_country);
-        regionSpinner = (Spinner) this.findViewById(R.id.spinner_region);
-        districtSpinner = (Spinner) this.findViewById(R.id.spinner_district);
-        placeSpinner = (Spinner) this.findViewById(R.id.spinner_place);
-        farmerGroupSpinner = (Spinner) this.findViewById(R.id.spinner_farmerGroup);
-        sectionSpinner = (Spinner) this.findViewById(R.id.spinner_section);
+        countrySpinner = this.findViewById(R.id.spinner_country);
+        regionSpinner = this.findViewById(R.id.spinner_region);
+        districtSpinner = this.findViewById(R.id.spinner_district);
+        placeSpinner = this.findViewById(R.id.spinner_place);
+        farmerGroupSpinner = this.findViewById(R.id.spinner_farmerGroup);
+        sectionSpinner = this.findViewById(R.id.spinner_section);
 
         dl.createBusinessHierarchySpinners(this, context, farmerIdPrefix, selectedFarmerGroup, selectedSection);
         dl.createGeographyHierarchySpinners(this, context, farmerIdPrefix, selectedCountry, selectedRegion, selectedDistrict, selectedPlace, phonenumbers, true);
 
-        farmerPhotoActionButton = (ImageButton) findViewById(R.id.farmerPhotoActionButton);
+        farmerPhotoActionButton = findViewById(R.id.farmerPhotoActionButton);
         farmerPhotoActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_FARMER_PHOTO,  ScreenNameConstants.BUTTON_CLICKED);
                 // Request Permission only for Android Version Marshmallow and above
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     // Check Camera & Storage Permission
-                    if (ContextCompat.checkSelfPermission(AddFarmerActivity.this,
-                            android.Manifest.permission.READ_EXTERNAL_STORAGE) + ContextCompat
-                            .checkSelfPermission(AddFarmerActivity.this,
-                                    android.Manifest.permission.CAMERA)
-                            != PackageManager.PERMISSION_GRANTED) {
+                    if (ContextCompat.checkSelfPermission(AddFarmerActivity.this, android.Manifest.permission.READ_EXTERNAL_STORAGE) + ContextCompat.checkSelfPermission(AddFarmerActivity.this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
 
                         //request permission
-                        ActivityCompat.requestPermissions(AddFarmerActivity.this,
-                                new String[]{android.Manifest.permission.CAMERA,
-                                        android.Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                                MY_PROFILE_PIC_PERMISSIONS_REQUEST);
+                        ActivityCompat.requestPermissions(AddFarmerActivity.this, new String[]{android.Manifest.permission.CAMERA, android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, MY_PROFILE_PIC_PERMISSIONS_REQUEST);
 
                     } else {
 
@@ -283,13 +292,17 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             }
         };
         gpsTracker = new GPSTracker(this, gpsListener);
-        if (gpsTracker.isGpsEnabled()){
+//        if (gpsTracker.isGpsEnabled()) {
             gpsTracker.startLocationUpdateInitially();
-        }
+ //       }
 
     }
 
-
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MatomoHelper.matomoScreenTracker(ScreenNameConstants.SCREEN_HOME_ACTIVITY, ScreenNameConstants.SCREEN_ADD_FARMER_ACTIVITY, ScreenNameConstants.SCREEN_ADD_FARMER);
+    }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle savedInstanceState) {
@@ -328,8 +341,8 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
 
     @Override
     protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
-        ImageButton farmerPhotoButton = (ImageButton) findViewById(R.id.farmerPhoto);
-        ImageButton farmerSignatureButton = (ImageButton) findViewById(R.id.farmerSignature);
+        ImageButton farmerPhotoButton = findViewById(R.id.farmerPhoto);
+        ImageButton farmerSignatureButton = findViewById(R.id.farmerSignature);
 
         if (savedInstanceState.containsKey(CAPTURED_PHOTO_PATH_KEY)) {
             mCurrentPhotoPath = savedInstanceState.getString(CAPTURED_PHOTO_PATH_KEY);
@@ -385,10 +398,6 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         this.hm_uripath = hm_uripath;
     }
 
-    private HashMap<Integer, String> getCurrentNIDPhotoPath() {
-        return hm_uripath;
-    }
-
     private Uri getCapturedImageURI() {
         return mCapturedImageURI;
     }
@@ -397,28 +406,19 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         this.mCapturedImageURI = mCapturedImageURI;
     }
 
-    private Uri getCapturedSignatureImageURI() {
-        return mCapturedSignatureImageURI;
-    }
-
     private void setCapturedSignatureImageURI(Uri mCapturedSignatureImageURI) {
         this.mCapturedSignatureImageURI = mCapturedSignatureImageURI;
     }
 
-
-    private void setCapturedNIDImageURI(HashMap<Integer,Uri> hm_uri) {
+    private void setCapturedNIDImageURI(HashMap<Integer, Uri> hm_uri) {
         this.hm_uri = hm_uri;
     }
 
-    private HashMap<Integer,Uri> getCapturedNIDImageURI() {
-        return hm_uri;
-    }
-
     private void populateExistingValues(final Cursor existingItem) {
-        EditText farmerName = (EditText) findViewById(R.id.farmerName);
+        EditText farmerName = findViewById(R.id.farmerName);
         farmerName.setText(existingItem.getString(existingItem.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME)));
         farmerName.setFilters(new InputFilter[]{filter});
-        farmerDOB = (TextView) findViewById(R.id.farmerDOB);
+        farmerDOB = findViewById(R.id.farmerDOB);
         dateStrToSend = existingItem.getString(existingItem.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_DOB));
         farmerDOB.setText(dateStrToSend);
 
@@ -434,13 +434,14 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
 
         selectedSection = existingItem.getInt(existingItem.getColumnIndex("section_id"));
 
-        genderspinner = (Spinner) findViewById(R.id.farmerGender);
+        genderspinner = findViewById(R.id.farmerGender);
         new CountDownTimer(1000, 100) {
 
             public void onTick(long millisUntilFinished) {
             }
 
             public void onFinish() {
+                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.SPINNER_GENDER,  ScreenNameConstants.SPINNER_CHANGED);
                 String existingGender = existingItem.getString(existingItem.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_GENDER));
                 String existingGenderKey = existingGender + Utilities.getLocaleSuffix(res);
                 if (genders.containsKey(existingGenderKey)) {
@@ -452,12 +453,12 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         }.start();
 
         farmerIdPrefix.setText(existingItem.getString(existingItem.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)).substring(0, 13));
-        EditText farmerIdSuffix = (EditText) findViewById(R.id.olamFarmerIdEnd);
+        EditText farmerIdSuffix = findViewById(R.id.olamFarmerIdEnd);
         farmerIdSuffix.setText(existingItem.getString(existingItem.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)).substring(13));
 
         String farmerPhotoPath = existingItem.getString(existingItem.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_PHOTO));
         if (farmerPhotoPath != null) {
-            ImageButton farmerPhoto = (ImageButton) findViewById(R.id.farmerPhoto);
+            ImageButton farmerPhoto = findViewById(R.id.farmerPhoto);
             if (farmerPhotoPath.length() > 0) {
                 Uri uri = Uri.parse(farmerPhotoPath);
                 setCapturedImageURI(uri);
@@ -476,7 +477,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                 farmerPhoto.setImageBitmap(existingBitmap);
             }
         }
-        ImageButton farmerSignature = (ImageButton) findViewById(R.id.farmerSignature);
+        ImageButton farmerSignature = findViewById(R.id.farmerSignature);
         String farmerSignaturePhotoPath = existingItem.getString(existingItem.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_SIGNATURE));
         if (farmerSignaturePhotoPath != null) {
             if (farmerSignaturePhotoPath.length() > 0) {
@@ -495,50 +496,50 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                 Bitmap existingSignatureBitmap = Utilities.loadSizedBitmap(farmerSignaturePhotoPath, outputWidth, outputHeight);
 
                 farmerSignature.setImageBitmap(existingSignatureBitmap);
-            }else {
+            } else {
                 farmerSignature.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.empty_signature));
             }
-        }else{
+        } else {
             farmerSignature.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.empty_signature));
         }
 
-        Switch consentFarmer = (Switch) findViewById(R.id.consentFarmer);
+        Switch consentFarmer = findViewById(R.id.consentFarmer);
         consentFarmer.setChecked(true);
         consentFarmer.setEnabled(false);
 
-        Switch consentOthers = (Switch) findViewById(R.id.consentOthers);
+        Switch consentOthers = findViewById(R.id.consentOthers);
         consentOthers.setChecked(true);
         consentOthers.setEnabled(false);
 
     }
 
     private void getAllPhoneNumbers() {
-        phoneNumberList = new ArrayList<String> ();
+        phoneNumberList = new ArrayList<String>();
 
         int phonerowscount = phonenumbers.getChildCount();
 
         for (int j = 0; j < phonerowscount; j++) {
             LinearLayout phonenumberrow = (LinearLayout) phonenumbers.getChildAt(j);
 
-            EditText phonenumber = (EditText) phonenumberrow.findViewById(R.id.phonenumber);
+            EditText phonenumber = phonenumberrow.findViewById(R.id.phonenumber);
             String phonenumberValue = String.valueOf(phonenumber.getText()).replace(" ", "");
-            if(phonenumberValue.trim().length() > 0){
+            if (phonenumberValue.trim().length() > 0) {
                 phoneNumberList.add(phonenumberValue);
             }
         }
     }
 
     private void getAllNationalIds() {
-        nationalidList = new ArrayList<String> ();
+        nationalidList = new ArrayList<String>();
 
         int nidrowscount = nationalids.getChildCount();
 
         for (int j = 0; j < nidrowscount; j++) {
             LinearLayout nidrow = (LinearLayout) nationalids.getChildAt(j);
 
-            EditText nidnumber = (EditText) nidrow.findViewById(R.id.nidnumber);
+            EditText nidnumber = nidrow.findViewById(R.id.nidnumber);
             String nidnumberValue = String.valueOf(nidnumber.getText()).replace(" ", "");
-            if(nidnumberValue.trim().length() > 0){
+            if (nidnumberValue.trim().length() > 0) {
                 nationalidList.add(nidnumberValue);
             }
         }
@@ -554,7 +555,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         for (int j = 0; j < phonerowscount; j++) {
             LinearLayout phonenumberrow = (LinearLayout) phonenumbers.getChildAt(j);
 
-            EditText phonenumber = (EditText) phonenumberrow.findViewById(R.id.phonenumber);
+            EditText phonenumber = phonenumberrow.findViewById(R.id.phonenumber);
             String phonenumberValue = String.valueOf(phonenumber.getText()).replace(" ", "");
 
 
@@ -572,7 +573,6 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         return duplicatePhoneNumberValidationFlag;
     }
 
-
     private boolean duplicateNationalidsValidation() {
         boolean duplicateNationalidsValidationFlag = false;
 
@@ -583,17 +583,13 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         for (int j = 0; j < rowscount; j++) {
             LinearLayout nidrow = (LinearLayout) nationalids.getChildAt(j);
 
-            EditText nidnumber = (EditText) nidrow.findViewById(R.id.nidnumber);
+            EditText nidnumber = nidrow.findViewById(R.id.nidnumber);
             String nidnumberValue = String.valueOf(nidnumber.getText()).replace(" ", "");
 
-            if(nidnumberValue.length()==0){
+            if (nidnumberValue.length() == 0) {
 
                 duplicateNationalidsValidationFlag = true;
-            }
-
-
-
-            else if (Collections.frequency(nationalidList,nidnumberValue.trim()) == 1) {
+            } else if (Collections.frequency(nationalidList, nidnumberValue.trim()) == 1) {
                 duplicateNationalidsValidationFlag = true;
             } else {
                 duplicateNationalidsValidationFlag = false;
@@ -615,7 +611,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
 
 //        String olamFarmerId = farmerIdPrefix.getText().toString() + farmerIdSuffixValue;
 
-        EditText farmerName = (EditText) findViewById(R.id.farmerName);
+        EditText farmerName = findViewById(R.id.farmerName);
         String farmerNameValue = String.valueOf(farmerName.getText()).trim();
         if (farmerNameValue.equals("")) {
             farmerName.setText("");
@@ -631,12 +627,12 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             return values;
 
         }
-        genderspinner = (Spinner) findViewById(R.id.farmerGender);
+        genderspinner = findViewById(R.id.farmerGender);
         String genderValue = Utilities.getDefaultTextByLocalValue(genders, String.valueOf(genderspinner.getSelectedItem()), res);
         if (genderValue.equals("")) {
             return values;
         }
-        Spinner spinner_section = (Spinner) findViewById(R.id.spinner_section);
+        Spinner spinner_section = findViewById(R.id.spinner_section);
         long section_id = spinner_section.getSelectedItemId();
 
 
@@ -676,11 +672,11 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             return values;
         }
 
-        Spinner districtSpinner = (Spinner) findViewById(R.id.spinner_district);
+        Spinner districtSpinner = findViewById(R.id.spinner_district);
         long district_id = districtSpinner.getSelectedItemId();
 
-        newPlaceName = (EditText) findViewById(R.id.newPlaceName);
-        Spinner spinner_place = (Spinner) findViewById(R.id.spinner_place);
+        newPlaceName = findViewById(R.id.newPlaceName);
+        Spinner spinner_place = findViewById(R.id.spinner_place);
         long place_id = spinner_place.getSelectedItemId();
         if (place_id == 0) {
 
@@ -708,48 +704,26 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             place_id = dl.insertNewPlace(newPlaceNameValue, district_id);
         }
 
-        Switch consentFarmer = (Switch) findViewById(R.id.consentFarmer);
+        Switch consentFarmer = findViewById(R.id.consentFarmer);
         if (!consentFarmer.isChecked()) {
             Toast.makeText(context, res.getString(R.string.Please_accept_both_consents), Toast.LENGTH_LONG).show();
             return values;
         }
 
-        Switch consentOthers = (Switch) findViewById(R.id.consentOthers);
+        Switch consentOthers = findViewById(R.id.consentOthers);
         if (!consentOthers.isChecked()) {
             Toast.makeText(context, res.getString(R.string.Please_accept_both_consents), Toast.LENGTH_LONG).show();
             return values;
         }
 
-//        fetch national id values
-       /* int nidrowscount = nationalids.getChildCount();
-        for (int j = 0; j < nidrowscount; j++) {
-            LinearLayout nidrow = (LinearLayout) nationalids.getChildAt(j);
-            EditText nidnumber = (EditText) nidrow.findViewById(R.id.nidnumber);
-            Spinner nid_type = (Spinner) nidrow.findViewById(R.id.idtypespinner);
-
-            String value = nid_type.getSelectedItem().toString();
-            int type = getNidType(value);
-            String nid = nidnumber.getText().toString();
-            JSONObject storeableNids = new JSONObject();
-            try {
-                storeableNids.put("nationalidtype", type);
-                storeableNids.put("nationalidNumber", nid);
-                storeableNids.put("photo", hm_uripath.get(j+1));
-                storeableNationalids.put(storeableNids);
-            } catch (JSONException e) {
-                FirebaseCrash.report(new Exception("AddFarmerActivity: Error creating storable phone number", e));
-                e.printStackTrace();
-            }
-
-        }*/
-        if(isNIDAvailable) {
-            if (getnationalidSubmitStatus().equalsIgnoreCase(DUPLICATE)) {
+        if (isNIDAvailable) {
+            if (getnationalidSubmitStatus(nationalids).equalsIgnoreCase(DUPLICATE)) {
                 Toast.makeText(this, getResources().getString(R.string.duplicate_nationalids), Toast.LENGTH_SHORT).show();
                 return values;
-            } else if (getnationalidSubmitStatus().equalsIgnoreCase(LIMIT_XED)) {
+            } else if (getnationalidSubmitStatus(nationalids).equalsIgnoreCase(LIMIT_XED)) {
                 Toast.makeText(this, getResources().getString(R.string.duplicate_nationalids), Toast.LENGTH_SHORT).show();
                 return values;
-            } else if (getnationalidSubmitStatus().equalsIgnoreCase(ENTER_NID)) {
+            } else if (getnationalidSubmitStatus(nationalids).equalsIgnoreCase(ENTER_NID)) {
                 Toast.makeText(this, getResources().getString(R.string.enter_nationalids), Toast.LENGTH_SHORT).show();
                 return values;
             }
@@ -759,8 +733,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             storeableNationalids = fetchnationalidvalues();
         }
         int phonerowscount = phonenumbers.getChildCount();
-        /*boolean hasNumber = false;
-        boolean hasMainNumber = false;*/
+
         long countryId = countrySpinner.getSelectedItemId();
         long regionId = regionSpinner.getSelectedItemId();
         long districtId = districtSpinner.getSelectedItemId();
@@ -769,12 +742,11 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         for (int j = 0; j < phonerowscount; j++) {
             LinearLayout phonenumberrow = (LinearLayout) phonenumbers.getChildAt(j);
 
-            EditText phonenumber = (EditText) phonenumberrow.findViewById(R.id.phonenumber);
-            RadioButton primary_number = (RadioButton) phonenumberrow.findViewById(R.id.primary_number);
+            EditText phonenumber = phonenumberrow.findViewById(R.id.phonenumber);
+            RadioButton primary_number = phonenumberrow.findViewById(R.id.primary_number);
             String phonenumberValue = String.valueOf(phonenumber.getText()).replace(" ", "");
 
             if (phonenumberValue.length() > 0 && PhoneNumberUtils.isGlobalPhoneNumber(phonenumberValue)) {
-                //hasNumber = true;
                 JSONObject storeableNumber = new JSONObject();
                 try {
                     storeableNumber.put("country_id", countryId);
@@ -796,12 +768,8 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
 //        SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(olamFarmerId, String.valueOf(generateUniqueLongNumber()));
 
         try {
-//            if (editMode) {
-                if (edit_signature)
-                    values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_SIGNATURE, getCurrentSignaturePhotoPath());
-//            }else {
-//                values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_SIGNATURE, getCurrentSignaturePhotoPath());
-//            }
+            if (edit_signature)
+                values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_SIGNATURE, getCurrentSignaturePhotoPath());
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME, farmerNameValue);
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID, olamFarmerId);
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_CREATED_LOCALLY, 1);
@@ -823,9 +791,9 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
             String registereddate = format.format(today);
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_REGISTER_DATE, registereddate);
-            if(! editMode) {
+            if (!editMode) {
                 boolean isUnique = dl.isFarmerEntryUnique(values);
-                values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_MODERATION_STATUS,isUnique);
+                values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_MODERATION_STATUS, isUnique);
                 if (!isUnique) {
                     statusmoduration = true;
                 }
@@ -838,29 +806,11 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         return values;
     }
 
-    private JSONArray fetchnationalidvalues() {
-        Cursor nids = dl.getnidsfromlocaldb();
-        JSONArray storeableNationalids = new JSONArray();
-        try {
-            while (nids.moveToNext()) {
-                JSONObject storeableNids = new JSONObject();
-                storeableNids.put("nationalIdType", new Long(nids.getInt(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_TYPE))));
-                storeableNids.put("nationalIdNumber", nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_NUMBER)));
-                storeableNids.put("photo", nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_PHOTO)));
-
-                storeableNationalids.put(storeableNids);
-
-            }
-        }catch (JSONException e){
-            e.printStackTrace();
-        }
-        return storeableNationalids;
-    }
-
     private void bindnumberdelete(ImageView trashbutton) {
         trashbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_PHONE_NO_DELETE,  ScreenNameConstants.BUTTON_CLICKED);
                 LinearLayout numberrow = (LinearLayout) v.getParent();
                 ((ViewGroup) numberrow.getParent()).removeView(numberrow);
             }
@@ -868,7 +818,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     }
 
     private void bindniddelete(LinearLayout trashbutton) {
-        trashbutton.setTag(nationalids.getChildCount() -1);
+        trashbutton.setTag(nationalids.getChildCount() - 1);
         trashbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -879,16 +829,14 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
 
                 removehmvalue(hm_uripath, (int) trashbutton.getTag());
                 removehmURIvalue(hm_uri, (int) trashbutton.getTag());
-                refreshTags();
+                refreshTags(nationalids);
             }
         });
     }
 
-
-
     private void removeSpinnerItem(LinearLayout numberrow) {
         try {
-            Spinner spinner = (Spinner) numberrow.findViewById(R.id.idtypespinner);
+            Spinner spinner = numberrow.findViewById(R.id.idtypespinner);
             String val = spinner.getSelectedItem().toString();
 
             for (int i = 0; i < selectednationalidList.size(); i++) {
@@ -898,42 +846,8 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             }
             int type = getNidType(val);
             dl.removeNIDPhoto(type);
-        }catch (NullPointerException e){
+        } catch (NullPointerException e) {
             e.printStackTrace();
-        }
-    }
-
-    private void removehmvalue(HashMap<Integer, String> hm_uripath, int val) {
-        Iterator<Integer> iterator = hm_uripath.keySet().iterator();
-        while(iterator.hasNext()){
-            Integer nid = iterator.next();
-            if(nid == val){
-                iterator.remove();
-            }
-        }
-    }
-
-    private void removehmURIvalue(HashMap<Integer, Uri> hm_uripath, int val) {
-        Iterator<Integer> iterator = hm_uripath.keySet().iterator();
-        while(iterator.hasNext()){
-            Integer nid = iterator.next();
-            if(nid == val){
-                iterator.remove();
-            }
-        }
-    }
-
-    private void refreshTags() {
-        int nidrowscount = nationalids.getChildCount();
-        for (int j = 0; j < nidrowscount; j++) {
-            if(j > 0) {
-                LinearLayout nationalidinclude = (LinearLayout) nationalids.getChildAt(j);
-                ImageButton actionbtn = nationalidinclude.findViewById(R.id.nidphotoActionButton);
-                ImageButton nationalidphoto = nationalidinclude.findViewById(R.id.nationalidphoto);
-                actionbtn.setTag(j+1);
-                nationalidphoto.setTag(j+1);
-
-            }
         }
     }
 
@@ -945,7 +859,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                     int phonerowscount = phonenumbers.getChildCount();
                     for (int j = 0; j < phonerowscount; j++) {
                         LinearLayout phonenumberrow = (LinearLayout) phonenumbers.getChildAt(j);
-                        RadioButton primary_number = (RadioButton) phonenumberrow.findViewById(R.id.primary_number);
+                        RadioButton primary_number = phonenumberrow.findViewById(R.id.primary_number);
 
                         primary_number.setChecked(false);
                     }
@@ -964,9 +878,9 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
 
             while (existingNumbers.moveToNext()) {
                 LinearLayout phonenumberinclude = (LinearLayout) inflater.inflate(R.layout.phonenumber_entry, phonenumbers, false);
-                RadioButton numberradio = (RadioButton) phonenumberinclude.findViewById(R.id.primary_number);
-                EditText numbertext = (EditText) phonenumberinclude.findViewById(R.id.phonenumber);
-                ImageView numberdelete = (ImageView) phonenumberinclude.findViewById(R.id.deleteNumber);
+                RadioButton numberradio = phonenumberinclude.findViewById(R.id.primary_number);
+                EditText numbertext = phonenumberinclude.findViewById(R.id.phonenumber);
+                ImageView numberdelete = phonenumberinclude.findViewById(R.id.deleteNumber);
 
                 numberradio.setChecked(existingNumbers.getInt(existingNumbers.getColumnIndex(OFISDBContract.PhoneNumber.COLUMN_NAME_PRIMARY)) == 1);
                 numbertext.setText(existingNumbers.getString(existingNumbers.getColumnIndex(OFISDBContract.PhoneNumber.COLUMN_NAME_NUMBER)));
@@ -985,8 +899,8 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
 
                 LinearLayout phonenumberinclude = (LinearLayout) inflater.inflate(R.layout.phonenumber_entry, phonenumbers, false);
                 phonenumbers.addView(phonenumberinclude);
-                RadioButton numberradio = (RadioButton) phonenumberinclude.findViewById(R.id.primary_number);
-                ImageView numberdelete = (ImageView) phonenumberinclude.findViewById(R.id.deleteNumber);
+                RadioButton numberradio = phonenumberinclude.findViewById(R.id.primary_number);
+                ImageView numberdelete = phonenumberinclude.findViewById(R.id.deleteNumber);
                 numberdelete.setVisibility(View.GONE);
                 bindnumberradio(numberradio);
                 numberradio.setChecked(true);
@@ -995,53 +909,50 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         } else {
             LinearLayout phonenumberinclude = (LinearLayout) inflater.inflate(R.layout.phonenumber_entry, phonenumbers, false);
             phonenumbers.addView(phonenumberinclude);
-            RadioButton numberradio = (RadioButton) phonenumberinclude.findViewById(R.id.primary_number);
-            ImageView numberdelete = (ImageView) phonenumberinclude.findViewById(R.id.deleteNumber);
+            RadioButton numberradio = phonenumberinclude.findViewById(R.id.primary_number);
+            ImageView numberdelete = phonenumberinclude.findViewById(R.id.deleteNumber);
             numberdelete.setVisibility(View.GONE);
             bindnumberradio(numberradio);
             numberradio.setChecked(true);
         }
 
-        ImageButton addNumber = (ImageButton) findViewById(R.id.addNumber);
-       /* if(!editMode){
-            addNumber.setVisibility(View.INVISIBLE);
-        }*/
+        ImageButton addNumber = findViewById(R.id.addNumber);
+
         addNumber.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 LinearLayout phonenumberinclude = (LinearLayout) inflater.inflate(R.layout.phonenumber_entry, phonenumbers, false);
                 EditText diallingCode = null;
                 try {
-                    diallingCode = (EditText) phonenumbers.getChildAt(0).findViewById(R.id.dialling_code);
+                    diallingCode = phonenumbers.getChildAt(0).findViewById(R.id.dialling_code);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
                 if (diallingCode != null) {
-                    EditText newDiallingCode = (EditText) phonenumberinclude.findViewById(R.id.dialling_code);
+                    EditText newDiallingCode = phonenumberinclude.findViewById(R.id.dialling_code);
                     newDiallingCode.setText(diallingCode.getText());
                 }
                 phonenumbers.addView(phonenumberinclude);
-                bindnumberdelete((ImageView) phonenumberinclude.findViewById(R.id.deleteNumber));
-                bindnumberradio((RadioButton) phonenumberinclude.findViewById(R.id.primary_number));
+                bindnumberdelete(phonenumberinclude.findViewById(R.id.deleteNumber));
+                bindnumberradio(phonenumberinclude.findViewById(R.id.primary_number));
             }
         });
     }
 
     private void bindnationalid() {
-//        if (! editMode) {
         ArrayList<String> refreshitem = refreshNationalidtype(setNationalidtype());
         LinearLayout nationalidinclude = (LinearLayout) inflater.inflate(R.layout.add_nationalid, nationalids, false);
         nationalids.addView(nationalidinclude);
 
-        LinearLayout niddelete = (LinearLayout) nationalidinclude.findViewById(R.id.deleteNationalid);
+        LinearLayout niddelete = nationalidinclude.findViewById(R.id.deleteNationalid);
         niddelete.setVisibility(View.GONE);
-        spinner_nidtype = (Spinner) nationalidinclude.findViewById(R.id.idtypespinner);
-        LinearLayout ll_capturephoto = (LinearLayout) nationalidinclude.findViewById(R.id.ll_capturephoto);
+        spinner_nidtype = nationalidinclude.findViewById(R.id.idtypespinner);
+        LinearLayout ll_capturephoto = nationalidinclude.findViewById(R.id.ll_capturephoto);
         spinnerArrayAdapter = new ArrayAdapter<String>(AddFarmerActivity.this, R.layout.spinner_item, refreshitem);
         spinnerArrayAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         spinner_nidtype.setAdapter(spinnerArrayAdapter);
 
-        EditText nidnumber = (EditText) nationalidinclude.findViewById(R.id.nidnumber);
+        EditText nidnumber = nationalidinclude.findViewById(R.id.nidnumber);
         ImageButton actionbtn = nationalidinclude.findViewById(R.id.nidphotoActionButton);
         ImageButton nationalidphoto = nationalidinclude.findViewById(R.id.nationalidphoto);
         actionbtn.setTag(nationalids.getChildCount());
@@ -1070,8 +981,6 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (!spinner_nidtype.getSelectedItem().toString().equalsIgnoreCase(SELECT_NATIONALID)) {
-//                    selectednationalidList.add(spinner_nidtype.getSelectedItem().toString());
-
                     int limit = getNidLimit(spinner_nidtype.getSelectedItem().toString());
                     InputFilter[] filters = new InputFilter[1];
                     filters[0] = new InputFilter.LengthFilter(limit); //Filter to 10 characters
@@ -1092,58 +1001,44 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             }
         });
 
-        bindnationlidcapturephoto((Spinner) nationalidinclude.findViewById(R.id.idtypespinner), (ImageButton) nationalidinclude.findViewById(R.id.nidphotoActionButton));
+        bindnationlidcapturephoto(nationalidinclude.findViewById(R.id.idtypespinner), nationalidinclude.findViewById(R.id.nidphotoActionButton));
 
-        ImageButton addNationId = (ImageButton) findViewById(R.id.addnid);
+        ImageButton addNationId = findViewById(R.id.addnid);
         addNationId.setOnClickListener(this);
 
     }
 
     private void bindNationalidValues() {
-        if(editFarmerId != 0) {
+        if (editFarmerId != 0) {
             Cursor nids = dl.getnationalidsbyfarmerid(editFarmerId);
-//            JSONArray nidlist = new JSONArray();
             ArrayList<String> refreshitem = refreshNationalidtype(setNationalidtype());
             try {
                 int i = 0;
                 while (nids.moveToNext()) {
                     LinearLayout nationalidinclude = (LinearLayout) inflater.inflate(R.layout.add_nationalid, nationalids, false);
                     nationalids.addView(nationalidinclude);
-                    Spinner spinner_nidtype = (Spinner) nationalidinclude.findViewById(R.id.idtypespinner);
-                    LinearLayout niddelete = (LinearLayout) nationalidinclude.findViewById(R.id.deleteNationalid);
+                    Spinner spinner_nidtype = nationalidinclude.findViewById(R.id.idtypespinner);
+                    LinearLayout niddelete = nationalidinclude.findViewById(R.id.deleteNationalid);
                     ImageButton actionbtn = nationalidinclude.findViewById(R.id.nidphotoActionButton);
                     ImageButton nationalidphoto = nationalidinclude.findViewById(R.id.nationalidphoto);
-                    LinearLayout ll_capturephoto = (LinearLayout) nationalidinclude.findViewById(R.id.ll_capturephoto);
-                    EditText nidnumber = (EditText) nationalidinclude.findViewById(R.id.nidnumber);
+                    LinearLayout ll_capturephoto = nationalidinclude.findViewById(R.id.ll_capturephoto);
+                    EditText nidnumber = nationalidinclude.findViewById(R.id.nidnumber);
                     spinnerArrayAdapter = new ArrayAdapter<String>(AddFarmerActivity.this, R.layout.nidtype_spinner, refreshitem);
                     spinnerArrayAdapter.setDropDownViewResource(R.layout.nidtype_spinner);
                     spinner_nidtype.setAdapter(spinnerArrayAdapter);
                     actionbtn.setClickable(false);
                     spinner_nidtype.setEnabled(false);
-//                    nidnumber.setEnabled(false);
-                    if(i ==0) {
+                    if (i == 0) {
                         niddelete.setVisibility(View.INVISIBLE);
-                    }else{
+                    } else {
                         niddelete.setVisibility(View.VISIBLE);
                     }
                     i++;
-//                    JSONObject nationalids = new JSONObject();
-
-//                    nationalids.put("farmerId", new Long(nids.getInt(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID))));
-//                    nationalids.put("nationalIdType", new Long(nids.getInt(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_TYPE))));
-//                    nationalids.put("nationalIdNumber", nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_NUMBER)));
                     nidnumber.setText(nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_NUMBER)));
                     String selected_item = getNidTypebyid(nids.getInt(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_TYPE)));
                     int spinnerPosition = spinnerArrayAdapter.getPosition(selected_item);
                     spinner_nidtype.setSelection(spinnerPosition);
-                    /*if (spinnerPosition != 0) {
-//
-                        if (getNidCaptureStatus(selected_item).equalsIgnoreCase("false")) {
-                            ll_capturephoto.setVisibility(View.GONE);
-                        } else {
-                            ll_capturephoto.setVisibility(View.VISIBLE);
-                        }
-                    }*/
+
                     String farmerNIDPath = nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_PHOTO));
                     if (farmerNIDPath != null && farmerNIDPath.length() > 0) {
                         int baseWidth = 100;
@@ -1157,13 +1052,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                         Bitmap bitmap = Utilities.loadSizedBitmap(farmerNIDPath, outputWidth, outputHeight);
 
                         nationalidphoto.setImageBitmap(bitmap);
-                       /* try {
-                            String encodedImage = Utilities.base64ConversionForImage(farmerNIDPath);
-                            nationalids.put("photo", encodedImage);
-//                   jsonObject.put(OFISDBContract.FarmerEntry.COLUMN_NAME_SIGNATURE, signature.getName());
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }*/
+
                         nationalidphoto.setTag(nationalids.getChildCount());
                     }
                     actionbtn.setTag(nationalids.getChildCount());
@@ -1191,8 +1080,6 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                         @Override
                         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                             if (!spinner_nidtype.getSelectedItem().toString().equalsIgnoreCase(SELECT_NATIONALID)) {
-//                    selectednationalidList.add(spinner_nidtype.getSelectedItem().toString());
-
                                 int limit = getNidLimit(spinner_nidtype.getSelectedItem().toString());
                                 InputFilter[] filters = new InputFilter[1];
                                 filters[0] = new InputFilter.LengthFilter(limit); //Filter to 10 characters
@@ -1212,9 +1099,8 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
 
                         }
                     });
-//                    nidlist.put(nationalids);
-                    bindnationlidcapturephoto((Spinner) nationalidinclude.findViewById(R.id.idtypespinner), (ImageButton) nationalidinclude.findViewById(R.id.nidphotoActionButton));
-                    bindniddelete((LinearLayout) nationalidinclude.findViewById(R.id.deleteNationalid));
+                    bindnationlidcapturephoto(nationalidinclude.findViewById(R.id.idtypespinner), nationalidinclude.findViewById(R.id.nidphotoActionButton));
+                    bindniddelete(nationalidinclude.findViewById(R.id.deleteNationalid));
                 }
 
             } catch (Exception e) {
@@ -1222,115 +1108,60 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                 e.printStackTrace();
             }
 
-            ImageButton addNationId = (ImageButton) findViewById(R.id.addnid);
+            ImageButton addNationId = findViewById(R.id.addnid);
             addNationId.setOnClickListener(this);
 
         }
     }
 
-    private boolean validateSpinnerValues(String selected_item) {
-        boolean status = true;
-        if(editMode && ! editnidmode) {
-            return true;
-        }
-        if(selected_item.equalsIgnoreCase(SELECT_NATIONALID)){
-            return false;
-        }
-        int nidrowscount = nationalids.getChildCount();
-        for (int j = 0; j < nidrowscount; j++) {
-            LinearLayout nationalidinclude = (LinearLayout) nationalids.getChildAt(j);
-            Spinner spinner = nationalidinclude.findViewById(R.id.idtypespinner);
-            String val = spinner.getSelectedItem().toString();
-            if(val.equalsIgnoreCase(SELECT_NATIONALID)){
-
-                return false;
-            }
-        }
-        return status;
-    }
-
     private void ValidateSpinnerTypes() {
         ArrayList<String> nidtype_list = new ArrayList<>();
         ArrayList<Integer> selected_types = new ArrayList<>();
-        selectednationalidList = new ArrayList<String> ();
+        selectednationalidList = new ArrayList<String>();
         int nidrowscount = nationalids.getChildCount();
         for (int j = 0; j < nidrowscount; j++) {
             LinearLayout nidrow = (LinearLayout) nationalids.getChildAt(j);
-            Spinner nid_type = (Spinner) nidrow.findViewById(R.id.idtypespinner);
+            Spinner nid_type = nidrow.findViewById(R.id.idtypespinner);
             String value = nid_type.getSelectedItem().toString();
             int type = getNidType(value);
-            if(! nidtype_list.contains(value)) {
+            if (!nidtype_list.contains(value)) {
                 nidtype_list.add(value);
                 selectednationalidList.add(value);
                 selected_types.add(type);
             }
         }
-        compareTypes(selected_types,getAllphotoTypes());
-    }
-
-    private void compareTypes(ArrayList<Integer> selected_types, ArrayList<Integer> allphotoTypes) {
-        for (int type2 : allphotoTypes) {
-            boolean found = false;
-            for (int type1 : selected_types) {
-                if (type2 == type1) {
-                    found = true;
-                }
-            }
-            if (!found) {
-                dl.removeNIDPhoto(type2);
-            }
-        }
+        compareTypes(selected_types, getAllphotoTypes());
     }
 
     private boolean validateSpinnerSelection() {
         boolean status = true;
         ArrayList<String> values = refreshNationalidtype(setNationalidtype());
-        if(values.size() == 1){
+        if (values.size() == 1) {
             return false;
         }
         return status;
     }
 
-    /*private boolean validateSelectedSpinnerValue(String selectedValue) {
-        boolean status = false;
-        for(int i=0; i < selectednationalidList.size(); i++){
-            if(selectedValue.equalsIgnoreCase(selectednationalidList.get(i))) {
-                return true;
-            }
-        }
-        return status;
-    }*/
-
-
     private void bindnationlidcapturephoto(Spinner spinner, ImageButton actionbutton) {
-
+        MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_NATIONAL_ID_PHOTO,  ScreenNameConstants.BUTTON_CLICKED);
         actionbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String value = spinner.getSelectedItem().toString();
                 if (value.equalsIgnoreCase(SELECT_NATIONALID)) {
-                    Toast.makeText(AddFarmerActivity.this,getResources().getString(R.string.nationalidtype_selection),Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AddFarmerActivity.this, getResources().getString(R.string.nationalidtype_selection), Toast.LENGTH_SHORT).show();
                     return;
                 }
 
                 nidvalue = getNidType(value);
-//                showtoast((int) actionbutton.getTag());
-//                currentcapture_position = nationalids.getChildCount();
                 currentcapture_position = (int) actionbutton.getTag();
                 // Request Permission only for Android Version Marshmallow and above
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     // Check Camera & Storage Permission
-                    if (ContextCompat.checkSelfPermission(AddFarmerActivity.this,
-                            android.Manifest.permission.READ_EXTERNAL_STORAGE) + ContextCompat
-                            .checkSelfPermission(AddFarmerActivity.this,
-                                    android.Manifest.permission.CAMERA)
-                            != PackageManager.PERMISSION_GRANTED) {
+                    if (ContextCompat.checkSelfPermission(AddFarmerActivity.this, android.Manifest.permission.READ_EXTERNAL_STORAGE) + ContextCompat.checkSelfPermission(AddFarmerActivity.this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
 
                         //request permission
-                        ActivityCompat.requestPermissions(AddFarmerActivity.this,
-                                new String[]{android.Manifest.permission.CAMERA,
-                                        android.Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                                MY_NATIONALID_PIC_PERMISSIONS_REQUEST);
+                        ActivityCompat.requestPermissions(AddFarmerActivity.this, new String[]{android.Manifest.permission.CAMERA, android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, MY_NATIONALID_PIC_PERMISSIONS_REQUEST);
 
                     } else {
 
@@ -1347,9 +1178,9 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     }
 
     private void bindConsentButton() {
-        Button showConsent = (Button) findViewById(R.id.consentLaunchButton);
-        ImageButton hideConsent = (ImageButton) findViewById(R.id.consentCloseButton);
-        final LinearLayout consentHolder = (LinearLayout) findViewById(R.id.consentStatementHolder);
+        Button showConsent = findViewById(R.id.consentLaunchButton);
+        ImageButton hideConsent = findViewById(R.id.consentCloseButton);
+        final LinearLayout consentHolder = findViewById(R.id.consentStatementHolder);
         final Animation mSlideBottomUp = AnimationUtils.loadAnimation(context, R.anim.bottom_up);
         final Animation mSlideBottomDown = AnimationUtils.loadAnimation(context, R.anim.bottom_down);
 
@@ -1357,6 +1188,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         showConsent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_SHOW_CONSENT,  ScreenNameConstants.BUTTON_CLICKED);
                 consentHolder.setVisibility(View.VISIBLE);
                 consentHolder.startAnimation(mSlideBottomUp);
             }
@@ -1365,6 +1197,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         hideConsent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_HIDE_CONSENT,  ScreenNameConstants.BUTTON_CLICKED);
                 consentHolder.startAnimation(mSlideBottomDown);
             }
         });
@@ -1388,14 +1221,15 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     }
 
     private void bindSaveButton() {
-        Button saveButton = (Button) findViewById(R.id.saveFarmer);
+        Button saveButton = findViewById(R.id.saveFarmer);
 
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Switch consentFarmer = (Switch) findViewById(R.id.consentFarmer);
-                Switch consentOthers = (Switch) findViewById(R.id.consentOthers);
-                if(isNIDAvailable) {
+                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_SAVE_FARMER,  ScreenNameConstants.BUTTON_CLICKED);
+                Switch consentFarmer = findViewById(R.id.consentFarmer);
+                Switch consentOthers = findViewById(R.id.consentOthers);
+                if (isNIDAvailable) {
                     if (!duplicateNationalidsValidation()) { //Duplicate nationalids Validation....
                         Toast.makeText(context, res.getString(R.string.duplicate_nationalids), Toast.LENGTH_LONG).show();
                         return;
@@ -1411,7 +1245,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                         if (editMode) {
                             long updFarmerId = dl.updateFarmer(values, editFarmerId);
                             dl.updateFarmerPhoneNumbers(editFarmerId, storeableNumbers);
-                            if(isNIDAvailable) {
+                            if (isNIDAvailable) {
                                 boolean moduretationstatus = dl.updateFarmerNationalids(context, editFarmerId, storeableNationalids, "1", "name");
                                 if (moduretationstatus) {
                                     statusmoduration = true;
@@ -1427,15 +1261,19 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                             }
                         } else {
                             // check the current location
-                            if (mCurrentLocation == null || !gpsTracker.isGpsEnabled()) {
-                                gpsTracker.getDeviceLocation();
-                                return;
+                            if(mCurrentLocation != null){
+                                 // check the current location
+                            }else {
+                                if (mCurrentLocation == null || !gpsTracker.isGpsEnabled()) {
+                                    gpsTracker.getDeviceLocation();
+                                    return;
+                                }
                             }
 
                             long newFarmerId = dl.insertFarmer(values);
                             if (newFarmerId != -1) {
                                 dl.updateFarmerPhoneNumbers(newFarmerId, storeableNumbers);
-                                if(isNIDAvailable) {
+                                if (isNIDAvailable) {
                                     boolean moduretationstatus = dl.updateFarmerNationalids(context, newFarmerId, storeableNationalids, "1", "name");
                                     if (moduretationstatus) {
                                         statusmoduration = true;
@@ -1447,22 +1285,15 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                                     collectGPSPoint();
                                 }
                                 ViewFarmerActivity.farmerId = newFarmerId;
-                                //SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(newFarmerId);
                                 finish();
                                 Intent intent = new Intent(context, ViewFarmerActivity.class);
                                 startActivity(intent);
                             }
                         }
-                        if(statusmoduration){
-                            Toast.makeText(AddFarmerActivity.this,getResources().getString(R.string.moderation_note),Toast.LENGTH_LONG).show();
+                        if (statusmoduration) {
+                            Toast.makeText(AddFarmerActivity.this, getResources().getString(R.string.moderation_note), Toast.LENGTH_LONG).show();
                         }
 
-                    } else {
-                        if ((!consentFarmer.isChecked()) || (!consentOthers.isChecked())) {
-                            //Toast.makeText(context, res.getString(R.string.Please_accept_both_consents), Toast.LENGTH_LONG).show();
-                        }else {
-//                                    Toast.makeText(context, res.getString(R.string.Please_fill_all_fields), Toast.LENGTH_LONG).show();
-                        }
                     }
                 } else {
                     Toast.makeText(context, res.getString(R.string.duplicate_phone_number), Toast.LENGTH_LONG).show();
@@ -1471,12 +1302,6 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             }
         });
     }
-
-    private void showToast() {
-
-
-    }
-
 
     private void collectGPSPoint() {
         ContentValues geoContentValues = new GPSUtils().getGeoContentValues(GPSConstants.MODULE_CAPTURE_ADD_FARMER, String.valueOf(mCurrentLocation.getLatitude()), String.valueOf(mCurrentLocation.getLongitude()), new Timestamp(System.currentTimeMillis()).toString());
@@ -1493,52 +1318,19 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         super.onStop();
         try {
             gpsTracker.stopLocationUpdates();
-        }catch (Exception e){}
-
-    }
-
-    /**
-     * Generate unique ID from UUID.
-     * @return long value representing UUID
-     */
-    private static Long generateUniqueLongNumber() {
-        long val = -1;
-        do {
-            final UUID uid = UUID.randomUUID();
-            final ByteBuffer buffer = ByteBuffer.wrap(new byte[16]);
-            buffer.putLong(uid.getLeastSignificantBits());
-            buffer.putLong(uid.getMostSignificantBits());
-            final BigInteger bi = new BigInteger(buffer.array());
-            val = bi.longValue();
-        } while (val < 0);
-        return val;
-    }
-
-    private final DatePickerDialog.OnDateSetListener pickerListener = new DatePickerDialog.OnDateSetListener() {
-        @Override
-        public void onDateSet(DatePicker datePicker, int selectedYear, int selectedMonth, int selectedDay) {
-
-            // get the date
-            Calendar cal = Calendar.getInstance();
-            cal.set(selectedYear, selectedMonth, selectedDay);
-
-            SimpleDateFormat serverDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
-
-            dateStrToSend = serverDateFormat.format(cal.getTime());
-
-            String humanDate = DateFormat.getMediumDateFormat(context).format(cal.getTime());
-
-            farmerDOB.setText(humanDate);
+        } catch (Exception e) {
         }
-    };
+
+    }
 
     private void bindDateField() {
-        farmerDOB = (TextView) findViewById(R.id.farmerDOB);
+        farmerDOB = findViewById(R.id.farmerDOB);
 
         farmerDOB.setKeyListener(null);
         farmerDOB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_FARMER_DOB,  ScreenNameConstants.BUTTON_CLICKED);
                 final Calendar c = Calendar.getInstance();
                 c.add(Calendar.YEAR, -16);
                 int year = c.get(Calendar.YEAR);
@@ -1577,40 +1369,6 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         target.setImageBitmap(bitmap);
     }
 
-    private void displayBitmapforNID(int nidvalue, String savedImagePath) {
-        // set our desired width and height for display
-        int baseWidth = 100;
-        int baseHeight = 133;
-
-
-
-        Hashtable dimensions = Utilities.getDimensionsForDisplayFromBase(baseWidth, baseHeight, res);
-        Integer outputWidth = Integer.parseInt(dimensions.get("width").toString());
-        Integer outputHeight = Integer.parseInt(dimensions.get("height").toString());
-
-        Bitmap bitmap = Utilities.loadSizedBitmap(savedImagePath, outputWidth, outputHeight);
-
-//        target.setImageBitmap(bitmap);
-
-        int nidrowscount = nationalids.getChildCount();
-
-        for (int j = 0; j < nidrowscount; j++) {
-            LinearLayout nidrow = (LinearLayout) nationalids.getChildAt(j);
-            Spinner nid_type = (Spinner) nidrow.findViewById(R.id.idtypespinner);
-            ImageButton imageButton = (ImageButton) nidrow.findViewById(R.id.nationalidphoto);
-            String value = nid_type.getSelectedItem().toString();
-            int type = getNidType(value);
-           /* if(imageButton.getTag() == captureSignature){
-                imageButton.setImageBitmap(bitmap);
-            }*/
-            if(type == nidvalue) {
-                imageButton.setImageBitmap(bitmap);
-            }
-        }
-
-
-    }
-
     private void setFullImageFromFilePath(String imagePath, ImageButton target, String portraitOrSignature) {
         String savedImagePath = Utilities.scaleRotateAndSaveImage(imagePath, portraitOrSignature);
         if (savedImagePath != null) {
@@ -1637,24 +1395,22 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             Integer outputHeight = Integer.parseInt(dimensions.get("height").toString());
 
             dl.updateNIDPhoto(nidvalue, savedImagePath);
-            if(editMode){
-                dl.removeNIDPhotostatusByType(String.valueOf(nidvalue),editFarmerId);
+            if (editMode) {
+                dl.removeNIDPhotostatusByType(String.valueOf(nidvalue), editFarmerId);
             }
-//            showNIDImage.setImageBitmap(bitmap);
+            displayBitmapforNID(nationalids, nidvalue, savedImagePath);
 
-            displayBitmapforNID(nidvalue,savedImagePath);
-
-        }else{
-            Toast.makeText(this,"Image not saved ! Please try again.", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "Image not saved ! Please try again.", Toast.LENGTH_SHORT).show();
         }
     }
 
     private File createImageFile(String portraitOrSignature) throws IOException {
         String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.ENGLISH).format(new Date());
         String imageFileName;
-        if(! portraitOrSignature.contains("nationalidimage")) {
+        if (!portraitOrSignature.contains("nationalidimage")) {
             imageFileName = (portraitOrSignature.equalsIgnoreCase("portrait")) ? "ofis_farmer_portrait_" + timestamp + "_" : "ofis_farmer_signature_" + timestamp + "_";
-        }else{
+        } else {
             imageFileName = portraitOrSignature + "_" + timestamp + "_";
         }
         File storageDir = getExternalFilesDir(null);
@@ -1667,15 +1423,13 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         return image;
     }
 
-
-
     private void bindFarmerNationalIDButton() {
         Intent takePicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         takePicture.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         File photoFile = null;
 
         try {
-            photoFile = createImageFile("nationalidimage_" +currentcapture_position );
+            photoFile = createImageFile("nationalidimage_" + currentcapture_position);
         } catch (IOException e) {
             FirebaseCrash.report(new Exception("AddFarmerActivity: Error creating nationalid image file", e));
             e.printStackTrace();
@@ -1691,18 +1445,16 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                 }
             }
             Uri fileUri = Uri.fromFile(photoFile);
-            removehmURIvalue(hm_uri,currentcapture_position);
-            removehmvalue(hm_uripath,currentcapture_position);
-            hm_uri.put(currentcapture_position,fileUri);
-            hm_uripath.put(currentcapture_position,fileUri.getPath());
+            removehmURIvalue(hm_uri, currentcapture_position);
+            removehmvalue(hm_uripath, currentcapture_position);
+            hm_uri.put(currentcapture_position, fileUri);
+            hm_uripath.put(currentcapture_position, fileUri.getPath());
             setCapturedNIDImageURI(hm_uri);
             setCurrentNIDPhotoPath(hm_uripath);
             takePicture.putExtra(MediaStore.EXTRA_OUTPUT, hm_uri.get(currentcapture_position));
             startActivityForResult(takePicture, REQUEST_IMAGE_CAPTURE_NATIONALID);
         }
     }
-
-
 
     private void bindFarmerPhotoButton() {
         final CharSequence[] items = {res.getString(R.string.Camera), res.getString(R.string.Gallery)};
@@ -1739,12 +1491,12 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                         setCurrentPhotoPath(fileUri.getPath());
                         takePicture.putExtra(MediaStore.EXTRA_OUTPUT, getCapturedImageURI());
                         try {
-                            if(takePicture.resolveActivity(getPackageManager()) != null) {
+                            if (takePicture.resolveActivity(getPackageManager()) != null) {
                                 startActivityForResult(takePicture, REQUEST_IMAGE_CAPTURE);
-                            }else {
-                                Toast.makeText(AddFarmerActivity.this,"Gallery is not available in Mobile",Toast.LENGTH_LONG).show();
+                            } else {
+                                Toast.makeText(AddFarmerActivity.this, "Gallery is not available in Mobile", Toast.LENGTH_LONG).show();
                             }
-                        }catch (Exception e){
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
@@ -1752,12 +1504,12 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                 } else if (items[item].equals(res.getString(R.string.Gallery))) {
                     Intent pickPhoto = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                     try {
-                        if(pickPhoto.resolveActivity(getPackageManager()) != null) {
+                        if (pickPhoto.resolveActivity(getPackageManager()) != null) {
                             startActivityForResult(pickPhoto, REQUEST_IMAGE_GALLERY);
-                        }else {
-                            Toast.makeText(AddFarmerActivity.this,"Gallery is not available in Mobile",Toast.LENGTH_LONG).show();
+                        } else {
+                            Toast.makeText(AddFarmerActivity.this, "Gallery is not available in Mobile", Toast.LENGTH_LONG).show();
                         }
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
 
@@ -1768,22 +1520,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         alert.show();
     }
 
-    private static String getFilePathUri(Context context, Uri uri) {
-        Uri filePathUri = uri;
-        if (uri.getScheme().compareTo("content") == 0) {
-            Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
-            assert cursor != null;
-            if (cursor.moveToFirst()) {
-                int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-                filePathUri = Uri.parse(cursor.getString(column_index));
-            }
-            cursor.close();
-        }
-        return filePathUri + "";
-    }
-
-    private ArrayList<NationalIdTypeDTO> getModules(){
-//        nidtype = new ArrayList<NationalIdTypeDTO>();
+    private ArrayList<NationalIdTypeDTO> getModules() {
         nidtypelist = new ArrayList<NationalIdTypeDTO>();
 
         Cursor cursor = dl.getnationalids();
@@ -1811,30 +1548,30 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         return nidtypelist;
     }
 
-    private ArrayList<String> setNationalidtype(){
+    private ArrayList<String> setNationalidtype() {
         String language = Locale.getDefault().getLanguage();
         nidtypelist = getModules();
         nidtype = new ArrayList<String>();
         nidtype.add(SELECT_NATIONALID);
         if (nidtypelist.size() > 0) {
             for (NationalIdTypeDTO moduleDTO : nidtypelist) {
-                if(language.equalsIgnoreCase(Utilities.FR)){
+                if (language.equalsIgnoreCase(Utilities.FR)) {
                     nidtype.add(moduleDTO.getTypeFr());
-                }else if(language.equalsIgnoreCase(Utilities.ES)){
+                } else if (language.equalsIgnoreCase(Utilities.ES)) {
                     nidtype.add(moduleDTO.getTypeEs());
-                }else if(language.equalsIgnoreCase(Utilities.PT)){
+                } else if (language.equalsIgnoreCase(Utilities.PT)) {
                     nidtype.add(moduleDTO.getTypePt());
-                }else if(language.equalsIgnoreCase(Utilities.ID)){
+                } else if (language.equalsIgnoreCase(Utilities.ID)) {
                     nidtype.add(moduleDTO.getTypeId());
-                }else if(language.equalsIgnoreCase(Utilities.TR)){
+                } else if (language.equalsIgnoreCase(Utilities.TR)) {
                     nidtype.add(moduleDTO.getTypeTr());
-                }else if(language.equalsIgnoreCase(Utilities.LO)){
+                } else if (language.equalsIgnoreCase(Utilities.LO)) {
                     nidtype.add(moduleDTO.getTypeLo());
-                }else if(language.equalsIgnoreCase(Utilities.VI)){
+                } else if (language.equalsIgnoreCase(Utilities.VI)) {
                     nidtype.add(moduleDTO.getTypeVi());
-                }else if(language.equalsIgnoreCase(Utilities.TH)){
+                } else if (language.equalsIgnoreCase(Utilities.TH)) {
                     nidtype.add(moduleDTO.getTypeTh());
-                }else {
+                } else {
                     nidtype.add(moduleDTO.getType());
                 }
             }
@@ -1843,133 +1580,19 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         return nidtype;
     }
 
-
-    private ArrayList<String> refreshNationalidtype(ArrayList<String> value){
-        for(int i=0; i < selectednationalidList.size(); i++){
+    private ArrayList<String> refreshNationalidtype(ArrayList<String> value) {
+        for (int i = 0; i < selectednationalidList.size(); i++) {
             value.remove(selectednationalidList.get(i));
         }
 
         return value;
     }
-    // getting nationalids type id values
-    public int getNidType(String type) {
-        int id=0;
-        Cursor  nid=dl.getNIDByName(type);
-        if (nid.getCount() > 0) {
-            nid.moveToFirst();
-            id= nid.getInt(nid.getColumnIndex(OFISDBContract.NationalIDEntry.COLUMN_NAME_ID));
-        }
-        return  id;
-    }
-
-    // getting nationalids type id values
-    public String getNidTypebyid(int id) {
-        String type=null;
-        Cursor  nid=dl.getNIDById(id);
-        if (nid.getCount() > 0) {
-            nid.moveToFirst();
-            type= nid.getString(nid.getColumnIndex(OFISDBContract.NationalIDEntry.COLUMN_NAME_NID_TYPE));
-            String language = Locale.getDefault().getLanguage();
-            if(language.equalsIgnoreCase(Utilities.FR)){
-                type= nid.getString(nid.getColumnIndex(OFISDBContract.NationalIDEntry.COLUMN_NAME_TYPE_FR));
-            }else if(language.equalsIgnoreCase(Utilities.ES)){
-                type= nid.getString(nid.getColumnIndex(OFISDBContract.NationalIDEntry.COLUMN_NAME_TYPE_ES));
-            }else if(language.equalsIgnoreCase(Utilities.PT)){
-                type= nid.getString(nid.getColumnIndex(OFISDBContract.NationalIDEntry.COLUMN_NAME_TYPE_PT));
-            }else if(language.equalsIgnoreCase(Utilities.ID)){
-                type= nid.getString(nid.getColumnIndex(OFISDBContract.NationalIDEntry.COLUMN_NAME_TYPE_ID));
-            }else if(language.equalsIgnoreCase(Utilities.TR)){
-                type= nid.getString(nid.getColumnIndex(OFISDBContract.NationalIDEntry.COLUMN_NAME_TYPE_TR));
-            }else if(language.equalsIgnoreCase(Utilities.LO)){
-                type= nid.getString(nid.getColumnIndex(OFISDBContract.NationalIDEntry.COLUMN_NAME_TYPE_LO));
-            }else if(language.equalsIgnoreCase(Utilities.VI)){
-                type= nid.getString(nid.getColumnIndex(OFISDBContract.NationalIDEntry.COLUMN_NAME_TYPE_VI));
-            }else if(language.equalsIgnoreCase(Utilities.TH)){
-                type= nid.getString(nid.getColumnIndex(OFISDBContract.NationalIDEntry.COLUMN_NAME_TYPE_TH));
-            }
-        }
-        return  type;
-    }
-
-    // getting nationalids type id values
-    public String getPhotobytype(int type) {
-        String photo=null;
-        Cursor  nid=dl.getPhotoByType(type);
-        if (nid.getCount() > 0) {
-            nid.moveToFirst();
-            photo= nid.getString(nid.getColumnIndex(OFISDBContract.LocalNationalIDImages.COLUMN_NID_PHOTO));
-        }
-        return photo;
-    }
-
-    // getting nationalids type id values
-    public int getNidLimit(String type) {
-        int id=0;
-        Cursor  nid=dl.getNIDByName(type);
-        if (nid.getCount() > 0) {
-            nid.moveToFirst();
-            id= nid.getInt(nid.getColumnIndex(OFISDBContract.NationalIDEntry.COLUMN_NAME_NID_LIMIT));
-        }
-        return  id;
-    }
-
-    // getting nationalids type id values
-    public String getNidCaptureStatus(String type) {
-        String photostatus="true";
-        Cursor  nid=dl.getNIDPhotostatusByName(type);
-        if (nid.getCount() > 0) {
-            nid.moveToFirst();
-            photostatus= nid.getString(nid.getColumnIndex(OFISDBContract.NationalIDEntry.COLUMN_NAME_PHOTO_REQUIRED));
-        }
-        Boolean status = (photostatus == "true")? true : false;
-        return  photostatus;
-    }
-
-    // getting nationalids type id values
-    public boolean getPhotostatusByType(String type) {
-        boolean photostatus= false;
-        Cursor  nid=dl.getPhotostatusByType(type);
-        if (nid.getCount() > 0) {
-            photostatus= true;
-        }
-        return  photostatus;
-    }
-
-    public boolean getNIDPhotostatusByType(String type, long editFarmerId) {
-        boolean photostatus= false;
-        Cursor  nid=dl.getNIDPhotostatusByType(type,editFarmerId);
-        if (nid.getCount() > 0) {
-            photostatus= true;
-        }
-        return  photostatus;
-    }
-
-    public ArrayList<Integer> getAllphotoTypes() {
-        ArrayList<Integer> types = new ArrayList<>();
-        Cursor  nid=dl.getAllPhotos();
-        if (nid.getCount() > 0) {
-            nid.moveToFirst();
-            int type= nid.getInt(nid.getColumnIndex(OFISDBContract.LocalNationalIDImages.COLUMN_NID_TYPE));
-            types.add(type);
-        }
-        return types;
-    }
-
-    public String getNIDPhotoByType(String type, long farmerid) {
-        String photo=null;
-        Cursor  nid=dl.getNIDPhotostatusByType(type, farmerid);
-        if (nid.getCount() > 0) {
-            nid.moveToFirst();
-            photo= nid.getString(nid.getColumnIndex(OFISDBContract.LocalNationalIDImages.COLUMN_NID_PHOTO));
-        }
-        return photo;
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
         super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
-        if(resultCode == Activity.RESULT_CANCELED) return;
-        ImageButton farmerPhoto = (ImageButton) findViewById(R.id.farmerPhoto);
+        if (resultCode == Activity.RESULT_CANCELED) return;
+        ImageButton farmerPhoto = findViewById(R.id.farmerPhoto);
 
         switch (requestCode) {
             case REQUEST_CHECK_SETTINGS:
@@ -2004,39 +1627,15 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         }
     }
 
-    private void showSettingsDialog(String msg) {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-        dialog.setTitle(R.string.permission_permanent_denial_title);
-        dialog.setMessage(msg)
-                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-                        startActivity(new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                                Uri.parse("package:" + context.getPackageName())));
-                    }
-                })
-                .setNegativeButton(R.string.app_update_cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-                        Toast.makeText(AddFarmerActivity.this, R.string.permission_permanent_denial_msg, Toast.LENGTH_LONG).show();
-                    }
-                });
-        dialog.show();
-    }
-
     @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         switch (requestCode) {
             case MY_PROFILE_PIC_PERMISSIONS_REQUEST: {
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED
-                        && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
 
                     bindFarmerPhotoButton();
 
-                } else if (Build.VERSION.SDK_INT >= 23
-                        && (!shouldShowRequestPermissionRationale(permissions[0])
-                        || !shouldShowRequestPermissionRationale(permissions[1]))) {
+                } else if (Build.VERSION.SDK_INT >= 23 && (!shouldShowRequestPermissionRationale(permissions[0]) || !shouldShowRequestPermissionRationale(permissions[1]))) {
                     showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
 
                 } else {
@@ -2046,15 +1645,11 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             }
 
             case MY_NATIONALID_PIC_PERMISSIONS_REQUEST: {
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED
-                        && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
 
                     bindFarmerNationalIDButton();
 
-                } else if (Build.VERSION.SDK_INT >= 23
-                        && (!shouldShowRequestPermissionRationale(permissions[0])
-                        || !shouldShowRequestPermissionRationale(permissions[1]))) {
+                } else if (Build.VERSION.SDK_INT >= 23 && (!shouldShowRequestPermissionRationale(permissions[0]) || !shouldShowRequestPermissionRationale(permissions[1]))) {
                     showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
 
                 } else {
@@ -2065,10 +1660,8 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         }
     }
 
-    boolean isSigned = false;
-
     public void showSignatureDialog(View v) {
-
+        MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_SHOW_SIGNATEURE,  ScreenNameConstants.BUTTON_CLICKED);
         isSigned = false;
 
         final Dialog signatureDialog = new Dialog(this, android.R.style.Theme_Material_Dialog_Alert);
@@ -2079,10 +1672,10 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         SignaturePad mSignaturePad = signatureDialog.findViewById(R.id.signature_pad);
 
 
-
         signatureDialog.findViewById(R.id.imgv_clear_signature).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_CLEAR_SIGNATURE,  ScreenNameConstants.BUTTON_CLICKED);
                 mSignaturePad.clear();
             }
         });
@@ -2112,7 +1705,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         signatureDialog.findViewById(R.id.btn_cancel_signature).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_CANCEL_SIGNATURE,  ScreenNameConstants.BUTTON_CLICKED);
                 signatureDialog.dismiss();
 
 
@@ -2122,7 +1715,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         signatureDialog.findViewById(R.id.btn_add_signature).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_CONFIRM_SIGNATURE,  ScreenNameConstants.BUTTON_CLICKED);
                 try {
 
                     if (isSigned) {
@@ -2171,8 +1764,6 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                 } catch (Exception e) {
 
                 }
-
-
             }
         });
 
@@ -2180,36 +1771,35 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     }
 
 
-
     @Override
     public void onClick(View v) {
         int id = v.getId();
 
-        if(id == R.id.addnid) {
+        if (id == R.id.addnid) {
+            MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_ADD_NATIONAL_ID,  ScreenNameConstants.BUTTON_CLICKED);
             if (!ValidateNIDValues()) return;
             try {
-                if (! validateSpinnerValues(spinner_nidtype.getSelectedItem().toString())) {
-                    Toast.makeText(AddFarmerActivity.this,getResources().getString(R.string.nationalidtype_selection),Toast.LENGTH_LONG).show();
+                if (!validateSpinnerValues(nationalids, spinner_nidtype.getSelectedItem().toString())) {
+                    Toast.makeText(AddFarmerActivity.this, getResources().getString(R.string.nationalidtype_selection), Toast.LENGTH_LONG).show();
                     return;
                 }
-            }catch (NullPointerException e){
+            } catch (NullPointerException e) {
                 e.printStackTrace();
             }
-//            if (validateSpinnerValues(spinner_nidtype.getSelectedItem().toString())) {
             if (validateSpinnerSelection()) {
                 ArrayList<String> refreshitem = refreshNationalidtype(setNationalidtype());
                 if (refreshitem.size() != 0) {
                     editnidmode = true;
                     LinearLayout nationalidinclude = (LinearLayout) inflater.inflate(R.layout.add_nationalid, nationalids, false);
                     nationalids.addView(nationalidinclude);
-                    LinearLayout ll_capturephoto = (LinearLayout) nationalidinclude.findViewById(R.id.ll_capturephoto);
-                    Spinner spinner_nidtype = (Spinner) nationalidinclude.findViewById(R.id.idtypespinner);
+                    LinearLayout ll_capturephoto = nationalidinclude.findViewById(R.id.ll_capturephoto);
+                    Spinner spinner_nidtype = nationalidinclude.findViewById(R.id.idtypespinner);
 
                     ImageButton actionbtn = nationalidinclude.findViewById(R.id.nidphotoActionButton);
                     ImageButton nationalidphoto = nationalidinclude.findViewById(R.id.nationalidphoto);
                     actionbtn.setTag(nationalids.getChildCount());
                     nationalidphoto.setTag(nationalids.getChildCount());
-                    EditText nidnumber = (EditText) nationalidinclude.findViewById(R.id.nidnumber);
+                    EditText nidnumber = nationalidinclude.findViewById(R.id.nidnumber);
                     spinnerArrayAdapter = new ArrayAdapter<String>(AddFarmerActivity.this, R.layout.spinner_item, refreshitem);
                     spinnerArrayAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
                     spinner_nidtype.setAdapter(spinnerArrayAdapter);
@@ -2235,9 +1825,6 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                         @Override
                         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                             if (!spinner_nidtype.getSelectedItem().toString().equalsIgnoreCase(SELECT_NATIONALID)) {
-
-//                                    selectednationalidList.add(spinner_nidtype.getSelectedItem().toString());
-
                                 int limit = getNidLimit(spinner_nidtype.getSelectedItem().toString());
                                 InputFilter[] filters = new InputFilter[1];
                                 filters[0] = new InputFilter.LengthFilter(limit); //Filter to 10 characters
@@ -2249,11 +1836,6 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                                 }
                                 ValidateSpinnerTypes();
                             }
-                           /* if(selectednationalidList.contains(spinner_nidtype.getSelectedItem().toString())){
-                                Toast.makeText(AddFarmerActivity.this,"Already selected",Toast.LENGTH_LONG).show();
-                                int spinnerPosition = spinnerArrayAdapter.getPosition(selected_item);
-                                spinner_nidtype.setSelection(spinnerPosition);
-                            }*/
                         }
 
                         @Override
@@ -2262,169 +1844,91 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                         }
                     });
 
-                    bindniddelete((LinearLayout) nationalidinclude.findViewById(R.id.deleteNationalid));
-//                        String value = spinner_nidtype.getSelectedItem().toString();
-//                        if (!value.equalsIgnoreCase(SELECT_NATIONALID)) {
-//                            nidvalue = getNidType(value);
-                    bindnationlidcapturephoto((Spinner) nationalidinclude.findViewById(R.id.idtypespinner), (ImageButton) nationalidinclude.findViewById(R.id.nidphotoActionButton));
-//                        }else{
-//                            Toast.makeText(AddFarmerActivity.this,getResources().getString(R.string.nationalidtype_selection),Toast.LENGTH_LONG).show();
-//                        }
+                    bindniddelete(nationalidinclude.findViewById(R.id.deleteNationalid));
+                    bindnationlidcapturephoto(nationalidinclude.findViewById(R.id.idtypespinner), nationalidinclude.findViewById(R.id.nidphotoActionButton));
 
                 }
             }
-//            }
 
-            /*else{
-                Toast.makeText(AddFarmerActivity.this,getResources().getString(R.string.nationalidtype_selection),Toast.LENGTH_LONG).show();
-
-            }*/
         }
-
 
 
     }
 
-    private String getnationalidSubmitStatus() {
-        String typeadded = "false";
-        int nidrowscount = nationalids.getChildCount();
-        ArrayList<String> names = new ArrayList<>();
-        for (int i = 0; i < nidrowscount; i++) {
-            LinearLayout view = (LinearLayout) nationalids.getChildAt(i);
-
-            Spinner idtypespinner = view.findViewById(R.id.idtypespinner);
-            EditText nidnumber = view.findViewById(R.id.nidnumber);
-            String value = idtypespinner.getSelectedItem().toString();
-            int type = getNidType(value);
-            String nid = nidnumber.getText().toString();
-            int limit = getNidLimit(idtypespinner.getSelectedItem().toString());
-            if(limit < nid.length()){
-                typeadded = LIMIT_XED;
-            }
-            if(nidrowscount == 1 && i==0){
-                if(type == 0){
-                    typeadded = ENTER_NID;
-                }
-            }
-            names.add(String.valueOf(type));
-        }
-        Set<String> store = new HashSet<>();
-        for (String name : names) {
-            if (store.add(name) == false) {
-                typeadded = DUPLICATE;
-            }
-        }
-
-        return typeadded;
-    }
 
     private boolean ValidateNIDValues() {
         boolean status = true;
         ArrayList<String> nidtype_list = new ArrayList<>();
-        selectednationalidList = new ArrayList<String> ();;
+        selectednationalidList = new ArrayList<String>();
         int nidrowscount = nationalids.getChildCount();
         for (int j = 0; j < nidrowscount; j++) {
             LinearLayout nidrow = (LinearLayout) nationalids.getChildAt(j);
-            EditText nidnumber = (EditText) nidrow.findViewById(R.id.nidnumber);
-            Spinner nid_type = (Spinner) nidrow.findViewById(R.id.idtypespinner);
-            LinearLayout ll_nidview = (LinearLayout) nidrow.findViewById(R.id.ll_nidview);
-            LinearLayout deleteNationalid = (LinearLayout) nidrow.findViewById(R.id.deleteNationalid);
-            ImageButton nidphotoActionButton = (ImageButton) nidrow.findViewById(R.id.nidphotoActionButton);
+            EditText nidnumber = nidrow.findViewById(R.id.nidnumber);
+            Spinner nid_type = nidrow.findViewById(R.id.idtypespinner);
+            LinearLayout ll_nidview = nidrow.findViewById(R.id.ll_nidview);
+            LinearLayout deleteNationalid = nidrow.findViewById(R.id.deleteNationalid);
+            ImageButton nidphotoActionButton = nidrow.findViewById(R.id.nidphotoActionButton);
             String value = nid_type.getSelectedItem().toString();
             int type = getNidType(value);
             String nid = nidnumber.getText().toString();
-            /*if(j == nidrowscount-1){
-                nid_type.setEnabled(true);
-            }else {
-                nid_type.setEnabled(false);
-            }*/
-            if(nid.trim() == "" || nid.trim().equalsIgnoreCase("")){
-//                nidnumber.setEnabled(false);
-                Toast.makeText(this,getResources().getString(R.string.nid_value_enter),Toast.LENGTH_SHORT).show();
+
+            if (nid.trim() == "" || nid.trim().equalsIgnoreCase("")) {
+                Toast.makeText(this, getResources().getString(R.string.nid_value_enter), Toast.LENGTH_SHORT).show();
                 return false;
             }
-            if(value.equalsIgnoreCase(SELECT_NATIONALID)){
-                Toast.makeText(this,getResources().getString(R.string.nationalidtype_selection),Toast.LENGTH_SHORT).show();
+            if (value.equalsIgnoreCase(SELECT_NATIONALID)) {
+                Toast.makeText(this, getResources().getString(R.string.nationalidtype_selection), Toast.LENGTH_SHORT).show();
                 return false;
             }
-            if(nidtype_list.size() != 0 && nidtype_list.contains(value)) {
+            if (nidtype_list.size() != 0 && nidtype_list.contains(value)) {
                 nid_type.setEnabled(true);
-                Toast.makeText(this,getResources().getString(R.string.nationalidtype_alreadyselected),Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getResources().getString(R.string.nationalidtype_alreadyselected), Toast.LENGTH_SHORT).show();
                 return false;
-            }else {
+            } else {
                 nidtype_list.add(value);
                 selectednationalidList.add(value);
             }
             if (getNidCaptureStatus(value).equalsIgnoreCase("true")) {
-//                if(! hm_uripath.containsKey(j+1)){
-                if(! editMode) {
+                if (!editMode) {
                     if (!getPhotostatusByType(String.valueOf(type))) {
                         nidphotoActionButton.setClickable(true);
                         Toast.makeText(this, getResources().getString(R.string.nid_photo_select), Toast.LENGTH_SHORT).show();
                         return false;
                     }
-                }else {
-                    if(! (getNIDPhotostatusByType(String.valueOf(type),editFarmerId) || getPhotostatusByType(String.valueOf(type)))) {
+                } else {
+                    if (!(getNIDPhotostatusByType(String.valueOf(type), editFarmerId) || getPhotostatusByType(String.valueOf(type)))) {
                         nidphotoActionButton.setClickable(true);
                         Toast.makeText(this, getResources().getString(R.string.nid_photo_select), Toast.LENGTH_SHORT).show();
                         return false;
                     }
                 }
-                /*else {
-                    if(! hm_uripath.containsKey(j+1)){
-                        nidphotoActionButton.setClickable(true);
-                        Toast.makeText(this, getResources().getString(R.string.nid_photo_select), Toast.LENGTH_SHORT).show();
-                        return false;
-                    }
-                }*/
-
             }
 
-            if(status){
+            if (status) {
                 NationalIdDTO idDTO = new NationalIdDTO();
                 idDTO.setNationalidNumber(nid);
                 idDTO.setNationalidtype(String.valueOf(type));
                 if (getNidCaptureStatus(value).equalsIgnoreCase("true")) {
                     String photopath = null;
-                    if(! editMode) {
+                    if (!editMode) {
                         photopath = getPhotobytype(type);
-                    }else{
-                        if(getNIDPhotostatusByType(String.valueOf(type),editFarmerId)) {
+                    } else {
+                        if (getNIDPhotostatusByType(String.valueOf(type), editFarmerId)) {
                             photopath = getNIDPhotoByType(String.valueOf(type), editFarmerId);
-                        }else {
+                        } else {
                             photopath = getPhotobytype(type);
                         }
                     }
                     idDTO.setPhoto(photopath);
-                }else{
+                } else {
                     idDTO.setPhoto("");
                 }
 
                 dl.addnewLocalFarmerNationalids(idDTO);
                 nid_type.setEnabled(false);
-               /* nid_type.setEnabled(false);
-                nidnumber.setEnabled(false);
-                nidphotoActionButton.setClickable(false);
-//                deleteNationalid.setClickable(false);
-                ll_nidview.setBackgroundColor(getResources().getColor(R.color.cardview_light_background));*/
             }
         }
         return status;
     }
-
-   /* private void removelastrow() {
-        try {
-            int nidrowscount = nationalids.getChildCount();
-            LinearLayout nidrow = (LinearLayout) nationalids.getChildAt(nidrowscount - 1);
-            Spinner nid_type = (Spinner) nidrow.findViewById(R.id.idtypespinner);
-            String value = nid_type.getSelectedItem().toString();
-            if (value.equalsIgnoreCase(SELECT_NATIONALID)) {
-                nationalids.removeViewAt(nidrowscount - 1);
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-    }*/
-
 
 }

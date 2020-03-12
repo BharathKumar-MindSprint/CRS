@@ -91,6 +91,8 @@ import com.olam.digital.ofis.gps.GPSTracker;
 import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
 import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.gps.utils.GPSUtils;
+import com.olam.digital.ofis.matoma.MatomoHelper;
+import com.olam.digital.ofis.matoma.ScreenNameConstants;
 import com.olam.digital.ofis.recordpolygon.LocationBeanList;
 import com.olam.digital.ofis.recordpolygon.PlotsList;
 import com.olam.digital.ofis.recordpolygon.RecordPolygonActivity;
@@ -123,6 +125,7 @@ import static com.google.android.gms.location.LocationServices.getFusedLocationP
 
 public class ViewFarmerActivity extends BaseListActivity implements AdapterView.OnItemClickListener {
 
+    private final String MATOMOTAG = this.getClass().getSimpleName();
     public static long farmerId;
     private Cursor farmer;
     private Context context;
@@ -247,9 +250,9 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         };
         gpsTracker=new GPSTracker(this,gpsListener);
         //   gpsTracker.getDeviceLocation();
-        if (gpsTracker.isGpsEnabled()){
+//        if (gpsTracker.isGpsEnabled()){
             gpsTracker.startLocationUpdateInitially();
-        }
+  //      }
 
 
     }
@@ -286,7 +289,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(UPDATE_INTERVAL_IN_MILLISECONDS);
         mLocationRequest.setFastestInterval(FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        mLocationRequest.setPriority(new GPSTracker(this).getLocationMode());
 
         LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder();
         builder.addLocationRequest(mLocationRequest);
@@ -430,11 +433,16 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
             @Override
             public void onClick(View v) {
                 // Request Permission only for Android Version Marshmallow and above
+                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_UPDATE_PHOTO_BUTTON,  ScreenNameConstants.BUTTON_CLICKED);
+                if (mCurrentCapturedLocation!=null){
 
-                if (mCurrentCapturedLocation==null || !gpsTracker.isGpsEnabled()) {
-                    gpsTracker.getDeviceLocation();
-                    return;
+                }else{
+                    if (mCurrentCapturedLocation==null || !gpsTracker.isGpsEnabled()) {
+                        gpsTracker.getDeviceLocation();
+                        return;
+                    }
                 }
+
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     // Check Camera & Storage Permission
@@ -495,7 +503,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
 
                 // capturing the geo point track
                 collectGPSPoint(GPSConstants.MODULE_CAPTURE_FARM_LOCATION,farmLocation);
-
+                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_RECORD_FARM_LOCATION,  ScreenNameConstants.BUTTON_CLICKED);
             }
         } catch (Exception e) {
             FirebaseCrash.report(new Exception("ViewFarmerActivity: Error setting farmer GPS location", e));
@@ -727,6 +735,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 .setCancelable(false)
                 .setPositiveButton(res.getString(R.string.yes), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
+                        MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_SUBMIT_PLOT_LEVEL_ANALYSIS,  ScreenNameConstants.BUTTON_CLICKED);
                         getFarmGPSPolygon(v);
                     }
                 })
@@ -1025,6 +1034,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         hidenumbersBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_HIDE_NUMBERBOX,  ScreenNameConstants.BUTTON_CLICKED);
                 phoneNumbersHolder.startAnimation(mSlideBottomDown);
             }
         });
@@ -1032,6 +1042,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         addNumber.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_ADD_PHONE_NUMBER,  ScreenNameConstants.BUTTON_CLICKED);
                 LinearLayout phonenumberinclude = (LinearLayout) inflater.inflate(R.layout.phonenumber_entry, phonenumbers, false);
                 EditText diallingCode = (EditText) phonenumbers.getChildAt(0).findViewById(R.id.dialling_code);
                 if (diallingCode != null) {
@@ -1047,6 +1058,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         phonenumbersSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_SAVE_PHONE_NUMBER,  ScreenNameConstants.BUTTON_CLICKED);
                 if (duplicatePhoneNumberValidation()) { //Duplicate Phone Number Validation....
                     int phonerowscount = phonenumbers.getChildCount();
                     boolean hasNumber = false;
@@ -1373,11 +1385,14 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         dl.updateFarmerPhoto(farmerId,savedImagePath,olamFarmerIdStr,farmerNameStr);
 
         // Collect the GPS Point
-        if (mCurrentCapturedLocation==null || !gpsTracker.isGpsEnabled()){
+        if(mCurrentCapturedLocation != null){
+            // check the current location
+            collectGPSPoint(GPSConstants.MODULE_CAPTURE_UPDATE_PHOTO,mCurrentCapturedLocation);
+        }else if(mCurrentCapturedLocation==null || !gpsTracker.isGpsEnabled()){
             gpsTracker.getDeviceLocation();
             return;
         }else{
-            collectGPSPoint(GPSConstants.MODULE_CAPTURE_UPDATE_PHOTO,mCurrentCapturedLocation);
+            //
         }
     }
     private static String getFilePathUri(Context context, Uri uri) {
@@ -1406,6 +1421,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 TextView farmerModuleIdTv = (TextView) v.findViewById(R.id.moduleListFarmerModuleId);
                 TextView farmerModuleLatTv = (TextView) v.findViewById(R.id.moduleListRecordedLat);
                 TextView farmerModuleLngTv = (TextView) v.findViewById(R.id.moduleListRecordedLng);
+                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_SURVEY,  ScreenNameConstants.BUTTON_CLICKED);
                 Intent intent = new Intent(context, CompleteModuleActivity.class);
                 intent.putExtra(FARMER_ID, farmerId);
                 intent.putExtra(MODULE_ID, id);
@@ -1429,6 +1445,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                     // record farm location if necessary
                     TextView recordedLng = (TextView) v.findViewById(R.id.moduleListRecordedLng);
                     if (recordedLng != null && recordedLng.getText().equals("Phone")) {
+                        MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_UPDATE_PHONE_NUMBER,  ScreenNameConstants.BUTTON_CLICKED);
                         if (phoneNumbersListItem == null) {
                             phoneNumbersListItem = v;
                         }
@@ -1436,23 +1453,28 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                         phoneNumbersHolder.setVisibility(View.VISIBLE);
                         phoneNumbersHolder.startAnimation(mSlideBottomUp);
                     } else if (recordedLng != null && recordedLng.getText().equals("farmpolygon")) {
+                        MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_FARM_POLYGON,  ScreenNameConstants.BUTTON_CLICKED);
                         polygon=true;
                         enableFarmPolygon(v);
                     } else if (recordedLng != null && recordedLng.getText().equals(ChildLabourUtils.REG_CHILD)) {
+                        MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_REGISTER_CHILD,  ScreenNameConstants.BUTTON_CLICKED);
                         Intent in = new Intent(this, RegisterChildActivity.class);
                         Bundle bundle=new Bundle();
                         bundle.putLong(ChildLabourUtils.CHILD_FARMER_ID, farmerId);
                         in.putExtras(bundle);
                         startActivity(in);
                     } else if (recordedLng != null && recordedLng.getText().equals(ChildLabourUtils.CHILDLABOUR_SURVEY)) {
+                        MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_CHILD_LABOUR_SURVEY,  ScreenNameConstants.BUTTON_CLICKED);
                         Intent in = new Intent(this, ChildLabourDetailsActivity.class);
                         Bundle bundle=new Bundle();
                         bundle.putLong(ChildLabourUtils.CHILD_FARMER_ID, farmerId);
                         in.putExtras(bundle);
                         startActivity(in);
                     } else if (recordedLng != null && recordedLng.getText().equals("Signature")) {
+                        MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_UPDATE_SIGNATURE,  ScreenNameConstants.BUTTON_CLICKED);
                         showSignatureDialog();
                     } else if (recordedLng != null && recordedLng.getText().equals("National_ID")) {
+                        MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_ADD_NATIONAL_ID,  ScreenNameConstants.BUTTON_CLICKED);
                         Intent in = new Intent(this, AddNationalidActivity.class);
                         Bundle bundle=new Bundle();
                         bundle.putString(FARMER_NAME, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME)));
@@ -1507,6 +1529,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         signatureDialog.findViewById(R.id.imgv_clear_signature).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_CLEAR_SIGNATURE,  ScreenNameConstants.BUTTON_CLICKED);
                 mSignaturePad.clear();
             }
         });
@@ -1536,7 +1559,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         signatureDialog.findViewById(R.id.btn_cancel_signature).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_CANCEL_SIGNATURE,  ScreenNameConstants.BUTTON_CLICKED);
                 signatureDialog.dismiss();
 
 
@@ -1546,7 +1569,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         signatureDialog.findViewById(R.id.btn_add_signature).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_CONFIRM_SIGNATURE,  ScreenNameConstants.BUTTON_CLICKED);
                 try {
 
                     if (isSigned) {
@@ -1610,5 +1633,6 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
     protected void onResume() {
         super.onResume();
         setupUI();
+        MatomoHelper.matomoScreenTracker(ScreenNameConstants.SCREEN_FIND_FARMER_ACTIVITY, ScreenNameConstants.SCREEN_VIEW_FARMER_ACTIVITY, ScreenNameConstants.SCREEN_VIEW_FARMER);
     }
 }
