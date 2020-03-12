@@ -63,8 +63,8 @@ android {
         //noinspection OldTargetApi
         targetSdkVersion 27
         multiDexEnabled true
-        versionCode 61
-        versionName "10.0.54"
+        versionCode 23
+        versionName "10.1.6"
     }
 
     buildTypes {
@@ -202,6 +202,9 @@ android {
             resValue "string", "AUTH_SERVER_URL", 'https://ofisot-zuul-preprod.olamdigital.com/oauth/api/v1/oauth/'
             buildConfigField 'String', 'HOST', '"https://ofisot-zuul-preprod.olamdigital.com/"'
             resValue "string", "client_secret", 'xGfAz5zSFTJDHcWWcEQR19hNx9zA30NeZOQuxdnr'
+            buildConfigField "String", "MATOMO_SERVER_URL", '"https://olammatomo.azurewebsites.net/matomo.php"'
+            buildConfigField "int", "MATOMO_SERVER_CODE", '35'
+            buildConfigField "boolean", "MATOMO_ENABLED", 'true'
         }
 
         //noinspection GroovyMissingReturnStatement
@@ -219,6 +222,9 @@ android {
             resValue "string", "AUTH_SERVER_URL", 'https://otofis-zuul.olamdigital.com/oauth/api/v1/oauth/'
             buildConfigField 'String', 'HOST', '"https://otofis-zuul.olamdigital.com/"'
             resValue "string", "client_secret", 'xGfAz5zSFTJDHcWWcEQR19hNx9zA30NeZOQuxdnr'
+            buildConfigField "String", "MATOMO_SERVER_URL", '"https://olammatomo.azurewebsites.net/matomo.php"'
+            buildConfigField "int", "MATOMO_SERVER_CODE", '39'
+            buildConfigField "boolean", "MATOMO_ENABLED", 'true'
         }
     }
 
@@ -289,10 +295,10 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.5'
     implementation 'com.android.support.constraint:constraint-layout:1.1.2'
     implementation 'com.github.gcacace:signature-pad:1.2.1'
-    implementation project(path: ':InAppLib_1.8')
+   /* implementation project(path: ':InAppLib_1.8')
     implementation group: 'net.lingala.zip4j', name: 'zip4j', version: '2.2.6'
     implementation group: 'com.googlecode.libphonenumber', name: 'libphonenumber', version:'8.11.0'
-
+*/
     // User Event Analytics
     implementation 'org.matomo.sdk:tracker:4.1.1'
 
