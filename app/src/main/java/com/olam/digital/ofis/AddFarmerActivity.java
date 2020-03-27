@@ -1664,22 +1664,32 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_SHOW_SIGNATEURE,  ScreenNameConstants.BUTTON_CLICKED);
         isSigned = false;
 
-        final Dialog signatureDialog = new Dialog(this, android.R.style.Theme_Material_Dialog_Alert);
+        final Dialog signatureDialog = new Dialog(AddFarmerActivity.this, android.R.style.Theme_Material_Dialog_Alert);
         signatureDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
 
         signatureDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         signatureDialog.setContentView(R.layout.dialog_signature);
         SignaturePad mSignaturePad = signatureDialog.findViewById(R.id.signature_pad);
 
-
-        signatureDialog.findViewById(R.id.imgv_clear_signature).setOnClickListener(new View.OnClickListener() {
+        Button bt_clear = (Button)signatureDialog.findViewById(R.id.imgv_clear_signature);
+        Button bt_confirm = (Button)signatureDialog.findViewById(R.id.btn_add_signature);
+        bt_confirm.setEnabled(true);
+        bt_clear.setEnabled(true);
+        bt_clear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_CLEAR_SIGNATURE,  ScreenNameConstants.BUTTON_CLICKED);
                 mSignaturePad.clear();
             }
         });
-
+        bt_clear.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_CLEAR_SIGNATURE,  ScreenNameConstants.BUTTON_CLICKED);
+                mSignaturePad.clear();
+                return false;
+            }
+        });
 
         mSignaturePad.setOnSignedListener(new SignaturePad.OnSignedListener() {
 
@@ -1712,7 +1722,52 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             }
         });
 
-        signatureDialog.findViewById(R.id.btn_add_signature).setOnClickListener(new View.OnClickListener() {
+
+        bt_confirm.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_CONFIRM_SIGNATURE,  ScreenNameConstants.BUTTON_CLICKED);
+                try {
+                    if (isSigned) {
+                        farmerSignatureButton.setImageBitmap(mSignaturePad.getTransparentSignatureBitmap());
+                        File photoFile = null;
+                        try {
+                            photoFile = createImageFile("signature");
+                        } catch (IOException e) {
+                            FirebaseCrash.report(new Exception("AddFarmerActivity: Error creating signature image file", e));
+                            e.printStackTrace();
+                        }
+                        if (photoFile != null) {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                                try {
+                                    Method m = StrictMode.class.getMethod("disableDeathOnFileUriExposure");
+                                    m.invoke(null);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                            Uri fileUri = Uri.fromFile(photoFile);
+                            setCapturedSignatureImageURI(fileUri);
+                            setCurrentSignaturePhotoPath(fileUri.getPath());
+                            try (FileOutputStream out = new FileOutputStream(photoFile)) {
+                                mSignaturePad.getTransparentSignatureBitmap().compress(Bitmap.CompressFormat.PNG, 100, out); // bmp is your Bitmap instance
+                                // PNG is a lossless format, the compression factor (100) is ignored
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        signatureDialog.dismiss();
+                    } else {
+                        Toast.makeText(AddFarmerActivity.this, "No signature available...", Toast.LENGTH_SHORT).show();
+                    }
+                } catch (Exception e) {
+                }
+                return false;
+            }
+        });
+
+
+        bt_confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_CONFIRM_SIGNATURE,  ScreenNameConstants.BUTTON_CLICKED);
@@ -1769,6 +1824,8 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
 
         signatureDialog.show();
     }
+
+
 
 
     @Override
