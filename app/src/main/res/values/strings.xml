@@ -294,6 +294,7 @@
     <string name="fullreview_farm_management_plan_in_progress">Full Review in Progress</string>
     <string name="fmp_are_you_sure">This will require a new plan to be printed, are you sure you want to proceed?</string>
     <string name="complete_all_required_fields">You must complete all required fields before you can submit this item (i.e. questions displaying a red *)</string>
+    <string name="complete_all_required_fields_mandatry">Survey Configuration Error. Please submit an Ask for help.</string>
     <string name="ReadAndAgreeConsent">Read and agree to consent statement</string>
     <string name="consentStatementMain1">It is necessary for you to supply us with personal data in connection with the Olam sustainability programme of which you are part of. This personal data will be collected and stored on the Olam Farmer Information System ("<strong>OFIS</strong>"). You may subsequently withdraw any consent given for our collection, use and disclosure of your personal data. However, failure to supply your personal data and/or subsequent withdrawal of your consent may result in you being unable to participate in the sustainability programme.</string>
     <string name="consentStatementMain2">
@@ -396,7 +397,10 @@
     <string name="main_number">Main?</string>
     <string name="location">Location</string>
     <string name="update_phone_numbers">Update Phone Numbers</string>
+    <string name="register_child">Register Child</string>
+    <string name="child_labour_survey">Child Labour Survey</string>
     <string name="update_phone_numbers_hint">Tap to update</string>
+    <string name="update_childlabour_hint">Tap to Register</string>
     <string name="select_transactee">Who are you transacting with?</string>
     <string name="price_per_unit">Price per </string>
     <string name="total_price">Total Price</string>
@@ -475,7 +479,11 @@
     <string name="authentication_failed">Authentication failed. Please try again</string>
     <string name="authentication_attempt">Please wait for 30 minutes for your login to be enabled and try again with your same enumerator ID and Passcode</string>
     <string name="enumerator_empty">Please enter the valid enumerator Id &amp; Passcode</string>
+
+    <string name="valid_range">Please specify the value within the range as mentioned</string>
+
     <string name="fill_name">Please fill the name</string>
+    <string name="fill_age">Please select the correct age</string>
     <string name="fill_country">Please fill the country</string>
     <string name="fill_region">Please fill the region</string>
     <string name="fill_district">Please fill the district</string>
@@ -492,4 +500,61 @@
     <string name="data_initialization">Data initialization</string>
     <string name="phone_number_recorded">Phone number recorded</string>
     <string name="survey_data">Downloading Survey Data</string>
+    <string name="title_child_labour">Register Child</string>
+    <string name="household_question">Farmer has no children under 18 (household)</string>
+    <string name="inspection_question">No children found on farm (Inspection)</string>
+    <string name="followup_question">No children found during followup</string>
+    <string name="add_child">Add Child</string>
+    <string name="update_child">Update Child</string>
+    <string name="full_name">Child name</string>
+    <string name="age">Age</string>
+    <string name="add">Add</string>
+    <string name="checking_child_enumerator">Checking Child Enumerator</string>
+    <string name="download_nationalid_enumerator">Downloading NationalID details</string>
+    <string name="download_nationalidtype_enumerator">Downloading NationalID Types</string>
+    <string name="visit_detail">Visit Detail</string>
+    <string name="child_visit_details_inserted">Child Visit Details Successfully Registered</string>
+    <string name="child_register_successfully">Child registered Successfully</string>
+    <string name="detail_view">Detail View</string>
+    <string name="child_details">Child Details</string>
+    <string name="child_not_synced">Sorry, but the child has not yet been synced. Please sync the child first</string>
+    <string name="fill_child_name">Please fill the child name</string>
+    <string name="yrs">yrs</string>
+    <string name="child_max_limit">You have allowed maximum 30 children to register per farmer</string>
+    <string name="new_child">New Child</string>
+    <string name="child">Child</string>
+    <string name="farmer">Farmer</string>
+    <string name="household">Household Visit Detail</string>
+    <string name="inspection">Inspection Visit Detail</string>
+    <string name="followup">FollowUp Visit Detail</string>
+    <string name="child_updated_successfully">Child Updated Successfully</string>
+    <string name="downloading_child_data">Downloading Child Enumerator Details</string>
+    <string name="no_child_registered">Register Child to enable the surveys</string>
+    <string name="please_select_Age">Please select Age</string>
+    <string name="capture_my_location_button_text">Capture My location</string>
+    <string name="enumerator_location_capture">Enumerator Location Capture</string>
+
+    <string name="nationalid">National ID</string>
+    <string name="idtype">ID Type</string>
+    <string name="nationalidno">National ID</string>
+    <string name="captureid">Capture ID</string>
+
+    <string name="duplicate_nationalids">Duplicate National ID values are not allowed.</string>
+    <string name="enter_nationalids">Please enter National ID details</string>
+    <string name="update_signature">Update Signature</string>
+    <string name="update_signature_hint">Tap to update</string>
+    <string name="update_tab_hint">Tap to update</string>
+    <string name="view_tab_hint">Tap to view</string>
+    <string name="add_tab_hint">Tap to add</string>
+    <string name="add_nationalid">Add National ID</string>
+    <string name="update_nationalid">Update National ID</string>
+    <string name="view_nationalid">View National ID</string>
+    <string name="nationalidtype_selection">Please select National ID Type</string>
+    <string name="nationalidtype_alreadyselected">National ID Type already selected</string>
+    <string name="nid_photo_select">Please capture valid photo for National ID</string>
+    <string name="nid_value_enter">Please enter National ID</string>
+    <string name="clear">Clear</string>
+    <string name="nid_updated_successfully">NationalID Updated Successfully</string>
+    <string name="moderation_note">Farmer details are not unique and will be sent to administrator for moderation</string>
+
 </resources>

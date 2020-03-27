@@ -59,6 +59,13 @@ import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.PermissionListener;
 import com.olam.digital.ofis.R;
+import com.olam.digital.ofis.gps.GPSListener;
+import com.olam.digital.ofis.gps.GPSTracker;
+import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
+import com.olam.digital.ofis.gps.utils.GPSConstants;
+import com.olam.digital.ofis.gps.utils.GPSUtils;
+import com.olam.digital.ofis.matoma.MatomoHelper;
+import com.olam.digital.ofis.matoma.ScreenNameConstants;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -66,6 +73,7 @@ import java.util.Calendar;
 
 public class CompleteModuleActivity extends BaseActivity {
 
+    private  final String MATOMOTAG = this.getClass().getSimpleName();
     private long farmerId;
     private long moduleId;
     private long farmerModuleId;
@@ -97,6 +105,7 @@ public class CompleteModuleActivity extends BaseActivity {
     private static final String RECORDED_LNG = "RECORDED_LNG";
     private static final String FARMER_NAME = "FARMER_NAME";
     private long networkQueueId = 0;
+    public static boolean editMode = false;
 
     // for GPS location system
 //    private GoogleApiClient googleApiClient;
@@ -124,13 +133,17 @@ public class CompleteModuleActivity extends BaseActivity {
     // Bool to track whether the app is already resolving an error
     private boolean mResolvingError = false;
 
+    private Location mCurrentCapturedLocation=null;
+    GPSListener gpsListener=null;
+    private GPSTracker gpsTracker=null;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_complete_module);
         //noinspection ConstantConditions
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         Intent intent = getIntent();
         farmerId = intent.getLongExtra(FARMER_ID, 0);
         moduleId = intent.getLongExtra(MODULE_ID, 0);
@@ -215,6 +228,28 @@ public class CompleteModuleActivity extends BaseActivity {
 
         bindSaveButton();
         setupFooter();
+        dynamicQuestions.SurveyType="other";
+
+        gpsListener=new GPSListener() {
+            @Override
+            public void onGPSClick(Location location) {
+                if (location!=null){
+                    mCurrentCapturedLocation=location;
+                }
+            }
+        };
+        gpsTracker=new GPSTracker(this,gpsListener);
+       // gpsTracker.getDeviceLocation();
+        if (gpsTracker.isGpsEnabled()){
+            gpsTracker.startLocationUpdateInitially();
+        }
+
+}
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MatomoHelper.matomoScreenTracker(ScreenNameConstants.SCREEN_VIEW_FARMER_ACTIVITY, ScreenNameConstants.SCREEN_COMPLETE_MODULE_ACTIVITY, ScreenNameConstants.SCREEN_COMPLETE_QUESTIONARE);
     }
 
     @SuppressWarnings("ConstantConditions")
@@ -363,30 +398,22 @@ public class CompleteModuleActivity extends BaseActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
         super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
-/*
 
-        if (requestCode == REQUEST_RESOLVE_ERROR) {
-            mResolvingError = false;
-            if (resultCode == RESULT_OK) {
-                // Make sure the app is not already connected or attempting to connect
-                if (!googleApiClient.isConnecting() &&
-                        !googleApiClient.isConnected()) {
-                    googleApiClient.connect();
+        switch (requestCode) {
+            case REQUEST_CHECK_SETTINGS:
+                if (requestCode == 100 && resultCode == RESULT_OK) {
+//            Toast.makeText(AddInfrastructureActivity.this,getResources().getString(R.string.record_location_timeout),Toast.LENGTH_LONG).show();
+                    gpsTracker.getDeviceLocation();
+                    startLocationUpdates();
+                }else if (requestCode == 100 && resultCode == RESULT_CANCELED) {
+//            Toast.makeText(AddInfrastructureActivity.this,getResources().getString(R.string.record_location_timeout),Toast.LENGTH_LONG).show();
+                    stopLocationUpdates();
                 }
-            }
-        }
-*/
-
-        if (requestCode == 100 && resultCode == RESULT_OK) {
-//            Toast.makeText(AddInfrastructureActivity.this,getResources().getString(R.string.record_location_timeout),Toast.LENGTH_LONG).show();
-            startLocationUpdates();
-        }else if (requestCode == 100 && resultCode == RESULT_CANCELED) {
-//            Toast.makeText(AddInfrastructureActivity.this,getResources().getString(R.string.record_location_timeout),Toast.LENGTH_LONG).show();
-            stopLocationUpdates();
-        }
-
-        if (resultCode == RESULT_OK) {
-            dynamicQuestions.setFullImageFromFilePath(res);
+                break;
+            default:
+                if (resultCode == RESULT_OK) {
+                    dynamicQuestions.setFullImageFromFilePath(res);
+                }
         }
     }
 
@@ -454,7 +481,19 @@ public class CompleteModuleActivity extends BaseActivity {
         nextSaveSubmodule.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+               /* boolean status = dynamicQuestions.CheckMinMaxforQuestion(questions);
+                if(! status){
+                    return;
+                }*/
                 if (isLastPage) {
+
+                    try{
+                        if (mCurrentCapturedLocation == null || !gpsTracker.isGpsEnabled()) {
+                            gpsTracker.getDeviceLocation();
+                            return;
+                        }
+                    }catch (Exception e){}
+
                     ContentValues values = new ContentValues();
                     Timestamp timestamp = new Timestamp(System.currentTimeMillis());
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "module");
@@ -471,7 +510,7 @@ public class CompleteModuleActivity extends BaseActivity {
                         values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT, timestamp.toString());
                         networkQueueId = dl.insertNetworkQueueEntry(values);
                     } else {
-                        dl.updateNetworkQueueFarmerModuleEntry(values, farmerModuleId);
+                        dl.updateNetworkQueueFarmerAndChildModuleEntry(values, farmerModuleId,"module");
                     }
                     statusFinished = 1;
                     saveSubModule("finish");
@@ -489,13 +528,26 @@ public class CompleteModuleActivity extends BaseActivity {
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_SAVE_SURVEY,  ScreenNameConstants.BUTTON_CLICKED);
                 saveSubModule("exit");
             }
         });
     }
 
     private void saveSubModule(String action) {
+        /*boolean status = dynamicQuestions.CheckMinMaxforQuestion(questions);
+        if(! status){
+            return;
+        }*/
         boolean canSaveAndFinish = true;
+
+        // check location
+        if (action.equalsIgnoreCase("finish")) {
+            if (mCurrentCapturedLocation == null || !gpsTracker.isGpsEnabled()) {
+                gpsTracker.getDeviceLocation();
+                return;
+            }
+        }
 
         // first time saving this module?
         if (farmerModuleId == 0) {
@@ -511,20 +563,30 @@ public class CompleteModuleActivity extends BaseActivity {
 
         dl.updateSubModuleAnswers(dynamicQuestions.answerSet, farmerModuleId, subModuleId, farmerId, olamFarmerId, farmId, "module");
 
+
         if (action.equalsIgnoreCase("next")) {
+            MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_NEXT_SUBMODULE,  ScreenNameConstants.BUTTON_CLICKED);
             subModules.moveToNext();
             subModuleId = subModules.getInt(subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_ID));
         } else if (action.equalsIgnoreCase("back")) {
+            MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_PREVIOUS_SUBMODULE,  ScreenNameConstants.BUTTON_CLICKED);
             subModules.moveToPrevious();
             subModuleId = subModules.getInt(subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_ID));
         }
 
-        if (action.equalsIgnoreCase("exit") || action.equalsIgnoreCase("finish")) {
+        /*if (action.equalsIgnoreCase("exit") || action.equalsIgnoreCase("finish")) {
+//            if (!dynamicQuestions.requiredFieldsAnswered((int) farmerModuleId, (int) moduleId) || ! dynamicQuestions.requiredFieldsMinMaxAnswered((int) farmerModuleId, (int) moduleId)) {
             if (!dynamicQuestions.requiredFieldsAnswered((int) farmerModuleId, (int) moduleId)) {
                 statusFinished = 0;
                 canSaveAndFinish = false;
                 dl.deleteNetworkQueueItemByFarmerModuleId((int) farmerModuleId);
                 Toast.makeText(context, res.getString(R.string.complete_all_required_fields), Toast.LENGTH_LONG).show();
+            }
+            if(! dynamicQuestions.requiredFieldsMinMaxAnswered((int) farmerModuleId, (int) moduleId)){
+                statusFinished = 0;
+                canSaveAndFinish = false;
+                dl.deleteNetworkQueueItemByFarmerModuleId((int) farmerModuleId);
+                Toast.makeText(context, res.getString(R.string.valid_range), Toast.LENGTH_LONG).show();
             }
         }
 
@@ -561,7 +623,72 @@ public class CompleteModuleActivity extends BaseActivity {
 
             finish();
 
+        }*/
+        boolean bool=dynamicQuestions.checkDisplayStatus((int) moduleId);
+        if (action.equalsIgnoreCase("exit") || action.equalsIgnoreCase("finish")) {
+            if(bool){
+                if (!dynamicQuestions.requiredFieldsAnswered((int) farmerModuleId, (int) moduleId)) {
+                    statusFinished = 0;
+                    canSaveAndFinish = false;
+                    dl.deleteNetworkQueueItemByFarmerModuleId((int) farmerModuleId);
+                    Toast.makeText(context, res.getString(R.string.complete_all_required_fields), Toast.LENGTH_LONG).show();
+                }
+            }else{
+                statusFinished = 0;
+                canSaveAndFinish = false;
+                dl.deleteNetworkQueueItemByFarmerModuleId((int) farmerModuleId);
+                Toast.makeText(context, res.getString(R.string.complete_all_required_fields_mandatry), Toast.LENGTH_LONG).show();
+            }
         }
+        dl.updateFarmerModule(farmerModuleId, subModuleId, statusStarted, statusFinished);
+        if (action.equalsIgnoreCase("exit")) {
+            if(bool){
+                ViewFarmerActivity.farmerId = farmerId;
+
+                //SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(farmerId);
+                Intent intent = new Intent(context, ViewFarmerActivity.class);
+                context.startActivity(intent);
+            }
+        } else if (action.equalsIgnoreCase("finish")) {
+            if(bool){
+                if (canSaveAndFinish) {
+
+                    if (dynamicQuestions.requiredFieldsAnswered((int) farmerModuleId, (int) moduleId) && !editMode) {
+                        collectGPSPoint(mCurrentCapturedLocation);
+                        gpsTracker.stopLocationUpdates();
+                    }
+
+                    ViewFarmerActivity.farmerId = farmerId;
+                    //SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(farmerId);
+                    Intent intent = new Intent(context, ViewFarmerActivity.class);
+                    context.startActivity(intent);
+                }
+            }
+        } else {
+            Intent intent = getIntent();
+            intent.putExtra(FARMER_ID, farmerId);
+            intent.putExtra(MODULE_ID, moduleId);
+            intent.putExtra(FARMER_MODULE_ID, farmerModuleId);
+            intent.putExtra(SUB_MODULE_ID, subModuleId);
+            intent.putExtra(FARM_ID, farmId);
+            intent.putExtra(STATUS_STARTED, statusStarted);
+            intent.putExtra(STATUS_FINISHED, statusFinished);
+            intent.putExtra(OLAM_FARMER_ID, olamFarmerId);
+            intent.putExtra(MODULE_NAME, moduleName);
+            intent.putExtra(RECORDED_LAT, recordedLat);
+            intent.putExtra(RECORDED_LNG, recordedLng);
+            intent.putExtra(FARMER_NAME, farmerName);
+            startActivity(intent);
+            finish();
+        }
+    }
+
+
+    private void collectGPSPoint(Location farmLocation) {
+        String lat=String.valueOf(farmLocation.getLatitude());
+        String lon=String.valueOf(farmLocation.getLongitude());
+        ContentValues geoContentValues=new GPSUtils().getGeoContentValues(GPSConstants.MODULE_CAPTURE_FARMER_SURVEY,lat,lon,new Timestamp(System.currentTimeMillis()).toString());
+        Long newTrackId= new GpsTrackerLogic().insertGeoDataDetails(context,geoContentValues);
     }
 
     /**

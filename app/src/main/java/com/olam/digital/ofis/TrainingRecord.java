@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -23,11 +24,19 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.google.firebase.crash.FirebaseCrash;
 import com.olam.digital.ofis.R;
+import com.olam.digital.ofis.gps.GPSListener;
+import com.olam.digital.ofis.gps.GPSTracker;
+import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
+import com.olam.digital.ofis.gps.utils.GPSConstants;
+import com.olam.digital.ofis.gps.utils.GPSUtils;
+import com.olam.digital.ofis.matoma.MatomoHelper;
+import com.olam.digital.ofis.matoma.ScreenNameConstants;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -41,8 +50,9 @@ import java.util.Date;
 import java.util.Hashtable;
 import java.util.Locale;
 
-public class TrainingRecord extends BaseListActivity {
+public class TrainingRecord extends BaseListActivity{
 
+    private final String MATOMOTAG = this.getClass().getSimpleName();
     private Context context;
     private Resources res;
     private DataLayer dl;
@@ -75,14 +85,21 @@ public class TrainingRecord extends BaseListActivity {
 
     // Runtime Permission Request Code
     private final static int MY_PERMISSIONS_REQUEST = 9999;
-    
+    private static final int REQUEST_CHECK_SETTINGS = 100;
+    ListView listView;
+
+//    private Location mCurrentLocation=null;
+//    GPSListener gpsListener=null;
+//    private GPSTracker gpsTracker=null;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_training_record);
-
+        listView=findViewById(R.id.list);
         //noinspection ConstantConditions
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         context = me = this;
         res = getResources();
@@ -117,6 +134,7 @@ public class TrainingRecord extends BaseListActivity {
                 @Override
                 public void onClick(View view) {
                     // Request Permission only for Android Version Marshmallow and above
+                    MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_TRAINING_PHOTO,  ScreenNameConstants.BUTTON_CLICKED);
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                         // Check Camera & Storage Permission
                         if (ContextCompat.checkSelfPermission(TrainingRecord.this,
@@ -145,6 +163,18 @@ public class TrainingRecord extends BaseListActivity {
 
         bindSpinners();
         bindButtons();
+
+//        gpsListener=new GPSListener() {
+//            @Override
+//            public void onGPSClick(Location location) {
+//                if (location!=null){
+//                    mCurrentLocation=location;
+//                }
+//            }
+//        };
+//        gpsTracker=new GPSTracker(this,gpsListener);
+//        gpsTracker.getDeviceLocation();
+
 
     }
 
@@ -305,7 +335,8 @@ public class TrainingRecord extends BaseListActivity {
                     R.id.criterion_grade
             };
             customListAdapter_selectedAttendees = new CustomListAdapter_SelectedAttendees(context, trainingAttendees, adapterCols, adapterRowViews, res, readOnlyMode, me, scoringColumns, columnSuffix);
-            setListAdapter(customListAdapter_selectedAttendees);
+            listView.setAdapter(customListAdapter_selectedAttendees);
+            //setListAdapter(customListAdapter_selectedAttendees);
         }
     }
 
@@ -391,6 +422,7 @@ public class TrainingRecord extends BaseListActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
+                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.SPINNER_COURSE_MODULE,  ScreenNameConstants.SPINNER_CHANGED);
                 Cursor trainingModules = dl.getSimpleSpinnerData(OFISDBContract.TrainingModule.TABLE_NAME,
                         true,
                         OFISDBContract.TrainingModule.COLUMN_NAME_COURSE_ID,
@@ -456,7 +488,7 @@ public class TrainingRecord extends BaseListActivity {
         trainingModuleSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
+                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.SPINNER_TRAINING_MODULE,  ScreenNameConstants.SPINNER_CHANGED);
                 boolean hasSwapped = (trainingModuleId != id);
                 trainingModuleId = id;
                 if (editMode && trainingModuleId != 0 && !firstLoad && hasSwapped) {
@@ -521,13 +553,33 @@ public class TrainingRecord extends BaseListActivity {
             }
         } else {
             // insert
+
+//            if (mCurrentLocation==null){
+//                gpsTracker.getDeviceLocation();
+//                return;
+//            }
+
             trainingRecordId = dl.insertTrainingRecord(values);
             if (trainingRecordId != 0) {
                 editMode = true;
                 Toast.makeText(context, res.getString(R.string.Training_Record_Added), Toast.LENGTH_LONG).show();
             }
+
+            // collect GPS Record
+          //  collectGPSPoint(GPSConstants.MODULE_CAPTURE_TRAINING_RECORD,mCurrentLocation);
+
         }
     }
+
+    private void collectGPSPoint(String module, Location farmLocation) {
+        String lat=String.valueOf(farmLocation.getLatitude());
+        String lon=String.valueOf(farmLocation.getLongitude());
+        ContentValues geoContentValues=new GPSUtils().getGeoContentValues(module,lat,lon,new Timestamp(System.currentTimeMillis()).toString());
+        Long newTrackId= new GpsTrackerLogic().insertGeoDataDetails(context,geoContentValues);
+//        gpsTracker.stopLocationUpdates();
+//        gpsTracker.setNullGPSListener();
+    }
+
 
     private void bindButtons() {
         ImageButton addTrainingAttendees = (ImageButton) findViewById(R.id.addTrainingAttendees);
@@ -537,6 +589,7 @@ public class TrainingRecord extends BaseListActivity {
             addTrainingAttendees.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_ADD_TRAINING_ATTENDEES,  ScreenNameConstants.BUTTON_CLICKED);
                     if (courseId == 0 || trainingModuleId == 0 || mCurrentPhotoPath == null) {
                         Toast.makeText(context, res.getString(R.string.Training_select_course_module_first), Toast.LENGTH_LONG).show();
                     } else {
@@ -560,6 +613,7 @@ public class TrainingRecord extends BaseListActivity {
             saveTrainingRecord.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_SAVE_TRAINING_RECORD,  ScreenNameConstants.BUTTON_CLICKED);
                     if (courseId != 0 && trainingModuleId != 0 && mCurrentPhotoPath != null) {
                         addOrUpdateTrainingRecord();
                     } else {
@@ -583,6 +637,7 @@ public class TrainingRecord extends BaseListActivity {
             addAttendeeScores.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_ADD_ATTENDEE_SCORES,  ScreenNameConstants.BUTTON_CLICKED);
                     if (trainingAttendees == null || trainingAttendees.getCount() == 0) {
                         Toast.makeText(context, res.getString(R.string.Add_one_attendee_to_continue), Toast.LENGTH_LONG).show();
                     } else {
@@ -602,6 +657,7 @@ public class TrainingRecord extends BaseListActivity {
             completeTrainingRecord.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_COMPLETE_TRAINING_RECORD,  ScreenNameConstants.BUTTON_CLICKED);
                     if (courseId == 0 || trainingModuleId == 0 || mCurrentPhotoPath == null) {
                         Toast.makeText(context, res.getString(R.string.Training_select_course_module_first), Toast.LENGTH_LONG).show();
                     }else if (trainingAttendees == null || trainingAttendees.getCount() == 0) {
@@ -618,15 +674,27 @@ public class TrainingRecord extends BaseListActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        MatomoHelper.matomoScreenTracker(ScreenNameConstants.SCREEN_TRAINING_RECORDS_ACTIVITY, ScreenNameConstants.SCREEN_TRAINING_RECORD_ACTIVITY, ScreenNameConstants.SCREEN_TRAINING_RECORD);
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
         super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
         ImageView trainingPhoto = (ImageView) findViewById(R.id.trainingPhoto);
-
-        if (resultCode == RESULT_OK) {
-            setFullImageFromFilePath(getCurrentPhotoPath(),trainingPhoto);
+        switch (requestCode) {
+            case REQUEST_CHECK_SETTINGS:
+                if (resultCode == -1) {
+                  //  gpsTracker.getDeviceLocation();
+                }
+                break;
+            default:
+                if (resultCode == RESULT_OK) {
+                    setFullImageFromFilePath(getCurrentPhotoPath(), trainingPhoto);
+                }
         }
     }
-
     private void bindTrainingPhotoButton() {
         Intent takePicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         takePicture.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
@@ -679,6 +747,8 @@ public class TrainingRecord extends BaseListActivity {
                 });
         dialog.show();
     }
+
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {

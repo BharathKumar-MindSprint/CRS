@@ -12,6 +12,7 @@
     <dimen name="ofis_large_text">17sp</dimen>
     <dimen name="ofis_fmp_section_text">17sp</dimen>
     <dimen name="ofis_module_repeateritem_padding">10dp</dimen>
+    <dimen name="margin_10">10dp</dimen>
 
     <dimen name="ofis_input_field_text">14sp</dimen>
     <dimen name="ofis_input_field_bottom_margin">10dp</dimen>
@@ -42,6 +43,7 @@
 
     <dimen name="small_button_width_height">24dp</dimen>
     <dimen name="standard_button_width_height">32dp</dimen>
+    <dimen name="button_width_height">28dp</dimen>
     <dimen name="text_button_width_height">40dp</dimen>
 
     <dimen name="phone_number_plus_offset">-28dp</dimen>

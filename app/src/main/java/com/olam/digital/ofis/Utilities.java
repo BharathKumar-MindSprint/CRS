@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.SyncRequest;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.database.sqlite.SQLiteDatabase;
@@ -17,16 +18,27 @@ import android.support.v4.content.ContextCompat;
 import android.telephony.TelephonyManager;
 import android.util.Base64;
 import android.util.DisplayMetrics;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.EditText;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.Spinner;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.crash.FirebaseCrash;
+import com.olam.digital.ofis.gps.utils.GPSConstants;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.concurrent.TimeUnit;
@@ -54,7 +66,15 @@ public class Utilities {
 
     public static  int minProgressCount=0;
 
-
+    public static String EN = "en";
+    public static String FR = "fr";
+    public static String ES = "es";
+    public static String PT = "pt";
+    public static String ID = "id";
+    public static String TR = "TR";
+    public static String LO = "lo";
+    public static String VI = "vi";
+    public static String TH = "th";
 
 
 public  static String base64ConversionForImage(String filepath)  {
@@ -192,6 +212,25 @@ public  static String base64ConversionForImage(String filepath)  {
 
         return sharedPreferences.getString("ENUMERATOR_ID", "");
     }
+
+
+    /**
+     * get and set the enumerator Name
+     * @param context
+     * @param prefName
+     * @param prefValue
+     */
+    public static void setEnumeratorNameSharedPrefs(Context context,String prefName,String prefValue){
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor=sharedPreferences.edit();
+        editor.putString(prefName,prefValue);
+        editor.commit();
+    }
+    public static String getEnumeratorNameSharedPrefs(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
+        return sharedPreferences.getString(GPSConstants.COLUMN_ENUMERATOR_NAME, "");
+    }
+
 //  getPasscode from sharedPref - Penetration testing
     public static String getPasscodeFromSharedPrefs(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
@@ -204,6 +243,18 @@ public  static String base64ConversionForImage(String filepath)  {
 
         return sharedPreferences.getString(SHARED_FIREBASE_TOKEN_UPDATED, "");
     }
+
+   public static boolean getChildLabourPref(Context context,String prefName){
+       SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
+       return sharedPreferences.getBoolean(prefName, false);
+   }
+
+   public static void setChildLabourPref(Context context,String prefName,boolean prefValue){
+       SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
+       SharedPreferences.Editor editor=sharedPreferences.edit();
+       editor.putBoolean(prefName,prefValue);
+       editor.commit();
+   }
 
 
     public static boolean getBoolFromSharedPrefs(Context context, String prefName, boolean defaultResponse) {
@@ -469,232 +520,73 @@ public  static String base64ConversionForImage(String filepath)  {
         return consent;
     }
 
-    public static String Moduleresponse = "{\n" +
-            "  \"status\": \"updated\",\n" +
-            "  \"outputdata\": {\n" +
-            "\"modules\": [\n" +
-            "      {\n" +
-            "        \"id\": 27,\n" +
-            "        \"name\": \"Cocoa Baseline Survey\",\n" +
-            "        \"name_fr\": \"Enquête de Base\",\n" +
-            "        \"name_es\": \"Encuesta Productor\",\n" +
-            "        \"n ame_id\": \"Survey Awal\",\n" +
-            "        \"name_pt\": \"Pesquisa inicial do Cacau\",\n" +
-            "        \"name_tr\": \"Cocoa Baseline Survey\",\n" +
-            "        \"name_lo\": \"Cocoa Baseline Survey\",\n" +
-            "        \"name_vi\": \"Cocoa Bas eline Survey\",\n" +
-            "        \"name_th\": \"Cocoa Baseline Survey\",\n" +
-            "        \"expires\": null,\n" +
-            "        \"annual_survey\": false,\n" +
-            "        \"is_oscmodule\": false,\n" +
-            "        \"active\": true,\n" +
-            "        \"created_at\": \"2014-12-31T23:59:59.000+0000\",\n" +
-            "        \"updated_ at\": \"2018-01-06T21:03:23.000+0000\",\n" +
-            "        \"app_id\": 0\n" +
-            "      }\n" +
-            "    ],\"submodules\": [\n" +
-            "      {\n" +
-            "        \"id\": 1,\n" +
-            "        \"module_id\": 2,\n" +
-            "        \"module_name\": \"Cocoa Baseline Survey\",\n" +
-            "        \"position\": 1,\n" +
-            "        \"name\": \"Personal Information\",\n" +
-            "        \"name_fr\": \"Informations Personnelles\",\n" +
-            "        \"name_es\": \"Información Personal\",\n" +
-            "        \"name_id\": \"Informasi pribadi\",\n" +
-            "        \"name_pt\": \"Informaçãoes pessoal\",\n" +
-            "        \"name_tr\": \"Personal Information\",\n" +
-            "        \"name_lo\": \"Personal Information\",\n" +
-            "        \"name_vi\": \"Personal Information\",\n" +
-            "        \"name_th\": \"Personal Information\",\n" +
-            "        \"active\": true,\n" +
-            "        \"created_at\": \"2014-12-31T23:59:59.000+0000\",\n" +
-            "        \"updated_at\": \"2018-03-07T11:04:40.000+0000\",\n" +
-            "        \"app_id\": 0\n" +
-            "      }\n" +
-            "    ],\n" +
-            "    \"moduleassignments\": [\n" +
-            "      {\n" +
-            "        \"id\": 1,\n" +
-            "        \"module_id\": 2,\n" +
-            "        \"moduleassignment_id\": 1,\n" +
-            "        \"moduleassignment_type\": \"Product\",\n" +
-            "        \"recurrence_frequency\": 0,\n" +
-            "        \"recurrence_type\": \"\",\n" +
-            "        \"disabled_months\": null,\n" +
-            "        \"active\": true,\n" +
-            "        \"created_at\": \"2014-12-31T23:59:59.000+0000\",\n" +
-            "        \"updated_at\": \"2014-12-31T23:59:59.000+0000\",\n" +
-            "        \"app_id\": 0\n" +
-            "      }\n" +
-            "    ],\n" +
-            "    \"datatypes\": [\n" +
-            "      {\n" +
-            "        \"id\": 1,\n" +
-            "        \"name\": \"int\",\n" +
-            "        \"created_at\": null,\n" +
-            "        \"updated_at\": null,\n" +
-            "        \"app_id\": null\n" +
-            "      }\n" +
-            "    ],\n" +
-            "    \"questions\": [\n" +
-            "      {\n" +
-            "        \"id\": 1,\n" +
-            "        \"submodule_id\": 1,\n" +
-            "        \"submodule_name\": \"Personal Information\",\n" +
-            "        \"datatype_id\": 1,\n" +
-            "        \"datatype_name\": \"int\",\n" +
-            "        \"position\": 1,\n" +
-            "        \"display_type\": \"Yes\\/No\",\n" +
-            "        \"question\": \"What was the farmers highest educational level attained?\",\n" +
-            "        \"question_fr\": \"Quel est le niveau scolaire atteint du planteur?\",\n" +
-            "        \"question_es\": \"Cuál fue el nivel de eduacion más alto logrado por el agricultor?\",\n" +
-            "        \"question_id\": \"Apa tingkat pendidikan tertinggi yang dimiliki oleh Petani\",\n" +
-            "        \"question_pt\": \"Qual foi o nível educacional mais elevado dos agricultores alcançado?\",\n" +
-            "        \"question_tr\": \"What was the farmers highest educational level attained?\",\n" +
-            "        \"question_lo\": \"What was the farmers highest educational level attained?\",\n" +
-            "        \"question_vi\": \"What was the farmers highest educational level attained\",\n" +
-            "        \"question_th\": \"What was the farmers highest educational level attaine\",\n" +
-            "        \"display_configuration\": \"{}\",\n" +
-            "        \"storage_model\": \"Farmer\",\n" +
-            "        \"storage_column\": \"education_level_id\",\n" +
-            "        \"active\": true,\n" +
-            "        \"created_at\": \"2018-09-06T13:50:39.000+0000\",\n" +
-            "        \"updated_at\": \"2018-09-06T13:50:39.000+0000\",\n" +
-            "        \"app_id\": 2,\n" +
-            "        \"is_subset_questions_required\": true,\n" +
-            "        \"conditional_questions\": [\n" +
-            "          {\n" +
-            "            \"question\": \"2,3,1\",\n" +
-            "            \"conditionCheck\": \"==YES\"\n" +
-            "          },\n" +
-            "          {\n" +
-            "            \"question\": \"3,9,1\",\n" +
-            "            \"conditionCheck\": \"==NO\"\n" +
-            "          }\n" +
-            "        ],\n" +
-            "        \"sipGroupId\": null,\n" +
-            "        \"sipKey\": null\n" +
-            "      }\n" +
-            "    ],\n" +
-            "    \"lookupvalues\": [\n" +
-            "      {\n" +
-            "        \"id\": 1,\n" +
-            "        \"question_id\": 15,\n" +
-            "        \"question_name\": \"Does the farmer own his farm?\",\n" +
-            "        \"position\": 1,\n" +
-            "        \" value\": \"No School\",\n" +
-            "        \"value_fr\": \"Pas d'école\",\n" +
-            "        \"value_es\": \"Ningúna instrucción escolar\",\n" +
-            "        \"value_id\": \"Tidak Sekolah\",\n" +
-            "        \"value_pt\": \"Nunca foi na Escola\",\n" +
-            "        \"value_tr\": \"No School\",\n" +
-            "        \"value_lo\": \"No School\",\n" +
-            "        \"value_vi\": \"No School\",\n" +
-            "        \"value_th\": \"No School\",\n" +
-            "        \"photo\": \"NULL\",\n" +
-            "        \"active\": true,\n" +
-            "        \"created_at\": \"2014-12-31T23:59:59.000+0000\",\n" +
-            "        \"updated_at\": \"2018-01-06T21:33:51.000+0000\",\n" +
-            "        \"app_id\": 1,\n" +
-            "        \"countryLookUpValueDtos\": [\n" +
-            "          {\n" +
-            "            \"id\": 1,\n" +
-            "            \"country_id\": 1,\n" +
-            "            \"lookupvalue_id\": 1,\n" +
-            "            \"created_at\": \"2015-09-18T16:52:33.000+0000\",\n" +
-            "            \"updated_at\": \"2015-09-18T16:52:33.000+0000\",\n" +
-            "            \"app_id\": 2\n" +
-            "          },\n" +
-            "          {\n" +
-            "            \"id\": 130,\n" +
-            "            \"country_id\": 2,\n" +
-            "            \"lookupvalue_id\": 1,\n" +
-            "            \"created_at\": \"2015-09-18T16:52:35.000+0000\",\n" +
-            "            \"updated_at\": \"2015-09-18T16:52:35.000+0000\",\n" +
-            "            \"app_id\": 2\n" +
-            "          },\n" +
-            "          {\n" +
-            "            \"id\": 259,\n" +
-            "            \"country_id\": 3,\n" +
-            "            \"lookupvalue_id\": 1,\n" +
-            "            \"created_at\": \"2015-09-18T16:52:36.000+0000\",\n" +
-            "            \"updated_at\": \"2015-09-18T16:52:36.000+0000\",\n" +
-            "            \"app_id\": 2\n" +
-            "          },\n" +
-            "          {\n" +
-            "            \"id\": 1417,\n" +
-            "            \"country_id\": 11,\n" +
-            "            \"lookupvalue_id\": 1,\n" +
-            "            \"created_at\": \"2015-09-18T16:52:46.000+0000\",\n" +
-            "            \"updated_at\": \"2015-09-18T16:52:46.000+0000\",\n" +
-            "            \"app_id\": 2\n" +
-            "          },\n" +
-            "          {\n" +
-            "            \"id\": 1546,\n" +
-            "            \"country_id\": 12,\n" +
-            "            \"lookupvalue_id\": 1,\n" +
-            "            \"created_at\": \"2015-09-18T16:52:47.000+0000\",\n" +
-            "            \"updated_at\": \"2015-09-18T16:52:47.000+0000\",\n" +
-            "            \"app_id\": 2\n" +
-            "          },\n" +
-            "          {\n" +
-            "            \"id\": 3420,\n" +
-            "            \"country_id\": 16,\n" +
-            "            \"lookupvalue_id\": 1,\n" +
-            "            \"created_at\": null,\n" +
-            "            \"updated_at\": null,\n" +
-            "            \"app_id\": 2\n" +
-            "          },\n" +
-            "          {\n" +
-            "            \"id\": 6869,\n" +
-            "            \"country_id\": 27,\n" +
-            "            \"lookupvalue_id\": 1,\n" +
-            "            \"created_at\": null,\n" +
-            "            \"updated_at\": null,\n" +
-            "            \"app_id\": 2\n" +
-            "          },\n" +
-            "          {\n" +
-            "            \"id\": 7457,\n" +
-            "            \"country_id\": 42,\n" +
-            "            \"lookupvalue_id\": 1,\n" +
-            "            \"created_at\": null,\n" +
-            "            \"updated_at\": null,\n" +
-            "            \"app_id\": 2\n" +
-            "          },\n" +
-            "          {\n" +
-            "            \"id\": 7707,\n" +
-            "            \"country_id\": 44,\n" +
-            "            \"lookupvalue_id\": 1,\n" +
-            "            \"created_at\": null,\n" +
-            "            \"updated_at\": null,\n" +
-            "            \"app_id\": 2\n" +
-            "          }\n" +
-            "        ]\n" +
-            "      }\n" +
-            "    ],\n" +
-            "    \"assignmentTypes\": [\n" +
-            "      {\n" +
-            "        \"id\": 1,\n" +
-            "        \"name\": \"Country\",\n" +
-            "        \"active\": true,\n" +
-            "        \"created_at\": null,\n" +
-            "        \"updated_at\": null,\n" +
-            "        \"app_id\": null\n" +
-            "      }\n" +
-            "    ],\n" +
-            "    \"displayTypes\": [\n" +
-            "      {\n" +
-            "        \"id\": 1,\n" +
-            "        \"name\": \"Calculated\",\n" +
-            "        \"active\": true,\n" +
-            "        \"created_at\": null,\n" +
-            "        \"updated_at\": null,\n" +
-            "        \"app_id\": null\n" +
-            "      }\n" +
-            "    ]\n" +
-            "\n" +
-            "    },\n" +
-            "  \"resultcount\": 5076\n" +
-            "}";
+    public static Long currentTimeInMilliSeconds(){
+        Calendar calendar=Calendar.getInstance();
+        return calendar.getTimeInMillis();
+    }
+
+    public static Long currentDateStringToMilliSeconds(){
+
+        Calendar cal=Calendar.getInstance();
+        Date currentDate=cal.getTime();
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        Long timeInSeconds=0L;
+        try{
+            String strCurrentDate=formatter.format(currentDate);
+            Date date = formatter.parse(strCurrentDate);
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(date);
+            timeInSeconds= calendar.getTimeInMillis();
+        }catch(ParseException e){
+            e.printStackTrace();
+        }
+        return timeInSeconds;
+    }
+
+    public static Long dateStringToMilliSeconds(String dateStr){
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Long timeInSeconds=0L;
+        try{
+            Date date = sdf.parse(dateStr.substring(0,10));
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(date);
+            timeInSeconds= calendar.getTimeInMillis();
+        }catch(ParseException e){
+            e.printStackTrace();
+        }
+        return timeInSeconds;
+    }
+
+    public static void setListViewHeightBasedOnChildren(ListView listView)
+    {
+        ListAdapter listAdapter = listView.getAdapter();
+        if (listAdapter == null)
+            return;
+
+        int desiredWidth = View.MeasureSpec.makeMeasureSpec(listView.getWidth(), View.MeasureSpec.UNSPECIFIED);
+        int totalHeight=0;
+        View view = null;
+
+        for (int i = 0; i < listAdapter.getCount(); i++)
+        {
+            view = listAdapter.getView(i, view, listView);
+
+            if (i == 0)
+                view.setLayoutParams(new ViewGroup.LayoutParams(desiredWidth,
+                        WindowManager.LayoutParams.MATCH_PARENT));
+
+            view.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
+            totalHeight += view.getMeasuredHeight();
+
+        }
+
+        ViewGroup.LayoutParams params = listView.getLayoutParams();
+        params.height = totalHeight + ((listView.getDividerHeight()) * (listAdapter.getCount()));
+
+        listView.setLayoutParams(params);
+        listView.requestLayout();
+
+    }
+
 }

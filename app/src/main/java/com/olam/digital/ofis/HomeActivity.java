@@ -6,6 +6,7 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -14,12 +15,14 @@ import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Typeface;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.os.StrictMode;
 import android.os.SystemClock;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
@@ -33,6 +36,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -57,7 +61,19 @@ import com.olam.digital.ofis.authentication.DeviceIDxctractor;
 import com.olam.digital.ofis.authentication.OnAccessTokenInterface;
 import com.olam.digital.ofis.authentication.model.AuthRequestDTO;
 import com.olam.digital.ofis.authentication.model.AuthenticationDTO;
+import com.olam.digital.ofis.childlabour.AddNewChildActivity;
+import com.olam.digital.ofis.childlabour.ChildLabourCompleteModuleActivity;
+import com.olam.digital.ofis.childlabour.ChildLabourUtils;
+import com.olam.digital.ofis.childlabour.ChildVisitDetailActivity;
+import com.olam.digital.ofis.childlabour.ViewChildLabourSurveyActivity;
+import com.olam.digital.ofis.gps.GPSListener;
+import com.olam.digital.ofis.gps.GPSTracker;
+import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
+import com.olam.digital.ofis.gps.utils.GPSConstants;
+import com.olam.digital.ofis.gps.utils.GPSUtils;
 import com.olam.digital.ofis.logging.FabricLogsWriter;
+import com.olam.digital.ofis.matoma.MatomoHelper;
+import com.olam.digital.ofis.matoma.ScreenNameConstants;
 import com.olam.digital.ofis.recordpolygon.RecordPolygonActivity;
 import com.olam.digital.ofis.recordpolygon.SharedPreferenceUtils;
 import com.olam.digital.ofis.BuildConfig;
@@ -68,6 +84,7 @@ import org.json.JSONObject;
 
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
+import java.sql.Timestamp;
 import java.util.Locale;
 
 import javax.net.ssl.SSLContext;
@@ -80,10 +97,11 @@ import retrofit2.Response;
 import static io.fabric.sdk.android.Fabric.TAG;
 
 
-public class HomeActivity extends BaseListActivity implements Callback<AuthenticationDTO>,OnAccessTokenInterface {
+public class HomeActivity extends BaseListActivity implements Callback<AuthenticationDTO>,OnAccessTokenInterface, AdapterView.OnItemClickListener{
 
     // update
     public static final String TAG = "HomeActivity";
+    private final String MATOMOTAG =this.getClass().getSimpleName();;
     private Context context;
     private static Context staticContext;
     private static Resources staticRes;
@@ -101,7 +119,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     private static RelativeLayout mainSection;
     private static ScrollView firstRunSection;
     private static TextView queueCount;
-    private static CardView recordTransactionWrapper;
+    private static CardView captureMyLocationWrapper;
     private static CardView recordTrainingWrapper;
     private SharedPreferences sharedPreferences;
     private static final String SHARED_PREFS_NAME = "com.olam.digital.ofis.app_prefs";
@@ -139,17 +157,27 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     private final static int MY_PROFILE_PIC_PERMISSIONS_REQUEST = 9998;
     private final static int MY_SIGNATURE_PIC_PERMISSIONS_REQUEST = 9997;
     private static final int PERMISSIONS_ACCESS_LOCATION = 6575;
+    private static final int REQUEST_CHECK_SETTINGS = 100;
 
     private boolean syncOptionAll;
     private int itemId;
     public static int totalItems;
     public static int progressItem;
     private long lastClickTime = 0;
+    private boolean isChildSynced=true;
+    ListView listView;
+
+    private Location mCurrentLocation=null;
+    GPSListener gpsListener=null;
+    private GPSTracker gpsTracker=null;
+    private Boolean newGps;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+        listView=findViewById(R.id.list);
+        listView.setOnItemClickListener(this);
         checkTls();
         staticContext = this;
         context = me = this;
@@ -161,12 +189,12 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         mainHandler = new Handler(Looper.getMainLooper());
         sharedPreferences = getSharedPreferences("com.olam.digital.ofis.app_prefs", MODE_PRIVATE);
 
-        LinearLayout itemsHeader = (LinearLayout) ((LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.home_header_buttons, getListView(), false);
-        getListView().addHeaderView(itemsHeader);
+        LinearLayout itemsHeader = (LinearLayout) ((LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.home_header_buttons, listView, false);
+        listView.addHeaderView(itemsHeader);
 
         firstRunSection = (ScrollView) findViewById(R.id.firstRunWrapper);
         mainSection = (RelativeLayout) findViewById(R.id.mainWrapper);
-        recordTransactionWrapper = (CardView) findViewById(R.id.recordTransactionWrapper);
+        captureMyLocationWrapper = (CardView) findViewById(R.id.captureLocationWrapper);
         recordTrainingWrapper = (CardView) findViewById(R.id.recordTrainingWrapper);
 
         enumeratorID = (EditText) findViewById(R.id.enumeratorID);
@@ -174,7 +202,9 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         passcode = (EditText) findViewById(R.id.passcode);
         saveUpdateButton = (Button) findViewById(R.id.buttonSaveUpdate);
         topSection = (LinearLayout) findViewById(R.id.topSectionWrapper);
-
+        StrictMode.ThreadPolicy policy =
+                new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
 
         checkTime();
         bindNetworkQueue();
@@ -236,7 +266,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
                     return;
                 }else {
-                    System.out.println("doingAuthRequest 1");
                     doingAuthRequest();
                 }
             }
@@ -283,10 +312,31 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 //            }
 //        }
 
+        gpsListener=new GPSListener() {
+            @Override
+            public void onGPSClick(Location location) {
+                if (location!=null){
+                    mCurrentLocation=location;
+                    ContentValues geoContentValues=new GPSUtils().getGeoContentValues(GPSConstants.MODULE_CAPTURE_CAPTURE_MY_LOCATION,String.valueOf(mCurrentLocation.getLatitude()),String.valueOf(mCurrentLocation.getLongitude()),new Timestamp(System.currentTimeMillis()).toString());
+                    if (newGps) {
+                        long newGpsQueueId = new GpsTrackerLogic().insertGPSDetailsToQueue(context, geoContentValues);
+                        if (newGpsQueueId != -1) {
+                            try{
+                                bindNetworkQueue();
+                            }catch (Exception e){
+                                e.printStackTrace();
+                            }
+                        }
+                        newGps=false;
+                    }
+                }
+            }
+        };
+        gpsTracker=new GPSTracker(this,gpsListener,true);
+
     }
 
     private void doingAuthRequest() {
-        System.out.println("doingAuthRequest");
         String userEnumerator = enumeratorID.getText().toString().trim();
 //        Passcode validation - Penetration testing
         String userpasscode = passcode.getText().toString().trim();
@@ -419,8 +469,16 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 6575) {
-            checkTime();
+        switch (requestCode) {
+            case REQUEST_CHECK_SETTINGS:
+                if (resultCode == -1) {
+                    gpsTracker.getDeviceLocation();
+                }
+                break;
+            default:
+                if (requestCode == 6575) {
+                    checkTime();
+                }
         }
     }
 
@@ -526,13 +584,13 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         if (tasksButton != null) {
             tasksButton.setVisible(true);
         }
-        boolean can_transact = Utilities.getBoolFromSharedPrefs(staticContext, "can_transact", false);
 
-        if (!can_transact) {
-            recordTransactionWrapper.setVisibility(View.GONE);
-            ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) recordTrainingWrapper.getLayoutParams();
-            lp.setMargins(0,0,0,0);
-        }
+//        boolean can_transact = Utilities.getBoolFromSharedPrefs(staticContext, "can_transact", false);
+//        if (!can_transact) {
+//            recordTransactionWrapper.setVisibility(View.GONE);
+//            ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) recordTrainingWrapper.getLayoutParams();
+//            lp.setMargins(0,0,0,0);
+//        }
 
         firstRunSection.startAnimation(mSlideOutBottom);
         topSection.startAnimation(mSlideInTop);
@@ -558,6 +616,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     private void bindNetworkQueue() {
         TextView nomodulestosubmittext = (TextView) findViewById(R.id.nomodulestosubmittext);
         networkQueue = dl.getNetworkQueue();
+
         if (networkQueue.getCount() > 0) {
             queueCount = (TextView) findViewById(R.id.networkQueueCount);
             totalItems = networkQueue.getCount();
@@ -568,7 +627,8 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             String[] adapterCols = new String[]{"_id", OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID};
             int[] adapterRowViews = new int[]{R.id.networkQueueId, R.id.networkQueueName, R.id.networkQueuePoiType, R.id.networkQueueOlamFarmerId};
             customListAdapter_networkQueue = new CustomListAdapter_NetworkQueue(context, networkQueue, adapterCols, adapterRowViews, me);
-            setListAdapter(customListAdapter_networkQueue);
+            listView.setAdapter(customListAdapter_networkQueue);
+            //setListAdapter(customListAdapter_networkQueue);
 
             if (Utilities.daysToUpdate(context) <= 0) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -589,7 +649,9 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             }
 
         } else {
-            getListView().setAdapter(null);
+            listView.setAdapter(null);
+            queueCount = (TextView) findViewById(R.id.networkQueueCount);
+            queueCount.setText("0");
             if (Utilities.daysToUpdate(context) <= 0) {
                 nomodulestosubmittext.setText(R.string.ofis_update_overdue);
                 nomodulestosubmittext.setTypeface(Typeface.DEFAULT_BOLD);
@@ -636,7 +698,11 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                     if (!farmerSynced) {
                         m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, 0, 0, res.getString(R.string.farmer_not_synced));
                         Utilities.closeProgressDialog(m_ProgressDialog, 3000);
-                    }else{
+                    }else if(!isChildSynced){
+                        m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, 0, 0, res.getString(R.string.child_not_synced));
+                        Utilities.closeProgressDialog(m_ProgressDialog, 3000);
+                    }
+                    else{
                         if(totalItems == 0)
                             totalItems = networkQueue.getCount();
 
@@ -663,11 +729,13 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                         finishItemSync(msg);
                     } else if (msg.what == 3) {
                         farmerSynced = false;
+                    }else if (msg.what == 5){
+                        isChildSynced=false;
                     }
                 }
             };
             farmerSynced = true;
-
+            isChildSynced=true;
             nl.getNetworkQueue(null);
             nl.syncNetworkQueue(null, syncHandler);
         } else {
@@ -697,6 +765,9 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                     if (!farmerSynced) {
                         m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, 0, 0, res.getString(R.string.farmer_not_synced));
                         Utilities.closeProgressDialog(m_ProgressDialog, 3000);
+                    }else if (!isChildSynced){
+                        m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, 0, 0, res.getString(R.string.child_not_synced));
+                        Utilities.closeProgressDialog(m_ProgressDialog, 3000);
                     }
                 }
             });
@@ -720,12 +791,16 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                         finishItemSync(msg);
                     } else if (msg.what == 3) {
                         farmerSynced = false;
-                    } else {
+                    } else if (msg.what ==5){
+                        isChildSynced=false;
+                    }
+                    else {
                         finishItemSync(msg);
                     }
                 }
             };
             farmerSynced = true;
+            isChildSynced=true;
             nl.getNetworkQueue(itemId);
             nl.syncNetworkQueueFromHome(itemId, syncHandler);
         } else {
@@ -772,7 +847,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         Button addNewFarmer = (Button) findViewById(R.id.AddNewFarmer);
         Button completeModule = (Button) findViewById(R.id.CompleteQuestionnaireModule);
         Button addSocialInfra = (Button) findViewById(R.id.AddSocialInfrastructure);
-        Button recordTransaction = (Button) findViewById(R.id.RecordTransaction);
+        Button captureLocation = (Button) findViewById(R.id.captureLocation);
         Button recordTraining = (Button) findViewById(R.id.RecordFarmerTraining);
         ImageButton syncAll = (ImageButton) findViewById(R.id.syncAll);
         boolean can_transact = Utilities.getBoolFromSharedPrefs(context, "can_transact", false);
@@ -780,6 +855,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         syncAll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_SYNC_ALL_ITEM,  ScreenNameConstants.BUTTON_CLICKED);
                 if (SystemClock.elapsedRealtime() - lastClickTime < 3000){
                     return;
                 }else{
@@ -797,6 +873,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             addNewFarmer.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_ADD_NEW_FARMER,  ScreenNameConstants.BUTTON_CLICKED);
                     Intent intent = new Intent(context, AddFarmerActivity.class);
                     intent.putExtra(EDIT_FARMER_ID, (long) 0);
                     intent.putExtra(EDIT_MODE, false);
@@ -807,14 +884,17 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             completeModule.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_COMPLETE_QUESTIONNAIRE_MODULE,  ScreenNameConstants.BUTTON_CLICKED);
                     Intent intent = new Intent(context, FindFarmerActivity.class);
                     context.startActivity(intent);
                 }
             });
 
+
             addSocialInfra.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_ADD_NEW_SIP,  ScreenNameConstants.BUTTON_CLICKED);
                     AddInfrastructureActivity.editMode = false;
                     AddInfrastructureActivity.infrastructureID = 0;
                     Intent intent = new Intent(context, AddInfrastructureActivity.class);
@@ -822,23 +902,39 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 }
             });
 
-            if (can_transact || sharedPreferences.getBoolean("FIRST_RUN",true)) {
-                recordTransaction.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent intent = new Intent(context, TransactionItems.class);
-                        context.startActivity(intent);
+            // Hiding the record transaction section
+//            if (can_transact || sharedPreferences.getBoolean("FIRST_RUN",true)) {
+//                recordTransaction.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        Intent intent = new Intent(context, TransactionItems.class);
+//                        context.startActivity(intent);
+//                    }
+//                });
+//            } else {
+//                recordTransactionWrapper.setVisibility(View.GONE);
+//                ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) recordTrainingWrapper.getLayoutParams();
+//                lp.setMargins(0,0,0,0);
+//            }
+
+            captureLocation.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_CAPTURE_MY_LOCATION,  ScreenNameConstants.BUTTON_CLICKED);
+                    if (SystemClock.elapsedRealtime() - lastClickTime < 3000){
+                        return;
+                    }else {
+                        newGps=true;
+                        gpsTracker.getDeviceLocation();
                     }
-                });
-            } else {
-                recordTransactionWrapper.setVisibility(View.GONE);
-                ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) recordTrainingWrapper.getLayoutParams();
-                lp.setMargins(0,0,0,0);
-            }
+                    lastClickTime=SystemClock.elapsedRealtime();
+                }
+            });
 
             recordTraining.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_RECORD_TRAINING,  ScreenNameConstants.BUTTON_CLICKED);
                     Intent intent = new Intent(context, TrainingRecords.class);
                     context.startActivity(intent);
                 }
@@ -851,87 +947,17 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             completeModule.setClickable(false);
             addSocialInfra.setAlpha(.5f);
             addSocialInfra.setClickable(false);
-            recordTransaction.setAlpha(.5f);
-            recordTransaction.setClickable(false);
+            captureLocation.setAlpha(.5f);
+            captureLocation.setClickable(false);
             recordTraining.setAlpha(.5f);
             recordTraining.setClickable(false);
         }
     }
 
     @Override
-    protected void onListItemClick (ListView l, View v, int position, long id) {
-        // carry out relevant action based on item clicked
-        if (networkQueue.getCount() > 1) {
-            networkQueue.moveToPosition(position-1);
-        }
-        String itemType = networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE));
-        if (itemType.equalsIgnoreCase("infrastructure")) {
-            Intent intent = new Intent(this, AddInfrastructureActivity.class);
-            AddInfrastructureActivity.infrastructureID = id;
-            AddInfrastructureActivity.editMode = true;
-            startActivity(intent);
-        } else if (itemType.equalsIgnoreCase("farmer")) {
-            Intent intent = new Intent(this, AddFarmerActivity.class);
-            intent.putExtra(EDIT_FARMER_ID, (long) networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
-            intent.putExtra(EDIT_MODE, true);
-            startActivity(intent);
-        } else if (itemType.equalsIgnoreCase("farmlocation")) {
-            Intent intent = new Intent(this, ViewFarmerActivity.class);
-            ViewFarmerActivity.farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
-            //long farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
-            //SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(farmerId);
-            startActivity(intent);
-        }  else if (itemType.equalsIgnoreCase("farmpolygon")) {
-            Intent recordPolygonIntent = new Intent(this, RecordPolygonActivity.class);
-            final int lFarmID = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID));
-//            int count = SharedPreferenceUtils.getInstance(getApplicationContext()).getPlotCount(""+lFarmID);
-            DataLayer dl = new DataLayer(getResources(), HomeActivity.this);
-            dl.fetchPlotData(networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
-            int count =0;
-//        if(strFarmID != "0"){
-            try{
-//            count = SharedPreferenceUtils.getInstance(getApplicationContext()).getPlotCount(""+strFarmID);
-                count = dl.fetchPlotData(networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
-            }catch (Exception e){
-                count = 0;
-            }
-            recordPolygonIntent.putExtra(FARMER_ID, networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
-            recordPolygonIntent.putExtra(FARM_ID, lFarmID);
-            recordPolygonIntent.putExtra(OLAM_FARMER_ID, networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID)));
-            recordPolygonIntent.putExtra(FARMER_NAME, networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME)));
-            recordPolygonIntent.putExtra(PLOT_COUNT, count);
-            recordPolygonIntent.setAction(Intent.ACTION_DEFAULT);
-            startActivity(recordPolygonIntent);
-        } else if (itemType.equalsIgnoreCase("module")) {
-            Intent intent = new Intent(this, ViewFarmerActivity.class);
-            ViewFarmerActivity.farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
-            //long farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
-            //SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(farmerId);
-            startActivity(intent);
-        } else if (itemType.equalsIgnoreCase("fmpreview") || itemType.equalsIgnoreCase("fullfmpreview")) {
-            Intent intent = new Intent(this, ViewFarmerActivity.class);
-            ViewFarmerActivity.farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
-            //long farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
-            //SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(farmerId);
-            startActivity(intent);
-        } else if (itemType.equalsIgnoreCase("transaction")) {
-            Intent intent = new Intent(context, TransactionItem.class);
-            intent.putExtra(EDIT_TRANSACTION_ITEM_ID, networkQueue.getLong(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_TRANSACTION_ITEM_ID)));
-            intent.putExtra(EDIT_MODE, true);
-            intent.putExtra(READ_ONLY_MODE, true);
-            startActivity(intent);
-        } else if (itemType.equalsIgnoreCase("trainingrecord")) {
-            Intent intent = new Intent(context, TrainingRecord.class);
-            intent.putExtra(EDIT_TRAININGRECORD_ID, networkQueue.getLong(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_TRAINING_RECORD_ID)));
-            intent.putExtra(EDIT_MODE, true);
-            intent.putExtra(READ_ONLY_MODE, true);
-            startActivity(intent);
-        }else if (itemType.equalsIgnoreCase("farmer_photo")) {
-            //JIRA req OW-505
-            Intent intent = new Intent(this, ViewFarmerActivity.class);
-            ViewFarmerActivity.farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
-            startActivity(intent);
-        }
+    protected void onResume() {
+        super.onResume();
+        MatomoHelper.matomoScreenTracker(ScreenNameConstants.SCREEN_HOME_ACTIVITY, ScreenNameConstants.SCREEN_HOME_ACTIVITY, ScreenNameConstants.SCREEN_HOME);
     }
 
     @Override
@@ -1076,66 +1102,74 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
             case PERMISSIONS_ACCESS_LOCATION: {
-                for (String permission : permissions) {
-                    if (ActivityCompat.shouldShowRequestPermissionRationale(this, permission)) {
-                        // Permission Denied
-                        Toast.makeText(this, R.string.gps_permission_denial_msg, Toast.LENGTH_LONG).show();
-                        String userEnumerator = enumeratorID.getText().toString().trim();
-                        if (userEnumerator!=null && !userEnumerator.equalsIgnoreCase("")){
-                            System.out.println("doingAuthRequest 2");
-                            doingAuthRequest();
-                        }
-
-                    } else {
-                        if (ActivityCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED) {
-                            // Permission Allowed
-                            System.out.println("doingAuthRequest 3");
-                            if(checkvalue == 0) {
-                                checkvalue++;
+                try {
+                    for (String permission : permissions) {
+                        if (ActivityCompat.shouldShowRequestPermissionRationale(this, permission)) {
+                            // Permission Denied
+                            Toast.makeText(this, R.string.gps_permission_denial_msg, Toast.LENGTH_LONG).show();
+                            String userEnumerator = enumeratorID.getText().toString().trim();
+                            if (userEnumerator!=null && !userEnumerator.equalsIgnoreCase("")){
                                 doingAuthRequest();
                             }
+
                         } else {
-                            // Checkbox set to Never Ask Again
-                            showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
+                            if (ActivityCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED) {
+                                // Permission Allowed
+                                if(checkvalue == 0) {
+                                    checkvalue++;
+                                    doingAuthRequest();
+                                }
+                            } else {
+                                // Checkbox set to Never Ask Again
+                                showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
+                            }
                         }
                     }
-                }
-                break;
+                    break;
+            }catch (Exception e ){}
+
             }
 
             case MY_PROFILE_PIC_PERMISSIONS_REQUEST: {
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED
-                        && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                try{
+                    if (grantResults.length > 0
+                            && grantResults[0] == PackageManager.PERMISSION_GRANTED
+                            && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
 
 
 
-                } else if (Build.VERSION.SDK_INT >= 23
-                        && (!shouldShowRequestPermissionRationale(permissions[0])
-                        || !shouldShowRequestPermissionRationale(permissions[1]))) {
-                    showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
+                    } else if (Build.VERSION.SDK_INT >= 23
+                            && (!shouldShowRequestPermissionRationale(permissions[0])
+                            || !shouldShowRequestPermissionRationale(permissions[1]))) {
+                        showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
 
-                } else {
-                    Toast.makeText(this, R.string.camera_and_gallery_permission_denial_msg, Toast.LENGTH_LONG).show();
-                }
-                break;
+                    } else {
+                        Toast.makeText(this, R.string.camera_and_gallery_permission_denial_msg, Toast.LENGTH_LONG).show();
+                    }
+                    break;
+                }catch (Exception e){}
+
             }
             case MY_SIGNATURE_PIC_PERMISSIONS_REQUEST: {
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED
-                        && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+
+                try {
+                    if (grantResults.length > 0
+                            && grantResults[0] == PackageManager.PERMISSION_GRANTED
+                            && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
 
 
 
-                } else if (Build.VERSION.SDK_INT >= 23
-                        && (!shouldShowRequestPermissionRationale(permissions[0])
-                        || !shouldShowRequestPermissionRationale(permissions[1]))) {
-                    showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
+                    } else if (Build.VERSION.SDK_INT >= 23
+                            && (!shouldShowRequestPermissionRationale(permissions[0])
+                            || !shouldShowRequestPermissionRationale(permissions[1]))) {
+                        showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
 
-                } else {
-                    Toast.makeText(this, R.string.camera_and_gallery_permission_denial_msg, Toast.LENGTH_LONG).show();
-                }
-                break;
+                    } else {
+                        Toast.makeText(this, R.string.camera_and_gallery_permission_denial_msg, Toast.LENGTH_LONG).show();
+                    }
+                    break;
+
+                }catch (Exception e){}
             }
 
 
@@ -1147,6 +1181,12 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     public void onTokenCompleted(String status) {
         if(! status.equalsIgnoreCase("false")){
             Utilities.minProgressCount=0;
+            try{
+                if (GpsTrackerLogic.getGeoPointCount(context) >0 ){
+                    nl.syncGPSData();
+                }
+            }catch (Exception e){}
+
                if(syncOptionAll){
                   startAllItemSync();
               }else{
@@ -1159,5 +1199,104 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     }
 
 
+    @Override
+    public void onItemClick(AdapterView<?> l, View v, int position, long id) {
+        // carry out relevant action based on item clicked
+        if (networkQueue.getCount() > 1) {
+            networkQueue.moveToPosition(position-1);
+        }
+        String itemType = networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE));
+        if (itemType.equalsIgnoreCase("infrastructure")) {
+            Intent intent = new Intent(this, AddInfrastructureActivity.class);
+            AddInfrastructureActivity.infrastructureID = id;
+            AddInfrastructureActivity.editMode = true;
+            startActivity(intent);
+        } else if (itemType.equalsIgnoreCase("farmer")) {
+            Intent intent = new Intent(this, AddFarmerActivity.class);
+            intent.putExtra(EDIT_FARMER_ID, (long) networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
+            intent.putExtra(EDIT_MODE, true);
+            startActivity(intent);
+        } else if (itemType.equalsIgnoreCase("farmlocation")) {
+            Intent intent = new Intent(this, ViewFarmerActivity.class);
+            ViewFarmerActivity.farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
+            //long farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
+            //SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(farmerId);
+            startActivity(intent);
+        }  else if (itemType.equalsIgnoreCase("farmpolygon")) {
+            Intent recordPolygonIntent = new Intent(this, RecordPolygonActivity.class);
+            final int lFarmID = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID));
+//            int count = SharedPreferenceUtils.getInstance(getApplicationContext()).getPlotCount(""+lFarmID);
+            DataLayer dl = new DataLayer(getResources(), HomeActivity.this);
+            dl.fetchPlotData(networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
+            int count =0;
+//        if(strFarmID != "0"){
+            try{
+//            count = SharedPreferenceUtils.getInstance(getApplicationContext()).getPlotCount(""+strFarmID);
+                count = dl.fetchPlotData(networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
+            }catch (Exception e){
+                count = 0;
+            }
+            recordPolygonIntent.putExtra(FARMER_ID, networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
+            recordPolygonIntent.putExtra(FARM_ID, lFarmID);
+            recordPolygonIntent.putExtra(OLAM_FARMER_ID, networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID)));
+            recordPolygonIntent.putExtra(FARMER_NAME, networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME)));
+            recordPolygonIntent.putExtra(PLOT_COUNT, count);
+            recordPolygonIntent.setAction(Intent.ACTION_DEFAULT);
+            startActivity(recordPolygonIntent);
+        } else if (itemType.equalsIgnoreCase("module")) {
+            Intent intent = new Intent(this, ViewFarmerActivity.class);
+            CompleteModuleActivity.editMode = true;
+            ViewFarmerActivity.farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
+            //long farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
+            //SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(farmerId);
+            startActivity(intent);
+        }  else if (itemType.equalsIgnoreCase("childmodule")) {
+            Intent intent = new Intent(this, ViewChildLabourSurveyActivity.class);
+            ChildLabourCompleteModuleActivity.editMode = true;
+            ViewChildLabourSurveyActivity.farmerID = Long.valueOf(networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
+            ViewChildLabourSurveyActivity.childID = Long.valueOf(networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_CHILD_ID)));
+            //long farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
+            //SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(farmerId);
+            startActivity(intent);
+        } else if (itemType.equalsIgnoreCase("fmpreview") || itemType.equalsIgnoreCase("fullfmpreview")) {
+            Intent intent = new Intent(this, ViewFarmerActivity.class);
+            ViewFarmerActivity.farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
+            //long farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
+            //SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(farmerId);
+            startActivity(intent);
+        } else if (itemType.equalsIgnoreCase("transaction")) {
+            Intent intent = new Intent(context, TransactionItem.class);
+            intent.putExtra(EDIT_TRANSACTION_ITEM_ID, networkQueue.getLong(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_TRANSACTION_ITEM_ID)));
+            intent.putExtra(EDIT_MODE, true);
+            intent.putExtra(READ_ONLY_MODE, true);
+            startActivity(intent);
+        } else if (itemType.equalsIgnoreCase("trainingrecord")) {
+            Intent intent = new Intent(context, TrainingRecord.class);
+            intent.putExtra(EDIT_TRAININGRECORD_ID, networkQueue.getLong(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_TRAINING_RECORD_ID)));
+            intent.putExtra(EDIT_MODE, true);
+            intent.putExtra(READ_ONLY_MODE, true);
+            startActivity(intent);
+        }else if (itemType.equalsIgnoreCase("farmer_photo")) {
+            //JIRA req OW-505
+            Intent intent = new Intent(this, ViewFarmerActivity.class);
+            ViewFarmerActivity.farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
+            startActivity(intent);
+        }else if (itemType.equalsIgnoreCase("children")) {
+            Intent intent = new Intent(this, AddNewChildActivity.class);
+            intent.putExtra("action","sync_edit");
+            intent.putExtra(ChildLabourUtils.CHILD_FARMER_ID, String.valueOf(networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID))));
+            intent.putExtra(ChildLabourUtils.CHILD_ID, networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_CHILD_ID)));
+            startActivity(intent);
+        }else if (itemType.equalsIgnoreCase("child_visit")){
+            Bundle childBundle=new Bundle();
+            childBundle.putString(ChildLabourUtils.CHILD_FARMER_ID,String.valueOf(networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID))));
+            Intent intent = new Intent(this, ChildVisitDetailActivity.class);
+            intent.putExtras(childBundle);
+//            intent.putExtra(ChildLabourUtils.CHILD_FARMER_ID, String.valueOf(networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID))));
+//            intent.putExtra(ChildLabourUtils.CHILDLABOUR_SURVEY, networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_SURVEY_CODE)));
+            startActivity(intent);
+
+        }
+    }
 
 }

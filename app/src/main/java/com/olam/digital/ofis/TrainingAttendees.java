@@ -29,7 +29,7 @@ import com.olam.digital.ofis.R;
 
 import java.util.ArrayList;
 
-public class TrainingAttendees extends BaseListActivity {
+public class TrainingAttendees extends BaseListActivity implements AdapterView.OnItemClickListener {
 
     private Context context;
     private TrainingAttendees me;
@@ -54,13 +54,15 @@ public class TrainingAttendees extends BaseListActivity {
     private Spinner farmerGroupSpinner, sectionSpinner;
 
     public ArrayList<Long> selectedFarmers;
+    ListView listView;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_training_attendees);
-
+        listView=findViewById(R.id.list);
+        listView.setOnItemClickListener(this);
         //noinspection ConstantConditions
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         context = me = this;
         res = getResources();
@@ -92,28 +94,28 @@ public class TrainingAttendees extends BaseListActivity {
         bindButtons();
     }
 
-    @SuppressLint("SetTextI18n")
-    @Override
-    protected void onListItemClick (ListView l, View v, int position, long id) {
-        ImageView imageView = (ImageView) v.findViewById(R.id.cbImage);
-        TextView state = (TextView) v.findViewById(R.id.attendeeStatus);
-        LinearLayout linearLayout = (LinearLayout) v.findViewById(R.id.rowlin);
-        boolean selectedState = Boolean.parseBoolean(state.getText().toString());
-
-        if (selectedState) {
-            imageView.setImageDrawable(ContextCompat.getDrawable(context, android.R.drawable.checkbox_off_background));
-            linearLayout.setBackgroundResource(R.drawable.list_item);
-            state.setText("false");
-            selectedFarmers.remove(id);
-        } else {
-            imageView.setImageDrawable(ContextCompat.getDrawable(context, android.R.drawable.checkbox_on_background));
-            linearLayout.setBackgroundResource(R.drawable.list_item_selected);
-            state.setText("true");
-            selectedFarmers.add(id);
-        }
-        animateAttendeeSelection();
-        attendeeCount.setText(String.valueOf(selectedFarmers.size()));
-    }
+//    @SuppressLint("SetTextI18n")
+//    @Override
+//    protected void onListItemClick (ListView l, View v, int position, long id) {
+//        ImageView imageView = (ImageView) v.findViewById(R.id.cbImage);
+//        TextView state = (TextView) v.findViewById(R.id.attendeeStatus);
+//        LinearLayout linearLayout = (LinearLayout) v.findViewById(R.id.rowlin);
+//        boolean selectedState = Boolean.parseBoolean(state.getText().toString());
+//
+//        if (selectedState) {
+//            imageView.setImageDrawable(ContextCompat.getDrawable(context, android.R.drawable.checkbox_off_background));
+//            linearLayout.setBackgroundResource(R.drawable.list_item);
+//            state.setText("false");
+//            selectedFarmers.remove(id);
+//        } else {
+//            imageView.setImageDrawable(ContextCompat.getDrawable(context, android.R.drawable.checkbox_on_background));
+//            linearLayout.setBackgroundResource(R.drawable.list_item_selected);
+//            state.setText("true");
+//            selectedFarmers.add(id);
+//        }
+//        animateAttendeeSelection();
+//        attendeeCount.setText(String.valueOf(selectedFarmers.size()));
+//    }
 
     private void getExistingAttendees() {
         Cursor existingAttendees = dl.getTrainingAttendeeIdsByTrainingRecordId(trainingRecordId);
@@ -173,7 +175,8 @@ public class TrainingAttendees extends BaseListActivity {
             };
             int[] adapterRowViews = new int[]{R.id.farmerListFarmerName, R.id.farmerListOlamFarmerId};
             customListAdapter_attendees = new CustomListAdapter_Attendees(context, farmerList, adapterCols, adapterRowViews, res, me);
-            setListAdapter(customListAdapter_attendees);
+            listView.setAdapter(customListAdapter_attendees);
+            //setListAdapter(customListAdapter_attendees);
 
         }
     }
@@ -264,5 +267,27 @@ public class TrainingAttendees extends BaseListActivity {
         colorAnimation.setDuration(820);
         colorAnimation.setInterpolator(new AccelerateInterpolator(0.8f));
         colorAnimation.start();
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> l, View v, int position, long id) {
+        ImageView imageView = (ImageView) v.findViewById(R.id.cbImage);
+        TextView state = (TextView) v.findViewById(R.id.attendeeStatus);
+        LinearLayout linearLayout = (LinearLayout) v.findViewById(R.id.rowlin);
+        boolean selectedState = Boolean.parseBoolean(state.getText().toString());
+
+        if (selectedState) {
+            imageView.setImageDrawable(ContextCompat.getDrawable(context, android.R.drawable.checkbox_off_background));
+            linearLayout.setBackgroundResource(R.drawable.list_item);
+            state.setText("false");
+            selectedFarmers.remove(id);
+        } else {
+            imageView.setImageDrawable(ContextCompat.getDrawable(context, android.R.drawable.checkbox_on_background));
+            linearLayout.setBackgroundResource(R.drawable.list_item_selected);
+            state.setText("true");
+            selectedFarmers.add(id);
+        }
+        animateAttendeeSelection();
+        attendeeCount.setText(String.valueOf(selectedFarmers.size()));
     }
 }

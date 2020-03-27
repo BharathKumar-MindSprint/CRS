@@ -153,10 +153,28 @@
                     android:paddingBottom="@dimen/ofis_bottom_section_padding_vertical">
 
                     <Spinner
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:id="@+id/spinner_district"
+                        android:nextFocusDown="@+id/spinner_place"
+                        android:nextFocusForward="@+id/spinner_place"
                         android:layout_weight="1" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:contentDescription="@string/ofis_cd_hierarchy_arrow"
+                        android:src="@drawable/ic_spinner_hierarchy_arrow"
+                        android:scaleType="center" />
+
+                    <Spinner
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/spinner_place"
+                        android:layout_marginRight="0dp"
+                        android:layout_weight="1" />
+
+
 
                 </LinearLayout>
 
@@ -290,6 +308,17 @@
                 android:textColor="@color/ofis_base_font_white"
                 style="@style/Spinner"/>
 
+            <Spinner
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/villageSpinner"
+                android:textColor="@color/ofis_base_font_white"
+                android:textSize="@dimen/ofis_input_field_text"
+                android:visibility="gone"
+                android:layout_marginBottom="@dimen/ofis_input_field_bottom_margin"
+                style="@style/Spinner"
+                />
+
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -302,7 +331,7 @@
                 android:hint="@string/Name"
                 android:textColorHint="@color/ofis_base_font_white"
                 android:background="@drawable/ofis_edit_text_holo_dark"
-                />
+               android:visibility="gone" />
 
         </LinearLayout>
 

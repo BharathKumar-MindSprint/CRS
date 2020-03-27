@@ -17,6 +17,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -37,6 +38,8 @@ import com.olam.digital.ofis.authentication.AccessTokenTask;
 import com.olam.digital.ofis.authentication.DeviceIDxctractor;
 import com.olam.digital.ofis.authentication.OnAccessTokenInterface;
 import com.olam.digital.ofis.authentication.model.AuthRequestDTO;
+import com.olam.digital.ofis.matoma.MatomoHelper;
+import com.olam.digital.ofis.matoma.ScreenNameConstants;
 import com.olam.digital.ofis.model.CountriesDTO;
 
 import org.apache.commons.io.FileUtils;
@@ -47,7 +50,7 @@ import java.util.List;
 import java.util.Locale;
 
 
-public class SettingsActivity extends Activity implements OnAccessTokenInterface {
+public class SettingsActivity extends AppCompatActivity implements OnAccessTokenInterface {
     // update
     private Context context;
     private EditText enumeratorID;
@@ -71,7 +74,7 @@ public class SettingsActivity extends Activity implements OnAccessTokenInterface
         dl = new DataLayer(res, context);
 
         //noinspection ConstantConditions
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         buttonSave = (Button) findViewById(R.id.buttonSave);
         buttonSave.setOnClickListener(new View.OnClickListener() {
@@ -112,8 +115,8 @@ public class SettingsActivity extends Activity implements OnAccessTokenInterface
     protected void onResume()
     {
         super.onResume();
+        MatomoHelper.matomoScreenTracker(ScreenNameConstants.SCREEN_HOME_ACTIVITY, ScreenNameConstants.SCREEN_SETTINGS_ACTIVITY, ScreenNameConstants.SCREEN_SETTINGS);
         String enumerator_id = Utilities.getFromSharedPrefs(context);
-
         if (enumerator_id.length() > 0) {
             enumeratorID.setText(enumerator_id);
         }
@@ -302,11 +305,21 @@ public class SettingsActivity extends Activity implements OnAccessTokenInterface
             Intent intent = new Intent(this, TasksActivity.class);
             startActivity(intent);
             return true;
-        } else {
+        }else if (id == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }else {
             onBackPressed();
             return true;
         }
 
+    }
+
+    @Override
+    public void onBackPressed() {
+       super.onBackPressed();
+        Intent intent = new Intent(this, HomeActivity.class);
+        startActivity(intent);
     }
 
     @Override

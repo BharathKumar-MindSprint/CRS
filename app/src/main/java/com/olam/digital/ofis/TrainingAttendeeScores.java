@@ -21,6 +21,8 @@ import android.widget.Toast;
 
 import com.google.firebase.crash.FirebaseCrash;
 import com.olam.digital.ofis.R;
+import com.olam.digital.ofis.matoma.MatomoHelper;
+import com.olam.digital.ofis.matoma.ScreenNameConstants;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -52,7 +54,7 @@ public class TrainingAttendeeScores extends BaseActivity {
         setContentView(R.layout.activity_training_attendee_scores);
 
         //noinspection ConstantConditions
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         context = this;
         res = getResources();
@@ -75,6 +77,12 @@ public class TrainingAttendeeScores extends BaseActivity {
         getTrainingAttendees();
         bindButtons();
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MatomoHelper.matomoScreenTracker(ScreenNameConstants.SCREEN_TRAINING_RECORD_ACTIVITY, ScreenNameConstants.SCREEN_TRAINING_ATTENDEE_SCORES_ACTIVITY, ScreenNameConstants.SCREEN_TRAINING_ATTENDEE_SCORE);
     }
 
     private void getTrainingRecord() {

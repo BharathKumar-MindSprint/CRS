@@ -29,7 +29,7 @@ public class BuyingAgent extends BaseActivity {
         setContentView(R.layout.activity_buying_agent);
 
         //noinspection ConstantConditions
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         context = this;
         res = getResources();

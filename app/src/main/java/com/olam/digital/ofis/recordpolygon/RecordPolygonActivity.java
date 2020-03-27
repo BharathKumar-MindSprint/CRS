@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -29,6 +30,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NavUtils;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.view.View;
@@ -59,6 +61,12 @@ import com.olam.digital.ofis.BuildConfig;
 import com.olam.digital.ofis.DataLayer;
 import com.olam.digital.ofis.OFISDBContract;
 import com.olam.digital.ofis.R;
+import com.olam.digital.ofis.ViewFarmerActivity;
+import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
+import com.olam.digital.ofis.gps.utils.GPSConstants;
+import com.olam.digital.ofis.gps.utils.GPSUtils;
+import com.olam.digital.ofis.matoma.MatomoHelper;
+import com.olam.digital.ofis.matoma.ScreenNameConstants;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -92,6 +100,7 @@ import org.osmdroid.views.overlay.infowindow.InfoWindow;
 import org.osmdroid.views.overlay.mylocation.DirectedLocationOverlay;
 
 import java.io.File;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -101,9 +110,10 @@ import java.util.Stack;
 
 import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
 
-public class RecordPolygonActivity extends Activity implements AdapterView.OnItemSelectedListener, MapEventsReceiver, LocationListener {
+public class RecordPolygonActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, MapEventsReceiver, LocationListener {
 
     private static final String TAG = RecordPolygonActivity.class.getSimpleName();
+    private  final String MATOMOTAG = this.getClass().getSimpleName();
 
     protected MapView map;
 
@@ -270,6 +280,7 @@ public class RecordPolygonActivity extends Activity implements AdapterView.OnIte
         mStartLoggingButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_START_LOGGING,  ScreenNameConstants.BUTTON_CLICKED);
                 if(pause.getText().toString().equalsIgnoreCase("resume")){
 
 
@@ -285,6 +296,7 @@ public class RecordPolygonActivity extends Activity implements AdapterView.OnIte
         pause.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_PAUSE_POLYGON,  ScreenNameConstants.BUTTON_CLICKED);
                 if (mIsLoggingPaused) {
                     setPauseButtonState(false);
                 } else {
@@ -296,6 +308,7 @@ public class RecordPolygonActivity extends Activity implements AdapterView.OnIte
         bttnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_SAVE_POLYGON,  ScreenNameConstants.BUTTON_CLICKED);
                 setLoggingStarted(false);
                 setRecordingIcon(RecordingState.STOPPED);
                 if (!checkPlotEntryExistInPreference()) {
@@ -1283,7 +1296,9 @@ public class RecordPolygonActivity extends Activity implements AdapterView.OnIte
 
                 LocationBeanList lLocationBeanList = new LocationBeanList();
                 lLocationBeanList.setLocationBean(mLocationBeanList);
-
+               try {
+                  collectGPSPoint();
+               }catch (Exception e){}
                 String plotGeoJson = SharedPreferenceUtils.getInstance(getApplicationContext()).setLocationBeanList(currentTrackname, lLocationBeanList);
 
                 String plotId = currentTrackname.toLowerCase().replace(" ", "").toString().concat("_" + mOlamFarmerId);
@@ -1316,6 +1331,20 @@ public class RecordPolygonActivity extends Activity implements AdapterView.OnIte
         });
         builder.create().show();
 
+    }
+
+    private void collectGPSPoint() {
+
+        if ( mLocationBeanList.size()>0){
+            if(mLocationBeanList.get(0) != null){
+              String latitude= String.valueOf(mLocationBeanList.get(0).getLat());
+              String longitude=String.valueOf(mLocationBeanList.get(0).getLng());
+
+                ContentValues geoContentValues=new GPSUtils().getGeoContentValues(GPSConstants.MODULE_CAPTURE_FARM_POLYGON,latitude,longitude,new Timestamp(System.currentTimeMillis()).toString());
+                Long newTrackId= new GpsTrackerLogic().insertGeoDataDetails(RecordPolygonActivity.this,geoContentValues);
+
+            }
+        }
     }
 
     /**
@@ -1474,6 +1503,7 @@ public class RecordPolygonActivity extends Activity implements AdapterView.OnIte
         buttonSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_SAVE_PLOT_COUNT,  ScreenNameConstants.BUTTON_CLICKED);
                 lPlotCount = numberPicker.getValue();
                 spinnerArray = (String[]) resizeArray(spinnerArray, lPlotCount);
                 for (int i = 0; i < lPlotCount; i++) {
@@ -1493,7 +1523,7 @@ public class RecordPolygonActivity extends Activity implements AdapterView.OnIte
         buttonCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_CANCEL_PLOT_COUNT,  ScreenNameConstants.BUTTON_CLICKED);
                 dialog.dismiss();
             }
         });
@@ -1547,5 +1577,12 @@ public class RecordPolygonActivity extends Activity implements AdapterView.OnIte
             return true;
         }
 
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MatomoHelper.matomoScreenTracker(ScreenNameConstants.SCREEN_VIEW_FARMER_ACTIVITY, ScreenNameConstants.SCREEN_RECORD_POLYGON_ACTIVITY, ScreenNameConstants.SCREEN_RECORD_PLOT_POLYGON);
     }
 }

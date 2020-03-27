@@ -7,6 +7,7 @@ import com.google.firebase.crash.FirebaseCrash;
 import com.olam.digital.ofis.OFISDBContract;
 import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.Utilities;
+import com.olam.digital.ofis.gps.utils.GPSConstants;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -45,6 +46,7 @@ class UpdateSpinnerListsTask extends DatabaseTask {
 
                 // get the various sub lists
                 JSONArray countryArray, regionArray, districtArray, placeArray, farmergroupArray, sectionArray, productArray;
+                
 
                 try {
                     countryArray = response.getJSONArray(OFISDBContract.CountriesEntry.TABLE_NAME);

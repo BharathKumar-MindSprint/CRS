@@ -5,7 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:textSize="@dimen/ofis_spinner_text"
+    android:layout_weight="1"
+    android:ellipsize="none"
+    android:maxLines="100"
+    android:scrollHorizontally="false"
     android:textColor="@color/ofis_text_field"
     android:background="@color/ofis_spinner_item_background"
     android:padding="10dp"
+    android:singleLine="false"
+    android:textAlignment="inherit"
     />

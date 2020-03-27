@@ -8,15 +8,19 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.olam.digital.ofis.R;
+import com.olam.digital.ofis.matoma.MatomoHelper;
+import com.olam.digital.ofis.matoma.ScreenNameConstants;
 
-public class TrainingRecords extends BaseListActivity {
+public class TrainingRecords extends BaseListActivity implements AdapterView.OnItemClickListener {
 
+    private final String MATOMOTAG = this.getClass().getSimpleName();
     private Context context;
     private Resources res;
     private DataLayer dl;
@@ -30,14 +34,15 @@ public class TrainingRecords extends BaseListActivity {
 
     private Cursor trainingRecords;
     private TextView noTrainingRecordsText;
-
+    ListView listView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_training_records);
-
+        listView=findViewById(R.id.list);
+        listView.setOnItemClickListener(this);
         //noinspection ConstantConditions
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         context = me = this;
         res = getResources();
@@ -50,6 +55,12 @@ public class TrainingRecords extends BaseListActivity {
         bindButtons();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MatomoHelper.matomoScreenTracker(ScreenNameConstants.SCREEN_HOME_ACTIVITY, ScreenNameConstants.SCREEN_TRAINING_RECORDS_ACTIVITY, ScreenNameConstants.SCREEN_TRAINING_RECORDS);
+    }
+
     private void getTrainingRecords() {
         trainingRecords = dl.getTrainingRecords();
 
@@ -59,7 +70,8 @@ public class TrainingRecords extends BaseListActivity {
             String[] adapterCols = new String[]{"_id", "course_date", "course_name", "module_name", OFISDBContract.TrainingRecord.COLUMN_NAME_IN_QUEUE ,"attendee_count"};
             int[] adapterRowViews = new int[]{R.id.trainingRecordId, R.id.trainingDate, R.id.trainingCourse, R.id.trainingModule, R.id.readOnlyMode, R.id.attendeeCount};
             customListAdapter_trainingRecords = new CustomListAdapter_TrainingRecords(context, trainingRecords, adapterCols, adapterRowViews, res, me);
-            setListAdapter(customListAdapter_trainingRecords);
+            listView.setAdapter(customListAdapter_trainingRecords);
+            //setListAdapter(customListAdapter_trainingRecords);
         } else {
             noTrainingRecordsText.setVisibility(View.VISIBLE);
         }
@@ -94,9 +106,37 @@ public class TrainingRecords extends BaseListActivity {
         alert.show();
     }
 
-    @Override
-    protected void onListItemClick (ListView l, View v, int position, long id) {
+//    @Override
+//    protected void onListItemClick (ListView l, View v, int position, long id) {
+//
+//        //we now view this training record
+//        Intent intent = new Intent(context, TrainingRecord.class);
+//        intent.putExtra(EDIT_TRAININGRECORD_ID, id);
+//        intent.putExtra(EDIT_MODE, true);
+//
+//        TextView readOnlyValue = (TextView) v.findViewById(R.id.readOnlyMode);
+//        if (readOnlyValue.getText().equals("1")) {
+//            intent.putExtra(READ_ONLY_MODE, true);
+//        }
+//
+//        context.startActivity(intent);
+//    }
 
+    private void bindButtons() {
+        ImageButton addTrainingRecord = (ImageButton) findViewById(R.id.addTrainingRecord);
+
+        addTrainingRecord.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_ADD_TRAINING_RECORD,  ScreenNameConstants.BUTTON_CLICKED);
+                Intent intent = new Intent(context, TrainingRecord.class);
+                context.startActivity(intent);
+            }
+        });
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> l, View v, int position, long id) {
         //we now view this training record
         Intent intent = new Intent(context, TrainingRecord.class);
         intent.putExtra(EDIT_TRAININGRECORD_ID, id);
@@ -108,17 +148,5 @@ public class TrainingRecords extends BaseListActivity {
         }
 
         context.startActivity(intent);
-    }
-
-    private void bindButtons() {
-        ImageButton addTrainingRecord = (ImageButton) findViewById(R.id.addTrainingRecord);
-
-        addTrainingRecord.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(context, TrainingRecord.class);
-                context.startActivity(intent);
-            }
-        });
     }
 }

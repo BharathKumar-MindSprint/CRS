@@ -7,5 +7,10 @@
     android:textSize="@dimen/ofis_small_text"
     android:textColor="@color/ofis_base_font_white"
     android:background="@android:color/transparent"
-    android:padding="@dimen/ofis_small_pad"
-    android:maxLines="1" />
+    android:ellipsize="none"
+    android:maxLines="100"
+    android:layout_weight="1"
+    android:scrollHorizontally="false"
+    android:singleLine="false"
+    android:textAlignment="inherit"
+    android:padding="@dimen/ofis_small_pad" />
