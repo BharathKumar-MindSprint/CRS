@@ -63,8 +63,8 @@ android {
         //noinspection OldTargetApi
         targetSdkVersion 27
         multiDexEnabled true
-        versionCode 23
-        versionName "10.1.6"
+        versionCode 24
+        versionName "10.1.7"
     }
 
     buildTypes {
