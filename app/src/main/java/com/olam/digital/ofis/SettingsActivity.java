@@ -81,7 +81,7 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
             @Override
             public void onClick(View v) {
                 // For clear cache functionality
-                FileUtils.deleteQuietly(context.getCacheDir());
+               // FileUtils.deleteQuietly(context.getCacheDir());
                 // Request Permission only for Android Version Marshmallow and above
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     // Check Phone Permission

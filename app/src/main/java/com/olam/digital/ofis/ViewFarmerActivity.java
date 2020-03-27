@@ -37,6 +37,7 @@ import android.text.TextWatcher;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -1506,29 +1507,33 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
 
     boolean isSigned = false;
     public void showSignatureDialog() {
-
         isSigned = false;
-
         final Dialog signatureDialog = new Dialog(this, android.R.style.Theme_Material_Dialog_Alert);
         signatureDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-
         signatureDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         signatureDialog.setContentView(R.layout.dialog_signature);
         SignaturePad mSignaturePad = signatureDialog.findViewById(R.id.signature_pad);
+        Button bt_clear = (Button)signatureDialog.findViewById(R.id.imgv_clear_signature);
+        Button bt_confirm = (Button)signatureDialog.findViewById(R.id.btn_add_signature);
+        bt_confirm.setEnabled(true);
+        bt_clear.setEnabled(true);
 
-
-
-        signatureDialog.findViewById(R.id.imgv_clear_signature).setOnClickListener(new View.OnClickListener() {
+        bt_clear.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_CLEAR_SIGNATURE,  ScreenNameConstants.BUTTON_CLICKED);
+                mSignaturePad.clear();
+                return false;
+            }
+        });
+        bt_clear.findViewById(R.id.imgv_clear_signature).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_CLEAR_SIGNATURE,  ScreenNameConstants.BUTTON_CLICKED);
                 mSignaturePad.clear();
             }
         });
-
-
         mSignaturePad.setOnSignedListener(new SignaturePad.OnSignedListener() {
-
             @Override
             public void onStartSigning() {
                 //Event triggered when the pad is touched
@@ -1553,31 +1558,71 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
             public void onClick(View v) {
                 MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_CANCEL_SIGNATURE,  ScreenNameConstants.BUTTON_CLICKED);
                 signatureDialog.dismiss();
-
-
             }
         });
 
-        signatureDialog.findViewById(R.id.btn_add_signature).setOnClickListener(new View.OnClickListener() {
+        bt_confirm.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                {
+                    MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_CONFIRM_SIGNATURE,  ScreenNameConstants.BUTTON_CLICKED);
+                    try {
+                        if (isSigned) {
+//                        farmerSignatureButton.setImageBitmap(mSignaturePad.getTransparentSignatureBitmap());
+                            File photoFile = null;
+                            try {
+                                photoFile = createImageFile("signature");
+                            } catch (IOException e) {
+                                FirebaseCrash.report(new Exception("AddFarmerActivity: Error creating signature image file", e));
+                                e.printStackTrace();
+                            }
+                            if (photoFile != null) {
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                                    try {
+                                        Method m = StrictMode.class.getMethod("disableDeathOnFileUriExposure");
+                                        m.invoke(null);
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                                Uri fileUri = Uri.fromFile(photoFile);
+//                            setCapturedSignatureImageURI(fileUri);
+//                            setCurrentSignaturePhotoPath(fileUri.getPath());
+                                dl.updateSignature(context, farmerId, fileUri.getPath(),farmerNameStr);
+
+                                try (FileOutputStream out = new FileOutputStream(photoFile)) {
+                                    mSignaturePad.getTransparentSignatureBitmap().compress(Bitmap.CompressFormat.PNG, 100, out); // bmp is your Bitmap instance
+                                    // PNG is a lossless format, the compression factor (100) is ignored
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                            signatureDialog.dismiss();
+                            customListAdapter_modulesAdapter.notifyDataSetChanged();
+                        } else {
+                            Toast.makeText(ViewFarmerActivity.this, "No signature available...", Toast.LENGTH_SHORT).show();
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                return false;
+            }
+        });
+        bt_confirm.findViewById(R.id.btn_add_signature).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_CONFIRM_SIGNATURE,  ScreenNameConstants.BUTTON_CLICKED);
                 try {
-
                     if (isSigned) {
-
-
 //                        farmerSignatureButton.setImageBitmap(mSignaturePad.getTransparentSignatureBitmap());
-
                         File photoFile = null;
-
                         try {
                             photoFile = createImageFile("signature");
                         } catch (IOException e) {
                             FirebaseCrash.report(new Exception("AddFarmerActivity: Error creating signature image file", e));
                             e.printStackTrace();
                         }
-
                         if (photoFile != null) {
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                                 try {
@@ -1591,29 +1636,21 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
 //                            setCapturedSignatureImageURI(fileUri);
 //                            setCurrentSignaturePhotoPath(fileUri.getPath());
                             dl.updateSignature(context, farmerId, fileUri.getPath(),farmerNameStr);
-
                             try (FileOutputStream out = new FileOutputStream(photoFile)) {
                                 mSignaturePad.getTransparentSignatureBitmap().compress(Bitmap.CompressFormat.PNG, 100, out); // bmp is your Bitmap instance
                                 // PNG is a lossless format, the compression factor (100) is ignored
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
-
                         }
-
                         signatureDialog.dismiss();
                         customListAdapter_modulesAdapter.notifyDataSetChanged();
                     } else {
-
                         Toast.makeText(ViewFarmerActivity.this, "No signature available...", Toast.LENGTH_SHORT).show();
                     }
-
-
                 } catch (Exception e) {
-
+                    e.printStackTrace();
                 }
-
-
             }
         });
 
