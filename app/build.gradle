@@ -269,7 +269,7 @@ dependencies {
     implementation 'com.github.MKergall:osmbonuspack:6.4'
     // dexter runtime permissions
     implementation 'com.karumi:dexter:4.2.0'
-    implementation 'com.jakewharton.timber:timber:4.1.0'
+    implementation 'com.jakewharton.timber:timber:4.7.1'
     //    implementation 'com.auth0.android:jwtdecode:1.2.0'
 //    implementation 'com.dynatrace.agent:agent-android:7.+'
 
