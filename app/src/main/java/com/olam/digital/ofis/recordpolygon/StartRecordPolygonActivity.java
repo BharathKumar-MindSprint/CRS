@@ -1,10 +1,10 @@
 package com.olam.digital.ofis.recordpolygon;
 
-import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.os.Bundle;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.Base64;
 import android.util.Log;
 import android.widget.ScrollView;
@@ -22,7 +22,7 @@ import java.util.List;
  * Created by Linu C. N. M1032987 on 10/18/2017.
  */
 
-public class StartRecordPolygonActivity extends Activity {
+public class StartRecordPolygonActivity extends AppCompatActivity {
 
     private static final String TAG = StartRecordPolygonActivity.class.getSimpleName();
 

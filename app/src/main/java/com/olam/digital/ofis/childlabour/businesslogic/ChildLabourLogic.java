@@ -2,20 +2,13 @@ package com.olam.digital.ofis.childlabour.businesslogic;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.Intent;
-import android.content.pm.LabeledIntent;
 import android.database.Cursor;
-import android.support.v4.content.ContextCompat;
-import android.widget.Toast;
+import androidx.core.content.ContextCompat;
 
-import com.google.gson.Gson;
 import com.olam.digital.ofis.DataLayer;
 import com.olam.digital.ofis.OFISDBContract;
-import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.Utilities;
-import com.olam.digital.ofis.childlabour.AddNewChildActivity;
 import com.olam.digital.ofis.childlabour.ChildLabourUtils;
-import com.olam.digital.ofis.childlabour.ChildVisitDetailActivity;
 import com.olam.digital.ofis.childlabour.dto.ChildModuleDto;
 import com.olam.digital.ofis.childlabour.dto.ChildrenDTO;
 
@@ -23,7 +16,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 

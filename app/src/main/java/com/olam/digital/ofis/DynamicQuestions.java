@@ -12,7 +12,7 @@ import android.net.Uri;
 import android.os.CountDownTimer;
 import android.os.StrictMode;
 import android.provider.MediaStore;
-import android.support.v4.content.ContextCompat;
+import androidx.core.content.ContextCompat;
 import android.text.Editable;
 import android.text.Html;
 import android.text.InputType;
@@ -34,13 +34,10 @@ import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.crash.FirebaseCrash;
-import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.recordpolygon.AppConstants;
 
-import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -61,8 +58,6 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
-
-import okhttp3.internal.Util;
 
 /**
  * Created by ben on 02/06/2015.
