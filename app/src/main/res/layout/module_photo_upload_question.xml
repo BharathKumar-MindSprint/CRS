@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
@@ -10,7 +11,7 @@
         android:maxHeight="100dp"
         android:id="@+id/modulePhotoQuestion"
         android:contentDescription="@string/Farmer_Photo"
-        android:src="@android:drawable/ic_menu_gallery"
+        app:srcCompat="@android:drawable/ic_menu_gallery"
         android:background="@drawable/border"
         android:adjustViewBounds="true"
         android:scaleType="fitCenter" />

@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <android.support.v7.widget.CardView
+    <androidx.cardview.widget.CardView
         android:id="@+id/rowCardView"
         android:layout_width="match_parent"
         android:layout_margin="10dp"
@@ -40,7 +41,7 @@
                 android:id="@+id/statusIcon"
                 android:layout_centerVertical="true"
                 android:layout_width="wrap_content"
-                android:src="@drawable/ic_childsurvey"
+                app:srcCompat="@drawable/ic_childsurvey"
                 android:layout_alignTop="@+id/surveyName"
                 android:layout_alignBottom="@+id/surveyName"
                 android:padding="10dp"
@@ -49,7 +50,7 @@
 
         </RelativeLayout>
 
-    </android.support.v7.widget.CardView>
+    </androidx.cardview.widget.CardView>
 
 
 </LinearLayout>

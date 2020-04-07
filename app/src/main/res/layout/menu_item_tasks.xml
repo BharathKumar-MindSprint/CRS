@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="32dp"
     android:layout_height="match_parent"
@@ -12,7 +13,7 @@
         android:id="@+id/TaskListIcon"
         android:contentDescription="@string/ofis_cd_submit_all_icon"
         android:layout_marginTop="@dimen/ofis_small_pad"
-        android:src="@drawable/ic_action_tasks"
+        app:srcCompat="@drawable/ic_action_tasks"
         android:scaleType="fitXY"
         android:background="@android:color/transparent" />
 

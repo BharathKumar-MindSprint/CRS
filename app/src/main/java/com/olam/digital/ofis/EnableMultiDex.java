@@ -1,9 +1,6 @@
 package com.olam.digital.ofis;
-
-import android.app.Activity;
 import android.content.Context;
-import android.support.multidex.MultiDexApplication;
-import android.view.Gravity;
+import androidx.multidex.MultiDexApplication;
 
 import com.crashlytics.android.Crashlytics;
 //import com.dynatrace.android.agent.Dynatrace;
@@ -45,7 +42,7 @@ public class EnableMultiDex extends MultiDexApplication {
                 .buildConfiguration());
 */
 
-        AppCenter.start(this, "983e5261-951a-40fc-b19c-692e856558d3", Distribute.class);
+//        AppCenter.start(this, "983e5261-951a-40fc-b19c-692e856558d3", Distribute.class);
 
         Distribute.setEnabledForDebuggableBuild(true);
         Fabric.with(this, new Crashlytics());

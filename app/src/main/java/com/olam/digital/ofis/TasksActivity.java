@@ -2,9 +2,7 @@ package com.olam.digital.ofis;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.app.ListActivity;
 import android.content.BroadcastReceiver;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -12,8 +10,9 @@ import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.content.LocalBroadcastManager;
+import androidx.core.content.ContextCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.appcompat.app.AlertDialog;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,13 +22,11 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.matoma.MatomoHelper;
 import com.olam.digital.ofis.matoma.ScreenNameConstants;
 import com.olam.digital.ofis.model.TasksDTO;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 public class TasksActivity extends BaseListActivity implements AdapterView.OnItemClickListener {
     private Context context;
@@ -248,7 +245,7 @@ ListView listView;
         completed = "1".equals(tasksDTO.getTaskCompletedStatus());
 
         if (completed) {
-            android.app.AlertDialog.Builder dialog = new android.app.AlertDialog.Builder(this);
+            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
             dialog.setTitle(R.string.untick_task);
             dialog.setMessage(R.string.untick_task_msg)
                     .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {

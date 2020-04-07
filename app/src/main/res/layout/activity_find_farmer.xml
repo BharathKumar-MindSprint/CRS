@@ -1,4 +1,5 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -52,14 +53,13 @@
                 android:focusable="true"
                 android:focusableInTouchMode="true"
                 android:nextFocusDown="@+id/spinner_section"
-                android:nextFocusForward="@+id/spinner_section"
-                style="@style/Spinner"/>
+                android:nextFocusForward="@+id/spinner_section"/>
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:contentDescription="@string/ofis_cd_hierarchy_arrow"
-                android:src="@drawable/ic_spinner_hierarchy_arrow"
+                app:srcCompat="@drawable/ic_spinner_hierarchy_arrow"
                 android:scaleType="center" />
 
             <Spinner
@@ -70,8 +70,7 @@
                 android:layout_marginEnd="0dp"
                 android:layout_weight="1"
                 android:focusable="true"
-                android:focusableInTouchMode="true"
-                style="@style/Spinner"/>
+                android:focusableInTouchMode="true"/>
 
         </LinearLayout>
         <!-- end business groups -->
@@ -98,7 +97,7 @@
                 android:layout_height="match_parent"
                 android:id="@+id/imageButton"
                 android:layout_weight="8"
-                android:src="@drawable/ic_search"
+                app:srcCompat="@drawable/ic_search"
                 android:background="@android:color/transparent"
                 android:contentDescription="@string/Search" />
         </LinearLayout>

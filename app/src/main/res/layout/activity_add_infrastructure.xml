@@ -1,4 +1,5 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/ofis_page_background"
@@ -133,7 +134,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:contentDescription="@string/ofis_cd_hierarchy_arrow"
-                        android:src="@drawable/ic_spinner_hierarchy_arrow"
+                        app:srcCompat="@drawable/ic_spinner_hierarchy_arrow"
                         android:scaleType="center" />
 
                     <Spinner
@@ -164,7 +165,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:contentDescription="@string/ofis_cd_hierarchy_arrow"
-                        android:src="@drawable/ic_spinner_hierarchy_arrow"
+                        app:srcCompat="@drawable/ic_spinner_hierarchy_arrow"
                         android:scaleType="center" />
 
                     <Spinner
@@ -210,7 +211,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:contentDescription="@string/ofis_cd_hierarchy_arrow"
-                        android:src="@drawable/ic_spinner_hierarchy_arrow"
+                        app:srcCompat="@drawable/ic_spinner_hierarchy_arrow"
                         android:scaleType="center"
                         android:id="@+id/haFarmerGroup" />
 
@@ -298,15 +299,14 @@
                 android:id="@+id/spinner_modules"
                 android:visibility="invisible"
                 android:textColor="@color/ofis_base_font_white"
-                style="@style/Spinner"/>
+                />
 
             <!--android:entries="@array/poitypes"-->
             <Spinner
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/spinner_submodules"
-                android:textColor="@color/ofis_base_font_white"
-                style="@style/Spinner"/>
+                android:textColor="@color/ofis_base_font_white"/>
 
             <Spinner
                 android:layout_width="match_parent"
@@ -316,7 +316,7 @@
                 android:textSize="@dimen/ofis_input_field_text"
                 android:visibility="gone"
                 android:layout_marginBottom="@dimen/ofis_input_field_bottom_margin"
-                style="@style/Spinner"
+
                 />
 
             <EditText
@@ -358,7 +358,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/requestLocation"
                 android:contentDescription="@string/record_farm_location_hint"
-                android:src="@drawable/ic_actionbutton_location_searching"
+                app:srcCompat="@drawable/ic_actionbutton_location_searching"
                 android:background="@android:color/transparent"
                 android:layout_alignParentEnd="false"
                 android:layout_alignParentBottom="true"

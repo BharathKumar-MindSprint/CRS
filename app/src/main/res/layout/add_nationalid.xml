@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -41,7 +42,7 @@
                         android:id="@+id/nationalidphoto"
                         android:layout_width="74dp"
                         android:tooltipText="@string/captureid"
-                        android:src="@drawable/ic_capture_id_defaulr"
+                        app:srcCompat="@drawable/ic_capture_id_defaulr"
                         android:layout_height="94dp"/>
 
                     <LinearLayout
@@ -53,7 +54,7 @@
                             android:layout_height="@dimen/button_width_height"
                             android:id="@+id/nidphotoActionButton"
                             android:contentDescription="@string/Camera"
-                            android:src="@drawable/ic_actionbutton_camera"
+                            app:srcCompat="@drawable/ic_actionbutton_camera"
                             android:layout_marginLeft="5dp"
                             android:adjustViewBounds="false"
                             android:background="@android:color/transparent"
@@ -111,7 +112,7 @@
         android:adjustViewBounds="true"
         android:scaleType="fitCenter"
         android:layout_marginBottom="15dp"
-        android:src="@drawable/ic_delete_item"
+        app:srcCompat="@drawable/ic_delete_item"
         android:contentDescription="@string/Delete_Item" />
     </LinearLayout>
 </LinearLayout>

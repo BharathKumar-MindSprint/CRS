@@ -2,24 +2,19 @@ package com.olam.digital.ofis.gps;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
-import android.media.tv.TvContract;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.Settings;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.appcompat.app.AppCompatActivity;
 import android.widget.Toast;
 
 import com.google.android.gms.common.api.ApiException;
@@ -41,26 +36,20 @@ import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.DexterError;
-import com.karumi.dexter.listener.PermissionDeniedResponse;
-import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.PermissionRequestErrorListener;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
-import com.karumi.dexter.listener.single.PermissionListener;
-import com.olam.digital.ofis.AddInfrastructureActivity;
 import com.olam.digital.ofis.BuildConfig;
 import com.olam.digital.ofis.R;
-import com.olam.digital.ofis.childlabour.listener.OnItemSurveyListener;
 
 import java.util.List;
 
 import static android.content.Context.LOCATION_SERVICE;
-import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
 
 public class GPSTracker {
 
     // Component related to UI
-    Activity mActivity;
+    AppCompatActivity mActivity;
     private ProgressDialog progressDialog;
 
     // bunch of location related apis
@@ -84,18 +73,18 @@ public class GPSTracker {
     public static final int PRIORITY_LOW_POWER = 104;
     public static final int PRIORITY_NO_POWER = 105;
 
-    public GPSTracker(Activity mActivity){
+    public GPSTracker(AppCompatActivity mActivity){
         this.mActivity=mActivity;
     }
 
-    public GPSTracker(Activity mActivity,GPSListener gpsListener){
+    public GPSTracker(AppCompatActivity mActivity, GPSListener gpsListener){
         this.mActivity= mActivity;
         this.gpsListener = gpsListener;
         progressDialog=new ProgressDialog(mActivity);
         init();
     }
 
-    public GPSTracker(Activity mActivity,GPSListener gpsListener, boolean showDialog){
+    public GPSTracker(AppCompatActivity mActivity, GPSListener gpsListener, boolean showDialog){
         this.mActivity= mActivity;
         this.gpsListener = gpsListener;
         progressDialog=new ProgressDialog(mActivity);
