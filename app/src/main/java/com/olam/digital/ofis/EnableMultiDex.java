@@ -4,8 +4,7 @@ import androidx.multidex.MultiDexApplication;
 
 import com.crashlytics.android.Crashlytics;
 //import com.dynatrace.android.agent.Dynatrace;
-import com.microsoft.appcenter.AppCenter;
-import com.microsoft.appcenter.distribute.Distribute;
+//import com.microsoft.appcenter.distribute.Distribute;
 import com.olam.digital.ofis.logging.CrashReportingTree;
 
 //import com.olam.inapp.InApp;
@@ -44,7 +43,7 @@ public class EnableMultiDex extends MultiDexApplication {
 
 //        AppCenter.start(this, "983e5261-951a-40fc-b19c-692e856558d3", Distribute.class);
 
-        Distribute.setEnabledForDebuggableBuild(true);
+//        Distribute.setEnabledForDebuggableBuild(true);
         Fabric.with(this, new Crashlytics());
         context = getApplicationContext();
         Timber.plant(BuildConfig.DEBUG ? new CrashReportingTree() :  new Timber.DebugTree());
