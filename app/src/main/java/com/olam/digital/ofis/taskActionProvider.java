@@ -2,17 +2,15 @@ package com.olam.digital.ofis;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.annotation.Keep;
+import androidx.annotation.Keep;
 //import android.view.ActionProvider;
-import android.support.v4.view.ActionProvider;
+import androidx.core.view.ActionProvider;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import com.olam.digital.ofis.R;
 
 /**
  * Task action provider. Created by ben on 08/11/2016.

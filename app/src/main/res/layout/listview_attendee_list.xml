@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
@@ -41,7 +42,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/cbImage"
                 android:contentDescription="@string/checkbox_image"
-                android:src="@android:drawable/checkbox_off_background"/>
+                app:srcCompat="@android:drawable/checkbox_off_background"/>
 
         </LinearLayout>
 
@@ -85,7 +86,7 @@
                 android:adjustViewBounds="true"
                 android:scaleType="fitCenter"
                 android:id="@+id/farmerListIcon"
-                android:src="@drawable/ic_status_no_photo"
+                app:srcCompat="@drawable/ic_status_no_photo"
                 android:contentDescription="@string/Farmer_Photo"
                 android:layout_gravity="center_vertical"
                 android:maxHeight="60dp" />

@@ -3,7 +3,7 @@ package com.olam.digital.ofis;
 import android.content.Context;
 import android.content.res.Resources;
 import android.database.Cursor;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +13,6 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
 import com.google.firebase.crash.FirebaseCrash;
-import com.olam.digital.ofis.R;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

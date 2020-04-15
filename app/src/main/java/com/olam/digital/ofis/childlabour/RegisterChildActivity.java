@@ -2,23 +2,21 @@ package com.olam.digital.ofis.childlabour;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.NavUtils;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.AppCompatButton;
-import android.support.v7.widget.AppCompatCheckBox;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.view.MenuItem;
+import androidx.annotation.Nullable;
+import androidx.core.app.NavUtils;
+import androidx.core.content.ContextCompat;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
+import androidx.appcompat.widget.AppCompatCheckBox;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
-import android.widget.LinearLayout;
 
 import com.olam.digital.ofis.BaseActivity;
-import com.olam.digital.ofis.DataLayer;
 import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.childlabour.adapter.ChildLabourRecyclerAdapter;
 import com.olam.digital.ofis.childlabour.businesslogic.ChildLabourLogic;

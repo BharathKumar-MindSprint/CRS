@@ -93,11 +93,10 @@
             android:name="com.olam.digital.ofis.HomeActivity"
             android:label="@string/applicationName"
             android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+              <intent-filter>
+                    <action android:name="android.intent.action.MAIN" />
+                    <category android:name="android.intent.category.LAUNCHER" />
+               </intent-filter>
         </activity>
         <activity
             android:name="com.olam.digital.ofis.SettingsActivity"

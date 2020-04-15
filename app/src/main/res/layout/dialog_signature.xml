@@ -43,7 +43,7 @@
 
             <ImageView
                 android:layout_width="wrap_content"
-                android:src="@drawable/ic_consent_close"
+                bind:srcCompat="@drawable/ic_consent_close"
                 android:layout_alignTop="@+id/signature_pad"
                 android:id="@+id/btn_cancel_signature"
                 android:padding="10dp"

@@ -1,20 +1,15 @@
 package com.olam.digital.ofis.tasks;
 
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.net.Uri;
-
+import androidx.appcompat.app.AlertDialog;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.firebase.crash.FirebaseCrash;
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 import com.olam.digital.ofis.BuildConfig;
 import com.olam.digital.ofis.HomeActivity;
 import com.olam.digital.ofis.R;

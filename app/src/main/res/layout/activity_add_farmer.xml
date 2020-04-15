@@ -1,4 +1,5 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -154,7 +155,7 @@
                             android:layout_gravity="right|center"
                             android:background="@android:color/transparent"
                             android:contentDescription="@string/Add"
-                            android:src="@drawable/ic_ofis_add" />
+                            app:srcCompat="@drawable/ic_ofis_add" />
 
                     </LinearLayout>
                 </LinearLayout>
@@ -247,7 +248,7 @@
                             android:contentDescription="@string/Add"
                             android:scaleType="fitXY"
                             android:layout_gravity="right|center"
-                            android:src="@drawable/ic_ofis_add" />
+                            app:srcCompat="@drawable/ic_ofis_add" />
 
                     </LinearLayout>
 
@@ -292,7 +293,7 @@
                             android:layout_width="wrap_content"
                             android:contentDescription="@string/ofis_cd_hierarchy_arrow"
                             android:layout_height="match_parent"
-                            android:src="@drawable/ic_spinner_hierarchy_arrow"
+                            app:srcCompat="@drawable/ic_spinner_hierarchy_arrow"
                             android:scaleType="center"
                             android:id="@+id/haCountry" />
 
@@ -321,7 +322,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:contentDescription="@string/ofis_cd_hierarchy_arrow"
-                            android:src="@drawable/ic_spinner_hierarchy_arrow"
+                            app:srcCompat="@drawable/ic_spinner_hierarchy_arrow"
                             android:scaleType="center"
                             android:id="@+id/haDistrict" />
 
@@ -395,7 +396,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:contentDescription="@string/ofis_cd_hierarchy_arrow"
-                            android:src="@drawable/ic_spinner_hierarchy_arrow"
+                            app:srcCompat="@drawable/ic_spinner_hierarchy_arrow"
                             android:scaleType="center"
                             android:id="@+id/haFarmerGroup" />
 
@@ -520,7 +521,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:contentDescription="@string/ofis_cd_hierarchy_arrow"
-                        android:src="@drawable/ic_spinner_hierarchy_arrow"
+                        app:srcCompat="@drawable/ic_spinner_hierarchy_arrow"
                         android:scaleType="center"
                         android:id="@+id/imageView4"
                         android:paddingLeft="3dp"
@@ -533,7 +534,7 @@
                         android:id="@+id/farmerSignature"
                         android:layout_weight="1"
                         android:contentDescription="@string/Add_Signature"
-                        android:src="@drawable/empty_signature"
+                        app:srcCompat="@drawable/empty_signature"
                         android:scaleType="fitCenter"
                         android:paddingLeft="@dimen/ofis_med_pad"
                         android:paddingRight="@dimen/ofis_med_pad"/>
@@ -606,8 +607,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/farmerGender"
                 android:textColor="@color/ofis_base_font_white"
-                android:entries="@array/genders"
-                style="@style/Spinner" />
+                android:entries="@array/genders" />
 
         </LinearLayout>
         <!-- end add farmer white input fields and heading -->
@@ -627,7 +627,7 @@
                 android:layout_height="112dp"
                 android:id="@+id/farmerPhoto"
                 android:contentDescription="@string/Farmer_Photo"
-                android:src="@drawable/empty_farmer_photo"
+                app:srcCompat="@drawable/empty_farmer_photo"
                 android:background="@android:color/transparent"
                 android:scaleType="fitStart"
                 android:layout_alignParentLeft="false"
@@ -639,7 +639,7 @@
                 android:layout_height="@dimen/standard_button_width_height"
                 android:id="@+id/farmerPhotoActionButton"
                 android:contentDescription="@string/Camera"
-                android:src="@drawable/ic_actionbutton_camera"
+                app:srcCompat="@drawable/ic_actionbutton_camera"
                 android:layout_alignParentEnd="false"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentRight="true"
@@ -680,7 +680,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:id="@+id/consentCloseButton"
-                android:src="@drawable/ic_consent_close"
+                app:srcCompat="@drawable/ic_consent_close"
                 android:background="@android:color/transparent"
                 android:layout_weight="3"
                 android:layout_gravity="end|top"
