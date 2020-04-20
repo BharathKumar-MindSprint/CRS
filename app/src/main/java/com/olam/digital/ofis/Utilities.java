@@ -14,6 +14,8 @@ import android.media.ExifInterface;
 import android.os.Handler;
 import android.os.Looper;
 import androidx.core.content.ContextCompat;
+
+import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.util.Base64;
 import android.util.DisplayMetrics;
@@ -277,7 +279,10 @@ public  static String base64ConversionForImage(String filepath)  {
         int permissionCheck = ContextCompat.checkSelfPermission(c, Manifest.permission.READ_PHONE_STATE);
         if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
             TelephonyManager telephonyManager = (TelephonyManager) c.getSystemService(Context.TELEPHONY_SERVICE);
-            return (telephonyManager.getDeviceId() == null) ? "emulator" : telephonyManager.getDeviceId();
+            String android_id = Settings.Secure.getString(c.getContentResolver(), Settings.Secure.ANDROID_ID);
+//            return (telephonyManager.getDeviceId() == null) ? "emulator" : telephonyManager.getDeviceId();
+            return android_id;
+
         } else {
             return "imei not available";
         }
