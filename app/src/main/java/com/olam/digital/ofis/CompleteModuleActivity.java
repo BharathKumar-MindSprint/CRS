@@ -17,6 +17,8 @@ import android.os.Looper;
 import android.provider.Settings;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
+
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -379,8 +381,33 @@ public class CompleteModuleActivity extends BaseActivity {
         TextView subModuleNameTv = (TextView) findViewById(R.id.completeModuleSubModuleTitle);
 
         moduleNameTv.setText(moduleName);
+
+        moduleNameTv.post(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    if (moduleNameTv.getLineCount()>4){
+                        moduleNameTv.setMaxLines(4);
+                        moduleNameTv.setEllipsize(TextUtils.TruncateAt.END);}
+                }catch (Exception e){}
+            }
+        });
+
+
         int columnIndex = (subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME + dynamicQuestions.questionColumnSuffix) != -1) ? subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME + dynamicQuestions.questionColumnSuffix) : subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME);
         subModuleNameTv.setText(subModules.getString(columnIndex));
+
+        subModuleNameTv.post(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    if (subModuleNameTv.getLineCount()>4){
+                        subModuleNameTv.setMaxLines(4);
+                        subModuleNameTv.setEllipsize(TextUtils.TruncateAt.END);}
+                }catch (Exception e){}
+            }
+        });
+
     }
 
     private int getReportingYear() {
