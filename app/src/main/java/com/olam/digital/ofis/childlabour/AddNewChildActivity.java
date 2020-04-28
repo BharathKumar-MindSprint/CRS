@@ -9,6 +9,8 @@ import android.os.SystemClock;
 import androidx.annotation.Nullable;
 import androidx.core.app.NavUtils;
 import android.text.Html;
+import android.text.InputFilter;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,8 +24,10 @@ import android.widget.Toast;
 
 import com.olam.digital.ofis.BaseActivity;
 import com.olam.digital.ofis.DataLayer;
+import com.olam.digital.ofis.DynamicQuestions;
 import com.olam.digital.ofis.OFISDBContract;
 import com.olam.digital.ofis.R;
+import com.olam.digital.ofis.Utilities;
 import com.olam.digital.ofis.childlabour.businesslogic.ChildLabourLogic;
 import com.olam.digital.ofis.childlabour.dto.ChildrenDTO;
 import com.olam.digital.ofis.gps.GPSListener;
@@ -33,6 +37,7 @@ import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.gps.utils.GPSUtils;
 import com.olam.digital.ofis.matoma.MatomoHelper;
 import com.olam.digital.ofis.matoma.ScreenNameConstants;
+import com.olam.digital.ofis.recordpolygon.Utils;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -125,6 +130,8 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
 
     private void initComponents() {
         fullnameEditText=findViewById(R.id.fullnameEditText);
+        fullnameEditText.setFilters(new InputFilter[]{new Utils.EmojiExcludeFilter()});
+        fullnameEditText.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
         maleButton=findViewById(R.id.maleButton);
         femaleButton=findViewById(R.id.femaleButton);
         ageSpinner=findViewById(R.id.ageSpinner);
@@ -185,6 +192,7 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
 
     // Method to enroll the new child
     private void addNewChild() {
+
         String name=fullnameEditText.getText().toString().trim();
         if (TextUtils.isEmpty(name)){
             Toast.makeText(AddNewChildActivity.this,getResources().getString(R.string.fill_child_name),Toast.LENGTH_LONG).show();
