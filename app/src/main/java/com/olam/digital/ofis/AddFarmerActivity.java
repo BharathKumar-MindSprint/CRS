@@ -60,6 +60,7 @@ import com.olam.digital.ofis.matoma.MatomoHelper;
 import com.olam.digital.ofis.matoma.ScreenNameConstants;
 import com.olam.digital.ofis.model.NationalIdDTO;
 import com.olam.digital.ofis.model.NationalIdTypeDTO;
+import com.olam.digital.ofis.recordpolygon.Utils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -417,7 +418,8 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     private void populateExistingValues(final Cursor existingItem) {
         EditText farmerName = findViewById(R.id.farmerName);
         farmerName.setText(existingItem.getString(existingItem.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME)));
-        farmerName.setFilters(new InputFilter[]{filter});
+        farmerName.setFilters(new InputFilter[]{new EmojiExcludeFilter()});
+
         farmerDOB = findViewById(R.id.farmerDOB);
         dateStrToSend = existingItem.getString(existingItem.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_DOB));
         farmerDOB.setText(dateStrToSend);
@@ -1988,4 +1990,18 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         return status;
     }
 
+    public static class EmojiExcludeFilter implements InputFilter {
+        private String blockCharacterSet = "~#^|$%&*!'\"";
+        @Override
+        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+            for (int i = start; i < end; i++) {
+                int type = Character.getType(source.charAt(i));
+                if (type == Character.SURROGATE || type == Character.OTHER_SYMBOL ||
+                        (source != null && blockCharacterSet.contains(("" + source)))) {
+                    return "";
+                }
+            }
+            return null;
+        }
+    }
 }

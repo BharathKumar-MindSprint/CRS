@@ -1,5 +1,7 @@
 package com.olam.digital.ofis.recordpolygon;
 
+import android.text.InputFilter;
+import android.text.Spanned;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -71,5 +73,18 @@ public class Utils {
     private static double calculateXSegment(final double longitudeRef, final double longitude, final double latitude,
                                             final double circumference) {
         return (longitude - longitudeRef) * circumference * Math.cos(Math.toRadians(latitude)) / 360.0;
+    }
+
+    public static class EmojiExcludeFilter implements InputFilter {
+        @Override
+        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+            for (int i = start; i < end; i++) {
+                int type = Character.getType(source.charAt(i));
+                if (type == Character.SURROGATE || type == Character.OTHER_SYMBOL) {
+                    return "";
+                }
+            }
+            return null;
+        }
     }
 }

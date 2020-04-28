@@ -16,6 +16,9 @@ import androidx.core.app.NavUtils;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.text.InputFilter;
+import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
@@ -23,6 +26,8 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
+
+import com.olam.digital.ofis.recordpolygon.Utils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -284,6 +289,8 @@ public class BaseActivity extends AppCompatActivity {
 
             Spinner idtypespinner = view.findViewById(R.id.idtypespinner);
             EditText nidnumber = view.findViewById(R.id.nidnumber);
+            nidnumber.setFilters(new InputFilter[]{new Utils.EmojiExcludeFilter()});
+            nidnumber.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
             String value = idtypespinner.getSelectedItem().toString();
             int type = getNidType(value);
             String nid = nidnumber.getText().toString();

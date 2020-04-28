@@ -11,6 +11,9 @@ import android.database.MergeCursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.text.InputFilter;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -25,6 +28,7 @@ import android.widget.TextView;
 import com.google.firebase.crash.FirebaseCrash;
 import com.olam.digital.ofis.childlabour.ChildLabourUtils;
 import com.olam.digital.ofis.model.NationalIdDTO;
+import com.olam.digital.ofis.recordpolygon.Utils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -1680,7 +1684,8 @@ public class DataLayer {
         final Spinner placeSpinner = (Spinner) activity.findViewById(R.id.spinner_place);
 
         final EditText newplace =(EditText) activity.findViewById(R.id.newPlaceName);
-
+        newplace.setFilters(new InputFilter[]{new Utils.EmojiExcludeFilter()});
+        newplace.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
         Cursor countries = getSpinnerData(OFISDBContract.CountriesEntry.TABLE_NAME, true, OFISDBContract.CountriesEntry.COLUMN_NAME_ENUMERATOR_COUNTRY, 1, true, OFISDBContract.CountriesEntry.COLUMN_NAME_COUNTRY_NAME);
         bindDataDrivenSpinner(countrySpinner, countries, context, R.string.spinner_country_default, null, false);
 
@@ -1798,6 +1803,8 @@ public class DataLayer {
 
             if (activity.findViewById(R.id.newPlaceName) != null) {
                 final EditText newPlaceName = (EditText) activity.findViewById(R.id.newPlaceName);
+                newPlaceName.setFilters(new InputFilter[]{new Utils.EmojiExcludeFilter()});
+                newPlaceName.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
                 placeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long id) {
