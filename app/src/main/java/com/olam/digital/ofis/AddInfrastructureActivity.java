@@ -19,6 +19,9 @@ import android.provider.Settings;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+
+import android.text.InputFilter;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -63,6 +66,7 @@ import com.olam.digital.ofis.matoma.MatomoHelper;
 import com.olam.digital.ofis.matoma.ScreenNameConstants;
 import com.olam.digital.ofis.model.ModuleDTO;
 import com.olam.digital.ofis.model.SubModuleDTO;
+import com.olam.digital.ofis.recordpolygon.Utils;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -195,6 +199,8 @@ public class AddInfrastructureActivity extends BaseActivity {
 
         dl = new DataLayer(res, context);
         poiName = (EditText) findViewById(R.id.poiName);
+        poiName.setFilters(new InputFilter[]{new Utils.EmojiExcludeFilter()});
+        poiName.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
         subModulesSpinner = (Spinner) findViewById(R.id.spinner_submodules);
         modulesSpinner = (Spinner) findViewById(R.id.spinner_modules);
         villageSpinner=(Spinner) findViewById(R.id.villageSpinner);
@@ -431,6 +437,8 @@ public class AddInfrastructureActivity extends BaseActivity {
     @SuppressLint("SetTextI18n")
     private void populateExistingValues(final Cursor existingItem) {
         gpsField = (EditText) findViewById(R.id.gpsPosition);
+        gpsField.setFilters(new InputFilter[]{new Utils.EmojiExcludeFilter()});
+        gpsField.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
         int selectedModulePOI = existingItem.getInt(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE_ID));
         int selectedSubModulePOI = existingItem.getInt(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_SUBGROUP_TYPE_ID));
         recorded_lat = existingItem.getString(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LAT));
@@ -670,6 +678,8 @@ public class AddInfrastructureActivity extends BaseActivity {
             //  poiLocation = (Location) msg.obj;
             poiLocation = location;
             gpsField = (EditText) findViewById(R.id.gpsPosition);
+            gpsField.setFilters(new InputFilter[]{new Utils.EmojiExcludeFilter()});
+            gpsField.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
             String locationResult;
             if (poiLocation != null) {
                 double latitude = poiLocation.getLatitude();

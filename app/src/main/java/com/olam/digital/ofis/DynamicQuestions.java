@@ -15,7 +15,9 @@ import android.provider.MediaStore;
 import androidx.core.content.ContextCompat;
 import android.text.Editable;
 import android.text.Html;
+import android.text.InputFilter;
 import android.text.InputType;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -1335,7 +1337,8 @@ public class DynamicQuestions {
         final int answerId = answerIdTemp;
 
         final EditText et = (EditText) inflater.inflate(R.layout.module_edit_text, (isRepeaterItem) ? parentLayout : questionWrapper, false);
-
+        et.setFilters(new InputFilter[]{new EmojiExcludeFilter()});
+        et.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
         et.setTag(questionId);
         if (hasAnswers) {
             String currentAnswerValue = null;
@@ -1519,7 +1522,8 @@ public class DynamicQuestions {
         final int answerId = answerIdTemp;
 
         final EditText et = (EditText) inflater.inflate(R.layout.module_edit_text, (isRepeaterItem) ? parentLayout : questionWrapper, false);
-
+        et.setFilters(new InputFilter[]{new EmojiExcludeFilter()});
+        et.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
        /* if (hasAnswers) {
             String currentAnswerValue = null;
             if (isRepeaterItem && repeaterAnswers != null && repeaterAnswers.getCount() > 0) {
@@ -4163,6 +4167,18 @@ public class DynamicQuestions {
     }
 
 
+    private class EmojiExcludeFilter implements InputFilter {
 
+        @Override
+        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+            for (int i = start; i < end; i++) {
+                int type = Character.getType(source.charAt(i));
+                if (type == Character.SURROGATE || type == Character.OTHER_SYMBOL) {
+                    return "";
+                }
+            }
+            return null;
+        }
+    }
 
 }

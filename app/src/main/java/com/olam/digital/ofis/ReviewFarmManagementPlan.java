@@ -11,6 +11,8 @@ import android.os.Bundle;
 import androidx.appcompat.app.AlertDialog;
 import android.text.Editable;
 import android.text.Html;
+import android.text.InputFilter;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,6 +29,7 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.google.firebase.crash.FirebaseCrash;
+import com.olam.digital.ofis.recordpolygon.Utils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -196,7 +199,8 @@ public class ReviewFarmManagementPlan extends BaseActivity {
                     tv.setText(entries.getString(columnIndex));
 
                     final EditText et = (EditText) tr.findViewById(R.id.entryInputBox);
-
+                    et.setFilters(new InputFilter[]{new Utils.EmojiExcludeFilter()});
+                    et.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
                     // add existing entry stuff here
                     String existingvalue = entries.getString(entries.getColumnIndex(OFISDBContract.FarmManagementPlanValuesEntry.COLUMN_NAME_VALUE));
                     if (existingvalue != null) {

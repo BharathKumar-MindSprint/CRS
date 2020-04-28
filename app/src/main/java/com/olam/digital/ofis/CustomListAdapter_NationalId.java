@@ -9,6 +9,7 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
 import android.text.InputFilter;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.olam.digital.ofis.model.NationalIdDTO;
+import com.olam.digital.ofis.recordpolygon.Utils;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -72,6 +74,8 @@ public class CustomListAdapter_NationalId extends ArrayAdapter<NationalIdDTO> {
         ImageButton captureimg = view.findViewById(R.id.nidphotoActionButton);
         Spinner idtypespinner = view.findViewById(R.id.idtypespinner);
         EditText nidnumber = view.findViewById(R.id.nidnumber);
+        nidnumber.setFilters(new InputFilter[]{new Utils.EmojiExcludeFilter()});
+        nidnumber.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
         LinearLayout ll_capturephoto = view.findViewById(R.id.ll_capturephoto);
 
         ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(context, R.layout.spinner_item, nidList);
