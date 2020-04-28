@@ -76,6 +76,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/ModuleTitle"
+                android:maxLines="1"
+                android:ellipsize="end"
                 android:id="@+id/moduleListModuleName"
                 android:textColor="@color/ofis_base_font_dark"
                 android:textSize="@dimen/ofis_med_text" />
