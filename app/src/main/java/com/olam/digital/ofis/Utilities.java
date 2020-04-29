@@ -4,7 +4,6 @@ import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.SyncRequest;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.database.sqlite.SQLiteDatabase;
@@ -14,14 +13,15 @@ import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.v4.content.ContextCompat;
+import androidx.core.content.ContextCompat;
+
+import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
@@ -34,7 +34,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -280,7 +279,10 @@ public  static String base64ConversionForImage(String filepath)  {
         int permissionCheck = ContextCompat.checkSelfPermission(c, Manifest.permission.READ_PHONE_STATE);
         if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
             TelephonyManager telephonyManager = (TelephonyManager) c.getSystemService(Context.TELEPHONY_SERVICE);
-            return (telephonyManager.getDeviceId() == null) ? "emulator" : telephonyManager.getDeviceId();
+            String android_id = Settings.Secure.getString(c.getContentResolver(), Settings.Secure.ANDROID_ID);
+//            return (telephonyManager.getDeviceId() == null) ? "emulator" : telephonyManager.getDeviceId();
+            return android_id;
+
         } else {
             return "imei not available";
         }

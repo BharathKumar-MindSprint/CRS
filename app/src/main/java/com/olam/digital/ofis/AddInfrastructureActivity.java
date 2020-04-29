@@ -2,11 +2,9 @@ package com.olam.digital.ofis;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
@@ -18,9 +16,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.Settings;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
+import android.text.InputFilter;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -57,6 +58,7 @@ import com.karumi.dexter.listener.single.PermissionListener;
 import com.olam.digital.ofis.childlabour.ChildLabourUtils;
 import com.olam.digital.ofis.childlabour.businesslogic.SipLogic;
 import com.olam.digital.ofis.childlabour.dto.VillageDTO;
+import com.olam.digital.ofis.gps.GPSTracker;
 import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
 import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.gps.utils.GPSUtils;
@@ -64,6 +66,7 @@ import com.olam.digital.ofis.matoma.MatomoHelper;
 import com.olam.digital.ofis.matoma.ScreenNameConstants;
 import com.olam.digital.ofis.model.ModuleDTO;
 import com.olam.digital.ofis.model.SubModuleDTO;
+import com.olam.digital.ofis.recordpolygon.Utils;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -188,7 +191,7 @@ public class AddInfrastructureActivity extends BaseActivity {
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(UPDATE_INTERVAL_IN_MILLISECONDS);
         mLocationRequest.setFastestInterval(FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        mLocationRequest.setPriority(new GPSTracker(this).getLocationMode());
 
         LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder();
         builder.addLocationRequest(mLocationRequest);
@@ -196,6 +199,8 @@ public class AddInfrastructureActivity extends BaseActivity {
 
         dl = new DataLayer(res, context);
         poiName = (EditText) findViewById(R.id.poiName);
+        poiName.setFilters(new InputFilter[]{new Utils.EmojiExcludeFilter()});
+        poiName.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
         subModulesSpinner = (Spinner) findViewById(R.id.spinner_submodules);
         modulesSpinner = (Spinner) findViewById(R.id.spinner_modules);
         villageSpinner=(Spinner) findViewById(R.id.villageSpinner);
@@ -432,6 +437,8 @@ public class AddInfrastructureActivity extends BaseActivity {
     @SuppressLint("SetTextI18n")
     private void populateExistingValues(final Cursor existingItem) {
         gpsField = (EditText) findViewById(R.id.gpsPosition);
+        gpsField.setFilters(new InputFilter[]{new Utils.EmojiExcludeFilter()});
+        gpsField.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
         int selectedModulePOI = existingItem.getInt(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE_ID));
         int selectedSubModulePOI = existingItem.getInt(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_SUBGROUP_TYPE_ID));
         recorded_lat = existingItem.getString(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LAT));
@@ -671,6 +678,8 @@ public class AddInfrastructureActivity extends BaseActivity {
             //  poiLocation = (Location) msg.obj;
             poiLocation = location;
             gpsField = (EditText) findViewById(R.id.gpsPosition);
+            gpsField.setFilters(new InputFilter[]{new Utils.EmojiExcludeFilter()});
+            gpsField.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
             String locationResult;
             if (poiLocation != null) {
                 double latitude = poiLocation.getLatitude();

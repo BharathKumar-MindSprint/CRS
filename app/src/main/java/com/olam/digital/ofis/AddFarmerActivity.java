@@ -1,7 +1,6 @@
 package com.olam.digital.ofis;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.ContentValues;
@@ -18,9 +17,10 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.StrictMode;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.appcompat.app.AlertDialog;
 import android.telephony.PhoneNumberUtils;
 import android.text.InputFilter;
 import android.text.Spanned;
@@ -60,6 +60,7 @@ import com.olam.digital.ofis.matoma.MatomoHelper;
 import com.olam.digital.ofis.matoma.ScreenNameConstants;
 import com.olam.digital.ofis.model.NationalIdDTO;
 import com.olam.digital.ofis.model.NationalIdTypeDTO;
+import com.olam.digital.ofis.recordpolygon.Utils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -292,9 +293,11 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             }
         };
         gpsTracker = new GPSTracker(this, gpsListener);
-        if (gpsTracker.isGpsEnabled()) {
+
+//        if (gpsTracker.isGpsEnabled()) {
+
             gpsTracker.startLocationUpdateInitially();
-        }
+ //       }
 
     }
 
@@ -417,7 +420,9 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     private void populateExistingValues(final Cursor existingItem) {
         EditText farmerName = findViewById(R.id.farmerName);
         farmerName.setText(existingItem.getString(existingItem.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME)));
-        farmerName.setFilters(new InputFilter[]{filter});
+
+        farmerName.setFilters(new InputFilter[]{new EmojiExcludeFilter()});
+
         farmerDOB = findViewById(R.id.farmerDOB);
         dateStrToSend = existingItem.getString(existingItem.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_DOB));
         farmerDOB.setText(dateStrToSend);
@@ -1261,9 +1266,13 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                             }
                         } else {
                             // check the current location
-                            if (mCurrentLocation == null || !gpsTracker.isGpsEnabled()) {
-                                gpsTracker.getDeviceLocation();
-                                return;
+                            if(mCurrentLocation != null){
+                                 // check the current location
+                            }else {
+                                if (mCurrentLocation == null || !gpsTracker.isGpsEnabled()) {
+                                    gpsTracker.getDeviceLocation();
+                                    return;
+                                }
                             }
 
                             long newFarmerId = dl.insertFarmer(values);
@@ -1762,7 +1771,6 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             }
         });
 
-
         bt_confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1982,6 +1990,22 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             }
         }
         return status;
+    }
+
+
+    public static class EmojiExcludeFilter implements InputFilter {
+        private String blockCharacterSet = "~#^|$%&*!'\"";
+        @Override
+        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+            for (int i = start; i < end; i++) {
+                int type = Character.getType(source.charAt(i));
+                if (type == Character.SURROGATE || type == Character.OTHER_SYMBOL ||
+                        (source != null && blockCharacterSet.contains(("" + source)))) {
+                    return "";
+                }
+            }
+            return null;
+        }
     }
 
 }

@@ -1,8 +1,6 @@
 package com.olam.digital.ofis.recordpolygon;
 
 import android.Manifest;
-import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.ContentValues;
@@ -25,12 +23,13 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.Settings;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.NavUtils;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.content.res.ResourcesCompat;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NavUtils;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.view.View;
@@ -61,7 +60,7 @@ import com.olam.digital.ofis.BuildConfig;
 import com.olam.digital.ofis.DataLayer;
 import com.olam.digital.ofis.OFISDBContract;
 import com.olam.digital.ofis.R;
-import com.olam.digital.ofis.ViewFarmerActivity;
+import com.olam.digital.ofis.gps.GPSTracker;
 import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
 import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.gps.utils.GPSUtils;
@@ -234,8 +233,12 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                         token.continuePermissionRequest();
                     }
                 }).check();
+
         if (!isGPSProviderEnabled()) {
-            showTurnOnGPSDialog();
+            if (locationMode() !=2){
+                showTurnOnGPSDialog();
+            }
+
         } else {
             //Go to the current location with location marker in center of map.
             centerCurrentLocation();
@@ -462,6 +465,16 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
         initializeLoggingVariables();
     }
 
+    private int locationMode(){
+        int locationMode=0;
+        try {
+            locationMode = Settings.Secure.getInt(this.getContentResolver(),Settings.Secure.LOCATION_MODE);
+        } catch (Settings.SettingNotFoundException e) {
+            e.printStackTrace();
+        }
+        return locationMode;
+    }
+
     private void openSettings() {
         Intent intent = new Intent();
         intent.setAction(
@@ -609,7 +622,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
 
     void handleStartStopLoggingButton() {
 
-        if (isGPSProviderEnabled()) {
+        if (isGPSProviderEnabled() || locationMode()==2) {
             if (!checkPlotEntryExistInPreference()) {
                 if (mLocationBeanList.size() > 0 && !mIsLoggingStarted) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -847,7 +860,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
         return true;
     }
 
-    public static int getPermissionStatus(Activity activity, String androidPermissionName) {
+    public static int getPermissionStatus(AppCompatActivity activity, String androidPermissionName) {
         if (ContextCompat.checkSelfPermission(activity, androidPermissionName) != PackageManager.PERMISSION_GRANTED) {
             if (!ActivityCompat.shouldShowRequestPermissionRationale(activity, androidPermissionName)) {
                 return BLOCKED_OR_NEVER_ASKED;
@@ -1564,7 +1577,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
         locationRequest = new LocationRequest();
         locationRequest.setInterval(INTERVAL);
         locationRequest.setFastestInterval(FASTEST_INTERVAL);
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        locationRequest.setPriority(new GPSTracker(this).getLocationMode());
         locationRequest.setSmallestDisplacement(DISPLACEMENT);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this,

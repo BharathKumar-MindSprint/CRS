@@ -93,9 +93,15 @@ public class TrainingRecordConfirmation extends BaseListActivity {
         };
         gpsTracker=new GPSTracker(this,gpsListener);
         //gpsTracker.getDeviceLocation();
-        if (gpsTracker.isGpsEnabled()){
+//        if (gpsTracker.isGpsEnabled()){
             gpsTracker.startLocationUpdateInitially();
-        }
+//        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MatomoHelper.matomoScreenTracker(ScreenNameConstants.SCREEN_TRAINING_RECORD_ACTIVITY, ScreenNameConstants.SCREEN_TRAINING_RECORD_CONFIRMATION_ACTIVITY, ScreenNameConstants.SCREEN_TRAINING_RECORD_CONFIRMATION);
     }
 
     @Override
@@ -214,9 +220,13 @@ public class TrainingRecordConfirmation extends BaseListActivity {
             public void onClick(View v) {
                 // add transaction to network queue
                 MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_CONFIRM_TRAINING_RECORD,  ScreenNameConstants.BUTTON_CLICKED);
-                if (mCurrentLocation==null || !gpsTracker.isGpsEnabled()){
-                    gpsTracker.getDeviceLocation();
-                    return;
+
+                if (mCurrentLocation!=null){}else {
+                    if (mCurrentLocation == null || !gpsTracker.isGpsEnabled()) {
+                        gpsTracker.getDeviceLocation();
+                        return;
+                    }
+
                 }
 
 

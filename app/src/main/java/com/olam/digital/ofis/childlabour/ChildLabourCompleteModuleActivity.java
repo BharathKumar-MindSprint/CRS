@@ -1,7 +1,6 @@
 package com.olam.digital.ofis.childlabour;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -15,9 +14,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.Settings;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,7 +24,6 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -49,7 +47,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.crash.FirebaseCrash;
 import com.olam.digital.ofis.BaseActivity;
 import com.olam.digital.ofis.BuildConfig;
-import com.olam.digital.ofis.CompleteModuleActivity;
 import com.olam.digital.ofis.DataLayer;
 import com.olam.digital.ofis.DynamicQuestions;
 import com.olam.digital.ofis.OFISDBContract;
@@ -173,9 +170,9 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
         };
         gpsTracker=new GPSTracker(this,gpsListener);
        // gpsTracker.getDeviceLocation();
-        if (gpsTracker.isGpsEnabled()){
+//        if (gpsTracker.isGpsEnabled()){
             gpsTracker.startLocationUpdateInitially();
-        }
+//        }
 
     }
 
@@ -311,9 +308,11 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
                 if (isLastPage) {
 
                     try{
+                        if (mCurrentCapturedLocation!=null){}else{
                         if (mCurrentCapturedLocation == null || !gpsTracker.isGpsEnabled()) {
                             gpsTracker.getDeviceLocation();
                             return;
+                        }
                         }
                     }catch (Exception e){}
 
@@ -355,9 +354,11 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
 
         // check location
         if (action.equalsIgnoreCase("finish")) {
-            if (mCurrentCapturedLocation == null || !gpsTracker.isGpsEnabled()) {
-                gpsTracker.getDeviceLocation();
-                return;
+            if (mCurrentCapturedLocation!=null){}else {
+                if (mCurrentCapturedLocation == null || !gpsTracker.isGpsEnabled()) {
+                    gpsTracker.getDeviceLocation();
+                    return;
+                }
             }
         }
 
@@ -538,7 +539,7 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(UPDATE_INTERVAL_IN_MILLISECONDS);
         mLocationRequest.setFastestInterval(FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        mLocationRequest.setPriority(new GPSTracker(this).getLocationMode());
 
 
         LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder();

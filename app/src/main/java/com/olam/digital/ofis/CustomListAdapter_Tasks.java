@@ -4,8 +4,8 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Resources;
 import android.database.Cursor;
-import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,7 +16,6 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
 import com.google.firebase.crash.FirebaseCrash;
-import com.olam.digital.ofis.R;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

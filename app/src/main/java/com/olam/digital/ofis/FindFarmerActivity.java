@@ -5,10 +5,11 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.v4.app.NavUtils;
-import android.support.v7.app.AppCompatActivity;
+import androidx.core.app.NavUtils;
+import androidx.appcompat.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.InputFilter;
+import android.text.InputType;
 import android.text.Spanned;
 import android.text.TextWatcher;
 import android.view.MenuItem;
@@ -19,9 +20,11 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.olam.digital.ofis.R;
+
 import com.olam.digital.ofis.matoma.MatomoHelper;
 import com.olam.digital.ofis.matoma.ScreenNameConstants;
+import com.olam.digital.ofis.recordpolygon.Utils;
+
 
 
 public class FindFarmerActivity extends BaseListActivity implements AdapterView.OnItemClickListener {
@@ -56,6 +59,12 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
             if (source != null && blockCharacterSet.contains(("" + source))) {
                 return "";
             }
+            for (int i = start; i < end; i++) {
+                int type = Character.getType(source.charAt(i));
+                if (type == Character.SURROGATE || type == Character.OTHER_SYMBOL) {
+                    return "";
+                }
+            }
             return null;
         }
     };
@@ -75,6 +84,7 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
         farmerGroupSpinner = (Spinner) findViewById(R.id.spinner_farmerGroup);
         sectionSpinner = (Spinner) findViewById(R.id.spinner_section);
         ed = (EditText) findViewById(R.id.findFarmerSearchBox);
+        ed.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
         ed.setFilters(new InputFilter[] { filter });
         Intent intent = this.getIntent();
         transactionMode = intent.getBooleanExtra(TRANSACTION_MODE, false);

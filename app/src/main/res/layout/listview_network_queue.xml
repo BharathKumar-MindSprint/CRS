@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -78,7 +79,7 @@
                 android:maxHeight="@dimen/text_button_width_height"
                 android:scaleType="center"
                 android:id="@+id/imageView_pic"
-                android:src="@drawable/ic_upload_list"
+                app:srcCompat="@drawable/ic_upload_list"
                 android:contentDescription="@string/Farmer_Photo"
                 android:layout_gravity="center_vertical|center_horizontal" />
         </LinearLayout>

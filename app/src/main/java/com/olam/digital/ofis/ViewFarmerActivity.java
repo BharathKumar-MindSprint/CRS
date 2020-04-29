@@ -3,7 +3,6 @@ package com.olam.digital.ofis;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.ContentValues;
@@ -21,20 +20,19 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.os.Message;
 import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.provider.Settings;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.NavUtils;
-import android.support.v4.content.ContextCompat;
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NavUtils;
+import androidx.core.content.ContextCompat;
+import androidx.appcompat.app.AlertDialog;
 import android.telephony.PhoneNumberUtils;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -57,10 +55,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.gcacace.signaturepad.views.SignaturePad;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -72,10 +67,8 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResponse;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.location.SettingsClient;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.gson.Gson;
 import com.karumi.dexter.Dexter;
@@ -101,7 +94,6 @@ import com.olam.digital.ofis.recordpolygon.SharedPreferenceUtils;
 import com.olam.digital.ofis.recordpolygon.location;
 import com.olam.digital.ofis.recordpolygon.plot;
 import com.olam.digital.ofis.recordpolygon.plots;
-import com.olam.digital.ofis.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -120,8 +112,6 @@ import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Locale;
-
-import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
 
 
 public class ViewFarmerActivity extends BaseListActivity implements AdapterView.OnItemClickListener {
@@ -251,9 +241,9 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         };
         gpsTracker=new GPSTracker(this,gpsListener);
         //   gpsTracker.getDeviceLocation();
-        if (gpsTracker.isGpsEnabled()){
+//        if (gpsTracker.isGpsEnabled()){
             gpsTracker.startLocationUpdateInitially();
-        }
+  //      }
 
 
     }
@@ -290,7 +280,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(UPDATE_INTERVAL_IN_MILLISECONDS);
         mLocationRequest.setFastestInterval(FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        mLocationRequest.setPriority(new GPSTracker(this).getLocationMode());
 
         LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder();
         builder.addLocationRequest(mLocationRequest);
@@ -435,10 +425,17 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
             public void onClick(View v) {
                 // Request Permission only for Android Version Marshmallow and above
                 MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_UPDATE_PHOTO_BUTTON,  ScreenNameConstants.BUTTON_CLICKED);
-                if (mCurrentCapturedLocation==null || !gpsTracker.isGpsEnabled()) {
-                    gpsTracker.getDeviceLocation();
-                    return;
+
+                if (mCurrentCapturedLocation!=null){
+
+                }else{
+                    if (mCurrentCapturedLocation==null || !gpsTracker.isGpsEnabled()) {
+                        gpsTracker.getDeviceLocation();
+                        return;
+                    }
+
                 }
+
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     // Check Camera & Storage Permission
@@ -1381,11 +1378,14 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         dl.updateFarmerPhoto(farmerId,savedImagePath,olamFarmerIdStr,farmerNameStr);
 
         // Collect the GPS Point
-        if (mCurrentCapturedLocation==null || !gpsTracker.isGpsEnabled()){
+        if(mCurrentCapturedLocation != null){
+            // check the current location
+            collectGPSPoint(GPSConstants.MODULE_CAPTURE_UPDATE_PHOTO,mCurrentCapturedLocation);
+        }else if(mCurrentCapturedLocation==null || !gpsTracker.isGpsEnabled()){
             gpsTracker.getDeviceLocation();
             return;
         }else{
-            collectGPSPoint(GPSConstants.MODULE_CAPTURE_UPDATE_PHOTO,mCurrentCapturedLocation);
+            //
         }
     }
     private static String getFilePathUri(Context context, Uri uri) {

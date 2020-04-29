@@ -1,7 +1,6 @@
 package com.olam.digital.ofis;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.res.Resources;
@@ -11,6 +10,10 @@ import android.database.MatrixCursor;
 import android.database.MergeCursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.text.InputFilter;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -21,14 +24,11 @@ import android.widget.LinearLayout;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.crash.FirebaseCrash;
-import com.google.gson.JsonObject;
 import com.olam.digital.ofis.childlabour.ChildLabourUtils;
-import com.olam.digital.ofis.childlabour.dto.ChildrenDTO;
-import com.olam.digital.ofis.gps.dto.TrackDetailsDTO;
 import com.olam.digital.ofis.model.NationalIdDTO;
+import com.olam.digital.ofis.recordpolygon.Utils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -1596,7 +1596,7 @@ public class DataLayer {
         spinner.setAdapter(simpleCursorAdapter);
     }
 
-    void createBusinessHierarchySpinners(Activity activity, final Context context, final EditText farmerIdPrefix, final int farmerGroupSelection, final int sectionSelection) {
+    void createBusinessHierarchySpinners(AppCompatActivity activity, final Context context, final EditText farmerIdPrefix, final int farmerGroupSelection, final int sectionSelection) {
         final Spinner farmerGroupSpinner = (Spinner) activity.findViewById(R.id.spinner_farmerGroup);
         final Spinner sectionSpinner = (Spinner) activity.findViewById(R.id.spinner_section);
 
@@ -1677,14 +1677,15 @@ public class DataLayer {
 
     }
 
-    void createGeographyHierarchySpinners(final Activity activity, final Context context, final EditText farmerIdPrefix, int countrySelection, final int regionSelection, final int districtSelection, final int placeSelection, final LinearLayout phonenumbers,final boolean newPlace) {
+    void createGeographyHierarchySpinners(final AppCompatActivity activity, final Context context, final EditText farmerIdPrefix, int countrySelection, final int regionSelection, final int districtSelection, final int placeSelection, final LinearLayout phonenumbers, final boolean newPlace) {
         final Spinner countrySpinner = (Spinner) activity.findViewById(R.id.spinner_country);
         final Spinner regionSpinner = (Spinner) activity.findViewById(R.id.spinner_region);
         final Spinner districtSpinner = (Spinner) activity.findViewById(R.id.spinner_district);
         final Spinner placeSpinner = (Spinner) activity.findViewById(R.id.spinner_place);
 
         final EditText newplace =(EditText) activity.findViewById(R.id.newPlaceName);
-
+        newplace.setFilters(new InputFilter[]{new Utils.EmojiExcludeFilter()});
+        newplace.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
         Cursor countries = getSpinnerData(OFISDBContract.CountriesEntry.TABLE_NAME, true, OFISDBContract.CountriesEntry.COLUMN_NAME_ENUMERATOR_COUNTRY, 1, true, OFISDBContract.CountriesEntry.COLUMN_NAME_COUNTRY_NAME);
         bindDataDrivenSpinner(countrySpinner, countries, context, R.string.spinner_country_default, null, false);
 
@@ -1802,6 +1803,8 @@ public class DataLayer {
 
             if (activity.findViewById(R.id.newPlaceName) != null) {
                 final EditText newPlaceName = (EditText) activity.findViewById(R.id.newPlaceName);
+                newPlaceName.setFilters(new InputFilter[]{new Utils.EmojiExcludeFilter()});
+                newPlaceName.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
                 placeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long id) {
@@ -1849,7 +1852,7 @@ public class DataLayer {
         }
     }
 
-    void createProductSpinner(Activity activity, final Context context, int productSelection) {
+    void createProductSpinner(AppCompatActivity activity, final Context context, int productSelection) {
         final Spinner productSpinner = (Spinner) activity.findViewById(R.id.spinner_product);
 
         Cursor products = getSpinnerData(OFISDBContract.productSipEntry.TABLE_NAME, false, null, null, true, OFISDBContract.productSipEntry.COLUMN_NAME_PRODUCT_NAME);

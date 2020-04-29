@@ -3,7 +3,7 @@ package com.olam.digital.ofis;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 /**
  * Created by ben on 08/11/2016.

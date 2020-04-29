@@ -2,7 +2,6 @@ package com.olam.digital.ofis;
 
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
-import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -10,8 +9,10 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
+import androidx.core.content.ContextCompat;
 import android.text.Editable;
+import android.text.InputFilter;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
@@ -25,7 +26,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.olam.digital.ofis.R;
+import com.olam.digital.ofis.recordpolygon.Utils;
 
 import java.util.ArrayList;
 
@@ -72,7 +73,8 @@ public class TrainingAttendees extends BaseListActivity implements AdapterView.O
         farmerGroupSpinner = (Spinner) findViewById(R.id.spinner_farmerGroup);
         sectionSpinner = (Spinner) findViewById(R.id.spinner_section);
         ed = (EditText) findViewById(R.id.findFarmerSearchBox);
-
+        ed.setFilters(new InputFilter[]{new Utils.EmojiExcludeFilter()});
+        ed.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
         Intent intent = this.getIntent();
         trainingRecordId = intent.getLongExtra(EDIT_TRAININGRECORD_ID, 0);
         courseId = intent.getLongExtra(COURSE_ID, 0);

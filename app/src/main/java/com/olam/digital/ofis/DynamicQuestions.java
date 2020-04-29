@@ -12,10 +12,12 @@ import android.net.Uri;
 import android.os.CountDownTimer;
 import android.os.StrictMode;
 import android.provider.MediaStore;
-import android.support.v4.content.ContextCompat;
+import androidx.core.content.ContextCompat;
 import android.text.Editable;
 import android.text.Html;
+import android.text.InputFilter;
 import android.text.InputType;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -34,13 +36,10 @@ import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.crash.FirebaseCrash;
-import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.recordpolygon.AppConstants;
 
-import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -61,8 +60,6 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
-
-import okhttp3.internal.Util;
 
 /**
  * Created by ben on 02/06/2015.
@@ -1340,7 +1337,8 @@ public class DynamicQuestions {
         final int answerId = answerIdTemp;
 
         final EditText et = (EditText) inflater.inflate(R.layout.module_edit_text, (isRepeaterItem) ? parentLayout : questionWrapper, false);
-
+        et.setFilters(new InputFilter[]{new EmojiExcludeFilter()});
+        et.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
         et.setTag(questionId);
         if (hasAnswers) {
             String currentAnswerValue = null;
@@ -1524,7 +1522,8 @@ public class DynamicQuestions {
         final int answerId = answerIdTemp;
 
         final EditText et = (EditText) inflater.inflate(R.layout.module_edit_text, (isRepeaterItem) ? parentLayout : questionWrapper, false);
-
+        et.setFilters(new InputFilter[]{new EmojiExcludeFilter()});
+        et.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
        /* if (hasAnswers) {
             String currentAnswerValue = null;
             if (isRepeaterItem && repeaterAnswers != null && repeaterAnswers.getCount() > 0) {
@@ -4168,6 +4167,18 @@ public class DynamicQuestions {
     }
 
 
+    private class EmojiExcludeFilter implements InputFilter {
 
+        @Override
+        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+            for (int i = start; i < end; i++) {
+                int type = Character.getType(source.charAt(i));
+                if (type == Character.SURROGATE || type == Character.OTHER_SYMBOL) {
+                    return "";
+                }
+            }
+            return null;
+        }
+    }
 
 }

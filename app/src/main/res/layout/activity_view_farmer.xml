@@ -1,4 +1,5 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/ofis_page_background"
@@ -46,7 +47,7 @@
                     android:contentDescription="@string/ofis_cd_info_icon"
                     android:layout_gravity="center_vertical"
                     android:id="@+id/imageView2"
-                    android:src="@drawable/ic_task_list_icon" />
+                    app:srcCompat="@drawable/ic_task_list_icon" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -146,7 +147,7 @@
                 android:layout_height="112dp"
                 android:contentDescription="@string/Farmer_Photo"
                 android:id="@+id/viewFarmerFarmerPhoto"
-                android:src="@drawable/empty_farmer_photo"
+                app:srcCompat="@drawable/empty_farmer_photo"
                 android:background="@android:color/transparent"
                 android:scaleType="fitStart"
                 android:layout_alignParentLeft="false"
@@ -158,7 +159,7 @@
                 android:layout_height="@dimen/standard_button_width_height"
                 android:id="@+id/farmerPhotoActionButton"
                 android:contentDescription="@string/Camera"
-                android:src="@drawable/ic_actionbutton_camera"
+                app:srcCompat="@drawable/ic_actionbutton_camera"
                 android:layout_alignParentEnd="false"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentRight="true"
@@ -296,7 +297,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:id="@+id/phonenumbersCloseButton"
-                android:src="@drawable/ic_consent_close"
+                app:srcCompat="@drawable/ic_consent_close"
                 android:background="@android:color/transparent"
                 android:layout_weight="1"
                 android:layout_gravity="end|top"
@@ -383,7 +384,7 @@
                             android:layout_width="@dimen/small_button_width_height"
                             android:layout_height="@dimen/small_button_width_height"
                             android:id="@+id/addNumber"
-                            android:src="@drawable/ic_ofis_add"
+                            app:srcCompat="@drawable/ic_ofis_add"
                             android:scaleType="fitXY"
                             android:background="@android:color/transparent"
                             android:layout_marginRight="@dimen/ofis_bottom_section_padding_horizontal"

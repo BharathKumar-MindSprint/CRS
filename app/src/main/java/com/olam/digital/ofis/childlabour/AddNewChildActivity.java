@@ -3,13 +3,14 @@ package com.olam.digital.ofis.childlabour;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
-import android.database.Cursor;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.SystemClock;
-import android.support.annotation.Nullable;
-import android.support.v4.app.NavUtils;
+import androidx.annotation.Nullable;
+import androidx.core.app.NavUtils;
 import android.text.Html;
+import android.text.InputFilter;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,16 +18,16 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.olam.digital.ofis.AddFarmerActivity;
 import com.olam.digital.ofis.BaseActivity;
 import com.olam.digital.ofis.DataLayer;
+import com.olam.digital.ofis.DynamicQuestions;
 import com.olam.digital.ofis.OFISDBContract;
 import com.olam.digital.ofis.R;
+import com.olam.digital.ofis.Utilities;
 import com.olam.digital.ofis.childlabour.businesslogic.ChildLabourLogic;
 import com.olam.digital.ofis.childlabour.dto.ChildrenDTO;
 import com.olam.digital.ofis.gps.GPSListener;
@@ -36,6 +37,9 @@ import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.gps.utils.GPSUtils;
 import com.olam.digital.ofis.matoma.MatomoHelper;
 import com.olam.digital.ofis.matoma.ScreenNameConstants;
+
+import com.olam.digital.ofis.recordpolygon.Utils;
+
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -106,9 +110,9 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
         };
         gpsTracker=new GPSTracker(this,gpsListener);
        // gpsTracker.getDeviceLocation();
-        if (gpsTracker.isGpsEnabled()){
+//        if (gpsTracker.isGpsEnabled()){
             gpsTracker.startLocationUpdateInitially();
-        }
+ //       }
 
 
     }
@@ -128,6 +132,8 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
 
     private void initComponents() {
         fullnameEditText=findViewById(R.id.fullnameEditText);
+        fullnameEditText.setFilters(new InputFilter[]{new Utils.EmojiExcludeFilter()});
+        fullnameEditText.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
         maleButton=findViewById(R.id.maleButton);
         femaleButton=findViewById(R.id.femaleButton);
         ageSpinner=findViewById(R.id.ageSpinner);
@@ -188,6 +194,7 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
 
     // Method to enroll the new child
     private void addNewChild() {
+
         String name=fullnameEditText.getText().toString().trim();
         if (TextUtils.isEmpty(name)){
             Toast.makeText(AddNewChildActivity.this,getResources().getString(R.string.fill_child_name),Toast.LENGTH_LONG).show();
@@ -202,9 +209,11 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
 
         if(getIntent().getStringExtra(ChildLabourUtils.ACTION).equalsIgnoreCase(ChildLabourUtils.NEW)){
 
-            if (mCurrentLocation==null || !gpsTracker.isGpsEnabled()){
-                gpsTracker.getDeviceLocation();
-                return;
+            if (mCurrentLocation!=null){}else {
+                if (mCurrentLocation == null || !gpsTracker.isGpsEnabled()) {
+                    gpsTracker.getDeviceLocation();
+                    return;
+                }
             }
             submitChild(name);
         }else {

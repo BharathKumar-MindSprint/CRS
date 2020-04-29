@@ -1,7 +1,6 @@
 package com.olam.digital.ofis;
 
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
@@ -16,13 +15,15 @@ import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.support.v4.app.NavUtils;
-import android.support.v4.content.ContextCompat;
+import androidx.core.app.NavUtils;
+import androidx.core.content.ContextCompat;
+import androidx.appcompat.app.AlertDialog;
 import android.telephony.PhoneStateListener;
 import android.telephony.SignalStrength;
 import android.telephony.TelephonyManager;
 import android.text.Editable;
 import android.text.InputFilter;
+import android.text.InputType;
 import android.text.Spanned;
 import android.text.TextWatcher;
 import android.view.MenuItem;
@@ -42,7 +43,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.crash.FirebaseCrash;
-import com.olam.digital.ofis.R;
+import com.olam.digital.ofis.recordpolygon.Utils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -173,7 +174,8 @@ public class TransactionItem extends BaseActivity {
         recipientPhoneWrapper = (LinearLayout) findViewById(R.id.recipientPhoneWrapper);
         diallingCode = (TextView) findViewById(R.id.recipientPhoneDiallingCode);
         phoneNumber = (EditText) findViewById(R.id.recipientPhoneNumber);
-
+        transactionNotes.setFilters(new InputFilter[]{new Utils.EmojiExcludeFilter()});
+        transactionNotes.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
         unitsText = res.getString(R.string.price_per_unit_default);
         priceLabel.append(" " + unitsText);
 

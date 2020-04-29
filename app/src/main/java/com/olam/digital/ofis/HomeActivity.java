@@ -3,7 +3,6 @@ package com.olam.digital.ofis;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -25,15 +24,17 @@ import android.os.Message;
 import android.os.StrictMode;
 import android.os.SystemClock;
 import android.provider.Settings;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.CardView;
+
+import androidx.appcompat.app.ActionBar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.appcompat.app.AlertDialog;
+import androidx.cardview.widget.CardView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
@@ -75,15 +76,10 @@ import com.olam.digital.ofis.logging.FabricLogsWriter;
 import com.olam.digital.ofis.matoma.MatomoHelper;
 import com.olam.digital.ofis.matoma.ScreenNameConstants;
 import com.olam.digital.ofis.recordpolygon.RecordPolygonActivity;
-import com.olam.digital.ofis.recordpolygon.SharedPreferenceUtils;
-import com.olam.digital.ofis.BuildConfig;
-import com.olam.digital.ofis.R;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
 import java.util.Locale;
 
@@ -93,8 +89,6 @@ import javax.net.ssl.SSLEngine;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
-import static io.fabric.sdk.android.Fabric.TAG;
 
 
 public class HomeActivity extends BaseListActivity implements Callback<AuthenticationDTO>,OnAccessTokenInterface, AdapterView.OnItemClickListener{
@@ -183,6 +177,8 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         context = me = this;
         staticRes = getResources();
         res = getResources();
+//        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_TITLE);
+//        setTitle(R.string.applicationName);
 
         dl = new DataLayer(res, context);
         nl = new NetworkLayer(context, res);
@@ -360,6 +356,9 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         }
 
     }
+
+
+
 
 
     protected void checkTls() {

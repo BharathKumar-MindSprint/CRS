@@ -5,11 +5,11 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.NavUtils;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.AppCompatButton;
-import android.support.v7.widget.AppCompatCheckBox;
+import androidx.annotation.Nullable;
+import androidx.core.app.NavUtils;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
+import androidx.appcompat.widget.AppCompatCheckBox;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,7 +20,6 @@ import com.olam.digital.ofis.BaseActivity;
 import com.olam.digital.ofis.OFISDBContract;
 import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.childlabour.businesslogic.ChildLabourLogic;
-import com.olam.digital.ofis.childlabour.dto.ChildrenDTO;
 import com.olam.digital.ofis.gps.GPSListener;
 import com.olam.digital.ofis.gps.GPSTracker;
 import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
@@ -77,9 +76,9 @@ public class ChildVisitDetailActivity  extends BaseActivity implements View.OnCl
         };
         gpsTracker=new GPSTracker(this,gpsListener);
      //   gpsTracker.getDeviceLocation();
-        if (gpsTracker.isGpsEnabled()){
+//        if (gpsTracker.isGpsEnabled()){
             gpsTracker.startLocationUpdateInitially();
-        }
+ //       }
     }
 
     @Override
@@ -136,10 +135,11 @@ public class ChildVisitDetailActivity  extends BaseActivity implements View.OnCl
 
     // method to save the child survey visit details
     private void saveVisitDetails() {
-
-        if (mCurrentLocation==null || !gpsTracker.isGpsEnabled()){
-            gpsTracker.getDeviceLocation();
-            return;
+        if (mCurrentLocation!=null){}else {
+            if (mCurrentLocation == null || !gpsTracker.isGpsEnabled()) {
+                gpsTracker.getDeviceLocation();
+                return;
+            }
         }
 
         if(houseHoldCheckBox.isChecked()){
