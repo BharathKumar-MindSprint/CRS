@@ -56,7 +56,6 @@ public class TrainingRecordConfirmation extends BaseListActivity {
     private static final int REQUEST_CHECK_SETTINGS = 100;
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,6 +96,12 @@ public class TrainingRecordConfirmation extends BaseListActivity {
 //        if (gpsTracker.isGpsEnabled()){
             gpsTracker.startLocationUpdateInitially();
 //        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MatomoHelper.matomoScreenTracker(ScreenNameConstants.SCREEN_TRAINING_RECORD_ACTIVITY, ScreenNameConstants.SCREEN_TRAINING_RECORD_CONFIRMATION_ACTIVITY, ScreenNameConstants.SCREEN_TRAINING_RECORD_CONFIRMATION);
     }
 
     @Override
@@ -215,11 +220,13 @@ public class TrainingRecordConfirmation extends BaseListActivity {
             public void onClick(View v) {
                 // add transaction to network queue
                 MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_CONFIRM_TRAINING_RECORD,  ScreenNameConstants.BUTTON_CLICKED);
+
                 if (mCurrentLocation!=null){}else {
                     if (mCurrentLocation == null || !gpsTracker.isGpsEnabled()) {
                         gpsTracker.getDeviceLocation();
                         return;
                     }
+
                 }
 
 

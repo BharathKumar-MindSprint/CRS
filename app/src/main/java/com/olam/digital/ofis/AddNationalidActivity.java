@@ -15,6 +15,7 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.widget.AppCompatButton;
+
 import android.text.InputFilter;
 import android.text.InputType;
 import android.view.LayoutInflater;
@@ -190,10 +191,12 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
         EditText nidnumber = nationalidinclude.findViewById(R.id.nidnumber);
         nidnumber.setFilters(new InputFilter[]{new Utils.EmojiExcludeFilter()});
         nidnumber.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+
         ImageButton actionbtn = nationalidinclude.findViewById(R.id.nidphotoActionButton);
         ImageButton nationalidphoto = nationalidinclude.findViewById(R.id.nationalidphoto);
         actionbtn.setTag(nationalids.getChildCount());
         nationalidphoto.setTag(nationalids.getChildCount());
+
         spinner_nidtype.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -262,8 +265,10 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
                     ImageButton nationalidphoto = nationalidinclude.findViewById(R.id.nationalidphoto);
                     LinearLayout ll_capturephoto = nationalidinclude.findViewById(R.id.ll_capturephoto);
                     EditText nidnumber = nationalidinclude.findViewById(R.id.nidnumber);
+
                     nidnumber.setFilters(new InputFilter[]{new Utils.EmojiExcludeFilter()});
                     nidnumber.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+
                     spinnerArrayAdapter = new ArrayAdapter<String>(AddNationalidActivity.this, R.layout.nidtype_spinner, refreshitem);
                     spinnerArrayAdapter.setDropDownViewResource(R.layout.nidtype_spinner);
                     spinner_nidtype.setAdapter(spinnerArrayAdapter);
@@ -390,8 +395,10 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
             LinearLayout nidrow = (LinearLayout) nationalids.getChildAt(j);
             EditText nidnumber = nidrow.findViewById(R.id.nidnumber);
             Spinner nid_type = nidrow.findViewById(R.id.idtypespinner);
+
             nidnumber.setFilters(new InputFilter[]{new Utils.EmojiExcludeFilter()});
             nidnumber.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+
             ImageButton nidphotoActionButton = nidrow.findViewById(R.id.nidphotoActionButton);
             String value = nid_type.getSelectedItem().toString();
             int type = getNidType(value);
@@ -511,8 +518,10 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
                     actionbtn.setTag(nationalids.getChildCount());
                     nationalidphoto.setTag(nationalids.getChildCount());
                     EditText nidnumber = nationalidinclude.findViewById(R.id.nidnumber);
+
                     nidnumber.setFilters(new InputFilter[]{new Utils.EmojiExcludeFilter()});
                     nidnumber.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+
                     spinnerArrayAdapter = new ArrayAdapter<String>(AddNationalidActivity.this, R.layout.spinner_item, refreshitem);
                     spinnerArrayAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
                     spinner_nidtype.setAdapter(spinnerArrayAdapter);
