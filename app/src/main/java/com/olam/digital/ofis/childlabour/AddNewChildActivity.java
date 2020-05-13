@@ -33,6 +33,7 @@ import com.olam.digital.ofis.childlabour.dto.ChildrenDTO;
 import com.olam.digital.ofis.gps.GPSListener;
 import com.olam.digital.ofis.gps.GPSTracker;
 import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
+import com.olam.digital.ofis.gps.dto.TrackDetailsDTO;
 import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.gps.utils.GPSUtils;
 import com.olam.digital.ofis.matoma.MatomoHelper;
@@ -266,7 +267,7 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
         long newChildId= new ChildLabourLogic().insertChildDetails(this,contentValues,farmerName);
         if (newChildId != -1){
             if(action.equalsIgnoreCase(ChildLabourUtils.NEW)){
-                collectGPSPoint();
+                collectGPSPoint(String.valueOf(newChildId),name);
                 Toast.makeText(this,getResources().getString(R.string.child_register_successfully),Toast.LENGTH_LONG).show();
             }else{
                 Toast.makeText(this,getResources().getString(R.string.child_updated_successfully),Toast.LENGTH_LONG).show();
@@ -275,9 +276,21 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
         }
     }
 
-        private void collectGPSPoint() {
-            ContentValues geoContentValues=new GPSUtils().getGeoContentValues(GPSConstants.MODULE_CAPTURE_ADD_CHILD,String.valueOf(mCurrentLocation.getLatitude()),String.valueOf(mCurrentLocation.getLongitude()),new Timestamp(System.currentTimeMillis()).toString());
-            Long newTrackId= new GpsTrackerLogic().insertGeoDataDetails(this,geoContentValues);
+        private void collectGPSPoint(String childId, String childName) {
+            TrackDetailsDTO trackDetailsDTO=new TrackDetailsDTO();
+            trackDetailsDTO.setModule(GPSConstants.MODULE_CAPTURE_ADD_CHILD);
+            trackDetailsDTO.setLatitude(String.valueOf(mCurrentLocation.getLatitude()));
+            trackDetailsDTO.setLongitude(String.valueOf(mCurrentLocation.getLongitude()));
+            trackDetailsDTO.setRecordDate(new Timestamp(System.currentTimeMillis()).toString());
+            trackDetailsDTO.setFarmerId(String.valueOf(farmerId));
+            trackDetailsDTO.setFarmerName(farmerName);
+            trackDetailsDTO.setChildId(childId);
+            trackDetailsDTO.setChildName(childName);
+            trackDetailsDTO.setGender(gender);
+            trackDetailsDTO.setAge(age);
+
+            ContentValues geoContentValues=new GPSUtils().getGeoContentValues(trackDetailsDTO);
+            new GpsTrackerLogic().insertGeoDataDetails(this,geoContentValues);
         }
 
 

@@ -70,6 +70,7 @@ import com.olam.digital.ofis.childlabour.ViewChildLabourSurveyActivity;
 import com.olam.digital.ofis.gps.GPSListener;
 import com.olam.digital.ofis.gps.GPSTracker;
 import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
+import com.olam.digital.ofis.gps.dto.TrackDetailsDTO;
 import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.gps.utils.GPSUtils;
 import com.olam.digital.ofis.logging.FabricLogsWriter;
@@ -313,7 +314,12 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             public void onGPSClick(Location location) {
                 if (location!=null){
                     mCurrentLocation=location;
-                    ContentValues geoContentValues=new GPSUtils().getGeoContentValues(GPSConstants.MODULE_CAPTURE_CAPTURE_MY_LOCATION,String.valueOf(mCurrentLocation.getLatitude()),String.valueOf(mCurrentLocation.getLongitude()),new Timestamp(System.currentTimeMillis()).toString());
+                    TrackDetailsDTO trackDetailsDTO=new TrackDetailsDTO();
+                    trackDetailsDTO.setModule(GPSConstants.MODULE_CAPTURE_CAPTURE_MY_LOCATION);
+                    trackDetailsDTO.setLatitude(String.valueOf(mCurrentLocation.getLatitude()));
+                    trackDetailsDTO.setLongitude(String.valueOf(mCurrentLocation.getLongitude()));
+                    trackDetailsDTO.setRecordDate(new Timestamp(System.currentTimeMillis()).toString());
+                    ContentValues geoContentValues=new GPSUtils().getGeoContentValues(trackDetailsDTO);
                     if (newGps) {
                         long newGpsQueueId = new GpsTrackerLogic().insertGPSDetailsToQueue(context, geoContentValues);
                         if (newGpsQueueId != -1) {
@@ -919,6 +925,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             captureLocation.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                   // nl.syncGPSData();
                     MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_CAPTURE_MY_LOCATION,  ScreenNameConstants.BUTTON_CLICKED);
                     if (SystemClock.elapsedRealtime() - lastClickTime < 3000){
                         return;
@@ -1178,11 +1185,11 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
     @Override
     public void onTokenCompleted(String status) {
-        if(! status.equalsIgnoreCase("false")){
+        if(!status.equalsIgnoreCase("false")){
             Utilities.minProgressCount=0;
             try{
                 if (GpsTrackerLogic.getGeoPointCount(context) >0 ){
-                    nl.syncGPSData();
+                   // nl.syncGPSData();
                 }
             }catch (Exception e){}
 

@@ -3344,9 +3344,15 @@ public class DataLayer {
                     farmerChildValues.put(OFISDBContract.ChildEntry.COLUMN_NAME_FARMER_ID, id);
                     db.update(OFISDBContract.ChildEntry.TABLE_NAME, farmerChildValues, OFISDBContract.ChildEntry.COLUMN_NAME_FARMER_ID + " = ?", whereArgs);
                 }catch (Exception e){}
-
-
                 // Child labour update Ends
+
+                // update farmer Id in db
+                try {
+                    ContentValues gpsTrackValues = new ContentValues();
+                    gpsTrackValues.put(OFISDBContract.GPSDetails.COLUMN_NAME_FARMER_ID, id);
+                    db.update(OFISDBContract.GPSDetails.TABLE_NAME, gpsTrackValues, OFISDBContract.GPSDetails.COLUMN_NAME_FARMER_ID + " = ?", whereArgs);
+                }catch (Exception e){}
+
 
 
 
@@ -4300,6 +4306,13 @@ public class DataLayer {
         cv.put(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_SYNCED,1);
         db.update(OFISDBContract.ChildEntry.TABLE_NAME, cv, "tmpId="+tempChildId, null);
 
+        // update child Id in db
+        String[] whereArgs = new String[]{String.valueOf(tempChildId)};
+        try {
+            ContentValues gpsTrackValues = new ContentValues();
+            gpsTrackValues.put(OFISDBContract.GPSDetails.COLUMN_NAME_CHILD_ID, generatedChildId);
+            db.update(OFISDBContract.GPSDetails.TABLE_NAME, gpsTrackValues, OFISDBContract.GPSDetails.COLUMN_NAME_CHILD_ID + " = ?", whereArgs);
+        }catch (Exception e){}
 
 
 //        String[] whereArgs = new String[]{String.valueOf(tempChildId)};
@@ -4455,7 +4468,41 @@ public class DataLayer {
         networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT,timestamp.toString());
 
         newEntry= insertNetworkQueueEntry(networkQueueValues);
-
         return newEntry;
+
+    }
+
+    public boolean findPlotAvailable(String plots) {
+        boolean isAvailable = false;
+        Cursor cursor = db.rawQuery("SELECT * FROM gps_details where polygonPlotDetails=" + plots, null);
+       if(cursor!=null){
+           if (cursor.getCount()>0){
+               isAvailable=true;
+           }
+       }
+        return isAvailable;
+
+    }
+
+
+    public void updatePlotData(String updatedPlotDetails, String oldPlotDetails) {
+        String[] whereArgs = new String[]{String.valueOf(oldPlotDetails)};
+        try {
+            ContentValues gpsTrackValues = new ContentValues();
+            gpsTrackValues.put(OFISDBContract.GPSDetails.COLUMN_NAME_POLYGON_PLOTS_DETAILS, updatedPlotDetails);
+            db.update(OFISDBContract.GPSDetails.TABLE_NAME, gpsTrackValues, OFISDBContract.GPSDetails.COLUMN_NAME_POLYGON_PLOTS_DETAILS + " = ?", whereArgs);
+        }catch (Exception e){}
+    }
+
+    public int checkToSyncGPS() {
+        int count=0;
+        Cursor cursor = db.rawQuery("select * from networkqueue where submission_type in (" +"'farmer'"+","+"'children'"+ ")",null);
+       try {
+           if (cursor!=null){
+               count=cursor.getCount();
+           }
+       }catch (Exception e){}
+
+        return count;
     }
 }

@@ -1914,6 +1914,19 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_RECORDED_DATE = "recordDate";
         public static final String COLUMN_NAME_SUBMITTED_DATE = "submittedDate";
         public static final String COLUMN_NAME_CAPTURED_MODULE = "module";
+        public static final String COLUMN_NAME_FARMER_ID = "farmerId";
+        public static final String COLUMN_NAME_FARMER_NAME = "farmerName";
+        public static final String COLUMN_NAME_CHILD_ID = "childId";
+        public static final String COLUMN_NAME_CHILD_NAME = "childName";
+        public static final String COLUMN_NAME_SIP_NAME = "sipName";
+        public static final String COLUMN_NAME_SIP_TYPE = "sipType";
+        public static final String COLUMN_NAME_TRAINING_COURSE_NAME = "trainingCourseName";
+        public static final String COLUMN_NAME_TRAINING_MODULE_NAME = "trainingModuleName";
+        public static final String COLUMN_NAME_GENDER = "gender";
+        public static final String COLUMN_NAME_AGE = "age";
+        public static final String COLUMN_NAME_POLYGON_PLOTS_DETAILS = "polygonPlotDetails";
+        public static final String COLUMN_NAME_SURVEY_NAME = "surveyName";
+
     }
 
     public static final LinkedHashMap<String, List<String>> ALL_TABLES =

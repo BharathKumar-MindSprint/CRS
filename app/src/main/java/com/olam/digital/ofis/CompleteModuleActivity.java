@@ -55,6 +55,7 @@ import com.karumi.dexter.listener.single.PermissionListener;
 import com.olam.digital.ofis.gps.GPSListener;
 import com.olam.digital.ofis.gps.GPSTracker;
 import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
+import com.olam.digital.ofis.gps.dto.TrackDetailsDTO;
 import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.gps.utils.GPSUtils;
 import com.olam.digital.ofis.matoma.MatomoHelper;
@@ -710,10 +711,17 @@ public class CompleteModuleActivity extends BaseActivity {
 
 
     private void collectGPSPoint(Location farmLocation) {
-        String lat=String.valueOf(farmLocation.getLatitude());
-        String lon=String.valueOf(farmLocation.getLongitude());
-        ContentValues geoContentValues=new GPSUtils().getGeoContentValues(GPSConstants.MODULE_CAPTURE_FARMER_SURVEY,lat,lon,new Timestamp(System.currentTimeMillis()).toString());
-        Long newTrackId= new GpsTrackerLogic().insertGeoDataDetails(context,geoContentValues);
+        TrackDetailsDTO trackDetailsDTO=new TrackDetailsDTO();
+        trackDetailsDTO.setModule(GPSConstants.MODULE_CAPTURE_FARMER_SURVEY);
+        trackDetailsDTO.setLatitude(String.valueOf(farmLocation.getLatitude()));
+        trackDetailsDTO.setLongitude(String.valueOf(farmLocation.getLongitude()));
+        trackDetailsDTO.setRecordDate(new Timestamp(System.currentTimeMillis()).toString());
+        trackDetailsDTO.setFarmerId(String.valueOf(farmerId));
+        trackDetailsDTO.setFarmerName(farmerName);
+        trackDetailsDTO.setSurveyName(moduleName);
+
+        ContentValues geoContentValues=new GPSUtils().getGeoContentValues(trackDetailsDTO);
+        new GpsTrackerLogic().insertGeoDataDetails(context,geoContentValues);
     }
 
     /**

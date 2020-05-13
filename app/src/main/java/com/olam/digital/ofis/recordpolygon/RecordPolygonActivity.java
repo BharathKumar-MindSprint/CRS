@@ -62,6 +62,7 @@ import com.olam.digital.ofis.OFISDBContract;
 import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.gps.GPSTracker;
 import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
+import com.olam.digital.ofis.gps.dto.TrackDetailsDTO;
 import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.gps.utils.GPSUtils;
 import com.olam.digital.ofis.matoma.MatomoHelper;
@@ -139,6 +140,8 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
     boolean mIsLoggingStarted;
     boolean mIsLoggingPaused;
     boolean mIsGPSLocationAvailable;
+    private String plotsToGps;
+    private String plotsRecentGps;
 
     private enum RecordingState {
         RECORDING, PAUSED, STOPPED
@@ -1309,9 +1312,6 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
 
                 LocationBeanList lLocationBeanList = new LocationBeanList();
                 lLocationBeanList.setLocationBean(mLocationBeanList);
-               try {
-                  collectGPSPoint();
-               }catch (Exception e){}
                 String plotGeoJson = SharedPreferenceUtils.getInstance(getApplicationContext()).setLocationBeanList(currentTrackname, lLocationBeanList);
 
                 String plotId = currentTrackname.toLowerCase().replace(" ", "").toString().concat("_" + mOlamFarmerId);
@@ -1319,8 +1319,12 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
 
                 try {
                     String plotallLocations = prepareJsonServerSync();
+                    plotsToGps=plotallLocations;
                     saveToSyncDatabase(plotallLocations);
-
+                    try {
+                        collectGPSPoint();
+                        plotsRecentGps=plotsToGps;
+                    }catch (Exception e){}
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -1350,11 +1354,34 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
 
         if ( mLocationBeanList.size()>0){
             if(mLocationBeanList.get(0) != null){
-              String latitude= String.valueOf(mLocationBeanList.get(0).getLat());
-              String longitude=String.valueOf(mLocationBeanList.get(0).getLng());
 
-                ContentValues geoContentValues=new GPSUtils().getGeoContentValues(GPSConstants.MODULE_CAPTURE_FARM_POLYGON,latitude,longitude,new Timestamp(System.currentTimeMillis()).toString());
-                Long newTrackId= new GpsTrackerLogic().insertGeoDataDetails(RecordPolygonActivity.this,geoContentValues);
+                try {
+                    GpsTrackerLogic gpsTrackerLogic=new GpsTrackerLogic();
+                    boolean entryAvailable=gpsTrackerLogic.isPlotAvailable(this,plotsRecentGps);
+
+                    String latitude= String.valueOf(mLocationBeanList.get(0).getLat());
+                    String longitude=String.valueOf(mLocationBeanList.get(0).getLng());
+
+                    TrackDetailsDTO trackDetailsDTO=new TrackDetailsDTO();
+                    trackDetailsDTO.setModule(GPSConstants.MODULE_CAPTURE_FARM_POLYGON);
+                    trackDetailsDTO.setLatitude(latitude);
+                    trackDetailsDTO.setLongitude(longitude);
+                    trackDetailsDTO.setRecordDate(new Timestamp(System.currentTimeMillis()).toString());
+                    trackDetailsDTO.setFarmerId(String.valueOf(mFarmerId));
+                    trackDetailsDTO.setFarmerName(mFarmerName);
+                    trackDetailsDTO.setPolygonPlotDetails(plotsToGps);
+
+                    ContentValues geoContentValues=new GPSUtils().getGeoContentValues(trackDetailsDTO);
+                    if (!entryAvailable) {
+                        gpsTrackerLogic.insertGeoDataDetails(RecordPolygonActivity.this, geoContentValues);
+                    }else{
+                        gpsTrackerLogic.updatePolygonPlotDetails(RecordPolygonActivity.this, plotsToGps,plotsRecentGps);
+                    }
+
+                }catch (Exception e){
+                    System.out.println("failed : "+e.getLocalizedMessage() +": "+e.getMessage());
+                }
+
 
             }
         }

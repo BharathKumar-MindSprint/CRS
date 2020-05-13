@@ -54,6 +54,7 @@ import com.olam.digital.ofis.authentication.AuthenticationHelper;
 import com.olam.digital.ofis.gps.GPSListener;
 import com.olam.digital.ofis.gps.GPSTracker;
 import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
+import com.olam.digital.ofis.gps.dto.TrackDetailsDTO;
 import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.gps.utils.GPSUtils;
 import com.olam.digital.ofis.matoma.MatomoHelper;
@@ -1284,7 +1285,9 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                                 Toast.makeText(context, res.getString(R.string.Farmer_Added), Toast.LENGTH_LONG).show();
 
                                 if (mCurrentLocation != null) {
-                                    collectGPSPoint();
+                                    EditText farmerName = findViewById(R.id.farmerName);
+                                    String farmerNameValue = String.valueOf(farmerName.getText()).trim();
+                                    collectGPSPoint(newFarmerId,farmerNameValue);
                                 }
                                 ViewFarmerActivity.farmerId = newFarmerId;
                                 finish();
@@ -1305,14 +1308,20 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         });
     }
 
-    private void collectGPSPoint() {
-        ContentValues geoContentValues = new GPSUtils().getGeoContentValues(GPSConstants.MODULE_CAPTURE_ADD_FARMER, String.valueOf(mCurrentLocation.getLatitude()), String.valueOf(mCurrentLocation.getLongitude()), new Timestamp(System.currentTimeMillis()).toString());
-        Long newTrackId = new GpsTrackerLogic().insertGeoDataDetails(context, geoContentValues);
-//        if (newTrackId==-1){
-//            try {
-//                FabricLogsWriter.printGpsCrashLog(GPSConstants.MODULE_CAPTURE_ADD_FARMER ,context);
-//            }catch (Exception e){}
-//        }
+    private void collectGPSPoint(long farmerId,String farmerName) {
+
+        TrackDetailsDTO trackDetailsDTO=new TrackDetailsDTO();
+        trackDetailsDTO.setModule(GPSConstants.MODULE_CAPTURE_ADD_FARMER);
+        trackDetailsDTO.setLatitude(String.valueOf(mCurrentLocation.getLatitude()));
+        trackDetailsDTO.setLongitude(String.valueOf(mCurrentLocation.getLongitude()));
+        trackDetailsDTO.setRecordDate(new Timestamp(System.currentTimeMillis()).toString());
+        trackDetailsDTO.setFarmerId(String.valueOf(farmerId));
+        trackDetailsDTO.setFarmerName(farmerName);
+        String genderValue = Utilities.getDefaultTextByLocalValue(genders, String.valueOf(genderspinner.getSelectedItem()), res);
+        trackDetailsDTO.setGender(genderValue);
+
+        ContentValues geoContentValues = new GPSUtils().getGeoContentValues(trackDetailsDTO);
+        new GpsTrackerLogic().insertGeoDataDetails(context, geoContentValues);
     }
 
     @Override
