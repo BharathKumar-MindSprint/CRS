@@ -24,6 +24,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.provider.Settings;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NavUtils;
 import androidx.core.content.ContextCompat;
@@ -199,7 +200,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_TITLE);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         Configuration.getInstance().setOsmdroidBasePath(new File(Environment.getExternalStorageDirectory(), "osmdroid"));
