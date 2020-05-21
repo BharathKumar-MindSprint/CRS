@@ -562,19 +562,7 @@ public class TrainingRecord extends BaseListActivity{
                 Toast.makeText(context, res.getString(R.string.Training_Record_Added), Toast.LENGTH_LONG).show();
             }
 
-            // collect GPS Record
-          //  collectGPSPoint(GPSConstants.MODULE_CAPTURE_TRAINING_RECORD,mCurrentLocation);
-
         }
-    }
-
-    private void collectGPSPoint(String module, Location farmLocation) {
-        String lat=String.valueOf(farmLocation.getLatitude());
-        String lon=String.valueOf(farmLocation.getLongitude());
-        ContentValues geoContentValues=new GPSUtils().getGeoContentValues(module,lat,lon,new Timestamp(System.currentTimeMillis()).toString());
-        Long newTrackId= new GpsTrackerLogic().insertGeoDataDetails(context,geoContentValues);
-//        gpsTracker.stopLocationUpdates();
-//        gpsTracker.setNullGPSListener();
     }
 
 

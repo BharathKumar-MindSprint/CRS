@@ -83,6 +83,7 @@ import com.olam.digital.ofis.childlabour.RegisterChildActivity;
 import com.olam.digital.ofis.gps.GPSListener;
 import com.olam.digital.ofis.gps.GPSTracker;
 import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
+import com.olam.digital.ofis.gps.dto.TrackDetailsDTO;
 import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.gps.utils.GPSUtils;
 import com.olam.digital.ofis.matoma.MatomoHelper;
@@ -493,7 +494,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 textView.setText(res.getString(R.string.record_farm_location_complete));
 
                 // capturing the geo point track
-                collectGPSPoint(GPSConstants.MODULE_CAPTURE_FARM_LOCATION,farmLocation);
+                collectGPSPoint(GPSConstants.MODULE_CAPTURE_FARM_LOCATION,farmLocation,farmerId);
                 MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_RECORD_FARM_LOCATION,  ScreenNameConstants.BUTTON_CLICKED);
             }
         } catch (Exception e) {
@@ -506,11 +507,18 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         }
     }
 
-    private void collectGPSPoint(String module,Location farmLocation) {
-        String lat=String.valueOf(farmLocation.getLatitude());
-        String lon=String.valueOf(farmLocation.getLongitude());
-        ContentValues geoContentValues=new GPSUtils().getGeoContentValues(module,lat,lon,new Timestamp(System.currentTimeMillis()).toString());
-        Long newTrackId= new GpsTrackerLogic().insertGeoDataDetails(context,geoContentValues);
+    private void collectGPSPoint(String module ,Location farmLocation,long farmerId) {
+
+        TrackDetailsDTO trackDetailsDTO=new TrackDetailsDTO();
+        trackDetailsDTO.setModule(module);
+        trackDetailsDTO.setLatitude(String.valueOf(farmLocation.getLatitude()));
+        trackDetailsDTO.setLongitude(String.valueOf(farmLocation.getLongitude()));
+        trackDetailsDTO.setRecordDate(new Timestamp(System.currentTimeMillis()).toString());
+        trackDetailsDTO.setFarmerId(String.valueOf(farmerId));
+        trackDetailsDTO.setFarmerName(farmerNameStr);
+
+        ContentValues geoContentValues=new GPSUtils().getGeoContentValues(trackDetailsDTO);
+        new GpsTrackerLogic().insertGeoDataDetails(context,geoContentValues);
 
     }
 
@@ -1093,7 +1101,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                         dl.updateFarmerPhoneNumbers(farmerId, storeableNumbers);
                         ContentValues nqiValues = new ContentValues();
 
-                        collectGPSPoint(GPSConstants.MODULE_UPDATE_PHONE_NUMBER,mCurrentCapturedLocation);
+                        collectGPSPoint(GPSConstants.MODULE_UPDATE_PHONE_NUMBER,mCurrentCapturedLocation,farmerId);
                         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
                         nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "phonenumbers");
                         nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, res.getString(R.string.update_phone_numbers));
@@ -1378,7 +1386,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         // Collect the GPS Point
         if(mCurrentCapturedLocation != null){
             // check the current location
-            collectGPSPoint(GPSConstants.MODULE_CAPTURE_UPDATE_PHOTO,mCurrentCapturedLocation);
+            collectGPSPoint(GPSConstants.MODULE_CAPTURE_UPDATE_PHOTO,mCurrentCapturedLocation,farmerId);
         }else if(mCurrentCapturedLocation==null || !gpsTracker.isGpsEnabled()){
             gpsTracker.getDeviceLocation();
             return;
@@ -1587,6 +1595,8 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
 //                            setCapturedSignatureImageURI(fileUri);
 //                            setCurrentSignaturePhotoPath(fileUri.getPath());
                                 dl.updateSignature(context, farmerId, fileUri.getPath(),farmerNameStr);
+
+                                collectGPSPoint(GPSConstants.MODULE_UPDATE_SIGNATURE,mCurrentCapturedLocation,farmerId);
 
                                 try (FileOutputStream out = new FileOutputStream(photoFile)) {
                                     mSignaturePad.getTransparentSignatureBitmap().compress(Bitmap.CompressFormat.PNG, 100, out); // bmp is your Bitmap instance

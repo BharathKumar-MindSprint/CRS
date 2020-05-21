@@ -62,6 +62,7 @@ import com.olam.digital.ofis.OFISDBContract;
 import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.gps.GPSTracker;
 import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
+import com.olam.digital.ofis.gps.dto.TrackDetailsDTO;
 import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.gps.utils.GPSUtils;
 import com.olam.digital.ofis.matoma.MatomoHelper;
@@ -139,6 +140,8 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
     boolean mIsLoggingStarted;
     boolean mIsLoggingPaused;
     boolean mIsGPSLocationAvailable;
+    private String plotsToGps;
+    private String plotsRecentGps;
 
     private enum RecordingState {
         RECORDING, PAUSED, STOPPED
@@ -1309,18 +1312,25 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
 
                 LocationBeanList lLocationBeanList = new LocationBeanList();
                 lLocationBeanList.setLocationBean(mLocationBeanList);
-               try {
-                  collectGPSPoint();
-               }catch (Exception e){}
+
                 String plotGeoJson = SharedPreferenceUtils.getInstance(getApplicationContext()).setLocationBeanList(currentTrackname, lLocationBeanList);
 
                 String plotId = currentTrackname.toLowerCase().replace(" ", "").toString().concat("_" + mOlamFarmerId);
                 savePlotGeoDataJsonToDatabase(plotGeoJson, plotId);
+                JSONObject jObj=new JSONObject();
+                try {
+                    String encodedPlotsJson = Base64.encodeToString(plotGeoJson.getBytes(), Base64.NO_WRAP);
+                    jObj.put(currentTrackname,encodedPlotsJson);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
 
+                try {
+                    collectGPSPoint(jObj.toString());
+                }catch (Exception e){}
                 try {
                     String plotallLocations = prepareJsonServerSync();
                     saveToSyncDatabase(plotallLocations);
-
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -1346,18 +1356,28 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
 
     }
 
-    private void collectGPSPoint() {
 
+    private void collectGPSPoint(String plotDetails) {
         if ( mLocationBeanList.size()>0){
             if(mLocationBeanList.get(0) != null){
-              String latitude= String.valueOf(mLocationBeanList.get(0).getLat());
-              String longitude=String.valueOf(mLocationBeanList.get(0).getLng());
+                String latitude= String.valueOf(mLocationBeanList.get(0).getLat());
+                String longitude=String.valueOf(mLocationBeanList.get(0).getLng());
 
-                ContentValues geoContentValues=new GPSUtils().getGeoContentValues(GPSConstants.MODULE_CAPTURE_FARM_POLYGON,latitude,longitude,new Timestamp(System.currentTimeMillis()).toString());
-                Long newTrackId= new GpsTrackerLogic().insertGeoDataDetails(RecordPolygonActivity.this,geoContentValues);
+                TrackDetailsDTO trackDetailsDTO=new TrackDetailsDTO();
+                trackDetailsDTO.setModule(GPSConstants.MODULE_CAPTURE_FARM_POLYGON);
+                trackDetailsDTO.setLatitude(latitude);
+                trackDetailsDTO.setLongitude(longitude);
+                trackDetailsDTO.setRecordDate(new Timestamp(System.currentTimeMillis()).toString());
+                trackDetailsDTO.setFarmerId(String.valueOf(mFarmerId));
+                trackDetailsDTO.setFarmerName(mFarmerName);
+                trackDetailsDTO.setPolygonPlotDetails(plotDetails);
 
+                ContentValues geoContentValues=new GPSUtils().getGeoContentValues(trackDetailsDTO);
+                GpsTrackerLogic gpsTrackerLogic=new GpsTrackerLogic();
+                gpsTrackerLogic.insertGeoDataDetails(RecordPolygonActivity.this, geoContentValues);
             }
         }
+
     }
 
     /**

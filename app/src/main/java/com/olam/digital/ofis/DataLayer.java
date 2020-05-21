@@ -354,7 +354,6 @@ public class DataLayer {
         int updated;
         String whereClause = OFISDBContract.NetworkQueueEntry.COLUMN_NAME_ID + " = ?";
         String[] whereArgs = new String[]{String.valueOf(networkEntryId)};
-
         updated = db.update(OFISDBContract.NetworkQueueEntry.TABLE_NAME, values, whereClause, whereArgs);
 
         return updated;
@@ -1684,8 +1683,6 @@ public class DataLayer {
         final Spinner placeSpinner = (Spinner) activity.findViewById(R.id.spinner_place);
 
         final EditText newplace =(EditText) activity.findViewById(R.id.newPlaceName);
-        newplace.setFilters(new InputFilter[]{new Utils.EmojiExcludeFilter()});
-        newplace.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
         Cursor countries = getSpinnerData(OFISDBContract.CountriesEntry.TABLE_NAME, true, OFISDBContract.CountriesEntry.COLUMN_NAME_ENUMERATOR_COUNTRY, 1, true, OFISDBContract.CountriesEntry.COLUMN_NAME_COUNTRY_NAME);
         bindDataDrivenSpinner(countrySpinner, countries, context, R.string.spinner_country_default, null, false);
 
@@ -1803,8 +1800,6 @@ public class DataLayer {
 
             if (activity.findViewById(R.id.newPlaceName) != null) {
                 final EditText newPlaceName = (EditText) activity.findViewById(R.id.newPlaceName);
-                newPlaceName.setFilters(new InputFilter[]{new Utils.EmojiExcludeFilter()});
-                newPlaceName.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
                 placeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long id) {
@@ -3226,9 +3221,10 @@ public class DataLayer {
             return db.rawQuery("select * from " + OFISDBContract.NetworkQueueEntry.TABLE_NAME +
                             " order by case when " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE +" = 'farmer' " +
                             "THEN 1 when " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE +" = 'children' " +
-                            "THEN 2 when " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE +" = 'Polygon recorded' " +
-                            "THEN 3 when " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE +" = 'Location recorded' " +
-                            "THEN 4 ELSE 5 END, "+ OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE ,
+                            "THEN 2 when " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE +" = 'infrastructure' " +
+                            "THEN 3 when " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE +" = 'Polygon recorded' " +
+                            "THEN 4 when " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE +" = 'Location recorded' " +
+                            "THEN 5 ELSE 6 END, "+ OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE ,
                     null);
         }
 
@@ -3344,9 +3340,15 @@ public class DataLayer {
                     farmerChildValues.put(OFISDBContract.ChildEntry.COLUMN_NAME_FARMER_ID, id);
                     db.update(OFISDBContract.ChildEntry.TABLE_NAME, farmerChildValues, OFISDBContract.ChildEntry.COLUMN_NAME_FARMER_ID + " = ?", whereArgs);
                 }catch (Exception e){}
-
-
                 // Child labour update Ends
+
+                // update farmer Id in db
+                try {
+                    ContentValues gpsTrackValues = new ContentValues();
+                    gpsTrackValues.put(OFISDBContract.GPSDetails.COLUMN_NAME_FARMER_ID, id);
+                    db.update(OFISDBContract.GPSDetails.TABLE_NAME, gpsTrackValues, OFISDBContract.GPSDetails.COLUMN_NAME_FARMER_ID + " = ?", whereArgs);
+                }catch (Exception e){}
+
 
 
 
@@ -4300,6 +4302,13 @@ public class DataLayer {
         cv.put(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_SYNCED,1);
         db.update(OFISDBContract.ChildEntry.TABLE_NAME, cv, "tmpId="+tempChildId, null);
 
+        // update child Id in db
+        String[] whereArgs = new String[]{String.valueOf(tempChildId)};
+        try {
+            ContentValues gpsTrackValues = new ContentValues();
+            gpsTrackValues.put(OFISDBContract.GPSDetails.COLUMN_NAME_CHILD_ID, generatedChildId);
+            db.update(OFISDBContract.GPSDetails.TABLE_NAME, gpsTrackValues, OFISDBContract.GPSDetails.COLUMN_NAME_CHILD_ID + " = ?", whereArgs);
+        }catch (Exception e){}
 
 
 //        String[] whereArgs = new String[]{String.valueOf(tempChildId)};
@@ -4455,7 +4464,53 @@ public class DataLayer {
         networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT,timestamp.toString());
 
         newEntry= insertNetworkQueueEntry(networkQueueValues);
-
         return newEntry;
+
+    }
+
+
+    public int checkToSyncGPS() {
+        int count=0;
+         Cursor cursor = db.rawQuery("select * from networkqueue where submission_type in (" +"'farmer'"+","+"'children'"+","+"'infrastructure'"+ ")",null);
+
+        try {
+           if (cursor!=null){
+               count=cursor.getCount();
+           }
+       }catch (Exception e){}
+
+        return count;
+    }
+
+    public void updateFarmerDetails(long editFarmerId, String farmerNameValue, String farmerGender) {
+        String whereClause = OFISDBContract.GPSDetails.COLUMN_NAME_FARMER_ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(editFarmerId)};
+        ContentValues values=new ContentValues();
+        values.put(OFISDBContract.GPSDetails.COLUMN_NAME_FARMER_NAME,farmerNameValue);
+        values.put(OFISDBContract.GPSDetails.COLUMN_NAME_FARMER_GENDER,farmerGender);
+        db.update(OFISDBContract.GPSDetails.TABLE_NAME, values, whereClause, whereArgs);
+    }
+
+    public void updateChildDetails(String editChildId, String childNameValue, String childGender,String age) {
+        String whereClause = OFISDBContract.GPSDetails.COLUMN_NAME_CHILD_ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(editChildId)};
+        ContentValues values=new ContentValues();
+        values.put(OFISDBContract.GPSDetails.COLUMN_NAME_CHILD_NAME,childNameValue);
+        values.put(OFISDBContract.GPSDetails.COLUMN_NAME_CHILD_GENDER,childGender);
+        values.put(OFISDBContract.GPSDetails.COLUMN_NAME_CHILD_AGE,age);
+        db.update(OFISDBContract.GPSDetails.TABLE_NAME, values, whereClause, whereArgs);
+    }
+
+    public void updateSIPNameforGPS(Context context, String sipName, int updated) {
+        try {
+            String whereClause = OFISDBContract.GPSDetails.COLUMN_NAME_NETWORK_QUEUE_ID + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(updated)};
+            ContentValues sipContentValues=new ContentValues();
+            sipContentValues.put(OFISDBContract.GPSDetails.COLUMN_NAME_SIP_NAME,sipName);
+            db.update(OFISDBContract.GPSDetails.TABLE_NAME, sipContentValues, whereClause, whereArgs);
+        }catch (Exception e){
+            // ignore if fails , Can't able to update
+        }
+
     }
 }

@@ -54,6 +54,7 @@ import com.olam.digital.ofis.authentication.AuthenticationHelper;
 import com.olam.digital.ofis.gps.GPSListener;
 import com.olam.digital.ofis.gps.GPSTracker;
 import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
+import com.olam.digital.ofis.gps.dto.TrackDetailsDTO;
 import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.gps.utils.GPSUtils;
 import com.olam.digital.ofis.matoma.MatomoHelper;
@@ -1246,6 +1247,11 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                     if (values.size() > 0) {
                         if (editMode) {
                             long updFarmerId = dl.updateFarmer(values, editFarmerId);
+                            // update farmer name
+                            EditText farmerName = findViewById(R.id.farmerName);
+                            String farmerNameValue = String.valueOf(farmerName.getText()).trim();
+                            String genderValue = Utilities.getDefaultTextByLocalValue(genders, String.valueOf(genderspinner.getSelectedItem()), res);
+                            new GpsTrackerLogic().updateFarmerDetails(context,editFarmerId,farmerNameValue,genderValue);
                             dl.updateFarmerPhoneNumbers(editFarmerId, storeableNumbers);
                             if (isNIDAvailable) {
                                 boolean moduretationstatus = dl.updateFarmerNationalids(context, editFarmerId, storeableNationalids, "1", "name");
@@ -1284,7 +1290,9 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                                 Toast.makeText(context, res.getString(R.string.Farmer_Added), Toast.LENGTH_LONG).show();
 
                                 if (mCurrentLocation != null) {
-                                    collectGPSPoint();
+                                    EditText farmerName = findViewById(R.id.farmerName);
+                                    String farmerNameValue = String.valueOf(farmerName.getText()).trim();
+                                    collectGPSPoint(newFarmerId,farmerNameValue);
                                 }
                                 ViewFarmerActivity.farmerId = newFarmerId;
                                 finish();
@@ -1305,14 +1313,39 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         });
     }
 
-    private void collectGPSPoint() {
-        ContentValues geoContentValues = new GPSUtils().getGeoContentValues(GPSConstants.MODULE_CAPTURE_ADD_FARMER, String.valueOf(mCurrentLocation.getLatitude()), String.valueOf(mCurrentLocation.getLongitude()), new Timestamp(System.currentTimeMillis()).toString());
-        Long newTrackId = new GpsTrackerLogic().insertGeoDataDetails(context, geoContentValues);
-//        if (newTrackId==-1){
-//            try {
-//                FabricLogsWriter.printGpsCrashLog(GPSConstants.MODULE_CAPTURE_ADD_FARMER ,context);
-//            }catch (Exception e){}
-//        }
+    private void collectGPSPoint(long farmerId,String farmerName) {
+
+        TrackDetailsDTO trackDetailsDTO=new TrackDetailsDTO();
+        trackDetailsDTO.setLatitude(String.valueOf(mCurrentLocation.getLatitude()));
+        trackDetailsDTO.setLongitude(String.valueOf(mCurrentLocation.getLongitude()));
+        trackDetailsDTO.setRecordDate(new Timestamp(System.currentTimeMillis()).toString());
+        trackDetailsDTO.setFarmerId(String.valueOf(farmerId));
+        trackDetailsDTO.setFarmerName(farmerName);
+
+        trackDetailsDTO.setModule(GPSConstants.MODULE_CAPTURE_ADD_FARMER);
+        String genderValue = Utilities.getDefaultTextByLocalValue(genders, String.valueOf(genderspinner.getSelectedItem()), res);
+        trackDetailsDTO.setFarmerGender(genderValue);
+        ContentValues geoContentValues = new GPSUtils().getGeoContentValues(trackDetailsDTO);
+        new GpsTrackerLogic().insertGeoDataDetails(context, geoContentValues);
+
+        trackDetailsDTO.setFarmerGender(null);
+        try {
+            // insert National Id update
+            trackDetailsDTO.setModule(GPSConstants.MODULE_ADD_NATIONAL_ID);
+            ContentValues geoContentValuesNationalId = new GPSUtils().getGeoContentValues(trackDetailsDTO);
+            new GpsTrackerLogic().insertGeoDataDetails(context, geoContentValuesNationalId);
+        }catch (Exception e){}
+
+        try {
+            // insert Signature Capture
+            if (isSigned) {
+                trackDetailsDTO.setModule(GPSConstants.MODULE_UPDATE_SIGNATURE);
+                ContentValues geoContentValuesSignatureCapture = new GPSUtils().getGeoContentValues(trackDetailsDTO);
+                new GpsTrackerLogic().insertGeoDataDetails(context, geoContentValuesSignatureCapture);
+            }
+        }catch (Exception e){}
+
+
     }
 
     @Override
