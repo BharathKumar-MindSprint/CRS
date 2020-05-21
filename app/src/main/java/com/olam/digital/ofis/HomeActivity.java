@@ -1187,12 +1187,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     public void onTokenCompleted(String status) {
         if(!status.equalsIgnoreCase("false")){
             Utilities.minProgressCount=0;
-            try{
-                if (GpsTrackerLogic.getGeoPointCount(context) >0 ){
-                   // nl.syncGPSData();
-                }
-            }catch (Exception e){}
-
                if(syncOptionAll){
                   startAllItemSync();
               }else{

@@ -1922,11 +1922,15 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_SIP_TYPE = "sipType";
         public static final String COLUMN_NAME_TRAINING_COURSE_NAME = "trainingCourseName";
         public static final String COLUMN_NAME_TRAINING_MODULE_NAME = "trainingModuleName";
-        public static final String COLUMN_NAME_GENDER = "gender";
-        public static final String COLUMN_NAME_AGE = "age";
+
+        public static final String COLUMN_NAME_FARMER_GENDER = "farmerGender";
+        public static final String COLUMN_NAME_CHILD_GENDER = "childGender";
+        public static final String COLUMN_NAME_CHILD_AGE = "childAge";
+
         public static final String COLUMN_NAME_POLYGON_PLOTS_DETAILS = "polygonPlotDetails";
         public static final String COLUMN_NAME_SURVEY_NAME = "surveyName";
 
+        public static final String COLUMN_NAME_NETWORK_QUEUE_ID = "networkQueueId";
     }
 
     public static final LinkedHashMap<String, List<String>> ALL_TABLES =

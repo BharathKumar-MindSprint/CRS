@@ -6,6 +6,7 @@ import android.database.Cursor;
 
 import com.olam.digital.ofis.DataLayer;
 import com.olam.digital.ofis.OFISDBContract;
+import com.olam.digital.ofis.childlabour.AddNewChildActivity;
 import com.olam.digital.ofis.childlabour.dto.ChildrenDTO;
 import com.olam.digital.ofis.gps.dto.TrackDetailsDTO;
 import com.olam.digital.ofis.recordpolygon.RecordPolygonActivity;
@@ -58,14 +59,15 @@ public class GpsTrackerLogic {
        dataLayer.deleteGeoPoints();
     }
 
-    public boolean isPlotAvailable(Context context,String plotsRecentGps) {
-        DataLayer dataLayer = new DataLayer(context.getResources(), context);
-        return dataLayer.findPlotAvailable(plotsRecentGps);
+
+    public void updateFarmerDetails(Context context, long editFarmerId, String farmerNameValue, String genderValue) {
+        dataLayer = new DataLayer(context.getResources(), context);
+        dataLayer.updateFarmerDetails(editFarmerId,farmerNameValue,genderValue);
+
     }
 
-
-    public void updatePolygonPlotDetails(Context context, String updatedPlotDetails, String oldPlotDetails) {
+    public void updateChildDetails(Context context, String childId, String name, String gender, String age) {
         dataLayer = new DataLayer(context.getResources(), context);
-        dataLayer.updatePlotData(updatedPlotDetails,oldPlotDetails);
+        dataLayer.updateChildDetails(childId,name,gender,age);
     }
 }

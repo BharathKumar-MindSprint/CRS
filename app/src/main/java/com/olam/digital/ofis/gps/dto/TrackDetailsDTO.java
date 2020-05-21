@@ -18,16 +18,43 @@ public class TrackDetailsDTO {
     private String trainingModuleName;
     private String surveyName;
 
-    private String gender;
-    private String age;
+    private String farmerGender;
+    private String childGender;
+    private String childAge;
     private String polygonPlotDetails;
 
-    public String getAge() {
-        return age;
+    private long networkQueueId;
+
+    public long getNetworkQueueId() {
+        return networkQueueId;
     }
 
-    public void setAge(String age) {
-        this.age = age;
+    public void setNetworkQueueId(long nwtworkQueueId) {
+        this.networkQueueId = nwtworkQueueId;
+    }
+
+    public String getFarmerGender() {
+        return farmerGender;
+    }
+
+    public void setFarmerGender(String farmerGender) {
+        this.farmerGender = farmerGender;
+    }
+
+    public String getChildGender() {
+        return childGender;
+    }
+
+    public void setChildGender(String childGender) {
+        this.childGender = childGender;
+    }
+
+    public String getChildAge() {
+        return childAge;
+    }
+
+    public void setChildAge(String childAge) {
+        this.childAge = childAge;
     }
 
     public String getPolygonPlotDetails() {
@@ -36,14 +63,6 @@ public class TrackDetailsDTO {
 
     public void setPolygonPlotDetails(String polygonPlotDetails) {
         this.polygonPlotDetails = polygonPlotDetails;
-    }
-
-    public String getGender() {
-        return gender;
-    }
-
-    public void setGender(String gender) {
-        this.gender = gender;
     }
 
     public String getTrainingCourseName() {

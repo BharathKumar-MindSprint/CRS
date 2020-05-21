@@ -1312,19 +1312,25 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
 
                 LocationBeanList lLocationBeanList = new LocationBeanList();
                 lLocationBeanList.setLocationBean(mLocationBeanList);
+
                 String plotGeoJson = SharedPreferenceUtils.getInstance(getApplicationContext()).setLocationBeanList(currentTrackname, lLocationBeanList);
 
                 String plotId = currentTrackname.toLowerCase().replace(" ", "").toString().concat("_" + mOlamFarmerId);
                 savePlotGeoDataJsonToDatabase(plotGeoJson, plotId);
+                JSONObject jObj=new JSONObject();
+                try {
+                    String encodedPlotsJson = Base64.encodeToString(plotGeoJson.getBytes(), Base64.NO_WRAP);
+                    jObj.put(currentTrackname,encodedPlotsJson);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
 
                 try {
+                    collectGPSPoint(jObj.toString());
+                }catch (Exception e){}
+                try {
                     String plotallLocations = prepareJsonServerSync();
-                    plotsToGps=plotallLocations;
                     saveToSyncDatabase(plotallLocations);
-                    try {
-                        collectGPSPoint();
-                        plotsRecentGps=plotsToGps;
-                    }catch (Exception e){}
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -1350,41 +1356,28 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
 
     }
 
-    private void collectGPSPoint() {
 
+    private void collectGPSPoint(String plotDetails) {
         if ( mLocationBeanList.size()>0){
             if(mLocationBeanList.get(0) != null){
+                String latitude= String.valueOf(mLocationBeanList.get(0).getLat());
+                String longitude=String.valueOf(mLocationBeanList.get(0).getLng());
 
-                try {
-                    GpsTrackerLogic gpsTrackerLogic=new GpsTrackerLogic();
-                    boolean entryAvailable=gpsTrackerLogic.isPlotAvailable(this,plotsRecentGps);
+                TrackDetailsDTO trackDetailsDTO=new TrackDetailsDTO();
+                trackDetailsDTO.setModule(GPSConstants.MODULE_CAPTURE_FARM_POLYGON);
+                trackDetailsDTO.setLatitude(latitude);
+                trackDetailsDTO.setLongitude(longitude);
+                trackDetailsDTO.setRecordDate(new Timestamp(System.currentTimeMillis()).toString());
+                trackDetailsDTO.setFarmerId(String.valueOf(mFarmerId));
+                trackDetailsDTO.setFarmerName(mFarmerName);
+                trackDetailsDTO.setPolygonPlotDetails(plotDetails);
 
-                    String latitude= String.valueOf(mLocationBeanList.get(0).getLat());
-                    String longitude=String.valueOf(mLocationBeanList.get(0).getLng());
-
-                    TrackDetailsDTO trackDetailsDTO=new TrackDetailsDTO();
-                    trackDetailsDTO.setModule(GPSConstants.MODULE_CAPTURE_FARM_POLYGON);
-                    trackDetailsDTO.setLatitude(latitude);
-                    trackDetailsDTO.setLongitude(longitude);
-                    trackDetailsDTO.setRecordDate(new Timestamp(System.currentTimeMillis()).toString());
-                    trackDetailsDTO.setFarmerId(String.valueOf(mFarmerId));
-                    trackDetailsDTO.setFarmerName(mFarmerName);
-                    trackDetailsDTO.setPolygonPlotDetails(plotsToGps);
-
-                    ContentValues geoContentValues=new GPSUtils().getGeoContentValues(trackDetailsDTO);
-                    if (!entryAvailable) {
-                        gpsTrackerLogic.insertGeoDataDetails(RecordPolygonActivity.this, geoContentValues);
-                    }else{
-                        gpsTrackerLogic.updatePolygonPlotDetails(RecordPolygonActivity.this, plotsToGps,plotsRecentGps);
-                    }
-
-                }catch (Exception e){
-                    System.out.println("failed : "+e.getLocalizedMessage() +": "+e.getMessage());
-                }
-
-
+                ContentValues geoContentValues=new GPSUtils().getGeoContentValues(trackDetailsDTO);
+                GpsTrackerLogic gpsTrackerLogic=new GpsTrackerLogic();
+                gpsTrackerLogic.insertGeoDataDetails(RecordPolygonActivity.this, geoContentValues);
             }
         }
+
     }
 
     /**

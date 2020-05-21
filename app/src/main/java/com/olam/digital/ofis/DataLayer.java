@@ -354,7 +354,6 @@ public class DataLayer {
         int updated;
         String whereClause = OFISDBContract.NetworkQueueEntry.COLUMN_NAME_ID + " = ?";
         String[] whereArgs = new String[]{String.valueOf(networkEntryId)};
-
         updated = db.update(OFISDBContract.NetworkQueueEntry.TABLE_NAME, values, whereClause, whereArgs);
 
         return updated;
@@ -3222,9 +3221,10 @@ public class DataLayer {
             return db.rawQuery("select * from " + OFISDBContract.NetworkQueueEntry.TABLE_NAME +
                             " order by case when " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE +" = 'farmer' " +
                             "THEN 1 when " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE +" = 'children' " +
-                            "THEN 2 when " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE +" = 'Polygon recorded' " +
-                            "THEN 3 when " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE +" = 'Location recorded' " +
-                            "THEN 4 ELSE 5 END, "+ OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE ,
+                            "THEN 2 when " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE +" = 'infrastructure' " +
+                            "THEN 3 when " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE +" = 'Polygon recorded' " +
+                            "THEN 4 when " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE +" = 'Location recorded' " +
+                            "THEN 5 ELSE 6 END, "+ OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE ,
                     null);
         }
 
@@ -4468,37 +4468,49 @@ public class DataLayer {
 
     }
 
-    public boolean findPlotAvailable(String plots) {
-        boolean isAvailable = false;
-        Cursor cursor = db.rawQuery("SELECT * FROM gps_details where polygonPlotDetails=" + plots, null);
-       if(cursor!=null){
-           if (cursor.getCount()>0){
-               isAvailable=true;
-           }
-       }
-        return isAvailable;
-
-    }
-
-
-    public void updatePlotData(String updatedPlotDetails, String oldPlotDetails) {
-        String[] whereArgs = new String[]{String.valueOf(oldPlotDetails)};
-        try {
-            ContentValues gpsTrackValues = new ContentValues();
-            gpsTrackValues.put(OFISDBContract.GPSDetails.COLUMN_NAME_POLYGON_PLOTS_DETAILS, updatedPlotDetails);
-            db.update(OFISDBContract.GPSDetails.TABLE_NAME, gpsTrackValues, OFISDBContract.GPSDetails.COLUMN_NAME_POLYGON_PLOTS_DETAILS + " = ?", whereArgs);
-        }catch (Exception e){}
-    }
 
     public int checkToSyncGPS() {
         int count=0;
-        Cursor cursor = db.rawQuery("select * from networkqueue where submission_type in (" +"'farmer'"+","+"'children'"+ ")",null);
-       try {
+         Cursor cursor = db.rawQuery("select * from networkqueue where submission_type in (" +"'farmer'"+","+"'children'"+","+"'infrastructure'"+ ")",null);
+
+        try {
            if (cursor!=null){
                count=cursor.getCount();
            }
        }catch (Exception e){}
 
         return count;
+    }
+
+    public void updateFarmerDetails(long editFarmerId, String farmerNameValue, String farmerGender) {
+        String whereClause = OFISDBContract.GPSDetails.COLUMN_NAME_FARMER_ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(editFarmerId)};
+        ContentValues values=new ContentValues();
+        values.put(OFISDBContract.GPSDetails.COLUMN_NAME_FARMER_NAME,farmerNameValue);
+        values.put(OFISDBContract.GPSDetails.COLUMN_NAME_FARMER_GENDER,farmerGender);
+        db.update(OFISDBContract.GPSDetails.TABLE_NAME, values, whereClause, whereArgs);
+    }
+
+    public void updateChildDetails(String editChildId, String childNameValue, String childGender,String age) {
+        String whereClause = OFISDBContract.GPSDetails.COLUMN_NAME_CHILD_ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(editChildId)};
+        ContentValues values=new ContentValues();
+        values.put(OFISDBContract.GPSDetails.COLUMN_NAME_CHILD_NAME,childNameValue);
+        values.put(OFISDBContract.GPSDetails.COLUMN_NAME_CHILD_GENDER,childGender);
+        values.put(OFISDBContract.GPSDetails.COLUMN_NAME_CHILD_AGE,age);
+        db.update(OFISDBContract.GPSDetails.TABLE_NAME, values, whereClause, whereArgs);
+    }
+
+    public void updateSIPNameforGPS(Context context, String sipName, int updated) {
+        try {
+            String whereClause = OFISDBContract.GPSDetails.COLUMN_NAME_NETWORK_QUEUE_ID + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(updated)};
+            ContentValues sipContentValues=new ContentValues();
+            sipContentValues.put(OFISDBContract.GPSDetails.COLUMN_NAME_SIP_NAME,sipName);
+            db.update(OFISDBContract.GPSDetails.TABLE_NAME, sipContentValues, whereClause, whereArgs);
+        }catch (Exception e){
+            // ignore if fails , Can't able to update
+        }
+
     }
 }

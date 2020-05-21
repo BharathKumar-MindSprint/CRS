@@ -100,6 +100,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
     //private Handler handler;
     private ProgressDialog pd = null;
     private boolean gpsSynced=false;
+    private boolean isGpsSyncProcessing=false;
 
     private static SSLSocketFactory getSSLSocketFactory() {
         try {
@@ -745,7 +746,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         if (dl.checkToSyncGPS()==0){
             try{
                 if (GpsTrackerLogic.getGeoPointCount(context) > 0 ){
-                    syncGPSData();
+                    if (!isGpsSyncProcessing) syncGPSData();
                 }
             }catch (Exception e){}
         }
@@ -2546,7 +2547,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 //                                dl.syncFarmerModule(farmerModuleId, farmerId, moduleId, submissionDate);
 
                         dl.deleteSipNetworkQueueItem(networkQueueItemId);
-
+                        initGPSSync();
                         statusMessage = res.getString(R.string.item_synced);
                         msg.what = 1;
                         msg.arg1 = total;
@@ -3980,12 +3981,9 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         try {
             final String endpoint = GPSConstants.SYNC_END_POINT;
             final JSONArray jsonArray = new JSONArray();
-
-            if(gpsSynced){
-                return;
-            }
             Cursor gpsData = dl.getGeoTrackList();
             if (gpsData.getCount() > 0) {
+                isGpsSyncProcessing=true;
                 while (gpsData.moveToNext()) {
                     try {
                         JSONObject jsonObject = new JSONObject();
@@ -4006,8 +4004,9 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         jsonObject.put(OFISDBContract.GPSDetails.COLUMN_NAME_TRAINING_MODULE_NAME, gpsData.getString(gpsData.getColumnIndex(OFISDBContract.GPSDetails.COLUMN_NAME_TRAINING_MODULE_NAME)));
                         jsonObject.put(OFISDBContract.GPSDetails.COLUMN_NAME_SURVEY_NAME, gpsData.getString(gpsData.getColumnIndex(OFISDBContract.GPSDetails.COLUMN_NAME_SURVEY_NAME)));
 
-                        jsonObject.put(OFISDBContract.GPSDetails.COLUMN_NAME_GENDER, gpsData.getString(gpsData.getColumnIndex(OFISDBContract.GPSDetails.COLUMN_NAME_GENDER)));
-                        jsonObject.put(OFISDBContract.GPSDetails.COLUMN_NAME_AGE, gpsData.getString(gpsData.getColumnIndex(OFISDBContract.GPSDetails.COLUMN_NAME_AGE)));
+                        jsonObject.put(OFISDBContract.GPSDetails.COLUMN_NAME_FARMER_GENDER, gpsData.getString(gpsData.getColumnIndex(OFISDBContract.GPSDetails.COLUMN_NAME_FARMER_GENDER)));
+                        jsonObject.put(OFISDBContract.GPSDetails.COLUMN_NAME_CHILD_GENDER, gpsData.getString(gpsData.getColumnIndex(OFISDBContract.GPSDetails.COLUMN_NAME_CHILD_GENDER)));
+                        jsonObject.put(OFISDBContract.GPSDetails.COLUMN_NAME_CHILD_AGE, gpsData.getString(gpsData.getColumnIndex(OFISDBContract.GPSDetails.COLUMN_NAME_CHILD_AGE)));
                         jsonObject.put(OFISDBContract.GPSDetails.COLUMN_NAME_POLYGON_PLOTS_DETAILS, gpsData.getString(gpsData.getColumnIndex(OFISDBContract.GPSDetails.COLUMN_NAME_POLYGON_PLOTS_DETAILS)));
 
                         try {
@@ -4018,6 +4017,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         jsonArray.put(jsonObject);
                     } catch (Exception e) { }
                 }
+            }else{
+                return;
             }
             JSONObject requstBody = new JSONObject();
             try {
@@ -4035,9 +4036,9 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                         if (postResponse.isSuccessful()) {
                             new GpsTrackerLogic().deleteGeoDetails(context);
-                            gpsSynced=true;
+                            isGpsSyncProcessing=false;
                         } else {
-                            gpsSynced=false;
+                            isGpsSyncProcessing=false;
                             // Added
                             if (postResponse.code() == 401 && postResponse.headers().toString().contains("invalid_token")) {
                                 try {
@@ -4051,6 +4052,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     }
                     @Override
                     public void onFailure(Call call, IOException e) {
+                        isGpsSyncProcessing=false;
                         gpsSynced=false;
                     }
                 });

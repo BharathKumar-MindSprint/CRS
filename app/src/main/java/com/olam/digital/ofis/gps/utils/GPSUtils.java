@@ -26,9 +26,11 @@ public class GPSUtils {
         geoContentValues.put(OFISDBContract.GPSDetails.COLUMN_NAME_TRAINING_COURSE_NAME, trackDetailsDTO.getTrainingCourseName());
         geoContentValues.put(OFISDBContract.GPSDetails.COLUMN_NAME_TRAINING_MODULE_NAME, trackDetailsDTO.getTrainingModuleName());
         geoContentValues.put(OFISDBContract.GPSDetails.COLUMN_NAME_SURVEY_NAME, trackDetailsDTO.getSurveyName());
-        geoContentValues.put(OFISDBContract.GPSDetails.COLUMN_NAME_GENDER, trackDetailsDTO.getGender());
-        geoContentValues.put(OFISDBContract.GPSDetails.COLUMN_NAME_AGE, trackDetailsDTO.getAge());
+        geoContentValues.put(OFISDBContract.GPSDetails.COLUMN_NAME_FARMER_GENDER, trackDetailsDTO.getFarmerGender());
+        geoContentValues.put(OFISDBContract.GPSDetails.COLUMN_NAME_CHILD_GENDER, trackDetailsDTO.getChildGender());
+        geoContentValues.put(OFISDBContract.GPSDetails.COLUMN_NAME_CHILD_AGE, trackDetailsDTO.getChildAge());
         geoContentValues.put(OFISDBContract.GPSDetails.COLUMN_NAME_POLYGON_PLOTS_DETAILS, trackDetailsDTO.getPolygonPlotDetails());
+        geoContentValues.put(OFISDBContract.GPSDetails.COLUMN_NAME_NETWORK_QUEUE_ID, String.valueOf(trackDetailsDTO.getNetworkQueueId()));
 
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         geoContentValues.put(OFISDBContract.GPSDetails.COLUMN_NAME_SUBMITTED_DATE,timestamp.toString());
