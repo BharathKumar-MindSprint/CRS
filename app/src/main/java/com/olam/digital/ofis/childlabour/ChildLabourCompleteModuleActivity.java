@@ -58,6 +58,7 @@ import com.olam.digital.ofis.childlabour.dto.ChildrenDTO;
 import com.olam.digital.ofis.gps.GPSListener;
 import com.olam.digital.ofis.gps.GPSTracker;
 import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
+import com.olam.digital.ofis.gps.dto.TrackDetailsDTO;
 import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.gps.utils.GPSUtils;
 import com.olam.digital.ofis.matoma.MatomoHelper;
@@ -429,17 +430,27 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
             intent.putExtra(RECORDED_LNG, recordedLng);
             intent.putExtra(FARMER_NAME, farmerName);
             startActivity(intent);
-
             finish();
 
         }
     }
 
     private void collectGPSPoint() {
-        String lat=String.valueOf(mCurrentCapturedLocation.getLatitude());
-        String lon=String.valueOf(mCurrentCapturedLocation.getLongitude());
-        ContentValues geoContentValues=new GPSUtils().getGeoContentValues(GPSConstants.COLUMN_NAME_CHILD_SURVEY,lat,lon,new Timestamp(System.currentTimeMillis()).toString());
-        Long newTrackId= new GpsTrackerLogic().insertGeoDataDetails(this,geoContentValues);
+
+        TrackDetailsDTO trackDetailsDTO=new TrackDetailsDTO();
+        trackDetailsDTO.setModule(GPSConstants.COLUMN_NAME_CHILD_SURVEY);
+        trackDetailsDTO.setLatitude(String.valueOf(mCurrentCapturedLocation.getLatitude()));
+        trackDetailsDTO.setLongitude(String.valueOf(mCurrentCapturedLocation.getLongitude()));
+        trackDetailsDTO.setRecordDate(new Timestamp(System.currentTimeMillis()).toString());
+        trackDetailsDTO.setFarmerId(String.valueOf(farmerId));
+        trackDetailsDTO.setFarmerName(farmerName);
+        trackDetailsDTO.setChildId(String.valueOf(children.getId()));
+        trackDetailsDTO.setChildName(children.getName());
+        trackDetailsDTO.setSurveyName(moduleName);
+
+
+        ContentValues geoContentValues=new GPSUtils().getGeoContentValues(trackDetailsDTO);
+        new GpsTrackerLogic().insertGeoDataDetails(this,geoContentValues);
     }
 
     private void bindSaveButton() {

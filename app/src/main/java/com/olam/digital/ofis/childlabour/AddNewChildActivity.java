@@ -33,6 +33,7 @@ import com.olam.digital.ofis.childlabour.dto.ChildrenDTO;
 import com.olam.digital.ofis.gps.GPSListener;
 import com.olam.digital.ofis.gps.GPSTracker;
 import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
+import com.olam.digital.ofis.gps.dto.TrackDetailsDTO;
 import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.gps.utils.GPSUtils;
 import com.olam.digital.ofis.matoma.MatomoHelper;
@@ -230,14 +231,8 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
         contentValues.put(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_SYNCED, 0);
         contentValues.put(OFISDBContract.ChildEntry.COLUMN_NAME_ID, childId);
 
-       /* ContentValues updatecontentValues=new ContentValues();
-        updatecontentValues.put(OFISDBContract.ChildEntry.COLUMN_NAME_FARMER_ID, childrenDTO.getFarmerId());
-        updatecontentValues.put(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_NAME, childrenDTO.getName());
-        updatecontentValues.put(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_AGE, Integer.parseInt(childrenDTO.getAge()));
-        updatecontentValues.put(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_GENDER, childrenDTO.getGender());
-        updatecontentValues.put(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_AGE_ON_YEAR, childrenDTO.getAgeOnYear());
-        updatecontentValues.put(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_CREATEDAT, childrenDTO.getCreatedAt());*/
         long newChildId= new ChildLabourLogic().updateChildDetails(this,contentValues,childrenDTO.getId(),farmerName,name);
+        new GpsTrackerLogic().updateChildDetails(this,childId,name,gender,age);
         if (newChildId != -1){
             if(action.equalsIgnoreCase(ChildLabourUtils.NEW)){
                 Toast.makeText(this,getResources().getString(R.string.child_register_successfully),Toast.LENGTH_LONG).show();
@@ -266,7 +261,7 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
         long newChildId= new ChildLabourLogic().insertChildDetails(this,contentValues,farmerName);
         if (newChildId != -1){
             if(action.equalsIgnoreCase(ChildLabourUtils.NEW)){
-                collectGPSPoint();
+                collectGPSPoint(String.valueOf(newChildId),name);
                 Toast.makeText(this,getResources().getString(R.string.child_register_successfully),Toast.LENGTH_LONG).show();
             }else{
                 Toast.makeText(this,getResources().getString(R.string.child_updated_successfully),Toast.LENGTH_LONG).show();
@@ -275,9 +270,21 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
         }
     }
 
-        private void collectGPSPoint() {
-            ContentValues geoContentValues=new GPSUtils().getGeoContentValues(GPSConstants.MODULE_CAPTURE_ADD_CHILD,String.valueOf(mCurrentLocation.getLatitude()),String.valueOf(mCurrentLocation.getLongitude()),new Timestamp(System.currentTimeMillis()).toString());
-            Long newTrackId= new GpsTrackerLogic().insertGeoDataDetails(this,geoContentValues);
+        private void collectGPSPoint(String childId, String childName) {
+            TrackDetailsDTO trackDetailsDTO=new TrackDetailsDTO();
+            trackDetailsDTO.setModule(GPSConstants.MODULE_CAPTURE_ADD_CHILD);
+            trackDetailsDTO.setLatitude(String.valueOf(mCurrentLocation.getLatitude()));
+            trackDetailsDTO.setLongitude(String.valueOf(mCurrentLocation.getLongitude()));
+            trackDetailsDTO.setRecordDate(new Timestamp(System.currentTimeMillis()).toString());
+            trackDetailsDTO.setFarmerId(String.valueOf(farmerId));
+            trackDetailsDTO.setFarmerName(farmerName);
+            trackDetailsDTO.setChildId(childId);
+            trackDetailsDTO.setChildName(childName);
+            trackDetailsDTO.setChildGender(gender);
+            trackDetailsDTO.setChildAge(age);
+
+            ContentValues geoContentValues=new GPSUtils().getGeoContentValues(trackDetailsDTO);
+            new GpsTrackerLogic().insertGeoDataDetails(this,geoContentValues);
         }
 
 

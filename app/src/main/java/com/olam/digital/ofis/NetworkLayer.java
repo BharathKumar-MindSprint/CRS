@@ -100,6 +100,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
     //private Handler handler;
     private ProgressDialog pd = null;
     private boolean gpsSynced=false;
+    private boolean isGpsSyncProcessing=false;
 
     private static SSLSocketFactory getSSLSocketFactory() {
         try {
@@ -383,7 +384,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             AuthenticationDTO newAuthDTO = (AuthenticationDTO) authResponse.body();
             newAuthDTO.setWillExpireAt((System.currentTimeMillis()/1000) + newAuthDTO.getExpiresIn() /1000);
             new AuthenticationHelper(context).setAuthenticationDTO(newAuthDTO);
-            syncGPSData();
+          //  syncGPSData();
 
         }
     }
@@ -697,6 +698,9 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 .getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE));
         int networkQueueItemId = networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_ID));
 
+        // verify the farmer & children in network Queue and sync
+        initGPSSync();
+
         if (itemType.equalsIgnoreCase("infrastructure")) {
             postInfrastructure(networkQueueItemId, handler, msg, total, progress, itemId);
         } else if (itemType.equalsIgnoreCase("farmer")) {
@@ -736,6 +740,16 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             postGpsNetworkQueue(networkQueueItemId, handler, msg, total, progress, itemId);
         }
 
+    }
+
+    private void initGPSSync() {
+        if (dl.checkToSyncGPS()==0){
+            try{
+                if (GpsTrackerLogic.getGeoPointCount(context) > 0 ){
+                    if (!isGpsSyncProcessing) syncGPSData();
+                }
+            }catch (Exception e){}
+        }
     }
 
     void initiateMobileMoneyTransaction(final Handler handler, final long transactionItemId, final long farmerId) {
@@ -2533,7 +2547,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 //                                dl.syncFarmerModule(farmerModuleId, farmerId, moduleId, submissionDate);
 
                         dl.deleteSipNetworkQueueItem(networkQueueItemId);
-
+                        initGPSSync();
                         statusMessage = res.getString(R.string.item_synced);
                         msg.what = 1;
                         msg.arg1 = total;
@@ -2955,8 +2969,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                         JSONObject outputObject = new JSONObject(postResponse.body().string());
                                         JSONArray childObject = outputObject.getJSONArray("children");
                                         dl.updateChildId(finalTempChildId, childObject.getJSONObject(0).getInt("id"));
-
                                         dl.deleteNetworkQueueItem(networkQueueItemId);
+                                        initGPSSync();
                                         statusMessage = res.getString(R.string.item_synced);
                                         msg.what = 1;
                                         msg.arg1 = total;
@@ -3203,6 +3217,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 dl.updateSyncedStatus(localFarmerId);
                                 dl.markFarmerAsSynced(localFarmerId, jsonObject1.getInt("id"), jsonObject1.getInt("farmId"), localPlaceId, jsonObject1.getInt("placeId"),jsonObject1.getString("olamFarmerId"));
                                 dl.deleteNetworkQueueItem(networkQueueItemId);
+                                initGPSSync();
                                 statusMessage = res.getString(R.string.item_synced);
                                 msg.what = 1;
                                 msg.arg1 = total;
@@ -3846,9 +3861,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 });
             }
         }
-
-
-
     }
 
 
@@ -3969,11 +3981,9 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         try {
             final String endpoint = GPSConstants.SYNC_END_POINT;
             final JSONArray jsonArray = new JSONArray();
-            if(gpsSynced){
-                return;
-            }
             Cursor gpsData = dl.getGeoTrackList();
             if (gpsData.getCount() > 0) {
+                isGpsSyncProcessing=true;
                 while (gpsData.moveToNext()) {
                     try {
                         JSONObject jsonObject = new JSONObject();
@@ -3983,6 +3993,22 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         jsonObject.put(OFISDBContract.GPSDetails.COLUMN_NAME_LONGITUDE, gpsData.getString(gpsData.getColumnIndex(OFISDBContract.GPSDetails.COLUMN_NAME_LONGITUDE)));
                         jsonObject.put(OFISDBContract.GPSDetails.COLUMN_NAME_RECORDED_DATE, gpsData.getString(gpsData.getColumnIndex(OFISDBContract.GPSDetails.COLUMN_NAME_RECORDED_DATE)).substring(0,19));
 
+                        jsonObject.put(OFISDBContract.GPSDetails.COLUMN_NAME_FARMER_ID, gpsData.getString(gpsData.getColumnIndex(OFISDBContract.GPSDetails.COLUMN_NAME_FARMER_ID)));
+                        jsonObject.put(OFISDBContract.GPSDetails.COLUMN_NAME_FARMER_NAME, gpsData.getString(gpsData.getColumnIndex(OFISDBContract.GPSDetails.COLUMN_NAME_FARMER_NAME)));
+                        jsonObject.put(OFISDBContract.GPSDetails.COLUMN_NAME_CHILD_ID, gpsData.getString(gpsData.getColumnIndex(OFISDBContract.GPSDetails.COLUMN_NAME_CHILD_ID)));
+                        jsonObject.put(OFISDBContract.GPSDetails.COLUMN_NAME_CHILD_NAME, gpsData.getString(gpsData.getColumnIndex(OFISDBContract.GPSDetails.COLUMN_NAME_CHILD_NAME)));
+
+                        jsonObject.put(OFISDBContract.GPSDetails.COLUMN_NAME_SIP_NAME, gpsData.getString(gpsData.getColumnIndex(OFISDBContract.GPSDetails.COLUMN_NAME_SIP_NAME)));
+                        jsonObject.put(OFISDBContract.GPSDetails.COLUMN_NAME_SIP_TYPE, gpsData.getString(gpsData.getColumnIndex(OFISDBContract.GPSDetails.COLUMN_NAME_SIP_TYPE)));
+                        jsonObject.put(OFISDBContract.GPSDetails.COLUMN_NAME_TRAINING_COURSE_NAME, gpsData.getString(gpsData.getColumnIndex(OFISDBContract.GPSDetails.COLUMN_NAME_TRAINING_COURSE_NAME)));
+                        jsonObject.put(OFISDBContract.GPSDetails.COLUMN_NAME_TRAINING_MODULE_NAME, gpsData.getString(gpsData.getColumnIndex(OFISDBContract.GPSDetails.COLUMN_NAME_TRAINING_MODULE_NAME)));
+                        jsonObject.put(OFISDBContract.GPSDetails.COLUMN_NAME_SURVEY_NAME, gpsData.getString(gpsData.getColumnIndex(OFISDBContract.GPSDetails.COLUMN_NAME_SURVEY_NAME)));
+
+                        jsonObject.put(OFISDBContract.GPSDetails.COLUMN_NAME_FARMER_GENDER, gpsData.getString(gpsData.getColumnIndex(OFISDBContract.GPSDetails.COLUMN_NAME_FARMER_GENDER)));
+                        jsonObject.put(OFISDBContract.GPSDetails.COLUMN_NAME_CHILD_GENDER, gpsData.getString(gpsData.getColumnIndex(OFISDBContract.GPSDetails.COLUMN_NAME_CHILD_GENDER)));
+                        jsonObject.put(OFISDBContract.GPSDetails.COLUMN_NAME_CHILD_AGE, gpsData.getString(gpsData.getColumnIndex(OFISDBContract.GPSDetails.COLUMN_NAME_CHILD_AGE)));
+                        jsonObject.put(OFISDBContract.GPSDetails.COLUMN_NAME_POLYGON_PLOTS_DETAILS, gpsData.getString(gpsData.getColumnIndex(OFISDBContract.GPSDetails.COLUMN_NAME_POLYGON_PLOTS_DETAILS)));
+
                         try {
                             String submittedTimeStamp = new Timestamp(System.currentTimeMillis()).toString();
                             jsonObject.put(OFISDBContract.GPSDetails.COLUMN_NAME_SUBMITTED_DATE, submittedTimeStamp.substring(0,19));
@@ -3991,6 +4017,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         jsonArray.put(jsonObject);
                     } catch (Exception e) { }
                 }
+            }else{
+                return;
             }
             JSONObject requstBody = new JSONObject();
             try {
@@ -4008,9 +4036,9 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                         if (postResponse.isSuccessful()) {
                             new GpsTrackerLogic().deleteGeoDetails(context);
-                            gpsSynced=true;
+                            isGpsSyncProcessing=false;
                         } else {
-                            gpsSynced=false;
+                            isGpsSyncProcessing=false;
                             // Added
                             if (postResponse.code() == 401 && postResponse.headers().toString().contains("invalid_token")) {
                                 try {
@@ -4024,6 +4052,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     }
                     @Override
                     public void onFailure(Call call, IOException e) {
+                        isGpsSyncProcessing=false;
                         gpsSynced=false;
                     }
                 });
