@@ -33,6 +33,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Base64;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
@@ -59,8 +61,10 @@ import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.PermissionListener;
 import com.olam.digital.ofis.BuildConfig;
 import com.olam.digital.ofis.DataLayer;
+import com.olam.digital.ofis.HomeActivity;
 import com.olam.digital.ofis.OFISDBContract;
 import com.olam.digital.ofis.R;
+import com.olam.digital.ofis.TasksActivity;
 import com.olam.digital.ofis.gps.GPSTracker;
 import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
 import com.olam.digital.ofis.gps.dto.TrackDetailsDTO;
@@ -200,8 +204,8 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_TITLE);
+
+
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         Configuration.getInstance().setOsmdroidBasePath(new File(Environment.getExternalStorageDirectory(), "osmdroid"));
@@ -212,6 +216,8 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
 
         setContentView(R.layout.activity_record_polygon);
 
+        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_TITLE);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
 
@@ -1620,4 +1626,35 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
         super.onResume();
         MatomoHelper.matomoScreenTracker(ScreenNameConstants.SCREEN_VIEW_FARMER_ACTIVITY, ScreenNameConstants.SCREEN_RECORD_POLYGON_ACTIVITY, ScreenNameConstants.SCREEN_RECORD_PLOT_POLYGON);
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_settings, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        if (id == R.id.action_home) {
+            Intent intent = new Intent(this, HomeActivity.class);
+            startActivity(intent);
+            return true;
+
+        }else if (id == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }else {
+            onBackPressed();
+            return true;
+        }
+
+    }
+
+
 }
