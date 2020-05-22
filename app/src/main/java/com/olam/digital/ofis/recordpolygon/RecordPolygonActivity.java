@@ -64,6 +64,7 @@ import com.olam.digital.ofis.DataLayer;
 import com.olam.digital.ofis.HomeActivity;
 import com.olam.digital.ofis.OFISDBContract;
 import com.olam.digital.ofis.R;
+import com.olam.digital.ofis.SettingsActivity;
 import com.olam.digital.ofis.TasksActivity;
 import com.olam.digital.ofis.gps.GPSTracker;
 import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
@@ -1610,7 +1611,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_settings, menu);
+        getMenuInflater().inflate(R.menu.menu_other, menu);
         return true;
     }
 
@@ -1621,19 +1622,31 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
+            return true;
+        }
+
         if (id == R.id.action_home) {
             Intent intent = new Intent(this, HomeActivity.class);
             startActivity(intent);
             return true;
+        }
 
-        }else if (id == android.R.id.home) {
-            onBackPressed();
-            return true;
-        }else {
-            onBackPressed();
+        if (id == android.R.id.home) {
+            NavUtils.navigateUpFromSameTask(this);
             return true;
         }
 
+        if (id == R.id.action_tasks) {
+            Intent intent = new Intent(this, TasksActivity.class);
+            startActivity(intent);
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
 
