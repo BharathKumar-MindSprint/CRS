@@ -98,11 +98,6 @@ public class TrainingRecordConfirmation extends BaseListActivity {
 //        }
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        MatomoHelper.matomoScreenTracker(ScreenNameConstants.SCREEN_TRAINING_RECORD_ACTIVITY, ScreenNameConstants.SCREEN_TRAINING_RECORD_CONFIRMATION_ACTIVITY, ScreenNameConstants.SCREEN_TRAINING_RECORD_CONFIRMATION);
-    }
 
     @Override
     protected void onResume() {
