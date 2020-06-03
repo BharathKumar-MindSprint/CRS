@@ -186,6 +186,8 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
 
     private int lPlotCount = 0;
 
+    private Location mCapturedLocation=null;
+
     ArrayAdapter<String> spinnerArrayAdapter;
 
     private static final long INTERVAL = 1000 * 3;
@@ -1070,6 +1072,9 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
     @Override
     public void onLocationChanged(final Location pLoc) {
         setGPSLocationAvailable(true);
+        if (pLoc !=null){
+            mCapturedLocation= pLoc;
+        }
 
         long currentTime = System.currentTimeMillis();
         if (mNetworkLocationIgnorer.shouldIgnore(pLoc.getProvider(), currentTime))
@@ -1367,25 +1372,21 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
 
 
     private void collectGPSPoint(String plotDetails) {
-        if ( mLocationBeanList.size()>0){
-            if(mLocationBeanList.get(0) != null){
-                String latitude= String.valueOf(mLocationBeanList.get(0).getLat());
-                String longitude=String.valueOf(mLocationBeanList.get(0).getLng());
+                if (mCapturedLocation!=null) {
+                    TrackDetailsDTO trackDetailsDTO = new TrackDetailsDTO();
+                    trackDetailsDTO.setModule(GPSConstants.MODULE_CAPTURE_FARM_POLYGON);
+                    trackDetailsDTO.setLatitude(String.valueOf(mCapturedLocation.getLatitude()));
+                    trackDetailsDTO.setLongitude(String.valueOf(mCapturedLocation.getLongitude()));
+                    trackDetailsDTO.setAccuracy(String.valueOf(mCapturedLocation.getAccuracy()));
+                    trackDetailsDTO.setRecordDate(new Timestamp(System.currentTimeMillis()).toString());
+                    trackDetailsDTO.setFarmerId(String.valueOf(mFarmerId));
+                    trackDetailsDTO.setFarmerName(mFarmerName);
+                    trackDetailsDTO.setPolygonPlotDetails(plotDetails);
 
-                TrackDetailsDTO trackDetailsDTO=new TrackDetailsDTO();
-                trackDetailsDTO.setModule(GPSConstants.MODULE_CAPTURE_FARM_POLYGON);
-                trackDetailsDTO.setLatitude(latitude);
-                trackDetailsDTO.setLongitude(longitude);
-                trackDetailsDTO.setRecordDate(new Timestamp(System.currentTimeMillis()).toString());
-                trackDetailsDTO.setFarmerId(String.valueOf(mFarmerId));
-                trackDetailsDTO.setFarmerName(mFarmerName);
-                trackDetailsDTO.setPolygonPlotDetails(plotDetails);
-
-                ContentValues geoContentValues=new GPSUtils().getGeoContentValues(trackDetailsDTO);
-                GpsTrackerLogic gpsTrackerLogic=new GpsTrackerLogic();
-                gpsTrackerLogic.insertGeoDataDetails(RecordPolygonActivity.this, geoContentValues);
-            }
-        }
+                    ContentValues geoContentValues = new GPSUtils().getGeoContentValues(trackDetailsDTO);
+                    GpsTrackerLogic gpsTrackerLogic = new GpsTrackerLogic();
+                    gpsTrackerLogic.insertGeoDataDetails(RecordPolygonActivity.this, geoContentValues);
+                }
 
     }
 

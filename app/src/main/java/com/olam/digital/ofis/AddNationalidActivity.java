@@ -19,6 +19,7 @@ import androidx.core.content.ContextCompat;
 import androidx.appcompat.widget.AppCompatButton;
 import android.text.InputFilter;
 import android.text.InputType;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -33,6 +34,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.google.firebase.crash.FirebaseCrash;
+import com.google.gson.JsonObject;
 import com.olam.digital.ofis.childlabour.ChildLabourUtils;
 import com.olam.digital.ofis.gps.GPSListener;
 import com.olam.digital.ofis.gps.GPSTracker;
@@ -47,6 +49,8 @@ import com.olam.digital.ofis.model.NationalIdTypeDTO;
 import com.olam.digital.ofis.recordpolygon.Utils;
 
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
@@ -628,7 +632,25 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
 
             storeableNationalids = fetchnationalidvalues();
             boolean statusmoduration = dl.updateFarmerNationalids(context, farmerId, storeableNationalids, "2", farmername);
-            collectGPSPoint();
+
+            // collect the national id types
+            ArrayList nationalIdTypes= new ArrayList<String>();
+            try{
+                if(storeableNationalids.length() > 0){
+
+                    int length = storeableNationalids.length();
+                    for (int j = 0; j < length; j++) {
+                        try {
+                            nationalIdTypes.add(storeableNationalids.getJSONObject(j).get("nationalIdType").toString());
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }catch (Exception e){}
+
+            collectGPSPoint(nationalIdTypes);
+
             if (statusmoduration) {
                 Toast.makeText(this, getResources().getString(R.string.moderation_note), Toast.LENGTH_LONG).show();
             }
@@ -636,16 +658,26 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
         }
     }
 
-    private void collectGPSPoint() {
+    private void collectGPSPoint(ArrayList nationalIdTypes) {
+        GpsTrackerLogic gpsTrackerLogic=new GpsTrackerLogic();
+        GPSUtils gpsUtils=new GPSUtils();
+        ArrayList<String> nationalIdTypeNames =gpsTrackerLogic.getNationalIdNamesnyIds(this,nationalIdTypes);
         TrackDetailsDTO trackDetailsDTO=new TrackDetailsDTO();
         trackDetailsDTO.setModule(GPSConstants.MODULE_ADD_NATIONAL_ID);
         trackDetailsDTO.setLatitude( String.valueOf(mCurrentLocation.getLatitude()));
         trackDetailsDTO.setLongitude(String.valueOf(mCurrentLocation.getLongitude()));
+        trackDetailsDTO.setAccuracy(String.valueOf(mCurrentLocation.getAccuracy()));
         trackDetailsDTO.setRecordDate(new Timestamp(System.currentTimeMillis()).toString());
         trackDetailsDTO.setFarmerId(String.valueOf(farmerId));
         trackDetailsDTO.setFarmerName(farmername);
-        ContentValues geoContentValues = new GPSUtils().getGeoContentValues(trackDetailsDTO);
-        new GpsTrackerLogic().insertGeoDataDetails(context, geoContentValues);
+
+        // collecting in independent records
+        for ( String type : nationalIdTypeNames){
+            trackDetailsDTO.setNationalId(type);
+            ContentValues geoContentValues = gpsUtils.getGeoContentValues(trackDetailsDTO);
+            gpsTrackerLogic.insertGeoDataDetails(context, geoContentValues);
+        }
+
     }
 
 

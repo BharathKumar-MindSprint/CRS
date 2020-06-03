@@ -96,6 +96,7 @@ public class AddInfrastructureActivity extends BaseActivity {
     private ImageButton requestLocation;
     private Location poiLocation;
     private String recorded_lat, recorded_lng;
+    private String accuracy;
 
 
 
@@ -546,6 +547,7 @@ public class AddInfrastructureActivity extends BaseActivity {
         if (poiLocation != null && !editMode) {
             recorded_lat = String.valueOf(poiLocation.getLatitude());
             recorded_lng = String.valueOf(poiLocation.getLongitude());
+            accuracy=String.valueOf(poiLocation.getAccuracy());
         }
 
 
@@ -693,6 +695,7 @@ public class AddInfrastructureActivity extends BaseActivity {
         trackDetailsDTO.setModule(GPSConstants.MODULE_CAPTURE_SOCIAL_INFRASTRUCTURE_POINT);
         trackDetailsDTO.setLatitude(recorded_lat);
         trackDetailsDTO.setLongitude(recorded_lng);
+        trackDetailsDTO.setAccuracy(accuracy);
         trackDetailsDTO.setRecordDate(new Timestamp(System.currentTimeMillis()).toString());
         trackDetailsDTO.setSipName(name);
         trackDetailsDTO.setSipType(type);

@@ -1101,6 +1101,9 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_IS_VILLAGE = "is_village";
         public static final String COLUMN_NAME_SIGNATURE = "signature";
 
+        // Add for accuracu capture
+        public static final String COLUMN_NAME_ACCURACY = "accuracy";
+
 
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
@@ -1148,6 +1151,7 @@ public class OFISDBContract {
                     add(COLUMN_NAME_FARMER_SURVEY_CODE);
                     add(COLUMN_NAME_IS_VILLAGE);
                     add(COLUMN_NAME_SIGNATURE);
+                    add(COLUMN_NAME_ACCURACY);
                 }}
         );
 
@@ -1931,6 +1935,8 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_SURVEY_NAME = "surveyName";
 
         public static final String COLUMN_NAME_NETWORK_QUEUE_ID = "networkQueueId";
+        public static final String COLUMN_NAME_GPS_ACCURACY = "accuracy";
+        public static final String COLUMN_NAME_NATIONAL_ID="nationalId";
     }
 
     public static final LinkedHashMap<String, List<String>> ALL_TABLES =

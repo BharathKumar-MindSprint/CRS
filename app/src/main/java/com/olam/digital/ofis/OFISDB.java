@@ -10,7 +10,7 @@ import android.database.sqlite.SQLiteOpenHelper;
  */
 class OFISDB extends SQLiteOpenHelper {
     private static OFISDB sInstance;
-    private static final int DATABASE_VERSION = 101;
+    private static final int DATABASE_VERSION = 102;
     private static final String DATABASE_NAME = "ofismobile";
 
     // Child Labour Table Creation
@@ -57,6 +57,8 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.GPSDetails.COLUMN_NAME_FARMER_GENDER+ " TEXT, "
             + OFISDBContract.GPSDetails.COLUMN_NAME_CHILD_GENDER+ " TEXT, "
             + OFISDBContract.GPSDetails.COLUMN_NAME_CHILD_AGE + " TEXT, "
+            + OFISDBContract.GPSDetails.COLUMN_NAME_GPS_ACCURACY + " TEXT, "
+            + OFISDBContract.GPSDetails.COLUMN_NAME_NATIONAL_ID + " TEXT, "
             + OFISDBContract.GPSDetails.COLUMN_NAME_POLYGON_PLOTS_DETAILS + " TEXT, "
             + OFISDBContract.GPSDetails.COLUMN_NAME_SURVEY_NAME + " TEXT, "
             + OFISDBContract.GPSDetails.COLUMN_NAME_RECORDED_DATE  + " TEXT, "
@@ -382,6 +384,7 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_SUBMODULE_ID + " INTEGER, "
             + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_SUBGROUP_TYPE + " TEXT, "
             + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME + " TEXT, "
+            + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_ACCURACY + " TEXT, "
             + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_CHILD_ID + " TEXT, "
             + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_SURVEY_CODE + " TEXT, "
             + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_IS_VILLAGE + " TEXT, "

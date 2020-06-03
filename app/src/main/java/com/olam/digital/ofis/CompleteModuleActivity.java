@@ -715,6 +715,7 @@ public class CompleteModuleActivity extends BaseActivity {
         trackDetailsDTO.setModule(GPSConstants.MODULE_CAPTURE_FARMER_SURVEY);
         trackDetailsDTO.setLatitude(String.valueOf(farmLocation.getLatitude()));
         trackDetailsDTO.setLongitude(String.valueOf(farmLocation.getLongitude()));
+        trackDetailsDTO.setAccuracy(String.valueOf(farmLocation.getAccuracy()));
         trackDetailsDTO.setRecordDate(new Timestamp(System.currentTimeMillis()).toString());
         trackDetailsDTO.setFarmerId(String.valueOf(farmerId));
         trackDetailsDTO.setFarmerName(farmerName);

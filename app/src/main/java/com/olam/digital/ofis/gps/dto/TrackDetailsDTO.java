@@ -25,6 +25,25 @@ public class TrackDetailsDTO {
 
     private long networkQueueId;
 
+    private String accuracy;
+    private String nationalId;
+
+    public String getNationalId() {
+        return nationalId;
+    }
+
+    public void setNationalId(String nationalId) {
+        this.nationalId = nationalId;
+    }
+
+    public String getAccuracy() {
+        return accuracy;
+    }
+
+    public void setAccuracy(String accuracy) {
+        this.accuracy = accuracy;
+    }
+
     public long getNetworkQueueId() {
         return networkQueueId;
     }
