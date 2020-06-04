@@ -70,4 +70,9 @@ public class GpsTrackerLogic {
         dataLayer = new DataLayer(context.getResources(), context);
         dataLayer.updateChildDetails(childId,name,gender,age);
     }
+
+    public ArrayList<String> getNationalIdNamesnyIds(Context context,ArrayList<String> nationalIds){
+        dataLayer = new DataLayer(context.getResources(), context);
+        return dataLayer.getNationalIdNames(nationalIds);
+    }
 }

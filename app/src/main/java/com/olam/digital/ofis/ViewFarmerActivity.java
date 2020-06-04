@@ -513,6 +513,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         trackDetailsDTO.setModule(module);
         trackDetailsDTO.setLatitude(String.valueOf(farmLocation.getLatitude()));
         trackDetailsDTO.setLongitude(String.valueOf(farmLocation.getLongitude()));
+        trackDetailsDTO.setAccuracy(String.valueOf(farmLocation.getAccuracy()));
         trackDetailsDTO.setRecordDate(new Timestamp(System.currentTimeMillis()).toString());
         trackDetailsDTO.setFarmerId(String.valueOf(farmerId));
         trackDetailsDTO.setFarmerName(farmerNameStr);

@@ -441,6 +441,7 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
         trackDetailsDTO.setModule(GPSConstants.COLUMN_NAME_CHILD_SURVEY);
         trackDetailsDTO.setLatitude(String.valueOf(mCurrentCapturedLocation.getLatitude()));
         trackDetailsDTO.setLongitude(String.valueOf(mCurrentCapturedLocation.getLongitude()));
+        trackDetailsDTO.setAccuracy(String.valueOf(mCurrentCapturedLocation.getAccuracy()));
         trackDetailsDTO.setRecordDate(new Timestamp(System.currentTimeMillis()).toString());
         trackDetailsDTO.setFarmerId(String.valueOf(farmerId));
         trackDetailsDTO.setFarmerName(farmerName);

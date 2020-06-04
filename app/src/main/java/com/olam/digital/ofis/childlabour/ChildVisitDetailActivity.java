@@ -225,6 +225,7 @@ public class ChildVisitDetailActivity  extends BaseActivity implements View.OnCl
         trackDetailsDTO.setModule(module);
         trackDetailsDTO.setLatitude(String.valueOf(location.getLatitude()));
         trackDetailsDTO.setLongitude(String.valueOf(location.getLongitude()));
+        trackDetailsDTO.setAccuracy(String.valueOf(location.getAccuracy()));
         trackDetailsDTO.setRecordDate(new Timestamp(System.currentTimeMillis()).toString());
         trackDetailsDTO.setFarmerId(String.valueOf(farmerId));
         trackDetailsDTO.setFarmerName(name);
