@@ -4008,7 +4008,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         jsonObject.put(OFISDBContract.GPSDetails.COLUMN_NAME_CHILD_GENDER, gpsData.getString(gpsData.getColumnIndex(OFISDBContract.GPSDetails.COLUMN_NAME_CHILD_GENDER)));
                         jsonObject.put(OFISDBContract.GPSDetails.COLUMN_NAME_CHILD_AGE, gpsData.getString(gpsData.getColumnIndex(OFISDBContract.GPSDetails.COLUMN_NAME_CHILD_AGE)));
                         jsonObject.put(OFISDBContract.GPSDetails.COLUMN_NAME_POLYGON_PLOTS_DETAILS, gpsData.getString(gpsData.getColumnIndex(OFISDBContract.GPSDetails.COLUMN_NAME_POLYGON_PLOTS_DETAILS)));
-
+                        jsonObject.put(OFISDBContract.GPSDetails.COLUMN_NAME_GPS_ACCURACY, gpsData.getString(gpsData.getColumnIndex(OFISDBContract.GPSDetails.COLUMN_NAME_GPS_ACCURACY)));
+                        jsonObject.put(OFISDBContract.GPSDetails.COLUMN_NAME_NATIONAL_ID, gpsData.getString(gpsData.getColumnIndex(OFISDBContract.GPSDetails.COLUMN_NAME_NATIONAL_ID)));
                         try {
                             String submittedTimeStamp = new Timestamp(System.currentTimeMillis()).toString();
                             jsonObject.put(OFISDBContract.GPSDetails.COLUMN_NAME_SUBMITTED_DATE, submittedTimeStamp.substring(0,19));
@@ -4074,7 +4075,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             try{
                 jsonObject.put(OFISDBContract.GPSDetails.COLUMN_NAME_RECORDED_DATE, networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT)).substring(0,19));
             }catch (Exception e){}
-
+            jsonObject.put(OFISDBContract.GPSDetails.COLUMN_NAME_GPS_ACCURACY, networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_ACCURACY)));
             try {
                 String submittedTimeStamp = new Timestamp(System.currentTimeMillis()).toString();
                 jsonObject.put(OFISDBContract.GPSDetails.COLUMN_NAME_SUBMITTED_DATE, submittedTimeStamp.substring(0,19));

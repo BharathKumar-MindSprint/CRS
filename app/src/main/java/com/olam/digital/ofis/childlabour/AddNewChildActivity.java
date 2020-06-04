@@ -275,6 +275,7 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
             trackDetailsDTO.setModule(GPSConstants.MODULE_CAPTURE_ADD_CHILD);
             trackDetailsDTO.setLatitude(String.valueOf(mCurrentLocation.getLatitude()));
             trackDetailsDTO.setLongitude(String.valueOf(mCurrentLocation.getLongitude()));
+            trackDetailsDTO.setAccuracy(String.valueOf(mCurrentLocation.getAccuracy()));
             trackDetailsDTO.setRecordDate(new Timestamp(System.currentTimeMillis()).toString());
             trackDetailsDTO.setFarmerId(String.valueOf(farmerId));
             trackDetailsDTO.setFarmerName(farmerName);

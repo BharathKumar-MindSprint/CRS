@@ -256,6 +256,7 @@ public class TrainingRecordConfirmation extends BaseListActivity {
         trackDetailsDTO.setModule(module);
         trackDetailsDTO.setLatitude(String.valueOf(farmLocation.getLatitude()));
         trackDetailsDTO.setLongitude(String.valueOf(farmLocation.getLongitude()));
+        trackDetailsDTO.setAccuracy(String.valueOf(farmLocation.getAccuracy()));
         trackDetailsDTO.setRecordDate(new Timestamp(System.currentTimeMillis()).toString());
         trackDetailsDTO.setTrainingCourseName(courseName);
         trackDetailsDTO.setTrainingModuleName(moduleName);

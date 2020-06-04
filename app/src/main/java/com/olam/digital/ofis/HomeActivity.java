@@ -318,6 +318,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                     trackDetailsDTO.setModule(GPSConstants.MODULE_CAPTURE_CAPTURE_MY_LOCATION);
                     trackDetailsDTO.setLatitude(String.valueOf(mCurrentLocation.getLatitude()));
                     trackDetailsDTO.setLongitude(String.valueOf(mCurrentLocation.getLongitude()));
+                    trackDetailsDTO.setAccuracy(String.valueOf(mCurrentLocation.getAccuracy()));
                     trackDetailsDTO.setRecordDate(new Timestamp(System.currentTimeMillis()).toString());
                     ContentValues geoContentValues=new GPSUtils().getGeoContentValues(trackDetailsDTO);
                     if (newGps) {

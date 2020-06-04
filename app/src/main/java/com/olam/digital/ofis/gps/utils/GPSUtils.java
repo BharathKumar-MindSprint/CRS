@@ -31,7 +31,8 @@ public class GPSUtils {
         geoContentValues.put(OFISDBContract.GPSDetails.COLUMN_NAME_CHILD_AGE, trackDetailsDTO.getChildAge());
         geoContentValues.put(OFISDBContract.GPSDetails.COLUMN_NAME_POLYGON_PLOTS_DETAILS, trackDetailsDTO.getPolygonPlotDetails());
         geoContentValues.put(OFISDBContract.GPSDetails.COLUMN_NAME_NETWORK_QUEUE_ID, String.valueOf(trackDetailsDTO.getNetworkQueueId()));
-
+        geoContentValues.put(OFISDBContract.GPSDetails.COLUMN_NAME_GPS_ACCURACY, String.valueOf(trackDetailsDTO.getAccuracy()));
+        geoContentValues.put(OFISDBContract.GPSDetails.COLUMN_NAME_NATIONAL_ID, String.valueOf(trackDetailsDTO.getNationalId()));
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         geoContentValues.put(OFISDBContract.GPSDetails.COLUMN_NAME_SUBMITTED_DATE,timestamp.toString());
         return  geoContentValues;
