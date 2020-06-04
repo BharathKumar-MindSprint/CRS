@@ -783,8 +783,7 @@ class OFISDB extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL("drop table IF EXISTS localfarmernationalids");
         sqLiteDatabase.execSQL("drop table IF EXISTS nationalidimages");
         sqLiteDatabase.execSQL("drop table IF EXISTS signature");
-
-
+        sqLiteDatabase.execSQL("drop table IF EXISTS gps_details");
 
         onCreate(sqLiteDatabase);
     }
