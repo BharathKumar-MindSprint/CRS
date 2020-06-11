@@ -1,10 +1,12 @@
 package com.olam.digital.ofis;
 
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -18,6 +20,7 @@ import androidx.appcompat.widget.AppCompatButton;
 
 import android.text.InputFilter;
 import android.text.InputType;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -32,7 +35,14 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.google.firebase.crash.FirebaseCrash;
+import com.google.gson.JsonObject;
 import com.olam.digital.ofis.childlabour.ChildLabourUtils;
+import com.olam.digital.ofis.gps.GPSListener;
+import com.olam.digital.ofis.gps.GPSTracker;
+import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
+import com.olam.digital.ofis.gps.dto.TrackDetailsDTO;
+import com.olam.digital.ofis.gps.utils.GPSConstants;
+import com.olam.digital.ofis.gps.utils.GPSUtils;
 import com.olam.digital.ofis.matoma.MatomoHelper;
 import com.olam.digital.ofis.matoma.ScreenNameConstants;
 import com.olam.digital.ofis.model.NationalIdDTO;
@@ -40,10 +50,13 @@ import com.olam.digital.ofis.model.NationalIdTypeDTO;
 import com.olam.digital.ofis.recordpolygon.Utils;
 
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -83,6 +96,12 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
     private Uri mCapturedImageURI = null, mCapturedSignatureImageURI = null;
     private LinearLayout nationalids;
 
+    private Location mCurrentLocation = null;
+    private GPSTracker gpsTracker = null;
+    GPSListener gpsListener = null;
+
+    private static final int REQUEST_CHECK_SETTINGS = 100;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -109,6 +128,21 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
         } else {
             bindNationalidValues();
         }
+        initLocationSetup();
+    }
+
+    private void initLocationSetup() {
+        gpsListener = new GPSListener() {
+            @Override
+            public void onGPSClick(Location location) {
+                if (location != null) {
+                    mCurrentLocation = location;
+                }
+            }
+        };
+        gpsTracker = new GPSTracker(this, gpsListener);
+//        if (gpsTracker.isGpsEnabled()) {
+        gpsTracker.startLocationUpdateInitially();
     }
 
     @Override
@@ -574,6 +608,17 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
 
         } else if (id == R.id.save) {
             MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_SAVE_NATIONAL_ID,  ScreenNameConstants.BUTTON_CLICKED);
+
+            // check the current location
+            if(mCurrentLocation != null){
+                // check the current location
+            }else {
+                if (mCurrentLocation == null || !gpsTracker.isGpsEnabled()) {
+                    gpsTracker.getDeviceLocation();
+                    return;
+                }
+            }
+
             if (!ValidateNIDValues()) return;
             try {
                 if (!validateSpinnerValues(nationalids, spinner_nidtype.getSelectedItem().toString())) {
@@ -596,6 +641,25 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
 
             storeableNationalids = fetchnationalidvalues();
             boolean statusmoduration = dl.updateFarmerNationalids(context, farmerId, storeableNationalids, "2", farmername);
+
+            // collect the national id types
+            ArrayList nationalIdTypes= new ArrayList<String>();
+            try{
+                if(storeableNationalids.length() > 0){
+
+                    int length = storeableNationalids.length();
+                    for (int j = 0; j < length; j++) {
+                        try {
+                            nationalIdTypes.add(storeableNationalids.getJSONObject(j).get("nationalIdType").toString());
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }catch (Exception e){}
+
+            collectGPSPoint(nationalIdTypes);
+
             if (statusmoduration) {
                 Toast.makeText(this, getResources().getString(R.string.moderation_note), Toast.LENGTH_LONG).show();
             }
@@ -603,6 +667,39 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
         }
     }
 
+    private void collectGPSPoint(ArrayList nationalIdTypes) {
+        GpsTrackerLogic gpsTrackerLogic=new GpsTrackerLogic();
+        GPSUtils gpsUtils=new GPSUtils();
+        ArrayList<String> nationalIdTypeNames =gpsTrackerLogic.getNationalIdNamesnyIds(this,nationalIdTypes);
+        TrackDetailsDTO trackDetailsDTO=new TrackDetailsDTO();
+        trackDetailsDTO.setModule(GPSConstants.MODULE_ADD_NATIONAL_ID);
+        trackDetailsDTO.setLatitude( String.valueOf(mCurrentLocation.getLatitude()));
+        trackDetailsDTO.setLongitude(String.valueOf(mCurrentLocation.getLongitude()));
+        trackDetailsDTO.setAccuracy(String.valueOf(mCurrentLocation.getAccuracy()));
+        trackDetailsDTO.setRecordDate(new Timestamp(System.currentTimeMillis()).toString());
+        trackDetailsDTO.setFarmerId(String.valueOf(farmerId));
+        trackDetailsDTO.setFarmerName(farmername);
+
+        // collecting in independent records
+        for ( String type : nationalIdTypeNames){
+            trackDetailsDTO.setNationalId(type);
+            ContentValues geoContentValues = gpsUtils.getGeoContentValues(trackDetailsDTO);
+            gpsTrackerLogic.insertGeoDataDetails(context, geoContentValues);
+        }
+
+    }
+
+
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        try {
+            gpsTracker.stopLocationUpdates();
+        } catch (Exception e) {
+        }
+
+    }
 
     private boolean validateSpinnerSelection() {
         boolean status = true;
@@ -718,10 +815,14 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
         super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
         if (resultCode == Activity.RESULT_CANCELED) return;
         switch (requestCode) {
-
             case REQUEST_IMAGE_CAPTURE_NATIONALID:
                 if (resultCode == RESULT_OK) {
                     setNIDImageFromFilePath(hm_uripath.get(currentcapture_position), "signature");
+                }
+                break;
+            case REQUEST_CHECK_SETTINGS:
+                if (resultCode == -1) {
+                    gpsTracker.getDeviceLocation();
                 }
                 break;
             default:

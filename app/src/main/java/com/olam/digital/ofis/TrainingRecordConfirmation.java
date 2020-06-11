@@ -24,6 +24,7 @@ import com.olam.digital.ofis.childlabour.AddNewChildActivity;
 import com.olam.digital.ofis.gps.GPSListener;
 import com.olam.digital.ofis.gps.GPSTracker;
 import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
+import com.olam.digital.ofis.gps.dto.TrackDetailsDTO;
 import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.gps.utils.GPSUtils;
 import com.olam.digital.ofis.matoma.MatomoHelper;
@@ -238,7 +239,7 @@ public class TrainingRecordConfirmation extends BaseListActivity {
 
                 if (dl.insertNetworkQueueEntry(networkQueueValues) != 0) {
                     // collect GPS Record
-                    collectGPSPoint(GPSConstants.MODULE_CAPTURE_TRAINING_RECORD,mCurrentLocation);
+                    collectGPSPoint(GPSConstants.MODULE_CAPTURE_TRAINING_RECORD,mCurrentLocation,courseNameValue,moduleNameValue);
                     ContentValues trainingRecordValues = new ContentValues();
                     trainingRecordValues.put(OFISDBContract.TrainingRecord.COLUMN_NAME_IN_QUEUE, 1);
                     if (dl.updateTrainingRecord(trainingRecordValues, trainingRecordId) > 0) {
@@ -251,11 +252,18 @@ public class TrainingRecordConfirmation extends BaseListActivity {
         });
     }
 
-    private void collectGPSPoint(String module, Location farmLocation) {
-        String lat=String.valueOf(farmLocation.getLatitude());
-        String lon=String.valueOf(farmLocation.getLongitude());
-        ContentValues geoContentValues=new GPSUtils().getGeoContentValues(module,lat,lon,new Timestamp(System.currentTimeMillis()).toString());
-        Long newTrackId= new GpsTrackerLogic().insertGeoDataDetails(context,geoContentValues);
+    private void collectGPSPoint(String module, Location farmLocation, String courseName,String moduleName) {
+
+        TrackDetailsDTO trackDetailsDTO=new TrackDetailsDTO();
+        trackDetailsDTO.setModule(module);
+        trackDetailsDTO.setLatitude(String.valueOf(farmLocation.getLatitude()));
+        trackDetailsDTO.setLongitude(String.valueOf(farmLocation.getLongitude()));
+        trackDetailsDTO.setAccuracy(String.valueOf(farmLocation.getAccuracy()));
+        trackDetailsDTO.setRecordDate(new Timestamp(System.currentTimeMillis()).toString());
+        trackDetailsDTO.setTrainingCourseName(courseName);
+        trackDetailsDTO.setTrainingModuleName(moduleName);
+        ContentValues geoContentValues=new GPSUtils().getGeoContentValues(trackDetailsDTO);
+        new GpsTrackerLogic().insertGeoDataDetails(context,geoContentValues);
     }
 
     private void displayBitmap(String savedImagePath, ImageView target) {

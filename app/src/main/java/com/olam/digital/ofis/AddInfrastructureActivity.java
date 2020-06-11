@@ -60,6 +60,7 @@ import com.olam.digital.ofis.childlabour.businesslogic.SipLogic;
 import com.olam.digital.ofis.childlabour.dto.VillageDTO;
 import com.olam.digital.ofis.gps.GPSTracker;
 import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
+import com.olam.digital.ofis.gps.dto.TrackDetailsDTO;
 import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.gps.utils.GPSUtils;
 import com.olam.digital.ofis.matoma.MatomoHelper;
@@ -95,6 +96,7 @@ public class AddInfrastructureActivity extends BaseActivity {
     private ImageButton requestLocation;
     private Location poiLocation;
     private String recorded_lat, recorded_lng;
+    private String accuracy;
 
 
 
@@ -215,7 +217,6 @@ public class AddInfrastructureActivity extends BaseActivity {
             if (savedInstanceState.containsKey("is_requesting_updates")) {
                 mRequestingLocationUpdates = savedInstanceState.getBoolean("is_requesting_updates");
             }
-
             if (savedInstanceState.containsKey("last_known_location")) {
                 mCurrentLocation = savedInstanceState.getParcelable("last_known_location");
             }
@@ -546,6 +547,7 @@ public class AddInfrastructureActivity extends BaseActivity {
         if (poiLocation != null && !editMode) {
             recorded_lat = String.valueOf(poiLocation.getLatitude());
             recorded_lng = String.valueOf(poiLocation.getLongitude());
+            accuracy=String.valueOf(poiLocation.getAccuracy());
         }
 
 
@@ -639,8 +641,21 @@ public class AddInfrastructureActivity extends BaseActivity {
                 if (values.size() > 0 && uploadId != null ) {
                     if (editMode) {
                         // edit POI call
-                        if (dl.updateNetworkQueueEntry(values, infrastructureID) > 0) {
+                        if ( dl.updateNetworkQueueEntry(values, infrastructureID) > 0) {
                             Toast.makeText(context, res.getString(R.string.Successfully_updated), Toast.LENGTH_SHORT).show();
+                            // update Gps table
+                            String sipName="";
+                            if (isVillage){
+                                sipName=villageDetails.getVillageName();
+                            }else{
+                                sipName=poiName.getText().toString().trim();
+                            }
+                            try {
+                                if (infrastructureID!=0){
+                                    dl.updateSIPNameforGPS(AddInfrastructureActivity.this,sipName,(int)infrastructureID);
+                                }
+                            }catch (Exception e){}
+
                             Intent intent = new Intent(context, HomeActivity.class);
                             startActivity(intent);
                         }
@@ -649,7 +664,17 @@ public class AddInfrastructureActivity extends BaseActivity {
                         // insert POI
                         long newPoiId = dl.insertNetworkQueueSipEntry(values, uploadId);
                         if (newPoiId != -1) {
-                            collectGPSPoint();
+                            String sipName = null;
+                            try {
+                                if (isVillage){
+                                    sipName=villageDetails.getVillageName();
+                                }else{
+                                    sipName=poiName.getText().toString();
+                                }
+                            }catch (Exception e){}
+
+                            String sipType=String.valueOf(subModulesSpinner.getSelectedItem());
+                            collectGPSPoint(sipName,sipType,newPoiId);
                             Toast.makeText(context, res.getString(R.string.Successfully_added), Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(context, HomeActivity.class);
                             startActivity(intent);
@@ -665,9 +690,18 @@ public class AddInfrastructureActivity extends BaseActivity {
         });
     }
 
-    private void collectGPSPoint() {
-        ContentValues geoContentValues=new GPSUtils().getGeoContentValues(GPSConstants.MODULE_CAPTURE_SOCIAL_INFRASTRUCTURE_POINT,recorded_lat,recorded_lng,new Timestamp(System.currentTimeMillis()).toString());
-        Long newTrackId= new GpsTrackerLogic().insertGeoDataDetails(context,geoContentValues);
+    private void collectGPSPoint(String name,String type,long newPoiId) {
+        TrackDetailsDTO trackDetailsDTO=new TrackDetailsDTO();
+        trackDetailsDTO.setModule(GPSConstants.MODULE_CAPTURE_SOCIAL_INFRASTRUCTURE_POINT);
+        trackDetailsDTO.setLatitude(recorded_lat);
+        trackDetailsDTO.setLongitude(recorded_lng);
+        trackDetailsDTO.setAccuracy(accuracy);
+        trackDetailsDTO.setRecordDate(new Timestamp(System.currentTimeMillis()).toString());
+        trackDetailsDTO.setSipName(name);
+        trackDetailsDTO.setSipType(type);
+        trackDetailsDTO.setNetworkQueueId(newPoiId);
+        ContentValues geoContentValues=new GPSUtils().getGeoContentValues(trackDetailsDTO);
+        new GpsTrackerLogic().insertGeoDataDetails(context,geoContentValues);
     }
 
     private void setPoiGPS(Location location) {

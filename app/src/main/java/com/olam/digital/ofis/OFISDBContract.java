@@ -1101,6 +1101,9 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_IS_VILLAGE = "is_village";
         public static final String COLUMN_NAME_SIGNATURE = "signature";
 
+        // Add for accuracu capture
+        public static final String COLUMN_NAME_ACCURACY = "accuracy";
+
 
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
@@ -1148,6 +1151,7 @@ public class OFISDBContract {
                     add(COLUMN_NAME_FARMER_SURVEY_CODE);
                     add(COLUMN_NAME_IS_VILLAGE);
                     add(COLUMN_NAME_SIGNATURE);
+                    add(COLUMN_NAME_ACCURACY);
                 }}
         );
 
@@ -1914,6 +1918,25 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_RECORDED_DATE = "recordDate";
         public static final String COLUMN_NAME_SUBMITTED_DATE = "submittedDate";
         public static final String COLUMN_NAME_CAPTURED_MODULE = "module";
+        public static final String COLUMN_NAME_FARMER_ID = "farmerId";
+        public static final String COLUMN_NAME_FARMER_NAME = "farmerName";
+        public static final String COLUMN_NAME_CHILD_ID = "childId";
+        public static final String COLUMN_NAME_CHILD_NAME = "childName";
+        public static final String COLUMN_NAME_SIP_NAME = "sipName";
+        public static final String COLUMN_NAME_SIP_TYPE = "sipType";
+        public static final String COLUMN_NAME_TRAINING_COURSE_NAME = "trainingCourseName";
+        public static final String COLUMN_NAME_TRAINING_MODULE_NAME = "trainingModuleName";
+
+        public static final String COLUMN_NAME_FARMER_GENDER = "farmerGender";
+        public static final String COLUMN_NAME_CHILD_GENDER = "childGender";
+        public static final String COLUMN_NAME_CHILD_AGE = "childAge";
+
+        public static final String COLUMN_NAME_POLYGON_PLOTS_DETAILS = "polygonPlotDetails";
+        public static final String COLUMN_NAME_SURVEY_NAME = "surveyName";
+
+        public static final String COLUMN_NAME_NETWORK_QUEUE_ID = "networkQueueId";
+        public static final String COLUMN_NAME_GPS_ACCURACY = "accuracy";
+        public static final String COLUMN_NAME_NATIONAL_ID="nationalId";
     }
 
     public static final LinkedHashMap<String, List<String>> ALL_TABLES =
