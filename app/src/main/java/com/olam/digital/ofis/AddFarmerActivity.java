@@ -296,7 +296,9 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             }
         };
         gpsTracker = new GPSTracker(this, gpsListener);
+
 //        if (gpsTracker.isGpsEnabled()) {
+
             gpsTracker.startLocationUpdateInitially();
  //       }
 
@@ -421,6 +423,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     private void populateExistingValues(final Cursor existingItem) {
         EditText farmerName = findViewById(R.id.farmerName);
         farmerName.setText(existingItem.getString(existingItem.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME)));
+
         farmerName.setFilters(new InputFilter[]{new EmojiExcludeFilter()});
 
         farmerDOB = findViewById(R.id.farmerDOB);
@@ -1836,7 +1839,6 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             }
         });
 
-
         bt_confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -2058,6 +2060,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         return status;
     }
 
+
     public static class EmojiExcludeFilter implements InputFilter {
         private String blockCharacterSet = "~#^|$%&*!'\"";
         @Override
@@ -2072,4 +2075,5 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             return null;
         }
     }
+
 }

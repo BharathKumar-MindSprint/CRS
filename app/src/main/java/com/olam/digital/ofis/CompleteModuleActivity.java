@@ -236,7 +236,9 @@ public class CompleteModuleActivity extends BaseActivity {
        // gpsTracker.getDeviceLocation();
 //        if (gpsTracker.isGpsEnabled()){
             gpsTracker.startLocationUpdateInitially();
+
 //        }
+
 
 }
 

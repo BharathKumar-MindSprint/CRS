@@ -1673,7 +1673,9 @@ public class DataLayer {
         final Spinner districtSpinner = (Spinner) activity.findViewById(R.id.spinner_district);
         final Spinner placeSpinner = (Spinner) activity.findViewById(R.id.spinner_place);
 
+
         final EditText newplace = (EditText) activity.findViewById(R.id.newPlaceName);
+
         Cursor countries = getSpinnerData(OFISDBContract.CountriesEntry.TABLE_NAME, true, OFISDBContract.CountriesEntry.COLUMN_NAME_ENUMERATOR_COUNTRY, 1, true, OFISDBContract.CountriesEntry.COLUMN_NAME_COUNTRY_NAME);
         bindDataDrivenSpinner(countrySpinner, countries, context, R.string.spinner_country_default, null, false);
 

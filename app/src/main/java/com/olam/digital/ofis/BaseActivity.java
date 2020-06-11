@@ -1,5 +1,8 @@
 package com.olam.digital.ofis;
 
+
+import android.app.AlertDialog;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -14,7 +17,6 @@ import android.os.Bundle;
 import androidx.appcompat.app.ActionBar;
 import androidx.core.app.NavUtils;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.text.InputFilter;
@@ -26,6 +28,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
+
 
 import com.olam.digital.ofis.recordpolygon.Utils;
 
@@ -41,7 +44,6 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.Set;
 
-//import com.olam.inapp.InApp;
 
 /**
  * Base Activity Created by ben on 13/11/2016.
@@ -66,7 +68,9 @@ public class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         context = this;
         res = getResources();
+
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_TITLE);
+
         dl = new DataLayer(res, context);
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("TasksUpdated"));
 //        InApp.identifiedUserWithEnvironment(new AuthenticationHelper(this).getuserName(), BuildConfig.FLAVOR);
@@ -289,8 +293,10 @@ public class BaseActivity extends AppCompatActivity {
 
             Spinner idtypespinner = view.findViewById(R.id.idtypespinner);
             EditText nidnumber = view.findViewById(R.id.nidnumber);
+
             nidnumber.setFilters(new InputFilter[]{new Utils.EmojiExcludeFilter()});
             nidnumber.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+
             String value = idtypespinner.getSelectedItem().toString();
             int type = getNidType(value);
             String nid = nidnumber.getText().toString();

@@ -426,6 +426,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
             public void onClick(View v) {
                 // Request Permission only for Android Version Marshmallow and above
                 MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_UPDATE_PHOTO_BUTTON,  ScreenNameConstants.BUTTON_CLICKED);
+
                 if (mCurrentCapturedLocation!=null){
 
                 }else{
@@ -433,6 +434,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                         gpsTracker.getDeviceLocation();
                         return;
                     }
+
                 }
 
 
