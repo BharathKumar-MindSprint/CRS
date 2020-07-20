@@ -258,6 +258,39 @@ public class DataLayer {
         return updated;
     }
 
+    int updateHouseholdLocation(long farmerId, Location location, String olamFarmerId, int farmId, String farmerName) {
+        int updated;
+        ContentValues values = new ContentValues();
+        values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_HOUSEHOLD_LAT, location.getLatitude());
+        values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_HOUSEHOLD_LNG, location.getLongitude());
+        values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_HOUSEHOLD_ID, 0);
+        String whereClause = OFISDBContract.FarmerEntry.COLUMN_NAME_ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(farmerId)};
+
+        updated = db.update(OFISDBContract.FarmerEntry.TABLE_NAME, values, whereClause, whereArgs);
+//        db.update(OFISDBContract.FarmerEntry.BACKUP_TABLE_NAME, values, whereClause, whereArgs);
+
+        if (updated > 0) {
+            ContentValues nqiValues = new ContentValues();
+            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+            nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "Household");
+            nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, farmerName);
+            nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, res.getString(R.string.record_household_location_complete));
+            nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID, farmerId);
+            nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID, olamFarmerId);
+            nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID, farmId);
+            nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LAT, values.getAsDouble(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_HOUSEHOLD_LAT));
+            nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG, values.getAsDouble(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_HOUSEHOLD_LNG));
+            nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT, timestamp.toString());
+            nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPDATED_AT, timestamp.toString());
+
+            insertNetworkQueueEntry(nqiValues);
+        }
+
+        return updated;
+    }
+
+
     long updateFarmer(ContentValues values, long farmerId) {
 
         long district_id = values.getAsLong(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_DISTRICT_ID);
@@ -1347,6 +1380,14 @@ public class DataLayer {
         addFarmerPhoneNumbers(farmerId, storeableNumbers);
     }
 
+    void updateFarmerIdforConsentStatement(long farmerId, String name) {
+        ContentValues values = new ContentValues();
+        values.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_FARMER_ID, farmerId);
+        String whereClause = OFISDBContract.ConsentStatementEntry.COLUMN_NAME_OLAM_FARMER_NAME + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(name)};
+        db.update(OFISDBContract.ConsentStatementEntry.TABLE_NAME, values, whereClause, whereArgs);
+    }
+
     public boolean updateFarmerNationalids(Context context, long farmerId, JSONArray storeableNationalids, String status, String farmername) {
         String whereClause = OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID + " = ?";
         String[] whereArgs = new String[]{String.valueOf(farmerId)};
@@ -2397,6 +2438,16 @@ public class DataLayer {
                         "",
                         "farmpolygon"
                 });
+
+                boolean isHHAvailable = Utilities.getBoolFromSharedPrefs(context, Utilities.HOUSEHOLD_ENUMERATOR, false);
+                if (isHHAvailable) {
+
+                    // add new record household location task
+                    mc.addRow(new String[]{"0", res.getString(R.string.record_hh_location), res.getString(R.string.record_hh_location), res.getString(R.string.record_hh_location), res.getString(R.string.record_hh_location), res.getString(R.string.record_hh_location), res.getString(R.string.record_hh_location), res.getString(R.string.record_hh_location), res.getString(R.string.record_hh_location), res.getString(R.string.record_hh_location), "0", "", "", "", res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), "", "", "", "", "", "", res.getString(R.string.household_farmer)});
+                }
+
+                // add update consent statement task
+                mc.addRow(new String[]{"0", res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), "0", "", "", "", res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), "", "", "", "", "", "", res.getString(R.string.consent_statement)});
 
                 // add new phone number updating task
                 mc.addRow(new String[]{
@@ -4252,6 +4303,31 @@ public class DataLayer {
         return newRowId;
     }
 
+    public long insertConsentStatementDetails(ContentValues contentValues, String olamfarmername, String type) {
+        long newRowId;
+        newRowId = db.insert(OFISDBContract.ConsentStatementEntry.TABLE_NAME, null, contentValues);
+        if(type.equalsIgnoreCase("update")) {
+            if (newRowId != -1) {
+                // add a network queue entry
+                Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+
+                ContentValues networkQueueValues = new ContentValues();
+                networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "consentstatement");
+                networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, "Farmer consent captured");
+                networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, olamfarmername);
+//            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID, contentValues.getAsString(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_DISPLAYFARMER_ID));
+                networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT, timestamp.toString());
+                networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPDATED_AT, timestamp.toString());
+
+                networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID, contentValues.getAsString(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_FARMER_ID));
+                networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID, contentValues.getAsString(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_DISPLAYFARMER_ID));
+
+                insertNetworkQueueEntry(networkQueueValues);
+            }
+        }
+        return newRowId;
+    }
+
     public long insertChildVisitSurveyDetails(ContentValues contentValues, String name, String type) {
         long newRowId;
         newRowId = db.insert(OFISDBContract.ChildVisitDetails.TABLE_NAME, null, contentValues);
@@ -4293,6 +4369,20 @@ public class DataLayer {
         String whereClause = OFISDBContract.ChildEntry.COLUMN_NAME_ID + " = ?";
         String[] whereArgs = new String[]{String.valueOf(id)};
         return db.query(OFISDBContract.ChildEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+    }
+
+    public Cursor getConsentStatementById(long id) {
+        String[] columns = new String[]{"*"};
+        String whereClause = OFISDBContract.ConsentStatementEntry.COLUMN_NAME_FARMER_ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(id)};
+        return db.query(OFISDBContract.ConsentStatementEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+    }
+
+    public Cursor getConsentStatementByName(String name) {
+        String[] columns = new String[]{"*"};
+        String whereClause = OFISDBContract.ConsentStatementEntry.COLUMN_NAME_FARMER + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(name)};
+        return db.query(OFISDBContract.ConsentStatementEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
     }
 
     public void updateChildId(int tempChildId, int generatedChildId) {
@@ -4490,6 +4580,14 @@ public class DataLayer {
         values.put(OFISDBContract.GPSDetails.COLUMN_NAME_FARMER_NAME, farmerNameValue);
         values.put(OFISDBContract.GPSDetails.COLUMN_NAME_FARMER_GENDER, farmerGender);
         db.update(OFISDBContract.GPSDetails.TABLE_NAME, values, whereClause, whereArgs);
+    }
+
+    public void updateConsentDetails(long editFarmerId, String farmerNameValue) {
+        String whereClause = OFISDBContract.ConsentStatementEntry.COLUMN_NAME_FARMER + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(farmerNameValue)};
+        ContentValues values = new ContentValues();
+        values.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_FARMER_ID, editFarmerId);
+        db.update(OFISDBContract.ConsentStatementEntry.TABLE_NAME, values, whereClause, whereArgs);
     }
 
     public void updateChildDetails(String editChildId, String childNameValue, String childGender, String age) {

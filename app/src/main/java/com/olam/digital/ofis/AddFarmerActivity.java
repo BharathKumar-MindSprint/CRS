@@ -712,7 +712,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             place_id = dl.insertNewPlace(newPlaceNameValue, district_id);
         }
 
-        Switch consentFarmer = findViewById(R.id.consentFarmer);
+        /*Switch consentFarmer = findViewById(R.id.consentFarmer);
         if (!consentFarmer.isChecked()) {
             Toast.makeText(context, res.getString(R.string.Please_accept_both_consents), Toast.LENGTH_LONG).show();
             return values;
@@ -722,7 +722,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         if (!consentOthers.isChecked()) {
             Toast.makeText(context, res.getString(R.string.Please_accept_both_consents), Toast.LENGTH_LONG).show();
             return values;
-        }
+        }*/
 
         if (isNIDAvailable) {
             if (getnationalidSubmitStatus(nationalids).equalsIgnoreCase(DUPLICATE)) {
@@ -1217,8 +1217,30 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             @Override
             public void onClick(View view) {
                 MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_SHOW_CONSENT,  ScreenNameConstants.BUTTON_CLICKED);
-                consentHolder.setVisibility(View.VISIBLE);
-                consentHolder.startAnimation(mSlideBottomUp);
+//                consentHolder.setVisibility(View.VISIBLE);
+//                consentHolder.startAnimation(mSlideBottomUp);
+                EditText farmerName = findViewById(R.id.farmerName);
+                String farmerNameValue = String.valueOf(farmerName.getText()).trim();
+                if (farmerNameValue.equals("")) {
+                    farmerName.setText("");
+                    Toast.makeText(context, res.getString(R.string.please_fill_farmer_name), Toast.LENGTH_LONG).show();
+                    return;
+
+
+                }
+                Intent in = new Intent(AddFarmerActivity.this, ConsentStatementActivity.class);
+                Bundle bundle=new Bundle();
+                bundle.putString("type", "new");
+                bundle.putString("displayFarmerId", "");
+                bundle.putString("olamfarmername", farmerNameValue);
+                if(editMode){
+                    bundle.putLong("FarmerId", editFarmerId);
+                }else {
+                    bundle.putLong("FarmerId", 0);
+                }
+
+                in.putExtras(bundle);
+                startActivity(in);
             }
         });
 
@@ -1306,6 +1328,9 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                             long newFarmerId = dl.insertFarmer(values);
                             if (newFarmerId != -1) {
                                 dl.updateFarmerPhoneNumbers(newFarmerId, storeableNumbers);
+                                EditText farmerName = findViewById(R.id.farmerName);
+                                String farmerNameValue = String.valueOf(farmerName.getText()).trim();
+                                dl.updateFarmerIdforConsentStatement(newFarmerId, farmerNameValue);
                                 if (isNIDAvailable) {
                                     boolean moduretationstatus = dl.updateFarmerNationalids(context, newFarmerId, storeableNationalids, "1", "name");
                                     if (moduretationstatus) {
@@ -1315,8 +1340,8 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                                 Toast.makeText(context, res.getString(R.string.Farmer_Added), Toast.LENGTH_LONG).show();
 
                                 if (mCurrentLocation != null) {
-                                    EditText farmerName = findViewById(R.id.farmerName);
-                                    String farmerNameValue = String.valueOf(farmerName.getText()).trim();
+//                                    EditText farmerName = findViewById(R.id.farmerName);
+//                                    String farmerNameValue = String.valueOf(farmerName.getText()).trim();
 
                                     collectGPSPoint(newFarmerId,farmerNameValue);
                                 }

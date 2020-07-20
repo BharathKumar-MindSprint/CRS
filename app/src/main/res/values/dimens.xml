@@ -10,6 +10,7 @@
     <dimen name="ofis_smallmed_text">14sp</dimen>
     <dimen name="ofis_med_text">15sp</dimen>
     <dimen name="ofis_large_text">17sp</dimen>
+    <dimen name="ofis_xlarge_text">20sp</dimen>
     <dimen name="ofis_fmp_section_text">17sp</dimen>
     <dimen name="ofis_module_repeateritem_padding">10dp</dimen>
     <dimen name="margin_10">10dp</dimen>
