@@ -10,7 +10,9 @@ import android.database.sqlite.SQLiteOpenHelper;
  */
 class OFISDB extends SQLiteOpenHelper {
     private static OFISDB sInstance;
-    private static final int DATABASE_VERSION = 101;
+
+    private static final int DATABASE_VERSION = 102;
+
     private static final String DATABASE_NAME = "ofismobile";
 
     // Child Labour Table Creation
@@ -46,9 +48,26 @@ class OFISDB extends SQLiteOpenHelper {
             + " ( " + OFISDBContract.GPSDetails.COLUMN_NAME_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
             + OFISDBContract.GPSDetails.COLUMN_NAME_LATITUDE + " TEXT, "
             + OFISDBContract.GPSDetails.COLUMN_NAME_LONGITUDE + " TEXT, "
+            + OFISDBContract.GPSDetails.COLUMN_NAME_FARMER_ID + " TEXT, "
+            + OFISDBContract.GPSDetails.COLUMN_NAME_FARMER_NAME + " TEXT, "
+            + OFISDBContract.GPSDetails.COLUMN_NAME_CHILD_ID + " TEXT, "
+            + OFISDBContract.GPSDetails.COLUMN_NAME_CHILD_NAME + " TEXT, "
+            + OFISDBContract.GPSDetails.COLUMN_NAME_SIP_NAME + " TEXT, "
+            + OFISDBContract.GPSDetails.COLUMN_NAME_SIP_TYPE + " TEXT, "
+            + OFISDBContract.GPSDetails.COLUMN_NAME_TRAINING_COURSE_NAME + " TEXT, "
+            + OFISDBContract.GPSDetails.COLUMN_NAME_TRAINING_MODULE_NAME + " TEXT, "
+            + OFISDBContract.GPSDetails.COLUMN_NAME_FARMER_GENDER+ " TEXT, "
+            + OFISDBContract.GPSDetails.COLUMN_NAME_CHILD_GENDER+ " TEXT, "
+            + OFISDBContract.GPSDetails.COLUMN_NAME_CHILD_AGE + " TEXT, "
+            + OFISDBContract.GPSDetails.COLUMN_NAME_GPS_ACCURACY + " TEXT, "
+            + OFISDBContract.GPSDetails.COLUMN_NAME_NATIONAL_ID + " TEXT, "
+            + OFISDBContract.GPSDetails.COLUMN_NAME_POLYGON_PLOTS_DETAILS + " TEXT, "
+            + OFISDBContract.GPSDetails.COLUMN_NAME_SURVEY_NAME + " TEXT, "
             + OFISDBContract.GPSDetails.COLUMN_NAME_RECORDED_DATE  + " TEXT, "
+            + OFISDBContract.GPSDetails.COLUMN_NAME_NETWORK_QUEUE_ID  + " TEXT, "
             + OFISDBContract.GPSDetails.COLUMN_NAME_SUBMITTED_DATE  + " TEXT, "
             + OFISDBContract.GPSDetails.COLUMN_NAME_CAPTURED_MODULE + " TEXT)";
+
 
     private static final String OFIS_CHILD_VIST_DETAILS_CREATE = "CREATE TABLE IF NOT EXISTS "
             + OFISDBContract.ChildVisitDetailsEntry.TABLE_NAME
@@ -367,6 +386,7 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_SUBMODULE_ID + " INTEGER, "
             + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_SUBGROUP_TYPE + " TEXT, "
             + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME + " TEXT, "
+            + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_ACCURACY + " TEXT, "
             + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_CHILD_ID + " TEXT, "
             + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_SURVEY_CODE + " TEXT, "
             + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_IS_VILLAGE + " TEXT, "
@@ -765,8 +785,7 @@ class OFISDB extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL("drop table IF EXISTS localfarmernationalids");
         sqLiteDatabase.execSQL("drop table IF EXISTS nationalidimages");
         sqLiteDatabase.execSQL("drop table IF EXISTS signature");
-
-
+        sqLiteDatabase.execSQL("drop table IF EXISTS gps_details");
 
         onCreate(sqLiteDatabase);
     }

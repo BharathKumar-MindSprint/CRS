@@ -23,6 +23,7 @@ import com.olam.digital.ofis.childlabour.businesslogic.ChildLabourLogic;
 import com.olam.digital.ofis.gps.GPSListener;
 import com.olam.digital.ofis.gps.GPSTracker;
 import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
+import com.olam.digital.ofis.gps.dto.TrackDetailsDTO;
 import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.gps.utils.GPSUtils;
 import com.olam.digital.ofis.matoma.MatomoHelper;
@@ -44,6 +45,7 @@ public class ChildVisitDetailActivity  extends BaseActivity implements View.OnCl
     private boolean b_household = true;
     private boolean b_inspection = true;
     private String farmerName;
+    private String name="";
 
     private Location mCurrentLocation=null;
     GPSListener gpsListener=null;
@@ -62,7 +64,9 @@ public class ChildVisitDetailActivity  extends BaseActivity implements View.OnCl
         initEvents();
         getBundleValues();
         if (farmerId!=null){
-            farmerName=getResources().getString(R.string.farmer)+": "+new ChildLabourLogic().getFarmerName(this,farmerId);
+            name=new ChildLabourLogic().getFarmerName(this,farmerId);
+            farmerName=getResources().getString(R.string.farmer)+": "+name;
+
         }
         getSubmittedSurveyDetails();
 
@@ -176,7 +180,7 @@ public class ChildVisitDetailActivity  extends BaseActivity implements View.OnCl
             long hh_rowId= new ChildLabourLogic().insertVisitSurveyDetails(this,contentValue,farmerName, getResources().getString(R.string.household));
 
             if (hh_rowId != -1){
-                collectGPSPoint(GPSConstants.MODULE_CAPTURE_HOUSEHOLD_VISIT,mCurrentLocation);
+                collectGPSPoint(GPSConstants.MODULE_CAPTURE_HOUSEHOLD_VISIT,mCurrentLocation,farmerId,"HouseHold Survey Visit");
                 Log.e("HH_RESULT",  getResources().getString(R.string.child_visit_details_inserted));
                 if(inspection == 0 && followup == 0){
                     Toast.makeText(this, getResources().getString(R.string.child_visit_details_inserted),Toast.LENGTH_LONG).show();
@@ -190,7 +194,7 @@ public class ChildVisitDetailActivity  extends BaseActivity implements View.OnCl
             long hh_rowId= new ChildLabourLogic().insertVisitSurveyDetails(this,contentValue,farmerName,getResources().getString(R.string.inspection));
             if (hh_rowId != -1){
                 Log.e("IN_RESULT",  getResources().getString(R.string.child_visit_details_inserted));
-                collectGPSPoint(GPSConstants.MODULE_CAPTURE_INSPECTION_VISIT,mCurrentLocation);
+                collectGPSPoint(GPSConstants.MODULE_CAPTURE_INSPECTION_VISIT,mCurrentLocation,farmerId,"Inspection Survey Visit");
                 if(followup == 0){
                     Toast.makeText(this, getResources().getString(R.string.child_visit_details_inserted),Toast.LENGTH_LONG).show();
                     finish();
@@ -202,6 +206,7 @@ public class ChildVisitDetailActivity  extends BaseActivity implements View.OnCl
             contentValue.put(OFISDBContract.ChildVisitDetails.COLUMN_NAME_SURVEY_DESCRIPTION,"Followup Survey");
             long hh_rowId= new ChildLabourLogic().insertVisitSurveyDetails(this,contentValue,farmerName,getResources().getString(R.string.followup));
             if (hh_rowId != -1){
+                collectGPSPoint(GPSConstants.MODULE_CAPTURE_FOLLOWUP_VISIT,mCurrentLocation,farmerId,"Followup Survey Visit");
                 Log.e("FU_RESULT",  getResources().getString(R.string.child_visit_details_inserted));
                 Toast.makeText(this, getResources().getString(R.string.child_visit_details_inserted),Toast.LENGTH_LONG).show();
                 finish();
@@ -214,10 +219,20 @@ public class ChildVisitDetailActivity  extends BaseActivity implements View.OnCl
 
     }
 
-    private void collectGPSPoint(String module,Location location) {
-        String lat=String.valueOf(location.getLatitude());
-        String lon=String.valueOf(location.getLongitude());
-        ContentValues geoContentValues=new GPSUtils().getGeoContentValues(module,lat,lon,new Timestamp(System.currentTimeMillis()).toString());
+    private void collectGPSPoint(String module,Location location,String farmerId,String visitDetail) {
+
+        TrackDetailsDTO trackDetailsDTO=new TrackDetailsDTO();
+        trackDetailsDTO.setModule(module);
+        trackDetailsDTO.setLatitude(String.valueOf(location.getLatitude()));
+        trackDetailsDTO.setLongitude(String.valueOf(location.getLongitude()));
+        trackDetailsDTO.setAccuracy(String.valueOf(location.getAccuracy()));
+        trackDetailsDTO.setRecordDate(new Timestamp(System.currentTimeMillis()).toString());
+        trackDetailsDTO.setFarmerId(String.valueOf(farmerId));
+        trackDetailsDTO.setFarmerName(name);
+        // set visit detail in new column for further
+        trackDetailsDTO.setSurveyName(visitDetail);
+
+        ContentValues geoContentValues=new GPSUtils().getGeoContentValues(trackDetailsDTO);
         Long newTrackId= new GpsTrackerLogic().insertGeoDataDetails(this,geoContentValues);
     }
 
