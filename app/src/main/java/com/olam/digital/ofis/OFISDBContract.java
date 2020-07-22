@@ -785,6 +785,7 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_FARM_HOUSEHOLD_LAT = "householdLat";
         public static final String COLUMN_NAME_FARM_HOUSEHOLD_LNG = "householdLng";
         public static final String COLUMN_NAME_FARM_HOUSEHOLD_ID = "householdId";
+        public static final String COLUMN_NAME_ISCONSENTAVAILABLE = "isConsentAvailable";
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
                     add(COLUMN_NAME_ID);
@@ -813,9 +814,6 @@ public class OFISDBContract {
                     add(COLUMN_NAME_PRODUCT_ID);
                     add(COLUMN_NAME_REGISTER_DATE);
                     add(COLUMN_NAME_MODERATION_STATUS);
-                    add(COLUMN_NAME_FARM_HOUSEHOLD_LAT);
-                    add(COLUMN_NAME_FARM_HOUSEHOLD_LNG);
-                    add(COLUMN_NAME_FARM_HOUSEHOLD_ID);
 
                 }}
         );
@@ -836,6 +834,10 @@ public class OFISDBContract {
                     add(COLUMN_NAME_FARMERGROUPID);
                     add(COLUMN_NAME_REGIONID);
                     add(COLUMN_NAME_PRODUCT_ID);
+                    add(COLUMN_NAME_ISCONSENTAVAILABLE);
+                    add(COLUMN_NAME_FARM_HOUSEHOLD_LAT);
+                    add(COLUMN_NAME_FARM_HOUSEHOLD_LNG);
+                    add(COLUMN_NAME_FARM_HOUSEHOLD_ID);
                 }}
         );
         public static final String COLUMN_NAME_OLAM_FARMER_ID_DISPLAY = "displayFarmerId";

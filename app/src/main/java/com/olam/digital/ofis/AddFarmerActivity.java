@@ -108,6 +108,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     private final static int MY_PROFILE_PIC_PERMISSIONS_REQUEST = 9998;
     private final static int MY_NATIONALID_PIC_PERMISSIONS_REQUEST = 9997;
     private static final int REQUEST_CHECK_SETTINGS = 100;
+    private static final int REQUEST_CHECK_CONSENT_STATEMENT = 800;
     private final Hashtable<String, String> genders = new Hashtable<>();
     ArrayAdapter<String> spinnerArrayAdapter;
     Spinner spinner_nidtype;
@@ -138,6 +139,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     private Uri mCapturedImageURI = null, mCapturedSignatureImageURI = null;
     private String dateStrToSend;
     private TextView farmerDOB;
+    boolean  csStatus;
     ArrayList<String> nationalIdTypes=null;
     /**
      * Generate unique ID from UUID.
@@ -211,7 +213,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         editMode = intent.getBooleanExtra(EDIT_MODE, false);
 
         String localeSuffix = Utilities.getLocaleSuffix(res);
-
+        csStatus = false;
         genders.put("Male" + localeSuffix, res.getString(R.string.gender_male));
         genders.put("Female" + localeSuffix, res.getString(R.string.gender_female));
 
@@ -724,6 +726,11 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             return values;
         }*/
 
+        if (!csStatus) {
+            Toast.makeText(context, res.getString(R.string.Please_accept_consent), Toast.LENGTH_LONG).show();
+            return values;
+        }
+
         if (isNIDAvailable) {
             if (getnationalidSubmitStatus(nationalids).equalsIgnoreCase(DUPLICATE)) {
                 Toast.makeText(this, getResources().getString(R.string.duplicate_nationalids), Toast.LENGTH_SHORT).show();
@@ -815,6 +822,8 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_REGIONID, String.valueOf(regionId));
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_DISTRICTID, String.valueOf(districtId));
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID, String.valueOf(farmerGroupId));
+            values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_ISCONSENTAVAILABLE, "true");
+
             Date today = new Date();
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
             String registereddate = format.format(today);
@@ -1240,7 +1249,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                 }
 
                 in.putExtras(bundle);
-                startActivity(in);
+                startActivityForResult(in,800);
             }
         });
 
@@ -1693,6 +1702,8 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         ImageButton farmerPhoto = findViewById(R.id.farmerPhoto);
 
         switch (requestCode) {
+            case REQUEST_CHECK_CONSENT_STATEMENT:
+                csStatus = imageReturnedIntent.getBooleanExtra("STATUS", false);
             case REQUEST_CHECK_SETTINGS:
                 if (resultCode == -1) {
                     gpsTracker.getDeviceLocation();

@@ -483,6 +483,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_weight="10"
                                     android:textSize="@dimen/ofis_med_text"
+                                    android:autoLink="email"
                                     android:text="@string/cs_page2_18" />
                             </TableRow>
 
@@ -507,6 +508,7 @@
                     </LinearLayout>
 
                     <LinearLayout
+                        android:visibility="gone"
                         android:id="@+id/consentStatement3"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -673,7 +675,7 @@
                                 android:layout_marginBottom="5dp"
                                 android:layout_weight="1"
                                 android:textSize="@dimen/ofis_med_text"
-                                android:text="@string/full_name"
+                                android:text="@string/childs_name"
                                 android:textColor="@color/clmrs_tv_grey" />
 
                             <EditText
@@ -682,43 +684,16 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="52dp"
                                 android:background="@drawable/border_grey_bg"
-                                android:hint="@string/full_name"
+                                android:hint="@string/childs_name"
                                 android:inputType="textPersonName"
                                 android:paddingLeft="10dp"
-                                android:maxLength="150"
+                                android:maxLength="1500"
                                 android:textSize="@dimen/ofis_med_text"
                                 android:textColor="@android:color/black" />
 
                         </LinearLayout>
 
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="10dp"
-                            android:weightSum="2"
-                            android:orientation="horizontal">
 
-                            <TextView
-                                android:layout_weight="1"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginBottom="5dp"
-                                android:text="@string/date"
-                                android:textSize="@dimen/ofis_med_text"
-                                android:textColor="@color/clmrs_tv_grey" />
-
-                            <TextView
-                                android:layout_weight="1"
-                                android:id="@+id/currentdate"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginBottom="5dp"
-                                android:text="XX"
-                                android:textStyle="bold"
-                                android:textSize="@dimen/ofis_med_text"
-                                android:textColor="@color/black" />
-
-                        </LinearLayout>
 
                         <!--<LinearLayout
                             android:layout_width="match_parent"
@@ -763,7 +738,7 @@
                                 android:layout_marginBottom="5dp"
                                 android:layout_weight="1"
                                 android:textSize="@dimen/ofis_med_text"
-                                android:text="@string/digital_sign"
+                                android:text="@string/Add_Signature"
                                 android:textColor="@color/clmrs_tv_grey" />
 
                             <TextView
@@ -787,6 +762,34 @@
 
                         </LinearLayout>
 
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="10dp"
+                            android:weightSum="2"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_weight="1"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="5dp"
+                                android:text="@string/date"
+                                android:textSize="@dimen/ofis_med_text"
+                                android:textColor="@color/clmrs_tv_grey" />
+
+                            <TextView
+                                android:layout_weight="1"
+                                android:id="@+id/currentdate"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="5dp"
+                                android:text="XX"
+                                android:textStyle="bold"
+                                android:textSize="@dimen/ofis_med_text"
+                                android:textColor="@color/black" />
+
+                        </LinearLayout>
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -841,7 +844,7 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:layout_marginBottom="5dp"
-                                    android:text="@string/full_farmer_name"
+                                    android:text="@string/name"
                                     android:textSize="@dimen/ofis_med_text"
                                     android:textColor="@color/clmrs_tv_grey" />
 
@@ -855,6 +858,43 @@
                                     android:textStyle="bold"
                                     android:textSize="@dimen/ofis_med_text"
                                     android:textColor="@color/black" />
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="10dp"
+                                android:weightSum="2"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginBottom="5dp"
+                                    android:layout_weight="1"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:text="@string/Add_Signature"
+                                    android:textColor="@color/clmrs_tv_grey" />
+
+                                <TextView
+                                    android:layout_weight="1"
+                                    android:id="@+id/enum_signature"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginBottom="5dp"
+                                    android:text="@string/enum_sign"
+                                    android:textStyle="bold"
+                                    android:paddingTop="20dp"
+                                    android:paddingBottom="20dp"
+                                    android:gravity="center"
+                                    android:background="@drawable/border_green_bg"
+                                    android:textSize="@dimen/ofis_med_text"
+                                    android:textColor="@color/white" />
+
+
+
+
 
                             </LinearLayout>
 
@@ -884,43 +924,6 @@
                                     android:textStyle="bold"
                                     android:textSize="@dimen/ofis_med_text"
                                     android:textColor="@color/black" />
-
-                            </LinearLayout>
-
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_margin="10dp"
-                                android:weightSum="2"
-                                android:orientation="horizontal">
-
-                                <TextView
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginBottom="5dp"
-                                    android:layout_weight="1"
-                                    android:textSize="@dimen/ofis_med_text"
-                                    android:text="@string/digital_sign"
-                                    android:textColor="@color/clmrs_tv_grey" />
-
-                                <TextView
-                                    android:layout_weight="1"
-                                    android:id="@+id/enum_signature"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginBottom="5dp"
-                                    android:text="@string/enum_sign"
-                                    android:textStyle="bold"
-                                    android:paddingTop="20dp"
-                                    android:paddingBottom="20dp"
-                                    android:gravity="center"
-                                    android:background="@drawable/border_green_bg"
-                                    android:textSize="@dimen/ofis_med_text"
-                                    android:textColor="@color/white" />
-
-
-
-
 
                             </LinearLayout>
 
@@ -967,6 +970,7 @@
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:layout_weight="10"
+                                    android:autoLink="web"
                                     android:textSize="@dimen/ofis_med_text"
                                     android:text="@string/cs_page5_2"/>
                             </TableRow>
@@ -1243,6 +1247,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_weight="10"
                                     android:textSize="@dimen/ofis_med_text"
+                                    android:autoLink="email"
                                     android:text="@string/cs_page5_21"/>
                             </TableRow>
 
@@ -1406,7 +1411,7 @@
                 android:layout_marginTop="@dimen/mapview_magrin"
                 android:paddingRight="0dp"
                 android:paddingLeft="5dp"
-                android:textSize="@dimen/ofis_med_text"
+                android:textSize="@dimen/ofis_small_text"
                 tools:ignore="RtlHardcoded" />
 
 

@@ -489,6 +489,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 collectGPSPoint(GPSConstants.MODULE_CAPTURE_FARM_LOCATION,farmLocation,farmerId);
                 MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_RECORD_FARM_LOCATION,  ScreenNameConstants.BUTTON_CLICKED);
             }
+            setupUI();
         } catch (Exception e) {
             FirebaseCrash.report(new Exception("ViewFarmerActivity: Error setting farmer GPS location", e));
             e.printStackTrace();
@@ -531,6 +532,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 collectGPSPoint(GPSConstants.MODULE_CAPTURE_HOUSEHOLD_LOCATION,farmLocation,farmerId);
                 MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_RECORD_HOUSEHOLD_LOCATION,  ScreenNameConstants.BUTTON_CLICKED);
             }
+            setupUI();
         } catch (Exception e) {
             FirebaseCrash.report(new Exception("ViewFarmerActivity: Error setting household GPS location", e));
             e.printStackTrace();

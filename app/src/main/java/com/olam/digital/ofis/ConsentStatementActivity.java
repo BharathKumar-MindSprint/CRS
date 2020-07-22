@@ -2,7 +2,9 @@ package com.olam.digital.ofis;
 
 import android.app.Dialog;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -11,7 +13,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -21,9 +22,6 @@ import android.widget.Toast;
 
 import com.github.gcacace.signaturepad.views.SignaturePad;
 import com.google.firebase.crash.FirebaseCrash;
-import com.olam.digital.ofis.childlabour.ChildLabourUtils;
-import com.olam.digital.ofis.matoma.MatomoHelper;
-import com.olam.digital.ofis.matoma.ScreenNameConstants;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -40,6 +38,7 @@ public class ConsentStatementActivity extends BaseActivity implements View.OnCli
     AppCompatCheckBox cb_sc7,cb_sc1,cb_sc2,cb_sc3,cb_sc4,cb_sc5,cb_sc6;
     EditText et_farmername,childname;
     Button nextsavebtn,prevbtn;
+    Boolean reachedbottom = false;
     Long farmerId;
     String farmername,olamfarmername, childrenname, displayFarmerId, farmerSign = "", staffSign = "",type;
     TextView farmer_name,currentdate,currentdate2,enum_name,farmer_signature,enum_signature;
@@ -100,11 +99,17 @@ public class ConsentStatementActivity extends BaseActivity implements View.OnCli
                         <= (scrollView.getHeight() + scrollView.getScrollY())) {
                     //scroll view is at bottom
                     nextsavebtn.setClickable(true);
+                    reachedbottom = true;
                     nextsavebtn.setBackgroundResource(R.color.ofis_action_button_background);
                 } else {
                     //scroll view is not at bottom
-                    nextsavebtn.setClickable(false);
-                    nextsavebtn.setBackgroundResource(R.drawable.border);
+                    if(! reachedbottom) {
+                        nextsavebtn.setClickable(false);
+                        nextsavebtn.setBackgroundResource(R.drawable.border);
+                    }else {
+                        nextsavebtn.setClickable(true);
+                        nextsavebtn.setBackgroundResource(R.color.ofis_action_button_background);
+                    }
                 }
             }
         });
@@ -151,7 +156,7 @@ public class ConsentStatementActivity extends BaseActivity implements View.OnCli
             consentStatement3.setVisibility(View.GONE);
             consentStatement4.setVisibility(View.GONE);
             consentStatement5.setVisibility(View.VISIBLE);
-            nextsavebtn.setText(getResources().getString(R.string.ModuleSaveButton));
+            nextsavebtn.setText(getResources().getString(R.string.confirm));
         }
     }
 
@@ -162,7 +167,7 @@ public class ConsentStatementActivity extends BaseActivity implements View.OnCli
         int id = v.getId();
 
         if(id == R.id.nextsavebtn){
-            scrollView.fullScroll(ScrollView.FOCUS_UP);
+                scrollView.fullScroll(ScrollView.FOCUS_UP);
             if(page <= 5 && page >= 1) {
                 if (page != 5) {
                     if(page == 2){
@@ -176,6 +181,8 @@ public class ConsentStatementActivity extends BaseActivity implements View.OnCli
                     }
                     if(page == 3){
                         if(et_farmername.getText().toString().matches("")){
+                            et_farmername.getBackground().setColorFilter(getResources().getColor(android.R.color.holo_red_light),
+                                    PorterDuff.Mode.SRC_ATOP);
                             Toast.makeText(ConsentStatementActivity.this, getResources().getString(R.string.please_fill_farmer_name), Toast.LENGTH_LONG).show();
                             return;
                         }else {
@@ -192,12 +199,12 @@ public class ConsentStatementActivity extends BaseActivity implements View.OnCli
                         }
                     }
                     if(page == 4){
-                        if(childname.getText().toString().matches("")){
+                       /* if(childname.getText().toString().matches("")){
                             Toast.makeText(ConsentStatementActivity.this, getResources().getString(R.string.fill_child_name), Toast.LENGTH_LONG).show();
                             return;
-                        }else {
+                        }else {*/
                             childrenname = childname.getText().toString();
-                        }
+//                        }
                         if(farmerSign.matches("")){
                             Toast.makeText(ConsentStatementActivity.this, getResources().getString(R.string.farmer_sign_required), Toast.LENGTH_LONG).show();
                             return;
@@ -210,6 +217,7 @@ public class ConsentStatementActivity extends BaseActivity implements View.OnCli
                         nextsavebtn.setBackgroundResource(R.drawable.border);
                     }
                     page++;
+                    reachedbottom = false;
                     loadpage();
                     System.out.println("page value:" + page);
                 }
@@ -234,7 +242,14 @@ public class ConsentStatementActivity extends BaseActivity implements View.OnCli
                 contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_FARMER_CONFIRMATION,true);
                 contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_OLAM_FARMER_NAME,olamfarmername);
                 dataLayer.insertConsentStatementDetails(contentValue,olamfarmername,type);
+                if(type.equalsIgnoreCase("update")){
+                    dataLayer.updateConsentStatus(farmerId);
+                }
+                Intent intent=new Intent();
+                intent.putExtra("STATUS",true);
+                setResult(2,intent);
                 finish();
+
             }
         }else if(id == R.id.prevbtn){
             page--;

@@ -4,7 +4,7 @@ public class GPSConstants {
 
     public static final String MODULE_CAPTURE_SOCIAL_INFRASTRUCTURE_POINT="social infrastructure";
     public static final String MODULE_CAPTURE_FARM_LOCATION = "Farm location";
-    public static final String MODULE_CAPTURE_HOUSEHOLD_LOCATION = "Household location";
+    public static final String MODULE_CAPTURE_HOUSEHOLD_LOCATION = "Household GPS Captured";
     public static final String MODULE_CAPTURE_FARM_POLYGON = "Farm Polygon";
     public static final String MODULE_CAPTURE_ADD_FARMER = "New Farmer Registration";
     public static final String MODULE_CAPTURE_UPDATE_PHOTO = "Update photo";

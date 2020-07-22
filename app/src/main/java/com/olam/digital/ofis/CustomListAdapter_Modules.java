@@ -219,17 +219,17 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                     textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
                 }
             } else if(cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals(context.getResources().getString(R.string.household_farmer))){
-                String currentLat = currentFarmer.getString(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_HOUSEHOLD_LAT));
-                String currentLng = currentFarmer.getString(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_HOUSEHOLD_LNG));
-                if (currentLat != null && currentLat.length() > 0 && (!currentLat.equalsIgnoreCase("null")) && currentLng != null && currentLng.length() > 0 && (!currentLng.equalsIgnoreCase("null"))) {
-                    imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.hh_dark_gps1));
+                String currenthhLat = currentFarmer.getString(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_HOUSEHOLD_LAT));
+                String currenthhLng = currentFarmer.getString(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_HOUSEHOLD_LNG));
+                if (currenthhLat != null && currenthhLat.length() > 0 && (!currenthhLat.equalsIgnoreCase("null")) && currenthhLng != null && currenthhLng.length() > 0 && (!currenthhLng.equalsIgnoreCase("null"))) {
+                    imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_householdgps));
                     enabledItem.setText("false");
                     linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
                     moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
                     textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
                     textView.setText(res.getString(R.string.record_farm_location_complete));
                 } else {
-                    imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.hh_light_gps1));
+                    imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_householdgps));
                     enabledItem.setText("true");
                     linearLayout.setBackgroundResource(R.drawable.list_item);
                     moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
@@ -237,12 +237,20 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                     textView.setText(res.getString(R.string.record_farm_location_hint));
                 }
             } else if(cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals(context.getResources().getString(R.string.consent_statement))){
-                    imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.cs1));
+                String isConsentavailable = currentFarmer.getString(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ISCONSENTAVAILABLE));
+                if(isConsentavailable != null && isConsentavailable.length() > 0 && isConsentavailable.equalsIgnoreCase("true")) {
+                    imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_consentstmts));
+                    enabledItem.setText("false");
+                    linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
+                    moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                    textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                }else{
+                    imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_consentstmts));
                     enabledItem.setText("true");
                     linearLayout.setBackgroundResource(R.drawable.list_item);
                     moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
                     textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
-
+                }
             } else {
                 String currentLat = currentFarmer.getString(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_PRIMARY_LAT));
                 String currentLng = currentFarmer.getString(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_PRIMARY_LNG));
