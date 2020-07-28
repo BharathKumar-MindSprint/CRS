@@ -565,6 +565,7 @@
     <string name="consent_statement">ConsentStatement</string>
     <string name="farmer_consent">FARMER CONSENT</string>
     <string name="personal_info_collection">Personal Information Collection Notice</string>
+    <string name="cs_page2_title">Personal Data Use</string>
     <string name="cs_page2_1">We will use and share your personal data as follows</string>
     <string name="cs_page2_2">Please click the appropriate checkbox</string>
     <string name="cs_page2_3">Populating OFIS and Other Olam Databases</string>
@@ -628,7 +629,7 @@
     <string name="cs_page5_19">Except as otherwise required by law, Olam will retain your personal data for such period that is necessary for the purposes for which the data was collected.</string>
     <string name="cs_page5_20">Contact Details</string>
     <string name="cs_page5_21">The data controller for your data is Olam International Limited, unless otherwise specified by the relevant Olam entity in your country. If you have any questions relating to the data we hold about you then please email us at <a href="privacy@olamnet.com">privacy@olamnet.com</a>.</string>
-    <string name="cs_page5_22">The Olam Group Privacy Statement which explains additional ways we collect and use personal data can be found at www.olamgroup.com/privacy.html</string>
+    <string name="cs_page5_22">The Olam Group Privacy Statement which explains additional ways we collect and use personal data can be found at <a href="www.olamgroup.com/privacy.html">www.olamgroup.com/privacy.html</a></string>
     <string name="cs_page5_23">INTERNAL GUIDANCE NOTE</string>
     <string name="cs_page5_24">There may be a number of ways for consent to be recorded. Please consult the Legal function if your intended collection method is not covered above. The signature fields may be replaced with consent buttons, etc.</string>
     <string name="cs_page5_25">Please consult the Legal function if your intended purpose(s) for use and disclosure of Farmer Data does not fall within any of the categories listed in paragraph 1 above. </string>

@@ -364,7 +364,7 @@ public class ConsentStatementActivity extends BaseActivity implements View.OnCli
                 return false;
             }
         });
-        bt_confirm.findViewById(R.id.btn_add_signature).setOnClickListener(new View.OnClickListener() {
+       /* bt_confirm.findViewById(R.id.btn_add_signature).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 try {
@@ -408,7 +408,7 @@ public class ConsentStatementActivity extends BaseActivity implements View.OnCli
                 }
             }
         });
-
+*/
         signatureDialog.show();
     }
 

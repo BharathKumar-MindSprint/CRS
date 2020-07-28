@@ -301,7 +301,7 @@ public class DataLayer {
         String[] whereArgs = new String[]{String.valueOf(farmerId)};
 
         updated = db.update(OFISDBContract.FarmerEntry.TABLE_NAME, values, whereClause, whereArgs);
-        db.update(OFISDBContract.FarmerEntry.BACKUP_TABLE_NAME, values, whereClause, whereArgs);
+//        db.update(OFISDBContract.FarmerEntry.BACKUP_TABLE_NAME, values, whereClause, whereArgs);
 
         if (updated > 0) {
             ContentValues networkQueueValues = new ContentValues();

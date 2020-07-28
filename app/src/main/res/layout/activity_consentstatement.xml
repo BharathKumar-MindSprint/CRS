@@ -95,7 +95,6 @@
                     </LinearLayout>
 
                     <LinearLayout
-                        android:visibility="gone"
                         android:id="@+id/consentStatement2"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -107,6 +106,21 @@
                             android:paddingLeft="@dimen/ofis_large_pad"
                             android:paddingRight="@dimen/ofis_large_pad"
                             android:paddingTop="@dimen/ofis_large_pad">
+                            <TableRow
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="@dimen/ofis_consent_statement_row_bottom_margin"
+                                android:weightSum="10"
+                                android:gravity="top">
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="10"
+                                    android:textSize="@dimen/ofis_large_text"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/cs_color"
+                                    android:text="@string/cs_page2_title" />
+                            </TableRow>
                             <TableRow
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
@@ -1264,6 +1278,7 @@
                                     android:layout_weight="10"
                                     android:textSize="@dimen/ofis_med_text"
                                     android:textStyle="bold"
+                                    android:autoLink="web"
                                     android:textColor="@color/cs_color"
                                     android:text="@string/cs_page5_22" />
                             </TableRow>

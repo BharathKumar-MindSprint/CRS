@@ -725,10 +725,11 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             Toast.makeText(context, res.getString(R.string.Please_accept_both_consents), Toast.LENGTH_LONG).show();
             return values;
         }*/
-
-        if (!csStatus) {
-            Toast.makeText(context, res.getString(R.string.Please_accept_consent), Toast.LENGTH_LONG).show();
-            return values;
+        if(! editMode) {
+            if (!csStatus) {
+                Toast.makeText(context, res.getString(R.string.Please_accept_consent), Toast.LENGTH_LONG).show();
+                return values;
+            }
         }
 
         if (isNIDAvailable) {
