@@ -50,6 +50,7 @@ public class Utilities {
     // update
     private static final String SHARED_PREFS_NAME = "com.olam.digital.ofis.app_prefs";
     private static final String SHARED_FIREBASE_TOKEN_UPDATED = "firebase_token_updated";
+    public static final String HOUSEHOLD_ENUMERATOR = "household_enumerator";
     public static int syctask=0;
 
 

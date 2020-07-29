@@ -70,4 +70,10 @@
         <item name="android:textSize">@dimen/ofis_med_text</item>
     </style>
 
+    <style name="CheckboxStyle" parent="AppTheme">
+        <item name="colorAccent">@color/cs_checkbox</item>
+    </style>
+
+
+
 </resources>

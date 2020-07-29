@@ -687,6 +687,32 @@ public class OFISDBContract {
         );
     }
 
+//    Consent Statement Table
+    public static abstract class ConsentStatementEntry implements BaseColumns {
+        public static final String TABLE_NAME = "consentstatement";
+        public static final String COLUMN_NAME_ID = "id";
+        public static final String COLUMN_NAME_FARMER_ID = "farmerId";
+        public static final String COLUMN_NAME_FARMER = "farmerName";
+        public static final String COLUMN_NAME_DISPLAYFARMER_ID = "displayFarmerId";
+        public static final String COLUMN_NAME_FARMER_CONFIRMATION = "farmerConfirmation";
+        public static final String COLUMN_NAME_CHILDNAME = "childName";
+        public static final String COLUMN_NAME_FARMER_SIGN = "farmerConsentSignature";
+        public static final String COLUMN_NAME_ENUM_SIGN = "enumeratorConsentSignature";
+        public static final String COLUMN_NAME_OLAM_FARMER_NAME = "olamfarmername";
+
+        public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
+                new ArrayList<String>() {{
+                    add(COLUMN_NAME_ID);
+                    add(COLUMN_NAME_FARMER_ID);
+                    add(COLUMN_NAME_FARMER);
+                    add(COLUMN_NAME_DISPLAYFARMER_ID);
+                    add(COLUMN_NAME_FARMER_CONFIRMATION);
+                    add(COLUMN_NAME_CHILDNAME);
+                    add(COLUMN_NAME_FARMER_SIGN);
+                    add(COLUMN_NAME_ENUM_SIGN);
+                }}
+        );
+    }
 
 
     public static abstract class ChildVisitDetailsEntry implements BaseColumns {
@@ -755,6 +781,11 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_REGISTER_DATE = "registeredDate";
         //        for moderation - nationalid
         public static final String COLUMN_NAME_MODERATION_STATUS = "nidmoderation";
+//        OFHG-2 Household latlong
+        public static final String COLUMN_NAME_FARM_HOUSEHOLD_LAT = "householdLat";
+        public static final String COLUMN_NAME_FARM_HOUSEHOLD_LNG = "householdLng";
+        public static final String COLUMN_NAME_FARM_HOUSEHOLD_ID = "householdId";
+        public static final String COLUMN_NAME_ISCONSENTAVAILABLE = "isConsentAvailable";
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
                     add(COLUMN_NAME_ID);
@@ -803,6 +834,10 @@ public class OFISDBContract {
                     add(COLUMN_NAME_FARMERGROUPID);
                     add(COLUMN_NAME_REGIONID);
                     add(COLUMN_NAME_PRODUCT_ID);
+                    add(COLUMN_NAME_ISCONSENTAVAILABLE);
+                    add(COLUMN_NAME_FARM_HOUSEHOLD_LAT);
+                    add(COLUMN_NAME_FARM_HOUSEHOLD_LNG);
+                    add(COLUMN_NAME_FARM_HOUSEHOLD_ID);
                 }}
         );
         public static final String COLUMN_NAME_OLAM_FARMER_ID_DISPLAY = "displayFarmerId";
