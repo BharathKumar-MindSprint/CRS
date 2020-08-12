@@ -74,10 +74,7 @@
                                     android:textSize="@dimen/ofis_med_text"
                                     android:text="@string/consent_statement_pageone1" />
                             </TableRow>
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="10dp"/>
-                            <TableRow
+                              <TableRow
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginBottom="@dimen/ofis_consent_statement_row_bottom_margin"
@@ -92,11 +89,6 @@
 
 
                             </TableRow>
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="50dp"
-                                android:layout_weight="10"
-                                android:textSize="@dimen/ofis_med_text"/>
 
                         </TableLayout>
 
@@ -579,10 +571,7 @@
                                     android:textSize="@dimen/ofis_med_text"
                                     android:text="@string/cs_page3_2"/>
                             </TableRow>
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="10dp"/>
-                            <TableRow
+                             <TableRow
                                 android:paddingTop="@dimen/margin_10"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
@@ -611,10 +600,7 @@
                                     android:textSize="@dimen/ofis_med_text"
                                     android:text="@string/cs_page3_4"/>
                             </TableRow>
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="10dp"/>
-                            <TableRow
+                             <TableRow
                                 android:paddingTop="@dimen/margin_10"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
@@ -628,10 +614,7 @@
                                     android:textSize="@dimen/ofis_med_text"
                                     android:text="@string/cs_page3_5"/>
                             </TableRow>
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="10dp"/>
-                            <TableRow
+                             <TableRow
                                 android:paddingTop="@dimen/margin_10"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
@@ -645,10 +628,7 @@
                                     android:textSize="@dimen/ofis_med_text"
                                     android:text="@string/cs_page3_6"/>
                             </TableRow>
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="10dp"/>
-                        </TableLayout>
+                            </TableLayout>
 
 
 
@@ -962,9 +942,6 @@
                             </LinearLayout>
 
                         </LinearLayout>
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="50dp"/>
 
                     </LinearLayout>
 

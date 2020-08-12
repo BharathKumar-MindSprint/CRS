@@ -46,7 +46,7 @@ public class ConsentStatementActivity extends BaseActivity implements View.OnCli
     ScrollView scrollView;
     DataLayer dataLayer;
 
-       @Override
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_consentstatement);
@@ -92,7 +92,8 @@ public class ConsentStatementActivity extends BaseActivity implements View.OnCli
         loadpage();
         nextsavebtn.setClickable(false);
         nextsavebtn.setBackgroundResource(R.drawable.border);
-        scrollView.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
+        ViewTreeObserver viewTreeObserver = scrollView.getViewTreeObserver();
+        viewTreeObserver.addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
             @Override
             public void onScrollChanged() {
                 if (scrollView.getChildAt(0).getBottom()
@@ -110,6 +111,18 @@ public class ConsentStatementActivity extends BaseActivity implements View.OnCli
                         nextsavebtn.setClickable(true);
                         nextsavebtn.setBackgroundResource(R.color.ofis_action_button_background);
                     }
+                }
+            }
+        });
+        viewTreeObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                scrollView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                int childHeight = ((LinearLayout) findViewById(R.id.bottomSection)).getHeight();
+                boolean isScrollable = scrollView.getHeight() < childHeight + scrollView.getPaddingTop() + scrollView.getPaddingBottom();
+                if (!isScrollable) {
+                    nextsavebtn.setClickable(true);
+                    nextsavebtn.setBackgroundResource(R.color.ofis_action_button_background);
                 }
             }
         });
