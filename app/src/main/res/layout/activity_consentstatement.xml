@@ -97,7 +97,6 @@
                     </LinearLayout>
 
                     <LinearLayout
-                        android:visibility="gone"
                         android:id="@+id/consentStatement2"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -249,7 +248,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginBottom="@dimen/ofis_consent_statement_row_bottom_margin"
-
+                                android:visibility="gone"
                                 android:gravity="top">
 
                                 <LinearLayout
@@ -295,7 +294,6 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginBottom="@dimen/ofis_consent_statement_row_bottom_margin"
-                                android:visibility="gone"
                                 android:gravity="top">
 
                                 <LinearLayout
@@ -525,7 +523,6 @@
                     </LinearLayout>
 
                     <LinearLayout
-                        android:visibility="gone"
                         android:id="@+id/consentStatement3"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
