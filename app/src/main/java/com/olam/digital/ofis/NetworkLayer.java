@@ -2310,10 +2310,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                              }
 
                          }
-                         Date today = new Date();
-                         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-                         String registereddate = format.format(today);
-                         params.put("confirmedDate", registereddate);
+                         params.put("confirmedDate", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_CONFIRMED_DATE)));
                      } catch (Exception e) {
 
                      }

@@ -184,7 +184,7 @@ public class ConsentStatementActivity extends BaseActivity implements View.OnCli
             if(page <= 5 && page >= 1) {
                 if (page != 5) {
                     if(page == 2){
-                        if(!cb_sc1.isChecked() || !cb_sc2.isChecked()  || !cb_sc4.isChecked() ||
+                        if(!cb_sc1.isChecked() || !cb_sc3.isChecked()  || !cb_sc4.isChecked() ||
                                 !cb_sc5.isChecked() || !cb_sc6.isChecked() || !cb_sc7.isChecked() ){
                             Toast.makeText(ConsentStatementActivity.this, "Please click all the appropriate checkboxes", Toast.LENGTH_LONG).show();
                             return;
@@ -254,6 +254,10 @@ public class ConsentStatementActivity extends BaseActivity implements View.OnCli
                 contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_ENUM_SIGN,staffSign);
                 contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_FARMER_CONFIRMATION,true);
                 contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_OLAM_FARMER_NAME,olamfarmername);
+                Date today = new Date();
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+                String registereddate = format.format(today);
+                contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_CONFIRMED_DATE,registereddate);
                 dataLayer.insertConsentStatementDetails(contentValue,olamfarmername,type);
                 if(type.equalsIgnoreCase("update")){
                     dataLayer.updateConsentStatus(farmerId);
