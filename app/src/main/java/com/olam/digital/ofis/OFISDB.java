@@ -11,7 +11,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 class OFISDB extends SQLiteOpenHelper {
     private static OFISDB sInstance;
 
-    private static final int DATABASE_VERSION = 108;
+    private static final int DATABASE_VERSION = 110;
 
     private static final String DATABASE_NAME = "ofismobile";
 
@@ -89,6 +89,7 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_FARMER_CONFIRMATION + " TEXT, "
             + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_CHILDNAME + " TEXT, "
             + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_FARMER_SIGN + " TEXT, "
+            + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_CONFIRMED_DATE + " TEXT, "
             + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_ENUM_SIGN + " TEXT)";
 
     //Child Labour Table end
