@@ -505,4 +505,93 @@
     <string name="please_select_Age">Please select Age</string>
     <string name="capture_my_location_button_text">Capture My location</string>
     <string name="enumerator_location_capture">Enumerator Location Capture</string>
+
+    <string name="farmer_consent">SỰ ĐỒNG Ý CỦA NÔNG DÂN</string>
+    <string name="personal_info_collection">THÔNG BÁO THU THẬP THÔNG TIN CÁ NHÂN </string>
+    <string name="consent_statement_pageone2">Dữ liệu cá nhân của quý vị bao gồm tên, tuổi, thông tin liên lạc (địa chỉ email, số điện thoại, địa chỉ gửi thư), ảnh, video hoặc bản ghi kỹ thuật số, thông tin tiểu sử, xã hội và địa lý, thông tin tài chính, nông nghiệp và thông tin đầu ra, phản hồi từ quý vị và nếu có, những dữ liệu về con cái hoặc người phụ thuộc của quý vị (“Dữ Liệu Nông Dân”) sẽ được chúng tôi thu thập và lưu trữ và các khách hàng, đối tác kinh doanh của chúng tôi có thể truy cập được và trong một số trường hợp, được công khai trên các trang web của Olam, phương tiện truyền thông xã hội, ấn phẩm điện tử hoặc bằng văn bản của chúng tôi. Điều này bao gồm Hệ Thống Thông Tin Nông Dân Olam ("OFIS") và/hoặc nền tảng AtSource (“AtSource”) là các cơ sở dữ liệu và công cụ trực tuyến chứa dữ liệu liên quan đến nông dân được chúng tôi và khách hàng cũng như đối tác của chúng tôi sử dụng. Chúng tôi yêu cầu quý vị công nhận và đồng ý việc thu thập, sử dụng và tiết lộ dữ liệu cá nhân của quý vị cho mục đích theo Thông Báo Thu Thập Thông Tin Cá Nhân này.</string>
+    <string name="consent_statement_pageone1">Quý vị được yêu cầu cung cấp cho Olam International Limited (sau đây gọi tắt là “Olam,” “chúng tôi,”) dữ liệu cá nhân để hỗ trợ cho các nỗ lực của Olam nhằm thúc đẩy tính bền vững và khả năng truy xuất nguồn gốc trong chuỗi cung ứng đồng thời tiến đến việc thúc đẩy thương mại có trách nhiệm với nông dân chẳng hạn như bản thân quý vị trên toàn cầu (“Mục đích”). </string>
+    <string name="cs_page2_title">Sử Dụng Dữ Liệu Cá Nhân</string>
+    <string name="cs_page2_1">Chúng tôi sẽ sử dụng và chia sẻ dữ liệu cá nhân của quý vị như sau</string>
+    <string name="cs_page2_2">Quý vị có đồng ý không? Vui lòng đánh dấu “✔“ hoặc “yes”</string>
+    <string name="cs_page2_3">Nhập vào Cơ sở dữ liệu OFIS và cơ sở dữ liệu Olam khác</string>
+    <string name="cs_page2_4">Chúng tôi sẽ thu thập Dữ Liệu Nông Dân để nhập vào cơ sở dữ liệu OFIS và cơ sở dữ liệu Olam khác, tại đây dữ liệu của quý vị được sắp xếp và sau đó được phân tích để giúp chúng tôi nắm bắt những thông tin quan trọng như xu hướng và các vấn đề có thể ảnh hưởng đến chuỗi cung ứng. Để thực hiện được điều này, nhân viên của Olam và các công ty con và bộ xử lý bên thứ 3 nhất định có quyền truy cập vào Dữ Liệu Nông Dân của quý vị. Cơ sở dữ liệu này và thông tin trong cơ sở dữ liệu sẽ được chia sẻ với các chi nhánh, đối tác và khách hàng của chúng tôi.</string>
+    <string name="cs_page2_5">Cung Cấp Khả Năng Truy Xuất Nguồn Gốc cho Thị Trường</string>
+    <string name="cs_page2_6">Chúng tôi sẽ chia sẻ Dữ Liệu Nông Dân do quý vị cung cấp cho khách hàng và đối tác của mình (họ cũng chia sẻ Dữ Liệu Nông Dân với khách hàng và đối tác của họ) để nắm bắt những thông tin quan trọng về nguồn gốc của thực phẩm và ai đang sản xuất nó. Sự minh bạch này sẽ giúp người mua có quyết định mua hàng sáng suốt và có trách nhiệm.</string>
+    <string name="cs_page2_7">Trend and Issue Spotting</string>
+    <string name="cs_page2_8">We will work with our internal teams and service providers to organize, process, and analyse the Farmer Data you share with us in order to identify trends and issues that may affect the supply chain. </string>
+    <string name="cs_page2_9">Bán Hàng và Sự Phát Triển của Nông Dân</string>
+    <string name="cs_page2_10">Chúng tôi sử dụng Dữ Liệu Nông Dân của quý vị và tổng hợp dữ liệu OFIS để giúp xác định cơ hội phát triển kinh doanh và hoạt động của quý vị. Nếu có cơ hội thích hợp, chúng tôi sẽ trao cơ hội đó cho quý vị để tiếp nhận nguồn tài chính, máy móc, tư vấn quản lý trang trại, vật tư nông nghiệp và bảo hiểm, ngoài cơ hội bán hàng - tất cả đều được chúng tôi hoặc bên thứ ba do chúng tôi giới thiệu, cung cấp trực tiếp. Theo đó, các bên thứ ba này được quyền truy cập vào Dữ Liệu Nông Dân của quý vị.</string>
+    <string name="cs_page2_11">Thúc đẩy Khả Năng Truy Xuất Nguồn Gốc</string>
+    <string name="cs_page2_12">Chúng tôi sử dụng Dữ Liệu Nông Dân của quý vị để quảng bá chương trình truy xuất nguồn gốc mà chúng tôi thực hiện, bao gồm trên OFIS, AtSource và các phương tiện truyền thông khác như trang web liên kết của chúng tôi cũng như qua liên lạc trực tiếp. Điều này có nghĩa là chúng tôi sẽ sử dụng Dữ Liệu Nông Dân trong các tài liệu thông tin và bài thuyết trình được chia sẻ giữa chúng tôi, khách hàng của chúng tôi (và khách hàng tiềm năng) và đối tác (và đối tác tiềm năng), là những người có thể giúp nâng cao khả năng truy xuất nguồn gốc và tính bền vững.</string>
+    <string name="cs_page2_13">Xúc Tiến và Quảng Bá Công Khai</string>
+    <string name="cs_page2_14">Olam và khách hàng và đối tác của mình sử dụng Dữ Liệu Nông Dân bao gồm tên, ảnh, video, thông tin vị trí, thông tin sản phẩm và buổi phỏng vấn (nếu được cung cấp) trên các tài liệu quảng bá được chia sẻ công khai, chẳng hạn như trên các trang web, ấn phẩm bằng văn bản và trên các sản phẩm. Mục tiêu nhằm thúc đẩy việc mua sản phẩm do quý vị sản xuất cũng như thúc đẩy hỗ trợ nông dân, sáng kiến về khả năng truy xuất nguồn gốc và tính bền vững của chúng tôi.</string>
+    <string name="cs_page2_15">Nghiên Cứu</string>
+    <string name="cs_page2_16">Chúng tôi chia sẻ Dữ Liệu Nông Dân của quý vị để hỗ trợ các nghiên cứu của các tổ chức giáo dục, chính phủ và phi chính phủ tập trung vào nông dân địa phương, cộng đồng, nông nghiệp, chuỗi cung ứng, khả năng truy xuất nguồn gốc, tính bền vững và các nghiên cứu ý thức xã hội liên quan để thúc đẩy sự phát triển và cộng tác của cộng đồng trong không gian truy xuất nguồn gốc và tính bền vững. Các tổ chức nói trên cũng được sử dụng Dữ Liệu Nông Dân của quý vị trong thông tin giao tiếp điện tử hoặc được công bố của riêng họ.</string>
+    <string name="cs_page2_17">Khi Dữ Liệu Nông Dân của quý vị được chia sẻ với các bên thứ ba, chẳng hạn như khách hàng và đối tác của chúng tôi để thực hiện Mục Đích và sử dụng thông tin cụ thể được đồng ý nói trên, mỗi khách hàng và đối tác này là người kiểm soát dữ liệu theo quyền riêng của họ và quý vị đồng ý với việc sử dụng dữ liệu của mình như được trình bày trong Đoạn 1 nói trên và được nêu chi tiết trong Tuyên Bố về Quyền Riêng Tư.</string>
+    <string name="cs_page2_18">Quý vị có quyền rút lại sự đồng ý của mình, yêu cầu quyền truy cập và/hoặc chỉnh sửa Dữ Liệu Nông Dân của mình và/hoặc yêu cầu cung cấp thông tin liên quan đến các chính sách và thực hành của chúng tôi bất kỳ lúc nào bằng cách liên hệ với chúng tôi qua <a href="privacy@olamnet.com">privacy@olamnet.com</a>. Mặc dù việc yêu cầu tiết lộ là không bắt buộc, nhưng việc không cung cấp Dữ Liệu Nông Dân của quý vị và/hoặc sau đó quý vị rút lại sự đồng ý của mình có thể ảnh hưởng đến khả năng cung cấp các dịch vụ nhất định mà quý vị yêu cầu riêng từ chúng tôi (tùy từng trường hợp). Ví dụ: địa chỉ của quý vị được yêu cầu không chỉ nhằm hỗ trợ việc truy xuất nguồn gốc, mà còn giúp chúng tôi cung cấp cho quý vị một số nguyên vật liệu nhất định như vật tư nông nghiệp chẳng hạn. Trong những trường hợp rút lại sự đồng ý, chúng tôi có quyền giữ lại dữ liệu nói trên để thực hiện các nghĩa vụ theo hợp đồng của mình đối với quý vị nhưng không sử dụng dữ liệu đó cho bất kỳ mục đích nào khác.</string>
+    <string name="cs_page2_19">Tuyên Bố về Quyền Riêng Tư của Dữ Liệu Nông Dân của chúng tôi được cung cấp để quý vị tham khảo bên dưới. Điều này giải thích cách chúng tôi xử lý và bảo vệ dữ liệu cá nhân. Mặc dù Dữ Liệu Nông Dân của quý vị được chia sẻ với những người được chỉ định nói trên, nhưng Dữ Liệu Nông Dân do chúng tôi lưu giữ sẽ được bảo mật và được lưu trữ trên các máy chủ của chúng tôi tại Singapore và tuân theo luật về quyền riêng tư hiện hành.</string>
+    <string name="cs_page3_1">Tôi,</string>
+    <string name="cs_page3_2">bằng cách này xác nhận rằng tôi đã đọc, hiểu và đồng ý với các quy định của Thông Báo Thu Thập Thông Tin Cá Nhân này và Tuyên Bố về Quyền Riêng Tư của Dữ Liệu Nông Dân và rằng: </string>
+    <string name="cs_page3_3">Tôi đã đánh dấu  “<b><i>✔</i></b>“ hoặc “yes” trong Đoạn 1 khi tôi đồng ý sử dụng và thu thập dữ liệu cá nhân của mình cho các mục đích cụ thể được nêu trên. </string>
+    <string name="cs_page3_4">Trường hợp tôi đồng ý thay mặt cho trẻ em hoặc trẻ vị thành niên, thì tôi là cha mẹ hoặc người giám hộ hợp pháp của trẻ em hoặc trẻ vị thành niên đó.</string>
+    <string name="cs_page3_5">Tôi hiểu rằng mình sẽ không nhận bất kỳ khoản tiền thù lao hoặc thù lao nào khác về dữ liệu cá nhân bao gồm mọi hình ảnh và tài sản trí tuệ hiện diện trong bất kỳ hình ảnh nào thuộc về Olam.</string>
+    <string name="cs_page3_6">Tôi hiểu rằng tôi có quyền rút lại sự đồng ý đối với tôi hoặc con tôi/trẻ vị thành niên bất kỳ lúc nào và khi rút lại sự đồng ý đó, Olam sẽ không sử dụng bất kỳ hình ảnh hoặc dữ liệu cá nhân nào trong bất kỳ ấn phẩm nào trong tương lai, nhưng có quyền tiếp tục sử dụng Dữ Liệu Cá Nhân đó trong các ấn phẩm đã được lưu hành.</string>
+    <string name="cs_page4_1">NẾU THÔNG BÁO ĐƯỢC NHÂN VIÊN / ĐẠI DIỆN CỦA OLAM ĐỌC RA CHO CÁ NHÂN:</string>
+    <string name="cs_page4_2">Tôi xác nhận rằng Người tham gia đã lắng nghe tôi đọc Thông Báo Thu Thập Thông Tin Cá Nhân và họ đã đồng ý rõ ràng về việc thu thập, sử dụng, chuyển giao bên ngoài phạm vi quyền hạn và tiết lộ dữ liệu cá nhân của anh ấy/cô ấy cho các mục đích được nêu trong đó.</string>
+    <string name="cs_page5_1">Tuyên Bố Bảo Mật Dữ Liệu của Nông Dân</string>
+    <string name="cs_page5_2">Chính sách này mô tả việc Olam và các chi nhánh của Olam sử dụng Dữ Liệu Nông Dân của quý vị được thu thập theo Thông Báo Thu Thập Thông Tin Cá Nhân do quý vị ký (“Thông Báo”). Đây là phần bổ sung và nên được đọc cùng với Thông Báo và Tuyên Bố về Quyền Riêng Tư của Tập Đoàn Olam có trên <a href="www.olamgroup.com/privacy.html">www.olamgroup.com/privacy.html</a>. Nếu có bất kỳ sự mâu thuẫn nào, thì Thông Báo sẽ được ưu tiên so với Tuyên Bố Bảo Mật Dữ Liệu của Nông Dân này và Tuyên Bố về Quyền Riêng Tư của Tập Đoàn Olam (theo thứ tự trên).</string>
+    <string name="cs_page5_3">Chính sách của Olam là tuân thủ tất cả các luật hiện hành về quyền riêng tư và bảo vệ dữ liệu. Olam chỉ thu thập và sử dụng dữ liệu của quý vị cho các mục đích được chỉ định và hợp pháp, xử lý dữ liệu theo cách phù hợp với các mục đích nói trên, thực hiện các bước hợp lý để đảm bảo rằng dữ liệu của quý vị là chính xác, đầy đủ và được cập nhật (nếu cần) và có biện pháp thích hợp để bảo vệ đầy đủ cho dữ liệu của quý vị.</string>
+    <string name="cs_page5_4">Chúng tôi thu thập dữ liệu nào?</string>
+    <string name="cs_page5_5">Chúng tôi thu thập và xử lý dữ liệu cá nhân về quý vị bao gồm nhưng không giới hạn ở:\n
+•	Ảnh, video và các hình ảnh khác (nơi nhận dạng rõ ràng danh tính cá nhân của quý vị);\n
+•	Tên và họ; \n
+•	Sản lượng nông nghiệp và cơ sở hạ tầng;\n
+•	Phản hồi từ quý vị có thể bao gồm dữ liệu cá nhân;\n
+•	Thông tin xã hội, tài chính, địa lý và tiểu sử;\n
+•	Quốc gia cư trú và các chi tiết liên hệ khác; và \n
+•	Nghề nghiệp.
+</string>
+    <string name="cs_page5_6">Chúng tôi sử dụng dữ liệu của quý vị cho những mục đích gì? </string>
+    <string name="cs_page5_7">Chúng tôi sử dụng dữ liệu này cho các mục đích sau:\n
+•	Cung cấp dịch vụ cho quý vị;\n
+•	Giao tiếp với quý vị; \n
+•	Thúc đẩy tính bền vững và các sáng kiến truy xuất nguồn gốc của chúng tôi;\n
+•	Tiếp thị và quảng bá các sản phẩm của Olam và các hoạt động của công ty trên các kênh truyền thông thuộc sở hữu của Olam bao gồm trang web, mạng xã hội và báo in và chủ động đưa nội dung vào các ấn phẩm truyền thông bên ngoài (báo in và trực tuyến);\n
+•	Hỗ trợ các sáng kiến nghiên cứu của các đối tác của chúng tôi để hỗ trợ sự hợp tác của cộng đồng và những tiến bộ trong lĩnh vực tính bền vững và truy xuất nguồn gốc;\n
+•	Xác định xu hướng, vấn đề và rủi ro trong thị trường nông nghiệp và trong chuỗi cung ứng; và \n
+•	Phát triển và quản lý các mối quan hệ của chúng tôi với quý vị và các đối tác kinh doanh của chúng tôi.
+</string>
+    <string name="cs_page5_8">Cơ sở pháp lý của chúng tôi để thu thập và xử lý dữ liệu của quý vị là gì?</string>
+    <string name="cs_page5_9">Chúng tôi chỉ thu thập và xử lý dữ liệu này với (a) sự đồng ý của quý vị; và (b) khi áp dụng, theo yêu cầu của Olam và các chi nhánh của chúng tôi để tiến hành kinh doanh và theo đuổi lợi ích hợp pháp của chúng tôi; và (c) cho bất kỳ mục đích hợp lý hoặc hợp pháp nào, theo luật bảo vệ dữ liệu hiện hành.</string>
+    <string name="cs_page5_10">Chúng tôi chia sẻ dữ liệu này với ai?</string>
+    <string name="cs_page5_11">Chúng tôi chia sẻ dữ liệu của quý vị với các thành viên khác trong Tập Đoàn Olam (Olam Group), bao gồm mọi chi nhánh, để đạt được các mục đích được mô tả ở trên. Chúng tôi cũng chia sẻ dữ liệu của quý vị với các cơ quan chính phủ và/hoặc các quan chức thực thi pháp luật nếu pháp luật cho phép, và bất kỳ khách hàng, nhà cung cấp dịch vụ, nhà cung cấp và đối tác kinh doanh hiện tại và tương lai của Olam nhằm theo đuổi các mục đích được mô tả ở trên hoặc theo cách khác với sự đồng ý của quý vị.</string>
+    <string name="cs_page5_12">Chúng tôi sẽ gửi dữ liệu của quý vị đến đâu?</string>
+    <string name="cs_page5_13">Ngoài việc chia sẻ với bộ xử lý bên thứ ba của chúng tôi cho các mục đích được liệt kê ở trên, đôi khi dữ liệu của quý vị được chuyển đến một trong các chi nhánh của chúng tôi ở một quốc gia khác. Chúng tôi sẽ thực hiện các bước hợp lý để đảm bảo rằng dữ liệu của quý vị được bảo vệ đầy đủ theo quy định của pháp luật bảo vệ dữ liệu có liên quan đến việc xử lý dữ liệu tại quốc gia đó. Trường hợp thông tin cá nhân của quý vị được chuyển ra ngoài Khu vực Kinh tế châu Âu (EEA) cho một chi nhánh của Olam hoặc một tổ chức ở quốc gia không phải tuân theo quyết định đầy đủ của Ủy ban Liên minh Châu Âu (EU Commission), thì dữ liệu cá nhân của quý vị sẽ được bảo vệ bởi các biện pháp bảo vệ xuyên biên giới đã được Ủy ban Liên minh Châu Âu chấp thuận bao gồm các điều khoản hợp đồng tiêu chuẩn về truyền dữ liệu xuyên biên giới.</string>
+    <string name="cs_page5_14">Chúng tôi có những biện pháp nào để bảo vệ dữ liệu của quý vị?</string>
+    <string name="cs_page5_15">Olam duy trì các biện pháp bảo vệ hợp lý để bảo vệ tính bí mật, bảo mật và tính toàn vẹn của dữ liệu quý vị. Mặc dù chúng tôi sử dụng các biện pháp bảo mật để giúp bảo vệ dữ liệu của quý vị không bị tiết lộ trái phép, chúng tôi không thể đảm bảo tính bảo mật của thông tin được cung cấp qua internet và không chịu trách nhiệm về những vi phạm bảo mật ngoài tầm kiểm soát hợp lý của chúng tôi.</string>
+    <string name="cs_page5_16">Quý vị có quyền gì liên quan đến dữ liệu của mình? </string>
+    <string name="cs_page5_17">Quý vị có quyền chọn không cung cấp dữ liệu do chúng tôi yêu cầu. Quý vị có quyền yêu cầu Olam cung cấp bản sao dữ liệu của mình và xác minh, chỉnh sửa hoặc hạn chế việc xử lý tích cực dữ liệu của quý vị. Quý vị có thể yêu cầu Olam ngừng sử dụng hình ảnh của mình bất kỳ lúc nào, trong trường hợp đó, hình ảnh sẽ không được sử dụng trong các ấn phẩm sau này nhưng có thể tiếp tục xuất hiện trên các ấn phẩm đã được lưu hành. Các quyền này có thể bị giới hạn theo luật. Nếu muốn thực hiện các quyền này hoặc có bất kỳ thắc mắc nào về chúng, quý vị có thể liên hệ với Olam theo địa chỉ email được cung cấp bên dưới.</string>
+    <string name="cs_page5_18">Dữ liệu của tôi được giữ lại trong bao lâu? </string>
+    <string name="cs_page5_19">Trừ khi có yêu cầu khác của pháp luật, Olam sẽ giữ lại dữ liệu cá nhân của quý vị trong khoảng thời gian cần thiết cho các mục đích mà dữ liệu được thu thập.</string>
+    <string name="cs_page5_20">Chi tiết liên hệ</string>
+    <string name="cs_page5_21">Người kiểm soát dữ liệu về dữ liệu của quý vị là Olam International Limited, trừ khi được tổ chức Olam liên quan ở quốc gia của quý vị có chỉ định khác. Nếu có bất kỳ thắc mắc nào liên quan đến dữ liệu chúng tôi lưu giữ về quý vị, vui lòng gửi email cho chúng tôi theo địa chỉ <a href="privacy@olamnet.com">privacy@olamnet.com</a>.</string>
+    <string name="cs_page5_22">Tuyên Bố về Quyền Riêng Tư của Tập Đoàn Olam sẽ giải thích cách thức bổ sung mà chúng tôi thu thập và sử dụng dữ liệu cá nhân tại <a href="www.olamgroup.com/privacy.html">www.olamgroup.com/privacy.html</a></string>
+    <string name="cs_page5_23">INTERNAL GUIDANCE NOTE</string>
+    <string name="cs_page5_24">There may be a number of ways for consent to be recorded. Please consult the Legal function if your intended collection method is not covered above. The signature fields may be replaced with consent buttons, etc.</string>
+    <string name="cs_page5_25">Please consult the Legal function if your intended purpose(s) for use and disclosure of Farmer Data does not fall within any of the categories listed in paragraph 1 above. </string>
+    <string name="cs_page5_26">All consents need to be appropriately tracked and stored. Where an Olam representative is reading the notice to the individual and acknowledging his consent on behalf of the individual (e.g. by way of a slide box in a mobile app), please ensure that Olam is able to check which representative has obtained the consent. </string>
+
+    <string name="full_farmer_name">Họ Tên</string>
+    <string name="date">Ngày</string>
+    <string name="olam_connect">Olam Connect</string>
+    <string name="olam_contact">Người liên hệ Olam</string>
+    <string name="digital_sign">Digital Chữ ký</string>
+    <string name="farmer_signature">Farmer Chữ ký</string>
+    <string name="enum_sign">Staff Chữ ký</string>
+    <string name="enum_name">Enumerator Tên</string>
+    <string name="farmer_sign_required">Please get signed by farmer</string>
+    <string name="staff_sign_required">Please get signed by staff</string>
+    <string name="childs_name">Tên của Trẻ</string>
+    <string name="name">Tên</string>
+    <string name="Please_accept_consent">You must accept consent statements to save the farmer</string>
 </resources>

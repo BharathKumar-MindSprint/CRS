@@ -498,4 +498,93 @@
     <string name="please_select_Age">Please select Age</string>
     <string name="capture_my_location_button_text">Capture My location</string>
     <string name="enumerator_location_capture">Enumerator Location Capture</string>
+
+    <string name="farmer_consent">PERSETUJUAN PETANI</string>
+    <string name="personal_info_collection">PEMBERITAHUAN PENGUMPULAN INFORMASI PRIBADI</string>
+    <string name="consent_statement_pageone2">Data pribadi Anda, termasuk nama, umur, informasi kontak (alamat surel, nomor telepon, alamat surat) foto, video atau rekam digital, informasi biografis, sosial dan geografis, finansial, pertanian dan informasi hasil, masukan dari Anda, dan bilamana sesuai, termasuk milik anak atau tanggungan Anda (“Data Petani”) akan dikumpulkan dan disimpan oleh kami dan akan tersedia bagi para pelanggan, mitra bisnis kami dan dalam beberapa kasus, akan tersedia bagi umum melalui laman, media sosial, publikasi elektronik atau tertulis Olam. Hal ini juga meliputi Sistem Informasi Petani Olam (“OFIS”) dan/atau platform AtSource (“AtSource”) yang merupakan pangkalan data dan perangkat daring yang berisikan data terkait petani yang digunakan oleh kami dan para pelanggan serta mitra kami. Bersama ini kami meminta Anda untuk mengetahui dan memberikan persetujuan bagi pengumpulan, penggunaan dan pengungkapan Data Pribadi Anda untuk Tujuan ini, sesuai dengan Pemberitahuan Pengumpulan Informasi Pribadi ini.</string>
+    <string name="consent_statement_pageone1">Dimintakan kepada Anda untuk memberikan kepada Olam International Limited (selanjutnya disebut sebagai “Olam,” “kami,” atau “kita”) data pribadi guna mendukung usaha-usaha Olam dalam mempromosikan keberlanjutkan dan pelacakan pada rantai pasokannya dan sebaliknya mempromosikan perdagangan yang bertanggung jawab dengan para petani seperti Anda sendiri di seluruh dunia (“Tujuan”).</string>
+    <string name="cs_page2_title">Penggunaan Data Pribadi</string>
+    <string name="cs_page2_1">Kami akan menggunakan dan membagikan Data Pribadi Anda sebagai berikut</string>
+    <string name="cs_page2_2">Anda setuju? Beri tanda“✔“ atau “ya” </string>
+    <string name="cs_page2_3">Mengisi OFIS dan pangkalan data Olam lainnya</string>
+    <string name="cs_page2_4">Kami akan mengumpulkan Data Petani untuk mengisi OFIS dan pangkalan data Olam lainnya di mana data Anda dapat diatur kemudian dianalisis guna memberi kami wawasan yang penting seperti tren dan isu-isu yang dapat mempengaruhi rantai pasokan. Guna melakukan hal tersebut, karyawan Olam serta anak perusahannya dan pemroses pihak ketiga tertentu akan memiliki akses ke Data Petani Anda. Pangkalan data ini dan informasi yang ada di dalamnya dapat dibagikan kepada afiliasi, mitra, dan para pelanggan kami.</string>
+    <string name="cs_page2_5">Menyediakan Pelacakan bagi Pasar</string>
+    <string name="cs_page2_6">Kami akan membagikan Data Petani yang Anda sediakan dengan para pelanggan dan mitra kami (yang juga akan membagikan Data Petani tersebut dengan para pelanggan dan mitra mereka) guna menyediakan wawasan tentang dari mana makanan mereka berasal dan siapa yang menghasilkannya. Transparansi ini memungkinkan para pembeli untuk mengambil keputusan pembelian yang terinformasi dan bertanggung jawab.</string>
+    <string name="cs_page2_7">Trend and Issue Spotting</string>
+    <string name="cs_page2_8">We will work with our internal teams and service providers to organize, process, and analyse the Farmer Data you share with us in order to identify trends and issues that may affect the supply chain. </string>
+    <string name="cs_page2_9">Penjualan dan Pengembangan Petani</string>
+    <string name="cs_page2_10">Kami akan menggunakan Data Petani dari Anda dan data OFIS agregat untuk membantu mengenali kesempatan bagi Anda untuk mengembangkan bisnis dan operasi Anda. Saat kesempatan yang tepat muncul, kami akan menyediakan bagi Anda, kesempatan mendapatkan pendanaan, permesinan, saran pengelolaan pertanian, pasokan pertanian, dan asuransi, sebagai tambahan dari kesempatan penjualan – semuanya akan disediakan secara langsung oleh kami atau pihak ketiga yang kami referensikan bagi Anda. Tentunya, pihak ketiga ini akan diberikan akses ke Data Petani Anda.</string>
+    <string name="cs_page2_11">Promosi Pelacakan</string>
+    <string name="cs_page2_12">Kami akan menggunakan Data Petani Anda untuk mempromosikan program pelacakan yang kami jalankan, termasuk di OFIS, AtSource dan media lainnya seperti misalnya laman afiliasi kami serta dalam komunikasi langsung. Ini berarti kami akan menggunakan Data Petani pada materi informasi dan presentasi yang dibagikan di antara kami, pelanggan kami (dan calon pelanggan), dan mitra kami (dan calon mitra) yang kiranya membantu pelacakan dan keberlanjutan.</string>
+    <string name="cs_page2_13">Iklan dan Promosi Publik</string>
+    <string name="cs_page2_14">Olam dan para pelanggan serta mitranya akan menggunakan Data Petani, termasuk nama, foto, video, informasi lokasi, informasi produk dan wawancara (bila ada) pada materi iklan yang akan dibagikan secara publik, seperti pada laman, publikasi tertulis dan pada produk. Tujuannya adalah mempromosikan pembelian produk seperti yang diproduksi oleh Anda serta mempromosikan dukungan kepada petani serta prakarsa pelacakan dan keberlanjutan kami.</string>
+    <string name="cs_page2_15">Riset</string>
+    <string name="cs_page2_16">Kami akan membagikan Data Petani Anda guna mendukung studi oleh organisasi pendidikan, pemerintahan, dan non-pemerintah yang berfokus pada petani lokal, masyarakat, pertanian, rantai-pasokan, pelacakan, keberlanjutan dan studi kesadaran sosial lainnya guna mempromosikan kolaborasi masyarakat dan pengembangan dalam hal keberlanjutan dan pelacakan. Organisasi-organisasi ini juga dapat menggunakan Data Petani Anda dalam komunikasi elektronik atau terpublikasi milik mereka sendiri.</string>
+    <string name="cs_page2_17">Saat Data Petani dibagikan dengan pihak ketiga seperti misalnya para pelanggan dan mitra kami guna memajukan Tujuan dan penggunaan tertentu yang dijelaskan di atas, masing-masing dari pelanggan dan mitra ini adalah pengendali data dengan haknya sendiri dan Anda menyetujui penggunaan data Anda seperti diatur di Paragraf 1 dan seperti dirinci di Pernyataan Privasi.</string>
+    <string name="cs_page2_18">Anda dapat menarik persetujuan yang diberikan, meminta akses dan/atau koreksi Data Petani dan/atau meminta informasi terkait dengan kebijakan dan praktik kami kapan saja dengan mengontak kami di <a href="privacy@olamnet.com">privacy@olamnet.com</a>. Meskipun tidak ada permintaan informasi bersifat wajib, kegagalan memberikan Data Petani dan/atau penarikan persetujuan Anda setelahnya dapat mempengaruhi kemampuan kami dalam memberikan layanan tertentu yang bisa saja Anda minta dari kami secara terpisah (yang bisa saja terjadi). Misalnya, alamat Anda mungkin diperlukan tidak hanya untuk membantu dalam pelacakan, namun juga bagi kami untuk mengirimkan bahan-bahan tertentu kepada Anda seperti misalnya pasokan pertanian. Dalam contoh demikian, di mana Anda menarik persetujuan, kami bisa saja tetap menyimpan data tersebut guna memenuhi kewajiban kontraktual kami kepada Anda namun tidak akan menggunakan data tersebut untuk tujuan lainnya.</string>
+    <string name="cs_page2_19">Pernyataan Privasi Data Petani kami tersedia sebagai referensi Anda di bawah. Pernyataan ini menjelaskan bagaimana kami menangani dan melindungi data pribadi. Saat Data Petani Anda dibagikan dengan mereka yang dijelaskan di atas, Data Petani Anda yang kami simpan akan tetap rahasia dan akan disimpan di server kami di Singapura dan mengikuti ketentuan hukum privasi yang berlaku.</string>
+    <string name="cs_page3_1">Saya,</string>
+    <string name="cs_page3_2">dengan ini menyatakan telah membaca, memahami dan menyetujui ketentuan yang ada pada Pemberitahuan Pengumpulan Informasi Pribadi dan Pernyatan Privasi Data Petani dan bahwa: </string>
+    <string name="cs_page3_3">Saya telah memberikan tanda  “<b><i>✔</i></b>“ di Paragraf 1 di mana saya menyetujui penggunaan dan pengumpulan data pribadi saya untuk Tujuan tertentu yang diperlihatkan di sana.</string>
+    <string name="cs_page3_4">Di mana saya menyetujui atas nama seorang anak atau anak di bawah umur, saya bertindak sebagai orangtua atau wali dari anak atau anak di bawah umur tersebut.</string>
+    <string name="cs_page3_5">Saya memahami bahwa saya tidak akan menerima imbalan finansial atau lainnya untuk data pribadi apa pun termasuk gambar dan properti intelektual apa pun yang ada di dalam gambar apa pun akan menjadi milik Olam.</string>
+    <string name="cs_page3_6">Saya memahami bahwa saya memiliki hak untuk menarik persetujuan bagi saya atau anak/anak di bawah umur saya kapan saja dan bahwa saat persetujuan tersebut ditarik, Olam tidak akan menggunakan gambar atau data pribadi dalam publikasi apa pun di masa depan, namun dapat terus menggunakan Data Pribadi tersebut dalam publikasi yang sudah diedarkan.</string>
+    <string name="cs_page4_1">DI MANA PEMBERITAHUAN DIBACAKAN KEPADA INDIVIDU OLEH STAF/PERWAKILAN OLAM:</string>
+    <string name="cs_page4_2">Saya mengonfirmasi bahwa Partisipan telah mendengarkan saat saya membacakan Pemberitahuan Pengumpulan Informasi Pribadi dan mereka telah secara yakin memberikan persetujuan bagi pengumpulan, penggunaan, pemindahan keluar yurisdiksi dan pengungkapan data pribadinya oleh Olam untuk tujuan yang dikemukakan di sini.</string>
+    <string name="cs_page5_1">Pernyataan Privasi Data Petani</string>
+    <string name="cs_page5_2">Kebijakan ini menjelaskan tentang penggunaan Data Petani Anda yang dikumpulkan di bawah Pemberitahuan Pengumpulan Informasi Pribadi yang ditanda tangani oleh Anda ( “Pemberitahuan”) oleh Olam dan afiliasinya. Pernyataan ini merupakan pelengkap dan harus dibaca bersama dengan Pemberitahuan dan Pernyataan Privasi Grup Olam yang tersedia di <a href="www.olamgroup.com/privacy.html">www.olamgroup.com/privacy.html</a>. Bilamana ada inkonsistensi, Pemberitahuan akan dipakai sebagai rujukan daripada Pernyataan Privasi dan Pernyataan Privasi Grup Olam (dengan urutan sedemikian).</string>
+    <string name="cs_page5_3">Merupakan kebijakan Olam untuk memenuhi segala UU privasi dan perlindungan data yang berlaku. Olam akan mengumpulkan dan menggunakan data Anda hanya untuk tujuan tertentu dan sah, memprosesnya sedemikian rupa agar konsisten dengan tujuan tersebut, mengambil langkah-langkah yang masuk akal untuk memastikan bahwa data Anda akurat, lengkap dan diperbarui (bilamana perlu) dan mengambil tindakan yang tepat untuk memberikan perlindungan yang memadai bagi data Anda. </string>
+    <string name="cs_page5_4">Data apa yang kami kumpulkan?</string>
+    <string name="cs_page5_5">Kami mengumpulkan dan memproses data pribadi tentang Anda termasuk namun tidak terbatas pada:\n
+•	Foto, video dan pencitraan lain (di mana identitas pribadi Anda dapat dengan jelas dikenali);\n
+•	Nama depan dan nama terakhir; \n
+•	Hasil dan infrastruktur pertanian\n
+•	Masukan dari Anda yang dapat berisikan data pribadi;\n
+•	Informasi sosial, geografis dan biografis;\n
+•	Negara tempat tinggal dan detail kontak lainnya; dan\n
+•	pekerjaan.
+</string>
+    <string name="cs_page5_6">Untuk tujuan apa kami menggunakan data Anda?</string>
+    <string name="cs_page5_7">Kami menggunakan data ini untuk tujuan berikut ini:\n
+•	Menyediakan layanan kepada Anda; \n
+•	Berkomunikasi dengan Anda; \n
+•	Mempromosikan prakarsa keberlanjutan dan pelacakan kami;\n
+•	Memasarkan dan mempromosikan produk Olam dan aktivitas korporat di kanal-kanal yang dimiliki Olam termasuk laman, media sosial dan cetak dan secara aktif menaruh konten di publikasi media eksternal (cetak dan daring);\n
+•	Mendukung prakarsa riset dari mitra kami untuk mendukung kolaborasi masyarakat dan kemajuan di bidang keberlanjutan dan pelacakan; \n
+•	Mengenali tren, isu, dan risiko di pasar agrikultur dan di rantai pasokan; dan\n
+•	Mengembangkan dan mengelola hubungan kami dengan Anda serta mitra bisnis kami.
+</string>
+    <string name="cs_page5_8">Apa dasar hukum kami dalam mengumpulkan dan memproses data Anda?</string>
+    <string name="cs_page5_9">Kami hanya akan mengumpulkan dan memproses data ini dengan (a) persetujuan Anda; dan (b) bilamana sesuai, hanya bila dibutuhkan oleh Olam dan afiliasi kami untuk melakukan bisnis dan mengejar kepentingan kami yang sah; dan (c) untuk tujuan lain yang masuk akal atau sah, sesuai dengan UU perlindungan data yang berlaku</string>
+    <string name="cs_page5_10">Dengan siapa kami akan berbagi data ini? </string>
+    <string name="cs_page5_11">Kami akan berbagi data Anda dengan anggota lain dari grup Olam, termasuk afiliasi, guna mencapai tujuan yang dijelaskan di atas. Kami juga akan berbagi data Anda dengan otoritas pemerintah dan/atau petugas penegakkan hukum bila dimandatkan oleh hukum, dan kepada pelanggan saat ini dan masa depan, penyedia jasa, pemasok dan mitra bisnis dari Olam dalam mengejar tujuan yang dijelaskan di atas atau sebaliknya dengan persetujuan Anda.</string>
+    <string name="cs_page5_12">Kemana kami akan mengirim data Anda? </string>
+    <string name="cs_page5_13">Selain dari berbagi dengan pemroses pihak ketiga kami untuk tujuan yang dijelaskan di atas, dari waktu ke waktu data Anda bisa saja dipindahkan ke salah satu afiliasi kami di luar negeri. Kami akan mengambil langkah yang masuk akal untuk memastikan bahwa data Anda terlindungi secara mencukup dsesuai dengan UU perlindungan data yang relevan bagi pemrosesan data di negara tersebut. Di saat informasi pribadi Anda dipindahkan di luar EEA ke afiliasi Olam atau sebuah entitas di sebuah negara yang tidak tunduk pada keputusan yang memadai dari Komisi EU, data pribadi Anda akan dilindungi oleh perlindungan lintas-batas yang disetujui oleh Komisi EU termasuk klausul kontrak standar untuk pemindahan data lintas-batas.</string>
+    <string name="cs_page5_14">Langkah-langkah apa saja yang kami miliki untuk melindungi data Anda?</string>
+    <string name="cs_page5_15">Olam memiliki sejumlah pengaman untuk melindungi kerahasiaan, keamanan dan integritas data Anda. Walaupun kami memiliki sejumlah langkah untuk membantu melindungi data Anda dari pengungkapan yang tidak sah, kami tidak bisa menjamin keamanan dari informasi yang tersedia di internet dan tidak bertanggung jawab atas pelanggaran keamanan yang berada di luar kendali kami.</string>
+    <string name="cs_page5_16">Hak apa saja yang Anda miliki sehubungan dengan data Anda?</string>
+    <string name="cs_page5_17">Anda bisa memilih untuk tidak memberikan data yang kami minta. Anda berhak untuk meminta salinan data Anda dari Olam dan untuk melakukan verifikasi, koreski atau membatasi pemrosesan aktif atas data Anda. Anda dapat meminta Olam untuk menghentikan penggunaan gambar Anda kapan saja, di mana hal tersebut tidak akan dipakai dalam publikasi di masa depan namun bisa tetap ada di dalam publikasi yang telah diedarkan. Hak-hak ini mungkin dapat dibatasi oleh hukum. Bila Anda ingin menggunakan hak-hak ini atau memiliki pertanyaan terkait hak-hak tersebut, Anda bisa menghubungi Olam melalui alamat surel yang ada di bawah ini.</string>
+    <string name="cs_page5_18">Berapa lama Olam akan menyimpan data saya? </string>
+    <string name="cs_page5_19">Kecuali diperlukan sebaliknya oleh hukum, Olam akan menyimpan data pribadi Anda selama periode yang diperlukan untuk mencapai tujuan dari pengumpulan data tersebut.</string>
+    <string name="cs_page5_20">Detail Kontak</string>
+    <string name="cs_page5_21">Pengendali data untuk data Anda adalah Olam International Limited, kecuali sebaliknya dijelaskan oleh entitas Olam yang relevan di negara Anda. Jika Anda memiliki pertanyaan sehubungan dengan data yang kami simpan tentang Anda silakan kirim surel ke kami di <a href="privacy@olamnet.com">privacy@olamnet.com</a>.</string>
+    <string name="cs_page5_22">Pernyataan Privasi Grup Olam yang menjelaskan langkah-langkah tambahan bagaimana kami mengumpulkan dan menggunakan data pribadi dapat ditemukan di <a href="www.olamgroup.com/privacy.html">www.olamgroup.com/privacy.html</a></string>
+    <string name="cs_page5_23">INTERNAL GUIDANCE NOTE</string>
+    <string name="cs_page5_24">There may be a number of ways for consent to be recorded. Please consult the Legal function if your intended collection method is not covered above. The signature fields may be replaced with consent buttons, etc.</string>
+    <string name="cs_page5_25">Please consult the Legal function if your intended purpose(s) for use and disclosure of Farmer Data does not fall within any of the categories listed in paragraph 1 above. </string>
+    <string name="cs_page5_26">All consents need to be appropriately tracked and stored. Where an Olam representative is reading the notice to the individual and acknowledging his consent on behalf of the individual (e.g. by way of a slide box in a mobile app), please ensure that Olam is able to check which representative has obtained the consent. </string>
+
+    <string name="full_farmer_name">Nama Lengkap</string>
+    <string name="date">Tanggal</string>
+    <string name="olam_connect">Olam Connect</string>
+    <string name="olam_contact">Kontak dari Olam</string>
+    <string name="digital_sign">Digital Tanda tangan</string>
+    <string name="farmer_signature">Farmer Tanda tangan</string>
+    <string name="enum_sign">Staff Tanda tangan</string>
+    <string name="enum_name">Enumerator Nama</string>
+    <string name="farmer_sign_required">Please get signed by farmer</string>
+    <string name="staff_sign_required">Please get signed by staff</string>
+    <string name="childs_name">Nama Anak </string>
+    <string name="name">Nama</string>
+    <string name="Please_accept_consent">You must accept consent statements to save the farmer</string>
 </resources>

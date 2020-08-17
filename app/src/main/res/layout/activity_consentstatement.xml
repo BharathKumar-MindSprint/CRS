@@ -1286,6 +1286,7 @@
 
 
                             <TableRow
+                                android:visibility="gone"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginBottom="@dimen/ofis_consent_statement_row_bottom_margin"
@@ -1302,6 +1303,7 @@
                             </TableRow>
 
                             <TableRow
+                                android:visibility="gone"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginBottom="@dimen/ofis_consent_statement_row_bottom_margin"
@@ -1316,6 +1318,7 @@
                             </TableRow>
 
                             <TableRow
+                                android:visibility="gone"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginBottom="@dimen/ofis_consent_statement_row_bottom_margin"
@@ -1329,6 +1332,7 @@
                                     android:text="@string/cs_page5_25"/>
                             </TableRow>
                             <TableRow
+                                android:visibility="gone"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginBottom="@dimen/ofis_consent_statement_row_bottom_margin"
