@@ -36,7 +36,7 @@
                 android:layout_marginBottom="5dp"
                 android:textColor="@color/black"
                 android:padding="5dp"
-                android:text="Signature"
+                android:text="@string/Add_Signature"
                 android:layout_weight="9"
                 android:textAppearance="?android:textAppearanceMedium"
                 android:textStyle="bold" />
@@ -81,7 +81,7 @@
             android:layout_marginBottom="5dp"
             android:textColor="@color/black"
             android:padding="10dp"
-            android:text="Please sign within the boundary box"
+            android:text="@string/please_sign_within_the_boundary_box"
             android:textAppearance="?android:textAppearanceMedium"
             android:textStyle="bold"
             android:layout_height="wrap_content" />

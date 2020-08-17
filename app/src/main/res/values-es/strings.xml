@@ -506,4 +506,93 @@
     <string name="please_select_Age">Please select Age</string>
     <string name="capture_my_location_button_text">Capture My location</string>
     <string name="enumerator_location_capture">Enumerator Location Capture</string>
+
+    <string name="farmer_consent">CONSENTIMIENTO DEL AGRICULTOR</string>
+    <string name="personal_info_collection">AVISO DE RECOLECCIÓN DE INFORMACIÓN PERSONAL</string>
+    <string name="consent_statement_pageone2">Sus datos personales, incluyendo su nombre, edad, información de contacto (dirección de correo electrónico, número telefónico, dirección postal), fotografías, videos o grabaciones digitales, información biográfica, social y geográfica, financiera, de agricultura y de producción, comentarios que recibamos sobre usted y, cuando corresponda, los datos de sus hijos o dependientes (los “Datos del Agricultor”) serán recopilados y almacenados por nosotros y estarán disponibles para nuestros clientes, socios comerciales y, en algunos casos, se publicarán en nuestros sitios web de Olam, redes sociales, publicaciones escritas o electrónicas. Esto también incluye el sistema de información de agricultores de Olam ("OFIS") y/o la plataforma AtSource (“AtSource”) que son bases de datos y herramientas en línea con datos relacionados al agricultor que son utilizados por nosotros, nuestros clientes y socios. Le pedimos que por este medio acepte y autorice la recolección, uso y divulgación de sus datos personales para este propósito de conformidad con este Aviso de recolección de información personal. </string>
+    <string name="consent_statement_pageone1">Se le solicita que brinde a Olam International Limited (en lo sucesivo, “Olam,” o nosotros”) datos personales para respaldar los esfuerzos de Olam de fomentar la sustentabilidad y trazabilidad en la cadena de suministros y, a su vez, fomentar el comercio responsable con los agricultores, así como la participación con comunidades alrededor del mundo (en lo sucesivo el “Propósito”). </string>
+    <string name="cs_page2_title">Uso de datos personales</string>
+    <string name="cs_page2_1">Utilizaremos y compartiremos sus datos personales de la siguiente manera</string>
+    <string name="cs_page2_2">¿Acepta? Por favor marque “✔“o “sí”</string>
+    <string name="cs_page2_3">Ingresos en las bases de datos de OFIS y otras de Olam</string>
+    <string name="cs_page2_4">Recolectaremos Datos del Agricultor para ingresarlos en las bases de datos de OFIS y otras bases de datos de Olam donde podremos organizar sus datos para su posterior análisis, lo que nos bridará un panorama importante sobre las tendencias y los problemas que pueden afectar la cadena de suministros. A tales fines, los empleados de Olam y sus subsidiarias, y ciertos procesadores de 3eros, tendrán acceso a sus Datos del Agricultor. Se podrán compartir esas bases de datos y la información que contienen con nuestras filiales, socios y clientes.</string>
+    <string name="cs_page2_5">Brindar trazabilidad al mercado</string>
+    <string name="cs_page2_6">Compartiremos sus Datos del Agricultor con nuestros clientes y socios (que también los compartirán con sus clientes y socios) para saber de dónde se obtienen los alimentos y quién los produce. Esta transparencia les permite a los compradores tomar decisiones de compra responsables e informadas. </string>
+    <string name="cs_page2_7">Trend and Issue Spotting</string>
+    <string name="cs_page2_8">We will work with our internal teams and service providers to organize, process, and analyse the Farmer Data you share with us in order to identify trends and issues that may affect the supply chain. </string>
+    <string name="cs_page2_9">Desarrollo y ventas del agricultor</string>
+    <string name="cs_page2_10">Usaremos sus Datos del Agricultor y añadiremos datos de OFIS para ayudar a identificar oportunidades para hacer crecer su empresa y sus operaciones. Si surgiera la oportunidad apropiada, le podremos presentar opciones para obtener financiamiento, maquinaria, asesoría en la gestión de la finca, suministros y seguros para la finca, además de oportunidades de venta, -todo lo cual será proporcionado directamente por nosotros o por un tercero con quien nosotros lo refiramos.Por consiguiente, estos terceros tendrán acceso a sus Datos del Agricultor. </string>
+    <string name="cs_page2_11">Fomentar la trazabilidad</string>
+    <string name="cs_page2_12">Utilizaremos sus Datos del Agricultor para fomentar los programas de trazabilidad que gestionamos, incluyendo en OFIS, AtSource y otros medios como los sitios web de nuestros afiliados así como en comunicaciones directas. Esto significa que utilizaremos los Datos del Agricultor en materiales informativos y presentaciones que compartimos entre nosotros, nuestros clientes (y potenciales clientes), y socios (y potenciales socios) quienes podrán ayudar a mejorar la trazabilidad y sustentabilidad. </string>
+    <string name="cs_page2_13">Publicidad y promoción públicas</string>
+    <string name="cs_page2_14">Olam y nuestros clientes y socios utilizarán sus Datos del Agricultor incluyendo nombres, fotografías, videos, información de la ubicación, información del producto y entrevistas (en caso de que existan) en materiales publicitarios que se compartirán públicamente, como en páginas web, publicaciones escritas o en productos. La meta es promover las compras de productos tales como aquellos que usted produce como así también fomentar el apoyo a los agricultores, la trazabilidad y las iniciativas de sustentabilidad.</string>
+    <string name="cs_page2_15">Investigación</string>
+    <string name="cs_page2_16">Compartiremos sus Datos del Agricultor para apoyar estudios de organizaciones educativas, gubernamentales y no gubernamentales enfocadas en agricultores locales, comunidades, agricultura, cadena de suministro, trazabilidad, sustentabilidad y estudios relacionados con el compromiso social, con la intención de promover la colaboración y el desarrollo comunitario en el ámbito de la trazabilidad y sustentabilidad. Tales organizaciones también podrán utilizar sus Datos del Agricultor en sus propias comunicaciones electrónicas o publicadas.</string>
+    <string name="cs_page2_17">Cuando se comparten sus Datos del Agricultor con terceros tales como nuestros clientes o socios con miras a alcanzar el Propósito y los usos específicos arriba mencionados y a los que usted ha accedido, cada uno de estos clientes y socios son controladores de datos en su propio derecho y usted acepta el uso de sus datos según se establece en el Párrafo 1 arriba mencionado y como se detalla en la Declaración de Privacidad. </string>
+    <string name="cs_page2_18">Usted puede retirar el consentimiento otorgado, solicitar el acceso y/o la corrección de sus Datos del Agricultor y/o solicitar información relacionada a nuestras políticas y prácticas en cualquier momento poniéndose en contacto con nosotros al correo electrónico <a href="privacy@olamnet.com">privacy@olamnet.com</a>. Aunque no es obligatorio revelar sus Datos del Agricultor, el no hacerlo o el subsecuente retiro de su consentimiento puede afectar nuestra capacidad de proporcionar ciertos servicios que nos haya solicitado de manera independiente (según sea el caso). Por ejemplo, se puede solicitar su dirección no solamente para ayudar con la trazabilidad, sino también para que nosotros podamos enviarle ciertos materiales tales como suministros agrícolas.. En tales casos en que revoque su consentimiento, podremos conservar sus datos con la intención de cumplir con nuestras obligaciones contractuales con usted, pero no los usaremos para ningún otro propósito.</string>
+    <string name="cs_page2_19">Se le proporciona a continuación una copia de la Declaración de Privacidad de Datos del Agricultor como referencia. En esta se explica cómo manejamos y protegemos sus datos personales. Aunque sus Datos del Agricultor se compartirán con las personas arriba mencionadas, aquellos Datos que estén en nuestro poder se mantendrán de manera confidencial y se guardarán en nuestros servidores en Singapur y en cumplimiento con las leyes de privacidad aplicables.</string>
+    <string name="cs_page3_1">Yo,</string>
+    <string name="cs_page3_2">por medio de la presente confirmo que he leído, entendido y estoy de acuerdo con las disposiciones de este Aviso de Recolección de Información Personal y la Declaración de Privacidad de los Datos del Agricultor, y en el cual: </string>
+    <string name="cs_page3_3">He señalado con un “<b><i>✔</i></b>“ o un “sí” en el Párrafo 1 que estoy de acuerdo en el uso y recolección de mis datos personales para los propósitos específicos que se indican. </string>
+    <string name="cs_page3_4">En donde he dado mi consentimiento a nombre de un niño(a) o menor, soy ya sea el padre o tutor legal de ese niño(a) o menor. </string>
+    <string name="cs_page3_5">Entiendo que no recibiré ninguna retribución económica o de otro tipo por ninguno de los datos personales incluyendo cualquier imagen y que toda propiedad intelectual que subsistsobre dichas imágenes pertenecerá a Olam.</string>
+    <string name="cs_page3_6">Entiendo que tengo el derecho a revocar el consentimiento para mí o mi hijo(a)/menor en cualquier momento y que en los casos en que retire este consentimiento, Olam no utilizará ninguna imagen ni datos personales en publicaciones futuras, pero podrá continuar usándolos en publicaciones que ya se encuentren en circulación.</string>
+    <string name="cs_page4_1">SI UN REPRESENTANTE O MIEMBRO DEL PERSONAL DE OLAM LEE EN VOZ ALTA EL AVISO AL INTERESADO:</string>
+    <string name="cs_page4_2">Confirmo que el Participante me ha escuchado leer en voz alta el Aviso de Recolección de Información Personal y que me ha dado su consentimiento expreso para que Olaf recolecte, utilice, transfiera fuera de la jurisdicción y divulgue sus datos personales a fines allí mencionados.</string>
+    <string name="cs_page5_1">Declaración de Privacidad de los Datos del Agricultor</string>
+    <string name="cs_page5_2">Esta política describe el uso por parte de Olam y sus asociados de sus Datos del Agricultor recopilados por medio de este Aviso de Recolección de Información Personal firmado por usted (en lo sucesivo el “Aviso”). La Declaración es complementaria y deberá leerse en conjunto con el Aviso y la Declaración de Privacidad de Grupo Olam disponible en <a href="www.olamgroup.com/privacy.html">www.olamgroup.com/privacy.html</a>. Si existiera alguna inconsistencia, el Aviso prevalecerá sobre esta Declaración de Privacidad de los Datos del Agricultor y la Declaración de Privacidad de Grupo Olam (en ese orden).</string>
+    <string name="cs_page5_3">La política de Olam es cumplir con todas las leyes aplicables de privacidad y de protección de datos. Olam recopilará y utilizará sus datos únicamente para los propósitos legales y especificados, los procesará de manera coherente con dichos propósitos, tomará las medidas razonables para asegurarse que sus datos sean precisos, completos y se mantengan actualizados (cuando sea necesario) y tomará las medidas necesarias para proveer una adecuada protección para sus datos.</string>
+    <string name="cs_page5_4">¿Qué datos recopilamos?</string>
+    <string name="cs_page5_5">Recopilamos y procesamos sus datos personales incluyendo de manera enunciativa mas no limitativa:\n
+•	Fotografías, videos y otras imágenes (en las cuales su identidad personal se identifica claramente).\n
+•	Nombre (s) y apellidos.\n
+•	Producción agrícola e infraestructura.\n
+•	Comentarios que tengamos sobre usted que pueden incluir sus datos personales.\n
+•	Información social, geográfica y biográfica.\n
+•	País de residencia y otra información de contacto.\n
+•	Profesión.
+</string>
+    <string name="cs_page5_6">¿Con qué propósitos usamos sus datos?</string>
+    <string name="cs_page5_7">Usamos sus datos para los siguientes propósitos:\n
+•	Brindarle servicios.\n
+•	Comunicarnos con usted.\n
+•	Fomentar nuestras iniciativas de sustentabilidad y trazabilidad.\n
+•	Comercializar y fomentar los productos de Olam y actividades corporativas en canales de Olam que incluyen sitios web, redes sociales e impresiones y para colocar contenidos de forma proactiva en publicaciones de medios externos (impresas y en línea).\n
+•	Apoyar iniciativas de investigación de nuestros socios para respaldar la colaboración comunitaria y los avances en los campos de la sustentabilidad y la trazabilidad.\n
+•	Identificar tendencias, problemas y riesgos en los mercados agrícolas y la cadena de suministros.\n
+•	Desarrollar y gestionar las relaciones con usted y nuestros socios comerciales.
+</string>
+    <string name="cs_page5_8">¿Cuál es nuestra base legal para recopilar y procesar sus datos? </string>
+    <string name="cs_page5_9">Sólo recopilamos y procesamos esos datos con (a) su consentimiento; y (b) cuando corresponda, según lo solicite Olam o nuestros socios para realizar nuestros negocios y buscar nuestros intereses legítimos; y (c) por cualquier propósito legítimo o esperado de manera razonable, de conformidad con la legislación aplicable de protección de datos.</string>
+    <string name="cs_page5_10">¿Con quién compartiremos sus datos? </string>
+    <string name="cs_page5_11">Compartiremos sus datos con otros miembros del grupo Olam, incluyendo cualquier filial, para lograr los propósitos arriba mencionados. También compartiremos sus datos con autoridades gubernamentales o agentes del orden en caso de estipularlo la ley y con cualquier cliente, proveedor de servicios, proveedores o socios comerciales actuales o futuros de Olam en la búsqueda por alcanzar los propósitos descritos anteriormente u otro propósito con su consentimiento</string>
+    <string name="cs_page5_12">¿Adónde enviaremos sus datos?</string>
+    <string name="cs_page5_13">Además de compartir sus datos con nuestros procesadores terceros para los propósitos arriba mencionados, cada cierto tiempo sus datos podrán ser transferidos a una de nuestras filiales en otro país. Tomaremos las medidas necesarias para asegurarnos de que sus datos sean protegidos adecuadamente de conformidad con la legislación de protección de datos vigente que rija sobre el procesamiento de datos en dicho país. Cuando se transfiere su información personal fuera del EEE a una filial de Olam o a una entidad en un país que no esté sujeto a una decisión adecuada por parte de la Comisión de la UE, sus datos personales estarán protegidos por las garantías entre países aprobadas por la Comisión de la UE que incluyen cláusulas contractuales estándar para la transferencia de datos entre países.</string>
+    <string name="cs_page5_14">¿Qué medidas tenemos implementadas para la protección de sus datos?</string>
+    <string name="cs_page5_15">Olam mantiene garantías de seguridad razonables para proteger la confidencialidad, seguridad e integridad de sus datos. Aunque utilizamos medidas de seguridad para ayudar a proteger sus datos en contra de divulgaciones no autorizadas, no podemos garantizar la seguridad de la información proporcionada en internet y no seremos responsables de violaciones de seguridad más allá de nuestro control razonable.</string>
+    <string name="cs_page5_16">¿Qué derechos tiene usted en relación con sus datos?</string>
+    <string name="cs_page5_17">Usted puede elegir no proporcionar datos que nosotros solicitemos. Tiene el derecho a solicitar una copia de sus datos a Olam y verificar, corregir o restringir el procesamiento activo de estos. Puede solicitar a Olam que deje de utilizar sus imágenes en cualquier momento, en cuyo caso estas no serán utilizadas en publicaciones futuras, pero continuarán apareciendo en publicaciones que ya se encuentren en circulación. Estos derechos podrán estar limitados por las leyes. Si usted desea ejercer estos derechos o tiene preguntas sobre ellos, puede ponerse en contacto con Olam a la dirección de correo electrónico que se proporciona más adelante.</string>
+    <string name="cs_page5_18">¿Por cuánto tiempo conservarán mis datos?</string>
+    <string name="cs_page5_19">A menos que la ley requiera lo contrario, Olam conservará sus datos por un periodo de tiempo tal como sea necesario para los propósitos para los cuales se recopilaron los datos.</string>
+    <string name="cs_page5_20">Detalles de contacto</string>
+    <string name="cs_page5_21">El controlador de datos para sus datos es Olam International Limited, a menos que la entidad de Olam vigente en su país especifique lo contrario. Si tiene preguntas en relación con los datos que conservamos sobre usted, por favor envíenos un correo electrónico a <a href="privacy@olamnet.com">privacy@olamnet.com</a>.</string>
+    <string name="cs_page5_22">Encontrará la Declaración de Privacidad de Grupo Olam que explica formas adicionales en las que recopilamos y utilizamos datos personales aquí: <a href="www.olamgroup.com/privacy.html">www.olamgroup.com/privacy.html</a></string>
+    <string name="cs_page5_23">INTERNAL GUIDANCE NOTE</string>
+    <string name="cs_page5_24">There may be a number of ways for consent to be recorded. Please consult the Legal function if your intended collection method is not covered above. The signature fields may be replaced with consent buttons, etc.</string>
+    <string name="cs_page5_25">Please consult the Legal function if your intended purpose(s) for use and disclosure of Farmer Data does not fall within any of the categories listed in paragraph 1 above. </string>
+    <string name="cs_page5_26">All consents need to be appropriately tracked and stored. Where an Olam representative is reading the notice to the individual and acknowledging his consent on behalf of the individual (e.g. by way of a slide box in a mobile app), please ensure that Olam is able to check which representative has obtained the consent. </string>
+
+    <string name="full_farmer_name">Nombre completo</string>
+    <string name="date">Fecha</string>
+    <string name="olam_connect">Connecto de Olam</string>
+    <string name="olam_contact">Contacto de Olam</string>
+    <string name="digital_sign">Digital Firma</string>
+    <string name="farmer_signature">Farmer Firma</string>
+    <string name="enum_sign">Staff Firma</string>
+    <string name="enum_name">Enumerator Name</string>
+    <string name="farmer_sign_required">Please get signed by farmer</string>
+    <string name="staff_sign_required">Please get signed by staff</string>
+    <string name="childs_name">Nombre del niño(a)</string>
+    <string name="name">Nombre</string>
+    <string name="Please_accept_consent">You must accept consent statements to save the farmer</string>
 </resources>
