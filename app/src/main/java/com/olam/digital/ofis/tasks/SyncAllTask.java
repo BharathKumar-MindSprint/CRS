@@ -33,6 +33,7 @@ import java.util.Calendar;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
+import okhttp3.internal.Util;
 
 /**
  * Created by ben on 24/02/16.
@@ -156,6 +157,13 @@ public class SyncAllTask extends SyncTask {
         }else if (op == SyncTaskOperationType.SYNC_ENUM_NID) {
             try {
                 syncEnumNationalIDs();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }else if (op == SyncTaskOperationType.SYNC_HHGPS) {
+            try {
+                syncHouseholdEnumerator();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -768,6 +776,56 @@ public class SyncAllTask extends SyncTask {
         });
     }
 
+    private void syncHouseholdEnumerator() {
+        String endpoint = "";
+        endpoint = "ofismaster/master/isFarmerHHEnumerator?enumeratorId=" + Utilities.getFromSharedPrefs(context);
+        final String finalEndpoint = endpoint;
+        okHttpGet(context, endpoint, null, new Callback() {
+            @Override
+            public void onResponse(Call call, final Response postResponse) {
+                try {
+                    // JSONObject response = new JSONObject(postResponse.body().string());
+                    String output = postResponse.body().string();
+                    if (postResponse.isSuccessful()) {
+                        // store the value in Child labour preferences
+                        Boolean ishousehold = Boolean.parseBoolean(output.trim());
+                        Utilities.saveToSharedPrefs(context, Utilities.HOUSEHOLD_ENUMERATOR,null, ishousehold);
+
+                        publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.checking_child_enumerator));
+                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.CHILD_ENUMERATOR);
+
+
+
+                    } else {
+                        try {
+                            FabricLogsWriter.printCrashLog(TAG, finalEndpoint, postResponse.code(), postResponse.networkResponse().toString(), context);
+                        } catch (Exception e) {
+                        }
+                        postFailureMessage(null);
+                    }
+                } catch (IOException e) {
+                    FirebaseCrash.report(new Exception("SyncAllTask: Error syncing Child Enumerator data", e));
+                    e.printStackTrace();
+                } finally {
+                    postResponse.close();
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+                String failureMessage = res.getString(R.string.networking_error);
+                if (e != null) {
+                    FirebaseCrash.report(new Exception("SyncAllTask: Error in response when syncing training data", e));
+                    failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
+                }
+
+                publishProgress(SyncOperation.ERROR_RECEIVED, failureMessage);
+
+            }
+
+        });
+    }
+
     private void syncNationalIDs() {
         String endpoint = "";
         endpoint = "ofismaster/master/nationalId/getNationalIDsByEnumerator?enumeratorLoginId=" + Utilities.getFromSharedPrefs(context);
@@ -827,8 +885,8 @@ public class SyncAllTask extends SyncTask {
 
                         enumnationalidresponse = response;
                         // store the value in Child labour preferences
-                        publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.checking_child_enumerator));
-                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.CHILD_ENUMERATOR);
+                        publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.checking_hhgps_enumerator));
+                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_HHGPS);
 
 
                     } else {
@@ -888,6 +946,7 @@ public class SyncAllTask extends SyncTask {
                         } catch (Exception e) {
                         }
                         postFailureMessage(response);
+
                     }
                 } catch (JSONException | IOException e) {
                     FirebaseCrash.report(new Exception("SyncAllTask: Error syncing training data", e));

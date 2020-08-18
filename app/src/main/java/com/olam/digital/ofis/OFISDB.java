@@ -11,7 +11,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 class OFISDB extends SQLiteOpenHelper {
     private static OFISDB sInstance;
 
-    private static final int DATABASE_VERSION = 102;
+    private static final int DATABASE_VERSION = 110;
 
     private static final String DATABASE_NAME = "ofismobile";
 
@@ -77,6 +77,20 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.ChildVisitDetailsEntry.COLUMN_INSPECTION + " INTEGER, "
             + OFISDBContract.ChildVisitDetailsEntry.COLUMN_FOLLOWUP + " INTEGER, "
             + OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_SYNCED + " INTEGER DEFAULT 1)";
+
+
+    private static final String OFIS_CONSENT_STATEMENT_CREATE = "CREATE TABLE IF NOT EXISTS "
+            + OFISDBContract.ConsentStatementEntry.TABLE_NAME
+            + " ( " + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+            + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_FARMER_ID + " INTEGER, "
+            + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_DISPLAYFARMER_ID + " TEXT, "
+            + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_FARMER + " TEXT, "
+            + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_OLAM_FARMER_NAME + " TEXT, "
+            + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_FARMER_CONFIRMATION + " TEXT, "
+            + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_CHILDNAME + " TEXT, "
+            + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_FARMER_SIGN + " TEXT, "
+            + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_CONFIRMED_DATE + " TEXT, "
+            + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_ENUM_SIGN + " TEXT)";
 
     //Child Labour Table end
 
@@ -282,12 +296,15 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.FarmerEntry.COLUMN_NAME_REGIONID + " TEXT, "
             + OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID + " TEXT, "
             + OFISDBContract.FarmerEntry.COLUMN_NAME_DISTRICTID + " TEXT, "
+            + OFISDBContract.FarmerEntry.COLUMN_NAME_ISCONSENTAVAILABLE + " TEXT, "
             + OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID+ " TEXT, "
             + OFISDBContract.FarmerEntry.COLUMN_NAME_DOB + " TEXT, " + OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID + " TEXT, "
             + OFISDBContract.FarmerEntry.COLUMN_NAME_PHOTO + " TEXT, " + OFISDBContract.FarmerEntry.COLUMN_NAME_SIGNATURE + " TEXT, "
             + OFISDBContract.FarmerEntry.COLUMN_NAME_SYNCED + " INTEGER DEFAULT 1, " + OFISDBContract.FarmerEntry.COLUMN_NAME_CREATED_LOCALLY + " INTEGER, "
             + OFISDBContract.FarmerEntry.COLUMN_NAME_WEBSITE_FARMER_ID + " INTEGER, " + OFISDBContract.FarmerEntry.COLUMN_NAME_WEBSITE_SUBMITTED_MODULES + " TEXT, "
             + OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_PRIMARY_LAT + " TEXT, " + OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_PRIMARY_LNG + " TEXT, "
+            + OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_HOUSEHOLD_LAT + " TEXT, " + OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_HOUSEHOLD_LNG + " TEXT, "
+            + OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_HOUSEHOLD_ID + " TEXT, "
             + OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_PLOTS + " TEXT, "
             + OFISDBContract.FarmerEntry.COLUMN_NAME_REGISTER_DATE + " TEXT, "
             + OFISDBContract.FarmerEntry.COLUMN_NAME_MODERATION_STATUS + " TEXT, "
@@ -707,6 +724,8 @@ class OFISDB extends SQLiteOpenHelper {
 
 //        updatesignature
         sqLiteDatabase.execSQL(OFIS_SIGNATURE_TABLE_CREATE);
+//        Update consent statement
+        sqLiteDatabase.execSQL(OFIS_CONSENT_STATEMENT_CREATE);
 
     }
 
@@ -786,6 +805,7 @@ class OFISDB extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL("drop table IF EXISTS nationalidimages");
         sqLiteDatabase.execSQL("drop table IF EXISTS signature");
         sqLiteDatabase.execSQL("drop table IF EXISTS gps_details");
+        sqLiteDatabase.execSQL("drop table IF EXISTS consentstatement");
 
         onCreate(sqLiteDatabase);
     }

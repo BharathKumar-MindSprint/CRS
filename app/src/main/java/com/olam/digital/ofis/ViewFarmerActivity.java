@@ -202,6 +202,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
     private String farmerNameStr;
     private String olamFarmerIdStr;
     private boolean polygon = false;
+    private boolean household = false;
     private ListView listView;
 
     // Location captured related variable
@@ -483,24 +484,57 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                     farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME))
             );
             if (updated > 0) {
-                TextView enabled = (TextView) v.findViewById(R.id.moduleListEnabled);
-                enabled.setText("false");
-                LinearLayout linearLayout = (LinearLayout) v.findViewById(R.id.rowlin);
-                ImageView imageView = (ImageView) v.findViewById(R.id.moduleListModuleIcon);
-                TextView moduleTitle = (TextView) v.findViewById(R.id.moduleListModuleName);
-                TextView textView = (TextView) v.findViewById(R.id.moduleListModuleStatus);
-                imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_location_found));
-                linearLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_background));
-                moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-                textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-                textView.setText(res.getString(R.string.record_farm_location_complete));
-
+                updatelistitem(v);
                 // capturing the geo point track
                 collectGPSPoint(GPSConstants.MODULE_CAPTURE_FARM_LOCATION,farmLocation,farmerId);
                 MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_RECORD_FARM_LOCATION,  ScreenNameConstants.BUTTON_CLICKED);
             }
+            setupUI();
         } catch (Exception e) {
             FirebaseCrash.report(new Exception("ViewFarmerActivity: Error setting farmer GPS location", e));
+            e.printStackTrace();
+        }
+
+        if (pd != null && pd.isShowing()) {
+            pd.dismiss();
+        }
+    }
+
+    private void updatelistitem(View v) {
+        TextView enabled = (TextView) v.findViewById(R.id.moduleListEnabled);
+        enabled.setText("false");
+        LinearLayout linearLayout = (LinearLayout) v.findViewById(R.id.rowlin);
+        ImageView imageView = (ImageView) v.findViewById(R.id.moduleListModuleIcon);
+        TextView moduleTitle = (TextView) v.findViewById(R.id.moduleListModuleName);
+        TextView textView = (TextView) v.findViewById(R.id.moduleListModuleStatus);
+        imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_location_found));
+        linearLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_background));
+        moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+        textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+        textView.setText(res.getString(R.string.record_farm_location_complete));
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void setHouseholdGPS(Location location, View v) {
+        try {
+            // Location farmLocation = (Location) msg.obj;
+            Location farmLocation = location;
+            int updated = dl.updateHouseholdLocation(
+                    farmerId,
+                    farmLocation,
+                    farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)),
+                    farmer.getInt(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_ID)),
+                    farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME))
+            );
+            if (updated > 0) {
+                updatelistitem(v);
+                // capturing the geo point track
+                collectGPSPoint(GPSConstants.MODULE_CAPTURE_HOUSEHOLD_LOCATION,farmLocation,farmerId);
+                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_RECORD_HOUSEHOLD_LOCATION,  ScreenNameConstants.BUTTON_CLICKED);
+            }
+            setupUI();
+        } catch (Exception e) {
+            FirebaseCrash.report(new Exception("ViewFarmerActivity: Error setting household GPS location", e));
             e.printStackTrace();
         }
 
@@ -589,14 +623,14 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         }
     }
 
-    private void recordFarmLocation(final View v) {
+    private void recordFarmLocation(final View v, String statement) {
         pd = new ProgressDialog(ViewFarmerActivity.this);
         pd.setCancelable(false);
         pd.setIndeterminate(false);
         pd.setMessage(res.getString(R.string.fetching_location));
         pd.show();
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setMessage(res.getString(R.string.are_you_at_the_farm))
+        builder.setMessage(statement)
                 .setCancelable(false)
                 .setPositiveButton(res.getString(R.string.yes), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
@@ -653,7 +687,11 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                                     if (polygon) {
                                         recordFarmPolygon(v);
                                     } else {
-                                        setFarmGPS(mCurrentLocation, v);
+                                        if(household) {
+                                            setHouseholdGPS(mCurrentLocation, v);
+                                        }else{
+                                            setFarmGPS(mCurrentLocation, v);
+                                        }
                                     }
                                 }else{
                                     Toast.makeText(ViewFarmerActivity.this,getResources().getString(R.string.record_location_timeout),Toast.LENGTH_LONG).show();
@@ -1476,22 +1514,37 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                         MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_UPDATE_SIGNATURE,  ScreenNameConstants.BUTTON_CLICKED);
                         showSignatureDialog();
                     } else if (recordedLng != null && recordedLng.getText().equals("National_ID")) {
-                        MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_ADD_NATIONAL_ID,  ScreenNameConstants.BUTTON_CLICKED);
+                        MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_ADD_NATIONAL_ID, ScreenNameConstants.BUTTON_CLICKED);
                         Intent in = new Intent(this, AddNationalidActivity.class);
-                        Bundle bundle=new Bundle();
+                        Bundle bundle = new Bundle();
                         bundle.putString(FARMER_NAME, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME)));
                         bundle.putLong(ChildLabourUtils.CHILD_FARMER_ID, farmerId);
                         boolean status = dl.isValueavailable(farmerId);
-                        if(status){
+                        if (status) {
                             bundle.putBoolean("edit_mode", true);
-                        }else {
+                        } else {
                             bundle.putBoolean("edit_mode", false);
                         }
                         in.putExtras(bundle);
                         startActivity(in);
+                    } else if (recordedLng != null && recordedLng.getText().equals("ConsentStatement")) {
+                        MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_CHILD_LABOUR_SURVEY,  ScreenNameConstants.BUTTON_CLICKED);
+                        Intent in = new Intent(this, ConsentStatementActivity.class);
+                        Bundle bundle=new Bundle();
+                        bundle.putString("displayFarmerId", olamFarmerIdStr);
+                        bundle.putString("olamfarmername", farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME)));
+                        bundle.putLong("FarmerId", farmerId);
+                        bundle.putString("type", "update");
+                        in.putExtras(bundle);
+                        startActivity(in);
+                    }else if (recordedLng != null && recordedLng.getText().equals(getResources().getString(R.string.household_farmer))){
+                        polygon=false;
+                        household = true;
+                        recordFarmLocation(v,res.getString(R.string.are_you_at_the_farmers_hh));
                     } else {
                         polygon=false;
-                        recordFarmLocation(v);
+                        household=false;
+                        recordFarmLocation(v,res.getString(R.string.are_you_at_the_farm));
                     }
                 } else if (id < 0) {
                     // go to fmp review page

@@ -88,6 +88,7 @@ public class ScreenNameConstants {
     public static final String BUTTON_SAVE_PHONE_NUMBER = "Save Phone Number Button";
     public static final String BUTTON_UPDATE_PHOTO_BUTTON = "Update Photo Button";
     public static final String BUTTON_RECORD_FARM_LOCATION = "Record Farm Location Button";
+    public static final String BUTTON_RECORD_HOUSEHOLD_LOCATION = "Record Farmer household";
     public static final String BUTTON_SUBMIT_PLOT_LEVEL_ANALYSIS = "Submit Plot Level Analysis Button";
     public static final String BUTTON_START_LOGGING = "Start Logging Button";
     public static final String BUTTON_PAUSE_POLYGON = "Pause_Polygon Button";

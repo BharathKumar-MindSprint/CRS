@@ -108,6 +108,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     private final static int MY_PROFILE_PIC_PERMISSIONS_REQUEST = 9998;
     private final static int MY_NATIONALID_PIC_PERMISSIONS_REQUEST = 9997;
     private static final int REQUEST_CHECK_SETTINGS = 100;
+    private static final int REQUEST_CHECK_CONSENT_STATEMENT = 800;
     private final Hashtable<String, String> genders = new Hashtable<>();
     ArrayAdapter<String> spinnerArrayAdapter;
     Spinner spinner_nidtype;
@@ -138,6 +139,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     private Uri mCapturedImageURI = null, mCapturedSignatureImageURI = null;
     private String dateStrToSend;
     private TextView farmerDOB;
+    boolean  csStatus;
     ArrayList<String> nationalIdTypes=null;
     /**
      * Generate unique ID from UUID.
@@ -211,7 +213,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         editMode = intent.getBooleanExtra(EDIT_MODE, false);
 
         String localeSuffix = Utilities.getLocaleSuffix(res);
-
+        csStatus = false;
         genders.put("Male" + localeSuffix, res.getString(R.string.gender_male));
         genders.put("Female" + localeSuffix, res.getString(R.string.gender_female));
 
@@ -712,7 +714,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             place_id = dl.insertNewPlace(newPlaceNameValue, district_id);
         }
 
-        Switch consentFarmer = findViewById(R.id.consentFarmer);
+        /*Switch consentFarmer = findViewById(R.id.consentFarmer);
         if (!consentFarmer.isChecked()) {
             Toast.makeText(context, res.getString(R.string.Please_accept_both_consents), Toast.LENGTH_LONG).show();
             return values;
@@ -722,6 +724,12 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         if (!consentOthers.isChecked()) {
             Toast.makeText(context, res.getString(R.string.Please_accept_both_consents), Toast.LENGTH_LONG).show();
             return values;
+        }*/
+        if(! editMode) {
+            if (!csStatus) {
+                Toast.makeText(context, res.getString(R.string.Please_accept_consent), Toast.LENGTH_LONG).show();
+                return values;
+            }
         }
 
         if (isNIDAvailable) {
@@ -815,6 +823,8 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_REGIONID, String.valueOf(regionId));
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_DISTRICTID, String.valueOf(districtId));
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID, String.valueOf(farmerGroupId));
+            values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_ISCONSENTAVAILABLE, "true");
+
             Date today = new Date();
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
             String registereddate = format.format(today);
@@ -1217,8 +1227,30 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             @Override
             public void onClick(View view) {
                 MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_SHOW_CONSENT,  ScreenNameConstants.BUTTON_CLICKED);
-                consentHolder.setVisibility(View.VISIBLE);
-                consentHolder.startAnimation(mSlideBottomUp);
+//                consentHolder.setVisibility(View.VISIBLE);
+//                consentHolder.startAnimation(mSlideBottomUp);
+                EditText farmerName = findViewById(R.id.farmerName);
+                String farmerNameValue = String.valueOf(farmerName.getText()).trim();
+                if (farmerNameValue.equals("")) {
+                    farmerName.setText("");
+                    Toast.makeText(context, res.getString(R.string.please_fill_farmer_name), Toast.LENGTH_LONG).show();
+                    return;
+
+
+                }
+                Intent in = new Intent(AddFarmerActivity.this, ConsentStatementActivity.class);
+                Bundle bundle=new Bundle();
+                bundle.putString("type", "new");
+                bundle.putString("displayFarmerId", "");
+                bundle.putString("olamfarmername", farmerNameValue);
+                if(editMode){
+                    bundle.putLong("FarmerId", editFarmerId);
+                }else {
+                    bundle.putLong("FarmerId", 0);
+                }
+
+                in.putExtras(bundle);
+                startActivityForResult(in,800);
             }
         });
 
@@ -1306,6 +1338,9 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                             long newFarmerId = dl.insertFarmer(values);
                             if (newFarmerId != -1) {
                                 dl.updateFarmerPhoneNumbers(newFarmerId, storeableNumbers);
+                                EditText farmerName = findViewById(R.id.farmerName);
+                                String farmerNameValue = String.valueOf(farmerName.getText()).trim();
+                                dl.updateFarmerIdforConsentStatement(newFarmerId, farmerNameValue);
                                 if (isNIDAvailable) {
                                     boolean moduretationstatus = dl.updateFarmerNationalids(context, newFarmerId, storeableNationalids, "1", "name");
                                     if (moduretationstatus) {
@@ -1315,8 +1350,8 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                                 Toast.makeText(context, res.getString(R.string.Farmer_Added), Toast.LENGTH_LONG).show();
 
                                 if (mCurrentLocation != null) {
-                                    EditText farmerName = findViewById(R.id.farmerName);
-                                    String farmerNameValue = String.valueOf(farmerName.getText()).trim();
+//                                    EditText farmerName = findViewById(R.id.farmerName);
+//                                    String farmerNameValue = String.valueOf(farmerName.getText()).trim();
 
                                     collectGPSPoint(newFarmerId,farmerNameValue);
                                 }
@@ -1668,6 +1703,8 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         ImageButton farmerPhoto = findViewById(R.id.farmerPhoto);
 
         switch (requestCode) {
+            case REQUEST_CHECK_CONSENT_STATEMENT:
+                csStatus = imageReturnedIntent.getBooleanExtra("STATUS", false);
             case REQUEST_CHECK_SETTINGS:
                 if (resultCode == -1) {
                     gpsTracker.getDeviceLocation();

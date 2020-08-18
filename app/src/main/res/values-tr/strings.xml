@@ -505,4 +505,93 @@
     <string name="please_select_Age">Please select Age</string>
     <string name="capture_my_location_button_text">Capture My location</string>
     <string name="enumerator_location_capture">Enumerator Location Capture</string>
+
+    <string name="farmer_consent">ÇİFTÇİ İZNİ</string>
+    <string name="personal_info_collection">KİŞİSEL BİLGİ TOPLAMA BİDİRİMİ</string>
+    <string name="consent_statement_pageone2">Ad, yaş, iletişim bilgisi (e-posta adresi, telefon numarası, posta adresi), fotoğraflar, videolar ya da dijital kayıtlar, öz geçmiş, sosyal ve coğrafi bilgi, finansal, çiftçilik ve verim bilgisi, sizden gelen geri bildirimi kapsayan kişisel verileriniz ve geçerli olan yerlerde, çocuklarınızın ya da bakmakla yükümlü olduğunuz kişilerin verileri ("Çiftçi Verisi") tarafımızdan toplanacak ve saklanacak, müşterilerimiz ve iş ortaklarımız için erişilebilir olacak ve bazı durumlarda Olam web sitelerinde, sosyal medyada, elektronik ya da yazılı yayınlarda kamuya açıklanacaktır. Buna, tarafımızdan ve müşterilerimiz ve iş ortaklarımız tarafından kullanılan çiftçilerle ilgili veriyi içeren çevrimiçi veri tabanları ve araçlar olan Olam Çiftçi Bilgi Sistemi ("OFIS") ve/veya AtSource platformunu ("AtSource") da içerir. İşbu belgeyle, bu amaç doğrultusunda, kişisel verinizin bu Kişisel Bilgi Toplama Bildirimine uygun olarak toplanması, kullanılması ve açıklamasını kabul etmeniz ve buna izin vermeniz istenmektedir.</string>
+    <string name="consent_statement_pageone1">Sizden, tedarik zincirinde sürdürülebilirlik ve izlenebilirliği artırma ve bunun sonucunda, tüm dünyada sizin gibi çiftçilerle sorumlu ticareti artırma ("Amaç") çabalarına destek olmak adına Olam International Limited\'a (burada "Olam", "bize" ya da "biz" olarak anılacaktır) kişisel verilerinizi vermeniz istenmektedir.</string>
+    <string name="cs_page2_title">Kişisel Veri Kullanımı</string>
+    <string name="cs_page2_1">Kişisel verinizi aşağıdaki gibi kullanacağız ve paylaşacağız</string>
+    <string name="cs_page2_2">İzin veriyor musunuz? Lütfen "✔" işareti koyun ya da "evet" yazın</string>
+    <string name="cs_page2_3">OFIS ve Diğer Olam Veri Tabanlarını Doldurma</string>
+    <string name="cs_page2_4">Çiftçi Verisini, verinizin, düzenlenebileceği ve ardından, bize trendler ve tedarik zincirini etkileyebilecek sorunlar gibi konularda önemli fikirler verebileceği şekilde analiz edilebileceği OFIS ve diğer Olam veri tabanlarını doldurmak için kullanıyoruz. Bunu yapmak için, Olam çalışanlarının ve bağlı kuruluşlarının ve belirli 3. taraf bilgi işleme kurumlarının Çiftçi Verinize erişimi olacaktır. Bu veri tabanları ve içindeki bilgiler iştiraklerimiz, iş ortaklarımız ve müşterilerimiz ile paylaşılabilir.</string>
+    <string name="cs_page2_5">Pazar Koşullarında İzlenebilirlik Sağlama</string>
+    <string name="cs_page2_6">Bize sunduğunuz Çiftçi Verisini, gıdanın kaynağı ve üreticisi hakkında bir fikir sağlamak adına müşterilerimiz ve iş ortaklarımız (bu taraflar, Çiftçi Verisini ayrıca kendi müşterileri ve iş ortakları ile paylaşabilir) ile paylaşacağız. Bu şeffaflık, alıcıların bilgilendirilmiş ve sorumlu satın alma kararları vermesini sağlamaktadır.</string>
+    <string name="cs_page2_7">Trend and Issue Spotting</string>
+    <string name="cs_page2_8">We will work with our internal teams and service providers to organize, process, and analyse the Farmer Data you share with us in order to identify trends and issues that may affect the supply chain. </string>
+    <string name="cs_page2_9">Çiftçi Adına Satış ve Geliştirme</string>
+    <string name="cs_page2_10">Çiftçi Verinizi kullanarak ve OFIS verisini toplayarak, işinizi ve operasyonlarınızı büyütmeye yönelik fırsatları tanımlamanıza yardım edeceğiz. Uygun fırsat doğduğunda, size bu fırsatları finansman, makine, çiftlik yönetim danışmanlığı, çiftlik sarf malzemeleri ve sigortaya ek olarak satış fırsatları ile birlikte sunacağız; bunların tümü doğrudan tarafımızdan ya da size yönlendirdiğimiz bir üçüncü tarafça sunulacaktır. Buna göre, bu üçüncü taraflara, Çiftçi Verinize erişim hakkı verilecektir.</string>
+    <string name="cs_page2_11">İzlenebilirliği Artırma</string>
+    <string name="cs_page2_12">Çiftçi Verinizi, OFIS, AtSource ve iştiraklerimizin web siteleri gibi diğer ortamlarda, yanı sıra doğrudan iletişimlerde yürüttüğümüz izlenebilirlik programlarını geliştirmek için kullanacağız. Bu, Çiftçi Verisini, kendi bünyemizde, müşterilerimiz (ve potansiyel müşterilerin) ve izlenebilirliği ve sürdürülebilirliği geliştirmeye yardım edebilecek iş ortakları (ve potansiyel iş ortaklarının) arasında paylaşılan bilgilendirme materyalleri ve sunumlarda kullanacağımız anlamına geliyor.</string>
+    <string name="cs_page2_13">Kamu Reklamları ve Tanıtımları</string>
+    <string name="cs_page2_14">Olam ve müşterileri ve iş ortakları, adlar, fotoğraflar, videolar, konum bilgisi, ürün bilgisi ve söyleşileri (varsa) kapsayan Çiftçi Verisini, web siteleri, yazılı yayınlar ve ürünler gibi kamuya açık ortamlarda paylaşılacak reklam materyallerinde kullanacaktır. Bunun amacı, tarafınızca üretilen ürünlerin satın alımlarını artırmak, yanı sıra çiftçi desteğimizi, izlenebilirlik ve sürdürülebilirlik girişimlerimizi geliştirmektir.</string>
+    <string name="cs_page2_15">Araştırma</string>
+    <string name="cs_page2_16">Çiftçi Verinizi, topluluk işbirliğini ve sürdürülebilirlik ve izlenebilirlik alanındaki geliştirmeleri artırmak amacıyla, eğitim kurumları, resmi ve resmi olmayan organizasyonlar tarafından yapılan yerel çiftçilere, topluluklara, tarım, tedarik zinciri, izlenebilirlik, sürdürülebilirlik ve ilgili sosyal bilinç araştırmalarına odaklanan çalışmaları desteklemek için paylaşacağız. Bu gibi organizasyonlar, Çiftçi Verinizi ayrıca kendi elektronik ya da yayınlanmış iletişimlerinde kullanabilirler.</string>
+    <string name="cs_page2_17">Çiftçi Veriniz, yukarıda izin verilen Amaçlar ve spesifik kullanımlar için müşterilerimiz ve iş ortaklarımız gibi üçüncü taraflarla paylaşıldığında, bu müşterilerin ve iş ortaklarının her biri kendi adına hareket eden veri denetleyicileridir ve bu tarafların verinizi kullanmasına ilişkin verdiğiniz izin, Paragraf 1\'de belirtildiği ve Gizlilik Beyanı\'nda ayrıntıları verildiği gibidir.</string>
+    <string name="cs_page2_18">İstediğiniz zaman bizimle <a href="privacy@olamnet.com">privacy@olamnet.com</a> e-posta adresinden iletişim kurarak verdiğiniz izni geri alabilir, Çiftçi Verinize erişim ve/veya düzeltme isteyebilir ve/veya ilkelerimize ve uygulamalarımıza ilişkin bilgi talebinde bulunabilirsiniz. İstenen bu bilgileri sunmak her ne kadar zorunlu olmasa da, Çiftçi Verinizi sunmamak ve/veya sonrasında izninizi geri almak, bizden ayrıca istemiş olabileceğiniz belirli hizmetleri (duruma göre) size sunma kabiliyetimizi etkileyebilir. Örneğin, adresiniz yalnızca izlenebilirliği desteklemek için değil, ayrıca size çiftçilik sarf malzemeleri gibi belirli materyaller sunmamız için de gerekli olabilir. İzninizi geri çektiğiniz bu gibi durumlarda, kendi sözleşme kapsamındaki yükümlülüklerimizi yerine getirmek için bu gibi verileri tutabiliriz, ancak bu verileri başka hiçbir amaç için kullanmayız.</string>
+    <string name="cs_page2_19">Çiftçi Verisi Gizlilik Beyanı aşağıda bilginize sunulmuştur. Bu belge, kişisel verinizi nasıl işlediğimizi ve koruduğumuzu açıklamaktadır. Çiftçi Veriniz yukarıda belirtilen kişilerle paylaşılacak olmasına rağmen, kendi kayıtlarımızdaki Çiftçi Veriniz gizli tutulacak ve Singapur\'daki sunucularımızda, geçerli gizlilik yasalarına uygun olarak saklanacaktır.</string>
+    <string name="cs_page3_1">Ben,</string>
+    <string name="cs_page3_2">bu vesileyle, bu Kişisel Bilgi Toplama Bildirimi\'nin ve Çiftçi Verisi Gizlilik Beyanı\'nın hükümlerini okuduğumu, anladığımı ve bunlara razı olduğumu, ayrıca:</string>
+    <string name="cs_page3_3">Paragraf 1\'de bana bir  “<b><i>✔</i></b>“ ya da "evet" alanının sunulduğunu ve bu alanda, kişisel verimin ilgili paragrafta gösterilen spesifik amaçlar doğrultusunda kullanılmasına ve toplanmasına izin verdiğimi kabul ederim.</string>
+    <string name="cs_page3_4">Bu izni bir çocuk ya da reşit olmayan kimse için veriyorsam, çocuk ya da reşit olmayan kimsenin ebeveyni ya da yasal vasisiyim.</string>
+    <string name="cs_page3_5">Herhangi bir görsel de dahil hiçbir kişisel veri için herhangi bir mali ya da diğer şekillerde bir karşılık almayacağımı ve herhangi bir görsele ilişkin her türlü fikri mülkiyetin Olam\'a ait olacağını anlıyorum.</string>
+    <string name="cs_page3_6">İstediğim zaman kendim ya da çocuğum/korumam altındaki reşit olmayan kimse için izni geri çekme hakkım olduğunu ve bu izni geri çektiğimde, Olam\'ın herhangi bir görseli ya da kişisel veriyi gelecekteki herhangi bir yayında kullanmayacağını, ancak bu gibi Kişisel Veriyi halihazırda dolaşımda olan yayınlarda kullanmaya devam edeceğini anlıyorum.</string>
+    <string name="cs_page4_1">BİLDİRİMİN, BİREYE, OLAM PERSONELİ/TEMSİLCİSİ TARAFINDAN OKUNDUĞU DURUMLARDA :</string>
+    <string name="cs_page4_2">Katılımcının okuduğum Kişisel Bilgi Toplama Bildirimini dinlediğini ve kendi kişisel verisinin, Olam tarafından burada belirtilen amaçlar doğrultusunda toplanmasına, kullanılmasına, yetki alanının dışına aktarılmasına ve açıklanmasına açık şekilde izin verdiğini onaylıyorum.</string>
+    <string name="cs_page5_1">Çiftçi Verisi Gizlilik Beyanı</string>
+    <string name="cs_page5_2">Bu ilke, Olam\'ın ve iştiraklerinin, tarafınızca imzalanan Kişisel Bilgi Toplama Bildirimi ("Bildirim") kapsamında toplanan Çiftçi Verinizi kullanmasını açıklamaktadır. Bu beyan, Bildirim ve <a href="www.olamgroup.com/privacy.html">www.olamgroup.com/privacy.html</a> adresinde yer alan Olam Group Gizlilik Beyanı için tamamlayıcı niteliktedir ve bunlarla birlikte okunmalıdır. Herhangi bir tutarsızlık olması durumunda, bu Bildirim, geçerlilik açısından bu Çiftçi Verisi Gizlilik Beyanı\'ndan ve Olam Group Gizlilik Beyanı\'ndan (ve bu sıralamada) önceliklidir.</string>
+    <string name="cs_page5_3">Olam\'ın ilkesi her türlü geçerli gizlilik ve veri koruma yasasına uymaktır. Olam, verinizi yalnızca belirtilen ve yasal amaçlar için toplayacak ve kullanacaktır, bu amaçlara tutarlı bir şekilde işleyecek, verinizin doğru olduğundan emin olmak için makul adımlar atacak, (gerektiğinde) tamamlayacak ve güncel tutacak ve verinizin yeterli şekilde korunması için uygun önlemleri alacaktır.</string>
+    <string name="cs_page5_4">Hangi verileri topluyoruz? </string>
+    <string name="cs_page5_5">Hakkınızda, aşağıdakileri de içeren ama bunlarla sınırlı olmayan kişisel verileri topluyor ve işliyoruz :\n
+•	Fotoğraflar, videolar ve diğer görseller (kişisel kimliğinizin açıkça tanımlanabildiği);\n
+•	Adınız ve soyadınız; \n
+•	Çiftçilik verimi ve altyapısı;\n
+•	Sizden gelen ve kişisel verinizi içerebilecek geri bildirimler;\n
+•	Sosyal, finansal, coğrafi ve biyografik bilgiler;\n
+•	İkamet edilen ülke ve diğer iletişim ayrıntıları; ve\n
+•	Mesleğiniz.
+</string>
+    <string name="cs_page5_6">Verinizi hangi amaçlarla kullanıyoruz? </string>
+    <string name="cs_page5_7">Bu veriyi aşağıdaki amaçlarla kullanıyoruz :\n
+•	Size hizmet sağlamak;\n
+•	Sizinle iletişim kurmak;\n
+•	Sürdürülebilirlik ve izlenebilirlik girişimlerinizi geliştirmek;\n
+•	Olam\'a ait olan web siteleri, sosyal medya ve yayınlarda Olam ürünlerini ve kurumsal etkinlikleri pazarlamak ve tanıtmak ve harici medya yayınlarında (basılı ve çevrimiçi) proaktif olarak içerik yerleştirmek;\n
+•	İş Ortaklarımız tarafından, topluluk işbirliğini ve sürdürülebilirlik ve izlenebilirlik alanlarındaki ilerlemeleri desteklemek için yapılan araştırma girişimlerini desteklemek;\n
+•	Tarım pazarlarındaki ve tedarik zincirindeki trendleri, sorunları ve riskleri tanımlamak; ve\n
+•	Sizinle ve iş ortaklarımızla olan ilişkilerimizi geliştirme ve yönetmek.
+</string>
+    <string name="cs_page5_8">Verinizi toplama ve işlemeye yönelik yasal dayanağımız nedir? </string>
+    <string name="cs_page5_9">Bu veriyi yalnızca (a) izninizle; ve (b) geçerli olan yerlerde, işimizi yürütmek ve yasal çıkarlarımızı gözetmek adına Olam ve iştiraklerimizin gerektirdiği şekilde; ve (c) makul ölçüde beklenen ya da yasal her türlü amaç için, geçerli veri koruma yasalarına uygun şekilde toplayacak ve işleyeceğiz.</string>
+    <string name="cs_page5_10">Bu veriyi kimlerle paylaşacağız?</string>
+    <string name="cs_page5_11">Verinizi, yukarıda açıklanan amaçları elde etmek için, iştirakler de dâhil Olam Group\'un diğer üyeleri ile paylaşacağız. Verinizi ayrıca, yasanın zorunlu kıldığı durumlarda, resmi yetkililer ve/veya emniyet görevlileriyle, ayrıca Olam\'ın herhangi bir geçeli ve gelecekteki müşteri, hizmet sağlayıcı, tedarikçi ve iş ortağı ile, yukarıda açıklanan amaçlar ya da izniniz doğrultusunda paylaşacağız.</string>
+    <string name="cs_page5_12">Verinizi nereye göndereceğiz? </string>
+    <string name="cs_page5_13">Yukarıda listelenen amaçlar doğrultusunda üçüncü taraf bilgi işlemcilerimiz ile paylaşmanın dışında, zaman zaman veriniz, başka bir ülkedeki iştiraklerimizden birine aktarılabilir. Verinizin, o ülkede, veri işlenmesine yönelik ilgili veri koruma yasalarına uygun şekilde yeterli düzeyde korunmasını sağlamak için makul adımları atacağız. Kişisel bilginizin EEA dışında bir Olam iştirakine ya da AB Komisyonu yargısına tabi olmayan bir ülkedeki bir kuruma aktarıldığında, kişisel veriniz, sınır ötesi veri aktarımına yönelik standart sözleşme maddelerini içeren AB Komisyonu onaylı sınır ötesi tedbirler ile korunacaktır.</string>
+    <string name="cs_page5_14">Verinizi korumak için ne gibi önlemlerimiz var?</string>
+    <string name="cs_page5_15">Olam, verinizin gizliliğini, güvenliğini ve bütünlüğünü korumak için makul tedbirleri muhafaza etmektedir. Verinizi izinsiz açıklamalara karşı korumaya yardım etmek için güvenlik önlemleri kullanmamıza rağmen, İnternet üzerinden sunulan bilginin güvenliğini garanti edemeyiz ve makul denetimimiz dışındaki güvenlik ihlallerinden sorumlu olmayacağız.</string>
+    <string name="cs_page5_16">Verinizle ilgili olarak hangi haklara sahipsiniz? </string>
+    <string name="cs_page5_17">İstediğimiz veriyi sunmamayı tercih edebilirsiniz. Olam\'dan verinizi bir kopyasını isteme ve verinizi doğrulama, düzeltme ya da aktif olarak işlenmesine rıza göstermeme hakkınız vardır. İstediğiniz zaman Olam\'dan görsellerinizi kullanmasını durdurmasını isteyebilirsiniz, bu durumda görselleriniz gelecekteki yayınlarda kullanılmayacaktır ancak hâlâ dolaşımda olan yayınlarda görünmeye devam edebilir. Bu haklar yasayla sınırlandırılabilir. Bu hakları kullanmak isterseniz ya da bunlarla ilgili bir sorunuz varsa, aşağıda verilen e-posta aracılığıyla Olam ile iletişim kurabilirsiniz.</string>
+    <string name="cs_page5_18">Verimi ne kadar süre tutacaksınız? </string>
+    <string name="cs_page5_19">Yasalarca aksi belirtilmediği sürece, Olam, kişisel verinizi, bu verinin toplanma amacı için gerekli olduğu süre boyunca tutacaktır.</string>
+    <string name="cs_page5_20">İletişim Ayrıntıları</string>
+    <string name="cs_page5_21">Ülkenizdeki ilgili Olam kurumu tarafından aksi belirtilmediği sürece verinizin veri denetleyicisi Olam International Limited\'dir. Hakkınızda tuttuğumuz veri ile ilgili herhangi bir sorunuz varsa lütfen <a href="privacy@olamnet.com">privacy@olamnet.com</a> adresini kullanarak bize e-posta gönderin.</string>
+    <string name="cs_page5_22">Kişisel verinizi toplamamıza ve kullanmamıza yönelik ilave yöntemleri açıklayan Olam Group Gizlilik Beyanı <a href="www.olamgroup.com/privacy.html">www.olamgroup.com/privacy.html</a> adresinde bulabilirsiniz.</string>
+    <string name="cs_page5_23">INTERNAL GUIDANCE NOTE</string>
+    <string name="cs_page5_24">There may be a number of ways for consent to be recorded. Please consult the Legal function if your intended collection method is not covered above. The signature fields may be replaced with consent buttons, etc.</string>
+    <string name="cs_page5_25">Please consult the Legal function if your intended purpose(s) for use and disclosure of Farmer Data does not fall within any of the categories listed in paragraph 1 above. </string>
+    <string name="cs_page5_26">All consents need to be appropriately tracked and stored. Where an Olam representative is reading the notice to the individual and acknowledging his consent on behalf of the individual (e.g. by way of a slide box in a mobile app), please ensure that Olam is able to check which representative has obtained the consent. </string>
+
+    <string name="full_farmer_name">Tam Adı</string>
+    <string name="date">Tarih</string>
+    <string name="olam_connect">Olam Connect</string>
+    <string name="olam_contact">Olam İletişim Sorumlusu</string>
+    <string name="digital_sign">Digital İmza</string>
+    <string name="farmer_signature">Farmer İmza</string>
+    <string name="enum_sign">Staff İmza</string>
+    <string name="enum_name">Enumerator Adı</string>
+    <string name="farmer_sign_required">Please get signed by farmer</string>
+    <string name="staff_sign_required">Please get signed by staff</string>
+    <string name="childs_name">Çocuğun Adı</string>
+    <string name="name">Adı</string>
+    <string name="Please_accept_consent">You must accept consent statements to save the farmer</string>
 </resources>
