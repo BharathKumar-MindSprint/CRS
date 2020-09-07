@@ -36,7 +36,8 @@ import androidx.appcompat.widget.AppCompatCheckBox;
 public class ConsentStatementActivity extends BaseActivity implements View.OnClickListener {
     LinearLayout  consentStatement1,consentStatement2,consentStatement3,consentStatement4,consentStatement5;
     AppCompatCheckBox cb_sc7,cb_sc1,cb_sc2,cb_sc3,cb_sc4,cb_sc5,cb_sc6;
-    EditText et_farmername,childname;
+    EditText childname;
+    TextView et_farmername;
     Button nextsavebtn,prevbtn;
     Boolean reachedbottom = false;
     Long farmerId;
@@ -74,7 +75,7 @@ public class ConsentStatementActivity extends BaseActivity implements View.OnCli
         cb_sc5 = (AppCompatCheckBox) findViewById(R.id.cb_sc5);
         cb_sc6 = (AppCompatCheckBox) findViewById(R.id.cb_sc6);
         cb_sc7 = (AppCompatCheckBox) findViewById(R.id.cb_sc7);
-        et_farmername = (EditText) findViewById(R.id.et_farmername);
+        et_farmername = (TextView) findViewById(R.id.et_farmername);
         childname = (EditText) findViewById(R.id.childname);
         farmer_name = (TextView) findViewById(R.id.farmer_name);
         currentdate = (TextView) findViewById(R.id.currentdate);
@@ -91,6 +92,7 @@ public class ConsentStatementActivity extends BaseActivity implements View.OnCli
         enum_signature.setOnClickListener(this);
         loadpage();
         nextsavebtn.setClickable(false);
+        et_farmername.setText(olamfarmername);
         nextsavebtn.setBackgroundResource(R.drawable.border);
         scrollView.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
             @Override
