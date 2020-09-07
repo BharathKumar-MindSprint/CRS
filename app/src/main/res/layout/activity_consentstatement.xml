@@ -97,6 +97,7 @@
                     </LinearLayout>
 
                     <LinearLayout
+                        android:visibility="gone"
                         android:id="@+id/consentStatement2"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -548,7 +549,10 @@
                                     android:layout_height="wrap_content"
                                     android:textSize="@dimen/ofis_med_text"
                                     android:text="@string/cs_page3_1" />
-                                <EditText
+                                <TextView
+                                    android:paddingTop="5dp"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/black"
                                     android:id="@+id/et_farmername"
                                     android:layout_weight="8"
                                     android:textSize="@dimen/ofis_med_text"
@@ -632,7 +636,6 @@
                     </LinearLayout>
 
                     <LinearLayout
-                        android:visibility="gone"
                         android:id="@+id/consentStatement4"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
