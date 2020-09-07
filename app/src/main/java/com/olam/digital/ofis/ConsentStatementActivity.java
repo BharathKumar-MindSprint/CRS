@@ -36,7 +36,8 @@ import androidx.appcompat.widget.AppCompatCheckBox;
 public class ConsentStatementActivity extends BaseActivity implements View.OnClickListener {
     LinearLayout  consentStatement1,consentStatement2,consentStatement3,consentStatement4,consentStatement5;
     AppCompatCheckBox cb_sc7,cb_sc1,cb_sc2,cb_sc3,cb_sc4,cb_sc5,cb_sc6;
-    EditText et_farmername,childname;
+    EditText childname;
+    TextView et_farmername;
     Button nextsavebtn,prevbtn;
     Boolean reachedbottom = false;
     Long farmerId;
@@ -74,7 +75,7 @@ public class ConsentStatementActivity extends BaseActivity implements View.OnCli
         cb_sc5 = (AppCompatCheckBox) findViewById(R.id.cb_sc5);
         cb_sc6 = (AppCompatCheckBox) findViewById(R.id.cb_sc6);
         cb_sc7 = (AppCompatCheckBox) findViewById(R.id.cb_sc7);
-        et_farmername = (EditText) findViewById(R.id.et_farmername);
+        et_farmername = (TextView) findViewById(R.id.et_farmername);
         childname = (EditText) findViewById(R.id.childname);
         farmer_name = (TextView) findViewById(R.id.farmer_name);
         currentdate = (TextView) findViewById(R.id.currentdate);
@@ -91,9 +92,9 @@ public class ConsentStatementActivity extends BaseActivity implements View.OnCli
         enum_signature.setOnClickListener(this);
         loadpage();
         nextsavebtn.setClickable(false);
+        et_farmername.setText(olamfarmername);
         nextsavebtn.setBackgroundResource(R.drawable.border);
-        ViewTreeObserver viewTreeObserver = scrollView.getViewTreeObserver();
-        viewTreeObserver.addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
+        scrollView.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
             @Override
             public void onScrollChanged() {
                 if (scrollView.getChildAt(0).getBottom()
@@ -114,7 +115,12 @@ public class ConsentStatementActivity extends BaseActivity implements View.OnCli
                 }
             }
         });
-        viewTreeObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+        addingGlobalLayoutListener();
+
+    }
+
+    private void addingGlobalLayoutListener() {
+        scrollView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
                 scrollView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
@@ -191,6 +197,7 @@ public class ConsentStatementActivity extends BaseActivity implements View.OnCli
                         }
                         nextsavebtn.setClickable(false);
                         nextsavebtn.setBackgroundResource(R.drawable.border);
+                        addingGlobalLayoutListener();
                     }
                     if(page == 3){
                         if(et_farmername.getText().toString().matches("")){
@@ -209,15 +216,11 @@ public class ConsentStatementActivity extends BaseActivity implements View.OnCli
                             currentdate.setText(date);
                             currentdate2.setText(date);
                             enum_name.setText(Utilities.getEnumeratorNameSharedPrefs(context));
+                            addingGlobalLayoutListener();
                         }
                     }
                     if(page == 4){
-                       /* if(childname.getText().toString().matches("")){
-                            Toast.makeText(ConsentStatementActivity.this, getResources().getString(R.string.fill_child_name), Toast.LENGTH_LONG).show();
-                            return;
-                        }else {*/
-                            childrenname = childname.getText().toString();
-//                        }
+                        childrenname = childname.getText().toString();
                         if(farmerSign.matches("")){
                             Toast.makeText(ConsentStatementActivity.this, getResources().getString(R.string.farmer_sign_required), Toast.LENGTH_LONG).show();
                             return;
@@ -228,6 +231,7 @@ public class ConsentStatementActivity extends BaseActivity implements View.OnCli
                         }
                         nextsavebtn.setClickable(false);
                         nextsavebtn.setBackgroundResource(R.drawable.border);
+                        addingGlobalLayoutListener();
                     }
                     page++;
                     reachedbottom = false;
@@ -268,6 +272,7 @@ public class ConsentStatementActivity extends BaseActivity implements View.OnCli
                 finish();
 
             }
+            addingGlobalLayoutListener();
         }else if(id == R.id.prevbtn){
             page--;
             loadpage();
@@ -381,51 +386,7 @@ public class ConsentStatementActivity extends BaseActivity implements View.OnCli
                 return false;
             }
         });
-       /* bt_confirm.findViewById(R.id.btn_add_signature).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try {
-                    if (isSigned) {
-//                        farmerSignatureButton.setImageBitmap(mSignaturePad.getTransparentSignatureBitmap());
-                        File photoFile = null;
-                        try {
-                            photoFile = createImageFile("signature");
-                        } catch (IOException e) {
-                            FirebaseCrash.report(new Exception("AddFarmerActivity: Error creating signature image file", e));
-                            e.printStackTrace();
-                        }
-                        if (photoFile != null) {
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                                try {
-                                    Method m = StrictMode.class.getMethod("disableDeathOnFileUriExposure");
-                                    m.invoke(null);
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                            Uri fileUri = Uri.fromFile(photoFile);
-                            if(signedby.equalsIgnoreCase(getResources().getString(R.string.farmer))){
-                                farmerSign = fileUri.getPath();
-                            }else {
-                                staffSign = fileUri.getPath();
-                            }
-                            try (FileOutputStream out = new FileOutputStream(photoFile)) {
-                                mSignaturePad.getTransparentSignatureBitmap().compress(Bitmap.CompressFormat.PNG, 100, out); // bmp is your Bitmap instance
-                                // PNG is a lossless format, the compression factor (100) is ignored
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        signatureDialog.dismiss();
-                        } else {
-                        Toast.makeText(ConsentStatementActivity.this, "No signature available...", Toast.LENGTH_SHORT).show();
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-*/
+
         signatureDialog.show();
     }
 
