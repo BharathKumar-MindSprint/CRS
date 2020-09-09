@@ -276,6 +276,7 @@ public class ConsentStatementActivity extends BaseActivity implements View.OnCli
         }else if(id == R.id.prevbtn){
             page--;
             loadpage();
+            addingGlobalLayoutListener();
             System.out.println("page value:" + page);
         }else if(id == R.id.farmer_signature){
             showSignatureDialog(getResources().getString(R.string.farmer));
