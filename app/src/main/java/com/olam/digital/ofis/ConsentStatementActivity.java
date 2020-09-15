@@ -96,6 +96,15 @@ public class ConsentStatementActivity extends BaseActivity implements View.OnCli
         nextsavebtn.setClickable(false);
         et_farmername.setText(olamfarmername);
         nextsavebtn.setBackgroundResource(R.drawable.border);
+        KeyboardUtils.addKeyboardToggleListener(this, new KeyboardUtils.SoftKeyboardToggleListener() {
+            @Override
+            public void onToggleSoftKeyboard(boolean isVisible) {
+                if(isVisible){
+                    nextsavebtn.setClickable(true);
+                    nextsavebtn.setBackgroundResource(R.color.ofis_action_button_background);
+                }
+            }
+        });
         scrollView.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
             @Override
             public void onScrollChanged() {
@@ -278,6 +287,7 @@ public class ConsentStatementActivity extends BaseActivity implements View.OnCli
         }else if(id == R.id.prevbtn){
             page--;
             loadpage();
+            scrollView.scrollTo(0, scrollView.getBottom());
             addingGlobalLayoutListener();
             System.out.println("page value:" + page);
         }else if(id == R.id.farmer_signature){
