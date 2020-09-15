@@ -2,6 +2,7 @@ package com.olam.digital.ofis;
 
 import android.app.Dialog;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.PorterDuff;
@@ -13,6 +14,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.Window;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -105,7 +107,7 @@ public class ConsentStatementActivity extends BaseActivity implements View.OnCli
                     nextsavebtn.setBackgroundResource(R.color.ofis_action_button_background);
                 } else {
                     //scroll view is not at bottom
-                    if(! reachedbottom) {
+                    if(! reachedbottom && page <= 3) {
                         nextsavebtn.setClickable(false);
                         nextsavebtn.setBackgroundResource(R.drawable.border);
                     }else {
@@ -206,8 +208,8 @@ public class ConsentStatementActivity extends BaseActivity implements View.OnCli
                             Toast.makeText(ConsentStatementActivity.this, getResources().getString(R.string.please_fill_farmer_name), Toast.LENGTH_LONG).show();
                             return;
                         }else {
-                            nextsavebtn.setClickable(false);
-                            nextsavebtn.setBackgroundResource(R.drawable.border);
+//                            nextsavebtn.setClickable(false);
+//                            nextsavebtn.setBackgroundResource(R.drawable.border);
                             farmername = et_farmername.getText().toString();
                             farmer_name.setText(farmername);
                             Date today = new Date();
@@ -229,8 +231,8 @@ public class ConsentStatementActivity extends BaseActivity implements View.OnCli
                             Toast.makeText(ConsentStatementActivity.this, getResources().getString(R.string.staff_sign_required), Toast.LENGTH_LONG).show();
                             return;
                         }
-                        nextsavebtn.setClickable(false);
-                        nextsavebtn.setBackgroundResource(R.drawable.border);
+//                        nextsavebtn.setClickable(false);
+//                        nextsavebtn.setBackgroundResource(R.drawable.border);
                         addingGlobalLayoutListener();
                     }
                     page++;
