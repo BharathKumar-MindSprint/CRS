@@ -524,6 +524,7 @@
                     </LinearLayout>
 
                     <LinearLayout
+                        android:visibility="gone"
                         android:id="@+id/consentStatement3"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -689,7 +690,8 @@
                                 android:layout_marginBottom="5dp"
                                 android:layout_weight="1"
                                 android:textSize="@dimen/ofis_med_text"
-                                android:text="@string/childs_name"
+                                android:layout_gravity="center"
+                                android:text="@string/allchilds_name"
                                 android:textColor="@color/clmrs_tv_grey" />
 
                             <EditText
