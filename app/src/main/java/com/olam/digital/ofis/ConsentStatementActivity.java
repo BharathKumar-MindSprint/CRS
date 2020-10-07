@@ -255,9 +255,6 @@ public class ConsentStatementActivity extends BaseActivity implements View.OnCli
                     page++;
                     return;
                 }
-                System.out.println("page value:" + page);
-
-
 
             }else if(page == 6){
                 ContentValues contentValue=new ContentValues();

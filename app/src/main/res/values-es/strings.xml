@@ -595,4 +595,7 @@
     <string name="childs_name">Nombre del niño(a)</string>
     <string name="name">Nombre</string>
     <string name="Please_accept_consent">You must accept consent statements to save the farmer</string>
+
+    <string name="allchilds_name">Todos los nombres de los niños (según corresponda)</string>
+
 </resources>
