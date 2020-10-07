@@ -594,4 +594,7 @@
     <string name="childs_name">Tên của Trẻ</string>
     <string name="name">Tên</string>
     <string name="Please_accept_consent">You must accept consent statements to save the farmer</string>
+
+    <string name="allchilds_name">Tất cả tên của trẻ em (nếu có)</string>
+
 </resources>

@@ -580,4 +580,7 @@
     <string name="childs_name">ຊື່ເດັກ</string>
     <string name="name">ຊື່</string>
     <string name="Please_accept_consent">You must accept consent statements to save the farmer</string>
+
+    <string name="allchilds_name">ທຸກໆຊື່ຂອງເດັກ (ຕາມຄວາມ ເໝາະ ສົມ)</string>
+
 </resources>

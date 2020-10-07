@@ -656,4 +656,7 @@
     <string name="name">Name</string>
     <string name="Please_accept_consent">You must accept consent statements to save the farmer</string>
     <string name="please_sign_within_the_boundary_box">Please sign within the boundary box</string>
+
+    <string name="allchilds_name">All children\’s names (as applicable)</string>
+
 </resources>
