@@ -1107,6 +1107,11 @@ public class DynamicQuestions {
                             today.setTime(serverDateFormat.parse(answerDateString));
                             saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, answerDateString);
                         }
+                    }else{
+                        /* OCA-59 - Date Picker Question */
+                        // Solution : Update the current data during inflate the view
+                        Calendar cal = Calendar.getInstance();
+                        saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, serverDateFormat.format(cal.getTime()));
                     }
 
                     dp.init(

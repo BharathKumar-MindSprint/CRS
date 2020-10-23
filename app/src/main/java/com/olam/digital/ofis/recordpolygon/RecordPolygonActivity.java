@@ -185,7 +185,6 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
     public static final int BLOCKED_OR_NEVER_ASKED = 2;
 
     private int lPlotCount = 0;
-    private double areaWithoutRounded=0;
 
     private Location mCapturedLocation=null;
 
@@ -333,7 +332,6 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                     if (calculateArea() >= 0.01){
                         savePolygonToSharedPreference();
                     }else{
-                    areaInfo.setText(getResources().getString(R.string.area_info, String.valueOf(areaWithoutRounded)));
                         showZeroAreaDialog();
                     }
                 } else {
@@ -1532,7 +1530,6 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
             builder.setCancelable(false);
             builder.setMessage(getResources().getString(R.string.zero_area_msg));
             builder.setPositiveButton("OK", (dialog, which) -> {
-                areaInfo.setText("");
                 dialog.dismiss();
             });
             builder.show();
@@ -1713,8 +1710,6 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
              lTotalArea = Utils.getArea(lats, lons);
             if (lTotalArea >= 0) {
                 lTotalArea = lTotalArea / 10000;
-                // Area rounded in 3 digits
-                areaWithoutRounded=roundArea(lTotalArea,3);
                 lTotalArea = roundArea(lTotalArea,2);
             }
         }

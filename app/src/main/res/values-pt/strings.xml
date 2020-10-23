@@ -611,4 +611,5 @@
 
 
 
+    <string name="zero_area_msg">Cannot save recorded polygon with 0ha. Please try recording a different polygon</string>
 </resources>

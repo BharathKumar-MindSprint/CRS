@@ -429,7 +429,7 @@
     <string name="cancel_logging_question">"Batalkan merekam plot! "</string>
     <string name="cancel_logging_msg">"Merekam %1$s dibatalkan! "</string>
     <string name="not_logged_yet">"%1$s belum direkam! "</string>
-    <string name="area_info">"Area: %1$f ha "</string>
+    <string name="area_info">"Area: %1$s ha "</string>
     <string name="save_polygon_alertdialog_title">"Simpan poligon %1$s? "</string>
     <string name="save_polygon_alertdialog_msg">"Anda tidak bisa merekam %1$s lagi "</string>
     <string name="close">"Tutup "</string>
@@ -589,5 +589,5 @@
     <string name="Please_accept_consent">You must accept consent statements to save the farmer</string>
 
     <string name="allchilds_name">Semua nama anak-anak (sebagaimana berlaku)</string>
-
+    <string name="zero_area_msg">Cannot save recorded polygon with 0ha. Please try recording a different polygon</string>
 </resources>

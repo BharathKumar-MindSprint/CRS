@@ -429,7 +429,7 @@
     <string name="cancel_logging_question">"Annuler l'enregistrement "</string>
     <string name="cancel_logging_msg">"%1$s de l'enregistrement a été annulé ! "</string>
     <string name="not_logged_yet">"%1$s non encore enregistré! "</string>
-    <string name="area_info">"Superficie:%1$f ha "</string>
+    <string name="area_info">"Superficie:%1$s ha "</string>
     <string name="save_polygon_alertdialog_title">"Sauvegardez %1$s Polygone ? "</string>
     <string name="save_polygon_alertdialog_msg">"Vous ne pourrez plus vous connecter à %1$s "</string>
     <string name="close">"Fermer "</string>
@@ -602,4 +602,5 @@
 
     <string name="allchilds_name">Noms de tous les enfants (le cas échéant)</string>
 
+    <string name="zero_area_msg">Cannot save recorded polygon with 0ha. Please try recording a different polygon</string>
 </resources>

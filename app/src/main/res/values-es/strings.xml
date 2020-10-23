@@ -428,7 +428,7 @@
     <string name="cancel_logging_question">"Cancelar registro "</string>
     <string name="cancel_logging_msg">"Registro %1$s cancelado "</string>
     <string name="not_logged_yet">" %1$s  no registrado aún "</string>
-    <string name="area_info">"Área %1$f Ha "</string>
+    <string name="area_info">"Área %1$s Ha "</string>
     <string name="save_polygon_alertdialog_title">"Guardar el polígono %1$s? "</string>
     <string name="save_polygon_alertdialog_msg">"Usted no podrá registrar el lote %1$s de nuevo "</string>
     <string name="close">"Cerrar "</string>
@@ -596,6 +596,8 @@
     <string name="name">Nombre</string>
     <string name="Please_accept_consent">You must accept consent statements to save the farmer</string>
 
-    <string name="allchilds_name">Todos los nombres de los niños (según corresponda)</string>
 
+    <string name="allchilds_name">Todos los nombres de los niños (según corresponda)</string>
+    <string name="zero_area_msg">Cannot save recorded polygon with 0ha. Please try recording a different polygon</string>
 </resources>
+
