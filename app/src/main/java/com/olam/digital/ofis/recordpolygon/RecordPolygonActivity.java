@@ -185,6 +185,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
     public static final int BLOCKED_OR_NEVER_ASKED = 2;
 
     private int lPlotCount = 0;
+    private double areaWithoutRounded=0;
 
     private Location mCapturedLocation=null;
 
@@ -329,7 +330,12 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                 setLoggingStarted(false);
                 setRecordingIcon(RecordingState.STOPPED);
                 if (!checkPlotEntryExistInPreference()) {
-                    savePolygonToSharedPreference();
+                    if (calculateArea() >= 0.01){
+                        savePolygonToSharedPreference();
+                    }else{
+                    areaInfo.setText(getResources().getString(R.string.area_info, String.valueOf(areaWithoutRounded)));
+                        showZeroAreaDialog();
+                    }
                 } else {
                     showToastMessage(getResources().getString(R.string.plot_already_logged, currentTrackname));
                 }
@@ -1306,9 +1312,9 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
             double lTotalArea = Utils.getArea(lats, lons);
             if (lTotalArea >= 0) {
                 lTotalArea = lTotalArea / 10000;
-                lTotalArea = Math.round(lTotalArea * 100.0) / 100.0;
-                areaInfo.setText(getResources().getString(R.string.area_info, lTotalArea));
-                ;
+               // lTotalArea = Math.round(lTotalArea * 100.0) / 100.0;
+                lTotalArea = roundArea(lTotalArea,2);
+                areaInfo.setText(getResources().getString(R.string.area_info, String.valueOf(lTotalArea)));
             }
         }
         updateUIWithPolygon(geoPoints, trackId);
@@ -1519,6 +1525,19 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                 Toast.LENGTH_SHORT).show();
     }
 
+    private void showZeroAreaDialog(){
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            // builder.setTitle(getResources().getString(R.string.save_polygon_alertdialog_title, currentTrackname));
+            builder.setCancelable(false);
+            builder.setMessage(getResources().getString(R.string.zero_area_msg));
+            builder.setPositiveButton("OK", (dialog, which) -> {
+                areaInfo.setText("");
+                dialog.dismiss();
+            });
+            builder.show();
+        }
+
     public void showEditPlotsDialog(View view) {
         final Dialog dialog = new Dialog(RecordPolygonActivity.this);
         dialog.setContentView(R.layout.number_picker_dialog);
@@ -1670,5 +1689,44 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
         return super.onOptionsItemSelected(item);
     }
 
+   private double calculateArea() {
+        //record in the track the current location at current time:
+
+       LocationBeanList lLocationBeanList = new LocationBeanList();
+       lLocationBeanList.setLocationBean(mLocationBeanList);
+
+        ArrayList<GeoPoint> geoPoints = new ArrayList<>();
+        ArrayList<Double> lats = new ArrayList<>();
+        ArrayList<Double> lons = new ArrayList<>();
+       // LocationBeanList locationBeanList = SharedPreferenceUtils.getInstance(getApplicationContext()).getLocationBeanList(trackId);
+
+        if (mLocationBeanList != null) {
+            for (plot locationBean : mLocationBeanList) {
+                GeoPoint currentLocation = new GeoPoint(locationBean.getLat(), locationBean.getLng());
+                lats.add(locationBean.getLat());
+                lons.add(locationBean.getLng());
+                geoPoints.add(currentLocation);
+            }
+        }
+        double lTotalArea = 0;
+        if (lats.size() > 0) {
+             lTotalArea = Utils.getArea(lats, lons);
+            if (lTotalArea >= 0) {
+                lTotalArea = lTotalArea / 10000;
+                // Area rounded in 3 digits
+                areaWithoutRounded=roundArea(lTotalArea,3);
+                lTotalArea = roundArea(lTotalArea,2);
+            }
+        }
+        return lTotalArea;
+    }
+
+    public static double roundArea(double value, int places) {
+        if (places < 0) throw new IllegalArgumentException();
+        long factor = (long) Math.pow(10, places);
+        value = value * factor;
+        long tmp = Math.round(value);
+        return (double) tmp / factor;
+    }
 
 }
