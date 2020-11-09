@@ -93,7 +93,7 @@
     <string name="New_place_name">Nome do novo local</string>
     <string name="new_place_name_placeholder">Novo local</string>
     <string name="Olam_Farmer_ID">ID Olam do produtor</string>
-    <string name="Save">Salvar</string>
+    <string name="Save">Salve</string>
     <string name="Add_Signature">Assinatura</string>
 
     <!-- Find a farmer related -->
@@ -125,7 +125,7 @@
     <!-- module action buttons -->
     <string name="ModuleBackButton">Voltar</string>
     <string name="ModuleNextButton">Próximo</string>
-    <string name="ModuleSaveButton">Salvar</string>
+    <string name="ModuleSaveButton">Salve</string>
 
     <!-- errors -->
     <string name="Internet_not_available">Internet não disponível - você precisa estar online para completar esta tarefa.</string>
@@ -402,7 +402,7 @@
     <string name="title_activity_record_polygon">"Gravar o trecho "</string>
     <string name="loading">"Carregando "</string>
     <string name="wait">Por favor aguarde</string>
-    <string name="save_button_text">Salvar</string>
+    <string name="save_button_text">Salve</string>
     <string name="start_logging_button_text">"Iniciar o Login "</string>
     <string name="stop_logging_button_text">"Parar o Login "</string>
     <string name="pause_button_text">"Pause "</string>
@@ -429,7 +429,7 @@
     <string name="cancel_logging_question">"Cancelar login "</string>
     <string name="cancel_logging_msg">"%1$s login cancelado "</string>
     <string name="not_logged_yet">%1$s ainda não logado.</string>
-    <string name="area_info">Area: %1$f Há</string>
+    <string name="area_info">Area: %1$s Há</string>
     <string name="save_polygon_alertdialog_title">Salvar %1$s?</string>
     <string name="save_polygon_alertdialog_msg">Voce não poderá logar  %1$s novamente.</string>
     <string name="close">"Fechar "</string>
@@ -476,33 +476,38 @@
     <string name="please_fill_farmer_name">Por favor, preencha o nome do agricultor</string>
     <string name="please_fill_the">Por favor, selecione o local</string>
     <string name="invalid_imei_msg">Falha na autenticação. Por favor, entre em contato conosco para assistência</string>
-    <string name="household_question">Farmer has any children under 18 doing household?</string>
-    <string name="title_child_labour">Register Child</string>
-    <string name="inspection_question" />
-    <string name="followup_question">Any children found during follow-up?</string>
-    <string name="add_child">Add Child</string>
-    <string name="full_name">Child name</string>
-    <string name="age">Age</string>
+
+
+    <string name="household_question">O agricultor não tem filhos menores de 18 anos (Família do agricultor)</string>
+    <string name="title_child_labour">Registrar criança</string>
+    <string name="inspection_question">Nenhuma criança encontrada na fazenda (inspeção da fazenda)</string>
+    <string name="followup_question">Nenhuma criança encontrada durante o acompanhamento</string>
+    <string name="add_child">Adicionar criança</string>
+    <string name="full_name">Nome da criança</string>
+    <string name="age">Idade</string>
     <string name="add">Add</string>
-    <string name="checking_child_enumerator">Checking Child Enumerator</string>
-    <string name="visit_detail">Visit Detail</string>
-    <string name="child_visit_details_inserted" />
-    <string name="child_register_successfully">Child registered Successfully</string>
-    <string name="child_details">Child Details</string>
-    <string name="child_not_synced">Sorry, but the child has not yet been synced. Please sync the child first</string>
-    <string name="fill_child_name">Please fill the child name</string>
-    <string name="yrs">yrs</string>
-    <string name="child_max_limit">You have allowed maximum 30 children to register per farmer</string>
-    <string name="new_child">New Child</string>
-    <string name="child">Child</string>
-    <string name="farmer">Farmer</string>
-    <string name="household">Household Visit Detail</string>
-    <string name="inspection">Inspection Visit Detail</string>
-    <string name="followup">FollowUp Visit Detail</string>
-    <string name="child_updated_successfully">Child Updated Successfully</string>
-    <string name="downloading_child_data">Downloading Child Enumerator Details</string>
-    <string name="no_child_registered">Register Child to enable the surveys</string>
-    <string name="please_select_Age">Please select Age</string>
+    <string name="register_child">Registrar criança</string>
+    <string name="checking_child_enumerator">Verificando o enumerador da criança</string>
+    <string name="visit_detail">Detalhe da visita</string>
+    <string name="child_visit_details_inserted">Detalhes da visita da criança registrada com sucesso</string>
+    <string name="child_register_successfully">Criança registrada com sucesso</string>
+    <string name="child_details">Detalhes da criança</string>
+    <string name="child_not_synced">Desculpe, mas a criança ainda não foi sincronizada. Sincronize a criança primeiro</string>
+    <string name="fill_child_name">Por favor, preencha o nome da criança</string>
+    <string name="yrs">Anos</string>
+    <string name="child_max_limit">Você permitiu que no máximo 30 crianças fossem registradas por agricultor</string>
+    <string name="new_child">Nova criança</string>
+    <string name="child">criança</string>
+    <string name="farmer">Agricultor</string>
+    <string name="household">Detalhe da visita domiciliar</string>
+    <string name="inspection">Detalhe da visita de inspeção</string>
+    <string name="followup">Detalhe da visita de acompanhamento</string>
+    <string name="child_updated_successfully">Criança atualizada com sucesso</string>
+    <string name="downloading_child_data">Baixando detalhes do enumerador da criança</string>
+    <string name="no_child_registered">Cadastre-se criança para habilitar as pesquisas</string>
+    <string name="please_select_Age">Selecione a idade</string>
+
+
     <string name="capture_my_location_button_text">Capture My location</string>
     <string name="enumerator_location_capture">Enumerator Location Capture</string>
 
@@ -595,6 +600,15 @@
     <string name="name">Nome</string>
     <string name="Please_accept_consent">You must accept consent statements to save the farmer</string>
 
+
     <string name="allchilds_name">Nomes de todas as crianças (conforme aplicável)</string>
+    <string name="zero_area_msg">Cannot save recorded polygon with 0ha. Please try recording a different polygon</string>
+
+    <string name="child_labour_survey">Pesquisa do trabalho infantil</string>
+    <string name="update_childlabour_hint">Toque para registrar</string>
+    <string name="update_child">Atualizar criança</string>
+
+
+
 
 </resources>
