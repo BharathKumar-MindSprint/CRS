@@ -478,7 +478,7 @@
     <string name="invalid_imei_msg">Lỗi xác thực . Vui lòng liên hệ với chúng tôi để được hỗ trợ</string>
     <string name="household_question">Farmer has any children under 18 doing household?</string>
     <string name="title_child_labour">Register Child</string>
-    <string name="inspection_question" />
+    <string name="inspection_question">No children found on farm (Inspection)</string>
     <string name="followup_question">Any children found during follow-up?</string>
     <string name="add_child">Add Child</string>
     <string name="full_name">Child name</string>
