@@ -29,11 +29,13 @@ import android.widget.Spinner;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.crash.FirebaseCrash;
 import com.olam.digital.ofis.gps.utils.GPSConstants;
+import com.scottyab.aescrypt.AESCrypt;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -176,8 +178,16 @@ public  static String base64ConversionForImage(String filepath)  {
     public static void saveToSharedPrefs(Context context, String prefName, String value, Boolean altVal) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
+
         if (value != null) {
-            editor.putString(prefName, value);
+            // enumeratorId and Passcode
+            String encryptedContent="";
+            try {
+                encryptedContent = AESCrypt.encrypt(prefName, value);
+            }catch (GeneralSecurityException e){
+                //handle error
+            }
+            editor.putString(prefName, encryptedContent);
         }
         if (altVal != null) {
             editor.putBoolean(prefName, altVal);
@@ -210,7 +220,19 @@ public  static String base64ConversionForImage(String filepath)  {
     public static String getFromSharedPrefs(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
 
-        return sharedPreferences.getString("ENUMERATOR_ID", "");
+        String s= sharedPreferences.getString("ENUMERATOR_ID", "");
+        String decryptedMsg="";
+        try {
+            decryptedMsg = AESCrypt.decrypt("ENUMERATOR_ID", s);
+        }catch (Exception e){
+            //handle error - could be due to incorrect password or tampered encryptedMsg
+        }
+        if (decryptedMsg.equalsIgnoreCase("")){
+            return  s;
+        }else{
+            return decryptedMsg;
+        }
+
     }
 
 
@@ -223,19 +245,48 @@ public  static String base64ConversionForImage(String filepath)  {
     public static void setEnumeratorNameSharedPrefs(Context context,String prefName,String prefValue){
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor=sharedPreferences.edit();
-        editor.putString(prefName,prefValue);
+
+        String encryptedContent="";
+        try {
+            encryptedContent = AESCrypt.encrypt(prefName, prefValue);
+        }catch (GeneralSecurityException e){
+            //handle error
+        }
+
+        editor.putString(prefName,encryptedContent);
         editor.commit();
     }
     public static String getEnumeratorNameSharedPrefs(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
-        return sharedPreferences.getString(GPSConstants.COLUMN_ENUMERATOR_NAME, "");
+        String s=sharedPreferences.getString(GPSConstants.COLUMN_ENUMERATOR_NAME, "");
+        String decryptedMsg="";
+        try {
+            decryptedMsg = AESCrypt.decrypt(GPSConstants.COLUMN_ENUMERATOR_NAME, s);
+        }catch (GeneralSecurityException e){
+            //handle error - could be due to incorrect password or tampered encryptedMsg
+        }
+        return decryptedMsg;
     }
+
+
+
 
 //  getPasscode from sharedPref - Penetration testing
     public static String getPasscodeFromSharedPrefs(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
+        String s= sharedPreferences.getString("PASSCODE", "");
+        String decryptedMsg="";
+        try {
+            decryptedMsg = AESCrypt.decrypt("PASSCODE", s);
+        }catch (Exception e){
+            //handle error - could be due to incorrect password or tampered encryptedMsg
+        }
+        if (decryptedMsg.equalsIgnoreCase("")){
+            return s;
+        }else{
+            return decryptedMsg;
+        }
 
-        return sharedPreferences.getString("PASSCODE", "");
     }
 
     public static String getFirebaseTokenSharedPrefs(Context context) {

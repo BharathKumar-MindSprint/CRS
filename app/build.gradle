@@ -63,16 +63,25 @@ android {
         //noinspection OldTargetApi
         targetSdkVersion 29
         multiDexEnabled true
-        versionCode 24
-        versionName "10.1.7"
+
+        versionCode 143
+        versionName "10.1.46"
+
+        ndk {
+		//	abiFilters 'x86', 'armeabi-v7a', 'arm64-v8a'
+          abiFilters 'armeabi-v7a','arm64-v8a'
+      //       abiFilters 'armeabi-v7a'
+        }
+
+
 
     }
 
     buildTypes {
         debug {
-            minifyEnabled false
-            shrinkResources false
-//            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.config
         }
         release {
@@ -90,14 +99,7 @@ android {
 
     productFlavors {
         //noinspection GroovyMissingReturnStatement
-        /*  local {
-              applicationId "com.olam.digital.ofislocal"
-              resValue "string", "contentprovider_authorities", applicationId + '.provider'
-              resValue "string", "sync_account_type", applicationId
-              buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofislocal"'
-              buildConfigField 'String', 'HOST', '"http://local.ofis52.com/api/v1/"'
-          }
-  */
+
         dev {
             applicationId "com.olam.digital.ofisdebug"
             resValue "string", "contentprovider_authorities", applicationId + '.provider'
@@ -105,7 +107,6 @@ android {
             buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofisdebug"'
 //            buildConfigField 'String', 'HOST', '"https://testofis.olamgroup.com/api/v1/"'
 
-            buildConfigField 'String', 'MICROSERVICE_HOST', '"http://137.116.145.198:8080/"'
             resValue "string", "applicationName", "OFIS DEV"
             resValue "string", "AUTH_SERVER_URL", 'https://otofis-dev-zuul.olamdigital.com/oauth/api/v1/oauth/'
             buildConfigField 'String', 'HOST', '"https://otofis-dev-zuul.olamdigital.com/"'
@@ -118,37 +119,6 @@ android {
 
         }
 
-        //noinspection GroovyMissingReturnStatement
-        /*preprod {
-            applicationId "com.olam.digital.ofispreprod"
-
-            resValue "string", "contentprovider_authorities", applicationId + '.provider'
-            resValue "string", "sync_account_type", applicationId
-            //   resValue "string", "AUTH_SERVER_URL", 'http://13.67.108.216:8084/oauth/api/v1/oauth/'
-//            resValue "string", "client_secret", 'gqYWH4dRyQST0dHHgA5iUyxkgtPxGStVd3hJop'
-            buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofispreprod"'
-            //  buildConfigField 'String', 'HOST', '"http://13.67.108.216:8084/"'
-            buildConfigField 'String', 'MICROSERVICE_HOST', '"http://137.116.145.198:8080/"'
-
-            // New Local changes - QA
-//            resValue "string", "applicationName", "OFIS SIT"
-//            resValue "string", "AUTH_SERVER_URL", 'https://otofis-sit-zuul.olamdigital.com/oauth/api/v1/oauth/'
-//            buildConfigField 'String', 'HOST', '"https://otofis-sit-zuul.olamdigital.com/"'
-//            resValue "string", "client_secret", 'gqYWH4dRyQST0dHHgA5iUyxkgtPxGStVd3hJop'
-
-           *//* //New UAT DNS name
-            resValue "string", "applicationName", "OFIS UAT"
-            resValue "string", "AUTH_SERVER_URL", 'https://otofis-uat-zuul.olamdigital.com/oauth/api/v1/oauth/'
-            buildConfigField 'String', 'HOST', '"https://otofis-uat-zuul.olamdigital.com/"'
-//            resValue "string", "client_secret", 'xGfAz5zSFTJDHcWWcEQR19hNx9zA30NeZOQuxdnr'
-*//*
-            //New DEV DNS name
-            resValue "string", "applicationName", "OFIS UAT"
-            resValue "string", "AUTH_SERVER_URL", 'https://otofis-dev-zuul.olamdigital.com/oauth/api/v1/oauth/'
-            buildConfigField 'String', 'HOST', '"https://otofis-dev-zuul.olamdigital.com/"'
-            resValue "string", "client_secret", 'xGfAz5zSFTJDHcWWcEQR19hNx9zA30NeZOQuxdnr'
-
-        }*/
 
         uat{
             applicationId "com.olam.digital.ofispreprod"
@@ -156,7 +126,6 @@ android {
             resValue "string", "contentprovider_authorities", applicationId + '.provider'
             resValue "string", "sync_account_type", applicationId
             buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofispreprod"'
-            buildConfigField 'String', 'MICROSERVICE_HOST', '"http://137.116.145.198:8080/"'
 
             //New UAT DNS name
             resValue "string", "applicationName", "OFIS UAT"
@@ -176,7 +145,6 @@ android {
             resValue "string", "contentprovider_authorities", applicationId + '.provider'
             resValue "string", "sync_account_type", applicationId
             buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofispreprod"'
-            buildConfigField 'String', 'MICROSERVICE_HOST', '"http://137.116.145.198:8080/"'
 
             // New SIT DNS name
             resValue "string", "applicationName", "OFIS SIT"
@@ -195,7 +163,6 @@ android {
             resValue "string", "contentprovider_authorities", applicationId + '.provider'
             resValue "string", "sync_account_type", applicationId
             buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofispreprod"'
-            buildConfigField 'String', 'MICROSERVICE_HOST', '"http://137.116.145.198:8080/"'
             // New SIT DNS name
             // https://otofis-zuul.olamdigital.com/
 
@@ -216,7 +183,6 @@ android {
             resValue "string", "contentprovider_authorities", applicationId + '.provider'
             resValue "string", "sync_account_type", applicationId
             buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofis"'
-            buildConfigField 'String', 'MICROSERVICE_HOST', '"http://137.116.145.198:8080/"'
             // New SIT DNS name
             // https://otofis-zuul.olamdigital.com/
 
@@ -259,7 +225,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-messaging:11.8.0'
     implementation 'com.google.firebase:firebase-crash:11.8.0'
     implementation 'com.google.firebase:firebase-perf:11.8.0'
-    implementation 'androidx.appcompat:appcompat:1.0.0'
+    implementation 'androidx.appcompat:appcompat:1.0.2'
     implementation 'org.osmdroid:osmdroid-mapsforge:5.5:release@aar'
     implementation 'org.mapsforge:mapsforge-map-android:0.6.1'
     implementation 'org.mapsforge:mapsforge-map:0.6.1'
@@ -307,6 +273,8 @@ dependencies {
     implementation 'org.matomo.sdk:tracker:4.1.1'
 
 
+
+    implementation 'com.scottyab:aescrypt:0.0.1'
 
 
 }

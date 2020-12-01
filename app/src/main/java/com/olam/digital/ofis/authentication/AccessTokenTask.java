@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 
 import com.google.gson.Gson;
+import com.olam.digital.ofis.Utilities;
 import com.olam.digital.ofis.authentication.model.AuthRequestDTO;
 import com.olam.digital.ofis.authentication.model.AuthenticationDTO;
 import com.olam.digital.ofis.logging.FabricLogsWriter;
@@ -30,13 +31,12 @@ public class AccessTokenTask extends AsyncTask<Object, Object, String> {
 
     @Override
     protected void onPreExecute() {
-        authenticationDTO = new AuthenticationHelper(mContext).getAuthenticationDTO();
+      //  authenticationDTO = new AuthenticationHelper(mContext).getAuthenticationDTO();
     }
 
     @Override
     protected String doInBackground(Object... objects) {
         try {
-            if (authenticationDTO == null) {
                 //fetch new AccessToken and update willExpireAt
                 AuthenticationInterface authenticationInterface;
                 authenticationInterface = AuthenticationClient.createService(AuthenticationInterface.class, mContext);
@@ -47,6 +47,10 @@ public class AccessTokenTask extends AsyncTask<Object, Object, String> {
                     authenticationDTO = (AuthenticationDTO) authResponse.body();
                     authenticationDTO.setWillExpireAt((System.currentTimeMillis()/1000) + authenticationDTO.getExpiresIn() /1000);
                     new AuthenticationHelper(mContext).setAuthenticationDTO(authenticationDTO);
+                    new AuthenticationHelper(mContext).setUserName(authRequestDTO.getUsername());
+                    new AuthenticationHelper(mContext).setPassode(authRequestDTO.getPasscode());
+                    Utilities.saveToSharedPrefs(mContext, "ENUMERATOR_ID", authRequestDTO.getUsername(), null);
+                    Utilities.saveToSharedPrefs(mContext, "PASSCODE", authRequestDTO.getPasscode(), null);
                     return authenticationDTO.getAccessToken();
                 } else {
                     try {
@@ -55,9 +59,7 @@ public class AccessTokenTask extends AsyncTask<Object, Object, String> {
                     int statusCode = authResponse.code();
                     return null;
                 }
-            }else {
-                return "error";
-            }
+
         } catch (Exception e) {
             return null;
         }
