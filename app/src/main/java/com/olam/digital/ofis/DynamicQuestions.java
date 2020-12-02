@@ -2,16 +2,21 @@ package com.olam.digital.ofis;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.CountDownTimer;
 import android.os.StrictMode;
 import android.provider.MediaStore;
+
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import android.text.Editable;
 import android.text.Html;
@@ -36,8 +41,13 @@ import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.crash.FirebaseCrash;
+import com.olam.digital.ofis.coffeesurveyconstraints.CoffeeConstraints;
+import com.olam.digital.ofis.coffeesurveyconstraints.Constraint;
+import com.olam.digital.ofis.coffeesurveyconstraints.QuestionInfo;
+import com.olam.digital.ofis.coffeesurveyconstraints.utils.DecimalDigitsInputFilter;
 import com.olam.digital.ofis.recordpolygon.AppConstants;
 
 import org.json.JSONArray;
@@ -521,6 +531,63 @@ public class DynamicQuestions {
         }
 
     }
+
+    private void removeAnswerEntry(int questionId) {
+        for (int i = 0; i < answerSet.size(); i++) {
+            JSONObject currentAnswer = answerSet.get(i);
+            if (currentAnswer != null) {
+                int currentQuestionId = currentAnswer.optInt("question_id");
+                if (currentQuestionId == questionId) {
+                    answerSet.remove(i);
+                    break;
+                }
+            }
+        }
+    }
+
+    public boolean isAllRequiredSubmoduleAnswered(Cursor questions) throws JSONException {
+        boolean match=false;
+
+        // get List from Answered List
+        ArrayList<Integer> answeredQuestionList= new ArrayList<>();
+        for (int i = 0; i < answerSet.size(); i++) {
+            JSONObject currentAnswer = answerSet.get(i);
+            if (currentAnswer != null) {
+                int currentQuestionId = currentAnswer.optInt("question_id");
+                answeredQuestionList.add(currentQuestionId);
+            }
+        }
+
+        // get the list of mandated by submodules
+        ArrayList<Integer> questionList=new ArrayList<>();
+        if(questions != null && questions.moveToFirst()) {
+            do {
+
+                JSONObject displayConfig = new JSONObject(questions.getString(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION)));
+                if (displayConfig.has("display")) {
+                    JSONObject display = displayConfig.getJSONObject("display");
+                    if (display.optBoolean("requiredfield", false)) {
+                        String questionsString = questions.getString(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
+                        questionList.add(Integer.parseInt(questionsString));
+//                        if(type.equalsIgnoreCase("DropDown") || type.equalsIgnoreCase("checkbox")){
+//                            int question_id = requiredQuestions.getInt(requiredQuestions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
+//                            if(!dl.getLookupValuesForQuestion(question_id)){
+//                                value = false;
+//                                break;
+//                            }
+//                        }
+                    }
+                }
+            } while (questions.moveToNext());
+        }
+
+        // Compare the list
+        if(questionList.containsAll(answeredQuestionList) && answeredQuestionList.containsAll(questionList)){
+            match =true;
+        }
+        return  match;
+    }
+
 
     private String getAnswerMinMaxvalidation(int questionId, int answerId) {
         String ans = "noval";
@@ -1364,7 +1431,7 @@ public class DynamicQuestions {
             et.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
         } else if (datatype.equals("int")) {
             et.setInputType(InputType.TYPE_CLASS_NUMBER);
-            et.setFilters(new InputFilter[] {new InputFilter.LengthFilter(9)});
+            et.setFilters(new InputFilter[]{new InputFilter.LengthFilter(9)});
         }
 
         // add tv to array if this is a 100% group question
@@ -1398,6 +1465,19 @@ public class DynamicQuestions {
         final boolean isHundredPercentQuestion = isHPQTemp;
 
         final JSONObject finalDisplayConfig = displayConfig;
+
+        // restrict decimel places - AS-Q1, AS-Q2
+        int decimelRestrict= 0;
+        try {
+            decimelRestrict = CoffeeConstraints.isDecimalRestrict(displayConfig);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        if (decimelRestrict>0){
+            et.setFilters(new InputFilter[]{new DecimalDigitsInputFilter(decimelRestrict)});
+        }
+        // Decimal 2 digits concept - End
+
         et.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
@@ -1407,15 +1487,6 @@ public class DynamicQuestions {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
                 try {
-
-                    /*if (fetchMinMaxValue(finalDisplayConfig, AppConstants.RANGE_MAX) != 0
-                                || fetchMinMaxValue(finalDisplayConfig, AppConstants.RANGE_MIN) != 0 ? true : false) {
-                      if (Float.parseFloat(et.getText().toString()) > fetchMinMaxValue(finalDisplayConfig, AppConstants.RANGE_MAX)) {
-                          et.setText("");
-                          Toast.makeText(context, R.string.valid_range, Toast.LENGTH_LONG).show();
-                      }
-
-                    }*/
 
                 }catch (Exception e){
                     e.printStackTrace();
@@ -1428,35 +1499,77 @@ public class DynamicQuestions {
                 if ((isHundredPercentQuestion) && (!updatingHundredPercent)) {
                     autofill100Percent(et);
                 }
-//                if (SurveyType.equalsIgnoreCase("child")){
-                    saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, et.getText().toString());
-               /* }else{
-                    saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, et.getText().toString(),fetchMinMaxValue(finalDisplayConfig, AppConstants.RANGE_MIN),fetchMinMaxValue(finalDisplayConfig, AppConstants.RANGE_MAX));
-                }*/
+                saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, et.getText().toString());
 
+                if (et.getText().toString().trim().length() > 0){
+                    /* Contstraints Check- Coffee Survey Setup Project */
+                    int value=0;
+                    try {
+                         value=Integer.parseInt(et.getText().toString().trim());
+                    }catch (Exception e){}
+
+                    QuestionInfo questionInfo=new QuestionInfo();
+                    questionInfo.setQuestionId(questionId);
+                    questionInfo.setDataType(datatype);
+                    questionInfo.setDisplayConfig(finalDisplayConfig);
+                    Constraint constraint = null;
+                        try {
+                            constraint = new CoffeeConstraints(context,questionInfo,dl,answerSet).constraintType(finalDisplayConfig,value);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    if (constraint !=null){
+                        if (constraint.getErrorMsg()!=null){
+                            et.setError(constraint.getErrorMsg());
+                            et.setBackground(context.getResources().getDrawable(R.drawable.rounder_red_edittext));
+                            removeAnswerEntry(questionId);
+                        }else{
+                            et.setError(null);
+                        }
+                    }
+
+                    }
+
+
+//                if (questionId == 4322){
+//                    // multiple country based  questions - retake again
+//                   et.setError("Please amend the value of question 3 or 2, to fulfill the condition");
+//                    et.setBackground(context.getResources().getDrawable(R.drawable.rounder_red_edittext));
+//                }else if (questionId == 4323){
+//                    // Direct Value based  questions - retake
+//                    et.setError("Please enter value of question 1 within 15");
+//                    et.setBackground(context.getResources().getDrawable(R.drawable.rounder_red_edittext));
+//                }
+//                else if (questionId == 4306){
+//                    // Direct Value based  questions - retake
+//                    et.setError("The coffee tree density is higher than 10,000 trees/ha (Arabica). Please amend question 6");
+//                    et.setBackground(context.getResources().getDrawable(R.drawable.rounder_red_edittext));
+//                }
+//                else if (questionId == 4310){
+//                    // Direct Value based  questions - retake
+//                    et.setError("Please enter the value of question 7, within 0-100%");
+//                    et.setBackground(context.getResources().getDrawable(R.drawable.rounder_red_edittext));
+//                }
+//                else if (questionId == 4340){
+//                    // Direct Value based  questions - retake
+//                    et.setError("The farmer has produced >1,500kg/ha (Africa) of green coffee. Please amend question 25");
+//                    et.setBackground(context.getResources().getDrawable(R.drawable.rounder_red_edittext));
+//                }
+//
+
+  //              else {
+   //                 saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, et.getText().toString());
+  //              }
+//                if (questionId == 4310){
+//                    et.setError("Please enter the value of question 7, within 0-100% ");
+//                }else {
+//                    saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, et.getText().toString());
+//                }
 
             }
         });
 
 
-       /* et.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if(et.getText().toString().length() > 0) {
-                    if (fetchMinMaxValue(finalDisplayConfig, AppConstants.RANGE_MAX) != 0
-                            || fetchMinMaxValue(finalDisplayConfig, AppConstants.RANGE_MIN) != 0 ? true : false) {
-
-                        if (Float.parseFloat(et.getText().toString()) < fetchMinMaxValue(finalDisplayConfig, AppConstants.RANGE_MIN)) {
-
-                            et.setText("");
-                            Toast.makeText(context, R.string.valid_range, Toast.LENGTH_LONG).show();
-                        }
-                    }
-                }
-            }
-
-        });*/
 
 
         if (isRepeaterItem) {
@@ -1468,18 +1581,6 @@ public class DynamicQuestions {
     }
 
 
-   /* private int fetchMinMaxValue(JSONObject displayConfig, String rangeMinMax) {
-        // get disp"lay config to see if question has display range
-        try {
-            if (displayConfig.has("surveyrange")) {
-                    return displayConfig.getJSONObject("surveyrange").getInt(rangeMinMax);
-            }
-
-        } catch (JSONException e) {
-           e.printStackTrace();
-        }
-        return 0;
-    }*/
 
     private float fetchMinMaxValue(JSONObject displayConfig, String rangeMinMax) {
         // get disp"lay config to see if question has display range
@@ -3129,6 +3230,8 @@ public class DynamicQuestions {
         MatrixCursor spinnervalues = new MatrixCursor(columns);
         spinnervalues.addRow(new String[]{res.getString(R.string.ofis_switch_text_yes), "1", "1"});
         spinnervalues.addRow(new String[]{res.getString(R.string.ofis_switch_text_no), "2", "0"});
+      //
+        // spinner explaining
 
         dl.bindDataDrivenSpinner(spinner, spinnervalues, context, R.string.ModuleAnswerHint, null, false);
         Integer currentAnswer = -1;
@@ -3234,6 +3337,16 @@ public class DynamicQuestions {
                         }
                         Cursor selecteditem = (Cursor) spinner.getSelectedItem();
                         saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, selecteditem.getString(selecteditem.getColumnIndex("code")));
+                        if (questionId == 4333) {
+                        showAlertMsg("We recommend you to complete the General Certification Survey before continuing with this Starbucks certification survey");
+//                            TextView errorText = (TextView) spinner.getSelectedView();
+//                            errorText.setError("");
+//                            errorText.setTextColor(Color.RED);//just to highlight that this is an error
+//                            errorText.setText("We recommend you to complete the General Certification Survey before continuing with this Starbucks certification survey");
+//                          //  errorText.setBackground(context.getResources().getDrawable(R.drawable.rounder_red_edittext));
+
+                        }
+
                     } else {
                         removeAnswerEntry(questionId, answerId);
                         renderRepeaterItemstest(null, 2, questionWrapper, Utilities.farmerId, Utilities.olamFarmerId, Utilities.farmerModuleId, resources, false);
@@ -3295,6 +3408,16 @@ public class DynamicQuestions {
 
 
         }
+    }
+
+    public void showAlertMsg(String message){
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+        alertDialogBuilder.setMessage(message);
+        alertDialogBuilder.setPositiveButton("Ok",
+                (dialog, arg1) -> dialog.dismiss());
+
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
     }
 
     void renderYesNoQuestionSubQuestion(final Cursor qCursor, final boolean isRepeaterItem, final LinearLayout parentLayout, final int repeaterItemPosition, final int parentQuestionId, Cursor repeaterAnswers, Resources res) {

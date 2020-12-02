@@ -61,6 +61,8 @@ import com.olam.digital.ofis.gps.utils.GPSUtils;
 import com.olam.digital.ofis.matoma.MatomoHelper;
 import com.olam.digital.ofis.matoma.ScreenNameConstants;
 
+import org.json.JSONException;
+
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -503,10 +505,19 @@ public class CompleteModuleActivity extends BaseActivity {
         nextSaveSubmodule.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               /* boolean status = dynamicQuestions.CheckMinMaxforQuestion(questions);
-                if(! status){
+
+                // validate all the submodules question is answered
+                boolean isMandated = false;
+                try {
+                    isMandated = dynamicQuestions.isAllRequiredSubmoduleAnswered(questions);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                if(! isMandated){
+                    Toast.makeText(CompleteModuleActivity.this,"Please fill all the submodules question",Toast.LENGTH_SHORT).show();
                     return;
-                }*/
+                }
+                // End
                 if (isLastPage) {
 
                     try{
@@ -710,6 +721,7 @@ public class CompleteModuleActivity extends BaseActivity {
             finish();
         }
     }
+
 
 
     private void collectGPSPoint(Location farmLocation) {
