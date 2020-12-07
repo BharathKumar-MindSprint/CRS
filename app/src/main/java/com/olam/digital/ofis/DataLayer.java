@@ -2296,7 +2296,7 @@ public class DataLayer {
 
 
     // TODO remove annual survey and expires once no longer required.
-    Cursor getFarmerModules(long id, Context context) {
+    public Cursor getFarmerModules(long id, Context context) {
         Cursor farmer = null;
 
         try {
@@ -3532,7 +3532,7 @@ public class DataLayer {
         String sql = "SELECT " + answerTable + ".*," + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE + ", " + datatypeTable + "." + OFISDBContract.DatatypesEntry.COLUMN_NAME_DATATYPE_NAME +
                 " FROM " + answerTable + " INNER JOIN " + questionTable + " ON " + answerTable + "." + OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID + " = " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_ID +
                 " INNER JOIN " + datatypeTable + " ON " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID + " = " + datatypeTable + "." + OFISDBContract.DatatypesEntry.COLUMN_NAME_ID +
-                " WHERE " + OFISDBContract.AnswerEntry.COLUMN_NAME_PARENT_QUESTION_ID + " = 0  AND "+ OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID + " = ?  AND "+ OFISDBContract.AnswerEntry.COLUMN_NAME_FARMER_MODULE_ID + "= ? ORDER BY " + OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID + " ASC";
+                " WHERE " +answerTable+"."+ OFISDBContract.AnswerEntry.COLUMN_NAME_PARENT_QUESTION_ID + " = 0  AND "+answerTable+"."+ OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID + " = ?  AND "+answerTable+"."+ OFISDBContract.AnswerEntry.COLUMN_NAME_FARMER_MODULE_ID + "= ? ORDER BY " +answerTable+"."+ OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID + " ASC";
         String[] whereArgs = new String[]{String.valueOf(questionId),String.valueOf(farmerModuleId)};
 
         return db.rawQuery(sql, whereArgs);

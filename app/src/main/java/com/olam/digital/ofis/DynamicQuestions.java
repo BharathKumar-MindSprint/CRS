@@ -582,8 +582,12 @@ public class DynamicQuestions {
         }
 
         // Compare the list
-        if(questionList.containsAll(answeredQuestionList) && answeredQuestionList.containsAll(questionList)){
+        if (questionList.size() == 0){
             match =true;
+        }else {
+            if (questionList.containsAll(answeredQuestionList) && answeredQuestionList.containsAll(questionList)) {
+                match = true;
+            }
         }
         return  match;
     }
@@ -1478,6 +1482,8 @@ public class DynamicQuestions {
         }
         // Decimal 2 digits concept - End
 
+        Drawable originalDrawable = et.getBackground();
+
         et.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
@@ -1500,6 +1506,8 @@ public class DynamicQuestions {
                     autofill100Percent(et);
                 }
                 saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, et.getText().toString());
+//
+//
 
                 if (et.getText().toString().trim().length() > 0){
                     /* Contstraints Check- Coffee Survey Setup Project */
@@ -1514,20 +1522,20 @@ public class DynamicQuestions {
                     questionInfo.setDisplayConfig(finalDisplayConfig);
                     Constraint constraint = null;
                         try {
-                            constraint = new CoffeeConstraints(context,questionInfo,dl,answerSet).constraintType(finalDisplayConfig,value);
+                            constraint = new CoffeeConstraints(context,questionInfo,dl,answerSet,qCursor).constraintType(finalDisplayConfig,value);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
                     if (constraint !=null){
                         if (constraint.getErrorMsg()!=null){
                             et.setError(constraint.getErrorMsg());
-                            et.setBackground(context.getResources().getDrawable(R.drawable.rounder_red_edittext));
+                            et.setBackgroundResource(R.drawable.rounder_red_edittext);
                             removeAnswerEntry(questionId);
                         }else{
-                            et.setError(null);
+                            et.setBackground(originalDrawable);
+                           // et.setError(null);
                         }
                     }
-
                     }
 
 
@@ -1545,7 +1553,7 @@ public class DynamicQuestions {
 //                    et.setError("The coffee tree density is higher than 10,000 trees/ha (Arabica). Please amend question 6");
 //                    et.setBackground(context.getResources().getDrawable(R.drawable.rounder_red_edittext));
 //                }
-//                else if (questionId == 4310){
+////                else if (questionId == 4310){
 //                    // Direct Value based  questions - retake
 //                    et.setError("Please enter the value of question 7, within 0-100%");
 //                    et.setBackground(context.getResources().getDrawable(R.drawable.rounder_red_edittext));

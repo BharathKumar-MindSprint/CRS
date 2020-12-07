@@ -23,4 +23,7 @@ public class CoffeeConstants {
     public static final String DECIMAL_DIGITS = "decimal-digits";
 
     public static final String DIGITS = "digits";
+    public static final String MULTIPLE_CALCULATION_COUNTRY = "multiple-formula-country";
+    public static final String COUNTRY_IN_ORDER = "countryInOrder";
+    public static final String QUESTION_NUMBER = "questionNo";
 }
