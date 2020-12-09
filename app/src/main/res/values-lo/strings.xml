@@ -415,7 +415,7 @@
     <string name="cancel_logging_question">"ຍົກເລີກການບັນທຶກ "</string>
     <string name="cancel_logging_msg">"%1$s ການບັນທຶກຖືກຍົກເລີກ "</string>
     <string name="not_logged_yet">"%1$s ການບັນທຶກບໍ່ສຳເລັດ "</string>
-    <string name="area_info">"ເນື້ອທີ່: %1$f ເຮັກຕາ "</string>
+    <string name="area_info">"ເນື້ອທີ່: %1$s ເຮັກຕາ "</string>
     <string name="save_polygon_alertdialog_title">"ບັນທຶກ%1$s ຕອນ? "</string>
     <string name="save_polygon_alertdialog_msg">"ທ່ານບໍ່ສາມາດບັນທຶກ%1$sຕອນດິນໄດ້ "</string>
     <string name="close">"ປິດ "</string>
@@ -464,7 +464,7 @@
     <string name="invalid_imei_msg">ການກວດສອບໄດ້ລົ້ມເຫລວ. ກະລຸນາຕິດຕໍ່ພວກເຮົາເພື່ອຂໍຄວາມຊ່ວຍເຫຼືອ</string>
     <string name="household_question">Farmer has any children under 18 doing household?</string>
     <string name="title_child_labour">Register Child</string>
-    <string name="inspection_question" />
+    <string name="inspection_question">No children found on farm (Inspection)</string>
     <string name="followup_question">Any children found during follow-up?</string>
     <string name="add_child">Add Child</string>
     <string name="full_name">Child name</string>
@@ -583,4 +583,5 @@
 
     <string name="allchilds_name">ທຸກໆຊື່ຂອງເດັກ (ຕາມຄວາມ ເໝາະ ສົມ)</string>
 
+    <string name="zero_area_msg">Cannot save recorded polygon with 0ha. Please try recording a different polygon</string>
 </resources>

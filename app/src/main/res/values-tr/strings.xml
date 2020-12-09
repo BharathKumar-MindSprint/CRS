@@ -429,7 +429,7 @@
     <string name="cancel_logging_question">"Girişi iptal et "</string>
     <string name="cancel_logging_msg">"%1$s Giriş iptal edildi "</string>
     <string name="not_logged_yet">"%1$s Henüz giriş yapılmadı "</string>
-    <string name="area_info">Alan: %1$f ha</string>
+    <string name="area_info">Alan: %1$s ha</string>
     <string name="save_polygon_alertdialog_title">"Poligonu kaydet %1$s"</string>
     <string name="save_polygon_alertdialog_msg">"%1$s Bölgesine tekrar giriş yapamayacaksınız "</string>
     <string name="close">"Kapat "</string>
@@ -478,7 +478,7 @@
     <string name="invalid_imei_msg">Kimlik doğrulama başarısız oldu. Lütfen yardım için bize ulaşın</string>
     <string name="household_question">Farmer has any children under 18 doing household?</string>
     <string name="title_child_labour">Register Child</string>
-    <string name="inspection_question" />
+    <string name="inspection_question">No children found on farm (Inspection)</string>
     <string name="followup_question">Any children found during follow-up?</string>
     <string name="add_child">Add Child</string>
     <string name="full_name">Child name</string>
@@ -597,4 +597,5 @@
 
     <string name="allchilds_name">Tüm çocukların isimleri (uygun olduğu üzere)</string>
 
+    <string name="zero_area_msg">Cannot save recorded polygon with 0ha. Please try recording a different polygon</string>
 </resources>

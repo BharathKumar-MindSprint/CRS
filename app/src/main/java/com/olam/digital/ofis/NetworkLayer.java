@@ -3150,9 +3150,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
     }
 
-    private static String getMSAbsoluteUrl(String relativeUrl) {
-        return BuildConfig.MICROSERVICE_HOST + relativeUrl;
-    }
 
     // Child Registration Code
     private void postChild(final int networkQueueItemId, final Handler handler, final Message msg, final int total, final int progress, final Integer originalSyncRequestItemId) {

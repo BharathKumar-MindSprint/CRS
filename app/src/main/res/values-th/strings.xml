@@ -429,7 +429,7 @@
     <string name="cancel_logging_question">"ยกเลิกการบันทึก "</string>
     <string name="cancel_logging_msg">"%1$s ยกเลิกการบันทึก  "</string>
     <string name="not_logged_yet">"%1$s ยังไม่ได้บันทึก  "</string>
-    <string name="area_info">"พื้นที่ %1$f เฮกเกตอร์ "</string>
+    <string name="area_info">"พื้นที่ %1$s เฮกเกตอร์ "</string>
     <string name="save_polygon_alertdialog_title">"บันทึกขอบเขตพื้นที่ %1$s ? "</string>
     <string name="save_polygon_alertdialog_msg">"คุณจะไม่สามารถบันทึก %1$s ได้อีก "</string>
     <string name="close">"ปิด "</string>
@@ -478,7 +478,7 @@
     <string name="invalid_imei_msg">รับรองความถูกต้องล้มเหลว. กรุณาติดต่อเราเพื่อขอความช่วยเหลือ</string>
     <string name="household_question">Farmer has any children under 18 doing household?</string>
     <string name="title_child_labour">Register Child</string>
-    <string name="inspection_question" />
+    <string name="inspection_question">No children found on farm (Inspection)</string>
     <string name="followup_question">Any children found during follow-up?</string>
     <string name="add_child">Add Child</string>
     <string name="full_name">Child name</string>
@@ -596,5 +596,5 @@
     <string name="Please_accept_consent">You must accept consent statements to save the farmer</string>
 
     <string name="allchilds_name">ชื่อเด็กทั้งหมด (ตามความเหมาะสม)</string>
-
+    <string name="zero_area_msg">Cannot save recorded polygon with 0ha. Please try recording a different polygon</string>
 </resources>

@@ -323,7 +323,6 @@ public class DynamicQuestions {
             }
         }*/
         int tableRows = questionTable.getChildCount();
-
         dl.prentidAnswerDelete(parentQuestionId, questionId);
         for (int j = 0; j < tableRows; j++) {
             TableRow tr = (TableRow) questionTable.getChildAt(j);
@@ -1108,6 +1107,11 @@ public class DynamicQuestions {
                             today.setTime(serverDateFormat.parse(answerDateString));
                             saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, answerDateString);
                         }
+                    }else{
+                        /* OCA-59 - Date Picker Question */
+                        // Solution : Update the current data during inflate the view
+                        Calendar cal = Calendar.getInstance();
+                        saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, serverDateFormat.format(cal.getTime()));
                     }
 
                     dp.init(
@@ -1360,6 +1364,7 @@ public class DynamicQuestions {
             et.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
         } else if (datatype.equals("int")) {
             et.setInputType(InputType.TYPE_CLASS_NUMBER);
+            et.setFilters(new InputFilter[] {new InputFilter.LengthFilter(9)});
         }
 
         // add tv to array if this is a 100% group question
@@ -1419,7 +1424,7 @@ public class DynamicQuestions {
 
             @Override
             public void afterTextChanged(Editable editable) {
-
+               
                 if ((isHundredPercentQuestion) && (!updatingHundredPercent)) {
                     autofill100Percent(et);
                 }

@@ -429,7 +429,7 @@
     <string name="cancel_logging_question">"Hủy đăng nhập "</string>
     <string name="cancel_logging_msg">"%1$s đã hủy đăng nhập! "</string>
     <string name="not_logged_yet">"%1$s chưa đăng ký! "</string>
-    <string name="area_info">"Diện tích: %1$f ha "</string>
+    <string name="area_info">"Diện tích: %1$s ha "</string>
     <string name="save_polygon_alertdialog_title">"Lưu Lô số %1$s không? "</string>
     <string name="save_polygon_alertdialog_msg">"Bạn không thể đăng nhập lại %1$s "</string>
     <string name="close">"Đóng "</string>
@@ -478,7 +478,7 @@
     <string name="invalid_imei_msg">Lỗi xác thực . Vui lòng liên hệ với chúng tôi để được hỗ trợ</string>
     <string name="household_question">Farmer has any children under 18 doing household?</string>
     <string name="title_child_labour">Register Child</string>
-    <string name="inspection_question" />
+    <string name="inspection_question">No children found on farm (Inspection)</string>
     <string name="followup_question">Any children found during follow-up?</string>
     <string name="add_child">Add Child</string>
     <string name="full_name">Child name</string>
@@ -597,4 +597,5 @@
 
     <string name="allchilds_name">Tất cả tên của trẻ em (nếu có)</string>
 
+    <string name="zero_area_msg">Cannot save recorded polygon with 0ha. Please try recording a different polygon</string>
 </resources>
