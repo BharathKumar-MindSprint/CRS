@@ -44,6 +44,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.crash.FirebaseCrash;
+import com.olam.digital.ofis.coffeesurveyconstraints.CoffeeConstants;
 import com.olam.digital.ofis.coffeesurveyconstraints.CoffeeConstraints;
 import com.olam.digital.ofis.coffeesurveyconstraints.Constraint;
 import com.olam.digital.ofis.coffeesurveyconstraints.QuestionInfo;
@@ -585,7 +586,7 @@ public class DynamicQuestions {
         if (questionList.size() == 0){
             match =true;
         }else {
-            if (questionList.containsAll(answeredQuestionList) && answeredQuestionList.containsAll(questionList)) {
+            if (answeredQuestionList.containsAll(questionList)) {
                 match = true;
             }
         }
@@ -1469,6 +1470,37 @@ public class DynamicQuestions {
         final boolean isHundredPercentQuestion = isHPQTemp;
 
         final JSONObject finalDisplayConfig = displayConfig;
+
+        // Check the calculation tag Availability
+        String calculationNode = displayConfig.optString(CoffeeConstants.CALCULATION,"noTag");
+        boolean calculationAvailable=false;
+        if (calculationNode !=null && !calculationNode.equalsIgnoreCase("noTag")){
+            calculationAvailable=true;
+        }
+        boolean defaultTag=false;
+        try {
+            JSONObject jsonObject = new JSONObject(calculationNode);
+            defaultTag = jsonObject.optBoolean(CoffeeConstants.DEFAULT,false);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        if (defaultTag){
+            if (hasAnswers) {
+                   String currentAnswerValue = null;
+                    if (qCursor.getColumnIndex("answer_" + datatype) != -1) {
+                        currentAnswerValue = qCursor.getString(qCursor.getColumnIndex("answer_" + datatype));
+                    }
+                if (currentAnswerValue != null) {
+                    et.setText(currentAnswerValue);
+                    saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, currentAnswerValue);
+                }
+            }else{
+                String defaultAnswer="0";
+                et.setText(defaultAnswer);
+                saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, defaultAnswer);
+            }
+        }
 
         // restrict decimel places - AS-Q1, AS-Q2
         int decimelRestrict= 0;

@@ -253,17 +253,17 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
 
 
         // check the survey submit check
-        try {
-            boolean status= new CoffeeConstraints(this,dl).findSurveyStatus((int) farmerId,102);
-            if (status){
-                Toast.makeText(ViewFarmerActivity.this,"Submitted",Toast.LENGTH_SHORT ).show();
-            }else{
-                Toast.makeText(ViewFarmerActivity.this," not Submitted",Toast.LENGTH_SHORT ).show();
-
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            boolean status= new CoffeeConstraints(this,dl).findSurveyStatus((int) farmerId,102);
+//            if (status){
+//                Toast.makeText(ViewFarmerActivity.this,"Submitted",Toast.LENGTH_SHORT ).show();
+//            }else{
+//                Toast.makeText(ViewFarmerActivity.this," not Submitted",Toast.LENGTH_SHORT ).show();
+//
+//            }
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
 
     }
 

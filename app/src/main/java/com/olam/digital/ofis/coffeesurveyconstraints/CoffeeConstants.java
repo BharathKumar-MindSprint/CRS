@@ -26,4 +26,7 @@ public class CoffeeConstants {
     public static final String MULTIPLE_CALCULATION_COUNTRY = "multiple-formula-country";
     public static final String COUNTRY_IN_ORDER = "countryInOrder";
     public static final String QUESTION_NUMBER = "questionNo";
+    public static final String SINGLE_CALCULATION = "single-calculation";
+    public static final String DEFAULT = "default";
+    public static final String UNIT = "unit";
 }
