@@ -17,18 +17,18 @@ apply plugin: 'com.google.firebase.firebase-perf'
 apply plugin: 'io.fabric'
 
 
-//apply plugin: 'com.dynatrace.tools.android'
-
-//dynatrace {
-//    defaultConfig {
-//        beaconURL 'https://eok851.dynatrace-managed.com:9999/mbeacon/82203a30-a89c-4afb-8009-c475586c3488'
-//        applicationId '1bd3a5cf-7c8d-49ae-8452-7116cfccb064'
-//       /* beaconURL 'https://eok851.dynatrace-managed.com:9999/mbeacon/8f745a3a-ca48-40b4-aec4-a663c087c19f'
-//        applicationId '037a8683-44f6-4b8b-ba26-5c8bd021d473'*/
-//        agentProperties 'DTXLogLevel' : 'debug'
+apply plugin: 'com.dynatrace.tools.android'
 //
-//    }
-//}
+dynatrace {
+    defaultConfig {
+         beaconURL 'https://eok851.dynatrace-managed.com:9999/mbeacon/82203a30-a89c-4afb-8009-c475586c3488'
+         applicationId '1bd3a5cf-7c8d-49ae-8452-7116cfccb064'
+        /*beaconURL 'https://eok851.dynatrace-managed.com:9999/mbeacon/8f745a3a-ca48-40b4-aec4-a663c087c19f'
+        applicationId '037a8683-44f6-4b8b-ba26-5c8bd021d473'*/
+        agentProperties 'DTXLogLevel' : 'debug'
+
+    }
+}
 
 
 //noinspection GroovyMissingReturnStatement
@@ -64,8 +64,8 @@ android {
         targetSdkVersion 29
         multiDexEnabled true
 
-        versionCode 143
-        versionName "10.1.46"
+        versionCode 48
+        versionName "10.3.8"
 
         ndk {
 		//	abiFilters 'x86', 'armeabi-v7a', 'arm64-v8a'
