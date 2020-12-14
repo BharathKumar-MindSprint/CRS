@@ -72,6 +72,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import okhttp3.internal.Util;
+
 /**
  * Created by ben on 02/06/2015.
  */
@@ -532,6 +534,11 @@ public class DynamicQuestions {
         }
 
     }
+
+    private void removeAnswerEntryDatabase(int farmerModuleId, int questionId) {
+        dl.DeleteAnswersByQuestionId(farmerModuleId, questionId);
+    }
+
 
     private void removeAnswerEntry(int questionId) {
         for (int i = 0; i < answerSet.size(); i++) {
@@ -1473,32 +1480,35 @@ public class DynamicQuestions {
 
         // Check the calculation tag Availability
         String calculationNode = displayConfig.optString(CoffeeConstants.CALCULATION,"noTag");
-        boolean calculationAvailable=false;
-        if (calculationNode !=null && !calculationNode.equalsIgnoreCase("noTag")){
-            calculationAvailable=true;
-        }
-        boolean defaultTag=false;
+        String defaultValue="";
         try {
             JSONObject jsonObject = new JSONObject(calculationNode);
-            defaultTag = jsonObject.optBoolean(CoffeeConstants.DEFAULT,false);
+            defaultValue = jsonObject.getString(CoffeeConstants.DEFAULT);
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        if (defaultTag){
-            if (hasAnswers) {
-                   String currentAnswerValue = null;
-                    if (qCursor.getColumnIndex("answer_" + datatype) != -1) {
-                        currentAnswerValue = qCursor.getString(qCursor.getColumnIndex("answer_" + datatype));
+        if (!defaultValue.equalsIgnoreCase("")){
+            // Condition Verification Code
+            int farmerModuleId= (int) Utilities.farmerModuleId;
+            Cursor answerQuery = dl.getAnswersByFarmerModuleQuestionId(farmerModuleId, questionId);
+            String answer = "";
+            if (answerQuery.getCount() > 0) {
+                while (answerQuery.moveToNext()) {
+                    String datatypeQuestion = answerQuery.getString(answerQuery.getColumnIndex(OFISDBContract.DatatypesEntry.COLUMN_NAME_DATATYPE_NAME));
+                    if (datatypeQuestion.equalsIgnoreCase("int")) {
+                        answer = String.valueOf(answerQuery.getString(answerQuery.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_INT)));
+                    } else if (datatypeQuestion.equalsIgnoreCase("decimal")) {
+                        answer = String.valueOf(answerQuery.getString(answerQuery.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_DECIMAL)));
                     }
-                if (currentAnswerValue != null) {
-                    et.setText(currentAnswerValue);
-                    saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, currentAnswerValue);
                 }
+            }
+            if (answer.equalsIgnoreCase("")){
+                et.setText(defaultValue);
+                saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, defaultValue);
             }else{
-                String defaultAnswer="0";
-                et.setText(defaultAnswer);
-                saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, defaultAnswer);
+                et.setText(answer);
+                saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, answer);
             }
         }
 
@@ -1540,13 +1550,8 @@ public class DynamicQuestions {
                 saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, et.getText().toString());
 //
 //
-
-                if (et.getText().toString().trim().length() > 0){
                     /* Contstraints Check- Coffee Survey Setup Project */
-                    int value=0;
-                    try {
-                         value=Integer.parseInt(et.getText().toString().trim());
-                    }catch (Exception e){}
+                    String value= et.getText().toString().trim();
 
                     QuestionInfo questionInfo=new QuestionInfo();
                     questionInfo.setQuestionId(questionId);
@@ -1562,12 +1567,17 @@ public class DynamicQuestions {
                         if (constraint.getErrorMsg()!=null){
                             et.setError(constraint.getErrorMsg());
                             et.setBackgroundResource(R.drawable.rounder_red_edittext);
-                            removeAnswerEntry(questionId);
+                            if (et.getText().toString().trim().equalsIgnoreCase("")){
+                                // Remove the data from existing Database if data persists
+                                removeAnswerEntryDatabase((int) Utilities.farmerModuleId,questionId);
+                            }else{
+                                removeAnswerEntry(questionId);
+                            }
+
                         }else{
                             et.setBackground(originalDrawable);
                            // et.setError(null);
                         }
-                    }
                     }
 
 
@@ -1831,6 +1841,7 @@ public class DynamicQuestions {
 
             dl.bindDataDrivenSpinner(spinner, spinnervalues, context, R.string.ModuleAnswerHint, columnName, false);
 
+
             if (hasAnswers) {
                 if (datatype.equals("int") && (!isDensityQuestion)) {
                     Integer currentAnswerInt = -1;
@@ -1866,6 +1877,47 @@ public class DynamicQuestions {
                     }
                 }
             }
+
+            // N/A for LookUp Value franklin
+            if(displayConfig.has("calculation")){
+                String calculationNode = displayConfig.optString(CoffeeConstants.CALCULATION);
+                JSONObject jsonObject = new JSONObject(calculationNode);
+                int defaultLookUpValue = jsonObject.optInt("defaultLookUpValue",0);
+                if(defaultLookUpValue != 0){
+//                    if(hasAnswers){
+//                    if (datatype.equals("int") && (!isDensityQuestion)) {
+//                        Integer currentAnswerInt = -1;
+//                        if (isRepeaterItem && repeaterAnswers != null && repeaterAnswers.getCount() > 0) {
+//                            currentAnswerInt = repeaterAnswers.getInt(repeaterAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_INT));
+//                        } else {
+//                            if (qCursor.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_INT) != -1) {
+//                                currentAnswerInt = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_INT));
+//                            }
+//                        }
+//
+//                        for (int i = 0; i < spinner.getCount(); i++) {
+//                            if (spinner.getItemIdAtPosition(i) == currentAnswerInt) {
+//                                spinner.setSelection(i);
+//                                break;
+//                            }
+//                        }
+//
+//                    }
+//                    }else{
+                    if (!hasAnswers) {
+                        for (int i = 0; i < spinner.getCount(); i++) {
+                            if (spinner.getItemIdAtPosition(i) == defaultLookUpValue) {
+                                spinner.setSelection(i);
+                                break;
+                            }
+                        }
+                    }
+                     //   saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, String.valueOf(defaultLookUpValue));
+                   // }
+                }
+            }
+
+
 
 
             spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -2291,7 +2343,26 @@ public class DynamicQuestions {
                         }
                     }
                     cbAnswers.moveToPosition(-1);
+                }else {
+                    // N/A Question for franklin
+                    try {
+                        JSONObject displayConfig = new JSONObject(questions.getString(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION)));
+                        if (displayConfig.has("calculation")) {
+                            String calculationNode = displayConfig.optString(CoffeeConstants.CALCULATION);
+                            JSONObject jsonObject = new JSONObject(calculationNode);
+                            int defaultLookUpValue = jsonObject.optInt("defaultLookUpValue", 0);
+                            if (defaultLookUpValue != 0) {
+                                if (defaultLookUpValue == cbId) {
+                                    cb.setChecked(true);
+                                }
+                            }
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 }
+
+
 
                 tr.setOnClickListener(new View.OnClickListener() {
                     @Override

@@ -514,7 +514,7 @@ public class CompleteModuleActivity extends BaseActivity {
                     e.printStackTrace();
                 }
                 if(! isMandated){
-                    Toast.makeText(CompleteModuleActivity.this,"Please fill all the submodules question for coffee survey project",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(CompleteModuleActivity.this,res.getString(R.string.restriction_in_submodules),Toast.LENGTH_SHORT).show();
                     return;
                 }
                 // End

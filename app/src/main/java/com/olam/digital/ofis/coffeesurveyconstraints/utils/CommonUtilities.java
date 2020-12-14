@@ -2,6 +2,8 @@ package com.olam.digital.ofis.coffeesurveyconstraints.utils;
 
 import android.content.res.Resources;
 
+import java.text.NumberFormat;
+
 public class CommonUtilities {
 
     public static String getLocaleSuffix(Resources res) {
@@ -12,5 +14,11 @@ public class CommonUtilities {
         }
         result= result.substring(0, 1).toUpperCase() + result.substring(1);
         return result;
+    }
+
+    public static String FormatNumbers(int number) {
+        NumberFormat myFormat = NumberFormat.getInstance();
+        myFormat.setGroupingUsed(true);
+        return myFormat.format(number);
     }
 }

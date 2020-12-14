@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.widget.Toast;
 
+import com.google.gson.JsonObject;
 import com.olam.digital.ofis.DataLayer;
 import com.olam.digital.ofis.OFISDBContract;
 import com.olam.digital.ofis.R;
@@ -59,22 +60,31 @@ public class CoffeeConstraints {
 
 
 
-    public Constraint constraintType(JSONObject displayConfig, int value) throws JSONException {
+    public Constraint constraintType(JSONObject displayConfig, String value) throws JSONException {
 
         String calculationNode = displayConfig.optString(CoffeeConstants.CALCULATION);
-        JSONObject jsonObject = new JSONObject(calculationNode);
-        String type = jsonObject.optString(CoffeeConstants.TYPE);
-        Constraint constraint = null;
+        JSONObject calculationJsonObject = new JSONObject(calculationNode);
+        String type = calculationJsonObject.optString(CoffeeConstants.TYPE);
+        Constraint constraint = new Constraint();
 
         if (type.equalsIgnoreCase(CoffeeConstants.COMPARE)) {
-            JSONArray valuesInOrder = (JSONArray) jsonObject.get(CoffeeConstants.VALUES_IN_ORDER);
+
+            int  questionPosition=calculationJsonObject.optInt(CoffeeConstants.QUESTION_NUMBER,0);
+
+            // If value s empty
+            if (value.equalsIgnoreCase("")){
+                ArrayList<Integer> errorList=new ArrayList<>();
+                errorList.add(questionPosition);
+                constraint.setErrorMsg(generateErrorMsgByQuestionId(errorList,displayConfig));
+                return constraint;
+            }
+
+            JSONArray valuesInOrder = (JSONArray) calculationJsonObject.get(CoffeeConstants.VALUES_IN_ORDER);
             ArrayList<Integer> valueList = new ArrayList<>();
             for (int i = 0; i < valuesInOrder.length(); i++) {
                 valueList.add(valuesInOrder.getInt(i));
             }
-            String operation = jsonObject.optString(CoffeeConstants.OPERATION);
-            String unit=jsonObject.optString(CoffeeConstants.UNIT);
-           int  questionPosition=jsonObject.optInt(CoffeeConstants.QUESTION_NUMBER,0);
+            String operation = calculationJsonObject.optString(CoffeeConstants.OPERATION);
             int x = 0, y = 0;
             if (valueList.size() == 0) {
                 Toast.makeText(mContext, "Survey Config error. Please check the display configuration",Toast.LENGTH_SHORT).show();
@@ -83,15 +93,20 @@ public class CoffeeConstraints {
             } else if (valueList.size() == 2) {
                 y = (int) valuesInOrder.get(1);
             }
-            constraint = comparisionCheck(operation, value, x, y,questionPosition,unit);
+            constraint = comparisionCheck(operation, Integer.parseInt(value), x, y,questionPosition,calculationJsonObject);
         } else if (type.equalsIgnoreCase(CoffeeConstants.MIN_MAX)) {
-            int min = Integer.parseInt(jsonObject.getString(CoffeeConstants.MIN));
-            int max = Integer.parseInt(jsonObject.getString(CoffeeConstants.MAX));
-            String unit = jsonObject.optString(CoffeeConstants.UNIT);
-            int  questionPosition=jsonObject.optInt(CoffeeConstants.QUESTION_NUMBER,0);
-            constraint = minMaxCheck(value, min, max,questionPosition,unit);
+            int min = Integer.parseInt(calculationJsonObject.getString(CoffeeConstants.MIN));
+            int max = Integer.parseInt(calculationJsonObject.getString(CoffeeConstants.MAX));
+            int  questionPosition=calculationJsonObject.optInt(CoffeeConstants.QUESTION_NUMBER,0);
+            if (value.equalsIgnoreCase("")){
+                ArrayList<Integer> errorList=new ArrayList<>();
+                errorList.add(questionPosition);
+                constraint.setErrorMsg(generateErrorMsgByQuestionId(errorList,displayConfig));
+                return constraint;
+            }
+            constraint = minMaxCheck(Integer.parseInt(value), min, max,questionPosition,calculationJsonObject);
         } else if (type.equalsIgnoreCase(CoffeeConstants.MULTIPLE_FORMULA_DROPDOWN)) {
-            constraint = multipleCalculationDropdown(value,displayConfig);
+            constraint = multipleCalculationDropdown(displayConfig);
         }else if (type.equalsIgnoreCase(CoffeeConstants.MULTIPLE_CALCULATION_COUNTRY)){
             constraint=multipleCalculationCountry(displayConfig);
         }else if (type.equalsIgnoreCase(CoffeeConstants.SINGLE_CALCULATION)) {
@@ -104,59 +119,70 @@ public class CoffeeConstraints {
     }
 
 
-    private Constraint comparisionCheck(String operation, int value, int x, int y, int position,String unit) {
+    private Constraint comparisionCheck(String operation, int value, int x, int y, int position,JSONObject calculationObj) {
         Constraint constraint = new Constraint();
+        boolean error=false;
         switch (operation) {
             case "<x":
                 if (value < x) {
-                    constraint.setErrorMsg(mContext.getResources().getString(R.string.direct_value_above_error,position,x)+unit);
+                    error =true;
                 }
                 break;
             case ">x":
                 if (value > x) {
-                    constraint.setErrorMsg(mContext.getResources().getString(R.string.direct_value_below_error,position,x)+unit);
+                    error=true;
                 }
                 break;
 
             case "<=x":
                 if (value <= x) {
-                    constraint.setErrorMsg(mContext.getResources().getString(R.string.direct_value_less_than_error,position,x)+unit);
+                    error=true;
                 }
                 break;
             case ">=x":
                 if (value >= x) {
-                    constraint.setErrorMsg(mContext.getResources().getString(R.string.direct_value_greater_than_error,position,x)+unit);
+                    error=true;
                 }
                 break;
             case ">x<y":
                 if (value > x && value < y) {
-                    constraint.setErrorMsg(mContext.getResources().getString(R.string.direct_greater_lesser_error,position,x,y)+unit);
+                    error=true;
                 }
                 break;
             default:
-                Toast.makeText(mContext, "Congiguration error. Operator is out of the system assignment", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext, "Configuration error. Operator is out of the system assignment", Toast.LENGTH_SHORT).show();
+        }
+        if (error) {
+            try {
+                constraint.setErrorMsg(getErrorMsg(calculationObj,position,0));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         return constraint;
     }
 
-    private Constraint minMaxCheck(int value, int min, int max,int position,String unit) {
+    private Constraint minMaxCheck(int value, int min, int max,int position,JSONObject calculationObj) {
         boolean minMax = false;
         Constraint constraint = new Constraint();
         if (value >= min && value <= max) {
             minMax = true;
         }
-        constraint.setSuccess(minMax);
-        if (!minMax){
-            constraint.setErrorMsg(mContext.getResources().getString(R.string.min_max_error_msg,position,min,max)+unit);
+        if (!minMax) {
+            try {
+                constraint.setErrorMsg(getErrorMsg(calculationObj,position,0));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         return constraint;
     }
 
 
-    private Constraint multipleCalculationDropdown(int value, JSONObject displayConfig) throws JSONException {
+    private Constraint multipleCalculationDropdown(JSONObject displayConfig) throws JSONException {
         Constraint constraint = new Constraint();
         // get Question Information
-        String calculation = questionInfo.getDisplayConfig().getString(CoffeeConstants.CALCULATION);
+        String calculation = displayConfig.getString(CoffeeConstants.CALCULATION);
         JSONObject calculationObj = new JSONObject(calculation);
         // Question No
         int  questionPosition=calculationObj.optInt(CoffeeConstants.QUESTION_NUMBER,0);
@@ -194,7 +220,7 @@ public class CoffeeConstraints {
                         // get the answers from answer set
                         double answer= getAnswerFromSameSubmodule(questionList.get(i));
                         if (answer == -1){
-                            errorEmptyList.add(i);
+                            errorEmptyList.add(questionList.get(i));
                         }else {
                             int questionNo = i + 1;
                             answerHashMap.put("q" + questionNo, answer);
@@ -213,16 +239,16 @@ public class CoffeeConstraints {
                                 answerHashMap.put("q" + i + 1, answer);
                             }
                         }else{
-                            errorEmptyList.add(i);
+                            errorEmptyList.add(questionList.get(i));
                         }
                     }
                 }
 
                 // Collecting answer for dropdown Question and added in answer Hash Map
-            int selectedLookupValue=-1;
+            int selectedLookupValue=0;
             if (isQuestionAvailableInSubModule(Integer.parseInt(dropdownQuestion))){
                 selectedLookupValue =getLookUpValueAnswerSameModule(Integer.parseInt(dropdownQuestion));
-                if (selectedLookupValue == -1){
+                if (selectedLookupValue == 0){
                     errorEmptyList.add(Integer.parseInt(dropdownQuestion));
                 }
             }else{
@@ -239,7 +265,7 @@ public class CoffeeConstraints {
 
             // If the calculation Questions does not answered
                 if (errorEmptyList.size()>0){
-                    String errorMsg = generateErrorMsgByQuestionId(errorEmptyList);
+                    String errorMsg = generateErrorMsgByQuestionId(errorEmptyList,displayConfig);
                     constraint.setErrorMsg(errorMsg);
                 }else{
                     try {
@@ -336,9 +362,25 @@ public class CoffeeConstraints {
     }
 
 
-    private String generateErrorMsgByQuestionId(ArrayList<Integer> errorEmptyList) {
-        // arrange the proper position
-        return mContext.getResources().getString(R.string.common_survey_config_error)+errorEmptyList.toString();
+    private String generateErrorMsgByQuestionId(ArrayList<Integer> errorEmptyList,JSONObject displayConfig){
+        // arrange the proper position - Old
+//        String error=mContext.getResources().getString(R.string.please_respond_mandatory_question);
+////        String questionNos="";
+////        if (errorEmptyList.size()==1) {
+////             questionNos = dataLayer.getQuestionNo(errorEmptyList.get(0).toString());
+////        }else if (errorEmptyList.size()==2){
+////             questionNos = dataLayer.getQuestionNo(errorEmptyList.get(0).toString()) + " & "+dataLayer.getQuestionNo(errorEmptyList.get(1).toString());;
+////        }
+   //     return error + " "+questionNos;
+
+        String error="";
+        try {
+            String calcNode=displayConfig.getString(CoffeeConstants.CALCULATION);
+            JSONObject jsonObject=new JSONObject(calcNode).getJSONObject("mandatoryErrorMsg");
+            String msg= jsonObject.optString("error"+CommonUtilities.getLocaleSuffix(mContext.getResources()),"Please configure the error message");
+            error= msg.replace("~Q",String.valueOf(dataLayer.getQuestionNo(errorEmptyList.get(0).toString())));
+        }catch (Exception e){}
+       return  error;
     }
 
 
@@ -374,7 +416,7 @@ private Constraint multipleCalculationCountry( JSONObject displayConfig) throws 
                 // get the answers from answer set
                 double answer= getAnswerFromSameSubmodule(questionList.get(i));
                 if (answer == -1){
-                    errorEmptyList.add(i);
+                    errorEmptyList.add(questionList.get(i));
                 }else {
                     int questionNo = i + 1;
                     answerHashMap.put("q" + questionNo, answer);
@@ -395,7 +437,7 @@ private Constraint multipleCalculationCountry( JSONObject displayConfig) throws 
                         answerHashMap.put("q" + questionNo, answer);
                     }
                 }else{
-                    errorEmptyList.add(i);
+                    errorEmptyList.add(questionList.get(i));
                 }
             }
         }
@@ -422,7 +464,7 @@ private Constraint multipleCalculationCountry( JSONObject displayConfig) throws 
 
 
         if (errorEmptyList.size()>0){
-            String errorMsg = generateErrorMsgByQuestionId(errorEmptyList);
+            String errorMsg = generateErrorMsgByQuestionId(errorEmptyList,displayConfig);
             constraint.setErrorMsg(errorMsg);
         }else{
             constraint= doCalculationWithMultipleCountry(formula,answerHashMap,limitsList,countryId,countryList,questionPosition,calculationObj);
@@ -496,7 +538,7 @@ private Constraint multipleCalculationCountry( JSONObject displayConfig) throws 
                 // get the answers from answer set
                 double answer= getAnswerFromSameSubmodule(questionList.get(i));
                 if (answer == -1){
-                    errorEmptyList.add(i);
+                    errorEmptyList.add(questionList.get(i));
                 }else {
                     int questionNo = i + 1;
                     answerHashMap.put("q" + questionNo, answer);
@@ -516,13 +558,13 @@ private Constraint multipleCalculationCountry( JSONObject displayConfig) throws 
                         answerHashMap.put("q" + questionNo, answer);
                     }
                 }else{
-                    errorEmptyList.add(i);
+                    errorEmptyList.add(questionList.get(i));
                 }
             }
         }
 
         if (errorEmptyList.size()>0){
-            String errorMsg = generateErrorMsgByQuestionId(errorEmptyList);
+            String errorMsg = generateErrorMsgByQuestionId(errorEmptyList,displayConfig);
             constraint.setErrorMsg(errorMsg);
         }else{
             constraint= doCalculationWithSingleLogic(formula,answerHashMap,limitsList,calculationObj,questionPosition);
@@ -565,7 +607,7 @@ private Constraint multipleCalculationCountry( JSONObject displayConfig) throws 
         String errorObject= constraintObj.getString("errorMsg");
         JSONObject jobj=new JSONObject(errorObject);
         String msg= jobj.optString("error"+CommonUtilities.getLocaleSuffix(mContext.getResources()),"Please configure the error message");
-        msg= msg.replace("~Q",String.valueOf(questionPosition)).replace("~V",String.valueOf(limitValue));
+        msg= msg.replace("~Q",String.valueOf(questionPosition)).replace("~V",CommonUtilities.FormatNumbers(limitValue));
         return  msg;
     }
 
