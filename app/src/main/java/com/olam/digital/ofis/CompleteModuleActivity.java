@@ -509,6 +509,14 @@ public class CompleteModuleActivity extends BaseActivity {
                 // validate all the submodules question is answered
                 boolean isMandated = false;
                 try {
+                    if (DynamicQuestions.getInstance().surveySet.size()>0) {
+                        Toast.makeText(CompleteModuleActivity.this,res.getString(R.string.restriction_in_submodules),Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    if( DynamicQuestions.getInstance().constraintsSet.size()>0){
+                        Toast.makeText(CompleteModuleActivity.this,"Optional Constraint Type"+DynamicQuestions.getInstance().constraintsSet.toString(),Toast.LENGTH_SHORT).show();
+                        return;
+                    }
                     isMandated = dynamicQuestions.isAllRequiredSubmoduleAnswered(questions);
                 } catch (JSONException e) {
                     e.printStackTrace();

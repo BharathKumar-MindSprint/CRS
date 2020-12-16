@@ -155,6 +155,7 @@ public class CoffeeConstraints {
         if (error) {
             try {
                 constraint.setErrorMsg(getErrorMsg(calculationObj,position,0));
+                constraint.setOverLimit(true);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -171,6 +172,7 @@ public class CoffeeConstraints {
         if (!minMax) {
             try {
                 constraint.setErrorMsg(getErrorMsg(calculationObj,position,0));
+                constraint.setOverLimit(true);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -353,7 +355,10 @@ public class CoffeeConstraints {
                                 error=true;
                             }
                         }
-                        if (error) constraint.setErrorMsg(getErrorMsg(calculationObj, position, limitsList.get(i)));
+                        if (error) {
+                            constraint.setErrorMsg(getErrorMsg(calculationObj, position, limitsList.get(i)));
+                            constraint.setOverLimit(true);
+                        }
                     }catch (Exception e){}
                 }
             }
@@ -497,8 +502,15 @@ private Constraint multipleCalculationCountry( JSONObject displayConfig) throws 
                             if (answerHashMap.get("q1") / answerHashMap.get("q2") >= limitsList.get(i)) {
                                 error=true;
                             }
+                        }else if ((formula.equalsIgnoreCase("q1>x"))){
+                            if (answerHashMap.get("q1") > limitsList.get(i)){
+                                error =true;
+                            }
                         }
-                        if (error) constraint.setErrorMsg(getErrorMsg(calculationObj,questionPosition,limitsList.get(i)));
+                        if (error) {
+                            constraint.setErrorMsg(getErrorMsg(calculationObj, questionPosition, limitsList.get(i)));
+                            constraint.setOverLimit(true);
+                        }
                     }catch (Exception e){}
                 }
             }
@@ -597,7 +609,10 @@ private Constraint multipleCalculationCountry( JSONObject displayConfig) throws 
                         error=true;
                     }
                 }
-                if (error) constraint.setErrorMsg(getErrorMsg(constraintObj,questionPosition,limitsList.get(i)));
+                if (error) {
+                    constraint.setErrorMsg(getErrorMsg(constraintObj, questionPosition, limitsList.get(i)));
+                    constraint.setOverLimit(true);
+                }
             }catch (Exception e){}
         }
         return constraint;

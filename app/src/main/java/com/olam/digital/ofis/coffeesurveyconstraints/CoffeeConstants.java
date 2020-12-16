@@ -16,8 +16,6 @@ public class CoffeeConstants {
     public static final String LOOK_UP_VALUES_IN_ORDER = "lookupValuesInOrder";
     public static final String QUESTIONS_IN_ORDER = "questionsInOrder";
     public static final String DROPDOWN_CHECK = "dropdownCheck";
-    public static final String INNER_OPERATION = "inner-operation";
-    public static final String OUTER_OPERATION = "outer-operation";
     public static final String FORMULA = "formula";
     public static final String LIMITS = "limits";
     public static final String DECIMAL_DIGITS = "decimal-digits";
@@ -28,5 +26,5 @@ public class CoffeeConstants {
     public static final String QUESTION_NUMBER = "questionNo";
     public static final String SINGLE_CALCULATION = "single-calculation";
     public static final String DEFAULT = "default";
-    public static final String UNIT = "unit";
+    public static final String SURVEY_COMPLETION_CHECK = "survey-completion-check";
 }

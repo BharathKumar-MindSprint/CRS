@@ -26,6 +26,7 @@ import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -105,6 +106,8 @@ public class DynamicQuestions {
     private int densityQuestionId, densityAnswerId = 0;
     private TextView plotsHeader, densityResult;
     private Hashtable<String, String> plotvariants;
+    public  Set<Integer> surveySet= new HashSet<>();
+    public Set<Integer> constraintsSet=new HashSet<>();
 
     private static DynamicQuestions instance = null;
 
@@ -1525,7 +1528,6 @@ public class DynamicQuestions {
         // Decimal 2 digits concept - End
 
         Drawable originalDrawable = et.getBackground();
-
         et.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
@@ -1550,8 +1552,9 @@ public class DynamicQuestions {
                 saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, et.getText().toString());
 //
 //
-                    /* Contstraints Check- Coffee Survey Setup Project */
+                    /* Contstraints Check- Coffee Survey Setup Project franklin*/
                     String value= et.getText().toString().trim();
+                    if(value.equalsIgnoreCase("")){removeAnswerEntry(questionId);}
 
                     QuestionInfo questionInfo=new QuestionInfo();
                     questionInfo.setQuestionId(questionId);
@@ -1567,55 +1570,26 @@ public class DynamicQuestions {
                         if (constraint.getErrorMsg()!=null){
                             et.setError(constraint.getErrorMsg());
                             et.setBackgroundResource(R.drawable.rounder_red_edittext);
-                            if (et.getText().toString().trim().equalsIgnoreCase("")){
-                                // Remove the data from existing Database if data persists
-                                removeAnswerEntryDatabase((int) Utilities.farmerModuleId,questionId);
-                            }else{
-                                removeAnswerEntry(questionId);
+                            // New
+                            removeAnswerEntry(questionId);
+                            if (constraint.isOverLimit()){
+                                constraintsSet.add(questionId);
                             }
+
+                            // Old remove Logic
+//                            if (et.getText().toString().trim().equalsIgnoreCase("")){
+//                                // Remove the data from existing Database if data persists
+//                                removeAnswerEntryDatabase((int) Utilities.farmerModuleId,questionId);
+//                            }else{
+//                                removeAnswerEntry(questionId);
+//                            }
 
                         }else{
                             et.setBackground(originalDrawable);
+                            constraintsSet.remove(questionId);
                            // et.setError(null);
                         }
                     }
-
-
-//                if (questionId == 4322){
-//                    // multiple country based  questions - retake again
-//                   et.setError("Please amend the value of question 3 or 2, to fulfill the condition");
-//                    et.setBackground(context.getResources().getDrawable(R.drawable.rounder_red_edittext));
-//                }else if (questionId == 4323){
-//                    // Direct Value based  questions - retake
-//                    et.setError("Please enter value of question 1 within 15");
-//                    et.setBackground(context.getResources().getDrawable(R.drawable.rounder_red_edittext));
-//                }
-//                else if (questionId == 4306){
-//                    // Direct Value based  questions - retake
-//                    et.setError("The coffee tree density is higher than 10,000 trees/ha (Arabica). Please amend question 6");
-//                    et.setBackground(context.getResources().getDrawable(R.drawable.rounder_red_edittext));
-//                }
-////                else if (questionId == 4310){
-//                    // Direct Value based  questions - retake
-//                    et.setError("Please enter the value of question 7, within 0-100%");
-//                    et.setBackground(context.getResources().getDrawable(R.drawable.rounder_red_edittext));
-//                }
-//                else if (questionId == 4340){
-//                    // Direct Value based  questions - retake
-//                    et.setError("The farmer has produced >1,500kg/ha (Africa) of green coffee. Please amend question 25");
-//                    et.setBackground(context.getResources().getDrawable(R.drawable.rounder_red_edittext));
-//                }
-//
-
-  //              else {
-   //                 saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, et.getText().toString());
-  //              }
-//                if (questionId == 4310){
-//                    et.setError("Please enter the value of question 7, within 0-100% ");
-//                }else {
-//                    saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, et.getText().toString());
-//                }
-
             }
         });
 
@@ -1884,27 +1858,9 @@ public class DynamicQuestions {
                 JSONObject jsonObject = new JSONObject(calculationNode);
                 int defaultLookUpValue = jsonObject.optInt("defaultLookUpValue",0);
                 if(defaultLookUpValue != 0){
-//                    if(hasAnswers){
-//                    if (datatype.equals("int") && (!isDensityQuestion)) {
-//                        Integer currentAnswerInt = -1;
-//                        if (isRepeaterItem && repeaterAnswers != null && repeaterAnswers.getCount() > 0) {
-//                            currentAnswerInt = repeaterAnswers.getInt(repeaterAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_INT));
-//                        } else {
-//                            if (qCursor.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_INT) != -1) {
-//                                currentAnswerInt = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_INT));
-//                            }
-//                        }
-//
-//                        for (int i = 0; i < spinner.getCount(); i++) {
-//                            if (spinner.getItemIdAtPosition(i) == currentAnswerInt) {
-//                                spinner.setSelection(i);
-//                                break;
-//                            }
-//                        }
-//
-//                    }
-//                    }else{
-                    if (!hasAnswers) {
+                    // find the question is answered or not
+                    Cursor cbAnswers = dl.getAnswersForQuestionByFarmer(questionId,Utilities.farmerId, Utilities.farmerModuleId);
+                    if (!(cbAnswers.getCount()>0)) {
                         for (int i = 0; i < spinner.getCount(); i++) {
                             if (spinner.getItemIdAtPosition(i) == defaultLookUpValue) {
                                 spinner.setSelection(i);
@@ -3344,6 +3300,28 @@ public class DynamicQuestions {
       //
         // spinner explaining
 
+        // Error Message for constraints franklin
+        final String displayConfig = qCursor.getString(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION));
+        String constraintType = "",errorMsg = "";
+        int switchId = 0;
+        try {
+            JSONObject jsonObject= new JSONObject(displayConfig).getJSONObject(CoffeeConstants.CALCULATION);
+             switchId=jsonObject.getInt("switch");
+             constraintType=jsonObject.getString("type");
+             errorMsg= jsonObject.getJSONObject("errorMsg").getString("errorEn");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        TextView yesNoConstraint = null;
+        if (constraintType.equalsIgnoreCase(CoffeeConstants.SURVEY_COMPLETION_CHECK)){
+            yesNoConstraint = new TextView(context);
+            yesNoConstraint.setText(errorMsg);
+            yesNoConstraint.setTextColor(ContextCompat.getColor(context, R.color.ofis_red));
+
+        }
+
+        // End
+
         dl.bindDataDrivenSpinner(spinner, spinnervalues, context, R.string.ModuleAnswerHint, null, false);
         Integer currentAnswer = -1;
         if (hasAnswers) {
@@ -3399,6 +3377,8 @@ public class DynamicQuestions {
         final String noqQuestion = question2;
 
 
+        int finalSwitchId = switchId;
+        TextView finalYesNoConstraint = yesNoConstraint;
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -3409,10 +3389,20 @@ public class DynamicQuestions {
 
                         //renderQuestion(qCursor, isRepeaterItem, (isRepeaterItem) ? parentLayout : questionWrapper);
 
+                        // If id =2 , pirachana thaan
+                        if (id == finalSwitchId){
+                            questionWrapper.addView(finalYesNoConstraint);
+                            surveySet.add(questionId);
+                            finalYesNoConstraint.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.RIGHT);
+                        }else {
+                            surveySet.remove(questionId);
+                            questionWrapper.removeView(finalYesNoConstraint);
+                        }
 
                         if (is_subset_questions_required.equalsIgnoreCase("true")) {
 
                             try {
+
 
 
                                 if (id == 1) {
@@ -3448,15 +3438,15 @@ public class DynamicQuestions {
                         }
                         Cursor selecteditem = (Cursor) spinner.getSelectedItem();
                         saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, selecteditem.getString(selecteditem.getColumnIndex("code")));
-                        if (questionId == 4333) {
-                        showAlertMsg("We recommend you to complete the General Certification Survey before continuing with this Starbucks certification survey");
+    //                    if (questionId == 4333) {
+  //                      showAlertMsg("We recommend you to complete the General Certification Survey before continuing with this Starbucks certification survey");
 //                            TextView errorText = (TextView) spinner.getSelectedView();
 //                            errorText.setError("");
 //                            errorText.setTextColor(Color.RED);//just to highlight that this is an error
 //                            errorText.setText("We recommend you to complete the General Certification Survey before continuing with this Starbucks certification survey");
 //                          //  errorText.setBackground(context.getResources().getDrawable(R.drawable.rounder_red_edittext));
 
-                        }
+ //                       }
 
                     } else {
                         removeAnswerEntry(questionId, answerId);
