@@ -51,17 +51,20 @@
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/ofis_poi_screen_top_background_school" />
 
-        <service android:name="com.olam.digital.ofis.companionFirebaseInstanceIdService">
+        <service android:name="com.olam.digital.ofis.companionFirebaseInstanceIdService"
+            android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
-        <service android:name="com.olam.digital.ofis.companionFirebaseMessagingService">
+        <service android:name="com.olam.digital.ofis.companionFirebaseMessagingService"
+            android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-        <service android:name="com.olam.digital.ofis.tasks.AuthenticatorService">
+        <service android:name="com.olam.digital.ofis.tasks.AuthenticatorService"
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator" />
             </intent-filter>
