@@ -6,6 +6,7 @@ import android.widget.Toast;
 
 import com.google.gson.JsonObject;
 import com.olam.digital.ofis.DataLayer;
+import com.olam.digital.ofis.DynamicQuestions;
 import com.olam.digital.ofis.OFISDBContract;
 import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.Utilities;
@@ -18,6 +19,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
 
 
 public class CoffeeConstraints {
@@ -43,6 +45,9 @@ public class CoffeeConstraints {
         this.dataLayer = dataLayer;
     }
 
+    public CoffeeConstraints() {
+    }
+
 
     public static int isDecimalRestrict(JSONObject finalDisplayConfig) throws JSONException {
         int digit= 0;
@@ -58,6 +63,22 @@ public class CoffeeConstraints {
          return digit;
     }
 
+    public String getConstraintExceedMsg(Context context,DataLayer dl) {
+        String errorMsg=context.getResources().getString(R.string.please_check_question);
+        Set<Integer> constraintQuestions= DynamicQuestions.getInstance().constraintsSet;
+        String questions = "";
+        if (constraintQuestions.size()>0){
+            StringBuilder csvBuilder = new StringBuilder();
+            for(Integer question : constraintQuestions){
+                csvBuilder.append(dl.getQuestionNo(String.valueOf(question)));
+                csvBuilder.append(",");
+            }
+            questions= csvBuilder.toString();
+            questions = questions.substring(0, questions.length() - ",".length());
+        }
+
+        return errorMsg+" "+questions;
+    }
 
 
     public Constraint constraintType(JSONObject displayConfig, String value) throws JSONException {
@@ -73,9 +94,9 @@ public class CoffeeConstraints {
 
             // If value s empty
             if (value.equalsIgnoreCase("")){
-                ArrayList<Integer> errorList=new ArrayList<>();
-                errorList.add(questionPosition);
-                constraint.setErrorMsg(generateErrorMsgByQuestionId(errorList,displayConfig));
+//                ArrayList<Integer> errorList=new ArrayList<>();
+//                errorList.add(questionPosition);
+//                constraint.setErrorMsg(generateErrorMsgByQuestionId(errorList,displayConfig));
                 return constraint;
             }
 
@@ -99,9 +120,9 @@ public class CoffeeConstraints {
             int max = Integer.parseInt(calculationJsonObject.getString(CoffeeConstants.MAX));
             int  questionPosition=calculationJsonObject.optInt(CoffeeConstants.QUESTION_NUMBER,0);
             if (value.equalsIgnoreCase("")){
-                ArrayList<Integer> errorList=new ArrayList<>();
-                errorList.add(questionPosition);
-                constraint.setErrorMsg(generateErrorMsgByQuestionId(errorList,displayConfig));
+//                ArrayList<Integer> errorList=new ArrayList<>();
+//                errorList.add(questionPosition);
+//                constraint.setErrorMsg(generateErrorMsgByQuestionId(errorList,displayConfig));
                 return constraint;
             }
             constraint = minMaxCheck(Integer.parseInt(value), min, max,questionPosition,calculationJsonObject);
@@ -222,7 +243,9 @@ public class CoffeeConstraints {
                         // get the answers from answer set
                         double answer= getAnswerFromSameSubmodule(questionList.get(i));
                         if (answer == -1){
-                            errorEmptyList.add(questionList.get(i));
+                            if(questionList.get(i)!=questionInfo.getQuestionId()) {
+                                errorEmptyList.add(questionList.get(i));
+                            }
                         }else {
                             int questionNo = i + 1;
                             answerHashMap.put("q" + questionNo, answer);
@@ -241,7 +264,9 @@ public class CoffeeConstraints {
                                 answerHashMap.put("q" + i + 1, answer);
                             }
                         }else{
-                            errorEmptyList.add(questionList.get(i));
+                            if(questionList.get(i)!=questionInfo.getQuestionId()) {
+                                errorEmptyList.add(questionList.get(i));
+                            }
                         }
                     }
                 }
@@ -369,15 +394,6 @@ public class CoffeeConstraints {
 
     private String generateErrorMsgByQuestionId(ArrayList<Integer> errorEmptyList,JSONObject displayConfig){
         // arrange the proper position - Old
-//        String error=mContext.getResources().getString(R.string.please_respond_mandatory_question);
-////        String questionNos="";
-////        if (errorEmptyList.size()==1) {
-////             questionNos = dataLayer.getQuestionNo(errorEmptyList.get(0).toString());
-////        }else if (errorEmptyList.size()==2){
-////             questionNos = dataLayer.getQuestionNo(errorEmptyList.get(0).toString()) + " & "+dataLayer.getQuestionNo(errorEmptyList.get(1).toString());;
-////        }
-   //     return error + " "+questionNos;
-
         String error="";
         try {
             String calcNode=displayConfig.getString(CoffeeConstants.CALCULATION);
@@ -421,7 +437,9 @@ private Constraint multipleCalculationCountry( JSONObject displayConfig) throws 
                 // get the answers from answer set
                 double answer= getAnswerFromSameSubmodule(questionList.get(i));
                 if (answer == -1){
-                    errorEmptyList.add(questionList.get(i));
+                    if(questionList.get(i)!=questionInfo.getQuestionId()) {
+                        errorEmptyList.add(questionList.get(i));
+                    }
                 }else {
                     int questionNo = i + 1;
                     answerHashMap.put("q" + questionNo, answer);
@@ -442,7 +460,9 @@ private Constraint multipleCalculationCountry( JSONObject displayConfig) throws 
                         answerHashMap.put("q" + questionNo, answer);
                     }
                 }else{
-                    errorEmptyList.add(questionList.get(i));
+                    if(questionList.get(i)!=questionInfo.getQuestionId()) {
+                        errorEmptyList.add(questionList.get(i));
+                    }
                 }
             }
         }
@@ -550,7 +570,9 @@ private Constraint multipleCalculationCountry( JSONObject displayConfig) throws 
                 // get the answers from answer set
                 double answer= getAnswerFromSameSubmodule(questionList.get(i));
                 if (answer == -1){
-                    errorEmptyList.add(questionList.get(i));
+                    if(questionList.get(i)!=questionInfo.getQuestionId()) {
+                        errorEmptyList.add(questionList.get(i));
+                    }
                 }else {
                     int questionNo = i + 1;
                     answerHashMap.put("q" + questionNo, answer);
@@ -570,7 +592,9 @@ private Constraint multipleCalculationCountry( JSONObject displayConfig) throws 
                         answerHashMap.put("q" + questionNo, answer);
                     }
                 }else{
-                    errorEmptyList.add(questionList.get(i));
+                    if(questionList.get(i)!=questionInfo.getQuestionId()) {
+                        errorEmptyList.add(questionList.get(i));
+                    }
                 }
             }
         }
@@ -625,142 +649,6 @@ private Constraint multipleCalculationCountry( JSONObject displayConfig) throws 
         msg= msg.replace("~Q",String.valueOf(questionPosition)).replace("~V",CommonUtilities.FormatNumbers(limitValue));
         return  msg;
     }
-
-//
-//    // Checking the certification call check
-//    public boolean findSurveyStatus(int farmerId, int moduleId) throws JSONException {
-//        boolean submitted=false;
-//        Cursor farmer=dataLayer.getFarmerById(farmerId);
-//        String submittedModulesJSON = null;
-//        if (farmer.getCount() > 0) {
-//            farmer.moveToFirst();
-//            submittedModulesJSON= farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_WEBSITE_SUBMITTED_MODULES));
-//        }
-//
-//        String Samplestr = "{\"modules\":null}";
-//        if (Samplestr.equals(submittedModulesJSON)) {
-//            submittedModulesJSON = submittedModulesJSON.replaceAll("\"modules\":null", "");
-//        }
-//        JSONObject submittedModules = (!submittedModulesJSON.equals("null")) ? new JSONObject(submittedModulesJSON) : new JSONObject();
-//        boolean hasSubmittedModules = (submittedModules.has("modules"));
-//        JSONArray submittedModulesArray = null;
-//        if (hasSubmittedModules) {
-//            submittedModulesArray = submittedModules.getJSONArray("modules");
-//        }
-//
-//
-//        Cursor moduleAssignments = dataLayer.getFarmerModules(farmerId, mContext);
-//        if(moduleAssignments != null && moduleAssignments.moveToFirst()) {
-//            do {
-//                int currentId = moduleAssignments.getInt(moduleAssignments.getColumnIndex("_id"));
-//                if (currentId == moduleId) {
-//                    String disabled_months_string = moduleAssignments.getString(moduleAssignments.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_DISABLED_MONTHS));
-//                    List<String> disabled_months = Arrays.asList(disabled_months_string.split("\\s*,\\s*"));
-//                    Calendar currentDate = Calendar.getInstance();
-//                    if (hasSubmittedModules) {
-//                        try {
-//                            int recurrence_frequency = moduleAssignments.getInt(moduleAssignments.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_RECURRENCE_FREQUENCY));
-//                            String recurrence_type = moduleAssignments.getString(moduleAssignments.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_RECURRENCE_TYPE));
-//                            Calendar calculationDate = (Calendar) currentDate.clone();
-//                            boolean disable_entry = false;
-//
-//                            for (int i = 0; i < submittedModulesArray.length(); i++) {
-//                                JSONObject submittedModule = submittedModulesArray.getJSONObject(i);
-//                                JSONObject submittedModuleDetails = submittedModule.getJSONObject("module");
-//
-//
-//                                if (submittedModuleDetails.has("id") && submittedModuleDetails.getInt("id") == currentId) {
-//
-//                                    if (recurrence_frequency > 0 && !disabled_months.contains(String.valueOf(currentDate.get(Calendar.MONTH)))) {
-//                                        // for recurring
-//                                        try {
-//                                            // get last submitted date
-//                                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
-//                                            Calendar lastSubmittedDate = Calendar.getInstance();
-//
-//                                            //O20HS-84 - To enable the annual survey.
-//                                            calculationDate = (Calendar) currentDate.clone();
-//                                            //
-//
-//                                            try {
-//                                                lastSubmittedDate.setTime(sdf.parse(submittedModuleDetails.getString("created_at")));
-//                                            } catch (ParseException e) {
-//                                                FirebaseCrash.report(new Exception("CustomListAdapter_Modules: Error setting recurrence date values", e));
-//                                                e.printStackTrace();
-//                                            }
-//                                            if (recurrence_type != null) {
-//                                                if (recurrence_type.equalsIgnoreCase("years")) {
-//                                                    calculationDate.add(Calendar.YEAR, -recurrence_frequency);
-//                                                    calculationDate.set(Calendar.MONTH, Calendar.DECEMBER);
-//                                                    calculationDate.set(Calendar.DAY_OF_MONTH, 31);
-//                                                } else if (recurrence_type.equalsIgnoreCase("months")) {
-//                                                    calculationDate.add(Calendar.MONTH, -recurrence_frequency);
-//                                                    calculationDate.set(Calendar.DAY_OF_MONTH, calculationDate.getActualMaximum(Calendar.DAY_OF_MONTH));
-//                                                } else if (recurrence_type.equalsIgnoreCase("weeks")) {
-//                                                    calculationDate.add(Calendar.WEEK_OF_YEAR, -recurrence_frequency);
-//                                                    calculationDate.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
-//                                                } else {
-//                                                    // must be days
-//                                                    calculationDate.add(Calendar.DAY_OF_YEAR, -recurrence_frequency);
-//                                                }
-//
-//                                                // set the time
-//                                                calculationDate.set(Calendar.HOUR_OF_DAY, 23);
-//                                                calculationDate.set(Calendar.MINUTE, 59);
-//                                                calculationDate.set(Calendar.SECOND, 59);
-//                                                calculationDate.set(Calendar.MILLISECOND, 999);
-//
-//                                                // force the recalculation
-//                                                calculationDate.get(Calendar.DAY_OF_MONTH);
-//
-//
-//                                                if (lastSubmittedDate.after(calculationDate)) {
-//                                                    disable_entry = true;
-//                                                }
-//                                            }
-//                                        } catch (Exception e) {
-//                                            e.printStackTrace();
-//                                        }
-//                                    } else {
-//                                        // for non-recurring
-//                                        disable_entry = true;
-//                                    }
-//
-//                                    if (disable_entry) {
-//                                        submitted = true;
-//                                        break;
-//                                    }
-//                                }
-//                            }
-//                        } catch (JSONException e) {
-//                            FirebaseCrash.report(new Exception("CustomListAdapter_Modules: Error setting recurrence values", e));
-//                            e.printStackTrace();
-//                        } catch (Exception e) {
-//                            e.printStackTrace();
-//                        }
-//                    }
-//
-//                    if (!submitted) {
-//                        if ((moduleAssignments.getInt(moduleAssignments.getColumnIndex(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_STATUS_STARTED)) == 1) && (moduleAssignments.getInt(moduleAssignments.getColumnIndex(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_STATUS_FINISHED)) == 0)) {
-//                            submitted=false;
-//                        } else if ((moduleAssignments.getInt(moduleAssignments.getColumnIndex(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_STATUS_STARTED)) == 1) && (moduleAssignments.getInt(moduleAssignments.getColumnIndex(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_STATUS_FINISHED)) == 1)) {
-//                            submitted=true;
-//                        } else {
-//                            submitted=false;
-//                            if (disabled_months.contains(String.valueOf(currentDate.get(Calendar.MONTH)))) {
-//                                submitted=true;
-//                            }
-//                        }
-//                    }
-//                }
-//            } while (moduleAssignments.moveToNext());
-//        }
-//
-//        return submitted;
-//    }
-
-
-
 }
 
 

@@ -69,6 +69,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -307,15 +308,30 @@ public class DynamicQuestions {
     }
 
     private void saveMultipleAnswerEntry(int questionId, @SuppressWarnings("SameParameterValue") int parentQuestionId, String dataType, TableLayout questionTable) {
-        for (int i = 0; i < answerSet.size(); i++) {
-            JSONObject currentAnswer = answerSet.get(i);
+
+        // New
+        Iterator<JSONObject> iterator = answerSet.iterator();
+        while(iterator.hasNext()){
+            JSONObject currentAnswer = iterator.next();
             if (currentAnswer != null) {
                 int currentQuestionId = currentAnswer.optInt("question_id");
                 if (currentQuestionId == questionId) {
-                    answerSet.remove(i);
+                    iterator.remove();
                 }
             }
         }
+
+        // Old
+//        for (int i = 0; i < answerSet.size(); i++) {
+//            JSONObject currentAnswer = answerSet.get(i);
+//            if (currentAnswer != null) {
+//                int currentQuestionId = currentAnswer.optInt("question_id");
+//                if (currentQuestionId == questionId) {
+//                    answerSet.remove(i);
+//                }
+//            }
+//        }
+
         int tableRows = questionTable.getChildCount();
         for (int j = 0; j < tableRows; j++) {
             TableRow tr = (TableRow) questionTable.getChildAt(j);
@@ -1528,6 +1544,7 @@ public class DynamicQuestions {
         // Decimal 2 digits concept - End
 
         Drawable originalDrawable = et.getBackground();
+        String finalDefaultValue = defaultValue;
         et.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
@@ -1554,7 +1571,15 @@ public class DynamicQuestions {
 //
                     /* Contstraints Check- Coffee Survey Setup Project franklin*/
                     String value= et.getText().toString().trim();
-                    if(value.equalsIgnoreCase("")){removeAnswerEntry(questionId);}
+                    if(value.equalsIgnoreCase("")){
+                        // if the default value is available, for empty value is given , insert the default value for that question.
+                        if (!finalDefaultValue.equalsIgnoreCase("")){
+                            et.setText(finalDefaultValue);
+                            saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, finalDefaultValue);
+                        }else {
+                            removeAnswerEntry(questionId);
+                        }
+                    }
 
                     QuestionInfo questionInfo=new QuestionInfo();
                     questionInfo.setQuestionId(questionId);
@@ -1853,10 +1878,11 @@ public class DynamicQuestions {
             }
 
             // N/A for LookUp Value franklin
+            int defaultLookUpValue=0;
             if(displayConfig.has("calculation")){
                 String calculationNode = displayConfig.optString(CoffeeConstants.CALCULATION);
                 JSONObject jsonObject = new JSONObject(calculationNode);
-                int defaultLookUpValue = jsonObject.optInt("defaultLookUpValue",0);
+                defaultLookUpValue = jsonObject.optInt("defaultLookUpValue",0);
                 if(defaultLookUpValue != 0){
                     // find the question is answered or not
                     Cursor cbAnswers = dl.getAnswersForQuestionByFarmer(questionId,Utilities.farmerId, Utilities.farmerModuleId);
@@ -1874,8 +1900,7 @@ public class DynamicQuestions {
             }
 
 
-
-
+            int finalDefaultLookUpValue = defaultLookUpValue;
             spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
@@ -1898,6 +1923,15 @@ public class DynamicQuestions {
                         }
                     } else {
                         removeAnswerEntry(questionId, answerId);
+                        // Remove the old value and update the Not applicable value if Answer chosen for default value
+                        if(finalDefaultLookUpValue !=0 ){
+                            for (int i = 0; i < spinner.getCount(); i++) {
+                                if (spinner.getItemIdAtPosition(i) == finalDefaultLookUpValue) {
+                                    spinner.setSelection(i);
+                                    break;
+                                }
+                            }
+                        }
                     }
                     if (isDensityQuestion) {
                         renderTreeDensityPlots(position, res);
@@ -2269,6 +2303,20 @@ public class DynamicQuestions {
 
         singleSelect = tempSingleSelect;
 
+        // Parse N/A Question
+        int defaultLookUpValue=0;
+        try {
+            JSONObject displayConfig = new JSONObject(questions.getString(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION)));
+            if (displayConfig.has("calculation")) {
+                String calculationNode = displayConfig.optString(CoffeeConstants.CALCULATION);
+                JSONObject jsonObject = new JSONObject(calculationNode);
+                defaultLookUpValue = jsonObject.optInt("defaultLookUpValue", 0);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
         if (checkboxes != null && checkboxes.getCount() > 0) {
             // add the table layout to the screen
             final TableLayout tl = (TableLayout) inflater.inflate(R.layout.module_checkbox_table, questionWrapper, false);
@@ -2290,9 +2338,9 @@ public class DynamicQuestions {
 
                 CheckBox cb = (CheckBox) tr.findViewById(R.id.cbCheckBox);
                 tl.addView(tr);
-
+                // initilaize default look up globally
                 // pre-fill checkboxes that have been previously ticked
-                if (hasAnswers && cbAnswers.getCount() > 0) {
+                if (cbAnswers.getCount() > 0) {
                     while (cbAnswers.moveToNext()) {
                         if (cbAnswers.getInt(cbAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_INT)) == cbId) {
                             cb.setChecked(true);
@@ -2301,20 +2349,10 @@ public class DynamicQuestions {
                     cbAnswers.moveToPosition(-1);
                 }else {
                     // N/A Question for franklin
-                    try {
-                        JSONObject displayConfig = new JSONObject(questions.getString(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION)));
-                        if (displayConfig.has("calculation")) {
-                            String calculationNode = displayConfig.optString(CoffeeConstants.CALCULATION);
-                            JSONObject jsonObject = new JSONObject(calculationNode);
-                            int defaultLookUpValue = jsonObject.optInt("defaultLookUpValue", 0);
-                            if (defaultLookUpValue != 0) {
-                                if (defaultLookUpValue == cbId) {
-                                    cb.setChecked(true);
-                                }
-                            }
+                    if (defaultLookUpValue != 0) {
+                        if (defaultLookUpValue == cbId) {
+                            cb.setChecked(true);
                         }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
                     }
                 }
 
@@ -2332,6 +2370,7 @@ public class DynamicQuestions {
                 });
 
                 //stick the answer in the question itself
+                int finalDefaultLookUpValue = defaultLookUpValue;
                 cb.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -2346,6 +2385,28 @@ public class DynamicQuestions {
                             CheckBox clickedCb = (CheckBox) view;
                             clickedCb.setChecked(true);
                         }
+
+                        // Update the Not applicable field if none of the value is selected
+                        if (finalDefaultLookUpValue !=0){
+                            int ssTableRows = tl.getChildCount();
+                            boolean checkboxTicked=false;
+                            for (int j = 0; j < ssTableRows; j++) {
+                                TableRow ssTr = (TableRow) tl.getChildAt(j);
+                                CheckBox ssTcb = (CheckBox) ssTr.findViewById(R.id.cbCheckBox);
+                                if (ssTcb.isChecked()) checkboxTicked=true;
+                            }
+                            if (!checkboxTicked){
+                                for (int j = 0; j < ssTableRows; j++) {
+                                    TableRow ssTr = (TableRow) tl.getChildAt(j);
+                                    CheckBox ssTcb = (CheckBox) ssTr.findViewById(R.id.cbCheckBox);
+                                    TextView cbId = (TextView) ssTr.findViewById(R.id.cbId);
+                                    if (Integer.parseInt(cbId.getText().toString()) == finalDefaultLookUpValue){
+                                        ssTcb.setChecked(true);
+                                    }
+                                }
+                            }
+                        }
+
                         saveMultipleAnswerEntry(questionId, 0, datatype, tl);
                     }
                 });

@@ -613,4 +613,5 @@
     <string name="common_survey_config_error">Survey config error. Please check the display config</string>
     <string name="restriction_in_submodules">Please respond to all the mandatory questions to proceed</string>
     <string name="please_respond_mandatory_question">Please respond to mandatory question</string>
+    <string name="please_check_question">Please check Question</string>
 </resources>

@@ -52,6 +52,8 @@ import com.karumi.dexter.listener.PermissionDeniedResponse;
 import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.PermissionListener;
+import com.olam.digital.ofis.coffeesurveyconstraints.CoffeeConstants;
+import com.olam.digital.ofis.coffeesurveyconstraints.CoffeeConstraints;
 import com.olam.digital.ofis.gps.GPSListener;
 import com.olam.digital.ofis.gps.GPSTracker;
 import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
@@ -514,7 +516,8 @@ public class CompleteModuleActivity extends BaseActivity {
                         return;
                     }
                     if( DynamicQuestions.getInstance().constraintsSet.size()>0){
-                        Toast.makeText(CompleteModuleActivity.this,"Optional Constraint Type"+DynamicQuestions.getInstance().constraintsSet.toString(),Toast.LENGTH_SHORT).show();
+                        String constraintMsg= new CoffeeConstraints().getConstraintExceedMsg(context,dl);
+                        Toast.makeText(CompleteModuleActivity.this,constraintMsg,Toast.LENGTH_SHORT).show();
                         return;
                     }
                     isMandated = dynamicQuestions.isAllRequiredSubmoduleAnswered(questions);
