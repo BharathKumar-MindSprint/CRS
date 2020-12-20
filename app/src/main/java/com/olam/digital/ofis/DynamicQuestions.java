@@ -1587,6 +1587,7 @@ public class DynamicQuestions {
                     questionInfo.setDisplayConfig(finalDisplayConfig);
                     Constraint constraint = null;
                         try {
+                            et.setError(null);
                             constraint = new CoffeeConstraints(context,questionInfo,dl,answerSet,qCursor).constraintType(finalDisplayConfig,value);
                         } catch (JSONException e) {
                             e.printStackTrace();

@@ -4,13 +4,11 @@ import android.content.Context;
 import android.database.Cursor;
 import android.widget.Toast;
 
-import com.google.gson.JsonObject;
 import com.olam.digital.ofis.DataLayer;
 import com.olam.digital.ofis.DynamicQuestions;
 import com.olam.digital.ofis.OFISDBContract;
 import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.Utilities;
-import com.olam.digital.ofis.ViewFarmerActivity;
 import com.olam.digital.ofis.coffeesurveyconstraints.utils.CommonUtilities;
 
 import org.json.JSONArray;
@@ -19,9 +17,11 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.Set;
 
 
+@SuppressWarnings("ConstantConditions")
 public class CoffeeConstraints {
 
     private QuestionInfo questionInfo;
@@ -40,11 +40,6 @@ public class CoffeeConstraints {
 
     }
 
-    public CoffeeConstraints(ViewFarmerActivity context,DataLayer dataLayer) {
-        this.mContext=context;
-        this.dataLayer = dataLayer;
-    }
-
     public CoffeeConstraints() {
     }
 
@@ -56,7 +51,7 @@ public class CoffeeConstraints {
         String type = jsonObject.optString(CoffeeConstants.TYPE);
         if (type.equalsIgnoreCase(CoffeeConstants.DECIMAL_DIGITS)){
             String digits = jsonObject.optString(CoffeeConstants.DIGITS).trim();
-            if (digits !=null && digits.length()>0){
+            if (digits.length() > 0){
                 digit=Integer.parseInt(digits);
             }
         }
@@ -65,7 +60,7 @@ public class CoffeeConstraints {
 
     public String getConstraintExceedMsg(Context context,DataLayer dl) {
         String errorMsg=context.getResources().getString(R.string.please_check_question);
-        Set<Integer> constraintQuestions= DynamicQuestions.getInstance().constraintsSet;
+        Set<Integer> constraintQuestions= Objects.requireNonNull(DynamicQuestions.getInstance()).constraintsSet;
         String questions = "";
         if (constraintQuestions.size()>0){
             StringBuilder csvBuilder = new StringBuilder();
@@ -254,11 +249,11 @@ public class CoffeeConstraints {
                         Cursor answerQuery = dataLayer.getAnswersByFarmerModuleQuestionId(farmerModuleId, questionList.get(i));
                         if (answerQuery.getCount() > 0) {
                             while (answerQuery.moveToNext()) {
-                                String datatype = answerQuery.getString(answerQuery.getColumnIndex(OFISDBContract.DatatypesEntry.COLUMN_NAME_DATATYPE_NAME));
+                                String dataType = answerQuery.getString(answerQuery.getColumnIndex(OFISDBContract.DatatypesEntry.COLUMN_NAME_DATATYPE_NAME));
                                 double answer = 0d;
-                                if (datatype.equalsIgnoreCase("int")) {
+                                if (dataType.equalsIgnoreCase("int")) {
                                     answer = Double.parseDouble(answerQuery.getString(answerQuery.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_INT)));
-                                } else if (datatype.equalsIgnoreCase("decimal")) {
+                                } else if (dataType.equalsIgnoreCase("decimal")) {
                                     answer = Double.parseDouble(answerQuery.getString(answerQuery.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_DECIMAL)));
                                 }
                                 answerHashMap.put("q" + i + 1, answer);
@@ -332,7 +327,6 @@ public class CoffeeConstraints {
                     String answerStr= currentAnswer.getString("answer");
                     answer= Integer.parseInt(answerStr);
                 }
-                //   String datatype = currentAnswer.getString("datatype");
             }
         }
         return answer;
@@ -354,7 +348,7 @@ public class CoffeeConstraints {
 
 
 
-    private Constraint doCalculationWithLookUpValue(String formula, HashMap<String, Double> answerHashMap, ArrayList<Integer> limitsList, int selectedLookupValue, ArrayList<Integer> lookUpValueList,int position,JSONObject calculationObj) throws Exception{
+    private Constraint doCalculationWithLookUpValue(String formula, HashMap<String, Double> answerHashMap, ArrayList<Integer> limitsList, int selectedLookupValue, ArrayList<Integer> lookUpValueList,int position,JSONObject calculationObj) {
         Constraint constraint=new Constraint();
         if (selectedLookupValue !=0) {
             for (int i=0; i<limitsList.size();i++) {
@@ -384,7 +378,9 @@ public class CoffeeConstraints {
                             constraint.setErrorMsg(getErrorMsg(calculationObj, position, limitsList.get(i)));
                             constraint.setOverLimit(true);
                         }
-                    }catch (Exception e){}
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
                 }
             }
         }
@@ -400,7 +396,9 @@ public class CoffeeConstraints {
             JSONObject jsonObject=new JSONObject(calcNode).getJSONObject("mandatoryErrorMsg");
             String msg= jsonObject.optString("error"+CommonUtilities.getLocaleSuffix(mContext.getResources()),"Please configure the error message");
             error= msg.replace("~Q",String.valueOf(dataLayer.getQuestionNo(errorEmptyList.get(0).toString())));
-        }catch (Exception e){}
+        }catch (Exception e){
+            e.printStackTrace();
+        }
        return  error;
     }
 
@@ -449,11 +447,11 @@ private Constraint multipleCalculationCountry( JSONObject displayConfig) throws 
                 Cursor answerQuery = dataLayer.getAnswersByFarmerModuleQuestionId(farmerModuleId, questionList.get(i));
                 if (answerQuery.getCount() > 0) {
                     while (answerQuery.moveToNext()) {
-                        String datatype = answerQuery.getString(answerQuery.getColumnIndex(OFISDBContract.DatatypesEntry.COLUMN_NAME_DATATYPE_NAME));
+                        String dataType = answerQuery.getString(answerQuery.getColumnIndex(OFISDBContract.DatatypesEntry.COLUMN_NAME_DATATYPE_NAME));
                         double answer = 0d;
-                        if (datatype.equalsIgnoreCase("int")) {
+                        if (dataType.equalsIgnoreCase("int")) {
                             answer = Double.parseDouble(answerQuery.getString(answerQuery.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_INT)));
-                        } else if (datatype.equalsIgnoreCase("decimal")) {
+                        } else if (dataType.equalsIgnoreCase("decimal")) {
                             answer = Double.parseDouble(answerQuery.getString(answerQuery.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_DECIMAL)));
                         }
                         int questionNo = i + 1;
@@ -531,7 +529,9 @@ private Constraint multipleCalculationCountry( JSONObject displayConfig) throws 
                             constraint.setErrorMsg(getErrorMsg(calculationObj, questionPosition, limitsList.get(i)));
                             constraint.setOverLimit(true);
                         }
-                    }catch (Exception e){}
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
                 }
             }
         }
@@ -581,11 +581,11 @@ private Constraint multipleCalculationCountry( JSONObject displayConfig) throws 
                 Cursor answerQuery = dataLayer.getAnswersByFarmerModuleQuestionId(farmerModuleId, questionList.get(i));
                 if (answerQuery.getCount() > 0) {
                     while (answerQuery.moveToNext()) {
-                        String datatype = answerQuery.getString(answerQuery.getColumnIndex(OFISDBContract.DatatypesEntry.COLUMN_NAME_DATATYPE_NAME));
+                        String dataType = answerQuery.getString(answerQuery.getColumnIndex(OFISDBContract.DatatypesEntry.COLUMN_NAME_DATATYPE_NAME));
                         double answer = 0d;
-                        if (datatype.equalsIgnoreCase("int")) {
+                        if (dataType.equalsIgnoreCase("int")) {
                             answer = Double.parseDouble(answerQuery.getString(answerQuery.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_INT)));
-                        } else if (datatype.equalsIgnoreCase("decimal")) {
+                        } else if (dataType.equalsIgnoreCase("decimal")) {
                             answer = Double.parseDouble(answerQuery.getString(answerQuery.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_DECIMAL)));
                         }
                         int questionNo = i + 1;
@@ -609,7 +609,7 @@ private Constraint multipleCalculationCountry( JSONObject displayConfig) throws 
         return constraint;
     }
 
-    private Constraint doCalculationWithSingleLogic(String formula, HashMap<String, Double> answerHashMap, ArrayList<Integer> limitsList, JSONObject constraintObj, int questionPosition) throws Exception {
+    private Constraint doCalculationWithSingleLogic(String formula, HashMap<String, Double> answerHashMap, ArrayList<Integer> limitsList, JSONObject constraintObj, int questionPosition)  {
         Constraint constraint=new Constraint();
         for (int i=0; i<limitsList.size();i++) {
             // Check the all possible formulas
@@ -637,15 +637,17 @@ private Constraint multipleCalculationCountry( JSONObject displayConfig) throws 
                     constraint.setErrorMsg(getErrorMsg(constraintObj, questionPosition, limitsList.get(i)));
                     constraint.setOverLimit(true);
                 }
-            }catch (Exception e){}
+            }catch (Exception e){
+                e.printStackTrace();
+            }
         }
         return constraint;
     }
 
     private String getErrorMsg(JSONObject constraintObj,int questionPosition,int limitValue) throws Exception{
         String errorObject= constraintObj.getString("errorMsg");
-        JSONObject jobj=new JSONObject(errorObject);
-        String msg= jobj.optString("error"+CommonUtilities.getLocaleSuffix(mContext.getResources()),"Please configure the error message");
+        JSONObject errorObj=new JSONObject(errorObject);
+        String msg= errorObj.optString("error"+CommonUtilities.getLocaleSuffix(mContext.getResources()),"Please configure the error message");
         msg= msg.replace("~Q",String.valueOf(questionPosition)).replace("~V",CommonUtilities.FormatNumbers(limitValue));
         return  msg;
     }
