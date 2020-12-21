@@ -201,8 +201,7 @@ public class SyncAllTask extends SyncTask {
 
                         publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.updating_modules));
 
-                      //  delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_TRAINING);
-                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_TASKS);
+                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_TRAINING);
                     } else {
                         postFailureMessage(response);
                     }

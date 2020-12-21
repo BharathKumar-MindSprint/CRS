@@ -511,11 +511,11 @@ public class CompleteModuleActivity extends BaseActivity {
                 // validate all the submodules question is answered
                 boolean isMandated = false;
                 try {
-                    if (DynamicQuestions.getInstance().surveySet.size()>0) {
-                        Toast.makeText(CompleteModuleActivity.this,res.getString(R.string.restriction_in_submodules),Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                    if( DynamicQuestions.getInstance().constraintsSet.size()>0){
+//                    if (DynamicQuestions.getInstance().surveySet.size()>0) {
+//                        Toast.makeText(CompleteModuleActivity.this,res.getString(R.string.restriction_in_submodules),Toast.LENGTH_SHORT).show();
+//                        return;
+//                    }
+                    if( DynamicQuestions.getInstance().constraintsSet.size() > 0 || DynamicQuestions.getInstance().surveySet.size() > 0){
                         String constraintMsg= new CoffeeConstraints().getConstraintExceedMsg(context,dl);
                         Toast.makeText(CompleteModuleActivity.this,constraintMsg,Toast.LENGTH_SHORT).show();
                         return;

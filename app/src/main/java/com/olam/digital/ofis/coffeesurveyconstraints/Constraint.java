@@ -14,13 +14,6 @@ public class Constraint {
         this.overLimit = overLimit;
     }
 
-    public boolean isSuccess() {
-        return success;
-    }
-
-    public void setSuccess(boolean success) {
-        this.success = success;
-    }
 
     public String getErrorMsg() {
         return errorMsg;

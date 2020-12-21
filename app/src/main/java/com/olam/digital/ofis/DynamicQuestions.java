@@ -1584,7 +1584,6 @@ public class DynamicQuestions {
                     QuestionInfo questionInfo=new QuestionInfo();
                     questionInfo.setQuestionId(questionId);
                     questionInfo.setDataType(datatype);
-                    questionInfo.setDisplayConfig(finalDisplayConfig);
                     Constraint constraint = null;
                         try {
                             et.setError(null);
@@ -3571,16 +3570,6 @@ public class DynamicQuestions {
 
 
         }
-    }
-
-    public void showAlertMsg(String message){
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
-        alertDialogBuilder.setMessage(message);
-        alertDialogBuilder.setPositiveButton("Ok",
-                (dialog, arg1) -> dialog.dismiss());
-
-        AlertDialog alertDialog = alertDialogBuilder.create();
-        alertDialog.show();
     }
 
     void renderYesNoQuestionSubQuestion(final Cursor qCursor, final boolean isRepeaterItem, final LinearLayout parentLayout, final int repeaterItemPosition, final int parentQuestionId, Cursor repeaterAnswers, Resources res) {

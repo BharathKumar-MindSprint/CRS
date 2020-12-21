@@ -61,9 +61,14 @@ public class CoffeeConstraints {
     public String getConstraintExceedMsg(Context context,DataLayer dl) {
         String errorMsg=context.getResources().getString(R.string.please_check_question);
         Set<Integer> constraintQuestions= Objects.requireNonNull(DynamicQuestions.getInstance()).constraintsSet;
+        Set<Integer> surveyQuestions= Objects.requireNonNull(DynamicQuestions.getInstance()).surveySet;
         String questions = "";
-        if (constraintQuestions.size()>0){
+        if (constraintQuestions.size()>0 || surveyQuestions.size()>0){
             StringBuilder csvBuilder = new StringBuilder();
+            for(Integer question : surveyQuestions){
+                csvBuilder.append(dl.getQuestionSurveyCompletion(String.valueOf(question)));
+                csvBuilder.append(",");
+            }
             for(Integer question : constraintQuestions){
                 csvBuilder.append(dl.getQuestionNo(String.valueOf(question)));
                 csvBuilder.append(",");
@@ -107,6 +112,7 @@ public class CoffeeConstraints {
             } else if (valueList.size() == 1) {
                 x = (int) valuesInOrder.get(0);
             } else if (valueList.size() == 2) {
+                x = (int) valuesInOrder.get(0);
                 y = (int) valuesInOrder.get(1);
             }
             constraint = comparisionCheck(operation, Integer.parseInt(value), x, y,questionPosition,calculationJsonObject);
@@ -162,6 +168,8 @@ public class CoffeeConstraints {
                 break;
             case ">x<y":
                 if (value > x && value < y) {
+                    error=false;
+                }else{
                     error=true;
                 }
                 break;

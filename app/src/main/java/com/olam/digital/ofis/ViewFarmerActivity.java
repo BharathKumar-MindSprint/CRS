@@ -26,7 +26,6 @@ import android.provider.Settings;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.AppCompatImageButton;
-import androidx.constraintlayout.widget.Constraints;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NavUtils;
 import androidx.core.content.ContextCompat;
@@ -83,7 +82,6 @@ import com.karumi.dexter.listener.single.PermissionListener;
 import com.olam.digital.ofis.childlabour.ChildLabourDetailsActivity;
 import com.olam.digital.ofis.childlabour.ChildLabourUtils;
 import com.olam.digital.ofis.childlabour.RegisterChildActivity;
-import com.olam.digital.ofis.coffeesurveyconstraints.CoffeeConstraints;
 import com.olam.digital.ofis.gps.GPSListener;
 import com.olam.digital.ofis.gps.GPSTracker;
 import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
@@ -251,19 +249,6 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
             gpsTracker.startLocationUpdateInitially();
   //      }
 
-
-        // check the survey submit check
-//        try {
-//            boolean status= new CoffeeConstraints(this,dl).findSurveyStatus((int) farmerId,102);
-//            if (status){
-//                Toast.makeText(ViewFarmerActivity.this,"Submitted",Toast.LENGTH_SHORT ).show();
-//            }else{
-//                Toast.makeText(ViewFarmerActivity.this," not Submitted",Toast.LENGTH_SHORT ).show();
-//
-//            }
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
 
     }
 
