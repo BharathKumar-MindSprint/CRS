@@ -28,6 +28,7 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -1617,6 +1618,26 @@ public class DynamicQuestions {
                     }
             }
         });
+
+        try {
+            View scroll=CompleteModuleActivity.scrollView;
+            // Approach -1
+            scroll.setFocusable(true);
+            scroll.setFocusableInTouchMode(true);
+            scroll.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    // v.requestFocus();
+                    v.clearFocus();
+                    //  v.requestFocusFromTouch();
+                    // et.clearFocus();
+                    return false;
+                }
+            });
+
+        }catch (Exception e){e.printStackTrace();}
+
+
 
 
 

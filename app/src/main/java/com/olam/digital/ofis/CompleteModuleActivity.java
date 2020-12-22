@@ -135,6 +135,8 @@ public class CompleteModuleActivity extends BaseActivity {
     GPSListener gpsListener=null;
     private GPSTracker gpsTracker=null;
 
+    public static ScrollView scrollView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -155,6 +157,7 @@ public class CompleteModuleActivity extends BaseActivity {
         recordedLat = intent.getStringExtra(RECORDED_LAT);
         recordedLng = intent.getStringExtra(RECORDED_LNG);
         farmerName = intent.getStringExtra(FARMER_NAME);
+        scrollView= findViewById(R.id.scrollView);
 
         context = this;
         res = getResources();
