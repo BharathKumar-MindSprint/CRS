@@ -617,6 +617,7 @@
     <string name="restriction_in_submodules">Please respond to all the mandatory questions to proceed</string>
     <string name="please_respond_mandatory_question">Please respond to mandatory question</string>
     <string name="please_check_question">Please check Question</string>
+    <string name="please_check_dependent_question">since its dependent question is updated</string>
 
 
     <string name="zero_area_msg">Cannot save recorded polygon with 0ha. Please try recording a different polygon</string>

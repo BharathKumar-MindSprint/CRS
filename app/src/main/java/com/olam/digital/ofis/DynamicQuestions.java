@@ -48,6 +48,7 @@ import android.widget.Toast;
 import com.google.firebase.crash.FirebaseCrash;
 import com.olam.digital.ofis.coffeesurveyconstraints.CoffeeConstants;
 import com.olam.digital.ofis.coffeesurveyconstraints.CoffeeConstraints;
+import com.olam.digital.ofis.coffeesurveyconstraints.CommonPojo;
 import com.olam.digital.ofis.coffeesurveyconstraints.Constraint;
 import com.olam.digital.ofis.coffeesurveyconstraints.QuestionInfo;
 import com.olam.digital.ofis.coffeesurveyconstraints.utils.DecimalDigitsInputFilter;
@@ -110,6 +111,7 @@ public class DynamicQuestions {
     private Hashtable<String, String> plotvariants;
     public  Set<Integer> surveySet= new HashSet<>();
     public Set<Integer> constraintsSet=new HashSet<>();
+    public  Set<Integer> editQuestionSet=new HashSet<>();
 
     private static DynamicQuestions instance = null;
 
@@ -1546,19 +1548,16 @@ public class DynamicQuestions {
 
         Drawable originalDrawable = et.getBackground();
         String finalDefaultValue = defaultValue;
+        final String[] initialText = {""};
         et.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-
+                initialText[0] =et.getText().toString().trim();
             }
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-                try {
 
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
             }
 
             @Override
@@ -1568,17 +1567,74 @@ public class DynamicQuestions {
                     autofill100Percent(et);
                 }
                 saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, et.getText().toString());
-//
-//
+
+
+              //   Check the dependent questions - OFS-44 Check
+                    String beforeVal=et.getText().toString().trim();
+                    boolean dotCheck=false;
+                    if (beforeVal.length()>0){
+                        if (beforeVal.substring(beforeVal.length() - 1).equalsIgnoreCase(".")){
+                            dotCheck =true;
+                        }
+                    }
+                    if(!dotCheck) {
+                        ArrayList<CommonPojo> commonPojos = new CoffeeConstraints(context, CompleteModuleActivity.allQuestions, answerSet, qCursor, dl).questionDependent(questionId);
+                        for (CommonPojo commonPojo : commonPojos) {
+                            if (commonPojo.getAnswerValue() != -1) {
+                                QuestionInfo questionInfo = new QuestionInfo();
+                                questionInfo.setQuestionId(commonPojo.getQuestionId());
+                                Constraint constraint = new Constraint();
+                                if (commonPojo.getQuestionId() != 0) {
+                                    Cursor questionCur = dl.getQuestionById(commonPojo.getQuestionId());
+                                    String displayConfig1 = null;
+                                    if (questionCur != null && questionCur.moveToFirst()) {
+                                        do {
+                                            displayConfig1 = questionCur.getString(questionCur.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION));
+                                        } while (questionCur.moveToNext());
+                                    }
+                                    try {
+                                        JSONObject finalJsonObj = new JSONObject(displayConfig1);
+                                        constraint = new CoffeeConstraints(context, questionInfo, dl, answerSet, qCursor).constraintType(finalJsonObj, String.valueOf(commonPojo.getAnswerValue()));
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+
+                                if (constraint != null) {
+                                    if (constraint.getQuestionId() != 0) {
+                                        editQuestionSet.add(constraint.getQuestionId());
+                                    }
+                                }
+
+                            //    Toast.makeText(context, " frank solution : " + editQuestionSet, Toast.LENGTH_SHORT).show();
+
+                            } else {
+                                // Toast.makeText(context, "Innum 6th question ans pannala", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    }
+
+
+
+
                     /* Contstraints Check- Coffee Survey Setup Project franklin*/
                     String value= et.getText().toString().trim();
                     if(value.equalsIgnoreCase("")){
                         // if the default value is available, for empty value is given , insert the default value for that question.
                         if (!finalDefaultValue.equalsIgnoreCase("")){
                             et.setText(finalDefaultValue);
+                            et.setSelection(et.getText().length());
                             saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, finalDefaultValue);
                         }else {
                             removeAnswerEntry(questionId);
+                        }
+                    }else{
+                        if (!finalDefaultValue.equalsIgnoreCase("")) {
+                        if (initialText[0].equalsIgnoreCase("0")){
+                                et.setText(value.replace("0", ""));
+                                et.setSelection(et.getText().length());
+                                saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, et.getText().toString());
+                            }
                         }
                     }
 
@@ -1613,6 +1669,7 @@ public class DynamicQuestions {
                         }else{
                             et.setBackground(originalDrawable);
                             constraintsSet.remove(questionId);
+                            editQuestionSet.remove(questionId);
                            // et.setError(null);
                         }
                     }

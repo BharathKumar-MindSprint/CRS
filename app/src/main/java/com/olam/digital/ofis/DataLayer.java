@@ -3021,6 +3021,26 @@ public class DataLayer {
         return db.rawQuery(sql, whereArgs);
     }
 
+    //OFS-44
+    Cursor getAllQuestionIds(int moduleId) {
+        String questionTable = OFISDBContract.QuestionEntry.TABLE_NAME;
+        String submoduleTable = OFISDBContract.SubmoduleEntry.TABLE_NAME;
+        String moduleTable = OFISDBContract.ModuleEntry.TABLE_NAME;
+        String whereClause = moduleTable + "." + OFISDBContract.ModuleEntry.COLUMN_NAME_ID + " = ? ";
+        String[] whereArgs = new String[]{
+                String.valueOf(moduleId)
+        };
+        String sql = "SELECT " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_ID
+                + ", " + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION
+                + ", " + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE
+                + " FROM " + questionTable + " INNER JOIN " + submoduleTable
+                + " ON " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_SUBMODULE_ID + " = " + submoduleTable + "." + OFISDBContract.SubmoduleEntry.COLUMN_NAME_ID
+                + " INNER JOIN " + moduleTable + " ON " + submoduleTable + "." + OFISDBContract.SubmoduleEntry.COLUMN_NAME_MODULE_ID + " = " + moduleTable + "."
+                + OFISDBContract.ModuleEntry.COLUMN_NAME_ID + " WHERE " + whereClause;
+
+        return db.rawQuery(sql, whereArgs);
+    }
+
     Cursor getRequiredSurveyRangeQuestionIds(int moduleId) {
         String questionTable = OFISDBContract.QuestionEntry.TABLE_NAME;
         String submoduleTable = OFISDBContract.SubmoduleEntry.TABLE_NAME;
@@ -5018,4 +5038,23 @@ public class DataLayer {
         return questionPosition;
     }
 
+    public Cursor getQuestionById(int questionId) {
+            String[] columns = new String[]{"*"};
+            String whereClause = OFISDBContract.QuestionEntry.COLUMN_NAME_ID + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(questionId)};
+            Cursor cursor = db.query(OFISDBContract.QuestionEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+            return cursor;
+    }
+
+    public ArrayList<Integer> getAllSubmodulesQuestionsId(Cursor questions) throws JSONException {
+        // get the list of questions by submodules
+        ArrayList<Integer> questionList=new ArrayList<>();
+        if(questions != null && questions.moveToFirst()) {
+            do {
+                 String questionId = questions.getString(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
+                 questionList.add(Integer.parseInt(questionId));
+            } while (questions.moveToNext());
+        }
+        return questionList;
+    }
 }

@@ -85,6 +85,7 @@ public class CompleteModuleActivity extends BaseActivity {
     private String recordedLng;
     private String farmerName;
     private Cursor subModules, questions;
+    public static Cursor allQuestions;
     private Context context;
     private Resources res;
     private DataLayer dl;
@@ -184,6 +185,9 @@ public class CompleteModuleActivity extends BaseActivity {
         Utilities.farmerModuleId = farmerModuleId;
 
         Utilities.packagename=getPackageName();
+
+        // all questions
+        allQuestions = dl.getAllQuestionIds((int) moduleId);
 
         if (statusStarted != 0 || statusFinished != 0) {
 
@@ -504,6 +508,8 @@ public class CompleteModuleActivity extends BaseActivity {
             public void onClick(View view) {
                 isLastPage = false;
                 saveSubModule("back");
+                DynamicQuestions.getInstance().constraintsSet.clear();
+                DynamicQuestions.getInstance().surveySet.clear();
             }
         });
 
@@ -523,6 +529,25 @@ public class CompleteModuleActivity extends BaseActivity {
                         Toast.makeText(CompleteModuleActivity.this,constraintMsg,Toast.LENGTH_SHORT).show();
                         return;
                     }
+
+                    // Check the editQuestionSet in each submodule
+
+                    if (DynamicQuestions.getInstance().editQuestionSet.size()>0){
+                        ArrayList<Integer> AllSubmodulesQuestions=dl.getAllSubmodulesQuestionsId(questions);
+                        ArrayList<Integer> affectedQuestions = new ArrayList<Integer>(AllSubmodulesQuestions);
+                        // use common.retainAll
+
+                        affectedQuestions.retainAll(DynamicQuestions.getInstance().editQuestionSet);
+                        if (affectedQuestions.size()>0) {
+                            String constraintMsg = new CoffeeConstraints().getAffectedQuestionMsg(context, dl, affectedQuestions);
+                            Toast.makeText(CompleteModuleActivity.this, constraintMsg, Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
+                    }
+
+
+
                     isMandated = dynamicQuestions.isAllRequiredSubmoduleAnswered(questions);
                 } catch (JSONException e) {
                     e.printStackTrace();

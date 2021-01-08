@@ -29,6 +29,7 @@ public class CoffeeConstraints {
     private DataLayer dataLayer;
     private ArrayList<JSONObject> answerSet;
     private Cursor questionsCursor;
+    private  Cursor allQuestionCursor;
 
 
     public CoffeeConstraints(Context context, QuestionInfo questionInfo, DataLayer dataLayer,ArrayList<JSONObject> answerSet,Cursor questionsCursor) {
@@ -41,6 +42,14 @@ public class CoffeeConstraints {
     }
 
     public CoffeeConstraints() {
+    }
+
+    public CoffeeConstraints(Context context, Cursor allCursor, ArrayList<JSONObject> answerSet, Cursor questionsCursor,DataLayer dataLayer) {
+        this.mContext = context;;
+        this.answerSet=answerSet;
+        this.questionsCursor=questionsCursor;
+        this.allQuestionCursor=allCursor;
+        this.dataLayer=dataLayer;
     }
 
 
@@ -56,6 +65,41 @@ public class CoffeeConstraints {
             }
         }
          return digit;
+    }
+
+    public ArrayList<CommonPojo> questionDependent(int questionId) {
+        ArrayList<CommonPojo> commonPojos=new ArrayList<>();
+        ArrayList<Integer> dependentQuestions=new ArrayList<>();
+        if(allQuestionCursor != null && allQuestionCursor.moveToFirst()) {
+            do {
+                String questionsString = allQuestionCursor.getString(allQuestionCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
+                String displayConfig = allQuestionCursor.getString(allQuestionCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION));
+                try {
+                    JSONObject displayConfigObj = new JSONObject(displayConfig);
+                    String calculationNode = displayConfigObj.optString(CoffeeConstants.CALCULATION);
+                    JSONObject calculationObj = new JSONObject(calculationNode);
+                    JSONArray questionsInOrder = (JSONArray) calculationObj.get(CoffeeConstants.QUESTIONS_IN_ORDER);
+                    // Always need to check the sceond value
+                       if(questionsInOrder.getInt(1) == questionId){
+                           dependentQuestions.add(Integer.parseInt(questionsString));
+                       }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            } while (allQuestionCursor.moveToNext());
+        }
+
+        // Fetch answer for 4306
+        try {
+            if (dependentQuestions.size()>0) {
+                for (Integer id : dependentQuestions){
+                    commonPojos.add(getValueForQuestionId(id));
+                }
+            }
+        }catch (Exception e){}
+
+        return commonPojos;
     }
 
     public String getConstraintExceedMsg(Context context,DataLayer dl) {
@@ -78,6 +122,24 @@ public class CoffeeConstraints {
         }
 
         return errorMsg+" "+questions;
+    }
+
+    public String getAffectedQuestionMsg(Context context,DataLayer dl,ArrayList<Integer> affectedQuestionList) {
+        String errorMsg=context.getResources().getString(R.string.please_check_question);
+        String dependedMsg=context.getResources().getString(R.string.please_check_dependent_question);
+        ArrayList<Integer> affectedQuestions= Objects.requireNonNull(affectedQuestionList);
+        String questions = "";
+        if (affectedQuestions.size()>0){
+            StringBuilder csvBuilder = new StringBuilder();
+            for(Integer question : affectedQuestions){
+                csvBuilder.append(dl.getQuestionNo(String.valueOf(question)));
+                csvBuilder.append(",");
+            }
+            questions= csvBuilder.toString();
+            questions = questions.substring(0, questions.length() - ",".length());
+        }
+
+        return errorMsg+" "+questions +", "+dependedMsg;
     }
 
 
@@ -342,12 +404,14 @@ public class CoffeeConstraints {
 
     private double getAnswerFromSameSubmodule(int questionId) throws JSONException {
         double answer = -1;
-        for (int i = 0; i < answerSet.size(); i++) {
-            JSONObject currentAnswer = answerSet.get(i);
-            if (currentAnswer != null) {
-                if(currentAnswer.optInt("question_id") == questionId){
-                   String answerStr= currentAnswer.getString("answer");
-                   answer= Double.parseDouble(answerStr);
+        if (answerSet.size() > 0) {
+            for (int i = 0; i < answerSet.size(); i++) {
+                JSONObject currentAnswer = answerSet.get(i);
+                if (currentAnswer != null) {
+                    if (currentAnswer.optInt("question_id") == questionId) {
+                        String answerStr = currentAnswer.getString("answer");
+                        answer = Double.parseDouble(answerStr);
+                    }
                 }
             }
         }
@@ -385,6 +449,7 @@ public class CoffeeConstraints {
                         if (error) {
                             constraint.setErrorMsg(getErrorMsg(calculationObj, position, limitsList.get(i)));
                             constraint.setOverLimit(true);
+                            constraint.setQuestionId(questionInfo.getQuestionId());
                         }
                     }catch (Exception e){
                         e.printStackTrace();
@@ -536,6 +601,7 @@ private Constraint multipleCalculationCountry( JSONObject displayConfig) throws 
                         if (error) {
                             constraint.setErrorMsg(getErrorMsg(calculationObj, questionPosition, limitsList.get(i)));
                             constraint.setOverLimit(true);
+                            constraint.setQuestionId(questionInfo.getQuestionId());
                         }
                     }catch (Exception e){
                         e.printStackTrace();
@@ -644,6 +710,7 @@ private Constraint multipleCalculationCountry( JSONObject displayConfig) throws 
                 if (error) {
                     constraint.setErrorMsg(getErrorMsg(constraintObj, questionPosition, limitsList.get(i)));
                     constraint.setOverLimit(true);
+                    constraint.setQuestionId(questionInfo.getQuestionId());
                 }
             }catch (Exception e){
                 e.printStackTrace();
@@ -659,6 +726,32 @@ private Constraint multipleCalculationCountry( JSONObject displayConfig) throws 
         msg= msg.replace("~Q",String.valueOf(questionPosition)).replace("~V",CommonUtilities.FormatNumbers(limitValue));
         return  msg;
     }
+
+    private CommonPojo getValueForQuestionId(int questionId) throws  Exception{
+        CommonPojo commonPojo = new CommonPojo();
+        double answer = -1;
+        if (isQuestionAvailableInSubModule(questionId)){
+            // get the answers from answer set
+             answer= getAnswerFromSameSubmodule(questionId);
+        }else {
+            int farmerModuleId = (int) Utilities.farmerModuleId;
+            Cursor answerQuery = dataLayer.getAnswersByFarmerModuleQuestionId(farmerModuleId, questionId);
+            if (answerQuery.getCount() > 0) {
+                while (answerQuery.moveToNext()) {
+                    String dataType = answerQuery.getString(answerQuery.getColumnIndex(OFISDBContract.DatatypesEntry.COLUMN_NAME_DATATYPE_NAME));
+                    if (dataType.equalsIgnoreCase("int")) {
+                        answer = Double.parseDouble(answerQuery.getString(answerQuery.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_INT)));
+                    } else if (dataType.equalsIgnoreCase("decimal")) {
+                        answer = Double.parseDouble(answerQuery.getString(answerQuery.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_DECIMAL)));
+                    }
+                }
+            }
+        }
+        commonPojo .setAnswerValue(answer);
+        commonPojo .setQuestionId(questionId);
+        return  commonPojo;
+    }
+
 }
 
 
