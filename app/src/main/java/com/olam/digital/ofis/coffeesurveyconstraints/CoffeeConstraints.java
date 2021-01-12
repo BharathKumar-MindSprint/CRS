@@ -723,7 +723,16 @@ private Constraint multipleCalculationCountry( JSONObject displayConfig) throws 
         String errorObject= constraintObj.getString("errorMsg");
         JSONObject errorObj=new JSONObject(errorObject);
         String msg= errorObj.optString("error"+CommonUtilities.getLocaleSuffix(mContext.getResources()),"Please configure the error message");
-        msg= msg.replace("~Q",String.valueOf(questionPosition)).replace("~V",CommonUtilities.FormatNumbers(limitValue));
+        String limitValueMsg="";
+        if(CommonUtilities.getLocaleSuffix(mContext.getResources()).equalsIgnoreCase("En") ||
+                CommonUtilities.getLocaleSuffix(mContext.getResources()).equalsIgnoreCase("Es") ){
+            limitValueMsg = CommonUtilities.FormatNumbers(limitValue);
+        }else{
+
+            limitValueMsg = String.valueOf(limitValue);
+        }
+
+        msg= msg.replace("~Q",String.valueOf(questionPosition)).replace("~V",limitValueMsg);
         return  msg;
     }
 

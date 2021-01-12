@@ -51,6 +51,7 @@ import com.olam.digital.ofis.coffeesurveyconstraints.CoffeeConstraints;
 import com.olam.digital.ofis.coffeesurveyconstraints.CommonPojo;
 import com.olam.digital.ofis.coffeesurveyconstraints.Constraint;
 import com.olam.digital.ofis.coffeesurveyconstraints.QuestionInfo;
+import com.olam.digital.ofis.coffeesurveyconstraints.utils.CommonUtilities;
 import com.olam.digital.ofis.coffeesurveyconstraints.utils.DecimalDigitsInputFilter;
 import com.olam.digital.ofis.recordpolygon.AppConstants;
 
@@ -3447,7 +3448,7 @@ public class DynamicQuestions {
             JSONObject jsonObject= new JSONObject(displayConfig).getJSONObject(CoffeeConstants.CALCULATION);
              switchId=jsonObject.getInt("switch");
              constraintType=jsonObject.getString("type");
-             errorMsg= jsonObject.getJSONObject("errorMsg").getString("errorEn");
+             errorMsg= jsonObject.getJSONObject("errorMsg").getString("error"+ CommonUtilities.getLocaleSuffix(context.getResources()));
         } catch (JSONException e) {
             e.printStackTrace();
         }
