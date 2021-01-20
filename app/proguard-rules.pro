@@ -78,3 +78,82 @@
 # don't process support library
 -keep class android.support.v7.** { *; }
 -keep interface android.support.v7.** { *; }
+
+#OFIS class
+-dontwarn org.xmlpull.v1.XmlPullParser
+-dontwarn org.xmlpull.v1.XmlSerializer
+-keep class org.xmlpull.v1.* {*;}
+
+#-keep class com.olam.digital.ofis.** { *;}
+-keep class com.olam.digital.ofis.authentication.** { *; }
+-keep class com.olam.digital.ofis.authentication.model.** { *; }
+
+#
+#-keep class com.olam.digital.ofis.biometric.** { *; }
+
+#-keep class com.olam.digital.ofis.childlabour.** { *; }
+#-keep class com.olam.digital.ofis.childlabour.adapter.** { *; }
+#-keep class com.olam.digital.ofis.childlabour.businesslogic.** { *; }
+#-keep class com.olam.digital.ofis.childlabour.dto.** { *; }
+#-keep interface com.olam.digital.ofis.childlabour.listener.** { *; }
+#
+#-keep class com.olam.digital.ofis.gps.** { *; }
+#-keep class com.olam.digital.ofis.gps.businesslogic.** { *; }
+#-keep class com.olam.digital.ofis.gps.dto.** { *; }
+#-keep class com.olam.digital.ofis.gps.utils.** { *; }
+#-keep interface com.olam.digital.ofis.gps.utils.** { *; }
+#
+#
+#-keep class com.olam.digital.ofis.logging.** { *; }
+#-keep class com.olam.digital.ofis.matoma.** { *; }
+#-keep class com.olam.digital.ofis.model.** { *; }
+#-keep class com.olam.digital.ofis.recordpolygon.** { *; }
+#-keep class com.olam.digital.ofis.tasks.** { *; }
+
+#Dependency Library
+-keep class com.scottyab.** { *; }
+
+
+# GSON requirements
+-keep class sun.misc.Unsafe { *; }
+-keep class com.google.gson.** { *; }
+
+# design support library
+-keep public class android.support.v7.widget.** { *; }
+-keep public class android.support.v7.internal.widget.** { *; }
+-keep public class android.support.v7.internal.view.menu.** { *; }
+
+-keep class android.support.design.widget.** { *; }
+-keep interface android.support.design.widget.** { *; }
+
+-keepclasseswithmembers class * {
+    public <init>(android.content.Context, android.util.AttributeSet);
+}
+
+-keepclasseswithmembers class * {
+     public <init>(android.content.Context, android.util.AttributeSet, int);
+}
+#Retrofit
+-dontnote retrofit2.Platform
+-dontwarn retrofit2.**
+-dontnote retrofit2.Platform
+-keepattributes Signature
+-keepattributes Exceptions
+
+-keep class retrofit2.** { *; }
+
+-keepclasseswithmembers class * {
+    @retrofit2.http.* <methods>;
+}
+
+-keep class com.squareup.okhttp.** { *; }
+-keep interface com.squareup.okhttp.** { *; }
+-dontwarn com.squareup.okhttp.**
+-dontwarn okio.**
+
+
+#NeuroTech
+-keep class com.neurotec.** { *; }
+-keep class com.sun.jna.** { *; }
+
+-dontwarn com.sun.jna.**
