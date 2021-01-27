@@ -5,9 +5,12 @@ buildscript {
 
     dependencies {
         classpath 'io.fabric.tools:gradle:1.25.4'
+       // classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.7" //added for sonar
+
     }
 }
 apply plugin: 'com.android.application'
+apply plugin: 'org.sonarqube'
 
 repositories {
     maven { url 'https://maven.fabric.io/public' }
@@ -205,6 +208,21 @@ android {
         targetCompatibility = 1.8
     }
 
+}
+
+sonarqube{
+    properties
+            {
+                property "sonar.projectName", "olam-ot2.0-mobile-android-dev"
+                property "sonar.projectKey", "olam-ot2.0-mobile-android-dev"
+                property "sonar.host.url", "https://10.101.32.103:9000/"
+                property "sonar.language", "java"
+                property "sonar.sources", "src/main/java/"
+                property "sonar.java.sources", "src/main/java/"
+                property "sonar.sourceEncoding", "UTF-8"
+                property "sonar.login", "sonar-user"
+                property "sonar.password", "olam123\$\$"
+            }
 }
 
 dependencies {

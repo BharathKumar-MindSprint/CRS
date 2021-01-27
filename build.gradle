@@ -22,7 +22,14 @@ buildscript {
         classpath 'com.google.gms:google-services:4.0.1'
 
         classpath 'com.dynatrace.tools:android:7.2.+'
+
+        classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.7" //added for sonar
+
     }
+}
+
+plugins {
+    id "org.sonarqube" version "2.7"
 }
 
 allprojects {
