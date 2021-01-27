@@ -694,7 +694,7 @@ public class DynamicQuestions {
                 }
 
 
-               
+
             }
             if (displayConfig.has("display")) {
                 JSONObject display = displayConfig.getJSONObject("display");
@@ -1563,7 +1563,7 @@ public class DynamicQuestions {
 
             @Override
             public void afterTextChanged(Editable editable) {
-               
+
                 if ((isHundredPercentQuestion) && (!updatingHundredPercent)) {
                     autofill100Percent(et);
                 }
@@ -2420,9 +2420,15 @@ public class DynamicQuestions {
                 // initilaize default look up globally
                 // pre-fill checkboxes that have been previously ticked
                 if (cbAnswers.getCount() > 0) {
+                    // disable while loading the "Not Applicable"
+                    if(cbId == defaultLookUpValue){
+                        cb.setEnabled(false);
+                    }
+                    //End
                     while (cbAnswers.moveToNext()) {
                         if (cbAnswers.getInt(cbAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_INT)) == cbId) {
                             cb.setChecked(true);
+                            cb.setEnabled(true);
                         }
                     }
                     cbAnswers.moveToPosition(-1);
@@ -2431,6 +2437,7 @@ public class DynamicQuestions {
                     if (defaultLookUpValue != 0) {
                         if (defaultLookUpValue == cbId) {
                             cb.setChecked(true);
+                            cb.setEnabled(true);
                         }
                     }
                 }
@@ -2469,10 +2476,20 @@ public class DynamicQuestions {
                         if (finalDefaultLookUpValue !=0){
                             int ssTableRows = tl.getChildCount();
                             boolean checkboxTicked=false;
+                            int  count = 0;
                             for (int j = 0; j < ssTableRows; j++) {
                                 TableRow ssTr = (TableRow) tl.getChildAt(j);
+                                TextView cbId = (TextView) ssTr.findViewById(R.id.cbId);
                                 CheckBox ssTcb = (CheckBox) ssTr.findViewById(R.id.cbCheckBox);
-                                if (ssTcb.isChecked()) checkboxTicked=true;
+                                if (ssTcb.isChecked()) {
+                                    checkboxTicked=true;
+                                }
+                                if (Integer.parseInt(cbId.getText().toString()) != finalDefaultLookUpValue){
+                                    if (ssTcb.isChecked()){
+                                        count++;
+                                    }
+                                }
+
                             }
                             if (!checkboxTicked){
                                 for (int j = 0; j < ssTableRows; j++) {
@@ -2481,9 +2498,24 @@ public class DynamicQuestions {
                                     TextView cbId = (TextView) ssTr.findViewById(R.id.cbId);
                                     if (Integer.parseInt(cbId.getText().toString()) == finalDefaultLookUpValue){
                                         ssTcb.setChecked(true);
+                                        ssTcb.setEnabled(true);
                                     }
                                 }
                             }
+
+                            // Remove the Not applicable when other selected.
+                            if(count>0){
+                                for (int j = 0; j < ssTableRows; j++) {
+                                    TableRow ssTr = (TableRow) tl.getChildAt(j);
+                                    CheckBox ssTcb = (CheckBox) ssTr.findViewById(R.id.cbCheckBox);
+                                    TextView cbId = (TextView) ssTr.findViewById(R.id.cbId);
+                                    if (Integer.parseInt(cbId.getText().toString()) == finalDefaultLookUpValue){
+                                        ssTcb.setChecked(false);
+                                        ssTcb.setEnabled(false);
+                                    }
+                                }
+                            }
+
                         }
 
                         saveMultipleAnswerEntry(questionId, 0, datatype, tl);
