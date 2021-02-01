@@ -107,7 +107,7 @@
 #-keep class com.olam.digital.ofis.logging.** { *; }
 #-keep class com.olam.digital.ofis.matoma.** { *; }
 #-keep class com.olam.digital.ofis.model.** { *; }
-#-keep class com.olam.digital.ofis.recordpolygon.** { *; }
+-keep class com.olam.digital.ofis.recordpolygon.** { *; }
 #-keep class com.olam.digital.ofis.tasks.** { *; }
 
 #Dependency Library
