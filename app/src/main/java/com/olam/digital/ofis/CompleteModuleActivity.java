@@ -52,6 +52,8 @@ import com.karumi.dexter.listener.PermissionDeniedResponse;
 import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.PermissionListener;
+import com.olam.digital.ofis.coffeesurveyconstraints.CoffeeConstants;
+import com.olam.digital.ofis.coffeesurveyconstraints.CoffeeConstraints;
 import com.olam.digital.ofis.gps.GPSListener;
 import com.olam.digital.ofis.gps.GPSTracker;
 import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
@@ -60,6 +62,8 @@ import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.gps.utils.GPSUtils;
 import com.olam.digital.ofis.matoma.MatomoHelper;
 import com.olam.digital.ofis.matoma.ScreenNameConstants;
+
+import org.json.JSONException;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -81,6 +85,7 @@ public class CompleteModuleActivity extends BaseActivity {
     private String recordedLng;
     private String farmerName;
     private Cursor subModules, questions;
+    public static Cursor allQuestions;
     private Context context;
     private Resources res;
     private DataLayer dl;
@@ -131,6 +136,8 @@ public class CompleteModuleActivity extends BaseActivity {
     GPSListener gpsListener=null;
     private GPSTracker gpsTracker=null;
 
+    public static ScrollView scrollView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -151,6 +158,7 @@ public class CompleteModuleActivity extends BaseActivity {
         recordedLat = intent.getStringExtra(RECORDED_LAT);
         recordedLng = intent.getStringExtra(RECORDED_LNG);
         farmerName = intent.getStringExtra(FARMER_NAME);
+        scrollView= findViewById(R.id.scrollView);
 
         context = this;
         res = getResources();
@@ -177,6 +185,9 @@ public class CompleteModuleActivity extends BaseActivity {
         Utilities.farmerModuleId = farmerModuleId;
 
         Utilities.packagename=getPackageName();
+
+        // all questions
+        allQuestions = dl.getAllQuestionIds((int) moduleId);
 
         if (statusStarted != 0 || statusFinished != 0) {
 
@@ -497,16 +508,55 @@ public class CompleteModuleActivity extends BaseActivity {
             public void onClick(View view) {
                 isLastPage = false;
                 saveSubModule("back");
+                DynamicQuestions.getInstance().constraintsSet.clear();
+                DynamicQuestions.getInstance().surveySet.clear();
             }
         });
 
         nextSaveSubmodule.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               /* boolean status = dynamicQuestions.CheckMinMaxforQuestion(questions);
-                if(! status){
+
+                // validate all the submodules question is answered
+                boolean isMandated = false;
+                try {
+//                    if (DynamicQuestions.getInstance().surveySet.size()>0) {
+//                        Toast.makeText(CompleteModuleActivity.this,res.getString(R.string.restriction_in_submodules),Toast.LENGTH_SHORT).show();
+//                        return;
+//                    }
+                    if( DynamicQuestions.getInstance().constraintsSet.size() > 0 || DynamicQuestions.getInstance().surveySet.size() > 0){
+                        String constraintMsg= new CoffeeConstraints().getConstraintExceedMsg(context,dl);
+                        Toast.makeText(CompleteModuleActivity.this,constraintMsg,Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    // Check the editQuestionSet in each submodule
+
+                    if (DynamicQuestions.getInstance().editQuestionSet.size()>0){
+                        ArrayList<Integer> AllSubmodulesQuestions=dl.getAllSubmodulesQuestionsId(questions);
+                        ArrayList<Integer> affectedQuestions = new ArrayList<Integer>(AllSubmodulesQuestions);
+                        // use common.retainAll
+
+                        affectedQuestions.retainAll(DynamicQuestions.getInstance().editQuestionSet);
+                        if (affectedQuestions.size()>0) {
+                            String constraintMsg = new CoffeeConstraints().getAffectedQuestionMsg(context, dl, affectedQuestions);
+                            Toast.makeText(CompleteModuleActivity.this, constraintMsg, Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
+                    }
+
+
+
+                    isMandated = dynamicQuestions.isAllRequiredSubmoduleAnswered(questions);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                if(! isMandated){
+                    Toast.makeText(CompleteModuleActivity.this,res.getString(R.string.restriction_in_submodules),Toast.LENGTH_SHORT).show();
                     return;
-                }*/
+                }
+                // End
                 if (isLastPage) {
 
                     try{
@@ -710,6 +760,7 @@ public class CompleteModuleActivity extends BaseActivity {
             finish();
         }
     }
+
 
 
     private void collectGPSPoint(Location farmLocation) {

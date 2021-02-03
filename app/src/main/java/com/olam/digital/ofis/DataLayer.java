@@ -27,6 +27,7 @@ import android.widget.TextView;
 
 import com.google.firebase.crash.FirebaseCrash;
 import com.olam.digital.ofis.childlabour.ChildLabourUtils;
+import com.olam.digital.ofis.coffeesurveyconstraints.CoffeeConstants;
 import com.olam.digital.ofis.model.NationalIdDTO;
 import com.olam.digital.ofis.recordpolygon.Utils;
 
@@ -111,6 +112,23 @@ public class DataLayer {
         String[] whereArgs = new String[]{String.valueOf(placeId)};
 
         return db.query(OFISDBContract.PlacesEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+    }
+
+
+
+    Cursor getFGById(int Id) {
+        String[] columns = new String[]{"*"};
+        String whereClause = OFISDBContract.FarmerGroupsEntry.COLUMN_NAME_ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(Id)};
+
+        return db.query(OFISDBContract.FarmerGroupsEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+    }
+
+    Cursor getSectionById(int Id) {
+        String[] columns = new String[]{"*"};
+        String whereClause = OFISDBContract.SectionsEntry.COLUMN_NAME_ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(Id)};
+        return db.query(OFISDBContract.SectionsEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
     }
 
     public int updateFarmPolygon(long farmerId, String plotJson, String olamFarmerId, String farmerName) {
@@ -393,6 +411,16 @@ public class DataLayer {
     }
 
     public long insertNetworkQueueEntry(ContentValues values) {
+        long newRowId;
+        if (!values.containsKey(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ID)) {
+            values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ID, UUID.randomUUID().toString());
+        }
+        newRowId = db.insert(OFISDBContract.NetworkQueueEntry.TABLE_NAME, null, values);
+
+        return newRowId;
+    }
+
+    public static long insertNetworkQueueEntry2(ContentValues values) {
         long newRowId;
         if (!values.containsKey(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ID)) {
             values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ID, UUID.randomUUID().toString());
@@ -2296,7 +2324,7 @@ public class DataLayer {
 
 
     // TODO remove annual survey and expires once no longer required.
-    Cursor getFarmerModules(long id, Context context) {
+    public Cursor getFarmerModules(long id, Context context) {
         Cursor farmer = null;
 
         try {
@@ -2711,6 +2739,19 @@ public class DataLayer {
         db.update(OFISDBContract.FarmerNationalIDs.TABLE_NAME, values, whereClause, whereArgs);
     }
 
+    public void updateSyncedStatusFixed(long farmerid, long updatedFarmerId) {
+        try {
+            ContentValues values = new ContentValues();
+            values.put(OFISDBContract.FarmerNationalIDs.COLUMN_IS_SYNCED, true);
+            values.put(OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID, updatedFarmerId);
+            String whereClause = OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(farmerid)};
+            db.update(OFISDBContract.FarmerNationalIDs.TABLE_NAME, values, whereClause, whereArgs);
+        } catch (Exception e) {
+        }
+
+    }
+
 
     public void updateModerationStatus(long farmerid, boolean moderationstatus) {
         ContentValues values = new ContentValues();
@@ -2756,6 +2797,106 @@ public class DataLayer {
 
         return status;
     }
+
+    public String getNIDType(long farmerId) {
+        String type = null;
+        Cursor nids = getnationalidsbyfarmerid(farmerId);
+        try {
+            while (nids.moveToNext()) {
+                String value = nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_TYPE));
+                type = getNidTypebyid(Integer.parseInt(value));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            nids.close();
+        }
+
+        return type;
+    }
+
+    public ArrayList<String> getNIDTypeByFarmerID(long farmerId) {
+
+        ArrayList<String> nationalList = new ArrayList<String>();
+        Cursor nids = getnationalidsbyfarmerid(farmerId);
+        try {
+            while (nids.moveToNext()) {
+                String type = nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_TYPE));
+                String number = nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_NUMBER));
+                nationalList.add(number + " (" + getNIDTypeByID(type) + ") ");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            nids.close();
+        }
+
+        return nationalList;
+    }
+
+    public String getNIDTypeByID(String typeId) {
+        String type = null;
+        try {
+            type = getNidTypebyid(Integer.parseInt(String.valueOf(typeId)));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return type;
+    }
+
+
+
+    public String getPlaceName(int id) {
+        String name = "NA";
+        Cursor nids = getPlaceById(id);
+        try {
+            while (nids.moveToNext()) {
+                name = nids.getString(nids.getColumnIndex(OFISDBContract.PlacesEntry.COLUMN_NAME_PLACE_NAME));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            nids.close();
+        }
+
+        return name;
+    }
+
+
+    public String getFGName(int id) {
+        String name = "NA";
+        Cursor nids = getFGById(id);
+        try {
+            while (nids.moveToNext()) {
+                name = nids.getString(nids.getColumnIndex(OFISDBContract.FarmerGroupsEntry.COLUMN_NAME_FARMERGROUP_NAME));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            nids.close();
+        }
+
+        return name;
+    }
+
+    public String getSectionName(int id) {
+        String name = "NA";
+        Cursor nids = getSectionById(id);
+        try {
+            while (nids.moveToNext()) {
+                name = nids.getString(nids.getColumnIndex(OFISDBContract.FarmerGroupsEntry.COLUMN_NAME_FARMERGROUP_NAME));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            nids.close();
+        }
+
+        return name;
+    }
+
+
+
 
     public boolean isValueavailable(long farmerId) {
         boolean status = false;
@@ -2868,6 +3009,26 @@ public class DataLayer {
         String[] whereArgs = new String[]{
                 String.valueOf(moduleId),
                 "%\"requiredfield\":true%"
+        };
+        String sql = "SELECT " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_ID
+                + ", " + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION
+                + ", " + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE
+                + " FROM " + questionTable + " INNER JOIN " + submoduleTable
+                + " ON " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_SUBMODULE_ID + " = " + submoduleTable + "." + OFISDBContract.SubmoduleEntry.COLUMN_NAME_ID
+                + " INNER JOIN " + moduleTable + " ON " + submoduleTable + "." + OFISDBContract.SubmoduleEntry.COLUMN_NAME_MODULE_ID + " = " + moduleTable + "."
+                + OFISDBContract.ModuleEntry.COLUMN_NAME_ID + " WHERE " + whereClause;
+
+        return db.rawQuery(sql, whereArgs);
+    }
+
+    //OFS-44
+    Cursor getAllQuestionIds(int moduleId) {
+        String questionTable = OFISDBContract.QuestionEntry.TABLE_NAME;
+        String submoduleTable = OFISDBContract.SubmoduleEntry.TABLE_NAME;
+        String moduleTable = OFISDBContract.ModuleEntry.TABLE_NAME;
+        String whereClause = moduleTable + "." + OFISDBContract.ModuleEntry.COLUMN_NAME_ID + " = ? ";
+        String[] whereArgs = new String[]{
+                String.valueOf(moduleId)
         };
         String sql = "SELECT " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_ID
                 + ", " + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION
@@ -3359,7 +3520,7 @@ public class DataLayer {
 
     }
 
-    void markFarmerAsSynced(int localFarmerId, int id, int farmId, int localPlaceId, int newPlaceId, String olamId) {
+    void markFarmerAsSynced(int localFarmerId, int id, int farmId, int localPlaceId, int newPlaceId, String olamId, boolean biometric, String encodedBiometricImage) {
         // check to see if new id is already existing
         Cursor newFarmer = db.query(OFISDBContract.FarmerEntry.TABLE_NAME, new String[]{"id"}, "id = ?", new String[]{String.valueOf(id)}, null, null, null);
 
@@ -3512,7 +3673,7 @@ public class DataLayer {
         return db.rawQuery(sql, whereArgs);
     }
 
-    Cursor getAnswersByFarmerModuleId(int farmerModuleId) {
+    public Cursor getAnswersByFarmerModuleId(int farmerModuleId) {
         String answerTable = OFISDBContract.AnswerEntry.TABLE_NAME;
         String questionTable = OFISDBContract.QuestionEntry.TABLE_NAME;
         String datatypeTable = OFISDBContract.DatatypesEntry.TABLE_NAME;
@@ -3523,6 +3684,37 @@ public class DataLayer {
         String[] whereArgs = new String[]{String.valueOf(farmerModuleId)};
 
         return db.rawQuery(sql, whereArgs);
+    }
+
+    public Cursor getAnswersByFarmerModuleQuestionId(int farmerModuleId, int questionId) {
+        String answerTable = OFISDBContract.AnswerEntry.TABLE_NAME;
+        String questionTable = OFISDBContract.QuestionEntry.TABLE_NAME;
+        String datatypeTable = OFISDBContract.DatatypesEntry.TABLE_NAME;
+        String sql = "SELECT " + answerTable + ".*," + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE + ", " + datatypeTable + "." + OFISDBContract.DatatypesEntry.COLUMN_NAME_DATATYPE_NAME +
+                " FROM " + answerTable + " INNER JOIN " + questionTable + " ON " + answerTable + "." + OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID + " = " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_ID +
+                " INNER JOIN " + datatypeTable + " ON " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID + " = " + datatypeTable + "." + OFISDBContract.DatatypesEntry.COLUMN_NAME_ID +
+                " WHERE " + answerTable + "." + OFISDBContract.AnswerEntry.COLUMN_NAME_PARENT_QUESTION_ID + " = 0  AND " + answerTable + "." + OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID + " = ?  AND " + answerTable + "." + OFISDBContract.AnswerEntry.COLUMN_NAME_FARMER_MODULE_ID + "= ? ORDER BY " + answerTable + "." + OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID + " ASC";
+        String[] whereArgs = new String[]{String.valueOf(questionId), String.valueOf(farmerModuleId)};
+
+        return db.rawQuery(sql, whereArgs);
+    }
+
+
+    public Cursor getAnswersByQuestionId(int farmerModuleId, int questionId) {
+        String[] columns = new String[]{"*"};
+        String whereClause = OFISDBContract.AnswerEntry.COLUMN_NAME_FARMER_MODULE_ID + " = ? AND " + OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(farmerModuleId), String.valueOf(questionId)};
+        Cursor cursor = db.query(OFISDBContract.AnswerEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+        return cursor;
+    }
+
+    public void DeleteAnswersByQuestionId(int farmerModuleId, int questionId) {
+        try {
+            String[] columns = new String[]{"*"};
+            String whereClause = OFISDBContract.AnswerEntry.COLUMN_NAME_FARMER_MODULE_ID + " = ? AND " + OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(farmerModuleId), String.valueOf(questionId)};
+            db.delete(OFISDBContract.AnswerEntry.TABLE_NAME, whereClause, whereArgs);
+        }catch (Exception e){}
     }
 
     Cursor getAnswersByFarmerChildModuleId(int farmerModuleId) {
@@ -4333,7 +4525,7 @@ public class DataLayer {
     public long insertConsentStatementDetails(ContentValues contentValues, String olamfarmername, String type) {
         long newRowId;
         newRowId = db.insert(OFISDBContract.ConsentStatementEntry.TABLE_NAME, null, contentValues);
-        if(type.equalsIgnoreCase("update")) {
+        if (type.equalsIgnoreCase("update")) {
             if (newRowId != -1) {
                 // add a network queue entry
                 Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -4642,7 +4834,7 @@ public class DataLayer {
 
     public ArrayList<String> getNationalIdNames(ArrayList<String> nationalIds) {
         String nationalIdsStr = TextUtils.join(", ", nationalIds);
-        Cursor cursor = db.rawQuery("select * from nationalids where id in ("+ nationalIdsStr +")", null);
+        Cursor cursor = db.rawQuery("select * from nationalids where id in (" + nationalIdsStr + ")", null);
         ArrayList<String> types = new ArrayList<>();
         if (cursor != null) {
             if (cursor.getCount() > 0) {
@@ -4654,4 +4846,215 @@ public class DataLayer {
         return types;
     }
 
+
+
+    public Cursor farmerExist(long id, int sectionId, int placeId) {
+        String[] columns = new String[]{"*"};
+        String whereClause = OFISDBContract.FarmerEntry.COLUMN_NAME_ID + " = ? AND " + OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID + " = ? AND " + OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(id), String.valueOf(sectionId), String.valueOf(placeId)};
+
+        Cursor cursor = db.query(OFISDBContract.FarmerEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+        return cursor;
+    }
+
+    public Cursor farmerExist(long id) {
+        String[] columns = new String[]{"*"};
+        String whereClause = OFISDBContract.FarmerEntry.COLUMN_NAME_ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(id)};
+
+        Cursor cursor = db.query(OFISDBContract.FarmerEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+        return cursor;
+    }
+
+
+
+    public Cursor farmerExistByName(String name) {
+        String[] columns = new String[]{"*"};
+        String whereClause = OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(name)};
+        Cursor cursor = db.query(OFISDBContract.FarmerEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+        return cursor;
+    }
+
+    public Cursor farmerExistByDob(String name) {
+        String[] columns = new String[]{"*"};
+        String whereClause = OFISDBContract.FarmerEntry.COLUMN_NAME_DOB + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(name)};
+        Cursor cursor = db.query(OFISDBContract.FarmerEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+        return cursor;
+    }
+
+    public Cursor farmerExistByNameDob(String dob, String nameExisting, String nameNew) {
+//        String[] columns = new String[]{"*"};
+//        String whereClause = OFISDBContract.FarmerEntry.COLUMN_NAME_DOB + " = ? AND " + OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME + " = ?";
+//        String[] whereArgs = new String[]{String.valueOf(dob),name};
+//        Cursor cursor = db.query(OFISDBContract.FarmerEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+//
+        String sqlQuery = "select * from farmers where dob LIKE '%" + dob + "%' and (name='" + nameExisting + "' or name='" + nameNew + "')";
+        Cursor cursor = db.rawQuery(sqlQuery, null);
+        return cursor;
+    }
+
+    public Cursor farmerExistByGeoValues(int countryId, int regionId, int districtId, int placeId) {
+        String[] columns = new String[]{"*"};
+        String whereClause = OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID + " = ? AND " + OFISDBContract.FarmerEntry.COLUMN_NAME_REGIONID + " = ? AND " + OFISDBContract.FarmerEntry.COLUMN_NAME_DISTRICTID + " = ?AND " + OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(countryId), String.valueOf(regionId), String.valueOf(districtId), String.valueOf(placeId)};
+        Cursor cursor = db.query(OFISDBContract.FarmerEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+        return cursor;
+    }
+
+    public Cursor farmerExistByfarmerGroupSection(int farmerGroupId, int sectionId) {
+        String[] columns = new String[]{"*"};
+        String whereClause = OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID + " = ? AND " + OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(farmerGroupId), String.valueOf(sectionId)};
+        Cursor cursor = db.query(OFISDBContract.FarmerEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+        return cursor;
+    }
+
+
+    public Cursor farmerExistByNationalId(String value, int typeId) {
+        String[] columns = new String[]{"*"};
+        String whereClause = OFISDBContract.FarmerNationalIDs.COLUMN_NID_NUMBER + " = ? AND " + OFISDBContract.FarmerNationalIDs.COLUMN_NID_TYPE + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(value), String.valueOf(typeId)};
+        Cursor cursor = db.query(OFISDBContract.FarmerNationalIDs.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+        return cursor;
+    }
+
+    public Cursor getDuplicateRecordByFarmerId(long editFarmerId) {
+        String[] columns = new String[]{"*"};
+        String whereClause = OFISDBContract.FarmerEntry.COLUMN_NAME_ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(editFarmerId)};
+        Cursor cursor = db.query(OFISDBContract.FarmerEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+        return cursor;
+    }
+
+
+
+    public int getDuplicateListCount() {
+        int count = 0;
+        try {
+            Cursor cursor = db.rawQuery("select * from duplicate_farmers", null);
+            if (cursor != null) {
+                count = cursor.getCount();
+            }
+            cursor.close();
+        } catch (Exception e) {
+        }
+        return count;
+    }
+
+
+    public boolean isAvailableInNetworkTable(String farmerId, String update_biomatric) {
+        boolean available = false;
+
+        try {
+            // Check in Update Flow
+            String[] columns = new String[]{"*"};
+            String whereClause = OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID + " = ? AND " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE + " = ?";
+            String[] whereArgs = new String[]{farmerId, update_biomatric};
+            Cursor cursor = db.query(OFISDBContract.NetworkQueueEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+
+            if (cursor != null) {
+                if (cursor.getCount() > 0) {
+                    available = true;
+                }
+            }
+            cursor.close();
+        } catch (Exception e) {
+        }
+
+
+        try {
+            // Check in Add Farmer registration Table
+            String[] columnsReg = new String[]{"*"};
+            String whereClauseReg = OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID + " = ? AND " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE + " = ?";
+            String[] whereArgsReg = new String[]{farmerId, "farmer"};
+            Cursor cursorReg = db.query(OFISDBContract.NetworkQueueEntry.TABLE_NAME, columnsReg, whereClauseReg, whereArgsReg, null, null, null);
+
+            if (cursorReg != null) {
+                if (cursorReg.getCount() > 0) {
+                    available = true;
+                }
+            }
+            cursorReg.close();
+        } catch (Exception e) {
+        }
+
+        return available;
+    }
+
+
+
+
+
+    public String getQuestionNo(String questionNo) {
+
+        String[] columns = new String[]{"*"};
+        String whereClause = OFISDBContract.QuestionEntry.COLUMN_NAME_ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(questionNo)};
+        Cursor cursor = db.query(OFISDBContract.QuestionEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+        int questionPosition = 0;
+        if (cursor != null) {
+            try {
+                if (cursor.getCount() > 0) {
+                    while (cursor.moveToNext()) {
+                        String displayConfigStr;
+                        displayConfigStr = cursor.getString(cursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION));
+                        JSONObject displayObject=new JSONObject(displayConfigStr);
+                        String calculationNode = displayObject.optString(CoffeeConstants.CALCULATION);
+                        JSONObject jsonObject = new JSONObject(calculationNode);
+                        questionPosition = jsonObject.optInt(CoffeeConstants.QUESTION_NUMBER,0);
+                    }
+                }
+            } catch (Exception e) {
+            }
+        }
+        cursor.close();
+        return String.valueOf(questionPosition);
+    }
+
+    public String getQuestionSurveyCompletion(String questionNo) {
+        String[] columns = new String[]{"*"};
+        String whereClause = OFISDBContract.QuestionEntry.COLUMN_NAME_ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(questionNo)};
+        Cursor cursor = db.query(OFISDBContract.QuestionEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+        String questionPosition = "";
+        if (cursor != null) {
+            try {
+                if (cursor.getCount() > 0) {
+                    while (cursor.moveToNext()) {
+                        String displayConfigStr;
+                        displayConfigStr = cursor.getString(cursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION));
+                        JSONObject displayObject=new JSONObject(displayConfigStr);
+                        String calculationNode = displayObject.optString(CoffeeConstants.CALCULATION);
+                        JSONObject jsonObject = new JSONObject(calculationNode);
+                        questionPosition = jsonObject.optString(CoffeeConstants.QUESTION_NUMBER,"");
+                    }
+                }
+            } catch (Exception e) {
+            }
+        }
+        cursor.close();
+        return questionPosition;
+    }
+
+    public Cursor getQuestionById(int questionId) {
+            String[] columns = new String[]{"*"};
+            String whereClause = OFISDBContract.QuestionEntry.COLUMN_NAME_ID + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(questionId)};
+            Cursor cursor = db.query(OFISDBContract.QuestionEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+            return cursor;
+    }
+
+    public ArrayList<Integer> getAllSubmodulesQuestionsId(Cursor questions) throws JSONException {
+        // get the list of questions by submodules
+        ArrayList<Integer> questionList=new ArrayList<>();
+        if(questions != null && questions.moveToFirst()) {
+            do {
+                 String questionId = questions.getString(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
+                 questionList.add(Integer.parseInt(questionId));
+            } while (questions.moveToNext());
+        }
+        return questionList;
+    }
 }

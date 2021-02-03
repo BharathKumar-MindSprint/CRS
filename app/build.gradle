@@ -5,9 +5,12 @@ buildscript {
 
     dependencies {
         classpath 'io.fabric.tools:gradle:1.25.4'
+       // classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.7" //added for sonar
+
     }
 }
 apply plugin: 'com.android.application'
+apply plugin: 'org.sonarqube'
 
 repositories {
     maven { url 'https://maven.fabric.io/public' }
@@ -22,10 +25,12 @@ apply plugin: 'com.dynatrace.tools.android'
 //
 dynatrace {
     defaultConfig {
+
        /* beaconURL 'https://eok851.dynatrace-managed.com:9999/mbeacon/82203a30-a89c-4afb-8009-c475586c3488'
         applicationId '1bd3a5cf-7c8d-49ae-8452-7116cfccb064'*/
         beaconURL 'https://eok851.dynatrace-managed.com:9999/mbeacon/8f745a3a-ca48-40b4-aec4-a663c087c19f'
         applicationId '037a8683-44f6-4b8b-ba26-5c8bd021d473'
+
         agentProperties 'DTXLogLevel' : 'debug'
 
     }
@@ -65,8 +70,10 @@ android {
         targetSdkVersion 29
         multiDexEnabled true
 
+
         versionCode 33
         versionName "10.2.7"
+
 
     }
 
@@ -200,6 +207,21 @@ android {
 
 }
 
+sonarqube{
+    properties
+            {
+                property "sonar.projectName", "olam-ot2.0-mobile-android-dev"
+                property "sonar.projectKey", "olam-ot2.0-mobile-android-dev"
+                property "sonar.host.url", "https://10.101.32.103:9000/"
+                property "sonar.language", "java"
+                property "sonar.sources", "src/main/java/"
+                property "sonar.java.sources", "src/main/java/"
+                property "sonar.sourceEncoding", "UTF-8"
+                property "sonar.login", "sonar-user"
+                property "sonar.password", "olam123\$\$"
+            }
+}
+
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     //compile project(":OSMBonusPack")
@@ -237,7 +259,6 @@ dependencies {
 
 
 
-
     // Required for local unit tests (JUnit 4 framework)
     // Required -- JUnit 4 framework
     testImplementation 'junit:junit:4.12'
@@ -265,7 +286,13 @@ dependencies {
     // User Event Analytics
     implementation 'org.matomo.sdk:tracker:4.1.1'
 
+//    def appCenterSdkVersion = '3.0.0'
+//    implementation "com.microsoft.appcenter:appcenter-distribute:${appCenterSdkVersion}"
+    implementation project(':face-biometric')
+    implementation project(path: ':neurotec-licensing-gui-android')
+    implementation project(path: ':neurotec-biometrics-gui-android')
 
+    implementation 'com.scottyab:aescrypt:0.0.1'
 
     implementation 'com.scottyab:aescrypt:0.0.1'
 

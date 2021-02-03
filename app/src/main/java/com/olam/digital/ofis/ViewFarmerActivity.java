@@ -24,6 +24,8 @@ import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatButton;
+import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NavUtils;
 import androidx.core.content.ContextCompat;
