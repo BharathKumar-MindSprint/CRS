@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.res.Resources;
@@ -16,6 +17,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.provider.Settings;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 
 import android.text.TextUtils;
@@ -249,14 +251,43 @@ public class CompleteModuleActivity extends BaseActivity {
             gpsTracker.startLocationUpdateInitially();
 
 //        }
-
-
 }
+
+    private void checkTime() {
+        try {
+            int auto_time_enabled = 0;
+            int auto_time_zone_enabled = 0;
+
+                auto_time_enabled = Settings.Global.getInt(getContentResolver(), Settings.Global.AUTO_TIME, 0);
+                auto_time_zone_enabled = Settings.Global.getInt(getContentResolver(), Settings.Global.AUTO_TIME_ZONE, 0);
+//
+            if (auto_time_enabled == 0 || auto_time_zone_enabled == 0) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setCancelable(false);
+                builder.setMessage(res.getString(R.string.set_auto_time_message))
+                        .setPositiveButton(res.getString(R.string.app_update_ok), new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                Intent intent = new Intent(Settings.ACTION_DATE_SETTINGS);
+                                startActivityForResult(intent, 6575);
+                            }
+                        });
+                AlertDialog alert = builder.create();
+                alert.show();
+            } else {
+               // autotimeEnabled = true;
+            }
+        } catch (Exception e) {
+            FirebaseCrash.report(new Exception("HomeActivity: Error getting phone auto time settings", e));
+            e.printStackTrace();
+        }
+
+    }
 
     @Override
     protected void onResume() {
         super.onResume();
         MatomoHelper.matomoScreenTracker(ScreenNameConstants.SCREEN_VIEW_FARMER_ACTIVITY, ScreenNameConstants.SCREEN_COMPLETE_MODULE_ACTIVITY, ScreenNameConstants.SCREEN_COMPLETE_QUESTIONARE);
+        checkTime();
     }
 
     @SuppressWarnings("ConstantConditions")
@@ -376,7 +407,7 @@ public class CompleteModuleActivity extends BaseActivity {
 
         ((ViewGroup) questionsSection.getParent()).removeView(questionsSection);
         bottomSection.addView(questionsSection, 0, questionsSection.getLayoutParams());
-
+        checkTime();
     }
 
 
@@ -442,6 +473,9 @@ public class CompleteModuleActivity extends BaseActivity {
 //            Toast.makeText(AddInfrastructureActivity.this,getResources().getString(R.string.record_location_timeout),Toast.LENGTH_LONG).show();
                     stopLocationUpdates();
                 }
+                break;
+            case 6575:
+                checkTime();
                 break;
             default:
                 if (resultCode == RESULT_OK) {

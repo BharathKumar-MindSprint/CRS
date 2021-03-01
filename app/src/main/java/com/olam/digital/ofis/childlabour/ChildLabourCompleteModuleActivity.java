@@ -3,6 +3,7 @@ package com.olam.digital.ofis.childlabour;
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.res.Resources;
@@ -16,6 +17,7 @@ import android.os.Looper;
 import android.provider.Settings;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -158,6 +160,7 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         MatomoHelper.matomoScreenTracker(ScreenNameConstants.SCREEN_VIEW_CHILD_LABOUR_SURVEY_ACTIVITY, ScreenNameConstants.SCREEN_VIEW_CHILD_LABOUR_COMPLETE_MODULE_ACTIVITY, ScreenNameConstants.SCREEN_CHILD_LABOUR_COMPLETE_MODULE_SURVEY);
+        checkTime();
     }
 
     private void initGPSListener() {
@@ -174,6 +177,36 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
 //        if (gpsTracker.isGpsEnabled()){
             gpsTracker.startLocationUpdateInitially();
 //        }
+
+    }
+
+    private void checkTime() {
+        try {
+            int auto_time_enabled = 0;
+            int auto_time_zone_enabled = 0;
+
+            auto_time_enabled = Settings.Global.getInt(getContentResolver(), Settings.Global.AUTO_TIME, 0);
+            auto_time_zone_enabled = Settings.Global.getInt(getContentResolver(), Settings.Global.AUTO_TIME_ZONE, 0);
+//
+            if (auto_time_enabled == 0 || auto_time_zone_enabled == 0) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setCancelable(false);
+                builder.setMessage(res.getString(R.string.set_auto_time_message))
+                        .setPositiveButton(res.getString(R.string.app_update_ok), new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                Intent intent = new Intent(Settings.ACTION_DATE_SETTINGS);
+                                startActivityForResult(intent, 6575);
+                            }
+                        });
+                AlertDialog alert = builder.create();
+                alert.show();
+            } else {
+                // autotimeEnabled = true;
+            }
+        } catch (Exception e) {
+            FirebaseCrash.report(new Exception("HomeActivity: Error getting phone auto time settings", e));
+            e.printStackTrace();
+        }
 
     }
 
@@ -639,6 +672,9 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
                     stopLocationUpdates();
                 }
                 break;
+            case 6575:
+                checkTime();
+                break;
             default:
                 if (resultCode == RESULT_OK) {
                     dynamicQuestions.setFullImageFromFilePath(res);
@@ -758,7 +794,7 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
 
         ((ViewGroup) questionsSection.getParent()).removeView(questionsSection);
         bottomSection.addView(questionsSection, 0, questionsSection.getLayoutParams());
-
+        checkTime();
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
