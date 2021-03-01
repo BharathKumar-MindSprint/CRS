@@ -203,7 +203,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
-        checkTime();
+       // checkTime();
         bindNetworkQueue();
 
         if (sharedPreferences.getBoolean("FIRST_RUN",true)) {
@@ -965,6 +965,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     protected void onResume() {
         super.onResume();
         MatomoHelper.matomoScreenTracker(ScreenNameConstants.SCREEN_HOME_ACTIVITY, ScreenNameConstants.SCREEN_HOME_ACTIVITY, ScreenNameConstants.SCREEN_HOME);
+        checkTime();
     }
 
     @Override
