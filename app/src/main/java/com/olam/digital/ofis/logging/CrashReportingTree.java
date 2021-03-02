@@ -2,7 +2,7 @@ package com.olam.digital.ofis.logging;
 
 import android.util.Log;
 
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 import timber.log.Timber;
 
@@ -22,10 +22,10 @@ public class CrashReportingTree extends Timber.Tree {
                 ? throwable
                 : new Exception(message);
         // Firebase Crash Reporting
-        Crashlytics.log(priority, tag, message);
-        Crashlytics.logException(t);
-        Crashlytics.getInstance().core.logException(t);
-        Crashlytics.getInstance().logException(t);
+        try {
+            FirebaseCrashlytics.getInstance().recordException(t);
+            FirebaseCrashlytics.getInstance().log(message);
+        }catch (Exception e){}
     }
 }
 
