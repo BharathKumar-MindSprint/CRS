@@ -11,6 +11,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -30,6 +31,8 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.app.NavUtils;
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.FileProvider;
+
 import android.telephony.PhoneNumberUtils;
 import android.text.Editable;
 import android.text.InputType;
@@ -332,11 +335,11 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 break;
             case REQUEST_IMAGE_GALLERY:
                 if (resultCode == RESULT_OK) {
+                    String realPath= ImageFilePath.getPath(ViewFarmerActivity.this,data.getData());
 
-                    setCapturedImageURI(data.getData());
                     try {
-                        if (getFilePathUri(context, getCapturedImageURI()) != null) {
-                            setFullImageFromFilePath(getFilePathUri(context, getCapturedImageURI()), farmerPhoto, "portrait");
+                        if (realPath != null) {
+                            setFullImageFromFilePath(realPath, farmerPhoto, "portrait");
                         } else {
                             Toast.makeText(ViewFarmerActivity.this, "Something went wrong, please try again", Toast.LENGTH_LONG).show();
                         }
@@ -1300,10 +1303,8 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 Toast.makeText(context, items[item], Toast.LENGTH_SHORT).show();
 
                 if (items[item].equals(res.getString(R.string.Camera))) {
-                    Intent takePicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    takePicture.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    // New
                     File photoFile = null;
-
                     try {
                         photoFile = createImageFile("portrait");
                     } catch (IOException e) {
@@ -1312,40 +1313,32 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                     }
 
                     if (photoFile != null) {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                            try {
-                                Method m = StrictMode.class.getMethod("disableDeathOnFileUriExposure");
-                                m.invoke(null);
-                            } catch (Exception e) {
-                                e.printStackTrace();
+                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        if ((intent.resolveActivity(getPackageManager()) != null)) {
+                            Uri photoURI = FileProvider.getUriForFile(ViewFarmerActivity.this, getApplicationContext().getPackageName() + ".profileimage.fileprovider", photoFile);
+
+                            // Samsung Galaxy S3 Fix
+                            List<ResolveInfo> resInfoList = getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+                            for (ResolveInfo resolveInfo : resInfoList) {
+                                String packageName = resolveInfo.activityInfo.packageName;
+                                grantUriPermission(packageName, photoURI, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
                             }
-                        }
-                        Uri fileUri = Uri.fromFile(photoFile);
-                        setCapturedImageURI(fileUri);
-                        setCurrentPhotoPath(fileUri.getPath());
-                        takePicture.putExtra(MediaStore.EXTRA_OUTPUT, getCapturedImageURI());
-                        try {
-                            if(takePicture.resolveActivity(getPackageManager()) != null) {
-                                startActivityForResult(takePicture, REQUEST_IMAGE_CAPTURE);
-                            }else {
-                                Toast.makeText(ViewFarmerActivity.this,"Gallery is not available in Mobile",Toast.LENGTH_LONG).show();
-                            }
-                        }catch (Exception e){
-                            e.printStackTrace();
+
+                            //  tempProfileImageFile=photoFile;
+                            setCapturedImageURI(photoURI);
+                            setCurrentPhotoPath(photoFile.getPath());
+                            intent.putExtra(MediaStore.EXTRA_OUTPUT, getCapturedImageURI());
+                            startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
+                        }else{
+                            Toast.makeText(ViewFarmerActivity.this, "Gallery is not available in Mobile", Toast.LENGTH_LONG).show();
                         }
                     }
 
                 } else if (items[item].equals(res.getString(R.string.Gallery))) {
-                    Intent pickPhoto = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                    try {
-                        if(pickPhoto.resolveActivity(getPackageManager()) != null) {
-                            startActivityForResult(pickPhoto, REQUEST_IMAGE_GALLERY);
-                        }else {
-                            Toast.makeText(ViewFarmerActivity.this,"Gallery is not available in Mobile",Toast.LENGTH_LONG).show();
-                        }
-                    }catch (Exception e){
-                        e.printStackTrace();
-                    }
+                    Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                    intent.addCategory(Intent.CATEGORY_OPENABLE);
+                    intent.setType("image/*");
+                    startActivityForResult(intent, REQUEST_IMAGE_GALLERY);
 
                 }
             }
@@ -1357,7 +1350,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
     private File createImageFile(String portraitOrSignature) throws IOException {
         String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.ENGLISH).format(new Date());
         String imageFileName = (portraitOrSignature.equalsIgnoreCase("portrait")) ? "ofis_farmer_portrait_" + timestamp + "_" : "ofis_farmer_signature_" + timestamp + "_";
-        File storageDir = getExternalFilesDir(null);
+        File storageDir = getExternalFilesDir("");
         File image = File.createTempFile(imageFileName, ".jpg", storageDir);
         if (portraitOrSignature.equalsIgnoreCase("portrait")) {
             mCurrentPhotoPath = "file:" + image.getAbsolutePath();
