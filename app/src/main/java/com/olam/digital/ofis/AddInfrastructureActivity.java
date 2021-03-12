@@ -86,6 +86,7 @@ public class AddInfrastructureActivity extends BaseActivity {
     private int selectedCountry = 0;
     private int selectedRegion = 0;
     private int selectedDistrict = 0;
+    private int selectedSubDistrict = 0;
     private int selectedProduct = 0;
     private int selectedFarmerGroup = 0;
     private int selectedPlace = 0;
@@ -266,7 +267,7 @@ public class AddInfrastructureActivity extends BaseActivity {
         }
 
       //  int selectedPlace = 0;
-        dl.createGeographyHierarchySpinners(this, context, null, selectedCountry, selectedRegion, selectedDistrict, selectedPlace, null,false);
+        dl.createGeographyHierarchySpinners(this, context, null, selectedCountry, selectedRegion, selectedDistrict,selectedSubDistrict, selectedPlace, null,false);
         dl.createBusinessHierarchySpinners(this, context, null, selectedFarmerGroup, selectedSection);
 
         // New
@@ -495,6 +496,7 @@ public class AddInfrastructureActivity extends BaseActivity {
             selectedCountry = existingItem.getInt(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_COUNTRY_ID));
             selectedRegion = existingItem.getInt(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_REGION_ID));
             selectedDistrict = existingItem.getInt(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_DISTRICT_ID));
+            selectedSubDistrict = existingItem.getInt(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBDISTRICT_ID));
             selectedPlace = existingItem.getInt(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PLACE_ID));
         }else{
             selectedCountry1 = existingItem.getInt(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_COUNTRY_ID));
@@ -585,6 +587,13 @@ public class AddInfrastructureActivity extends BaseActivity {
             }
         }
 
+        Spinner spinner_subdistrict = (Spinner) findViewById(R.id.spinner_subdistrict);
+        long subdistrict_id = spinner_subdistrict.getSelectedItemId();
+        if (subdistrict_id < 1) {
+            Toast.makeText(context, res.getString(R.string.fill_subdistrict), Toast.LENGTH_LONG).show();
+
+            return values;
+        }
 
         Spinner spinner_farmer_group = (Spinner) findViewById(R.id.spinner_farmerGroup);
         long farmergroup_id = spinner_farmer_group.getSelectedItemId();
@@ -638,6 +647,7 @@ public class AddInfrastructureActivity extends BaseActivity {
             values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_SUBGROUP_TYPE, String.valueOf(subModulesSpinner.getSelectedItem()));
             values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LAT, recorded_lat);
             values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG, recorded_lng);
+            values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBDISTRICT_ID, subdistrict_id);
             if (isVillage){
                 values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_COUNTRY_ID, country_id1);
                 values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_REGION_ID, region_id1);
