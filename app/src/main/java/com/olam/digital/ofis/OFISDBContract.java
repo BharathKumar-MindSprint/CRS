@@ -752,6 +752,7 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_SECTIONID = "sectionId";
         public static final String COLUMN_NAME_COUNTRYID = "countryId";
         public static final String COLUMN_NAME_DISTRICTID = "districtId";
+        public static final String COLUMN_NAME_SUBDISTRICTID = "subdistrictId";
         public static final String COLUMN_NAME_FARMERGROUPID = "farmerGroupId";
         public static final String COLUMN_NAME_REGIONID = "regionId";
         public static final String COLUMN_NAME_CONSENTFARMER = "consentFarmer";
@@ -813,6 +814,7 @@ public class OFISDBContract {
                     add(COLUMN_NAME_CONSENT_OTHERS);
                     add(COLUMN_NAME_COUNTRY_ID);
                     add(COLUMN_NAME_DISTRICTID);
+                    add(COLUMN_NAME_SUBDISTRICTID);
                     add(COLUMN_NAME_FARMERGROUPID);
                     add(COLUMN_NAME_REGIONID);
                     add(COLUMN_NAME_PRODUCT_ID);
@@ -1028,6 +1030,20 @@ public class OFISDBContract {
         );
     }
 
+    public static abstract class SubDistrictsEntry implements BaseColumns {
+        public static final String TABLE_NAME = "subdistricts";
+        public static final String COLUMN_NAME_ID = "id";
+        public static final String COLUMN_NAME_DISTRICT_ID = "district_id";
+        public static final String COLUMN_NAME_SUBDISTRICT_NAME = "name";
+        public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
+                new ArrayList<String>() {{
+                    add(COLUMN_NAME_SUBDISTRICT_NAME);
+                    add(COLUMN_NAME_ID);
+                    add(COLUMN_NAME_DISTRICT_ID);
+                }}
+        );
+    }
+
     public static abstract class PlacesEntry implements BaseColumns {
         public static final String TABLE_NAME = "places";
         public static final String COLUMN_NAME_ID = "id";
@@ -1118,6 +1134,7 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_COUNTRY_ID = "country_id";
         public static final String COLUMN_NAME_REGION_ID = "region_id";
         public static final String COLUMN_NAME_DISTRICT_ID = "district_id";
+        public static final String COLUMN_NAME_SUBDISTRICT_ID = "subdistrict_id";
         public static final String COLUMN_NAME_PLACE_ID = "place_id";
         public static final String COLUMN_NAME_PRODUCT_ID = "product_id";
         public static final String COLUMN_NAME_FARMERGROUP_ID = "farmergroup_id";
@@ -1170,6 +1187,7 @@ public class OFISDBContract {
                     add(COLUMN_NAME_COUNTRY_ID);
                     add(COLUMN_NAME_REGION_ID);
                     add(COLUMN_NAME_DISTRICT_ID);
+                    add(COLUMN_NAME_SUBDISTRICT_ID);
                     add(COLUMN_NAME_PLACE_ID);
                     add(COLUMN_NAME_PRODUCT_ID);
                     add(COLUMN_NAME_FARMERGROUP_ID);

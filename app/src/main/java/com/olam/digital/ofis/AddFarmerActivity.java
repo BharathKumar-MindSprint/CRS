@@ -102,6 +102,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     private final static String CAPTURED_SELECTED_COUNTRY = "mCapturedCountry";
     private final static String CAPTURED_SELECTED_REGION = "mCapturedRegion";
     private final static String CAPTURED_SELECTED_DISTRICT = "mCapturedDistrict";
+    private final static String CAPTURED_SELECTED_SUBDISTRICT = "mCapturedSubDistrict";
     private final static String CAPTURED_SELECTED_PLACE = "mCapturedPlace";
     private final static String CAPTURED_SELECTED_FARMERGROUP = "mCapturedFarmerGroup";
     private final static String CAPTURED_SELECTED_SECTION = "mCapturedSection";
@@ -136,8 +137,8 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     boolean isSigned = false;
     private long editFarmerId;
     private boolean editMode;
-    private int selectedCountry = 0, selectedRegion = 0, selectedDistrict = 0, selectedPlace = 0, selectedFarmerGroup = 0, selectedSection = 0;
-    private Spinner genderspinner, countrySpinner, regionSpinner, districtSpinner, placeSpinner, farmerGroupSpinner, sectionSpinner;
+    private int selectedCountry = 0, selectedRegion = 0, selectedDistrict = 0,selectedSubDistrict = 0, selectedPlace = 0, selectedFarmerGroup = 0, selectedSection = 0;
+    private Spinner genderspinner, countrySpinner, regionSpinner, districtSpinner, placeSpinner, farmerGroupSpinner, sectionSpinner, subdistrictSpinner;
     // Required for camera operations in order to save the image file on resume.
     private String mCurrentPhotoPath = null, mCurrentSignaturePhotoPath = null;
     private Uri mCapturedImageURI = null, mCapturedSignatureImageURI = null;
@@ -255,12 +256,13 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         countrySpinner = this.findViewById(R.id.spinner_country);
         regionSpinner = this.findViewById(R.id.spinner_region);
         districtSpinner = this.findViewById(R.id.spinner_district);
+        subdistrictSpinner = this.findViewById(R.id.spinner_subdistrict);
         placeSpinner = this.findViewById(R.id.spinner_place);
         farmerGroupSpinner = this.findViewById(R.id.spinner_farmerGroup);
         sectionSpinner = this.findViewById(R.id.spinner_section);
 
         dl.createBusinessHierarchySpinners(this, context, farmerIdPrefix, selectedFarmerGroup, selectedSection);
-        dl.createGeographyHierarchySpinners(this, context, farmerIdPrefix, selectedCountry, selectedRegion, selectedDistrict, selectedPlace, phonenumbers, true);
+        dl.createGeographyHierarchySpinners(this, context, farmerIdPrefix, selectedCountry, selectedRegion, selectedDistrict, selectedSubDistrict, selectedPlace, phonenumbers, true);
 
         farmerPhotoActionButton = findViewById(R.id.farmerPhotoActionButton);
         farmerPhotoActionButton.setOnClickListener(new View.OnClickListener() {
@@ -337,6 +339,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         selectedCountry = (int) countrySpinner.getSelectedItemId();
         selectedRegion = (int) regionSpinner.getSelectedItemId();
         selectedDistrict = (int) districtSpinner.getSelectedItemId();
+        selectedSubDistrict = (int) subdistrictSpinner.getSelectedItemId();
         selectedPlace = (int) placeSpinner.getSelectedItemId();
         selectedFarmerGroup = (int) farmerGroupSpinner.getSelectedItemId();
         selectedSection = (int) sectionSpinner.getSelectedItemId();
@@ -345,6 +348,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         savedInstanceState.putInt(CAPTURED_SELECTED_COUNTRY, selectedCountry);
         savedInstanceState.putInt(CAPTURED_SELECTED_REGION, selectedRegion);
         savedInstanceState.putInt(CAPTURED_SELECTED_DISTRICT, selectedDistrict);
+        savedInstanceState.putInt(CAPTURED_SELECTED_SUBDISTRICT, selectedSubDistrict);
         savedInstanceState.putInt(CAPTURED_SELECTED_PLACE, selectedPlace);
         savedInstanceState.putInt(CAPTURED_SELECTED_FARMERGROUP, selectedFarmerGroup);
         savedInstanceState.putInt(CAPTURED_SELECTED_SECTION, selectedSection);
@@ -380,12 +384,13 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         selectedCountry = savedInstanceState.getInt(CAPTURED_SELECTED_COUNTRY, 0);
         selectedRegion = savedInstanceState.getInt(CAPTURED_SELECTED_REGION, 0);
         selectedDistrict = savedInstanceState.getInt(CAPTURED_SELECTED_DISTRICT, 0);
+        selectedSubDistrict = savedInstanceState.getInt(CAPTURED_SELECTED_SUBDISTRICT, 0);
         selectedPlace = savedInstanceState.getInt(CAPTURED_SELECTED_PLACE, 0);
         selectedFarmerGroup = savedInstanceState.getInt(CAPTURED_SELECTED_FARMERGROUP, 0);
         selectedSection = savedInstanceState.getInt(CAPTURED_SELECTED_SECTION, 0);
 
         dl.createBusinessHierarchySpinners(this, context, farmerIdPrefix, selectedFarmerGroup, selectedSection);
-        dl.createGeographyHierarchySpinners(this, context, farmerIdPrefix, selectedCountry, selectedRegion, selectedDistrict, selectedPlace, phonenumbers, true);
+        dl.createGeographyHierarchySpinners(this, context, farmerIdPrefix, selectedCountry, selectedRegion, selectedDistrict,  selectedSubDistrict,selectedPlace, phonenumbers, true);
 
         super.onRestoreInstanceState(savedInstanceState);
     }
@@ -441,6 +446,8 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         selectedRegion = existingItem.getInt(existingItem.getColumnIndex("region_id"));
 
         selectedDistrict = existingItem.getInt(existingItem.getColumnIndex("district_id"));
+
+        selectedSubDistrict = existingItem.getInt(existingItem.getColumnIndex("subdistrict_id"));
 
         selectedPlace = existingItem.getInt(existingItem.getColumnIndex("place_id"));
 
@@ -655,6 +662,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             selectedCountry = (int) countrySpinner.getSelectedItemId();
             selectedRegion = (int) regionSpinner.getSelectedItemId();
             selectedDistrict = (int) districtSpinner.getSelectedItemId();
+            selectedSubDistrict = (int) subdistrictSpinner.getSelectedItemId();
             selectedPlace = (int) placeSpinner.getSelectedItemId();
             selectedFarmerGroup = (int) farmerGroupSpinner.getSelectedItemId();
             selectedSection = (int) sectionSpinner.getSelectedItemId();
@@ -668,6 +676,8 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
 
             } else if (selectedDistrict == 0) {
                 message = "District";
+            } else if (selectedSubDistrict == 0) {
+                message = "SubDistrict";
             } else if (selectedPlace == 0) {
 
                 message = "Place";
@@ -688,6 +698,9 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
 
         Spinner districtSpinner = findViewById(R.id.spinner_district);
         long district_id = districtSpinner.getSelectedItemId();
+
+        Spinner subdistrictSpinner = findViewById(R.id.spinner_subdistrict);
+        long subdistrict_id = subdistrictSpinner.getSelectedItemId();
 
         newPlaceName = findViewById(R.id.newPlaceName);
         Spinner spinner_place = findViewById(R.id.spinner_place);
@@ -777,6 +790,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         long countryId = countrySpinner.getSelectedItemId();
         long regionId = regionSpinner.getSelectedItemId();
         long districtId = districtSpinner.getSelectedItemId();
+        long subdistrictId = subdistrictSpinner.getSelectedItemId();
         long farmerGroupId = farmerGroupSpinner.getSelectedItemId();
         storeableNumbers = new JSONArray();
         for (int j = 0; j < phonerowscount; j++) {
@@ -821,11 +835,13 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_SYNCED, 0);
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_WEBSITE_SUBMITTED_MODULES, "{}");
             values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_DISTRICT_ID, district_id);
+            values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBDISTRICT_ID, subdistrict_id);
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_CONSENT_FARMER, 1);
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_CONSENT_OTHERS, 1);
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID, String.valueOf(countryId));
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_REGIONID, String.valueOf(regionId));
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_DISTRICTID, String.valueOf(districtId));
+            values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_SUBDISTRICTID, String.valueOf(subdistrictId));
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID, String.valueOf(farmerGroupId));
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_ISCONSENTAVAILABLE, "true");
 

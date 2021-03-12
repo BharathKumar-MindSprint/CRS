@@ -3483,6 +3483,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 jsonObject.put(OFISDBContract.FarmerEntry.COLUMN_NAME_SECTIONID, sectionID);
                 long districtID=Long.valueOf(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_DISTRICTID)));
                 jsonObject.put("districtId",districtID);
+                long subdistrictID=Long.valueOf(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_SUBDISTRICTID)));
+                jsonObject.put("subdistrictId",subdistrictID);
                 long regionID=Long.valueOf(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_REGIONID)));
                 jsonObject.put("regionId",regionID);
                 long farmerGroupID=Long.valueOf(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID)));

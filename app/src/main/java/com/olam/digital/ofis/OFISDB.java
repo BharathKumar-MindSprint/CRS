@@ -297,6 +297,7 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.FarmerEntry.COLUMN_NAME_REGIONID + " TEXT, "
             + OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID + " TEXT, "
             + OFISDBContract.FarmerEntry.COLUMN_NAME_DISTRICTID + " TEXT, "
+            + OFISDBContract.FarmerEntry.COLUMN_NAME_SUBDISTRICTID + " TEXT, "
             + OFISDBContract.FarmerEntry.COLUMN_NAME_ISCONSENTAVAILABLE + " TEXT, "
             + OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID+ " TEXT, "
             + OFISDBContract.FarmerEntry.COLUMN_NAME_DOB + " TEXT, " + OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID + " TEXT, "
@@ -370,6 +371,11 @@ class OFISDB extends SQLiteOpenHelper {
             + " ( " + OFISDBContract.DistrictsEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.DistrictsEntry.COLUMN_NAME_REGION_ID + " INTEGER, "
             + OFISDBContract.DistrictsEntry.COLUMN_NAME_DISTRICT_NAME + " TEXT )";
 
+//    adding sub district
+    private static final String OFIS_SUBDISTRICTS_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.SubDistrictsEntry.TABLE_NAME
+            + " ( " + OFISDBContract.SubDistrictsEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.SubDistrictsEntry.COLUMN_NAME_DISTRICT_ID + " INTEGER, "
+            + OFISDBContract.SubDistrictsEntry.COLUMN_NAME_SUBDISTRICT_NAME + " TEXT )";
+
     private static final String OFIS_SIGNATURE_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.SignatureEntry.TABLE_NAME
             + " ( " + OFISDBContract.SignatureEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.SignatureEntry.COLUMN_NAME_FAMRERID + " INTEGER, "
             + OFISDBContract.SignatureEntry.COLUMN_NAME_SIGNATURE + " TEXT )";
@@ -416,7 +422,8 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LAT + " TEXT, " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG + " TEXT, "
             + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_PLOTS + " TEXT, "
             + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_COUNTRY_ID + " INTEGER, " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_REGION_ID + " INTEGER, "
-            + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_DISTRICT_ID + " INTEGER, " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PLACE_ID + " INTEGER, "
+            + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_DISTRICT_ID + " INTEGER, "
+            + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBDISTRICT_ID + " INTEGER, "+ OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PLACE_ID + " INTEGER, "
             + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PRODUCT_ID + " INTEGER, " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMERGROUP_ID + " INTEGER, "
             + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CAPACITY + " INTEGER," + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_NUM_CLASSROOMS + " INTEGER, "
             + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_YEAR_OPENED + " INTEGER, " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_GENDER_MIX + " TEXT, "
