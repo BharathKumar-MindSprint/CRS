@@ -50,6 +50,7 @@ import android.widget.Toast;
 
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.LoginEvent;
+import com.dynatrace.android.agent.Dynatrace;
 import com.google.android.gms.security.ProviderInstaller;
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.iid.FirebaseInstanceId;
@@ -67,6 +68,7 @@ import com.olam.digital.ofis.childlabour.ChildLabourCompleteModuleActivity;
 import com.olam.digital.ofis.childlabour.ChildLabourUtils;
 import com.olam.digital.ofis.childlabour.ChildVisitDetailActivity;
 import com.olam.digital.ofis.childlabour.ViewChildLabourSurveyActivity;
+import com.olam.digital.ofis.dynatrace.DynatraceHelper;
 import com.olam.digital.ofis.gps.GPSListener;
 import com.olam.digital.ofis.gps.GPSTracker;
 import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
@@ -195,6 +197,15 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         recordTrainingWrapper = (CardView) findViewById(R.id.recordTrainingWrapper);
 
         enumeratorID = (EditText) findViewById(R.id.enumeratorID);
+
+        String enumeratorId=Utilities.getFromSharedPrefs(context);
+        if(!enumeratorId.equalsIgnoreCase("")) {
+            if (DynatraceHelper.isAppClosed) {
+                Dynatrace.identifyUser(enumeratorId);
+                DynatraceHelper.isAppClosed=false;
+                DynatraceHelper.findNetworkSpeed(this);
+            }
+        }
 //        Passcode added - Penetration testing
         passcode = (EditText) findViewById(R.id.passcode);
         saveUpdateButton = (Button) findViewById(R.id.buttonSaveUpdate);
@@ -202,8 +213,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         StrictMode.ThreadPolicy policy =
                 new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
-
-        checkTime();
+        // checkTime();
         bindNetworkQueue();
 
         if (sharedPreferences.getBoolean("FIRST_RUN",true)) {
@@ -965,6 +975,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     protected void onResume() {
         super.onResume();
         MatomoHelper.matomoScreenTracker(ScreenNameConstants.SCREEN_HOME_ACTIVITY, ScreenNameConstants.SCREEN_HOME_ACTIVITY, ScreenNameConstants.SCREEN_HOME);
+        checkTime();
     }
 
     @Override
@@ -1025,6 +1036,9 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
             new AuthenticationHelper(this).setAuthenticationDTO(authenticationDTO);
             new AuthenticationHelper(this).setUserName(enumeratorID.getText().toString());
+            Dynatrace.identifyUser(enumeratorID.getText().toString());
+            DynatraceHelper.isAppClosed=false;
+            DynatraceHelper.findNetworkSpeed(this);
 //           Passcode validation - Penetration testing
             new AuthenticationHelper(this).setPassode(passcode.getText().toString());
             doInitialCheck();
@@ -1188,10 +1202,11 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     public void onTokenCompleted(String status) {
         if(!status.equalsIgnoreCase("false")){
             Utilities.minProgressCount=0;
+            DynatraceHelper.findNetworkSpeed(this);
                if(syncOptionAll){
                   startAllItemSync();
               }else{
-                  startItemSync(itemId);
+                   startItemSync(itemId);
               }
         }else{
             Toast.makeText(HomeActivity.this,getString(R.string.authentication_failed),Toast.LENGTH_LONG).show();

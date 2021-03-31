@@ -20,6 +20,8 @@ import com.olam.digital.ofis.authentication.AuthenticationInterface;
 import com.olam.digital.ofis.authentication.model.AuthRequestDTO;
 import com.olam.digital.ofis.authentication.model.AuthenticationDTO;
 import com.olam.digital.ofis.childlabour.ChildLabourUtils;
+import com.olam.digital.ofis.dynatrace.DynatraceConstants;
+import com.olam.digital.ofis.dynatrace.DynatraceHelper;
 import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.logging.FabricLogsWriter;
 
@@ -185,11 +187,14 @@ public class SyncAllTask extends SyncTask {
 
 //        String url = "http://13.76.131.132:8080/farmerdata/sipquestionnaire/getAllSIPQuestionnaireData";
         String url = "farmer-data/farmerdata/sipquestionnaire/getAllSIPQuestionnaireData";
+        final String finalEndpoint = url;
         okHttpPost(context, url, inputArgs, new Callback() {
             @Override
             public void onResponse(Call call, final Response postResponse) {
                 try {
                     JSONObject response = new JSONObject(postResponse.body().string());
+                    DynatraceHelper.requestPayload(finalEndpoint,response.toString(),context,false);
+
                     if (postResponse.isSuccessful()) {
                         syncResultCount = syncResultCount + response.getInt("resultcount");
                         if (response.getString("status").equals("unchanged")) {
@@ -416,6 +421,7 @@ public class SyncAllTask extends SyncTask {
                         FailureGetRefreshToken(null);
                     } else {
                         JSONObject response = new JSONObject(postResponse.body().string());
+                        DynatraceHelper.requestPayload(finalEndPoint,response.toString(),context,false);
                         if (postResponse.isSuccessful()) {
                             if (response.getString("status").equals("updated")) {
                                 if (Utilities.getLongFromSharedPrefs(context, "version_update_notified_on") == 0) {
@@ -522,6 +528,7 @@ public class SyncAllTask extends SyncTask {
             public void onResponse(Call call, final Response postResponse) {
                 try {
                     JSONObject response = new JSONObject(postResponse.body().string());
+                    DynatraceHelper.requestPayload(finalEndPoint,response.toString(),context,false);
                     if (postResponse.isSuccessful()) {
 
                         try {
@@ -591,6 +598,7 @@ public class SyncAllTask extends SyncTask {
             public void onResponse(Call call, final Response postResponse) {
                 try {
                     JSONObject response = new JSONObject(postResponse.body().string());
+                    DynatraceHelper.requestPayload(finalEndPoint,response.toString(),context,false);
                     if (postResponse.isSuccessful()) {
                         syncResultCount = syncResultCount + response.getInt("resultcount");
                         if (response.getString("status").equals("unchanged")) {
@@ -732,6 +740,7 @@ public class SyncAllTask extends SyncTask {
                 try {
                     // JSONObject response = new JSONObject(postResponse.body().string());
                     String output = postResponse.body().string();
+                    DynatraceHelper.requestPayload(finalEndpoint,output,context,false);
                     if (postResponse.isSuccessful()) {
                         // store the value in Child labour preferences
                         Boolean isChild = Boolean.parseBoolean(output.trim());
@@ -786,6 +795,7 @@ public class SyncAllTask extends SyncTask {
                 try {
                     // JSONObject response = new JSONObject(postResponse.body().string());
                     String output = postResponse.body().string();
+                    DynatraceHelper.requestPayload(finalEndpoint,output,context,false);
                     if (postResponse.isSuccessful()) {
                         // store the value in Child labour preferences
                         Boolean ishousehold = Boolean.parseBoolean(output.trim());
@@ -835,6 +845,7 @@ public class SyncAllTask extends SyncTask {
             public void onResponse(Call call, final Response postResponse) {
                 try {
                     JSONObject response = new JSONObject(postResponse.body().string());
+                    DynatraceHelper.requestPayload(finalEndpoint,response.toString(),context,false);
                     if (postResponse.isSuccessful()) {
 
                         nationalidresponse = response;
@@ -880,6 +891,7 @@ public class SyncAllTask extends SyncTask {
             public void onResponse(Call call, final Response postResponse) {
                 try {
                     JSONObject response = new JSONObject(postResponse.body().string());
+                    DynatraceHelper.requestPayload(finalEndpoint,response.toString(),context,false);
 
                     if (postResponse.isSuccessful()) {
 
@@ -932,6 +944,7 @@ public class SyncAllTask extends SyncTask {
             public void onResponse(Call call, final Response postResponse) {
                 try {
                     JSONObject response = new JSONObject(postResponse.body().string());
+                    DynatraceHelper.requestPayload(finalEndpoint,response.toString(),context,false);
                     if (postResponse.isSuccessful()) {
                         syncResultCount = syncResultCount + response.getInt("resultcount");
 
@@ -984,6 +997,7 @@ public class SyncAllTask extends SyncTask {
             public void onResponse(Call call, final Response postResponse) {
                 try {
                     JSONObject response = new JSONObject(postResponse.body().string());
+                    DynatraceHelper.requestPayload(finalEndPoint,response.toString(),context,false);
                     if (postResponse.isSuccessful()) {
                         syncResultCount = syncResultCount + response.getInt("resultcount");
 
@@ -1037,6 +1051,8 @@ public class SyncAllTask extends SyncTask {
             public void onResponse(Call call, final Response postResponse) {
                 try {
                     JSONObject response = new JSONObject(postResponse.body().string());
+                    DynatraceHelper.requestPayload(finalEndpoint,response.toString(),context,false);
+
                     if (postResponse.isSuccessful()) {
                         Utilities.isAppAlive = true;
                         syncResultCount = syncResultCount + response.getInt("resultcount");
@@ -1099,6 +1115,7 @@ public class SyncAllTask extends SyncTask {
                 try {
                     // JSONObject response = new JSONObject(postResponse.body().string());
                     JSONArray  response = new JSONArray(postResponse.body().string());
+                    DynatraceHelper.requestPayload(finalEndpoint,response.toString(),context,false);
                     if (postResponse.isSuccessful()) {
                         Utilities.isAppAlive = true;
 //                        syncResultCount = syncResultCount + response.getInt("resultcount");

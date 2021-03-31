@@ -1,3 +1,4 @@
+//apply plugin: 'com.dynatrace.instrumentation'
 buildscript {
     repositories {
         maven { url 'https://maven.fabric.io/public' }
@@ -21,20 +22,29 @@ apply plugin: 'io.fabric'
 
 
 
-apply plugin: 'com.dynatrace.tools.android'
-//
-dynatrace {
-    defaultConfig {
-
-       /* beaconURL 'https://eok851.dynatrace-managed.com:9999/mbeacon/82203a30-a89c-4afb-8009-c475586c3488'
-        applicationId '1bd3a5cf-7c8d-49ae-8452-7116cfccb064'*/
-        beaconURL 'https://eok851.dynatrace-managed.com:9999/mbeacon/8f745a3a-ca48-40b4-aec4-a663c087c19f'
-        applicationId '037a8683-44f6-4b8b-ba26-5c8bd021d473'
-
-        agentProperties 'DTXLogLevel' : 'debug'
-
-    }
-}
+//apply plugin: 'com.dynatrace.tools.android'
+//////
+//dynatrace {
+//    defaultConfig {
+//         beaconURL 'https://eok851.dynatrace-managed.com:9999/mbeacon/82203a30-a89c-4afb-8009-c475586c3488'
+//         applicationId '1bd3a5cf-7c8d-49ae-8452-7116cfccb064'
+//        /*beaconURL 'https://eok851.dynatrace-managed.com:9999/mbeacon/8f745a3a-ca48-40b4-aec4-a663c087c19f'
+//        applicationId '037a8683-44f6-4b8b-ba26-5c8bd021d473'*/
+//        agentProperties 'DTXLogLevel' : 'debug'
+//    }
+//}
+//apply plugin: 'com.dynatrace.instrumentation'
+//dynatrace {
+//    configurations {
+//        uatDebug {
+//            variantFilter "uatDebug"
+//            autoStart {
+//                applicationId '1bd3a5cf-7c8d-49ae-8452-7116cfccb064'
+//                beaconUrl 'https://eok851.dynatrace-managed.com:9999/mbeacon/82203a30-a89c-4afb-8009-c475586c3488'
+//            }
+//        }
+//    }
+//}
 
 
 //noinspection GroovyMissingReturnStatement
@@ -70,13 +80,11 @@ android {
         targetSdkVersion 29
         multiDexEnabled true
 
-
         versionCode 33
         versionName "10.2.7"
 
 
     }
-
     buildTypes {
         debug {
             minifyEnabled true
@@ -288,9 +296,6 @@ dependencies {
 
 //    def appCenterSdkVersion = '3.0.0'
 //    implementation "com.microsoft.appcenter:appcenter-distribute:${appCenterSdkVersion}"
-    implementation project(':face-biometric')
-    implementation project(path: ':neurotec-licensing-gui-android')
-    implementation project(path: ':neurotec-biometrics-gui-android')
 
     implementation 'com.scottyab:aescrypt:0.0.1'
 

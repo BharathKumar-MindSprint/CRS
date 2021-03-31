@@ -7,6 +7,8 @@ import com.google.gson.Gson;
 import com.olam.digital.ofis.Utilities;
 import com.olam.digital.ofis.authentication.model.AuthRequestDTO;
 import com.olam.digital.ofis.authentication.model.AuthenticationDTO;
+import com.olam.digital.ofis.dynatrace.DynatraceConstants;
+import com.olam.digital.ofis.dynatrace.DynatraceHelper;
 import com.olam.digital.ofis.logging.FabricLogsWriter;
 
 
@@ -41,10 +43,12 @@ public class AccessTokenTask extends AsyncTask<Object, Object, String> {
                 AuthenticationInterface authenticationInterface;
                 authenticationInterface = AuthenticationClient.createService(AuthenticationInterface.class, mContext);
                 AuthenticationDTO authenticationDTO = null;
-                Call<AuthenticationDTO> authCall = authenticationInterface.getCoreAuthToken(authRequestDTO);
+            DynatraceHelper.requestPayload(DynatraceConstants.AUTHENTICATION_REQUEST,new Gson().toJson(authRequestDTO),mContext,true);
+            Call<AuthenticationDTO> authCall = authenticationInterface.getCoreAuthToken(authRequestDTO);
                 Response authResponse = authCall.execute();
                 if (authResponse.isSuccessful()) {
                     authenticationDTO = (AuthenticationDTO) authResponse.body();
+                    DynatraceHelper.requestPayload(DynatraceConstants.AUTHENTICATION_RESPONSE,new Gson().toJson(authenticationDTO),mContext,false);
                     authenticationDTO.setWillExpireAt((System.currentTimeMillis()/1000) + authenticationDTO.getExpiresIn() /1000);
                     new AuthenticationHelper(mContext).setAuthenticationDTO(authenticationDTO);
                     new AuthenticationHelper(mContext).setUserName(authRequestDTO.getUsername());

@@ -1,4 +1,5 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
+apply plugin: 'com.dynatrace.instrumentation'
 
 buildscript {
     repositories {
@@ -7,10 +8,12 @@ buildscript {
         maven {
             url 'https://maven.fabric.io/public'
         }
+        mavenCentral()
         maven { url "https://jitpack.io" }
     }
+
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.4.3'
+        classpath 'com.android.tools.build:gradle:4.1.2'
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -19,23 +22,60 @@ buildscript {
         classpath 'io.fabric.tools:gradle:1.25.4'
         classpath 'com.google.firebase:firebase-plugins:1.1.5'
 
-        classpath 'com.google.gms:google-services:4.0.1'
+       // classpath 'com.dynatrace.tools:android:7.2.+'
+        classpath 'com.dynatrace.tools.android:gradle-plugin:8.+'
 
-        classpath 'com.dynatrace.tools:android:7.2.+'
+        classpath 'com.google.gms:google-services:4.3.5'
+        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.5.0'
 
-//        classpath 'com.dynatrace.tools.android:gradle-plugin:8.+'
+        classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.7" //added for sonar
 
     }
 }
 
-plugins {
-    id "org.sonarqube" version "2.7"
+dynatrace {
+    configurations {
+        prod {
+            variantFilter "prodDebug"
+            autoStart {
+                applicationId '037a8683-44f6-4b8b-ba26-5c8bd021d473'
+                beaconUrl 'https://eok851.dynatrace-managed.com:9999/mbeacon/8f745a3a-ca48-40b4-aec4-a663c087c19f'
+            }
+        }
+        uat {
+            variantFilter "uatDebug"
+            autoStart {
+                applicationId '1bd3a5cf-7c8d-49ae-8452-7116cfccb064'
+                beaconUrl 'https://eok851.dynatrace-managed.com:9999/mbeacon/82203a30-a89c-4afb-8009-c475586c3488'
+            }
+        }
+
+        sit {
+            variantFilter "sitDebug"
+            autoStart {
+                applicationId '1bd3a5cf-7c8d-49ae-8452-7116cfccb064'
+                beaconUrl 'https://eok851.dynatrace-managed.com:9999/mbeacon/82203a30-a89c-4afb-8009-c475586c3488'
+            }
+        }
+        dev {
+            variantFilter "devDebug"
+            autoStart {
+                applicationId '1bd3a5cf-7c8d-49ae-8452-7116cfccb064'
+                beaconUrl 'https://eok851.dynatrace-managed.com:9999/mbeacon/82203a30-a89c-4afb-8009-c475586c3488'
+            }
+        }
+    }
 }
+
+//plugins {
+//    id "org.sonarqube" version "2.7"
+//}
 
 allprojects {
     repositories {
         jcenter()
         google()
+        mavenCentral()
         maven {
             url 'https://maven.google.com/'
         }

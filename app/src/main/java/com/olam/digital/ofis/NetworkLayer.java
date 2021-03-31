@@ -29,6 +29,8 @@ import com.olam.digital.ofis.authentication.AuthenticationInterface;
 import com.olam.digital.ofis.authentication.model.AuthRequestDTO;
 import com.olam.digital.ofis.authentication.model.AuthenticationDTO;
 import com.olam.digital.ofis.childlabour.ChildLabourUtils;
+import com.olam.digital.ofis.dynatrace.DynatraceConstants;
+import com.olam.digital.ofis.dynatrace.DynatraceHelper;
 import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
 import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.logging.FabricLogsWriter;
@@ -50,10 +52,10 @@ import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Set;
 import java.util.TreeSet;
@@ -1089,7 +1091,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 }
 
             }
-
+            DynatraceHelper.requestPayload(DynatraceConstants.REQUEST+" "+endpoint,jsonObject.toString(),context,true);
             if (endpoint.length() > 0) {
                 final String finalEndpoint = endpoint;
                 okHttpPost(context, endpoint, jsonObject, new Callback() {
@@ -1825,7 +1827,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         submission.put("answers", answers);
                     }
                     Log.i("POST", "" + submission.toString());
-
+                    DynatraceHelper.requestPayload(DynatraceConstants.REQUEST+" "+endPoint,submission.toString(),context,true);
                     //increase the count - Adjustment code
                     recordFailedUpload(0, 0, networkQueueItemId);
 
@@ -1942,6 +1944,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID, networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID)));
                 }
                 params.put("primary_location",false);
+                DynatraceHelper.requestPayload(DynatraceConstants.REQUEST+" "+endpoint,params.toString(),context,true);
                 if (endpoint.length() > 0) {
                     final String finalEndpoint = endpoint;
                     okHttpPost(context, endpoint, params, new Callback() {
@@ -2076,7 +2079,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID, networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID)));
                 }
                 params.put("primary_location",true);
-
+                DynatraceHelper.requestPayload(DynatraceConstants.REQUEST+" "+endpoint,params.toString(),context,true);
                 if (endpoint.length() > 0) {
                     final String finalEndpoint = endpoint;
                     okHttpPost(context, endpoint, params, new Callback() {
@@ -2176,6 +2179,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     params.put("enumeratorId", enumeratorId);
                 }
 
+                DynatraceHelper.requestPayload(DynatraceConstants.REQUEST+" "+endpoint,params.toString(),context,true);
                 if (endpoint.length() > 0) {
                     final String finalEndpoint = endpoint;
                     okHttpPost(context, endpoint, params, new Callback() {
@@ -2315,7 +2319,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                      }
                  }
-
+                DynatraceHelper.requestPayload(DynatraceConstants.REQUEST+" "+endpoint,params.toString(),context,true);
                 if (endpoint.length() > 0) {
                     final String finalEndpoint = endpoint;
                     okHttpPost(context, endpoint, params, new Callback() {
@@ -2546,7 +2550,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 if (networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID)) > 0 && networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FULLY_SYNCED)) == 0) {
                     params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID, networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID)));
                 }
-
+                DynatraceHelper.requestPayload(DynatraceConstants.REQUEST+" "+endpoint,params.toString(),context,true);
                 if (numberstosend != null && endpoint.length() > 0) {
                     final String finalEndpoint = endpoint;
                     okHttpPost(context, endpoint, params, new Callback() {
@@ -2833,7 +2837,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
 //                    String url = "http://13.76.2.201:8080/farmerdata/socialinfra/saveAllSipAnswers/";
             final String url = "farmer-data/farmerdata/socialinfra/saveAllSipAnswers/";
-
+            DynatraceHelper.requestPayload(DynatraceConstants.REQUEST+" "+url,params.toString(),context,true);
             okHttpPost(context, url, params, new Callback() {
                 @Override
                 public void onResponse(Call call, Response postResponse) {
@@ -3062,6 +3066,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         }
                     }
                 }
+                DynatraceHelper.requestPayload(DynatraceConstants.REQUEST+" "+endpoint,params.toString(),context,true);
                 if (endpoint.length() > 0) {
                     final String finalEndpoint = endpoint;
                     okHttpMSPost(context, endpoint, params, new Callback() {
@@ -3245,6 +3250,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         e.printStackTrace();
                     }
                     // String requestData=jsonArray.toString();
+                    DynatraceHelper.requestPayload(DynatraceConstants.REQUEST+" "+endpoint,requstBody.toString(),context,true);
                     if (endpoint.length() > 0) {
 
                         final int finalTempChildId = tempChildId;
@@ -3491,7 +3497,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
             final JSONArray jsonArray=new JSONArray();
             jsonArray.put(jsonObject);
-            // String requestData=jsonArray.toString();
+            DynatraceHelper.requestPayload(DynatraceConstants.REQUEST+" "+endpoint,jsonArray.toString(),context,true);
             if (endpoint.length() > 0) {
 
                 final String finalTempOlamFarmerID = tempOlamFarmerID;
@@ -3849,7 +3855,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             submission.put("answers", answers);
                         }
                         Log.i("POST", "" + submission.toString());
-
+                        DynatraceHelper.requestPayload(DynatraceConstants.REQUEST+" "+endPoint,submission.toString(),context,true);
                         //increase the count - Adjustment code
                         recordFailedUpload(0, 0, networkQueueItemId);
 
@@ -3973,7 +3979,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
 
 
-
+                DynatraceHelper.requestPayload(DynatraceConstants.REQUEST+" "+endPoint,params.toString(),context,true);
                 if (endPoint.length() > 0) {
                     final String finalEndpoint = endPoint;
                     okHttpPost(context, endPoint, params, new Callback() {
@@ -4090,7 +4096,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 }
 
             }
-
+            DynatraceHelper.requestPayload(DynatraceConstants.REQUEST+" "+endPoint,params.toString(),context,true);
 
             if (endPoint.length() > 0) {
                 final String finalEndpoint = endPoint;
@@ -4184,6 +4190,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                 final JSONArray jsonArray = new JSONArray();
                 jsonArray.put(jsonObject);
+                DynatraceHelper.requestPayload(DynatraceConstants.REQUEST+" "+endpoint,jsonArray.toString(),context,true);
                 if (endpoint.length() > 0) {
 
                     okHttpArrayPost(context, endpoint, nidstosend, new Callback() {
@@ -4390,6 +4397,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 e.printStackTrace();
             }
             // String requestData=jsonArray.toString();
+            DynatraceHelper.requestPayload(DynatraceConstants.REQUEST+" "+endpoint,requstBody.toString(),context,true);
             if (endpoint.length() > 0) {
 
                 okHttpPost(context, endpoint, requstBody, new Callback() {

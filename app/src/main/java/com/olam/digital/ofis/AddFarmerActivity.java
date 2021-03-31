@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.location.Location;
@@ -21,6 +22,8 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.FileProvider;
+
 import android.telephony.PhoneNumberUtils;
 import android.text.InputFilter;
 import android.text.Spanned;
@@ -80,6 +83,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Locale;
 
 // update
@@ -1521,7 +1525,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         } else {
             imageFileName = portraitOrSignature + "_" + timestamp + "_";
         }
-        File storageDir = getExternalFilesDir(null);
+        File storageDir = getExternalFilesDir("");
         File image = File.createTempFile(imageFileName, ".jpg", storageDir);
         if (portraitOrSignature.equalsIgnoreCase("portrait")) {
             mCurrentPhotoPath = "file:" + image.getAbsolutePath();
@@ -1532,35 +1536,39 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     }
 
     private void bindFarmerNationalIDButton() {
-        Intent takePicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        takePicture.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        // New Implementation
         File photoFile = null;
-
         try {
             photoFile = createImageFile("nationalidimage_" + currentcapture_position);
         } catch (IOException e) {
-            FirebaseCrash.report(new Exception("AddFarmerActivity: Error creating nationalid image file", e));
+            FirebaseCrash.report(new Exception("AddFarmerActivity: Error creating photo image file", e));
             e.printStackTrace();
         }
 
         if (photoFile != null) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                try {
-                    Method m = StrictMode.class.getMethod("disableDeathOnFileUriExposure");
-                    m.invoke(null);
-                } catch (Exception e) {
-                    e.printStackTrace();
+            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            if ((intent.resolveActivity(getPackageManager()) != null)) {
+                Uri photoURI = FileProvider.getUriForFile(AddFarmerActivity.this, getApplicationContext().getPackageName() + ".profileimage.fileprovider", photoFile);
+
+                // Samsung Galaxy S3 Fix
+                List<ResolveInfo> resInfoList = getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+                for (ResolveInfo resolveInfo : resInfoList) {
+                    String packageName = resolveInfo.activityInfo.packageName;
+                    grantUriPermission(packageName, photoURI, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 }
+
+                removehmURIvalue(hm_uri, currentcapture_position);
+                removehmvalue(hm_uripath, currentcapture_position);
+                hm_uri.put(currentcapture_position, photoURI);
+                hm_uripath.put(currentcapture_position, photoFile.getPath());
+                setCapturedNIDImageURI(hm_uri);
+                setCurrentNIDPhotoPath(hm_uripath);
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, hm_uri.get(currentcapture_position));
+                startActivityForResult(intent, REQUEST_IMAGE_CAPTURE_NATIONALID);
+
+            }else{
+                Toast.makeText(AddFarmerActivity.this, "Gallery is not available in Mobile", Toast.LENGTH_LONG).show();
             }
-            Uri fileUri = Uri.fromFile(photoFile);
-            removehmURIvalue(hm_uri, currentcapture_position);
-            removehmvalue(hm_uripath, currentcapture_position);
-            hm_uri.put(currentcapture_position, fileUri);
-            hm_uripath.put(currentcapture_position, fileUri.getPath());
-            setCapturedNIDImageURI(hm_uri);
-            setCurrentNIDPhotoPath(hm_uripath);
-            takePicture.putExtra(MediaStore.EXTRA_OUTPUT, hm_uri.get(currentcapture_position));
-            startActivityForResult(takePicture, REQUEST_IMAGE_CAPTURE_NATIONALID);
         }
     }
 
@@ -1574,10 +1582,8 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                 Toast.makeText(context, items[item], Toast.LENGTH_SHORT).show();
 
                 if (items[item].equals(res.getString(R.string.Camera))) {
-                    Intent takePicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    takePicture.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                          Toast.makeText(context, items[item], Toast.LENGTH_SHORT).show();
                     File photoFile = null;
-
                     try {
                         photoFile = createImageFile("portrait");
                     } catch (IOException e) {
@@ -1586,40 +1592,32 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                     }
 
                     if (photoFile != null) {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                            try {
-                                Method m = StrictMode.class.getMethod("disableDeathOnFileUriExposure");
-                                m.invoke(null);
-                            } catch (Exception e) {
-                                e.printStackTrace();
+                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        if ((intent.resolveActivity(getPackageManager()) != null)) {
+                            Uri photoURI = FileProvider.getUriForFile(AddFarmerActivity.this, getApplicationContext().getPackageName() + ".profileimage.fileprovider", photoFile);
+
+                            // Samsung Galaxy S3 Fix
+                            List<ResolveInfo> resInfoList = getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+                            for (ResolveInfo resolveInfo : resInfoList) {
+                                String packageName = resolveInfo.activityInfo.packageName;
+                                grantUriPermission(packageName, photoURI, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
                             }
-                        }
-                        Uri fileUri = Uri.fromFile(photoFile);
-                        setCapturedImageURI(fileUri);
-                        setCurrentPhotoPath(fileUri.getPath());
-                        takePicture.putExtra(MediaStore.EXTRA_OUTPUT, getCapturedImageURI());
-                        try {
-                            if (takePicture.resolveActivity(getPackageManager()) != null) {
-                                startActivityForResult(takePicture, REQUEST_IMAGE_CAPTURE);
-                            } else {
-                                Toast.makeText(AddFarmerActivity.this, "Gallery is not available in Mobile", Toast.LENGTH_LONG).show();
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
+
+                            //  tempProfileImageFile=photoFile;
+                            setCapturedImageURI(photoURI);
+                            setCurrentPhotoPath(photoFile.getPath());
+                            intent.putExtra(MediaStore.EXTRA_OUTPUT, getCapturedImageURI());
+                            startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
+                        }else{
+                            Toast.makeText(AddFarmerActivity.this, "Gallery is not available in Mobile", Toast.LENGTH_LONG).show();
                         }
                     }
 
                 } else if (items[item].equals(res.getString(R.string.Gallery))) {
-                    Intent pickPhoto = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                    try {
-                        if (pickPhoto.resolveActivity(getPackageManager()) != null) {
-                            startActivityForResult(pickPhoto, REQUEST_IMAGE_GALLERY);
-                        } else {
-                            Toast.makeText(AddFarmerActivity.this, "Gallery is not available in Mobile", Toast.LENGTH_LONG).show();
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                    Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                    intent.addCategory(Intent.CATEGORY_OPENABLE);
+                    intent.setType("image/*");
+                    startActivityForResult(intent, REQUEST_IMAGE_GALLERY);
 
                 }
             }
@@ -1711,6 +1709,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                 }
                 break;
             case REQUEST_IMAGE_CAPTURE:
+
                 if (resultCode == RESULT_OK) {
                     setFullImageFromFilePath(getCurrentPhotoPath(), farmerPhoto, "portrait");
                 } else {
@@ -1720,9 +1719,17 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                 break;
             case REQUEST_IMAGE_GALLERY:
                 if (resultCode == RESULT_OK) {
-                    setCapturedImageURI(imageReturnedIntent.getData());
-                    setFullImageFromFilePath(getFilePathUri(context, getCapturedImageURI()), farmerPhoto, "portrait");
-                } else {
+                    String realPath= ImageFilePath.getPath(AddFarmerActivity.this,imageReturnedIntent.getData());
+                    try {
+                        if (realPath != null) {
+                            setFullImageFromFilePath(realPath, farmerPhoto, "portrait");
+                        } else {
+                            Toast.makeText(AddFarmerActivity.this, "Something went wrong, please try again", Toast.LENGTH_LONG).show();
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    } else {
                     farmerPhoto.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.empty_farmer_photo));
                     setCurrentPhotoPath(null);
                 }
