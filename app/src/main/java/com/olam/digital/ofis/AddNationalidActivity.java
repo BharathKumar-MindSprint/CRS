@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.location.Location;
@@ -17,6 +18,7 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.widget.AppCompatButton;
+import androidx.core.content.FileProvider;
 
 import android.text.InputFilter;
 import android.text.InputType;
@@ -62,6 +64,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Locale;
 
 
@@ -760,35 +763,36 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
     }
 
     private void bindFarmerNationalIDButton() {
-        Intent takePicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        takePicture.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        // New Implementation
         File photoFile = null;
-
         try {
             photoFile = createImageFile("nationalidimage_" + currentcapture_position);
         } catch (IOException e) {
-            FirebaseCrash.report(new Exception("AddFarmerActivity: Error creating nationalid image file", e));
             e.printStackTrace();
         }
 
         if (photoFile != null) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                try {
-                    Method m = StrictMode.class.getMethod("disableDeathOnFileUriExposure");
-                    m.invoke(null);
-                } catch (Exception e) {
-                    e.printStackTrace();
+            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            if ((intent.resolveActivity(getPackageManager()) != null)) {
+                Uri photoURI = FileProvider.getUriForFile(AddNationalidActivity.this, getApplicationContext().getPackageName() + ".profileimage.fileprovider", photoFile);
+
+                // Samsung Galaxy S3 Fix
+                List<ResolveInfo> resInfoList = getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+                for (ResolveInfo resolveInfo : resInfoList) {
+                    String packageName = resolveInfo.activityInfo.packageName;
+                    grantUriPermission(packageName, photoURI, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 }
+
+                removehmURIvalue(hm_uri, currentcapture_position);
+                removehmvalue(hm_uripath, currentcapture_position);
+                hm_uri.put(currentcapture_position, photoURI);
+                hm_uripath.put(currentcapture_position, photoFile.getPath());
+                setCapturedNIDImageURI(hm_uri);
+                setCurrentNIDPhotoPath(hm_uripath);
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, hm_uri.get(currentcapture_position));
+                startActivityForResult(intent, REQUEST_IMAGE_CAPTURE_NATIONALID);
+
             }
-            Uri fileUri = Uri.fromFile(photoFile);
-            removehmURIvalue(hm_uri, currentcapture_position);
-            removehmvalue(hm_uripath, currentcapture_position);
-            hm_uri.put(currentcapture_position, fileUri);
-            hm_uripath.put(currentcapture_position, fileUri.getPath());
-            setCapturedNIDImageURI(hm_uri);
-            setCurrentNIDPhotoPath(hm_uripath);
-            takePicture.putExtra(MediaStore.EXTRA_OUTPUT, hm_uri.get(currentcapture_position));
-            startActivityForResult(takePicture, REQUEST_IMAGE_CAPTURE_NATIONALID);
         }
     }
 
@@ -800,7 +804,7 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
         } else {
             imageFileName = portraitOrSignature + "_" + timestamp + "_";
         }
-        File storageDir = getExternalFilesDir(null);
+        File storageDir = getExternalFilesDir("");
         File image = File.createTempFile(imageFileName, ".jpg", storageDir);
         if (portraitOrSignature.equalsIgnoreCase("portrait")) {
             mCurrentPhotoPath = "file:" + image.getAbsolutePath();

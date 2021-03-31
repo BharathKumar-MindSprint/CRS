@@ -4,6 +4,8 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.MatrixCursor;
@@ -18,6 +20,8 @@ import android.provider.MediaStore;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
+
 import android.text.Editable;
 import android.text.Html;
 import android.text.InputFilter;
@@ -853,9 +857,9 @@ public class DynamicQuestions {
         modulePhotoUploadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent takePicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                File photoFile = null;
 
+               // New
+                File photoFile = null;
                 try {
                     photoFile = createImageFile();
                 } catch (IOException e) {
@@ -864,31 +868,43 @@ public class DynamicQuestions {
                 }
 
                 if (photoFile != null) {
-                    Uri fileUri = Uri.fromFile(photoFile);
-                    setCapturedImageURI(fileUri);
-                    setCurrentPhotoPath(fileUri.getPath());
-                    setCurrentImageView(iv);
-                    setCurrentPhotoMetaData(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype);
+                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                     if ((intent.resolveActivity(context.getPackageManager()) != null)) {
+                            Uri photoURI = FileProvider.getUriForFile(context, context.getApplicationContext().getPackageName() + ".profileimage.fileprovider", photoFile);
 
-                    takePicture.putExtra(MediaStore.EXTRA_OUTPUT, getCapturedImageURI());
+                            // Samsung Galaxy S3 Fix
+                            List<ResolveInfo> resInfoList = context.getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+                            for (ResolveInfo resolveInfo : resInfoList) {
+                                String packageName = resolveInfo.activityInfo.packageName;
+                                context.grantUriPermission(packageName, photoURI, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                            }
+
+                            //  tempProfileImageFile=photoFile;
+                            setCapturedImageURI(photoURI);
+                            setCurrentPhotoPath(photoFile.getPath());
+                         setCurrentImageView(iv);
+                         setCurrentPhotoMetaData(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype);
+                         intent.putExtra(MediaStore.EXTRA_OUTPUT, getCapturedImageURI());
+                        }
+
                     if (context.getClass().getSimpleName().equalsIgnoreCase("CompleteModuleActivity")) {
                         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
                         StrictMode.setVmPolicy(builder.build());
 
                         CompleteModuleActivity completeModuleActivity = (CompleteModuleActivity) context;
-                        completeModuleActivity.startActivityForResult(takePicture, REQUEST_IMAGE_CAPTURE);
+                        completeModuleActivity.startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
                     }else if (context.getClass().getSimpleName().equalsIgnoreCase("AddInfrastructureActivity")) {
                         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
                         StrictMode.setVmPolicy(builder.build());
 
                         AddInfrastructureActivity addInfrastructureActivity = (AddInfrastructureActivity) context;
-                        addInfrastructureActivity.startActivityForResult(takePicture, REQUEST_IMAGE_CAPTURE);
+                        addInfrastructureActivity.startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
                     } else {
                         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
                         StrictMode.setVmPolicy(builder.build());
                         try {
                             ReviewFarmManagementPlan reviewFarmManagementPlan = (ReviewFarmManagementPlan) context;
-                            reviewFarmManagementPlan.startActivityForResult(takePicture, REQUEST_IMAGE_CAPTURE);
+                            reviewFarmManagementPlan.startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
                         }catch (Exception e){
                             e.printStackTrace();
                         }
@@ -1017,7 +1033,7 @@ public class DynamicQuestions {
     private File createImageFile() throws IOException {
         String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.ENGLISH).format(new Date());
         String imageFileName = "ofis_module_answer_" + timestamp;
-        File storageDir = context.getExternalFilesDir(null);
+        File storageDir = context.getExternalFilesDir("");
         File image = File.createTempFile(imageFileName, ".jpg", storageDir);
 
         setCurrentPhotoPath("file:" + image.getAbsolutePath());

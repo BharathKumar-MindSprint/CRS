@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -20,6 +21,8 @@ import androidx.appcompat.app.ActionBar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.FileProvider;
+
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -45,6 +48,7 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Locale;
 
 public class TrainingRecord extends BaseListActivity{
@@ -681,36 +685,37 @@ public class TrainingRecord extends BaseListActivity{
         }
     }
     private void bindTrainingPhotoButton() {
-        Intent takePicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        takePicture.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        // New
         File photoFile = null;
-
         try {
             photoFile = createImageFile();
         } catch (IOException e) {
-            FirebaseCrash.report(new Exception("TrainingRecord: Error getting photo image file", e));
+            FirebaseCrash.report(new Exception("training record: Error creating photo image file", e));
             e.printStackTrace();
         }
 
         if (photoFile != null) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                try {
-                    Method m = StrictMode.class.getMethod("disableDeathOnFileUriExposure");
-                    m.invoke(null);
-                } catch (Exception e) {
-                    e.printStackTrace();
+            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            if ((intent.resolveActivity(getPackageManager()) != null)) {
+                Uri photoURI = FileProvider.getUriForFile(TrainingRecord.this, getApplicationContext().getPackageName() + ".profileimage.fileprovider", photoFile);
+
+                // Samsung Galaxy S3 Fix
+                List<ResolveInfo> resInfoList = getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+                for (ResolveInfo resolveInfo : resInfoList) {
+                    String packageName = resolveInfo.activityInfo.packageName;
+                    grantUriPermission(packageName, photoURI, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 }
-            }
-            try{
-                Uri fileUri = Uri.fromFile(photoFile);
-                setCapturedImageURI(fileUri);
-                setCurrentPhotoPath(fileUri.getPath());
-                takePicture.putExtra(MediaStore.EXTRA_OUTPUT, getCapturedImageURI());
-                startActivityForResult(takePicture, REQUEST_IMAGE_CAPTURE);
-            }catch (Exception e){
-                e.printStackTrace();
+
+                //  tempProfileImageFile=photoFile;
+                setCapturedImageURI(photoURI);
+                setCurrentPhotoPath(photoFile.getPath());
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, getCapturedImageURI());
+                startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
+            }else{
+                Toast.makeText(TrainingRecord.this, "Gallery is not available in Mobile", Toast.LENGTH_LONG).show();
             }
         }
+
     }
 
     private void showSettingsDialog(String msg) {
