@@ -2,7 +2,7 @@ package com.olam.digital.ofis;
 import android.content.Context;
 import androidx.multidex.MultiDexApplication;
 
-import com.crashlytics.android.Crashlytics;
+//import com.crashlytics.android.Crashlytics;
 //import com.dynatrace.android.agent.Dynatrace;
 //import com.microsoft.appcenter.distribute.Distribute;
 import com.olam.digital.ofis.logging.CrashReportingTree;
@@ -14,7 +14,6 @@ import org.matomo.sdk.Tracker;
 import org.matomo.sdk.TrackerBuilder;
 import org.matomo.sdk.dispatcher.DispatchMode;
 
-import io.fabric.sdk.android.Fabric;
 import timber.log.Timber;
 
 
@@ -44,7 +43,7 @@ public class EnableMultiDex extends MultiDexApplication {
 //        AppCenter.start(this, "983e5261-951a-40fc-b19c-692e856558d3", Distribute.class);
 
 //        Distribute.setEnabledForDebuggableBuild(true);
-        Fabric.with(this, new Crashlytics());
+       // Fabric.with(this, new Crashlytics());
         context = getApplicationContext();
         Timber.plant(BuildConfig.DEBUG ? new CrashReportingTree() :  new Timber.DebugTree());
 //        Dynatrace.identifyUser(Utilities.getFromSharedPrefs(context));

@@ -3,6 +3,7 @@ package com.olam.digital.ofis;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -48,8 +49,8 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.crashlytics.android.answers.Answers;
-import com.crashlytics.android.answers.LoginEvent;
+//import com.crashlytics.android.answers.Answers;
+//import com.crashlytics.android.answers.LoginEvent;
 import com.dynatrace.android.agent.Dynatrace;
 import com.google.android.gms.security.ProviderInstaller;
 import com.google.firebase.crash.FirebaseCrash;
@@ -1050,10 +1051,10 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 FabricLogsWriter.printCrashLog(TAG,"oauth/authenticate",response.code(),"Request : :  "+new Gson().toJson(getAuthRequestDTO()).toString() +"   Response :  "+response.raw().networkResponse().toString() + "user Id :" +enumeratorID.getText().toString().trim(),context);
             }catch (Exception e){}
             Toast.makeText(HomeActivity.this,getString(R.string.authentication_failed),Toast.LENGTH_LONG).show();
-            Answers.getInstance().logLogin(new LoginEvent()
-                    .putMethod("first")
-                    .putCustomAttribute("reason", "wrong credentials")
-                    .putSuccess(false));
+//            Answers.getInstance().logLogin(new LoginEvent()
+//                    .putMethod("first")
+//                    .putCustomAttribute("reason", "wrong credentials")
+//                    .putSuccess(false));
         }
     }
 
@@ -1061,10 +1062,10 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     public void onFailure(Call<AuthenticationDTO> call, Throwable t) {
         showProgress(false);
         Toast.makeText(HomeActivity.this,getString(R.string.authentication_failed),Toast.LENGTH_LONG).show();
-        Answers.getInstance().logLogin(new LoginEvent()
-                .putMethod("first")
-                .putCustomAttribute("reason", "network error")
-                .putSuccess(false));
+//        Answers.getInstance().logLogin(new LoginEvent()
+//                .putMethod("first")
+//                .putCustomAttribute("reason", "network error")
+//                .putSuccess(false));
     }
 
     private void doInitialCheck() {
