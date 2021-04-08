@@ -701,6 +701,11 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
 
         Spinner subdistrictSpinner = findViewById(R.id.spinner_subdistrict);
         long subdistrict_id = subdistrictSpinner.getSelectedItemId();
+        if (subdistrict_id < 1) {
+            Toast.makeText(context, res.getString(R.string.fill_subdistrict), Toast.LENGTH_LONG).show();
+
+            return values;
+        }
 
         newPlaceName = findViewById(R.id.newPlaceName);
         Spinner spinner_place = findViewById(R.id.spinner_place);
