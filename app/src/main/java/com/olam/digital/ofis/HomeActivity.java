@@ -1316,4 +1316,9 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
+      //  Toast.makeText(this,"Disable the back press",Toast.LENGTH_LONG).show();
+    }
 }
