@@ -1944,10 +1944,11 @@ public class DataLayer {
             }
         });
 
-
+        if (placeSpinner != null && subdistrictSpinner != null) {
             districtSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> adapterView, View view, int i, long id) {
+
                     Cursor subdistricts = getSpinnerData(OFISDBContract.SubDistrictsEntry.TABLE_NAME, true, OFISDBContract.SubDistrictsEntry.COLUMN_NAME_DISTRICT_ID, ((int) id), true, OFISDBContract.SubDistrictsEntry.COLUMN_NAME_SUBDISTRICT_NAME);
                     bindDataDrivenSpinner(subdistrictSpinner, subdistricts, context, R.string.spinner_subdistrict_default, null, false);
 
@@ -1966,17 +1967,6 @@ public class DataLayer {
                             subdistrictSpinner.setEnabled(true);
                         }
                     }
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> adapterView) {
-
-                }
-            });
-        if (placeSpinner != null) {
-            subdistrictSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long id) {
 
                     Cursor places = getSpinnerData(OFISDBContract.PlacesEntry.TABLE_NAME, true, OFISDBContract.PlacesEntry.COLUMN_NAME_DISTRICT_ID, ((int) id), true, OFISDBContract.PlacesEntry.COLUMN_NAME_PLACE_NAME);
                     if (!newPlace) {
@@ -2032,6 +2022,8 @@ public class DataLayer {
                 });
             }
         }
+
+
 
         if (countrySelection != 0) {
             setSpinnerSelectionById(countrySelection, countrySpinner);
@@ -2694,6 +2686,7 @@ public class DataLayer {
         String farmerQuery = "SELECT farmers.*, districts.id as district_id, regions.id as region_id, countries.id as country_id, farmergroups.id as farmergroup_id, farmergroups.programme_id as programme_id, farmergroups.product_id as product_id, farmergroups.partner_id as partner_id " +
                 "FROM farmers " +
                 "INNER JOIN places on farmers.place_id = places.id " +
+//                "INNER JOIN subdistricts on farmers.subdistrict_id = subdistricts.id " +
                 "INNER JOIN districts on places.district_id = districts.id " +
                 "INNER JOIN regions on districts.region_id = regions.id " +
                 "INNER JOIN countries on regions.country_id = countries.id " +

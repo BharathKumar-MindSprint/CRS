@@ -753,6 +753,7 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_COUNTRYID = "countryId";
         public static final String COLUMN_NAME_DISTRICTID = "districtId";
         public static final String COLUMN_NAME_SUBDISTRICTID = "subdistrictId";
+        public static final String COLUMN_NAME_SUBDISID = "subdistrict_id";
         public static final String COLUMN_NAME_FARMERGROUPID = "farmerGroupId";
         public static final String COLUMN_NAME_REGIONID = "regionId";
         public static final String COLUMN_NAME_CONSENTFARMER = "consentFarmer";
@@ -2037,6 +2038,7 @@ public class OFISDBContract {
                 put(CountriesEntry.TABLE_NAME, CountriesEntry.COLUMN_LIST);
                 put(RegionsEntry.TABLE_NAME, RegionsEntry.COLUMN_LIST);
                 put(DistrictsEntry.TABLE_NAME, DistrictsEntry.COLUMN_LIST);
+                put(SubDistrictsEntry.TABLE_NAME, SubDistrictsEntry.COLUMN_LIST);
                 put(PlacesEntry.TABLE_NAME, PlacesEntry.COLUMN_LIST);
                 put(FarmerGroupsEntry.TABLE_NAME, FarmerGroupsEntry.COLUMN_LIST);
                 put(SectionsEntry.TABLE_NAME, SectionsEntry.COLUMN_LIST);
