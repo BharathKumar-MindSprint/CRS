@@ -569,8 +569,6 @@
     <string name="checking_hhgps_enumerator">Checking Household GPS Enumerator</string>
     <string name="update_consent_statement">Update Consent Statement</string>
     <string name="consent_statement">ConsentStatement</string>
-
-
     <string name="farmer_consent">FARMER CONSENT</string>
     <string name="personal_info_collection">Personal Information Collection Notice</string>
     <string name="cs_page2_title">Personal Data Use</string>
@@ -691,8 +689,9 @@
     <string name="refresh_token">refresh_token</string>
     <string name="duplicate_survey">Dupicate survey entry</string>
     <string name="removing_duplicate_survey">Removing dupicate survey</string>
-
-
+    <string name="nid_exp_fill">Please fill Expiry Date</string>
+    <string name="checking_isfl_enumerator">Checking Farmer Lead Enumerator</string>
+    <string name="downloading_fldetails">Downloading Farmer Lead Details</string>
     <string name="privacy_data">Olam Food Ingredients and our affiliates worldwide (collectively called “ofi,” “we,” “us,” “our”) understand the importance of privacy to you. This policy summarizes what personal information we may collect, how we may use this information, and other important topics relating to your privacy and data protection.\n \n
 It is ofi policy to comply with all applicable privacy and data protection laws. This commitment reflects the value we place on earning and keeping the trust of our customers, business partners and others who share their personal information with us.\n \n
 This Policy applies to all websites and mobile applications (“apps”) operated by or on behalf of ofi. It also applies to personal information ofi may otherwise collect: (i) through our products and services; (ii) when you interact with us by means other than an ofi website or app, for example, in person, by telephone, or at a trade show or training; and (iii) from our customers, distributors, suppliers, vendors, and other business partners (collectively “Business Partners”).\n\n

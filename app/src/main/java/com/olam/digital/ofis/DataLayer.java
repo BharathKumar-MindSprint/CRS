@@ -2974,6 +2974,40 @@ public class DataLayer {
                         "Phone"
                 });
 
+                // update farmers subdistrict
+                mc.addRow(new String[]{
+                        "0",
+                        res.getString(R.string.update_farmer_subdistrict),
+                        res.getString(R.string.update_farmer_subdistrict),
+                        res.getString(R.string.update_farmer_subdistrict),
+                        res.getString(R.string.update_farmer_subdistrict),
+                        res.getString(R.string.update_farmer_subdistrict),
+                        res.getString(R.string.update_farmer_subdistrict),
+                        res.getString(R.string.update_farmer_subdistrict),
+                        res.getString(R.string.update_farmer_subdistrict),
+                        res.getString(R.string.update_farmer_subdistrict),
+                        "0",
+                        "",
+                        "",
+                        "",
+                        res.getString(R.string.update_tab_hint),
+                        res.getString(R.string.update_tab_hint),
+                        res.getString(R.string.update_tab_hint),
+                        res.getString(R.string.update_tab_hint),
+                        res.getString(R.string.update_tab_hint),
+                        res.getString(R.string.update_tab_hint),
+                        res.getString(R.string.update_tab_hint),
+                        res.getString(R.string.update_tab_hint),
+                        res.getString(R.string.update_tab_hint),
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "Subdistrict"
+                });
+
                 // add update consent statement task
                 mc.addRow(new String[]{"0", res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), "0", "", "", "", res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), "", "", "", "", "", "", res.getString(R.string.consent_statement)});
 

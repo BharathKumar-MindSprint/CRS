@@ -216,7 +216,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
     private GPSTracker gpsTracker=null;
 
     CustomListAdapter_Modules customListAdapter_modulesAdapter;
-   
+
 
     ImageView infoCloseImageView;
     LinearLayout statusInfoLayout;
@@ -1587,14 +1587,21 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                         bundle.putString("type", "update");
                         in.putExtras(bundle);
                         startActivity(in);
-                    }else if (recordedLng != null && recordedLng.getText().equals(getResources().getString(R.string.household_farmer))){
-                        polygon=false;
+                    } else if (recordedLng != null && recordedLng.getText().equals("Subdistrict")) {
+                        Intent in = new Intent(this, UpdateSubdistrict.class);
+                        Bundle bundle = new Bundle();
+                        bundle.putLong(ChildLabourUtils.CHILD_FARMER_ID, farmerId);
+                        in.putExtras(bundle);
+                        startActivity(in);
+
+                    } else if (recordedLng != null && recordedLng.getText().equals(getResources().getString(R.string.household_farmer))) {
+                        polygon = false;
                         household = true;
-                        recordFarmLocation(v,res.getString(R.string.are_you_at_the_farmers_hh));
+                        recordFarmLocation(v, res.getString(R.string.are_you_at_the_farmers_hh));
                     } else {
-                        polygon=false;
-                        household=false;
-                        recordFarmLocation(v,res.getString(R.string.are_you_at_the_farm));
+                        polygon = false;
+                        household = false;
+                        recordFarmLocation(v, res.getString(R.string.are_you_at_the_farm));
                     }
                 } else if (id < 0) {
                     // go to fmp review page
