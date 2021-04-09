@@ -84,14 +84,11 @@ android {
             resValue "string", "contentprovider_authorities", applicationId + '.provider'
             resValue "string", "sync_account_type", applicationId
             buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofisdebug"'
-//            buildConfigField 'String', 'HOST', '"https://testofis.olamgroup.com/api/v1/"'
 
             resValue "string", "applicationName", "OFIS DEV"
             resValue "string", "AUTH_SERVER_URL", 'https://otofis-dev-zuul.olamdigital.com/oauth/api/v1/oauth/'
             buildConfigField 'String', 'HOST', '"https://otofis-dev-zuul.olamdigital.com/"'
-            resValue "string", "client_secret", 'xGfAz5zSFTJDHcWWcEQR19hNx9zA30NeZOQuxdnr'
 
-         //   buildConfigField "String", "MATOMO_SERVER_URL", "\"https://olammatomo.azurewebsites.net/matomo.php\""
             buildConfigField "String", "MATOMO_SERVER_URL", '"https://olammatomo.azurewebsites.net/matomo.php"'
             buildConfigField "int", "MATOMO_SERVER_CODE", '35'
             buildConfigField "boolean", "MATOMO_ENABLED", 'true'
@@ -110,7 +107,6 @@ android {
             resValue "string", "applicationName", "OFIS UAT"
             resValue "string", "AUTH_SERVER_URL", 'https://otofis-uat-zuul.olamdigital.com/oauth/api/v1/oauth/'
             buildConfigField 'String', 'HOST', '"https://otofis-uat-zuul.olamdigital.com/"'
-            resValue "string", "client_secret", 'xGfAz5zSFTJDHcWWcEQR19hNx9zA30NeZOQuxdnr'
 
             buildConfigField "String", "MATOMO_SERVER_URL", '"https://olammatomo.azurewebsites.net/matomo.php"'
             buildConfigField "int", "MATOMO_SERVER_CODE", '35'
@@ -129,7 +125,6 @@ android {
             resValue "string", "applicationName", "OFIS SIT"
             resValue "string", "AUTH_SERVER_URL", 'https://otofis-sit-zuul.olamdigital.com/oauth/api/v1/oauth/'
             buildConfigField 'String', 'HOST', '"https://otofis-sit-zuul.olamdigital.com/"'
-            resValue "string", "client_secret", 'xGfAz5zSFTJDHcWWcEQR19hNx9zA30NeZOQuxdnr'
 
             buildConfigField "String", "MATOMO_SERVER_URL", '"https://olammatomo.azurewebsites.net/matomo.php"'
             buildConfigField "int", "MATOMO_SERVER_CODE", '35'
@@ -148,7 +143,6 @@ android {
             resValue "string", "applicationName", "OFIS Preprod"
             resValue "string", "AUTH_SERVER_URL", 'https://ofisot-zuul-preprod.olamdigital.com/oauth/api/v1/oauth/'
             buildConfigField 'String', 'HOST', '"https://ofisot-zuul-preprod.olamdigital.com/"'
-            resValue "string", "client_secret", 'xGfAz5zSFTJDHcWWcEQR19hNx9zA30NeZOQuxdnr'
 
             buildConfigField "String", "MATOMO_SERVER_URL", '"https://olammatomo.azurewebsites.net/matomo.php"'
             buildConfigField "int", "MATOMO_SERVER_CODE", '35'
@@ -168,7 +162,6 @@ android {
             resValue "string", "applicationName", "OFIS Companion"
             resValue "string", "AUTH_SERVER_URL", 'https://otofis-zuul.olamdigital.com/oauth/api/v1/oauth/'
             buildConfigField 'String', 'HOST', '"https://otofis-zuul.olamdigital.com/"'
-            resValue "string", "client_secret", 'xGfAz5zSFTJDHcWWcEQR19hNx9zA30NeZOQuxdnr'
 
             buildConfigField "String", "MATOMO_SERVER_URL", '"https://olammatomo.azurewebsites.net/matomo.php"'
             buildConfigField "int", "MATOMO_SERVER_CODE", '39'

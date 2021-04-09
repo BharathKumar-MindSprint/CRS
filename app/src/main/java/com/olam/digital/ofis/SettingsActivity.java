@@ -167,7 +167,6 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
         authRequestDTO.setFirebaseToken(Utilities.getFirebaseTokenSharedPrefs(SettingsActivity.this));
         authRequestDTO.setGrantType("password");
         authRequestDTO.setClientId(5L);
-        authRequestDTO.setClientSecret(getString(R.string.client_secret));
         return authRequestDTO;
     }
 
