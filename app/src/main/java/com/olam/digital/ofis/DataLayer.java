@@ -1855,6 +1855,30 @@ public class DataLayer {
 
     }
 
+    void loadSubdistrictSpinner(final AppCompatActivity activity, final Context context, final int districtSelection, final int subdistrictSelection) {
+        final Spinner subdistrictSpinner = (Spinner) activity.findViewById(R.id.spinner_subdistrict);
+
+        Cursor subdistricts = getSpinnerData(OFISDBContract.SubDistrictsEntry.TABLE_NAME, true, OFISDBContract.SubDistrictsEntry.COLUMN_NAME_DISTRICT_ID, districtSelection, true, OFISDBContract.SubDistrictsEntry.COLUMN_NAME_SUBDISTRICT_NAME);
+        bindDataDrivenSpinner(subdistrictSpinner, subdistricts, context, R.string.spinner_subdistrict_default, null, false);
+
+                    if (subdistrictSelection != 0) {
+                        setSpinnerSelectionById(subdistrictSelection, subdistrictSpinner);
+                        if (subdistricts.getCount() == 1) {
+                            subdistrictSpinner.setEnabled(false);
+                        } else {
+                            subdistrictSpinner.setEnabled(true);
+                        }
+                    } else {
+                        if (subdistricts.getCount() == 1) {
+                            subdistrictSpinner.setSelection(1, false);
+                            subdistrictSpinner.setEnabled(false);
+                        } else {
+                            subdistrictSpinner.setEnabled(true);
+                        }
+                    }
+
+    }
+
     void createGeographyHierarchySpinners(final AppCompatActivity activity, final Context context, final EditText farmerIdPrefix, int countrySelection, final int regionSelection, final int districtSelection, final int subdistrictSelection, final int placeSelection, final LinearLayout phonenumbers, final boolean newPlace) {
         final Spinner countrySpinner = (Spinner) activity.findViewById(R.id.spinner_country);
         final Spinner regionSpinner = (Spinner) activity.findViewById(R.id.spinner_region);
@@ -3274,6 +3298,27 @@ public class DataLayer {
         try {
             db.update(OFISDBContract.FarmerEntry.TABLE_NAME, values, whereClause, whereArgs);
         }catch (Exception e){}
+    }
+
+    public void updateSubdistrict(int farmerid, ContentValues values, String olamfarmername) {
+        String whereClause = OFISDBContract.FarmerEntry.COLUMN_NAME_ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(farmerid)};
+        try {
+            db.update(OFISDBContract.FarmerEntry.TABLE_NAME, values, whereClause, whereArgs);
+        }catch (Exception e){e.printStackTrace();}
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        ContentValues networkQueueValues = new ContentValues();
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "updatesubdistrict");
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, "Farmer subdistrict captured");
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, olamfarmername);
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBDISTRICT_ID, values.getAsString(OFISDBContract.FarmerEntry.COLUMN_NAME_SUBDISTRICTID));
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT, timestamp.toString());
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPDATED_AT, timestamp.toString());
+
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID, farmerid);
+//        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID, farmerid);
+
+        insertNetworkQueueEntry(networkQueueValues);
     }
 
     public Cursor getnationalidsbyfarmerid(long farmerid) {

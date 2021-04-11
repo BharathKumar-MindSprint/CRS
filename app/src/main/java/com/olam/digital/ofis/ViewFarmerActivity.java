@@ -1590,7 +1590,8 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                     } else if (recordedLng != null && recordedLng.getText().equals("Subdistrict")) {
                         Intent in = new Intent(this, UpdateSubdistrict.class);
                         Bundle bundle = new Bundle();
-                        bundle.putLong(ChildLabourUtils.CHILD_FARMER_ID, farmerId);
+                        bundle.putString("olamfarmername", farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME)));
+                        bundle.putInt(ChildLabourUtils.CHILD_FARMER_ID, (int) farmerId);
                         in.putExtras(bundle);
                         startActivity(in);
 

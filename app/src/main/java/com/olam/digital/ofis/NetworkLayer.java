@@ -834,6 +834,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             postHouseholdLocation(networkQueueItemId, handler, msg, total, progress, itemId);
         }else if(itemType.equalsIgnoreCase("consentstatement")){
             postConsentStatement(networkQueueItemId, handler, msg, total, progress, itemId);
+        }else if(itemType.equalsIgnoreCase("updatesubdistrict")){
+            postSubdistrictData(networkQueueItemId, handler, msg, total, progress, itemId);
         }
 
     }
@@ -2288,6 +2290,105 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 if(enumeratorId != null) {
                     params.put("enumeratorId", enumeratorId);
                 }
+
+                DynatraceHelper.requestPayload(DynatraceConstants.REQUEST+" "+endpoint,params.toString(),context,true);
+                if (endpoint.length() > 0) {
+                    final String finalEndpoint = endpoint;
+                    okHttpPost(context, endpoint, params, new Callback() {
+                        @Override
+                        public void onResponse(Call call, Response postResponse) {
+                            String statusMessage;
+                            if (postResponse.isSuccessful()) {
+                                dl.deleteNetworkQueueItem(networkQueueItemId);
+                                statusMessage = res.getString(R.string.item_synced);
+                                msg.what = 1;
+                                msg.arg1 = total;
+                                msg.arg2 = progress;
+                                msg.obj = statusMessage;
+                                handler.dispatchMessage(msg);
+                                syncNetworkQueue(originalSyncRequestItemId, handler);
+                            } else {
+                                try {
+                                    FabricLogsWriter.printCrashLog(TAG, finalEndpoint,postResponse.code(),"Request : " +params.toString() +" Response "+postResponse.networkResponse().toString(),context);
+                                }catch (Exception e){ FirebaseCrashlytics.getInstance().log(e.getMessage());
+                                }
+                                try {
+                                    if(postResponse.code() == 401 && postResponse.headers().toString().contains("invalid_token")){
+                                        FailureGetRefreshToken(handler,originalSyncRequestItemId, msg, 2, total, progress, null, "submitting farm location");
+                                    }else {
+                                        JSONObject response = new JSONObject(postResponse.body().string());
+                                        long server_item_id = 0, fully_synced = 0;
+                                        if (response.optJSONObject("farm") != null) {
+                                            JSONObject farm = response.getJSONObject("farm");
+                                            server_item_id = farm.getLong("id");
+                                            fully_synced = farm.getLong(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FULLY_SYNCED);
+                                        }
+                                        recordFailedUpload(server_item_id, fully_synced, networkQueueItemId);
+                                        postFailureMessage(handler, response, msg, 2, total, progress, null, "submitting household location");
+                                        FirebaseCrash.report(new Exception(response.optString("errors", res.getString(R.string.item_sync_error)) + " : submitting household location"));
+                                    }
+                                } catch (JSONException | IOException e) {
+                                    recordFailedUpload(0, 0, networkQueueItemId);
+                                    postFailureMessage(handler, null, msg, 2, total, progress, null, "submitting household location");
+                                    FirebaseCrashlytics.getInstance().log("NetworkLayer: Error getting household location failure response"+e.getMessage());
+
+                                }
+                            }
+                            postResponse.close();
+                        }
+
+                        @Override
+                        public void onFailure(Call call, IOException e) {
+                            try{
+                                recordFailedUpload(0, 0, networkQueueItemId);
+
+                                String failureMessage = res.getString(R.string.networking_error);
+                                if (e != null) {
+                                    failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
+                                }
+                                postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting household location");
+                                FirebaseCrash.report(new Exception(failureMessage, e));
+                            }catch(Exception onfailEx){
+                                String failureMessage = res.getString(R.string.networking_error);
+                                postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting household location");
+                                FirebaseCrashlytics.getInstance().log(failureMessage+e.getMessage());
+                                onfailEx.printStackTrace();
+                            }
+                        }
+
+                    });
+                }
+            } catch (JSONException e) {
+                recordFailedUpload(0, 0, networkQueueItemId);
+                postFailureMessage(handler, null, msg, 2, total, progress, null, "submitting farm location");
+                FirebaseCrashlytics.getInstance().log("NetworkLayer: Error creating farm location post object"+e.getMessage());
+            }
+        }
+    }
+
+    private void postSubdistrictData(final int networkQueueItemId, final Handler handler, final Message msg, final int total, final int progress, final Integer originalSyncRequestItemId) {
+
+        String endpoint="";
+        endpoint = "ofisfarmer/farmer/subDistrictForExistingFarmer";
+
+        final JSONObject params = new JSONObject();
+
+        if (!dl.isFarmerSynced(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)))) {
+            msg.what = 3;
+            msg.arg1 = total;
+            msg.arg2 = HomeActivity.progressItem = progress + 1;
+            msg.obj = String.valueOf(res.getString(R.string.farmer_not_synced));
+            handler.dispatchMessage(msg);
+        } else {
+
+            try {
+                int farmerID = networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
+                params.put("farmerId", farmerID);
+                params.put("subdistrictId", networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBDISTRICT_ID)));
+               /* String enumeratorId = Utilities.getFromSharedPrefs(context);
+                if(enumeratorId != null) {
+                    params.put("enumeratorId", enumeratorId);
+                }*/
 
                 DynatraceHelper.requestPayload(DynatraceConstants.REQUEST+" "+endpoint,params.toString(),context,true);
                 if (endpoint.length() > 0) {
