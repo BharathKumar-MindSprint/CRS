@@ -209,7 +209,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
+//        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
         setContentView(R.layout.activity_add_farmer);
         //noinspection ConstantConditions
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -262,7 +262,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         sectionSpinner = this.findViewById(R.id.spinner_section);
 
         dl.createBusinessHierarchySpinners(this, context, farmerIdPrefix, selectedFarmerGroup, selectedSection);
-        dl.createGeographyHierarchySpinners(this, context, farmerIdPrefix, selectedCountry, selectedRegion, selectedDistrict, selectedSubDistrict, selectedPlace, phonenumbers, true);
+        dl.createGeographyHierarchySpinners(this, context, farmerIdPrefix, selectedCountry, selectedRegion, selectedDistrict, selectedSubDistrict, selectedPlace, phonenumbers, true, 1);
 
         farmerPhotoActionButton = findViewById(R.id.farmerPhotoActionButton);
         farmerPhotoActionButton.setOnClickListener(new View.OnClickListener() {
@@ -390,7 +390,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         selectedSection = savedInstanceState.getInt(CAPTURED_SELECTED_SECTION, 0);
 
         dl.createBusinessHierarchySpinners(this, context, farmerIdPrefix, selectedFarmerGroup, selectedSection);
-        dl.createGeographyHierarchySpinners(this, context, farmerIdPrefix, selectedCountry, selectedRegion, selectedDistrict,  selectedSubDistrict,selectedPlace, phonenumbers, true);
+        dl.createGeographyHierarchySpinners(this, context, farmerIdPrefix, selectedCountry, selectedRegion, selectedDistrict,  selectedSubDistrict,selectedPlace, phonenumbers, true, 1);
 
         super.onRestoreInstanceState(savedInstanceState);
     }

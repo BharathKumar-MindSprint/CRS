@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,8 +29,10 @@ public class UpdateSubdistrict extends BaseActivity implements View.OnClickListe
     Button updateSubdistrict;
     int farmerId, selectedSubDistrict;
     String olamfarmername;
+    EditText newPlaceName;
+    int selectedDistrict;
     private TextView tv_country_name, tv_region_name, tv_district_name, tv_place_name;
-    private Spinner subdistrictSpinner;
+    Spinner subdistrictSpinner, countrySpinner, regionSpinner, districtSpinner, placeSpinner;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,30 +68,37 @@ public class UpdateSubdistrict extends BaseActivity implements View.OnClickListe
     private void initComponents() {
         Cursor farmer = null;
         updateSubdistrict=findViewById(R.id.updateSubdistrict);
-        tv_country_name=findViewById(R.id.tv_country_name);
+       /* tv_country_name=findViewById(R.id.tv_country_name);
         tv_region_name=findViewById(R.id.tv_region_name);
         tv_district_name=findViewById(R.id.tv_district_name);
-        tv_place_name=findViewById(R.id.tv_place_name);
+        tv_place_name=findViewById(R.id.tv_place_name);*/
+        countrySpinner = (Spinner) this.findViewById(R.id.spinner_country);
+        regionSpinner = (Spinner) this.findViewById(R.id.spinner_region);
+        districtSpinner = (Spinner) this.findViewById(R.id.spinner_district);
+        subdistrictSpinner = (Spinner) this.findViewById(R.id.spinner_subdistrict);
+        placeSpinner = (Spinner) this.findViewById(R.id.spinner_place);
 
-        subdistrictSpinner = this.findViewById(R.id.spinner_subdistrict);
         try {
             farmer = dl.getFarmerById(farmerId);
             if (farmer.getCount() > 0) {
                 farmer.moveToFirst();
                 int selectedCountry = Integer.parseInt(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID)));
                 int selectedRegion = Integer.parseInt(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_REGIONID)));
-                int selectedDistrict = Integer.parseInt(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_DISTRICTID)));
+                selectedDistrict = Integer.parseInt(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_DISTRICTID)));
                 int selectedPlace = Integer.parseInt(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID)));
                 String countryName = dl.getCountryName(selectedCountry);
-                tv_country_name.setText(countryName);
+//                tv_country_name.setText(countryName);
                 String regionName = dl.getRegionName(selectedRegion);
-                tv_region_name.setText(regionName);
+//                tv_region_name.setText(regionName);
                 String districtName = dl.getDistrictName(selectedDistrict);
-                tv_district_name.setText(districtName);
+//                tv_district_name.setText(districtName);
                 String placeName = dl.getPlaceName(selectedPlace);
-                tv_place_name.setText(placeName);
-
-                dl.loadSubdistrictSpinner(this, context, selectedDistrict, 0);
+//                tv_place_name.setText(placeName);
+                dl.createGeographyHierarchySpinners(this, context, null, selectedCountry, selectedRegion, selectedDistrict, selectedSubDistrict, selectedPlace, null, true, 3);
+//                dl.loadSubdistrictSpinner(this, context, selectedDistrict, 0);
+               /* countrySpinner.setEnabled(false);
+                regionSpinner.setEnabled(false);
+                districtSpinner.setEnabled(false);*/
             }
         }finally {
             farmer.close();
@@ -101,7 +111,41 @@ public class UpdateSubdistrict extends BaseActivity implements View.OnClickListe
     public void onClick(View v) {
 
         if(v.getId() == R.id.updateSubdistrict) {
+
+            newPlaceName = findViewById(R.id.newPlaceName);
+            Spinner spinner_place = findViewById(R.id.spinner_place);
+            long place_id = spinner_place.getSelectedItemId();
+            if (place_id == 0) {
+
+                Toast.makeText(context, res.getString(R.string.please_fill_the_place), Toast.LENGTH_LONG).show();
+                return ;
+
+            }
+            String newPlaceNameValue = (place_id == -1) ? String.valueOf(newPlaceName.getText()) : "";
+            if (place_id == -1) {
+                if (newPlaceNameValue.length() == 0) {
+
+                    Toast.makeText(context, res.getString(R.string.please_fill_the_place), Toast.LENGTH_LONG).show();
+                    return ;
+                } else {
+                    if (dl.placeAlreadyExists(newPlaceNameValue, selectedDistrict)) {
+                        Toast.makeText(context, res.getString(R.string.place_name_not_unique), Toast.LENGTH_LONG).show();
+
+
+                        return ;
+                    }
+                }
+            }
+
+            if (place_id == -1 && newPlaceName.length() > 0) {
+                place_id = dl.insertNewPlace(newPlaceNameValue, selectedDistrict);
+            }
+
             selectedSubDistrict = (int) subdistrictSpinner.getSelectedItemId();
+            if (selectedSubDistrict < 1) {
+                Toast.makeText(context, res.getString(R.string.fill_subdistrict), Toast.LENGTH_LONG).show();
+                return;
+            }
             Toast.makeText(this,getResources().getString(R.string.subdistrict_note), Toast.LENGTH_LONG).show();
             ContentValues contentValue=new ContentValues();
             contentValue.put(OFISDBContract.FarmerEntry.COLUMN_NAME_SUBDISTRICTID,selectedSubDistrict);

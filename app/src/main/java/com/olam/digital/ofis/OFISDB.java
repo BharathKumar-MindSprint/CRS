@@ -11,7 +11,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 class OFISDB extends SQLiteOpenHelper {
     private static OFISDB sInstance;
 
-    private static final int DATABASE_VERSION = 122;
+    private static final int DATABASE_VERSION = 123;
 
     private static final String DATABASE_NAME = "ofismobile";
 
@@ -344,12 +344,12 @@ class OFISDB extends SQLiteOpenHelper {
     private static final String OFIS_FAMRERNATIONALIDS_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.FarmerNationalIDs.TABLE_NAME
             + " ( " + OFISDBContract.FarmerNationalIDs.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID + " INTEGER, "
             + OFISDBContract.FarmerNationalIDs.COLUMN_NID_TYPE + " INTEGER, " + OFISDBContract.FarmerNationalIDs.COLUMN_NID_NUMBER + " TEXT, "
-            + OFISDBContract.FarmerNationalIDs.COLUMN_IS_SYNCED + " TEXT, "
+            + OFISDBContract.FarmerNationalIDs.COLUMN_IS_SYNCED + " TEXT, " + OFISDBContract.FarmerNationalIDs.COLUMN_NID_EXPIRY_DATE + " TEXT, "
             + OFISDBContract.FarmerNationalIDs.COLUMN_NID_PHOTO + " TEXT )";
 
     private static final String OFIS_LOCALFAMRERNATIONALIDS_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.LocalFarmerNationalIDs.TABLE_NAME
             + " ( " + OFISDBContract.LocalFarmerNationalIDs.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.LocalFarmerNationalIDs.COLUMN_NAME_FARMER_ID + " INTEGER, "
-            + OFISDBContract.LocalFarmerNationalIDs.COLUMN_NID_TYPE + " INTEGER, " + OFISDBContract.LocalFarmerNationalIDs.COLUMN_NID_NUMBER + " TEXT, "
+            + OFISDBContract.LocalFarmerNationalIDs.COLUMN_NID_TYPE + " INTEGER, " + OFISDBContract.LocalFarmerNationalIDs.COLUMN_NID_NUMBER + " TEXT, " + OFISDBContract.LocalFarmerNationalIDs.COLUMN_NID_EXPIRY_DATE + " TEXT, "
             + OFISDBContract.LocalFarmerNationalIDs.COLUMN_NID_PHOTO + " TEXT )";
 
     private static final String OFIS_LOCALNATIONALIDIMAGES_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.LocalNationalIDImages.TABLE_NAME

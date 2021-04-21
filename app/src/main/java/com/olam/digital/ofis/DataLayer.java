@@ -1879,7 +1879,7 @@ public class DataLayer {
 
     }
 
-    void createGeographyHierarchySpinners(final AppCompatActivity activity, final Context context, final EditText farmerIdPrefix, int countrySelection, final int regionSelection, final int districtSelection, final int subdistrictSelection, final int placeSelection, final LinearLayout phonenumbers, final boolean newPlace) {
+    void createGeographyHierarchySpinners(final AppCompatActivity activity, final Context context, final EditText farmerIdPrefix, int countrySelection, final int regionSelection, final int districtSelection, final int subdistrictSelection, final int placeSelection, final LinearLayout phonenumbers, final boolean newPlace, int item) {
         final Spinner countrySpinner = (Spinner) activity.findViewById(R.id.spinner_country);
         final Spinner regionSpinner = (Spinner) activity.findViewById(R.id.spinner_region);
         final Spinner districtSpinner = (Spinner) activity.findViewById(R.id.spinner_district);
@@ -1930,6 +1930,9 @@ public class DataLayer {
                         regionSpinner.setEnabled(true);
                     }
                 }
+                if(item == 3){
+                    regionSpinner.setEnabled(false);
+                }
             }
 
             @Override
@@ -1960,6 +1963,9 @@ public class DataLayer {
                         districtSpinner.setEnabled(true);
                     }
                 }
+                if(item == 3){
+                    districtSpinner.setEnabled(false);
+                }
             }
 
             @Override
@@ -1967,7 +1973,10 @@ public class DataLayer {
 
             }
         });
-
+        if(item == 3){
+            regionSpinner.setEnabled(false);
+            districtSpinner.setEnabled(false);
+        }
         if (placeSpinner != null && subdistrictSpinner != null) {
             districtSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
@@ -2998,45 +3007,47 @@ public class DataLayer {
                         "Phone"
                 });
 
-                // update farmers subdistrict
-                mc.addRow(new String[]{
-                        "0",
-                        res.getString(R.string.update_farmer_subdistrict),
-                        res.getString(R.string.update_farmer_subdistrict),
-                        res.getString(R.string.update_farmer_subdistrict),
-                        res.getString(R.string.update_farmer_subdistrict),
-                        res.getString(R.string.update_farmer_subdistrict),
-                        res.getString(R.string.update_farmer_subdistrict),
-                        res.getString(R.string.update_farmer_subdistrict),
-                        res.getString(R.string.update_farmer_subdistrict),
-                        res.getString(R.string.update_farmer_subdistrict),
-                        "0",
-                        "",
-                        "",
-                        "",
-                        res.getString(R.string.update_tab_hint),
-                        res.getString(R.string.update_tab_hint),
-                        res.getString(R.string.update_tab_hint),
-                        res.getString(R.string.update_tab_hint),
-                        res.getString(R.string.update_tab_hint),
-                        res.getString(R.string.update_tab_hint),
-                        res.getString(R.string.update_tab_hint),
-                        res.getString(R.string.update_tab_hint),
-                        res.getString(R.string.update_tab_hint),
-                        "",
-                        "",
-                        "",
-                        "",
-                        "",
-                        "",
-                        "Subdistrict"
-                });
+                String selectedsubdistrict = farmer.getString(farmer.getColumnIndex("subdistrictId")).trim();
+                 if(selectedsubdistrict.length()==0){
+                    // update farmers subdistrict
+                    mc.addRow(new String[]{
+                            "0",
+                            res.getString(R.string.update_farmer_subdistrict),
+                            res.getString(R.string.update_farmer_subdistrict),
+                            res.getString(R.string.update_farmer_subdistrict),
+                            res.getString(R.string.update_farmer_subdistrict),
+                            res.getString(R.string.update_farmer_subdistrict),
+                            res.getString(R.string.update_farmer_subdistrict),
+                            res.getString(R.string.update_farmer_subdistrict),
+                            res.getString(R.string.update_farmer_subdistrict),
+                            res.getString(R.string.update_farmer_subdistrict),
+                            "0",
+                            "",
+                            "",
+                            "",
+                            res.getString(R.string.update_tab_hint),
+                            res.getString(R.string.update_tab_hint),
+                            res.getString(R.string.update_tab_hint),
+                            res.getString(R.string.update_tab_hint),
+                            res.getString(R.string.update_tab_hint),
+                            res.getString(R.string.update_tab_hint),
+                            res.getString(R.string.update_tab_hint),
+                            res.getString(R.string.update_tab_hint),
+                            res.getString(R.string.update_tab_hint),
+                            "",
+                            "",
+                            "",
+                            "",
+                            "",
+                            "",
+                            "Subdistrict"
+                    });
+                }
 
                 // add update consent statement task
                 mc.addRow(new String[]{"0", res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), "0", "", "", "", res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), "", "", "", "", "", "", res.getString(R.string.consent_statement)});
 
-
-// add e-signature for existing farmers
+                // add e-signature for existing farmers
                 mc.addRow(new String[]{
                         "0",
                         res.getString(R.string.update_signature),

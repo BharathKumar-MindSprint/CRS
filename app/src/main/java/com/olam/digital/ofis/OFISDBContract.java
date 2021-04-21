@@ -838,6 +838,7 @@ public class OFISDBContract {
                     add(COLUMN_NAME_FARM_PLOTS);
                     add(COLUMN_NAME_COUNTRY_ID);
                     add(COLUMN_NAME_DISTRICTID);
+                    add(COLUMN_NAME_SUBDISTRICTID);
                     add(COLUMN_NAME_FARMERGROUPID);
                     add(COLUMN_NAME_REGIONID);
                     add(COLUMN_NAME_PRODUCT_ID);
@@ -895,6 +896,7 @@ public class OFISDBContract {
         public static final String COLUMN_NID_TYPE = "nationalIdType";
         public static final String COLUMN_NID_NUMBER = "nationalIdNumber";
         public static final String COLUMN_NID_PHOTO = "photo";
+        public static final String COLUMN_NID_EXPIRY_DATE = "expiryDate";
         public static final String COLUMN_IS_SYNCED = "isSynced";
         //        public static final String COLUMN_CREATEDDATE = "createddate";
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
@@ -904,6 +906,7 @@ public class OFISDBContract {
                     add(COLUMN_NID_TYPE);
                     add(COLUMN_NID_NUMBER);
                     add(COLUMN_NID_PHOTO);
+                    add(COLUMN_NID_EXPIRY_DATE);
                     add(COLUMN_IS_SYNCED);
 //                    add(COLUMN_CREATEDDATE);
                 }}
@@ -917,6 +920,7 @@ public class OFISDBContract {
         public static final String COLUMN_NID_TYPE = "nationalIdType";
         public static final String COLUMN_NID_NUMBER = "nationalIdNumber";
         public static final String COLUMN_NID_PHOTO = "photo";
+        public static final String COLUMN_NID_EXPIRY_DATE = "expiryDate";
         //        public static final String COLUMN_CREATEDDATE = "createddate";
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
@@ -925,6 +929,7 @@ public class OFISDBContract {
                     add(COLUMN_NID_TYPE);
                     add(COLUMN_NID_NUMBER);
                     add(COLUMN_NID_PHOTO);
+                    add(COLUMN_NID_EXPIRY_DATE);
 //                    add(COLUMN_CREATEDDATE);
                 }}
         );
