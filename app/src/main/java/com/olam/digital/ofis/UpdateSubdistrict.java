@@ -30,7 +30,7 @@ public class UpdateSubdistrict extends BaseActivity implements View.OnClickListe
     int farmerId, selectedSubDistrict;
     String olamfarmername;
     EditText newPlaceName;
-    int selectedDistrict;
+    int selectedDistrict, selectedPlace;
     private TextView tv_country_name, tv_region_name, tv_district_name, tv_place_name;
     Spinner subdistrictSpinner, countrySpinner, regionSpinner, districtSpinner, placeSpinner;
     @Override
@@ -85,7 +85,7 @@ public class UpdateSubdistrict extends BaseActivity implements View.OnClickListe
                 int selectedCountry = Integer.parseInt(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID)));
                 int selectedRegion = Integer.parseInt(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_REGIONID)));
                 selectedDistrict = Integer.parseInt(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_DISTRICTID)));
-                int selectedPlace = Integer.parseInt(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID)));
+                selectedPlace = Integer.parseInt(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID)));
                 String countryName = dl.getCountryName(selectedCountry);
 //                tv_country_name.setText(countryName);
                 String regionName = dl.getRegionName(selectedRegion);
@@ -136,12 +136,13 @@ public class UpdateSubdistrict extends BaseActivity implements View.OnClickListe
                     }
                 }
             }
-
+            selectedPlace = (int) placeSpinner.getSelectedItemId();
             if (place_id == -1 && newPlaceName.length() > 0) {
                 place_id = dl.insertNewPlace(newPlaceNameValue, selectedDistrict);
             }
 
             selectedSubDistrict = (int) subdistrictSpinner.getSelectedItemId();
+
             if (selectedSubDistrict < 1) {
                 Toast.makeText(context, res.getString(R.string.fill_subdistrict), Toast.LENGTH_LONG).show();
                 return;
@@ -150,6 +151,8 @@ public class UpdateSubdistrict extends BaseActivity implements View.OnClickListe
             ContentValues contentValue=new ContentValues();
             contentValue.put(OFISDBContract.FarmerEntry.COLUMN_NAME_SUBDISTRICTID,selectedSubDistrict);
             contentValue.put(OFISDBContract.FarmerEntry.COLUMN_NAME_SUBDISID,selectedSubDistrict);
+            contentValue.put(OFISDBContract.FarmerEntry.COLUMN_NAME_PLACEID,selectedPlace);
+            contentValue.put(OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID,place_id);
             dl.updateSubdistrict(farmerId, contentValue, olamfarmername);
             finish();
         }

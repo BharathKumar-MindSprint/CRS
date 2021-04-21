@@ -2385,11 +2385,23 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 int farmerID = networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
                 params.put("farmerId", farmerID);
                 params.put("subdistrictId", networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBDISTRICT_ID)));
+                params.put("placeId", networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PLACE_ID)));
                /* String enumeratorId = Utilities.getFromSharedPrefs(context);
                 if(enumeratorId != null) {
                     params.put("enumeratorId", enumeratorId);
                 }*/
-
+                // test for existence of new place name
+                 Cursor place = dl.getPlaceBytype("localinsert");
+                if (place != null) {
+                    place.moveToFirst();
+                       try {
+                            params.put("new_place", "true");
+                            params.put("new_place_name", place.getString(place.getColumnIndex(OFISDBContract.PlacesEntry.COLUMN_NAME_PLACE_NAME)));
+                            params.put("new_place_district_id", place.getString(place.getColumnIndex(OFISDBContract.PlacesEntry.COLUMN_NAME_DISTRICT_ID)));
+                        }catch (Exception e){
+                            FirebaseCrashlytics.getInstance().log(e.getMessage());
+                    }
+                }
                 DynatraceHelper.requestPayload(DynatraceConstants.REQUEST+" "+endpoint,params.toString(),context,true);
                 if (endpoint.length() > 0) {
                     final String finalEndpoint = endpoint;
@@ -2398,6 +2410,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         public void onResponse(Call call, Response postResponse) {
                             String statusMessage;
                             if (postResponse.isSuccessful()) {
+                                dl.updatePlacelocalupdate();
                                 dl.deleteNetworkQueueItem(networkQueueItemId);
                                 statusMessage = res.getString(R.string.item_synced);
                                 msg.what = 1;

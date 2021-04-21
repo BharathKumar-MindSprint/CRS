@@ -116,7 +116,13 @@ public class DataLayer {
         return db.query(OFISDBContract.PlacesEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
     }
 
+    Cursor getPlaceBytype(String type) {
+        String[] columns = new String[]{"*"};
+        String whereClause = OFISDBContract.PlacesEntry.COLUMN_NAME_PLACE_TYPE + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(type)};
 
+        return db.query(OFISDBContract.PlacesEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+    }
 
     Cursor getFGById(int Id) {
         String[] columns = new String[]{"*"};
@@ -3323,6 +3329,7 @@ public class DataLayer {
         networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, "Farmer subdistrict captured");
         networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, olamfarmername);
         networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBDISTRICT_ID, values.getAsString(OFISDBContract.FarmerEntry.COLUMN_NAME_SUBDISTRICTID));
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PLACE_ID, values.getAsString(OFISDBContract.FarmerEntry.COLUMN_NAME_PLACEID));
         networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT, timestamp.toString());
         networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPDATED_AT, timestamp.toString());
 
@@ -4044,6 +4051,17 @@ public class DataLayer {
         String[] whereArgs = new String[]{String.valueOf(networkQueueItemId)};
         try {
             db.delete(OFISDBContract.NetworkQueueEntry.TABLE_NAME, whereClause, whereArgs);
+        }catch (Exception e){}
+
+    }
+
+    void updatePlacelocalupdate() {
+        ContentValues newValues = new ContentValues();
+        newValues.put(OFISDBContract.PlacesEntry.COLUMN_NAME_PLACE_TYPE, "VILLAGE");
+        String whereClause = OFISDBContract.PlacesEntry.COLUMN_NAME_PLACE_TYPE + " = ?";
+        String[] whereArgs = new String[]{"localinsert"};
+        try {
+            db.update(OFISDBContract.PlacesEntry.TABLE_NAME, newValues, whereClause, whereArgs);
         }catch (Exception e){}
 
     }
