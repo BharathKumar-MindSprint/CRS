@@ -267,7 +267,7 @@ public class AddInfrastructureActivity extends BaseActivity {
         }
 
       //  int selectedPlace = 0;
-        dl.createGeographyHierarchySpinners(this, context, null, selectedCountry, selectedRegion, selectedDistrict,selectedSubDistrict, selectedPlace, null,false);
+        dl.createGeographyHierarchySpinners(this, context, null, selectedCountry, selectedRegion, selectedDistrict,selectedSubDistrict, selectedPlace, null,false, 2);
         dl.createBusinessHierarchySpinners(this, context, null, selectedFarmerGroup, selectedSection);
 
         // New
