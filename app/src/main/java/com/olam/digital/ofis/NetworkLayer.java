@@ -337,8 +337,19 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         authRequestDTO.setGrantType("refreshToken");
         authRequestDTO.setToken(authenticationDTO.getRefreshToken());
         AuthenticationInterface authenticationInterface =  AuthenticationClient.createService(AuthenticationInterface.class, context);
-        retrofit2.Call<AuthenticationDTO> authCall = authenticationInterface.getRefreshToken(authRequestDTO);
+
+        // Old
+//        retrofit2.Call<AuthenticationDTO> authCall = authenticationInterface.getRefreshToken(authRequestDTO);
+//        retrofit2.Response authResponse = authCall.execute();
+
+        // New
+        String grantType="refresh_token";
+        String refreshToken=authenticationDTO.getRefreshToken();
+        String clientId="mobile-ofis-app-dev";
+        String clientSecret="4afbbe46-ab48-4db9-8c67-dea623e691b1";
+        retrofit2.Call<AuthenticationDTO> authCall = authenticationInterface.getKeyCloakRefreshToken(clientId,clientSecret,grantType,refreshToken);
         retrofit2.Response authResponse = authCall.execute();
+
         if (authResponse.isSuccessful()) {
             AuthenticationDTO newAuthDTO = (AuthenticationDTO) authResponse.body();
             newAuthDTO.setWillExpireAt((System.currentTimeMillis()/1000) + newAuthDTO.getExpiresIn() /1000);
@@ -360,6 +371,9 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         AuthenticationInterface authenticationInterface =  AuthenticationClient.createService(AuthenticationInterface.class, context);
         retrofit2.Call<AuthenticationDTO> authCall = authenticationInterface.getRefreshToken(authRequestDTO);
         retrofit2.Response authResponse = authCall.execute();
+
+        // KeyCloak Login
+
         if (authResponse.isSuccessful()) {
             AuthenticationDTO newAuthDTO = (AuthenticationDTO) authResponse.body();
             newAuthDTO.setWillExpireAt((System.currentTimeMillis()/1000) + newAuthDTO.getExpiresIn() /1000);

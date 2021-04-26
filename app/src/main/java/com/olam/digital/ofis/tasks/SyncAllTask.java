@@ -17,6 +17,7 @@ import com.olam.digital.ofis.Utilities;
 import com.olam.digital.ofis.authentication.AuthenticationClient;
 import com.olam.digital.ofis.authentication.AuthenticationHelper;
 import com.olam.digital.ofis.authentication.AuthenticationInterface;
+import com.olam.digital.ofis.authentication.DeviceIDxctractor;
 import com.olam.digital.ofis.authentication.model.AuthRequestDTO;
 import com.olam.digital.ofis.authentication.model.AuthenticationDTO;
 import com.olam.digital.ofis.childlabour.ChildLabourUtils;
@@ -96,11 +97,16 @@ public class SyncAllTask extends SyncTask {
                 try {
                     checkVersion();
                 } catch (JSONException e) {
-                    FirebaseCrash.report(e);
                     e.printStackTrace();
                 }
 
             }
+        }
+
+        else if (op == SyncTaskOperationType.SYNC_BASIC_DEVICE_INFO) {
+          //  syncSpinners();
+            syncDeviceInfo();
+
         } else if (op == SyncTaskOperationType.SYNC_SPINNERS) {
             syncSpinners();
 
@@ -108,7 +114,6 @@ public class SyncAllTask extends SyncTask {
             try {
                 syncModules();
             } catch (JSONException e) {
-                FirebaseCrash.report(e);
                 e.printStackTrace();
             }
 
@@ -116,7 +121,6 @@ public class SyncAllTask extends SyncTask {
             try {
                 syncSipModules();
             } catch (JSONException e) {
-                FirebaseCrash.report(e);
                 e.printStackTrace();
             }
 
@@ -125,7 +129,6 @@ public class SyncAllTask extends SyncTask {
             try {
                 syncFarmers();
             } catch (JSONException e) {
-                FirebaseCrash.report(e);
                 e.printStackTrace();
             }
 
@@ -175,6 +178,48 @@ public class SyncAllTask extends SyncTask {
         return null;
 
     }
+
+    // Keycloak check version and Firebase token
+    private void syncDeviceInfo() {
+        String endpoint = "";
+        JSONObject inputArgs = new JSONObject();
+        try {
+            inputArgs.put("deviceId", DeviceIDxctractor.fetchDeviceID(context));
+            inputArgs.put("firebaseToken",Utilities.getFirebaseTokenSharedPrefs(context));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        endpoint = "ofismaster/master/authenticate";
+        final String finalEndpoint = endpoint;
+        okHttpPost(context, endpoint, inputArgs, new Callback() {
+            @Override
+            public void onResponse(Call call, final Response postResponse) {
+
+                //  JSONObject response = new JSONObject(postResponse.body().string());
+                //  DynatraceHelper.requestPayload(finalEndpoint,response.toString(),context,false);
+                if (postResponse.isSuccessful()) {
+                    // positive response
+                    publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.download_nationalidtype_enumerator));
+                    delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_NATIONALIDS);
+
+                } else {
+                    postFailureMessage(null);
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+                String failureMessage = res.getString(R.string.networking_error);
+                if (e != null) {
+                    failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
+                }
+                publishProgress(SyncOperation.ERROR_RECEIVED, failureMessage);
+            }
+
+        });
+    }
+
+
 
     private void syncSipModules() throws JSONException {
         JSONObject inputArgs = new JSONObject();
@@ -440,8 +485,8 @@ public class SyncAllTask extends SyncTask {
                                 Utilities.removeFromSharedPrefs(context, "version_update_notified_on");
                                 Utilities.removeFromSharedPrefs(context, "upgrade_by");
 
-                                publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.download_nationalidtype_enumerator));
-                                delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_NATIONALIDS);
+                                publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.update_firebase_install_id_info));
+                                delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_BASIC_DEVICE_INFO);
 
 
                             }
@@ -479,29 +524,21 @@ public class SyncAllTask extends SyncTask {
     }
 
     private void FailureGetRefreshToken(JSONObject response) throws IOException, JSONException {
-        /*try {
-            Log.d("Testing Message","Post Failure-----"+response.getString("errors"));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        String failureMessage=context.getString(R.string.item_sync_error);
-        if (response != null) {
-            try {
-                failureMessage = response.optString("message");
-                failureMessage = response.getString("errors") + " : " ;
-            } catch (JSONException e) {
-                FirebaseCrash.report(e);
-                e.printStackTrace();
-            }
-        }*/
+
         AuthenticationDTO authenticationDTO = new AuthenticationHelper(context).getAuthenticationDTO();
-        //
-        AuthRequestDTO authRequestDTO = new AuthRequestDTO();
-        authRequestDTO.setGrantType("refreshToken");
-        authRequestDTO.setToken(authenticationDTO.getRefreshToken());
+        String clientId=context.getResources().getString(R.string.clientId);
+        String clientSecret=context.getResources().getString(R.string.clientSecret);
+        String grantType=context.getResources().getString(R.string.refresh_token);
+        String refreshToken=authenticationDTO.getRefreshToken();
+
+        // Auth Call
         AuthenticationInterface authenticationInterface = AuthenticationClient.createService(AuthenticationInterface.class, context);
-        retrofit2.Call<AuthenticationDTO> authCall = authenticationInterface.getRefreshToken(authRequestDTO);
+        retrofit2.Call<AuthenticationDTO> authCall = authenticationInterface.getKeyCloakRefreshToken(clientId,clientSecret,grantType,refreshToken);
         retrofit2.Response authResponse = authCall.execute();
+
+
+        // DTO call
+
         if (authResponse.isSuccessful()) {
             AuthenticationDTO newAuthDTO = (AuthenticationDTO) authResponse.body();
 //            newAuthDTO.setWillExpireAt((System.currentTimeMillis()/1000) + newAuthDTO.getExpiresIn() /1000);

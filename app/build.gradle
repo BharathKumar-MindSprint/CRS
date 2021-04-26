@@ -4,20 +4,6 @@ apply plugin: 'org.sonarqube'
 apply plugin: 'com.google.firebase.firebase-perf'
 
 
-//apply plugin: 'com.dynatrace.tools.android'
-////
-//dynatrace {
-//    defaultConfig {
-//         beaconURL 'https://eok851.dynatrace-managed.com:9999/mbeacon/82203a30-a89c-4afb-8009-c475586c3488'
-//         applicationId '1bd3a5cf-7c8d-49ae-8452-7116cfccb064'
-//        /*beaconURL 'https://eok851.dynatrace-managed.com:9999/mbeacon/8f745a3a-ca48-40b4-aec4-a663c087c19f'
-//        applicationId '037a8683-44f6-4b8b-ba26-5c8bd021d473'*/
-//        agentProperties 'DTXLogLevel' : 'debug'
-//
-//    }
-//}
-
-
 //noinspection GroovyMissingReturnStatement
 android {
     dexOptions {
@@ -86,7 +72,8 @@ android {
             buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofisdebug"'
 
             resValue "string", "applicationName", "OFIS DEV"
-            resValue "string", "AUTH_SERVER_URL", 'https://otofis-dev-zuul.olamdigital.com/oauth/api/v1/oauth/'
+          //  resValue "string", "AUTH_SERVER_URL", 'https://otofis-dev-zuul.olamdigital.com/oauth/api/v1/oauth/'
+            resValue "string", "AUTH_SERVER_URL", 'https://digitalauthdev.olamnet.com/auth/realms/ofis-dse-dev/protocol/openid-connect/'
             buildConfigField 'String', 'HOST', '"https://otofis-dev-zuul.olamdigital.com/"'
 
             buildConfigField "String", "MATOMO_SERVER_URL", '"https://olammatomo.azurewebsites.net/matomo.php"'
@@ -248,10 +235,8 @@ dependencies {
         implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
         implementation 'com.github.gcacace:signature-pad:1.2.1'
 
-        /* implementation project(path: ':InAppLib_1.8')
-    implementation group: 'net.lingala.zip4j', name: 'zip4j', version: '2.2.6'
-    implementation group: 'com.googlecode.libphonenumber', name: 'libphonenumber', version:'8.11.0'
-*/
+        /* implementation project(path: ':InAppLib_1.8')*/
+
         // User Event Analytics
         implementation 'org.matomo.sdk:tracker:4.1.1'
 

@@ -13,16 +13,14 @@ import okhttp3.Response;
 public class TokenInterceptor implements Interceptor {
 
     public TokenInterceptor() {
-    }
 
+    }
     @Override
     public Response intercept(Chain chain) throws IOException {
         Request original = chain.request();
 
         Request.Builder builder = original.newBuilder()
-                .header("Content-Type","application/json")
-                .header("App-Id", "1");
-
+                .header("Content-Type","application/x-www-form-urlencoded");
 
         Request request = builder.build();
         return chain.proceed(request);

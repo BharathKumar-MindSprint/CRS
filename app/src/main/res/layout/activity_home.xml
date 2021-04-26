@@ -65,7 +65,6 @@
                 android:textColor="@color/ofis_base_font_white"
                 android:background="@drawable/ofis_edit_text_holo_dark"
                 android:layout_marginBottom="@dimen/activity_vertical_margin"
-                android:maxLength="5"
                 android:hint="@string/Passcode"/>
 
             <Button

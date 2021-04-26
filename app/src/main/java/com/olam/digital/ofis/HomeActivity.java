@@ -3,7 +3,6 @@ package com.olam.digital.ofis;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -46,7 +45,6 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -357,28 +355,41 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 //        Passcode validation - Penetration testing
         String userpasscode = passcode.getText().toString().trim();
         if (userEnumerator!=null && !userEnumerator.equalsIgnoreCase("") &&
-                userpasscode!=null && !userpasscode.equalsIgnoreCase("") ){
-           /* if (ContextCompat.checkSelfPermission(HomeActivity.this,
-                    android.Manifest.permission.READ_PHONE_STATE)
-                    != PackageManager.PERMISSION_GRANTED) {
-
-                //request permission
-                ActivityCompat.requestPermissions(HomeActivity.this,
-                        new String[]{android.Manifest.permission.READ_PHONE_STATE},
-                        MY_PERMISSIONS_REQUEST);
-
-            }else*/ {
+                userpasscode!=null && !userpasscode.equalsIgnoreCase("")){
                 showProgress(true);
-                doAuthentication(userEnumerator,userpasscode);
-            }
+                // Current OFIS Authentication
+                // doAuthentication(userEnumerator,userpasscode);
+
+                // KeyCloak Authentication
+                 doKeyCloakAuthentication(userEnumerator,passcode.getText().toString().trim());
+
         }else{
             Toast.makeText(HomeActivity.this,getString(R.string.enumerator_empty),Toast.LENGTH_LONG).show();
         }
 
     }
 
+    private void doKeyCloakAuthentication(String userEnumerator, String passcode) {
 
+        String clientId=getResources().getString(R.string.clientId);
+        String clientSecret=getResources().getString(R.string.clientSecret);
+        String grantType=getResources().getString(R.string.password);
+        String scope=getResources().getString(R.string.offline_access);
 
+        // Check the need of DTO
+        AuthRequestDTO authRequestDTO = new AuthRequestDTO();
+        authRequestDTO.setUsername(userEnumerator);
+        authRequestDTO.setPasscode(passcode);
+        authRequestDTO.setGrantType(grantType);
+        authRequestDTO.setClientId(clientId);
+        authRequestDTO.setClientSecret(clientSecret);
+        authRequestDTO.setScope(scope);
+
+        AuthenticationInterface authenticationInterface = AuthenticationClient.createService(AuthenticationInterface.class, HomeActivity.this);
+        Call<AuthenticationDTO> authCall = authenticationInterface.getKeyCloakAuthToken(clientId,
+                                                            userEnumerator,passcode,grantType,clientSecret,scope);
+        authCall.enqueue(HomeActivity.this);
+    }
 
 
     protected void checkTls() {
@@ -415,22 +426,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         }
     }
 
-    private void doAuthentication(String userID, String passCode) {
-        AuthRequestDTO authRequestDTO = new AuthRequestDTO();
-        authRequestDTO.setLanguage(Locale.getDefault().getLanguage());
-        authRequestDTO.setApplication("ofismobile");
-        authRequestDTO.setUsername(userID);
-//        Passcode added - Penetration testing
-        authRequestDTO.setPasscode(passCode);
-        authRequestDTO.setPassword(DeviceIDxctractor.fetchDeviceID(this));
-        String firebasetoken=FirebaseInstanceId.getInstance().getToken();
-        authRequestDTO.setFirebaseToken(Utilities.getFirebaseTokenSharedPrefs(HomeActivity.this));
-        authRequestDTO.setGrantType("password");
-        authRequestDTO.setClientId(5L);
-        AuthenticationInterface authenticationInterface = AuthenticationClient.createService(AuthenticationInterface.class, HomeActivity.this);
-        Call<AuthenticationDTO> authCall = authenticationInterface.getCoreAuthToken(authRequestDTO);
-        authCall.enqueue(HomeActivity.this);
-    }
+
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
@@ -692,15 +688,8 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
     private AuthRequestDTO getAuthRequestDTO(){
         AuthRequestDTO authRequestDTO = new AuthRequestDTO();
-        authRequestDTO.setLanguage(Locale.getDefault().getLanguage());
-        authRequestDTO.setApplication("ofismobile");
         authRequestDTO.setUsername(Utilities.getFromSharedPrefs(HomeActivity.this));
-//      Passcode added - Penetration testing
         authRequestDTO.setPasscode(Utilities.getPasscodeFromSharedPrefs(HomeActivity.this));
-        authRequestDTO.setPassword(DeviceIDxctractor.fetchDeviceID(this));
-        authRequestDTO.setFirebaseToken(Utilities.getFirebaseTokenSharedPrefs(HomeActivity.this));
-        authRequestDTO.setGrantType("password");
-        authRequestDTO.setClientId(5L);
         return authRequestDTO;
     }
 
@@ -1081,14 +1070,14 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         if (response.isSuccessful()) {
             AuthenticationDTO authenticationDTO = response.body();
             authenticationDTO.setWillExpireAt((System.currentTimeMillis() / 1000) + authenticationDTO.getExpiresIn() / 1000);
-
             new AuthenticationHelper(this).setAuthenticationDTO(authenticationDTO);
             new AuthenticationHelper(this).setUserName(enumeratorID.getText().toString());
+            new AuthenticationHelper(this).setPassode(passcode.getText().toString());
+
+
             Dynatrace.identifyUser(enumeratorID.getText().toString());
             DynatraceHelper.isAppClosed=false;
             DynatraceHelper.findNetworkSpeed(this);
-//           Passcode validation - Penetration testing
-            new AuthenticationHelper(this).setPassode(passcode.getText().toString());
             doInitialCheck();
         }else if(response.code() == 423){
             Toast.makeText(HomeActivity.this,getString(R.string.authentication_attempt),Toast.LENGTH_LONG).show();

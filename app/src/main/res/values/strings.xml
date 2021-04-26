@@ -678,4 +678,13 @@
     <string name="national_id_info">Please update the National ID of farmer</string>
     <string name="consent_duplicate_alert">Duplicate consent identified and hence cannot sync the item selected. Please note, such duplicates will be removed from the queue further.</string>
     <string name="consent_duplicate_error">Error in saving FarmerConsent</string>
+    <string name="update_farmer_subdistrict">Update Farmer\’s Subdistrict</string>
+    <string name="update">Update</string>
+    <string name="label_subdistrict">Subdistrict:</string>
+    <string name="subdistrict_note">Farmer\'s Subdistrict Captured</string>
+    <string name="valid_until">Vaild Until</string>
+    <string name="update_firebase_install_id_info">Updating Informations</string>
+    <string name="password">password</string>
+    <string name="offline_access">offline_access</string>
+    <string name="refresh_token">refresh_token</string>
 </resources>

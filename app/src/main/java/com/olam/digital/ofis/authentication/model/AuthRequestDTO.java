@@ -27,7 +27,11 @@ public class AuthRequestDTO {
     private String grantType;
     @SerializedName("client_id")
     @Expose
-    private Long clientId;
+    private String clientId;
+    @SerializedName("client_secret")
+    @Expose
+    private String clientSecret;
+
     @SerializedName("firebaseToken")
     @Expose
     private String firebaseToken;
@@ -35,6 +39,18 @@ public class AuthRequestDTO {
     @SerializedName("token")
     @Expose
     private String token;
+
+    @SerializedName("scope")
+    @Expose
+    private String scope;
+
+    public String getScope() {
+        return scope;
+    }
+
+    public void setScope(String scope) {
+        this.scope = scope;
+    }
 
     public String getToken() {
         return token;
@@ -75,7 +91,7 @@ public class AuthRequestDTO {
     public void setUsername(String username) {
         this.username = username;
     }
-//  Passcode added - Penetration testing
+
     public String getPasscode() {
         return passcode;
     }
@@ -100,13 +116,20 @@ public class AuthRequestDTO {
         this.grantType = grantType;
     }
 
-    public Long getClientId() {
+
+    public String getClientSecret() {
+        return clientSecret;
+    }
+
+    public void setClientSecret(String clientSecret) {
+        this.clientSecret = clientSecret;
+    }
+
+    public String getClientId() {
         return clientId;
     }
 
-    public void setClientId(Long clientId) {
+    public void setClientId(String clientId) {
         this.clientId = clientId;
     }
-
-
 }

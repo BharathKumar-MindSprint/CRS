@@ -24,24 +24,25 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 
 public class AuthenticationClient {
-    public static String API_BASE_URL;
+
+    public static String API_KEYCLOAK_URL;
 
     private AuthenticationClient() {
-        API_BASE_URL = "";
+        API_KEYCLOAK_URL = "";
     }
 
+    // Authentication KeyCloak
     private static OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
-
     private static Retrofit.Builder builder;
 
     private static Retrofit retrofit;
 
     private static void setup(Context context) {
-        API_BASE_URL = context.getString(R.string.AUTH_SERVER_URL);
+        API_KEYCLOAK_URL = context.getString(R.string.AUTH_SERVER_URL);
         if (builder == null) {
             builder =
                     new Retrofit.Builder()
-                            .baseUrl(API_BASE_URL)
+                            .baseUrl(API_KEYCLOAK_URL)
                             .addConverterFactory(GsonConverterFactory.create());
         }
         if (retrofit == null) {
@@ -84,14 +85,8 @@ public class AuthenticationClient {
                     }
             };
 
-//            final SSLContext sslContext = SSLContext.getInstance("SSL");
-//            sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
-//            final SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
-//            return sslSocketFactory;
-
             SSLContext sslcontext = SSLContext.getInstance("TLSv1.2");
             sslcontext.init(null, trustAllCerts, new java.security.SecureRandom());
-           // SSLSocketFactory NoSSLv3Factory = new NoSSLv3SocketFactory(sslcontext.getSocketFactory());
             final SSLSocketFactory sslSocketFactory = sslcontext.getSocketFactory();
             return sslSocketFactory;
 
@@ -101,5 +96,4 @@ public class AuthenticationClient {
         }
 
     }
-
 }

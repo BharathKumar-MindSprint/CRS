@@ -157,16 +157,8 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
 
     private AuthRequestDTO getAuthRequestDTO(){
         AuthRequestDTO authRequestDTO = new AuthRequestDTO();
-        authRequestDTO.setLanguage(Locale.getDefault().getLanguage());
-        authRequestDTO.setApplication("ofismobile");
         authRequestDTO.setUsername(enumeratorID.getText().toString().trim());
-//        Passcode added - Penetration testing
         authRequestDTO.setPasscode(Utilities.getPasscodeFromSharedPrefs(SettingsActivity.this));
-        //authRequestDTO.setPassword("3751e350-a1d4-4db9-b045-9dc50cf544fb");
-        authRequestDTO.setPassword(DeviceIDxctractor.fetchDeviceID(this));
-        authRequestDTO.setFirebaseToken(Utilities.getFirebaseTokenSharedPrefs(SettingsActivity.this));
-        authRequestDTO.setGrantType("password");
-        authRequestDTO.setClientId(5L);
         return authRequestDTO;
     }
 

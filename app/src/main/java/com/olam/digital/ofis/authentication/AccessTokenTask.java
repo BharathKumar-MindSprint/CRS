@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 
 import com.google.gson.Gson;
+import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.Utilities;
 import com.olam.digital.ofis.authentication.model.AuthRequestDTO;
 import com.olam.digital.ofis.authentication.model.AuthenticationDTO;
@@ -43,8 +44,16 @@ public class AccessTokenTask extends AsyncTask<Object, Object, String> {
                 AuthenticationInterface authenticationInterface;
                 authenticationInterface = AuthenticationClient.createService(AuthenticationInterface.class, mContext);
                 AuthenticationDTO authenticationDTO = null;
-            DynatraceHelper.requestPayload(DynatraceConstants.AUTHENTICATION_REQUEST,new Gson().toJson(authRequestDTO),mContext,true);
-            Call<AuthenticationDTO> authCall = authenticationInterface.getCoreAuthToken(authRequestDTO);
+                // New
+            String clientId=mContext.getResources().getString(R.string.clientId);
+            String clientSecret=mContext.getResources().getString(R.string.clientSecret);
+            String grantType=mContext.getResources().getString(R.string.password);
+            String scope=mContext.getResources().getString(R.string.offline_access);
+                Call<AuthenticationDTO> authCall = authenticationInterface.getKeyCloakAuthToken(clientId,
+                    authRequestDTO.getUsername(),authRequestDTO.getPasscode(),grantType,clientSecret,scope);
+
+
+            // Keycloak Code Changes
                 Response authResponse = authCall.execute();
                 if (authResponse.isSuccessful()) {
                     authenticationDTO = (AuthenticationDTO) authResponse.body();
@@ -57,9 +66,7 @@ public class AccessTokenTask extends AsyncTask<Object, Object, String> {
                     Utilities.saveToSharedPrefs(mContext, "PASSCODE", authRequestDTO.getPasscode(), null);
                     return authenticationDTO.getAccessToken();
                 } else {
-                    try {
-                        FabricLogsWriter.printCrashLog(TAG, "oAuth/authenticate",authResponse.code(), "Request : "+  new Gson().toJson(authRequestDTO) +"Response  : "+authResponse.raw().networkResponse().toString(),mContext);
-                    }catch (Exception e){}
+                    System.out.println("Franklin 13 " + authResponse.code());
                     int statusCode = authResponse.code();
                     return null;
                 }
