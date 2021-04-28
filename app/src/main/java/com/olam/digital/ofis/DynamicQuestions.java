@@ -50,6 +50,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.crash.FirebaseCrash;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.olam.digital.ofis.coffeesurveyconstraints.CoffeeConstants;
 import com.olam.digital.ofis.coffeesurveyconstraints.CoffeeConstraints;
 import com.olam.digital.ofis.coffeesurveyconstraints.CommonPojo;
@@ -187,7 +188,7 @@ public class DynamicQuestions {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            FirebaseCrashlytics.getInstance().log(e.getMessage());
         } finally {
             requiredQuestions.close();
         }
@@ -259,9 +260,9 @@ public class DynamicQuestions {
                 } while (requiredQuestions.moveToNext());
             }
         } catch (JSONException e) {
-           e.printStackTrace();
+            FirebaseCrashlytics.getInstance().log(e.getMessage());
         } catch (Exception e){
-            e.printStackTrace();
+            FirebaseCrashlytics.getInstance().log(e.getMessage());
         }
 
         return status;
@@ -284,7 +285,7 @@ public class DynamicQuestions {
                 }
             }
         }catch (Exception e){
-            e.printStackTrace();
+            FirebaseCrashlytics.getInstance().log(e.getMessage());
         }finally {
 //            completedAnswers.close();
         }
@@ -420,8 +421,7 @@ public class DynamicQuestions {
             }
 
         } catch (JSONException e) {
-            FirebaseCrash.report(new Exception("DynamicQuestions: Error saving calculated answer entry", e));
-            e.printStackTrace();
+            FirebaseCrashlytics.getInstance().log(e.getMessage());
         }
     }
 
@@ -469,8 +469,7 @@ public class DynamicQuestions {
             }
 
         } catch (JSONException e) {
-            FirebaseCrash.report(new Exception("DynamicQuestions: Error saving answer entry", e));
-            e.printStackTrace();
+            FirebaseCrashlytics.getInstance().log(e.getMessage());
         }
     }
 
@@ -523,8 +522,7 @@ public class DynamicQuestions {
             }
 
         } catch (JSONException e) {
-            FirebaseCrash.report(new Exception("DynamicQuestions: Error saving answer entry", e));
-            e.printStackTrace();
+            FirebaseCrashlytics.getInstance().log(e.getMessage());
         }
     }
 
@@ -540,6 +538,7 @@ public class DynamicQuestions {
         }
 
         }catch (Exception e){
+            FirebaseCrashlytics.getInstance().log(e.getMessage());
             return false;
         }
         return val;
@@ -712,8 +711,7 @@ public class DynamicQuestions {
             if ((qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID) != -1)) {
                 questionId = qCursor.getString(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
             }
-            FirebaseCrash.report(new Exception("DynamicQuestions: Error getting question display config - question " + questionId, e));
-            e.printStackTrace();
+            FirebaseCrashlytics.getInstance().log("DynamicQuestions: Error getting question display config - question " + questionId);
         }
 
         parentLayout.addView(tv);
@@ -758,8 +756,7 @@ public class DynamicQuestions {
             if ((qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID) != -1)) {
                 questionId = qCursor.getString(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
             }
-            FirebaseCrash.report(new Exception("DynamicQuestions: Error getting question display config - question " + questionId, e));
-            e.printStackTrace();
+            FirebaseCrashlytics.getInstance().log("DynamicQuestions: Error getting question display config - question " + questionId);
         } catch (Exception e){
             e.printStackTrace();
         }
@@ -863,8 +860,7 @@ public class DynamicQuestions {
                 try {
                     photoFile = createImageFile();
                 } catch (IOException e) {
-                    FirebaseCrash.report(new Exception("DynamicQuestions: Error creating photo image file", e));
-                    e.printStackTrace();
+                    FirebaseCrashlytics.getInstance().log("DynamicQuestions: Error creating photo image file");
                 }
 
                 if (photoFile != null) {
@@ -906,7 +902,7 @@ public class DynamicQuestions {
                             ReviewFarmManagementPlan reviewFarmManagementPlan = (ReviewFarmManagementPlan) context;
                             reviewFarmManagementPlan.startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
                         }catch (Exception e){
-                            e.printStackTrace();
+                            FirebaseCrashlytics.getInstance().log(e.getMessage());
                         }
 
                     }
@@ -995,8 +991,7 @@ public class DynamicQuestions {
                 try {
                     photoFile = createImageFile();
                 } catch (IOException e) {
-                    FirebaseCrash.report(new Exception("DynamicQuestions: Error creating photo image file", e));
-                    e.printStackTrace();
+                    FirebaseCrashlytics.getInstance().log("DynamicQuestions: Error creating photo image file");
                 }
 
                 if (photoFile != null) {
@@ -1057,8 +1052,7 @@ public class DynamicQuestions {
             this.mCurrentPhotoMetadata.put("repeater_position", repeaterItemPosition);
             this.mCurrentPhotoMetadata.put("data_type", datatype);
         } catch (JSONException e) {
-            FirebaseCrash.report(new Exception("DynamicQuestions: Error creating photo metadata", e));
-            e.printStackTrace();
+            FirebaseCrashlytics.getInstance().log("DynamicQuestions: Error creating photo metadata");
         }
     }
 
@@ -1113,8 +1107,7 @@ public class DynamicQuestions {
                         getCurrentPhotoFileName()
                 );
             } catch (JSONException e) {
-                FirebaseCrash.report(new Exception("Dynamic Questions: Error getting photo question image", e));
-                e.printStackTrace();
+                FirebaseCrashlytics.getInstance().log("Dynamic Questions: Error getting photo question image :" +e.getMessage());
             }
         }
     }
@@ -1258,8 +1251,7 @@ public class DynamicQuestions {
 
 
         } catch (JSONException | ParseException e) {
-            FirebaseCrash.report(new Exception("DynamicQuestions: Error creating date picker display", e));
-            e.printStackTrace();
+            FirebaseCrashlytics.getInstance().log("DynamicQuestions: Error creating date picker display :" +e.getMessage());
         }
     }
 
@@ -1435,8 +1427,7 @@ public class DynamicQuestions {
 
 
         } catch (Exception e) {
-            FirebaseCrash.report(new Exception("DynamicQuestions: Error creating date picker display", e));
-            e.printStackTrace();
+            FirebaseCrashlytics.getInstance().log("DynamicQuestions: Error creating date picker display :" +e.getMessage());
         }
     }
 
@@ -1510,8 +1501,7 @@ public class DynamicQuestions {
                 }
             }
         } catch (JSONException e) {
-            FirebaseCrash.report(new Exception("DynamicQuestions: Error getting textbox display config", e));
-            e.printStackTrace();
+            FirebaseCrashlytics.getInstance().log("DynamicQuestions: Error getting textbox display config :" +e.getMessage());
         }
         final boolean isHundredPercentQuestion = isHPQTemp;
 
@@ -1524,7 +1514,7 @@ public class DynamicQuestions {
             JSONObject jsonObject = new JSONObject(calculationNode);
             defaultValue = jsonObject.getString(CoffeeConstants.DEFAULT);
         } catch (JSONException e) {
-            e.printStackTrace();
+            FirebaseCrashlytics.getInstance().log(e.getMessage());
         }
 
         if (!defaultValue.equalsIgnoreCase("")){
@@ -1556,7 +1546,7 @@ public class DynamicQuestions {
         try {
             decimelRestrict = CoffeeConstraints.isDecimalRestrict(displayConfig);
         } catch (JSONException e) {
-            e.printStackTrace();
+            FirebaseCrashlytics.getInstance().log(e.getMessage());
         }
         if (decimelRestrict>0){
             et.setFilters(new InputFilter[]{new DecimalDigitsInputFilter(decimelRestrict)});
@@ -1613,7 +1603,7 @@ public class DynamicQuestions {
                                         JSONObject finalJsonObj = new JSONObject(displayConfig1);
                                         constraint = new CoffeeConstraints(context, questionInfo, dl, answerSet, qCursor).constraintType(finalJsonObj, String.valueOf(commonPojo.getAnswerValue()));
                                     } catch (JSONException e) {
-                                        e.printStackTrace();
+                                        FirebaseCrashlytics.getInstance().log(e.getMessage());
                                     }
                                 }
 
@@ -1663,7 +1653,7 @@ public class DynamicQuestions {
                             et.setError(null);
                             constraint = new CoffeeConstraints(context,questionInfo,dl,answerSet,qCursor).constraintType(finalDisplayConfig,value);
                         } catch (JSONException e) {
-                            e.printStackTrace();
+                            FirebaseCrashlytics.getInstance().log(e.getMessage());
                         }
                     if (constraint !=null){
                         if (constraint.getErrorMsg()!=null){
@@ -1709,7 +1699,7 @@ public class DynamicQuestions {
                 }
             });
 
-        }catch (Exception e){e.printStackTrace();}
+        }catch (Exception e){ FirebaseCrashlytics.getInstance().log(e.getMessage());}
 
 
 
@@ -1735,7 +1725,7 @@ public class DynamicQuestions {
             }
 
         } catch (JSONException e) {
-            e.printStackTrace();
+            FirebaseCrashlytics.getInstance().log(e.getMessage());
         }
         return 0;
     }
@@ -1835,8 +1825,7 @@ public class DynamicQuestions {
                 }
             }
         } catch (JSONException e) {
-            FirebaseCrash.report(new Exception("DynamicQuestions: Error getting textbox display config", e));
-            e.printStackTrace();
+            FirebaseCrashlytics.getInstance().log("DynamicQuestions: Error getting textbox display config "+e.getMessage());
         }
         final boolean isHundredPercentQuestion = isHPQTemp;
 
@@ -2050,8 +2039,7 @@ public class DynamicQuestions {
 
 
         } catch (JSONException e) {
-            FirebaseCrash.report(new Exception("DynamicQuestions: Error gettign dropdown display config", e));
-            e.printStackTrace();
+            FirebaseCrashlytics.getInstance().log("DynamicQuestions: Error gettign dropdown display config "+e.getMessage());
         }
 
     }
@@ -2175,8 +2163,7 @@ public class DynamicQuestions {
 
 
         } catch (JSONException e) {
-            FirebaseCrash.report(new Exception("DynamicQuestions: Error gettign dropdown display config", e));
-            e.printStackTrace();
+            FirebaseCrashlytics.getInstance().log("DynamicQuestions: Error gettign dropdown display config "+e.getMessage());
         }
 
     }
@@ -2363,8 +2350,7 @@ public class DynamicQuestions {
 
 
         } catch (JSONException e) {
-            FirebaseCrash.report(new Exception("DynamicQuestions: Error gettign dropdown display config", e));
-            e.printStackTrace();
+            FirebaseCrashlytics.getInstance().log("DynamicQuestions: Error gettign dropdown display config "+e.getMessage());
         }
 
     }
@@ -2392,8 +2378,7 @@ public class DynamicQuestions {
                 tempSingleSelect = display.optBoolean("single_select", false);
             }
         } catch (JSONException e) {
-            FirebaseCrash.report(new Exception("DynamicQuestions: Error getting checkbox display config", e));
-            e.printStackTrace();
+            FirebaseCrashlytics.getInstance().log("DynamicQuestions: Error getting checkbox display config "+e.getMessage());
         }
 
         singleSelect = tempSingleSelect;
@@ -2408,7 +2393,7 @@ public class DynamicQuestions {
                 defaultLookUpValue = jsonObject.optInt("defaultLookUpValue", 0);
             }
         } catch (JSONException e) {
-            e.printStackTrace();
+            FirebaseCrashlytics.getInstance().log(e.getMessage());
         }
 
 
@@ -2572,8 +2557,7 @@ public class DynamicQuestions {
                 tempSingleSelect = display.optBoolean("single_select", false);
             }
         } catch (JSONException e) {
-            FirebaseCrash.report(new Exception("DynamicQuestions: Error getting checkbox display config", e));
-            e.printStackTrace();
+            FirebaseCrashlytics.getInstance().log("DynamicQuestions: Error getting checkbox display config "+e.getMessage());
         }
 
         singleSelect = tempSingleSelect;
@@ -2704,8 +2688,7 @@ public class DynamicQuestions {
                 tempSingleSelect = display.optBoolean("single_select", false);
             }
         } catch (JSONException e) {
-            FirebaseCrash.report(new Exception("DynamicQuestions: Error getting checkbox display config", e));
-            e.printStackTrace();
+            FirebaseCrashlytics.getInstance().log("DynamicQuestions: Error getting checkbox display config "+e.getMessage());
         }
 
         singleSelect = tempSingleSelect;
@@ -2845,8 +2828,7 @@ public class DynamicQuestions {
                 tempSingleSelect = display.optBoolean("single_select", false);
             }
         } catch (JSONException e) {
-            FirebaseCrash.report(new Exception("DynamicQuestions: Error getting photo checkbox display config", e));
-            e.printStackTrace();
+            FirebaseCrashlytics.getInstance().log("DynamicQuestions: Error getting photo checkbox display config "+e.getMessage());
         }
 
         singleSelect = tempSingleSelect;
@@ -2951,8 +2933,7 @@ public class DynamicQuestions {
                 tempSingleSelect = display.optBoolean("single_select", false);
             }
         } catch (JSONException e) {
-            FirebaseCrash.report(new Exception("DynamicQuestions: Error getting photo checkbox display config", e));
-            e.printStackTrace();
+            FirebaseCrashlytics.getInstance().log("DynamicQuestions: Error getting photo checkbox display config "+e.getMessage());
         }
 
         singleSelect = tempSingleSelect;
@@ -3097,8 +3078,8 @@ public class DynamicQuestions {
                 });
             }
         } catch (JSONException e) {
-            FirebaseCrash.report(new Exception("DynamicQuestions: Error getting repeater display config", e));
-            e.printStackTrace();
+            FirebaseCrashlytics.getInstance().log("DynamicQuestions: Error getting repeater display config "+e.getMessage());
+
         }
     }
 
@@ -3195,8 +3176,7 @@ public class DynamicQuestions {
                 });
             }
         } catch (JSONException e) {
-            FirebaseCrash.report(new Exception("DynamicQuestions: Error getting repeater display config", e));
-            e.printStackTrace();
+            FirebaseCrashlytics.getInstance().log("DynamicQuestions: Error getting repeater display config "+e.getMessage());
         }
     }
 
@@ -3211,8 +3191,9 @@ public class DynamicQuestions {
                 }
             }
         } catch (JSONException e) {
-            FirebaseCrash.report(new Exception("DynamicQuestions: Error getting repeater item type display config", e));
-            e.printStackTrace();
+
+            FirebaseCrashlytics.getInstance().log("DynamicQuestions: Error getting repeater item type display config "+e.getMessage());
+
         }
         return displayType;
     }
@@ -3228,8 +3209,9 @@ public class DynamicQuestions {
                 }
             }
         } catch (JSONException e) {
-            FirebaseCrash.report(new Exception("DynamicQuestions: Error getting repeater item type display config", e));
-            e.printStackTrace();
+
+            FirebaseCrashlytics.getInstance().log("DynamicQuestions: Error getting repeater item type display config "+e.getMessage());
+
         }
         return displayType;
     }
@@ -3466,7 +3448,8 @@ public class DynamicQuestions {
                 is_subset_questions_requiredduplicate="";
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            FirebaseCrashlytics.getInstance().log(e.getMessage());
+
         }
         final String is_subset_questions_required = is_subset_questions_requiredduplicate;
         if (hasAnswers) {
@@ -3498,7 +3481,8 @@ public class DynamicQuestions {
              constraintType=jsonObject.getString("type");
              errorMsg= jsonObject.getJSONObject("errorMsg").getString("error"+ CommonUtilities.getLocaleSuffix(context.getResources()));
         } catch (JSONException e) {
-            e.printStackTrace();
+            FirebaseCrashlytics.getInstance().log(e.getMessage());
+
         }
         TextView yesNoConstraint = null;
         if (constraintType.equalsIgnoreCase(CoffeeConstants.SURVEY_COMPLETION_CHECK)){
@@ -3557,8 +3541,7 @@ public class DynamicQuestions {
 
             }
         } catch (Exception e) {
-
-
+            FirebaseCrashlytics.getInstance().log(e.getMessage());
         }
 
         final String yesQuestion = question1;
@@ -3620,7 +3603,7 @@ public class DynamicQuestions {
 
 
                             } catch (Exception e) {
-                                e.printStackTrace();
+                                FirebaseCrashlytics.getInstance().log(e.getMessage());
                             }
 
                         }
@@ -3642,7 +3625,7 @@ public class DynamicQuestions {
 
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    FirebaseCrashlytics.getInstance().log(e.getMessage());
                 }
             }
 
@@ -3694,8 +3677,7 @@ public class DynamicQuestions {
 
             }
         } catch (Exception e) {
-
-
+            FirebaseCrashlytics.getInstance().log(e.getMessage());
         }
     }
 
@@ -4126,8 +4108,7 @@ public class DynamicQuestions {
                 tempSingleSelect = display.optBoolean("single_select", false);
             }
         } catch (JSONException e) {
-            FirebaseCrash.report(new Exception("DynamicQuestions: Error getting checkbox display config", e));
-            e.printStackTrace();
+            FirebaseCrashlytics.getInstance().log( "DynamicQuestions: Error getting checkbox display config " +e.getMessage());
         }
 
         singleSelect = tempSingleSelect;
@@ -4323,8 +4304,8 @@ public class DynamicQuestions {
 
 
         } catch (JSONException | ParseException e) {
-            FirebaseCrash.report(new Exception("DynamicQuestions: Error creating date picker display", e));
-            e.printStackTrace();
+            FirebaseCrashlytics.getInstance().log( "DynamicQuestions: Error creating date picker display " +e.getMessage());
+
         }
     }
 
@@ -4349,8 +4330,8 @@ public class DynamicQuestions {
                 tempSingleSelect = display.optBoolean("single_select", false);
             }
         } catch (JSONException e) {
-            FirebaseCrash.report(new Exception("DynamicQuestions: Error getting photo checkbox display config", e));
-            e.printStackTrace();
+            FirebaseCrashlytics.getInstance().log( "DynamicQuestions: Error getting photo checkbox display config " +e.getMessage());
+
         }
 
         singleSelect = tempSingleSelect;
@@ -4493,8 +4474,7 @@ public class DynamicQuestions {
                 });
             }
         } catch (JSONException e) {
-            FirebaseCrash.report(new Exception("DynamicQuestions: Error getting repeater display config", e));
-            e.printStackTrace();
+            FirebaseCrashlytics.getInstance().log("DynamicQuestions: Error getting repeater display config "+ e.getMessage());
         }
     }
 

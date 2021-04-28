@@ -28,10 +28,6 @@ public class AuthRequestDTO {
     @SerializedName("client_id")
     @Expose
     private Long clientId;
-    @SerializedName("client_secret")
-    @Expose
-    private String clientSecret;
-
     @SerializedName("firebaseToken")
     @Expose
     private String firebaseToken;
@@ -112,12 +108,5 @@ public class AuthRequestDTO {
         this.clientId = clientId;
     }
 
-    public String getClientSecret() {
-        return clientSecret;
-    }
-
-    public void setClientSecret(String clientSecret) {
-        this.clientSecret = clientSecret;
-    }
 
 }

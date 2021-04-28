@@ -425,7 +425,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         authRequestDTO.setFirebaseToken(Utilities.getFirebaseTokenSharedPrefs(HomeActivity.this));
         authRequestDTO.setGrantType("password");
         authRequestDTO.setClientId(5L);
-        authRequestDTO.setClientSecret(getString(R.string.client_secret));
         AuthenticationInterface authenticationInterface = AuthenticationClient.createService(AuthenticationInterface.class, HomeActivity.this);
         Call<AuthenticationDTO> authCall = authenticationInterface.getCoreAuthToken(authRequestDTO);
         authCall.enqueue(HomeActivity.this);
@@ -698,7 +697,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         authRequestDTO.setFirebaseToken(Utilities.getFirebaseTokenSharedPrefs(HomeActivity.this));
         authRequestDTO.setGrantType("password");
         authRequestDTO.setClientId(5L);
-        authRequestDTO.setClientSecret(getString(R.string.client_secret));
         return authRequestDTO;
     }
 
@@ -1316,4 +1314,9 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
+      //  Toast.makeText(this,"Disable the back press",Toast.LENGTH_LONG).show();
+    }
 }

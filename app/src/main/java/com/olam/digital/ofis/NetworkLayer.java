@@ -23,6 +23,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.security.ProviderInstaller;
 import com.google.firebase.crash.FirebaseCrash;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.olam.digital.ofis.authentication.AuthenticationClient;
 import com.olam.digital.ofis.authentication.AuthenticationHelper;
 import com.olam.digital.ofis.authentication.AuthenticationInterface;
@@ -292,7 +293,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             failureValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ATTEMPTS, networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ATTEMPTS)) + 1);
             dl.updateNetworkQueueEntry(failureValues, networkQueueItemId);
         }catch (Exception e){
-
+            FirebaseCrashlytics.getInstance().log(e.getMessage());
         }
 
     }
@@ -448,12 +449,11 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                     @Override
                     public void onFailure(Call call, IOException e) {
-                        FirebaseCrash.report(new Exception("NetworkLayer: Error in firebase token response", e));
+                        FirebaseCrashlytics.getInstance().log("NetworkLayer: Error in posting firebase token"+ e.getMessage());
                     }
                 });
             } catch (JSONException e) {
-                FirebaseCrash.report(new Exception("NetworkLayer: Error in posting firebase token", e));
-                e.printStackTrace();
+                FirebaseCrashlytics.getInstance().log("NetworkLayer: Error in posting firebase token"+ e.getMessage());
             }
         }
     }
@@ -516,7 +516,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 }
                             }
                         } catch (JSONException | IOException e) {
-                            e.printStackTrace();
+                            FirebaseCrashlytics.getInstance().log(e.getMessage());
                         } finally {
                             postResponse.close();
                         }
@@ -535,8 +535,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                 });
             } catch (JSONException e) {
-                FirebaseCrash.report(new Exception("NetworkLayer: Error posting sync tasks request", e));
-                e.printStackTrace();
+                FirebaseCrashlytics.getInstance().log("NetworkLayer: Error in posting tasks request "+ e.getMessage());
             }
         }
     }
@@ -594,14 +593,14 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             try {
                                 FabricLogsWriter.printCrashLog(TAG, endpoint, postResponse.code(), postResponse.networkResponse().toString(), context);
                             } catch (Exception e) {
+                                FirebaseCrashlytics.getInstance().log( e.getMessage());
                             }
                             postFailureMessage(handler, response, msg, 2, 0, 0, null, "submitting help request");
                             FirebaseCrash.report(new Exception(response.optString("errors", res.getString(R.string.item_sync_error)) + " : submitting help request failed response"));
                         }
                     }
                 } catch (JSONException | IOException e) {
-                    FirebaseCrash.report(new Exception("NetworkLayer: Error in help request response", e));
-                    e.printStackTrace();
+                    FirebaseCrashlytics.getInstance().log("NetworkLayer: Error in help request response "+ e.getMessage());
                 }
                 postResponse.close();
             }
@@ -682,7 +681,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 sslContext.init(null, null, null);
                 SSLEngine engine = sslContext.createSSLEngine();
             } catch (Exception e) {
-                e.printStackTrace();
+                FirebaseCrashlytics.getInstance().log(e.getMessage());
             }
         }
     }
@@ -756,7 +755,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 if (GpsTrackerLogic.getGeoPointCount(context) > 0 ){
                     if (!isGpsSyncProcessing) syncGPSData();
                 }
-            }catch (Exception e){}
+            }catch (Exception e){FirebaseCrashlytics.getInstance().log(e.getMessage());}
         }
     }
 
@@ -833,8 +832,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                     startMobileMoneyTimer(response);
 
                                 } catch (JSONException | IOException e) {
-                                    FirebaseCrash.report(new Exception("NetworkLayer: Error in mobile money transaction post response", e));
-                                    e.printStackTrace();
+                                    FirebaseCrashlytics.getInstance().log("NetworkLayer: Error in mobile money transaction post response "+ e.getMessage());
                                 }
                                 statusMessage = res.getString(R.string.mm_transaction_initiated);
                                 msg.what = 1;
@@ -853,8 +851,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                     postFailureMessage(handler, response, msg, 2, 0, 0, null, "submitting transaction");
                                     FirebaseCrash.report(new Exception(response.optString("errors", res.getString(R.string.item_sync_error)) + " : submitting mobile money transaction"));
                                 } catch (JSONException | IOException e) {
-                                    FirebaseCrash.report(new Exception("NetworkLayer: Error getting mobile money transaction post failure response", e));
-                                    e.printStackTrace();
+                                    FirebaseCrashlytics.getInstance().log("NetworkLayer: Error getting mobile money transaction post failure response "+ e.getMessage());
                                 }
                             }
                             postResponse.close();
@@ -874,8 +871,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     });
 
                 } catch (JSONException e) {
-                    FirebaseCrash.report(new Exception("NetworkLayer: Error creating transaction post object", e));
-                    e.printStackTrace();
+                    FirebaseCrashlytics.getInstance().log("NetworkLayer: Error creating transaction post object "+ e.getMessage());
+
                 }
             }
         }
@@ -942,8 +939,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                     dl.updateTransactionItem(values, transactionItemId);
                                 }
                             } catch (JSONException | IOException e) {
-                                FirebaseCrash.report(new Exception("NetworkLayer: Error in mobile money transaction check response", e));
-                                e.printStackTrace();
+                                FirebaseCrashlytics.getInstance().log("NetworkLayer: Error in mobile money transaction check response"+ e.getMessage());
+
                             }
                             msg.obj = statusMessage;
                             handler.dispatchMessage(msg);
@@ -956,8 +953,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 postFailureMessage(handler, response, msg, 2, 0, 0, null, "submitting mobile money transaction");
                                 FirebaseCrash.report(new Exception(response.optString("errors", res.getString(R.string.item_sync_error)) + " : checking mobile money transaction"));
                             } catch (JSONException | IOException e) {
-                                FirebaseCrash.report(new Exception("NetworkLayer: Error getting mobile money transaction check failure response", e));
-                                e.printStackTrace();
+                                FirebaseCrashlytics.getInstance().log("NetworkLayer: Error getting mobile money transaction check failure response "+ e.getMessage());
+
                             }
                         }
                         postResponse.close();
@@ -976,8 +973,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 });
 
             } catch (JSONException e) {
-                FirebaseCrash.report(new Exception("NetworkLayer: Error creating transaction check object", e));
-                e.printStackTrace();
+                FirebaseCrashlytics.getInstance().log("NetworkLayer: Error creating transaction check object "+ e.getMessage());
             }
         }
     }
@@ -1015,8 +1011,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     jsonObject.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID, networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID)));
                 }
             }catch (Exception e){
-
-                e.printStackTrace();
+                FirebaseCrashlytics.getInstance().log(e.getMessage());
             }
 
 
@@ -1046,7 +1041,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 //                    jsonObject.put(OFISDBContract.TrainingRecord.COLUMN_NAME_PHOTO, photo.getName());
                 }
             }catch (Exception e){
-                e.printStackTrace();
+                FirebaseCrashlytics.getInstance().log(e.getMessage());
             }
 
             Cursor trainingAttendees = dl.getTrainingAttendeesByTrainingRecordId(trainingRecordId);
@@ -1077,8 +1072,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                             attendeesJSON.put(attendee);
                         } catch (JSONException e) {
-                            FirebaseCrash.report(new Exception("NetworkLayer: Error creating training record attendees object", e));
-                            e.printStackTrace();
+                            FirebaseCrashlytics.getInstance().log("NetworkLayer: Error creating training record attendees object "+e.getMessage());
                         }
                     }
                 }
@@ -1087,7 +1081,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 try {
                     jsonObject.put("training_attendees", attendeesJSON);
                 }catch (Exception e){
-                    e.printStackTrace();
+                    FirebaseCrashlytics.getInstance().log(e.getMessage());
                 }
 
             }
@@ -1102,9 +1096,9 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             try {
                                 JSONObject response = new JSONObject(postResponse.body().string());
                             } catch (JSONException e) {
-                                e.printStackTrace();
+                                FirebaseCrashlytics.getInstance().log(e.getMessage());
                             } catch (IOException e) {
-                                e.printStackTrace();
+                                FirebaseCrashlytics.getInstance().log(e.getMessage());
                             } finally {
                             }
                             dl.deleteNetworkQueueItem(networkQueueItemId);
@@ -1119,7 +1113,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         } else {
                             try {
                                 FabricLogsWriter.printCrashLog(TAG, finalEndpoint,postResponse.code(), "Request : "+jsonObject.toString() + "Response : "+ postResponse.networkResponse().toString(),context);
-                            }catch (Exception e){}
+                            }catch (Exception e){FirebaseCrashlytics.getInstance().log(e.getMessage());}
                             try {
                                 if(postResponse.code() == 401 && postResponse.headers().toString().contains("invalid_token")){
                                     FailureGetRefreshToken(handler,originalSyncRequestItemId, msg, 2, total, progress, null, "submitting training record" );
@@ -1138,8 +1132,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             } catch (JSONException | IOException e) {
                                 recordFailedUpload(0, 0, networkQueueItemId);
                                 postFailureMessage(handler, null, msg, 2, total, progress, null, "submitting training record");
-                                FirebaseCrash.report(new Exception("NetworkLayer: Error getting training record response", e));
-                                e.printStackTrace();
+                                FirebaseCrashlytics.getInstance().log("NetworkLayer: Error getting training record response "+e.getMessage());
                             }
                         }
                         postResponse.close();
@@ -1159,7 +1152,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         }catch(Exception onfailEx){
                             String failureMessage = res.getString(R.string.networking_error);
                             postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting survey module");
-                            FirebaseCrash.report(new Exception(failureMessage, e));
+                            FirebaseCrashlytics.getInstance().log(failureMessage+e.getMessage());
                             onfailEx.printStackTrace();
                         }
                     }
@@ -1228,8 +1221,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                     response = new JSONObject(postResponse.body().string());
                                     newBalance = response.optString("new_balance");
                                 } catch (JSONException | IOException e) {
-                                    FirebaseCrash.report(new Exception("NetworkLayer: Error in transaction post response", e));
-                                    e.printStackTrace();
+
+                                    FirebaseCrashlytics.getInstance().log("NetworkLayer: Error in transaction post response"+e.getMessage());
                                 }
                                 dl.deleteNetworkQueueItem(networkQueueItemId);
                                 dl.deleteTransactionItem(transactionItemId, true);
@@ -1254,10 +1247,9 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                     }
                                     recordFailedUpload(server_item_id, fully_synced, networkQueueItemId);
                                     postFailureMessage(handler, response, msg, 2, total, progress, null, "submitting transaction");
-                                    FirebaseCrash.report(new Exception(response.optString("errors", res.getString(R.string.item_sync_error)) + " : submitting transaction"));
                                 } catch (JSONException | IOException e) {
-                                    FirebaseCrash.report(new Exception("NetworkLayer: Error getting transaction post failure response", e));
-                                    e.printStackTrace();
+                                    FirebaseCrashlytics.getInstance().log("NetworkLayer: Error getting transaction post failure response"+e.getMessage());
+
                                 }
                             }
                             postResponse.close();
@@ -1277,8 +1269,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     });
 
                 } catch (JSONException e) {
-                    FirebaseCrash.report(new Exception("NetworkLayer: Error creating transaction post object", e));
-                    e.printStackTrace();
+                    FirebaseCrashlytics.getInstance().log("NetworkLayer: Error creating transaction post object "+e.getMessage());
+
                 }
             }
         }
@@ -1310,8 +1302,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         }
                         handler.dispatchMessage(msg);
                     } catch (JSONException | IOException e) {
-                        FirebaseCrash.report(new Exception("NetworkLayer: Error getting transaction balance response", e));
-                        e.printStackTrace();
+                        FirebaseCrashlytics.getInstance().log("NetworkLayer: Error getting transaction balance response"+ e.getMessage());
                     }
                     postResponse.close();
                 }
@@ -1326,8 +1317,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             });
 
         } catch (JSONException e) {
-            FirebaseCrash.report(new Exception("NetworkLayer: Error creating transaction balance post object", e));
-            e.printStackTrace();
+            FirebaseCrashlytics.getInstance().log("NetworkLayer: Error creating transaction balance post object"+ e.getMessage());
+
         }
 
     }
@@ -1394,8 +1385,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 FirebaseCrash.report(new Exception(response.optString("errors", res.getString(R.string.item_sync_error)) + " : submitting FMP review"));
                             }
                         } catch (JSONException | IOException e) {
-                            FirebaseCrash.report(new Exception("NetworkLayer: Error getting FMP review failure response", e));
-                            e.printStackTrace();
+                            FirebaseCrashlytics.getInstance().log("NetworkLayer: Error getting FMP review failure response "+ e.getMessage());
+
                         }
                     }
                     postResponse.close();
@@ -1415,7 +1406,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     }catch(Exception onfailEx){
                         String failureMessage = res.getString(R.string.networking_error);
                         postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting survey module");
-                        FirebaseCrash.report(new Exception(failureMessage, e));
+                        FirebaseCrashlytics.getInstance().log(failureMessage+e.getMessage());
                         onfailEx.printStackTrace();
                     }
                 }
@@ -1423,8 +1414,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             });
 
         } catch (JSONException e) {
-            FirebaseCrash.report(new Exception("NetworkLayer: Error creating fmp review post object", e));
-            e.printStackTrace();
+            FirebaseCrashlytics.getInstance().log("NetworkLayer: Error creating fmp review post object "+e.getMessage());
         }
     }
 
@@ -1549,8 +1539,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                     FirebaseCrash.report(new Exception(response.optString("errors", res.getString(R.string.item_sync_error)) + " : submitting FMP review"));
                                 }
                             } catch (JSONException | IOException e) {
-                                FirebaseCrash.report(new Exception("NetworkLayer: Error getting module submission failure response", e));
-                                e.printStackTrace();
+                                FirebaseCrashlytics.getInstance().log("NetworkLayer: Error getting module submission failure response "+e.getMessage());
                             }
                         }
                         postResponse.close();
@@ -1570,7 +1559,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         }catch(Exception onfailEx){
                             String failureMessage = res.getString(R.string.networking_error);
                             postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting survey module");
-                            FirebaseCrash.report(new Exception(failureMessage, e));
+                            FirebaseCrashlytics.getInstance().log(failureMessage+e.getMessage());
                             onfailEx.printStackTrace();
                         }
                     }
@@ -1579,8 +1568,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 Log.i("POST", "" + submission.toString());
             }
         } catch (JSONException e) {
-            FirebaseCrash.report(new Exception("NetworkLayer: Error creating full fmp review post object", e));
-            e.printStackTrace();
+            FirebaseCrashlytics.getInstance().log("NetworkLayer: Error creating full fmp review post object "+ e.getMessage());
+
         }
     }
 
@@ -1849,7 +1838,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             } else {
                                 try {
                                     FabricLogsWriter.printCrashLog(TAG, finalEndPoint,postResponse.code(), "Request : " +submission.toString() +"Response : "+ postResponse.networkResponse().toString(),context);
-                                }catch (Exception e){}
+                                }catch (Exception e){FirebaseCrashlytics.getInstance().log(e.getMessage());}
                                 try {
                                     if(postResponse.code() == 401 && postResponse.headers().toString().contains("invalid_token")){
                                         FailureGetRefreshToken(handler,originalSyncRequestItemId, msg, 2, total, progress, null, "submitting survey module");
@@ -1871,8 +1860,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 } catch (JSONException | IOException e) {
                                     recordFailedUpload(0, 0, networkQueueItemId);
                                     postFailureMessage(handler, null, msg, 2, total, progress, null, "submitting survey module");
-                                    FirebaseCrash.report(new Exception("NetworkLayer: Error getting module posting failure response", e));
-                                    e.printStackTrace();
+                                    FirebaseCrashlytics.getInstance().log("NetworkLayer: Error getting module posting failure response "+e.getMessage());
                                 }
                             }
                             postResponse.close();
@@ -1892,7 +1880,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             }catch(Exception onfailEx){
                                 String failureMessage = res.getString(R.string.networking_error);
                                 postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting survey module");
-                                FirebaseCrash.report(new Exception(failureMessage, e));
+                                FirebaseCrashlytics.getInstance().log(failureMessage+e.getMessage());
                                 onfailEx.printStackTrace();
                             }
                         }
@@ -1901,8 +1889,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 } catch (JSONException e) {
                     recordFailedUpload(0, 0, networkQueueItemId);
                     postFailureMessage(handler, null, msg, 2, total, progress, null, "submitting survey module");
-                    FirebaseCrash.report(new Exception("NetworkLayer: Error creating module post object", e));
-                    e.printStackTrace();
+                    FirebaseCrashlytics.getInstance().log("NetworkLayer: Error creating module post object "+e.getMessage());
                 }
             }
         }
@@ -1969,7 +1956,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                     }
 
                                 } catch (JSONException e) {
-                                    e.printStackTrace();
+                                    FirebaseCrashlytics.getInstance().log(e.getMessage());
+
                                 }
 
                                 dl.deleteNetworkQueueItem(networkQueueItemId);
@@ -1983,7 +1971,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             } else {
                                 try {
                                     FabricLogsWriter.printCrashLog(TAG, finalEndpoint,postResponse.code(), "Request : "+params.toString() + "Response : "+postResponse.networkResponse().toString(),context);
-                                }catch (Exception e){}
+                                }catch (Exception e){FirebaseCrashlytics.getInstance().log(e.getMessage());
+                                }
                                 try {
                                     if(postResponse.code() == 401 && postResponse.headers().toString().contains("invalid_token")){
                                         FailureGetRefreshToken(handler,originalSyncRequestItemId, msg, 2, total, progress, null, "submitting farm polygon");
@@ -2002,8 +1991,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 } catch (JSONException | IOException e) {
                                     recordFailedUpload(0, 0, networkQueueItemId);
                                     postFailureMessage(handler, null, msg, 2, total, progress, null, "submitting farm polygon");
-                                    FirebaseCrash.report(new Exception("NetworkLayer: Error getting farm polygon failure response", e));
-                                    e.printStackTrace();
+                                    FirebaseCrashlytics.getInstance().log("NetworkLayer: Error getting farm polygon failure response "+e.getMessage());
+
                                 }
                             }
                             postResponse.close();
@@ -2023,7 +2012,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             }catch(Exception onfailEx){
                                 String failureMessage = res.getString(R.string.networking_error);
                                 postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting survey module");
-                                FirebaseCrash.report(new Exception(failureMessage, e));
+                                FirebaseCrashlytics.getInstance().log(failureMessage+e.getMessage());
+
                                 onfailEx.printStackTrace();
                             }
                         }
@@ -2033,8 +2023,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             } catch (JSONException e) {
                 recordFailedUpload(0, 0, networkQueueItemId);
                 postFailureMessage(handler, null, msg, 2, total, progress, null, "submitting farm polygon");
-                FirebaseCrash.report(new Exception("NetworkLayer: Error creating farm polygon post object", e));
-                e.printStackTrace();
+                FirebaseCrashlytics.getInstance().log("NetworkLayer: Error creating farm polygon post object"+e.getMessage());
             }
         }
     }
@@ -2098,7 +2087,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             } else {
                                 try {
                                     FabricLogsWriter.printCrashLog(TAG, finalEndpoint,postResponse.code(),"Request : " +params.toString() +" Response "+postResponse.networkResponse().toString(),context);
-                                }catch (Exception e){}
+                                }catch (Exception e){ FirebaseCrashlytics.getInstance().log(e.getMessage());
+                                }
                                 try {
                                     if(postResponse.code() == 401 && postResponse.headers().toString().contains("invalid_token")){
                                         FailureGetRefreshToken(handler,originalSyncRequestItemId, msg, 2, total, progress, null, "submitting farm location");
@@ -2117,8 +2107,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 } catch (JSONException | IOException e) {
                                     recordFailedUpload(0, 0, networkQueueItemId);
                                     postFailureMessage(handler, null, msg, 2, total, progress, null, "submitting farm location");
-                                    FirebaseCrash.report(new Exception("NetworkLayer: Error getting farm location failure response", e));
-                                    e.printStackTrace();
+                                    FirebaseCrashlytics.getInstance().log("NetworkLayer: Error getting farm location failure response"+e.getMessage());
+
                                 }
                             }
                             postResponse.close();
@@ -2138,7 +2128,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             }catch(Exception onfailEx){
                                 String failureMessage = res.getString(R.string.networking_error);
                                 postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting survey module");
-                                FirebaseCrash.report(new Exception(failureMessage, e));
+                                FirebaseCrashlytics.getInstance().log(failureMessage+e.getMessage());
                                 onfailEx.printStackTrace();
                             }
                         }
@@ -2148,8 +2138,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             } catch (JSONException e) {
                 recordFailedUpload(0, 0, networkQueueItemId);
                 postFailureMessage(handler, null, msg, 2, total, progress, null, "submitting farm location");
-                FirebaseCrash.report(new Exception("NetworkLayer: Error creating farm location post object", e));
-                e.printStackTrace();
+                FirebaseCrashlytics.getInstance().log("NetworkLayer: Error creating farm location post object"+e.getMessage());
             }
         }
     }
@@ -2198,7 +2187,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             } else {
                                 try {
                                     FabricLogsWriter.printCrashLog(TAG, finalEndpoint,postResponse.code(),"Request : " +params.toString() +" Response "+postResponse.networkResponse().toString(),context);
-                                }catch (Exception e){}
+                                }catch (Exception e){ FirebaseCrashlytics.getInstance().log(e.getMessage());
+                                }
                                 try {
                                     if(postResponse.code() == 401 && postResponse.headers().toString().contains("invalid_token")){
                                         FailureGetRefreshToken(handler,originalSyncRequestItemId, msg, 2, total, progress, null, "submitting farm location");
@@ -2217,8 +2207,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 } catch (JSONException | IOException e) {
                                     recordFailedUpload(0, 0, networkQueueItemId);
                                     postFailureMessage(handler, null, msg, 2, total, progress, null, "submitting household location");
-                                    FirebaseCrash.report(new Exception("NetworkLayer: Error getting household location failure response", e));
-                                    e.printStackTrace();
+                                    FirebaseCrashlytics.getInstance().log("NetworkLayer: Error getting household location failure response"+e.getMessage());
+
                                 }
                             }
                             postResponse.close();
@@ -2238,7 +2228,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             }catch(Exception onfailEx){
                                 String failureMessage = res.getString(R.string.networking_error);
                                 postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting household location");
-                                FirebaseCrash.report(new Exception(failureMessage, e));
+                                FirebaseCrashlytics.getInstance().log(failureMessage+e.getMessage());
                                 onfailEx.printStackTrace();
                             }
                         }
@@ -2248,8 +2238,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             } catch (JSONException e) {
                 recordFailedUpload(0, 0, networkQueueItemId);
                 postFailureMessage(handler, null, msg, 2, total, progress, null, "submitting farm location");
-                FirebaseCrash.report(new Exception("NetworkLayer: Error creating farm location post object", e));
-                e.printStackTrace();
+                FirebaseCrashlytics.getInstance().log("NetworkLayer: Error creating farm location post object"+e.getMessage());
             }
         }
     }
@@ -2301,7 +2290,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                  String encodedImage=Utilities.base64ConversionForImage(farmerSignaturePath);
                                  params.put("farmerConsentSignature", encodedImage);
                              }catch (Exception e){
-                                 e.printStackTrace();
+                                 FirebaseCrashlytics.getInstance().log(e.getMessage());
                              }
 
                          }
@@ -2310,13 +2299,13 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                  String encodedImage=Utilities.base64ConversionForImage(enumSignaturePath);
                                  params.put("enumeratorConsentSignature", encodedImage);
                              }catch (Exception e){
-                                 e.printStackTrace();
+                                 FirebaseCrashlytics.getInstance().log(e.getMessage());
                              }
 
                          }
                          params.put("confirmedDate", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_CONFIRMED_DATE)));
                      } catch (Exception e) {
-
+                         FirebaseCrashlytics.getInstance().log(e.getMessage());
                      }
                  }
                 DynatraceHelper.requestPayload(DynatraceConstants.REQUEST+" "+endpoint,params.toString(),context,true);
@@ -2338,7 +2327,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             } else {
                                 try {
                                     FabricLogsWriter.printCrashLog(TAG, finalEndpoint,postResponse.code(),"Request : " +params.toString() +" Response "+postResponse.networkResponse().toString(),context);
-                                }catch (Exception e){}
+                                }catch (Exception e){FirebaseCrashlytics.getInstance().log(e.getMessage());}
                                 try {
                                     if(postResponse.code() == 401 && postResponse.headers().toString().contains("invalid_token")){
                                         FailureGetRefreshToken(handler,originalSyncRequestItemId, msg, 2, total, progress, null, "submitting farm location");
@@ -2357,8 +2346,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 } catch (JSONException | IOException e) {
                                     recordFailedUpload(0, 0, networkQueueItemId);
                                     postFailureMessage(handler, null, msg, 2, total, progress, null, "submitting cs location");
-                                    FirebaseCrash.report(new Exception("NetworkLayer: Error getting cs location failure response", e));
-                                    e.printStackTrace();
+                                    FirebaseCrashlytics.getInstance().log("NetworkLayer: Error getting cs location failure response"+e.getMessage());
                                 }
                             }
                             postResponse.close();
@@ -2378,7 +2366,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             }catch(Exception onfailEx){
                                 String failureMessage = res.getString(R.string.networking_error);
                                 postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting household location");
-                                FirebaseCrash.report(new Exception(failureMessage, e));
+                                FirebaseCrashlytics.getInstance().log(failureMessage + e.getMessage());
                                 onfailEx.printStackTrace();
                             }
                         }
@@ -2388,8 +2376,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             } catch (JSONException e) {
                 recordFailedUpload(0, 0, networkQueueItemId);
                 postFailureMessage(handler, null, msg, 2, total, progress, null, "submitting farm location");
-                FirebaseCrash.report(new Exception("NetworkLayer: Error creating farm location post object", e));
-                e.printStackTrace();
+                FirebaseCrashlytics.getInstance().log("NetworkLayer: Error creating farm location post object" + e.getMessage());
             }
         }
     }
@@ -2429,8 +2416,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             }
             return numbersarray;
         } catch (JSONException e) {
-            FirebaseCrash.report(new Exception("NetworkLayer: Error creating farmer phone numbers object", e));
-            e.printStackTrace();
+            FirebaseCrashlytics.getInstance().log("NetworkLayer: Error creating farmer phone numbers object "+e.getMessage());
         }
         return null;
     }
@@ -2456,7 +2442,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         nationalids.put("photo",encodedImage);
 //                   jsonObject.put(OFISDBContract.FarmerEntry.COLUMN_NAME_SIGNATURE, signature.getName());
                     }catch (Exception e){
-                        e.printStackTrace();
+                        FirebaseCrashlytics.getInstance().log(e.getMessage());
                     }
 
                 }
@@ -2466,8 +2452,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             }
             return numbersarray;
         } catch (JSONException e) {
-            FirebaseCrash.report(new Exception("NetworkLayer: Error creating farmer phone numbers object", e));
-            e.printStackTrace();
+            FirebaseCrashlytics.getInstance().log("NetworkLayer: Error creating farmer phone numbers object"+e.getMessage());
+
         }
         return null;
     }
@@ -2500,7 +2486,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         String encodedImage=Utilities.base64ConversionForImage(farmerSignaturePath);
                         params.put("farmerConsentSignature", encodedImage);
                     }catch (Exception e){
-                        e.printStackTrace();
+                       FirebaseCrashlytics.getInstance().log(e.getMessage());
                     }
 
                 }
@@ -2509,14 +2495,14 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         String encodedImage=Utilities.base64ConversionForImage(enumSignaturePath);
                         params.put("enumeratorConsentSignature", encodedImage);
                     }catch (Exception e){
-                        e.printStackTrace();
+                        FirebaseCrashlytics.getInstance().log(e.getMessage());
                     }
 
                 }
 
                 params.put("confirmedDate", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_CONFIRMED_DATE)));
             } catch (Exception e) {
-
+                FirebaseCrashlytics.getInstance().log(e.getMessage());
             }
         }
         return params;
@@ -2569,7 +2555,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             } else {
                                 try {
                                     FabricLogsWriter.printCrashLog(TAG, finalEndpoint,postResponse.code(), "Request : "+params.toString()+"Response : "+postResponse.networkResponse().toString(),context);
-                                }catch (Exception e){}
+                                }catch (Exception e){   FirebaseCrashlytics.getInstance().log(e.getMessage());}
                                 try {
                                     if(postResponse.code() == 401 && postResponse.headers().toString().contains("invalid_token")){
                                         FailureGetRefreshToken(handler,originalSyncRequestItemId, msg, 2, total, progress, null, "submitting farm location");
@@ -2588,8 +2574,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 } catch (JSONException | IOException e) {
                                     recordFailedUpload(0, 0, networkQueueItemId);
                                     postFailureMessage(handler, null, msg, 2, total, progress, null, "submitting farm location");
-                                    FirebaseCrash.report(new Exception("NetworkLayer: Error getting phone numbers post failure response", e));
-                                    e.printStackTrace();
+                                    FirebaseCrashlytics.getInstance().log("NetworkLayer: Error getting phone numbers post failure response"+e.getMessage());
                                 }
                             }
                             postResponse.close();
@@ -2609,8 +2594,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             }catch(Exception onfailEx){
                                 String failureMessage = res.getString(R.string.networking_error);
                                 postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting survey module");
-                                FirebaseCrash.report(new Exception(failureMessage, e));
-                                onfailEx.printStackTrace();
+                                FirebaseCrashlytics.getInstance().log(failureMessage+e.getMessage());
                             }
                         }
 
@@ -2619,8 +2603,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             } catch (JSONException e) {
                 recordFailedUpload(0, 0, networkQueueItemId);
                 postFailureMessage(handler, null, msg, 2, total, progress, null, "submitting farm location");
-                FirebaseCrash.report(new Exception("NetworkLayer: Error creating phone numbers post object", e));
-                e.printStackTrace();
+                FirebaseCrashlytics.getInstance().log("NetworkLayer: Error creating phone numbers post object"+e.getMessage());
             }
         }
 
@@ -2857,7 +2840,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     } else {
                         try {
                             FabricLogsWriter.printCrashLog(TAG, url,postResponse.code(),"Request : "+params.toString()+ " Response  : "+ postResponse.networkResponse().toString(),context);
-                        }catch (Exception e){}
+                        }catch (Exception e){ FirebaseCrashlytics.getInstance().log(e.getMessage());}
                         try {
                             if(postResponse.code() == 401 && postResponse.headers().toString().contains("invalid_token")){
                                 FailureGetRefreshToken(handler,originalSyncRequestItemId, msg, 2, total, progress, null, "submitting survey module");
@@ -2879,8 +2862,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         } catch (JSONException | IOException e) {
                             recordFailedUpload(0, 0, networkQueueItemId);
                             postFailureMessage(handler, null, msg, 2, total, progress, null, "submitting survey module");
-                            FirebaseCrash.report(new Exception("NetworkLayer: Error getting module posting failure response", e));
-                            e.printStackTrace();
+                            FirebaseCrashlytics.getInstance().log("NetworkLayer: Error getting module posting failure response"+e.getMessage());
                         }
                     }
                     postResponse.close();
@@ -2900,8 +2882,9 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     }catch(Exception onfailEx){
                         String failureMessage = res.getString(R.string.networking_error);
                         postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting survey module");
-                        FirebaseCrash.report(new Exception(failureMessage, e));
+                        FirebaseCrashlytics.getInstance().log(failureMessage+e.getMessage());
                         onfailEx.printStackTrace();
+
                     }
                 }
             });
@@ -2910,8 +2893,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         } catch (JSONException e) {
             recordFailedUpload(0, 0, networkQueueItemId);
             postFailureMessage(handler, null, msg, 2, total, progress, null, "submitting survey module");
-            FirebaseCrash.report(new Exception("NetworkLayer: Error creating module post object", e));
-            e.printStackTrace();
+            FirebaseCrashlytics.getInstance().log("NetworkLayer: Error creating module post object"+e.getMessage());
         }
     }
 
@@ -2953,8 +2935,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         postResponse.close();
 
                     } catch (JSONException | IOException e) {
-                        FirebaseCrash.report(new Exception("NetworkLayer: Error getting version check post response", e));
-                        e.printStackTrace();
+                        FirebaseCrashlytics.getInstance().log("NetworkLayer: Error getting version check post response"+e.getMessage());
                     }
                 }
 
@@ -3062,7 +3043,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             String encoded= Utilities.base64ConversionForImage(farmerPhotoPath);
                             params.put("photo", encoded);
                         }catch (Exception e){
-                            e.printStackTrace();
+                            FirebaseCrashlytics.getInstance().log(e.getMessage());
                         }
                     }
                 }
@@ -3085,7 +3066,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             } else {
                                 try {
                                     FabricLogsWriter.printCrashLog(TAG, finalEndpoint,postResponse.code(),"Request : "+params.toString()+" Response : "+postResponse.networkResponse().toString(),context);
-                                }catch (Exception e){}
+                                }catch (Exception e){   FirebaseCrashlytics.getInstance().log(e.getMessage());}
                                 try {
                                     String failureMessage = res.getString(R.string.networking_error);
                                     if(postResponse.code() == 401 && postResponse.headers().toString().contains("invalid_token")){
@@ -3115,9 +3096,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                         failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
                                     }
                                     postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting farmer photo failed");
-
-                                    FirebaseCrash.report(new Exception("NetworkLayer: Error getting farmer photo  failure response", e));
-                                    e.printStackTrace();
+                                    FirebaseCrashlytics.getInstance().log("NetworkLayer: Error getting farmer photo  failure response"+e.getMessage());
                                 }
                             }
                             postResponse.close();
@@ -3137,8 +3116,9 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             }catch(Exception onfailEx){
                                 String failureMessage = res.getString(R.string.networking_error);
                                 postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting survey module");
-                                FirebaseCrash.report(new Exception(failureMessage, e));
+                                FirebaseCrashlytics.getInstance().log(failureMessage+e.getMessage());
                                 onfailEx.printStackTrace();
+
                             }
                         }
 
@@ -3148,8 +3128,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 recordFailedUpload(0, 0, networkQueueItemId);
                 String failureMessage = res.getString(R.string.networking_error);
                 postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting farmer photo failed");
-                FirebaseCrash.report(new Exception("NetworkLayer: Error creating farm location post object", e));
-                e.printStackTrace();
+                FirebaseCrashlytics.getInstance().log("NetworkLayer: Error creating farm location post object"+e.getMessage());
             }
         }
 
@@ -3185,7 +3164,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         jsonObject.put("ageOnYear", child.getString(child.getColumnIndex(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_AGE_ON_YEAR)));
                         jsonObject.put("registeredDate", child.getString(child.getColumnIndex(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_CREATEDAT)));
                     } catch (Exception e) {
-
+                        FirebaseCrashlytics.getInstance().log(e.getMessage());
                     }
 
                     // farmer Details
@@ -3197,24 +3176,28 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         try {
                             jsonObject.put(OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRYID, Long.valueOf(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID))));
                         } catch (Exception e) {
+                            FirebaseCrashlytics.getInstance().log(e.getMessage());
                         }
 
                         try {
                             long placeID = Long.valueOf(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID)));
                             jsonObject.put(OFISDBContract.FarmerEntry.COLUMN_NAME_PLACEID, placeID);
                         } catch (Exception e) {
+                            FirebaseCrashlytics.getInstance().log(e.getMessage());
                         }
 
                         try {
                             long sectionID = Long.valueOf(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID)));
                             jsonObject.put(OFISDBContract.FarmerEntry.COLUMN_NAME_SECTIONID, sectionID);
                         } catch (Exception e) {
+                            FirebaseCrashlytics.getInstance().log(e.getMessage());
                         }
 
                         try {
                             long districtID = Long.valueOf(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_DISTRICTID)));
                             jsonObject.put("districtId", districtID);
                         } catch (Exception e) {
+                            FirebaseCrashlytics.getInstance().log(e.getMessage());
                         }
 
                         try {
@@ -3222,6 +3205,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             long regionID = Long.valueOf(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_REGIONID)));
                             jsonObject.put("regionId", regionID);
                         } catch (Exception e) {
+                            FirebaseCrashlytics.getInstance().log(e.getMessage());
                         }
 
                         try {
@@ -3229,12 +3213,14 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             long farmerGroupID = Long.valueOf(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID)));
                             jsonObject.put(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID, farmerGroupID);
                         } catch (Exception e) {
+                            FirebaseCrashlytics.getInstance().log(e.getMessage());
                         }
 
                         try {
                             long productID = Long.valueOf(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID)));
                             jsonObject.put(OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID, productID);
                         } catch (Exception e) {
+                            FirebaseCrashlytics.getInstance().log(e.getMessage());
                         }
 
                     }
@@ -3247,7 +3233,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         requstBody.put("children", jsonArray);
                         requstBody.put("olamEnumeratorId", Long.valueOf(Utilities.getFromSharedPrefs(context)));
                     } catch (JSONException e) {
-                        e.printStackTrace();
+                        FirebaseCrashlytics.getInstance().log(e.getMessage());
                     }
                     // String requestData=jsonArray.toString();
                     DynatraceHelper.requestPayload(DynatraceConstants.REQUEST+" "+endpoint,requstBody.toString(),context,true);
@@ -3284,6 +3270,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                         try {
                                             FabricLogsWriter.printCrashLog(TAG, endpoint, postResponse.code(), "Request : " + jsonArray.toString() + " Response  " + postResponse.networkResponse().toString(), context);
                                         } catch (Exception e) {
+                                            FirebaseCrashlytics.getInstance().log(e.getMessage());
                                         }
                                         long server_item_id = 0, fully_synced = 0;
 
@@ -3311,9 +3298,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                     recordFailedUpload(0, 0, networkQueueItemId);
                                     String failureMessage = res.getString(R.string.item_sync_error);
                                     postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting farmer");
-
-                                    FirebaseCrash.report(new Exception("NetworkLayer: Error getting farmer post failure response", e));
-                                    e.printStackTrace();
+                                    FirebaseCrashlytics.getInstance().log("NetworkLayer: Error getting farmer post failure response"+e.getMessage());
                                 }
                             }
 
@@ -3331,7 +3316,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 } catch (Exception onfailEx) {
                                     String failureMessage = res.getString(R.string.networking_error);
                                     postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting survey module");
-                                    FirebaseCrash.report(new Exception(failureMessage, e));
+                                    FirebaseCrashlytics.getInstance().log(e.getMessage());
                                     onfailEx.printStackTrace();
                                 }
                             }
@@ -3342,8 +3327,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             }catch (Exception e){
                 recordFailedUpload(0, 0, networkQueueItemId);
                 postFailureMessage(handler, null, msg, 2, total, progress, null, "submitting Child Register");
-                FirebaseCrash.report(new Exception("NetworkLayer: Error creating farm polygon post object", e));
-                e.printStackTrace();
+                FirebaseCrashlytics.getInstance().log("NetworkLayer: Error creating farm polygon post object"+e.getMessage());
             }
 
 
@@ -3406,7 +3390,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 //                jsonObject.put("enumeratorId",Utilities.getFromSharedPrefs(context));
 
             }catch (Exception e){
-                e.printStackTrace();
+                FirebaseCrashlytics.getInstance().log(e.getMessage());
             }
 
             // test for existence of new place name
@@ -3420,7 +3404,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         jsonObject.put("new_place_name", place.getString(place.getColumnIndex(OFISDBContract.PlacesEntry.COLUMN_NAME_PLACE_NAME)));
                         jsonObject.put("new_place_district_id", place.getString(place.getColumnIndex(OFISDBContract.PlacesEntry.COLUMN_NAME_DISTRICT_ID)));
                     }catch (Exception e){
-                        e.printStackTrace();
+                        FirebaseCrashlytics.getInstance().log(e.getMessage());
+
                     }
                 }
             }
@@ -3472,7 +3457,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             try {
                 jsonObject.put("consentStatement",consentStatement);
             } catch (JSONException e) {
-                e.printStackTrace();
+                FirebaseCrashlytics.getInstance().log(e.getMessage());
             }
             try {
                 if (numberstosend != null) {
@@ -3480,7 +3465,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 }
 
             }catch (Exception e){
-                e.printStackTrace();
+                FirebaseCrashlytics.getInstance().log(e.getMessage());
             }
 
             try {
@@ -3492,7 +3477,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 }
 
             }catch (Exception e){
-                e.printStackTrace();
+                FirebaseCrashlytics.getInstance().log(e.getMessage());
             }
 
             final JSONArray jsonArray=new JSONArray();
@@ -3536,7 +3521,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             } else {
                                 try {
                                     FabricLogsWriter.printCrashLog(TAG, endpoint,postResponse.code(),"Request : "+jsonArray.toString() + " Response  " +postResponse.networkResponse().toString(),context);
-                                }catch (Exception e){}
+                                }catch (Exception e){FirebaseCrashlytics.getInstance().log(e.getMessage());}
                                 long server_item_id = 0, fully_synced = 0;
 
                                 // Added
@@ -3563,9 +3548,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             recordFailedUpload(0, 0, networkQueueItemId);
                             String failureMessage = res.getString(R.string.item_sync_error);
                             postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting farmer");
-
-                            FirebaseCrash.report(new Exception("NetworkLayer: Error getting farmer post failure response", e));
-                            e.printStackTrace();
+                            FirebaseCrashlytics.getInstance().log("NetworkLayer: Error getting farmer post failure response"+e.getMessage());
                         }
                     }
 
@@ -3583,7 +3566,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         }catch(Exception onfailEx){
                             String failureMessage = res.getString(R.string.networking_error);
                             postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting survey module");
-                            FirebaseCrash.report(new Exception(failureMessage, e));
+                            FirebaseCrashlytics.getInstance().log(failureMessage+e.getMessage());
                             onfailEx.printStackTrace();
                         }
                     }
@@ -3628,7 +3611,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
             out.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            FirebaseCrashlytics.getInstance().log(e.getMessage());
         }
     }
 
@@ -3878,7 +3861,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 } else {
                                     try {
                                         FabricLogsWriter.printCrashLog(TAG, finalEndPoint,postResponse.code(), "Request : " +submission.toString() +"Response : "+ postResponse.networkResponse().toString(),context);
-                                    }catch (Exception e){}
+                                    }catch (Exception e){ FirebaseCrashlytics.getInstance().log(e.getMessage());}
                                     try {
                                         if(postResponse.code() == 401 && postResponse.headers().toString().contains("invalid_token")){
                                             FailureGetRefreshToken(handler,originalSyncRequestItemId, msg, 2, total, progress, null, "submitting survey module");
@@ -3900,8 +3883,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                     } catch (JSONException | IOException e) {
                                         recordFailedUpload(0, 0, networkQueueItemId);
                                         postFailureMessage(handler, null, msg, 2, total, progress, null, "submitting child survey module");
-                                        FirebaseCrash.report(new Exception("NetworkLayer: Error getting module posting failure response", e));
-                                        e.printStackTrace();
+                                        FirebaseCrashlytics.getInstance().log("NetworkLayer: Error getting module posting failure response"+e.getMessage());
                                     }
                                 }
                                 postResponse.close();
@@ -3921,7 +3903,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 }catch(Exception onfailEx){
                                     String failureMessage = res.getString(R.string.networking_error);
                                     postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting child survey module");
-                                    FirebaseCrash.report(new Exception(failureMessage, e));
+                                    FirebaseCrashlytics.getInstance().log(failureMessage+e.getMessage());
                                     onfailEx.printStackTrace();
                                 }
                             }
@@ -3930,8 +3912,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     } catch (JSONException e) {
                         recordFailedUpload(0, 0, networkQueueItemId);
                         postFailureMessage(handler, null, msg, 2, total, progress, null, "submitting survey module");
-                        FirebaseCrash.report(new Exception("NetworkLayer: Error creating module post object", e));
-                        e.printStackTrace();
+                        FirebaseCrashlytics.getInstance().log("NetworkLayer: Error creating module post object"+e.getMessage());
+
                     }
 
 
@@ -3992,7 +3974,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                     JSONArray childObject = outputObject.getJSONArray("childAvailabilityStatus");
                                     dl.updateCheckdetails(childObject.getJSONObject(0).getInt("farmerId"), childObject.getJSONObject(0).getInt("surveyCode"));
                                 }catch (Exception e){
-                                    e.printStackTrace();
+                                    FirebaseCrashlytics.getInstance().log(e.getMessage());
                                 }
                                 dl.deleteNetworkQueueItem(networkQueueItemId);
                                 statusMessage = res.getString(R.string.item_synced);
@@ -4005,7 +3987,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             } else {
                                 try {
                                     FabricLogsWriter.printCrashLog(TAG, finalEndpoint,postResponse.code(),"Request : " +params.toString() +" Response "+postResponse.networkResponse().toString(),context);
-                                }catch (Exception e){}
+                                }catch (Exception e){ FirebaseCrashlytics.getInstance().log(e.getMessage());}
                                 try {
                                     if(postResponse.code() == 401 && postResponse.headers().toString().contains("invalid_token")){
                                         FailureGetRefreshToken(handler,originalSyncRequestItemId, msg, 2, total, progress, null, "submitting farm location");
@@ -4024,8 +4006,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 } catch (JSONException | IOException e) {
                                     recordFailedUpload(0, 0, networkQueueItemId);
                                     postFailureMessage(handler, null, msg, 2, total, progress, null, "submitting farm location");
-                                    FirebaseCrash.report(new Exception("NetworkLayer: Error getting farm location failure response", e));
-                                    e.printStackTrace();
+                                    FirebaseCrashlytics.getInstance().log("NetworkLayer: Error getting farm location failure response"+e.getMessage());
                                 }
                             }
                             postResponse.close();
@@ -4045,7 +4026,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             }catch(Exception onfailEx){
                                 String failureMessage = res.getString(R.string.networking_error);
                                 postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting survey module");
-                                FirebaseCrash.report(new Exception(failureMessage, e));
+                                FirebaseCrashlytics.getInstance().log(failureMessage+e.getMessage());
                                 onfailEx.printStackTrace();
                             }
                         }
@@ -4055,8 +4036,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             } catch (JSONException e) {
                 recordFailedUpload(0, 0, networkQueueItemId);
                 postFailureMessage(handler, null, msg, 2, total, progress, null, "submitting farm location");
-                FirebaseCrash.report(new Exception("NetworkLayer: Error creating farm location post object", e));
-                e.printStackTrace();
+                FirebaseCrashlytics.getInstance().log("NetworkLayer: Error creating farm location post object"+e.getMessage());
             }
         }
 
@@ -4092,7 +4072,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     params.put("signature",encodedImage);
 //                   jsonObject.put(OFISDBContract.FarmerEntry.COLUMN_NAME_SIGNATURE, signature.getName());
                 }catch (Exception e){
-                    e.printStackTrace();
+                    FirebaseCrashlytics.getInstance().log(e.getMessage());
                 }
 
             }
@@ -4117,7 +4097,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         } else {
                             try {
                                 FabricLogsWriter.printCrashLog(TAG, finalEndpoint,postResponse.code(),"Request : " +params.toString() +" Response "+postResponse.networkResponse().toString(),context);
-                            }catch (Exception e){}
+                            }catch (Exception e){FirebaseCrashlytics.getInstance().log(e.getMessage());}
                             try {
                                 if(postResponse.code() == 401 && postResponse.headers().toString().contains("invalid_token")){
                                     FailureGetRefreshToken(handler,originalSyncRequestItemId, msg, 2, total, progress, null, "submitting farm location");
@@ -4136,8 +4116,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             } catch (JSONException | IOException e) {
                                 recordFailedUpload(0, 0, networkQueueItemId);
                                 postFailureMessage(handler, null, msg, 2, total, progress, null, "submitting farm location");
-                                FirebaseCrash.report(new Exception("NetworkLayer: Error getting farm location failure response", e));
-                                e.printStackTrace();
+                                FirebaseCrashlytics.getInstance().log("NetworkLayer: Error getting farm location failure response"+e.getMessage());
                             }
                         }
                         postResponse.close();
@@ -4157,7 +4136,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         }catch(Exception onfailEx){
                             String failureMessage = res.getString(R.string.networking_error);
                             postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting survey module");
-                            FirebaseCrash.report(new Exception(failureMessage, e));
+                            FirebaseCrashlytics.getInstance().log(failureMessage+e.getMessage());
                             onfailEx.printStackTrace();
                         }
                     }
@@ -4224,6 +4203,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                     try {
                                         FabricLogsWriter.printCrashLog(TAG, endpoint, postResponse.code(), "Request : " + jsonArray.toString() + " Response  " + postResponse.networkResponse().toString(), context);
                                     } catch (Exception e) {
+                                        FirebaseCrashlytics.getInstance().log(e.getMessage());
                                     }
                                     long server_item_id = 0, fully_synced = 0;
 
@@ -4251,9 +4231,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 recordFailedUpload(0, 0, networkQueueItemId);
                                 String failureMessage = res.getString(R.string.item_sync_error);
                                 postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting farmer");
-
-                                FirebaseCrash.report(new Exception("NetworkLayer: Error getting farmer post failure response", e));
-                                e.printStackTrace();
+                                FirebaseCrashlytics.getInstance().log("NetworkLayer: Error getting farmer post failure response"+e.getMessage());
                             }
                         }
 
@@ -4271,7 +4249,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             } catch (Exception onfailEx) {
                                 String failureMessage = res.getString(R.string.networking_error);
                                 postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting survey module");
-                                FirebaseCrash.report(new Exception(failureMessage, e));
+                                FirebaseCrashlytics.getInstance().log(failureMessage+e.getMessage());
                                 onfailEx.printStackTrace();
                             }
                         }
@@ -4318,10 +4296,10 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         try {
                             String submittedTimeStamp = new Timestamp(System.currentTimeMillis()).toString();
                             jsonObject.put(OFISDBContract.GPSDetails.COLUMN_NAME_SUBMITTED_DATE, submittedTimeStamp.substring(0,19));
-                        }catch (Exception e){}
+                        }catch (Exception e){FirebaseCrashlytics.getInstance().log(e.getMessage());}
 
                         jsonArray.put(jsonObject);
-                    } catch (Exception e) { }
+                    } catch (Exception e) {FirebaseCrashlytics.getInstance().log(e.getMessage()); }
                 }
             }else{
                 return;
@@ -4331,7 +4309,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 requstBody.put(GPSConstants.GPS_TRACK_DETAILS, jsonArray);
                 requstBody.put(GPSConstants.OLAM_ENUMERATOR_ID, Long.valueOf(Utilities.getFromSharedPrefs(context)));
             } catch (JSONException e) {
-                e.printStackTrace();
+                FirebaseCrashlytics.getInstance().log(e.getMessage());
             }
             // String requestData=jsonArray.toString();
             if (endpoint.length() > 0) {
@@ -4349,7 +4327,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             if (postResponse.code() == 401 && postResponse.headers().toString().contains("invalid_token")) {
                                 try {
                                     FailureGetRefreshToken();
-                                }catch (Exception e){}
+                                }catch (Exception e){FirebaseCrashlytics.getInstance().log(e.getMessage());}
 
                             } else {
                             }
@@ -4365,6 +4343,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             }
         }
         catch (Exception e){
+            FirebaseCrashlytics.getInstance().log(e.getMessage());
         }
     }
 
@@ -4379,12 +4358,12 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             jsonObject.put(OFISDBContract.GPSDetails.COLUMN_NAME_LONGITUDE, networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)));
             try{
                 jsonObject.put(OFISDBContract.GPSDetails.COLUMN_NAME_RECORDED_DATE, networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT)).substring(0,19));
-            }catch (Exception e){}
+            }catch (Exception e){FirebaseCrashlytics.getInstance().log(e.getMessage());}
             jsonObject.put(OFISDBContract.GPSDetails.COLUMN_NAME_GPS_ACCURACY, networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_ACCURACY)));
             try {
                 String submittedTimeStamp = new Timestamp(System.currentTimeMillis()).toString();
                 jsonObject.put(OFISDBContract.GPSDetails.COLUMN_NAME_SUBMITTED_DATE, submittedTimeStamp.substring(0,19));
-            }catch (Exception e){}
+            }catch (Exception e){FirebaseCrashlytics.getInstance().log(e.getMessage());}
 
             jsonArray.put(jsonObject);
 
@@ -4394,7 +4373,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 requstBody.put(GPSConstants.GPS_TRACK_DETAILS, jsonArray);
                 requstBody.put(GPSConstants.OLAM_ENUMERATOR_ID, Long.valueOf(Utilities.getFromSharedPrefs(context)));
             } catch (JSONException e) {
-                e.printStackTrace();
+                FirebaseCrashlytics.getInstance().log(e.getMessage());
             }
             // String requestData=jsonArray.toString();
             DynatraceHelper.requestPayload(DynatraceConstants.REQUEST+" "+endpoint,requstBody.toString(),context,true);
@@ -4417,6 +4396,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             try {
                                 FabricLogsWriter.printCrashLog(TAG, endpoint, postResponse.code(), "Request : " + new Timestamp(System.currentTimeMillis()).toString() + "Response : " + postResponse.networkResponse().toString(), context);
                             } catch (Exception e) {
+                                FirebaseCrashlytics.getInstance().log(e.getMessage());
                             }
                             try {
                                 if (postResponse.code() == 401 && postResponse.headers().toString().contains("invalid_token")) {
@@ -4431,8 +4411,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             } catch (JSONException | IOException e) {
                                 recordFailedUpload(0, 0, networkQueueItemId);
                                 postFailureMessage(handler, null, msg, 2, total, progress, null, "submitting GPS track module");
-                                FirebaseCrash.report(new Exception("NetworkLayer: Error getting GPS posting failure response", e));
-                                e.printStackTrace();
+                                FirebaseCrashlytics.getInstance().log("NetworkLayer: Error getting GPS posting failure response"+e.getMessage());
                             }
                         }
                         postResponse.close();
@@ -4452,7 +4431,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         } catch (Exception onfailEx) {
                             String failureMessage = res.getString(R.string.networking_error);
                             postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting GPS track module");
-                            FirebaseCrash.report(new Exception(failureMessage, e));
+                            FirebaseCrashlytics.getInstance().log(failureMessage+e.getMessage());
                             onfailEx.printStackTrace();
                         }
                     }
@@ -4463,8 +4442,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         catch (JSONException e) {
             recordFailedUpload(0, 0, networkQueueItemId);
             postFailureMessage(handler, null, msg, 2, total, progress, null, "submitting GPS track module");
-            FirebaseCrash.report(new Exception("NetworkLayer: Error creating module post object", e));
-            e.printStackTrace();
+            FirebaseCrashlytics.getInstance().log("NetworkLayer: Error creating module post object"+e.getMessage());
         }
     }
 }
