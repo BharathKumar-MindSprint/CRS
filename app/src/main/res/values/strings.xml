@@ -675,23 +675,22 @@
     <string name="please_respond_mandatory_question">Please respond to mandatory question</string>
     <string name="please_check_question">Please check Question </string>
     <string name="please_check_dependent_question">since its dependent question is updated</string>
-    <string name="national_id_info">Please update the National ID of farmer</string>
     <string name="consent_duplicate_alert">Duplicate consent identified and hence cannot sync the item selected. Please note, such duplicates will be removed from the queue further.</string>
     <string name="consent_duplicate_error">Error in saving FarmerConsent</string>
+    <string name="duplicate_survey">Dupicate survey entry</string>
+    <string name="removing_duplicate_survey">Removing dupicate survey</string>
+    <string name="downloading_fldetails">Downloading Farmer Lead Details</string>
+    <string name="national_id_info">Please update the National ID of farmer</string>
     <string name="update_farmer_subdistrict">Update Farmer\’s Subdistrict</string>
     <string name="update">Update</string>
     <string name="label_subdistrict">Subdistrict:</string>
     <string name="subdistrict_note">Farmer\'s Subdistrict Captured</string>
     <string name="valid_until">Vaild Until</string>
+    <string name="nid_exp_fill">Please fill Expiry Date</string>
     <string name="update_firebase_install_id_info">Updating Informations</string>
     <string name="password">password</string>
     <string name="offline_access">offline_access</string>
     <string name="refresh_token">refresh_token</string>
-    <string name="duplicate_survey">Dupicate survey entry</string>
-    <string name="removing_duplicate_survey">Removing dupicate survey</string>
-    <string name="nid_exp_fill">Please fill Expiry Date</string>
-    <string name="checking_isfl_enumerator">Checking Farmer Lead Enumerator</string>
-    <string name="downloading_fldetails">Downloading Farmer Lead Details</string>
     <string name="privacy_data">Olam Food Ingredients and our affiliates worldwide (collectively called “ofi,” “we,” “us,” “our”) understand the importance of privacy to you. This policy summarizes what personal information we may collect, how we may use this information, and other important topics relating to your privacy and data protection.\n \n
 It is ofi policy to comply with all applicable privacy and data protection laws. This commitment reflects the value we place on earning and keeping the trust of our customers, business partners and others who share their personal information with us.\n \n
 This Policy applies to all websites and mobile applications (“apps”) operated by or on behalf of ofi. It also applies to personal information ofi may otherwise collect: (i) through our products and services; (ii) when you interact with us by means other than an ofi website or app, for example, in person, by telephone, or at a trade show or training; and (iii) from our customers, distributors, suppliers, vendors, and other business partners (collectively “Business Partners”).\n\n

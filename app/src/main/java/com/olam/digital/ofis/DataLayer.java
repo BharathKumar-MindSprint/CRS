@@ -1376,6 +1376,9 @@ public class DataLayer {
                 values.put(OFISDBContract.FarmerNationalIDs.COLUMN_IS_SYNCED, false);
                 values.put(OFISDBContract.FarmerNationalIDs.COLUMN_NID_TYPE, storeableNumber.getInt("nationalIdType"));
                 values.put(OFISDBContract.FarmerNationalIDs.COLUMN_NID_NUMBER, storeableNumber.getString("nationalIdNumber"));
+                if (storeableNumber.has("expiryDate")) {
+                    values.put(OFISDBContract.FarmerNationalIDs.COLUMN_NID_EXPIRY_DATE, storeableNumber.getString("expiryDate"));
+                }
                 if (storeableNumber.has("photo")) {
                     values.put(OFISDBContract.FarmerNationalIDs.COLUMN_NID_PHOTO, storeableNumber.getString("photo"));
                 }
@@ -1401,7 +1404,7 @@ public class DataLayer {
     }
 
 
-    void addLocalFarmerNationalids(ArrayList<NationalIdDTO> storeableNationalids) {
+    /*void addLocalFarmerNationalids(ArrayList<NationalIdDTO> storeableNationalids) {
         int arrayLength = storeableNationalids.size();
         try {
             for (int i = 0; i < arrayLength; i++) {
@@ -1415,7 +1418,7 @@ public class DataLayer {
         }catch (Exception e){}
 
 
-    }
+    }*/
 
     void addnewLocalFarmerNationalids(NationalIdDTO storeableNationalids) {
 //        delete value if exists
@@ -1427,6 +1430,7 @@ public class DataLayer {
         values.put(OFISDBContract.LocalFarmerNationalIDs.COLUMN_NID_TYPE, storeableNationalids.getNationalidtype());
         values.put(OFISDBContract.LocalFarmerNationalIDs.COLUMN_NID_NUMBER, storeableNationalids.getNationalidNumber());
         values.put(OFISDBContract.LocalFarmerNationalIDs.COLUMN_NID_PHOTO, storeableNationalids.getPhoto());
+        values.put(OFISDBContract.LocalFarmerNationalIDs.COLUMN_NID_EXPIRY_DATE, storeableNationalids.getExpiryDate());
         try {
             db.insert(OFISDBContract.LocalFarmerNationalIDs.TABLE_NAME, null, values);
         }catch (Exception e){}
@@ -1469,10 +1473,10 @@ public class DataLayer {
         return db.query(OFISDBContract.FarmerNationalIDs.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
     }
 
-    void updateLocalFarmerNationalids(ArrayList<NationalIdDTO> storeableNationalids) {
+   /* void updateLocalFarmerNationalids(ArrayList<NationalIdDTO> storeableNationalids) {
         db.delete(OFISDBContract.LocalFarmerNationalIDs.TABLE_NAME, null, null);
         addLocalFarmerNationalids(storeableNationalids);
-    }
+    }*/
 
     void deletelocalfarmervalues(int id) {
         String whereClause = OFISDBContract.LocalFarmerNationalIDs.COLUMN_NAME_ID + " = ?";
@@ -1483,11 +1487,11 @@ public class DataLayer {
 
     }
 
-    void deletelocalfarmervalues() {
+   /* void deletelocalfarmervalues() {
         try {
             db.delete(OFISDBContract.LocalFarmerNationalIDs.TABLE_NAME, null, null);
         }catch (Exception e){}
-    }
+    }*/
 
     Cursor getDiallingCodeByPlaceId(long placeId) {
         String placesTable = OFISDBContract.PlacesEntry.TABLE_NAME;
@@ -3014,7 +3018,7 @@ public class DataLayer {
                 });
 
                 String selectedsubdistrict = farmer.getString(farmer.getColumnIndex("subdistrictId")).trim();
-                 if(selectedsubdistrict.length()==0){
+                 if(selectedsubdistrict.equalsIgnoreCase("0")){
                     // update farmers subdistrict
                     mc.addRow(new String[]{
                             "0",
@@ -3213,7 +3217,10 @@ public class DataLayer {
                 output = new MergeCursor(cursors);
             }
             return output;
-        } finally {
+        }catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }finally {
             farmer.close();
         }
 
@@ -3322,14 +3329,16 @@ public class DataLayer {
         String[] whereArgs = new String[]{String.valueOf(farmerid)};
         try {
             db.update(OFISDBContract.FarmerEntry.TABLE_NAME, values, whereClause, whereArgs);
-        }catch (Exception e){e.printStackTrace();}
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         ContentValues networkQueueValues = new ContentValues();
         networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "updatesubdistrict");
         networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, "Farmer subdistrict captured");
         networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, olamfarmername);
         networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBDISTRICT_ID, values.getAsString(OFISDBContract.FarmerEntry.COLUMN_NAME_SUBDISTRICTID));
-        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PLACE_ID, values.getAsString(OFISDBContract.FarmerEntry.COLUMN_NAME_PLACEID));
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PLACE_ID, values.getAsString(OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID));
         networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT, timestamp.toString());
         networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPDATED_AT, timestamp.toString());
 

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -43,7 +44,8 @@
                         android:layout_width="74dp"
                         android:tooltipText="@string/captureid"
                         app:srcCompat="@drawable/ic_capture_id_defaulr"
-                        android:layout_height="94dp"/>
+                        android:layout_height="94dp"
+                        tools:ignore="VectorDrawableCompat" />
 
                     <LinearLayout
                         android:layout_width="wrap_content"
@@ -91,6 +93,26 @@
                     android:textSize="@dimen/ofis_input_field_text"
                     android:hint="@string/nationalidno"
                     android:layout_margin="@dimen/ofis_input_field_bottom_margin"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textCapWords"
+                        android:id="@+id/expirydate"
+                        android:textSize="@dimen/ofis_input_field_text"
+                        android:gravity="left|center"
+                        android:paddingLeft="3dp"
+                        android:drawableRight="@drawable/ic_calendar"
+                        android:hint="@string/valid_until"
+                        android:layout_margin="@dimen/ofis_input_field_bottom_margin"/>
+
+                </LinearLayout>
 
             </LinearLayout>
 

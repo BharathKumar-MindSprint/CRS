@@ -27,6 +27,8 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -234,6 +236,7 @@ public class BaseActivity extends AppCompatActivity {
                 storeableNids.put("nationalIdType", new Long(nids.getInt(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_TYPE))));
                 storeableNids.put("nationalIdNumber", nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_NUMBER)));
                 storeableNids.put("photo", nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_PHOTO)));
+                storeableNids.put("expiryDate", nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_EXPIRY_DATE)));
 
                 storeableNationalids.put(storeableNids);
 
@@ -246,6 +249,16 @@ public class BaseActivity extends AppCompatActivity {
 
     // getting nationalids type id values
     public String getPhotobytype(int type) {
+        String photo = null;
+        Cursor nid = dl.getPhotoByType(type);
+        if (nid.getCount() > 0) {
+            nid.moveToFirst();
+            photo = nid.getString(nid.getColumnIndex(OFISDBContract.LocalNationalIDImages.COLUMN_NID_PHOTO));
+        }
+        return photo;
+    }
+
+    public String getExpiryDatebytype(int type) {
         String photo = null;
         Cursor nid = dl.getPhotoByType(type);
         if (nid.getCount() > 0) {
@@ -374,6 +387,21 @@ public class BaseActivity extends AppCompatActivity {
             int type = getNidType(value);
             if (type == nidvalue) {
                 imageButton.setImageBitmap(bitmap);
+            }
+        }
+
+
+    }
+    public void displayExpiryDateforNID(LinearLayout nationalids, int nidvalue, String expDate) {
+        int nidrowscount = nationalids.getChildCount();
+        for (int j = 0; j < nidrowscount; j++) {
+            LinearLayout nidrow = (LinearLayout) nationalids.getChildAt(j);
+            Spinner nid_type = nidrow.findViewById(R.id.idtypespinner);
+            TextView expiryDate = nidrow.findViewById(R.id.expirydate);
+            String value = nid_type.getSelectedItem().toString();
+            int type = getNidType(value);
+            if (type == nidvalue) {
+                expiryDate.setText(expDate);
             }
         }
 

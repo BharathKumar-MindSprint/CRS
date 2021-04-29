@@ -147,13 +147,14 @@ public class UpdateSubdistrict extends BaseActivity implements View.OnClickListe
                 Toast.makeText(context, res.getString(R.string.fill_subdistrict), Toast.LENGTH_LONG).show();
                 return;
             }
-            Toast.makeText(this,getResources().getString(R.string.subdistrict_note), Toast.LENGTH_LONG).show();
+
             ContentValues contentValue=new ContentValues();
             contentValue.put(OFISDBContract.FarmerEntry.COLUMN_NAME_SUBDISTRICTID,selectedSubDistrict);
             contentValue.put(OFISDBContract.FarmerEntry.COLUMN_NAME_SUBDISID,selectedSubDistrict);
-            contentValue.put(OFISDBContract.FarmerEntry.COLUMN_NAME_PLACEID,selectedPlace);
-            contentValue.put(OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID,place_id);
+//            contentValue.put(OFISDBContract.FarmerEntry.COLUMN_NAME_PLACEID,selectedPlace);
+            contentValue.put(OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID,selectedPlace);
             dl.updateSubdistrict(farmerId, contentValue, olamfarmername);
+            Toast.makeText(this,getResources().getString(R.string.subdistrict_note), Toast.LENGTH_LONG).show();
             finish();
         }
     }
