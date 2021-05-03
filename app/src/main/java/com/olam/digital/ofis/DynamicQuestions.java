@@ -210,7 +210,25 @@ public class DynamicQuestions {
         }
         try {
             while (requiredQuestions.moveToNext()) {
-                requiredQuestionIds.add(requiredQuestions.getInt(requiredQuestions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID)));
+
+                // START
+                    do {
+                        try {
+                        JSONObject displayConfig = new JSONObject(requiredQuestions.getString(requiredQuestions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION)));
+                        if (displayConfig.has("display")) {
+                            JSONObject display = displayConfig.getJSONObject("display");
+                            if (display.optBoolean("requiredfield", false)) {
+                                String questionsString = requiredQuestions.getString(requiredQuestions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
+                                String type = requiredQuestions.getString(requiredQuestions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE));
+                             // check the type only for calcualted question.
+                                if(!type.equalsIgnoreCase("Calculated")){
+                                    requiredQuestionIds.add(Integer.parseInt(questionsString));
+                                }
+                            }
+                        }
+                        }catch (Exception e){}
+                    } while (requiredQuestions.moveToNext());
+                //END
             }
         }finally {
             requiredQuestions.close();
@@ -602,14 +620,12 @@ public class DynamicQuestions {
                     JSONObject display = displayConfig.getJSONObject("display");
                     if (display.optBoolean("requiredfield", false)) {
                         String questionsString = questions.getString(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
-                        questionList.add(Integer.parseInt(questionsString));
-//                        if(type.equalsIgnoreCase("DropDown") || type.equalsIgnoreCase("checkbox")){
-//                            int question_id = requiredQuestions.getInt(requiredQuestions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
-//                            if(!dl.getLookupValuesForQuestion(question_id)){
-//                                value = false;
-//                                break;
-//                            }
-//                        }
+                        String type = questions.getString(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE));
+
+//                        check the type only for calcualted question. Calculated question FRANKLIN
+                        if(!type.equalsIgnoreCase("Calculated")){
+                            questionList.add(Integer.parseInt(questionsString));
+                        }
                     }
                 }
             } while (questions.moveToNext());
