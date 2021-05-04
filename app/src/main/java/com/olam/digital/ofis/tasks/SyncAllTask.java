@@ -189,7 +189,7 @@ public class SyncAllTask extends SyncTask {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        endpoint = "ofismaster/master/authenticate";
+        endpoint = "ofismaster/master/saveDeviceInfo";
         final String finalEndpoint = endpoint;
         okHttpPost(context, endpoint, inputArgs, new Callback() {
             @Override
