@@ -2042,6 +2042,40 @@ public class DataLayer {
                 }
             });
 
+          /*  subdistrictSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long id) {
+
+                    Cursor places = getSpinnerData(OFISDBContract.PlacesEntry.TABLE_NAME, true, OFISDBContract.PlacesEntry.COLUMN_NAME_DISTRICT_ID, ((int) id), true, OFISDBContract.PlacesEntry.COLUMN_NAME_PLACE_NAME);
+                    if (!newPlace) {
+                        bindDataDrivenSpinnerSIP(placeSpinner, places, context, R.string.spinner_place_default, null, false);
+                    } else {
+                        bindDataDrivenSpinner(placeSpinner, places, context, R.string.spinner_place_default, null, false);
+                    }
+
+                    if (placeSelection != 0) {
+                        setSpinnerSelectionById(placeSelection, placeSpinner);
+                    } else {
+                        if (newPlace) {
+                            if (places.getCount() == 1) {
+                                try {
+                                    placeSpinner.setSelection(2, false);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+                        }
+                    }
+
+
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> adapterView) {
+
+                }
+            });*/
             if (activity.findViewById(R.id.newPlaceName) != null) {
                 final EditText newPlaceName = (EditText) activity.findViewById(R.id.newPlaceName);
                 placeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -3329,6 +3363,11 @@ public class DataLayer {
         String[] whereArgs = new String[]{String.valueOf(farmerid)};
         try {
             db.update(OFISDBContract.FarmerEntry.TABLE_NAME, values, whereClause, whereArgs);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        try {
+             deleteNetworkQueueItemByFarmerId(farmerid, "updatesubdistrict");
         }catch (Exception e){
             e.printStackTrace();
         }

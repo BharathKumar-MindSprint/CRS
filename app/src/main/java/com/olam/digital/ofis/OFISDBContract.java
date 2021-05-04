@@ -598,6 +598,7 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_NID_TYPE = "type";
         public static final String COLUMN_NAME_NID_LIMIT = "nationalIdLimit";
         public static final String COLUMN_NAME_PHOTO_REQUIRED = "photoRequired";
+        public static final String COLUMN_NAME_EXP_DATE_SLIDER = "expiryDateSlider";
         public static final String COLUMN_NAME_TYPE_FR = "type_fr";
         public static final String COLUMN_NAME_TYPE_ES = "type_es";
         public static final String COLUMN_NAME_TYPE_PT = "type_pt";
@@ -615,6 +616,7 @@ public class OFISDBContract {
                     add(COLUMN_NAME_NID_TYPE);
                     add(COLUMN_NAME_NID_LIMIT);
                     add(COLUMN_NAME_PHOTO_REQUIRED);
+                    add(COLUMN_NAME_EXP_DATE_SLIDER);
                     add(COLUMN_NAME_TYPE_FR);
                     add(COLUMN_NAME_TYPE_ES);
                     add(COLUMN_NAME_TYPE_PT);

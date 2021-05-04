@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -31,6 +32,7 @@ public class UpdateSubdistrict extends BaseActivity implements View.OnClickListe
     String olamfarmername;
     EditText newPlaceName;
     int selectedDistrict, selectedPlace;
+    boolean editmode = false;
     private TextView tv_country_name, tv_region_name, tv_district_name, tv_place_name;
     Spinner subdistrictSpinner, countrySpinner, regionSpinner, districtSpinner, placeSpinner;
     @Override
@@ -40,6 +42,7 @@ public class UpdateSubdistrict extends BaseActivity implements View.OnClickListe
         //noinspection ConstantConditions
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         farmerId=getIntent().getExtras().getInt(ChildLabourUtils.CHILD_FARMER_ID);
+        editmode=getIntent().getExtras().getBoolean("EDIT_MODE");
         olamfarmername=getIntent().getExtras().getString("olamfarmername");
         initComponents();
         initEvents();
@@ -99,6 +102,7 @@ public class UpdateSubdistrict extends BaseActivity implements View.OnClickListe
                /* countrySpinner.setEnabled(false);
                 regionSpinner.setEnabled(false);
                 districtSpinner.setEnabled(false);*/
+
             }
         }finally {
             farmer.close();
@@ -139,6 +143,7 @@ public class UpdateSubdistrict extends BaseActivity implements View.OnClickListe
             selectedPlace = (int) placeSpinner.getSelectedItemId();
             if (place_id == -1 && newPlaceName.length() > 0) {
                 place_id = dl.insertNewPlace(newPlaceNameValue, selectedDistrict);
+                Log.d("AddPlace", String.valueOf(place_id));
             }
 
             selectedSubDistrict = (int) subdistrictSpinner.getSelectedItemId();

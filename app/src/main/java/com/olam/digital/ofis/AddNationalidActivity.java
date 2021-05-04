@@ -249,8 +249,9 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
         LinearLayout niddelete = nationalidinclude.findViewById(R.id.deleteNationalid);
         niddelete.setVisibility(View.GONE);
         spinner_nidtype = nationalidinclude.findViewById(R.id.idtypespinner);
-        TextView expirydate = nationalidinclude.findViewById(R.id.expirydate);
+        TextView expiryDate = nationalidinclude.findViewById(R.id.expirydate);
         LinearLayout ll_capturephoto = nationalidinclude.findViewById(R.id.ll_capturephoto);
+        LinearLayout ll_captureexpiry = nationalidinclude.findViewById(R.id.ll_captureexpiry);
         spinnerArrayAdapter = new ArrayAdapter<String>(AddNationalidActivity.this, R.layout.spinner_item, refreshitem);
         spinnerArrayAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         spinner_nidtype.setAdapter(spinnerArrayAdapter);
@@ -263,30 +264,39 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
         ImageButton nationalidphoto = nationalidinclude.findViewById(R.id.nationalidphoto);
         actionbtn.setTag(nationalids.getChildCount());
         nationalidphoto.setTag(nationalids.getChildCount());
-        expirydate.setTag(nationalids.getChildCount());
+        expiryDate.setTag(nationalids.getChildCount());
 
-
-        expirydate.setOnClickListener(new View.OnClickListener(){
-
+        expiryDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+//                Toast.makeText(AddFarmerActivity.this, "clicked", Toast.LENGTH_LONG).show();
                 final Calendar c = Calendar.getInstance();
-                c.add(Calendar.YEAR, -16);
-                int year = c.get(Calendar.YEAR);
-                int month = c.get(Calendar.MONTH);
-                int day = c.get(Calendar.DAY_OF_MONTH);
+                int mYear = c.get(Calendar.YEAR); // current year
+                int mMonth = c.get(Calendar.MONTH); // current month
+                int mDay = c.get(Calendar.DAY_OF_MONTH); // current day
+                // date picker dialog
+                DatePickerDialog datePickerDialog = new DatePickerDialog(AddNationalidActivity.this,
+                        new DatePickerDialog.OnDateSetListener() {
 
-                // Max Age: 110 Years
-                long minYearMilliseconds = (long) (365.2425 * 24 * 60 * 60 * 1000 * 110);
-                // formula used = no. of days in a year * hrs in a day * minutes * seconds * milliseconds * total years
-                //Log.d("AddFarmerActivity", "minYearMilliSeconds: " + minYearMilliseconds);
+                            @Override
+                            public void onDateSet(DatePicker view, int year,
+                                                  int monthOfYear, int dayOfMonth) {
+                                // set day of month , month and year value in the edit text
+                               /* expiryDate.setText(dayOfMonth + "-"
+                                        + (monthOfYear + 1) + "-" + year);*/
+                                Calendar cal = Calendar.getInstance();
+                                cal.set(year, monthOfYear, dayOfMonth);
 
-                DatePickerDialog datePickerDialog = new DatePickerDialog(context, pickerListener, year, month, day);
-                datePickerDialog.getDatePicker().setMinDate(Calendar.getInstance().getTimeInMillis() - minYearMilliseconds);
-                datePickerDialog.getDatePicker().setMaxDate(c.getTimeInMillis());
+                                SimpleDateFormat serverDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+                                String humanDate = serverDateFormat.format(cal.getTime());
+                                expiryDate.setText(humanDate);
+
+                            }
+                        }, mYear, mMonth, mDay);
                 datePickerDialog.show();
             }
         });
+
         spinner_nidtype.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -299,7 +309,7 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
                     spinnerArrayAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
                     spinner_nidtype.setAdapter(spinnerArrayAdapter);
                     nidnumber.setText("");
-                    expirydate.setText("");
+                    expiryDate.setText("");
                     nationalidphoto.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_capture_id_default));
                     dl.removeNIDPhoto(type);
                 }
@@ -318,6 +328,11 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
                         ll_capturephoto.setVisibility(View.GONE);
                     } else {
                         ll_capturephoto.setVisibility(View.VISIBLE);
+                    }
+                    if (getNidExpiryDateStatus(spinner_nidtype.getSelectedItem().toString()).trim().equalsIgnoreCase("false")) {
+                        ll_captureexpiry.setVisibility(View.GONE);
+                    } else {
+                        ll_captureexpiry.setVisibility(View.VISIBLE);
                     }
                     ValidateSpinnerTypes();
                 }
@@ -355,6 +370,7 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
                     ImageButton actionbtn = nationalidinclude.findViewById(R.id.nidphotoActionButton);
                     ImageButton nationalidphoto = nationalidinclude.findViewById(R.id.nationalidphoto);
                     LinearLayout ll_capturephoto = nationalidinclude.findViewById(R.id.ll_capturephoto);
+                    LinearLayout ll_captureexpiry = nationalidinclude.findViewById(R.id.ll_captureexpiry);
                     EditText nidnumber = nationalidinclude.findViewById(R.id.nidnumber);
                     TextView expiryDate = nationalidinclude.findViewById(R.id.expirydate);
                     nidnumber.setFilters(new InputFilter[]{new Utils.EmojiExcludeFilter()});
@@ -395,7 +411,35 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
                     }
                     actionbtn.setTag(nationalids.getChildCount());
 
+                    expiryDate.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+//                Toast.makeText(AddFarmerActivity.this, "clicked", Toast.LENGTH_LONG).show();
+                            final Calendar c = Calendar.getInstance();
+                            int mYear = c.get(Calendar.YEAR); // current year
+                            int mMonth = c.get(Calendar.MONTH); // current month
+                            int mDay = c.get(Calendar.DAY_OF_MONTH); // current day
+                            // date picker dialog
+                            DatePickerDialog   datePickerDialog = new DatePickerDialog(AddNationalidActivity.this,
+                                    new DatePickerDialog.OnDateSetListener() {
 
+                                        @Override
+                                        public void onDateSet(DatePicker view, int year,
+                                                              int monthOfYear, int dayOfMonth) {
+                                            // set day of month , month and year value in the edit text
+                                           /* expiryDate.setText(dayOfMonth + "-"
+                                        + (monthOfYear + 1) + "-" + year);*/
+                                            Calendar cal = Calendar.getInstance();
+                                            cal.set(year, monthOfYear, dayOfMonth);
+
+                                            SimpleDateFormat serverDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+                                            String humanDate = serverDateFormat.format(cal.getTime());
+                                            expiryDate.setText(humanDate);
+                                        }
+                                    }, mYear, mMonth, mDay);
+                            datePickerDialog.show();
+                        }
+                    });
                     spinner_nidtype.setOnTouchListener(new View.OnTouchListener() {
                         @Override
                         public boolean onTouch(View v, MotionEvent event) {
@@ -427,6 +471,11 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
                                     ll_capturephoto.setVisibility(View.GONE);
                                 } else {
                                     ll_capturephoto.setVisibility(View.VISIBLE);
+                                }
+                                if (getNidExpiryDateStatus(spinner_nidtype.getSelectedItem().toString()).trim().equalsIgnoreCase("false")) {
+                                    ll_captureexpiry.setVisibility(View.GONE);
+                                } else {
+                                    ll_captureexpiry.setVisibility(View.VISIBLE);
                                 }
                                 ValidateSpinnerTypes();
                             }
@@ -530,9 +579,11 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
                     }
                 }
             }
-            if (expDate.trim() == "" || expDate.trim().equalsIgnoreCase("")) {
-                Toast.makeText(this, getResources().getString(R.string.nid_exp_fill), Toast.LENGTH_SHORT).show();
-                return false;
+            if (getNidExpiryDateStatus(value).equalsIgnoreCase("true")) {
+                if (expDate.trim() == "" || expDate.trim().equalsIgnoreCase("")) {
+                    Toast.makeText(this, getResources().getString(R.string.nid_exp_fill), Toast.LENGTH_SHORT).show();
+                    return false;
+                }
             }
             if (status) {
                 NationalIdDTO idDTO = new NationalIdDTO();
@@ -549,7 +600,9 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
                 } else {
                     idDTO.setPhoto("");
                 }
-                idDTO.setExpiryDate(expDate);
+                if (getNidExpiryDateStatus(value).equalsIgnoreCase("true")) {
+                    idDTO.setExpiryDate(expDate);
+                }
                 dl.addnewLocalFarmerNationalids(idDTO);
                 nid_type.setEnabled(false);
             }
@@ -608,8 +661,9 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
                     LinearLayout nationalidinclude = (LinearLayout) inflater.inflate(R.layout.add_nationalid, nationalids, false);
                     nationalids.addView(nationalidinclude);
                     LinearLayout ll_capturephoto = nationalidinclude.findViewById(R.id.ll_capturephoto);
+                    LinearLayout ll_captureexpiry = nationalidinclude.findViewById(R.id.ll_captureexpiry);
                     Spinner spinner_nidtype = nationalidinclude.findViewById(R.id.idtypespinner);
-
+                    TextView expiryDate = nationalidinclude.findViewById(R.id.expirydate);
                     ImageButton actionbtn = nationalidinclude.findViewById(R.id.nidphotoActionButton);
                     ImageButton nationalidphoto = nationalidinclude.findViewById(R.id.nationalidphoto);
                     actionbtn.setTag(nationalids.getChildCount());
@@ -622,6 +676,37 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
                     spinnerArrayAdapter = new ArrayAdapter<String>(AddNationalidActivity.this, R.layout.spinner_item, refreshitem);
                     spinnerArrayAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
                     spinner_nidtype.setAdapter(spinnerArrayAdapter);
+
+                    expiryDate.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+//                Toast.makeText(AddFarmerActivity.this, "clicked", Toast.LENGTH_LONG).show();
+                            final Calendar c = Calendar.getInstance();
+                            int mYear = c.get(Calendar.YEAR); // current year
+                            int mMonth = c.get(Calendar.MONTH); // current month
+                            int mDay = c.get(Calendar.DAY_OF_MONTH); // current day
+                            // date picker dialog
+                            DatePickerDialog  datePickerDialog = new DatePickerDialog(AddNationalidActivity.this,
+                                    new DatePickerDialog.OnDateSetListener() {
+
+                                        @Override
+                                        public void onDateSet(DatePicker view, int year,
+                                                              int monthOfYear, int dayOfMonth) {
+                                            // set day of month , month and year value in the edit text
+                                          /* expiryDate.setText(dayOfMonth + "-"
+                                        + (monthOfYear + 1) + "-" + year);*/
+                                            Calendar cal = Calendar.getInstance();
+                                            cal.set(year, monthOfYear, dayOfMonth);
+
+                                            SimpleDateFormat serverDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+                                            String humanDate = serverDateFormat.format(cal.getTime());
+                                            expiryDate.setText(humanDate);
+
+                                        }
+                                    }, mYear, mMonth, mDay);
+                            datePickerDialog.show();
+                        }
+                    });
                     spinner_nidtype.setOnTouchListener(new View.OnTouchListener() {
                         @Override
                         public boolean onTouch(View v, MotionEvent event) {
@@ -652,6 +737,11 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
                                     ll_capturephoto.setVisibility(View.GONE);
                                 } else {
                                     ll_capturephoto.setVisibility(View.VISIBLE);
+                                }
+                                if (getNidExpiryDateStatus(spinner_nidtype.getSelectedItem().toString()).trim().equalsIgnoreCase("false")) {
+                                    ll_captureexpiry.setVisibility(View.GONE);
+                                } else {
+                                    ll_captureexpiry.setVisibility(View.VISIBLE);
                                 }
                                 ValidateSpinnerTypes();
                             }

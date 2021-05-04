@@ -35,7 +35,6 @@ class UpdateNationalIdTask extends DatabaseTask {
     protected String doInBackground(JSONObject... params) {
 
             JSONObject nationalidResponse = params[0];
-
                 try {
                     JSONArray nationalidArray = nationalidResponse.getJSONArray("nationalids");
                     if (nationalidArray.length()>0) {

@@ -55,6 +55,7 @@ import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -2685,7 +2686,14 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 nationalids.put("farmerId", new Long(nids.getInt(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID))));
                 nationalids.put("nationalIdType", new Long(nids.getInt(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_TYPE))));
                 nationalids.put("nationalIdNumber", nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_NUMBER)));
-
+                if(nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_EXPIRY_DATE)) != null) {
+                    nationalids.put("expiryDate", nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_EXPIRY_DATE)));
+                }
+               /* Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                Date today = new Date();
+                SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+                String date = format.format(today);
+                nationalids.put("expiryDate", date);*/
                 String farmerNIDPath = nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_PHOTO));
                 if (farmerNIDPath != null && farmerNIDPath.length() > 0) {
 
@@ -3715,6 +3723,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
             final JSONArray jsonArray=new JSONArray();
             jsonArray.put(jsonObject);
+            System.out.println("Register_Farmer_Data: " + jsonArray.toString());
+            Log.d("NL", "Register_Farmer_Data: " + jsonArray.toString());
             DynatraceHelper.requestPayload(DynatraceConstants.REQUEST+" "+endpoint,jsonArray.toString(),context,true);
             if (endpoint.length() > 0) {
 

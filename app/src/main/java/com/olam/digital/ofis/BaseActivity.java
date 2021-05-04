@@ -197,6 +197,15 @@ public class BaseActivity extends AppCompatActivity {
         return photostatus;
     }
 
+    public String getNidExpiryDateStatus(String type) {
+        String photostatus = "true";
+        Cursor nid = dl.getNIDPhotostatusByName(type);
+        if (nid.getCount() > 0) {
+            nid.moveToFirst();
+            photostatus = nid.getString(nid.getColumnIndex(OFISDBContract.NationalIDEntry.COLUMN_NAME_EXP_DATE_SLIDER));
+        }
+        return photostatus;
+    }
     // getting nationalids type id values
     public boolean getPhotostatusByType(String type) {
         boolean photostatus = false;
