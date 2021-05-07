@@ -332,27 +332,20 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
     private void FailureGetRefreshToken(Handler handler, int originalSyncRequestItemId) throws IOException {
 
+        // Keycloak refresh Token
         AuthenticationDTO authenticationDTO = new AuthenticationHelper(context).getAuthenticationDTO();
-        AuthRequestDTO authRequestDTO = new AuthRequestDTO();
-        authRequestDTO.setGrantType("refreshToken");
-        authRequestDTO.setToken(authenticationDTO.getRefreshToken());
-        AuthenticationInterface authenticationInterface =  AuthenticationClient.createService(AuthenticationInterface.class, context);
-
-        // Old
-//        retrofit2.Call<AuthenticationDTO> authCall = authenticationInterface.getRefreshToken(authRequestDTO);
-//        retrofit2.Response authResponse = authCall.execute();
-
-        // New
-        String grantType="refresh_token";
+        String clientId=context.getResources().getString(R.string.clientId);
+        String clientSecret=context.getResources().getString(R.string.clientSecret);
+        String grantType=context.getResources().getString(R.string.refresh_token);
         String refreshToken=authenticationDTO.getRefreshToken();
-        String clientId="mobile-ofis-app-dev";
-        String clientSecret="4afbbe46-ab48-4db9-8c67-dea623e691b1";
+        // Auth Call
+        AuthenticationInterface authenticationInterface = AuthenticationClient.createService(AuthenticationInterface.class, context);
         retrofit2.Call<AuthenticationDTO> authCall = authenticationInterface.getKeyCloakRefreshToken(clientId,clientSecret,grantType,refreshToken);
         retrofit2.Response authResponse = authCall.execute();
 
         if (authResponse.isSuccessful()) {
             AuthenticationDTO newAuthDTO = (AuthenticationDTO) authResponse.body();
-            newAuthDTO.setWillExpireAt((System.currentTimeMillis()/1000) + newAuthDTO.getExpiresIn() /1000);
+          //  newAuthDTO.setWillExpireAt((System.currentTimeMillis()/1000) + newAuthDTO.getExpiresIn() /1000);
             new AuthenticationHelper(context).setAuthenticationDTO(newAuthDTO);
             postData(originalSyncRequestItemId, handler);
 
@@ -363,13 +356,15 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
     private void FailureGetRefreshToken(Handler handler, Integer originalSyncRequestItemId,Message msg, int msgWhat, int total, int progress, String baseMessage, String failedOperation) throws IOException {
 
+        // Keycloak refresh Token
         AuthenticationDTO authenticationDTO = new AuthenticationHelper(context).getAuthenticationDTO();
-        //
-        AuthRequestDTO authRequestDTO = new AuthRequestDTO();
-        authRequestDTO.setGrantType("refreshToken");
-        authRequestDTO.setToken(authenticationDTO.getRefreshToken());
-        AuthenticationInterface authenticationInterface =  AuthenticationClient.createService(AuthenticationInterface.class, context);
-        retrofit2.Call<AuthenticationDTO> authCall = authenticationInterface.getRefreshToken(authRequestDTO);
+        String clientId=context.getResources().getString(R.string.clientId);
+        String clientSecret=context.getResources().getString(R.string.clientSecret);
+        String grantType=context.getResources().getString(R.string.refresh_token);
+        String refreshToken=authenticationDTO.getRefreshToken();
+        // Keycloak Refresh Token Call
+        AuthenticationInterface authenticationInterface = AuthenticationClient.createService(AuthenticationInterface.class, context);
+        retrofit2.Call<AuthenticationDTO> authCall = authenticationInterface.getKeyCloakRefreshToken(clientId,clientSecret,grantType,refreshToken);
         retrofit2.Response authResponse = authCall.execute();
 
         // KeyCloak Login
@@ -396,31 +391,37 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
     private void FailureGetRefreshToken() throws IOException {
 
+        // Keycloak refresh Token
         AuthenticationDTO authenticationDTO = new AuthenticationHelper(context).getAuthenticationDTO();
-        AuthRequestDTO authRequestDTO = new AuthRequestDTO();
-        authRequestDTO.setGrantType("refreshToken");
-        authRequestDTO.setToken(authenticationDTO.getRefreshToken());
-        AuthenticationInterface authenticationInterface =  AuthenticationClient.createService(AuthenticationInterface.class, context);
-        retrofit2.Call<AuthenticationDTO> authCall = authenticationInterface.getRefreshToken(authRequestDTO);
+        String clientId=context.getResources().getString(R.string.clientId);
+        String clientSecret=context.getResources().getString(R.string.clientSecret);
+        String grantType=context.getResources().getString(R.string.refresh_token);
+        String refreshToken=authenticationDTO.getRefreshToken();
+        // Keycloak Refresh Token Call
+        AuthenticationInterface authenticationInterface = AuthenticationClient.createService(AuthenticationInterface.class, context);
+        retrofit2.Call<AuthenticationDTO> authCall = authenticationInterface.getKeyCloakRefreshToken(clientId,clientSecret,grantType,refreshToken);
         retrofit2.Response authResponse = authCall.execute();
+
         if (authResponse.isSuccessful()) {
             AuthenticationDTO newAuthDTO = (AuthenticationDTO) authResponse.body();
             newAuthDTO.setWillExpireAt((System.currentTimeMillis()/1000) + newAuthDTO.getExpiresIn() /1000);
             new AuthenticationHelper(context).setAuthenticationDTO(newAuthDTO);
-          //  syncGPSData();
-
         }
     }
 
     private void FailureGetRefreshToken(Handler handler, String helpname, String countryId,String helpPhone, String helpDes,Message msg, int msgWhat, int total, int progress, String baseMessage, String failedOperation) throws IOException {
 
+        // Keycloak refresh Token
         AuthenticationDTO authenticationDTO = new AuthenticationHelper(context).getAuthenticationDTO();
-        AuthRequestDTO authRequestDTO = new AuthRequestDTO();
-        authRequestDTO.setGrantType("refreshToken");
-        authRequestDTO.setToken(authenticationDTO.getRefreshToken());
-        AuthenticationInterface authenticationInterface =  AuthenticationClient.createService(AuthenticationInterface.class, context);
-        retrofit2.Call<AuthenticationDTO> authCall = authenticationInterface.getRefreshToken(authRequestDTO);
+        String clientId=context.getResources().getString(R.string.clientId);
+        String clientSecret=context.getResources().getString(R.string.clientSecret);
+        String grantType=context.getResources().getString(R.string.refresh_token);
+        String refreshToken=authenticationDTO.getRefreshToken();
+        // Keycloak Refresh Token Call
+        AuthenticationInterface authenticationInterface = AuthenticationClient.createService(AuthenticationInterface.class, context);
+        retrofit2.Call<AuthenticationDTO> authCall = authenticationInterface.getKeyCloakRefreshToken(clientId,clientSecret,grantType,refreshToken);
         retrofit2.Response authResponse = authCall.execute();
+
         if (authResponse.isSuccessful()) {
             AuthenticationDTO newAuthDTO = (AuthenticationDTO) authResponse.body();
             newAuthDTO.setWillExpireAt((System.currentTimeMillis()/1000) + newAuthDTO.getExpiresIn() /1000);
@@ -520,7 +521,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     @Override
                     public void onResponse(Call call, final Response postResponse) {
                         try {
-                            if(postResponse.code() == 401 && postResponse.headers().toString().contains("invalid_token")){
+                            if(postResponse.code() == 401){
 
                             }else {
                                 JSONObject response = new JSONObject(postResponse.body().string());
@@ -599,7 +600,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             @Override
             public void onResponse(Call call, Response postResponse) {
                 try {
-                    if(postResponse.code() == 401 && postResponse.headers().toString().contains("invalid_token")){
+                    if(postResponse.code() == 401){
                         FailureGetRefreshToken(handler,helpName, countryId, helpPhoneNo, helpDescription, msg, 2, 0, 0, null, "submitting help request");
                     }else {
                         JSONObject response = new JSONObject(postResponse.body().string());
@@ -1133,7 +1134,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 FabricLogsWriter.printCrashLog(TAG, finalEndpoint,postResponse.code(), "Request : "+jsonObject.toString() + "Response : "+ postResponse.networkResponse().toString(),context);
                             }catch (Exception e){FirebaseCrashlytics.getInstance().log(e.getMessage());}
                             try {
-                                if(postResponse.code() == 401 && postResponse.headers().toString().contains("invalid_token")){
+                                if(postResponse.code() == 401){
                                     FailureGetRefreshToken(handler,originalSyncRequestItemId, msg, 2, total, progress, null, "submitting training record" );
                                 }else {
                                     JSONObject response = new JSONObject(postResponse.body().string());
@@ -1388,7 +1389,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         syncNetworkQueue(originalSyncRequestItemId, handler);
                     } else {
                         try {
-                            if(postResponse.code() == 401 && postResponse.headers().toString().contains("invalid_token")){
+                            if(postResponse.code() == 401 ){
                                 FailureGetRefreshToken(handler,originalSyncRequestItemId, msg, 2, total, progress, null, "submitting FMP review");
                             }else {
                                 JSONObject response = new JSONObject(postResponse.body().string());
@@ -1542,7 +1543,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             syncNetworkQueue(originalSyncRequestItemId, handler);
                         } else {
                             try {
-                                if (postResponse.code() == 401 && postResponse.headers().toString().contains("invalid_token")){
+                                if (postResponse.code() == 401){
                                     FailureGetRefreshToken(handler,originalSyncRequestItemId, msg, 2, total, progress, null, "submitting FMP review");
                                 }else{
                                     JSONObject response = new JSONObject(postResponse.body().string());
@@ -1858,7 +1859,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                     FabricLogsWriter.printCrashLog(TAG, finalEndPoint,postResponse.code(), "Request : " +submission.toString() +"Response : "+ postResponse.networkResponse().toString(),context);
                                 }catch (Exception e){FirebaseCrashlytics.getInstance().log(e.getMessage());}
                                 try {
-                                    if(postResponse.code() == 401 && postResponse.headers().toString().contains("invalid_token")){
+                                    if(postResponse.code() == 401){
                                         FailureGetRefreshToken(handler,originalSyncRequestItemId, msg, 2, total, progress, null, "submitting survey module");
                                     }else {
                                         JSONObject response = new JSONObject(postResponse.body().string());
@@ -1992,7 +1993,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 }catch (Exception e){FirebaseCrashlytics.getInstance().log(e.getMessage());
                                 }
                                 try {
-                                    if(postResponse.code() == 401 && postResponse.headers().toString().contains("invalid_token")){
+                                    if(postResponse.code() == 401 ){
                                         FailureGetRefreshToken(handler,originalSyncRequestItemId, msg, 2, total, progress, null, "submitting farm polygon");
                                     }else {
                                         JSONObject response = new JSONObject(postResponse.body().string());
@@ -2108,7 +2109,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 }catch (Exception e){ FirebaseCrashlytics.getInstance().log(e.getMessage());
                                 }
                                 try {
-                                    if(postResponse.code() == 401 && postResponse.headers().toString().contains("invalid_token")){
+                                    if(postResponse.code() == 401 ){
                                         FailureGetRefreshToken(handler,originalSyncRequestItemId, msg, 2, total, progress, null, "submitting farm location");
                                     }else {
                                         JSONObject response = new JSONObject(postResponse.body().string());
@@ -2208,7 +2209,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 }catch (Exception e){ FirebaseCrashlytics.getInstance().log(e.getMessage());
                                 }
                                 try {
-                                    if(postResponse.code() == 401 && postResponse.headers().toString().contains("invalid_token")){
+                                    if(postResponse.code() == 401 ){
                                         FailureGetRefreshToken(handler,originalSyncRequestItemId, msg, 2, total, progress, null, "submitting farm location");
                                     }else {
                                         JSONObject response = new JSONObject(postResponse.body().string());
@@ -2347,7 +2348,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                     FabricLogsWriter.printCrashLog(TAG, finalEndpoint,postResponse.code(),"Request : " +params.toString() +" Response "+postResponse.networkResponse().toString(),context);
                                 }catch (Exception e){FirebaseCrashlytics.getInstance().log(e.getMessage());}
                                 try {
-                                    if(postResponse.code() == 401 && postResponse.headers().toString().contains("invalid_token")){
+                                    if(postResponse.code() == 401 ){
                                         FailureGetRefreshToken(handler,originalSyncRequestItemId, msg, 2, total, progress, null, "submitting farm location");
                                     }else {
                                         JSONObject response = new JSONObject(postResponse.body().string());
@@ -2591,7 +2592,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                     FabricLogsWriter.printCrashLog(TAG, finalEndpoint,postResponse.code(), "Request : "+params.toString()+"Response : "+postResponse.networkResponse().toString(),context);
                                 }catch (Exception e){   FirebaseCrashlytics.getInstance().log(e.getMessage());}
                                 try {
-                                    if(postResponse.code() == 401 && postResponse.headers().toString().contains("invalid_token")){
+                                    if(postResponse.code() == 401){
                                         FailureGetRefreshToken(handler,originalSyncRequestItemId, msg, 2, total, progress, null, "submitting farm location");
                                     }else {
                                         JSONObject response = new JSONObject(postResponse.body().string());
@@ -2876,7 +2877,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             FabricLogsWriter.printCrashLog(TAG, url,postResponse.code(),"Request : "+params.toString()+ " Response  : "+ postResponse.networkResponse().toString(),context);
                         }catch (Exception e){ FirebaseCrashlytics.getInstance().log(e.getMessage());}
                         try {
-                            if(postResponse.code() == 401 && postResponse.headers().toString().contains("invalid_token")){
+                            if(postResponse.code() == 401 ){
                                 FailureGetRefreshToken(handler,originalSyncRequestItemId, msg, 2, total, progress, null, "submitting survey module");
                             }else {
                                 JSONObject response = new JSONObject(postResponse.body().string());
@@ -3078,7 +3079,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 }catch (Exception e){   FirebaseCrashlytics.getInstance().log(e.getMessage());}
                                 try {
                                     String failureMessage = res.getString(R.string.networking_error);
-                                    if(postResponse.code() == 401 && postResponse.headers().toString().contains("invalid_token")){
+                                    if(postResponse.code() == 401 ){
                                         FailureGetRefreshToken(handler,originalSyncRequestItemId, msg, 2, total, progress, failureMessage, "submitting farmer photo failed");
                                     }else {
                                         JSONObject response = new JSONObject(postResponse.body().string());
@@ -3284,7 +3285,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                         long server_item_id = 0, fully_synced = 0;
 
                                         // Added
-                                        if (postResponse.code() == 401 && postResponse.headers().toString().contains("invalid_token")) {
+                                        if (postResponse.code() == 401 ) {
                                             FailureGetRefreshToken(handler, originalSyncRequestItemId, msg, 2, total, progress, null, "submitting child labour");
                                         } else {
                                             JSONArray jsonResponse = new JSONArray(postResponse.body().string());
@@ -3536,7 +3537,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 long server_item_id = 0, fully_synced = 0;
 
                                 // Added
-                                if(postResponse.code() == 401 && postResponse.headers().toString().contains("invalid_token")){
+                                if(postResponse.code() == 401 ){
                                     FailureGetRefreshToken(handler,originalSyncRequestItemId, msg, 2, total, progress, null, "submitting farmer");
                                 }else {
                                     JSONArray jsonResponse = new JSONArray(postResponse.body().string());
@@ -3874,7 +3875,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                         FabricLogsWriter.printCrashLog(TAG, finalEndPoint,postResponse.code(), "Request : " +submission.toString() +"Response : "+ postResponse.networkResponse().toString(),context);
                                     }catch (Exception e){ FirebaseCrashlytics.getInstance().log(e.getMessage());}
                                     try {
-                                        if(postResponse.code() == 401 && postResponse.headers().toString().contains("invalid_token")){
+                                        if(postResponse.code() == 401){
                                             FailureGetRefreshToken(handler,originalSyncRequestItemId, msg, 2, total, progress, null, "submitting survey module");
                                         }else {
                                             JSONObject response = new JSONObject(postResponse.body().string());
@@ -4000,7 +4001,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                     FabricLogsWriter.printCrashLog(TAG, finalEndpoint,postResponse.code(),"Request : " +params.toString() +" Response "+postResponse.networkResponse().toString(),context);
                                 }catch (Exception e){ FirebaseCrashlytics.getInstance().log(e.getMessage());}
                                 try {
-                                    if(postResponse.code() == 401 && postResponse.headers().toString().contains("invalid_token")){
+                                    if(postResponse.code() == 401 ){
                                         FailureGetRefreshToken(handler,originalSyncRequestItemId, msg, 2, total, progress, null, "submitting farm location");
                                     }else {
                                         JSONObject response = new JSONObject(postResponse.body().string());
@@ -4110,7 +4111,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 FabricLogsWriter.printCrashLog(TAG, finalEndpoint,postResponse.code(),"Request : " +params.toString() +" Response "+postResponse.networkResponse().toString(),context);
                             }catch (Exception e){FirebaseCrashlytics.getInstance().log(e.getMessage());}
                             try {
-                                if(postResponse.code() == 401 && postResponse.headers().toString().contains("invalid_token")){
+                                if(postResponse.code() == 401 ){
                                     FailureGetRefreshToken(handler,originalSyncRequestItemId, msg, 2, total, progress, null, "submitting farm location");
                                 }else {
                                     JSONObject response = new JSONObject(postResponse.body().string());
@@ -4220,7 +4221,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                     long server_item_id = 0, fully_synced = 0;
 
                                     // Added
-                                    if (postResponse.code() == 401 && postResponse.headers().toString().contains("invalid_token")) {
+                                    if (postResponse.code() == 401 ) {
                                         FailureGetRefreshToken(handler, originalSyncRequestItemId, msg, 2, total, progress, null, "submitting farmer");
                                     } else {
                                         JSONArray jsonResponse = new JSONArray(postResponse.body().string());
@@ -4336,7 +4337,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         } else {
                             isGpsSyncProcessing=false;
                             // Added
-                            if (postResponse.code() == 401 && postResponse.headers().toString().contains("invalid_token")) {
+                            if (postResponse.code() == 401) {
                                 try {
                                     FailureGetRefreshToken();
                                 }catch (Exception e){FirebaseCrashlytics.getInstance().log(e.getMessage());}
@@ -4411,7 +4412,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 FirebaseCrashlytics.getInstance().log(e.getMessage());
                             }
                             try {
-                                if (postResponse.code() == 401 && postResponse.headers().toString().contains("invalid_token")) {
+                                if (postResponse.code() == 401 ) {
                                     FailureGetRefreshToken(handler, originalSyncRequestItemId, msg, 2, total, progress, null, "submitting GPS track module");
                                 } else {
                                     JSONObject response = new JSONObject(postResponse.body().string());

@@ -40,15 +40,16 @@ public class AccessTokenTask extends AsyncTask<Object, Object, String> {
     @Override
     protected String doInBackground(Object... objects) {
         try {
-                //fetch new AccessToken and update willExpireAt
+                //getting new access token for first time
                 AuthenticationInterface authenticationInterface;
                 authenticationInterface = AuthenticationClient.createService(AuthenticationInterface.class, mContext);
                 AuthenticationDTO authenticationDTO = null;
-                // New
-            String clientId=mContext.getResources().getString(R.string.clientId);
-            String clientSecret=mContext.getResources().getString(R.string.clientSecret);
-            String grantType=mContext.getResources().getString(R.string.password);
-            String scope=mContext.getResources().getString(R.string.offline_access);
+
+                // Keycloak parameters - Using Access Token
+                String clientId=mContext.getResources().getString(R.string.clientId);
+                String clientSecret=mContext.getResources().getString(R.string.clientSecret);
+                String grantType=mContext.getResources().getString(R.string.password);
+                String scope=mContext.getResources().getString(R.string.offline_access);
                 Call<AuthenticationDTO> authCall = authenticationInterface.getKeyCloakAuthToken(clientId,
                     authRequestDTO.getUsername(),authRequestDTO.getPasscode(),grantType,clientSecret,scope);
 

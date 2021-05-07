@@ -462,7 +462,7 @@ public class SyncAllTask extends SyncTask {
             @Override
             public void onResponse(Call call, final Response postResponse) {
                 try {
-                    if (postResponse.code() == 401 && postResponse.headers().toString().contains("invalid_token")) {
+                    if (postResponse.code() == 401) {
                         FailureGetRefreshToken(null);
                     } else {
                         JSONObject response = new JSONObject(postResponse.body().string());
