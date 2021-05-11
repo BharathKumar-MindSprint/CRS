@@ -110,12 +110,17 @@ android {
 
             // New SIT DNS name
             resValue "string", "applicationName", "OFIS SIT"
-            resValue "string", "AUTH_SERVER_URL", 'https://otofis-sit-zuul.olamdigital.com/oauth/api/v1/oauth/'
+           // resValue "string", "AUTH_SERVER_URL", 'https://otofis-sit-zuul.olamdigital.com/oauth/api/v1/oauth/'
+            resValue "string", "AUTH_SERVER_URL", 'https://digitalauthdev.olamnet.com/auth/realms/ofis-dse-sit/protocol/openid-connect/'
             buildConfigField 'String', 'HOST', '"https://otofis-sit-zuul.olamdigital.com/"'
 
             buildConfigField "String", "MATOMO_SERVER_URL", '"https://olammatomo.azurewebsites.net/matomo.php"'
             buildConfigField "int", "MATOMO_SERVER_CODE", '35'
             buildConfigField "boolean", "MATOMO_ENABLED", 'true'
+            //KeyCloak
+            resValue "string", "clientId", '"ofis-mobile-sit"'
+            resValue "string", "clientSecret", '"d28384ec-7368-48ca-8886-91e4a17b8f3f"'
+
         }
 
         preprod {
