@@ -686,12 +686,12 @@
     <string name="label_subdistrict">Subdistrict:</string>
     <string name="subdistrict_note">Farmer\'s Subdistrict Captured</string>
     <string name="valid_until">Vaild Until</string>
-    <string name="nid_exp_fill">Please fill Expiry Date</string>
     <string name="update_firebase_install_id_info">Updating Informations</string>
     <string name="password">password</string>
     <string name="offline_access">offline_access</string>
     <string name="refresh_token">refresh_token</string>
-    <string name="privacy_data">Olam Food Ingredients and our affiliates worldwide (collectively called “ofi,” “we,” “us,” “our”) understand the importance of privacy to you. This policy summarizes what personal information we may collect, how we may use this information, and other important topics relating to your privacy and data protection.\n \n
+    <string name="checking_isfl_enumerator">Checking Farmer Lead Enumerator</string>
+     <string name="privacy_data">Olam Food Ingredients and our affiliates worldwide (collectively called “ofi,” “we,” “us,” “our”) understand the importance of privacy to you. This policy summarizes what personal information we may collect, how we may use this information, and other important topics relating to your privacy and data protection.\n \n
 It is ofi policy to comply with all applicable privacy and data protection laws. This commitment reflects the value we place on earning and keeping the trust of our customers, business partners and others who share their personal information with us.\n \n
 This Policy applies to all websites and mobile applications (“apps”) operated by or on behalf of ofi. It also applies to personal information ofi may otherwise collect: (i) through our products and services; (ii) when you interact with us by means other than an ofi website or app, for example, in person, by telephone, or at a trade show or training; and (iii) from our customers, distributors, suppliers, vendors, and other business partners (collectively “Business Partners”).\n\n
 However, different ofi websites, apps, products, and services have different purposes and features. If additional or different disclosures are required for a specific OFI website, app, product, or service, then we provide those disclosures (“Specific Privacy Statements”) separately on, or with, the relevant website, app, product, or service. Each such specific privacy disclosure, policy, or statement supplements and amends this Policy.\n\n

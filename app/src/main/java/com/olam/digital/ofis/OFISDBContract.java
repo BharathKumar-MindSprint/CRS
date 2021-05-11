@@ -949,6 +949,22 @@ public class OFISDBContract {
         );
     }
 
+    public static abstract class FarmerLeadDetails implements BaseColumns {
+        public static final String TABLE_NAME = "farmerLeads";
+        public static final String COLUMN_FL_ID = "farmerLeadId";
+        public static final String COLUMN_FL_DISPLAYID = "farmerLeadDisplayId";
+        public static final String COLUMN_FL_FULLNAME = "farmerLeadFullName";
+        public static final String COLUMN_FL_NUMBER = "contactNumber";
+        public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
+                new ArrayList<String>() {{
+                    add(COLUMN_FL_ID);
+                    add(COLUMN_FL_DISPLAYID);
+                    add(COLUMN_FL_FULLNAME);
+                    add(COLUMN_FL_NUMBER);
+                }}
+        );
+    }
+
     public static abstract class Subquestionanswer implements BaseColumns {
         public static final String TABLE_NAME = "Subquestionanswer";
         public static final String COLUMN_NAME_ID = "id";

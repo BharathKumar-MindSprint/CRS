@@ -11,7 +11,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 class OFISDB extends SQLiteOpenHelper {
     private static OFISDB sInstance;
 
-    private static final int DATABASE_VERSION = 125;
+    private static final int DATABASE_VERSION = 126;
 
     private static final String DATABASE_NAME = "ofismobile";
 
@@ -321,6 +321,7 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID + " TEXT, "
             + OFISDBContract.FarmerEntry.COLUMN_NAME_REGIONID + " TEXT, "
             + OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID + " TEXT, "
+            + OFISDBContract.FarmerEntry.COLUMN_NAME_ISCONSENTAVAILABLE + " TEXT, "
             + OFISDBContract.FarmerEntry.COLUMN_NAME_DISTRICTID + " TEXT, "
             + OFISDBContract.FarmerEntry.COLUMN_NAME_SUBDISTRICTID + " TEXT, "
             + OFISDBContract.FarmerEntry.COLUMN_NAME_SUBDISID + " TEXT, "
@@ -356,6 +357,11 @@ class OFISDB extends SQLiteOpenHelper {
     private static final String OFIS_LOCALNATIONALIDIMAGES_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.LocalNationalIDImages.TABLE_NAME
             + " ( " +  OFISDBContract.LocalNationalIDImages.COLUMN_NID_TYPE + " INTEGER, "
             + OFISDBContract.LocalNationalIDImages.COLUMN_NID_PHOTO + " TEXT )";
+
+    private static final String OFIS_FARMERLEADS_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.FarmerLeadDetails.TABLE_NAME
+            + " ( " +  OFISDBContract.FarmerLeadDetails.COLUMN_FL_ID + " INTEGER, "
+            + OFISDBContract.FarmerLeadDetails.COLUMN_FL_DISPLAYID + " TEXT, " + OFISDBContract.FarmerLeadDetails.COLUMN_FL_FULLNAME + " TEXT, "
+            + OFISDBContract.FarmerLeadDetails.COLUMN_FL_NUMBER + " TEXT )";
 
     private static final String OFIS_COUNTRIES_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.CountriesEntry.TABLE_NAME
             + " ( " + OFISDBContract.CountriesEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.CountriesEntry.COLUMN_NAME_CODE + " TEXT, "
@@ -738,6 +744,8 @@ class OFISDB extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(OFIS_SIGNATURE_TABLE_CREATE);
 //        Update consent statement
         sqLiteDatabase.execSQL(OFIS_CONSENT_STATEMENT_CREATE);
+//      farmerleads
+        sqLiteDatabase.execSQL(OFIS_FARMERLEADS_TABLE_CREATE);
 
     }
 
@@ -818,6 +826,7 @@ class OFISDB extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL("drop table IF EXISTS signature");
         sqLiteDatabase.execSQL("drop table IF EXISTS gps_details");
         sqLiteDatabase.execSQL("drop table IF EXISTS consentstatement");
+        sqLiteDatabase.execSQL("drop table IF EXISTS farmerLeads");
 
         onCreate(sqLiteDatabase);
     }

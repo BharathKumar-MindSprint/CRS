@@ -138,6 +138,26 @@ abstract class SyncTask extends AsyncTask<SyncTaskOperationType, Object, String>
         okHttpClient.newCall(request).enqueue(callback);
     }
 
+    void okHttpODPost(Context context, String url, JSONObject params, Callback callback) {
+        okHttpClient.readTimeoutMillis();
+
+        RequestBody body;
+        Request.Builder requestBuilder = new Request.Builder()
+                .url(url);
+
+        if (params != null) {
+            body = RequestBody.create(JSONBody, params.toString());
+        } else {
+            body = RequestBody.create(JSONBody, "");
+        }
+
+        requestBuilder.post(body);
+
+        Request request = requestBuilder.build();
+
+        okHttpClient.newCall(request).enqueue(callback);
+    }
+
     void okHttpGet(Context context, String url, JSONObject params, Callback callback) {
         okHttpClient.readTimeoutMillis();
         String enumeratorId = Utilities.getFromSharedPrefs(context);
@@ -176,6 +196,17 @@ abstract class SyncTask extends AsyncTask<SyncTaskOperationType, Object, String>
 
         Request request = requestBuilder.build();
 
+        okHttpClient.newCall(request).enqueue(callback);
+    }
+
+
+    void okHttpODGet(Context context, String url, JSONObject params, Callback callback) {
+        okHttpClient.readTimeoutMillis();
+        Request.Builder requestBuilder = new Request.Builder()
+                .header("Authorization", "Bearer " +   Utilities.getdatafromSharedPrefs(context, "ODTOKEN"))
+                .url(url);
+        requestBuilder.get();
+        Request request = requestBuilder.build();
         okHttpClient.newCall(request).enqueue(callback);
     }
 

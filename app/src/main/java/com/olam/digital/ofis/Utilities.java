@@ -53,6 +53,7 @@ public class Utilities {
     private static final String SHARED_PREFS_NAME = "com.olam.digital.ofis.app_prefs";
     private static final String SHARED_FIREBASE_TOKEN_UPDATED = "firebase_token_updated";
     public static final String HOUSEHOLD_ENUMERATOR = "household_enumerator";
+    public static final String FARMERLEAD_ENUMERATOR = "farmerlead_enumerator";
     public static int syctask=0;
 
 
@@ -262,6 +263,18 @@ public  static String base64ConversionForImage(String filepath)  {
         String decryptedMsg="";
         try {
             decryptedMsg = AESCrypt.decrypt(GPSConstants.COLUMN_ENUMERATOR_NAME, s);
+        }catch (GeneralSecurityException e){
+            //handle error - could be due to incorrect password or tampered encryptedMsg
+        }
+        return decryptedMsg;
+    }
+
+    public static String getdatafromSharedPrefs(Context context, String data) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
+        String s=sharedPreferences.getString(data, "");
+        String decryptedMsg="";
+        try {
+            decryptedMsg = AESCrypt.decrypt(data, s);
         }catch (GeneralSecurityException e){
             //handle error - could be due to incorrect password or tampered encryptedMsg
         }
