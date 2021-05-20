@@ -258,7 +258,6 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
 
         // Show popup OW-2909
         initiaizeInfoWidget();
-        showInfo();
         infoCloseImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -279,6 +278,8 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
             boolean available = dl.isValueavailable(farmerId);
             if (!available) {
               statusInfoLayout.setVisibility(View.VISIBLE);
+            }else {
+                statusInfoLayout.setVisibility(View.GONE);
             }
         }
     }
@@ -1750,6 +1751,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
     protected void onResume() {
         super.onResume();
         setupUI();
+        showInfo();
         MatomoHelper.matomoScreenTracker(ScreenNameConstants.SCREEN_FIND_FARMER_ACTIVITY, ScreenNameConstants.SCREEN_VIEW_FARMER_ACTIVITY, ScreenNameConstants.SCREEN_VIEW_FARMER);
     }
 }
