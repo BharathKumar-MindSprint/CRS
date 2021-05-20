@@ -643,4 +643,37 @@ public  static String base64ConversionForImage(String filepath)  {
 
     }
 
+    public static void setKeycloakClientDetails(Context context, String prefName, String value) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        if (value != null) {
+            String encryptedContent = "";
+            try {
+                encryptedContent = AESCrypt.encrypt(prefName, value);
+            } catch (GeneralSecurityException e) {
+                //handle error
+            }
+            editor.putString(prefName, encryptedContent);
+        }
+        editor.apply();
+    }
+
+    public static String getKeyCloakClientDetails(Context context,String prefName) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
+        String s= sharedPreferences.getString(prefName, "");
+        String decryptedMsg="";
+        try {
+            decryptedMsg = AESCrypt.decrypt(prefName, s);
+        }catch (Exception e){
+            //handle error - could be due to incorrect password or tampered encryptedMsg
+        }
+        if (decryptedMsg.equalsIgnoreCase("")){
+            return  s;
+        }else{
+            return decryptedMsg;
+        }
+
+    }
+
+
 }

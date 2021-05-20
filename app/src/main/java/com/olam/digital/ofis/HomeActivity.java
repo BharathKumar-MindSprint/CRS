@@ -62,6 +62,8 @@ import com.olam.digital.ofis.authentication.AuthenticationClient;
 import com.olam.digital.ofis.authentication.AuthenticationHelper;
 import com.olam.digital.ofis.authentication.AuthenticationInterface;
 import com.olam.digital.ofis.authentication.DeviceIDxctractor;
+import com.olam.digital.ofis.authentication.KeyCloakInfo;
+import com.olam.digital.ofis.authentication.KeyCloakInfo;
 import com.olam.digital.ofis.authentication.OnAccessTokenInterface;
 import com.olam.digital.ofis.authentication.model.AuthRequestDTO;
 import com.olam.digital.ofis.authentication.model.AuthenticationDTO;
@@ -219,7 +221,10 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         StrictMode.setThreadPolicy(policy);
         // checkTime();
         bindNetworkQueue(true);
-
+        if (Utilities.getKeyCloakClientDetails(context, KeyCloakInfo.Client_Id).equalsIgnoreCase("")){
+            String environment=BuildConfig.FLAVOR;
+            setKeycloakCredentials(environment);
+        }
         if (sharedPreferences.getBoolean("FIRST_RUN",true)) {
             firstRunSection.setVisibility(View.VISIBLE);
         }
@@ -349,7 +354,30 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         gpsTracker=new GPSTracker(this,gpsListener,true);
 
     }
-
+    private void setKeycloakCredentials(String environment) {
+        String clientId = null;
+        String clientSecret=null;
+        switch (environment){
+            case "dev":
+                clientId=KeyCloakInfo.dev_client_Id;
+                clientSecret=KeyCloakInfo.dev_Client_Secret;
+                break;
+            case "sit":
+                clientId=KeyCloakInfo.sit_client_Id;
+                clientSecret=KeyCloakInfo.sit_Client_Secret;
+                break;
+            case "uat":
+                clientId=KeyCloakInfo.uat_client_Id;
+                clientSecret=KeyCloakInfo.uat_Client_Secret;
+                break;
+            case "prod":
+                clientId=KeyCloakInfo.prod_client_Id;
+                clientSecret=KeyCloakInfo.prod_Client_Secret;
+                break;
+        }
+        Utilities.setKeycloakClientDetails(context,KeyCloakInfo.Client_Id,clientId);
+        Utilities.setKeycloakClientDetails(context,KeyCloakInfo.Client_Secret,clientSecret);
+    }
     private void doingAuthRequest() {
         String userEnumerator = enumeratorID.getText().toString().trim();
 //        Passcode validation - Penetration testing
@@ -371,8 +399,8 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
     private void doKeyCloakAuthentication(String userEnumerator, String passcode) {
 
-        String clientId=getResources().getString(R.string.clientId);
-        String clientSecret=getResources().getString(R.string.clientSecret);
+        String clientId=Utilities.getKeyCloakClientDetails(context,KeyCloakInfo.Client_Id);
+        String clientSecret=Utilities.getKeyCloakClientDetails(context,KeyCloakInfo.Client_Secret);
         String grantType=getResources().getString(R.string.password);
         String scope=getResources().getString(R.string.offline_access);
 

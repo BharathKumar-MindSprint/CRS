@@ -39,49 +39,12 @@ public class AccessTokenTask extends AsyncTask<Object, Object, String> {
 
     @Override
     protected String doInBackground(Object... objects) {
-        // Old Approach Start
-//        try {
-//                //getting new access token for first time
-//                AuthenticationInterface authenticationInterface;
-//                authenticationInterface = AuthenticationClient.createService(AuthenticationInterface.class, mContext);
-//                AuthenticationDTO authenticationDTO = null;
-//
-//                // Keycloak parameters - Using Access Token
-//                String clientId=mContext.getResources().getString(R.string.clientId);
-//                String clientSecret=mContext.getResources().getString(R.string.clientSecret);
-//                String grantType=mContext.getResources().getString(R.string.password);
-//                String scope=mContext.getResources().getString(R.string.offline_access);
-//                Call<AuthenticationDTO> authCall = authenticationInterface.getKeyCloakAuthToken(clientId,
-//                    authRequestDTO.getUsername(),authRequestDTO.getPasscode(),grantType,clientSecret,scope);
-//
-//
-//            // Keycloak Code Changes
-//                Response authResponse = authCall.execute();
-//                if (authResponse.isSuccessful()) {
-//                    authenticationDTO = (AuthenticationDTO) authResponse.body();
-//                    DynatraceHelper.requestPayload(DynatraceConstants.AUTHENTICATION_RESPONSE,new Gson().toJson(authenticationDTO),mContext,false);
-//                    authenticationDTO.setWillExpireAt((System.currentTimeMillis()/1000) + authenticationDTO.getExpiresIn() /1000);
-//                    new AuthenticationHelper(mContext).setAuthenticationDTO(authenticationDTO);
-//                    new AuthenticationHelper(mContext).setUserName(authRequestDTO.getUsername());
-//                    new AuthenticationHelper(mContext).setPassode(authRequestDTO.getPasscode());
-//                    Utilities.saveToSharedPrefs(mContext, "ENUMERATOR_ID", authRequestDTO.getUsername(), null);
-//                    Utilities.saveToSharedPrefs(mContext, "PASSCODE", authRequestDTO.getPasscode(), null);
-//                    return authenticationDTO.getAccessToken();
-//                } else {
-//                    int statusCode = authResponse.code();
-//                    return null;
-//                }
-//        } catch (Exception e) {
-//            return null;
-//        }
-        //END
-
 
         // New Approach Start
         try {
             //getting new access token for first time
-            String clientId=mContext.getResources().getString(R.string.clientId);
-            String clientSecret=mContext.getResources().getString(R.string.clientSecret);
+            String clientId=Utilities.getKeyCloakClientDetails(mContext,KeyCloakInfo.Client_Id);
+            String clientSecret=Utilities.getKeyCloakClientDetails(mContext,KeyCloakInfo.Client_Secret);
             String grantType=mContext.getResources().getString(R.string.refresh_token);
             String refreshToken=authenticationDTO.getRefreshToken();
 

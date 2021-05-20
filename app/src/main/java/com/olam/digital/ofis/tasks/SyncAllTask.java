@@ -18,6 +18,7 @@ import com.olam.digital.ofis.authentication.AuthenticationClient;
 import com.olam.digital.ofis.authentication.AuthenticationHelper;
 import com.olam.digital.ofis.authentication.AuthenticationInterface;
 import com.olam.digital.ofis.authentication.DeviceIDxctractor;
+import com.olam.digital.ofis.authentication.KeyCloakInfo;
 import com.olam.digital.ofis.authentication.model.AuthRequestDTO;
 import com.olam.digital.ofis.authentication.model.AuthenticationDTO;
 import com.olam.digital.ofis.childlabour.ChildLabourUtils;
@@ -526,8 +527,8 @@ public class SyncAllTask extends SyncTask {
     private void FailureGetRefreshToken(JSONObject response) throws IOException, JSONException {
 
         AuthenticationDTO authenticationDTO = new AuthenticationHelper(context).getAuthenticationDTO();
-        String clientId=context.getResources().getString(R.string.clientId);
-        String clientSecret=context.getResources().getString(R.string.clientSecret);
+        String clientId=Utilities.getKeyCloakClientDetails(context, KeyCloakInfo.Client_Id);
+        String clientSecret=Utilities.getKeyCloakClientDetails(context,KeyCloakInfo.Client_Secret);
         String grantType=context.getResources().getString(R.string.refresh_token);
         String refreshToken=authenticationDTO.getRefreshToken();
 
