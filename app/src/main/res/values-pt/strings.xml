@@ -618,6 +618,8 @@
     <string name="please_respond_mandatory_question">Por favor responda a pergunta obrigatória.</string>
     <string name="please_check_question">Please check Question</string>
     <string name="please_check_dependent_question">since its dependent question is updated</string>
+    <string name="update_firebase_install_id_info">Updating Informations</string>
+    <string name="national_id_info">Please update the National ID of farmer</string>
 
 
     <string name="zero_area_msg">Cannot save recorded polygon with 0ha. Please try recording a different polygon</string>
