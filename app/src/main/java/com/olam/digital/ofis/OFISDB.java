@@ -11,7 +11,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 class OFISDB extends SQLiteOpenHelper {
     private static OFISDB sInstance;
 
-    private static final int DATABASE_VERSION = 126;
+    private static final int DATABASE_VERSION = 129;
 
     private static final String DATABASE_NAME = "ofismobile";
 
@@ -119,6 +119,8 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.NationalIDEntry.COLUMN_NAME_NID_LIMIT + " INTEGER, " + OFISDBContract.NationalIDEntry.COLUMN_NAME_NID_TYPE + " TEXT, "
             + OFISDBContract.NationalIDEntry.COLUMN_NAME_EXP_DATE_SLIDER + " TEXT, "
             + OFISDBContract.NationalIDEntry.COLUMN_NAME_PHOTO_REQUIRED + " TEXT, " + OFISDBContract.NationalIDEntry.COLUMN_NAME_NID_ACTIVE + " TEXT, "
+            + OFISDBContract.NationalIDEntry.COLUMN_NAME_STARTYEAR + " TEXT, " + OFISDBContract.NationalIDEntry.COLUMN_NAME_ENDYEAR + " TEXT, "
+            + OFISDBContract.NationalIDEntry.COLUMN_NAME_MONTH + " TEXT, "
             + OFISDBContract.NationalIDEntry.COLUMN_NAME_TYPE_FR + " TEXT, " + OFISDBContract.NationalIDEntry.COLUMN_NAME_TYPE_ES + " TEXT, "
             + OFISDBContract.NationalIDEntry.COLUMN_NAME_TYPE_PT + " TEXT, " + OFISDBContract.NationalIDEntry.COLUMN_NAME_TYPE_ID + " TEXT, "
             + OFISDBContract.NationalIDEntry.COLUMN_NAME_TYPE_TR + " TEXT, " + OFISDBContract.NationalIDEntry.COLUMN_NAME_TYPE_LO + " TEXT, "
@@ -302,6 +304,7 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.FarmerEntry.COLUMN_NAME_SUBDISID + " TEXT, "
             + OFISDBContract.FarmerEntry.COLUMN_NAME_ISCONSENTAVAILABLE + " TEXT, "
             + OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID+ " TEXT, "
+            + OFISDBContract.FarmerEntry.COLUMN_NAME_ODFARMERID+ " TEXT, "
             + OFISDBContract.FarmerEntry.COLUMN_NAME_DOB + " TEXT, " + OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID + " TEXT, "
             + OFISDBContract.FarmerEntry.COLUMN_NAME_PHOTO + " TEXT, " + OFISDBContract.FarmerEntry.COLUMN_NAME_SIGNATURE + " TEXT, "
             + OFISDBContract.FarmerEntry.COLUMN_NAME_SYNCED + " INTEGER DEFAULT 1, " + OFISDBContract.FarmerEntry.COLUMN_NAME_CREATED_LOCALLY + " INTEGER, "
@@ -312,6 +315,8 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_PLOTS + " TEXT, "
             + OFISDBContract.FarmerEntry.COLUMN_NAME_REGISTER_DATE + " TEXT, "
             + OFISDBContract.FarmerEntry.COLUMN_NAME_MODERATION_STATUS + " TEXT, "
+            + OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERLEAD + " TEXT, "
+            + OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERLEADNAME + " TEXT, "
             + OFISDBContract.FarmerEntry.COLUMN_NAME_CONSENT_FARMER + " INTEGER DEFAULT 1, " + OFISDBContract.FarmerEntry.COLUMN_NAME_CONSENT_OTHERS + " INTEGER DEFAULT 1)";
 
     private static final String OFIS_BACKUP_FARMER_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.FarmerEntry.BACKUP_TABLE_NAME +
@@ -325,6 +330,7 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.FarmerEntry.COLUMN_NAME_DISTRICTID + " TEXT, "
             + OFISDBContract.FarmerEntry.COLUMN_NAME_SUBDISTRICTID + " TEXT, "
             + OFISDBContract.FarmerEntry.COLUMN_NAME_SUBDISID + " TEXT, "
+            + OFISDBContract.FarmerEntry.COLUMN_NAME_ODFARMERID+ " TEXT, "
             + OFISDBContract.FarmerEntry.COLUMN_NAME_DOB + " TEXT, " + OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID + " TEXT, "
             + OFISDBContract.FarmerEntry.COLUMN_NAME_PHOTO + " TEXT, " + OFISDBContract.FarmerEntry.COLUMN_NAME_SIGNATURE + " TEXT, "
             + OFISDBContract.FarmerEntry.COLUMN_NAME_SYNCED + " INTEGER DEFAULT 1, " + OFISDBContract.FarmerEntry.COLUMN_NAME_CREATED_LOCALLY + " INTEGER, "
@@ -333,6 +339,8 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_PLOTS + " TEXT, "
             + OFISDBContract.FarmerEntry.COLUMN_NAME_REGISTER_DATE + " TEXT, "
             + OFISDBContract.FarmerEntry.COLUMN_NAME_MODERATION_STATUS + " TEXT, "
+            + OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERLEAD + " TEXT, "
+            + OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERLEADNAME + " TEXT, "
             + OFISDBContract.FarmerEntry.COLUMN_NAME_CONSENT_FARMER + " INTEGER DEFAULT 1, " + OFISDBContract.FarmerEntry.COLUMN_NAME_CONSENT_OTHERS + " INTEGER DEFAULT 1)";
 
     private static final String OFIS_FARMER_INDEX_CREATE = "CREATE INDEX IF NOT EXISTS idx_farmer_locally_created ON " + OFISDBContract.FarmerEntry.TABLE_NAME + "(" + OFISDBContract.FarmerEntry.COLUMN_NAME_CREATED_LOCALLY + ")";

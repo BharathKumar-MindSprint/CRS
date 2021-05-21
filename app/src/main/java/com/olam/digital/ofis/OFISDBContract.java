@@ -599,6 +599,9 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_NID_LIMIT = "nationalIdLimit";
         public static final String COLUMN_NAME_PHOTO_REQUIRED = "photoRequired";
         public static final String COLUMN_NAME_EXP_DATE_SLIDER = "expiryDateSlider";
+        public static final String COLUMN_NAME_STARTYEAR = "startYear";
+        public static final String COLUMN_NAME_ENDYEAR = "endYear";
+        public static final String COLUMN_NAME_MONTH = "month";
         public static final String COLUMN_NAME_TYPE_FR = "type_fr";
         public static final String COLUMN_NAME_TYPE_ES = "type_es";
         public static final String COLUMN_NAME_TYPE_PT = "type_pt";
@@ -617,6 +620,9 @@ public class OFISDBContract {
                     add(COLUMN_NAME_NID_LIMIT);
                     add(COLUMN_NAME_PHOTO_REQUIRED);
                     add(COLUMN_NAME_EXP_DATE_SLIDER);
+                    add(COLUMN_NAME_STARTYEAR);
+                    add(COLUMN_NAME_ENDYEAR);
+                    add(COLUMN_NAME_MONTH);
                     add(COLUMN_NAME_TYPE_FR);
                     add(COLUMN_NAME_TYPE_ES);
                     add(COLUMN_NAME_TYPE_PT);
@@ -794,6 +800,9 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_FARM_HOUSEHOLD_LNG = "householdLng";
         public static final String COLUMN_NAME_FARM_HOUSEHOLD_ID = "householdId";
         public static final String COLUMN_NAME_ISCONSENTAVAILABLE = "isConsentAvailable";
+        public static final String COLUMN_NAME_FARMERLEAD = "farmerLead";
+        public static final String COLUMN_NAME_FARMERLEADNAME = "farmerLeadName";
+        public static final String COLUMN_NAME_ODFARMERID = "odFarmerId";
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
                     add(COLUMN_NAME_ID);
@@ -823,7 +832,9 @@ public class OFISDBContract {
                     add(COLUMN_NAME_PRODUCT_ID);
                     add(COLUMN_NAME_REGISTER_DATE);
                     add(COLUMN_NAME_MODERATION_STATUS);
-
+                    add(COLUMN_NAME_FARMERLEAD);
+                    add(COLUMN_NAME_FARMERLEADNAME);
+                    add(COLUMN_NAME_ODFARMERID);
                 }}
         );
         public static final List<String> SYNC_COLUMN_LIST = Collections.unmodifiableList(
@@ -844,10 +855,12 @@ public class OFISDBContract {
                     add(COLUMN_NAME_FARMERGROUPID);
                     add(COLUMN_NAME_REGIONID);
                     add(COLUMN_NAME_PRODUCT_ID);
+                    add(COLUMN_NAME_DOB);
                     add(COLUMN_NAME_ISCONSENTAVAILABLE);
                     add(COLUMN_NAME_FARM_HOUSEHOLD_LAT);
                     add(COLUMN_NAME_FARM_HOUSEHOLD_LNG);
                     add(COLUMN_NAME_FARM_HOUSEHOLD_ID);
+                    add(COLUMN_NAME_ODFARMERID);
                 }}
         );
         public static final String COLUMN_NAME_OLAM_FARMER_ID_DISPLAY = "displayFarmerId";

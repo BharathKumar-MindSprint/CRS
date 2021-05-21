@@ -9,9 +9,13 @@ import android.database.DatabaseUtils;
 import android.database.MatrixCursor;
 import android.database.MergeCursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteQueryBuilder;
 import android.location.Location;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.text.TextUtils;
@@ -29,6 +33,7 @@ import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.olam.digital.ofis.childlabour.ChildLabourUtils;
 import com.olam.digital.ofis.coffeesurveyconstraints.CoffeeConstants;
+import com.olam.digital.ofis.model.FarmerLeadDTO;
 import com.olam.digital.ofis.model.NationalIdDTO;
 import com.olam.digital.ofis.recordpolygon.Utils;
 import com.olam.digital.ofis.model.FarmerGeo;
@@ -339,7 +344,7 @@ public class DataLayer {
 
                 updateNetworkQueueNewFarmerEntry(networkQueueValues, farmerId);
             }
-        }catch (Exception e){}
+        }catch (Exception e){e.printStackTrace();}
 
 //        db.update(OFISDBContract.FarmerEntry.BACKUP_TABLE_NAME, values, whereClause, whereArgs);
 
@@ -3450,6 +3455,28 @@ public class DataLayer {
         }
 
         return nationalList;
+    }
+
+    public List<FarmerLeadDTO> getFarmerLeads() {
+
+        List<FarmerLeadDTO> list = new ArrayList<FarmerLeadDTO>();
+        Cursor nids = db.rawQuery("SELECT * FROM " + OFISDBContract.FarmerLeadDetails.TABLE_NAME, null);;
+        try {
+            while (nids.moveToNext()) {
+                FarmerLeadDTO leadDTO = new FarmerLeadDTO();
+                leadDTO.setFarmerLeadFullName(nids.getString(nids.getColumnIndex(OFISDBContract.FarmerLeadDetails.COLUMN_FL_FULLNAME)));
+                leadDTO.setFarmerLeadDisplayId(nids.getString(nids.getColumnIndex(OFISDBContract.FarmerLeadDetails.COLUMN_FL_DISPLAYID)));
+                leadDTO.setContactNumber(nids.getString(nids.getColumnIndex(OFISDBContract.FarmerLeadDetails.COLUMN_FL_NUMBER)));
+                leadDTO.setFarmerLeadId(nids.getInt(nids.getColumnIndex(OFISDBContract.FarmerLeadDetails.COLUMN_FL_ID)));
+                list.add(leadDTO);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            nids.close();
+        }
+
+        return list;
     }
 
     public String getNIDTypeByID(String typeId) {

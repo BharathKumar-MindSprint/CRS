@@ -293,6 +293,7 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
 
                             }
                         }, mYear, mMonth, mDay);
+                setRangeofDatePicker(datePickerDialog,spinner_nidtype.getSelectedItem().toString());
                 datePickerDialog.show();
             }
         });
@@ -437,6 +438,7 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
                                             expiryDate.setText(humanDate);
                                         }
                                     }, mYear, mMonth, mDay);
+                            setRangeofDatePicker(datePickerDialog,spinner_nidtype.getSelectedItem().toString());
                             datePickerDialog.show();
                         }
                     });
@@ -704,6 +706,7 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
 
                                         }
                                     }, mYear, mMonth, mDay);
+                            setRangeofDatePicker(datePickerDialog,spinner_nidtype.getSelectedItem().toString());
                             datePickerDialog.show();
                         }
                     });

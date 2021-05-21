@@ -3,6 +3,7 @@ package com.olam.digital.ofis;
 
 import android.app.AlertDialog;
 
+import android.app.DatePickerDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -38,7 +39,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -203,6 +207,52 @@ public class BaseActivity extends AppCompatActivity {
         if (nid.getCount() > 0) {
             nid.moveToFirst();
             photostatus = nid.getString(nid.getColumnIndex(OFISDBContract.NationalIDEntry.COLUMN_NAME_EXP_DATE_SLIDER));
+        }
+        return photostatus;
+    }
+
+    public String getNidMinrange(String type) {
+        String photostatus = "true";
+        Cursor nid = dl.getNIDPhotostatusByName(type);
+        if (nid.getCount() > 0) {
+            nid.moveToFirst();
+            photostatus = nid.getString(nid.getColumnIndex(OFISDBContract.NationalIDEntry.COLUMN_NAME_STARTYEAR));
+        }
+        return photostatus;
+    }
+
+    public void setRangeofDatePicker(DatePickerDialog datePickerDialog, String type) {
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            String startyear = getNidMinrange(type);
+            String endyear = getNidMaxrange(type);
+            String month = getNidMonthRange(type);
+            String startdate = startyear + "-" + month + "-01" ;
+            String enddate = endyear + "-" + month + "-01" ;
+            Date sdate = sdf.parse(startdate);
+            Date edate = sdf.parse(enddate);
+            long startDate = sdate.getTime();
+            long endDate = edate.getTime();
+            datePickerDialog.getDatePicker().setMinDate(startDate);
+            datePickerDialog.getDatePicker().setMaxDate(endDate);
+        }catch (ParseException e) { e.printStackTrace(); }
+    }
+
+    public String getNidMaxrange(String type) {
+        String photostatus = "true";
+        Cursor nid = dl.getNIDPhotostatusByName(type);
+        if (nid.getCount() > 0) {
+            nid.moveToFirst();
+            photostatus = nid.getString(nid.getColumnIndex(OFISDBContract.NationalIDEntry.COLUMN_NAME_ENDYEAR));
+        }
+        return photostatus;
+    }
+    public String getNidMonthRange(String type) {
+        String photostatus = "true";
+        Cursor nid = dl.getNIDPhotostatusByName(type);
+        if (nid.getCount() > 0) {
+            nid.moveToFirst();
+            photostatus = nid.getString(nid.getColumnIndex(OFISDBContract.NationalIDEntry.COLUMN_NAME_MONTH));
         }
         return photostatus;
     }

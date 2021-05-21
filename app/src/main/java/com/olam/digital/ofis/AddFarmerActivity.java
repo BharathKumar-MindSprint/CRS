@@ -23,12 +23,19 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.FileProvider;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.telephony.PhoneNumberUtils;
+import android.text.Editable;
 import android.text.InputFilter;
+import android.text.InputType;
 import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.text.format.DateFormat;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -39,6 +46,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
@@ -46,7 +54,10 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
+import android.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -55,6 +66,12 @@ import android.widget.Toast;
 import com.github.gcacace.signaturepad.views.SignaturePad;
 import com.google.firebase.crash.FirebaseCrash;
 import com.olam.digital.ofis.authentication.AuthenticationHelper;
+import com.olam.digital.ofis.childlabour.ChildLabourDetailsActivity;
+import com.olam.digital.ofis.childlabour.ChildLabourUtils;
+import com.olam.digital.ofis.childlabour.ViewChildLabourSurveyActivity;
+import com.olam.digital.ofis.childlabour.adapter.ChildLabourRecyclerAdapter;
+import com.olam.digital.ofis.childlabour.dto.ChildrenDTO;
+import com.olam.digital.ofis.childlabour.listener.OnItemChildClickListener;
 import com.olam.digital.ofis.gps.GPSListener;
 import com.olam.digital.ofis.gps.GPSTracker;
 import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
@@ -63,6 +80,7 @@ import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.gps.utils.GPSUtils;
 import com.olam.digital.ofis.matoma.MatomoHelper;
 import com.olam.digital.ofis.matoma.ScreenNameConstants;
+import com.olam.digital.ofis.model.FarmerLeadDTO;
 import com.olam.digital.ofis.model.NationalIdDTO;
 import com.olam.digital.ofis.model.NationalIdTypeDTO;
 import com.olam.digital.ofis.recordpolygon.Utils;
@@ -77,6 +95,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.sql.Timestamp;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -121,6 +140,12 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     ImageButton farmerPhotoActionButton;
     ImageButton farmerSignatureButton;
     EditText newPlaceName;
+    TextView farmerLeadSearch;
+    LinearLayout farmerLeadDisplayLayout;
+    String farmerleadid, farmerleadidname;
+    List<FarmerLeadDTO> flList;
+//    CustomListAdapterFarmerlead adapterFarmerlead;
+//    FarmerLeadDTO selectedFarmerLead;
     ArrayList<String> phoneNumberList;
     ArrayList<String> nationalidList;
     ArrayList<String> selectednationalidList = new ArrayList<String>();
@@ -147,6 +172,8 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     private TextView farmerDOB;
     boolean  csStatus;
     ArrayList<String> nationalIdTypes=null;
+    boolean isFLEnumerator;
+    PopupWindow popupWindow=null;
     /**
      * Generate unique ID from UUID.
      *
@@ -188,6 +215,23 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             return null;
         }
     };
+    private InputFilter flFilter = new InputFilter() {
+
+        @Override
+        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+
+            if (source != null && blockCharacterSet.contains(("" + source))) {
+                return "";
+            }
+            for (int i = start; i < end; i++) {
+                int type = Character.getType(source.charAt(i));
+                if (type == Character.SURROGATE || type == Character.OTHER_SYMBOL) {
+                    return "";
+                }
+            }
+            return null;
+        }
+    };
     // Location captured related variable
     private Location mCurrentLocation = null;
     private GPSTracker gpsTracker = null;
@@ -205,6 +249,29 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             cursor.close();
         }
         return filePathUri + "";
+    }
+
+    public static void dimBehind(PopupWindow popupWindow) {
+        View container;
+        if (popupWindow.getBackground() == null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+                container = (View) popupWindow.getContentView().getParent();
+            } else {
+                container = popupWindow.getContentView();
+            }
+        } else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                container = (View) popupWindow.getContentView().getParent().getParent();
+            } else {
+                container = (View) popupWindow.getContentView().getParent();
+            }
+        }
+        Context context = popupWindow.getContentView().getContext();
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        WindowManager.LayoutParams p = (WindowManager.LayoutParams) container.getLayoutParams();
+        p.flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND;
+        p.dimAmount = 0.7f;
+        wm.updateViewLayout(container, p);
     }
 
     @Override
@@ -234,7 +301,29 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         phonenumbers = findViewById(R.id.phonenumbers);
         nationalids = findViewById(R.id.nationalids);
         farmerSignatureButton = findViewById(R.id.farmerSignature);
-
+        farmerLeadSearch = findViewById(R.id.farmerleadinfo);
+        farmerLeadDisplayLayout = findViewById(R.id.farmerLeadDisplayLayout);
+        isFLEnumerator = Utilities.getBoolFromSharedPrefs(context, Utilities.FARMERLEAD_ENUMERATOR,false);
+        if(! isFLEnumerator){
+            farmerLeadDisplayLayout.setVisibility(View.GONE);
+        }else {
+            flList = dl.getFarmerLeads();
+            farmerLeadSearch.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    showPopupFarmerLead(flList);
+                }
+            });
+        }
+        /*adapterFarmerlead = new CustomListAdapterFarmerlead(this, R.layout.activity_add_farmer, flList);
+        farmerLeadSearch.setAdapter(adapterFarmerlead);
+        farmerLeadSearch.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int pos, long id) {
+                //this is the way to find selected object/item
+                selectedFarmerLead = (FarmerLeadDTO) adapterView.getItemAtPosition(pos);
+            }
+        });*/
         bindphonenumbers();
         dl.clearlocalniddbvalue();
         if (isNIDAvailable) {
@@ -312,6 +401,8 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
  //       }
 
     }
+
+
 
     @Override
     protected void onResume() {
@@ -795,6 +886,14 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             }
         }
 
+         /* if(isFLEnumerator){
+            String farmerleadname = farmerLeadSearch.getText().toString();
+            if(farmerleadname.equalsIgnoreCase("")){
+                Toast.makeText(context, res.getString(R.string.select_farmerlead), Toast.LENGTH_LONG).show();
+                return values;
+            }
+        }*/
+
         if (isNIDAvailable) {
             if (getnationalidSubmitStatus(nationalids).equalsIgnoreCase(DUPLICATE)) {
                 Toast.makeText(this, getResources().getString(R.string.duplicate_nationalids), Toast.LENGTH_SHORT).show();
@@ -890,7 +989,10 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_SUBDISTRICTID, String.valueOf(subdistrictId));
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID, String.valueOf(farmerGroupId));
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_ISCONSENTAVAILABLE, "true");
-
+            if(isFLEnumerator) {
+                values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERLEAD, farmerleadid);
+                values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERLEADNAME, farmerleadidname);
+            }
             Date today = new Date();
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
             String registereddate = format.format(today);
@@ -903,6 +1005,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                 }
             }
         } catch (Exception e) {
+            e.printStackTrace();
             FirebaseCrash.report(new Exception("AddFarmerActivity: Error creating farmer content values", e));
             values.clear();
         }
@@ -1091,6 +1194,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                                 expiryDate.setText(humanDate);
                             }
                         }, mYear, mMonth, mDay);
+                setRangeofDatePicker(datePickerDialog,spinner_nidtype.getSelectedItem().toString());
                 datePickerDialog.show();
             }
         });
@@ -1227,6 +1331,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
 
                                         }
                                     }, mYear, mMonth, mDay);
+                            setRangeofDatePicker(datePickerDialog,spinner_nidtype.getSelectedItem().toString());
                             datePickerDialog.show();
                         }
                     });
@@ -2143,6 +2248,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
 
                                         }
                                     }, mYear, mMonth, mDay);
+                            setRangeofDatePicker(datePickerDialog,spinner_nidtype.getSelectedItem().toString());
                             datePickerDialog.show();
                         }
                     });
@@ -2202,6 +2308,8 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
 
 
     }
+
+
 
 
     private boolean ValidateNIDValues() {
@@ -2305,4 +2413,92 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         }
     }
 
+    public void showPopupFarmerLead(List<FarmerLeadDTO> flList) {
+
+        LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View popupView = inflater.inflate(R.layout.activity_findfarmerlead, null);
+        FindFarmerLeadAdapter findFarmerLeadAdapter;
+       /* popupWindow = new PopupWindow(popupView, LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        popupWindow.showAtLocation(findViewById(R.id.layout_add_farmer), Gravity.CENTER, 0, 0);
+        popupWindow.setHeight(1);
+        popupWindow.setWidth(1);
+        popupWindow.setTouchable(true);
+        popupWindow.setFocusable(false);
+        popupWindow.setOutsideTouchable(true);
+        popupWindow.setContentView(popupView);
+        popupWindow.setBackgroundDrawable(getResources().getDrawable(R.drawable.bttn_disabled));*/
+
+
+        int width = LinearLayout.LayoutParams.MATCH_PARENT;
+        int height = LinearLayout.LayoutParams.MATCH_PARENT;
+        boolean focusable = true;
+        final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
+        popupWindow.showAtLocation(findViewById(R.id.layout_add_farmer), Gravity.CENTER, 0, 0);
+        dimBehind(popupWindow);
+
+        final Dialog farmerleadDialog = new Dialog(AddFarmerActivity.this, android.R.style.Theme_Material_Dialog_Alert);
+        farmerleadDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+
+        farmerleadDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        farmerleadDialog.setContentView(R.layout.activity_findfarmerlead);
+
+        EditText searchfl = popupView.findViewById(R.id.findFLSearchBox);
+        RecyclerView farmerLeadRecyclerView = popupView.findViewById(R.id.flList);
+        findFarmerLeadAdapter = new FindFarmerLeadAdapter(flList,this);
+        RecyclerView.LayoutManager reLayoutManager = new LinearLayoutManager(getApplicationContext());
+        farmerLeadRecyclerView.setLayoutManager(reLayoutManager);
+        farmerLeadRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        ((LinearLayoutManager) reLayoutManager).setReverseLayout(true);
+        farmerLeadRecyclerView.setAdapter(findFarmerLeadAdapter);
+        farmerLeadRecyclerView.scrollToPosition(findFarmerLeadAdapter.getItemCount() - 1);
+        searchfl.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+        searchfl.setFilters(new InputFilter[] { flFilter });
+
+        searchfl.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence constraint, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable constraint) {
+                ArrayList<FarmerLeadDTO> filteredlist = new ArrayList<>();
+                for (FarmerLeadDTO farmerLeadDTO : flList) {
+                    if (farmerLeadDTO.getFarmerLeadFullName().toLowerCase().contains(constraint.toString().toLowerCase()) ||
+                            farmerLeadDTO.getFarmerLeadDisplayId().toLowerCase().contains(constraint.toString().toLowerCase()) ||
+                            farmerLeadDTO.getContactNumber().toLowerCase().contains(constraint.toString().toLowerCase())) {
+                        filteredlist.add(farmerLeadDTO);
+                    }
+                }
+                if (filteredlist.isEmpty()) {
+                    Toast.makeText(AddFarmerActivity.this, "No Data Found..", Toast.LENGTH_SHORT).show();
+                } else {
+                    findFarmerLeadAdapter.filterList(filteredlist);
+                }
+            }
+        });
+        popupView.findViewById(R.id.cancel_btn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                popupWindow.dismiss();
+            }
+        });
+
+        findFarmerLeadAdapter.setOnItemFarmerLeadClickListener(new OnItemFarmerLeadListener() {
+            @Override
+            public void onFarmerLeadClick(View view, int position, FarmerLeadDTO farmerLeadDTO) {
+                farmerLeadSearch.setText(farmerLeadDTO.getFarmerLeadFullName());
+//                getSelectedFarmerLead = farmerLeadDTO;
+                farmerleadid = farmerLeadDTO.getFarmerLeadDisplayId();
+                farmerleadidname = farmerLeadDTO.getFarmerLeadFullName();
+                popupWindow.dismiss();
+            }
+
+        });
+    }
 }
