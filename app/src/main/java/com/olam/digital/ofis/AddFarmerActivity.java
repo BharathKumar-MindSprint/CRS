@@ -7,19 +7,28 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.ShapeDrawable;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Handler;
+import android.os.Message;
 import android.os.StrictMode;
 import android.provider.MediaStore;
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatButton;
+import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.NavUtils;
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.FileProvider;
@@ -102,9 +111,12 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 // update
 public class AddFarmerActivity extends BaseActivity implements View.OnClickListener {
@@ -211,6 +223,23 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
 
             if (source != null && blockCharacterSet.contains(("" + source))) {
                 return "";
+            }
+            return null;
+        }
+    };
+    private InputFilter flFilter = new InputFilter() {
+
+        @Override
+        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+
+            if (source != null && blockCharacterSet.contains(("" + source))) {
+                return "";
+            }
+            for (int i = start; i < end; i++) {
+                int type = Character.getType(source.charAt(i));
+                if (type == Character.SURROGATE || type == Character.OTHER_SYMBOL) {
+                    return "";
+                }
             }
             return null;
         }
@@ -401,6 +430,8 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
  //       }
 
     }
+
+
 
 
 
@@ -2501,4 +2532,95 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
 
         });
     }
+
+
+    public void showPopupFarmerLead(List<FarmerLeadDTO> flList) {
+
+        LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View popupView = inflater.inflate(R.layout.activity_findfarmerlead, null);
+        FindFarmerLeadAdapter findFarmerLeadAdapter;
+       /* popupWindow = new PopupWindow(popupView, LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        popupWindow.showAtLocation(findViewById(R.id.layout_add_farmer), Gravity.CENTER, 0, 0);
+        popupWindow.setHeight(1);
+        popupWindow.setWidth(1);
+        popupWindow.setTouchable(true);
+        popupWindow.setFocusable(false);
+        popupWindow.setOutsideTouchable(true);
+        popupWindow.setContentView(popupView);
+        popupWindow.setBackgroundDrawable(getResources().getDrawable(R.drawable.bttn_disabled));*/
+
+
+        int width = LinearLayout.LayoutParams.MATCH_PARENT;
+        int height = LinearLayout.LayoutParams.MATCH_PARENT;
+        boolean focusable = true;
+        final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
+        popupWindow.showAtLocation(findViewById(R.id.layout_add_farmer), Gravity.CENTER, 0, 0);
+         dimBehind(popupWindow);
+
+        final Dialog farmerleadDialog = new Dialog(AddFarmerActivity.this, android.R.style.Theme_Material_Dialog_Alert);
+        farmerleadDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+
+        farmerleadDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        farmerleadDialog.setContentView(R.layout.activity_findfarmerlead);
+
+        EditText searchfl = popupView.findViewById(R.id.findFLSearchBox);
+        RecyclerView farmerLeadRecyclerView = popupView.findViewById(R.id.flList);
+        findFarmerLeadAdapter = new FindFarmerLeadAdapter(flList,this);
+        RecyclerView.LayoutManager reLayoutManager = new LinearLayoutManager(getApplicationContext());
+        farmerLeadRecyclerView.setLayoutManager(reLayoutManager);
+        farmerLeadRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        ((LinearLayoutManager) reLayoutManager).setReverseLayout(true);
+        farmerLeadRecyclerView.setAdapter(findFarmerLeadAdapter);
+        farmerLeadRecyclerView.scrollToPosition(findFarmerLeadAdapter.getItemCount() - 1);
+        searchfl.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+        searchfl.setFilters(new InputFilter[] { flFilter });
+
+        searchfl.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence constraint, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable constraint) {
+                ArrayList<FarmerLeadDTO> filteredlist = new ArrayList<>();
+                for (FarmerLeadDTO farmerLeadDTO : flList) {
+                    if (farmerLeadDTO.getFarmerLeadFullName().toLowerCase().contains(constraint.toString().toLowerCase()) ||
+                            farmerLeadDTO.getFarmerLeadDisplayId().toLowerCase().contains(constraint.toString().toLowerCase()) ||
+                            farmerLeadDTO.getContactNumber().toLowerCase().contains(constraint.toString().toLowerCase())) {
+                        filteredlist.add(farmerLeadDTO);
+                    }
+                }
+                if (filteredlist.isEmpty()) {
+                    Toast.makeText(AddFarmerActivity.this, "No Data Found..", Toast.LENGTH_SHORT).show();
+                } else {
+                    findFarmerLeadAdapter.filterList(filteredlist);
+                }
+            }
+        });
+        popupView.findViewById(R.id.cancel_btn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                popupWindow.dismiss();
+            }
+        });
+
+        findFarmerLeadAdapter.setOnItemFarmerLeadClickListener(new OnItemFarmerLeadListener() {
+            @Override
+            public void onFarmerLeadClick(View view, int position, FarmerLeadDTO farmerLeadDTO) {
+                farmerLeadSearch.setText(farmerLeadDTO.getFarmerLeadFullName());
+//                getSelectedFarmerLead = farmerLeadDTO;
+                farmerleadid = farmerLeadDTO.getFarmerLeadDisplayId();
+                farmerleadidname = farmerLeadDTO.getFarmerLeadFullName();
+                popupWindow.dismiss();
+            }
+
+        });
+    }
+
 }

@@ -6,6 +6,9 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.os.Bundle;
 import androidx.core.app.NavUtils;
+import androidx.core.content.ContextCompat;
+
+import android.os.Handler;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.InputType;
@@ -24,6 +27,10 @@ import com.olam.digital.ofis.matoma.MatomoHelper;
 import com.olam.digital.ofis.matoma.ScreenNameConstants;
 import com.olam.digital.ofis.recordpolygon.Utils;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 
 
 public class FindFarmerActivity extends BaseListActivity implements AdapterView.OnItemClickListener {

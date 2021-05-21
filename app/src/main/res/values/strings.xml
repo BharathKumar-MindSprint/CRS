@@ -679,7 +679,6 @@
     <string name="consent_duplicate_error">Error in saving FarmerConsent</string>
     <string name="duplicate_survey">Dupicate survey entry</string>
     <string name="removing_duplicate_survey">Removing dupicate survey</string>
-    <string name="downloading_fldetails">Downloading Farmer Lead Details</string>
     <string name="national_id_info">Please update the National ID of farmer</string>
     <string name="update_farmer_subdistrict">Update Farmer\’s Subdistrict</string>
     <string name="update">Update</string>
@@ -692,6 +691,7 @@
     <string name="offline_access">offline_access</string>
     <string name="refresh_token">refresh_token</string>
     <string name="checking_isfl_enumerator">Checking Farmer Lead Enumerator</string>
+    <string name="downloading_fldetails">Downloading Farmer Lead Details</string>
     <string name="choose_farmerlead">Choose Farmer Lead</string>
     <string name="fl_search">Search by Name/Id/Phone No.</string>
     <string name="farmerlead_name">Farmer Lead Name</string>
