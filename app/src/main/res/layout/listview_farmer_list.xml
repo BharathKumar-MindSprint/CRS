@@ -55,6 +55,15 @@
                 android:id="@+id/farmerListOlamFarmerId"
                 android:textColor="@color/ofis_list_item_subtitle"
                 android:textSize="@dimen/ofis_small_text" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/Awaiting_Sync"
+                android:id="@+id/farmerListODFarmerId"
+                android:textColor="@color/ofis_list_item_subtitle"
+                android:textSize="@dimen/ofis_small_text" />
+
         </LinearLayout>
 
         <LinearLayout

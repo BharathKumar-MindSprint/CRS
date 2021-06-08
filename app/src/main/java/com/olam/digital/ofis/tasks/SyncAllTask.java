@@ -576,19 +576,22 @@ public class SyncAllTask extends SyncTask {
     private void syncODRefreshToken() throws JSONException {
 
         JSONObject inputArgs = new JSONObject();
-        String counrtyCode = "IN";
-//        String counrtyCode = Utilities.getdatafromSharedPrefs(context, "COUNTRY_CODE");
+        String counrtyCode = Utilities.getdatafromSharedPrefs(context, "COUNTRY_CODE");
+//        String counrtyCode = "IN";
         System.out.println("SAT_Country_code:" + counrtyCode);
-        inputArgs.put("appInstanceId", counrtyCode + "_OFIS_DO_INTERFACE");
+      /*  inputArgs.put("appInstanceId", counrtyCode + "_OFIS_DO_INTERFACE");
         inputArgs.put("clientId",8);
         inputArgs.put("id", counrtyCode + "_OFIS_DO_INTERFACE");
         inputArgs.put("languageIsoCode", "en");
+        inputArgs.put("password", "Olam123+");*/
+        inputArgs.put("userId", counrtyCode + "_OFIS_DO_INTERFACE");
         inputArgs.put("password", "Olam123+");
+        inputArgs.put("system", "od");
 
-        String endPoint = "https://dev-apigateway.olamdirect.com/authorization/login/v1";
+        String endPoint = "ofismaster/master/externalLogin";
 
         final String finalEndPoint = endPoint;
-        okHttpODPost(context, endPoint, inputArgs, new Callback() {
+        okHttpPost(context, endPoint, inputArgs, new Callback() {
             @Override
             public void onResponse(Call call, final Response postResponse) {
                 try {
@@ -596,7 +599,6 @@ public class SyncAllTask extends SyncTask {
                     if (postResponse.isSuccessful()) {
                         try {
                             String accessToken= response.getString("accessToken");
-                            System.out.println("AccessTokenOD: " + accessToken);
                             Utilities.saveToSharedPrefs(context,"ODTOKEN",accessToken,null);
                         }catch (Exception e){}
 
@@ -658,12 +660,14 @@ public class SyncAllTask extends SyncTask {
                         }catch (Exception e){}
                         try {
                             JSONArray countryArray = response.getJSONObject("outputdata").getJSONArray("countries");
+                            System.out.println("CountrySpinners:" + countryArray.toString());
                             JSONObject item = new JSONObject();
                             int length = countryArray.length();
                             for (int j = 0; j < length; j++) {
                                 item = countryArray.getJSONObject(j);
-                                counrtyCode = item.getString("code");
-                                Utilities.saveToSharedPrefs(context, "COUNRTY_CODE", counrtyCode, null);
+                                counrtyCode = item.getString("countryIsoCode");
+
+                                Utilities.saveToSharedPrefs(context, "COUNTRY_CODE", counrtyCode.substring(0,2), null);
                             }
                         }catch (Exception e){e.printStackTrace();}
                         syncResultCount = syncResultCount + response.getInt("resultcount");
@@ -711,7 +715,7 @@ public class SyncAllTask extends SyncTask {
 
     private void syncFLDetails() {
         JSONObject inputArgs = new JSONObject();
-        String endPoint = "https://dev-apigateway.olamdirect.com/farmer/getAllFlBasicDetails";
+        String endPoint = "farmer/getAllFlBasicDetails";
         final String finalEndPoint = endPoint;
         okHttpODGet(context, endPoint, inputArgs, new Callback() {
             @Override
@@ -1038,7 +1042,7 @@ public class SyncAllTask extends SyncTask {
                         Boolean isflenumerator = Boolean.parseBoolean(output.trim());
                         Utilities.saveToSharedPrefs(context, Utilities.FARMERLEAD_ENUMERATOR,null, isflenumerator);
 
-                        if( isflenumerator) {
+                        if(! isflenumerator) {
                             publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.updating_farmers));
                             delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_FARMERS);
                         }else{

@@ -15,6 +15,8 @@ import android.widget.TextView;
 
 import com.google.firebase.crash.FirebaseCrash;
 
+import org.w3c.dom.Text;
+
 import java.util.Hashtable;
 
 /**
@@ -46,8 +48,11 @@ class CustomListAdapter_Farmer extends SimpleCursorAdapter {
         super.bindView(view, context, cursor);
         try {
             ImageView farmerPhoto = (ImageView) view.findViewById(R.id.farmerListIcon);
+            TextView ofisID = (TextView) view.findViewById(R.id.farmerListOlamFarmerId);
+            TextView odID = (TextView) view.findViewById(R.id.farmerListODFarmerId);
             int statusColIndex = cursor.getColumnIndex(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_STATUS_STARTED);
             int localColIndex = cursor.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_CREATED_LOCALLY);
+
 
             if (transactionMode) {
                 TextView transacteetype = (TextView) view.findViewById(R.id.transacteeType);
@@ -77,6 +82,14 @@ class CustomListAdapter_Farmer extends SimpleCursorAdapter {
                 } else {
                     farmerPhoto.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_no_photo));
                 }
+            }
+
+            ofisID.setText("OFIS ID: "+cursor.getString(cursor.getColumnIndex("olam_farmer_id")));
+            String odidvalue = cursor.getString(cursor.getColumnIndex("odFarmerId"));
+            if(odidvalue != null && odidvalue != "null") {
+                odID.setText("OD ID:   " + cursor.getString(cursor.getColumnIndex("odFarmerId")));
+            }else {
+                odID.setVisibility(View.GONE);
             }
         } catch (Exception e) {
             FirebaseCrash.report(new Exception("CustomListAdapter_Farmer: Error setting row value", e));
