@@ -626,6 +626,25 @@ public class DynamicQuestions {
                         if(!type.equalsIgnoreCase("Calculated")){
                             questionList.add(Integer.parseInt(questionsString));
                         }
+
+                        // OCOM-176 - remove the Repeater Item If the parent question is 0
+                        if (type.equalsIgnoreCase("Repeater Item") || type.equalsIgnoreCase("repeateritem")){
+                            int repeaterParentId=display.getInt("repeater_id");
+                            String answerRepetaerParent="";
+                            for (int i = 0; i < answerSet.size(); i++) {
+                                JSONObject currentAnswer = answerSet.get(i);
+                                if (currentAnswer != null) {
+                                   if(repeaterParentId == currentAnswer.optInt("question_id")){
+                                      answerRepetaerParent=currentAnswer.getString("answer");
+                                      if (answerRepetaerParent.equalsIgnoreCase("0")){
+                                        int index=  questionList.indexOf(Integer.parseInt(questions.getString(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID))));
+                                        questionList.remove(index);
+                                      }
+                                   }
+                                }
+                            }
+                        }
+
                     }
                 }
             } while (questions.moveToNext());
