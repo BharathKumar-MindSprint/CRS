@@ -221,7 +221,7 @@ public class DynamicQuestions {
                                 String questionsString = requiredQuestions.getString(requiredQuestions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
                                 String type = requiredQuestions.getString(requiredQuestions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE));
                              // check the type only for calcualted question.
-                                if(!type.equalsIgnoreCase("Calculated")){
+                                if(!type.equalsIgnoreCase("Calculated") && !type.equalsIgnoreCase("Repeater Item") && !type.equalsIgnoreCase("repeateritem")){
                                     requiredQuestionIds.add(Integer.parseInt(questionsString));
                                 }
                             }
