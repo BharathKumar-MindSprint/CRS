@@ -39,10 +39,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -223,12 +228,16 @@ public class BaseActivity extends AppCompatActivity {
 
     public void setRangeofDatePicker(DatePickerDialog datePickerDialog, String type) {
         try {
+
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             String startyear = getNidMinrange(type);
             String endyear = getNidMaxrange(type);
             String month = getNidMonthRange(type);
             String startdate = startyear + "-" + month + "-01" ;
-            String enddate = endyear + "-" + month + "-01" ;
+            Calendar cal = new GregorianCalendar(Integer.parseInt(endyear), Integer.parseInt(month), 0);
+            Date date = cal.getTime();
+//            String enddate = endyear + "-" + month + "-01" ;
+            String enddate = sdf.format(date) ;
             Date sdate = sdf.parse(startdate);
             Date edate = sdf.parse(enddate);
             long startDate = sdate.getTime();
