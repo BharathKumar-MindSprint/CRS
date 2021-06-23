@@ -447,7 +447,13 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         farmerLeadSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                flList = dl.getFarmerLeads(selectedCountry);
+                int countryId = (int) countrySpinner.getSelectedItemId();
+                if(countryId == 0){
+                    Toast.makeText(context, getResources().getString(R.string.select_country) , Toast.LENGTH_LONG).show();
+                    return;
+                }
+                flList = dl.getFarmerLeads(countryId);
+                System.out.println("flList:" + flList.size());
                 showPopupFarmerLead(flList);
             }
         });
