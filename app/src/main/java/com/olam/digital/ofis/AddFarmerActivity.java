@@ -185,6 +185,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     boolean  csStatus;
     ArrayList<String> nationalIdTypes=null;
     boolean isFLEnumerator;
+    boolean isSubdistrictCapture;
     PopupWindow popupWindow=null;
     /**
      * Generate unique ID from UUID.
@@ -244,23 +245,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             return null;
         }
     };
-    private InputFilter flFilter = new InputFilter() {
 
-        @Override
-        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
-
-            if (source != null && blockCharacterSet.contains(("" + source))) {
-                return "";
-            }
-            for (int i = start; i < end; i++) {
-                int type = Character.getType(source.charAt(i));
-                if (type == Character.SURROGATE || type == Character.OTHER_SYMBOL) {
-                    return "";
-                }
-            }
-            return null;
-        }
-    };
     // Location captured related variable
     private Location mCurrentLocation = null;
     private GPSTracker gpsTracker = null;
@@ -425,10 +410,6 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         }else {
             boolean isMultiCountries = dl.isMultipleCountries();
             if(isMultiCountries){
-               /* if(selectedCountry == 0){
-                    Toast.makeText(context, getResources().getString(R.string.select_country) , Toast.LENGTH_LONG).show();
-                    return;
-                }*/
                 boolean  isODOrigin =  dl.isODOrigin(selectedCountry);
                 if(isODOrigin){
                     showFarmerLead();
@@ -816,7 +797,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             selectedPlace = (int) placeSpinner.getSelectedItemId();
             selectedFarmerGroup = (int) farmerGroupSpinner.getSelectedItemId();
             selectedSection = (int) sectionSpinner.getSelectedItemId();
-
+            isSubdistrictCapture = dl.isSubdistrictCapture((int) selectedCountry);
             String message = "";
             if (selectedCountry == 0) {
                 message = "Country";
@@ -826,8 +807,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
 
             } else if (selectedDistrict == 0) {
                 message = "District";
-            } else if (selectedSubDistrict == 0) {
-                message = "SubDistrict";
+
             } else if (selectedPlace == 0) {
 
                 message = "Place";
@@ -839,6 +819,11 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             } else if (selectedSection == 0) {
                 message = "section";
 
+            }
+            if(isSubdistrictCapture) {
+                if (selectedSubDistrict == 0) {
+                    message = "SubDistrict";
+                }
             }
 
             Toast.makeText(context, "Please select the " + message, Toast.LENGTH_LONG).show();
@@ -871,12 +856,14 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         }
 
 
-        Spinner subdistrictSpinner = findViewById(R.id.spinner_subdistrict);
         long subdistrict_id = subdistrictSpinner.getSelectedItemId();
-        if (subdistrict_id < 1) {
-            Toast.makeText(context, res.getString(R.string.fill_subdistrict), Toast.LENGTH_LONG).show();
+        if(isSubdistrictCapture) {
+            Spinner subdistrictSpinner = findViewById(R.id.spinner_subdistrict);
+            if (subdistrict_id < 1) {
+                Toast.makeText(context, res.getString(R.string.fill_subdistrict), Toast.LENGTH_LONG).show();
 
-            return values;
+                return values;
+            }
         }
 
         Spinner spinner_farmer_group = (Spinner) findViewById(R.id.spinner_farmerGroup);
@@ -1044,7 +1031,9 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID, String.valueOf(countryId));
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_REGIONID, String.valueOf(regionId));
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_DISTRICTID, String.valueOf(districtId));
-            values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_SUBDISTRICTID, String.valueOf(subdistrictId));
+            if(isSubdistrictCapture) {
+                values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_SUBDISTRICTID, String.valueOf(subdistrictId));
+            }
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID, String.valueOf(farmerGroupId));
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_ISCONSENTAVAILABLE, "true");
             if(isFLEnumerator) {
@@ -2471,94 +2460,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         }
     }
 
-    public void showPopupFarmerLead(List<FarmerLeadDTO> flList) {
 
-        LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View popupView = inflater.inflate(R.layout.activity_findfarmerlead, null);
-        FindFarmerLeadAdapter findFarmerLeadAdapter;
-       /* popupWindow = new PopupWindow(popupView, LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        popupWindow.showAtLocation(findViewById(R.id.layout_add_farmer), Gravity.CENTER, 0, 0);
-        popupWindow.setHeight(1);
-        popupWindow.setWidth(1);
-        popupWindow.setTouchable(true);
-        popupWindow.setFocusable(false);
-        popupWindow.setOutsideTouchable(true);
-        popupWindow.setContentView(popupView);
-        popupWindow.setBackgroundDrawable(getResources().getDrawable(R.drawable.bttn_disabled));*/
-
-
-        int width = LinearLayout.LayoutParams.MATCH_PARENT;
-        int height = LinearLayout.LayoutParams.MATCH_PARENT;
-        boolean focusable = true;
-        final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
-        popupWindow.showAtLocation(findViewById(R.id.layout_add_farmer), Gravity.CENTER, 0, 0);
-        dimBehind(popupWindow);
-
-        final Dialog farmerleadDialog = new Dialog(AddFarmerActivity.this, android.R.style.Theme_Material_Dialog_Alert);
-        farmerleadDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-
-        farmerleadDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        farmerleadDialog.setContentView(R.layout.activity_findfarmerlead);
-
-        EditText searchfl = popupView.findViewById(R.id.findFLSearchBox);
-        RecyclerView farmerLeadRecyclerView = popupView.findViewById(R.id.flList);
-        findFarmerLeadAdapter = new FindFarmerLeadAdapter(flList,this);
-        RecyclerView.LayoutManager reLayoutManager = new LinearLayoutManager(getApplicationContext());
-        farmerLeadRecyclerView.setLayoutManager(reLayoutManager);
-        farmerLeadRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        ((LinearLayoutManager) reLayoutManager).setReverseLayout(true);
-        farmerLeadRecyclerView.setAdapter(findFarmerLeadAdapter);
-        farmerLeadRecyclerView.scrollToPosition(findFarmerLeadAdapter.getItemCount() - 1);
-        searchfl.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
-        searchfl.setFilters(new InputFilter[] { flFilter });
-
-        searchfl.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence constraint, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable constraint) {
-                ArrayList<FarmerLeadDTO> filteredlist = new ArrayList<>();
-                for (FarmerLeadDTO farmerLeadDTO : flList) {
-                    if (farmerLeadDTO.getFarmerLeadFullName().toLowerCase().contains(constraint.toString().toLowerCase()) ||
-                            farmerLeadDTO.getFarmerLeadDisplayId().toLowerCase().contains(constraint.toString().toLowerCase()) ||
-                            farmerLeadDTO.getContactNumber().toLowerCase().contains(constraint.toString().toLowerCase())) {
-                        filteredlist.add(farmerLeadDTO);
-                    }
-                }
-                if (filteredlist.isEmpty()) {
-                    Toast.makeText(AddFarmerActivity.this, "No Data Found..", Toast.LENGTH_SHORT).show();
-                } else {
-                    findFarmerLeadAdapter.filterList(filteredlist);
-                }
-            }
-        });
-        popupView.findViewById(R.id.cancel_btn).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                popupWindow.dismiss();
-            }
-        });
-
-        findFarmerLeadAdapter.setOnItemFarmerLeadClickListener(new OnItemFarmerLeadListener() {
-            @Override
-            public void onFarmerLeadClick(View view, int position, FarmerLeadDTO farmerLeadDTO) {
-                farmerLeadSearch.setText(farmerLeadDTO.getFarmerLeadFullName());
-//                getSelectedFarmerLead = farmerLeadDTO;
-                farmerleadid = farmerLeadDTO.getFarmerLeadDisplayId();
-                farmerleadidname = farmerLeadDTO.getFarmerLeadFullName();
-                popupWindow.dismiss();
-            }
-
-        });
-    }
 
 
     public void showPopupFarmerLead(List<FarmerLeadDTO> flList) {
