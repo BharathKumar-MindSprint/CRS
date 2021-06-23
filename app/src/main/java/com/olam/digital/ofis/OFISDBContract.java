@@ -1030,8 +1030,10 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_CODE = "code";
         public static final String COLUMN_NAME_COUNTRY_NAME = "name";
         public static final String COLUMN_NAME_DIALLING_CODE = "dialling_code";
-        public static final String COLUMN_NAME_OLAM_COUNTRY = "olam_country";
+        public static final String COLUMN_NAME_OLAM_COUNTRY = "olam_country_id";
         public static final String COLUMN_NAME_ENUMERATOR_COUNTRY = "enumerator_country";
+        public static final String COLUMN_NAME_ISSUBDISTCAPTURE = "isSubdistrictCapture";
+        public static final String COLUMN_NAME_ISOCODE = "countryIsoCode";
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
                     add(COLUMN_NAME_COUNTRY_NAME);
@@ -1040,6 +1042,8 @@ public class OFISDBContract {
                     add(COLUMN_NAME_OLAM_COUNTRY);
                     add(COLUMN_NAME_ENUMERATOR_COUNTRY);
                     add(COLUMN_NAME_DIALLING_CODE);
+                    add(COLUMN_NAME_ISSUBDISTCAPTURE);
+                    add(COLUMN_NAME_ISOCODE);
                 }}
         );
     }
