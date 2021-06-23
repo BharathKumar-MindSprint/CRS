@@ -610,4 +610,6 @@
     <string name="please_respond_mandatory_question">Vui lòng trả lời câu hỏi bắt buộc</string>
     <string name="please_check_question">Silakan periksa Pertanyaan</string>
     <string name="please_check_dependent_question">karena pertanyaan dependennya diperbarui</string>
+    <string name="update_firebase_install_id_info">Updating Informations</string>
+    <string name="national_id_info">Please update the National ID of farmer</string>
 </resources>

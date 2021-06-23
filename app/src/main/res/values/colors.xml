@@ -44,5 +44,15 @@
     <color name="child_visitdetailbg">#00869D</color>
     <color name="cs_color">#101010</color>
 
+    <color name="orange">#DE5215</color>
+    <color name="grey">#707070</color>
+    <color name="biometric_blue">#00869D</color>
+    <color name="gray_text">#858585</color>
+    <color name="dull_white">#FAFAFA</color>
+    <color name="disabled_gray">#CCCCCC</color>
+    <color name="dark_orange">#DC582A</color>
+    <color name="lightblue">#c3e2e8</color>
+
+
     <!-- updated -->
 </resources>

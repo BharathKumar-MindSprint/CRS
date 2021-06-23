@@ -216,6 +216,10 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
     private GPSTracker gpsTracker=null;
 
     CustomListAdapter_Modules customListAdapter_modulesAdapter;
+   
+
+    ImageView infoCloseImageView;
+    LinearLayout statusInfoLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -252,8 +256,34 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
             gpsTracker.startLocationUpdateInitially();
   //      }
 
+        // Show popup OW-2909
+        initiaizeInfoWidget();
+        infoCloseImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+              statusInfoLayout.setVisibility(View.GONE);
+            }
+        });
 
     }
+
+    private void initiaizeInfoWidget() {
+        infoCloseImageView=findViewById(R.id.info_close_btn);
+        statusInfoLayout=findViewById(R.id.layout_notification);
+    }
+
+    private void showInfo() {
+        boolean isNIDAvailable = Utilities.getBoolFromSharedPrefs(context, "NationalID", false);
+        if (isNIDAvailable) {
+            boolean available = dl.isValueavailable(farmerId);
+            if (!available) {
+              statusInfoLayout.setVisibility(View.VISIBLE);
+            }else {
+                statusInfoLayout.setVisibility(View.GONE);
+            }
+        }
+    }
+
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -1721,6 +1751,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
     protected void onResume() {
         super.onResume();
         setupUI();
+        showInfo();
         MatomoHelper.matomoScreenTracker(ScreenNameConstants.SCREEN_FIND_FARMER_ACTIVITY, ScreenNameConstants.SCREEN_VIEW_FARMER_ACTIVITY, ScreenNameConstants.SCREEN_VIEW_FARMER);
     }
 }
