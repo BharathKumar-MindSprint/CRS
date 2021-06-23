@@ -685,11 +685,11 @@
     <string name="label_subdistrict">Subdistrict:</string>
     <string name="subdistrict_note">Farmer\'s Subdistrict Captured</string>
     <string name="valid_until">Vaild Until</string>
-     <string name="nid_exp_fill">Please fill Expiry Date</string>
     <string name="update_firebase_install_id_info">Updating Informations</string>
     <string name="password">password</string>
     <string name="offline_access">offline_access</string>
     <string name="refresh_token">refresh_token</string>
+    <string name="nid_exp_fill">Please fill Expiry Date</string>
     <string name="checking_isfl_enumerator">Checking Farmer Lead Enumerator</string>
     <string name="downloading_fldetails">Downloading Farmer Lead Details</string>
     <string name="choose_farmerlead">Choose Farmer Lead</string>
@@ -913,4 +913,5 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="privacy_cache_offline">You\'re offline. Please switch on your network to view the latest privacy statement</string>
     <string name="privacy_no_cache_offline">You\'re offline. Please switch on your network to view the privacy statement</string>
     <string name="please_click_checkbox">Please click all the appropriate checkboxes</string>
+    <string name="select_country">Please select Country</string>
 </resources>

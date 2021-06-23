@@ -1930,6 +1930,15 @@ public class DataLayer {
                         diallingcode.setText(dialling_code);
                     }
                 }
+                if (id > 0) {
+                    LinearLayout farmerLeadDisplayLayout = activity.findViewById(R.id.farmerLeadDisplayLayout);
+                    boolean isODOrigin = isODOrigin((int) id);
+                    if (!isODOrigin) {
+                        farmerLeadDisplayLayout.setVisibility(View.GONE);
+                    } else {
+                        farmerLeadDisplayLayout.setVisibility(View.VISIBLE);
+                    }
+                }
 
                 if (regionSelection != 0) {
                     setSpinnerSelectionById(regionSelection, regionSpinner);
@@ -3402,6 +3411,51 @@ public class DataLayer {
         return db.query(OFISDBContract.FarmerNationalIDs.TABLE_NAME, columns, whereClause, whereArgs, null, null, orderBy);
     }
 
+    public Cursor getassignmentbyCountryId(int countryid) {
+        String[] columns = new String[]{"*"};
+        String whereClause = OFISDBContract.FarmerAssignments.COLUMN_COUNTRY_iD + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(countryid)};
+        String orderBy = OFISDBContract.FarmerAssignments.COLUMN_COUNTRY_iD + " ASC";
+
+        return db.query(OFISDBContract.FarmerAssignments.TABLE_NAME, columns, whereClause, whereArgs, null, null, orderBy);
+    }
+
+    public Cursor getFLbycountryId(int farmerid) {
+        String[] columns = new String[]{"*"};
+        String whereClause = OFISDBContract.FarmerLeadDetails.COLUMN_COUNTRY_ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(farmerid)};
+        String orderBy = OFISDBContract.FarmerLeadDetails.COLUMN_FL_ID + " ASC";
+
+        return db.query(OFISDBContract.FarmerLeadDetails.TABLE_NAME, columns, whereClause, whereArgs, null, null, orderBy);
+    }
+
+    public Cursor getcountrynameid(long farmerid) {
+        String[] columns = new String[]{"*"};
+        String whereClause = OFISDBContract.CountriesEntry.COLUMN_NAME_ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(farmerid)};
+        String orderBy = OFISDBContract.CountriesEntry.COLUMN_NAME_ID + " ASC";
+
+        return db.query(OFISDBContract.CountriesEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, orderBy);
+    }
+
+    public Cursor getregionnameid(long farmerid) {
+        String[] columns = new String[]{"*"};
+        String whereClause = OFISDBContract.RegionsEntry.COLUMN_NAME_ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(farmerid)};
+        String orderBy = OFISDBContract.RegionsEntry.COLUMN_NAME_ID + " ASC";
+
+        return db.query(OFISDBContract.RegionsEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, orderBy);
+    }
+
+    public Cursor getdistrictnameid(long farmerid) {
+        String[] columns = new String[]{"*"};
+        String whereClause = OFISDBContract.DistrictsEntry.COLUMN_NAME_ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(farmerid)};
+        String orderBy = OFISDBContract.DistrictsEntry.COLUMN_NAME_ID + " ASC";
+
+        return db.query(OFISDBContract.DistrictsEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, orderBy);
+    }
+
     public boolean getSyncedStatus(long farmerId) {
         boolean status = false;
         Cursor nids = getnationalidsbyfarmerid(farmerId);
@@ -3409,6 +3463,27 @@ public class DataLayer {
             while (nids.moveToNext()) {
                 String isSynced = nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_IS_SYNCED));
                 if (isSynced.equalsIgnoreCase("1")) {
+                    status = true;
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            nids.close();
+        }
+
+        return status;
+    }
+
+
+    public boolean isODOrigin(int countryid) {
+        boolean status = false;
+        Cursor nids = getassignmentbyCountryId(countryid);
+        try {
+            while (nids.moveToNext()) {
+                String isODorigin = nids.getString(nids.getColumnIndex(OFISDBContract.FarmerAssignments.COLUMN_ISODORIGIN));
+                if (isODorigin.equalsIgnoreCase("true")) {
                     status = true;
                     break;
                 }
@@ -3458,10 +3533,11 @@ public class DataLayer {
         return nationalList;
     }
 
-    public List<FarmerLeadDTO> getFarmerLeads() {
+    public List<FarmerLeadDTO> getFarmerLeads(int countryId) {
 
         List<FarmerLeadDTO> list = new ArrayList<FarmerLeadDTO>();
-        Cursor nids = db.rawQuery("SELECT * FROM " + OFISDBContract.FarmerLeadDetails.TABLE_NAME, null);;
+//        Cursor nids = db.rawQuery("SELECT * FROM " + OFISDBContract.FarmerLeadDetails.TABLE_NAME, null);;
+        Cursor nids = getFLbycountryId(countryId);
         try {
             while (nids.moveToNext()) {
                 FarmerLeadDTO leadDTO = new FarmerLeadDTO();

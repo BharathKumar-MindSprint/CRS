@@ -333,17 +333,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         farmerLeadSearch = findViewById(R.id.farmerleadinfo);
         farmerLeadDisplayLayout = findViewById(R.id.farmerLeadDisplayLayout);
         isFLEnumerator = Utilities.getBoolFromSharedPrefs(context, Utilities.FARMERLEAD_ENUMERATOR,false);
-        if(! isFLEnumerator){
-            farmerLeadDisplayLayout.setVisibility(View.GONE);
-        }else {
-            flList = dl.getFarmerLeads();
-            farmerLeadSearch.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    showPopupFarmerLead(flList);
-                }
-            });
-        }
+
         /*adapterFarmerlead = new CustomListAdapterFarmerlead(this, R.layout.activity_add_farmer, flList);
         farmerLeadSearch.setAdapter(adapterFarmerlead);
         farmerLeadSearch.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -429,8 +419,39 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             gpsTracker.startLocationUpdateInitially();
  //       }
 
+        showFarmerLead();
+        if(! isFLEnumerator){
+            farmerLeadDisplayLayout.setVisibility(View.GONE);
+        }else {
+            boolean isMultiCountries = dl.isMultipleCountries();
+            if(isMultiCountries){
+               /* if(selectedCountry == 0){
+                    Toast.makeText(context, getResources().getString(R.string.select_country) , Toast.LENGTH_LONG).show();
+                    return;
+                }*/
+                boolean  isODOrigin =  dl.isODOrigin(selectedCountry);
+                if(isODOrigin){
+                    showFarmerLead();
+                }else {
+                    farmerLeadDisplayLayout.setVisibility(View.GONE);
+                }
+            }else {
+                showFarmerLead();
+            }
+        }
+
     }
 
+    private void showFarmerLead() {
+
+        farmerLeadSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                flList = dl.getFarmerLeads(selectedCountry);
+                showPopupFarmerLead(flList);
+            }
+        });
+    }
 
 
 
@@ -514,7 +535,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
 
         dl.createBusinessHierarchySpinners(this, context, farmerIdPrefix, selectedFarmerGroup, selectedSection);
         dl.createGeographyHierarchySpinners(this, context, farmerIdPrefix, selectedCountry, selectedRegion, selectedDistrict,  selectedSubDistrict,selectedPlace, phonenumbers, true, 1);
-
+        showFarmerLead();
         super.onRestoreInstanceState(savedInstanceState);
     }
 
@@ -599,7 +620,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         farmerIdPrefix.setText(existingItem.getString(existingItem.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)).substring(0, 13));
         EditText farmerIdSuffix = findViewById(R.id.olamFarmerIdEnd);
         farmerIdSuffix.setText(existingItem.getString(existingItem.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)).substring(13));
-
+        showFarmerLead();
         String farmerPhotoPath = existingItem.getString(existingItem.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_PHOTO));
         if (farmerPhotoPath != null) {
             ImageButton farmerPhoto = findViewById(R.id.farmerPhoto);

@@ -968,12 +968,32 @@ public class OFISDBContract {
         public static final String COLUMN_FL_DISPLAYID = "farmerLeadDisplayId";
         public static final String COLUMN_FL_FULLNAME = "farmerLeadFullName";
         public static final String COLUMN_FL_NUMBER = "contactNumber";
+        public static final String COLUMN_COUNTRY_ISOCODE = "countryIsoCode";
+        public static final String COLUMN_COUNTRY_ID = "countryId";
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
                     add(COLUMN_FL_ID);
                     add(COLUMN_FL_DISPLAYID);
                     add(COLUMN_FL_FULLNAME);
                     add(COLUMN_FL_NUMBER);
+                    add(COLUMN_COUNTRY_ISOCODE);
+                    add(COLUMN_COUNTRY_ID);
+                }}
+        );
+    }
+
+    public static abstract class FarmerAssignments implements BaseColumns {
+        public static final String TABLE_NAME = "assignments";
+        public static final String COLUMN_PRODUCT_ID = "productId";
+        public static final String COLUMN_COUNTRY_iD = "countryId";
+        public static final String COLUMN_ISODORIGIN = "isODOrigin";
+        public static final String COLUMN_COUNTRYISOCODE = "countryIsoCode";
+        public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
+                new ArrayList<String>() {{
+                    add(COLUMN_PRODUCT_ID);
+                    add(COLUMN_COUNTRY_iD);
+                    add(COLUMN_ISODORIGIN);
+                    add(COLUMN_COUNTRYISOCODE);
                 }}
         );
     }

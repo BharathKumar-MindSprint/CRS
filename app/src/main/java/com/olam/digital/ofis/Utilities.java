@@ -194,6 +194,8 @@ public  static String base64ConversionForImage(String filepath)  {
             editor.putBoolean(prefName, altVal);
         }
 
+
+
         editor.apply();
 //        Passcode added - Penetration testing
         FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(context);
@@ -213,6 +215,16 @@ public  static String base64ConversionForImage(String filepath)  {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         if (value != 0) {
             editor.putLong(prefName, value);
+        }
+
+        editor.apply();
+    }
+
+    public static void saveIntToSharedPrefs(Context context, @SuppressWarnings("SameParameterValue") String prefName, int value) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        if (value != 0) {
+            editor.putInt(prefName, value);
         }
 
         editor.apply();
@@ -333,6 +345,11 @@ public  static String base64ConversionForImage(String filepath)  {
         return sharedPreferences.getLong(prefName, 0);
     }
 
+    public static int getIntFromSharedPrefs(Context context, @SuppressWarnings("SameParameterValue") String prefName) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
+
+        return sharedPreferences.getInt(prefName, 0);
+    }
 
     public static String getStringFromSharedPrefs(Context context, String prefName) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
