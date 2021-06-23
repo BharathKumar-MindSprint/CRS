@@ -24,6 +24,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
@@ -1901,6 +1902,7 @@ public class DataLayer {
         final Spinner districtSpinner = (Spinner) activity.findViewById(R.id.spinner_district);
         final Spinner subdistrictSpinner = (Spinner) activity.findViewById(R.id.spinner_subdistrict);
         final Spinner placeSpinner = (Spinner) activity.findViewById(R.id.spinner_place);
+        final ImageView haDistrict = (ImageView) activity.findViewById(R.id.haDistrict);
 
 
         final EditText newplace = (EditText) activity.findViewById(R.id.newPlaceName);
@@ -1937,6 +1939,17 @@ public class DataLayer {
                         farmerLeadDisplayLayout.setVisibility(View.GONE);
                     } else {
                         farmerLeadDisplayLayout.setVisibility(View.VISIBLE);
+                    }
+                }
+
+                if (id > 0) {
+                    boolean isODOrigin = isSubdistrictCapture((int) id);
+                    if (!isODOrigin) {
+                        subdistrictSpinner.setVisibility(View.GONE);
+                        haDistrict.setVisibility(View.GONE);
+                    } else {
+                        subdistrictSpinner.setVisibility(View.VISIBLE);
+                        haDistrict.setVisibility(View.VISIBLE);
                     }
                 }
 
@@ -3067,42 +3080,14 @@ public class DataLayer {
                 });
 
                 String selectedsubdistrict = farmer.getString(farmer.getColumnIndex("subdistrictId")).trim();
-                 if(selectedsubdistrict.equalsIgnoreCase("0")){
-                    // update farmers subdistrict
-                    mc.addRow(new String[]{
-                            "0",
-                            res.getString(R.string.update_farmer_subdistrict),
-                            res.getString(R.string.update_farmer_subdistrict),
-                            res.getString(R.string.update_farmer_subdistrict),
-                            res.getString(R.string.update_farmer_subdistrict),
-                            res.getString(R.string.update_farmer_subdistrict),
-                            res.getString(R.string.update_farmer_subdistrict),
-                            res.getString(R.string.update_farmer_subdistrict),
-                            res.getString(R.string.update_farmer_subdistrict),
-                            res.getString(R.string.update_farmer_subdistrict),
-                            "0",
-                            "",
-                            "",
-                            "",
-                            res.getString(R.string.update_tab_hint),
-                            res.getString(R.string.update_tab_hint),
-                            res.getString(R.string.update_tab_hint),
-                            res.getString(R.string.update_tab_hint),
-                            res.getString(R.string.update_tab_hint),
-                            res.getString(R.string.update_tab_hint),
-                            res.getString(R.string.update_tab_hint),
-                            res.getString(R.string.update_tab_hint),
-                            res.getString(R.string.update_tab_hint),
-                            "",
-                            "",
-                            "",
-                            "",
-                            "",
-                            "",
-                            "Subdistrict"
-                    });
+                String countryid = farmer.getString(farmer.getColumnIndex("country_id")).trim();
+                boolean isSubdistrictCapture = isSubdistrictCapture(Integer.parseInt(countryid));
+                if(isSubdistrictCapture) {
+                    if (selectedsubdistrict.equalsIgnoreCase("0")) {
+                        // update farmers subdistrict
+                        mc.addRow(new String[]{"0", res.getString(R.string.update_farmer_subdistrict), res.getString(R.string.update_farmer_subdistrict), res.getString(R.string.update_farmer_subdistrict), res.getString(R.string.update_farmer_subdistrict), res.getString(R.string.update_farmer_subdistrict), res.getString(R.string.update_farmer_subdistrict), res.getString(R.string.update_farmer_subdistrict), res.getString(R.string.update_farmer_subdistrict), res.getString(R.string.update_farmer_subdistrict), "0", "", "", "", res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), "", "", "", "", "", "", "Subdistrict"});
+                    }
                 }
-
                 // add update consent statement task
                 mc.addRow(new String[]{"0", res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), "0", "", "", "", res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), "", "", "", "", "", "", res.getString(R.string.consent_statement)});
 
@@ -3484,6 +3469,29 @@ public class DataLayer {
             while (nids.moveToNext()) {
                 String isODorigin = nids.getString(nids.getColumnIndex(OFISDBContract.FarmerAssignments.COLUMN_ISODORIGIN));
                 if (isODorigin.equalsIgnoreCase("true")) {
+                    status = true;
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            nids.close();
+        }
+
+        return status;
+    }
+
+    public boolean isSubdistrictCapture(int countryid) {
+        if(countryid == 0){
+            return  false;
+        }
+        boolean status = false;
+        Cursor nids = getcountrynameid(countryid);
+        try {
+            while (nids.moveToNext()) {
+                String isSubDistCapture = nids.getString(nids.getColumnIndex(OFISDBContract.CountriesEntry.COLUMN_NAME_ISSUBDISTCAPTURE));
+                if (isSubDistCapture.equalsIgnoreCase("true")) {
                     status = true;
                     break;
                 }

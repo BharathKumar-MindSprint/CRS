@@ -172,6 +172,7 @@ public class AddInfrastructureActivity extends BaseActivity {
     ArrayAdapter<String> villageSpinnerAdapter=null;
     private int editPosition;
     private boolean isVillage;
+    boolean isSubdistrictCapture;
     LinearLayout layout_geo_old, layout_geo_new;
 
     @Override
@@ -534,6 +535,7 @@ public class AddInfrastructureActivity extends BaseActivity {
         // common
         Spinner spinner_country = (Spinner) findViewById(R.id.spinner_country);
         long country_id = spinner_country.getSelectedItemId();
+        isSubdistrictCapture = dl.isSubdistrictCapture((int) country_id);
         //New
         Spinner spinner_country1 = (Spinner) findViewById(R.id.spinner_country1);
         long country_id1 = spinner_country1.getSelectedItemId();
@@ -589,10 +591,12 @@ public class AddInfrastructureActivity extends BaseActivity {
 
         Spinner spinner_subdistrict = (Spinner) findViewById(R.id.spinner_subdistrict);
         long subdistrict_id = spinner_subdistrict.getSelectedItemId();
-        if (subdistrict_id < 1) {
-            Toast.makeText(context, res.getString(R.string.fill_subdistrict), Toast.LENGTH_LONG).show();
+        if(isSubdistrictCapture) {
+            if (subdistrict_id < 1) {
+                Toast.makeText(context, res.getString(R.string.fill_subdistrict), Toast.LENGTH_LONG).show();
 
-            return values;
+                return values;
+            }
         }
 
         Spinner spinner_farmer_group = (Spinner) findViewById(R.id.spinner_farmerGroup);
@@ -647,7 +651,9 @@ public class AddInfrastructureActivity extends BaseActivity {
             values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_SUBGROUP_TYPE, String.valueOf(subModulesSpinner.getSelectedItem()));
             values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LAT, recorded_lat);
             values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG, recorded_lng);
-            values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBDISTRICT_ID, subdistrict_id);
+            if(isSubdistrictCapture) {
+                values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBDISTRICT_ID, subdistrict_id);
+            }
             if (isVillage){
                 values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_COUNTRY_ID, country_id1);
                 values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_REGION_ID, region_id1);
@@ -657,7 +663,6 @@ public class AddInfrastructureActivity extends BaseActivity {
                 values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_REGION_ID, region_id);
                 values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_DISTRICT_ID, district_id);
             }
-
             values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMERGROUP_ID, farmergroup_id);
 
             if (isVillage) {
