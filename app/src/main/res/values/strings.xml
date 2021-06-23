@@ -679,7 +679,6 @@
     <string name="consent_duplicate_error">Error in saving FarmerConsent</string>
     <string name="duplicate_survey">Dupicate survey entry</string>
     <string name="removing_duplicate_survey">Removing dupicate survey</string>
-    <string name="national_id_info">Please update the National ID of farmer</string>
     <string name="update_farmer_subdistrict">Update Farmer\’s Subdistrict</string>
     <string name="update">Update</string>
     <string name="label_subdistrict">Subdistrict:</string>
@@ -914,4 +913,6 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="privacy_no_cache_offline">You\'re offline. Please switch on your network to view the privacy statement</string>
     <string name="please_click_checkbox">Please click all the appropriate checkboxes</string>
     <string name="select_country">Please select Country</string>
+    <string name="national_id_info">Please update the National ID of farmer</string>
+    <string name="odid">OD ID:</string>
 </resources>

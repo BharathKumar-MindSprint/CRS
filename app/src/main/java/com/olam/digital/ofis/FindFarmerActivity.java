@@ -150,9 +150,11 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
         if (farmerList.getCount() > 0) {
             String[] adapterCols = new String[]{
                     "name",
-                    "olam_farmer_id"
+                    "olam_farmer_id",
+                    "country_id",
+                    "odFarmerId"
             };
-            int[] adapterRowViews = new int[]{R.id.farmerListFarmerName, R.id.farmerListOlamFarmerId};
+            int[] adapterRowViews = new int[]{R.id.farmerListFarmerName, R.id.farmerListOlamFarmerId,R.id.farmerListODFarmerId};
             customListAdapter_farmerAdapter = new CustomListAdapter_Farmer(context, farmerList, adapterCols, adapterRowViews, res, transactionMode);
            // setListAdapter(customListAdapter_farmerAdapter);
             listView.setAdapter(customListAdapter_farmerAdapter);

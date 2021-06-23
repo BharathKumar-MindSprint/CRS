@@ -85,9 +85,19 @@ class CustomListAdapter_Farmer extends SimpleCursorAdapter {
             }
 
             ofisID.setText("OFIS ID: "+cursor.getString(cursor.getColumnIndex("olam_farmer_id")));
-            String odidvalue = cursor.getString(cursor.getColumnIndex("odFarmerId"));
-            if(odidvalue != null && odidvalue != "null") {
-                odID.setText("OD ID:   " + cursor.getString(cursor.getColumnIndex("odFarmerId")));
+            String country_id = cursor.getString(cursor.getColumnIndex("country_id"));
+            System.out.println("Countryid:" + country_id);
+            DataLayer dl = new DataLayer(res,context);
+            boolean isODOrigin = dl.isODOrigin(Integer.parseInt(country_id));
+            System.out.println("isODOrigin:" + isODOrigin);
+
+            if(isODOrigin) {
+                String odidvalue = cursor.getString(cursor.getColumnIndex("odFarmerId"));
+                if(odidvalue != null && odidvalue != "null") {
+                    odID.setText("OD ID:   " + odidvalue);
+                    odID.setVisibility(View.VISIBLE);
+                }else
+                    odID.setVisibility(View.GONE);
             }else {
                 odID.setVisibility(View.GONE);
             }

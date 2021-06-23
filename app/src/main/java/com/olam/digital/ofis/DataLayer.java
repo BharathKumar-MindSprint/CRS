@@ -2026,6 +2026,7 @@ public class DataLayer {
                     if (subdistrictSelection != 0) {
                         setSpinnerSelectionById(subdistrictSelection, subdistrictSpinner);
                         if (subdistricts.getCount() == 1) {
+                            subdistrictSpinner.setSelection(1, false);
                             subdistrictSpinner.setEnabled(false);
                         } else {
                             subdistrictSpinner.setEnabled(true);
@@ -2527,6 +2528,8 @@ public class DataLayer {
                     farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_PHOTO + ", " +
                     farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID + ", " +
                     farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_CREATED_LOCALLY + ", " +
+                    farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID + ", " +
+                    farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_ODFARMERID + ", " +
                     " 'farmer' AS transactee_type FROM " +
                     farmerTable + " INNER JOIN " + sectionsTable + " ON " + farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID +
                     " = " + sectionsTable + "." + OFISDBContract.SectionsEntry.COLUMN_NAME_ID + " INNER JOIN " + farmerGroupsTable + " ON " +
@@ -2624,6 +2627,7 @@ public class DataLayer {
         String sectionsTable = OFISDBContract.SectionsEntry.TABLE_NAME;
         if (query.length() > 0) {
             whereClause = "WHERE " + farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME + " LIKE '%" + query + "%' OR " +
+                    farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_ODFARMERID + " LIKE '%" + query + "%' OR " +
                     farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID + " LIKE '%" + query + "'";
         }
         if (selectedFarmerGroup > 0) {
@@ -2647,6 +2651,8 @@ public class DataLayer {
                 farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_PHOTO + ", " +
                 farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID + ", " +
                 farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_CREATED_LOCALLY + ", " +
+                farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID + ", " +
+                farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_ODFARMERID + ", " +
                 farmerModulesTable + "." + OFISDBContract.FarmerModulesEntry.COLUMN_NAME_ID + " as farmer_module_id, " +
                 farmerModulesTable + "." + OFISDBContract.FarmerModulesEntry.COLUMN_NAME_STATUS_STARTED + " from " +
                 farmerTable + " INNER JOIN " + sectionsTable + " ON " + farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID +
