@@ -3503,7 +3503,9 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                         .getInstance(context)
                                         .getFarmerID(finalTempOlamFarmerID);*/
 //                                SharedPreferenceUtils.getInstance(context).setFarmerID(jsonObject1.getString("olamFarmerId"), String.valueOf(farmUniqueID));
-                                dl.updateSyncedStatus(localFarmerId);
+                               //Fixed for biomatric
+                               // dl.updateSyncedStatus(localFarmerId);
+                                dl.updateSyncedStatusFixed(localFarmerId, jsonObject1.getInt("id"));
                                 dl.markFarmerAsSynced(localFarmerId, jsonObject1.getInt("id"), jsonObject1.getInt("farmId"), localPlaceId, jsonObject1.getInt("placeId"),jsonObject1.getString("olamFarmerId"));
                                 dl.deleteNetworkQueueItem(networkQueueItemId);
                                 initGPSSync();
