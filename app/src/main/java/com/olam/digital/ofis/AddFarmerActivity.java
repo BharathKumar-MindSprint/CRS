@@ -567,7 +567,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         farmerName.setText(existingItem.getString(existingItem.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME)));
 
         farmerName.setFilters(new InputFilter[]{new EmojiExcludeFilter()});
-
+        farmerLeadSearch = findViewById(R.id.farmerleadinfo);
         farmerDOB = findViewById(R.id.farmerDOB);
         dateStrToSend = existingItem.getString(existingItem.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_DOB));
         farmerDOB.setText(dateStrToSend);
@@ -603,7 +603,10 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                 Utilities.setSpinnerSelectionByValue(existingGender, genderspinner);
             }
         }.start();
-
+        isFLEnumerator = Utilities.getBoolFromSharedPrefs(context, Utilities.FARMERLEAD_ENUMERATOR,false);
+        if(isFLEnumerator) {
+            farmerLeadSearch.setText(existingItem.getString(existingItem.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERLEADNAME)));
+        }
         farmerIdPrefix.setText(existingItem.getString(existingItem.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)).substring(0, 13));
         EditText farmerIdSuffix = findViewById(R.id.olamFarmerIdEnd);
         farmerIdSuffix.setText(existingItem.getString(existingItem.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)).substring(13));

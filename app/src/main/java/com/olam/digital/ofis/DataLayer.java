@@ -1932,7 +1932,7 @@ public class DataLayer {
                         diallingcode.setText(dialling_code);
                     }
                 }
-                if (id > 0) {
+                if (id > 0 && item == 1) {
                     LinearLayout farmerLeadDisplayLayout = activity.findViewById(R.id.farmerLeadDisplayLayout);
                     boolean isODOrigin = isODOrigin((int) id);
                     if (!isODOrigin) {
