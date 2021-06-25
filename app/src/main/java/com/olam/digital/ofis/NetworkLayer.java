@@ -3599,17 +3599,21 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 boolean moderation = Boolean.parseBoolean(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_MODERATION_STATUS)));
                 jsonObject.put(OFISDBContract.FarmerEntry.COLUMN_NAME_MODERATION_STATUS, moderation);
                 // converting to Long value
-                //  long countryID= Long.valueOf(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID)));
-                jsonObject.put(OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRYID, Long.valueOf(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID))));
+                  long countryID= Long.valueOf(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID)));
+                jsonObject.put(OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRYID, countryID);
                 long placeID= Long.valueOf(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID)));
                 jsonObject.put(OFISDBContract.FarmerEntry.COLUMN_NAME_PLACEID, placeID);
                 long sectionID=Long.valueOf(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID)));
                 jsonObject.put(OFISDBContract.FarmerEntry.COLUMN_NAME_SECTIONID, sectionID);
                 long districtID=Long.valueOf(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_DISTRICTID)));
                 jsonObject.put("districtId",districtID);
+
                 try{
-                    long subdistrictID = Long.valueOf(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_SUBDISTRICTID)));
-                    jsonObject.put("subdistrictId", subdistrictID);
+                    boolean isSubdistrictCapture = dl.isSubdistrictCapture((int) countryID);
+                    if(isSubdistrictCapture) {
+                        long subdistrictID = Long.valueOf(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_SUBDISTRICTID)));
+                        jsonObject.put("subdistrictId", subdistrictID);
+                    }
                 }catch (Exception e){e.printStackTrace();}
                 long regionID=Long.valueOf(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_REGIONID)));
                 jsonObject.put("regionId",regionID);
