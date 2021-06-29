@@ -11,7 +11,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 class OFISDB extends SQLiteOpenHelper {
     private static OFISDB sInstance;
 
-    private static final int DATABASE_VERSION = 132;
+    private static final int DATABASE_VERSION = 133;
 
     private static final String DATABASE_NAME = "ofismobile";
 
@@ -405,7 +405,7 @@ class OFISDB extends SQLiteOpenHelper {
 
 
     private static final String OFIS_PLACES_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.PlacesEntry.TABLE_NAME
-            + " ( " + OFISDBContract.PlacesEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + OFISDBContract.PlacesEntry.COLUMN_NAME_DISTRICT_ID + " INTEGER, "
+            + " ( " + OFISDBContract.PlacesEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + OFISDBContract.PlacesEntry.COLUMN_NAME_DISTRICT_ID + " INTEGER, " + OFISDBContract.PlacesEntry.COLUMN_NAME_SUBDISTRICT_ID + " INTEGER, "
             + OFISDBContract.PlacesEntry.COLUMN_NAME_PLACE_TYPE + " TEXT, " + OFISDBContract.PlacesEntry.COLUMN_NAME_PLACE_NAME + " TEXT )";
 
     private static final String OFIS_FARMERGROUPS_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.FarmerGroupsEntry.TABLE_NAME

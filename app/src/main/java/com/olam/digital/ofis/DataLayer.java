@@ -2019,6 +2019,7 @@ public class DataLayer {
 
             }
         });
+
         if(item == 3){
             regionSpinner.setEnabled(false);
             districtSpinner.setEnabled(false);
@@ -2047,8 +2048,13 @@ public class DataLayer {
                             subdistrictSpinner.setEnabled(true);
                         }
                     }
-
-                    Cursor places = getSpinnerData(OFISDBContract.PlacesEntry.TABLE_NAME, true, OFISDBContract.PlacesEntry.COLUMN_NAME_DISTRICT_ID, ((int) id), true, OFISDBContract.PlacesEntry.COLUMN_NAME_PLACE_NAME);
+                    boolean isODOrigin = isSubdistrictCapture((int) id);
+                    Cursor places;
+                    if (!isODOrigin) {
+                        places = getSpinnerData(OFISDBContract.PlacesEntry.TABLE_NAME, true, OFISDBContract.PlacesEntry.COLUMN_NAME_DISTRICT_ID, ((int) id), true, OFISDBContract.PlacesEntry.COLUMN_NAME_PLACE_NAME);
+                    }else {
+                        places = getSpinnerData(OFISDBContract.PlacesEntry.TABLE_NAME, true, OFISDBContract.PlacesEntry.COLUMN_NAME_SUBDISTRICT_ID, ((int) id), true, OFISDBContract.PlacesEntry.COLUMN_NAME_PLACE_NAME);
+                    }
                     if (!newPlace) {
                         bindDataDrivenSpinnerSIP(placeSpinner, places, context, R.string.spinner_place_default, null, false);
                     } else {
@@ -2079,11 +2085,12 @@ public class DataLayer {
                 }
             });
 
-          /*  subdistrictSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+            subdistrictSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> adapterView, View view, int i, long id) {
 
-                    Cursor places = getSpinnerData(OFISDBContract.PlacesEntry.TABLE_NAME, true, OFISDBContract.PlacesEntry.COLUMN_NAME_DISTRICT_ID, ((int) id), true, OFISDBContract.PlacesEntry.COLUMN_NAME_PLACE_NAME);
+                    Cursor places = getSpinnerData(OFISDBContract.PlacesEntry.TABLE_NAME, true, OFISDBContract.PlacesEntry.COLUMN_NAME_SUBDISTRICT_ID, ((int) id), true, OFISDBContract.PlacesEntry.COLUMN_NAME_PLACE_NAME);
                     if (!newPlace) {
                         bindDataDrivenSpinnerSIP(placeSpinner, places, context, R.string.spinner_place_default, null, false);
                     } else {
@@ -2112,7 +2119,7 @@ public class DataLayer {
                 public void onNothingSelected(AdapterView<?> adapterView) {
 
                 }
-            });*/
+            });
             if (activity.findViewById(R.id.newPlaceName) != null) {
                 final EditText newPlaceName = (EditText) activity.findViewById(R.id.newPlaceName);
                 placeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {

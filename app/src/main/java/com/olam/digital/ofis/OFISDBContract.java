@@ -1109,6 +1109,7 @@ public class OFISDBContract {
         public static final String TABLE_NAME = "places";
         public static final String COLUMN_NAME_ID = "id";
         public static final String COLUMN_NAME_DISTRICT_ID = "district_id";
+        public static final String COLUMN_NAME_SUBDISTRICT_ID = "subdistrictId";
         public static final String COLUMN_NAME_PLACE_TYPE = "type";
         public static final String COLUMN_NAME_PLACE_NAME = "name";
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
@@ -1116,6 +1117,7 @@ public class OFISDBContract {
                     add(COLUMN_NAME_PLACE_NAME);
                     add(COLUMN_NAME_ID);
                     add(COLUMN_NAME_DISTRICT_ID);
+                    add(COLUMN_NAME_SUBDISTRICT_ID);
                     add(COLUMN_NAME_PLACE_TYPE);
                 }}
         );
