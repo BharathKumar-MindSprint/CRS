@@ -1935,10 +1935,15 @@ public class DataLayer {
                 if (id > 0 && item == 1) {
                     LinearLayout farmerLeadDisplayLayout = activity.findViewById(R.id.farmerLeadDisplayLayout);
                     boolean isODOrigin = isODOrigin((int) id);
+                    boolean isFLEnumerator = Utilities.getBoolFromSharedPrefs(context, Utilities.FARMERLEAD_ENUMERATOR,false);
                     if (!isODOrigin) {
                         farmerLeadDisplayLayout.setVisibility(View.GONE);
                     } else {
-                        farmerLeadDisplayLayout.setVisibility(View.VISIBLE);
+                        if(isFLEnumerator) {
+                            farmerLeadDisplayLayout.setVisibility(View.VISIBLE);
+                        }else {
+                            farmerLeadDisplayLayout.setVisibility(View.GONE);
+                        }
                     }
                 }
 
@@ -2900,7 +2905,7 @@ public class DataLayer {
 
 
     // TODO remove annual survey and expires once no longer required.
-    public Cursor getFarmerModules(long id, Context context) {
+    public Cursor getFarmerModules1(long id, Context context) {
         Cursor farmer = null;
 
         try {
@@ -3581,6 +3586,54 @@ public class DataLayer {
     }
 
 
+    public String getCountryName(int id) {
+        String name = "NA";
+        Cursor nids = getcountrynameid(id);
+        try {
+            while (nids.moveToNext()) {
+                name = nids.getString(nids.getColumnIndex(OFISDBContract.CountriesEntry.COLUMN_NAME_COUNTRY_NAME));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            nids.close();
+        }
+
+        return name;
+    }
+
+
+    public String getRegionName(int id) {
+        String name = "NA";
+        Cursor nids = getregionnameid(id);
+        try {
+            while (nids.moveToNext()) {
+                name = nids.getString(nids.getColumnIndex(OFISDBContract.RegionsEntry.COLUMN_NAME_REGION_NAME));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            nids.close();
+        }
+
+        return name;
+    }
+
+    public String getDistrictName(int id) {
+        String name = "NA";
+        Cursor nids = getdistrictnameid(id);
+        try {
+            while (nids.moveToNext()) {
+                name = nids.getString(nids.getColumnIndex(OFISDBContract.DistrictsEntry.COLUMN_NAME_DISTRICT_NAME));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            nids.close();
+        }
+
+        return name;
+    }
 
     public String getPlaceName(int id) {
         String name = "NA";
@@ -3632,6 +3685,25 @@ public class DataLayer {
     }
 
 
+
+    public boolean isMultipleCountries() {
+        boolean status = false;
+        Cursor ids = null;
+
+        try {
+            ids = db.query(OFISDBContract.CountriesEntry.TABLE_NAME, new String[]{"*"}, null, null, null, null, null);
+
+            if (ids.getCount() > 1) {
+                status = true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            ids.close();
+        }
+
+        return status;
+    }
 
 
     public boolean isValueavailable(long farmerId) {
@@ -4574,7 +4646,7 @@ public class DataLayer {
         return (nqis.getCount() > 0);
     }
 
-    private Cursor getFmpByFarmerId(long farmerId) {
+    public Cursor getFmpByFarmerId(long farmerId) {
         String[] columns = new String[]{"*"};
         String whereClause = OFISDBContract.FarmManagementPlanEntry.COLUMN_NAME_FARMER_ID + " = ? ";
         String[] whereArgs = new String[]{
@@ -4591,6 +4663,12 @@ public class DataLayer {
 
         //  return  db.query(OFISDBContract.FarmManagementPlanEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
     }
+
+    public Cursor getfarmerModules(String modulesQuery, String[] modulesQueryValues) {
+        @SuppressLint("Recycle") Cursor farmerModules = db.rawQuery(modulesQuery, modulesQueryValues);
+        return farmerModules;
+    }
+
 
     Cursor getFmpSections() {
         Cursor cursor=null;

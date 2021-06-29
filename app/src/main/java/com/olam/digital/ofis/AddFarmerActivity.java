@@ -318,7 +318,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         farmerLeadSearch = findViewById(R.id.farmerleadinfo);
         farmerLeadDisplayLayout = findViewById(R.id.farmerLeadDisplayLayout);
         isFLEnumerator = Utilities.getBoolFromSharedPrefs(context, Utilities.FARMERLEAD_ENUMERATOR,false);
-
+        System.out.println("isflenumerator_data2:" + isFLEnumerator);
         /*adapterFarmerlead = new CustomListAdapterFarmerlead(this, R.layout.activity_add_farmer, flList);
         farmerLeadSearch.setAdapter(adapterFarmerlead);
         farmerLeadSearch.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -405,6 +405,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
  //       }
 
         showFarmerLead();
+        System.out.println("isflenumerator_data3:" + isFLEnumerator);
         if(! isFLEnumerator){
             farmerLeadDisplayLayout.setVisibility(View.GONE);
         }else {
@@ -1028,15 +1029,13 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_SYNCED, 0);
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_WEBSITE_SUBMITTED_MODULES, "{}");
             values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_DISTRICT_ID, district_id);
-            values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBDISTRICT_ID, subdistrict_id);
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_CONSENT_FARMER, 1);
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_CONSENT_OTHERS, 1);
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID, String.valueOf(countryId));
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_REGIONID, String.valueOf(regionId));
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_DISTRICTID, String.valueOf(districtId));
-            if(isSubdistrictCapture) {
-                values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_SUBDISTRICTID, String.valueOf(subdistrictId));
-            }
+            values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBDISTRICT_ID, subdistrict_id);
+            values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_SUBDISTRICTID, String.valueOf(subdistrictId));
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID, String.valueOf(farmerGroupId));
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_ISCONSENTAVAILABLE, "true");
             if(isFLEnumerator) {
