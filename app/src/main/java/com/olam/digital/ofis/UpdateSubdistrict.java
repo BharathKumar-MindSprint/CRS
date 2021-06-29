@@ -89,6 +89,11 @@ public class UpdateSubdistrict extends BaseActivity implements View.OnClickListe
                 int selectedRegion = Integer.parseInt(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_REGIONID)));
                 selectedDistrict = Integer.parseInt(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_DISTRICTID)));
                 selectedPlace = Integer.parseInt(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID)));
+                try {
+                    selectedSubDistrict = Integer.parseInt(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_SUBDISTRICTID)));
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
                 String countryName = dl.getCountryName(selectedCountry);
 //                tv_country_name.setText(countryName);
                 String regionName = dl.getRegionName(selectedRegion);
@@ -96,6 +101,8 @@ public class UpdateSubdistrict extends BaseActivity implements View.OnClickListe
                 String districtName = dl.getDistrictName(selectedDistrict);
 //                tv_district_name.setText(districtName);
                 String placeName = dl.getPlaceName(selectedPlace);
+
+                String subdistricName = dl.getPlaceName(selectedSubDistrict);
 //                tv_place_name.setText(placeName);
                 dl.createGeographyHierarchySpinners(this, context, null, selectedCountry, selectedRegion, selectedDistrict, selectedSubDistrict, selectedPlace, null, true, 3);
 //                dl.loadSubdistrictSpinner(this, context, selectedDistrict, 0);
