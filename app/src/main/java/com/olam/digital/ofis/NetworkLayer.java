@@ -96,7 +96,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             .readTimeout(720, TimeUnit.SECONDS)
             .writeTimeout(720, TimeUnit.SECONDS)
             .sslSocketFactory(getSSLSocketFactory())
-            .retryOnConnectionFailure(true)
+            .retryOnConnectionFailure(false)
             .build();
     private static final MediaType JSONBody = MediaType.parse("application/json; charset=utf-8");
     private static final MediaType MEDIA_TYPE_JPG = MediaType.parse("image/jpg");
@@ -1838,7 +1838,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     Log.i("POST", "" + submission.toString());
                     DynatraceHelper.requestPayload(DynatraceConstants.REQUEST+" "+endPoint,submission.toString(),context,true);
                     //increase the count - Adjustment code
-                    recordFailedUpload(0, 0, networkQueueItemId);
+                   // recordFailedUpload(0, 0, networkQueueItemId);
 
                     final String finalEndPoint = endPoint;
                     okHttpPost(context, endPoint, submission, new Callback() {
@@ -1846,15 +1846,41 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         public void onResponse(Call call, Response postResponse) {
                             String statusMessage;
                             if (postResponse.isSuccessful()) {
-                                dl.syncFarmerModule(farmerModuleId, farmerId, moduleId, submissionDate);
-                                dl.deleteNetworkQueueItem(networkQueueItemId);
-                                statusMessage = res.getString(R.string.item_synced);
-                                msg.what = 1;
-                                msg.arg1 = total;
-                                msg.arg2 = HomeActivity.progressItem = progress+1;
-                                msg.obj = statusMessage;
-                                handler.dispatchMessage(msg);
-                                syncNetworkQueue(originalSyncRequestItemId, handler);
+                                //Start - OW-2948
+                                // Handling the duplicate error - Franklin
+                                JSONObject response = null;
+                                boolean isDuplicateError;
+                                try {
+                                    response = new JSONObject(postResponse.body().string());
+                                    isDuplicateError=response.getBoolean("error");
+                                    if (isDuplicateError){
+                                        if (response != null) {
+                                            JSONArray errorObj = response.getJSONArray("errors");
+                                            String errorItem= (String) errorObj.get(0);
+                                            if (res.getString(R.string.duplicate_survey).equalsIgnoreCase(errorItem)){
+                                                // Do the Activity if the duplicate entry is there
+                                                dl.syncFarmerModule(farmerModuleId, farmerId, moduleId, submissionDate);
+                                                dl.deleteNetworkQueueItem(networkQueueItemId);
+                                            }
+                                        }
+                                    }else{
+                                        // Existing Logic
+                                        dl.syncFarmerModule(farmerModuleId, farmerId, moduleId, submissionDate);
+                                        dl.deleteNetworkQueueItem(networkQueueItemId);
+                                        statusMessage = res.getString(R.string.item_synced);
+                                        msg.what = 1;
+                                        msg.arg1 = total;
+                                        msg.arg2 = HomeActivity.progressItem = progress+1;
+                                        msg.obj = statusMessage;
+                                        handler.dispatchMessage(msg);
+                                        syncNetworkQueue(originalSyncRequestItemId, handler);
+                                    }
+
+                                } catch (JSONException | IOException e) {
+                                    FabricLogsWriter.printCrashLog(TAG, finalEndPoint,postResponse.code(), "Request : " +submission.toString() +"Response : JSON Parsing Exception :"+ postResponse.networkResponse().toString(),context);
+
+                                }
+                             //   End
                             } else {
                                 try {
                                     FabricLogsWriter.printCrashLog(TAG, finalEndPoint,postResponse.code(), "Request : " +submission.toString() +"Response : "+ postResponse.networkResponse().toString(),context);

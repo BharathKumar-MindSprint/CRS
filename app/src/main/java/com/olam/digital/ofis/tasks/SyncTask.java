@@ -44,7 +44,7 @@ abstract class SyncTask extends AsyncTask<SyncTaskOperationType, Object, String>
             .readTimeout(180, TimeUnit.SECONDS)
             .writeTimeout(180, TimeUnit.SECONDS)
             .sslSocketFactory(getSSLSocketFactory())
-            .retryOnConnectionFailure(true)
+            .retryOnConnectionFailure(false)
             .build();
     private static final MediaType JSONBody = MediaType.parse("application/json; charset=utf-8");
 
