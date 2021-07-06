@@ -389,7 +389,14 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
                     }
                     i++;
                     nidnumber.setText(nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_NUMBER)));
-                    expiryDate.setText(nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_EXPIRY_DATE)));
+                    try {
+                        String expirydatevalue = nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_EXPIRY_DATE));
+                        long millisecond = Long.parseLong(expirydatevalue);
+                        String dateString = new SimpleDateFormat("yyyy-MM-dd").format(new Date(millisecond));
+                        expiryDate.setText(dateString);
+                    }catch (Exception e){
+                        expiryDate.setText(nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_EXPIRY_DATE)));
+                    }
                     String selected_item = getNidTypebyid(nids.getInt(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_TYPE)));
                     int spinnerPosition = spinnerArrayAdapter.getPosition(selected_item);
                     spinner_nidtype.setSelection(spinnerPosition);

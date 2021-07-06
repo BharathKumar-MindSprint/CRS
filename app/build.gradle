@@ -37,8 +37,8 @@ android {
         targetSdkVersion 29
         multiDexEnabled true
 
-        versionCode 181
-        versionName "10.1.83"
+        versionCode 191
+        versionName "10.1.93"
 
         ndk {
 		//	abiFilters 'x86', 'armeabi-v7a', 'arm64-v8a'

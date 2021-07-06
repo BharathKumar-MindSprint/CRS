@@ -106,10 +106,11 @@ public class DataLayer {
         return (existingPlace.getCount() > 0);
     }
 
-    long insertNewPlace(String newPlaceName, long district_id) {
+    long insertNewPlace(String newPlaceName, long district_id, long subdistrict_id) {
         ContentValues values = new ContentValues();
         values.put(OFISDBContract.PlacesEntry.COLUMN_NAME_PLACE_NAME, newPlaceName);
         values.put(OFISDBContract.PlacesEntry.COLUMN_NAME_DISTRICT_ID, district_id);
+        values.put(OFISDBContract.PlacesEntry.COLUMN_NAME_SUBDISTRICT_ID, subdistrict_id);
         values.put(OFISDBContract.PlacesEntry.COLUMN_NAME_PLACE_TYPE, "localinsert");
 
         return db.insert(OFISDBContract.PlacesEntry.TABLE_NAME, null, values);
@@ -2028,25 +2029,28 @@ public class DataLayer {
             districtSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> adapterView, View view, int i, long id) {
+                    try {
+                        Cursor subdistricts = getSpinnerData(OFISDBContract.SubDistrictsEntry.TABLE_NAME, true, OFISDBContract.SubDistrictsEntry.COLUMN_NAME_DISTRICT_ID, ((int) id), true, OFISDBContract.SubDistrictsEntry.COLUMN_NAME_SUBDISTRICT_NAME);
+                        bindDataDrivenSpinner(subdistrictSpinner, subdistricts, context, R.string.spinner_subdistrict_default, null, false);
 
-                    Cursor subdistricts = getSpinnerData(OFISDBContract.SubDistrictsEntry.TABLE_NAME, true, OFISDBContract.SubDistrictsEntry.COLUMN_NAME_DISTRICT_ID, ((int) id), true, OFISDBContract.SubDistrictsEntry.COLUMN_NAME_SUBDISTRICT_NAME);
-                    bindDataDrivenSpinner(subdistrictSpinner, subdistricts, context, R.string.spinner_subdistrict_default, null, false);
-
-                    if (subdistrictSelection != 0) {
-                        setSpinnerSelectionById(subdistrictSelection, subdistrictSpinner);
-                        if (subdistricts.getCount() == 1) {
-                            subdistrictSpinner.setSelection(1, false);
-                            subdistrictSpinner.setEnabled(false);
+                        if (subdistrictSelection != 0) {
+                            setSpinnerSelectionById(subdistrictSelection, subdistrictSpinner);
+                            if (subdistricts.getCount() == 1) {
+                                subdistrictSpinner.setSelection(1, false);
+                                subdistrictSpinner.setEnabled(false);
+                            } else {
+                                subdistrictSpinner.setEnabled(true);
+                            }
                         } else {
-                            subdistrictSpinner.setEnabled(true);
+                            if (subdistricts.getCount() == 1) {
+                                subdistrictSpinner.setSelection(1, false);
+                                subdistrictSpinner.setEnabled(false);
+                            } else {
+                                subdistrictSpinner.setEnabled(true);
+                            }
                         }
-                    } else {
-                        if (subdistricts.getCount() == 1) {
-                            subdistrictSpinner.setSelection(1, false);
-                            subdistrictSpinner.setEnabled(false);
-                        } else {
-                            subdistrictSpinner.setEnabled(true);
-                        }
+                    }catch (Exception e){
+                        e.printStackTrace();
                     }
                     boolean isODOrigin = isSubdistrictCapture((int) id);
                     Cursor places;
@@ -4371,7 +4375,7 @@ public class DataLayer {
 
     }
 
-    void markFarmerAsSynced(int localFarmerId, int id, int farmId, int localPlaceId, int newPlaceId, String olamId) {
+    void markFarmerAsSynced(int localFarmerId, int id, int farmId, int localPlaceId, int newPlaceId, String olamId, String odFarmerId) {
         // check to see if new id is already existing
         Cursor newFarmer = db.query(OFISDBContract.FarmerEntry.TABLE_NAME, new String[]{"id"}, "id = ?", new String[]{String.valueOf(id)}, null, null, null);
 
@@ -4387,6 +4391,12 @@ public class DataLayer {
             newValues.put(OFISDBContract.FarmerEntry.COLUMN_NAME_WEBSITE_FARMER_ID, id);
             if (newPlaceId > 0) {
                 newValues.put(OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID, newPlaceId);
+            }
+            try {
+                System.out.println("dl_odFarmerId:" + odFarmerId);
+                newValues.put(OFISDBContract.FarmerEntry.COLUMN_NAME_ODFARMERID, odFarmerId);
+            }catch (Exception e){
+                e.printStackTrace();
             }
 
             String[] whereArgs = new String[]{String.valueOf(localFarmerId)};

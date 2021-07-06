@@ -914,7 +914,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         }
 
         if (place_id == -1 && newPlaceName.length() > 0) {
-            place_id = dl.insertNewPlace(newPlaceNameValue, district_id);
+            place_id = dl.insertNewPlace(newPlaceNameValue, district_id ,subdistrict_id);
         }
 
         /*Switch consentFarmer = findViewById(R.id.consentFarmer);

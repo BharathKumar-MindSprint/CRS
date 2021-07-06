@@ -690,6 +690,7 @@
     <string name="refresh_token">refresh_token</string>
     <string name="nid_exp_fill">Please fill Expiry Date</string>
     <string name="checking_isfl_enumerator">Checking Farmer Lead Enumerator</string>
+    <string name="checking_enumerator_assignment">Checking Enumerator Assignments</string>
     <string name="downloading_fldetails">Downloading Farmer Lead Details</string>
     <string name="choose_farmerlead">Choose Farmer Lead</string>
     <string name="fl_search">Search by Name/Id/Phone No.</string>

@@ -197,7 +197,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
 
 
-    public static void okHttpPost(Context context, String url, JSONObject params, Callback callback) {
+    private static void okHttpPost(Context context, String url, JSONObject params, Callback callback) {
         String enumeratorId = Utilities.getFromSharedPrefs(context);
         String commodity=Utilities.getCommoditySharedPrefs(context);
         String operatingUnit=Utilities.getOperatingUnitSharedPrefs(context);
@@ -3770,7 +3770,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                //Fixed for biomatric
                                // dl.updateSyncedStatus(localFarmerId);
                                 dl.updateSyncedStatusFixed(localFarmerId, jsonObject1.getInt("id"));
-                                dl.markFarmerAsSynced(localFarmerId, jsonObject1.getInt("id"), jsonObject1.getInt("farmId"), localPlaceId, jsonObject1.getInt("placeId"),jsonObject1.getString("olamFarmerId"));
+                                dl.markFarmerAsSynced(localFarmerId, jsonObject1.getInt("id"), jsonObject1.getInt("farmId"), localPlaceId, jsonObject1.getInt("placeId"),jsonObject1.getString("olamFarmerId"),jsonObject1.getString("odFarmerId"));
                                 dl.deleteNetworkQueueItem(networkQueueItemId);
                                 initGPSSync();
                                 statusMessage = res.getString(R.string.item_synced);
@@ -3787,6 +3787,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             } else {
                                 try {
                                     FabricLogsWriter.printCrashLog(TAG, endpoint,postResponse.code(),"Request : "+jsonArray.toString() + " Response  " +postResponse.networkResponse().toString(),context);
+                                    System.out.println(endpoint + " "+ postResponse.code() + "Request : "+jsonArray.toString() + " Response  " +postResponse.networkResponse().toString());
                                 }catch (Exception e){FirebaseCrashlytics.getInstance().log(e.getMessage());}
                                 long server_item_id = 0, fully_synced = 0;
 

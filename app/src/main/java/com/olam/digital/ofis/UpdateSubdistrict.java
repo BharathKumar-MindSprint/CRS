@@ -149,7 +149,7 @@ public class UpdateSubdistrict extends BaseActivity implements View.OnClickListe
             }
             selectedPlace = (int) placeSpinner.getSelectedItemId();
             if (place_id == -1 && newPlaceName.length() > 0) {
-                place_id = dl.insertNewPlace(newPlaceNameValue, selectedDistrict);
+                place_id = dl.insertNewPlace(newPlaceNameValue, selectedDistrict, selectedSubDistrict);
                 Log.d("AddPlace", String.valueOf(place_id));
             }
 

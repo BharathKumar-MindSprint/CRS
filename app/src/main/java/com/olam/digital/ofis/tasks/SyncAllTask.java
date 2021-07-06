@@ -455,9 +455,7 @@ public class SyncAllTask extends SyncTask {
 
 
         try {
-            Log.d("Testing Message", "Post Failure-----" + response.getString("errors"));
-        } catch (JSONException e) {
-            e.printStackTrace();
+            Log.d("Testing Message", "Post Failure-----" + response.toString());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -627,7 +625,8 @@ public class SyncAllTask extends SyncTask {
                             Utilities.saveIntToSharedPrefs(context, "COUNTRY_COUNT", 1);
                             countrycount = 1;
                             publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.checking_isfl_enumerator));
-                            delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_OD_TOKEN);
+                            delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_ISFL);
+
                         }catch (Exception e){e.printStackTrace();}
 
 
@@ -920,6 +919,7 @@ public class SyncAllTask extends SyncTask {
                 try {
                     JSONObject response = new JSONObject(postResponse.body().string());
                     DynatraceHelper.requestPayload(finalEndPoint,response.toString(),context,false);
+                    System.out.println("Surveyresponse_sync:" + response.toString());
                     if (postResponse.isSuccessful()) {
                         syncResultCount = syncResultCount + response.getInt("resultcount");
                         if (response.getString("status").equals("unchanged")) {
@@ -1176,11 +1176,13 @@ public class SyncAllTask extends SyncTask {
                         if(! isflenumerator) {
                             publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.updating_farmers));
                             delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_FARMERS);
-                        }else{
+                        }else{/*
 //                            publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.checking_isfl_enumerator));
                             publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.checking_isfl_enumerator));
 //                            delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_OD_TOKEN);
-                            delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_ENUM_ASSIGNMENT);
+                            delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_ENUM_ASSIGNMENT);*/
+                            publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.checking_isfl_enumerator));
+                            delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_OD_TOKEN);
                         }
 
 
@@ -1385,8 +1387,9 @@ public class SyncAllTask extends SyncTask {
                         delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_SPINNERS);*/
                        /* publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.updating_farmers));
                         delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_FARMERS);*/
-                        publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.checking_isfl_enumerator));
-                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_ISFL);
+
+                        publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.checking_enumerator_assignment));
+                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_ENUM_ASSIGNMENT);
                     } else {
                         try {
                             FabricLogsWriter.printCrashLog(TAG, finalEndPoint, postResponse.code(), postResponse.networkResponse().toString(), context);
