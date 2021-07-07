@@ -182,8 +182,8 @@ android {
 sonarqube{
     properties
             {
-                property "sonar.projectName", "olam-ot2.0-mobile-android-dev"
-                property "sonar.projectKey", "olam-ot2.0-mobile-android-dev"
+                property "sonar.projectName", "olam-ot2.0-mobile-android-prod"
+                property "sonar.projectKey", "olam-ot2.0-mobile-android-prod"
                 property "sonar.host.url", "https://10.101.32.103:9000/"
                 property "sonar.language", "java"
                 property "sonar.sources", "src/main/java/"
