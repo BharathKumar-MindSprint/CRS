@@ -49,6 +49,7 @@ import java.lang.reflect.Method;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Locale;
@@ -75,7 +76,7 @@ public class TrainingRecord extends BaseListActivity{
     private String mCurrentPhotoPath = null;
     private Uri mCapturedImageURI = null;
 
-    private long trainingRecordId, courseId, trainingModuleId;
+    public long trainingRecordId, courseId, trainingModuleId;
     private JSONObject scoringColumns;
     private boolean editMode, readOnlyMode, firstLoad = true;
 
@@ -94,7 +95,7 @@ public class TrainingRecord extends BaseListActivity{
 //    private Location mCurrentLocation=null;
 //    GPSListener gpsListener=null;
 //    private GPSTracker gpsTracker=null;
-
+   public static HashMap<Long,Integer> farmerAttendeeList =null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,9 +125,10 @@ public class TrainingRecord extends BaseListActivity{
             columnSuffix = "";
         }
 
+// Moving this to OnResume
         if (editMode) {
             getTrainingRecord();
-            getTrainingAttendees();
+           // getTrainingAttendees();
         }
 
         trainingPhotoActionButton = (ImageButton) findViewById(R.id.trainingPhotoActionButton);
@@ -314,6 +316,9 @@ public class TrainingRecord extends BaseListActivity{
     private void getTrainingAttendees() {
         trainingAttendees = dl.getTrainingAttendeesByTrainingRecordId(trainingRecordId);
 
+        //Get All Training Attendees Counts
+         farmerAttendeeList=dl.prepareAttendeeCountList(trainingAttendees,Integer.parseInt(String.valueOf(trainingRecordId)));
+
         if (trainingAttendees.getCount() > 0) {
             String[] adapterCols = new String[]{
                     "_id",
@@ -337,7 +342,7 @@ public class TrainingRecord extends BaseListActivity{
                     R.id.criterion_percentage,
                     R.id.criterion_grade
             };
-            customListAdapter_selectedAttendees = new CustomListAdapter_SelectedAttendees(context, trainingAttendees, adapterCols, adapterRowViews, res, readOnlyMode, me, scoringColumns, columnSuffix);
+            customListAdapter_selectedAttendees = new CustomListAdapter_SelectedAttendees(context, trainingAttendees, adapterCols, adapterRowViews, res, readOnlyMode, me, scoringColumns, columnSuffix,dl,farmerAttendeeList,trainingRecordId);
             listView.setAdapter(customListAdapter_selectedAttendees);
             //setListAdapter(customListAdapter_selectedAttendees);
         }
@@ -705,6 +710,11 @@ public class TrainingRecord extends BaseListActivity{
     protected void onResume() {
         super.onResume();
         MatomoHelper.matomoScreenTracker(ScreenNameConstants.SCREEN_TRAINING_RECORDS_ACTIVITY, ScreenNameConstants.SCREEN_TRAINING_RECORD_ACTIVITY, ScreenNameConstants.SCREEN_TRAINING_RECORD);
+        if (editMode) {
+         //   getTrainingRecord();
+            getTrainingAttendees();
+        }
+
     }
 
     @Override

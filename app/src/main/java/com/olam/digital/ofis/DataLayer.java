@@ -26,8 +26,10 @@ import android.widget.TextView;
 
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
+
 import com.olam.digital.ofis.childlabour.ChildLabourUtils;
 import com.olam.digital.ofis.coffeesurveyconstraints.CoffeeConstants;
+import com.olam.digital.ofis.model.Attendee;
 import com.olam.digital.ofis.model.FarmerLeadDTO;
 import com.olam.digital.ofis.model.GeoDTO;
 import com.olam.digital.ofis.model.NationalIdDTO;
@@ -49,6 +51,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -3583,7 +3586,6 @@ public class DataLayer {
         String whereClause = OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID + " = ?";
         String[] whereArgs = new String[]{String.valueOf(farmerid)};
         String orderBy = OFISDBContract.FarmerNationalIDs.COLUMN_NAME_ID + " ASC";
-
         return db.query(OFISDBContract.FarmerNationalIDs.TABLE_NAME, columns, whereClause, whereArgs, null, null, orderBy);
     }
 
@@ -6460,7 +6462,7 @@ public class DataLayer {
     }
 
      public long getProductIdByFarmerGroupId(long farmerGroupId) {
-       
+
         long productId=0;
         String[] columns = new String[]{"*"};
         String whereClause = OFISDBContract.FarmerGroupsEntry.COLUMN_NAME_ID+ " = ?";
@@ -8166,6 +8168,97 @@ public class DataLayer {
             cursor.close();
         }
         return  false;
+    }
+
+    public Cursor getTraineeRelationship(int trainingRecordId, long farmerId) {
+        String[] columns = new String[]{"*"};
+        String whereClause = OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINING_RECORD_ID + " = ? AND " + OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_FARMER_ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(trainingRecordId), String.valueOf(farmerId)};
+        Cursor cursor=null;
+        try {
+            cursor = db.query(OFISDBContract.TrainingAttendeeRelations.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+        }catch (Exception e){
+            FirebaseCrashlytics.getInstance().log(e.getMessage());
+        }
+        return cursor;
+    }
+
+    public void addOrUpdateTrainees(Context context, long farmerId, int trainingRecordId, ArrayList<Attendee> attendeeList) {
+
+        String[] columns = new String[]{"*"};
+        String whereClause = OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINING_RECORD_ID + " = ? AND " + OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_FARMER_ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(trainingRecordId), String.valueOf(farmerId)};
+        Cursor traineeCursor=null;
+        try {
+            traineeCursor = db.query(OFISDBContract.TrainingAttendeeRelations.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+        }catch (Exception e){
+            FirebaseCrashlytics.getInstance().log(e.getMessage());
+        }
+        if (traineeCursor != null && traineeCursor.getCount() > 0) {
+            db.delete(OFISDBContract.TrainingAttendeeRelations.TABLE_NAME, whereClause, whereArgs);
+        }
+
+        if (attendeeList.size()>0) {
+            for (Attendee attendee : attendeeList) {
+                ContentValues values = new ContentValues();
+                values.put(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_FARMER_ID, farmerId);
+                values.put(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINING_RECORD_ID, trainingRecordId);
+                values.put(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINEE_NAME, attendee.getTraineeName());
+                values.put(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINEE_AGE, attendee.getTraineeAge());
+                values.put(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINEE_RELATIONSHIP, attendee.getTraineeRelationship());
+                values.put(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINEE_RELATIONSHIP_ID, attendee.getTraineeRelationshipId());
+                values.put(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINEE_GENDER, attendee.getTraineeGender());
+                values.put(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINEE_GENDER_ID, attendee.getTraineeGenderId());
+                db.insert(OFISDBContract.TrainingAttendeeRelations.TABLE_NAME, null, values);
+            }
+        }
+    }
+
+    private Cursor getFarmerIdByItem(int itemId) {
+        String[] columns = new String[]{"*"};
+        String whereClause = OFISDBContract.TrainingAttendee.COLUMN_NAME_ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(itemId)};
+        return db.query(OFISDBContract.TrainingAttendee.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+    }
+
+    public int getFarmerByAttendeeItem(int itemId) {
+        Cursor cursor=getFarmerIdByItem(itemId);
+        int farmerId = 0;
+        try {
+            if (cursor != null) {
+                while (cursor.moveToNext()) {
+                    farmerId = Integer.parseInt(cursor.getString(cursor.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_FARMER_ID)));
+                }
+            }
+        }catch (Exception e){
+
+        }finally {
+            cursor.close();
+        }
+        return  farmerId;
+    }
+
+    public HashMap<Long, Integer> prepareAttendeeCountList(Cursor trainingAttendees, int trainingRecordId) {
+        HashMap<Long,Integer> hashMap=new HashMap<Long,Integer>();
+        try {
+            if (trainingAttendees != null) {
+                while (trainingAttendees.moveToNext()) {
+                    Cursor cursor=null;
+                    try {
+                        long farmerId=Long.valueOf(trainingAttendees.getString(trainingAttendees.getColumnIndex(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_FARMER_ID)));
+                        cursor=  getTraineeRelationship(trainingRecordId,farmerId);
+                        if (cursor!=null){
+                            hashMap.put(farmerId,cursor.getCount());
+                        }
+                    }catch (Exception e){
+                    }finally {
+                        cursor.close();
+                    }
+                }
+            }
+        }catch (Exception e){}
+
+        return hashMap;
     }
 }
 
