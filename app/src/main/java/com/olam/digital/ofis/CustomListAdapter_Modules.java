@@ -236,15 +236,16 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                     textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
                     textView.setText(res.getString(R.string.record_farm_location_hint));
                 }
-            } else if(cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals(context.getResources().getString(R.string.consent_statement))){
+            } else if(cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals(context.getResources().getString(R.string.consent_statement))) {
                 String isConsentavailable = currentFarmer.getString(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ISCONSENTAVAILABLE));
-                if(isConsentavailable != null && isConsentavailable.length() > 0 && isConsentavailable.equalsIgnoreCase("true")) {
+                Log.d("CustomListAdapter", "isConsentavailable? :" + isConsentavailable);
+                if (isConsentavailable != null && isConsentavailable.length() > 0 && isConsentavailable.equalsIgnoreCase("true")) {
                     imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_consentstmts));
                     enabledItem.setText("false");
                     linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
                     moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
                     textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-                }else{
+                } else {
                     imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_consentstmts));
                     enabledItem.setText("true");
                     linearLayout.setBackgroundResource(R.drawable.list_item);
