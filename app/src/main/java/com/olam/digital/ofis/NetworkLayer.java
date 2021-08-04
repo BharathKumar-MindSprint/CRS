@@ -1659,6 +1659,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     submission.put("olam_enumerator_id", enumeratorId);
                     submission.put("imei_number", IMEI);
                     submission.put("fmpreview", false);
+                    submission.put("app_version",BuildConfig.VERSION_NAME);
                     submission.put(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_FARMER_ID, farmerModule.getInt(farmerModule.getColumnIndex(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_FARMER_ID)));
                     submission.put(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_FARM_ID, farmerModule.getInt(farmerModule.getColumnIndex(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_FARM_ID)));
                     submission.put("recorded_lat", networkQueueItems.getDouble(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LAT)));
