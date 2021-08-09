@@ -621,7 +621,6 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
                     return;
                 }
             }
-
             if (!ValidateNIDValues()) return;
             try {
                 if (!validateSpinnerValues(nationalids, spinner_nidtype.getSelectedItem().toString())) {
@@ -663,6 +662,7 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
 
             collectGPSPoint(nationalIdTypes);
 
+            save.setEnabled(false);
             if (statusmoduration) {
                 Toast.makeText(this, getResources().getString(R.string.moderation_note), Toast.LENGTH_LONG).show();
             }

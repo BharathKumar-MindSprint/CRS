@@ -655,12 +655,12 @@ public class AddInfrastructureActivity extends BaseActivity {
                                     dl.updateSIPNameforGPS(AddInfrastructureActivity.this,sipName,(int)infrastructureID);
                                 }
                             }catch (Exception e){}
-
+                            save.setEnabled(false);
                             Intent intent = new Intent(context, HomeActivity.class);
                             startActivity(intent);
                         }
                     } else {
-
+                        save.setEnabled(false);
                         // insert POI
                         long newPoiId = dl.insertNetworkQueueSipEntry(values, uploadId);
                         if (newPoiId != -1) {

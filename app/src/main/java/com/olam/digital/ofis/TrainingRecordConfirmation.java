@@ -214,6 +214,7 @@ public class TrainingRecordConfirmation extends BaseListActivity {
         confirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                confirmButton.setEnabled(false);
                 // add transaction to network queue
                 MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_CONFIRM_TRAINING_RECORD,  ScreenNameConstants.BUTTON_CLICKED);
 

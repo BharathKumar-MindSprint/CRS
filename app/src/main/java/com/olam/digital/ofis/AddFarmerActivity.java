@@ -1291,8 +1291,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             @Override
             public void onClick(View view) {
                 MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_SAVE_FARMER,  ScreenNameConstants.BUTTON_CLICKED);
-                Switch consentFarmer = findViewById(R.id.consentFarmer);
-                Switch consentOthers = findViewById(R.id.consentOthers);
+
                 if (isNIDAvailable) {
                     if (!duplicateNationalidsValidation()) { //Duplicate nationalids Validation....
                         Toast.makeText(context, res.getString(R.string.duplicate_nationalids), Toast.LENGTH_LONG).show();
@@ -1351,6 +1350,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                                         statusmoduration = true;
                                     }
                                 }
+                                saveButton.setEnabled(false);
                                 Toast.makeText(context, res.getString(R.string.Farmer_Added), Toast.LENGTH_LONG).show();
 
                                 if (mCurrentLocation != null) {

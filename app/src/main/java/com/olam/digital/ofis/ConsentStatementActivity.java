@@ -257,6 +257,7 @@ public class ConsentStatementActivity extends BaseActivity implements View.OnCli
                 }
 
             }else if(page == 6){
+                nextsavebtn.setClickable(false);
                 ContentValues contentValue=new ContentValues();
                 contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_FARMER_ID,farmerId);
                 contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_FARMER,farmername);
