@@ -1202,6 +1202,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                         textView.setText(res.getString(R.string.phone_number_recorded));
 
                         phoneNumbersHolder.startAnimation(mSlideBottomDown);
+                        phonenumbersSave.setEnabled(false);
                         Toast.makeText(context, res.getString(R.string.Farmer_Updated), Toast.LENGTH_LONG).show();
                     }
                 } else {

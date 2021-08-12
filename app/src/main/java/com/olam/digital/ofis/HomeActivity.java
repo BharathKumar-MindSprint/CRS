@@ -31,6 +31,8 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AlertDialog;
 import androidx.cardview.widget.CardView;
+
+import android.text.format.Formatter;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -44,6 +46,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -85,6 +88,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 
 import javax.net.ssl.SSLContext;
@@ -162,6 +171,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     public static int totalItems;
     public static int progressItem;
     private long lastClickTime = 0;
+    private long lastitemClickTime = 0;
     private boolean isChildSynced=true;
     ListView listView;
 
@@ -169,6 +179,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     GPSListener gpsListener=null;
     private GPSTracker gpsTracker=null;
     private Boolean newGps;
+    ImageButton syncAll;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -247,7 +258,8 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
                 ActivityCompat.requestPermissions(HomeActivity.this,
                         new String[]{android.Manifest.permission.CAMERA,android.Manifest.permission.READ_EXTERNAL_STORAGE,android.Manifest.permission.READ_PHONE_STATE,
-                                android.Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                                android.Manifest.permission.WRITE_EXTERNAL_STORAGE,android.Manifest.permission.ACCESS_COARSE_LOCATION, android.Manifest.permission.RECORD_AUDIO,
+                                android.Manifest.permission.ACCESS_FINE_LOCATION},
                         MY_SIGNATURE_PIC_PERMISSIONS_REQUEST);
 
 
@@ -760,14 +772,24 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
     public void startItemSyncAuth(int itemId){
 
-        if (SystemClock.elapsedRealtime() - lastClickTime < 3000){
+       /* if (SystemClock.elapsedRealtime() - lastitemClickTime < 3000){
             return;
-        }else {
+        }else {*/
+        syncAll.setEnabled(false);
+        syncAll.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_upload_gray));
+        final Handler handler = new Handler(Looper.getMainLooper());
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                syncAll.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_upload_list));
+                syncAll.setEnabled(true);
+            }
+        }, 3000);
             this.itemId = itemId;
             syncOptionAll = false;
             checkAuthenticate();
-        }
-        lastClickTime = SystemClock.elapsedRealtime();
+//        }
+//        lastitemClickTime = SystemClock.elapsedRealtime();
     }
 
     public void startItemSync(int itemId) {
@@ -864,12 +886,22 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         Button addSocialInfra = (Button) findViewById(R.id.AddSocialInfrastructure);
         Button captureLocation = (Button) findViewById(R.id.captureLocation);
         Button recordTraining = (Button) findViewById(R.id.RecordFarmerTraining);
-        ImageButton syncAll = (ImageButton) findViewById(R.id.syncAll);
+        syncAll = (ImageButton) findViewById(R.id.syncAll);
         boolean can_transact = Utilities.getBoolFromSharedPrefs(context, "can_transact", false);
 
         syncAll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                syncAll.setEnabled(false);
+                syncAll.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_upload_gray));
+                final Handler handler = new Handler(Looper.getMainLooper());
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        syncAll.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_upload_list));
+                        syncAll.setEnabled(true);
+                    }
+                }, 3000);
                 MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_SYNC_ALL_ITEM,  ScreenNameConstants.BUTTON_CLICKED);
                 if (SystemClock.elapsedRealtime() - lastClickTime < 3000){
                     return;

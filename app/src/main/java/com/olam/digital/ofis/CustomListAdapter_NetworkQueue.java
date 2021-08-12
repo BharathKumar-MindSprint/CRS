@@ -3,6 +3,11 @@ package com.olam.digital.ofis;
 import android.content.Context;
 import android.database.Cursor;
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+
+import android.os.Handler;
+import android.os.Looper;
+import android.os.SystemClock;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +24,7 @@ class CustomListAdapter_NetworkQueue extends SimpleCursorAdapter {
     private final int layout;
     private final LayoutInflater inflater;
     private final HomeActivity homeActivity;
+    private long mLastClickTime = 0;
 
     public CustomListAdapter_NetworkQueue(Context c, Cursor cursor, String[] adapterCols, int[] adapterRowViews, HomeActivity ha) {
         super(c, R.layout.listview_network_queue, cursor, adapterCols, adapterRowViews, 0);
@@ -41,6 +47,16 @@ class CustomListAdapter_NetworkQueue extends SimpleCursorAdapter {
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                imageView.setEnabled(false);
+                imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_upload_gray));
+                final Handler handler = new Handler(Looper.getMainLooper());
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_upload_list));
+                        imageView.setEnabled(true);
+                    }
+                }, 3000);
                 int itemId = Integer.parseInt(String.valueOf(networkQueueId.getText()));
                 homeActivity.startItemSyncAuth(itemId);
             }
