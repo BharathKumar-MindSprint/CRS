@@ -48,7 +48,7 @@ class CustomListAdapter_NetworkQueue extends SimpleCursorAdapter {
             @Override
             public void onClick(View v) {
                 imageView.setEnabled(false);
-                imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_upload_gray));
+                imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_icon_sync_black));
                 final Handler handler = new Handler(Looper.getMainLooper());
                 handler.postDelayed(new Runnable() {
                     @Override

@@ -776,7 +776,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             return;
         }else {*/
         syncAll.setEnabled(false);
-        syncAll.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_upload_gray));
+        syncAll.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_icon_sync_black));
         final Handler handler = new Handler(Looper.getMainLooper());
         handler.postDelayed(new Runnable() {
             @Override
