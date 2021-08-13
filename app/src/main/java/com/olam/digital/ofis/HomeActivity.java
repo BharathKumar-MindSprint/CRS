@@ -777,6 +777,9 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         }else {*/
         syncAll.setEnabled(false);
         syncAll.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_icon_sync_black));
+        this.itemId = itemId;
+        syncOptionAll = false;
+        checkAuthenticate();
         final Handler handler = new Handler(Looper.getMainLooper());
         handler.postDelayed(new Runnable() {
             @Override
@@ -785,9 +788,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 syncAll.setEnabled(true);
             }
         }, 10000);
-            this.itemId = itemId;
-            syncOptionAll = false;
-            checkAuthenticate();
+
 //        }
 //        lastitemClickTime = SystemClock.elapsedRealtime();
     }
@@ -895,13 +896,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 syncAll.setEnabled(false);
                 syncAll.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_upload_gray));
                 final Handler handler = new Handler(Looper.getMainLooper());
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        syncAll.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_upload_list));
-                        syncAll.setEnabled(true);
-                    }
-                }, 3000);
+
                 MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_SYNC_ALL_ITEM,  ScreenNameConstants.BUTTON_CLICKED);
                 if (SystemClock.elapsedRealtime() - lastClickTime < 3000){
                     return;
@@ -912,6 +907,13 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                     }
                 }
                 lastClickTime=SystemClock.elapsedRealtime();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        syncAll.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_upload_list));
+                        syncAll.setEnabled(true);
+                    }
+                }, 5000);
             }
         });
 
