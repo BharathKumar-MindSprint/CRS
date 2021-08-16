@@ -26,28 +26,14 @@ class CustomListAdapter_NetworkQueue extends SimpleCursorAdapter {
     private final HomeActivity homeActivity;
     private long mLastClickTime = 0;
     public boolean isClickable = true;
-    ImageView imageView;
-    Context context;
 
     public CustomListAdapter_NetworkQueue(Context c, Cursor cursor, String[] adapterCols, int[] adapterRowViews, HomeActivity ha) {
         super(c, R.layout.listview_network_queue, cursor, adapterCols, adapterRowViews, 0);
          this.layout = R.layout.listview_network_queue;
         this.inflater = LayoutInflater.from(c);
         this.homeActivity = ha;
-        this.context = c;
     }
 
-    public void onClick(boolean isClickable) {
-        if(!isClickable){
-            imageView.setEnabled(false);
-            imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_icon_sync_black));
-        }else{
-            imageView.setEnabled(true);
-            imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_upload_list));
-        }
-            return;
-        // do your click stuff
-    }
 
     @Override
     public View newView (Context context, final Cursor cursor, ViewGroup parent) {
@@ -57,7 +43,7 @@ class CustomListAdapter_NetworkQueue extends SimpleCursorAdapter {
     @Override
     public void bindView(@NonNull View view, final Context context, @NonNull final Cursor cursor) {
         super.bindView(view, context, cursor);
-        imageView = (ImageView) view.findViewById(R.id.imageView_pic);
+        ImageView imageView = (ImageView) view.findViewById(R.id.imageView_pic);
         final TextView networkQueueId = (TextView) view.findViewById(R.id.networkQueueId);
 
         imageView.setOnClickListener(new View.OnClickListener() {

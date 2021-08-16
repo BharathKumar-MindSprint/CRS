@@ -913,7 +913,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                     public void run() {
                         syncAll.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_upload_list));
                         syncAll.setEnabled(true);
-                        customListAdapter_networkQueue.onClick(true);
                     }
                 }, 5000);
             }
