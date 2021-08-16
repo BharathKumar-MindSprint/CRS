@@ -787,7 +787,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 syncAll.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_upload_list));
                 syncAll.setEnabled(true);
             }
-        }, 10000);
+        }, 5000);
 
 //        }
 //        lastitemClickTime = SystemClock.elapsedRealtime();

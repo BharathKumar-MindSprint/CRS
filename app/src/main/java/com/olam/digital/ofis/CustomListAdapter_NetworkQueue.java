@@ -49,6 +49,9 @@ class CustomListAdapter_NetworkQueue extends SimpleCursorAdapter {
             public void onClick(View v) {
                 imageView.setEnabled(false);
                 imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_icon_sync_black));
+
+                int itemId = Integer.parseInt(String.valueOf(networkQueueId.getText()));
+                homeActivity.startItemSyncAuth(itemId);
                 final Handler handler = new Handler(Looper.getMainLooper());
                 handler.postDelayed(new Runnable() {
                     @Override
@@ -56,9 +59,7 @@ class CustomListAdapter_NetworkQueue extends SimpleCursorAdapter {
                         imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_upload_list));
                         imageView.setEnabled(true);
                     }
-                }, 10000);
-                int itemId = Integer.parseInt(String.valueOf(networkQueueId.getText()));
-                homeActivity.startItemSyncAuth(itemId);
+                }, 5000);
             }
         });
     }
