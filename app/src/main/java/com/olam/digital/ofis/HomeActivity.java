@@ -895,7 +895,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             public void onClick(View view) {
                 syncAll.setEnabled(false);
                 syncAll.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_upload_gray));
-                customListAdapter_networkQueue.onClick(false);
                 final Handler handler = new Handler(Looper.getMainLooper());
 
                 MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_SYNC_ALL_ITEM,  ScreenNameConstants.BUTTON_CLICKED);
