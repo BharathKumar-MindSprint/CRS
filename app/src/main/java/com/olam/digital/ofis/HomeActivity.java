@@ -226,7 +226,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
         // checkTime();
-        bindNetworkQueue();
+        bindNetworkQueue(true);
 
         if (sharedPreferences.getBoolean("FIRST_RUN",true)) {
             firstRunSection.setVisibility(View.VISIBLE);
@@ -348,7 +348,8 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                         long newGpsQueueId = new GpsTrackerLogic().insertGPSDetailsToQueue(context, geoContentValues);
                         if (newGpsQueueId != -1) {
                             try{
-                                bindNetworkQueue();
+                                setupSyncAllBtn(true);
+                                bindNetworkQueue(true);
                             }catch (Exception e){
                                 e.printStackTrace();
                             }
@@ -641,7 +642,9 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         });
     }
 
-    private void bindNetworkQueue() {
+
+
+    private void bindNetworkQueue(boolean isClickable) {
         TextView nomodulestosubmittext = (TextView) findViewById(R.id.nomodulestosubmittext);
         networkQueue = dl.getNetworkQueue();
 
@@ -654,7 +657,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             nomodulestosubmittext.setVisibility(View.GONE);
             String[] adapterCols = new String[]{"_id", OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID};
             int[] adapterRowViews = new int[]{R.id.networkQueueId, R.id.networkQueueName, R.id.networkQueuePoiType, R.id.networkQueueOlamFarmerId};
-            customListAdapter_networkQueue = new CustomListAdapter_NetworkQueue(context, networkQueue, adapterCols, adapterRowViews, me);
+            customListAdapter_networkQueue = new CustomListAdapter_NetworkQueue(context, networkQueue, adapterCols, adapterRowViews, me , isClickable);
             listView.setAdapter(customListAdapter_networkQueue);
             //setListAdapter(customListAdapter_networkQueue);
 
@@ -770,24 +773,36 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         }
     }
 
+    public void setupSyncAllBtn(boolean isClickable){
+        if(isClickable){
+            syncAll.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_upload_list));
+            syncAll.setEnabled(true);
+        }else{
+            syncAll.setEnabled(false);
+            syncAll.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_icon_sync_black));
+        }
+    }
+
     public void startItemSyncAuth(int itemId){
 
        /* if (SystemClock.elapsedRealtime() - lastitemClickTime < 3000){
             return;
         }else {*/
-        syncAll.setEnabled(false);
-        syncAll.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_icon_sync_black));
+       /* syncAll.setEnabled(false);
+        syncAll.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_icon_sync_black));*/
+        setupSyncAllBtn(false);
+        bindNetworkQueue(false);
         this.itemId = itemId;
         syncOptionAll = false;
         checkAuthenticate();
-        final Handler handler = new Handler(Looper.getMainLooper());
+       /* final Handler handler = new Handler(Looper.getMainLooper());
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 syncAll.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_upload_list));
                 syncAll.setEnabled(true);
             }
-        }, 5000);
+        }, 5000);*/
 
 //        }
 //        lastitemClickTime = SystemClock.elapsedRealtime();
@@ -850,7 +865,8 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     protected void onRestart() {
         super.onRestart();
         try{
-            bindNetworkQueue();
+            setupSyncAllBtn(true);
+            bindNetworkQueue(true);
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -895,25 +911,26 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             public void onClick(View view) {
                 syncAll.setEnabled(false);
                 syncAll.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_upload_gray));
-                final Handler handler = new Handler(Looper.getMainLooper());
-
+//                final Handler handler = new Handler(Looper.getMainLooper());
                 MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_SYNC_ALL_ITEM,  ScreenNameConstants.BUTTON_CLICKED);
                 if (SystemClock.elapsedRealtime() - lastClickTime < 3000){
                     return;
                 }else{
                     if (networkQueue.getCount() > 0) {
                         syncOptionAll=true;
+                        setupSyncAllBtn(false);
+                        bindNetworkQueue(false);
                         checkAuthenticate();
                     }
                 }
                 lastClickTime=SystemClock.elapsedRealtime();
-                handler.postDelayed(new Runnable() {
+               /* handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         syncAll.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_upload_list));
                         syncAll.setEnabled(true);
                     }
-                }, 5000);
+                }, 5000);*/
             }
         });
 
@@ -922,6 +939,17 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             addNewFarmer.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    islocationenabled = true;
+                    if (ContextCompat.checkSelfPermission(HomeActivity.this,
+                            android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                            && ContextCompat.checkSelfPermission(HomeActivity.this,
+                            android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        ActivityCompat.requestPermissions(HomeActivity.this,
+                                new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION,
+                                        android.Manifest.permission.ACCESS_COARSE_LOCATION}, PERMISSIONS_ACCESS_LOCATION);
+
+                        return;
+                    }
                     MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_ADD_NEW_FARMER,  ScreenNameConstants.BUTTON_CLICKED);
                     Intent intent = new Intent(context, AddFarmerActivity.class);
                     intent.putExtra(EDIT_FARMER_ID, (long) 0);

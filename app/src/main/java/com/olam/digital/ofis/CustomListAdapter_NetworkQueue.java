@@ -25,13 +25,14 @@ class CustomListAdapter_NetworkQueue extends SimpleCursorAdapter {
     private final LayoutInflater inflater;
     private final HomeActivity homeActivity;
     private long mLastClickTime = 0;
-    public boolean isClickable = true;
+    public boolean isClickable;
 
-    public CustomListAdapter_NetworkQueue(Context c, Cursor cursor, String[] adapterCols, int[] adapterRowViews, HomeActivity ha) {
+    public CustomListAdapter_NetworkQueue(Context c, Cursor cursor, String[] adapterCols, int[] adapterRowViews, HomeActivity ha, boolean isClickable) {
         super(c, R.layout.listview_network_queue, cursor, adapterCols, adapterRowViews, 0);
          this.layout = R.layout.listview_network_queue;
         this.inflater = LayoutInflater.from(c);
         this.homeActivity = ha;
+        this.isClickable = isClickable;
     }
 
 
@@ -46,22 +47,30 @@ class CustomListAdapter_NetworkQueue extends SimpleCursorAdapter {
         ImageView imageView = (ImageView) view.findViewById(R.id.imageView_pic);
         final TextView networkQueueId = (TextView) view.findViewById(R.id.networkQueueId);
 
+        if(isClickable){
+            imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_upload_list));
+            imageView.setEnabled(true);
+        }else{
+            imageView.setEnabled(false);
+            imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_icon_sync_black));
+        }
+
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                imageView.setEnabled(false);
-                imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_icon_sync_black));
+//                imageView.setEnabled(false);
+//                imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_icon_sync_black));
 
                 int itemId = Integer.parseInt(String.valueOf(networkQueueId.getText()));
                 homeActivity.startItemSyncAuth(itemId);
-                final Handler handler = new Handler(Looper.getMainLooper());
+               /* final Handler handler = new Handler(Looper.getMainLooper());
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_upload_list));
                         imageView.setEnabled(true);
                     }
-                }, 5000);
+                }, 5000);*/
             }
         });
     }
