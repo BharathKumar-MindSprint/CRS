@@ -347,12 +347,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                     if (newGps) {
                         long newGpsQueueId = new GpsTrackerLogic().insertGPSDetailsToQueue(context, geoContentValues);
                         if (newGpsQueueId != -1) {
-                            try{
-                                setupSyncAllBtn(true);
-                                bindNetworkQueue(true);
-                            }catch (Exception e){
-                                e.printStackTrace();
-                            }
+                           enableSync();
                         }
                         newGps=false;
                     }
@@ -715,6 +710,15 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         return authRequestDTO;
     }
 
+    public void enableSync(){
+        try{
+            setupSyncAllBtn(true);
+            bindNetworkQueue(true);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
     private void startAllItemSync() {
         if (nl.isPhoneOnline()) {
 
@@ -728,9 +732,11 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                     if (!farmerSynced) {
                         m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, 0, 0, res.getString(R.string.farmer_not_synced));
                         Utilities.closeProgressDialog(m_ProgressDialog, 3000);
+                        enableSync();
                     }else if(!isChildSynced){
                         m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, 0, 0, res.getString(R.string.child_not_synced));
                         Utilities.closeProgressDialog(m_ProgressDialog, 3000);
+                        enableSync();
                     }
                     else{
                         if(totalItems == 0)
@@ -818,9 +824,11 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                     if (!farmerSynced) {
                         m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, 0, 0, res.getString(R.string.farmer_not_synced));
                         Utilities.closeProgressDialog(m_ProgressDialog, 3000);
+                        enableSync();
                     }else if (!isChildSynced){
                         m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, 0, 0, res.getString(R.string.child_not_synced));
                         Utilities.closeProgressDialog(m_ProgressDialog, 3000);
+                        enableSync();
                     }
                 }
             });
@@ -864,12 +872,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     @Override
     protected void onRestart() {
         super.onRestart();
-        try{
-            setupSyncAllBtn(true);
-            bindNetworkQueue(true);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+       enableSync();
     }
 
     private void finishItemSync(final Message msg) {
@@ -885,12 +888,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 }
                 networkQueue.close();
 //                customListAdapter_networkQueue.swapCursor(networkQueue);
-                try{
-                    setupSyncAllBtn(true);
-                    bindNetworkQueue(true);
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
+                enableSync();
                 networkQueue = dl.getNetworkQueue();
                 String queueTotal = Integer.toString(networkQueue.getCount());
                 queueCount.setText(queueTotal);
