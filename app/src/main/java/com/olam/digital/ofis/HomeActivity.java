@@ -884,8 +884,14 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                     Utilities.closeProgressDialog(m_ProgressDialog, 3000);
                 }
                 networkQueue.close();
+//                customListAdapter_networkQueue.swapCursor(networkQueue);
+                try{
+                    setupSyncAllBtn(true);
+                    bindNetworkQueue(true);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
                 networkQueue = dl.getNetworkQueue();
-                customListAdapter_networkQueue.swapCursor(networkQueue);
                 String queueTotal = Integer.toString(networkQueue.getCount());
                 queueCount.setText(queueTotal);
                 totalItems = networkQueue.getCount();
