@@ -88,12 +88,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Locale;
 
 import javax.net.ssl.SSLContext;
@@ -943,17 +937,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             addNewFarmer.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    islocationenabled = true;
-                    if (ContextCompat.checkSelfPermission(HomeActivity.this,
-                            android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                            && ContextCompat.checkSelfPermission(HomeActivity.this,
-                            android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                        ActivityCompat.requestPermissions(HomeActivity.this,
-                                new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION,
-                                        android.Manifest.permission.ACCESS_COARSE_LOCATION}, PERMISSIONS_ACCESS_LOCATION);
-
-                        return;
-                    }
                     MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_ADD_NEW_FARMER,  ScreenNameConstants.BUTTON_CLICKED);
                     Intent intent = new Intent(context, AddFarmerActivity.class);
                     intent.putExtra(EDIT_FARMER_ID, (long) 0);
