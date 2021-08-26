@@ -1595,7 +1595,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
     private void postModule(final int networkQueueItemId, final Handler handler, final Message msg, final int total, final int progress, final Integer originalSyncRequestItemId) {
 
-
+        try {
         // end points
         String endPoint="";
         // old end point
@@ -1862,6 +1862,11 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                                 // Do the Activity if the duplicate entry is there
                                                 dl.syncFarmerModule(farmerModuleId, farmerId, moduleId, submissionDate);
                                                 dl.deleteNetworkQueueItem(networkQueueItemId);
+                                                
+                                                 // Update the message
+                                                statusMessage = res.getString(R.string.item_synced);
+                                                msg.obj = statusMessage;
+                                                handler.dispatchMessage(msg);
                                             }
                                         }
                                     }else{
@@ -1940,7 +1945,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 }
             }
         }
-
+ }catch (CursorIndexOutOfBoundsException e){}
     }
 
     private void postFarmPolygon(final int networkQueueItemId, final Handler handler, final Message msg, final int total, final int progress, final Integer originalSyncRequestItemId) {
