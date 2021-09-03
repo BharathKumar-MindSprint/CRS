@@ -74,6 +74,7 @@ public class ViewChildLabourSurveyActivity extends BaseActivity {
         initData();
         getChildDetailsById();
         populateSurveyList();
+        DynamicQuestions.farmerGeo=dl.getFarmerInfo(this,farmerID);
     }
 
     @Override
