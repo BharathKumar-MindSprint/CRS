@@ -144,6 +144,11 @@ android {
 
             //New UAT DNS name
             resValue "string", "applicationName", "OFIS UAT"
+           // resValue "string", "AUTH_SERVER_URL", 'https://otofis-uat-zuul.olamdigital.com/oauth/api/v1/oauth/'
+            resValue "string", "AUTH_SERVER_URL", 'https://digitalauthdev.olamnet.com/auth/realms/ofis-dse-uat/protocol/openid-connect/'
+            buildConfigField 'String', 'HOST', '"https://otofis-uat-zuul.olamdigital.com/"'
+//            buildConfigField 'String', 'ODHOST', '"https://uat-apigateway.olamdirect.com/"'
+            buildConfigField 'String', 'ODHOST', '"https://uat-apigateway-global.olamdirect.com/"'
             resValue "string", "AUTH_SERVER_URL", 'https://digitalauthdev.olamnet.com/auth/realms/ofis-dse-manna-uat/protocol/openid-connect/'
             buildConfigField 'String', 'HOST', '"https://otofis-uat-manna-zuul.olamdigital.com/"'
             buildConfigField 'String', 'ODHOST', '"https://sit-apigateway.olamdirect.com/"'
@@ -288,6 +293,13 @@ android {
     }
 
 
+}
+
+
+tasks.whenTaskAdded {task ->
+    if(task.name.toLowerCase().contains("crashlytics")) {
+        task.enabled = false
+    }
 }
 
 sonarqube{
