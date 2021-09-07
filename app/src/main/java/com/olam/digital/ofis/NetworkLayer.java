@@ -4171,6 +4171,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                 final JSONArray jsonArray = new JSONArray();
                 jsonArray.put(jsonObject);
+                Log.e("NationalIdRequest", nidstosend.toString());
                 DynatraceHelper.requestPayload(DynatraceConstants.REQUEST+" "+endpoint,jsonArray.toString(),context,true);
                 if (endpoint.length() > 0) {
 
