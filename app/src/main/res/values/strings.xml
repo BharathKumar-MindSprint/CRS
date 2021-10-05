@@ -209,6 +209,7 @@
     <string name="spinner_country_default">Country</string>
     <string name="spinner_region_default">Region</string>
     <string name="spinner_district_default">District</string>
+    <string name="spinner_subdistrict_default">Subdistrict</string>
     <string name="spinner_place_default">Place</string>
     <string name="spinner_farmergroup_default">Farmer Group</string>
     <string name="spinner_section_default">Section</string>
@@ -487,11 +488,12 @@
     <string name="fill_country">Please fill the country</string>
     <string name="fill_region">Please fill the region</string>
     <string name="fill_district">Please fill the district</string>
+    <string name="fill_subdistrict">Please fill the subdistrict</string>
     <string name="fill_farmergroup_name">Please fill the farmer group name</string>
+    <string name="fill_section">Please fill the section</string>
     <string name="fill_GPS_position">Please fill the GPS position</string>
     <string name="please_answer_all_questions">Please answer all questions</string>
     <string name="updating_sip_training">Updating Social Infrastructure Points</string>
-
     <string name="updating_face_templates">Updating Biometric Data</string>
     <string name="updating_faceda_templates">Updating Biometric License Status</string>
     <string name="are_you_ready_to_polygon_record">Are you ready to record polygon ?</string>
@@ -559,6 +561,7 @@
     <string name="clear">Clear</string>
     <string name="nid_updated_successfully">NationalID Updated Successfully</string>
     <string name="moderation_note">Farmer details are not unique and will be sent to administrator for moderation</string>
+
     <string name="record_hh_location">Record Household Location</string>
     <string name="household_farmer">Household</string>
     <string name="are_you_at_the_farmers_hh">Are you at the farmer\’s household?</string>
@@ -673,4 +676,6 @@
     <string name="please_check_question">Please check Question </string>
     <string name="please_check_dependent_question">since its dependent question is updated</string>
     <string name="national_id_info">Please update the National ID of farmer</string>
+    <string name="consent_duplicate_alert">Duplicate consent identified and hence cannot sync the item selected. Please note, such duplicates will be removed from the queue further.</string>
+    <string name="consent_duplicate_error">Error in saving FarmerConsent</string>
 </resources>

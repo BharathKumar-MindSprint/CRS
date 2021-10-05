@@ -2342,6 +2342,9 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                         recordFailedUpload(server_item_id, fully_synced, networkQueueItemId);
                                         postFailureMessage(handler, response, msg, 2, total, progress, null, "submitting cs location");
                                         FirebaseCrash.report(new Exception(response.optString("errors", res.getString(R.string.item_sync_error)) + " : submitting cs location"));
+                                        if(response.toString().contains(context.getResources().getString(R.string.consent_duplicate_error))){
+                                           showAlertMessage(networkQueueItemId);
+                                        }
                                     }
                                 } catch (JSONException | IOException e) {
                                     recordFailedUpload(0, 0, networkQueueItemId);
@@ -2379,6 +2382,19 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 FirebaseCrashlytics.getInstance().log("NetworkLayer: Error creating farm location post object" + e.getMessage());
             }
         }
+    }
+
+    private void showAlertMessage(int networkQueueItemId) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setMessage(context.getResources().getString(R.string.consent_duplicate_alert))
+                .setCancelable(false)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dl.deleteNetworkQueueItem(networkQueueItemId);
+                    }
+                });
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 
     // get farmer phone numbers
@@ -2987,31 +3003,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         syncAllTask.execute(SyncTaskOperationType.CHECK_VERSION);
 
     }
-
-    void showDialog(String s) {
-        AlertDialog.Builder alert = new AlertDialog.Builder(context);
-        alert.setTitle("Title");
-        alert.setMessage("Message");
-        // Create TextView
-        final TextView input = new TextView(context);
-        ScrollView scroller = new ScrollView(context);
-        scroller.addView(input);
-        alert.setView(scroller);
-        input.setText(s);
-        alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                // Do something with value!
-            }
-        });
-
-        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                // Canceled.
-            }
-        });
-        alert.show();
-    }
-
 
     //JIRA req OW-505
     private void postFarmerPhoto(final int networkQueueItemId, final Handler handler, final Message msg, final int total, final int progress, final Integer originalSyncRequestItemId) {
