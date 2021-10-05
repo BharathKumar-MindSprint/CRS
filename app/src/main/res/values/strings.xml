@@ -675,10 +675,6 @@
     <string name="please_respond_mandatory_question">Please respond to mandatory question</string>
     <string name="please_check_question">Please check Question </string>
     <string name="please_check_dependent_question">since its dependent question is updated</string>
-    <string name="consent_duplicate_alert">Duplicate consent identified and hence cannot sync the item selected. Please note, such duplicates will be removed from the queue further.</string>
-    <string name="consent_duplicate_error">Error in saving FarmerConsent</string>
-    <string name="duplicate_survey">Dupicate survey entry</string>
-    <string name="removing_duplicate_survey">Removing dupicate survey</string>
     <string name="update_farmer_subdistrict">Update Farmer\’s Subdistrict</string>
     <string name="update">Update</string>
     <string name="label_subdistrict">Subdistrict:</string>
@@ -916,4 +912,29 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="select_country">Please select Country</string>
     <string name="national_id_info">Please update the National ID of farmer</string>
     <string name="odid">OD ID:</string>
+    <string name="duplicate_survey">Dupicate survey entry</string>
+    <string name="removing_duplicate_survey">Removing dupicate survey</string>
+    <string name="attendee_name">Attendee Name:</string>
+    <string name="attendee_age">Age</string>
+    <string name="attendee_relationship">Relationship:</string>
+    <string name="attendee_sex">Gender:</string>
+    <string name="add_attendee">Add Attendee</string>
+    <string name="attendee_name_hint">Enter Attendee Name</string>
+    <string name="attendee_hint_age">Enter Age</string>
+    <string name="view_attendees_count">View Attendee (~V attendees)</string>
+    <string name="add_edit_attendee">Add/Edit\n Attendee</string>
+    <string name="viewAttendee">View Attendee</string>
+    <string name="attendee">Attendee</string>
+    <string name="mandatory_msg">Please fill all the details</string>
+    <string name="add_edit">Add/Edit</string>
+    <string name="Attendee">Attendee</string>
+    <string-array name="Trainee_relationships">
+        <item>Farmer\'s son/daughter</item>
+        <item>Farmer\'s niece/nephew</item>
+        <item>Farmer\'s spouse</item>
+        <item>Other</item>
+    </string-array>
+
+    <string name="consent_duplicate_alert">Duplicate consent identified and hence cannot sync the item selected. Please note, such duplicates will be removed from the queue further.</string>
+    <string name="consent_duplicate_error">Error in saving FarmerConsent</string>
 </resources>
