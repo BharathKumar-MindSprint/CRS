@@ -322,7 +322,11 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         msg.what = msgWhat;
         msg.arg1 = total;
         msg.arg2 = progress;
-        msg.obj = failureMessage;
+        if(response.toString().contains(context.getResources().getString(R.string.consent_duplicate_error))){
+            msg.obj = context.getResources().getString(R.string.consent_duplicate_alert);
+        }else {
+            msg.obj = failureMessage;
+        }
         handler.dispatchMessage(msg);
     }
 
@@ -2343,7 +2347,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                         postFailureMessage(handler, response, msg, 2, total, progress, null, "submitting cs location");
                                         FirebaseCrash.report(new Exception(response.optString("errors", res.getString(R.string.item_sync_error)) + " : submitting cs location"));
                                         if(response.toString().contains(context.getResources().getString(R.string.consent_duplicate_error))){
-                                           showAlertMessage(networkQueueItemId);
+                                            dl.deleteNetworkQueueItem(networkQueueItemId);
                                         }
                                     }
                                 } catch (JSONException | IOException e) {
