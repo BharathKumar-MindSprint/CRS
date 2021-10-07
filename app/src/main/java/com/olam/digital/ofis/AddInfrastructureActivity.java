@@ -91,6 +91,14 @@ public class AddInfrastructureActivity extends BaseActivity {
     private int selectedPlace = 0;
     private int selectedSection=0;
 
+    // New
+    private int selectedCountry1 = 0;
+    private int selectedRegion1 = 0;
+    private int selectedDistrict1 = 0;
+    private int selectedSubDistrict1 = 0;
+    private int selectedPlace1 = 0;
+
+
     // for GPS location system
     private EditText gpsField;
     private ImageButton requestLocation;
@@ -159,10 +167,12 @@ public class AddInfrastructureActivity extends BaseActivity {
     // boolean flag to toggle the ui
     private Boolean mRequestingLocationUpdates;
     Spinner spinner_place=null;
+    Spinner spinner_place1=null;
     VillageDTO villageDetails=null;
     ArrayAdapter<String> villageSpinnerAdapter=null;
     private int editPosition;
     private boolean isVillage;
+    LinearLayout layout_geo_old, layout_geo_new;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -173,6 +183,8 @@ public class AddInfrastructureActivity extends BaseActivity {
         context = this;
         res = getResources();
          spinner_place = (Spinner) findViewById(R.id.spinner_place);
+
+        initWidgets();
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         mSettingsClient = LocationServices.getSettingsClient(this);
@@ -206,7 +218,7 @@ public class AddInfrastructureActivity extends BaseActivity {
         subModulesSpinner = (Spinner) findViewById(R.id.spinner_submodules);
         modulesSpinner = (Spinner) findViewById(R.id.spinner_modules);
         villageSpinner=(Spinner) findViewById(R.id.villageSpinner);
-
+        villageSpinner.setVisibility(View.GONE);
 
         requestLocation = (ImageButton) findViewById(R.id.requestLocation);
         if(!editMode)
@@ -257,6 +269,11 @@ public class AddInfrastructureActivity extends BaseActivity {
       //  int selectedPlace = 0;
         dl.createGeographyHierarchySpinners(this, context, null, selectedCountry, selectedRegion, selectedDistrict, selectedPlace, null,false);
         dl.createBusinessHierarchySpinners(this, context, null, selectedFarmerGroup, selectedSection);
+
+        // New
+        dl.createGeographyHierarchySpinners1(this, context, null, selectedCountry1, selectedRegion1, selectedDistrict1, selectedPlace1, null,false, 2);
+
+
         bindSaveButton();
         dynamicQuestions.SurveyType="other";
 
@@ -277,6 +294,15 @@ public class AddInfrastructureActivity extends BaseActivity {
 
             }
         });
+    }
+
+    private void initWidgets() {
+
+        spinner_place1 = (Spinner) findViewById(R.id.spinner_place1);
+        layout_geo_old=(LinearLayout) findViewById(R.id.layout_geo_old);
+        layout_geo_new=(LinearLayout) findViewById(R.id.layout_geo_new);
+
+
     }
 
 
@@ -461,27 +487,38 @@ public class AddInfrastructureActivity extends BaseActivity {
 //        dynamicQuestions
         setupSubModuleQuestions();
 
-        selectedCountry = existingItem.getInt(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_COUNTRY_ID));
-        selectedRegion = existingItem.getInt(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_REGION_ID));
-        selectedDistrict = existingItem.getInt(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_DISTRICT_ID));
+        if (isVillage) {
+            selectedCountry = existingItem.getInt(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_COUNTRY_ID));
+            selectedRegion = existingItem.getInt(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_REGION_ID));
+            selectedDistrict = existingItem.getInt(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_DISTRICT_ID));
+            selectedPlace = existingItem.getInt(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PLACE_ID));
+        }else{
+            selectedCountry1 = existingItem.getInt(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_COUNTRY_ID));
+            selectedRegion1 = existingItem.getInt(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_REGION_ID));
+            selectedDistrict1 = existingItem.getInt(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_DISTRICT_ID));
+            selectedPlace1 = existingItem.getInt(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PLACE_ID));
+        }
+
         selectedProduct = existingItem.getInt(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PRODUCT_ID));
         selectedFarmerGroup = existingItem.getInt(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMERGROUP_ID));
-        selectedPlace=existingItem.getInt(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PLACE_ID));
 
-      //   String name=getSubModules(moduleId).get(selectedSubModulePOI).getSipName();
+
+        //   String name=getSubModules(moduleId).get(selectedSubModulePOI).getSipName();
         if (existingItem.getString(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_IS_VILLAGE)).equalsIgnoreCase(ChildLabourUtils.TRUE)){
             isVillage=true;
         }else{
             isVillage=false;
         }
         if (isVillage) {
-            showVillageDropdown();
-            villageSpinner.setVisibility(View.VISIBLE);
-            String villageName=existingItem.getString(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME));
-            if (villageName != null) {
-                editPosition = villageSpinnerAdapter.getPosition(villageName);
-                villageSpinner.setSelection(editPosition);
-            }
+            layout_geo_new.setVisibility(View.VISIBLE);
+            layout_geo_old.setVisibility(View.GONE);
+//            showVillageDropdown();
+//            villageSpinner.setVisibility(View.VISIBLE);
+//            String villageName=existingItem.getString(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME));
+//            if (villageName != null) {
+//                editPosition = villageSpinnerAdapter.getPosition(villageName);
+//                villageSpinner.setSelection(editPosition);
+//            }
         }else {
             poiName.setVisibility(View.VISIBLE);
             poiName.setText(existingItem.getString(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME)));
@@ -496,28 +533,59 @@ public class AddInfrastructureActivity extends BaseActivity {
         // common
         Spinner spinner_country = (Spinner) findViewById(R.id.spinner_country);
         long country_id = spinner_country.getSelectedItemId();
-        if (country_id < 1) {
+        //New
+        Spinner spinner_country1 = (Spinner) findViewById(R.id.spinner_country1);
+        long country_id1 = spinner_country1.getSelectedItemId();
 
-            Toast.makeText(context, res.getString(R.string.fill_country), Toast.LENGTH_LONG).show();
-
-            return values;
+        if (isVillage){
+            if (country_id1 < 1) {
+                Toast.makeText(context, res.getString(R.string.fill_country), Toast.LENGTH_LONG).show();
+                return values;
+            }
+        }else {
+            if (country_id < 1) {
+                Toast.makeText(context, res.getString(R.string.fill_country), Toast.LENGTH_LONG).show();
+                return values;
+            }
         }
 
         Spinner spinner_region = (Spinner) findViewById(R.id.spinner_region);
         long region_id = spinner_region.getSelectedItemId();
-        if (region_id < 1) {
-            Toast.makeText(context, res.getString(R.string.fill_region), Toast.LENGTH_LONG).show();
 
-            return values;
+        //New
+        Spinner spinner_region1 = (Spinner) findViewById(R.id.spinner_region1);
+        long region_id1 = spinner_region1.getSelectedItemId();
+        if (isVillage){
+            if (region_id1 < 1) {
+                Toast.makeText(context, res.getString(R.string.fill_region), Toast.LENGTH_LONG).show();
+                return values;
+            }
+        }else{
+            if (region_id < 1) {
+                Toast.makeText(context, res.getString(R.string.fill_region), Toast.LENGTH_LONG).show();
+                return values;
+            }
         }
 
         Spinner spinner_district = (Spinner) findViewById(R.id.spinner_district);
         long district_id = spinner_district.getSelectedItemId();
-        if (district_id < 1) {
-            Toast.makeText(context, res.getString(R.string.fill_district), Toast.LENGTH_LONG).show();
 
-            return values;
+        //New
+        Spinner spinner_district1 = (Spinner) findViewById(R.id.spinner_district1);
+        long district_id1 = spinner_district1.getSelectedItemId();
+
+        if (isVillage){
+            if (district_id1 < 1) {
+                Toast.makeText(context, res.getString(R.string.fill_district), Toast.LENGTH_LONG).show();
+                return values;
+            }
+        }else{
+            if (district_id < 1) {
+                Toast.makeText(context, res.getString(R.string.fill_district), Toast.LENGTH_LONG).show();
+                return values;
+            }
         }
+
 
         Spinner spinner_farmer_group = (Spinner) findViewById(R.id.spinner_farmerGroup);
         long farmergroup_id = spinner_farmer_group.getSelectedItemId();
@@ -532,7 +600,16 @@ public class AddInfrastructureActivity extends BaseActivity {
 
             long place_id = spinner_place.getSelectedItemId();
        // if (!moduleName.equalsIgnoreCase(ChildLabourUtils.VILLAGE_NAME)) {
-        if (!isVillage){
+
+        //New
+        Spinner spinner_place1 = (Spinner) findViewById(R.id.spinner_place1);
+        long place_id1 = spinner_place1.getSelectedItemId();
+        if (isVillage){
+            if (place_id1 < 1) {
+                Toast.makeText(context, res.getString(R.string.please_fill_the_place), Toast.LENGTH_LONG).show();
+                return values;
+            }
+        }else{
             if (place_id < 1) {
                 Toast.makeText(context, res.getString(R.string.please_fill_the_place), Toast.LENGTH_LONG).show();
                 return values;
@@ -562,14 +639,21 @@ public class AddInfrastructureActivity extends BaseActivity {
             values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_SUBGROUP_TYPE, String.valueOf(subModulesSpinner.getSelectedItem()));
             values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LAT, recorded_lat);
             values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG, recorded_lng);
-            values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_COUNTRY_ID, country_id);
-            values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_REGION_ID, region_id);
-            values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_DISTRICT_ID, district_id);
+            if (isVillage){
+                values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_COUNTRY_ID, country_id1);
+                values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_REGION_ID, region_id1);
+                values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_DISTRICT_ID, district_id1);
+            }else{
+                values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_COUNTRY_ID, country_id);
+                values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_REGION_ID, region_id);
+                values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_DISTRICT_ID, district_id);
+            }
+
             values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMERGROUP_ID, farmergroup_id);
 
             if (isVillage) {
-                    values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PLACE_ID, villageDetails.getId());
-                    values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, villageDetails.getVillageName());
+                    values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PLACE_ID, place_id1);
+                    values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, dl.getPlaceName(Integer.parseInt(String.valueOf(place_id1))));
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_IS_VILLAGE, ChildLabourUtils.TRUE);
             }else{
                 values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PLACE_ID, place_id);
@@ -602,7 +686,8 @@ public class AddInfrastructureActivity extends BaseActivity {
                         return;
                     }
                 }else{
-                    long villageNameId=villageSpinner.getSelectedItemId();
+                    Spinner spinner_place1=(Spinner) findViewById(R.id.spinner_place1);
+                    long villageNameId=spinner_place1.getSelectedItemId();
                     if(villageNameId < 1){
                         Toast.makeText(context, res.getString(R.string.fill_name), Toast.LENGTH_LONG).show();
                         return;
@@ -646,7 +731,9 @@ public class AddInfrastructureActivity extends BaseActivity {
                             // update Gps table
                             String sipName="";
                             if (isVillage){
-                                sipName=villageDetails.getVillageName();
+                                Spinner spinner_place1=(Spinner) findViewById(R.id.spinner_place1);
+                                long villageNameId=spinner_place1.getSelectedItemId();
+                                sipName=dl.getPlaceName(Integer.parseInt(String.valueOf(villageNameId)));
                             }else{
                                 sipName=poiName.getText().toString().trim();
                             }
@@ -667,7 +754,9 @@ public class AddInfrastructureActivity extends BaseActivity {
                             String sipName = null;
                             try {
                                 if (isVillage){
-                                    sipName=villageDetails.getVillageName();
+                                    Spinner spinner_place1=(Spinner) findViewById(R.id.spinner_place1);
+                                    long villageNameId=spinner_place1.getSelectedItemId();
+                                    sipName=dl.getPlaceName(Integer.parseInt(String.valueOf(villageNameId)));
                                 }else{
                                     sipName=poiName.getText().toString();
                                 }
@@ -864,14 +953,14 @@ public class AddInfrastructureActivity extends BaseActivity {
 
     private void showPoiName() {
         poiName.setVisibility(View.VISIBLE);
-        villageSpinner.setVisibility(View.GONE);
+      //  villageSpinner.setVisibility(View.GONE);
         spinner_place.setVisibility(View.VISIBLE);
     }
 
     private void showVillageDropdown() {
         spinner_place.setVisibility(View.GONE);
         poiName.setVisibility(View.GONE);
-        villageSpinner.setVisibility(View.VISIBLE);
+     //   villageSpinner.setVisibility(View.VISIBLE);
         villageList= SipLogic.getAllPlaces(this);
         List<String> villageNameList=new ArrayList<String>();
         villageNameList.add(context.getResources().getString(R.string.Name));
@@ -916,9 +1005,14 @@ public class AddInfrastructureActivity extends BaseActivity {
                    }
                     if (isVillage){
                    // if (moduleName.equalsIgnoreCase(ChildLabourUtils.VILLAGE_NAME)){
-                        showVillageDropdown();
+                   //     showVillageDropdown();
+                        poiName.setVisibility(View.GONE);
+                        layout_geo_old.setVisibility(View.GONE);
+                        layout_geo_new.setVisibility(View.VISIBLE);
                     }else{
                         showPoiName();
+                        layout_geo_old.setVisibility(View.VISIBLE);
+                        layout_geo_new.setVisibility(View.GONE);
                     }
                     dynamicQuestions.questionsSection.removeAllViews();
                     dynamicQuestions.answerSet.clear();
