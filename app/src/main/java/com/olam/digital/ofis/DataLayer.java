@@ -2281,7 +2281,7 @@ public class DataLayer {
                     if (!newPlace) {
                         bindDataDrivenSpinnerSIP1(placeSpinner, places, context, R.string.Name, null, false);
                     } else {
-                        bindDataDrivenSpinner1(placeSpinner, places, context, R.string.spinner_place_default, null, false);
+                        bindDataDrivenSpinner1(placeSpinner, places, context, R.string.Name, null, false);
                     }
 
                     if (placeSelection != 0) {
@@ -2315,9 +2315,9 @@ public class DataLayer {
 
                     Cursor places = getSpinnerData(OFISDBContract.PlacesEntry.TABLE_NAME, true, OFISDBContract.PlacesEntry.COLUMN_NAME_SUBDISTRICT_ID, ((int) id), true, OFISDBContract.PlacesEntry.COLUMN_NAME_PLACE_NAME);
                     if (!newPlace) {
-                        bindDataDrivenSpinnerSIP1(placeSpinner, places, context, R.string.spinner_place_default, null, false);
+                        bindDataDrivenSpinnerSIP1(placeSpinner, places, context,  R.string.Name, null, false);
                     } else {
-                        bindDataDrivenSpinner1(placeSpinner, places, context, R.string.spinner_place_default, null, false);
+                        bindDataDrivenSpinner1(placeSpinner, places, context,  R.string.Name, null, false);
                     }
 
                     if (placeSelection != 0) {

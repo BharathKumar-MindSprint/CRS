@@ -487,7 +487,7 @@ public class AddInfrastructureActivity extends BaseActivity {
 //        dynamicQuestions
         setupSubModuleQuestions();
 
-        if (isVillage) {
+        if (!isVillage) {
             selectedCountry = existingItem.getInt(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_COUNTRY_ID));
             selectedRegion = existingItem.getInt(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_REGION_ID));
             selectedDistrict = existingItem.getInt(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_DISTRICT_ID));

@@ -1,11 +1,16 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.olam.digital.ofis.AddInfrastructureActivity"
+    tools:ignore="Overdraw">
+
+<RelativeLayout
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/ofis_page_background"
-    tools:context="com.olam.digital.ofis.AddInfrastructureActivity"
-    android:focusableInTouchMode="true"
-    tools:ignore="Overdraw">
+    android:focusableInTouchMode="true">
 
     <ImageView
         android:layout_width="match_parent"
@@ -46,8 +51,8 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/spinner_country1"
                 android:hint="@string/Country"
-                android:nextFocusDown="@+id/spinner_region"
-                android:nextFocusForward="@+id/spinner_region"
+                android:nextFocusDown="@+id/spinner_region1"
+                android:nextFocusForward="@+id/spinner_region1"
                 android:layout_weight="1"
                 android:layout_marginLeft="0dp"
                 />
@@ -63,7 +68,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/spinner_region1"
-                android:nextFocusDown="@id/spinner_district"
+                android:nextFocusDown="@id/spinner_district1"
                 android:layout_marginRight="0dp"
                 android:layout_weight="1" />
 
@@ -79,8 +84,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/spinner_district1"
-                android:nextFocusDown="@+id/spinner_place"
-                android:nextFocusForward="@+id/spinner_place"
+                android:nextFocusDown="@+id/spinner_place1"
+                android:nextFocusForward="@+id/spinner_place1"
                 android:layout_weight="1" />
 
             <ImageView
@@ -113,7 +118,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/spinner_place1"
                 android:nextFocusDown="@+id/spinner_place"
-                android:nextFocusForward="@+id/spinner_place"
+                android:nextFocusForward="@+id/spinner_place1"
                 android:layout_weight="1" />
 
             <ImageView
@@ -501,3 +506,4 @@
     </LinearLayout>
 
 </RelativeLayout>
+</ScrollView>
