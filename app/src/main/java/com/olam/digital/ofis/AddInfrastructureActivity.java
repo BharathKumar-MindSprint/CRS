@@ -1009,6 +1009,8 @@ public class AddInfrastructureActivity extends BaseActivity {
                         poiName.setVisibility(View.GONE);
                         layout_geo_old.setVisibility(View.GONE);
                         layout_geo_new.setVisibility(View.VISIBLE);
+                        dl.createGeographyHierarchySpinners1(AddInfrastructureActivity.this, context, null, selectedCountry1, selectedRegion1, selectedDistrict1,selectedSubDistrict1, selectedPlace1, null,false, 2);
+
                     }else{
                         showPoiName();
                         layout_geo_old.setVisibility(View.VISIBLE);
