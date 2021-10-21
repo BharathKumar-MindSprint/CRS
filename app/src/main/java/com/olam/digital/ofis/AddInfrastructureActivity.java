@@ -487,6 +487,11 @@ public class AddInfrastructureActivity extends BaseActivity {
 //        dynamicQuestions
         setupSubModuleQuestions();
 
+        if (existingItem.getString(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_IS_VILLAGE)).equalsIgnoreCase(ChildLabourUtils.TRUE)){
+            isVillage=true;
+        }else{
+            isVillage=false;
+        }
         if (!isVillage) {
             selectedCountry = existingItem.getInt(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_COUNTRY_ID));
             selectedRegion = existingItem.getInt(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_REGION_ID));
@@ -504,11 +509,6 @@ public class AddInfrastructureActivity extends BaseActivity {
 
 
         //   String name=getSubModules(moduleId).get(selectedSubModulePOI).getSipName();
-        if (existingItem.getString(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_IS_VILLAGE)).equalsIgnoreCase(ChildLabourUtils.TRUE)){
-            isVillage=true;
-        }else{
-            isVillage=false;
-        }
         if (isVillage) {
             layout_geo_new.setVisibility(View.VISIBLE);
             layout_geo_old.setVisibility(View.GONE);
