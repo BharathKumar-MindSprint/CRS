@@ -37,8 +37,8 @@ android {
         targetSdkVersion 29
         multiDexEnabled true
 
-        versionCode 42
-        versionName "10.3.6"
+        versionCode 43
+        versionName "10.3.7"
 
 
     }
