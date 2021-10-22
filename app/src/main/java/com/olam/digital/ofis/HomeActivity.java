@@ -1108,12 +1108,14 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             DynatraceHelper.findNetworkSpeed(this);
             doInitialCheck();
         }else if(response.code() == 423){
+            enableSync();
             Toast.makeText(HomeActivity.this,getString(R.string.authentication_attempt),Toast.LENGTH_LONG).show();
         }
         else {
             try {
                 FabricLogsWriter.printCrashLog(TAG,"oauth/authenticate",response.code(),"Request : :  "+new Gson().toJson(getAuthRequestDTO()).toString() +"   Response :  "+response.raw().networkResponse().toString() + "user Id :" +enumeratorID.getText().toString().trim(),context);
             }catch (Exception e){}
+            enableSync();
             Toast.makeText(HomeActivity.this,getString(R.string.authentication_failed),Toast.LENGTH_LONG).show();
 //            Answers.getInstance().logLogin(new LoginEvent()
 //                    .putMethod("first")
@@ -1265,6 +1267,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
     @Override
     public void onTokenCompleted(String status) {
+        enableSync();
         if(!status.equalsIgnoreCase("false")){
             Utilities.minProgressCount=0;
             DynatraceHelper.findNetworkSpeed(this);
