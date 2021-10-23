@@ -324,9 +324,14 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         msg.what = msgWhat;
         msg.arg1 = total;
         msg.arg2 = progress;
-        if(response.toString().contains(context.getResources().getString(R.string.consent_duplicate_error))){
-            msg.obj = context.getResources().getString(R.string.consent_duplicate_alert);
-        }else {
+
+        if (response != null) {
+            if (response.toString().contains(context.getResources().getString(R.string.consent_duplicate_error))) {
+                msg.obj = context.getResources().getString(R.string.consent_duplicate_alert);
+            } else {
+                msg.obj = failureMessage;
+            }
+        }else{
             msg.obj = failureMessage;
         }
         handler.dispatchMessage(msg);
