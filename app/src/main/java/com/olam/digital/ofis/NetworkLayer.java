@@ -1894,9 +1894,9 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                             String errorItem= (String) errorObj.get(0);
                                             if (res.getString(R.string.duplicate_survey).equalsIgnoreCase(errorItem)){
                                                 // Do the Activity if the duplicate entry is there
-                                                dl.syncFarmerModule(farmerModuleId, farmerId, moduleId, submissionDate);
                                                 dl.deleteNetworkQueueItem(networkQueueItemId);
-                                                
+                                                dl.syncFarmerModule(farmerModuleId, farmerId, moduleId, submissionDate);
+
                                                  // Update the message
                                                 statusMessage = res.getString(R.string.item_synced);
                                                 msg.obj = statusMessage;
@@ -1905,8 +1905,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                         }
                                     }else{
                                         // Existing Logic
-                                        dl.syncFarmerModule(farmerModuleId, farmerId, moduleId, submissionDate);
                                         dl.deleteNetworkQueueItem(networkQueueItemId);
+                                        dl.syncFarmerModule(farmerModuleId, farmerId, moduleId, submissionDate);
                                         statusMessage = res.getString(R.string.item_synced);
                                         msg.what = 1;
                                         msg.arg1 = total;
@@ -3931,8 +3931,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 String statusMessage;
                                 if (postResponse.isSuccessful()) {
                                     // should pass the Child Id instead of farmer ID
-                                    dl.syncChildFarmerModule(farmerModuleId, childId, moduleId, submissionDate,surveyCode);
                                     dl.deleteNetworkQueueItem(networkQueueItemId);
+                                    dl.syncChildFarmerModule(farmerModuleId, childId, moduleId, submissionDate,surveyCode);
                                     statusMessage = res.getString(R.string.item_synced);
                                     msg.what = 1;
                                     msg.arg1 = total;
