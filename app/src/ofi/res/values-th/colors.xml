@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="orange">#DE5215</color>
+    <color name="grey">#707070</color>
+    <color name="biometric_blue">#00869D</color>
+    <color name="gray_text">#858585</color>
+    <color name="dull_white">#FAFAFA</color>
+    <color name="disabled_gray">#CCCCCC</color>
+    <color name="dark_orange">#DC582A</color>
+    <color name="blue_attendee_text">#00ACC6</color>
+    <color name="black_attendee">#262626</color>
+    <color name="text_label_attendee">#535353</color>
+    <color name="background_attendee">#FAFAFA</color>
+</resources>

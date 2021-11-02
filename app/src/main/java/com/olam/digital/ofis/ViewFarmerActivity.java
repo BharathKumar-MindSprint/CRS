@@ -664,24 +664,35 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         pd.setIndeterminate(false);
         pd.setMessage(res.getString(R.string.fetching_location));
         pd.show();
+
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setMessage(statement)
-                .setCancelable(false)
-                .setPositiveButton(res.getString(R.string.yes), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        getFarmGPS(v);
-                    }
-                })
-                .setNegativeButton(res.getString(R.string.no), new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.cancel();
-                                if (pd != null && pd.isShowing()) {
-                                    pd.dismiss();
-                                }
-                            }
-                        }
-                );
+        builder.setCancelable(false);
+        LayoutInflater inflater = this.getLayoutInflater();
+        View dialogView= inflater.inflate(R.layout.common_alert_dialog, null);
+        builder.setView(dialogView);
+        TextView tvMsg=(TextView)dialogView.findViewById(R.id.tv_msg);
+        tvMsg.setText(statement);
+        Button btnNo = (Button)dialogView.findViewById(R.id.btn_no);
+        Button btnYes = (Button)dialogView.findViewById(R.id.btn_yes);
         AlertDialog alert = builder.create();
+        btnNo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (pd != null && pd.isShowing()) {
+                    pd.dismiss();
+                }
+                alert.dismiss();
+            }
+        });
+
+        btnYes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getFarmGPS(v);
+                alert.dismiss();
+            }
+        });
+
         alert.show();
     }
 
@@ -799,32 +810,44 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         return json;
     }
 
-    private void enableFarmPolygon(final View v){
+    private void enableFarmPolygon(final View v) {
         pd = new ProgressDialog(ViewFarmerActivity.this);
         pd.setCancelable(false);
         pd.setIndeterminate(false);
         pd.setMessage(res.getString(R.string.fetching_location));
         pd.show();
+
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setMessage(res.getString(R.string.are_you_ready_to_polygon_record))
-                .setCancelable(false)
-                .setPositiveButton(res.getString(R.string.yes), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_SUBMIT_PLOT_LEVEL_ANALYSIS,  ScreenNameConstants.BUTTON_CLICKED);
-                        getFarmGPSPolygon(v);
-                    }
-                })
-                .setNegativeButton(res.getString(R.string.no), new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.cancel();
-                                if (pd != null && pd.isShowing()) {
-                                    pd.dismiss();
-                                }
-                            }
-                        }
-                );
+        builder.setCancelable(false);
+        LayoutInflater inflater = this.getLayoutInflater();
+        View dialogView= inflater.inflate(R.layout.common_alert_dialog, null);
+        builder.setView(dialogView);
+        TextView tvMsg=(TextView)dialogView.findViewById(R.id.tv_msg);
+        tvMsg.setText(res.getString(R.string.are_you_ready_to_polygon_record));
+        Button btnNo = (Button)dialogView.findViewById(R.id.btn_no);
+        Button btnYes = (Button)dialogView.findViewById(R.id.btn_yes);
         AlertDialog alert = builder.create();
+        btnNo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (pd != null && pd.isShowing()) {
+                    pd.dismiss();
+                }
+                alert.dismiss();
+            }
+        });
+
+        btnYes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_SUBMIT_PLOT_LEVEL_ANALYSIS, ScreenNameConstants.BUTTON_CLICKED);
+                alert.dismiss();
+                getFarmGPSPolygon(v);
+            }
+        });
+
         alert.show();
+
     }
 
     private void getFarmGPSPolygon(final View v) {
@@ -895,20 +918,20 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
 
         Log.d("ViewFarmerActivity", "Plot Count = " + count);
         if (count == 0) {
-
-            LinearLayout parentLayout=new LinearLayout(context);
-            parentLayout.setOrientation(LinearLayout.HORIZONTAL);
-
-            final EditText edTxtNumberOfPlots = new EditText(context);
-            edTxtNumberOfPlots.setInputType(InputType.TYPE_CLASS_NUMBER);
-            edTxtNumberOfPlots.setHint(res.getString(R.string.record_polygon_input_hint));
-
-            LinearLayout.LayoutParams rLp= new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT);
-            rLp.setMargins(40,0,40,0);
-            edTxtNumberOfPlots.setLayoutParams(rLp);
-
-            parentLayout.addView(edTxtNumberOfPlots);
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setCancelable(false);
+            LayoutInflater inflater = this.getLayoutInflater();
+            View dialogView= inflater.inflate(R.layout.plot_count_alert_dialog, null);
+            builder.setView(dialogView);
+            TextView tvMsg=(TextView)dialogView.findViewById(R.id.tv_msg);
+            TextView tvTitle=(TextView)dialogView.findViewById(R.id.tv_title);
+            EditText edTxtNumberOfPlots=(EditText) dialogView.findViewById(R.id.et_number_plot);
+            tvTitle.setText(res.getString(R.string.record_polygon_input_title));
+            tvMsg.setText(res.getString(R.string.record_polygon_input_messege));
+            Button btnNo = (Button)dialogView.findViewById(R.id.btn_no);
+            Button btnYes = (Button)dialogView.findViewById(R.id.btn_yes);
+            AlertDialog alert = builder.create();
+            alert.show();
 
             edTxtNumberOfPlots.addTextChangedListener(new TextWatcher() {
                 @Override
@@ -919,7 +942,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 @Override
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
                     String str = String.valueOf(s);
-                    if(str.length()>3){
+                    if (str.length() > 3) {
                         int num = Integer.parseInt(str);
                         if(num >= 1001){
                             edTxtNumberOfPlots.setError("We are supporting up to max 1000 plots");
@@ -934,37 +957,38 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
 
                 }
             });
-            new AlertDialog.Builder(context)
-                    .setTitle(res.getString(R.string.record_polygon_input_title))
-                    .setMessage(res.getString(R.string.record_polygon_input_messege))
-                    .setView(parentLayout)
-                    .setPositiveButton(R.string.submit, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int whichButton) {
-                            String lPlotCountString = edTxtNumberOfPlots.getText().toString();
-                            int lPlotCount = 0;
-                            if (!TextUtils.isEmpty(lPlotCountString)) {
-                                lPlotCount = Integer.parseInt(lPlotCountString);
-                            }
-                            if (lPlotCount > 0) {
-                                Intent recordPolygonIntent = new Intent(context, RecordPolygonActivity.class);
-                                recordPolygonIntent.putExtra(FARMER_ID, farmerId);
-                                recordPolygonIntent.putExtra(FARM_ID, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
-                                recordPolygonIntent.putExtra(OLAM_FARMER_ID, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
-                                recordPolygonIntent.putExtra(FARMER_NAME, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME)));
-                                recordPolygonIntent.putExtra(PLOT_COUNT, lPlotCount);
-                                SharedPreferenceUtils.getInstance(getApplicationContext()).setPlotCount(""+strFarmID, lPlotCount);
-                                recordPolygonIntent.setAction(Intent.ACTION_DEFAULT);
-                                startActivity(recordPolygonIntent);
-                            } else {
-                                Toast.makeText(getApplicationContext(), R.string.valid_count_msg, Toast.LENGTH_LONG).show();
-                            }
-                        }
-                    })
-                    .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int whichButton) {
-                        }
-                    })
-                    .show();
+
+
+            btnNo.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    alert.dismiss();
+                }
+            });
+
+            btnYes.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    String lPlotCountString = edTxtNumberOfPlots.getText().toString();
+                    int lPlotCount = 0;
+                    if (!TextUtils.isEmpty(lPlotCountString)) {
+                        lPlotCount = Integer.parseInt(lPlotCountString);
+                    }
+                    if (lPlotCount > 0) {
+                        Intent recordPolygonIntent = new Intent(context, RecordPolygonActivity.class);
+                        recordPolygonIntent.putExtra(FARMER_ID, farmerId);
+                        recordPolygonIntent.putExtra(FARM_ID, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
+                        recordPolygonIntent.putExtra(OLAM_FARMER_ID, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
+                        recordPolygonIntent.putExtra(FARMER_NAME, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME)));
+                        recordPolygonIntent.putExtra(PLOT_COUNT, lPlotCount);
+                        SharedPreferenceUtils.getInstance(getApplicationContext()).setPlotCount("" + strFarmID, lPlotCount);
+                        recordPolygonIntent.setAction(Intent.ACTION_DEFAULT);
+                        startActivity(recordPolygonIntent);
+                    } else {
+                        Toast.makeText(getApplicationContext(), R.string.valid_count_msg, Toast.LENGTH_LONG).show();
+                    }
+                }
+            });
         } else {
             Intent recordPolygonIntent = new Intent(context, RecordPolygonActivity.class);
             recordPolygonIntent.putExtra(FARMER_ID, farmerId);

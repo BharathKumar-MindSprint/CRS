@@ -76,7 +76,7 @@ public class MyCustomListAdapter_Tasks extends BaseAdapter {
             }
 
             if (completed == 1) {
-                cbImage.setImageDrawable(ContextCompat.getDrawable(context, android.R.drawable.checkbox_on_background));
+                cbImage.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_check_box));
                 linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
                 taskText.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
                 taskText.setTextSize(TypedValue.COMPLEX_UNIT_PX, res.getDimension(R.dimen.ofis_small_text));
@@ -89,7 +89,7 @@ public class MyCustomListAdapter_Tasks extends BaseAdapter {
                }
 
             } else {
-                cbImage.setImageDrawable(ContextCompat.getDrawable(context, android.R.drawable.checkbox_off_background));
+                cbImage.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_check_box_outline_blank));
                 linearLayout.setBackgroundResource(R.drawable.list_item);
                 taskText.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
                 taskText.setTextSize(TypedValue.COMPLEX_UNIT_PX, res.getDimension(R.dimen.ofis_med_text));

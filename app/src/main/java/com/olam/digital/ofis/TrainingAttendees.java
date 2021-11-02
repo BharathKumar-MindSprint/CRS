@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -84,7 +85,7 @@ public class TrainingAttendees extends BaseListActivity implements AdapterView.O
 
         selectedFarmers = new ArrayList<>();
         attendeeCount = (TextView) findViewById(R.id.attendeeCount);
-        attendeeCountBackground = (GradientDrawable) attendeeCount.getBackground();
+       // attendeeCountBackground = (GradientDrawable) attendeeCount.getBackground();
 
         if (editMode) {
             getExistingAttendees();
@@ -253,7 +254,7 @@ public class TrainingAttendees extends BaseListActivity implements AdapterView.O
     {
         Integer colorFrom = 0xFFEDE5DC;
         Integer colorTo = 0xFFFFFFFF;
-        attendeeCountBackground.setColor(colorFrom);
+      //  attendeeCountBackground.setColor(colorFrom);
         ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
         colorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
 
@@ -262,7 +263,7 @@ public class TrainingAttendees extends BaseListActivity implements AdapterView.O
             {
                 Integer colour = (Integer)animator.getAnimatedValue();
                 //attendeeCount.setBackgroundColor(colour);
-                attendeeCountBackground.setColor(colour);
+           //     attendeeCountBackground.setColor(colour);
             }
 
         });
@@ -279,13 +280,13 @@ public class TrainingAttendees extends BaseListActivity implements AdapterView.O
         boolean selectedState = Boolean.parseBoolean(state.getText().toString());
 
         if (selectedState) {
-            imageView.setImageDrawable(ContextCompat.getDrawable(context, android.R.drawable.checkbox_off_background));
-            linearLayout.setBackgroundResource(R.drawable.list_item);
+            imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_check_box_outline_blank));
+          //  linearLayout.setBackgroundResource(R.drawable.list_item);
             state.setText("false");
             selectedFarmers.remove(id);
         } else {
-            imageView.setImageDrawable(ContextCompat.getDrawable(context, android.R.drawable.checkbox_on_background));
-            linearLayout.setBackgroundResource(R.drawable.list_item_selected);
+            imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_check_box));
+          //  linearLayout.setBackgroundResource(R.drawable.list_item_selected);
             state.setText("true");
             selectedFarmers.add(id);
         }

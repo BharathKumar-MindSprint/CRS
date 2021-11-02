@@ -60,6 +60,20 @@ dynatrace {
                 beaconUrl 'https://eok851.dynatrace-managed.com:9999/mbeacon/82203a30-a89c-4afb-8009-c475586c3488'
             }
         }
+        devofi {
+            variantFilter "devofiDebug"
+            autoStart {
+                applicationId '1bd3a5cf-7c8d-49ae-8452-7116cfccb064'
+                beaconUrl 'https://eok851.dynatrace-managed.com:9999/mbeacon/82203a30-a89c-4afb-8009-c475586c3488'
+            }
+        }
+        sitofi {
+            variantFilter "sitofiDebug"
+            autoStart {
+                applicationId '1bd3a5cf-7c8d-49ae-8452-7116cfccb064'
+                beaconUrl 'https://eok851.dynatrace-managed.com:9999/mbeacon/82203a30-a89c-4afb-8009-c475586c3488'
+            }
+        }
     }
 }
 

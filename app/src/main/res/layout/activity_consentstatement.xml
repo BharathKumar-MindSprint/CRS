@@ -810,6 +810,40 @@
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:layout_margin="10dp"
+                            android:weightSum="2"
+                            android:visibility="gone"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:id="@+id/occupation_name"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="5dp"
+                                android:layout_weight="1"
+                                android:textSize="@dimen/ofis_med_text"
+                                android:layout_gravity="center"
+                                android:text="Occupation:"
+                                android:textColor="@color/clmrs_tv_grey" />
+
+                            <EditText
+                                android:id="@+id/occupationET"
+                                android:layout_weight="1"
+                                android:layout_width="match_parent"
+                                android:layout_height="52dp"
+                                android:background="@drawable/border_grey_bg"
+                                android:hint="Occupation"
+                                android:inputType="textPersonName"
+                                android:paddingLeft="10dp"
+                                android:maxLength="1500"
+                                android:textSize="@dimen/ofis_med_text"
+                                android:textColor="@android:color/black" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
                             android:orientation="vertical">
 
                             <TableLayout

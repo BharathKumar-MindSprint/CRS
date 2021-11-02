@@ -77,12 +77,12 @@ class CustomListAdapter_Attendees extends SimpleCursorAdapter {
             TextView state = (TextView) view.findViewById(R.id.attendeeStatus);
 
             if (trainingAttendees.selectedFarmers.contains(id)) {
-                cbImage.setImageDrawable(ContextCompat.getDrawable(context, android.R.drawable.checkbox_on_background));
-                linearLayout.setBackgroundResource(R.drawable.list_item_selected);
+                cbImage.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_check_box));
+              //  linearLayout.setBackgroundResource(R.drawable.list_item_selected);
                 state.setText("true");
             } else {
-                cbImage.setImageDrawable(ContextCompat.getDrawable(context, android.R.drawable.checkbox_off_background));
-                linearLayout.setBackgroundResource(R.drawable.list_item);
+                cbImage.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_check_box_outline_blank));
+             //   linearLayout.setBackgroundResource(R.drawable.list_item);
                 state.setText("false");
             }
         } catch (Exception e) {

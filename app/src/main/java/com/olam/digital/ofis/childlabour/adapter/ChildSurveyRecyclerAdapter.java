@@ -229,6 +229,7 @@ public class ChildSurveyRecyclerAdapter extends RecyclerView.Adapter<ChildSurvey
             if (childModuleDto.getSurveyCode().equalsIgnoreCase(ChildLabourUtils.FOLLOWUP_SURVEY_CODE)) {
                 if (!submitted && !enabledFollowUp){
                     holder.surveyLayout.setEnabled(false);
+                    holder.surveyLayout.setBackgroundResource(R.drawable.list_item_disabled);
                 }
             }
         }catch (Exception e){}

@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.AppCompatCheckBox;
 import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -83,6 +84,12 @@ public class RegisterChildActivity extends BaseActivity implements View.OnClickL
             childLabourRecyclerAdapter = new ChildLabourRecyclerAdapter(childrenList,this);
             RecyclerView.LayoutManager reLayoutManager = new LinearLayoutManager(getApplicationContext());
             childRecyclerView.setLayoutManager(reLayoutManager);
+
+            // Newly Added
+            DividerItemDecoration itemDecoration = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
+            itemDecoration.setDrawable(getResources().getDrawable(R.drawable.list_seperator_divider));
+            childRecyclerView.addItemDecoration(itemDecoration);
+
             childRecyclerView.setItemAnimator(new DefaultItemAnimator());
             ((LinearLayoutManager) reLayoutManager).setReverseLayout(true);
             childRecyclerView.setAdapter(childLabourRecyclerAdapter);
