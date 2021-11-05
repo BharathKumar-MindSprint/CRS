@@ -23,8 +23,11 @@ public interface KeyCloakInfo {
 
 
 
-    String uat_client_Id="";
-    String uat_Client_Secret="";
+    String uat_ofi_client_Id="ofi-ofis-mobile-uat";
+    String uat_ofi_Client_Secret="70efcd6c-ec13-49e9-9c0c-888a4e1d4276";
+
+    String uat_non_ofi_client_Id="ofis-mobile-uat";
+    String uat_non_ofi_Client_Secret="a2550a70-bec9-457b-862b-6bed71fb8dcb";
 
     String prod_client_Id="ofis-mobile";
     String prod_Client_Secret="53b13797-8f74-451f-9eb5-70e385f88522";

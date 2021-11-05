@@ -133,14 +133,35 @@ android {
 
             //New UAT DNS name
             resValue "string", "applicationName", "OFIS UAT"
-            resValue "string", "AUTH_SERVER_URL", 'https://otofis-uat-zuul.olamdigital.com/oauth/api/v1/oauth/'
-            buildConfigField 'String', 'HOST', '"https://otofis-uat-zuul.olamdigital.com/"'
+            resValue "string", "AUTH_SERVER_URL", 'https://digitalauthdev.olamnet.com/auth/realms/ofis-dse-manna-uat/protocol/openid-connect/'
+            buildConfigField 'String', 'HOST', '"https://otofis-uat-manna-zuul.olamdigital.com/"'
+            buildConfigField 'String', 'ODHOST', '"https://sit-apigateway.olamdirect.com/"'
 
             buildConfigField "String", "MATOMO_SERVER_URL", '"https://olammatomo.azurewebsites.net/matomo.php"'
             buildConfigField "int", "MATOMO_SERVER_CODE", '35'
             buildConfigField "boolean", "MATOMO_ENABLED", 'true'
 
         }
+
+        uatofi{
+            applicationId "com.olam.digital.ofispreprod"
+
+            resValue "string", "contentprovider_authorities", applicationId + '.provider'
+            resValue "string", "sync_account_type", applicationId
+            buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofispreprod"'
+
+            //New UAT DNS name
+            resValue "string", "applicationName", "OFI UAT"
+            resValue "string", "AUTH_SERVER_URL", 'https://digitalauthdev.olamnet.com/auth/realms/ofis-dse-manna-uat/protocol/openid-connect/'
+            buildConfigField 'String', 'HOST', '"https://otofis-uat-manna-zuul.olamdigital.com/"'
+            buildConfigField 'String', 'ODHOST', '"https://sit-apigateway.olamdirect.com/"'
+
+            buildConfigField "String", "MATOMO_SERVER_URL", '"https://olammatomo.azurewebsites.net/matomo.php"'
+            buildConfigField "int", "MATOMO_SERVER_CODE", '35'
+            buildConfigField "boolean", "MATOMO_ENABLED", 'true'
+
+        }
+
 
         sit {
             applicationId "com.olam.digital.ofispreprod"
@@ -218,6 +239,11 @@ android {
         sitofi {
             //java.srcDirs = ['src/flavorB/java', 'src/sharedType/java']
             res.srcDirs = ['src/sitofi/res', 'src/ofi/res']
+            //  assets.srcDirs = ['src/flavorB/assets', 'src/sharedType/assets']
+        }
+        uatofi {
+            //java.srcDirs = ['src/flavorB/java', 'src/sharedType/java']
+            res.srcDirs = ['src/uatofi/res', 'src/ofi/res']
             //  assets.srcDirs = ['src/flavorB/assets', 'src/sharedType/assets']
         }
     }
