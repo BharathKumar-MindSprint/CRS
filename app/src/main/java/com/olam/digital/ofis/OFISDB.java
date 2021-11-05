@@ -88,6 +88,7 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_OLAM_FARMER_NAME + " TEXT, "
             + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_FARMER_CONFIRMATION + " TEXT, "
             + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_CHILDNAME + " TEXT, "
+            + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_OCCUPATION + " TEXT, "
             + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_FARMER_SIGN + " TEXT, "
             + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_CONFIRMED_DATE + " TEXT, "
             + OFISDBContract.ConsentStatementEntry.COLUMN_NAME_ENUM_SIGN + " TEXT)";

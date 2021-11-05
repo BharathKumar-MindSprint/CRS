@@ -63,7 +63,6 @@ import com.olam.digital.ofis.authentication.AuthenticationHelper;
 import com.olam.digital.ofis.authentication.AuthenticationInterface;
 import com.olam.digital.ofis.authentication.DeviceIDxctractor;
 import com.olam.digital.ofis.authentication.KeyCloakInfo;
-import com.olam.digital.ofis.authentication.KeyCloakInfo;
 import com.olam.digital.ofis.authentication.OnAccessTokenInterface;
 import com.olam.digital.ofis.authentication.model.AuthRequestDTO;
 import com.olam.digital.ofis.authentication.model.AuthenticationDTO;
@@ -361,10 +360,23 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             case "dev":
                 clientId=KeyCloakInfo.dev_client_Id;
                 clientSecret=KeyCloakInfo.dev_Client_Secret;
+
+                // fake
+//                clientId=KeyCloakInfo.dev_ofi_client_Id;
+//                clientSecret=KeyCloakInfo.dev_ofi_Client_Secret;
+
+                break;
+            case "devofi":
+                clientId=KeyCloakInfo.dev_ofi_client_Id;
+                clientSecret=KeyCloakInfo.dev_ofi_Client_Secret;
+                break;
+            case "sitofi":
+                clientId=KeyCloakInfo.sit_ofi_client_Id;
+                clientSecret=KeyCloakInfo.sit_ofi_Client_Secret;
                 break;
             case "sit":
-                clientId=KeyCloakInfo.sit_client_Id;
-                clientSecret=KeyCloakInfo.sit_Client_Secret;
+                clientId=KeyCloakInfo.sit_non_ofi_client_Id;
+                clientSecret=KeyCloakInfo.sit_non_ofi_Client_Secret;
                 break;
             case "uat":
                 clientId=KeyCloakInfo.uat_client_Id;

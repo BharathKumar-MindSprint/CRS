@@ -4,7 +4,6 @@ import android.Manifest;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.ContentValues;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -33,6 +32,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Base64;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -185,6 +185,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
     public static final int BLOCKED_OR_NEVER_ASKED = 2;
 
     private int lPlotCount = 0;
+    private double areaWithoutRounded=0;
 
     private Location mCapturedLocation=null;
 
@@ -287,6 +288,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
         //currentLocation = (ImageButton) findViewById(R.id.current_location);
         pause.setEnabled(false);
         bttnSave.setEnabled(false);
+        disableBtn(pause); disableBtn(bttnSave);
         spinnerArrayAdapter = new ArrayAdapter<String>
                 (this, android.R.layout.simple_spinner_item,
                         spinnerArray);
@@ -332,6 +334,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                     if (calculateArea() >= 0.01){
                         savePolygonToSharedPreference();
                     }else{
+                    areaInfo.setText(getResources().getString(R.string.area_info, String.valueOf(areaWithoutRounded)));
                         showZeroAreaDialog();
                     }
                 } else {
@@ -483,6 +486,21 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
         initializeLoggingVariables();
     }
 
+    private void enablePauseBtn(Button btn){
+        btn.setBackgroundColor(ContextCompat.getColor(this, R.color.btn_secondary_background));
+        btn.setTextColor(ContextCompat.getColor(this, R.color.white));
+    }
+
+    private  void enableSaveBtn(Button btn){
+        btn.setBackgroundColor(ContextCompat.getColor(this, R.color.btnColorPrimary));
+        btn.setTextColor(ContextCompat.getColor(this, R.color.white));
+    }
+
+    private void disableBtn(Button btn){
+        btn.setBackgroundColor(ContextCompat.getColor(this, R.color.btn_primary_disabled));
+        btn.setTextColor(ContextCompat.getColor(this, R.color.btn_disabled_text));
+    }
+
     private int locationMode(){
         int locationMode=0;
         try {
@@ -616,26 +634,40 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
     }
 
     void showChangeSettingsDialog() {
+
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(R.string.location_permission_alertdialog_title);
-        builder.setMessage(R.string.open_application_settings_msg);
         builder.setCancelable(false);
-        builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+        LayoutInflater inflater = this.getLayoutInflater();
+        View dialogView= inflater.inflate(R.layout.common_alert_dialog, null);
+        builder.setView(dialogView);
+        TextView tvMsg=(TextView)dialogView.findViewById(R.id.tv_msg);
+        TextView tvTitle= dialogView.findViewById(R.id.tv_title);
+        tvTitle.setVisibility(View.VISIBLE);
+        tvTitle.setText(R.string.location_permission_alertdialog_title);
+        tvMsg.setText(R.string.open_application_settings_msg);
+        Button btnNo = (Button)dialogView.findViewById(R.id.btn_no);
+        Button btnYes = (Button)dialogView.findViewById(R.id.btn_yes);
+        AlertDialog alert = builder.create();
+
+        btnNo.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
+            public void onClick(View view) {
+                showToastMessage(getResources().getString(R.string.gps_permission_denial_msg));
+                alert.dismiss();
+            }
+        });
+        btnYes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
                 Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
                 Uri uri = Uri.fromParts("package", getPackageName(), null);
                 intent.setData(uri);
                 startActivityForResult(intent, REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS);
+                alert.dismiss();
             }
         });
-        builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                showToastMessage(getResources().getString(R.string.gps_permission_denial_msg));
-            }
-        });
-        builder.create().show();
+
+        alert.show();
     }
 
     void handleStartStopLoggingButton() {
@@ -643,26 +675,40 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
         if (isGPSProviderEnabled() || locationMode()==2) {
             if (!checkPlotEntryExistInPreference()) {
                 if (mLocationBeanList.size() > 0 && !mIsLoggingStarted) {
+                    //new
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                    builder.setTitle(getResources().getString(R.string.ready_to_save, currentTrackname));
-                    builder.setMessage(R.string.restart_logging);
                     builder.setCancelable(false);
-                    builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                    LayoutInflater inflater = this.getLayoutInflater();
+                    View dialogView= inflater.inflate(R.layout.common_alert_dialog, null);
+                    builder.setView(dialogView);
+                    TextView tvTitle=(TextView)dialogView.findViewById(R.id.tv_title);
+                    tvTitle.setVisibility(View.VISIBLE);
+                    tvTitle.setText(getResources().getString(R.string.ready_to_save, currentTrackname));
+                    TextView tvMsg=(TextView)dialogView.findViewById(R.id.tv_msg);
+                    tvMsg.setText(R.string.restart_logging);
+                    Button btnNo = (Button)dialogView.findViewById(R.id.btn_no);
+                    Button btnYes = (Button)dialogView.findViewById(R.id.btn_yes);
+                    AlertDialog alert = builder.create();
+                    btnNo.setOnClickListener(new View.OnClickListener() {
                         @Override
-                        public void onClick(DialogInterface dialog, int which) {
+                        public void onClick(View view) {
+                            showToastMessage(getResources().getString(R.string.save_existing_logs));
+                            alert.dismiss();
+                        }
+                    });
+
+                    btnYes.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
                             mLocationBeanList = new ArrayList<>();
                             bttnSave.setEnabled(false);
+                            disableBtn(bttnSave);
                             initializeKMLDocument();
                             initiateLogging();
+                            alert.dismiss();
                         }
                     });
-                    builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            showToastMessage(getResources().getString(R.string.save_existing_logs));
-                        }
-                    });
-                    builder.create().show();
+                    alert.show();
                 } else {
                     initiateLogging();
                 }
@@ -743,7 +789,9 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                             if (mLocationBeanList.size() > 0) {
                                 showToastMessage(getResources().getString(R.string.ready_to_save, currentTrackname).trim().toUpperCase());
                                 pause.setEnabled(false);
+                                disableBtn(pause);
                                 bttnSave.setEnabled(true);
+                                enableSaveBtn(bttnSave);
                                 setButtonsLoggingState(false);
                             } else {
 
@@ -753,6 +801,8 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                                     showToastMessage(getResources().getString(R.string.location_not_yet_logged));
                                     pause.setEnabled(false);
                                     bttnSave.setEnabled(false);
+                                    disableBtn(pause);
+                                    disableBtn(bttnSave);
                                     setButtonsLoggingState(false);
 
                             }
@@ -815,6 +865,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
             setLoggingStarted(true);
             setRecordingIcon(RecordingState.RECORDING);
             pause.setEnabled(true);
+            enablePauseBtn(pause);
 
         } else {
 
@@ -824,6 +875,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
             mStartLoggingButton.setText(R.string.start_logging_button_text);
             pause.setText(R.string.pause_button_text);
             pause.setEnabled(false);
+            disableBtn(pause);
 
         }
     }
@@ -840,32 +892,41 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
         }
     }
 
-    AlertDialog alert;
 
     void showTurnOnGPSDialog() {
+
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(R.string.gps_manager_msg);
         builder.setCancelable(false);
-        builder.setMessage(R.string.enable_gps_msg);
-        builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+        LayoutInflater inflater = this.getLayoutInflater();
+        View dialogView= inflater.inflate(R.layout.common_alert_dialog, null);
+        builder.setView(dialogView);
+        TextView tvMsg=(TextView)dialogView.findViewById(R.id.tv_msg);
+        TextView tvTitle= dialogView.findViewById(R.id.tv_title);
+        tvTitle.setVisibility(View.VISIBLE);
+        tvTitle.setText(R.string.gps_manager_msg);
+        tvMsg.setText(R.string.enable_gps_msg);
+        Button btnNo = (Button)dialogView.findViewById(R.id.btn_no);
+        Button btnYes = (Button)dialogView.findViewById(R.id.btn_yes);
+        AlertDialog alert = builder.create();
+
+        AlertDialog finalAlert = alert;
+        btnNo.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-                showToastMessage(getResources().getString(R.string.gps_turned_on));
-                Intent i = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                dialog.cancel();
-                startActivity(i);
-            }
-        });
-        builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                //No location service, no Activity
-                dialog.cancel();
+            public void onClick(View view) {
+                finalAlert.dismiss();
                 finish();
             }
         });
+        btnYes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finalAlert.dismiss();
+                showToastMessage(getResources().getString(R.string.gps_turned_on));
+                Intent i = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                startActivity(i);
+            }
+        });
 
-        alert = builder.create();
         alert.show();
     }
 
@@ -939,6 +1000,8 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
     void initializeButtonStates() {
         bttnSave.setEnabled(false);
         pause.setEnabled(false);
+        disableBtn(bttnSave);
+        disableBtn(pause);
         mStartLoggingButton.setText(R.string.start_logging_button_text);
     }
 
@@ -1215,12 +1278,32 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
             }
 
             if (!currentTrackname.equals(currentPlotName)) {
+
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setTitle(R.string.logging_progress_msg);
-                builder.setMessage(getResources().getString(R.string.cancel_logging_question) +" "+ currentPlotName + "?");
-                builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                builder.setCancelable(false);
+                LayoutInflater inflater = this.getLayoutInflater();
+                View dialogView= inflater.inflate(R.layout.common_alert_dialog, null);
+                builder.setView(dialogView);
+                TextView tvMsg=(TextView)dialogView.findViewById(R.id.tv_msg);
+                TextView tvTitle= dialogView.findViewById(R.id.tv_title);
+                tvTitle.setVisibility(View.VISIBLE);
+                tvTitle.setText(R.string.logging_progress_msg);
+                tvMsg.setText(getResources().getString(R.string.cancel_logging_question) +" "+ currentPlotName + "?");
+                Button btnNo = (Button)dialogView.findViewById(R.id.btn_no);
+                Button btnYes = (Button)dialogView.findViewById(R.id.btn_yes);
+                AlertDialog alert = builder.create();
+
+                btnNo.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                    public void onClick(View view) {
+                        alert.dismiss();
+                        spinnerPlotList.setSelection(currentLoggingTrackSpinnerPosition);
+                    }
+                });
+                btnYes.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        alert.dismiss();
                         showToastMessage(getResources().getString(R.string.cancel_logging_msg, currentTrackname));
                         mLocationBeanList = new ArrayList<>();
                         initializeKMLDocument();
@@ -1228,13 +1311,8 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                         initializeButtonStates();
                     }
                 });
-                builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        spinnerPlotList.setSelection(currentLoggingTrackSpinnerPosition);
-                    }
-                });
-                builder.create().show();
+
+                alert.show();
             }
             return;
         }
@@ -1319,14 +1397,32 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
     }
 
     void savePolygonToSharedPreference() {
-
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(getResources().getString(R.string.save_polygon_alertdialog_title, currentTrackname));
         builder.setCancelable(false);
-        builder.setMessage(getResources().getString(R.string.save_polygon_alertdialog_msg, currentTrackname));
-        builder.setPositiveButton(R.string.save_button_text, new DialogInterface.OnClickListener() {
+        LayoutInflater inflater = this.getLayoutInflater();
+        View dialogView= inflater.inflate(R.layout.common_alert_dialog, null);
+        builder.setView(dialogView);
+        TextView tvMsg=(TextView)dialogView.findViewById(R.id.tv_msg);
+        TextView tvTitle= dialogView.findViewById(R.id.tv_title);
+        tvTitle.setVisibility(View.VISIBLE);
+        tvTitle.setText(getResources().getString(R.string.save_polygon_alertdialog_title, currentTrackname));
+        tvMsg.setText(getResources().getString(R.string.save_polygon_alertdialog_msg, currentTrackname));
+        Button btnNo = (Button)dialogView.findViewById(R.id.btn_no);
+        Button btnYes = (Button)dialogView.findViewById(R.id.btn_yes);
+        btnNo.setText(R.string.close);
+        btnYes.setText(R.string.save_button_text);
+        AlertDialog alert = builder.create();
+
+        btnNo.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
+            public void onClick(View view) {
+                alert.dismiss();
+            }
+        });
+        btnYes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                alert.dismiss();
 
                 LocationBeanList lLocationBeanList = new LocationBeanList();
                 lLocationBeanList.setLocationBean(mLocationBeanList);
@@ -1358,19 +1454,15 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                 showToastMessage(getResources().getString(R.string.saved_successfully_msg, currentTrackname));
                 mLocationBeanList = new ArrayList<>();
                 bttnSave.setEnabled(false);
+                disableBtn(bttnSave);
                 if (checkPlotEntryExistInPreference()) {
                     initializeKMLDocument();
                     loadMapWithPolygon(currentTrackname);
                 }
             }
         });
-        builder.setNegativeButton(R.string.close, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
 
-            }
-        });
-        builder.create().show();
+        alert.show();
 
     }
 
@@ -1495,27 +1587,41 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
 
     void showPlotLocationConfirmDialog(final String aPlotName) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(R.string.confirm);
         builder.setCancelable(false);
-        builder.setMessage(getResources().getString(R.string.plot_location_confirmation, aPlotName));
-        builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+        LayoutInflater inflater = this.getLayoutInflater();
+        View dialogView= inflater.inflate(R.layout.common_alert_dialog, null);
+        builder.setView(dialogView);
+        TextView tvTitle=(TextView)dialogView.findViewById(R.id.tv_title);
+        tvTitle.setVisibility(View.VISIBLE);
+        tvTitle.setText(R.string.confirm);
+        TextView tvMsg=(TextView)dialogView.findViewById(R.id.tv_msg);
+        tvMsg.setText(getResources().getString(R.string.plot_location_confirmation, aPlotName));
+        Button btnNo = (Button)dialogView.findViewById(R.id.btn_no);
+        Button btnYes = (Button)dialogView.findViewById(R.id.btn_yes);
+        AlertDialog alert = builder.create();
+        btnNo.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
+            public void onClick(View view) {
+                showToastMessage(getResources().getString(R.string.logging_not_started_msg));
+                alert.dismiss();
+            }
+        });
+
+        btnYes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
                 bttnSave.setEnabled(false);
+                disableBtn(bttnSave);
                 setLoggingStarted(true);
                 setButtonsLoggingState(true);
                 initializeKMLDocument();
                 myLocationOverlay.setEnabled(true);
                 currentLoggingTrackSpinnerPosition = spinnerPlotList.getSelectedItemPosition();
+                alert.dismiss();
             }
         });
-        builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                showToastMessage(getResources().getString(R.string.logging_not_started_msg));
-            }
-        });
-        builder.create().show();
+
+        alert.show();
     }
 
     void showToastMessage(String aMessage) {
@@ -1525,15 +1631,31 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
 
     private void showZeroAreaDialog(){
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            // builder.setTitle(getResources().getString(R.string.save_polygon_alertdialog_title, currentTrackname));
-            builder.setCancelable(false);
-            builder.setMessage(getResources().getString(R.string.zero_area_msg));
-            builder.setPositiveButton("OK", (dialog, which) -> {
-                dialog.dismiss();
-            });
-            builder.show();
-        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setCancelable(false);
+        LayoutInflater inflater = this.getLayoutInflater();
+        View dialogView= inflater.inflate(R.layout.common_alert_dialog, null);
+        builder.setView(dialogView);
+        TextView tvMsg=(TextView)dialogView.findViewById(R.id.tv_msg);
+        tvMsg.setText(getResources().getString(R.string.zero_area_msg));
+        Button btnNo = (Button)dialogView.findViewById(R.id.btn_no);
+        btnNo.setVisibility(View.GONE);
+        Button btnYes = (Button)dialogView.findViewById(R.id.btn_yes);
+        btnYes.setText(getResources().getString(R.string.msg_ok));
+        AlertDialog alert = builder.create();
+
+        btnYes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                areaInfo.setText("");
+                alert.dismiss();
+            }
+        });
+        alert.show();
+
+
+
+    }
 
     public void showEditPlotsDialog(View view) {
         final Dialog dialog = new Dialog(RecordPolygonActivity.this);
@@ -1710,6 +1832,8 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
              lTotalArea = Utils.getArea(lats, lons);
             if (lTotalArea >= 0) {
                 lTotalArea = lTotalArea / 10000;
+                // Area rounded in 3 digits
+                areaWithoutRounded=roundArea(lTotalArea,3);
                 lTotalArea = roundArea(lTotalArea,2);
             }
         }

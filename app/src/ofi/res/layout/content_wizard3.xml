@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/consentStatementHolder"
+        android:orientation="vertical"
+         android:background="@drawable/border_white_cs"
+        >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TableLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="@dimen/ofis_large_pad"
+                    android:paddingRight="@dimen/ofis_large_pad"
+                    android:paddingTop="@dimen/ofis_large_pad">
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:weightSum="10"
+                        android:gravity="top">
+                            <TextView
+                            android:layout_gravity="center"
+                            android:paddingTop="5dp"
+                            android:layout_weight="0.5"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/ofis_med_text"
+                            android:text="@string/cs_page3_1" />
+                            <EditText
+                                android:layout_weight="8"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"/>
+                    </LinearLayout>
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/ofis_consent_statement_row_bottom_margin"
+                        android:weightSum="10"
+                        android:gravity="top">
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="10"
+                            android:textSize="@dimen/ofis_med_text"
+                            android:text="@string/cs_page3_2"/>
+                    </TableRow>
+
+                    <TableRow
+                        android:paddingTop="@dimen/margin_10"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/ofis_consent_statement_row_bottom_margin"
+                        android:weightSum="10"
+                        android:gravity="top">
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="10"
+                            android:textSize="@dimen/ofis_med_text"
+                            android:text="@string/cs_page3_3"/>
+                    </TableRow>
+
+                    <TableRow
+                        android:paddingTop="@dimen/margin_10"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/ofis_consent_statement_row_bottom_margin"
+                        android:weightSum="10"
+                        android:gravity="top">
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="10"
+                            android:textSize="@dimen/ofis_med_text"
+                            android:text="@string/cs_page3_4"/>
+                    </TableRow>
+
+                    <TableRow
+                        android:paddingTop="@dimen/margin_10"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/ofis_consent_statement_row_bottom_margin"
+                        android:weightSum="10"
+                        android:gravity="top">
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="10"
+                            android:textSize="@dimen/ofis_med_text"
+                            android:text="@string/cs_page3_5"/>
+                    </TableRow>
+
+                    <TableRow
+                        android:paddingTop="@dimen/margin_10"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/ofis_consent_statement_row_bottom_margin"
+                        android:weightSum="10"
+                        android:gravity="top">
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="10"
+                            android:textSize="@dimen/ofis_med_text"
+                            android:text="@string/cs_page3_6"/>
+                    </TableRow>
+
+                </TableLayout>
+
+
+
+            </LinearLayout>
+
+
+
+    </LinearLayout>
+
+</LinearLayout>

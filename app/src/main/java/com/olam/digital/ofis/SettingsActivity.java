@@ -61,7 +61,7 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
     private boolean updateData=false;
     // Runtime Permission Request Code
     private final static int MY_PERMISSIONS_REQUEST = 9999;
-
+    Button buttonPrivacyConsent;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,6 +75,7 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         buttonSave = (Button) findViewById(R.id.buttonSave);
+        buttonPrivacyConsent=(Button) findViewById(R.id.buttonPrivacyConsent);
         buttonSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -102,6 +103,15 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
                     // Call methods directly for Android versions lower than Marshmallow
                     bindSaveButton();
                 }
+            }
+        });
+
+        buttonPrivacyConsent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(SettingsActivity.this, PrivacyStatementActivity.class);
+                startActivity(intent);
+
             }
         });
 

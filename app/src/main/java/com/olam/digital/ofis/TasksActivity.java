@@ -13,10 +13,13 @@ import android.os.Bundle;
 import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.appcompat.app.AlertDialog;
+
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -246,36 +249,50 @@ ListView listView;
         completed = "1".equals(tasksDTO.getTaskCompletedStatus());
 
         if (completed) {
-            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-            dialog.setTitle(R.string.untick_task);
-            dialog.setMessage(R.string.untick_task_msg)
-                    .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-                            imageView.setImageDrawable(ContextCompat.getDrawable(context, android.R.drawable.checkbox_off_background));
-                            linearLayout.setBackgroundResource(R.drawable.list_item);
-                            completedText.setText("0");
-                            completed = false;
-                            if (dl.updateTaskStatus(completed, id) > 0) {
-//                                myCustomListAdapter_tasks.notifyDataSetChanged();
-                                updateTasks();
-                            }
-                        }
-                    })
-                    .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface paramDialogInterface, int paramInt) {
 
-                        }
-                    });
-            dialog.show();
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setCancelable(false);
+            LayoutInflater inflater = this.getLayoutInflater();
+            View dialogView= inflater.inflate(R.layout.common_alert_dialog, null);
+            builder.setView(dialogView);
+            TextView tvMsg=(TextView)dialogView.findViewById(R.id.tv_msg);
+            TextView tvTitle= dialogView.findViewById(R.id.tv_title);
+            tvTitle.setVisibility(View.VISIBLE);
+            tvTitle.setText(R.string.untick_task);
+            tvMsg.setText(res.getString(R.string.untick_task_msg));
+            Button btnNo = (Button)dialogView.findViewById(R.id.btn_no);
+            Button btnYes = (Button)dialogView.findViewById(R.id.btn_yes);
+            AlertDialog alert = builder.create();
+
+            btnNo.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                 alert.dismiss();
+                }
+            });
+            btnYes.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_check_box_outline_blank));
+                    linearLayout.setBackgroundResource(R.drawable.list_item);
+                    completedText.setText("0");
+                    completed = false;
+                    if (dl.updateTaskStatus(completed, id) > 0) {
+//                                myCustomListAdapter_tasks.notifyDataSetChanged();
+                        updateTasks();
+                    }
+                    alert.dismiss();
+                }
+            });
+
+            alert.show();
 
             /*imageView.setImageDrawable(ContextCompat.getDrawable(context, android.R.drawable.checkbox_off_background));
             linearLayout.setBackgroundResource(R.drawable.list_item);
             completedText.setText("0");
             completed = false;*/
         } else {
-            imageView.setImageDrawable(ContextCompat.getDrawable(context, android.R.drawable.checkbox_on_background));
+            imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_check_box));
             linearLayout.setBackgroundResource(R.drawable.list_item_selected);
             completedText.setText("1");
             completed = true;

@@ -569,6 +569,8 @@
     <string name="checking_hhgps_enumerator">Checking Household GPS Enumerator</string>
     <string name="update_consent_statement">Update Consent Statement</string>
     <string name="consent_statement">ConsentStatement</string>
+
+
     <string name="farmer_consent">FARMER CONSENT</string>
     <string name="personal_info_collection">Personal Information Collection Notice</string>
     <string name="cs_page2_title">Personal Data Use</string>
@@ -641,10 +643,10 @@
     <string name="cs_page5_24">There may be a number of ways for consent to be recorded. Please consult the Legal function if your intended collection method is not covered above. The signature fields may be replaced with consent buttons, etc.</string>
     <string name="cs_page5_25">Please consult the Legal function if your intended purpose(s) for use and disclosure of Farmer Data does not fall within any of the categories listed in paragraph 1 above. </string>
     <string name="cs_page5_26">All consents need to be appropriately tracked and stored. Where an Olam representative is reading the notice to the individual and acknowledging his consent on behalf of the individual (e.g. by way of a slide box in a mobile app), please ensure that Olam is able to check which representative has obtained the consent. </string>
-
-
     <string name="consent_statement_pageone2">Your  personal  data  including  your  name,  age,  contact  information  (e-mail  address,  phone  number,  mailing  address), photographs, videos or digital recordings, biographical, social and geographical information, financial, farming and output information,  feedback  from  you,  and  where  applicable,  those  of  your  children  or  dependants  (“Farmer  Data”)  will  be collected and stored by us and made accessible to our customers, business partners and in some cases, made public on our  Olam  websites,  social  media,  electronic  or  written  publications.  This  includes  the  Olam  Farmer  Information  System ("OFIS") and/or the AtSource platform (“AtSource”) which are online databases and tools containing farmer related data used by us and our customers and partners. We ask that you hereby acknowledge and provide consent to the collection, use and disclosure of your personal data for this purpose in accordance with this Personal Information Collection Notice. </string>
     <string name="consent_statement_pageone1">It is requested for you to supply Olam International Limited (hereafter referred to as “Olam,” “us,” or “we”) with personal data in support of Olam’s efforts to promote sustainability and traceability in the supply chain and in-turn to promote responsible trade with farmers such as yourself around the globe (the “Purpose”). </string>
+
+
     <string name="full_farmer_name">Full Name</string>
     <string name="date">Date</string>
     <string name="olam_connect">Olam Connect</string>
@@ -689,4 +691,216 @@
     <string name="refresh_token">refresh_token</string>
     <string name="duplicate_survey">Dupicate survey entry</string>
     <string name="removing_duplicate_survey">Removing dupicate survey</string>
+
+
+    <string name="privacy_data">Olam Food Ingredients and our affiliates worldwide (collectively called “ofi,” “we,” “us,” “our”) understand the importance of privacy to you. This policy summarizes what personal information we may collect, how we may use this information, and other important topics relating to your privacy and data protection.\n \n
+It is ofi policy to comply with all applicable privacy and data protection laws. This commitment reflects the value we place on earning and keeping the trust of our customers, business partners and others who share their personal information with us.\n \n
+This Policy applies to all websites and mobile applications (“apps”) operated by or on behalf of ofi. It also applies to personal information ofi may otherwise collect: (i) through our products and services; (ii) when you interact with us by means other than an ofi website or app, for example, in person, by telephone, or at a trade show or training; and (iii) from our customers, distributors, suppliers, vendors, and other business partners (collectively “Business Partners”).\n\n
+However, different ofi websites, apps, products, and services have different purposes and features. If additional or different disclosures are required for a specific OFI website, app, product, or service, then we provide those disclosures (“Specific Privacy Statements”) separately on, or with, the relevant website, app, product, or service. Each such specific privacy disclosure, policy, or statement supplements and amends this Policy.\n\n
+</string>
+    <string name="general_principels">General Principles of ofi’s Collection, Use and Disclosure of Personal Information</string>
+    <string name="general_principels_data">In this Privacy Statement, “personal data” or “personal information” shall mean any information about an individual who can be identified from that information or from that information combined with other information to which we are likely to have access, including without limitation, information such as name, address, telephone number, email address, identification numbers, location data, and online identifiers.\n\n
+Additionally, “process” or “processing” means any operation which is performed upon personal information, whether or not by automatic means, such as collection, recording, organization, structuring, storage, adaptation or alteration, retrieval, consultation, acquisition, holding, use, disclosure by transmission, dissemination or otherwise making available, alignment or combination, restriction, erasure, or destruction.\n\n
+To the extent required by applicable law, whenever ofi collects personal information, ofi will:\n\n
+          provide notice to you about our data practices.\n\n
+          collect your personal information only for specified and legitimate purposes. The information we collect will be relevant, adequate, and not excessive for the purposes for which it is collected.\n\n
+          process your personal information in a manner consistent with the purposes for which it was collected or to which you consented;\n\n
+          take reasonable steps to ensure that your personal information is reliable for its intended use, accurate, complete, and, where necessary, kept up to date; and\n\n
+          take appropriate measures, by contract or otherwise, to provide adequate protection for personal information that is disclosed to a third party or transferred to another country, including transfers within ofi.\n\n
+You have choices about the personal information you provide to ofi. You may choose not to provide information that we request, but if you do so, we may not be able to provide you a relevant service or a particular feature for an ofi website, app, or product.
+</string>
+    <string name="ofi_info">Personal Information ofi Collects</string>
+    <string name="ofi_info_data">ofi collects the following types of personal information -\n\n
+Information You Provide:\n\n
+•	contact information, such as your name, company name, job title, address, email address, and phone number;\n\n
+•	additional information about you to help us get to know you better, such as your gender, age, date of birth, nationality, marital status, details of dependents, employment history, professional associations and registration numbers, information about how you use our products, and demographic information;\n\n
+•	financial information needed to process sales and purchases, such as credit card or account information or tax identification numbers;\n\n
+•	log-in information, including, if applicable, social media account information for login purposes;\n\n
+•	comments, questions, opinions, requests and orders or sales you may make; and\n\n
+•	as applicable to our farmers and suppliers, information such as the geolocation of farms or businesses, product yields and related analytical information regarding farms or businesses such as inventories and farming methods, financial data such as financing information, pricing, wages, and farmer/supplier identification information such as photographs, signatures, and certificates verifying identity and education.\n\n
+Information from Business Partners and other Third Parties:\n\n
+•	ofi collects personal information through our Business Partners. This information may include contact information, such as name, company name, job title, address, email address, phone number, education, purchase and sale information.\n\n
+•	ofi also obtains personal information from other third-party sources, including publicly and commercially available sources.\n\n
+Information Automatically Gathered from Your Device:\n\n
+•	ofi collects technical information about your device, such as device and advertising identifiers, browser type, pages you view and the general manner while navigating the site, location data, Internet Protocol (“IP”) address, operating system, date and time of your visit and certain server logs for system administration purposes. . ofi collects this information automatically from your device and web browser through cookies and similar technologies.
+</string>
+    <string name="cookies_header">Cookies and Similar Technologies</string>
+    <string name="cookies">A "cookie" is a file of information placed on your device when you visit a website. Cookies and similar technologies can enhance your user experience by saving your preferences and personalizing your online experience.\n\n
+Certain countries require your consent to the use of cookies when you visit ofi websites. If you access an ofi website from one of these countries, you will be presented with information regarding your options via a cookie consent banner, including the option to accept or reject such cookies. You will be able to change such settings on the cookie consent banner.\n\n
+Please refer to our Cookie Policy for more information <a href="http://www.ofi.com/cookies.html">here</a>
+</string>
+
+    <string name="ofi_personal_info">How OFI Uses Your Personal Information</string>
+    <string name="ofi_personal_info_data">ofi uses your personal information to:\n\n
+<u>Develop and manage our relationships with you and our Business Partners.</u> This includes: (i) delivering services or carrying out transactions that you have requested; (ii) providing information about ofi  products, services, transactions, and advertisements, that may be of interest to you; (iii) providing you a more consistent experience in interacting with ofi, including by learning more about you and how you use and interact with ofi  websites, apps, products, and services; (iv) planning, managing, and performing under our contractual relationships with you; (v) providing after-sales support to you; and (vi) in the case of farmers, providing farm-management plans and enhancing farming capabilities.\n\n
+<u>Provide Traceability in the Supply Chain.</u> ofi is committed to empowering our customers and producers by providing traceability in the supply chain. Traceability allows for socially and environmentally responsible sourcing in the supply chain of our products. Accordingly, we use farmer and supplier personal information to enhance traceability and strengthen our partnerships with our farmers, suppliers, and buyers while improving our traceability-focused websites and apps and empowering our Business Partners and affiliates to make informed and responsible sourcing decisions.\n\n
+<u>Foster Careers.</u> You may submit your resume and other information to apply for a job with us either through our sites or via email to an official ofi email address. We use the information you submit solely for the purposes of considering applications and recruitment (and for purposes of our administration or management if you commence work for us), and not to market to you.\n\n
+<u>Communicate with you.</u> This includes: (i) informing you of ofi  products, services, events and promotional activities that you requested or may be of interest to you; (ii) providing information about relevant ofi  products, services, and transactions, including, for example, pricing information, technical data, invoice, shipping, or production information, warranty or recall information, or information about product or service improvements; (iii) responding to questions or inquiries that you make, including customer service requests; and (iv) inviting you to participate in, or informing you of the results of, customer satisfaction or market research surveys.\n\n
+<u>Provide and improve our websites, apps, products, and services.</u> This includes: (i) customizing them to your preferences or interests, making them more compatible with your technology, or otherwise making them easier to use; (ii) maintaining the security of and otherwise protecting them; and (iii) and developing new websites, apps, products and services.\n\n
+<u>Address legal issues.</u> This includes: (i) complying with our obligations to retain certain business records for defined retention periods; (ii) establishing, exercising, or defending legal claims; (iii) complying with laws, regulations, court orders, or other legal process; (iv) detecting, preventing, and responding to fraud, intellectual property infringement, violation of our contracts or agreements, violations of law, or other misuse of ofi  websites, apps, products or services; and (v) protecting ofi\’s rights or property, or yours or other\’s health, safety, welfare, rights, or property.\n\n
+<u>Manage office visitors.</u> If you visit an ofi office, we may collect personal information about you, including, but not limited to, your title, name, address, phone number, email address, business or company affiliation, government identification (driver\’s license, passport), and other details you provide. We process this information for a variety of purposes, including to generally manage your visit, to verify your identity, to provide access to our facilities and systems, for security and other safety purposes, to communicate with you regarding your visit, to provide information we believe may be of interest to you, including regarding our services, for purposes disclosed at the time a visitor provides Personal Information or otherwise with consent.\n\n
+<u>Process with your consent.</u> We also use your personal information for other uses consistent with the context in which the information was collected or with your consent. Where you provide us with the personal data of any other individual, including any employee that is involved in farming operations or a family member, you confirm that you have notified the individual of the purposes to which you are providing ofi with that third party\'s personal data and you have obtained the person\'s consent or that you are legally authorised to consent on their behalf to providing ofi with that person\'s personal data.\n\n
+In certain jurisdictions, consent is the primary ground on which personal data may be processed by an organisation. In those jurisdictions, processing personal data in connection with the performance of a contract or legitimate purposes is not recognised as an accepted ground on which personal data may be processed.  Accordingly, if you are a resident in such a jurisdiction, you agree that consent will be the ground on which ofi will process your personal data instead of performance of a contract or legitimate purposes.\n\n
+Note that we can anonymise or aggregate any of the information we collect and use it for any purpose, including for research and product-development purposes. Such information will not identify you individually.\n
+</string>
+    <string name="sharing_info">When We Share Your Personal Information</string>
+    <string name="sharing_info_data">We will not disclose your personal information except under a lawful and measured basis as follows:\n\n
+•	With other ofi entities. We share your personal information with other ofi entities, including those in different countries. When we do so, these other ofi entities will use your information in a manner consistent with this Policy, any applicable Specific Privacy Statements, and all applicable privacy and data protection laws.\n\n
+•	Support services. We also share your personal information with third parties we hire to perform support services for us. These third parties are required to use the personal information we share with them only to perform services on our behalf and to treat your personal information in compliance with all applicable privacy and data protection laws.\n\n
+•	Business partners. In some cases, we will share your personal information with third parties who partner with us to provide products and services to our customers, such as distributors in our commercial operations or even with non-governmental organisations who share in our commitment to traceability and sustainability when it comes to farmer and sourcing data. If we do so, we require these third parties to use that information in a manner consistent with this Policy, any applicable Specific Privacy Statements, and all applicable privacy and data protection laws.\n\n
+•	Legal obligations. We will also share your personal information with third parties when we have a good faith and belief that disclosure is necessary: (i) to comply with a law, regulation, court order, or other legal process; (ii) to detect, prevent, and respond to fraud, intellectual property infringement, violation of our contracts or agreements, violation of law, or other misuse of ofi websites, apps, products or services; (iii) to protect ofi’s rights or property or yours or others’ health, safety, welfare, rights, or property; or (iv) under similar circumstances. If such an event occurs, we will take appropriate steps to protect your personal information.\n\n
+•	Sale of business. In the event that our business is sold or integrated with another business, your details will be disclosed to our advisers and any prospective purchaser’s adviser and will be passed to the new owners of the business.\n\n
+•	With permission/at your request. We will also share your information with your permission or at your request.\n\n
+•	Anonymously. We share anonymised or aggregated information internally and with third parties for any purpose. Such information will not identify you individually.\n
+</string>
+    <string name="crossbordertrasfer">Cross-Border Transfer</string>
+    <string name="crossbordertrasfer_data">Your Personal Information may be stored and processed in any country where we have offices or Data Centres, hosted services or in which we engage external service providers. Your personal information may be transferred to countries outside your country of residence, including Singapore, which may have different data protection and data processing laws than those in your country. Any such transfer shall take place only in accordance with and as permitted by the law of your jurisdiction, but please be aware that the laws and practices relating to the protection of personal information are likely to be different, and in some cases may be weaker than those within your home jurisdiction. Regardless, in all events, we shall apply the provisions of this Privacy Statement to your personal information wherever it is located.</string>
+    <string name="security_personal">Security of Your Personal Information</string>
+    <string name="security_personal_data">ofi maintains reasonable safeguards to protect the confidentiality, security and integrity of your personal information. Although we use security measures to help protect your personal information against unauthorised disclosure we cannot guarantee the security of information provided over the Internet and will not be responsible for breaches of security beyond our reasonable control.</string>
+    <string name="retention_personal">Retention of Your Personal Information</string>
+    <string name="retention_personal_data">OFI will retain your personal information for no longer than is necessary for the purposes for which the data was collected. How long we keep your personal information will vary and will depend on the purpose and use of information collected. There are legal requirements for which we keep some types of data for specific periods of time.
+    </string>
+
+    <string name="children_ps">Children</string>
+    <string name="children_data">We do not collect and process the personal data of children under the relevant minimum age under applicable local legal requirements except for specific services and upon the consent of the holder of parental responsibility.</string>
+    <string name="links_to_website">Links to Other Websites</string>
+    <string name="links_to_website_data">We have links to other apps, plugins, or websites that are not owned or controlled by ofi. We are not responsible for the security or privacy of any information collected by such apps or websites. You should exercise caution and review the privacy statements applicable to the third-party websites and services you use. The use of online tracking mechanism by those third-party websites and services is subject to those third parties own privacy policies, and not this Privacy Statement</string>
+
+
+
+    <string name="RandC">Requests &amp; Clarifications</string>
+    <string name="RandC_data">If you need any clarifications or have any requests with regards to personal information, we hold about you, please direct your queries to our Data Privacy team at privacy@ofi.com</string>
+    <string name="gdpr">GDPR: Additional Information</string>
+    <string name="gdpr_data">Where GDPR is applicable and you are in the EU, and/or where the data controller is an ofi company established in the EU, then:
+Legal Basis for Processing
+We will not process personal data without having a lawful reason to do so. We process your personal data where necessary for the performance of a contract to which you are a party, or when it is necessary for compliance with a legal obligation or where required, with your prior consent. We also process your personal data for ofi’s legitimate interests except where such interests are overridden by your interests or fundamental rights and freedoms. Specifically, the legal bases for the various ways we process your personal information (listed and explained above in the section, “How ofi uses your personal information”) are as follows:
+
+Your RightsAdditional Information for California Residents
+The law gives you certain rights in respect of the information we collect from you. Among these rights, you have the right to ask us for a copy of your personal data, to verify, correct, or restrict (stop any active) processing of your personal data.
+In addition, you can object to the processing of your personal data in some circumstances (namely, where we don’t have to process the data to meet a contractual or other legal requirement, or where we are using the data for direct marketing).
+These rights may be limited, for example if fulfilling your request would reveal personal data about another person, or if you ask us to delete information which we are required by law to keep or have compelling legitimate interests in keeping.
+You have choices about the personal information you provide ofi. You may choose not to provide information that we request, but if you do so, we may not be able to provide you a relevant service or a particular feature for an ofi website, app, or product.
+If you want to exercise or inquire as to any of these above-mentioned rights, you can email us at the address below.
+In your email, clearly state your request and specify the ofi website or app your request refers to and we will direct your request to the appropriate data controller. If you have unresolved concerns, you have the right to complain to an appropriate data protection authority where you live, work or where you believe a breach may have occurred.
+Email: privacy@ofi.com
+Data Controller
+The data controller for your information will be Olam International Limited Singapore (OIL SG) and the relevant ofi entity in your country as applicable. OIL SG will be a group company for all ofi legal entities  and part of the ofi group ltd.We generally act as the data controller for personal data. However, in certain circumstances, Business Partners may engage us to provide them with certain processing services related to personal data. In such instances, the Business Partner’s collection and use of your personal data is governed by its own privacy policies and not this Privacy Statement and we rely on their legal representations that they are authorised to process personal data in the manner they propose or demonstrate.
+As explained above, we will share your personal information for certain specified purposes. Where your personal information is transferred outside the EEA to an ofi affiliate or an entity in a country that is not subject to an adequacy decision by the EU Commission, your personal data will be protected by EU Commission approved cross-border safeguards including standard contractual clauses for cross-border data transfer.
+</string>
+    <string name="gdpr_data_t1"> How ofi uses Your Personal Information	</string>
+    <string name="gdpr_data_t_ans1"> Legal Basis</string>
+    <string name="gdpr_data_t2"> Develop and manage our relationships with you and our Business Partners	</string>
+    <string name="gdpr_data_t_ans2"> Legitimate interest, and when a contractual relationship exists, in order to fulfil our contractual obligations to you</string>
+    <string name="gdpr_data_t3"> Provide Traceability in the Supply Chain	</string>
+    <string name="gdpr_data_t_ans3"> Legitimate interest</string>
+    <string name="gdpr_data_t4"> Foster Careers	</string>
+    <string name="gdpr_data_t_ans4"> Legitimate interest</string>
+    <string name="gdpr_data_t5"> Communicate with you regarding services you are party to	</string>
+    <string name="gdpr_data_t_ans5"> Legitimate interest</string>
+    <string name="gdpr_data_t6"> Provide and improve our websites, apps, products, and services	</string>
+    <string name="gdpr_data_t_ans6"> Legitimate interest</string>
+    <string name="gdpr_data_t7"> Address legal issues	</string>
+    <string name="gdpr_data_t_ans7"> Legal obligation</string>
+    <string name="gdpr_data_t8"> Manage office visitors	</string>
+    <string name="gdpr_data_t_ans8"> Legitimate interest</string>
+    <string name="gdpr_data_t9"> Marketing communications and analytics	</string>
+    <string name="gdpr_data_t_ans9"> Consent</string>
+    <string name="addional_info">Additional Information for California Residents</string>
+    <string name="addional_info_data">Your Rights
+California residents may have, pursuant to the CCPA, the following rights with respect to their personal information with ofi, which apply differently in different circumstances: right t.1o access your information, right to portability of data, and the right to deletion. ofi does not and will not sell personal information (but if we did so, you may have the right to opt-out of such sales of your personal information). Most of these rights are not absolute. We will not discriminate against you or deny products or services from you for exercising any or all of these rights. For more information or to exercise any of these rights, you may contact us at privacy@ofi.com.
+Or you may write to us at:
+Olam Americas Inc
+205 East River Park Place
+Suite 310
+Fresno, CA 93720
+Toll-free number (USA): (833) 718-1023
+
+Our Data Collection Activities in California
+The below table indicates examples of some of the categories of personal information we may be collecting from California residents.
+
+</string>
+    <string name="additional_info_data2">Additional Information for Residents of Nevada and Maine in the US
+Pursuant to Nevada Revised Statutes Chapter 603A and Maine Revised Statutes 35-a M.R.S. 9301, residents of Nevada and Maine respectively may have the right to opt-out of the sale of their personal information, however Olam does not and will not sell personal information. We will not discriminate against you or deny products or services from you for exercising these rights. For more information or to review and make any changes to your personal information, or to exercise any of your rights, you may contact us at privacy@ofi.com or at Toll-free number (USA): (833) 718-1023.
+</string>
+    <string name="Privacy_change">Changes to this Privacy Statement</string>
+    <string name="Privacy_change_data">As we add new features and functionality to our products and services, we may need to update or revise this Privacy Policy. We reserve the right to update this Privacy Statement from time to time by posting the updates on our website or apps. Any updates will become effective immediately after posting and will apply to all information collected about you, or where required, upon your consent. You are free to decide whether to accept a modified version of this Privacy Statement. If you do not agree to the modifications, you must cease further use of our website or app.</string>
+    <string name="one">1</string>
+    <string name="two">2</string>
+    <string name="three">3</string>
+    <string name="four">4</string>
+    <string name="five">5</string>
+    <string name="six">6</string>
+    <string name="seven">7</string>
+    <string name="eight">8</string>
+    <string name="row1value1">	Identifiers such as a real name, alias, postal address, unique personal identifier, online identifier, Internet Protocol address, email address, account name, social security number, driver’s license number, passport number, or other similar identifiers.</string>
+    <string name="row1value2">Any categories of personal information described in subdivision (e) of Section 1798.80: “Personal information” means any information that identifies, relates to, describes, or is capable of being associated with, a particular individual, including, but not limited to, his or her name, signature, social security number, physical characteristics or description, address, telephone number, passport number, driver’s license or state identification card number, insurance policy number, education, employment, employment history, bank account number, credit card number, debit card number, or any other financial information, medical information, or health insurance information. “Personal information” does not include publicly available information that is lawfully made available to the general public from federal, state, or local government records.”</string>
+    <string name="row1value3">Characteristics of protected classifications under California or federal law (classes include race, colour, religion, national origin, sex (including pregnancy, childbirth, and related medical conditions), disability, leave, age, citizenship status, genetic information, ancestry, breastfeeding, marital status, gender identity, gender expression, sexual orientation, medical condition including AIDS/HIV, political activities and affiliations, military and veteran status, and status as a victim of domestic violence, assault, or stalking).</string>
+    <string name="row1value4">Commercial information, including records of personal property, products or services purchased, obtained, or considered, or other purchasing or consuming histories or tendencies.</string>
+    <string name="row1value5">Internet or other electronic network activity information, including, but not limited to, browsing history, search history, and information regarding a consumer’s interaction with an Internet website, application, or advertisement.</string>
+    <string name="row1value6">Audio, electronic, visual, thermal, olfactory, or similar information.</string>
+    <string name="row1value7">Professional or employment-related information.</string>
+    <string name="row1value8">Education information, defined as information that is not publicly available personally identifiable information as defined in the Family Educational Rights and Privacy Act (20 U.S.C. section 1232g, 34 C.F.R. Part 99).</string>
+    <string name="row2value1">Clients/job applicants/other third parties
+To manage our business operations and administer our client relationships.
+To provide relevant marketing to you (e.g., information about events or services that may be of interest).
+To address compliance and legal obligations (e.g., checking identity of new clients, prevention of fraud/money laundering).
+To consider individuals for employment and contractor opportunities and manage on-boarding procedures.
+Employees
+Administering and providing compensation, benefits and other work-related allowances.
+Administering the workforce (e.g. managing work activities, performance evaluations and promotions, preparing corporate organisation charts, managing entity and intra-entity staffing and team management, managing and monitoring business travel, carrying out workforce analysis, talent management and career development, managing employee leave, succession planning, providing employment references, administering ethics and compliance training, facilitating and providing services for the re-location and movement of employees and their families locally and internationally).
+Complying with employment law obligations.
+Communicating with employees and their designated contacts in the event of an emergency.
+Responding to legal and/or regulatory requests for information.
+Complying with corporate financial responsibilities (audit, accounting and tax requirements).
+Managing corporate information technology (e.g., IT support, corporate directory, IT security).
+Conducting security screenings (to the extent permitted by law).
+</string>
+    <string name="row2value2">See section 1 above.</string>
+    <string name="row2value3">Solely as strictly necessary for the purposes described in section 1 above regarding employee data and as otherwise required in connection with managing the employment relationship (e.g., sick leave, sick pay, accidents at work, other employment related claims, accommodating disability within the workplace, maternity leave, etc.).
+Solely to the extent required to comply with the Company’s legal or other best practice obligations (e.g., AML, equality laws, monitoring diversity and inclusion, etc.).
+</string>
+    <string name="row2value4">See section 1 above.</string>
+    <string name="row2value5">To make our website more intuitive and easy to use.
+To protect the security and effective functioning of our website.
+</string>
+    <string name="row2value6">Audio/visual - where required for legal/regulatory reasons.</string>
+    <string name="row2value7">See section 1 above in relation to employees and job applicants.</string>
+    <string name="row2value8">See section 1 above in relation to employees and job applicants.</string>
+    <string name="row3value1">From the data subject, our affiliates, counterparties to transactions or disputes with the data subjects, employers, agents or professional advisers authorised to disclose data on behalf of the data subject and from other publicly available or subscription-based sources.</string>
+    <string name="row3value2">See section 1 above.</string>
+    <string name="row4value2">See section 1 above.</string>
+    <string name="row3value3">See section 1 above.</string>
+    <string name="row3value4">See section 1 above.</string>
+    <string name="row3value5">Via company websites.</string>
+    <string name="row3value6">Conference calls and video conferences with clients and other third parties.</string>
+    <string name="row3value7">See section 1 above in relation to employees and job applicants.</string>
+    <string name="row3value8">See section 1 above in relation to employees and job applicants.</string>
+    <string name="row4value1">Our affiliates,
+Suppliers and service providers where necessary to perform functions on our behalf (e.g., infrastructure/IT services providers, providers of services relating to client intake, global travel, finance, customer relationship management, business analytics and marketing and conference and event hosting).
+Financial institutions (for invoicing and payment).
+Corporate purchasers - as part of any sale of company assets, transition of service to another provider or in the event of insolvency, bankruptcy or
+Mandatory disclosures and legal claims (e.g., to comply with any subpoena, court order or other legal process or to comply with any regulatory, governmental or other legally binding request).
+</string>
+    <string name="row4value3">Affiliates.
+Suppliers and service providers where necessary to perform functions on our behalf.
+Mandatory disclosures and legal claims (e.g., to comply with any subpoena, court order or other legal process or to comply with any regulatory, governmental or other legally binding request).
+</string>
+    <string name="row4value4">See section 1 above.</string>
+    <string name="row4value5">To our service providers to the extent necessary for the provision of IT services on our behalf.
+Affiliates
+</string>
+    <string name="row4value6">Affiliates. To our service providers to the extent necessary for the provision of IT services on our behalf.
+Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court order or other legal process or to comply with any regulatory, governmental or other legally binding request).
+</string>
+    <string name="row4value7">See section 1 above in relation to employees and job applicants.</string>
+    <string name="row4value8">See section 1 above in relation to employees and job applicants.</string>
+    <string name="title1">Section</string>
+    <string name="title5">We have shared such personal information with the following categories of third parties:</string>
+    <string name="title4">We have collected such personal information from the following categories of sources:</string>
+    <string name="title2">Category of personal information</string>
+    <string name="title3">We have collected such personal information to use for the following business or commercial purposes:</string>
+    <string name="Privacy">Privacy</string>
+
+    <string name="title_privacy_statement">Privacy Statement</string>
+    <string name="msg_ok">OK</string>
 </resources>

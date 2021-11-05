@@ -380,6 +380,10 @@
         <!--<meta-data-->
             <!--android:name="io.fabric.ApiKey"-->
             <!--android:value="a893453713a55832cf2771ee8fbe4a68b4a3b031" />-->
+        <activity
+            android:name="com.olam.digital.ofis.PrivacyStatementActivity"
+            android:label="@string/title_privacy_statement"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

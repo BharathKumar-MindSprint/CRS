@@ -55,4 +55,15 @@
 
 
     <!-- updated -->
+    <!--    // dealing disable buttion-->
+    <color name="btn_primary_disabled">#c6c6c5</color>
+    <color name="btn_disabled_text">#878786</color>
+    <color name="btnColorPrimary">#dc582a</color>
+    <color name="btnColorThird">#f78c2a</color>
+    <color name="ofis_btn_danger">#ea0029</color>
+    <color name="btn_primary_background">#dc582a</color>
+    <color name="btn_secondary_background">#dc582a</color>
+    <color name="colorPrimary">#dc582a</color>
+    <color name="icon_grey_palette_2">#878786</color>
+
 </resources>

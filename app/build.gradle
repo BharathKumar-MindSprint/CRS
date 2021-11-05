@@ -38,7 +38,7 @@ android {
         multiDexEnabled true
 
         versionCode 43
-        versionName "10.3.7"
+        versionName "10.4.1"
 
 
     }
@@ -73,13 +73,54 @@ android {
 
             resValue "string", "applicationName", "OFIS DEV"
           //  resValue "string", "AUTH_SERVER_URL", 'https://otofis-dev-zuul.olamdigital.com/oauth/api/v1/oauth/'
-            resValue "string", "AUTH_SERVER_URL", 'https://digitalauthdev.olamnet.com/auth/realms/ofis-dse-dev/protocol/openid-connect/'
-            buildConfigField 'String', 'HOST', '"https://otofis-dev-zuul.olamdigital.com/"'
+            resValue "string", "AUTH_SERVER_URL", 'https://digitalauthdev.olamnet.com/auth/realms/ofis-dse-manna-dev/protocol/openid-connect/'
+            buildConfigField 'String', 'HOST', '"https://otofis-dev-manna-zuul.olamdigital.com/"'
+            buildConfigField 'String', 'ODHOST', '"https://dev-apigateway.olamdirect.com/"'
 
             buildConfigField "String", "MATOMO_SERVER_URL", '"https://olammatomo.azurewebsites.net/matomo.php"'
             buildConfigField "int", "MATOMO_SERVER_CODE", '35'
             buildConfigField "boolean", "MATOMO_ENABLED", 'true'
 
+        }
+
+        devofi {
+            // Original
+            applicationId "com.olam.digital.ofisdebug"
+            resValue "string", "contentprovider_authorities", applicationId + '.provider'
+            resValue "string", "sync_account_type", applicationId
+            buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofisdebug"'
+
+            resValue "string", "applicationName", "OFI DEV"
+            //  resValue "string", "AUTH_SERVER_URL", 'https://otofis-dev-zuul.olamdigital.com/oauth/api/v1/oauth/'
+            resValue "string", "AUTH_SERVER_URL", 'https://digitalauthdev.olamnet.com/auth/realms/ofis-dse-manna-dev/protocol/openid-connect/'
+            buildConfigField 'String', 'HOST', '"https://otofis-dev-manna-zuul.olamdigital.com/"'
+            buildConfigField 'String', 'ODHOST', '"https://dev-apigateway.olamdirect.com/"'
+
+            buildConfigField "String", "MATOMO_SERVER_URL", '"https://olammatomo.azurewebsites.net/matomo.php"'
+            buildConfigField "int", "MATOMO_SERVER_CODE", '35'
+            buildConfigField "boolean", "MATOMO_ENABLED", 'true'
+
+        }
+
+        sitofi {
+            applicationId "com.olam.digital.ofispreprod"
+
+            resValue "string", "contentprovider_authorities", applicationId + '.provider'
+            resValue "string", "sync_account_type", applicationId
+            buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofispreprod"'
+
+            // New SIT DNS name
+            resValue "string", "applicationName", "OFI SIT"
+            resValue "string", "AUTH_SERVER_URL", 'https://digitalauthdev.olamnet.com/auth/realms/ofis-dse-manna-sit/protocol/openid-connect/'
+            buildConfigField 'String', 'HOST', '"https://otofis-sit-manna-zuul.olamdigital.com/"'
+            buildConfigField 'String', 'ODHOST', '"https://sit-apigateway.olamdirect.com/"'
+//            resValue "string", "AUTH_SERVER_URL", 'https://digitalauthdev.olamnet.com/auth/realms/ofis-dse-sit/protocol/openid-connect/'
+//            buildConfigField 'String', 'HOST', '"https://otofis-sit-zuul.olamdigital.com/"'
+//            buildConfigField 'String', 'ODHOST', '"https://sit-apigateway.olamdirect.com/"'
+
+            buildConfigField "String", "MATOMO_SERVER_URL", '"https://olammatomo.azurewebsites.net/matomo.php"'
+            buildConfigField "int", "MATOMO_SERVER_CODE", '35'
+            buildConfigField "boolean", "MATOMO_ENABLED", 'true'
         }
 
 
@@ -110,9 +151,9 @@ android {
 
             // New SIT DNS name
             resValue "string", "applicationName", "OFIS SIT"
-           // resValue "string", "AUTH_SERVER_URL", 'https://otofis-sit-zuul.olamdigital.com/oauth/api/v1/oauth/'
-            resValue "string", "AUTH_SERVER_URL", 'https://digitalauthdev.olamnet.com/auth/realms/ofis-dse-sit/protocol/openid-connect/'
-            buildConfigField 'String', 'HOST', '"https://otofis-sit-zuul.olamdigital.com/"'
+            resValue "string", "AUTH_SERVER_URL", 'https://digitalauthdev.olamnet.com/auth/realms/ofis-dse-manna-sit/protocol/openid-connect/'
+            buildConfigField 'String', 'HOST', '"https://otofis-sit-manna-zuul.olamdigital.com/"'
+            buildConfigField 'String', 'ODHOST', '"https://sit-apigateway.olamdirect.com/"'
 
             buildConfigField "String", "MATOMO_SERVER_URL", '"https://olammatomo.azurewebsites.net/matomo.php"'
             buildConfigField "int", "MATOMO_SERVER_CODE", '35'
@@ -168,6 +209,19 @@ android {
         sourceCompatibility = 1.8
         targetCompatibility = 1.8
     }
+    sourceSets {
+        devofi {
+            //  java.srcDirs = ['src/flavorA/java', 'src/sharedType/java']
+            res.srcDirs = ['src/devofi/res', 'src/ofi/res']
+            //   assets.srcDirs = ['src/flavorA/assets', 'src/sharedType/assets']
+        }
+        sitofi {
+            //java.srcDirs = ['src/flavorB/java', 'src/sharedType/java']
+            res.srcDirs = ['src/sitofi/res', 'src/ofi/res']
+            //  assets.srcDirs = ['src/flavorB/assets', 'src/sharedType/assets']
+        }
+    }
+
 
 }
 
