@@ -12,13 +12,14 @@ import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.text.InputFilter;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
@@ -26,13 +27,10 @@ import android.widget.TextView;
 
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
-import com.olam.digital.ofis.biometric.BiometricConstants;
 import com.olam.digital.ofis.childlabour.ChildLabourUtils;
 import com.olam.digital.ofis.coffeesurveyconstraints.CoffeeConstants;
-import com.olam.digital.ofis.model.Attendee;
-import com.olam.digital.ofis.model.FaceLicense;
-import com.olam.digital.ofis.model.FarmerLeadDTO;
 import com.olam.digital.ofis.model.NationalIdDTO;
+import com.olam.digital.ofis.recordpolygon.Utils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -43,7 +41,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -101,11 +98,10 @@ public class DataLayer {
         return (existingPlace.getCount() > 0);
     }
 
-    long insertNewPlace(String newPlaceName, long district_id, long subdistrict_id) {
+    long insertNewPlace(String newPlaceName, long district_id) {
         ContentValues values = new ContentValues();
         values.put(OFISDBContract.PlacesEntry.COLUMN_NAME_PLACE_NAME, newPlaceName);
         values.put(OFISDBContract.PlacesEntry.COLUMN_NAME_DISTRICT_ID, district_id);
-        values.put(OFISDBContract.PlacesEntry.COLUMN_NAME_SUBDISTRICT_ID, subdistrict_id);
         values.put(OFISDBContract.PlacesEntry.COLUMN_NAME_PLACE_TYPE, "localinsert");
 
         return db.insert(OFISDBContract.PlacesEntry.TABLE_NAME, null, values);
@@ -119,29 +115,6 @@ public class DataLayer {
         return db.query(OFISDBContract.PlacesEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
     }
 
-    Cursor getPlaceBytype(String type) {
-        String[] columns = new String[]{"*"};
-        String whereClause = OFISDBContract.PlacesEntry.COLUMN_NAME_PLACE_TYPE + " = ?";
-        String[] whereArgs = new String[]{String.valueOf(type)};
-
-        return db.query(OFISDBContract.PlacesEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
-    }
-
-    Cursor getBiometricClient() {
-        String[] columns = new String[]{"*"};
-        String whereClause = OFISDBContract.BiometricTypes.COLUMN_NAME_BIO_TYPE + " = ?";
-        String[] whereArgs = new String[]{"Facial Recognition"};
-
-        return db.query(OFISDBContract.BiometricTypes.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
-    }
-
-    Cursor getActivatedlicense(String type) {
-        String[] columns = new String[]{"*"};
-        String whereClause = OFISDBContract.BiometricLicense.COLUMN_NAME_LICENSE_TYPE + " = ?";
-        String[] whereArgs = new String[]{type};
-
-        return db.query(OFISDBContract.BiometricLicense.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
-    }
 
 
     Cursor getFGById(int Id) {
@@ -359,7 +332,7 @@ public class DataLayer {
 
                 updateNetworkQueueNewFarmerEntry(networkQueueValues, farmerId);
             }
-        }catch (Exception e){e.printStackTrace();}
+        }catch (Exception e){}
 
 //        db.update(OFISDBContract.FarmerEntry.BACKUP_TABLE_NAME, values, whereClause, whereArgs);
 
@@ -1187,11 +1160,6 @@ public class DataLayer {
             String[] queueWhereArgs = new String[]{String.valueOf(trainingRecordId)};
             db.delete(OFISDBContract.NetworkQueueEntry.TABLE_NAME, queueWhereClause, queueWhereArgs);
 
-            // Delete the trainingRecord Id from relationship table
-            String attendeeRelationWhereClause = OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINING_RECORD_ID + " = ?";
-            String[] attendeeRelationWhereArgs = new String[]{String.valueOf(trainingRecordId)};
-            db.delete(OFISDBContract.TrainingAttendeeRelations.TABLE_NAME, attendeeRelationWhereClause, attendeeRelationWhereArgs);
-
             String whereClause = OFISDBContract.TrainingRecord.COLUMN_NAME_ID + " = ?";
             String[] whereArgs = new String[]{String.valueOf(trainingRecordId)};
 
@@ -1401,9 +1369,6 @@ public class DataLayer {
                 values.put(OFISDBContract.FarmerNationalIDs.COLUMN_IS_SYNCED, false);
                 values.put(OFISDBContract.FarmerNationalIDs.COLUMN_NID_TYPE, storeableNumber.getInt("nationalIdType"));
                 values.put(OFISDBContract.FarmerNationalIDs.COLUMN_NID_NUMBER, storeableNumber.getString("nationalIdNumber"));
-                if (storeableNumber.has("expiryDate")) {
-                    values.put(OFISDBContract.FarmerNationalIDs.COLUMN_NID_EXPIRY_DATE, storeableNumber.getString("expiryDate"));
-                }
                 if (storeableNumber.has("photo")) {
                     values.put(OFISDBContract.FarmerNationalIDs.COLUMN_NID_PHOTO, storeableNumber.getString("photo"));
                 }
@@ -1429,7 +1394,7 @@ public class DataLayer {
     }
 
 
-    /*void addLocalFarmerNationalids(ArrayList<NationalIdDTO> storeableNationalids) {
+    void addLocalFarmerNationalids(ArrayList<NationalIdDTO> storeableNationalids) {
         int arrayLength = storeableNationalids.size();
         try {
             for (int i = 0; i < arrayLength; i++) {
@@ -1443,7 +1408,7 @@ public class DataLayer {
         }catch (Exception e){}
 
 
-    }*/
+    }
 
     void addnewLocalFarmerNationalids(NationalIdDTO storeableNationalids) {
 //        delete value if exists
@@ -1455,7 +1420,6 @@ public class DataLayer {
         values.put(OFISDBContract.LocalFarmerNationalIDs.COLUMN_NID_TYPE, storeableNationalids.getNationalidtype());
         values.put(OFISDBContract.LocalFarmerNationalIDs.COLUMN_NID_NUMBER, storeableNationalids.getNationalidNumber());
         values.put(OFISDBContract.LocalFarmerNationalIDs.COLUMN_NID_PHOTO, storeableNationalids.getPhoto());
-        values.put(OFISDBContract.LocalFarmerNationalIDs.COLUMN_NID_EXPIRY_DATE, storeableNationalids.getExpiryDate());
         try {
             db.insert(OFISDBContract.LocalFarmerNationalIDs.TABLE_NAME, null, values);
         }catch (Exception e){}
@@ -1498,10 +1462,10 @@ public class DataLayer {
         return db.query(OFISDBContract.FarmerNationalIDs.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
     }
 
-   /* void updateLocalFarmerNationalids(ArrayList<NationalIdDTO> storeableNationalids) {
+    void updateLocalFarmerNationalids(ArrayList<NationalIdDTO> storeableNationalids) {
         db.delete(OFISDBContract.LocalFarmerNationalIDs.TABLE_NAME, null, null);
         addLocalFarmerNationalids(storeableNationalids);
-    }*/
+    }
 
     void deletelocalfarmervalues(int id) {
         String whereClause = OFISDBContract.LocalFarmerNationalIDs.COLUMN_NAME_ID + " = ?";
@@ -1512,11 +1476,11 @@ public class DataLayer {
 
     }
 
-   /* void deletelocalfarmervalues() {
+    void deletelocalfarmervalues() {
         try {
             db.delete(OFISDBContract.LocalFarmerNationalIDs.TABLE_NAME, null, null);
         }catch (Exception e){}
-    }*/
+    }
 
     Cursor getDiallingCodeByPlaceId(long placeId) {
         String placesTable = OFISDBContract.PlacesEntry.TABLE_NAME;
@@ -1807,298 +1771,10 @@ public class DataLayer {
 
     }
 
-    void loadSubdistrictSpinner(final AppCompatActivity activity, final Context context, final int districtSelection, final int subdistrictSelection) {
-        final Spinner subdistrictSpinner = (Spinner) activity.findViewById(R.id.spinner_subdistrict);
-
-        Cursor subdistricts = getSpinnerData(OFISDBContract.SubDistrictsEntry.TABLE_NAME, true, OFISDBContract.SubDistrictsEntry.COLUMN_NAME_DISTRICT_ID, districtSelection, true, OFISDBContract.SubDistrictsEntry.COLUMN_NAME_SUBDISTRICT_NAME);
-        bindDataDrivenSpinner(subdistrictSpinner, subdistricts, context, R.string.spinner_subdistrict_default, null, false);
-
-                    if (subdistrictSelection != 0) {
-                        setSpinnerSelectionById(subdistrictSelection, subdistrictSpinner);
-                        if (subdistricts.getCount() == 1) {
-                            subdistrictSpinner.setEnabled(false);
-                        } else {
-                            subdistrictSpinner.setEnabled(true);
-                        }
-                    } else {
-                        if (subdistricts.getCount() == 1) {
-                            subdistrictSpinner.setSelection(1, false);
-                            subdistrictSpinner.setEnabled(false);
-                        } else {
-                            subdistrictSpinner.setEnabled(true);
-                        }
-                    }
-
-    }
-
-    void createGeographyHierarchySpinners(final AppCompatActivity activity, final Context context, final EditText farmerIdPrefix, int countrySelection, final int regionSelection, final int districtSelection, final int subdistrictSelection, final int placeSelection, final LinearLayout phonenumbers, final boolean newPlace, int item) {
-        final Spinner countrySpinner = (Spinner) activity.findViewById(R.id.spinner_country);
-        final Spinner regionSpinner = (Spinner) activity.findViewById(R.id.spinner_region);
-        final Spinner districtSpinner = (Spinner) activity.findViewById(R.id.spinner_district);
-        final Spinner subdistrictSpinner = (Spinner) activity.findViewById(R.id.spinner_subdistrict);
-        final Spinner placeSpinner = (Spinner) activity.findViewById(R.id.spinner_place);
-        final ImageView haDistrict = (ImageView) activity.findViewById(R.id.haDistrict);
-
-        Cursor countries = getSpinnerData(OFISDBContract.CountriesEntry.TABLE_NAME, true, OFISDBContract.CountriesEntry.COLUMN_NAME_ENUMERATOR_COUNTRY, 1, true, OFISDBContract.CountriesEntry.COLUMN_NAME_COUNTRY_NAME);
-        bindDataDrivenSpinner(countrySpinner, countries, context, R.string.spinner_country_default, null, false);
-        if(item == 3){
-            countrySpinner.setEnabled(false);
-        }
-
-        countrySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long id) {
-                Cursor regions = getSpinnerData(OFISDBContract.RegionsEntry.TABLE_NAME, true, OFISDBContract.RegionsEntry.COLUMN_NAME_COUNTRY_ID, ((int) id), true, OFISDBContract.RegionsEntry.COLUMN_NAME_REGION_NAME);
-                bindDataDrivenSpinner(regionSpinner, regions, context, R.string.spinner_region_default, null, false);
-                Cursor selectedCountry = (Cursor) countrySpinner.getSelectedItem();
-
-                if (farmerIdPrefix != null && id > 0) {
-                    String code = selectedCountry.getString(selectedCountry.getColumnIndex(OFISDBContract.CountriesEntry.COLUMN_NAME_CODE));
-                    String currentPrefix = farmerIdPrefix.getText().toString();
-                    String newPrefix = code + currentPrefix.substring(2);
-                    farmerIdPrefix.setText(newPrefix);
-                }
-
-                if (phonenumbers != null && id > 0) {
-                    for (int z = 0; z < phonenumbers.getChildCount(); z++) {
-                        LinearLayout phonenumber = (LinearLayout) phonenumbers.getChildAt(z);
-                        EditText diallingcode = (EditText) phonenumber.findViewById(R.id.dialling_code);
-                        String dialling_code = selectedCountry.getString(selectedCountry.getColumnIndex(OFISDBContract.CountriesEntry.COLUMN_NAME_DIALLING_CODE));
-                        diallingcode.setText(dialling_code);
-                    }
-                }
-                if (id > 0 && item == 1) {
-                    LinearLayout farmerLeadDisplayLayout = activity.findViewById(R.id.farmerLeadDisplayLayout);
-                    boolean isODOrigin = isODOrigin((int) id);
-                    boolean isFLEnumerator = Utilities.getBoolFromSharedPrefs(context, Utilities.FARMERLEAD_ENUMERATOR,false);
-                    if (!isODOrigin) {
-                        farmerLeadDisplayLayout.setVisibility(View.GONE);
-                    } else {
-                        if(isFLEnumerator) {
-                            farmerLeadDisplayLayout.setVisibility(View.VISIBLE);
-                        }else {
-                            farmerLeadDisplayLayout.setVisibility(View.GONE);
-                        }
-                    }
-                }
-
-                if (id > 0) {
-                    boolean isODOrigin = isSubdistrictCapture((int) id);
-                    if (!isODOrigin) {
-                        subdistrictSpinner.setVisibility(View.GONE);
-                        haDistrict.setVisibility(View.GONE);
-                    } else {
-                        subdistrictSpinner.setVisibility(View.VISIBLE);
-                        haDistrict.setVisibility(View.VISIBLE);
-                    }
-                }
-
-                if (regionSelection != 0) {
-                    setSpinnerSelectionById(regionSelection, regionSpinner);
-                    if (regions.getCount() == 1) {
-                        regionSpinner.setEnabled(false);
-                    } else {
-                        regionSpinner.setEnabled(true);
-                    }
-                } else {
-                    if (regions.getCount() == 1) {
-                        regionSpinner.setSelection(1, false);
-                        regionSpinner.setEnabled(false);
-                    } else {
-                        regionSpinner.setEnabled(true);
-                    }
-                }
-                if(item == 3){
-                    regionSpinner.setEnabled(false);
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
-
-        regionSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long id) {
-
-                Cursor districts = getSpinnerData(OFISDBContract.DistrictsEntry.TABLE_NAME, true, OFISDBContract.DistrictsEntry.COLUMN_NAME_REGION_ID, ((int) id), true, OFISDBContract.DistrictsEntry.COLUMN_NAME_DISTRICT_NAME);
-                bindDataDrivenSpinner(districtSpinner, districts, context, R.string.spinner_district_default, null, false);
-
-                if (districtSelection != 0) {
-                    setSpinnerSelectionById(districtSelection, districtSpinner);
-                    if (districts.getCount() == 1) {
-                        districtSpinner.setEnabled(false);
-                    } else {
-                        districtSpinner.setEnabled(true);
-                    }
-                } else {
-                    if (districts.getCount() == 1) {
-                        districtSpinner.setSelection(1, false);
-                        districtSpinner.setEnabled(false);
-                    } else {
-                        districtSpinner.setEnabled(true);
-                    }
-                }
-                if(item == 3){
-                    districtSpinner.setEnabled(false);
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
-
-        if(item == 3){
-            regionSpinner.setEnabled(false);
-            districtSpinner.setEnabled(false);
-        }
-        if (placeSpinner != null && subdistrictSpinner != null) {
-            districtSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long id) {
-                    try {
-                        Cursor subdistricts = getSpinnerData(OFISDBContract.SubDistrictsEntry.TABLE_NAME, true, OFISDBContract.SubDistrictsEntry.COLUMN_NAME_DISTRICT_ID, ((int) id), true, OFISDBContract.SubDistrictsEntry.COLUMN_NAME_SUBDISTRICT_NAME);
-                        bindDataDrivenSpinner(subdistrictSpinner, subdistricts, context, R.string.spinner_subdistrict_default, null, false);
-
-                        if (subdistrictSelection != 0) {
-                            setSpinnerSelectionById(subdistrictSelection, subdistrictSpinner);
-                            if (subdistricts.getCount() == 1) {
-                                subdistrictSpinner.setSelection(1, false);
-                                subdistrictSpinner.setEnabled(false);
-                            } else {
-                                subdistrictSpinner.setEnabled(true);
-                            }
-                        } else {
-                            if (subdistricts.getCount() == 1) {
-                                subdistrictSpinner.setSelection(1, false);
-                                subdistrictSpinner.setEnabled(false);
-                            } else {
-                                subdistrictSpinner.setEnabled(true);
-                            }
-                        }
-                    }catch (Exception e){
-                        e.printStackTrace();
-                    }
-                    boolean isODOrigin = isSubdistrictCapture((int) id);
-                    Cursor places;
-                    if (!isODOrigin) {
-                        places = getSpinnerData(OFISDBContract.PlacesEntry.TABLE_NAME, true, OFISDBContract.PlacesEntry.COLUMN_NAME_DISTRICT_ID, ((int) id), true, OFISDBContract.PlacesEntry.COLUMN_NAME_PLACE_NAME);
-                    }else {
-                        places = getSpinnerData(OFISDBContract.PlacesEntry.TABLE_NAME, true, OFISDBContract.PlacesEntry.COLUMN_NAME_SUBDISTRICT_ID, ((int) id), true, OFISDBContract.PlacesEntry.COLUMN_NAME_PLACE_NAME);
-                    }
-                    if (!newPlace) {
-                        bindDataDrivenSpinnerSIP(placeSpinner, places, context, R.string.spinner_place_default, null, false);
-                    } else {
-                        bindDataDrivenSpinner(placeSpinner, places, context, R.string.spinner_place_default, null, false);
-                    }
-
-                    if (placeSelection != 0) {
-                        setSpinnerSelectionById(placeSelection, placeSpinner);
-                    } else {
-                        if (newPlace) {
-                            if (places.getCount() == 1) {
-                                try {
-                                    placeSpinner.setSelection(2, false);
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-
-                        }
-                    }
-
-
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> adapterView) {
-
-                }
-            });
-
-
-            subdistrictSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long id) {
-
-                    Cursor places = getSpinnerData(OFISDBContract.PlacesEntry.TABLE_NAME, true, OFISDBContract.PlacesEntry.COLUMN_NAME_SUBDISTRICT_ID, ((int) id), true, OFISDBContract.PlacesEntry.COLUMN_NAME_PLACE_NAME);
-                    if (!newPlace) {
-                        bindDataDrivenSpinnerSIP(placeSpinner, places, context, R.string.spinner_place_default, null, false);
-                    } else {
-                        bindDataDrivenSpinner(placeSpinner, places, context, R.string.spinner_place_default, null, false);
-                    }
-
-                    if (placeSelection != 0) {
-                        setSpinnerSelectionById(placeSelection, placeSpinner);
-                    } else {
-                        if (newPlace) {
-                            if (places.getCount() == 1) {
-                                try {
-                                    placeSpinner.setSelection(2, false);
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-
-                        }
-                    }
-
-
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> adapterView) {
-
-                }
-            });
-            if (activity.findViewById(R.id.newPlaceName) != null) {
-                final EditText newPlaceName = (EditText) activity.findViewById(R.id.newPlaceName);
-                placeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                    @Override
-                    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long id) {
-                        try {
-                            if (id == -1) {
-                                newPlaceName.setVisibility(View.VISIBLE);
-                            } else {
-                                newPlaceName.setVisibility(View.GONE);
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    @Override
-                    public void onNothingSelected(AdapterView<?> adapterView) {
-
-                    }
-                });
-            }
-        }
-
-
-
-        if (countrySelection != 0) {
-            setSpinnerSelectionById(countrySelection, countrySpinner);
-            if (countries.getCount() == 1) {
-                countrySpinner.setEnabled(false);
-            }
-        } else {
-            if (countries.getCount() == 1) {
-                countrySpinner.setSelection(1, false);
-                countrySpinner.setEnabled(false);
-            }
-        }
-    }
-
     void createGeographyHierarchySpinners(final AppCompatActivity activity, final Context context, final EditText farmerIdPrefix, int countrySelection, final int regionSelection, final int districtSelection, final int placeSelection, final LinearLayout phonenumbers, final boolean newPlace) {
         final Spinner countrySpinner = (Spinner) activity.findViewById(R.id.spinner_country);
         final Spinner regionSpinner = (Spinner) activity.findViewById(R.id.spinner_region);
         final Spinner districtSpinner = (Spinner) activity.findViewById(R.id.spinner_district);
-        final Spinner subdistrictSpinner = (Spinner) activity.findViewById(R.id.spinner_subdistrict);
         final Spinner placeSpinner = (Spinner) activity.findViewById(R.id.spinner_place);
 
 
@@ -2317,8 +1993,6 @@ public class DataLayer {
                     farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_PHOTO + ", " +
                     farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID + ", " +
                     farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_CREATED_LOCALLY + ", " +
-                    farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID + ", " +
-                    farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_ODFARMERID + ", " +
                     " 'farmer' AS transactee_type FROM " +
                     farmerTable + " INNER JOIN " + sectionsTable + " ON " + farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID +
                     " = " + sectionsTable + "." + OFISDBContract.SectionsEntry.COLUMN_NAME_ID + " INNER JOIN " + farmerGroupsTable + " ON " +
@@ -2416,7 +2090,6 @@ public class DataLayer {
         String sectionsTable = OFISDBContract.SectionsEntry.TABLE_NAME;
         if (query.length() > 0) {
             whereClause = "WHERE " + farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME + " LIKE '%" + query + "%' OR " +
-                    farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_ODFARMERID + " LIKE '%" + query + "%' OR " +
                     farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID + " LIKE '%" + query + "'";
         }
         if (selectedFarmerGroup > 0) {
@@ -2440,8 +2113,6 @@ public class DataLayer {
                 farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_PHOTO + ", " +
                 farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID + ", " +
                 farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_CREATED_LOCALLY + ", " +
-                farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID + ", " +
-                farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_ODFARMERID + ", " +
                 farmerModulesTable + "." + OFISDBContract.FarmerModulesEntry.COLUMN_NAME_ID + " as farmer_module_id, " +
                 farmerModulesTable + "." + OFISDBContract.FarmerModulesEntry.COLUMN_NAME_STATUS_STARTED + " from " +
                 farmerTable + " INNER JOIN " + sectionsTable + " ON " + farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID +
@@ -2586,7 +2257,6 @@ public class DataLayer {
         String farmerQuery = "SELECT farmers.*, districts.id as district_id, regions.id as region_id, countries.id as country_id, farmergroups.id as farmergroup_id, farmergroups.programme_id as programme_id, farmergroups.product_id as product_id, farmergroups.partner_id as partner_id " +
                 "FROM farmers " +
                 "INNER JOIN places on farmers.place_id = places.id " +
-//                "INNER JOIN subdistricts on farmers.subdistrict_id = subdistricts.id " +
                 "INNER JOIN districts on places.district_id = districts.id " +
                 "INNER JOIN regions on districts.region_id = regions.id " +
                 "INNER JOIN countries on regions.country_id = countries.id " +
@@ -2689,7 +2359,7 @@ public class DataLayer {
 
 
     // TODO remove annual survey and expires once no longer required.
-    public Cursor getFarmerModules1(long id, Context context) {
+    public Cursor getFarmerModules(long id, Context context) {
         Cursor farmer = null;
 
         try {
@@ -2874,19 +2544,11 @@ public class DataLayer {
                         "Phone"
                 });
 
-                String selectedsubdistrict = farmer.getString(farmer.getColumnIndex("subdistrictId")).trim();
-                String countryid = farmer.getString(farmer.getColumnIndex("country_id")).trim();
-                boolean isSubdistrictCapture = isSubdistrictCapture(Integer.parseInt(countryid));
-                if(isSubdistrictCapture) {
-                    if (selectedsubdistrict.equalsIgnoreCase("0")) {
-                        // update farmers subdistrict
-                        mc.addRow(new String[]{"0", res.getString(R.string.update_farmer_subdistrict), res.getString(R.string.update_farmer_subdistrict), res.getString(R.string.update_farmer_subdistrict), res.getString(R.string.update_farmer_subdistrict), res.getString(R.string.update_farmer_subdistrict), res.getString(R.string.update_farmer_subdistrict), res.getString(R.string.update_farmer_subdistrict), res.getString(R.string.update_farmer_subdistrict), res.getString(R.string.update_farmer_subdistrict), "0", "", "", "", res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), "", "", "", "", "", "", "Subdistrict"});
-                    }
-                }
                 // add update consent statement task
                 mc.addRow(new String[]{"0", res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), "0", "", "", "", res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), "", "", "", "", "", "", res.getString(R.string.consent_statement)});
 
-                // add e-signature for existing farmers
+
+// add e-signature for existing farmers
                 mc.addRow(new String[]{
                         "0",
                         res.getString(R.string.update_signature),
@@ -2925,12 +2587,6 @@ public class DataLayer {
 //         add national id information
                     mc.addRow(new String[]{"0", res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), "0", "", "", "", res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), "", "", "", "", "", "", "National_ID"});
                 }
-
-                boolean isBioMetric = Utilities.getBiometricEnabledPref(context, BiometricConstants.BIOMETRIC_ENABLED);
-                if (isBioMetric) {
-                    mc.addRow(new String[]{"0", res.getString(R.string.update_biomatric), res.getString(R.string.update_biomatric), res.getString(R.string.update_biomatric), res.getString(R.string.update_biomatric), res.getString(R.string.update_biomatric), res.getString(R.string.update_biomatric), res.getString(R.string.update_biomatric), res.getString(R.string.update_biomatric), res.getString(R.string.update_biomatric), "0", "", "", "", res.getString(R.string.update_biomatric_hint), res.getString(R.string.update_biomatric_hint), res.getString(R.string.update_biomatric_hint), res.getString(R.string.update_biomatric_hint), res.getString(R.string.update_biomatric_hint), res.getString(R.string.update_biomatric_hint), res.getString(R.string.update_biomatric_hint), res.getString(R.string.update_biomatric_hint), res.getString(R.string.update_biomatric_hint), "", "", "", "", "", "", "Update_Biomatric"});
-                }
-
                 Cursor fmp = getFmpByFarmerId(id);
                 if (fmp.getCount() > 0) {
                     fmp.moveToFirst();
@@ -3052,10 +2708,7 @@ public class DataLayer {
                 output = new MergeCursor(cursors);
             }
             return output;
-        }catch (Exception e){
-            e.printStackTrace();
-            return null;
-        }finally {
+        } finally {
             farmer.close();
         }
 
@@ -3159,93 +2812,13 @@ public class DataLayer {
         }catch (Exception e){}
     }
 
-    public void updateSubdistrict(int farmerid, ContentValues values, String olamfarmername) {
-        String whereClause = OFISDBContract.FarmerEntry.COLUMN_NAME_ID + " = ?";
-        String[] whereArgs = new String[]{String.valueOf(farmerid)};
-        try {
-            db.update(OFISDBContract.FarmerEntry.TABLE_NAME, values, whereClause, whereArgs);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        try {
-             deleteNetworkQueueItemByFarmerId(farmerid, "updatesubdistrict");
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        ContentValues networkQueueValues = new ContentValues();
-        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "updatesubdistrict");
-        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, "Farmer subdistrict captured");
-        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, olamfarmername);
-        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBDISTRICT_ID, values.getAsString(OFISDBContract.FarmerEntry.COLUMN_NAME_SUBDISTRICTID));
-        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PLACE_ID, values.getAsString(OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID));
-        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT, timestamp.toString());
-        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPDATED_AT, timestamp.toString());
-
-        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID, farmerid);
-//        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID, farmerid);
-
-        insertNetworkQueueEntry(networkQueueValues);
-    }
-
     public Cursor getnationalidsbyfarmerid(long farmerid) {
         String[] columns = new String[]{"*"};
         String whereClause = OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID + " = ?";
         String[] whereArgs = new String[]{String.valueOf(farmerid)};
         String orderBy = OFISDBContract.FarmerNationalIDs.COLUMN_NAME_ID + " ASC";
+
         return db.query(OFISDBContract.FarmerNationalIDs.TABLE_NAME, columns, whereClause, whereArgs, null, null, orderBy);
-    }
-
-    public Cursor getassignmentbyCountryId(int countryid) {
-        String[] columns = new String[]{"*"};
-        String whereClause = OFISDBContract.FarmerAssignments.COLUMN_COUNTRY_iD + " = ?";
-        String[] whereArgs = new String[]{String.valueOf(countryid)};
-        String orderBy = OFISDBContract.FarmerAssignments.COLUMN_COUNTRY_iD + " ASC";
-
-        return db.query(OFISDBContract.FarmerAssignments.TABLE_NAME, columns, whereClause, whereArgs, null, null, orderBy);
-    }
-
-    public Cursor getFLbycountryId(int farmerid) {
-        String[] columns = new String[]{"*"};
-        String whereClause = OFISDBContract.FarmerLeadDetails.COLUMN_COUNTRY_ID + " = ?";
-        String[] whereArgs = new String[]{String.valueOf(farmerid)};
-        String orderBy = OFISDBContract.FarmerLeadDetails.COLUMN_FL_ID + " ASC";
-
-        return db.query(OFISDBContract.FarmerLeadDetails.TABLE_NAME, columns, whereClause, whereArgs, null, null, orderBy);
-    }
-
-    public Cursor getlicensevalues() {
-        String[] columns = new String[]{"*"};
-        String orderBy = OFISDBContract.BiometricLicenseTracking.COLUMN_NAME_ID + " ASC";
-
-        return db.query(OFISDBContract.BiometricLicenseTracking.TABLE_NAME, columns, null, null, null, null, orderBy);
-    }
-
-    public Cursor getcountrynameid(long farmerid) {
-        String[] columns = new String[]{"*"};
-        String whereClause = OFISDBContract.CountriesEntry.COLUMN_NAME_ID + " = ?";
-        String[] whereArgs = new String[]{String.valueOf(farmerid)};
-        String orderBy = OFISDBContract.CountriesEntry.COLUMN_NAME_ID + " ASC";
-
-        return db.query(OFISDBContract.CountriesEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, orderBy);
-    }
-
-    public Cursor getregionnameid(long farmerid) {
-        String[] columns = new String[]{"*"};
-        String whereClause = OFISDBContract.RegionsEntry.COLUMN_NAME_ID + " = ?";
-        String[] whereArgs = new String[]{String.valueOf(farmerid)};
-        String orderBy = OFISDBContract.RegionsEntry.COLUMN_NAME_ID + " ASC";
-
-        return db.query(OFISDBContract.RegionsEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, orderBy);
-    }
-
-    public Cursor getdistrictnameid(long farmerid) {
-        String[] columns = new String[]{"*"};
-        String whereClause = OFISDBContract.DistrictsEntry.COLUMN_NAME_ID + " = ?";
-        String[] whereArgs = new String[]{String.valueOf(farmerid)};
-        String orderBy = OFISDBContract.DistrictsEntry.COLUMN_NAME_ID + " ASC";
-
-        return db.query(OFISDBContract.DistrictsEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, orderBy);
     }
 
     public boolean getSyncedStatus(long farmerId) {
@@ -3255,50 +2828,6 @@ public class DataLayer {
             while (nids.moveToNext()) {
                 String isSynced = nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_IS_SYNCED));
                 if (isSynced.equalsIgnoreCase("1")) {
-                    status = true;
-                    break;
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            nids.close();
-        }
-
-        return status;
-    }
-
-
-    public boolean isODOrigin(int countryid) {
-        boolean status = false;
-        Cursor nids = getassignmentbyCountryId(countryid);
-        try {
-            while (nids.moveToNext()) {
-                String isODorigin = nids.getString(nids.getColumnIndex(OFISDBContract.FarmerAssignments.COLUMN_ISODORIGIN));
-                if (isODorigin.equalsIgnoreCase("true")) {
-                    status = true;
-                    break;
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            nids.close();
-        }
-
-        return status;
-    }
-
-    public boolean isSubdistrictCapture(int countryid) {
-        if(countryid == 0){
-            return  false;
-        }
-        boolean status = false;
-        Cursor nids = getcountrynameid(countryid);
-        try {
-            while (nids.moveToNext()) {
-                String isSubDistCapture = nids.getString(nids.getColumnIndex(OFISDBContract.CountriesEntry.COLUMN_NAME_ISSUBDISTCAPTURE));
-                if (isSubDistCapture.equalsIgnoreCase("true")) {
                     status = true;
                     break;
                 }
@@ -3348,29 +2877,6 @@ public class DataLayer {
         return nationalList;
     }
 
-    public List<FarmerLeadDTO> getFarmerLeads(int countryId) {
-
-        List<FarmerLeadDTO> list = new ArrayList<FarmerLeadDTO>();
-//        Cursor nids = db.rawQuery("SELECT * FROM " + OFISDBContract.FarmerLeadDetails.TABLE_NAME, null);;
-        Cursor nids = getFLbycountryId(countryId);
-        try {
-            while (nids.moveToNext()) {
-                FarmerLeadDTO leadDTO = new FarmerLeadDTO();
-                leadDTO.setFarmerLeadFullName(nids.getString(nids.getColumnIndex(OFISDBContract.FarmerLeadDetails.COLUMN_FL_FULLNAME)));
-                leadDTO.setFarmerLeadDisplayId(nids.getString(nids.getColumnIndex(OFISDBContract.FarmerLeadDetails.COLUMN_FL_DISPLAYID)));
-                leadDTO.setContactNumber(nids.getString(nids.getColumnIndex(OFISDBContract.FarmerLeadDetails.COLUMN_FL_NUMBER)));
-                leadDTO.setFarmerLeadId(nids.getInt(nids.getColumnIndex(OFISDBContract.FarmerLeadDetails.COLUMN_FL_ID)));
-                list.add(leadDTO);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            nids.close();
-        }
-
-        return list;
-    }
-
     public String getNIDTypeByID(String typeId) {
         String type = null;
         try {
@@ -3382,54 +2888,6 @@ public class DataLayer {
     }
 
 
-    public String getCountryName(int id) {
-        String name = "NA";
-        Cursor nids = getcountrynameid(id);
-        try {
-            while (nids.moveToNext()) {
-                name = nids.getString(nids.getColumnIndex(OFISDBContract.CountriesEntry.COLUMN_NAME_COUNTRY_NAME));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            nids.close();
-        }
-
-        return name;
-    }
-
-
-    public String getRegionName(int id) {
-        String name = "NA";
-        Cursor nids = getregionnameid(id);
-        try {
-            while (nids.moveToNext()) {
-                name = nids.getString(nids.getColumnIndex(OFISDBContract.RegionsEntry.COLUMN_NAME_REGION_NAME));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            nids.close();
-        }
-
-        return name;
-    }
-
-    public String getDistrictName(int id) {
-        String name = "NA";
-        Cursor nids = getdistrictnameid(id);
-        try {
-            while (nids.moveToNext()) {
-                name = nids.getString(nids.getColumnIndex(OFISDBContract.DistrictsEntry.COLUMN_NAME_DISTRICT_NAME));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            nids.close();
-        }
-
-        return name;
-    }
 
     public String getPlaceName(int id) {
         String name = "NA";
@@ -3447,90 +2905,6 @@ public class DataLayer {
         return name;
     }
 
-    public String getFaceClientLicense(String serialnumber) {
-        String name = "NA";
-        Cursor nids = getBiometricClient();
-        try {
-            while (nids.moveToNext()) {
-                if (serialnumber.equalsIgnoreCase("FaceClient")) {
-                    name = nids.getString(nids.getColumnIndex(OFISDBContract.BiometricTypes.COLUMN_NAME_CLIENT_LICENSE_ID));
-                } else if (serialnumber.equalsIgnoreCase("FaceMatcher")) {
-                    name = nids.getString(nids.getColumnIndex(OFISDBContract.BiometricTypes.COLUMN_NAME_FACE_MATCHER_LICENSE_ID));
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return name;
-    }
-
-    public String getFaceMatcherLicense() {
-        String name = "NA";
-        Cursor nids = getBiometricClient();
-        try {
-            while (nids.moveToNext()) {
-                name = nids.getString(nids.getColumnIndex(OFISDBContract.BiometricTypes.COLUMN_NAME_FACE_MATCHER_LICENSE_ID));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            nids.close();
-        }
-
-        return name;
-    }
-
-    public String getFaceClientLicense() {
-        String name = "NA";
-        Cursor nids = getBiometricClient();
-        try {
-            while (nids.moveToNext()) {
-                name = nids.getString(nids.getColumnIndex(OFISDBContract.BiometricTypes.COLUMN_NAME_CLIENT_LICENSE_ID));
-
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            nids.close();
-        }
-
-        return name;
-    }
-
-    public String getSerialNumber(String type) {
-        String sn = "NA";
-        Cursor nids = getActivatedlicense(type);
-        try {
-            while (nids.moveToNext()) {
-                sn = nids.getString(nids.getColumnIndex(OFISDBContract.BiometricLicense.COLUMN_NAME_SERIALNO));
-
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            nids.close();
-        }
-
-        return sn;
-    }
-
-    public String getActivatedLicense(String type) {
-        String license = "NA";
-        Cursor nids = getActivatedlicense(type);
-        try {
-            while (nids.moveToNext()) {
-                license = nids.getString(nids.getColumnIndex(OFISDBContract.BiometricLicense.COLUMN_NAME_LICENSE));
-
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            nids.close();
-        }
-
-        return license;
-    }
 
     public String getFGName(int id) {
         String name = "NA";
@@ -3564,70 +2938,8 @@ public class DataLayer {
         return name;
     }
 
-    public boolean isLicenseavailable() {
-        boolean status = false;
-        Cursor ids = null;
-
-        try {
-            ids = db.query(OFISDBContract.BiometricLicense.TABLE_NAME, new String[]{"*"}, null, null, null, null, null);
-
-            if (ids.getCount() > 0) {
-                status = true;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            ids.close();
-        }
-
-        return status;
-    }
 
 
-
-    public boolean isMultipleCountries() {
-        boolean status = false;
-        Cursor ids = null;
-
-        try {
-            ids = db.query(OFISDBContract.CountriesEntry.TABLE_NAME, new String[]{"*"}, null, null, null, null, null);
-
-            if (ids.getCount() > 1) {
-                status = true;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            ids.close();
-        }
-
-        return status;
-    }
-
-    public String getactivationStatus(String licenseType) {
-        String value = null;
-        Cursor nids = getlicensebyType(licenseType);
-        try {
-            while (nids.moveToNext()) {
-                value = nids.getString(nids.getColumnIndex(OFISDBContract.BiometricLicense.COLUMN_NAME_ACTIVATIONSTATUS));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            nids.close();
-        }
-
-        return value;
-    }
-
-    public Cursor getlicensebyType(String type) {
-        String[] columns = new String[]{"*"};
-        String whereClause = OFISDBContract.BiometricLicense.COLUMN_NAME_LICENSE_TYPE + " = ?";
-        String[] whereArgs = new String[]{String.valueOf(type)};
-        String orderBy = OFISDBContract.BiometricLicense.COLUMN_NAME_ID + " ASC";
-
-        return db.query(OFISDBContract.BiometricLicense.TABLE_NAME, columns, whereClause, whereArgs, null, null, orderBy);
-    }
 
     public boolean isValueavailable(long farmerId) {
         boolean status = false;
@@ -4050,7 +3362,6 @@ public class DataLayer {
         return db.query(OFISDBContract.AnswerEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
     }
 
-
     public void updateSubModuleAnswers(ArrayList<JSONObject> answerSet, long farmerModuleId, int subModuleId, long farmerId, String olamFarmerId, int farmId, String type) {
         try {
             // delete existing answers for this farmer and submodule
@@ -4217,23 +3528,6 @@ public class DataLayer {
 
     }
 
-    void updatePlacelocalupdate() {
-        ContentValues newValues = new ContentValues();
-        newValues.put(OFISDBContract.PlacesEntry.COLUMN_NAME_PLACE_TYPE, "VILLAGE");
-        String whereClause = OFISDBContract.PlacesEntry.COLUMN_NAME_PLACE_TYPE + " = ?";
-        String[] whereArgs = new String[]{"localinsert"};
-        try {
-            db.update(OFISDBContract.PlacesEntry.TABLE_NAME, newValues, whereClause, whereArgs);
-        }catch (Exception e){}
-
-    }
-
-    void deletelicensetrackingtable() {
-        try {
-            db.delete(OFISDBContract.BiometricLicenseTracking.TABLE_NAME, null, null);
-        }catch (Exception e){}
-    }
-
     void deleteSipNetworkQueueItem(int networkQueueItemId) {
         String whereClause = OFISDBContract.AnswerSipEntry.COLUMN_NAME_UPLOAD_ID + " = ?";
         String[] whereArgs = new String[]{String.valueOf(networkQueueItemId)};
@@ -4291,7 +3585,7 @@ public class DataLayer {
 
     }
 
-    void markFarmerAsSynced(int localFarmerId, int id, int farmId, int localPlaceId, int newPlaceId, String olamId, boolean biometric, String encodedBiometric, String odFarmerId) {
+    void markFarmerAsSynced(int localFarmerId, int id, int farmId, int localPlaceId, int newPlaceId, String olamId) {
         // check to see if new id is already existing
         Cursor newFarmer = db.query(OFISDBContract.FarmerEntry.TABLE_NAME, new String[]{"id"}, "id = ?", new String[]{String.valueOf(id)}, null, null, null);
 
@@ -4308,12 +3602,6 @@ public class DataLayer {
             if (newPlaceId > 0) {
                 newValues.put(OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID, newPlaceId);
             }
-            try {
-                System.out.println("dl_odFarmerId:" + odFarmerId);
-                newValues.put(OFISDBContract.FarmerEntry.COLUMN_NAME_ODFARMERID, odFarmerId);
-            }catch (Exception e){
-                e.printStackTrace();
-            }
 
             String[] whereArgs = new String[]{String.valueOf(localFarmerId)};
 
@@ -4324,27 +3612,6 @@ public class DataLayer {
                 ContentValues farmerValues = new ContentValues();
                 farmerValues.put(OFISDBContract.AnswerEntry.COLUMN_NAME_FARMER_ID, id);
                 farmerValues.put(OFISDBContract.AnswerEntry.COLUMN_NAME_FARM_ID, farmId);
-
-                if (biometric) {
-                    ContentValues values = new ContentValues();
-                    values.put(OFISDBContract.FaceTemplate.COLUMN_NAME_SUBJECT_ID, id);
-                    db.update(OFISDBContract.FaceTemplate.TABLE_NAME, values, "SubjectId = ?", whereArgs);
-
-                    values.put(OFISDBContract.FaceTemplate.COLUMN_NAME_SUBJECT_ID, id);
-                    db.update(OFISDBContract.FaceTemplate1.TABLE_NAME, values, "SubjectId = ?", whereArgs);
-
-                    ContentValues thumbnailValues = new ContentValues();
-                    thumbnailValues.put(OFISDBContract.FarmerThumbnailEntry.COLUMN_NAME_FARMER_ID, id);
-                    db.update(OFISDBContract.FarmerThumbnailEntry.TABLE_NAME, thumbnailValues, "farmerId = ?", whereArgs);
-
-                    // update in temp list
-                    BiometricConstants.faceTemplateList.add(String.valueOf(id));
-//                    thumbnailValues.put(OFISDBContract.FarmerThumbnailEntry.COLUMN_NAME_FARMER_THUMBNAIL, encodedBiometricImage);
-//                    db.insert(OFISDBContract.FarmerThumbnailEntry.TABLE_NAME,null, thumbnailValues);
-//                    new MegamatcherActivity().updateExistTemplateOn(localFarmerId,id);
-                }
-
-
 
                 // Answer ket
                 db.update(OFISDBContract.AnswerEntry.TABLE_NAME, farmerValues, OFISDBContract.AnswerEntry.COLUMN_NAME_FARMER_ID + " = ?", whereArgs);
@@ -4603,7 +3870,7 @@ public class DataLayer {
         return (nqis.getCount() > 0);
     }
 
-    public Cursor getFmpByFarmerId(long farmerId) {
+    private Cursor getFmpByFarmerId(long farmerId) {
         String[] columns = new String[]{"*"};
         String whereClause = OFISDBContract.FarmManagementPlanEntry.COLUMN_NAME_FARMER_ID + " = ? ";
         String[] whereArgs = new String[]{
@@ -4620,12 +3887,6 @@ public class DataLayer {
 
         //  return  db.query(OFISDBContract.FarmManagementPlanEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
     }
-
-    public Cursor getfarmerModules(String modulesQuery, String[] modulesQueryValues) {
-        @SuppressLint("Recycle") Cursor farmerModules = db.rawQuery(modulesQuery, modulesQueryValues);
-        return farmerModules;
-    }
-
 
     Cursor getFmpSections() {
         Cursor cursor=null;
@@ -4922,79 +4183,6 @@ public class DataLayer {
 
     }
 
-    public void updateFaceLicense(FaceLicense faceLicense) {
-
-        ContentValues values = new ContentValues();
-        values.put(OFISDBContract.BiometricLicense.COLUMN_NAME_LICENSE, faceLicense.getLicense());
-        values.put(OFISDBContract.BiometricLicense.COLUMN_NAME_LICENSE_TYPE, faceLicense.getLicenseType());
-        values.put(OFISDBContract.BiometricLicense.COLUMN_NAME_SERIALNO, faceLicense.getSerialNumber());
-        values.put(OFISDBContract.BiometricLicense.COLUMN_NAME_ACTIVATIONSTATUS, faceLicense.getActivationStatus());
-        try {
-            db.insert(OFISDBContract.BiometricLicense.TABLE_NAME, null, values);
-        }catch (Exception e){}
-    }
-
-    private static void updateLicensingTable(ContentValues values, String page, String status) {
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(OFISDBContract.BiometricLicense.COLUMN_NAME_ACTIVATIONSTATUS, String.valueOf(values.get(OFISDBContract.BiometricLicenseTracking.COLUMN_NAME_ACTIVATIONSTATUS)));
-        contentValues.put(OFISDBContract.BiometricLicense.COLUMN_NAME_DEACTIVATELICENSE, String.valueOf(values.get(OFISDBContract.BiometricLicenseTracking.COLUMN_NAME_DEACTIVATEDLICENSEID)));
-        if (page.equalsIgnoreCase("settings")) {
-            if (String.valueOf(values.get(OFISDBContract.BiometricLicenseTracking.COLUMN_NAME_DEACTIVATIONSTATUS)).equalsIgnoreCase("true")) {
-                contentValues.put(OFISDBContract.BiometricLicense.COLUMN_NAME_DEACTIVATETYPE, "Online");
-            } else {
-                contentValues.put(OFISDBContract.BiometricLicense.COLUMN_NAME_DEACTIVATETYPE, "Offline");
-
-            }
-        }
-        if (status.equalsIgnoreCase("offline")) {
-            networkQueueLicensing();
-        }
-
-        String whereClause = OFISDBContract.BiometricLicense.COLUMN_NAME_LICENSE_TYPE + " = ?";
-        String[] whereArgs = new String[]{
-                String.valueOf(values.get(OFISDBContract.BiometricLicense.COLUMN_NAME_LICENSE_TYPE))
-        };
-
-        try {
-            db.update(OFISDBContract.BiometricLicense.TABLE_NAME, contentValues, whereClause, whereArgs);
-        }catch (Exception e){}
-
-    }
-
-    private static void networkQueueLicensing() {
-        // add a network queue entry
-        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-
-        ContentValues networkQueueValues = new ContentValues();
-        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "deactivateLicense");
-        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, res.getString(R.string.face_recognizion));
-        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, res.getString(R.string.biometric_licence_deactivation_queue));
-        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT, timestamp.toString());
-        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPDATED_AT, timestamp.toString());
-        if (!isAvailableInNQ()) {
-            insertNetworkQueueEntry2(networkQueueValues);
-        }
-    }
-
-    public static boolean isAvailableInNQ() {
-        boolean available = false;
-        String[] columns = new String[]{"*"};
-        String whereClause = OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE + " = ?";
-        String[] whereArgs = new String[]{"deactivateLicense"};
-        Cursor cursor = null;
-        try {
-            cursor = db.query(OFISDBContract.NetworkQueueEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
-        } catch (Exception e) {
-        }
-        if (cursor != null) {
-            if (cursor.getCount() > 0) {
-                available = true;
-            }
-        }
-        cursor.close();
-        return available;
-    }
-
     void clearlocalniddbvalue() {
         try {
             db.delete(OFISDBContract.LocalNationalIDImages.TABLE_NAME, null, null);
@@ -5065,14 +4253,6 @@ public class DataLayer {
 
         return db.update(OFISDBContract.NetworkQueueEntry.TABLE_NAME, nqiValues, whereClause, whereArgs);
     }
-
-    public static void addvalueforLincesetracking(ContentValues values, String page, String status) {
-        try {
-            db.insert(OFISDBContract.BiometricLicenseTracking.TABLE_NAME, null, values);
-        }catch (Exception e){}
-        updateLicensingTable(values, page, status);
-    }
-
 
     Cursor getParentSubquestionAnswer(int submoduleid, int parentid, int questionId) {
 
@@ -5802,25 +4982,6 @@ public class DataLayer {
         return count;
     }
 
-    public int checkToSyncBiometricDuplicate() {
-        int count = 0;
-        //Cursor cursor = db.rawQuery("select * from networkqueue where submission_type = farmer", null);
-
-        String[] columns = new String[]{"*"};
-        String whereClause = OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE + " = ?";
-        String[] whereArgs = new String[]{"farmer"};
-        Cursor cursor=null;
-        try {
-            cursor = db.query(OFISDBContract.NetworkQueueEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
-            if (cursor != null) {
-                count = cursor.getCount();
-            }
-        } catch (Exception e) {
-            FirebaseCrashlytics.getInstance().log(e.getMessage());
-        }
-        return count;
-    }
-
     public void updateFarmerDetails(long editFarmerId, String farmerNameValue, String farmerGender) {
         try {
             String whereClause = OFISDBContract.GPSDetails.COLUMN_NAME_FARMER_ID + " = ?";
@@ -5895,63 +5056,6 @@ public class DataLayer {
     }
 
 
-    public Cursor getFaceTemplate11(long id) {
-        String[] columns = new String[]{"*"};
-        String whereClause = OFISDBContract.FaceTemplate.COLUMN_NAME_SUBJECT_ID + " = ?";
-        String[] whereArgs = new String[]{String.valueOf(id)};
-        Cursor cursor=null;
-        try {
-            cursor= db.query(OFISDBContract.FaceTemplate.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
-
-        }catch (Exception e){
-            FirebaseCrashlytics.getInstance().log(e.getMessage());
-        }
-
-        return cursor;
-    }
-
-    public Cursor getFaceTemplate111(long id) {
-        String idStr = String.valueOf(id);
-        String sql = "select * from Subjects where SubjectId =" + id;
-        Cursor cursor=null;
-        try {
-            cursor= db.rawQuery(sql, null);
-        }catch (Exception e){
-            FirebaseCrashlytics.getInstance().log(e.getMessage());
-        }
-
-        return cursor;
-    }
-
-    public Cursor getFaceTemplate1(long id) {
-        String idStr = String.valueOf(id);
-        String sql = "select * from Subjects1 where SubjectId =" + id;
-        Cursor cursor=null;
-        try {
-            cursor= db.rawQuery(sql, null);
-        }catch (Exception e){
-            FirebaseCrashlytics.getInstance().log(e.getMessage());
-        }
-
-        return cursor;
-    }
-
-
-    public Cursor getFaceTemplate(long id) {
-//        SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
-//        queryBuilder.setTables(OFISDBContract.FaceTemplate.TABLE_NAME);
-        String[] columns = new String[]{"*"};
-        String whereClause = "SubjectId" + " = ?";
-        String[] whereArgs = new String[]{String.valueOf(id)};
-        Cursor cursor=null;
-        try {
-            cursor= db.query("Subjects", columns, whereClause, whereArgs, null, null, null);
-        }catch (Exception e){
-            FirebaseCrashlytics.getInstance().log(e.getMessage());
-        }
-
-        return cursor;
-    }
 
     public Cursor farmerExist(long id, int sectionId, int placeId) {
         String[] columns = new String[]{"*"};
@@ -5981,39 +5085,6 @@ public class DataLayer {
         return cursor;
     }
 
-    public void addOrUpdateDuplicateFarmer(String farmerId, String markedFarmer) {
-        try {
-            ContentValues values = new ContentValues();
-            values.put(OFISDBContract.DuplicateFarmerEntry.COLUMN_NAME_DUPLICATE_FARMER_ID, farmerId);
-            values.put(OFISDBContract.DuplicateFarmerEntry.COLUMN_NAME_MARKED_FARMER_ID, markedFarmer);
-            String[] columns = new String[]{"*"};
-            String whereClause = OFISDBContract.DuplicateFarmerEntry.COLUMN_NAME_DUPLICATE_FARMER_ID + " = ?";
-            String[] whereArgs = new String[]{farmerId};
-
-            Cursor duplicateCursor = db.query(OFISDBContract.DuplicateFarmerEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
-
-            if (duplicateCursor.getCount() > 0) {
-                db.update(OFISDBContract.DuplicateFarmerEntry.TABLE_NAME, values, whereClause, whereArgs);
-            } else {
-                db.insert(OFISDBContract.DuplicateFarmerEntry.TABLE_NAME, null, values);
-            }
-            duplicateCursor.close();
-        } catch (Exception e) {
-            FirebaseCrashlytics.getInstance().log(e.getMessage());
-        }
-
-    }
-
-    public Cursor getAllDuplicatefarmers() {
-        Cursor cursor=null;
-        try {
-            cursor = db.rawQuery("SELECT * FROM " + OFISDBContract.DuplicateFarmerEntry.TABLE_NAME, null);
-        }catch (Exception e){
-            FirebaseCrashlytics.getInstance().log(e.getMessage());
-        }
-
-        return cursor;
-    }
 
 
     public Cursor farmerExistByName(String name) {
@@ -6121,31 +5192,7 @@ public class DataLayer {
         return cursor;
     }
 
-    public String getEncodedImageFromDB(long farmerId) {
-        String farmerThumbnailImage = null;
-        try {
-            String[] columns = new String[]{"*"};
-            String whereClause = OFISDBContract.FarmerThumbnailEntry.COLUMN_NAME_FARMER_ID + " = ?";
-            String[] whereArgs = new String[]{String.valueOf(farmerId)};
-            Cursor farmerThumbnailCursor = db.query(OFISDBContract.FarmerThumbnailEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
-            if (farmerThumbnailCursor != null) {
-                while (farmerThumbnailCursor.moveToNext()) {
-                    farmerThumbnailImage = farmerThumbnailCursor.getString(farmerThumbnailCursor.getColumnIndex(OFISDBContract.FarmerThumbnailEntry.COLUMN_NAME_FARMER_THUMBNAIL));
-                }
-                farmerThumbnailCursor.close();
-            }
-        } catch (Exception e) {
-        }
 
-        return farmerThumbnailImage;
-    }
-
-    public void deleteBiometricDuplicates() {
-        try {
-            db.delete(OFISDBContract.DuplicateFarmerEntry.TABLE_NAME, null, null);
-        } catch (Exception e) {
-        }
-    }
 
     public int getDuplicateListCount() {
         int count = 0;
@@ -6160,45 +5207,6 @@ public class DataLayer {
         return count;
     }
 
-    public long insertUpdateDetails(long editFarmerId, String duplicateFarmers, String photo) {
-        long newId = -1;
-        try {
-            ContentValues values = new ContentValues();
-            values.put(OFISDBContract.UpdateBiometricFarmerEntry.COLUMN_NAME_FARMER_ID, String.valueOf(editFarmerId));
-            // values.put(OFISDBContract.UpdateBiometricFarmerEntry.COLUMN_NAME_PHOTO, photo);
-            values.put(OFISDBContract.UpdateBiometricFarmerEntry.COLUMN_NAME_DUPLICATE_RECORDS, duplicateFarmers);
-            newId = db.insert(OFISDBContract.UpdateBiometricFarmerEntry.TABLE_NAME, null, values);
-        } catch (Exception e) {
-        }
-        return newId;
-    }
-
-    public Cursor getBiometricDetailsById(long farmerId) {
-        String[] columns = new String[]{"*"};
-        String whereClause = OFISDBContract.UpdateBiometricFarmerEntry.COLUMN_NAME_FARMER_ID + " = ?";
-        String[] whereArgs = new String[]{String.valueOf(farmerId)};
-        Cursor cursor=null;
-        try {
-            cursor = db.query(OFISDBContract.UpdateBiometricFarmerEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
-        }catch (Exception e){
-            FirebaseCrashlytics.getInstance().log(e.getMessage());
-        }
-
-        return cursor;
-    }
-
-
-    public void insertUpdateBiometricInQueue(Context context, String farmerId, String farmerName, String olamfarmerId) {
-        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        ContentValues networkQueueValues = new ContentValues();
-        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "biometric_update");
-        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, farmerName);
-        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, context.getResources().getString(R.string.biometric_update));
-        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID, farmerId);
-        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID, olamfarmerId);
-        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT, timestamp.toString());
-        insertNetworkQueueEntry(networkQueueValues);
-    }
 
     public boolean isAvailableInNetworkTable(String farmerId, String update_biomatric) {
         boolean available = false;
@@ -6239,168 +5247,9 @@ public class DataLayer {
         return available;
     }
 
-    public boolean isAvailableInFaceTemplate(String farmerId) {
-        boolean available = false;
-
-        try {
-            String[] columns = new String[]{"*"};
-            String whereClause = OFISDBContract.FaceTemplate.COLUMN_NAME_SUBJECT_ID + " = ?";
-            String[] whereArgs = new String[]{farmerId};
-            Cursor cursor = db.query(OFISDBContract.FaceTemplate.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
-            if (cursor != null) {
-                if (cursor.getCount() > 0) {
-                    available = true;
-                }
-                cursor.close();
-            }
-        } catch (Exception e) {
-        }
-
-        // check in temporary file
-        if (BiometricConstants.faceTemplateList.size() > 0) {
-            for (String farmerStr : BiometricConstants.faceTemplateList) {
-                if (farmerStr.equalsIgnoreCase(farmerId)) {
-                    available = true;
-                }
-            }
-        }
-
-        return available;
-    }
 
 
-    public void deleteUpdateBiometric(long farmerId) {
-        try {
-            String whereClause = OFISDBContract.UpdateBiometricFarmerEntry.COLUMN_NAME_FARMER_ID + " = ?";
-            String[] whereArgs = new String[]{String.valueOf(farmerId)};
-            db.delete(OFISDBContract.UpdateBiometricFarmerEntry.TABLE_NAME, whereClause, whereArgs);
-        } catch (Exception e) {
-        }
-    }
 
-    public void updateThumbnail(String farmerId, String encodedBiometricImage) {
-        try {
-            ContentValues thumbnailValues = new ContentValues();
-            thumbnailValues.put(OFISDBContract.FarmerThumbnailEntry.COLUMN_NAME_FARMER_ID, farmerId);
-            thumbnailValues.put(OFISDBContract.FarmerThumbnailEntry.COLUMN_NAME_FARMER_THUMBNAIL, encodedBiometricImage);
-            db.insert(OFISDBContract.FarmerThumbnailEntry.TABLE_NAME, null, thumbnailValues);
-        } catch (Exception e) {
-        }
-    }
-
-    public String getBase64String(long farmerId) {
-        String farmerThumbnailImage = null;
-        try {
-            String[] columns = new String[]{"*"};
-            String whereClause = OFISDBContract.UpdateBiometricFarmerEntry.COLUMN_NAME_FARMER_ID + " = ?";
-            String[] whereArgs = new String[]{String.valueOf(farmerId)};
-            Cursor farmerThumbnailCursor = db.query(OFISDBContract.UpdateBiometricFarmerEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
-            if (farmerThumbnailCursor != null) {
-                while (farmerThumbnailCursor.moveToNext()) {
-                    farmerThumbnailImage = farmerThumbnailCursor.getString(farmerThumbnailCursor.getColumnIndex(OFISDBContract.UpdateBiometricFarmerEntry.COLUMN_NAME_PHOTO));
-                }
-            }
-            farmerThumbnailCursor.close();
-        } catch (Exception e) {
-        }
-
-        return farmerThumbnailImage;
-    }
-
-    public String getFarmerImageByBiometric(long farmerId) {
-        String farmerThumbnailImage = null;
-        try {
-            String[] columns = new String[]{"*"};
-            String whereClause = OFISDBContract.FarmerThumbnailEntry.COLUMN_NAME_FARMER_ID + " = ?";
-            String[] whereArgs = new String[]{String.valueOf(farmerId)};
-            Cursor farmerThumbnailCursor = db.query(OFISDBContract.FarmerThumbnailEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
-            if (farmerThumbnailCursor != null) {
-                while (farmerThumbnailCursor.moveToNext()) {
-                    farmerThumbnailImage = farmerThumbnailCursor.getString(farmerThumbnailCursor.getColumnIndex(OFISDBContract.FarmerThumbnailEntry.COLUMN_NAME_FARMER_THUMBNAIL));
-                }
-            }
-            farmerThumbnailCursor.close();
-        } catch (Exception e) {
-        }
-
-        return farmerThumbnailImage;
-    }
-
-    public void insertFarmerThumbnail(long newFarmerId, String farmerImageSharedPrefs) {
-        try {
-            ContentValues thumbnailValues = new ContentValues();
-            thumbnailValues.put(OFISDBContract.FarmerThumbnailEntry.COLUMN_NAME_FARMER_ID, newFarmerId);
-            thumbnailValues.put(OFISDBContract.FarmerThumbnailEntry.COLUMN_NAME_FARMER_THUMBNAIL, farmerImageSharedPrefs);
-            db.insert(OFISDBContract.FarmerThumbnailEntry.TABLE_NAME, null, thumbnailValues);
-        } catch (Exception e) {
-        }
-    }
-
-    public void updateFarmerThumbnail(long editFarmerId, String farmerImageSharedPrefs) {
-        try {
-            ContentValues values = new ContentValues();
-            values.put(OFISDBContract.FarmerThumbnailEntry.COLUMN_NAME_FARMER_THUMBNAIL, farmerImageSharedPrefs);
-            String whereClause = OFISDBContract.FarmerThumbnailEntry.COLUMN_NAME_FARMER_ID + " = ?";
-            String[] whereArgs = new String[]{String.valueOf(editFarmerId)};
-            db.update(OFISDBContract.FarmerThumbnailEntry.TABLE_NAME, values, whereClause, whereArgs);
-        } catch (Exception e) {
-        }
-    }
-
-    public void UpdateTempIdInDuplicateList(String tempId, String originalId) {
-        try {
-            Cursor cursor = db.rawQuery("select * from duplicate_farmers", null);
-            if (cursor != null) {
-                try {
-                    if (cursor.getCount() > 0) {
-                        while (cursor.moveToNext()) {
-                            String id = cursor.getString(cursor.getColumnIndex(OFISDBContract.DuplicateFarmerEntry.COLUMN_NAME_ID));
-                            String primeFarmerId = cursor.getString(cursor.getColumnIndex(OFISDBContract.DuplicateFarmerEntry.COLUMN_NAME_DUPLICATE_FARMER_ID));
-                            String duplicateListIds = cursor.getString(cursor.getColumnIndex(OFISDBContract.DuplicateFarmerEntry.COLUMN_NAME_MARKED_FARMER_ID));
-
-                            if (primeFarmerId.contains(tempId) || duplicateListIds.contains(tempId)) {
-
-                                String updateFarmerId = primeFarmerId.replaceAll(tempId, originalId);
-                                String updatedDuplicateList = duplicateListIds.replaceAll(tempId, originalId);
-                                ContentValues values = new ContentValues();
-                                values.put(OFISDBContract.DuplicateFarmerEntry.COLUMN_NAME_DUPLICATE_FARMER_ID, updateFarmerId);
-                                values.put(OFISDBContract.DuplicateFarmerEntry.COLUMN_NAME_MARKED_FARMER_ID, updatedDuplicateList);
-
-                                String whereClause = OFISDBContract.DuplicateFarmerEntry.COLUMN_NAME_ID + " = ?";
-                                String[] whereArgs = new String[]{id};
-                                db.update(OFISDBContract.DuplicateFarmerEntry.TABLE_NAME, values, whereClause, whereArgs);
-                            }
-                        }
-                    }
-                } catch (Exception e) {
-                }
-            }
-            cursor.close();
-        } catch (Exception e) {
-        }
-    }
-
-    public void addOrUpdateFaceTemplate(String subjectId, byte[] faceTemplate) {
-        try {
-            ContentValues values = new ContentValues();
-            values.put(OFISDBContract.FaceTemplate1.COLUMN_NAME_SUBJECT_ID, subjectId);
-            values.put(OFISDBContract.FaceTemplate1.COLUMN_NAME_TEMPLATE, faceTemplate);
-            String[] columns = new String[]{"*"};
-            String whereClause = OFISDBContract.FaceTemplate1.COLUMN_NAME_SUBJECT_ID + " = ?";
-            String[] whereArgs = new String[]{subjectId};
-
-            Cursor faceTemplateCursor = db.query(OFISDBContract.FaceTemplate1.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
-
-            if (faceTemplateCursor.getCount() > 0) {
-                db.update(OFISDBContract.FaceTemplate1.TABLE_NAME, values, whereClause, whereArgs);
-            } else {
-                db.insert(OFISDBContract.FaceTemplate1.TABLE_NAME, null, values);
-            }
-            faceTemplateCursor.close();
-        } catch (Exception e) {
-        }
-
-    }
 
     public String getQuestionNo(String questionNo) {
 
@@ -6477,9 +5326,8 @@ public class DataLayer {
         }
         return questionList;
     }
-
-
-    public long getProductIdByFarmerGroupId(long farmerGroupId) {
+    
+     public long getProductIdByFarmerGroupId(long farmerGroupId) {
         long productId=0;
         String[] columns = new String[]{"*"};
         String whereClause = OFISDBContract.FarmerGroupsEntry.COLUMN_NAME_ID+ " = ?";
