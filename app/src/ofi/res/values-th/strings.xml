@@ -16,7 +16,7 @@
     <string name="title_activity_complete_module">แบบสอบถามเสร็จสมบูรณ์</string>
 
     <!-- main stuff -->
-    <string name="app_name">OFIS Companion Debug</string>
+    <string name="app_name">OFI Companion Debug</string>
     <string name="cd_topSectionColour">สีพื้นหลัง</string>
     <string name="ofis_switch_text_yes">ไม่ใช่</string>
     <string name="ofis_switch_text_no">ใช่</string>

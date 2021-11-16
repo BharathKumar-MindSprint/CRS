@@ -16,7 +16,7 @@
     <string name="title_activity_complete_module">Remplir le questionnaire</string>
 
     <!-- main stuff -->
-    <string name="app_name">OFIS Compagnon Debug</string>
+    <string name="app_name">OFI Compagnon Debug</string>
     <string name="cd_topSectionColour">Fonds coloré pour la section</string>
     <string name="ofis_switch_text_yes">Oui</string>
     <string name="ofis_switch_text_no">Non</string>
