@@ -31,6 +31,7 @@ import com.olam.digital.ofis.childlabour.ChildLabourUtils;
 import com.olam.digital.ofis.coffeesurveyconstraints.CoffeeConstants;
 import com.olam.digital.ofis.model.NationalIdDTO;
 import com.olam.digital.ofis.recordpolygon.Utils;
+import com.olam.digital.ofis.model.FarmerGeo;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -5325,5 +5326,48 @@ public class DataLayer {
             } while (questions.moveToNext());
         }
         return questionList;
+    }
+
+     public long getProductIdByFarmerGroupId(long farmerGroupId) {
+        long productId=0;
+        String[] columns = new String[]{"*"};
+        String whereClause = OFISDBContract.FarmerGroupsEntry.COLUMN_NAME_ID+ " = ?";
+        String[] whereArgs = new String[]{String.valueOf(farmerGroupId)};
+        Cursor mCursor= db.query(OFISDBContract.FarmerGroupsEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+        try {
+            if (mCursor != null) {
+                while (mCursor.moveToNext()) {
+                    productId = Long.valueOf(mCursor.getString(mCursor.getColumnIndex(OFISDBContract.FarmerGroupsEntry.COLUMN_NAME_PRODUCT_ID)));
+                }
+            }
+        }catch (Exception e){
+
+        }finally {
+            mCursor.close();
+        }
+        return productId;
+    }
+
+    public FarmerGeo getFarmerInfo(Context context, Long farmerId) {
+        FarmerGeo farmerGeo = new FarmerGeo();
+        Cursor farmer = getFarmerById(farmerId);
+        if (farmer != null && farmer.getCount() > 0) {
+            farmer.moveToFirst();
+            try {
+                farmerGeo.setCountryId(Integer.parseInt(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID))));
+            } catch (Exception e) {
+                FirebaseCrashlytics.getInstance().log(e.getMessage());
+            }
+
+            long farmerGroupID=0;
+            try {
+                farmerGroupID = Long.valueOf(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID)));
+                long productId=getProductIdByFarmerGroupId(farmerGroupID);
+                farmerGeo.setProductId((int)productId);
+            } catch (Exception e) {
+                FirebaseCrashlytics.getInstance().log(e.getMessage());
+            }
+        }
+        return farmerGeo;
     }
 }
