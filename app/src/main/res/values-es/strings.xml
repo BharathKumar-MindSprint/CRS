@@ -477,19 +477,11 @@
     <string name="phone_number_recorded">Número telefónico grabado.</string>
     <string name="survey_data">Downloading Survey Data</string>
     <string name="invalid_imei_msg">La autenticación falló Por favor contáctenos para asistencia</string>
-    <string name="household_question">Farmer has any children under 18 doing household?</string>
-    <string name="title_child_labour">Register Child</string>
-    <string name="inspection_question">No children found on farm (Inspection)</string>
-    <string name="followup_question">Any children found during follow-up?</string>
-    <string name="add_child">Add Child</string>
-    <string name="full_name">Child name</string>
-    <string name="age">Age</string>
+
     <string name="add">Add</string>
     <string name="checking_child_enumerator">Checking Child Enumerator</string>
-    <string name="visit_detail">Visit Detail</string>
     <string name="child_visit_details_inserted" />
     <string name="child_register_successfully">Child registered Successfully</string>
-    <string name="child_details">Child Details</string>
     <string name="child_not_synced">Sorry, but the child has not yet been synced. Please sync the child first</string>
     <string name="fill_child_name">Please fill the child name</string>
     <string name="yrs">yrs</string>
@@ -613,5 +605,31 @@
     <string name="please_check_dependent_question">since its dependent question is updated</string>
     <string name="update_firebase_install_id_info">Updating Informations</string>
     <string name="national_id_info">Please update the National ID of farmer</string>
+    <string name="attendee_name">Attendee Name:</string>
+    <string name="attendee_age">Age</string>
+    <string name="attendee_relationship">Relationship:</string>
+    <string name="attendee_sex">Sex</string>
+    <string name="add_attendee">Add Attendee</string>
+    <string name="attendee_name_hint">Enter Attendee Name</string>
+    <string name="attendee_hint_age">Enter Age</string>
+    <string name="view_attendees_count">View Attendee (~V attendees)</string>
+    <string name="add_edit_attendee">Add/Edit\n Attendee</string>
+    <string name="viewAttendee">View Attendee</string>
+    <string name="attendee">Attendee</string>
+    <string name="mandatory_msg">Please fill all the details</string>
+    <string name="add_edit">Add/Edit</string>
+    <string name="Attendee">Attendee</string>
+
+    <string name="household_question">¿El agricultor tiene hijos menores de 18 años en el hogar?</string>
+    <string name="title_child_labour">Registro de niño(a)</string>
+    <string name="inspection_question">No se han encontrado niños en la finca / parcela (inspección)</string>
+    <string name="followup_question">¿Se ha encontrado algún niño durante la visita?</string>
+    <string name="full_name">Nombre del niño</string>
+    <string name="age">Edad</string>
+    <string name="visit_detail">Detalle de la visita</string>
+    <string name="child_details">Detalle de niños</string>
+    <string name="register_child">Registro de niño(a)</string>
+    <string name="child_labour_survey">Encuestas trabajo infantil</string>
+    <string name="add_child">AGREGAR NIÑO</string>
 </resources>
 
