@@ -17,7 +17,7 @@
     <string name="title_activity_complete_module">Complete Questionnaire Module</string>
 
     <!-- main stuff -->
-    <string name="app_name">OFIS Companion Debug</string>
+    <string name="app_name">OFI Companion Debug</string>
     <string name="cd_topSectionColour">Coloured background for section</string>
     <string name="ofis_switch_text_yes">Yes</string>
     <string name="ofis_switch_text_no">No</string>
@@ -1008,4 +1008,7 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="title_privacy_statement">Privacy Statement</string>
     <string name="view_privacy_consent">View Privacy Statement</string>
     <string name="msg_ok">OK</string>
+
+    <string name="privacy_cache_offline">You\'re offline. Please switch on your network to view the latest privacy statement</string>
+    <string name="privacy_no_cache_offline">You\'re offline. Please switch on your network to view the privacy statement</string>
 </resources>
