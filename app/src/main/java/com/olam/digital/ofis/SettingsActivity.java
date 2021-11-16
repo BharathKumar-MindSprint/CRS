@@ -109,7 +109,8 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
         buttonPrivacyConsent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent(SettingsActivity.this, PrivacyStatementActivity.class);
+             //   Intent intent=new Intent(SettingsActivity.this, PrivacyStatementActivity.class);
+                Intent intent=new Intent(SettingsActivity.this, PrivacyStatementWebViewActivity.class);
                 startActivity(intent);
 
             }
