@@ -725,7 +725,7 @@
                                 android:layout_weight="1"
                                 android:textSize="@dimen/ofis_med_text"
                                 android:layout_gravity="center"
-                                android:text="Occupation:"
+                                android:text="@string/occupation_fs"
                                 android:textColor="@color/clmrs_tv_grey" />
 
                             <EditText
@@ -734,7 +734,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="52dp"
                                 android:background="@drawable/border_grey_bg"
-                                android:hint="Occupation"
+                                android:hint="@string/occupation_hint"
                                 android:inputType="textPersonName"
                                 android:paddingLeft="10dp"
                                 android:maxLength="1500"
