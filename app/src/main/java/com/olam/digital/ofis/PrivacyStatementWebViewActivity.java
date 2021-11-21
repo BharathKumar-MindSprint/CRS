@@ -17,7 +17,7 @@ import androidx.appcompat.app.AlertDialog;
 
 
 
-public class PrivacyStatementWebViewActivity extends  BaseActivity{
+public class PrivacyStatementWebViewActivity extends  BasePrivacyActivity{
 
     ProgressDialog progressDialog=null;
     WebView webView;
@@ -26,6 +26,8 @@ public class PrivacyStatementWebViewActivity extends  BaseActivity{
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_web_view);
+
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             progressDialog = new ProgressDialog(this);
             progressDialog.setMessage("Loading Data...");
             progressDialog.setCancelable(false);
