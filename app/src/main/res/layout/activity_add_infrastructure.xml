@@ -99,7 +99,7 @@
             <Spinner
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/spinner_subdistrict1"
+                android:id="@+id/spinner_place1"
                 android:layout_marginRight="0dp"
                 android:layout_weight="1" />
 
@@ -111,12 +111,13 @@
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             android:paddingBottom="@dimen/ofis_bottom_section_padding_vertical">
 
             <Spinner
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/spinner_place1"
+                android:id="@+id/spinner_place1_remove"
                 android:nextFocusDown="@+id/spinner_place"
                 android:nextFocusForward="@+id/spinner_place1"
                 android:layout_weight="1" />

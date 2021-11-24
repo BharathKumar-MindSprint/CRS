@@ -95,7 +95,6 @@ public class AddInfrastructureActivity extends BaseActivity {
     private int selectedCountry1 = 0;
     private int selectedRegion1 = 0;
     private int selectedDistrict1 = 0;
-    private int selectedSubDistrict1 = 0;
     private int selectedPlace1 = 0;
 
 
@@ -271,7 +270,7 @@ public class AddInfrastructureActivity extends BaseActivity {
         dl.createBusinessHierarchySpinners(this, context, null, selectedFarmerGroup, selectedSection);
 
         // New
-        dl.createGeographyHierarchySpinners1(this, context, null, selectedCountry1, selectedRegion1, selectedDistrict1, selectedPlace1, null,false, 2);
+        dl.createGeographyHierarchySpinners1(this, context, null, selectedCountry1, selectedRegion1, selectedDistrict1, selectedPlace1, null,false);
 
 
         bindSaveButton();
@@ -1009,7 +1008,7 @@ public class AddInfrastructureActivity extends BaseActivity {
                         poiName.setVisibility(View.GONE);
                         layout_geo_old.setVisibility(View.GONE);
                         layout_geo_new.setVisibility(View.VISIBLE);
-                        dl.createGeographyHierarchySpinners1(AddInfrastructureActivity.this, context, null, selectedCountry1, selectedRegion1, selectedDistrict1,selectedSubDistrict1, selectedPlace1, null,false, 2);
+                        dl.createGeographyHierarchySpinners1(AddInfrastructureActivity.this, context, null, selectedCountry1, selectedRegion1, selectedDistrict1,selectedPlace1, null,false);
 
                     }else{
                         showPoiName();
