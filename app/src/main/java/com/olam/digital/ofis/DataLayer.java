@@ -1854,535 +1854,6 @@ public class DataLayer {
 
     }
 
-
-    void createGeographyHierarchySpinners(final AppCompatActivity activity, final Context context, final EditText farmerIdPrefix, int countrySelection, final int regionSelection, final int districtSelection, final int subdistrictSelection, final int placeSelection, final LinearLayout phonenumbers, final boolean newPlace, int item) {
-        final Spinner countrySpinner = (Spinner) activity.findViewById(R.id.spinner_country);
-        final Spinner regionSpinner = (Spinner) activity.findViewById(R.id.spinner_region);
-        final Spinner districtSpinner = (Spinner) activity.findViewById(R.id.spinner_district);
-        final Spinner subdistrictSpinner = (Spinner) activity.findViewById(R.id.spinner_subdistrict);
-        final Spinner placeSpinner = (Spinner) activity.findViewById(R.id.spinner_place);
-        final ImageView haDistrict = (ImageView) activity.findViewById(R.id.haDistrict);
-
-        Cursor countries = getSpinnerData(OFISDBContract.CountriesEntry.TABLE_NAME, true, OFISDBContract.CountriesEntry.COLUMN_NAME_ENUMERATOR_COUNTRY, 1, true, OFISDBContract.CountriesEntry.COLUMN_NAME_COUNTRY_NAME);
-        bindDataDrivenSpinner(countrySpinner, countries, context, R.string.spinner_country_default, null, false);
-        if(item == 3){
-            countrySpinner.setEnabled(false);
-        }
-
-        countrySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long id) {
-                Cursor regions = getSpinnerData(OFISDBContract.RegionsEntry.TABLE_NAME, true, OFISDBContract.RegionsEntry.COLUMN_NAME_COUNTRY_ID, ((int) id), true, OFISDBContract.RegionsEntry.COLUMN_NAME_REGION_NAME);
-                bindDataDrivenSpinner(regionSpinner, regions, context, R.string.spinner_region_default, null, false);
-                Cursor selectedCountry = (Cursor) countrySpinner.getSelectedItem();
-
-                if (farmerIdPrefix != null && id > 0) {
-                    String code = selectedCountry.getString(selectedCountry.getColumnIndex(OFISDBContract.CountriesEntry.COLUMN_NAME_CODE));
-                    String currentPrefix = farmerIdPrefix.getText().toString();
-                    String newPrefix = code + currentPrefix.substring(2);
-                    farmerIdPrefix.setText(newPrefix);
-                }
-
-                if (phonenumbers != null && id > 0) {
-                    for (int z = 0; z < phonenumbers.getChildCount(); z++) {
-                        LinearLayout phonenumber = (LinearLayout) phonenumbers.getChildAt(z);
-                        EditText diallingcode = (EditText) phonenumber.findViewById(R.id.dialling_code);
-                        String dialling_code = selectedCountry.getString(selectedCountry.getColumnIndex(OFISDBContract.CountriesEntry.COLUMN_NAME_DIALLING_CODE));
-                        diallingcode.setText(dialling_code);
-                    }
-                }
-                if (id > 0 && item == 1) {
-                    LinearLayout farmerLeadDisplayLayout = activity.findViewById(R.id.farmerLeadDisplayLayout);
-                    boolean isODOrigin = isODOrigin((int) id);
-                    boolean isFLEnumerator = Utilities.getBoolFromSharedPrefs(context, Utilities.FARMERLEAD_ENUMERATOR,false);
-                    if (!isODOrigin) {
-                        farmerLeadDisplayLayout.setVisibility(View.GONE);
-                    } else {
-                        if(isFLEnumerator) {
-                            farmerLeadDisplayLayout.setVisibility(View.VISIBLE);
-                        }else {
-                            farmerLeadDisplayLayout.setVisibility(View.GONE);
-                        }
-                    }
-                }
-
-                if (id > 0) {
-                    boolean isODOrigin = isSubdistrictCapture((int) id);
-                    if (!isODOrigin) {
-                        subdistrictSpinner.setVisibility(View.GONE);
-                        haDistrict.setVisibility(View.GONE);
-                    } else {
-                        subdistrictSpinner.setVisibility(View.VISIBLE);
-                        haDistrict.setVisibility(View.VISIBLE);
-                    }
-                }
-
-                if (regionSelection != 0) {
-                    setSpinnerSelectionById(regionSelection, regionSpinner);
-                    if (regions.getCount() == 1) {
-                        regionSpinner.setEnabled(false);
-                    } else {
-                        regionSpinner.setEnabled(true);
-                    }
-                } else {
-                    if (regions.getCount() == 1) {
-                        regionSpinner.setSelection(1, false);
-                        regionSpinner.setEnabled(false);
-                    } else {
-                        regionSpinner.setEnabled(true);
-                    }
-                }
-                if(item == 3){
-                    regionSpinner.setEnabled(false);
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
-
-        regionSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long id) {
-
-                Cursor districts = getSpinnerData(OFISDBContract.DistrictsEntry.TABLE_NAME, true, OFISDBContract.DistrictsEntry.COLUMN_NAME_REGION_ID, ((int) id), true, OFISDBContract.DistrictsEntry.COLUMN_NAME_DISTRICT_NAME);
-                bindDataDrivenSpinner(districtSpinner, districts, context, R.string.spinner_district_default, null, false);
-
-                if (districtSelection != 0) {
-                    setSpinnerSelectionById(districtSelection, districtSpinner);
-                    if (districts.getCount() == 1) {
-                        districtSpinner.setEnabled(false);
-                    } else {
-                        districtSpinner.setEnabled(true);
-                    }
-                } else {
-                    if (districts.getCount() == 1) {
-                        districtSpinner.setSelection(1, false);
-                        districtSpinner.setEnabled(false);
-                    } else {
-                        districtSpinner.setEnabled(true);
-                    }
-                }
-                if(item == 3){
-                    districtSpinner.setEnabled(false);
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
-
-        if(item == 3){
-            regionSpinner.setEnabled(false);
-            districtSpinner.setEnabled(false);
-        }
-        if (placeSpinner != null && subdistrictSpinner != null) {
-            districtSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long id) {
-                    try {
-                        Cursor subdistricts = getSpinnerData(OFISDBContract.SubDistrictsEntry.TABLE_NAME, true, OFISDBContract.SubDistrictsEntry.COLUMN_NAME_DISTRICT_ID, ((int) id), true, OFISDBContract.SubDistrictsEntry.COLUMN_NAME_SUBDISTRICT_NAME);
-                        bindDataDrivenSpinner(subdistrictSpinner, subdistricts, context, R.string.spinner_subdistrict_default, null, false);
-
-                        if (subdistrictSelection != 0) {
-                            setSpinnerSelectionById(subdistrictSelection, subdistrictSpinner);
-                            if (subdistricts.getCount() == 1) {
-                                subdistrictSpinner.setSelection(1, false);
-                                subdistrictSpinner.setEnabled(false);
-                            } else {
-                                subdistrictSpinner.setEnabled(true);
-                            }
-                        } else {
-                            if (subdistricts.getCount() == 1) {
-                                subdistrictSpinner.setSelection(1, false);
-                                subdistrictSpinner.setEnabled(false);
-                            } else {
-                                subdistrictSpinner.setEnabled(true);
-                            }
-                        }
-                    }catch (Exception e){
-                        e.printStackTrace();
-                    }
-                    boolean isODOrigin = isSubdistrictCapture((int) id);
-                    Cursor places;
-                    if (!isODOrigin) {
-                        places = getSpinnerData(OFISDBContract.PlacesEntry.TABLE_NAME, true, OFISDBContract.PlacesEntry.COLUMN_NAME_DISTRICT_ID, ((int) id), true, OFISDBContract.PlacesEntry.COLUMN_NAME_PLACE_NAME);
-                    }else {
-                        places = getSpinnerData(OFISDBContract.PlacesEntry.TABLE_NAME, true, OFISDBContract.PlacesEntry.COLUMN_NAME_SUBDISTRICT_ID, ((int) id), true, OFISDBContract.PlacesEntry.COLUMN_NAME_PLACE_NAME);
-                    }
-                    if (!newPlace) {
-                        bindDataDrivenSpinnerSIP(placeSpinner, places, context, R.string.spinner_place_default, null, false);
-                    } else {
-                        bindDataDrivenSpinner(placeSpinner, places, context, R.string.spinner_place_default, null, false);
-                    }
-
-                    if (placeSelection != 0) {
-                        setSpinnerSelectionById(placeSelection, placeSpinner);
-                    } else {
-                        if (newPlace) {
-                            if (places.getCount() == 1) {
-                                try {
-                                    placeSpinner.setSelection(2, false);
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-
-                        }
-                    }
-
-
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> adapterView) {
-
-                }
-            });
-
-
-            subdistrictSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long id) {
-
-                    Cursor places = getSpinnerData(OFISDBContract.PlacesEntry.TABLE_NAME, true, OFISDBContract.PlacesEntry.COLUMN_NAME_SUBDISTRICT_ID, ((int) id), true, OFISDBContract.PlacesEntry.COLUMN_NAME_PLACE_NAME);
-                    if (!newPlace) {
-                        bindDataDrivenSpinnerSIP(placeSpinner, places, context, R.string.spinner_place_default, null, false);
-                    } else {
-                        bindDataDrivenSpinner(placeSpinner, places, context, R.string.spinner_place_default, null, false);
-                    }
-
-                    if (placeSelection != 0) {
-                        setSpinnerSelectionById(placeSelection, placeSpinner);
-                    } else {
-                        if (newPlace) {
-                            if (places.getCount() == 1) {
-                                try {
-                                    placeSpinner.setSelection(2, false);
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-
-                        }
-                    }
-
-
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> adapterView) {
-
-                }
-            });
-            if (activity.findViewById(R.id.newPlaceName) != null) {
-                final EditText newPlaceName = (EditText) activity.findViewById(R.id.newPlaceName);
-                placeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                    @Override
-                    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long id) {
-                        try {
-                            if (id == -1) {
-                                newPlaceName.setVisibility(View.VISIBLE);
-                            } else {
-                                newPlaceName.setVisibility(View.GONE);
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    @Override
-                    public void onNothingSelected(AdapterView<?> adapterView) {
-
-                    }
-                });
-            }
-        }
-
-
-
-        if (countrySelection != 0) {
-            setSpinnerSelectionById(countrySelection, countrySpinner);
-            if (countries.getCount() == 1) {
-                countrySpinner.setEnabled(false);
-            }
-        } else {
-            if (countries.getCount() == 1) {
-                countrySpinner.setSelection(1, false);
-                countrySpinner.setEnabled(false);
-            }
-        }
-    }
-
-
-    void createGeographyHierarchySpinners1(final AppCompatActivity activity, final Context context, final EditText farmerIdPrefix, int countrySelection, final int regionSelection, final int districtSelection, final int subdistrictSelection, final int placeSelection, final LinearLayout phonenumbers, final boolean newPlace, int item) {
-        final Spinner countrySpinner = (Spinner) activity.findViewById(R.id.spinner_country1);
-        final Spinner regionSpinner = (Spinner) activity.findViewById(R.id.spinner_region1);
-        final Spinner districtSpinner = (Spinner) activity.findViewById(R.id.spinner_district1);
-        final Spinner subdistrictSpinner = (Spinner) activity.findViewById(R.id.spinner_subdistrict1);
-        final Spinner placeSpinner = (Spinner) activity.findViewById(R.id.spinner_place1);
-        final ImageView haDistrict = (ImageView) activity.findViewById(R.id.haDistrict1);
-
-        Cursor countries = getSpinnerData(OFISDBContract.CountriesEntry.TABLE_NAME, true, OFISDBContract.CountriesEntry.COLUMN_NAME_ENUMERATOR_COUNTRY, 1, true, OFISDBContract.CountriesEntry.COLUMN_NAME_COUNTRY_NAME);
-        bindDataDrivenSpinner1(countrySpinner, countries, context, R.string.spinner_country_default, null, false);
-        if(item == 3){
-            countrySpinner.setEnabled(false);
-        }
-
-        countrySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long id) {
-                Cursor regions = getSpinnerData(OFISDBContract.RegionsEntry.TABLE_NAME, true, OFISDBContract.RegionsEntry.COLUMN_NAME_COUNTRY_ID, ((int) id), true, OFISDBContract.RegionsEntry.COLUMN_NAME_REGION_NAME);
-                bindDataDrivenSpinner1(regionSpinner, regions, context, R.string.spinner_region_default, null, false);
-                Cursor selectedCountry = (Cursor) countrySpinner.getSelectedItem();
-
-                if (farmerIdPrefix != null && id > 0) {
-                    String code = selectedCountry.getString(selectedCountry.getColumnIndex(OFISDBContract.CountriesEntry.COLUMN_NAME_CODE));
-                    String currentPrefix = farmerIdPrefix.getText().toString();
-                    String newPrefix = code + currentPrefix.substring(2);
-                    farmerIdPrefix.setText(newPrefix);
-                }
-
-                if (phonenumbers != null && id > 0) {
-                    for (int z = 0; z < phonenumbers.getChildCount(); z++) {
-                        LinearLayout phonenumber = (LinearLayout) phonenumbers.getChildAt(z);
-                        EditText diallingcode = (EditText) phonenumber.findViewById(R.id.dialling_code);
-                        String dialling_code = selectedCountry.getString(selectedCountry.getColumnIndex(OFISDBContract.CountriesEntry.COLUMN_NAME_DIALLING_CODE));
-                        diallingcode.setText(dialling_code);
-                    }
-                }
-                if (id > 0 && item == 1) {
-                    LinearLayout farmerLeadDisplayLayout = activity.findViewById(R.id.farmerLeadDisplayLayout);
-                    boolean isODOrigin = isODOrigin((int) id);
-                    boolean isFLEnumerator = Utilities.getBoolFromSharedPrefs(context, Utilities.FARMERLEAD_ENUMERATOR,false);
-                    if (!isODOrigin) {
-                        farmerLeadDisplayLayout.setVisibility(View.GONE);
-                    } else {
-                        if(isFLEnumerator) {
-                            farmerLeadDisplayLayout.setVisibility(View.VISIBLE);
-                        }else {
-                            farmerLeadDisplayLayout.setVisibility(View.GONE);
-                        }
-                    }
-                }
-
-                if (id > 0) {
-                    boolean isODOrigin = isSubdistrictCapture((int) id);
-                    if (!isODOrigin) {
-                        subdistrictSpinner.setVisibility(View.GONE);
-                        haDistrict.setVisibility(View.GONE);
-                    } else {
-                        subdistrictSpinner.setVisibility(View.VISIBLE);
-                        haDistrict.setVisibility(View.VISIBLE);
-                    }
-                }
-
-                if (regionSelection != 0) {
-                    setSpinnerSelectionById(regionSelection, regionSpinner);
-                    if (regions.getCount() == 1) {
-                        regionSpinner.setEnabled(false);
-                    } else {
-                        regionSpinner.setEnabled(true);
-                    }
-                } else {
-                    if (regions.getCount() == 1) {
-                        regionSpinner.setSelection(1, false);
-                        regionSpinner.setEnabled(false);
-                    } else {
-                        regionSpinner.setEnabled(true);
-                    }
-                }
-                if(item == 3){
-                    regionSpinner.setEnabled(false);
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
-
-        regionSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long id) {
-
-                Cursor districts = getSpinnerData(OFISDBContract.DistrictsEntry.TABLE_NAME, true, OFISDBContract.DistrictsEntry.COLUMN_NAME_REGION_ID, ((int) id), true, OFISDBContract.DistrictsEntry.COLUMN_NAME_DISTRICT_NAME);
-                bindDataDrivenSpinner1(districtSpinner, districts, context, R.string.spinner_district_default, null, false);
-
-                if (districtSelection != 0) {
-                    setSpinnerSelectionById(districtSelection, districtSpinner);
-                    if (districts.getCount() == 1) {
-                        districtSpinner.setEnabled(false);
-                    } else {
-                        districtSpinner.setEnabled(true);
-                    }
-                } else {
-                    if (districts.getCount() == 1) {
-                        districtSpinner.setSelection(1, false);
-                        districtSpinner.setEnabled(false);
-                    } else {
-                        districtSpinner.setEnabled(true);
-                    }
-                }
-                if(item == 3){
-                    districtSpinner.setEnabled(false);
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
-
-        if(item == 3){
-            regionSpinner.setEnabled(false);
-            districtSpinner.setEnabled(false);
-        }
-        if (placeSpinner != null && subdistrictSpinner != null) {
-            districtSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long id) {
-                    try {
-                        Cursor subdistricts = getSpinnerData(OFISDBContract.SubDistrictsEntry.TABLE_NAME, true, OFISDBContract.SubDistrictsEntry.COLUMN_NAME_DISTRICT_ID, ((int) id), true, OFISDBContract.SubDistrictsEntry.COLUMN_NAME_SUBDISTRICT_NAME);
-                        bindDataDrivenSpinner1(subdistrictSpinner, subdistricts, context, R.string.spinner_subdistrict_default, null, false);
-
-                        if (subdistrictSelection != 0) {
-                            setSpinnerSelectionById(subdistrictSelection, subdistrictSpinner);
-                            if (subdistricts.getCount() == 1) {
-                                subdistrictSpinner.setSelection(1, false);
-                                subdistrictSpinner.setEnabled(false);
-                            } else {
-                                subdistrictSpinner.setEnabled(true);
-                            }
-                        } else {
-                            if (subdistricts.getCount() == 1) {
-                                subdistrictSpinner.setSelection(1, false);
-                                subdistrictSpinner.setEnabled(false);
-                            } else {
-                                subdistrictSpinner.setEnabled(true);
-                            }
-                        }
-                    }catch (Exception e){
-                        e.printStackTrace();
-                    }
-                    boolean isODOrigin = isSubdistrictCapture((int) id);
-                    Cursor places;
-                    if (!isODOrigin) {
-                        places = getSpinnerData(OFISDBContract.PlacesEntry.TABLE_NAME, true, OFISDBContract.PlacesEntry.COLUMN_NAME_DISTRICT_ID, ((int) id), true, OFISDBContract.PlacesEntry.COLUMN_NAME_PLACE_NAME);
-                    }else {
-                        places = getSpinnerData(OFISDBContract.PlacesEntry.TABLE_NAME, true, OFISDBContract.PlacesEntry.COLUMN_NAME_SUBDISTRICT_ID, ((int) id), true, OFISDBContract.PlacesEntry.COLUMN_NAME_PLACE_NAME);
-                    }
-                    if (!newPlace) {
-                        bindDataDrivenSpinnerSIP1(placeSpinner, places, context, R.string.Name, null, false);
-                    } else {
-                        bindDataDrivenSpinner1(placeSpinner, places, context, R.string.Name, null, false);
-                    }
-
-                    if (placeSelection != 0) {
-                        setSpinnerSelectionById(placeSelection, placeSpinner);
-                    } else {
-                        if (newPlace) {
-                            if (places.getCount() == 1) {
-                                try {
-                                    placeSpinner.setSelection(2, false);
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-
-                        }
-                    }
-
-
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> adapterView) {
-
-                }
-            });
-
-
-            subdistrictSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long id) {
-
-                    Cursor places = getSpinnerData(OFISDBContract.PlacesEntry.TABLE_NAME, true, OFISDBContract.PlacesEntry.COLUMN_NAME_SUBDISTRICT_ID, ((int) id), true, OFISDBContract.PlacesEntry.COLUMN_NAME_PLACE_NAME);
-                    if (!newPlace) {
-                        bindDataDrivenSpinnerSIP1(placeSpinner, places, context,  R.string.Name, null, false);
-                    } else {
-                        bindDataDrivenSpinner1(placeSpinner, places, context,  R.string.Name, null, false);
-                    }
-
-                    if (placeSelection != 0) {
-                        setSpinnerSelectionById(placeSelection, placeSpinner);
-                    } else {
-                        if (newPlace) {
-                            if (places.getCount() == 1) {
-                                try {
-                                    placeSpinner.setSelection(2, false);
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-
-                        }
-                    }
-
-
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> adapterView) {
-
-                }
-            });
-            if (activity.findViewById(R.id.newPlaceName) != null) {
-                final EditText newPlaceName = (EditText) activity.findViewById(R.id.newPlaceName);
-                placeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                    @Override
-                    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long id) {
-                        try {
-                            if (id == -1) {
-                                newPlaceName.setVisibility(View.VISIBLE);
-                            } else {
-                                newPlaceName.setVisibility(View.GONE);
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    @Override
-                    public void onNothingSelected(AdapterView<?> adapterView) {
-
-                    }
-                });
-            }
-        }
-
-
-
-        if (countrySelection != 0) {
-            setSpinnerSelectionById(countrySelection, countrySpinner);
-            if (countries.getCount() == 1) {
-                countrySpinner.setEnabled(false);
-            }
-        } else {
-            if (countries.getCount() == 1) {
-                countrySpinner.setSelection(1, false);
-                countrySpinner.setEnabled(false);
-            }
-        }
-    }
-
-
     void createGeographyHierarchySpinners(final AppCompatActivity activity, final Context context, final EditText farmerIdPrefix, int countrySelection, final int regionSelection, final int districtSelection, final int placeSelection, final LinearLayout phonenumbers, final boolean newPlace) {
         final Spinner countrySpinner = (Spinner) activity.findViewById(R.id.spinner_country);
         final Spinner regionSpinner = (Spinner) activity.findViewById(R.id.spinner_region);
@@ -2481,6 +1952,167 @@ public class DataLayer {
                         bindDataDrivenSpinnerSIP(placeSpinner, places, context, R.string.spinner_place_default, null, false);
                     } else {
                         bindDataDrivenSpinner(placeSpinner, places, context, R.string.spinner_place_default, null, false);
+                    }
+
+                    if (placeSelection != 0) {
+                        setSpinnerSelectionById(placeSelection, placeSpinner);
+                    } else {
+                        if (newPlace) {
+                            if (places.getCount() == 1) {
+                                try {
+                                    placeSpinner.setSelection(2, false);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+                        }
+                    }
+
+
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> adapterView) {
+
+                }
+            });
+
+            if (activity.findViewById(R.id.newPlaceName) != null) {
+                final EditText newPlaceName = (EditText) activity.findViewById(R.id.newPlaceName);
+                placeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long id) {
+                        try {
+                            if (id == -1) {
+                                newPlaceName.setVisibility(View.VISIBLE);
+                            } else {
+                                newPlaceName.setVisibility(View.GONE);
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> adapterView) {
+
+                    }
+                });
+            }
+        }
+
+        if (countrySelection != 0) {
+            setSpinnerSelectionById(countrySelection, countrySpinner);
+            if (countries.getCount() == 1) {
+                countrySpinner.setEnabled(false);
+            }
+        } else {
+            if (countries.getCount() == 1) {
+                countrySpinner.setSelection(1, false);
+                countrySpinner.setEnabled(false);
+            }
+        }
+    }
+
+    void createGeographyHierarchySpinners1(final AppCompatActivity activity, final Context context, final EditText farmerIdPrefix, int countrySelection, final int regionSelection, final int districtSelection, final int placeSelection, final LinearLayout phonenumbers, final boolean newPlace) {
+        final Spinner countrySpinner = (Spinner) activity.findViewById(R.id.spinner_country1);
+        final Spinner regionSpinner = (Spinner) activity.findViewById(R.id.spinner_region1);
+        final Spinner districtSpinner = (Spinner) activity.findViewById(R.id.spinner_district1);
+        final Spinner placeSpinner = (Spinner) activity.findViewById(R.id.spinner_place1);
+
+
+        final EditText newplace = (EditText) activity.findViewById(R.id.newPlaceName);
+
+        Cursor countries = getSpinnerData(OFISDBContract.CountriesEntry.TABLE_NAME, true, OFISDBContract.CountriesEntry.COLUMN_NAME_ENUMERATOR_COUNTRY, 1, true, OFISDBContract.CountriesEntry.COLUMN_NAME_COUNTRY_NAME);
+        bindDataDrivenSpinner1(countrySpinner, countries, context, R.string.spinner_country_default, null, false);
+
+        countrySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long id) {
+                Cursor regions = getSpinnerData(OFISDBContract.RegionsEntry.TABLE_NAME, true, OFISDBContract.RegionsEntry.COLUMN_NAME_COUNTRY_ID, ((int) id), true, OFISDBContract.RegionsEntry.COLUMN_NAME_REGION_NAME);
+                bindDataDrivenSpinner1(regionSpinner, regions, context, R.string.spinner_region_default, null, false);
+                Cursor selectedCountry = (Cursor) countrySpinner.getSelectedItem();
+
+                if (farmerIdPrefix != null && id > 0) {
+                    String code = selectedCountry.getString(selectedCountry.getColumnIndex(OFISDBContract.CountriesEntry.COLUMN_NAME_CODE));
+                    String currentPrefix = farmerIdPrefix.getText().toString();
+                    String newPrefix = code + currentPrefix.substring(2);
+                    farmerIdPrefix.setText(newPrefix);
+                }
+
+                if (phonenumbers != null && id > 0) {
+                    for (int z = 0; z < phonenumbers.getChildCount(); z++) {
+                        LinearLayout phonenumber = (LinearLayout) phonenumbers.getChildAt(z);
+                        EditText diallingcode = (EditText) phonenumber.findViewById(R.id.dialling_code);
+                        String dialling_code = selectedCountry.getString(selectedCountry.getColumnIndex(OFISDBContract.CountriesEntry.COLUMN_NAME_DIALLING_CODE));
+                        diallingcode.setText(dialling_code);
+                    }
+                }
+
+                if (regionSelection != 0) {
+                    setSpinnerSelectionById(regionSelection, regionSpinner);
+                    if (regions.getCount() == 1) {
+                        regionSpinner.setEnabled(false);
+                    } else {
+                        regionSpinner.setEnabled(true);
+                    }
+                } else {
+                    if (regions.getCount() == 1) {
+                        regionSpinner.setSelection(1, false);
+                        regionSpinner.setEnabled(false);
+                    } else {
+                        regionSpinner.setEnabled(true);
+                    }
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+        regionSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long id) {
+
+                Cursor districts = getSpinnerData(OFISDBContract.DistrictsEntry.TABLE_NAME, true, OFISDBContract.DistrictsEntry.COLUMN_NAME_REGION_ID, ((int) id), true, OFISDBContract.DistrictsEntry.COLUMN_NAME_DISTRICT_NAME);
+                bindDataDrivenSpinner1(districtSpinner, districts, context, R.string.spinner_district_default, null, false);
+
+                if (districtSelection != 0) {
+                    setSpinnerSelectionById(districtSelection, districtSpinner);
+                    if (districts.getCount() == 1) {
+                        districtSpinner.setEnabled(false);
+                    } else {
+                        districtSpinner.setEnabled(true);
+                    }
+                } else {
+                    if (districts.getCount() == 1) {
+                        districtSpinner.setSelection(1, false);
+                        districtSpinner.setEnabled(false);
+                    } else {
+                        districtSpinner.setEnabled(true);
+                    }
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+        if (placeSpinner != null) {
+            districtSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long id) {
+
+                    Cursor places = getSpinnerData(OFISDBContract.PlacesEntry.TABLE_NAME, true, OFISDBContract.PlacesEntry.COLUMN_NAME_DISTRICT_ID, ((int) id), true, OFISDBContract.PlacesEntry.COLUMN_NAME_PLACE_NAME);
+                    if (!newPlace) {
+                        bindDataDrivenSpinnerSIP1(placeSpinner, places, context, R.string.Name, null, false);
+                    } else {
+                        bindDataDrivenSpinner1(placeSpinner, places, context, R.string.Name, null, false);
                     }
 
                     if (placeSelection != 0) {
