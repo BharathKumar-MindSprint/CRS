@@ -95,6 +95,7 @@
     <string name="Olam_Farmer_ID">ID Olam do produtor</string>
     <string name="Save">Salve</string>
     <string name="Add_Signature">Assinatura:</string>
+    <string name="Signature">Assinatura</string>
 
     <!-- Find a farmer related -->
     <!-- in XML -->
