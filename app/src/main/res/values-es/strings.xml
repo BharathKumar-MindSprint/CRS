@@ -95,7 +95,7 @@
     <string name="Olam_Farmer_ID">Identificación de agricultor Olam</string>
     <string name="Save">Guardar</string>
     <string name="Add_Signature">Firma:</string>
-
+    <string name="Signature">Firma</string>
     <!-- Find a farmer related -->
     <!-- in XML -->
     <string name="Select_Farmer">Seleccionar agricultor</string>

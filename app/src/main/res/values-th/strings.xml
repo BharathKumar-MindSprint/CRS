@@ -96,6 +96,7 @@
     <string name="Olam_Farmer_ID">รหัสเกษตรกร</string>
     <string name="Save">บันทึก</string>
     <string name="Add_Signature">ลายเซ็นต์:</string>
+    <string name="Signature">ลายเซ็นต์</string>
 
     <!-- Find a farmer related -->
     <!-- in XML -->
