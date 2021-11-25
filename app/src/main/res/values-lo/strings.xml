@@ -94,7 +94,7 @@
     <string name="new_place_name_placeholder">​ສ​ະ​ຖານ​ທີ​ໃໝ່</string>
     <string name="Olam_Farmer_ID">ເລກ​ບັດ​ຊາວ​ສວນ​ໂອ​ລາມ</string>
     <string name="Save">ເສັບ</string>
-    <string name="Add_Signature">ລາຍ​ເຊັນ</string>
+    <string name="Add_Signature">ລາຍ​ເຊັນ:</string>
 
     <!-- Find a farmer related -->
     <!-- in XML -->
@@ -568,17 +568,17 @@
     <string name="cs_page5_26">All consents need to be appropriately tracked and stored. Where an Olam representative is reading the notice to the individual and acknowledging his consent on behalf of the individual (e.g. by way of a slide box in a mobile app), please ensure that Olam is able to check which representative has obtained the consent. </string>
 
     <string name="full_farmer_name">ຊື່ເຕັມ</string>
-    <string name="date">ວັນທີ</string>
+    <string name="date">ວັນທີ:</string>
     <string name="olam_connect">Olam Connect</string>
     <string name="olam_contact">ຂໍ້ມູນຕິດຕໍ່ຂອງບໍລິສັດ Olam</string>
     <string name="digital_sign">Digital ລາຍເຊັນ</string>
     <string name="farmer_signature">Farmer ລາຍເຊັນ</string>
-    <string name="enum_sign">Staff ລາຍເຊັນ</string>
+    <string name="enum_sign">Staff ລາຍເຊັນ:</string>
     <string name="enum_name">Enumerator ຊື່</string>
     <string name="farmer_sign_required">Please get signed by farmer</string>
     <string name="staff_sign_required">Please get signed by staff</string>
     <string name="childs_name">ຊື່ເດັກ</string>
-    <string name="name">ຊື່</string>
+    <string name="name">ຊື່:</string>
     <string name="Please_accept_consent">You must accept consent statements to save the farmer</string>
 
     <string name="allchilds_name">ທຸກໆຊື່ຂອງເດັກ (ຕາມຄວາມ ເໝາະ ສົມ)</string>
@@ -598,4 +598,7 @@
     <string name="please_check_dependent_question">since its dependent question is updated</string>
     <string name="update_firebase_install_id_info">Updating Informations</string>
     <string name="national_id_info">Please update the National ID of farmer</string>
+    <string name="please_click_checkbox">ກະ​ລຸ​ນາ​ຄລິກ​ໃສ່​ປ່ອງ​ທີ່​ເຫມາະ​ສົມ​ທັງ​ຫມົດ​</string>
+    <string name="please_sign_within_the_boundary_box">ກະລຸນາລົງຊື່ພາຍໃນປ່ອງຂອບເຂດ</string>
 </resources>
+

@@ -94,7 +94,8 @@
     <string name="new_place_name_placeholder">Nouvel emplacement</string>
     <string name="Olam_Farmer_ID">No ID du planteur Olam</string>
     <string name="Save">Sauvegardez</string>
-    <string name="Add_Signature">Signature</string>
+    <string name="Add_Signature">Signature:</string>
+    <string name="Signature">Signature</string>
 
     <!-- Find a farmer related -->
     <!-- in XML -->
@@ -601,7 +602,7 @@
     <string name="cs_page5_14">Quelles mesures avons-nous mise en place pour protéger vos données ?</string>
     <string name="cs_page5_15">Ofi maintient des garanties raisonnables pour protéger la confidentialité, la sécurité et l’intégrité de vos données. Bien que nous utilisions des mesures de sécurité pour aider à protéger vos données contre la divulgation non autorisée, nous ne pouvons garantir la sécurité des informations fournies sur Internet et ne serons pas responsables des violations de la sécurité au-delà de notre contrôle.</string>
     <string name="cs_page5_16">"QUELS SONT VOS DROITS EN CE QUI CONCERNE VOS DONNÉES PERSONNELLES ? "</string>
-    <string name="cs_page5_17">"Vous pouvez choisir de ne pas fournir les données que nous demandons. Vous avez le droit de demander à ofi une copie de vos données et de vérifier, corriger ou restreindre le traitement actif de vos données. Vous pouvez demander à ofi de cesser d’utiliser vos images à tout moment, auquel cas elles ne seront pas utilisées dans les publications futures mais pourront continuer à apparaître dans les publications déjà en circulation. Vous avez le droit de déposer une plainte à tout moment auprès de l’autorité de protection des données de la région concernée. Ces droits peuvent être limités par la loi. Si vous souhaitez exercer ces droits ou si vous avez des questions à leur sujet, vous pouvez contacter ofi à l’adresse privacy@ofi.com. "</string>
+    <string name="cs_page5_17">"Vous pouvez choisir de ne pas fournir les données que nous demandons. Vous avez le droit de demander à ofi une copie de vos données et de vérifier, corriger ou restreindre le traitement actif de vos données. Vous pouvez demander à ofi de cesser d’utiliser vos images à tout moment, auquel cas elles ne seront pas utilisées dans les publications futures mais pourront continuer à apparaître dans les publications déjà en circulation. Vous avez le droit de déposer une plainte à tout moment auprès de l’autorité de protection des données de la région concernée. Ces droits peuvent être limités par la loi. Si vous souhaitez exercer ces droits ou si vous avez des questions à leur sujet, vous pouvez contacter ofi à l’adresse <a href="privacy@ofi.com">privacy@ofi.com</a>. "</string>
     <string name="cs_page5_18">"Combien de temps allez-vous conserver mes données ? "</string>
     <string name="cs_page5_19">Sauf disposition contraire de la loi, ofi conservera vos données personnelles pendant la période nécessaire aux fins pour lesquelles les données ont été collectées. Ofi partagera la durée de conservation de vos données personnelles à votre demande.</string>
     <string name="cs_page5_20">Informations de Contact</string>
@@ -619,21 +620,21 @@
 
     <string name="allchilds_name">Nom de l’Enfant (si vous consentez au nom d’un enfant) :</string>
     <string name="full_farmer_name">Nom Complet</string>
-    <string name="date">Date</string>
+    <string name="date">Date:</string>
     <string name="olam_connect">Olam Connect</string>
     <string name="olam_contact">Olam Contact</string>
     <string name="digital_sign">Digital Signature</string>
     <string name="farmer_signature">Farmer Signature</string>
-    <string name="enum_sign">Staff Signature</string>
+    <string name="enum_sign">Staff Signature:</string>
     <string name="enum_name">Enumerator Nom</string>
     <string name="farmer_sign_required">Please get signed by farmer</string>
     <string name="staff_sign_required">Please get signed by staff</string>
     <string name="childs_name">Nom de l\'enfant</string>
-    <string name="name">Nom</string>
+    <string name="name">Nom:</string>
     <string name="Please_accept_consent">You must accept consent statements to save the farmer</string>
 
     <!-- OFI Consent Consent -->
-    <string name="please_sign_within_the_boundary_box">Please sign within the boundary box</string>
+    <string name="please_sign_within_the_boundary_box">Veuillez signer dans la zone de délimitation</string>
 
     <string name="search_by_photo">Recherche par photo</string>
     <string name="no_matching_results_found">Aucun résultat correspondant trouvé</string>
@@ -696,4 +697,7 @@
     <string name="cs_page5_3">La politique d’ofi est de se conformer à toutes les lois applicables en matière de confidentialité et de protection des données. Ofi collectera et utilisera vos données uniquement à des fins spécifiées et légitimes, les traitera d’une manière compatible avec ces fins, prendra des mesures raisonnables pour s’assurer que vos données sont exactes, complètes et mises à jour (le cas échéant) et prendra les mesures appropriées pour assurer une protection adéquate de vos données.\n\n<b>Responsable des Données</b>\n\n Le responsable du traitement de vos informations sera Olam International Limited incorporé à Singapour sous le numéro d’entreprise 199504676H et l’entité affiliée concernée dans votre pays ou autrement au sein du groupe de sociétés ofi, selon le cas.\n\n Nous agissons généralement en tant que responsable du traitement des données personnelles. Cependant, dans certaines circonstances, les Partenaires commerciaux peuvent nous engager pour leur fournir certains services de traitement liés aux données personnelles. Dans de tels cas, la collecte et l’utilisation de vos données personnelles par le Partenaire commercial sont régies par ses propres politiques de confidentialité et nous nous appuyons sur leurs déclarations légales selon lesquelles nous sommes autorisés à traiter les données personnelles de la manière qu’ils proposent ou démontrent.\n\n Comme expliqué ci-dessus, nous partagerons vos informations personnelles à certaines fins spécifiées. Lorsque vos informations personnelles sont transférées en dehors de l’EEA à une filiale ofi ou à une entité dans un pays qui n’est pas soumis à une décision d’adéquation de la Commission Européenne, vos données personnelles seront protégées par des garanties transfrontalières approuvées par la Commission Européenne, y compris des clauses contractuelles types pour le transfert de données transfrontalier.</string>
     <string name="occupation_fs">Profession :</string>
     <string name="occupation_hint">Profession</string>
+    <string name="please_click_checkbox">Veuillez cocher toutes les cases appropriées</string>
+    <string name="clear">dégager</string>
+    <string name="update_consent_statement">Mettre à jour la déclaration de consentement</string>
 </resources>

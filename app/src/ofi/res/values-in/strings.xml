@@ -94,7 +94,8 @@
     <string name="new_place_name_placeholder">Tempat baru</string>
     <string name="Olam_Farmer_ID">ID Petani Olam</string>
     <string name="Save">Simpan</string>
-    <string name="Add_Signature">Tanda tangan</string>
+    <string name="Add_Signature">Tanda tangan:</string>
+    <string name="Signature">Tanda tangan</string>
 
     <!-- Find a farmer related -->
     <!-- in XML -->
@@ -534,7 +535,7 @@
     <string name="farmer_consent">PERSETUJUAN PETANI</string>
     <string name="personal_info_collection">"PEMBERITAHUAN PENGUMPULAN INFORMASI PRIBADI "</string>
     <string name="cs_page2_1">Kami dapat menggunakan dan membagikan data pribadi Anda seperti berikut</string>
-    <string name="cs_page2_2">Apakah Anda setuju? Silakan beri tanda centang “✔ “</string>
+    <string name="cs_page2_2">Apakah Anda setuju? Silakan beri tanda centang “✔ “ atau tulis “ya”</string>
     <string name="cs_page2_3">Mengisi Sistem Terkait ofi</string>
     <string name="cs_page2_4">Kami dapat mengumpulkan Data Petani untuk mengisi sistem terkait ofi dimana data Anda dapat dikelola kemudian dianalisis untuk memberikan kami pandangan penting seperti tren dan isu yang memengaruhi rantai pasokan serta meningkatkan layanan kami kepada Anda dan pelanggan kami. Untuk melakukannya, karyawan ofi dan afiliasinya serta pemroses pihak ketiga tertentu akan memiliki akses ke Sistem terkait ofi tersebut dan Data Petani Anda. Data Petani Anda dapat dibagikan dengan afiliasi, mitra, dan pelanggan kami.</string>
     <string name="cs_page2_5">Menyediakan Ketertelusuran untuk Pasar</string>
@@ -572,7 +573,7 @@
     <string name="cs_page5_14">Apa tindakan yang kami lakukan untuk melindungi data Anda?</string>
     <string name="cs_page5_15">"Ofi mempertahankan perlindungan data yang wajar untuk melindungi kerahasiaan, keamanan dan integritas data Anda. Meskipun kami melakukan tindakan keamanan untuk membantu melindungi data Anda dari pengungkapan yang tidak sah; kami tidak dapat menjamin keamanan informasi yang diberikan di internet dan tidak akan bertanggung jawab atas pelanggaran keamanan di luar kendali wajar kami. "</string>
     <string name="cs_page5_16">"Apa hak yang Anda miliki sehubungan dengan data Anda? "</string>
-    <string name="cs_page5_17">"Anda dapat memilih untuk tidak memberikan data yang kami minta. Anda berhak untuk meminta salinan data Anda kepada ofi guna memverifikasi, membenarkan atau membatasi pemrosesan aktif data Anda. Anda dapat meminta ofi untuk menghentikan penggunaan gambar Anda kapan saja, di mana gambar tidak akan digunakan dalam publikasi di masa mendatang tetapi dapat tetap muncul dalam publikasi yang telah beredar. Anda berhak untuk mengajukan keluhan setiap saat kepada otoritas perlindungan data di wilayah yang bersangkutan. Hak-hak ini mungkin dibatasi dalam undang-undang. Jika Anda ingin menggunakan hak-hak ini atau memiliki pertanyaan tentang hal ini, Anda dapat menghubungi ofi di privacy@ofi.com. "</string>
+    <string name="cs_page5_17">"Anda dapat memilih untuk tidak memberikan data yang kami minta. Anda berhak untuk meminta salinan data Anda kepada ofi guna memverifikasi, membenarkan atau membatasi pemrosesan aktif data Anda. Anda dapat meminta ofi untuk menghentikan penggunaan gambar Anda kapan saja, di mana gambar tidak akan digunakan dalam publikasi di masa mendatang tetapi dapat tetap muncul dalam publikasi yang telah beredar. Anda berhak untuk mengajukan keluhan setiap saat kepada otoritas perlindungan data di wilayah yang bersangkutan. Hak-hak ini mungkin dibatasi dalam undang-undang. Jika Anda ingin menggunakan hak-hak ini atau memiliki pertanyaan tentang hal ini, Anda dapat menghubungi ofi di <a href="privacy@ofi.com">privacy@ofi.com</a>. "</string>
     <string name="cs_page5_18">"Berapa lama Anda akan menyimpan data saya? "</string>
     <string name="cs_page5_19">Kecuali sebagaimana diwajibkan oleh hukum, ofi akan menyimpan data pribadi Anda dalam jangka waktu tertentu yang diperlukan untuk tujuan pengumpulan data tersebut. Ofi akan membagikan periode penyimpanan data pribadi Anda atas permintaan Anda.</string>
     <string name="cs_page5_20">Detail Kontak</string>
@@ -590,22 +591,22 @@
 
     <string name="allchilds_name">Nama Anak (jika menyetujui atas nama anak):</string>
     <string name="full_farmer_name">Nama Lengkap</string>
-    <string name="date">Tanggal</string>
+    <string name="date">Tanggal:</string>
     <string name="olam_connect">Olam Connect</string>
     <string name="olam_contact">Kontak dari Olam</string>
     <string name="digital_sign">Digital Tanda tangan</string>
     <string name="farmer_signature">Farmer Tanda tangan</string>
-    <string name="enum_sign">Staff Tanda tangan</string>
+    <string name="enum_sign">Staff Tanda tangan:</string>
     <string name="enum_name">Enumerator Nama</string>
     <string name="farmer_sign_required">Please get signed by farmer</string>
     <string name="staff_sign_required">Please get signed by staff</string>
     <string name="childs_name">Nama Anak </string>
-    <string name="name">Nama</string>
+    <string name="name">Nama:</string>
     <string name="Please_accept_consent">You must accept consent statements to save the farmer</string>
 
 
     <!-- OFI Consent Consent -->
-    <string name="please_sign_within_the_boundary_box">Please sign within the boundary box</string>
+    <string name="please_sign_within_the_boundary_box">Silakan masuk di dalam kotak batas</string>
 
     <string name="matching_farmer_records">Mencocokkan Catatan Petani</string>
     <string name="matching_results_found">Hasil yang cocok ditemukan</string>
@@ -685,4 +686,7 @@
     <string name="cs_page5_9">Kami hanya akan mengumpulkan dan memproses data ini untuk menjalankan bisnis kami, mewujudkan kepentingan kami yang sah seperti yang diwajibkan oleh ofi dan afiliasi kami, dan mematuhi kewajiban hukum. Kami mengandalkan persetujuan untuk beberapa aktivitas pemrosesan (seperti komunikasi pemasaran) yang dapat ditarik kapan pun subjek data memerlukannya.</string>
     <string name="occupation_fs">Pekerjaan:</string>
     <string name="occupation_hint">Pekerjaan</string>
+    <string name="please_click_checkbox">Silakan masuk di dalam kotak batas</string>
+    <string name="clear">jernih</string>
+    <string name="update_consent_statement">Perbarui Pernyataan Persetujuan</string>
 </resources>

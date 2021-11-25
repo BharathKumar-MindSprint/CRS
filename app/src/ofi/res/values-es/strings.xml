@@ -94,7 +94,8 @@
     <string name="new_place_name_placeholder">Nuevo lugar</string>
     <string name="Olam_Farmer_ID">Identificación de agricultor Olam</string>
     <string name="Save">Guardar</string>
-    <string name="Add_Signature">Firma</string>
+    <string name="Add_Signature">Firma:</string>
+    <string name="Signature">Firma</string>
 
     <!-- Find a farmer related -->
     <!-- in XML -->
@@ -544,7 +545,7 @@
     <string name="personal_info_collection">"AVISO DE RECOPILACIÓN DE INFORMACIÓN PERSONAL "</string>
     <string name="cs_page2_title">1.    Uso de datos personales</string>
     <string name="cs_page2_1">Podemos usar y compartir sus datos personales de la siguiente manera:</string>
-    <string name="cs_page2_2">Do you consent? Please tick “✔ “ or “yes”</string>
+    <string name="cs_page2_2">¿Da usted su consentimiento?  Marque "✔" o escriba “Sí”</string>
     <string name="cs_page2_3">Llenar los sistemas relacionados con OFI</string>
     <string name="cs_page2_4">Podemos recopilar los Datos del agricultor para llenar los sistemas relacionados con OFI, donde sus datos se pueden organizar y luego analizar para proporcionarnos información importante, como las tendencias y los problemas que afectan a la cadena de suministro, así como para mejorar nuestros servicios para usted y nuestros clientes. Para ello, los empleados de OFI, sus afiliados y ciertos proveedores externos tendrán acceso a dichos Sistemas relacionados con OFI y a sus Datos del agricultor. Sus Datos del agricultor pueden compartirse con nuestros afiliados, socios y clientes.</string>
     <string name="cs_page2_5">Proporcionar trazabilidad al mercado</string>
@@ -576,7 +577,7 @@
         •	Datos de ubicación, si nos permite acceder a su ubicación en la aplicación</string>
     <string name="cs_page5_6">¿Con qué propósito utilizamos sus datos?</string>
     <string name="cs_page5_7">Podemos utilizar estos datos para los siguientes propósitos:\n
-        •	Brindarle servicios como asesoramiento agronómico, material agrícola y acceso a servicios relacionados con la agricultura, como financiación, seguros y logística.
+        •	Brindarle servicios como asesoramiento agronómico, material agrícola y acceso a servicios relacionados con la agricultura, como financiación, seguros y logística.\n
         •	Facilitar el comercio con usted.\n
         •	Publicar en los canales de propiedad de OFI, incluidos los sitios web, las redes sociales y los medios impresos.\n
         •	Apoyar nuestras iniciativas de sostenibilidad y trazabilidad.\n
@@ -594,7 +595,7 @@
     <string name="cs_page5_14">¿Qué medidas tomamos para proteger sus datos?</string>
     <string name="cs_page5_15">OFI mantiene medidas de seguridad razonables para proteger la confidencialidad, seguridad e integridad de sus datos. Aunque utilizamos medidas de seguridad para ayudar a proteger sus datos contra la divulgación no autorizada, no podemos garantizar la seguridad de la información proporcionada a través de Internet y no seremos responsables de las violaciones de seguridad más allá de nuestro control razonable.</string>
     <string name="cs_page5_16">¿Qué derechos tiene usted en relación con sus datos?</string>
-    <string name="cs_page5_17">Puede optar por no proporcionar los datos que le solicitamos. Tiene derecho a solicitar a OFI una copia de sus datos y a verificar, corregir o restringir el manejo activo de sus datos. Puede pedir a OFI que deje de utilizar sus imágenes en cualquier momento, en cuyo caso no se utilizarán en futuras publicaciones, pero podrán seguir apareciendo en publicaciones ya en circulación. Tiene derecho a presentar un reclamo en cualquier momento ante la autoridad de protección de datos de la región en cuestión. Estos derechos pueden estar limitados por la ley. Si desea ejercer estos derechos o tiene alguna pregunta al respecto, puede ponerse en contacto con OFI en privacy@ofi.com.</string>
+    <string name="cs_page5_17">Puede optar por no proporcionar los datos que le solicitamos. Tiene derecho a solicitar a OFI una copia de sus datos y a verificar, corregir o restringir el manejo activo de sus datos. Puede pedir a OFI que deje de utilizar sus imágenes en cualquier momento, en cuyo caso no se utilizarán en futuras publicaciones, pero podrán seguir apareciendo en publicaciones ya en circulación. Tiene derecho a presentar un reclamo en cualquier momento ante la autoridad de protección de datos de la región en cuestión. Estos derechos pueden estar limitados por la ley. Si desea ejercer estos derechos o tiene alguna pregunta al respecto, puede ponerse en contacto con OFI en <a href="privacy@ofi.com">privacy@ofi.com</a>.</string>
     <string name="cs_page5_18">¿Cuánto tiempo conservarán mis datos?</string>
     <string name="cs_page5_19">A excepción de que la ley exija lo contrario, OFI conservará sus datos personales durante el período necesario para los fines para los que se recogieron los datos. OFI compartirá el periodo de conservación de sus datos personales si así lo solicita.</string>
     <string name="cs_page5_20">Datos de contacto</string>
@@ -612,24 +613,24 @@
 
     <string name="allchilds_name">Nombre del menor (si da su consentimiento en nombre de un menor):</string>
     <string name="full_farmer_name">Nombre completo</string>
-    <string name="date">Fecha</string>
+    <string name="date">Fecha:</string>
     <string name="olam_connect">Connecto de Olam</string>
     <string name="olam_contact">Contacto de Olam</string>
     <string name="digital_sign">Digital Firma</string>
     <string name="farmer_signature">Farmer Firma</string>
-    <string name="enum_sign">Staff Firma</string>
+    <string name="enum_sign">Staff Firma:</string>
     <string name="enum_name">Enumerator Name</string>
     <string name="farmer_sign_required">Please get signed by farmer</string>
     <string name="staff_sign_required">Please get signed by staff</string>
     <string name="childs_name">Nombre del niño(a)</string>
-    <string name="name">Nombre</string>
+    <string name="name">Nombre:</string>
     <string name="Please_accept_consent">You must accept consent statements to save the farmer</string>
 
 
     <!-- OFI Consent Consent -->
 
 
-    <string name="please_sign_within_the_boundary_box">Please sign within the boundary box</string>
+    <string name="please_sign_within_the_boundary_box">Firme dentro del cuadro de límites</string>
     <string name="matching_farmer_records">Registros de agricultores coincidentes</string>
     <string name="matching_results_found">Se encontraron resultados coincidentes</string>
     <string name="back_to_search">Volver a la búsqueda</string>
@@ -691,9 +692,12 @@
     <string name="cs_page3_2">por la presente reconozco que he leído, comprendido y aceptado la recopilación y el uso de mis Datos del agricultor, tal como se establece en este Aviso de recopilación de información personal y en la Declaración de privacidad de datos del agricultor, y que:</string>
     <string name="cs_page3_3">•   He indicado con un \"✔\" o he escrito \"Sí\" en el Párrafo 1, donde doy mi consentimiento para el uso y la recopilación de mis datos personales para los fines específicos que se muestran allí.</string>
     <string name="cs_page3_5">•   Entiendo que no recibiré ninguna remuneración financiera o de otro tipo por ningún dato personal, incluidas las imágenes, y que cualquier propiedad intelectual que subsista en cualquier imagen pertenecerá a OFI.</string>
-    <string name="cs_page3_6">•   Entendo que tenho o direito de retirar o consentimento para mim ou para meu filho/menor a qualquer momento e que, quando tal consentimento for retirado, a ofi não usará quaisquer imagens ou dados pessoais em quaisquer publicações futuras, mas poderá continuar a usar esses Dados Pessoais em publicações já em circulação.</string>
+    <string name="cs_page3_6">•   Entiendo que tengo derecho a retirar mi consentimiento o el de mi hijo o menor en cualquier momento y que, si se retira dicho consentimiento, OFI no utilizará ninguna imagen o dato personal en futuras publicaciones, pero podrá seguir utilizando dichos datos personales en las publicaciones que ya estén en circulación.</string>
     <string name="cs_page5_3">Es política de OFI cumplir con todas las leyes de privacidad y protección de datos aplicables. OFI recopilará y utilizará sus datos solo para fines específicos y legítimos, los procesará de manera coherente con dichos fines, tomará medidas razonables para garantizar que sus datos sean precisos, completos y actualizados (cuando sea necesario), y tomará las medidas necesarias para brindar una protección adecuada a sus datos.\n\n<b>Responsable del manejo de datos</b>\n\n El responsable del manejo de sus datos será Olam International Limited, constituida en Singapur, con número de empresa 199504676H, y la entidad afiliada pertinente en su país o dentro del grupo de empresas OFI, según corresponda.\n\n Por lo general, actuamos como responsables del manejo de los datos personales. Sin embargo, en determinadas circunstancias, los socios comerciales pueden contratarnos para que les proporcionemos ciertos servicios de procesamiento relacionados con los datos personales. En estos casos, la recopilación y el uso de sus datos personales por parte del socio comercial se rigen por sus propias políticas de privacidad, y confiamos en sus declaraciones legales de que estamos autorizados a procesar los datos personales de la manera que proponen o demuestran.\n\n Como se explicó anteriormente, compartiremos su información personal para ciertos propósitos específicos. Cuando sus datos personales se transfieran fuera del EEE a una filial de OFI o a una entidad de un país que no esté sujeto a una decisión de adecuación de la Comisión de la UE, sus datos personales estarán protegidos por las salvaguardias transfronterizas aprobadas por la Comisión de la UE, incluidas las cláusulas contractuales normalizadas para la transferencia transfronteriza de datos</string>
     <string name="occupation_fs">Ocupación:</string>
     <string name="occupation_hint">Ocupación</string>
+    <string name="please_click_checkbox">Haga clic en todas las casillas de verificación correspondientes.</string>
+    <string name="clear">clara</string>
+    <string name="update_consent_statement">Actualizar la declaración de consentimiento</string>
 </resources>
 
