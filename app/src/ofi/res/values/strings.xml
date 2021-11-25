@@ -154,7 +154,8 @@
     <string name="new_place_name_placeholder">New place</string>
     <string name="Olam_Farmer_ID">Olam Farmer ID</string>
     <string name="Save">Save</string>
-    <string name="Add_Signature">Signature</string>
+    <string name="Add_Signature">Signature:</string>
+    <string name="Signature">Signature</string>
 
     <!-- Find a farmer related -->
     <!-- in XML -->
@@ -321,7 +322,7 @@
     </string>
     <string name="consentStatementCheck1">I confirm that the Farmer has listened to the Enumerator reading out the Personal Information Collection Notice and he has expressly given his consent for the collection, use, transfer outside of the jurisdiction and disclosure of his personal data by Olam for the purposes set out therein.</string>
     <string name="consentStatementCheck2">I confirm that the Farmer has listened to the Enumerator reading out the Personal Information Collection Notice and he has confirmed that he has the express consent from all other individuals whose personal data he has provided to be collected, used and disclosed for the stated purposes.</string>
-    <string name="consentStatementTitle">Personal Information Collection Notice</string>
+    <string name="consentStatementTitle">PERSONAL INFORMATION COLLECTION NOTICE</string>
     <string name="Please_accept_both_consents">You must accept both consent statements to save the farmer</string>
     <string name="farmer_id_min">The Olam farmer ID must be four digits long</string>
     <string name="app_updated_upload_first_message">There is a new update available for the app. To download it, you must sync all items first. Please click OK to sync all items, and then go to settings to update your app.</string>
@@ -592,7 +593,7 @@
     <string name="cs_page2_16">We may share your Farmer Data in support of studies by educational, governmental, and non-governmental organisations focused on local farmers, communities, agriculture, supply-chain, traceability, sustainability and related socially conscious studies in order to promote community collaboration and developments in the sustainability and traceability space. Such organisations may use your Farmer Data in their own electronic or published communications.</string>
     <string name="cs_page2_17">2.    When your Farmer Data is shared with third parties such as our customers and partners in furtherance of the Purpose and the specific uses consented to above, each of these customers and partners are data controllers in their own right and you consent to their use of your data as set forth above in Paragraph 1 and as detailed in the Privacy Statement. Should any of such customers and partners require use of your Farmer Data beyond the Purpose and specific uses consented to above, they may directly contact you to request for your further consent.</string>
     <string name="cs_page2_18">3.    You may withdraw consent given, request for access and/or correction of your Farmer Data and/or request for information regarding our policies and practices at any time by contacting us at <a href="privacy@ofi.com">privacy@ofi.com</a>. While no disclosure requested is obligatory, failure to supply your Farmer Data and/or subsequent withdrawal of your consent may affect our ability to provide certain services that you may have separately requested from us (as the case may be). For example, your address may be required not only to assist with traceability, but also for us to deliver certain materials to you such as farming supplies. In such instances where you revoke consent, we may retain such data in order to fulfil our contractual obligations to you but will not use such data for any other purpose.</string>
-    <string name="cs_page2_19">"4.    Our Farmer Data Privacy Statement is provided for your reference below. It explains how we handle and protect personal data. While your Farmer Data will be shared with the persons indicated above, your Farmer Data that is held by us will be kept confidential and in accordance with applicable privacy laws. "</string>
+    <string name="cs_page2_19">4.    Our Farmer Data Privacy Statement is provided for your reference below. It explains how we handle and protect personal data. While your Farmer Data will be shared with the persons indicated above, your Farmer Data that is held by us will be kept confidential and in accordance with applicable privacy laws. "</string>
     <string name="cs_page3_1">I,</string>
     <string name="cs_page3_2">hereby acknowledge that I have read, understood and agree to the collection and use of my Farmer Data as set forth in this Personal Information Collection Notice and the Farmer Data Privacy Statement and that: </string>
     <string name="cs_page3_3">"•   I have indicated with a “<b><i>✔</i></b>“ or “yes” in Paragraph 1 where I consent to the use and collection of my personal data for the specific purposes shown there.  "</string>
@@ -613,7 +614,16 @@
 •	Location data upon your allowing us access to your location in the application
 </string>
     <string name="cs_page5_6">For what purposes do we use your data? </string>
-    <string name="cs_page5_7">"We may use this data for the following purposes:  •\tProvide services to you such as agronomy advice, farming materials and access to farming related services such as financing, insurance, and logistics;  •\tFacilitate trading with you;  •\tPublication on ofi owned channels including websites, social media and prints;  •\tSupport our sustainability and traceability initiatives;  •\tIdentify trends in agriculture that will allow us to better operate our business and provide services to you;  •\tMarket and promote ofi products and corporate activities;   •\tSupport research initiatives by our partners to support community collaboration and advancements in the sustainability and traceability areas;  •\tDemonstrate our farmer services to potential investors and partners; and  •\tCommunicate with you and develop and manage our relationships with you and our business partners. "</string>
+    <string name="cs_page5_7">"We may use this data for the following purposes: \n
+        •   Provide services to you such as agronomy advice, farming materials and access to farming related services such as financing, insurance, and logistics;\n
+        •   Facilitate trading with you; \n
+        •   Publication on ofi owned channels including websites, social media and prints; \n
+        •   Support our sustainability and traceability initiatives; \n
+        •   Identify trends in agriculture that will allow us to better operate our business and provide services to you; \n
+        •   Market and promote ofi products and corporate activities;  \n
+        •   Support research initiatives by our partners to support community collaboration and advancements in the sustainability and traceability areas; \n
+        •   Demonstrate our farmer services to potential investors and partners; and \n
+        •   Communicate with you and develop and manage our relationships with you and our business partners. "</string>
     <string name="cs_page5_8">What is our legal basis for collecting and processing your data? </string>
     <string name="cs_page5_9">We will only collect and process this data, to conduct our business and pursue our legitimate interests as required by ofi and our affiliates and to comply with legal obligations. We rely on consent for few processing activities (like marketing communication) which can be revoked whenever the data subject requires.</string>
     <string name="cs_page5_10">Who will we share this data with?</string>
@@ -641,18 +651,18 @@
 
     <string name="allchilds_name">Child\’s Name (if consenting on behalf of a child)</string>
     <string name="full_farmer_name">Full Name</string>
-    <string name="date">Date</string>
+    <string name="date">Date:</string>
     <string name="olam_connect">Olam Connect</string>
     <string name="olam_contact">Olam Contact</string>
     <string name="digital_sign">Digital Signature</string>
     <string name="farmer_signature">Farmer Signature</string>
-    <string name="enum_sign">Staff Signature</string>
+    <string name="enum_sign">Staff Signature:</string>
     <string name="enum_name">Enumerator Name</string>
     <string name="farmer_sign_required">Please get signed by farmer</string>
     <string name="staff_sign_required">Please get signed by staff</string>
     <string name="updating_farmer_images">Updating Biometric Farmer Images</string>
     <string name="childs_name">Child\'s Name</string>
-    <string name="name">Name</string>
+    <string name="name">Name:</string>
     <string name="Please_accept_consent">You must accept consent statements to save the farmer</string>
     <string name="please_sign_within_the_boundary_box">Please sign within the boundary box</string>
 
@@ -854,7 +864,7 @@ Note that we can anonymise or aggregate any of the information we collect and us
 
 
     <string name="RandC">Requests &amp; Clarifications</string>
-    <string name="RandC_data">If you need any clarifications or have any requests with regards to personal information, we hold about you, please direct your queries to our Data Privacy team at privacy@ofi.com</string>
+    <string name="RandC_data">If you need any clarifications or have any requests with regards to personal information, we hold about you, please direct your queries to our Data Privacy team at <a href="privacy@ofi.com">privacy@ofi.com</a></string>
     <string name="gdpr">GDPR: Additional Information</string>
     <string name="gdpr_data">\n \nWhere GDPR is applicable and you are in the EU, and/or where the data controller is an ofi company established in the EU, then:\n  \n
         <u>Legal Basis for Processing</u>\n  \n
@@ -998,4 +1008,5 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="cs_page5_3">"It is ofi\’s policy to comply with all applicable privacy and data protection laws. Ofi will collect and use your data only for specified and legitimate purposes, process it in a manner consistent with such purposes, take reasonable steps to ensure that your data is accurate, complete and kept up-to-date (where necessary) and take appropriate measures to provide adequate protection for your data.\n\n<b> Data Controller</b> \n\n       The data controller for your information will be Olam International Limited incorporated in Singapore with company number 199504676H and the relevant affiliated entity in your country or otherwise within the ofi group of companies, as applicable. \n\n          We generally act as the data controller for personal data. However, in certain circumstances, Business Partners may engage us to provide them with certain processing services related to personal data. In such instances, the Business Partner’s collection and use of your personal data is governed by its own privacy policies and we rely on their legal representations that we are authorised to process personal data in the manner they propose or demonstrate. \n \n        As explained above, we will share your personal information for certain specified purposes. Where your personal information is transferred outside the EEA to an ofi affiliate or an entity in a country that is not subject to an adequacy decision by the EU Commission, your personal data will be protected by EU Commission approved cross-border safeguards including standard contractual clauses for cross-border data transfer.   "</string>
     <string name="occupation_fs">Occupation:</string>
     <string name="occupation_hint">Occupation</string>
+    <string name="please_click_checkbox">Please click all the appropriate checkboxes</string>
 </resources>

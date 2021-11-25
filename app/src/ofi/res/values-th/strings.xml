@@ -95,7 +95,8 @@
     <string name="new_place_name_placeholder">สถานที่ใหม่</string>
     <string name="Olam_Farmer_ID">รหัสเกษตรกร</string>
     <string name="Save">บันทึก</string>
-    <string name="Add_Signature">ลายเซ็นต์</string>
+    <string name="Add_Signature">ลายเซ็นต์:</string>
+    <string name="Signature">ลายเซ็นต์</string>
 
     <!-- Find a farmer related -->
     <!-- in XML -->
@@ -541,8 +542,8 @@
     <string name="farmer_consent">ความยินยอมของเกษตรกร</string>
     <string name="personal_info_collection">"ประกาศแจ้งเกี่ยวกับการรวบรวมข้อมูลส่วนบุคคล "</string>
     <string name="cs_page2_title">1.    การใช้ข้อมูลส่วนบุคคล</string>
-    <string name="cs_page2_1">We may use and share your personal data as follows</string>
-    <string name="cs_page2_2">คุณให้ความยินยอม</string>
+    <string name="cs_page2_1">เราอาจใช้และแชร์ข้อมูลส่วนบุคคลของคุณดังนี้</string>
+    <string name="cs_page2_2">คุณให้ความยินยอม หรือไม่ กรุณาทำ เครื่องหมาย “✔ “ หรือตอบ “ใช่”</string>
     <string name="cs_page2_3">การกรอกข้อมูลในระบบของ ofi</string>
     <string name="cs_page2_4">เราอาจทำการรวบรวมข้อมูลเกษตรกรเพื่อป้อนไปยังระบบการทำงานที่เกี่ยวข้องของ ofi โดยข้อมูล ของคุณอาจถูกจัดการและวิเคราะห์ผลเพื่อให้เราทราบข้อมูลที่สำคัญ เช่น แนวโน้มและประเด็น</string>
     <string name="cs_page2_5">การจัดช่องทางในการตรวจย้อนสำหรับตลาด</string>
@@ -594,7 +595,7 @@
     <string name="cs_page5_14">เรามีมาตรการใดบ้างเพื่อปกป้องข้อมูลของคุณ</string>
     <string name="cs_page5_15">ofi มีมาตรการป้องกันที่เหมาะสมเพื่อปกป้องความลับ รักษาความปลอดภัยและความสมบูรณ์ของข้อมูล ของคุณ แม้ว่าเราจะใช้มาตรการรักษาความปลอดภัยเพื่อปกป้องข้อมูลของคุณจากการถูกเปิดเผยโดยไม่ได้ รับอนุญาต แต่เราไม่สามารถรับประกันความปลอดภัยของข้อมูลทางอินเทอร์เน็ตได้ และจะไม่รับผิดชอบใด ๆ หากมีการละเมิดมาตรการรักษาความปลอดภัยที่เกินกว่าความสามารถในการควบคุมของเรา</string>
     <string name="cs_page5_16">"คุณมีสิทธิ์ใดบ้างเกี่ยวกับข้อมูลของคุณ "</string>
-    <string name="cs_page5_17">"คุณสามารถเลือกไม่แจ้งข้อมูลที่เราร้องขอ คุณมีสิทธิ์ในการร้องขอให้ ofi จัดหาสำเนาข้อมูลของคุณ และ ในการยืนยัน แก้ไขหรือจำกัดการประมวลผลข้อมูลของคุณ คุณสามารถแจ้ง ofi ให้หยุดใช้ภาพของคุณ ได้ทุกเมื่อ ซึ่งในกรณีนี้ภาพจะไม่ถูกต้องกับผลงานเผยแพร่ในอนาคต แต่ยังปรากฏอยู่ในผลงานเผยแพร่ ที่มีการเผยแพร่อยู่แล้ว คุณมีสิทธิ์ในการร้องเรียนได้ทุกเมื่อกับหน่วยงานปกป้องข้อมูลในพื้นที่ที่เกี่ยวข้อง สิทธิ์เหล่านี้อาจถูกจำกัดตามเงื่อนไขทางกฎหมาย หากคุณต้องการใช้สิทธิ์เหล่านี้ หรือมีข้อสงสัยใด ๆ เกี่ยวกับสิทธิ์เหล่านี้ สามารถติดต่อ ofi ได้ที่ privacy@ofi.com "</string>
+    <string name="cs_page5_17">"คุณสามารถเลือกไม่แจ้งข้อมูลที่เราร้องขอ คุณมีสิทธิ์ในการร้องขอให้ ofi จัดหาสำเนาข้อมูลของคุณ และ ในการยืนยัน แก้ไขหรือจำกัดการประมวลผลข้อมูลของคุณ คุณสามารถแจ้ง ofi ให้หยุดใช้ภาพของคุณ ได้ทุกเมื่อ ซึ่งในกรณีนี้ภาพจะไม่ถูกต้องกับผลงานเผยแพร่ในอนาคต แต่ยังปรากฏอยู่ในผลงานเผยแพร่ ที่มีการเผยแพร่อยู่แล้ว คุณมีสิทธิ์ในการร้องเรียนได้ทุกเมื่อกับหน่วยงานปกป้องข้อมูลในพื้นที่ที่เกี่ยวข้อง สิทธิ์เหล่านี้อาจถูกจำกัดตามเงื่อนไขทางกฎหมาย หากคุณต้องการใช้สิทธิ์เหล่านี้ หรือมีข้อสงสัยใด ๆ เกี่ยวกับสิทธิ์เหล่านี้ สามารถติดต่อ ofi ได้ที่ <a href="privacy@ofi.com">privacy@ofi.com</a>. "</string>
     <string name="cs_page5_18">"มีการเก็บรักษาข้อมูลของฉันไว้นานเท่าใด "</string>
     <string name="cs_page5_19">ofi มีการเก็บรักษาข้อมูลส่วนบุคคลของคุณตามระยะเวลาที่จำเป็นภายใต้วัตถุประสงค์ในการรวบรวมข้อมูล ดังกล่าว เว้นแต่กฎหมายจะกำหนดไว้เป็นอย่างอื่น ofi จะแจ้งกรอบเวลาในการเก็บรักษาข้อมูลส่วนบุคคล ของคุณให้ทราบเมื่อคุณร้องขอ</string>
     <string name="cs_page5_20">รายละเอียดติดต่อ</string>
@@ -612,22 +613,22 @@
 
     <string name="allchilds_name">ชื่อผู้เยาว์ (หากให้ความยินยอมในนามของผู้เยาว์):</string>
     <string name="full_farmer_name">ชื่อนามสกุล:</string>
-    <string name="date">วันที่</string>
+    <string name="date">วันที่:</string>
     <string name="olam_connect">Olam Connect</string>
     <string name="olam_contact">ข้อมูลติดต่อ Olam</string>
-    <string name="digital_sign">Digital ลายมือชื่อ</string>
-    <string name="farmer_signature">Farmer ลายมือชื่อ</string>
-    <string name="enum_sign">Staff ลายมือชื่อ</string>
-    <string name="enum_name">Enumerator ชื่อ</string>
-    <string name="farmer_sign_required">Please get signed by farmer</string>
-    <string name="staff_sign_required">Please get signed by staff</string>
+    <string name="digital_sign">ดิจิทัล ลายมือชื่อ</string>
+    <string name="farmer_signature">ชาวนา ลายมือชื่อ</string>
+    <string name="enum_sign">พนักงาน ลายมือชื่อ:</string>
+    <string name="enum_name">แจงนับ ชื่อ</string>
+    <string name="farmer_sign_required">กรุณาลงนามโดยชาวนา</string>
+    <string name="staff_sign_required">กรุณาลงนามโดยเจ้าหน้าที่</string>
     <string name="childs_name">ชื่อผู้เยาว์</string>
-    <string name="name">ชื่อ</string>
-    <string name="Please_accept_consent">You must accept consent statements to save the farmer</string>
+    <string name="name">ชื่อ:</string>
+    <string name="Please_accept_consent">คุณต้องยอมรับคำยินยอมเพื่อช่วยชาวนา</string>
 
 
     <!-- OFI Consent Consent -->
-    <string name="please_sign_within_the_boundary_box">Please sign within the boundary box</string>
+    <string name="please_sign_within_the_boundary_box">กรุณาลงชื่อในกล่องเขตแดน</string>
 
 
 
@@ -694,4 +695,7 @@
     <string name="cs_page5_2">นโยบายความเป็นส่วนตัวนี้กำหนดรูปแบบการจัดเก็บ ใช้งานและเปิดเผยข้อมูลของคุณที่รวบรวมไว้ผ่าน แอพพลิเคชั่นนี้ โดยถือเป็นเงื่อนไขเพิ่มเติม และควรศึกษาไปพร้อม ๆ กันกับคำแถลงนโยบายความเป็น ส่วนตัวของ ofi ที่ระบุแนวทางเพิ่มเติมต่าง ๆ ของเราในการจัดเก็บและใช้งานข้อมูลส่วนบุคคล ซึ่งข้อมูล ชุดนี้มีเผยแพร่ไว้ใน <a href="www.ofi.com/privacy.html.">www.ofi.com/privacy.html.</a></string>
     <string name="occupation_fs">อาชีพ:</string>
     <string name="occupation_hint">อาชีพ</string>
+    <string name="please_click_checkbox">โปรดคลิกช่องทำเครื่องหมายที่เหมาะสมทั้งหมด</string>
+    <string name="clear">แจ่มใส</string>
+    <string name="update_consent_statement">อัปเดตคำชี้แจงความยินยอม</string>
 </resources>

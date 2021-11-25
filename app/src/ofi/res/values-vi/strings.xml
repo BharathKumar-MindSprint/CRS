@@ -94,7 +94,8 @@
     <string name="new_place_name_placeholder">Địa điểm mới</string>
     <string name="Olam_Farmer_ID">Mã Nông hộ Olam</string>
     <string name="Save">Lưu lại</string>
-    <string name="Add_Signature">Ký tên</string>
+    <string name="Add_Signature">Ký tên:</string>
+    <string name="Signature">Ký tên</string>
 
     <!-- Find a farmer related -->
     <!-- in XML -->
@@ -541,7 +542,7 @@
     <string name="personal_info_collection">"THÔNG BÁO THU THẬP THÔNG TIN CÁ NHÂN "</string>
     <string name="cs_page2_title">1.    Sử dụng Dữ liệu Cá nhân</string>
     <string name="cs_page2_1">Chúng tôi có thể sử dụng và chia sẻ dữ liệu cá nhân của bạn như sau</string>
-    <string name="cs_page2_2">Bạn có đồng ý không? Vui lòng đánh dấu “✔ “</string>
+    <string name="cs_page2_2">Bạn có đồng ý không? Vui lòng đánh dấu “✔ “ vào hoặc "có"</string>
     <string name="cs_page2_3">Đưa vào các hệ thống liên quan đến OFI</string>
     <string name="cs_page2_4">Chúng tôi có thể thu thập Dữ liệu Nông dân để đưa vào các hệ thống liên quan đến OFI nơi dữ liệu của bạn có thể được sắp xếp và sau đó phân tích để cung cấp cho chúng tôi những hiểu biết quan trọng như xu hướng và các vấn đề ảnh hưởng đến chuỗi cung ứng cũng như cải thiện dịch vụ của chúng tôi cho bạn và khách hàng của chúng tôi. Để làm như vậy, nhân viên của OFI và các chi nhánh của OFI và một số người xử lý bên thứ 3 nhất định sẽ có quyền truy cập vào các Hệ thống liên quan đến OFI và Dữ liệu Nông dân của bạn. Dữ liệu Nông dân của bạn có thể được chia sẻ với các chi nhánh, đối tác và khách hàng của chúng tôi</string>
     <string name="cs_page2_5">Cung cấp khả năng truy xuất nguồn gốc cho thị trường</string>
@@ -591,7 +592,7 @@
     <string name="cs_page5_14">Chúng tôi có những biện pháp nào để bảo vệ dữ liệu của bạn?</string>
     <string name="cs_page5_15">OFI duy trì các biện pháp bảo vệ hợp lý để bảo vệ tính bí mật, bảo mật và tính toàn vẹn của dữ liệu của bạn. Mặc dù chúng tôi sử dụng các biện pháp bảo mật để giúp bảo vệ dữ liệu của bạn khỏi bị tiết lộ trái phép, nhưng chúng tôi không thể đảm bảo tính bảo mật của thông tin được cung cấp qua internet và sẽ không chịu trách nhiệm về những vi phạm bảo mật nằm ngoài tầm kiểm soát hợp lý của chúng tôi.</string>
     <string name="cs_page5_16">"Bạn có quyền gì liên quan đến dữ liệu của mình? "</string>
-    <string name="cs_page5_17">"Bạn có thể chọn không cung cấp dữ liệu mà chúng tôi yêu cầu. Bạn có quyền yêu cầu OFI một bản sao dữ liệu của bạn và xác minh, chỉnh sửa hoặc hạn chế việc xử lý chủ động dữ liệu của bạn. Bạn có thể yêu cầu OFI ngừng sử dụng hình ảnh của bạn bất kỳ lúc nào và trong trường hợp đó, hình ảnh sẽ không được sử dụng trong các ấn phẩm sau này nhưng có thể tiếp tục xuất hiện trên các ấn phẩm đã được lưu hành. Bạn có quyền khiếu nại bất cứ lúc nào với cơ quan bảo vệ dữ liệu trong khu vực liên quan. Các quyền này có thể bị giới hạn theo luật định. Nếu bạn muốn thực hiện các quyền này hoặc có bất kỳ câu hỏi nào về các quyền này, bạn có thể liên hệ với OFI tại privacy@ofi.com. "</string>
+    <string name="cs_page5_17">"Bạn có thể chọn không cung cấp dữ liệu mà chúng tôi yêu cầu. Bạn có quyền yêu cầu OFI một bản sao dữ liệu của bạn và xác minh, chỉnh sửa hoặc hạn chế việc xử lý chủ động dữ liệu của bạn. Bạn có thể yêu cầu OFI ngừng sử dụng hình ảnh của bạn bất kỳ lúc nào và trong trường hợp đó, hình ảnh sẽ không được sử dụng trong các ấn phẩm sau này nhưng có thể tiếp tục xuất hiện trên các ấn phẩm đã được lưu hành. Bạn có quyền khiếu nại bất cứ lúc nào với cơ quan bảo vệ dữ liệu trong khu vực liên quan. Các quyền này có thể bị giới hạn theo luật định. Nếu bạn muốn thực hiện các quyền này hoặc có bất kỳ câu hỏi nào về các quyền này, bạn có thể liên hệ với OFI tại <a href="privacy@ofi.com">privacy@ofi.com</a>. "</string>
     <string name="cs_page5_18">"Dữ liệu của bạn được lưu giữ trong bao lâu? "</string>
     <string name="cs_page5_19">Trừ khi có yêu cầu khác của pháp luật, OFI sẽ lưu giữ dữ liệu cá nhân của bạn trong khoảng thời gian cần thiết cho các mục đích mà dữ liệu được thu thập. OFI sẽ chia sẻ thông tin về khoảng thời gian lưu giữ dữ liệu cá nhân của bạn theo yêu cầu của bạn.</string>
     <string name="cs_page5_20">Chi tiết liên hệ</string>
@@ -609,21 +610,21 @@
 
     <string name="allchilds_name">Tên của trẻ (nếu đồng ý thay mặt cho trẻ):</string>
     <string name="full_farmer_name">Tên đầy đủ:</string>
-    <string name="date">Ngày</string>
+    <string name="date">Ngày:</string>
     <string name="olam_connect">Olam Connect</string>
     <string name="olam_contact">Người liên hệ Olam</string>
-    <string name="digital_sign">Digital Chữ ký</string>
-    <string name="farmer_signature">Farmer Chữ ký</string>
-    <string name="enum_sign">Staff Chữ ký</string>
+    <string name="digital_sign">kỹ thuật số Chữ ký</string>
+    <string name="farmer_signature">nông phu Chữ ký</string>
+    <string name="enum_sign">Nhân Viên Chữ ký:</string>
     <string name="enum_name">Enumerator Tên</string>
-    <string name="farmer_sign_required">Please get signed by farmer</string>
-    <string name="staff_sign_required">Please get signed by staff</string>
+    <string name="farmer_sign_required">Vui lòng có chữ ký của nông dân</string>
+    <string name="staff_sign_required">Vui lòng có chữ ký của nhân viên</string>
     <string name="childs_name">Tên của Trẻ</string>
-    <string name="name">Tên</string>
-    <string name="Please_accept_consent">You must accept consent statements to save the farmer</string>
+    <string name="name">Tên:</string>
+    <string name="Please_accept_consent">Bạn phải chấp nhận các tuyên bố đồng ý để cứu người nông dân</string>
 
     <!-- OFI Consent Consent -->
-    <string name="please_sign_within_the_boundary_box">Please sign within the boundary box</string>
+    <string name="please_sign_within_the_boundary_box">Vui lòng ký tên trong ô ranh giới</string>
 
 
 
@@ -693,4 +694,7 @@
     <string name="cs_page5_2">Chính sách về quyền riêng tư này quy định các chế độ thu thập, sử dụng và tiết lộ thông tin của bạn được thu thập trên ứng dụng. Nó bổ sung và nên được đọc cùng với Tuyên bố về Quyền Riêng tư của OFI, giải thích các cách bổ sung mà chúng tôi thu thập và sử dụng dữ liệu cá nhân và có sẵn trên <a href="www.ofi.com/privacy.html.">www.ofi.com/privacy.html.</a></string>
     <string name="occupation_fs">Nghề nghiệp:</string>
     <string name="occupation_hint">Nghề nghiệp</string>
+    <string name="please_click_checkbox">Vui lòng nhấp vào tất cả các hộp kiểm thích hợp</string>
+    <string name="clear">sạch</string>
+    <string name="update_consent_statement">Cập nhật Tuyên bố về sự đồng ý</string>
 </resources>

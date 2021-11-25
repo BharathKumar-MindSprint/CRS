@@ -94,7 +94,8 @@
     <string name="new_place_name_placeholder">​ສ​ະ​ຖານ​ທີ​ໃໝ່</string>
     <string name="Olam_Farmer_ID">ເລກ​ບັດ​ຊາວ​ສວນ​ໂອ​ລາມ</string>
     <string name="Save">ເສັບ</string>
-    <string name="Add_Signature">ລາຍ​ເຊັນ</string>
+    <string name="Add_Signature">ລາຍ​ເຊັນ:</string>
+    <string name="Signature">ລາຍ​ເຊັນ</string>
 
     <!-- Find a farmer related -->
     <!-- in XML -->
@@ -527,7 +528,7 @@
     <string name="farmer_consent">ຄວາມຍິນຍອມຈາກຊາວກະສິກອນ</string>
     <string name="personal_info_collection">ແຈ້ງການກ່ຽວກັບການຮວບວມຂໍ້ມູນສ່ວນຕົວ</string>
     <string name="cs_page2_1">ພວກເຮົາອາດຈະໃຊ້ ແລະ ແບ່ງປັນຂໍ້ມູນສ່ວນຕົວຂອງທ່ານດັ່ງຕໍ່ໄປນີ້</string>
-    <string name="cs_page2_2">ທ່ານໃຫ້ການຍິນຍອມບໍ? ກະລຸນາໝາຍ “✔ “</string>
+    <string name="cs_page2_2">ທ່ານໃຫ້ການຍິນຍອມບໍ? ກະລຸນາໝາຍ “✔ “ຫຼື “ແມ່ນແລ້ວ”</string>
     <string name="cs_page2_3">ການເພີ່ມເຂົ້າສູ່ລະບົບທີ່ເຊື່ອມກັບ ofi</string>
     <string name="cs_page2_4">ພວກເຮົາອາດຈະຮວບຮວມຂໍ້ມູນຊາວກະສິກອນເພື່ອ ເພີ່ມເຂົ້າລະບົບທີ່ເຊື່ອມກັບ ofi, ບ່ອນທີ່ຂໍ້ມູນຂອງທ່ານໄດ້ຮັບການຈັດການ ແລະ ໄດ້ຮັບການວິເຄາະເພື່ອໃຫ້ຂໍ້ມູນເຊີງເລິກທີ່ສຳຄັນແກ່ພວກເຮົາເຊັ່ນ: ແນວໂນ້ມ ແລະ ບັນຫາທີ່ສົ່ງຜົນກະທົບຕໍ່ຕ່ອງໂສ້ການສະໜອງ, ພ້ອມທັງປັບປຸງການບໍລິການຂອງພວກເຮົາທີ່ມີໃຫ້ແກ່ທ່ານ ແລະ ລູກຄ້າຂອງພວກເຮົາ. ໃນການດຳເນີນການດັ່ງກ່າວ, ພະນັກງານຂອງ ofi ແລະ ບໍລິສັດໃນເຄືອ ແລະ ຜູ້ດຳເນີນການພາຍນອກບາງສ່ວນຈະສາມາດເຂົ້າເຖິງລະບົບທີ່ເຊື່ອມກັບ ofi ດັ່ງກ່າວ ແລະ ຂໍ້ມູນຊາວກະສິກອນຂອງທ່ານ. ຂໍ້ມູນຊາວກະສິກອນຂອງທ່ານອາດຈະຖືກແບ່ງປັນກັບບໍລິສັດໃນເຄືອ, ຫຸ້ນສ່ວນ ແລະ ລູກຄ້າຂອງພວກເຮົາ.</string>
     <string name="cs_page2_5">ການໃຫ້ຄວາມສາມາດໃນການກວດສອບຄືນແກ່ຕະຫຼາດ</string>
@@ -577,7 +578,7 @@
     <string name="cs_page5_14">ພວກເຮົາມີມາດຕະການແນວໃດໃນການປົກປ້ອງຂໍ້ມູນຂອງທ່ານ?</string>
     <string name="cs_page5_15">Ofi ຮັກສາມາດຕະການປ້ອງກັນຄວາມປອດໄພຢ່າງສົມເຫດສົມຜົນເພື່ອປົກປ້ອງຄວາມລັບ, ຄວາມປອດໄຟ ແລະ ຄວາມສົມບູນຂອງຂໍ້ມູນຂອງທ່ານ. ເຖິງແມ່ນວ່າພວກເຮົາໃຊ້ມາດຕະການຮັກສາຄວາມປອດໄພເພື່ອຊ່ວຍປົກປ້ອງຂໍ້ມູນຂອງທ່ານຕໍ່ກັບການເປີດເຜີຍທີ່ບໍ່ໄດ້ຮັບອະນຸຍາດ, ພວກເຮົາບໍ່ສາມາດຮັບປະກັນຄວາມປອດໄພຂອງຂໍ້ມູນທີ່ມີໃຫ້ໃນອິນເຕີເນັດ ແລະ ຈະບໍ່ຮັບຜິດຊອບຕໍ່ກັບການລະເມີດຄວາມປອດໄພທີ່ນອກເໜືອຈາກການຄວບຄຸມທີ່ສົມເຫດສົມຜົນຂອງພວກເຮົາ.</string>
     <string name="cs_page5_16">"ທ່ານມີສິດແນວໃດຕໍ່ກັບຂໍ້ມູນຂອງທ່ານ? "</string>
-    <string name="cs_page5_17">"ທ່ານສາມາດເລືອກທີ່ຈະບໍ່ໃຫ້ຂໍ້ມູນທີ່ພວກເຮົາຂໍ. ທ່ານມີສິດໃນການຂໍເອກະສານສະບັບສຳເນົາຈາກ ofi ແລະ ເພື່ອກວດສອບ, ແກ້ໄຂ ຫຼື ຈຳກັດການປະມວນຜົນຂໍ້ມູນຂອງທ່ານທີ່ຍັງໃຊ້ງານຢູ່. ທ່ານສາມາດຂໍໃຫ້ ofi ຢຸດນຳໃຊ້ຮູບພາບຂອງທ່ານໄດ້ຕະຫຼອດເວລາ, ໃນກໍລະນີນັ້ນມັນຈະບໍ່ຖືກໃຊ້ໃນສື່ພິມໃນອະນາຄົດ, ແຕ່ອາດຈະສືບຕໍ່ປາກົດຢູ່ໃນສິ່ງພິມທີ່ໄດ້ເຜີຍແຜ່ຢູ່ແລ້ວ. ທ່ານມີສິດໃນການດຳເນີນຄຳຮ້ອງທຸກກັບໜ່ວຍງານຄຸ້ມຄອງຂໍ້ມູນໃນຂົງເຂດຂອງທ່ານໄດ້ຕະຫຼອດເວລາ. ສິດເຫຼົ່ານີ້ອາດຈະຖືກຈຳກັດໃນກົດໝາຍ. ຖ້າຫາກທ່ານຕ້ອງການນຳໃຊ້ສິດເຫຼົ່ານີ້ ຫຼື ມີຄຳຖາມກ່ຽວກັບພວກມັນ, ທ່ານສາມາດຕິດຕໍ່ ofi ທີ່ privacy@ofi.com. "</string>
+    <string name="cs_page5_17">"ທ່ານສາມາດເລືອກທີ່ຈະບໍ່ໃຫ້ຂໍ້ມູນທີ່ພວກເຮົາຂໍ. ທ່ານມີສິດໃນການຂໍເອກະສານສະບັບສຳເນົາຈາກ ofi ແລະ ເພື່ອກວດສອບ, ແກ້ໄຂ ຫຼື ຈຳກັດການປະມວນຜົນຂໍ້ມູນຂອງທ່ານທີ່ຍັງໃຊ້ງານຢູ່. ທ່ານສາມາດຂໍໃຫ້ ofi ຢຸດນຳໃຊ້ຮູບພາບຂອງທ່ານໄດ້ຕະຫຼອດເວລາ, ໃນກໍລະນີນັ້ນມັນຈະບໍ່ຖືກໃຊ້ໃນສື່ພິມໃນອະນາຄົດ, ແຕ່ອາດຈະສືບຕໍ່ປາກົດຢູ່ໃນສິ່ງພິມທີ່ໄດ້ເຜີຍແຜ່ຢູ່ແລ້ວ. ທ່ານມີສິດໃນການດຳເນີນຄຳຮ້ອງທຸກກັບໜ່ວຍງານຄຸ້ມຄອງຂໍ້ມູນໃນຂົງເຂດຂອງທ່ານໄດ້ຕະຫຼອດເວລາ. ສິດເຫຼົ່ານີ້ອາດຈະຖືກຈຳກັດໃນກົດໝາຍ. ຖ້າຫາກທ່ານຕ້ອງການນຳໃຊ້ສິດເຫຼົ່ານີ້ ຫຼື ມີຄຳຖາມກ່ຽວກັບພວກມັນ, ທ່ານສາມາດຕິດຕໍ່ ofi ທີ່ <a href="privacy@ofi.com">privacy@ofi.com</a>. "</string>
     <string name="cs_page5_18">"ທ່ານຈະເກັບຂໍ້ມູນຂອງຂ້າພະເຈົ້າໄວ້ດົນປານໃດ? "</string>
     <string name="cs_page5_19">ຍົກເວັ້ນຕາມທີ່ຮຽກຮ້ອງໂດຍກົດໝາຍ, ofi ຈະເກັບຮັກສາຂໍ້ມູນສ່ວນຕົວຂອງທ່ານຕາມໄລຍະເວລາທີ່ຈຳເປັນຕໍ່ກັບຈຸດປະສົງທີ່ຂໍ້ມູນນັ້ນໄດ້ຖືກຮວບຮວມ. Ofi ຈະແບ່ງປັນໄລຍະການເກັບຮັກສາຂໍ້ມູນສ່ວນຕົວຂອງທ່ານຕາມຄຳຂໍຂອງທ່ານ.</string>
     <string name="cs_page5_20">ລາຍລະອຽດລາຍຊື່ຕິດຕໍ່</string>
@@ -595,23 +596,23 @@
 
     <string name="allchilds_name">ຊື່ຂອງເດັກ (ຖ້າຫາກໃຫ້ການຍິນຍອມໃນນາມຂອງເດັກ):</string>
     <string name="full_farmer_name">ຊື່ເຕັມ</string>
-    <string name="date">ວັນທີ</string>
+    <string name="date">ວັນທີ:</string>
     <string name="olam_connect">Olam Connect</string>
     <string name="olam_contact">ຂໍ້ມູນຕິດຕໍ່ຂອງບໍລິສັດ Olam</string>
     <string name="digital_sign">Digital ລາຍເຊັນ</string>
     <string name="farmer_signature">Farmer ລາຍເຊັນ</string>
-    <string name="enum_sign">Staff ລາຍເຊັນ</string>
+    <string name="enum_sign">Staff ລາຍເຊັນ:</string>
     <string name="enum_name">Enumerator ຊື່</string>
     <string name="farmer_sign_required">Please get signed by farmer</string>
     <string name="staff_sign_required">Please get signed by staff</string>
     <string name="childs_name">ຊື່ເດັກ</string>
-    <string name="name">ຊື່</string>
+    <string name="name">ຊື່:</string>
     <string name="Please_accept_consent">You must accept consent statements to save the farmer</string>
 
 
 
     <!-- OFI Consent Consent -->
-    <string name="please_sign_within_the_boundary_box">Please sign within the boundary box</string>
+    <string name="please_sign_within_the_boundary_box">ກະລຸນາລົງຊື່ພາຍໃນປ່ອງຂອບເຂດ</string>
 
 
     <string name="matching_farmer_records">ການຈັບຄູ່ບັນທຶກຊາວກະສິກອນ</string>
@@ -680,4 +681,7 @@
     <string name="cs_page5_2">ນະໂຍບາຍຄວາມເປັນສ່ວນຕົວນີ້ກຳນົດຮູບແບບການຮວບຮວມ, ການນຳໃຊ້ ແລະ ການເປີດເຜີຍຂໍ້ມູນຂອງທ່ານທີ່ໄດ້ເກັບກຳຈາກການສະໝັກ. ມັນເປັນສ່ວນເສີມ ແລະ ຄວນອ່ານຮ່ວມກັນກັບຖະແຫຼງການຄວາມເປັນສ່ວນຕົວຂອງ ofi, ເຊິ່ງອະທິບາຍວິທີການເພີ່ມເຕີມທີ່ພວກເຮົາຮວບຮວມ ແລະ ນຳໃຊ້ຂໍ້ມູນສ່ວນຕົວ ແລະ ມີໃຫ້ທີ່ <a href="www.ofi.com/privacy.html.">www.ofi.com/privacy.html.</a>.</string>
     <string name="occupation_fs">ອາຊີບ:</string>
     <string name="occupation_hint">ອາຊີບ</string>
+    <string name="please_click_checkbox">ກະ​ລຸ​ນາ​ຄລິກ​ໃສ່​ປ່ອງ​ທີ່​ເຫມາະ​ສົມ​ທັງ​ຫມົດ​</string>
+    <string name="clear">ຈະແຈ້ງ</string>
+    <string name="update_consent_statement">ອັບເດດຄໍາຖະແຫຼງການຍິນຍອມ</string>
 </resources>
