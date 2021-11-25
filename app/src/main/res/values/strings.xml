@@ -321,7 +321,7 @@
     </string>
     <string name="consentStatementCheck1">I confirm that the Farmer has listened to the Enumerator reading out the Personal Information Collection Notice and he has expressly given his consent for the collection, use, transfer outside of the jurisdiction and disclosure of his personal data by Olam for the purposes set out therein.</string>
     <string name="consentStatementCheck2">I confirm that the Farmer has listened to the Enumerator reading out the Personal Information Collection Notice and he has confirmed that he has the express consent from all other individuals whose personal data he has provided to be collected, used and disclosed for the stated purposes.</string>
-    <string name="consentStatementTitle">Personal Information Collection Notice</string>
+    <string name="consentStatementTitle">PERSONAL INFORMATION COLLECTION NOTICE</string>
     <string name="Please_accept_both_consents">You must accept both consent statements to save the farmer</string>
     <string name="farmer_id_min">The Olam farmer ID must be four digits long</string>
     <string name="app_updated_upload_first_message">There is a new update available for the app. To download it, you must sync all items first. Please click OK to sync all items, and then go to settings to update your app.</string>
@@ -647,18 +647,18 @@
     <string name="consent_statement_pageone1">It is requested for you to supply Olam International Limited (hereafter referred to as “Olam,” “us,” or “we”) with personal data in support of Olam’s efforts to promote sustainability and traceability in the supply chain and in-turn to promote responsible trade with farmers such as yourself around the globe (the “Purpose”). </string>
 
 
-    <string name="full_farmer_name">Full Name</string>
-    <string name="date">Date</string>
+    <string name="full_farmer_name">Full Name:</string>
+    <string name="date">Date:</string>
     <string name="olam_connect">Olam Connect</string>
     <string name="olam_contact">Olam Contact</string>
     <string name="digital_sign">Digital Signature</string>
     <string name="farmer_signature">Farmer Signature</string>
-    <string name="enum_sign">Staff Signature</string>
+    <string name="enum_sign">Staff Signature:</string>
     <string name="enum_name">Enumerator Name</string>
     <string name="farmer_sign_required">Please get signed by farmer</string>
     <string name="staff_sign_required">Please get signed by staff</string>
     <string name="childs_name">Child\'s Name</string>
-    <string name="name">Name</string>
+    <string name="name">Name:</string>
     <string name="Please_accept_consent">You must accept consent statements to save the farmer</string>
     <string name="please_sign_within_the_boundary_box">Please sign within the boundary box</string>
 
@@ -906,5 +906,5 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
 
     <string name="privacy_cache_offline">You\'re offline. Please switch on your network to view the latest privacy statement</string>
     <string name="privacy_no_cache_offline">You\'re offline. Please switch on your network to view the privacy statement</string>
-
+    <string name="please_click_checkbox">Please click all the appropriate checkboxes</string>
 </resources>

@@ -221,7 +221,7 @@ public class ConsentStatementActivity extends BaseActivity implements View.OnCli
                     if(page == 2){
                         if(!cb_sc1.isChecked() || !cb_sc3.isChecked()  || !cb_sc4.isChecked() ||
                                 !cb_sc5.isChecked() || !cb_sc6.isChecked() || !cb_sc7.isChecked() ){
-                            Toast.makeText(ConsentStatementActivity.this, "Please click all the appropriate checkboxes", Toast.LENGTH_LONG).show();
+                            Toast.makeText(ConsentStatementActivity.this, getResources().getString(R.string.please_click_checkbox), Toast.LENGTH_LONG).show();
                             return;
                         }
                         nextsavebtn.setClickable(false);

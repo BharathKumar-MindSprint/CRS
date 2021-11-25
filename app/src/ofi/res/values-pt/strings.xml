@@ -94,7 +94,8 @@
     <string name="new_place_name_placeholder">Novo local</string>
     <string name="Olam_Farmer_ID">ID Olam do produtor</string>
     <string name="Save">Salve</string>
-    <string name="Add_Signature">Assinatura</string>
+    <string name="Add_Signature">Assinatura:</string>
+    <string name="Signature">Assinatura</string>
 
     <!-- Find a farmer related -->
     <!-- in XML -->
@@ -545,7 +546,7 @@
     <string name="farmer_consent">CONSENTIMENTO DO AGRICULTOR</string>
     <string name="personal_info_collection">"COMUNICAÇÃO DE RECOLHA DE INFORMAÇÕES PESSOAIS "</string>
     <string name="cs_page2_1">Podemos usar e compartilhar seus dados pessoais da seguinte forma</string>
-    <string name="cs_page2_2">Concorda? Assinale \"✔ \"</string>
+    <string name="cs_page2_2">Concorda? Assinale \"✔ \" Ou "sim"</string>
     <string name="cs_page2_3">População de sistemas relacionados com ofi</string>
     <string name="cs_page2_4">Podemos recolher dados do agricultor para popularizar sistemas relacionados com o ofi onde seus dados podem ser organizados e depois analisados para nos dar percepções, tais como tendências e questões que afectam a cadeia de abastecimentos, bem como melhorar nossos serviços para contigo e nossos clientes. Para isso, os funcionários da ofi e seus afiliados e alguns processadores de terceiros terão acesso a tais sistemas relacionados e teus dados de agricultor. Seus Dados de Agricultor podem ser compartilhados com nossos afiliados, parceiros e clientes.</string>
     <string name="cs_page2_5">Garantir a rastreabilidade do mercado</string>
@@ -565,7 +566,7 @@
     <string name="cs_page4_1">ONDE O AVISO É LIDO AO INDIVÍDUO PELO FUNCIONÁRIO/REPRESENTANTE DA ofi:</string>
     <string name="cs_page4_2">Confirmo que o Participante me ouviu ler o Aviso de Recolha de Informações Pessoais e deu expressamente seu consentimento para a recolha, uso, transferência fora da jurisdição e divulgação de seus dados pessoais pela ofi para os fins nele estabelecidos.</string>
     <string name="cs_page5_1">Declaração de Privacidade de Dados do Agricultor</string>
-    <string name="cs_page5_3">É política da ofi cumprir todas as leis aplicáveis de privacidade e protecção de dados. A ofi irá recolher e usar seus dados apenas para fins especificados e legítimos, processá-los de maneira consistente com tais fins, tomar medidas razoáveis para garantir que seus dados sejam precisos, completos e mantidos actualizados (quando necessário) e tomar as medidas apropriadas para fornecer protecção adequada para seus dados.\n\n<b>Controlador de Dados</b>\n\n O controlador de dados para sua informação será a Olam International Limited, incorporada em Cingapura com o número da empresa 199504676H e a entidade afiliada relevante em seu país ou de outra forma dentro do grupo de empresas da ofi, conforme aplicável.\n\n Geralmente actuamos como o controlador de dados pessoais. No entanto, em certas circunstâncias, os Parceiros de Negócios podem nos contratar para fornecer certos serviços de processamento relacionados a dados pessoais. Nesses casos, a recolha e o uso de seus dados pessoais pelo Parceiro de Negócios são regidos por suas próprias políticas de privacidade e contamos com suas representações legais de que estamos autorizados a processar dados pessoais da maneira que propõem ou demonstram.\n\nConforme explicado acima, compartilharemos suas informações pessoais para determinados fins específicos. Quando suas informações pessoais são transferidas para fora da EEA para uma afiliada da ofi ou uma entidade em um país que não está sujeito a uma decisão de adequação pela Comissão da UE, seus dados pessoais serão protegidos por salvaguardas transfronteiriças aprovadas pela Comissão da UE, incluindo cláusulas contratuais padrão para transferência de dados além-fronteiras.\n\n</string>
+    <string name="cs_page5_3">É política da ofi cumprir todas as leis aplicáveis de privacidade e protecção de dados. A ofi irá recolher e usar seus dados apenas para fins especificados e legítimos, processá-los de maneira consistente com tais fins, tomar medidas razoáveis para garantir que seus dados sejam precisos, completos e mantidos actualizados (quando necessário) e tomar as medidas apropriadas para fornecer protecção adequada para seus dados.\n\n<b>Controlador de Dados</b>\n\n O controlador de dados para sua informação será a Olam International Limited, incorporada em Cingapura com o número da empresa 199504676H e a entidade afiliada relevante em seu país ou de outra forma dentro do grupo de empresas da ofi, conforme aplicável.\n\n Geralmente actuamos como o controlador de dados pessoais. No entanto, em certas circunstâncias, os Parceiros de Negócios podem nos contratar para fornecer certos serviços de processamento relacionados a dados pessoais. Nesses casos, a recolha e o uso de seus dados pessoais pelo Parceiro de Negócios são regidos por suas próprias políticas de privacidade e contamos com suas representações legais de que estamos autorizados a processar dados pessoais da maneira que propõem ou demonstram.\n\nConforme explicado acima, compartilharemos suas informações pessoais para determinados fins específicos. Quando suas informações pessoais são transferidas para fora da EEA para uma afiliada da ofi ou uma entidade em um país que não está sujeito a uma decisão de adequação pela Comissão da UE, seus dados pessoais serão protegidos por salvaguardas transfronteiriças aprovadas pela Comissão da UE, incluindo cláusulas contratuais padrão para transferência de dados além-fronteiras.</string>
     <string name="cs_page5_4">Que Dados Recolhemos?</string>
     <string name="cs_page5_5">Podemos recolher e processar dados pessoais seus, incluindo, mas não se limitando a:\n
         •	Fotografias, vídeos e outras imagens (onde sua identidade pessoal seja claramente identificável);
@@ -595,7 +596,7 @@
     <string name="cs_page5_14">Que medidas temos em vigor para proteger seus dados?</string>
     <string name="cs_page5_15">A ofi mantém salvaguardas razoáveis para proteger a confidencialidade, segurança e integridade de seus dados. Embora usemos medidas de segurança para ajudar a proteger seus dados contra divulgação não autorizada, não podemos garantir a segurança das informações fornecidas pela Internet e não seremos responsáveis por violações de segurança além de nosso controlo razoável.</string>
     <string name="cs_page5_16">Que direitos tem em relação aos seus dados?</string>
-    <string name="cs_page5_17">Poderá optar por não fornecer os dados que solicitamos. Tens o direito de solicitar uma cópia de seus dados e de verificar, corrigir ou restringir o processamento activo de seus dados. Poderá pedir ofi para parar de usar suas imagens a qualquer momento, caso em que não serão usadas em publicações futuras, mas podem continuar a aparecer em publicações já em circulação. Tens o direito de fazer uma reclamação a qualquer momento à autoridade de protecção de dados da região em questão. Esses direitos podem ser limitados por lei. Se desejar exercer esses direitos ou tiver alguma dúvida sobre eles, entre em contato com a ofi no privacy@ofi.com.</string>
+    <string name="cs_page5_17">Poderá optar por não fornecer os dados que solicitamos. Tens o direito de solicitar uma cópia de seus dados e de verificar, corrigir ou restringir o processamento activo de seus dados. Poderá pedir ofi para parar de usar suas imagens a qualquer momento, caso em que não serão usadas em publicações futuras, mas podem continuar a aparecer em publicações já em circulação. Tens o direito de fazer uma reclamação a qualquer momento à autoridade de protecção de dados da região em questão. Esses direitos podem ser limitados por lei. Se desejar exercer esses direitos ou tiver alguma dúvida sobre eles, entre em contato com a ofi no <a href="privacy@ofi.com">privacy@ofi.com</a>.</string>
     <string name="cs_page5_18">Por quanto tempo reterá meus dados?</string>
     <string name="cs_page5_19">Excepto se de outra forma exigido por lei, a ofi manterá seus dados pessoais pelo período necessário para os fins para os quais os dados foram recolhidos. A ofi compartilhará o período de retenção de seus dados pessoais mediante solicitação.</string>
     <string name="cs_page5_20">Dados do contacto</string>
@@ -613,22 +614,22 @@
 
     <string name="allchilds_name">Nome da criança (se consentir em nome de uma criança):</string>
     <string name="full_farmer_name">Nome completo</string>
-    <string name="date">Data</string>
+    <string name="date">Data:</string>
     <string name="olam_connect">Olam Connect</string>
     <string name="olam_contact">Contato na Olam</string>
     <string name="digital_sign">Digital Assinatura</string>
     <string name="farmer_signature">Farmer Assinatura</string>
-    <string name="enum_sign">Staff Assinatura</string>
+    <string name="enum_sign">Staff Assinatura:</string>
     <string name="enum_name">Enumerator Nome</string>
     <string name="farmer_sign_required">Please get signed by farmer</string>
     <string name="staff_sign_required">Please get signed by staff</string>
     <string name="childs_name">Nome do filho</string>
-    <string name="name">Nome</string>
+    <string name="name">Nome:</string>
     <string name="Please_accept_consent">You must accept consent statements to save the farmer</string>
 
 
     <!-- OFI Consent Consent -->
-    <string name="please_sign_within_the_boundary_box">Please sign within the boundary box</string>
+    <string name="please_sign_within_the_boundary_box">Por favor, assine dentro da caixa limite</string>
 
 
 
@@ -703,6 +704,7 @@
     <string name="cs_page5_2">Esta política de privacidade estabelece os modos de recolha, utilização e divulgação de suas informações recolhidas no aplicativo. É um complemento e deve ser lido em conjunto com a Declaração de Privacidade da ofi, que explica maneiras adicionais de recolher e usar dados pessoais e está disponível no <a href="www.ofi.com/privacy.html.">www.ofi.com/privacy.html.</a></string>
     <string name="occupation_fs">Ocupação:</string>
     <string name="occupation_hint">Ocupação</string>
-
-
+    <string name="please_click_checkbox">Por favor, clique em todas as caixas de seleção apropriadas</string>
+    <string name="clear">clara</string>
+    <string name="update_consent_statement">Atualizar declaração de consentimento</string>
 </resources>

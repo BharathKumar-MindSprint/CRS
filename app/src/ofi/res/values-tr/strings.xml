@@ -94,7 +94,8 @@
     <string name="new_place_name_placeholder">Yeni yer</string>
     <string name="Olam_Farmer_ID">Olam Çiftçi Tanıtım No</string>
     <string name="Save">Kaydet</string>
-    <string name="Add_Signature">İmza</string>
+    <string name="Add_Signature">İmza:</string>
+    <string name="Signature">İmza</string>
 
     <!-- Find a farmer related -->
     <!-- in XML -->
@@ -540,7 +541,7 @@
     <string name="farmer_consent">ÇİFTÇİ MUVAFAKATNAMESİ</string>
     <string name="personal_info_collection">"KİŞİSEL BİLGİ TOPLAMA BİLDİRİMİ "</string>
     <string name="cs_page2_title">1.    Kişisel Verilerin Kullanımı</string>
-    <string name="cs_page2_1">We may use and share your personal data as follows</string>
+    <string name="cs_page2_1">Kişisel verilerinizi aşağıdaki gibi kullanabilir ve paylaşabiliriz</string>
     <string name="cs_page2_2">İzin veriyor musunuz ? Lütfen “✔” işareti koyun ya da “evet” yazın</string>
     <string name="cs_page2_3">Verilerin ofi ile ilişkili sistemlere girilmesi</string>
     <string name="cs_page2_4">Çiftçi Verilerini, tedarik zincirini etkileyen trend ve sorunlar gibi konularda önemli bilgiler edinmek ve size ve müşterilerimize sunduğumuz hizmetleri iyileştirmek amacıyla düzenlenip analiz edildiği ofi ile ilişkili sistemlere girmek için toplayabiliriz. Bunun yapılabilmesi için söz konusu ofi ile ilişkili Sistemlere ve Çiftçi Verilerine, ofi ve iştiraklerinin yanı sıra belirli 3. kişi işlemcilerin çalışanları erişim sahibi olur. Çiftçi Verileriniz; iştiraklerimiz, iş ortaklarımız ve müşterilerimizle paylaşılabilir.</string>
@@ -563,7 +564,7 @@
     <string name="cs_page4_1">"BEYANIN KİŞİYE ofi PERSONELİ/TEMSİLCİSİ TARAFINDAN SESLİ OLARAK OKUNDUĞU DURUMLARDA: "</string>
     <string name="cs_page4_2">"Katılımcının Kişisel Bilgi Toplama Beyanını okuduğum sırada beni dinlediğini ve kişisel verilerinin ofi tarafından burada belirtilen amaçlar için toplanması, kullanılması, yetki alanı dışına aktarılmasına ve açıklanmasına açık rıza verdiğini tasdik ederim. "</string>
     <string name="cs_page5_1">Çiftçi Verileri Gizlilik Beyanı</string>
-    <string name="cs_page5_3">Ofi politikası gereği yürürlükteki tüm gizlilik ve veri koruma kanunlarına uymaktadır. Ofi, kişisel verilerinizi yalnızca belirtilen ve  amaçlar için toplar ve kullanır, bu amaçlara uygun bir şekilde işler, verilerinizin doğru ve tam olduğundan ve güncel tutulduğundan (gerektiğinde) emin olmak için makul adımlar atar ve verilerinize yeterli koruma sağlamak için uygun önlemler alır.\n\n<b>Veri Sorumlusu</b>\n\n Bilgilerinizin veri sorumlusu uygun olduğu üzere 199504676H şirket numarasıyla Singapur\'da kurulu bulunan Olam International Limited ve ülkenizde bulunan ya da ofi şirketlyer grubu bünyesindeki ilgili iştirak olacaktır.\n\n Kişisel veriler için genelde biz veri sorumlusu olarak hareket ediyoruz. Ancak bazı durumlarda İş Ortaklarımız kendilerine kişisel verilerle ilgili belirli işleme hizmetleri sunmamız için bizi görevlendirebiliyor. Böyle durumlarda kişisel verilerinizin İş Ortağı tarafından toplaması ve kullanması onun gizlilik politikalarına göre yönetilir ve kişisel verileri İş Ortağının önerdiği veya gösterdiği şekilde işlemek için yetkili olduğumuz konusunda onun yasal beyanlarını dayanak alırız. Yukarıda açıklandığı gibi, kişisel bilgilerinizi kati şekilde belirlenmiş amaçlar için paylaşırız. Kişisel bilgilerinizin AEA dışına, AB Komisyonunun aldığı bir yeterlilik kararına tabi olmayan bir ülkedeki bir ofi iştiraki veya kurumuna aktarıldığı durumlarda, kişisel verileriniz sınır ötesi veri aktarımına yönelik standart sözleşme maddeleri de dahil olmak üzere AB Komisyonunun onayladığı sınır ötesi korumalarla korunur.</string>
+    <string name="cs_page5_3">Ofi politikası gereği yürürlükteki tüm gizlilik ve veri koruma kanunlarına uymaktadır. Ofi, kişisel verilerinizi yalnızca belirtilen ve  amaçlar için toplar ve kullanır, bu amaçlara uygun bir şekilde işler, verilerinizin doğru ve tam olduğundan ve güncel tutulduğundan (gerektiğinde) emin olmak için makul adımlar atar ve verilerinize yeterli koruma sağlamak için uygun önlemler alır.\n\n<b>Veri Sorumlusu</b>\n\n Bilgilerinizin veri sorumlusu uygun olduğu üzere 199504676H şirket numarasıyla Singapur\'da kurulu bulunan Olam International Limited ve ülkenizde bulunan ya da ofi şirketlyer grubu bünyesindeki ilgili iştirak olacaktır.\n\n Kişisel veriler için genelde biz veri sorumlusu olarak hareket ediyoruz. Ancak bazı durumlarda İş Ortaklarımız kendilerine kişisel verilerle ilgili belirli işleme hizmetleri sunmamız için bizi görevlendirebiliyor. Böyle durumlarda kişisel verilerinizin İş Ortağı tarafından toplaması ve kullanması onun gizlilik politikalarına göre yönetilir ve kişisel verileri İş Ortağının önerdiği veya gösterdiği şekilde işlemek için yetkili olduğumuz konusunda onun yasal beyanlarını dayanak alırız.\n\n Yukarıda açıklandığı gibi, kişisel bilgilerinizi kati şekilde belirlenmiş amaçlar için paylaşırız. Kişisel bilgilerinizin AEA dışına, AB Komisyonunun aldığı bir yeterlilik kararına tabi olmayan bir ülkedeki bir ofi iştiraki veya kurumuna aktarıldığı durumlarda, kişisel verileriniz sınır ötesi veri aktarımına yönelik standart sözleşme maddeleri de dahil olmak üzere AB Komisyonunun onayladığı sınır ötesi korumalarla korunur.</string>
     <string name="cs_page5_4">"Hangi verileri topluyoruz? "</string>
     <string name="cs_page5_5">Sizinle ilgili aşağıdakilerle sınırlı olmamak kaydıyla verileri toplayabilir ve işleyebiliriz: \n
         •	Fotoğraflar, videolar ve diğer görseller (kimliğinizin açıkça tanımlanabildiği);\n
@@ -593,7 +594,7 @@
     <string name="cs_page5_14">Verilerinizi korumak için hangi önlemleri aldık?</string>
     <string name="cs_page5_15">Ofi, verilerinizin gizlilik, güvenlik ve bütünlüğünü korumak için makul tedbirleri idame ettirir. Verilerinizi izinsiz açıklanmaya karşı korumak için güvenlik önlemleri uyguluyor olmamıza rağmen internet üzerinden sağlanan bilgilerin güvenliğini garanti edemeyiz ve makul kontrolümüz dışındaki güvenlik ihlallerinden sorumlu olmayacağızdır.</string>
     <string name="cs_page5_16">"Verilerinizle ilgili hangi haklara sahipsiniz? "</string>
-    <string name="cs_page5_17">"Sizden istediğimiz verileri vermemeyi seçebilirsiniz. Ofi’den verilerinizin bir kopyasını isteme ve verilerinizi doğrulama, düzeltme ve aktif işlenmesini kısıtlama hakkına sahipsiniz. Ofi’den görüntülerinizi kullanmayı sonlandırmasını her zaman isteyebilirsiniz. Bu durumda görüntüleriniz sonraki yayınlarda kullanılmaz ancak halihazırda dolaşımda olan yayınlarda görünmeye devam edebilir. İlgili bölgedeki veri koruma otoritesine her zaman şikayet etme hakkına sahipsiniz. Bu haklar kanunla sınırlandırılabilir. Bu hakları kullanmak isterseniz veya bu haklara dair sorularınız olursa ofi ile privacy@ofi.com adresi üzerinden iletişime geçebilirsiniz. "</string>
+    <string name="cs_page5_17">"Sizden istediğimiz verileri vermemeyi seçebilirsiniz. Ofi’den verilerinizin bir kopyasını isteme ve verilerinizi doğrulama, düzeltme ve aktif işlenmesini kısıtlama hakkına sahipsiniz. Ofi’den görüntülerinizi kullanmayı sonlandırmasını her zaman isteyebilirsiniz. Bu durumda görüntüleriniz sonraki yayınlarda kullanılmaz ancak halihazırda dolaşımda olan yayınlarda görünmeye devam edebilir. İlgili bölgedeki veri koruma otoritesine her zaman şikayet etme hakkına sahipsiniz. Bu haklar kanunla sınırlandırılabilir. Bu hakları kullanmak isterseniz veya bu haklara dair sorularınız olursa ofi ile <a href="privacy@ofi.com">privacy@ofi.com</a> adresi üzerinden iletişime geçebilirsiniz. "</string>
     <string name="cs_page5_18">"Verilerimi ne kadar süre saklıyorsunuz? "</string>
     <string name="cs_page5_19">Ofi kanunda aksi belirtilen durumlar haricinde kişisel verilerinizi verinin toplandığı amaçlar için gerektiği süre boyunca saklar. Ofi, kişisel verilerinizin saklanacağı süreyi talebiniz üzerine sizinle paylaşır.</string>
     <string name="cs_page5_20">İletişim Bilgileri</string>
@@ -611,22 +612,22 @@
 
     <string name="allchilds_name">Çocuğun Adı (çocuk adına rıza gösteriliyorsa):</string>
     <string name="full_farmer_name">Adı Soyadı:</string>
-    <string name="date">Tarih</string>
+    <string name="date">Tarih:</string>
     <string name="olam_connect">Olam Connect</string>
     <string name="olam_contact">Olam İletişim Sorumlusu</string>
     <string name="digital_sign">Digital İmza</string>
     <string name="farmer_signature">Farmer İmza</string>
-    <string name="enum_sign">Staff İmza</string>
+    <string name="enum_sign">Staff İmza:</string>
     <string name="enum_name">Enumerator Adı</string>
     <string name="farmer_sign_required">Please get signed by farmer</string>
     <string name="staff_sign_required">Please get signed by staff</string>
     <string name="childs_name">Çocuğun Adı</string>
-    <string name="name">Adı</string>
+    <string name="name">Adı:</string>
     <string name="Please_accept_consent">You must accept consent statements to save the farmer</string>
 
 
     <!-- OFI Consent Consent -->
-    <string name="please_sign_within_the_boundary_box">Please sign within the boundary box</string>
+    <string name="please_sign_within_the_boundary_box">Lütfen sınır kutusunun içini imzalayın</string>
 
 
 
@@ -694,4 +695,7 @@
     <string name="cs_page5_2">Bu gizlilik politikası uygulama üzerinden toplanan bilgilerinizin toplanma, kullanım ve açıklanma biçimlerini beyan etmektedir. Bu belge, kişisel veri toplarken ve kullanırken yararlandığımız ek yöntemleri açıklayan ve <a href="www.ofi.com/privacy.html.">www.ofi.com/privacy.html.</a>.  adresinde mrevcut olan ofi Gizlilik Bildirimine tamamlayıcı niteliğindedir ve onunla birlikte okunmalıdır.</string>
     <string name="occupation_fs">Meslek:</string>
     <string name="occupation_hint">Meslek</string>
+    <string name="please_click_checkbox">Lütfen tüm uygun onay kutularını tıklayın</string>
+    <string name="clear">açık</string>
+    <string name="update_consent_statement">Onay Beyanını Güncelle</string>
 </resources>
