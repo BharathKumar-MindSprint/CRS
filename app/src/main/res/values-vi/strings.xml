@@ -588,7 +588,7 @@
     <string name="olam_contact">Người liên hệ Olam</string>
     <string name="digital_sign">Digital Chữ ký</string>
     <string name="farmer_signature">Farmer Chữ ký</string>
-    <string name="enum_sign">Staff Chữ ký:</string>
+    <string name="enum_sign">Staff Chữ ký</string>
     <string name="enum_name">Enumerator Tên</string>
     <string name="farmer_sign_required">Please get signed by farmer</string>
     <string name="staff_sign_required">Please get signed by staff</string>

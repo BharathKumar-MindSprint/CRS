@@ -565,7 +565,7 @@
     <string name="cs_page4_1">CUANDO EL PERSONAL O REPRESENTANTE DE OFI LE LEE EL AVISO AL INDIVIDUO:</string>
     <string name="cs_page4_2">Yo, confirmo que el Participante me ha escuchado leer el Aviso de recopilación de información personal y que ha dado expresamente su consentimiento para la recopilación, el uso, la transferencia fuera de la jurisdicción y la divulgación de sus datos personales por parte de OFI para los fines establecidos en el mismo.</string>
     <string name="cs_page5_1">Declaración de privacidad de los datos del agricultor</string>
-    <string name="cs_page5_2">Esta política de privacidad establece los modos de recopilación, utilización y divulgación de su información obtenida en la aplicación. Es complementario y debe leerse junto con la Declaración de privacidad de OFI, la cual explica las formas adicionales en que recopilamos y usamos los datos personales y está disponible en <a href="www.ofi.com/privacy.html.">www.ofi.com/privacy.html.</a></string>
+    <string name="cs_page5_2">Esta política de privacidad establece los modos de recopilación, utilización y divulgación de su información obtenida en la aplicación. Es complementario y debe leerse junto con la Declaración de privacidad de OFI, la cual explica las formas adicionales en que recopilamos y usamos los datos personales y está disponible en <a href="www.ofi.com/privacy.html">www.ofi.com/privacy.html</a></string>
     <string name="cs_page5_4">¿Qué datos recopilamos?</string>
     <string name="cs_page5_5">Podemos recopilar y procesar datos personales sobre usted, incluidos, entre otros, los siguientes:\n
         •	Fotografías, videos y otras imágenes (donde su identidad personal sea claramente identificable).\n
@@ -612,13 +612,13 @@
     <string name="consent_statement_pageone1">Se le solicita que proporcione a Olam Food Ingredients (en lo sucesivo, \"<b>OFI</b>\", \"<b>nos</b>\" o \"<b>nosotros</b>\") sus datos personales en apoyo de los esfuerzos de OFI para promover la sostenibilidad y la trazabilidad en la cadena de suministro y, a su vez, promover el comercio responsable con agricultores como usted en todo el mundo (el \"<b>Propósito</b>\").</string>
 
     <string name="allchilds_name">Nombre del menor (si da su consentimiento en nombre de un menor):</string>
-    <string name="full_farmer_name">Nombre completo</string>
+    <string name="full_farmer_name">Nombre completo:</string>
     <string name="date">Fecha:</string>
     <string name="olam_connect">Connecto de Olam</string>
     <string name="olam_contact">Contacto de Olam</string>
     <string name="digital_sign">Digital Firma</string>
     <string name="farmer_signature">Farmer Firma</string>
-    <string name="enum_sign">Staff Firma:</string>
+    <string name="enum_sign">Staff Firma</string>
     <string name="enum_name">Enumerator Name</string>
     <string name="farmer_sign_required">Please get signed by farmer</string>
     <string name="staff_sign_required">Please get signed by staff</string>

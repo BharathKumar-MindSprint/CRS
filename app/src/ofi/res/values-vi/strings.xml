@@ -615,7 +615,7 @@
     <string name="olam_contact">Người liên hệ Olam</string>
     <string name="digital_sign">kỹ thuật số Chữ ký</string>
     <string name="farmer_signature">nông phu Chữ ký</string>
-    <string name="enum_sign">Nhân Viên Chữ ký:</string>
+    <string name="enum_sign">Nhân Viên Chữ ký</string>
     <string name="enum_name">Enumerator Tên</string>
     <string name="farmer_sign_required">Vui lòng có chữ ký của nông dân</string>
     <string name="staff_sign_required">Vui lòng có chữ ký của nhân viên</string>
@@ -691,7 +691,7 @@
     <string name="cs_page3_4">"•   Khi tôi đồng ý thay mặt cho trẻ em hoặc trẻ vị thành niên, thì tôi là cha mẹ hoặc người giám hộ hợp pháp của trẻ em hoặc trẻ vị thành niên đó. "</string>
     <string name="cs_page3_5">"•   Tôi hiểu rằng tôi sẽ không nhận bất kỳ khoản thù lao tài chính hoặc thù lao nào khác cho bất kỳ dữ liệu cá nhân nào bao gồm bất kỳ hình ảnh nào và bất kỳ tài sản trí tuệ nào tồn tại trong bất kỳ hình ảnh nào sẽ thuộc về OFI. "</string>
     <string name="cs_page3_6">•   Tôi hiểu rằng tôi có quyền rút lại sự đồng ý đối với tôi hoặc con tôi/trẻ vị thành niên bất kỳ lúc nào và khi rút lại sự đồng ý đó, OFI sẽ không sử dụng bất kỳ hình ảnh hoặc dữ liệu cá nhân nào trong bất kỳ ấn phẩm nào trong tương lai, nhưng có thể tiếp tục sử dụng Dữ liệu Cá nhân đó trong các ấn phẩm đã được lưu hành</string>
-    <string name="cs_page5_2">Chính sách về quyền riêng tư này quy định các chế độ thu thập, sử dụng và tiết lộ thông tin của bạn được thu thập trên ứng dụng. Nó bổ sung và nên được đọc cùng với Tuyên bố về Quyền Riêng tư của OFI, giải thích các cách bổ sung mà chúng tôi thu thập và sử dụng dữ liệu cá nhân và có sẵn trên <a href="www.ofi.com/privacy.html.">www.ofi.com/privacy.html.</a></string>
+    <string name="cs_page5_2">Chính sách về quyền riêng tư này quy định các chế độ thu thập, sử dụng và tiết lộ thông tin của bạn được thu thập trên ứng dụng. Nó bổ sung và nên được đọc cùng với Tuyên bố về Quyền Riêng tư của OFI, giải thích các cách bổ sung mà chúng tôi thu thập và sử dụng dữ liệu cá nhân và có sẵn trên <a href="www.ofi.com/privacy.html">www.ofi.com/privacy.html</a></string>
     <string name="occupation_fs">Nghề nghiệp:</string>
     <string name="occupation_hint">Nghề nghiệp</string>
     <string name="please_click_checkbox">Vui lòng nhấp vào tất cả các hộp kiểm thích hợp</string>

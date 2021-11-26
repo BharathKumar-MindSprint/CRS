@@ -581,7 +581,7 @@
     <string name="olam_contact">Kontak dari Olam</string>
     <string name="digital_sign">Digital Tanda tangan</string>
     <string name="farmer_signature">Farmer Tanda tangan</string>
-    <string name="enum_sign">Staff Tanda tangan:</string>
+    <string name="enum_sign">Staff Tanda tangan</string>
     <string name="enum_name">Enumerator Nama</string>
     <string name="farmer_sign_required">Please get signed by farmer</string>
     <string name="staff_sign_required">Please get signed by staff</string>

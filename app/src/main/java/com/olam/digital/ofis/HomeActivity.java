@@ -220,10 +220,13 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         StrictMode.setThreadPolicy(policy);
         // checkTime();
         bindNetworkQueue(true);
-        if (Utilities.getKeyCloakClientDetails(context, KeyCloakInfo.Client_Id).equalsIgnoreCase("")){
+      //  if (Utilities.getKeyCloakClientDetails(context, KeyCloakInfo.Client_Id).equalsIgnoreCase("")){
+        // Removed the check migrate existing enumerator while update Manna version
             String environment=BuildConfig.FLAVOR;
             setKeycloakCredentials(environment);
-        }
+            setOperatingUnit(environment);
+            setCommodity();
+      //  }
         if (sharedPreferences.getBoolean("FIRST_RUN",true)) {
             firstRunSection.setVisibility(View.VISIBLE);
         }
@@ -394,6 +397,28 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         Utilities.setKeycloakClientDetails(context,KeyCloakInfo.Client_Id,clientId);
         Utilities.setKeycloakClientDetails(context,KeyCloakInfo.Client_Secret,clientSecret);
     }
+
+    private void setOperatingUnit(String environment){
+        String OpUnit="nil";
+        if (environment.equalsIgnoreCase("dev") || environment.equalsIgnoreCase("sit") ||
+        environment.equalsIgnoreCase("uat") || environment.equalsIgnoreCase("prod")){
+            OpUnit="NON OFI";
+        }else if (environment.equalsIgnoreCase("devofi") || environment.equalsIgnoreCase("sitofi") ||
+                environment.equalsIgnoreCase("uatofi") || environment.equalsIgnoreCase("prodofi")){
+            OpUnit="OFI";
+        }else{
+             OpUnit="nil";
+        }
+        Utilities.setOperatingUnitSharedPrefs(context,OpUnit);
+    }
+
+    private void setCommodity(){
+        String commodity=dl.getProductInfo();
+        Utilities.setCommoditySharedPrefs(context,commodity);
+    }
+
+
+
     private void doingAuthRequest() {
         String userEnumerator = enumeratorID.getText().toString().trim();
 //        Passcode validation - Penetration testing
