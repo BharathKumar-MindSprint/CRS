@@ -593,13 +593,13 @@
     <string name="consent_statement_pageone1">Anda diminta untuk memberikan Olam Food Ingredients (selanjutnya disebut sebagai “<b>ofi</b>”, atau “<b>kami</b>”) data pribadi guna mendukung upaya ofi untuk mendorong keberlanjutan dan keterselusuran dalam rantai pasokan dan pada gilirannya untuk mendorong perdagangan yang bertanggung jawab dengan petani seperti Anda di seluruh dunia (“<b>Tujuan</b>”).</string>
 
     <string name="allchilds_name">Nama Anak (jika menyetujui atas nama anak):</string>
-    <string name="full_farmer_name">Nama Lengkap</string>
+    <string name="full_farmer_name">Nama Lengkap:</string>
     <string name="date">Tanggal:</string>
     <string name="olam_connect">Olam Connect</string>
     <string name="olam_contact">Kontak dari Olam</string>
     <string name="digital_sign">Digital Tanda tangan</string>
     <string name="farmer_signature">Farmer Tanda tangan</string>
-    <string name="enum_sign">Staff Tanda tangan:</string>
+    <string name="enum_sign">Staff Tanda tangan</string>
     <string name="enum_name">Enumerator Nama</string>
     <string name="farmer_sign_required">Please get signed by farmer</string>
     <string name="staff_sign_required">Please get signed by staff</string>
@@ -670,7 +670,7 @@
     <string name="cs_page3_3">•   Saya telah menunjukkan dengan tanda “✔“ atau “ya” pada Paragraf 1 di mana saya menyetujui penggunaan dan pengumpulan data pribadi saya untuk tujuan khusus yang ditunjukkan di sana.</string>
     <string name="cs_page3_5">•   Saya memahami bahwa saya tidak akan menerima imbalan finansial atau imbalan lainnya untuk data pribadi apa pun termasuk gambar dan kekayaan intelektual yang ada dalam gambar mana pun yang akan menjadi milik ofi.</string>
     <string name="cs_page3_6">•   Saya memahami bahwa saya memiliki hak untuk menarik persetujuan bagi saya atau anak saya/anak di bawah umur kapan pun dan bahwa jika persetujuan tersebut ditarik, ofi tidak akan menggunakan gambar atau data pribadi dalam publikasi apa pun di masa mendatang, tetapi dapat terus menggunakan Data Pribadi dalam publikasi yang sudah beredar.</string>
-    <string name="cs_page5_2">Kebijakan privasi ini menjelaskan metode pengumpulan, penggunaan dan pengungkapan informasi Anda yang dikumpulkan dari aplikasi. Kebijakan ini melengkapi, dan harus dibaca bersama dengan Pernyataan Privasi ofi, yang menjelaskan cara lain kami dalam mengumpulkan dan menggunakan data pribadi dan tersedia di <a href="www.ofi.com/privacy.html.">www.ofi.com/privacy.html.</a></string>
+    <string name="cs_page5_2">Kebijakan privasi ini menjelaskan metode pengumpulan, penggunaan dan pengungkapan informasi Anda yang dikumpulkan dari aplikasi. Kebijakan ini melengkapi, dan harus dibaca bersama dengan Pernyataan Privasi ofi, yang menjelaskan cara lain kami dalam mengumpulkan dan menggunakan data pribadi dan tersedia di <a href="www.ofi.com/privacy.html">www.ofi.com/privacy.html</a></string>
     <string name="cs_page5_4">"Data apa yang kami kumpulkan? "</string>
     <string name="cs_page5_7">Kami dapat menggunakan data ini untuk tujuan berikut: \n
         •	Memberikan layanan untuk Anda seperti saran agronomi, bahan pertanian dan akses ke layanan terkait pertanian seperti pembiayaan, asuransi, dan logistik;\n

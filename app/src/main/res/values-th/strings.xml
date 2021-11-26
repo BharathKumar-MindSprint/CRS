@@ -588,7 +588,7 @@
     <string name="olam_contact">ข้อมูลติดต่อ Olam</string>
     <string name="digital_sign">Digital ลายมือชื่อ</string>
     <string name="farmer_signature">Farmer ลายมือชื่อ</string>
-    <string name="enum_sign">Staff ลายมือชื่อ:</string>
+    <string name="enum_sign">Staff ลายมือชื่อ</string>
     <string name="enum_name">Enumerator ชื่อ</string>
     <string name="farmer_sign_required">Please get signed by farmer</string>
     <string name="staff_sign_required">Please get signed by staff</string>
