@@ -617,7 +617,7 @@
     <string name="olam_contact">Olam İletişim Sorumlusu</string>
     <string name="digital_sign">Digital İmza</string>
     <string name="farmer_signature">Farmer İmza</string>
-    <string name="enum_sign">Staff İmza:</string>
+    <string name="enum_sign">Staff İmza</string>
     <string name="enum_name">Enumerator Adı</string>
     <string name="farmer_sign_required">Please get signed by farmer</string>
     <string name="staff_sign_required">Please get signed by staff</string>
@@ -692,7 +692,7 @@
     <string name="cs_page2_19">4.    Çiftçi Verileri Gizlilik Beyanı aşağıda bilginize sunulmuştur. Bu belge kişisel verileri nasıl ele aldığımızı ve koruduğumuzu açıklamaktadır. Çiftçi Verileriniz yukarıda belirtilen kişilerle paylaşılacak olmakla birlikte, bizde bulunan Çiftçi Verileriniz gizli ve yürürlükteki gizlilik kanunlarına uygun bir şekilde tutulacaktır</string>
     <string name="cs_page3_5">"•   Görüntüler de dahil olmak üzere kişisel veriler karşılığına hiçbir finansal veya başka türde ödeme almayacağımı ve görüntüler üzerindeki tüm fikri mülkiyetin ofi’ye ait olacağını anlıyorum. "</string>
     <string name="cs_page3_6">•   Kendim veya çocuğum/küçük adına rızamı her zaman geri çekme hakkına sahip olduğumu ve bu rızayı geri çektiğim durumlarda ofi\'nin görüntü veya kişisel verilerimi sonraki yayınlarında kullanmayacağını ancak bu Kişisel Verileri halihazırda dolaşımda olan yayınlarında kullanmaya devam edebileceğini anlıyorum</string>
-    <string name="cs_page5_2">Bu gizlilik politikası uygulama üzerinden toplanan bilgilerinizin toplanma, kullanım ve açıklanma biçimlerini beyan etmektedir. Bu belge, kişisel veri toplarken ve kullanırken yararlandığımız ek yöntemleri açıklayan ve <a href="www.ofi.com/privacy.html.">www.ofi.com/privacy.html.</a>.  adresinde mrevcut olan ofi Gizlilik Bildirimine tamamlayıcı niteliğindedir ve onunla birlikte okunmalıdır.</string>
+    <string name="cs_page5_2">Bu gizlilik politikası uygulama üzerinden toplanan bilgilerinizin toplanma, kullanım ve açıklanma biçimlerini beyan etmektedir. Bu belge, kişisel veri toplarken ve kullanırken yararlandığımız ek yöntemleri açıklayan ve <a href="www.ofi.com/privacy.html">www.ofi.com/privacy.html</a>  adresinde mrevcut olan ofi Gizlilik Bildirimine tamamlayıcı niteliğindedir ve onunla birlikte okunmalıdır.</string>
     <string name="occupation_fs">Meslek:</string>
     <string name="occupation_hint">Meslek</string>
     <string name="please_click_checkbox">Lütfen tüm uygun onay kutularını tıklayın</string>

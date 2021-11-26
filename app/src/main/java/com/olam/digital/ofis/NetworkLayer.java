@@ -163,6 +163,9 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
     // Array Object created
     private static void okHttpArrayPost(Context context, String url, JSONArray params, Callback callback) {
         String enumeratorId = Utilities.getFromSharedPrefs(context);
+        String commodity=Utilities.getCommoditySharedPrefs(context);
+        String operatingUnit=Utilities.getOperatingUnitSharedPrefs(context);
+
         String imeiNumber = Utilities.getIMEI(context);
         String uniqueId = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
         String base64EnumeratorId = Base64.encodeToString(enumeratorId.getBytes(), Base64.NO_WRAP);
@@ -175,6 +178,9 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
         Request request = new Request.Builder()
                 .header("enumerator-id", base64EnumeratorId)
+                .header("CL-Fetch-UserID", enumeratorId)
+                .header("CL-Fetch-Commodity", commodity)
+                .header("CL-Fetch-OperatingUnit", operatingUnit)
                 .header("imei-number", base64ImeiNumber)
                 .header("unique-id", base64UniqueId)
                 .header("app-version", BuildConfig.VERSION_NAME)
@@ -189,9 +195,12 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
     }
 
 
-
+// laina
     private static void okHttpPost(Context context, String url, JSONObject params, Callback callback) {
         String enumeratorId = Utilities.getFromSharedPrefs(context);
+        String commodity=Utilities.getCommoditySharedPrefs(context);
+        String operatingUnit=Utilities.getOperatingUnitSharedPrefs(context);
+
         String imeiNumber = Utilities.getIMEI(context);
         String uniqueId = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
         String base64EnumeratorId = Base64.encodeToString(enumeratorId.getBytes(), Base64.NO_WRAP);
@@ -203,6 +212,9 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
         Request request = new Request.Builder()
                 .header("enumerator-id", base64EnumeratorId)
+                .header("CL-Fetch-UserID", enumeratorId)
+                .header("CL-Fetch-Commodity", commodity)
+                .header("CL-Fetch-OperatingUnit", operatingUnit)
                 .header("imei-number", base64ImeiNumber)
                 .header("unique-id", base64UniqueId)
                 .header("app-version", BuildConfig.VERSION_NAME)
@@ -220,6 +232,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
     private static void okHttpPut(Context context, String url, JSONObject params, Callback callback) {
         String enumeratorId = Utilities.getFromSharedPrefs(context);
+        String commodity=Utilities.getCommoditySharedPrefs(context);
+        String operatingUnit=Utilities.getOperatingUnitSharedPrefs(context);
         String imeiNumber = Utilities.getIMEI(context);
         String uniqueId = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
         String base64EnumeratorId = Base64.encodeToString(enumeratorId.getBytes(), Base64.NO_WRAP);
@@ -231,6 +245,9 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
         Request request = new Request.Builder()
                 .header("enumerator-id", base64EnumeratorId)
+                .header("CL-Fetch-UserID", enumeratorId)
+                .header("CL-Fetch-Commodity", commodity)
+                .header("CL-Fetch-OperatingUnit", operatingUnit)
                 .header("imei-number", base64ImeiNumber)
                 .header("unique-id", base64UniqueId)
                 .header("app-version", BuildConfig.VERSION_NAME)
@@ -245,6 +262,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
     private static void okHttpMultiPartPost(Context context, String url, RequestBody requestBody, Callback callback) {
         String enumeratorId = Utilities.getFromSharedPrefs(context);
+        String commodity=Utilities.getCommoditySharedPrefs(context);
+        String operatingUnit=Utilities.getOperatingUnitSharedPrefs(context);
         String imeiNumber = Utilities.getIMEI(context);
         String uniqueId = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
         String base64EnumeratorId = Base64.encodeToString(enumeratorId.getBytes(), Base64.NO_WRAP);
@@ -254,6 +273,9 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
         Request request = new Request.Builder()
                 .header("enumerator-id", base64EnumeratorId)
+                .header("CL-Fetch-UserID", enumeratorId)
+                .header("CL-Fetch-Commodity", commodity)
+                .header("CL-Fetch-OperatingUnit", operatingUnit)
                 .header("imei-number", base64ImeiNumber)
                 .header("unique-id", base64UniqueId)
                 .header("app-version", BuildConfig.VERSION_NAME)
@@ -271,9 +293,15 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         //   String fullUrl = getMSAbsoluteUrl(url);
         String fullUrl=getAbsoluteUrl(url);
         RequestBody body = RequestBody.create(JSONBody, params.toString());
+        String enumeratorId = Utilities.getFromSharedPrefs(context);
+        String commodity=Utilities.getCommoditySharedPrefs(context);
+        String operatingUnit=Utilities.getOperatingUnitSharedPrefs(context);
 
         Request request = new Request.Builder()
                 .header("App-Id", "1")
+                .header("CL-Fetch-UserID", enumeratorId)
+                .header("CL-Fetch-Commodity", commodity)
+                .header("CL-Fetch-OperatingUnit", operatingUnit)
                 .header("Doc-Type","photo")
                 .header("Authorization", "Bearer " + new AuthenticationHelper(context).getAuthenticationDTO().getAccessToken())
                 .url(fullUrl)

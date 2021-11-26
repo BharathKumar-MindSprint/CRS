@@ -573,7 +573,7 @@
 
     <!-- OFI Consent Consent -->
     <string name="farmer_consent">FARMER CONSENT</string>
-    <string name="personal_info_collection">Personal Information Collection Notice</string>
+    <string name="personal_info_collection">PERSONAL INFORMATION COLLECTION NOTICE</string>
     <string name="cs_page2_title">1.    Personal Data Use</string>
     <string name="cs_page2_1">We may use and share your personal data as follows</string>
     <string name="cs_page2_2">Do you consent? Please tick “✔ “ or “yes”</string>
@@ -602,7 +602,7 @@
     <string name="cs_page4_1">WHERE NOTICE IS READ OUT TO THE INDIVIDUAL BY ofi STAFF/REPRESENTATIVE:</string>
     <string name="cs_page4_2">I confirm that Participant has listened to me read out the Personal Information Collection Notice and they have expressly given their consent for the collection, use, transfer outside of the jurisdiction and disclosure of his/her personal data by ofi for the purposes set out therein. </string>
     <string name="cs_page5_1">Farmer Data Privacy Statement</string>
-    <string name="cs_page5_2">This privacy policy sets forth the modes of collection, utilisation and disclosure of your information gathered on the application. It is supplemental to, and should be read together with the ofi’s Privacy Statement, which explains additional ways we collect and use personal data and is available on  <a href="www.ofi.com/privacy.html.">www.ofi.com/privacy.html.</a></string>
+    <string name="cs_page5_2">This privacy policy sets forth the modes of collection, utilisation and disclosure of your information gathered on the application. It is supplemental to, and should be read together with the ofi’s Privacy Statement, which explains additional ways we collect and use personal data and is available on  <a href="www.ofi.com/privacy.html">www.ofi.com/privacy.html</a></string>
     <string name="cs_page5_4">What data do we collect?</string>
     <string name="cs_page5_5">We may collect and process personal data about you including but not limited to:\n
 •	Photographs, videos and other imaging (where your personal identity is clearly identifiable);\n
@@ -614,16 +614,16 @@
 •	Location data upon your allowing us access to your location in the application
 </string>
     <string name="cs_page5_6">For what purposes do we use your data? </string>
-    <string name="cs_page5_7">"We may use this data for the following purposes: \n
-        •   Provide services to you such as agronomy advice, farming materials and access to farming related services such as financing, insurance, and logistics;\n
-        •   Facilitate trading with you; \n
-        •   Publication on ofi owned channels including websites, social media and prints; \n
-        •   Support our sustainability and traceability initiatives; \n
-        •   Identify trends in agriculture that will allow us to better operate our business and provide services to you; \n
-        •   Market and promote ofi products and corporate activities;  \n
-        •   Support research initiatives by our partners to support community collaboration and advancements in the sustainability and traceability areas; \n
-        •   Demonstrate our farmer services to potential investors and partners; and \n
-        •   Communicate with you and develop and manage our relationships with you and our business partners. "</string>
+    <string name="cs_page5_7">We may use this data for the following purposes: \n
+•   Provide services to you such as agronomy advice, farming materials and access to farming related services such as financing, insurance, and logistics;\n
+•   Facilitate trading with you; \n
+•   Publication on ofi owned channels including websites, social media and prints; \n
+•   Support our sustainability and traceability initiatives; \n
+•   Identify trends in agriculture that will allow us to better operate our business and provide services to you; \n
+•   Market and promote ofi products and corporate activities;  \n
+•   Support research initiatives by our partners to support community collaboration and advancements in the sustainability and traceability areas; \n
+•   Demonstrate our farmer services to potential investors and partners; and \n
+•   Communicate with you and develop and manage our relationships with you and our business partners. \n</string>
     <string name="cs_page5_8">What is our legal basis for collecting and processing your data? </string>
     <string name="cs_page5_9">We will only collect and process this data, to conduct our business and pursue our legitimate interests as required by ofi and our affiliates and to comply with legal obligations. We rely on consent for few processing activities (like marketing communication) which can be revoked whenever the data subject requires.</string>
     <string name="cs_page5_10">Who will we share this data with?</string>
@@ -649,14 +649,14 @@
     <string name="consent_statement_pageone2">Your personal data including your name, age, contact information (e-mail address, phone number, mailing address), occupation, photographs, videos or digital recordings, biographical, social and geographical information, farming and output information, and where applicable, those of your children or dependants (“<b>Farmer Data</b>”) will be collected and stored by us and made accessible to our customers, business partners and in some cases, made public on ofi’s websites, social media, electronic or written publications. We ask that you hereby acknowledge and provide consent to the collection, use and disclosure of your personal data for this purpose in accordance with this Personal Information Collection Notice. </string>
     <string name="consent_statement_pageone1">It is requested for you to supply Olam Food Ingredients (hereafter referred to as “<b>ofi</b>” ,“<b>us</b>” ,or “<b>we</b>”) with personal data in support of ofi’s efforts to promote sustainability and traceability in the supply chain and in-turn to promote responsible trade with farmers such as yourself around the globe (the “<b>Purpose</b>”). </string>
 
-    <string name="allchilds_name">Child\’s Name (if consenting on behalf of a child)</string>
-    <string name="full_farmer_name">Full Name</string>
+    <string name="allchilds_name">Child\’s Name (if consenting on behalf of a child):</string>
+    <string name="full_farmer_name">Full Name:</string>
     <string name="date">Date:</string>
     <string name="olam_connect">Olam Connect</string>
     <string name="olam_contact">Olam Contact</string>
     <string name="digital_sign">Digital Signature</string>
     <string name="farmer_signature">Farmer Signature</string>
-    <string name="enum_sign">Staff Signature:</string>
+    <string name="enum_sign">Staff Signature</string>
     <string name="enum_name">Enumerator Name</string>
     <string name="farmer_sign_required">Please get signed by farmer</string>
     <string name="staff_sign_required">Please get signed by staff</string>

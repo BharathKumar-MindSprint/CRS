@@ -595,13 +595,13 @@
     <string name="consent_statement_pageone1">"ມັນຈຳເປັນທີ່ທ່ານຕ້ອງສະໜອງຂໍ້ມູນສ່ວນຕົວໃຫ້ແກ່ Olam Food Ingredients (ຕໍ່ໄປນີ້ເອີ້ນວ່າ “<b>ofi</b>” ,“<b>ຂອງພວກເຮົາ</b>” ຫຼື “<b>ພວກເຮົາ</b>”) ເພື່ອສະໜັບສະໜູນ ofi ໃນການສົ່ງເສີມຄວາມຍືນຍົງ ແລະ ການກວດສອບຄືນໃນຕ່ອງໂສ້ການສະໜອງ ແລະ ໃນທາງກັບກັນເພື່ອສົ່ງເສີມການຄ້າກັບຊາວກະສິກອນຢ່າງມີຄວາມຮັບຜິດຊອບເຊັ່ນ: ຕົວທ່ານເອງຢູ່ໃນທົ່ວໂລກ ( “<b>ຈຸດປະສົງ</b>”). "</string>
 
     <string name="allchilds_name">ຊື່ຂອງເດັກ (ຖ້າຫາກໃຫ້ການຍິນຍອມໃນນາມຂອງເດັກ):</string>
-    <string name="full_farmer_name">ຊື່ເຕັມ</string>
+    <string name="full_farmer_name">ຊື່ເຕັມ:</string>
     <string name="date">ວັນທີ:</string>
     <string name="olam_connect">Olam Connect</string>
     <string name="olam_contact">ຂໍ້ມູນຕິດຕໍ່ຂອງບໍລິສັດ Olam</string>
     <string name="digital_sign">Digital ລາຍເຊັນ</string>
     <string name="farmer_signature">Farmer ລາຍເຊັນ</string>
-    <string name="enum_sign">Staff ລາຍເຊັນ:</string>
+    <string name="enum_sign">Staff ລາຍເຊັນ</string>
     <string name="enum_name">Enumerator ຊື່</string>
     <string name="farmer_sign_required">Please get signed by farmer</string>
     <string name="staff_sign_required">Please get signed by staff</string>
@@ -678,7 +678,7 @@
     <string name="cs_page3_3">"•   ຂ້າພະເຈົ້າໄດ້ລະບຸດ້ວຍ “✔“ ຫຼື “ແມ່ນແລ້ວ” ໃນວັກທີ 1, ທີ່ຂ້າພະເຈົ້າອະນຸຍາດໃຫ້ໃຊ້ ແລະ ຮວບຮວມຂໍ້ມູນສ່ວນຕົວຂອງຂ້າພະເຈົ້າເພື່ອຈຸດປະສົງສະເພາະທີ່ໄດ້ລະບຸໄວ້ນັ້ນ. "</string>
     <string name="cs_page3_5">"•   ຂ້າພະເຈົ້າເຂົ້າໃຈວ່າຂ້າພະເຈົ້າຈະບໍ່ໄດ້ຮັບເງິນ ຫຼື ຄ່າຕອບແທນໃດໆຕໍ່ກັບຂໍ້ມູນສ່ວນບຸກຄົນນີ້, ລວມທັງຮູບພາບ ແລະ ຊັບສິນທາງປັນຍາໃດໆທີ່ມີຢູ່ໃນຮູບພາບຈະເປັນຂອງ ofi. "</string>
     <string name="cs_page3_6">"•   ຂ້າພະເຈົ້າເຂົ້າໃຈວ່າຂ້າພະເຈົ້າມີສິດໃນການຖອນການຍິນຍອມຂອງຂ້າພະເຈົ້າ ຫຼື ຂອງເດັກໄດ້ຕະຫຼອດເວລາ ແລະ ເມື່ອການຍິນຍອມໄດ້ຖືກຖອນແລ້ວ, ofi ຈະບໍ່ນຳໃຊ້ຮູບພາບ ຫຼື ຂໍ້ມູນສ່ວນຕົວໃນການເຜີຍແຜ່ໃນອະນາຄົດ, ແຕ່ອາດຈະສືບຕໍ່ໃຊ້ຂໍ້ມູນສ່ວນຕົວທີ່ໄດ້ເຜີຍແຜ່ຢູ່ກ່ອນໜ້ານີ້ແລ້ວ. "</string>
-    <string name="cs_page5_2">ນະໂຍບາຍຄວາມເປັນສ່ວນຕົວນີ້ກຳນົດຮູບແບບການຮວບຮວມ, ການນຳໃຊ້ ແລະ ການເປີດເຜີຍຂໍ້ມູນຂອງທ່ານທີ່ໄດ້ເກັບກຳຈາກການສະໝັກ. ມັນເປັນສ່ວນເສີມ ແລະ ຄວນອ່ານຮ່ວມກັນກັບຖະແຫຼງການຄວາມເປັນສ່ວນຕົວຂອງ ofi, ເຊິ່ງອະທິບາຍວິທີການເພີ່ມເຕີມທີ່ພວກເຮົາຮວບຮວມ ແລະ ນຳໃຊ້ຂໍ້ມູນສ່ວນຕົວ ແລະ ມີໃຫ້ທີ່ <a href="www.ofi.com/privacy.html.">www.ofi.com/privacy.html.</a>.</string>
+    <string name="cs_page5_2">ນະໂຍບາຍຄວາມເປັນສ່ວນຕົວນີ້ກຳນົດຮູບແບບການຮວບຮວມ, ການນຳໃຊ້ ແລະ ການເປີດເຜີຍຂໍ້ມູນຂອງທ່ານທີ່ໄດ້ເກັບກຳຈາກການສະໝັກ. ມັນເປັນສ່ວນເສີມ ແລະ ຄວນອ່ານຮ່ວມກັນກັບຖະແຫຼງການຄວາມເປັນສ່ວນຕົວຂອງ ofi, ເຊິ່ງອະທິບາຍວິທີການເພີ່ມເຕີມທີ່ພວກເຮົາຮວບຮວມ ແລະ ນຳໃຊ້ຂໍ້ມູນສ່ວນຕົວ ແລະ ມີໃຫ້ທີ່ <a href="www.ofi.com/privacy.html">www.ofi.com/privacy.html</a></string>
     <string name="occupation_fs">ອາຊີບ:</string>
     <string name="occupation_hint">ອາຊີບ</string>
     <string name="please_click_checkbox">ກະ​ລຸ​ນາ​ຄລິກ​ໃສ່​ປ່ອງ​ທີ່​ເຫມາະ​ສົມ​ທັງ​ຫມົດ​</string>
