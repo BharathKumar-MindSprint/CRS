@@ -504,7 +504,7 @@
                     <Button
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/Add_Signature"
+                        android:text="@string/Signature"
                         android:id="@+id/captureSignature"
                         android:background="@color/ofis_action_button_background"
                         android:drawableRight="@drawable/ic_pen"
