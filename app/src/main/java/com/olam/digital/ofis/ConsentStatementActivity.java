@@ -97,7 +97,7 @@ public class ConsentStatementActivity extends BaseActivity implements View.OnCli
         enum_signature.setOnClickListener(this);
         loadpage();
         nextsavebtn.setClickable(false);
-        et_farmername.setText(olamfarmername);
+        et_farmername.setText(olamfarmername+" ,");
        // nextsavebtn.setBackgroundResource(R.drawable.border);
         disableBtn(nextsavebtn);
         KeyboardUtils.addKeyboardToggleListener(this, new KeyboardUtils.SoftKeyboardToggleListener() {
@@ -238,7 +238,7 @@ public class ConsentStatementActivity extends BaseActivity implements View.OnCli
                         }else {
 //                            nextsavebtn.setClickable(false);
 //                            nextsavebtn.setBackgroundResource(R.drawable.border);
-                            farmername = et_farmername.getText().toString();
+                            farmername = (et_farmername.getText().toString()).replace(",","");
                             farmer_name.setText(farmername);
                             Date today = new Date();
                             SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");

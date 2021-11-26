@@ -593,7 +593,7 @@
     <string name="olam_contact">Olam Contact</string>
     <string name="digital_sign">Digital Signature</string>
     <string name="farmer_signature">Farmer Signature</string>
-    <string name="enum_sign">Staff Signature:</string>
+    <string name="enum_sign">Staff Signature</string>
     <string name="enum_name">Enumerator Nom</string>
     <string name="farmer_sign_required">Please get signed by farmer</string>
     <string name="staff_sign_required">Please get signed by staff</string>

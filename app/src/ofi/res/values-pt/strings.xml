@@ -613,13 +613,13 @@
     <string name="consent_statement_pageone1">Solicita-se que forneça Ingredientes Alimentares Olam (a seguir referidos como \"<b>ofi</b>\" ,\"<b>us</b>\" ou \"<b>we</b>\") com dados pessoais em apoio aos esforços da ofi para promover a sustentabilidade e rastreabilidade na cadeia de abastecimentos e, por sua vez, para promover o comércio responsável com agricultores como vós em todo o mundo (o \"<b>propósito</b>\").</string>
 
     <string name="allchilds_name">Nome da criança (se consentir em nome de uma criança):</string>
-    <string name="full_farmer_name">Nome completo</string>
+    <string name="full_farmer_name">Nome completo:</string>
     <string name="date">Data:</string>
     <string name="olam_connect">Olam Connect</string>
     <string name="olam_contact">Contato na Olam</string>
     <string name="digital_sign">Digital Assinatura</string>
     <string name="farmer_signature">Farmer Assinatura</string>
-    <string name="enum_sign">Staff Assinatura:</string>
+    <string name="enum_sign">Staff Assinatura</string>
     <string name="enum_name">Enumerator Nome</string>
     <string name="farmer_sign_required">Please get signed by farmer</string>
     <string name="staff_sign_required">Please get signed by staff</string>
@@ -701,7 +701,7 @@
     <string name="cs_page3_3">•   Indiquei com um \" ✔ \" ou \" SIM \" no n. º 1, onde autorizo a utilização e a recolha dos meus dados pessoais para os fins específicos aí indicados</string>
     <string name="cs_page3_5">"•   Entendo que não vou receber nenhuma remuneração financeira ou outra por quaisquer dados pessoais, incluindo quaisquer imagens e qualquer propriedade intelectual que subsiste em qualquer imagem deve pertencer a ofi. "</string>
     <string name="cs_page3_6">•   Entendo que tenho o direito de retirar o consentimento para mim ou para meu filho/menor a qualquer momento e que, quando tal consentimento for retirado, a ofi não usará quaisquer imagens ou dados pessoais em quaisquer publicações futuras, mas poderá continuar a usar esses Dados Pessoais em publicações já em circulação.</string>
-    <string name="cs_page5_2">Esta política de privacidade estabelece os modos de recolha, utilização e divulgação de suas informações recolhidas no aplicativo. É um complemento e deve ser lido em conjunto com a Declaração de Privacidade da ofi, que explica maneiras adicionais de recolher e usar dados pessoais e está disponível no <a href="www.ofi.com/privacy.html.">www.ofi.com/privacy.html.</a></string>
+    <string name="cs_page5_2">Esta política de privacidade estabelece os modos de recolha, utilização e divulgação de suas informações recolhidas no aplicativo. É um complemento e deve ser lido em conjunto com a Declaração de Privacidade da ofi, que explica maneiras adicionais de recolher e usar dados pessoais e está disponível no <a href="www.ofi.com/privacy.html">www.ofi.com/privacy.html</a></string>
     <string name="occupation_fs">Ocupação:</string>
     <string name="occupation_hint">Ocupação</string>
     <string name="please_click_checkbox">Por favor, clique em todas as caixas de seleção apropriadas</string>

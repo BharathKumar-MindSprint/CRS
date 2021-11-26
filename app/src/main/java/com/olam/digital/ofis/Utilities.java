@@ -676,4 +676,30 @@ public  static String base64ConversionForImage(String filepath)  {
     }
 
 
+    // Logger for Manna
+    public static void setCommoditySharedPrefs(Context context,String prefValue){
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor=sharedPreferences.edit();
+        editor.putString("commodity",prefValue);
+        editor.commit();
+    }
+    public static String getCommoditySharedPrefs(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
+        String commodity=sharedPreferences.getString("commodity", "nil");
+        return commodity;
+    }
+
+    public static void setOperatingUnitSharedPrefs(Context context,String prefValue){
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor=sharedPreferences.edit();
+        editor.putString("opUnit",prefValue);
+        editor.commit();
+    }
+    public static String getOperatingUnitSharedPrefs(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
+        String opunit=sharedPreferences.getString("opUnit", "nil");
+        return opunit;
+    }
+
+
 }
