@@ -154,7 +154,7 @@
     <string name="new_place_name_placeholder">New place</string>
     <string name="Olam_Farmer_ID">Olam Farmer ID</string>
     <string name="Save">Save</string>
-    <string name="Add_Signature">Signature</string>
+    <string name="Add_Signature">Signature:</string>
     <string name="Signature">Signature</string>
     <!-- Find a farmer related -->
     <!-- in XML -->
