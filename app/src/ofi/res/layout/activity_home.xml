@@ -44,7 +44,9 @@
             <ImageView
                 android:id="@+id/logo"
                 android:layout_gravity="center"
-                android:background="@drawable/empty_farmer_photo"
+                android:padding="3dp"
+                android:background="@color/white"
+                android:src="@drawable/ic_launcher"
                 android:layout_width="100dp"
                 android:layout_height="100dp"/>
             <TextView
