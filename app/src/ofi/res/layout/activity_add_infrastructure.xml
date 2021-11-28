@@ -1,11 +1,16 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/ofis_page_background"
+    xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.olam.digital.ofis.AddInfrastructureActivity"
-    android:focusableInTouchMode="true"
     tools:ignore="Overdraw">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/ofis_page_background"
+        android:focusableInTouchMode="true">
 
     <ImageView
         android:layout_width="match_parent"
@@ -14,12 +19,139 @@
         android:background="@color/ofis_poi_screen_top_background_school"
         android:contentDescription="@string/cd_topSectionColour" />
 
+
+        <!-- Middle Section -->
+        <LinearLayout
+            android:id="@+id/layout_geo_new"
+            android:orientation="vertical"
+            android:layout_below="@+id/topSectionBackground"
+            android:visibility="gone"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingBottom="@dimen/activity_horizontal_margin"
+            android:background="@color/ofis_poi_screen_top_background_school"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/ofis_base_font_white"
+                android:textSize="@dimen/ofis_small_text"
+                android:text="@string/location"
+                android:textStyle="bold"
+                android:layout_marginBottom="@dimen/ofis_med_pad"/>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/ofis_med_pad">
+
+                <Spinner
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/spinner_country1"
+                    android:hint="@string/Country"
+                    android:nextFocusDown="@+id/spinner_region1"
+                    android:nextFocusForward="@+id/spinner_region1"
+                    android:layout_weight="1"
+                    android:layout_marginLeft="0dp"
+                    />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:visibility="invisible"
+                    android:contentDescription="@string/ofis_cd_hierarchy_arrow"
+                    app:srcCompat="@drawable/ic_spinner_hierarchy_arrow"
+                    android:scaleType="center" />
+
+                <Spinner
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/spinner_region1"
+                    android:nextFocusDown="@id/spinner_district1"
+                    android:layout_marginRight="0dp"
+                    android:layout_weight="1" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="@dimen/ofis_med_pad">
+
+                <Spinner
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/spinner_district1"
+                    android:nextFocusDown="@+id/spinner_place1"
+                    android:nextFocusForward="@+id/spinner_place1"
+                    android:layout_weight="1" />
+
+                <ImageView
+                    android:id="@+id/haDistrict1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:visibility="invisible"
+                    android:contentDescription="@string/ofis_cd_hierarchy_arrow"
+                    app:srcCompat="@drawable/ic_spinner_hierarchy_arrow"
+                    android:scaleType="center" />
+
+                <Spinner
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/spinner_place1"
+                    android:layout_marginRight="0dp"
+                    android:layout_weight="1" />
+
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:paddingBottom="@dimen/ofis_bottom_section_padding_vertical">
+
+                <Spinner
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/spinner_place1_remove"
+                    android:nextFocusDown="@+id/spinner_place"
+                    android:nextFocusForward="@+id/spinner_place1"
+                    android:layout_weight="1" />
+
+                <ImageView
+                    android:visibility="invisible"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:contentDescription="@string/ofis_cd_hierarchy_arrow"
+                    app:srcCompat="@drawable/ic_spinner_hierarchy_arrow"
+                    android:scaleType="center" />
+
+                <Spinner
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="invisible"
+                    android:layout_marginRight="0dp"
+                    android:layout_weight="1" />
+
+
+            </LinearLayout>
+        </LinearLayout>
+
+
     <!-- bottom section -->
     <ScrollView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/scrollView"
-        android:layout_below="@+id/topSectionBackground"
+        android:layout_below="@+id/layout_geo_new"
         android:padding="0dp">
 
         <LinearLayout
@@ -103,6 +235,13 @@
                 android:paddingTop="@dimen/activity_vertical_margin"
                 android:background="@drawable/border_white_background"
                 android:layout_marginTop="@dimen/ofis_med_pad">
+
+                <LinearLayout
+                    android:id="@+id/layout_geo_old"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -216,7 +355,7 @@
 
 
                 </LinearLayout>
-
+                </LinearLayout>
 
                 <!-- Farmer group view incorporated -Starts-->
                 <TextView
@@ -417,3 +556,4 @@
     </LinearLayout>
 
 </RelativeLayout>
+</ScrollView>
