@@ -478,19 +478,10 @@
     <string name="phone_number_recorded">Número telefónico grabado.</string>
     <string name="survey_data">Downloading Survey Data</string>
     <string name="invalid_imei_msg">La autenticación falló Por favor contáctenos para asistencia</string>
-    <string name="household_question">Farmer has any children under 18 doing household?</string>
-    <string name="title_child_labour">Register Child</string>
-    <string name="inspection_question">No children found on farm (Inspection)</string>
-    <string name="followup_question">Any children found during follow-up?</string>
-    <string name="add_child">Add Child</string>
-    <string name="full_name">Child name</string>
-    <string name="age">Age</string>
     <string name="add">Add</string>
     <string name="checking_child_enumerator">Checking Child Enumerator</string>
-    <string name="visit_detail">Visit Detail</string>
     <string name="child_visit_details_inserted" />
     <string name="child_register_successfully">Child registered Successfully</string>
-    <string name="child_details">Child Details</string>
     <string name="child_not_synced">Sorry, but the child has not yet been synced. Please sync the child first</string>
     <string name="fill_child_name">Please fill the child name</string>
     <string name="yrs">yrs</string>
@@ -671,20 +662,6 @@
     <string name="please_check_dependent_question">since its dependent question is updated</string>
     <string name="update_firebase_install_id_info">Updating Informations</string>
     <string name="national_id_info">Please update the National ID of farmer</string>
-    <string name="attendee_name">Attendee Name:</string>
-    <string name="attendee_age">Age</string>
-    <string name="attendee_relationship">Relationship:</string>
-    <string name="attendee_sex">Sex</string>
-    <string name="add_attendee">Add Attendee</string>
-    <string name="attendee_name_hint">Enter Attendee Name</string>
-    <string name="attendee_hint_age">Enter Age</string>
-    <string name="view_attendees_count">View Attendee (~V attendees)</string>
-    <string name="add_edit_attendee">Add/Edit\n Attendee</string>
-    <string name="viewAttendee">View Attendee</string>
-    <string name="attendee">Attendee</string>
-    <string name="mandatory_msg">Please fill all the details</string>
-    <string name="add_edit">Add/Edit</string>
-    <string name="Attendee">Attendee</string>
     <string name="Date_of_Birth_hint">MMM DD,YYYY</string>
     <string name="cs_page2_17">2.    Cuando sus Datos del agricultor se compartan con terceros, tales como nuestros clientes y socios, en cumplimiento del Propósito y de los usos específicos consentidos anteriormente, cada uno de estos clientes y socios son responsables del manejo de datos por derecho propio y usted acepta que utilicen sus datos, según lo establecido anteriormente en el Párrafo 1 y según se detalla en la Declaración de privacidad. En caso de que alguno de estos clientes y socios requiera el uso de sus Datos del agricultor más allá del Propósito y de los usos específicos consentidos anteriormente, podrá ponerse en contacto directamente con usted para solicitarle un nuevo consentimiento</string>
     <string name="cs_page2_18">3.    Usted puede retirar el consentimiento otorgado, solicitar el acceso o la corrección de sus Datos del agricultor, o solicitar información sobre nuestras políticas y prácticas en cualquier momento poniéndose en contacto con nosotros en <a href="privacy@ofi.com">privacy@ofi.com</a>. Si bien la solicitud de divulgación no es obligatoria, la falta de suministro de sus Datos de agricultor, o el retiro posterior de su consentimiento pueden afectar nuestra capacidad para proporcionar determinados servicios que usted nos haya solicitado por separado (según sea el caso). Por ejemplo, es posible que se solicite su dirección no solo para ayudar con la trazabilidad, sino también para que le enviemos ciertos materiales, como suministros agrícolas. En los casos en que usted revoque su consentimiento, podremos conservar esos datos para cumplir nuestras obligaciones contractuales con usted, pero no los utilizaremos para ningún otro fin</string>
@@ -699,5 +676,32 @@
     <string name="please_click_checkbox">Haga clic en todas las casillas de verificación correspondientes.</string>
     <string name="clear">clara</string>
     <string name="update_consent_statement">Actualizar la declaración de consentimiento</string>
+
+    <string name="attendee_name">Attendee Name:</string>
+    <string name="attendee_age">Age</string>
+    <string name="attendee_relationship">Relationship:</string>
+    <string name="attendee_sex">Sex</string>
+    <string name="add_attendee">Add Attendee</string>
+    <string name="attendee_name_hint">Enter Attendee Name</string>
+    <string name="attendee_hint_age">Enter Age</string>
+    <string name="view_attendees_count">View Attendee (~V attendees)</string>
+    <string name="add_edit_attendee">Add/Edit\n Attendee</string>
+    <string name="viewAttendee">View Attendee</string>
+    <string name="attendee">Attendee</string>
+    <string name="mandatory_msg">Please fill all the details</string>
+    <string name="add_edit">Add/Edit</string>
+    <string name="Attendee">Attendee</string>
+
+    <string name="household_question">¿El agricultor tiene hijos menores de 18 años en el hogar?</string>
+    <string name="title_child_labour">Registro de niño(a)</string>
+    <string name="inspection_question">No se han encontrado niños en la finca / parcela (inspección)</string>
+    <string name="followup_question">¿Se ha encontrado algún niño durante la visita?</string>
+    <string name="full_name">Nombre del niño</string>
+    <string name="age">Edad</string>
+    <string name="visit_detail">Detalle de la visita</string>
+    <string name="child_details">Detalle de niños</string>
+    <string name="register_child">Registro de niño(a)</string>
+    <string name="child_labour_survey">Encuestas trabajo infantil</string>
+    <string name="add_child">AGREGAR NIÑO</string>
 </resources>
 
