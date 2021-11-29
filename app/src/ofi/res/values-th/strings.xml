@@ -599,7 +599,6 @@
     <string name="cs_page5_18">"มีการเก็บรักษาข้อมูลของฉันไว้นานเท่าใด "</string>
     <string name="cs_page5_19">ofi มีการเก็บรักษาข้อมูลส่วนบุคคลของคุณตามระยะเวลาที่จำเป็นภายใต้วัตถุประสงค์ในการรวบรวมข้อมูล ดังกล่าว เว้นแต่กฎหมายจะกำหนดไว้เป็นอย่างอื่น ofi จะแจ้งกรอบเวลาในการเก็บรักษาข้อมูลส่วนบุคคล ของคุณให้ทราบเมื่อคุณร้องขอ</string>
     <string name="cs_page5_20">รายละเอียดติดต่อ</string>
-    <string name="cs_page5_21">หากมีข้อสงสัยใด ๆ เกี่ยวกับข้อมูลที่เราจัดเก็บไว้เกี่ยวกับคุณ กรุณาส่งอีเมลถึงเราที่<a href="privacy@ofi.com">privacy@ofi.com</a>.</string>
 
 
     <string name="cs_page5_22">   </string>
@@ -698,4 +697,5 @@
     <string name="please_click_checkbox">โปรดคลิกช่องทำเครื่องหมายที่เหมาะสมทั้งหมด</string>
     <string name="clear">แจ่มใส</string>
     <string name="update_consent_statement">อัปเดตคำชี้แจงความยินยอม</string>
+    <string name="cs_page5_21">หากมีข้อสงสัยใด ๆ เกี่ยวกับข้อมูลที่เราจัดเก็บไว้เกี่ยวกับคุณ กรุณาส่งอีเมลถึงเราที่ <a href="privacy@ofi.com">privacy@ofi.com</a>.</string>
 </resources>
