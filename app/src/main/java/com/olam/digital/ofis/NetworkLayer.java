@@ -195,8 +195,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
     }
 
 
-// laina
-    private static void okHttpPost(Context context, String url, JSONObject params, Callback callback) {
+
+    public static void okHttpPost(Context context, String url, JSONObject params, Callback callback) {
         String enumeratorId = Utilities.getFromSharedPrefs(context);
         String commodity=Utilities.getCommoditySharedPrefs(context);
         String operatingUnit=Utilities.getOperatingUnitSharedPrefs(context);
@@ -207,6 +207,38 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         String base64ImeiNumber = Base64.encodeToString(imeiNumber.getBytes(), Base64.NO_WRAP);
         String base64UniqueId = Base64.encodeToString(uniqueId.getBytes(), Base64.NO_WRAP);
         String fullUrl = getAbsoluteUrl(url);
+
+        RequestBody body = RequestBody.create(JSONBody, params.toString());
+
+        Request request = new Request.Builder()
+                .header("enumerator-id", base64EnumeratorId)
+                .header("CL-Fetch-UserID", enumeratorId)
+                .header("CL-Fetch-Commodity", commodity)
+                .header("CL-Fetch-OperatingUnit", operatingUnit)
+                .header("imei-number", base64ImeiNumber)
+                .header("unique-id", base64UniqueId)
+                .header("app-version", BuildConfig.VERSION_NAME)
+                .header("App-Id","1")
+                .header("Authorization", "Bearer " + new AuthenticationHelper(context).getAuthenticationDTO().getAccessToken())
+                .url(fullUrl)
+                .post(body)
+                .build();
+
+        System.out.println("okhttppost_Request:" + request);
+        okHttpClient.newCall(request).enqueue(callback);
+    }
+
+    public static void okHttpPostOauth(Context context, String url, JSONObject params, Callback callback) {
+        String enumeratorId = Utilities.getFromSharedPrefs(context);
+        String commodity=Utilities.getCommoditySharedPrefs(context);
+        String operatingUnit=Utilities.getOperatingUnitSharedPrefs(context);
+
+        String imeiNumber = Utilities.getIMEI(context);
+        String uniqueId = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
+        String base64EnumeratorId = Base64.encodeToString(enumeratorId.getBytes(), Base64.NO_WRAP);
+        String base64ImeiNumber = Base64.encodeToString(imeiNumber.getBytes(), Base64.NO_WRAP);
+        String base64UniqueId = Base64.encodeToString(uniqueId.getBytes(), Base64.NO_WRAP);
+        String fullUrl = getAbsoluteUrlMigration(url);
 
         RequestBody body = RequestBody.create(JSONBody, params.toString());
 
@@ -312,6 +344,9 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
     }
 
     private static String getAbsoluteUrl(String relativeUrl) {
+        return BASE_URL + relativeUrl;
+    }
+    private static String getAbsoluteUrlMigration(String relativeUrl) {
         return BASE_URL + relativeUrl;
     }
 
