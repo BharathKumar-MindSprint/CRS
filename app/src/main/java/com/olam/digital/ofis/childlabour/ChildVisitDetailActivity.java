@@ -3,6 +3,7 @@ package com.olam.digital.ofis.childlabour;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
 import android.location.Location;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
@@ -10,6 +11,8 @@ import androidx.core.app.NavUtils;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.AppCompatCheckBox;
+import androidx.core.content.ContextCompat;
+
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -298,6 +301,24 @@ public class ChildVisitDetailActivity  extends BaseActivity implements View.OnCl
         MatomoHelper.matomoScreenTracker(ScreenNameConstants.SCREEN_REGISTER_CHILD_ACTIVITY, ScreenNameConstants.SCREEN_CHILD_VISIT_DETAIL_ACTIVITY, ScreenNameConstants.SCREEN_CHILD_VISIT_DETAIL);
         getBundleValues();
         getSubmittedSurveyDetails();
+
+        try {
+            //  hide the household for Turkey/Hazelnut
+            Cursor mCursor= dl.getFarmerById(Long.valueOf(farmerId));
+            String countryId = null;
+            if (mCursor.getCount() > 0) {
+                mCursor.moveToFirst();
+                countryId = mCursor.getString(mCursor.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID));
+            }
+            if (countryId!=null){
+                if (countryId.equalsIgnoreCase("32")){
+                    houseHoldCheckBox.setEnabled(false);
+                    houseHoldCheckBox.setBackgroundColor(ContextCompat.getColor(this, R.color.clmrs_bg_gray));
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     @Override

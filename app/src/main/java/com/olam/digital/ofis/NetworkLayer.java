@@ -3288,16 +3288,17 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             FirebaseCrashlytics.getInstance().log(e.getMessage());
                         }
 
+                        long farmerGroupID=0;
                         try {
-
-                            long farmerGroupID = Long.valueOf(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID)));
+                            farmerGroupID = Long.valueOf(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID)));
                             jsonObject.put(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID, farmerGroupID);
                         } catch (Exception e) {
                             FirebaseCrashlytics.getInstance().log(e.getMessage());
                         }
 
                         try {
-                            long productID = Long.valueOf(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID)));
+                            // fetching the product Id from farmer Group table
+                            long productID = dl.getProductIdByFarmerGroupId(farmerGroupID);
                             jsonObject.put(OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID, productID);
                         } catch (Exception e) {
                             FirebaseCrashlytics.getInstance().log(e.getMessage());
