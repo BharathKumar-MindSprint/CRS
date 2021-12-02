@@ -58,6 +58,7 @@ import com.olam.digital.ofis.coffeesurveyconstraints.Constraint;
 import com.olam.digital.ofis.coffeesurveyconstraints.QuestionInfo;
 import com.olam.digital.ofis.coffeesurveyconstraints.utils.CommonUtilities;
 import com.olam.digital.ofis.coffeesurveyconstraints.utils.DecimalDigitsInputFilter;
+import com.olam.digital.ofis.model.FarmerGeo;
 import com.olam.digital.ofis.recordpolygon.AppConstants;
 
 import org.json.JSONArray;
@@ -101,6 +102,7 @@ public class DynamicQuestions {
     public Context context;
     private final DataLayer dl;
     public static String SurveyType="";
+    public static FarmerGeo farmerGeo;
 
     public ArrayList<EditText> et_list;
     private String mCurrentPhotoPath = null, mCurrentPhotoFileName = null;
@@ -1996,6 +1998,34 @@ public class DynamicQuestions {
                 }
             }
 
+
+            //   Prepopulate Yes/No If not answered
+            boolean isChildDefault=false;
+            try {
+                JSONObject jsonObject= new JSONObject(displayConfig.toString()).getJSONObject("calculation");
+                JSONArray countryIDs = (JSONArray) jsonObject.get("countryId");
+                JSONArray productIDs = (JSONArray) jsonObject.get("productId");
+                if (countryIDs.length()>0 && productIDs.length()>0) {
+                    ArrayList<Integer> countryLdList = new ArrayList<>();
+                    for (int i = 0; i < countryIDs.length(); i++) {
+                        countryLdList.add(Integer.parseInt(countryIDs.getString(i)));
+                    }
+                    ArrayList<Integer> productIdList = new ArrayList<>();
+                    for (int i = 0; i < productIDs.length(); i++) {
+                        productIdList.add(Integer.parseInt(productIDs.getString(i)));
+                    }
+                    if (countryLdList.contains(farmerGeo.getCountryId()) && productIdList.contains(farmerGeo.getProductId())){
+                        isChildDefault=true;
+                    }
+                }
+
+            } catch (JSONException e) {
+                FirebaseCrashlytics.getInstance().log(e.getMessage());
+
+            }
+
+
+
             // N/A for LookUp Value franklin
             int defaultLookUpValue=0;
             if(displayConfig.has("calculation")){
@@ -2004,12 +2034,19 @@ public class DynamicQuestions {
                 defaultLookUpValue = jsonObject.optInt("defaultLookUpValue",0);
                 if(defaultLookUpValue != 0){
                     // find the question is answered or not
-                    Cursor cbAnswers = dl.getAnswersForQuestionByFarmer(questionId,Utilities.farmerId, Utilities.farmerModuleId);
-                    if (!(cbAnswers.getCount()>0)) {
-                        for (int i = 0; i < spinner.getCount(); i++) {
-                            if (spinner.getItemIdAtPosition(i) == defaultLookUpValue) {
-                                spinner.setSelection(i);
-                                break;
+                    Cursor cbAnswers=null;
+                    if(isChildDefault){
+                        cbAnswers = dl.getAnswersForQuestionByChild(questionId,Utilities.farmerId, Utilities.farmerModuleId);
+                    }else{
+                         cbAnswers = dl.getAnswersForQuestionByFarmer(questionId,Utilities.farmerId, Utilities.farmerModuleId);
+                    }
+                    if(cbAnswers!=null) {
+                        if (!(cbAnswers.getCount() > 0)) {
+                            for (int i = 0; i < spinner.getCount(); i++) {
+                                if (spinner.getItemIdAtPosition(i) == defaultLookUpValue) {
+                                    spinner.setSelection(i);
+                                    break;
+                                }
                             }
                         }
                     }
@@ -3581,6 +3618,42 @@ public class DynamicQuestions {
 
         final String yesQuestion = question1;
         final String noqQuestion = question2;
+
+      //   Prepopulate Yes/No If not answered
+        String type,option;
+        try {
+            JSONObject jsonObject= new JSONObject(displayConfig).getJSONObject("prepopulate");
+            type=jsonObject.getString("type");
+            option= jsonObject.getString("option").trim();
+            JSONArray countryIDs = (JSONArray) jsonObject.get("countryId");
+            JSONArray productIDs = (JSONArray) jsonObject.get("productId");
+            if (countryIDs.length()>0 && productIDs.length()>0) {
+                ArrayList<Integer> countryLdList = new ArrayList<>();
+                for (int i = 0; i < countryIDs.length(); i++) {
+                    countryLdList.add(Integer.parseInt(countryIDs.getString(i)));
+                }
+                ArrayList<Integer> productIdList = new ArrayList<>();
+                for (int i = 0; i < productIDs.length(); i++) {
+                    productIdList.add(Integer.parseInt(productIDs.getString(i)));
+                }
+                if (countryLdList.contains(farmerGeo.getCountryId()) && productIdList.contains(farmerGeo.getProductId())){
+                if(type.equalsIgnoreCase("Yes/No")){
+                    if (option.equalsIgnoreCase("yes")){
+                        spinner.setSelection(1);
+                    }else{
+                        spinner.setSelection(2);
+                    }
+                }
+                }
+            }
+
+        } catch (JSONException e) {
+            FirebaseCrashlytics.getInstance().log(e.getMessage());
+
+        }
+
+
+         //End
 
 
         int finalSwitchId = switchId;
