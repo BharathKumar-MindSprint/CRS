@@ -66,4 +66,6 @@
     <color name="colorPrimary">#dc582a</color>
     <color name="icon_grey_palette_2">#878786</color>
 
+    <color name="child_selected_text_color">#000</color>
+
 </resources>

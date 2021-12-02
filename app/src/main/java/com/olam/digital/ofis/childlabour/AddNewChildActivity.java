@@ -160,11 +160,12 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
         }else if (v.getId() == R.id.maleButton) {
             MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_MALE_CHILD,  ScreenNameConstants.BUTTON_CLICKED);
              gender=ChildLabourUtils.MALE;
-            femaleButton.setBackgroundColor(getResources().getColor(R.color.gender_selected));
-            maleButton.setBackgroundResource(R.drawable.gender_male_selected);
 
+            maleButton.setBackgroundResource(R.drawable.gender_male_selected);
+            maleButton.setTextColor(getResources().getColor(R.color.child_selected_text_color));
+
+            femaleButton.setBackgroundColor(getResources().getColor(R.color.gender_selected));
             femaleButton.setTextColor(getResources().getColor(R.color.gender_selected_text));
-            maleButton.setTextColor(getResources().getColor(android.R.color.black));
 
         } else if (v.getId() == R.id.femaleButton) {
             MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_FEMALE_CHILD,  ScreenNameConstants.BUTTON_CLICKED);
@@ -172,7 +173,7 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
     //        gender = getResources().getString(R.string.gender_female);
 
             femaleButton.setBackgroundResource(R.drawable.gender_female_selected);
-            femaleButton.setTextColor(getResources().getColor(android.R.color.black));
+            femaleButton.setTextColor(getResources().getColor(R.color.child_selected_text_color));
 
             maleButton.setBackgroundColor(getResources().getColor(R.color.gender_selected));
             maleButton.setTextColor(getResources().getColor(R.color.gender_selected_text));

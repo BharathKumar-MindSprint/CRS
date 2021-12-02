@@ -112,6 +112,7 @@
 
     <style name="CheckboxStyle" parent="AppTheme">
         <item name="colorAccent">@color/cs_checkbox</item>
+        <item name="buttonTint">@color/colorPrimary</item>
     </style>
 
 
