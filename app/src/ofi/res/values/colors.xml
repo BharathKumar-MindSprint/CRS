@@ -99,4 +99,6 @@
     <color name="ofis_list_item_subtitle">#878786</color>
     <color name="ofis_input_field_separator">#26000000</color>
 
+    <color name="child_selected_text_color">#860063</color>
+
 </resources>

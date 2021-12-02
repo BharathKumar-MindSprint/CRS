@@ -21,6 +21,7 @@
             android:layout_width="match_parent"
             android:layout_height="70dp"
             android:paddingLeft="10dp"
+            android:theme="@style/CheckboxStyle"
             android:text="@string/household_question"
             android:textColor="@android:color/black" />
 
@@ -32,6 +33,7 @@
             android:layout_gravity="center"
             android:layout_marginTop="20dp"
             android:paddingLeft="10dp"
+            android:theme="@style/CheckboxStyle"
             android:text="@string/inspection_question"
             android:textColor="@android:color/black" />
 
@@ -42,6 +44,7 @@
             android:layout_gravity="center"
             android:layout_marginTop="20dp"
             android:paddingLeft="10dp"
+            android:theme="@style/CheckboxStyle"
             android:enabled="false"
             android:background="@color/ofis_list_item_disabled_background"
             android:text="@string/followup_question"
