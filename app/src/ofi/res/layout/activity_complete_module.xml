@@ -135,21 +135,17 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="2"
-            android:paddingTop="25dp"
-            android:paddingLeft="0dp"
+            android:layout_gravity="center"
+            android:gravity="center"
             android:paddingRight="10dp">
 
             <ImageButton
+                android:id="@+id/saveProgress"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/saveProgress"
-                app:srcCompat="@drawable/ic_actionbutton_save"
-                android:scaleType="center"
                 android:background="@android:color/transparent"
                 android:contentDescription="@string/Save"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentRight="true"
-                />
+                app:srcCompat="@drawable/ic_actionbutton_save" />
 
         </RelativeLayout>
 
