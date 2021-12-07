@@ -74,14 +74,14 @@ public class MyCustomListAdapter_Tasks extends BaseAdapter {
             }catch (Exception e){
                 e.printStackTrace();
             }
+            linearLayout.setBackgroundResource(R.drawable.list_item);
+            taskText.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
+            taskText.setTextSize(TypedValue.COMPLEX_UNIT_PX, res.getDimension(R.dimen.ofis_med_text));
+            taskDate.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
 
             if (completed == 1) {
                 cbImage.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_check_box));
-                linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
-                taskText.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-                taskText.setTextSize(TypedValue.COMPLEX_UNIT_PX, res.getDimension(R.dimen.ofis_small_text));
-                taskDate.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-               try {
+                try {
                    String viewDate = outputFormat.format(dbDate);
                    taskDate.setText(viewDate);
                }catch (Exception e){
@@ -90,11 +90,7 @@ public class MyCustomListAdapter_Tasks extends BaseAdapter {
 
             } else {
                 cbImage.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_check_box_outline_blank));
-                linearLayout.setBackgroundResource(R.drawable.list_item);
-                taskText.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
-                taskText.setTextSize(TypedValue.COMPLEX_UNIT_PX, res.getDimension(R.dimen.ofis_med_text));
-                taskDate.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
-                Date createdDate = inputFormat.parse(taskDate.getText().toString());
+                 Date createdDate = inputFormat.parse(taskDate.getText().toString());
                 String creator = tasksDTO.getTaskCreator();
                 taskDate.setText(creator + " | " + outputFormat.format(createdDate));
             }

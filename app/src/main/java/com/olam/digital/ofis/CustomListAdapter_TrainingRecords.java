@@ -65,7 +65,7 @@ class CustomListAdapter_TrainingRecords extends SimpleCursorAdapter {
 
         if (cursor.getInt(cursor.getColumnIndex(OFISDBContract.TrainingRecord.COLUMN_NAME_IN_QUEUE)) == 1) {
             status.setText(res.getString(R.string.trainingrecord_confirmed));
-            linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
+            linearLayout.setBackgroundResource(R.drawable.list_item);
         }
 
         imageView.setOnClickListener(new View.OnClickListener() {

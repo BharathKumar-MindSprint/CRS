@@ -71,6 +71,7 @@
                     android:textSize="@dimen/ofis_small_text"
                     android:paddingLeft="@dimen/ofis_small_pad"
                     android:textStyle="bold"
+                    android:paddingTop="5dp"
                     android:textAllCaps="true"/>
 
                 <Spinner
@@ -91,15 +92,15 @@
                 android:layout_weight="4.03">
 
                 <ImageView
+                    android:id="@+id/trainingPhoto"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:maxHeight="100dp"
-                    android:id="@+id/trainingPhoto"
-                    android:contentDescription="@string/Farmer_Photo"
-                    card_view:srcCompat="@drawable/ic_add_new_farmer"
-                    android:background="@drawable/border"
                     android:adjustViewBounds="true"
+                    android:background="@drawable/border"
+                    android:contentDescription="@string/Farmer_Photo"
+                    android:maxHeight="100dp"
                     android:scaleType="fitCenter"
+                    card_view:srcCompat="@drawable/ic_training_image"
                     tools:ignore="VectorDrawableCompat" />
 
                 <ImageButton
@@ -192,17 +193,17 @@
         android:paddingLeft="@dimen/ofis_bottom_section_padding_horizontal">
 
         <Button
+            android:id="@+id/addAttendeeScores"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/text_button_width_height"
-            android:text="@string/add_attendee_scores"
-            android:textAllCaps="true"
-            android:background="@color/btn_secondary_background"
-            android:textColor="@color/ofis_base_font_white"
+            android:layout_alignParentLeft="true"
+            android:background="@color/btnColorThird"
             android:paddingLeft="@dimen/ofis_med_pad"
             android:paddingRight="@dimen/ofis_med_pad"
-            android:textSize="@dimen/ofis_micro_text"
-            android:id="@+id/addAttendeeScores"
-            android:layout_alignParentLeft="true"/>
+            android:text="@string/add_attendee_scores"
+            android:textAllCaps="true"
+            android:textColor="@color/ofis_base_font_white"
+            android:textSize="@dimen/ofis_micro_text" />
 
         <Button
             android:layout_width="wrap_content"

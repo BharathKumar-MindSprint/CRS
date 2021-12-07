@@ -10,13 +10,18 @@ import com.olam.digital.ofis.authentication.model.AuthRequestDTO;
 import com.olam.digital.ofis.authentication.model.AuthenticationDTO;
 import com.olam.digital.ofis.dynatrace.DynatraceConstants;
 import com.olam.digital.ofis.dynatrace.DynatraceHelper;
-import com.olam.digital.ofis.logging.FabricLogsWriter;
 
 
+
+import org.json.JSONObject;
+
+import java.io.IOException;
+
+import okhttp3.Callback;
 import retrofit2.Call;
 import retrofit2.Response;
 
-import static com.olam.digital.ofis.HomeActivity.TAG;
+import static com.olam.digital.ofis.NetworkLayer.okHttpPostOauth;
 
 public class AccessTokenTask extends AsyncTask<Object, Object, String> {
 
@@ -86,6 +91,29 @@ public class AccessTokenTask extends AsyncTask<Object, Object, String> {
                         Utilities.saveToSharedPrefs(mContext, "PASSCODE", authRequestDTO.getPasscode(), null);
                         return authenticationDTO.getAccessToken();
                     } else {
+                        JSONObject inputArgs = new JSONObject();
+
+                       String endpoint = "oauth/api/v1/oauth/migrateRole?enumeratorId="+Utilities.getFromSharedPrefs(mContext);
+
+                        okHttpPostOauth(mContext, endpoint, inputArgs, new Callback() {
+                            @Override
+                            public void onResponse(okhttp3.Call call, final okhttp3.Response postResponse) throws IOException {
+                                if (postResponse.isSuccessful()) {
+
+                                } else {
+
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(okhttp3.Call call, IOException e) {
+
+                            }
+
+                        });
+
+
+                        //Old
                         int statusCode = authResponse.code();
                         return null;
                     }
