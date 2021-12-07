@@ -162,7 +162,7 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
              gender=ChildLabourUtils.MALE;
 
             maleButton.setBackgroundResource(R.drawable.gender_male_selected);
-            maleButton.setTextColor(getResources().getColor(R.color.child_selected_text_color));
+            maleButton.setTextColor(getResources().getColor(R.color.white));
 
             femaleButton.setBackgroundColor(getResources().getColor(R.color.gender_selected));
             femaleButton.setTextColor(getResources().getColor(R.color.gender_selected_text));
@@ -173,7 +173,7 @@ public class AddNewChildActivity extends BaseActivity implements  View.OnClickLi
     //        gender = getResources().getString(R.string.gender_female);
 
             femaleButton.setBackgroundResource(R.drawable.gender_female_selected);
-            femaleButton.setTextColor(getResources().getColor(R.color.child_selected_text_color));
+            femaleButton.setTextColor(getResources().getColor(R.color.white));
 
             maleButton.setBackgroundColor(getResources().getColor(R.color.gender_selected));
             maleButton.setTextColor(getResources().getColor(R.color.gender_selected_text));
