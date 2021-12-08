@@ -67,5 +67,5 @@
     <color name="icon_grey_palette_2">#878786</color>
 
     <color name="child_selected_text_color">#000</color>
-
+    <color name="gender_selected_textcolor">#000000</color>
 </resources>

@@ -100,5 +100,6 @@
     <color name="ofis_input_field_separator">#26000000</color>
 
     <color name="child_selected_text_color">#860063</color>
+    <color name="gender_selected_textcolor">#ffffff</color>
 
 </resources>
