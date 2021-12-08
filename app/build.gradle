@@ -38,8 +38,8 @@ android {
         multiDexEnabled true
 
 
-        versionCode 230
-        versionName "10.5.3"
+        versionCode 231
+        versionName "10.5.4"
 
 
 
