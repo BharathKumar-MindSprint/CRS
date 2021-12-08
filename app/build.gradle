@@ -37,9 +37,9 @@ android {
         targetSdkVersion 29
         multiDexEnabled true
 
+        versionCode 83
+        versionName "10.7.3"
 
-        versionCode 231
-        versionName "10.5.4"
     }
     buildTypes {
         debug {
