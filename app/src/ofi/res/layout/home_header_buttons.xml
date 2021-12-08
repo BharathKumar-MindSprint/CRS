@@ -179,19 +179,19 @@
             android:paddingRight="@dimen/home_activity_vertical_margin">
 
             <TextView
+                android:id="@+id/textView4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/Modules_to_submit"
-                android:id="@+id/textView4"
-                android:paddingRight="@dimen/ofis_micro_pad"
                 android:layout_marginTop="@dimen/ofis_small_pad"
+                android:paddingRight="@dimen/ofis_micro_pad"
+                android:text="@string/Modules_to_submit"
                 android:textColor="@color/ofis_base_font_dark"
-                android:textSize="@dimen/ofis_small_text"
-                tools:ignore="RtlHardcoded"/>
+                android:textSize="@dimen/ofis_med_text"
+                tools:ignore="RtlHardcoded" />
 
             <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="20dp"
+                android:layout_height="23dp"
                 android:background="@drawable/itemlist_total_background"
                 android:id="@+id/networkQueueCount"
                 android:text="0"
