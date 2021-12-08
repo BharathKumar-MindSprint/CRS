@@ -391,7 +391,7 @@
                         app:srcCompat="@drawable/ic_spinner_hierarchy_arrow"
                         android:scaleType="center"
                         android:id="@+id/haFarmerGroup"
-                        android:visibility="invisible"/>
+                        android:visibility="gone"/>
 
                     <Spinner
                         android:layout_width="match_parent"
