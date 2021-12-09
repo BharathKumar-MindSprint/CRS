@@ -32,6 +32,9 @@ public interface KeyCloakInfo {
     String prod_client_Id="ofis-mobile";
     String prod_Client_Secret="53b13797-8f74-451f-9eb5-70e385f88522";
 
+    String prod_ofi_client_Id="ofi-ofis-mobile";
+    String prod_ofi_Client_Secret="151b2702-581b-446b-8884-b794838cd6d3";
+
     String Client_Id = "keycloakClientId";
     String Client_Secret = "keycloakClientSecret";
 }
