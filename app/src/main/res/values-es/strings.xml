@@ -605,6 +605,20 @@
     <string name="please_check_dependent_question">since its dependent question is updated</string>
     <string name="update_firebase_install_id_info">Updating Informations</string>
     <string name="national_id_info">Please update the National ID of farmer</string>
+    <string name="attendee_name">Attendee Name:</string>
+    <string name="attendee_age">Age</string>
+    <string name="attendee_relationship">Relationship:</string>
+    <string name="attendee_sex">Sex</string>
+    <string name="add_attendee">Add Attendee</string>
+    <string name="attendee_name_hint">Enter Attendee Name</string>
+    <string name="attendee_hint_age">Enter Age</string>
+    <string name="view_attendees_count">View Attendee (~V attendees)</string>
+    <string name="add_edit_attendee">Add/Edit\n Attendee</string>
+    <string name="viewAttendee">View Attendee</string>
+    <string name="attendee">Attendee</string>
+    <string name="mandatory_msg">Please fill all the details</string>
+    <string name="add_edit">Add/Edit</string>
+    <string name="Attendee">Attendee</string>
 
     <string name="household_question">¿El agricultor tiene hijos menores de 18 años en el hogar?</string>
     <string name="title_child_labour">Registro de niño(a)</string>
