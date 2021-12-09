@@ -1,0 +1,472 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/ofis_page_background"
+    tools:context="com.olam.digital.ofis.ViewFarmerActivity"
+    android:id="@+id/layout_view_farmer"
+    tools:ignore="Overdraw">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="160dp"
+        android:id="@+id/topSectionBackground"
+        android:background="@color/ofis_farmer_screen_actions_background"
+        android:contentDescription="@string/cd_topSectionColour" />
+
+
+    <!-- Custom error message section -->
+    <LinearLayout
+        android:id="@+id/layout_notification"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="1"
+        android:visibility="gone"
+        android:background="@color/color_secondary_3"
+        android:padding="@dimen/activity_horizontal_margin"
+        android:layout_below="@+id/topSectionBackground"
+        android:baselineAligned="false">
+        <ImageView
+            android:id="@+id/info_status_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_info_icon"
+            android:layout_weight="0.1"/>
+
+        <TextView
+            android:id="@+id/info_text"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:paddingLeft="@dimen/margin_10"
+            android:paddingRight="@dimen/margin_10"
+            android:layout_marginTop="3dp"
+            android:layout_marginBottom="3dp"
+            android:layout_weight="0.8"
+            android:text="@string/national_id_info"
+            android:textColor="@color/ofis_base_font_white" />
+        <ImageView
+            android:id="@+id/info_close_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_close_info"
+            android:layout_weight="0.1"/>
+    </LinearLayout>
+
+    <!-- bottom section -->
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/layout_notification"
+        android:baselineAligned="false">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:id="@+id/bottomSection"
+            android:layout_weight="1"
+            tools:ignore="UselessParent">
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="15dp"
+                android:paddingLeft="15dp"
+                android:paddingRight="0dp"
+                android:paddingEnd="0dp"
+                android:background="@color/sub_task_header_bg"
+                android:paddingTop="10dp"
+                android:paddingBottom="5dp">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="27dp"
+                    android:scaleType="fitStart"
+                    android:contentDescription="@string/ofis_cd_info_icon"
+                    android:layout_gravity="center_vertical"
+                    android:id="@+id/imageView2"
+                    app:srcCompat="@drawable/ic_task_list_icon" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="27dp"
+                    android:text="@string/Task_list_header"
+                    android:layout_gravity="top"
+                    android:id="@+id/textView4"
+                    android:paddingLeft="6dp"
+                    android:paddingRight="6dp"
+                    android:textColor="@color/ofis_list_header_text"
+                    android:textSize="@dimen/ofis_med_text"
+                    android:gravity="top|center_vertical"/>
+            </LinearLayout>
+
+            <ListView
+                android:id="@+id/list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/ofis_page_background"
+                android:divider="@android:color/transparent"
+                android:dividerHeight="0dp" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- top section -->
+
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/topSection"
+        android:baselineAligned="false"
+        android:paddingBottom="0dp"
+        android:layout_margin="0dp">
+
+        <!-- add farmer white input fields and heading - updated -->
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingLeft="10dp"
+            android:paddingTop="10dp"
+            android:paddingRight="10dp"
+            android:paddingBottom="5dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/View_Farmer"
+                android:id="@+id/pageTitle"
+                android:textColor="@color/ofis_base_font_white"
+                android:textSize="@dimen/ofis_large_text"
+                android:paddingRight="0dp"
+                android:paddingEnd="0dp"
+                android:paddingLeft="5dp"
+                android:maxLines="1" />
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:textSize="@dimen/ofis_input_field_text"
+                android:layout_marginTop="6dp"
+                android:id="@+id/viewFarmerFarmerName"
+                android:textColor="@color/ofis_base_font_dark"
+                android:background="@drawable/edittext_bg_dark"
+                android:padding="@dimen/margin_10"
+                android:layout_marginBottom="@dimen/ofis_input_field_bottom_margin"
+                android:maxLines="1" />
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:textSize="@dimen/ofis_input_field_text"
+                android:id="@+id/viewFarmerOlamFarmerID"
+                android:textColor="@color/ofis_base_font_dark"
+                android:background="@drawable/edittext_bg_dark"
+                android:padding="@dimen/margin_10"
+                android:layout_marginBottom="@dimen/ofis_input_field_bottom_margin"
+                android:maxLines="1" />
+
+        </LinearLayout>
+        <!-- end add farmer white input fields and heading -->
+        <RelativeLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1.8"
+            android:paddingLeft="10dp"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingEnd="@dimen/activity_horizontal_margin"
+            android:id="@+id/wrapper_farmerPhoto">
+
+            <ImageView
+                android:layout_width="84dp"
+                android:layout_height="112dp"
+                android:paddingTop="@dimen/margin_10"
+                android:contentDescription="@string/Farmer_Photo"
+                android:id="@+id/viewFarmerFarmerPhoto"
+                app:srcCompat="@drawable/empty_farmer_icon"
+                android:layout_marginTop="@dimen/margin_10"
+                android:background="@android:color/transparent"
+                android:scaleType="fitStart"
+                android:layout_alignParentLeft="false"
+                android:layout_alignParentStart="false"
+                android:layout_alignParentBottom="true"/>
+
+            <ImageButton
+                android:layout_width="@dimen/standard_button_width_height"
+                android:layout_height="@dimen/standard_button_width_height"
+                android:id="@+id/farmerPhotoActionButton"
+                android:contentDescription="@string/Camera"
+                app:srcCompat="@drawable/ic_actionbutton_camera"
+                android:layout_alignParentEnd="false"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:padding="0dp"
+                android:adjustViewBounds="false"
+                android:background="@android:color/transparent"
+                android:scaleType="fitXY"
+                tools:ignore="VectorDrawableCompat" />
+        </RelativeLayout>
+
+    </LinearLayout>
+   <!-- <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/topSection"
+        android:baselineAligned="false"
+        android:layout_margin="0dp"
+        android:paddingBottom="0dp">
+
+        &lt;!&ndash; view farmer white text fields and heading &ndash;&gt;
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingLeft="10dp"
+            android:paddingTop="10dp"
+            android:paddingRight="10dp"
+            android:paddingBottom="@dimen/ofis_top_section_padding_bottom_optional">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/View_Farmer"
+                android:id="@+id/textView2"
+                android:textColor="@color/ofis_base_font_white"
+                android:paddingRight="0dp"
+                android:paddingEnd="0dp"
+                android:paddingLeft="5dp"
+                android:textSize="@dimen/ofis_large_text"
+                tools:ignore="RtlHardcoded" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/ofis_input_field_text"
+                android:id="@+id/viewFarmerFarmerName"
+                android:textColor="@color/ofis_base_font_white"
+                android:background="@drawable/ofis_edit_text_holo_dark"
+                android:layout_marginBottom="@dimen/ofis_input_field_bottom_margin"
+                android:maxLines="1" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/ofis_input_field_text"
+                android:id="@+id/viewFarmerOlamFarmerID"
+                android:textColor="@color/ofis_base_font_white"
+                android:background="@drawable/ofis_edit_text_holo_dark"
+                android:layout_marginBottom="@dimen/ofis_input_field_bottom_margin"
+                android:maxLines="1" />
+
+        </LinearLayout>
+        &lt;!&ndash; end view farmer white text fields and heading &ndash;&gt;
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1.8"
+            android:paddingTop="25dp"
+            android:paddingLeft="0dp"
+            android:paddingRight="10dp"
+            android:id="@+id/wrapper_farmerPhoto">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:contentDescription="@string/Farmer_Photo"
+                android:id="@+id/viewFarmerFarmerPhoto"
+                android:src="@drawable/empty_farmer_photo"
+                android:background="@android:color/transparent"
+                android:scaleType="fitStart"
+                android:layout_alignParentLeft="false"
+                android:layout_alignParentBottom="true" />
+            <ImageButton
+                android:layout_width="@dimen/standard_button_width_height"
+                android:layout_height="@dimen/standard_button_width_height"
+                android:id="@+id/farmerPhotoActionButton"
+                android:contentDescription="@string/Camera"
+                android:src="@drawable/ic_actionbutton_camera"
+                android:layout_alignParentEnd="false"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:padding="0dp"
+                android:adjustViewBounds="false"
+                android:background="@android:color/transparent"
+                android:scaleType="fitXY" />
+        </RelativeLayout>
+
+    </LinearLayout>-->
+
+    <!-- phone numbers dialog -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/phoneNumbersHolder"
+        android:orientation="vertical"
+        android:layout_margin="@dimen/ofis_input_field_bottom_margin"
+        android:background="@drawable/border_white_background"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/ofis_med_pad"
+            android:paddingRight="@dimen/ofis_med_pad"
+            android:paddingTop="@dimen/ofis_med_pad"
+            android:paddingBottom="@dimen/ofis_med_pad"
+            android:orientation="horizontal"
+            android:weightSum="10"
+            android:background="@drawable/bottom_border"
+            android:id="@+id/phoneNumbersDialogHeader">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/ofis_text_field"
+                android:textSize="@dimen/ofis_small_text"
+                android:text="@string/PhoneNumbers"
+                android:textAllCaps="true"
+                android:textStyle="bold"
+                android:layout_weight="9"
+                android:layout_gravity="start|top"/>
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:id="@+id/phonenumbersCloseButton"
+                app:srcCompat="@drawable/ic_consent_close"
+                android:background="@android:color/transparent"
+                android:layout_weight="1"
+                android:layout_gravity="end|top"
+                android:contentDescription="@string/ofis_switch_text_no"
+                android:scaleType="fitStart" />
+        </LinearLayout>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/ofis_med_pad"
+            android:layout_below="@+id/phoneNumbersDialogHeader"
+            android:layout_above="@+id/phoneNumbersDialogFooter">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:id="@+id/phonenumbersouter"
+                    android:weightSum="12"
+                    android:baselineAligned="false"
+                    tools:ignore="UselessParent">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_weight="10.8"
+                        android:id="@+id/phonenumbersinner">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:weightSum="12">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="5"
+                                android:text="@string/main_number"
+                                android:textSize="@dimen/ofis_small_text"
+                                android:textAllCaps="true"
+                                android:textStyle="bold"
+                                />
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="6.5"
+                                android:text="@string/PhoneNumberHint"
+                                android:textSize="@dimen/ofis_small_text"
+                                android:textAllCaps="true"
+                                android:textStyle="bold"
+                                android:paddingLeft="@dimen/ofis_micro_pad"
+                                />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:animateLayoutChanges="true"
+                            android:id="@+id/phonenumbers">
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:layout_weight="1.2"
+                        android:gravity="bottom|right">
+
+                        <ImageButton
+                            android:layout_width="@dimen/small_button_width_height"
+                            android:layout_height="@dimen/small_button_width_height"
+                            android:id="@+id/addNumber"
+                            app:srcCompat="@drawable/ic_ofis_add"
+                            android:scaleType="fitXY"
+                            android:background="@android:color/transparent"
+                            android:layout_marginRight="@dimen/ofis_bottom_section_padding_horizontal"
+                            android:layout_marginTop="@dimen/phone_number_plus_offset"
+                            android:contentDescription="@string/Add"
+                            />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </LinearLayout>
+        </ScrollView>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:id="@+id/phoneNumbersDialogFooter"
+            android:padding="@dimen/ofis_med_pad"
+            android:layout_alignParentBottom="true"
+            android:gravity="right">
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/Save"
+                android:id="@+id/phonenumbersSave"
+                android:background="@color/ofis_action_button_background"
+                android:textColor="@color/ofis_base_font_white"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"/>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</RelativeLayout>

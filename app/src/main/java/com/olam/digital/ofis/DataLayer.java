@@ -5572,7 +5572,33 @@ public class DataLayer {
         return questionList;
     }
 
+
+    public String getProductInfo() {
+         String productdetails="";
+            String[] columns = new String[]{"*"};
+            Cursor cursor = db.query(OFISDBContract.ProductsEntry.TABLE_NAME, columns, null, null, null, null, null);
+
+            List<String> products = new ArrayList<String>();
+            if (cursor != null) {
+                try {
+                    if (cursor.getCount() > 0) {
+                        while (cursor.moveToNext()) {
+                            String product = cursor.getString(cursor.getColumnIndex(OFISDBContract.ProductsEntry.COLUMN_NAME_PRODUCT_NAME));
+                            products.add(product);
+                        }
+                    }
+                } catch (Exception e) {
+                   e.printStackTrace();
+                } finally {
+                    cursor.close();
+                }
+            }
+            productdetails= String.join(", ", products);
+            return productdetails;
+    }
+
      public long getProductIdByFarmerGroupId(long farmerGroupId) {
+       
         long productId=0;
         String[] columns = new String[]{"*"};
         String whereClause = OFISDBContract.FarmerGroupsEntry.COLUMN_NAME_ID+ " = ?";

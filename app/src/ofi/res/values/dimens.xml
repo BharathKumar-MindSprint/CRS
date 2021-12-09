@@ -1,0 +1,57 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+
+    <dimen name="mapview_magrin">5dp</dimen>
+    <dimen name="record_status_right_magrin">15dp</dimen>
+    <dimen name="ofis_micro_text">12sp</dimen>
+    <dimen name="ofis_small_text">13sp</dimen>
+    <dimen name="ofis_smallmed_text">14sp</dimen>
+    <dimen name="ofis_med_text">15sp</dimen>
+    <dimen name="ofis_large_text">17sp</dimen>
+    <dimen name="ofis_xlarge_text">20sp</dimen>
+    <dimen name="ofis_fmp_section_text">17sp</dimen>
+    <dimen name="ofis_module_repeateritem_padding">10dp</dimen>
+    <dimen name="margin_10">10dp</dimen>
+
+    <dimen name="ofis_input_field_text">14sp</dimen>
+    <dimen name="ofis_input_field_bottom_margin">10dp</dimen>
+    <dimen name="ofis_spinner_text">14sp</dimen>
+    <dimen name="ofis_spinner_itemseparator">1dp</dimen>
+
+    <dimen name="ofis_list_itemseparator">4dp</dimen>
+    <dimen name="ofis_list_itemborder">1px</dimen>
+
+    <dimen name="ofis_top_section_padding_bottom_optional">30dp</dimen>
+    <dimen name="tracking_mode_button_width_height">40dp</dimen>
+
+    <dimen name="ofis_bottom_section_padding_vertical">20dp</dimen>
+    <dimen name="ofis_bottom_section_padding_horizontal">5dp</dimen>
+
+    <dimen name="ofis_consent_statement_row_bottom_margin">8dp</dimen>
+    <dimen name="ofis_consent_statement_subrow_left_margin">25dp</dimen>
+
+    <dimen name="ofis_multiline_help_height">120dp</dimen>
+
+    <dimen name="ofis_elevation_height">1dp</dimen>
+    <dimen name="home_activity_horizontal_margin">8dp</dimen>
+    <dimen name="home_activity_vertical_margin">8dp</dimen>
+    <dimen name="ofis_large_pad">12dp</dimen>
+    <dimen name="ofis_med_pad">8dp</dimen>
+    <dimen name="ofis_small_pad">4dp</dimen>
+    <dimen name="ofis_micro_pad">2dp</dimen>
+
+    <dimen name="small_button_width_height">24dp</dimen>
+    <dimen name="standard_button_width_height">32dp</dimen>
+    <dimen name="button_width_height">28dp</dimen>
+    <dimen name="text_button_width_height">40dp</dimen>
+
+    <dimen name="phone_number_plus_offset">-28dp</dimen>
+
+    <dimen name="transactee_name_narrow">120dp</dimen>
+    <dimen name="transaction_balance_width">160dp</dimen>
+
+
+
+</resources>

@@ -74,14 +74,14 @@ public class MyCustomListAdapter_Tasks extends BaseAdapter {
             }catch (Exception e){
                 e.printStackTrace();
             }
+            linearLayout.setBackgroundResource(R.drawable.list_item);
+            taskText.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
+            taskText.setTextSize(TypedValue.COMPLEX_UNIT_PX, res.getDimension(R.dimen.ofis_med_text));
+            taskDate.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
 
             if (completed == 1) {
-                cbImage.setImageDrawable(ContextCompat.getDrawable(context, android.R.drawable.checkbox_on_background));
-                linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
-                taskText.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-                taskText.setTextSize(TypedValue.COMPLEX_UNIT_PX, res.getDimension(R.dimen.ofis_small_text));
-                taskDate.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-               try {
+                cbImage.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_check_box));
+                try {
                    String viewDate = outputFormat.format(dbDate);
                    taskDate.setText(viewDate);
                }catch (Exception e){
@@ -89,12 +89,8 @@ public class MyCustomListAdapter_Tasks extends BaseAdapter {
                }
 
             } else {
-                cbImage.setImageDrawable(ContextCompat.getDrawable(context, android.R.drawable.checkbox_off_background));
-                linearLayout.setBackgroundResource(R.drawable.list_item);
-                taskText.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
-                taskText.setTextSize(TypedValue.COMPLEX_UNIT_PX, res.getDimension(R.dimen.ofis_med_text));
-                taskDate.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
-                Date createdDate = inputFormat.parse(taskDate.getText().toString());
+                cbImage.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_check_box_outline_blank));
+                 Date createdDate = inputFormat.parse(taskDate.getText().toString());
                 String creator = tasksDTO.getTaskCreator();
                 taskDate.setText(creator + " | " + outputFormat.format(createdDate));
             }

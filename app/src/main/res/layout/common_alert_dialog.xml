@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:padding="@dimen/activity_horizontal_margin"
+    android:orientation="vertical"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="match_parent"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        android:visibility="gone"
+        android:textStyle="bold"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/tv_msg"
+        android:layout_width="match_parent"
+        android:text="@string/about_message"
+        android:layout_marginTop="@dimen/margin_10"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        android:layout_height="wrap_content"/>
+
+    <RelativeLayout
+        android:id="@+id/btnLayout"
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/btn_no"
+            android:layout_width="100dp"
+            android:text="@string/no"
+            android:textColor="@color/ofis_base_font_white"
+            android:layout_toLeftOf="@+id/btn_yes"
+            android:background="@drawable/btn_secondary_bg"
+            android:layout_marginRight="@dimen/margin_10"
+            android:layout_height="40dp"/>
+
+        <Button
+            android:id="@+id/btn_yes"
+            android:layout_alignParentRight="true"
+            android:layout_width="100dp"
+            android:textColor="@color/ofis_base_font_white"
+            android:background="@drawable/btn_primary_bg"
+            android:layout_marginLeft="@dimen/margin_10"
+            android:text="@string/yes"
+            android:layout_height="40dp"/>
+
+
+    </RelativeLayout>
+
+
+
+</LinearLayout>

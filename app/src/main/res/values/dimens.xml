@@ -51,4 +51,7 @@
 
     <dimen name="transactee_name_narrow">120dp</dimen>
     <dimen name="transaction_balance_width">160dp</dimen>
+    <dimen name="table_width150">150dp</dimen>
+    <dimen name="table_width60">60dp</dimen>
+    <dimen name="table_width200">200dp</dimen>
 </resources>

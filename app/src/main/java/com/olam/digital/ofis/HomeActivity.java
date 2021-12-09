@@ -63,7 +63,6 @@ import com.olam.digital.ofis.authentication.AuthenticationHelper;
 import com.olam.digital.ofis.authentication.AuthenticationInterface;
 import com.olam.digital.ofis.authentication.DeviceIDxctractor;
 import com.olam.digital.ofis.authentication.KeyCloakInfo;
-import com.olam.digital.ofis.authentication.KeyCloakInfo;
 import com.olam.digital.ofis.authentication.OnAccessTokenInterface;
 import com.olam.digital.ofis.authentication.model.AuthRequestDTO;
 import com.olam.digital.ofis.authentication.model.AuthenticationDTO;
@@ -221,10 +220,13 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         StrictMode.setThreadPolicy(policy);
         // checkTime();
         bindNetworkQueue(true);
-        if (Utilities.getKeyCloakClientDetails(context, KeyCloakInfo.Client_Id).equalsIgnoreCase("")){
+      //  if (Utilities.getKeyCloakClientDetails(context, KeyCloakInfo.Client_Id).equalsIgnoreCase("")){
+        // Removed the check migrate existing enumerator while update Manna version
             String environment=BuildConfig.FLAVOR;
             setKeycloakCredentials(environment);
-        }
+            setOperatingUnit(environment);
+            setCommodity();
+      //  }
         if (sharedPreferences.getBoolean("FIRST_RUN",true)) {
             firstRunSection.setVisibility(View.VISIBLE);
         }
@@ -361,23 +363,67 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             case "dev":
                 clientId=KeyCloakInfo.dev_client_Id;
                 clientSecret=KeyCloakInfo.dev_Client_Secret;
+
+                // fake
+//                clientId=KeyCloakInfo.dev_ofi_client_Id;
+//                clientSecret=KeyCloakInfo.dev_ofi_Client_Secret;
+
+                break;
+            case "devofi":
+                clientId=KeyCloakInfo.dev_ofi_client_Id;
+                clientSecret=KeyCloakInfo.dev_ofi_Client_Secret;
+                break;
+            case "sitofi":
+                clientId=KeyCloakInfo.sit_ofi_client_Id;
+                clientSecret=KeyCloakInfo.sit_ofi_Client_Secret;
                 break;
             case "sit":
-                clientId=KeyCloakInfo.sit_client_Id;
-                clientSecret=KeyCloakInfo.sit_Client_Secret;
+                clientId=KeyCloakInfo.sit_non_ofi_client_Id;
+                clientSecret=KeyCloakInfo.sit_non_ofi_Client_Secret;
                 break;
             case "uat":
-                clientId=KeyCloakInfo.uat_client_Id;
-                clientSecret=KeyCloakInfo.uat_Client_Secret;
+                clientId=KeyCloakInfo.uat_non_ofi_client_Id;
+                clientSecret=KeyCloakInfo.uat_non_ofi_Client_Secret;
+                break;
+            case "uatofi":
+                clientId=KeyCloakInfo.uat_ofi_client_Id;
+                clientSecret=KeyCloakInfo.uat_ofi_Client_Secret;
                 break;
             case "prod":
                 clientId=KeyCloakInfo.prod_client_Id;
                 clientSecret=KeyCloakInfo.prod_Client_Secret;
                 break;
+
+            case "prodofi":
+                clientId=KeyCloakInfo.prod_ofi_client_Id;
+                clientSecret=KeyCloakInfo.prod_ofi_Client_Secret;
+                break;
         }
         Utilities.setKeycloakClientDetails(context,KeyCloakInfo.Client_Id,clientId);
         Utilities.setKeycloakClientDetails(context,KeyCloakInfo.Client_Secret,clientSecret);
     }
+
+    private void setOperatingUnit(String environment){
+        String OpUnit="nil";
+        if (environment.equalsIgnoreCase("dev") || environment.equalsIgnoreCase("sit") ||
+        environment.equalsIgnoreCase("uat") || environment.equalsIgnoreCase("prod")){
+            OpUnit="NON OFI";
+        }else if (environment.equalsIgnoreCase("devofi") || environment.equalsIgnoreCase("sitofi") ||
+                environment.equalsIgnoreCase("uatofi") || environment.equalsIgnoreCase("prodofi")){
+            OpUnit="OFI";
+        }else{
+             OpUnit="nil";
+        }
+        Utilities.setOperatingUnitSharedPrefs(context,OpUnit);
+    }
+
+    private void setCommodity(){
+        String commodity=dl.getProductInfo();
+        Utilities.setCommoditySharedPrefs(context,commodity);
+    }
+
+
+
     private void doingAuthRequest() {
         String userEnumerator = enumeratorID.getText().toString().trim();
 //        Passcode validation - Penetration testing

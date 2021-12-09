@@ -700,6 +700,7 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_ENUM_SIGN = "enumeratorConsentSignature";
         public static final String COLUMN_NAME_OLAM_FARMER_NAME = "olamfarmername";
         public static final String COLUMN_NAME_CONFIRMED_DATE = "confirmedDate";
+           public static final String COLUMN_NAME_OCCUPATION = "occupation";
 
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
@@ -712,6 +713,7 @@ public class OFISDBContract {
                     add(COLUMN_NAME_FARMER_SIGN);
                     add(COLUMN_NAME_ENUM_SIGN);
                     add(COLUMN_NAME_CONFIRMED_DATE);
+                    add(COLUMN_NAME_OCCUPATION);
                 }}
         );
     }

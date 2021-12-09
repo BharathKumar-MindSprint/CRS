@@ -94,7 +94,8 @@
     <string name="new_place_name_placeholder">Novo local</string>
     <string name="Olam_Farmer_ID">ID Olam do produtor</string>
     <string name="Save">Salve</string>
-    <string name="Add_Signature">Assinatura</string>
+    <string name="Add_Signature">Assinatura:</string>
+    <string name="Signature">Assinatura</string>
 
     <!-- Find a farmer related -->
     <!-- in XML -->
@@ -587,7 +588,7 @@
     <string name="cs_page5_26">All consents need to be appropriately tracked and stored. Where an Olam representative is reading the notice to the individual and acknowledging his consent on behalf of the individual (e.g. by way of a slide box in a mobile app), please ensure that Olam is able to check which representative has obtained the consent. </string>
 
     <string name="full_farmer_name">Nome completo</string>
-    <string name="date">Data</string>
+    <string name="date">Data:</string>
     <string name="olam_connect">Olam Connect</string>
     <string name="olam_contact">Contato na Olam</string>
     <string name="digital_sign">Digital Assinatura</string>
@@ -597,7 +598,7 @@
     <string name="farmer_sign_required">Please get signed by farmer</string>
     <string name="staff_sign_required">Please get signed by staff</string>
     <string name="childs_name">Nome do filho</string>
-    <string name="name">Nome</string>
+    <string name="name">Nome:</string>
     <string name="Please_accept_consent">You must accept consent statements to save the farmer</string>
 
 
@@ -620,7 +621,6 @@
     <string name="please_check_dependent_question">since its dependent question is updated</string>
     <string name="update_firebase_install_id_info">Updating Informations</string>
     <string name="national_id_info">Please update the National ID of farmer</string>
-
-
     <string name="zero_area_msg">Cannot save recorded polygon with 0ha. Please try recording a different polygon</string>
+    <string name="please_click_checkbox">Por favor, clique em todas as caixas de seleção apropriadas</string>
 </resources>

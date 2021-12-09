@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_margin="@dimen/activity_horizontal_margin"
+    android:layout_height="match_parent">
+
+
+    <TextView android:layout_margin="@dimen/activity_horizontal_margin"
+        android:layout_width="match_parent"
+        android:text="@string/addional_info_data"
+        android:layout_height="wrap_content"/>
+
+ <HorizontalScrollView android:layout_margin="@dimen/activity_horizontal_margin"
+     android:layout_width="match_parent"
+     android:layout_height="wrap_content">
+    <TableLayout
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent"
+        android:gravity="center">
+        <TableRow  android:padding="5dp">
+            <TextView
+                android:layout_width="@dimen/table_width60"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textStyle="bold"
+                android:text="@string/title1" />
+            <TextView android:textStyle="bold"
+                android:layout_width="@dimen/table_width150"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/title2" />
+            <TextView  android:textStyle="bold"
+                android:layout_width="@dimen/table_width150"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/title3" />
+            <TextView  android:textStyle="bold"
+                android:layout_width="@dimen/table_width150"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/title4" />
+            <TextView  android:textStyle="bold"
+                android:layout_width="@dimen/table_width150"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/title5" />
+        </TableRow>
+        <TableRow  android:padding="5dp">
+            <TextView
+                android:layout_width="@dimen/table_width60"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/one" />
+            <TextView
+                android:layout_width="@dimen/table_width150"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/row1value1" />
+            <TextView
+                android:layout_width="@dimen/table_width150"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/row2value1" />
+            <TextView
+                android:layout_width="@dimen/table_width150"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/row3value1" />
+            <TextView
+                android:layout_width="@dimen/table_width150"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/row4value1" />
+        </TableRow>
+        <TableRow  android:padding="5dp">
+            <TextView
+                android:layout_width="@dimen/table_width60"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/two" />
+            <TextView
+                android:layout_width="@dimen/table_width150"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/row1value2" />
+            <TextView
+                android:layout_width="@dimen/table_width150"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/row2value2" />
+            <TextView
+                android:layout_width="@dimen/table_width150"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/row3value2" />
+            <TextView
+                android:layout_width="@dimen/table_width150"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/row4value2" />
+        </TableRow>
+        <TableRow  android:padding="5dp">
+            <TextView
+                android:layout_width="@dimen/table_width60"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/three" />
+            <TextView
+                android:layout_width="@dimen/table_width150"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/row1value3" />
+            <TextView
+                android:layout_width="@dimen/table_width150"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/row2value3" />
+            <TextView
+                android:layout_width="@dimen/table_width150"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/row3value3" />
+            <TextView
+                android:layout_width="@dimen/table_width150"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/row4value3" />
+        </TableRow>
+        <TableRow  android:padding="5dp">
+            <TextView
+                android:layout_width="@dimen/table_width60"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/four" />
+            <TextView
+                android:layout_width="@dimen/table_width150"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/row1value4" />
+            <TextView
+                android:layout_width="@dimen/table_width150"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/row2value4" />
+            <TextView
+                android:layout_width="@dimen/table_width150"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/row3value4" />
+            <TextView
+                android:layout_width="@dimen/table_width150"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/row4value4" />
+        </TableRow>
+        <TableRow  android:padding="5dp">
+            <TextView
+                android:layout_width="@dimen/table_width60"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/five" />
+            <TextView
+                android:layout_width="@dimen/table_width150"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/row1value5" />
+            <TextView
+                android:layout_width="@dimen/table_width150"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/row2value5" />
+            <TextView
+                android:layout_width="@dimen/table_width150"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/row3value5" />
+            <TextView
+                android:layout_width="@dimen/table_width150"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/row4value5" />
+        </TableRow>
+        <TableRow  android:padding="5dp">
+            <TextView
+                android:layout_width="@dimen/table_width60"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/six" />
+            <TextView
+                android:layout_width="@dimen/table_width150"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/row1value6" />
+            <TextView
+                android:layout_width="@dimen/table_width150"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/row2value6" />
+            <TextView
+                android:layout_width="@dimen/table_width150"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/row3value6" />
+            <TextView
+                android:layout_width="@dimen/table_width150"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/row4value6" />
+        </TableRow>
+        <TableRow  android:padding="5dp">
+            <TextView
+                android:layout_width="@dimen/table_width60"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/seven" />
+            <TextView
+                android:layout_width="@dimen/table_width150"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/row1value7" />
+            <TextView
+                android:layout_width="@dimen/table_width150"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/row2value7" />
+            <TextView
+                android:layout_width="@dimen/table_width150"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/row3value7" />
+            <TextView
+                android:layout_width="@dimen/table_width150"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/row4value7" />
+        </TableRow>
+        <TableRow  android:padding="5dp">
+            <TextView
+                android:layout_width="@dimen/table_width60"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/eight" />
+            <TextView
+                android:layout_width="@dimen/table_width150"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/row1value8" />
+            <TextView
+                android:layout_width="@dimen/table_width150"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/row2value8" />
+            <TextView
+                android:layout_width="@dimen/table_width150"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/row3value8" />
+            <TextView
+                android:layout_width="@dimen/table_width150"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/row4value8" />
+        </TableRow>
+
+    </TableLayout>
+
+ </HorizontalScrollView>
+    <TextView android:layout_margin="@dimen/activity_horizontal_margin"
+        android:layout_width="match_parent"
+        android:text="@string/additional_info_data2"
+        android:layout_height="wrap_content"/>
+</LinearLayout>

@@ -6,6 +6,7 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
@@ -62,6 +63,11 @@ public class ChildLabourDetailsActivity extends BaseActivity {
             childLabourRecyclerAdapter = new ChildLabourRecyclerAdapter(childrenList,this);
             RecyclerView.LayoutManager reLayoutManager = new LinearLayoutManager(getApplicationContext());
             childLabourDetailsRecyclerView.setLayoutManager(reLayoutManager);
+            // Newly Added
+            DividerItemDecoration itemDecoration = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
+            itemDecoration.setDrawable(getResources().getDrawable(R.drawable.list_seperator_divider));
+            childLabourDetailsRecyclerView.addItemDecoration(itemDecoration);
+
             childLabourDetailsRecyclerView.setItemAnimator(new DefaultItemAnimator());
             ((LinearLayoutManager) reLayoutManager).setReverseLayout(true);
             childLabourDetailsRecyclerView.setAdapter(childLabourRecyclerAdapter);

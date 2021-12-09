@@ -1,0 +1,703 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--
+         DICTIONARY FILE, in order to translate just change the value not the key
+         ie, <string name="Settings">Paramètres</string>
+    -->
+    <!-- action bar and activity titles -->
+    <string name="ofis_action_bar_home">Accueil</string>
+    <string name="ofis_action_bar_settings">Paramètres</string>
+    <string name="title_activity_settings">Paramètres</string>
+    <string name="title_activity_add_farmer">Ajoutez un nouveau planteur</string>
+    <string name="title_activity_add_infrastructure">Ajoutez une infrastructure sociale</string>
+    <string name="title_activity_find_farmer">Recherchez un planteur</string>
+    <string name="title_activity_view_farmer">Détails sur le planteur</string>
+    <string name="title_activity_complete_module">Remplir le questionnaire</string>
+
+    <!-- main stuff -->
+    <string name="app_name">OFI Compagnon Debug</string>
+    <string name="cd_topSectionColour">Fonds coloré pour la section</string>
+    <string name="ofis_switch_text_yes">Oui</string>
+    <string name="ofis_switch_text_no">Non</string>
+
+    <!-- Home screen related -->
+    <string name="Retrieving_data">Vérification des mises à jour…</string>
+    <string name="importing_string">Importation %% des données enregistrées</string>
+    <string name="spinners_up_to_date">Données à jour</string>
+    <string name="updating_modules">Téléchargez le questionnaire</string>
+    <string name="modules_up_to_date">Questionnaire à jour</string>
+    <string name="updating_farmers">Téléchargez des données sur les planteurs</string>
+    <string name="farmers_up_to_date">Données des Planteurs à jour</string>
+    <string name="update_complete">Mises à jour complètes</string>
+    <string name="new_farmer">Nouveau Planteur</string>
+    <!-- module row stuff -->
+    <string name="Awaiting_Sync">En attente de synchronisation</string>
+    <!-- in XML -->
+    <string name="ofis_complete_questionnaire">Complétez le questionnaire</string>
+    <string name="ofis_add_infrastructure">Ajouter une infrastructure sociale</string>
+    <string name="ofis_add_new_farmer">Ajouter un nouveau planteur </string>
+    <string name="Modules_to_submit">Eléments à soumettre</string>
+    <string name="item_synced">Synchronisation effectuée avec succès.</string>
+    <string name="item_sync_error">Erreur de synchronisation. Veuillez nous contacter svp</string>
+    <string name="ofis_first_run_intro">C\'est votre première visite, non? Pouvons-nous obtenir quelques informations?</string>
+    <string name="ofis_first_run_save_update">Sauvegardez &amp; actualisez</string>
+
+    <!-- Settings screen related -->
+    <!-- in XML -->
+    <string name="Enumerator_ID">Numéro d\'identification de l\'énumérateur</string>
+
+    <!-- ADD POI related -->
+    <string name="Successfully_added">Le fichier a été ajouté avec succès</string>
+    <string name="Successfully_updated">La mise à jour a été effectuée avec succès</string>
+    <string name="ofis_select_gender">Genre</string>
+    <string name="ofis_olam_funded">Financé par Olam?</string>
+    <string name="ofis_select_year_opened">Année d\'ouverture</string>
+    <string name="ofis_select_education_level">Niveau académique</string>
+    <string name="ofis_select_product">Produit acheté</string>
+    <string name="ofis_select_supply_type">Type d\'approvisionnement en eau</string>
+    <string name="location_not_available">Localisation non disponible</string>
+
+    <!-- in XML -->
+    <string name="Add_Point_of_Interest">Ajouter une infrastructure sociale</string>
+    <string name="Name">Nom</string>
+    <string name="GPS_Position">Position GPS</string>
+
+    <!-- in XML includes -->
+    <string name="Capacity">Nombre d\'élèves (effectif)</string>
+    <string name="Number_of_Classrooms">Nombre de classes</string>
+
+    <!-- Add farmer related -->
+    <!-- in code -->
+    <string name="Select_picture_from">Sélectionner une image à partir de</string>
+    <string name="Camera">Appareil photo</string>
+    <string name="Gallery">Galerie</string>
+    <string name="Please_wait">Veuillez patienter</string>
+    <string name="Please_fill_all_fields">Veuillez remplir tous les champs</string>
+    <string name="Please_fill_required_fields">S\'il vous plaît remplir Nom et Description</string>
+    <string name="id_not_unique">Le numéro de référence du planteur n\'est pas unique. Veuillez réessayer svp</string>
+    <string name="Submitting_data">Transmission de données…</string>
+    <string name="Farmer_Added">Planteur ajouté</string>
+    <string name="Farmer_Updated">Planteur mis à jour</string>
+    <string name="are_you_at_the_farm">Êtes-vous sur la plantation?</string>
+    <string name="yes">Oui</string>
+    <string name="no">Non</string>
+    <string name="searching_for_loc">Recherchez un emplacement</string>
+    <string name="ofis_farmer_id_hint">AA-0000-AAAA-</string>
+
+    <!-- in XML -->
+    <string name="Add_Farmer">Ajouter Planteur</string>
+    <string name="Farmer_Name">Nom du planteur </string>
+    <string name="Date_of_Birth">Date de naissance</string>
+    <string name="Country">Pays</string>
+    <string name="New_place_name">Nom du nouvel emplacement</string>
+    <string name="new_place_name_placeholder">Nouvel emplacement</string>
+    <string name="Olam_Farmer_ID">No ID du planteur Olam</string>
+    <string name="Save">Sauvegardez</string>
+    <string name="Add_Signature">Signature:</string>
+    <string name="Signature">Signature</string>
+
+    <!-- Find a farmer related -->
+    <!-- in XML -->
+    <string name="Select_Farmer">Sélectionnez planteur</string>
+    <string name="Search">Recherchez</string>
+
+    <!-- View farmer related -->
+    <!-- in XML -->
+    <string name="View_Farmer">Voir le planteur</string>
+    <string name="Farmer_Photo">Photo du planteur </string>
+    <string name="Task_list_header">Liste des tâches</string>
+    <string name="record_farm_location">Identifiez la localisation de la plantation</string>
+    <string name="record_farm_location_hint">Cliquez ici pour obtenir la localisation GPS</string>
+    <string name="record_farm_location_complete">Emplacement identifié</string>
+    <string name="record_location_timeout">Si vous ne trouvez pas l\'emplacement, réessayez plus tard</string>
+    <string name="enabled_string">true</string>
+
+    <!-- For View Sub Module - questionnaire default values -->
+    <string name="ModuleTitle">Titre du Module à insérer ici</string>
+    <string name="ModuleSubTitle">Sous-titre du module à insérer ici</string>
+    <string name="ModuleStatus">Nouvelle tâche</string>
+    <string name="module_in_progress">En cours </string>
+    <string name="module_finished">En attente de téléchargement</string>
+    <string name="ModuleAnswerHint">Réponse</string>
+
+    <!-- module action buttons -->
+    <string name="ModuleBackButton">Retour en Arrière</string>
+    <string name="ModuleNextButton">Suivant</string>
+    <string name="ModuleSaveButton">Sauvegarder</string>
+
+    <!-- errors -->
+    <string name="Internet_not_available">La connexion n\'est pas disponibles - vous devez être en ligne pour effectuer cette tâche</string>
+    <string name="networking_error">Erreur. La connexion a peut-être expiré. Veuillez réessayer ou contacter notre service d\'assistance.</string>
+
+    <!-- upgrade -->
+    <string name="upgrade_message">L\'application a été optimisée. Veuillez actualiser à nouveau vos données locales.</string>
+
+    <!-- SPINNERS -->
+
+
+    <!-- spinner default values -->
+    <string name="spinner_country_default">Sélectionnez le pays</string>
+    <string name="spinner_region_default">Sélectionnez la région</string>
+    <string name="spinner_district_default">Sélectionnez le quartier</string>
+    <string name="spinner_place_default">Sélectionnez lieu</string>
+    <string name="spinner_farmergroup_default">Sélectionnez l\'organisation de planteurs</string>
+    <string name="spinner_section_default">Sélectionnez la section</string>
+    <string name="spinner_product_default">Sélectionnez le produit</string>
+
+    <string-array name="poitypes">
+        <item>École</item>
+        <item>Dispensaire</item>
+        <item>Approvisionnement en eau potable</item>
+        <item>Centre d\'achat</item>
+    </string-array>
+    <string name="poitype_school">École</string>
+    <string name="poitype_healthcentre">Dispensaire</string>
+    <string name="poitype_cleanwatersupply">Approvisionnement en eau potable</string>
+    <string name="poitype_buyingcentre">Centre d\'achat</string>
+    <string-array name="genders">
+        <item>Homme</item>
+        <item>Femme</item>
+    </string-array>
+    <string name="gender_male">Homme</string>
+    <string name="gender_female">Femme</string>
+    <string-array name="genders_2">
+        <item>Garçon</item>
+        <item>Fille</item>
+        <item>Mixte</item>
+    </string-array>
+    <string name="gender_school_male">Garçon</string>
+    <string name="gender_school_female">Fille</string>
+    <string name="gender_school_coeducational">Mixte</string>
+    <string-array name="educationlevels">
+        <item>Maternelle</item>
+        <item>Primaire</item>
+        <item>Collège</item>
+        <item>Lycée</item>
+        <item>Université</item>
+    </string-array>
+    <string name="educationlevel_nursery">Maternelle</string>
+    <string name="educationlevel_primary">Primaire</string>
+    <string name="educationlevel_juniorsecondary">Collège</string>
+    <string name="educationlevel_seniorsecondary">Lycée</string>
+    <string name="educationlevel_graduate">Université</string>
+    <string-array name="clean_water_types">
+        <item>Forage</item>
+        <item>Puis</item>
+        <item>Tuyau</item>
+        <item>Eau de source</item>
+    </string-array>
+    <string name="cleanwatertype_borehole">Forage</string>
+    <string name="cleanwatertype_well">Puis</string>
+    <string name="cleanwatertype_pipe">Tuyau</string>
+    <string name="cleanwatertype_spring">Eau de source</string>
+    <string-array name="plotvariants">
+        <item>La même</item>
+        <item>Supérieure</item>
+        <item>Inférieure</item>
+    </string-array>
+    <string name="plotvariant_thesame">La même</string>
+    <string name="plotvariant_more">Supérieure</string>
+    <string name="plotvariant_less">Inférieure</string>
+
+    <!-- content descriptions -->
+    <string name="ofis_cd_hierarchy_arrow">Fléche de droite</string>
+    <string name="ofis_cd_info_icon">Icône d\'information</string>
+    <string name="ofis_cd_submit_all_icon">Soumettez l\'ensemble</string>
+    <string name="module_density_plot_question">La densité de cette parcelle est-elle supérieure, inférieure ou la même que la parcelle principale?</string>
+    <string name="module_density_plot_question_intro">Parcelles supplémentaires</string>
+    <string name="module_density_plot_question_result_intro">Résultat:</string>
+    <string name="app_updated_generic_message">Il y a une nouvelle mise à jour disponible pour l\'application. S\'il vous plaît cliquez sur OK pour le téléchargement</string>
+    <string name="app_update_ok">Ok</string>
+    <string name="app_update_cancel">Annuler</string>
+    <string name="farmer_not_synced">Désolé, mais le planteur n\'a pas encore été synchronisé. Synchronisez d\'abord le planteur svp</string>
+    <string name="review_farm_management_plan">Révisez le plan de gestion de la plantation</string>
+    <string name="review_farm_management_plan_hint">Cliquez ici pour enregistrer un commentaire</string>
+    <string name="title_activity_review_farm_management_plan">Révisez le plan de gestion de la plantation</string>
+    <string name="updating_fmps">Actualisez les plans de gestion de plantations</string>
+    <string name="fmps_up_to_date">Actualisation du plan de gestion de la plantation</string>
+    <string name="review_farm_management_plan_complete">Commentaires soumis</string>
+    <string name="review_farm_management_plan_in_progress">Révision en cours</string>
+    <string name="fmp_redo_baseline">Réviser les données de base?</string>
+    <string name="hpQId">1</string>
+    <string name="hpAId">2</string>
+    <string name="hpPqId">3</string>
+    <string name="hpRiP">4</string>
+    <string name="hpD">5</string>
+    <string name="fullreview_farm_management_plan">Révision complète du plan de gestion de la plantation</string>
+    <string name="fullreview_farm_management_plan_in_progress">Révision complète en cours</string>
+    <string name="fmp_are_you_sure">Ceci va nécessiter l\'impression d\'un nouveau plan. Etes vous sûr de continuer?</string>
+    <string name="complete_all_required_fields">Vous devez remplir toutes les zones de saisie obligatoires avant de pouvoir soumettre cet article</string>
+    <string name="ReadAndAgreeConsent">Veuillez lire et valider la déclaration de consentement</string>
+    <string name="consentStatementMain1">Il est nécessaire que vous nous fournissiez des informations personnelles en relation avec le programme de développement durable d\'Olam auxquels vous participez. Les données personnelles seront collectées et archivées dans le système OFIS (Sytème d\'Information sur les Planteurs Olam, ou, en anglais, Olam Farmer Information System). Vous avez la possibilité de retirer votre consentement préalablement donné pour la collecte, l\'utilisation et la diffusion de vos données personnelles. Cependant, la non-soumission de vos données et/ou le retrait de votre consentement pourrait vous rendre inapte à participer au programme de développement durable d\'Olam.</string>
+    <string name="consentStatementMain2">
+        Vos données personnelles seront utilisées  sur OFIS pour enrichir l\'information sur:
+    </string>
+    <string name="consentStatementMain2a">
+        Le logiciel de cartographie. Il est conçu pour représenter graphiquement la plantation et les infrastructures dans leur environnement. Il capitalise les informations relatives aux planteurs liées aux coordonnées cartographiées.
+    </string>
+    <string name="consentStatementMain2b">
+        Le logiciel d\'analyse. Il permet de relier les informations personnelles du planteur aux données groupées de son environnement afin d\'aider l\'orientation des programmes. Les utilisateurs OFIS sont en mesure d\'extraire des analyses (ainsi que les données afférentes, telles que les données personnelles des planteurs) sous la forme de rapports en format PDF ou EXCEL. La fonction d\'extraction d\'analyse permet aux utilisateurs d\'identifier spécifiquement des planteurs avec, par exemple, les niveaux de productivité supérieurs ou plus faibles par rapport à leurs plantations dans le programme.
+    </string>
+    <string name="consentStatementMain2c">
+        Plans de gestion de plantation. Il s\'agit d\'un plan de gestion  individuel et personnalisé établi pour chaque planteur, indiquant les changements à adopter sur la plantation au cours des 3 à 5 prochaines années afin d\'optimiser le potentiel de productivité de chacun.
+    </string>
+    <string name="consentStatementMain3">
+        Conformément au logiciel de cartographie, au logiciel d\'analyse et au plan de gestion de plantation mentionnés dans le paragraphe 2 ci-dessus, les utilisateurs OFIS incluent les employés d\'Olam, le personnel gestionnaire des coopératives, et les clients nationaux et internationaux.
+    </string>
+    <string name="consentStatementMain4">
+        Vos données personnelles dont nous sommes déteneurs seront traitées de manière confidentielle. Néanmoins, elles peuvent être partagées aux utilisateurs OFIS tel que mentionné ci-dessus. Vos données personnelles peuvent être transférées hors de votre juridiction. Le cas échéant, et sous réserve de la loi applicable sur le territoire de transfert, nous prendrons les dispositions nécessaires pour s\'assurer que le standard de protection de vos données personnelles soit comparable au niveau de protection en vigueur dans votre juridiction.
+    </string>
+    <string name="consentStatementMain5">
+        Vous pouvez retirer tout consentement préalablement donné et/ou corriger vos données personnelles et/ou demander plus d\'informations concernant nos politiques et pratiques, en contactant notre responsable de la protection des données à l\'adresse électronique ofis@olamnet.com
+    </string>
+    <string name="consentStatementCheck1">Je confirme que le planteur a entendu l\'énumérateur lui lire la procédure de collecte d\'informations personnelles le concernant et qu\'il a consenti expressément à la collecte, l\'utilisation, au transfert à l\'extérieur de sa juridiction et à la diffusion de ses données personnelles par Olam pour les motifs énoncés dans les présentes.</string>
+    <string name="consentStatementCheck2">Je confirme que le planteur a entendu l\'énumérateur lui lire la procédure de collecte d\'informations personnelles le concernant et qu\'il a confirmé avoir reçu le consentement expresse de toutes les autres personnes dont il a fourni les données, pour la collecte, l\'utilisation et la diffusion desdites données dans et à l\'extérieur de sa juridiction pour les motifs énoncés dans les présentes</string>
+    <string name="consentStatementTitle">Procédure de Collecte d\'informations personnelles</string>
+    <string name="Please_accept_both_consents">Vous devez accepter les deux déclarations de consentement pour sauvegarder le planteur</string>
+    <string name="farmer_id_min">Le Numéro d\'identifiant du planteur (ID) doit être de 4 caractères</string>
+    <string name="app_updated_upload_first_message">Il y a une nouvelle mises à jour disponible pour l\'application. Pour la télécharger, vous devez d\'abord synchroniser tous les éléments. Veuillez cliquer "OK" pour synchroniser tous les éléments puis allez dans la section Paramètres pour actualiser l\'application.</string>
+    <string name="please_sync_before_update">Il y a des éléments qui attendent d\'être synchronisés. Veuillez synchroniser ces éléments avant de mettre à jour vos données sur l\'application.</string>
+    <string name="ofis_update_overdue">Cette version de l\'application est maintenant expirée. Vous devez mettre à jour l\'application avant de pouvoir continuer à l\'utiliser. Cliquez sur l\'icone "Paramètres" dans le coin supérieur à droite de l\'écran pour mettre à jour</string>
+    <string name="ofis_request_help">Demander de l\'aide</string>
+    <string name="Your_Name">Votre Nom</string>
+    <string name="Your_phone_number">Votre Numéro de téléphone</string>
+    <string name="problem_description">Veuillez décrire le problème que vous rencontrez</string>
+    <plurals name="days_left_to_update">
+        <item quantity="one">L\'actualisation de la version du logiciel est requise après 30 jours. Vous disposez de %1d jour pour la mettre à jour. </item>
+        <item quantity="other">L\'actualisation de la version du logiciel est requise après 30 jours. Vous disposez de % jours pour la mettre à jour. </item>
+    </plurals>
+    <string name="record_transaction_button_text">Enregistrer une transaction</string>
+    <string name="record_training_button">Enregistrer une formation</string>
+    <string name="ViewTransactionsTitle">Transactions</string>
+    <string name="Add">Ajouter</string>
+    <string name="AddTransactionItemTitle">Objet de la transaction</string>
+    <string name="please_select">Selectionner</string>
+    <string name="select_transaction_item_type">Type</string>
+    <string name="ofis_select_item_product_grade">Grade du produit</string>
+    <string name="select_currency">Devise</string>
+    <string name="enter_quantity">Volume</string>
+    <string name="select_units">Unités</string>
+    <string name="updating_transaction_data">Mise à jour des données de transaction</string>
+    <string name="Transaction_item_added">Objet de la transaction ajouté!</string>
+    <string name="Delete_Item">Supprimer l\'objet</string>
+    <string name="Transaction_default">Transaction</string>
+    <string name="transaction_are_you_sure">Êtes-vous sûr de vouloir supprimer cette transaction?</string>
+    <string name="transaction_deleted">Transaction supprimée</string>
+    <string name="complete_transaction">Finaliser la transaction</string>
+    <string name="Farmer_Group_Name">Coopérative</string>
+    <string name="direction_hint">Est-ce vous qui donnez ou recevez ?</string>
+    <string name="transaction_added_to_queue">Transaction confirmée pour le téléchargement</string>
+    <string name="Transaction_network_queue_title">Transaction</string>
+    <string name="transaction_confirmed">Transaction confirmée</string>
+    <string name="ofis_no_transactions_text">Lorsque vous ajoutez des transactions, elles apparaîtront ici.</string>
+    <string name="ofis_no_trainingrecords_text">Lorsque vous ajoutez des dossiers de formation, ils apparaîtront ici.</string>
+    <string name="TrainingRecordsTitle">Dossier de formation</string>
+    <string name="select_course">Thème de formation</string>
+    <string name="TrainingAttendees">Participants</string>
+    <string name="complete_record">Enregistrer une formation</string>
+    <string name="TrainingRecordTitle">Gérer le registre de formation</string>
+    <string name="select_training_module">Module de formation</string>
+    <string name="Training_Photo">Photo de la formation</string>
+    <string name="TrainingRecordConfirmationTitle">Confirmation du dossier de la formation</string>
+    <string name="TrainingRecordConfirmationSubTitle">Confirmer que le registre de formation est prêt pour Validation</string>
+    <string name="confirm_training_record">Valider le registre de formation</string>
+    <string name="Select_Attendees">Choisissez les participants</string>
+    <string name="Attendee_Name">Nom du participant</string>
+    <string name="selected">Sélectionné:</string>
+    <string name="save_selected_attendees">Enregistrer Les participants sélectionnés</string>
+    <string name="Training_select_course_module_first">Choisissez un thème de formation et un module puis enregistrer une photo d\'abord</string>
+    <string name="add_attendee_scores">Ajouter les scores</string>
+    <string name="attendees_saved">Participants enregistrés</string>
+    <string name="Training_Record_Edited">Dossier de formation actualisé</string>
+    <string name="Training_Record_Added">Dossier de formation Ajouté</string>
+    <string name="Add_one_attendee_to_continue">Ajoutez au moins un participant avant de continuer</string>
+    <string name="updating_training">Mise à jour des données de formation</string>
+    <string name="Attendees">Participants</string>
+    <string name="trainingrecord_are_you_sure">Êtes-vous sûr de vouloir supprimer ce dossier de formation?</string>
+    <string name="trainingrecord_deleted">Dossier de formation supprimé</string>
+    <string name="trainingattendee_are_you_sure">Êtes-vous sûr de vouloir supprimer ce participant?</string>
+    <string name="trainingattendee_deleted">Participant supprimé</string>
+    <string name="TrainingAttendeeScores">Scores du participant</string>
+    <string name="TrainingAttendeeScoresSubTitle">Ajouter ou modifier les scores</string>
+    <string name="save_scores">Enregistrer le score du participant</string>
+    <string name="attendees_scores_updated">Score du participant mise à jour</string>
+    <string name="trainingrecord_added_to_queue">Dossier de formation confirmé pour téléchargement</string>
+    <string name="trainingrecord_confirmed">Dossier de formation Confirmé</string>
+    <string name="checkbox_image">Cocher une image</string>
+    <string name="PhoneNumberHint">Numéro de téléphone</string>
+    <string name="PhoneNumbers">Numéros de téléphone</string>
+    <string name="main_number">Principal?</string>
+    <string name="location">Localité</string>
+    <string name="update_phone_numbers">Actualiser les numeros de téléphone</string>
+    <string name="update_phone_numbers_hint">Entrez des données pour actualiser</string>
+    <string name="select_transactee">Avec qui faites-vous la transaction?</string>
+    <string name="price_per_unit">Prix par</string>
+    <string name="total_price">Prix total</string>
+    <string name="amount_paid">Montant payé à</string>
+    <string name="amount_loaned">Montant prêté à</string>
+    <string name="amount_gifted">Montant Donné à</string>
+    <string name="Transaction_item_updated">Objet de la transaction actualisé</string>
+    <string name="amount_repaid">Montant versé à</string>
+    <plurals name="trainingAttendeesCount">
+        <item quantity="one">Taux (%1d) de participation par producteur</item>
+        <item quantity="other">Taux (%1d) de participation pour l\'ensemble des participants</item>
+    </plurals>
+    <string name="registeredForNotifications">Vous êtes maintenant enregistrés pour recevoir des notifications de tâche</string>
+    <string name="registerForNotificationsFailed">L\'enregistrement de la notification de tâche a échoué. Cette opération sera effectuée automatiquement plus tard. Si vous continuez à recevoir ce message, contactez le support technique</string>
+    <string name="NewTaskReceivedTitle">Nouvelle tâche reçue</string>
+    <string name="title_activity_tasks">Tâches</string>
+    <string name="updating_tasks">Mise à jour des tâches</string>
+    <string name="TaskUpdatedTitle">Tâche mise à jour</string>
+    <string name="TaskDeletedTitle">Tâche supprimée</string>
+    <string name="take_photo">Prendre une photo</string>
+    <string name="set_auto_time_message">Les paramètres de votre heure et de votre fuseau horaire ne sont pas définis sur automatique. Veuillez les mettre sur automatique.</string>
+    <string name="buyingagent">Acheteur</string>
+    <string name="credit_balance">On vous doit</string>
+    <string name="ChooseBuyingAgent">Choisissez un Acheteur</string>
+    <string name="WhoTransacting">Vous faites des transactions pour le compte de qui (quel Acheteur)?</string>
+    <string name="PickAgentFirst">Vous devez d\'abord choisir un acheteur</string>
+    <string name="farmer_or_buying_agent_name">Nom de l\'agriculteur ou de l\'acheteur</string>
+    <string name="title_activity_find_transactee">Trouver un partenaire</string>
+    <string name="amount_repaid_and_loaned">Montant versé et prêté à</string>
+    <string name="amount_loaned_by">Montant prêté par</string>
+    <string name="amount_repaid_by">Montant versé par</string>
+    <string name="amount_repaid_and_loaned_by">Montant versé et prêté par</string>
+    <string name="amount_paid_by">Montant payé par</string>
+    <string name="amount_gifted_by">Montant Donné par</string>
+    <string name="debit_balance">Vous devez</string>
+    <string name="cannotTransactNothingToRepay">Vous ne devez pas l\'argent alors cette transaction ne peut être achevée</string>
+    <string name="cannotTransactUnableToLoan">Vous devez de l\'argent alors cette transaction ne peut être achevée</string>
+    <string name="cannotRepayNotOwedMoney">On ne vous doit pas de l\'argent alors cette transaction ne peut être achevée</string>
+    <string name="cannotLoanOwedMoney">On vous doit de l\'argent alors cette transaction ne peut être achevée</string>
+    <string name="ensure_totals_match">Assurez vous que le total de tous les champs de paiement correspond au prix total</string>
+    <string name="price_per_unit_default">unité</string>
+    <string name="input_crop_finance">Intrant, Finance ou Produit?</string>
+    <string name="input_crop">Intrant ou Produit?</string>
+    <string name="input_finance">Intrant ou Finance?</string>
+    <string name="finance_crop">Finance ou Produit?</string>
+    <string name="task_mark_complete">Terminé</string>
+    <string name="transaction_notes">Notes</string>
+    <string name="cannotRepayMoreThanOwe">Vous ne pouvez pas rembourser plus que vous devez.</string>
+    <string name="cannotRepayMoreThanTheyOwe">Ils ne peuvent pas rembourser plus qu\'ils ne doivent</string>
+    <string name="item_in_progress">En cours</string>
+    <string name="cannot_do_mobile_money_non_farmer">Vous ne pouvez pas acheter auprès d\'un agent d\'achat en utilisant le paiement mobile</string>
+    <string name="pay_using_mobile_money_or_cash">"Paiement cash ou mobile ? "</string>
+    <string-array name="mmCash">
+        <item>Cash</item>
+        <item>Paiement mobile</item>
+    </string-array>
+    <string name="mmCash_mobilemoney">Paiement mobile</string>
+    <string name="mmCash_cash">Cash</string>
+    <string name="mobile_money_suffix">Utilisation du paiement mobile</string>
+    <string name="mm_transaction_initiated">Debut du paiement mobile, veuillez patienter ...</string>
+    <string name="mm_transaction_checking">Vérification de l\'état de la transaction</string>
+    <string name="mm_transaction_timedout">le deai de paiement a expiré. Le paiement mobile a échoué, veuillez utiliser le paiement cash</string>
+    <string name="mm_transaction_awaiting_response">Le paiement mobile est en attente de reponse</string>
+    <string name="mm_transaction_inprogress">Paiement mobile en cours</string>
+    <string name="mm_transaction_complete">Paiement mobile effectué avec succès</string>
+    <string name="mm_transaction_failed">Le paiement mobile a échoué. Essayez d\'utiliser le paiement cash</string>
+    <string name="mm_transaction_confirmation">Vous êtes sur le point de payer %1$s %2$s en utilisant le paiement mobile. Veuillez confirmer la transaction.</string>
+    <string name="mm_transaction_confirm">Confirme</string>
+    <string name="place_name_not_unique">Ce lieu existe déjà dans ce district. Veuillez le sélectionner à partir de la liste s\'il vous plait.</string>
+    <string name="title_activity_record_polygon">"Enregistrer un polygone de tracé"</string>
+    <string name="loading">"Chargement "</string>
+    <string name="wait">"Patientez "</string>
+    <string name="save_button_text">"sauvegarder "</string>
+    <string name="start_logging_button_text">"Commencer l'enregistrement "</string>
+    <string name="stop_logging_button_text">"Arrêter l'enregistrement "</string>
+    <string name="pause_button_text">"Pause "</string>
+    <string name="resume_button_text">"Resumé "</string>
+    <string name="plot">"Tracé %1$d "</string>
+    <string name="current_track_name">"Piste OFIS "</string>
+    <string name="plot_already_logged">"%1$s Déjà enregistré! "</string>
+    <string name="location_permission_alertdialog_title">"Vous avez besoin d'une autorisation de localisation pour accéder au GPS ! "</string>
+    <string name="open_application_settings_msg">"Aller aux paramètres de l'application ? "</string>
+    <string name="ready_to_save">"%1$s prêt à sauvegarder ! "</string>
+    <string name="restart_logging">"Voulez-vous reprendre l'enregistrement ? "</string>
+    <string name="save_existing_logs">"Sauvegardez les journaux existants ! "</string>
+    <string name="already_logged_and_saved">"%1$s déjà enregistré et Sauvegardé ! "</string>
+    <string name="try_again_later_msg">"Veuillez réessayer après quelques minutes ! "</string>
+    <string name="location_not_yet_logged">"Vous n'avez encore enregistré aucun emplacement ! "</string>
+    <string name="fetch_location_msg">"Recherche de l'emplacement. patientez s'il vous plaît ! "</string>
+    <string name="gps_manager_msg">"Gestionnaire GPS "</string>
+    <string name="enable_gps_msg">"Voulez-vous activer le GPS ? "</string>
+    <string name="gps_turned_on">"Activez le GPS ! "</string>
+    <string name="storage_permission_explanation">"L'autorisation de stockage est requise pour stocker la carte afin de réduire l'utilisation des données et pour une utilisation hors connexion. "</string>
+    <string name="location_permission_explanation">"La permission de localisation est requise pour collecter des données géographiques de parcelles. "</string>
+    <string name="speed_unit_kmph">"%1$d km/h "</string>
+    <string name="logging_progress_msg">"Enregistrement en cours ! "</string>
+    <string name="cancel_logging_question">"Annuler l'enregistrement "</string>
+    <string name="cancel_logging_msg">"%1$s de l'enregistrement a été annulé ! "</string>
+    <string name="not_logged_yet">"%1$s non encore enregistré! "</string>
+    <string name="area_info">"Superficie:%1$s ha "</string>
+    <string name="save_polygon_alertdialog_title">"Sauvegardez %1$s Polygone ? "</string>
+    <string name="save_polygon_alertdialog_msg">"Vous ne pourrez plus vous connecter à %1$s "</string>
+    <string name="close">"Fermer "</string>
+    <string name="saved_successfully_msg">"%1$s sauvegardez avec succès! "</string>
+    <string name="confirm">"Confirmer "</string>
+    <string name="plot_location_confirmation">"Êtes-vous à l'emplacement de %1$s? "</string>
+    <string name="logging_not_started_msg">"L'enregistrement ne peut pas être démarré ! "</string>
+    <string name="edit_plot_dialog_title">"Sélectionner le nombre de parcelles "</string>
+    <string name="existing_plots">Nombre de parcelles existant %1$d</string>
+    <string name="existing_plots_logged">Parcelles déjà enregistrées %1$d</string>
+    <string name="previous_plot_not_recorded_msg">"Le tracé %1$s n'a pas été enregistré. Veuillez d'abord enregistrer le tracé %1$s. "</string>
+    <string name="send_button">"Envoyer "</string>
+    <string name="duplicate_phone_number">"Le numéro de téléphone en double n'est pas autorisé. Veuillez vérifier les les numéro de téléphone. "</string>
+    <string name="record_polygon_input_messege">"Combien de parcelles différentes a-t-il ? "</string>
+    <string name="record_polygon_input_title">"Analyse du niveau de parcelle "</string>
+    <string name="record_polygon_input_hint">"Entrez le nombre de parcelles "</string>
+    <string name="camera_and_gallery_permission_denial_msg">La fonction Caméra &amp; Galerie ne fonctionnera pas sans cette autorisation</string>
+    <string name="gps_permission_denial_msg">"La fonctionnalité de localisation ne fonctionnera pas sans cette autorisation "</string>
+    <string name="phone_state_permission_denial_msg">"Une autorisation téléphonique est requise pour obtenir le numéro IMEI de l'appareil "</string>
+    <string name="permission_permanent_denial_title">"La permission a été définitivement refusée "</string>
+    <string name="permission_permanent_denial_msg">"La demande d'autorisation est définitivement refusée. Veuillez fournir des autorisations à partir des paramètres d'application. "</string>
+    <string name="go_to_settings_msg">"Autoriser l'autorisation des paramètres de l'application Aller aux paramètres? "</string>
+    <string name="record_farm_polygon">"Enregistrer le polygone du champ "</string>
+    <string name="record_farm_polygon_hint">"Appuyez pour enregistrer le polygone du champ "</string>
+    <string name="record_farm_polygon_complete">"Polygone enregistré "</string>
+    <string name="submit">"Soumettre "</string>
+    <string name="cancel">"Annuler "</string>
+    <string name="valid_count_msg">"Entrez un nombre valide ! "</string>
+    <string name="plot_recording_module_finished">"Enregistrement du tracé terminé "</string>
+    <string name="untick_task">"Tâche désactivée "</string>
+    <string name="untick_task_msg">"Veuillez confirmer que vous souhaitez marquer cette tâche comme incomplète ? "</string>
+    <string name="loggin_In">Connexion.</string>
+    <string name="updating_master_details">Téléchargement des détails,</string>
+    <string name="authentication_failed">Echec d\'authentification. Veuillez réessayer.</string>
+    <string name="enumerator_empty">Veuillez entrer l\'ID valide de l\'énumérateur.</string>
+    <string name="please_answer_all_questions">Veuillez répondre à toutes les questions s\'il vous plait.</string>
+    <string name="updating_sip_training">Infrastructure sociale.</string>
+    <string name="are_you_ready_to_polygon_record">Êtes-vous prêt à cartographier un champ ?</string>
+    <string name="fetching_location">Récupération des lieu.</string>
+    <string name="please_fill_farmer_name">Veuillez fournir le nom du producteur s\'il vous plait.</string>
+    <string name="please_fill_dob">Veuillez indiquer la date de naissance du producteur s\'il vous plait.</string>
+    <string name="please_fill_the">Veuillez sélectionner le lieu.</string>
+    <string name="please_fill_the_place">please select the place</string>
+    <string name="data_initialization">Data initialization</string>
+    <string name="phone_number_recorded">Numéro de téléphone enregistré.</string>
+    <string name="survey_data">Downloading Survey Data</string>
+    <string name="invalid_imei_msg">Authentification échouée. Veuillez nous contacter pour obtenir de assistance</string>
+    <string name="household_question">Le producteur n\'a pas d\'enfants de moins de 18 ans (Ménage)</string>
+    <string name="title_child_labour">Enregistrer un enfant</string>
+    <string name="register_child">Enregistrer un enfant</string>
+    <string name="inspection_question">Aucun enfant trouvé dans la plantation (Inspection)</string>
+    <string name="followup_question">Aucun enfant trouvé dans la plantation pendant le suivi</string>
+    <string name="add_child">Ajouter un enfant</string>
+    <string name="update_child">Mettre à jour des informations sur l\’enfant</string>
+    <string name="full_name">Nom de l\'enfant</string>
+    <string name="age">Age</string>
+    <string name="add">Ajouter</string>
+    <string name="checking_child_enumerator">Vérification de l’enumérateur </string>
+    <string name="visit_detail">Détails de la visite</string>
+    <string name="child_visit_details_inserted">Détails de la visite d\'enfant enregistrés avec succès</string>
+    <string name="child_register_successfully">Enfant enregistré avec succès</string>
+    <string name="child_details">Informations sur l’enfant</string>
+    <string name="child_not_synced">Désolé, l\'enfant n\'a pas encore été synchronisé. Veuillez synchroniser l\'enfant en premier s\’il vous plaît.</string>
+    <string name="fill_child_name">Veuillez entrer le nom de l\’enfant s\’il vous plaît</string>
+    <string name="yrs">ans</string>
+    <string name="child_max_limit">Vous êtes autorisé à enregistrer un maximum de 30 enfants par producteur</string>
+    <string name="new_child">Nouvel enfant</string>
+    <string name="child">Enfant</string>
+    <string name="farmer">Producteur</string>
+    <string name="household">Détails de la visite du ménage</string>
+    <string name="inspection">Détails de l\’inspection</string>
+    <string name="followup">Détails du suivi</string>
+    <string name="child_labour_survey">Enquête sur le travail des enfants</string>
+    <string name="update_childlabour_hint">Cliquer pour Enregistrer</string>
+    <string name="child_updated_successfully">Enfant mis à jour avec succès</string>
+    <string name="downloading_child_data">Téléchargement des informations de l\’enumérateur</string>
+    <string name="no_child_registered">Enregistrer l\'enfant pour activer les enquêtes</string>
+    <string name="please_select_Age">Veuillez selectionner l\'âge</string>
+    <string name="capture_my_location_button_text">Capture My location</string>
+    <string name="enumerator_location_capture">Enumerator Location Capture</string>
+    <string name="checking_biometric_enumerator">Vérification de l\'énumérateur biométrique</string>
+    <string name="validating_facial_match">Validation du match facial</string>
+    <string name="back_to_registration">Retour à l\'inscription</string>
+    <string name="no_duplicates_found">Aucun doublon trouvé</string>
+    <string name="moderation_info">Lors de la nouvelle inscription, les enregistrements en double répertoriés seront de toute façon envoyés pour modération</string>
+    <string name="continue_biometric">Continuer</string>
+    <string name="cancel_biometric">Annuler</string>
+    <string name="mark_as_unique">Marquer comme unique</string>
+    <string name="label_national_id">carte d\'identité:</string>
+    <string name="label_country" >Pays:</string>
+    <string name="label_region">région:</string>
+    <string name="label_district">quartier:</string>
+    <string name="label_place">lieu:</string>
+    <string name="label_farmer_group">l\'organisation de planteurs:</string>
+    <string name="title_duplicate_records">Enregistrements en double</string>
+    <string name="back_to_registration_info">Lors de la nouvelle inscription, les enregistrements en double répertoriés seront de toute façon envoyés pour modération</string>
+    <string name="match">Rencontre</string>
+    <string name="dob">Date de naissance</string>
+    <string name="view_farmer_info">En continuant, les enregistrements répertoriés seront envoyés pour modératio</string>
+    <string name="unique">Unique</string>
+    <string name="maximum_five_records">Seul un maximum de 5 enregistrements peut être sélectionné à la fois</string>
+    <string name="view_mark_as_unique_info">Les enregistrements seront envoyés pour une modération de deuxième niveau. Vous serez de toute façon autorisé à effectuer d\'autres activités</string>
+    <string name="update_biomatric">Mettre à jour biométrique</string>
+    <string name="update_biomatric_hint">Tap to Entrez des données pour actualiserupdate</string>
+    <string name="farmer_photo_validation">Veuillez télécharger la photo du fermier</string>
+    <string name="label_duplicate_found">Doubles trouvés</string>
+    <string name="title_list_of_duplicates">Liste des doublons</string>
+    <string name="label_duplicate_records">Enregistrements en double</string>
+    <string name="label_section">section:</string>
+    <string name="photo_not_matching">La photo ne correspond pas</string>
+    <string name="updating_farmer_images">Mise à jour des images biométriques des agriculteurs</string>
+    <string name="matching_farmer_records">Correspondance des enregistrements des agriculteurs</string>
+    <string name="matching_results_found">Résultats correspondants trouvés</string>
+    <string name="back_to_search">Retour à la recherche</string>
+    <string name="proceed_to_registration">Procéder à l\'inscription</string>
+    <string name="back">Arrière</string>
+
+    <!-- OFI Consent Consent -->
+    <string name="farmer_consent">L’ACCORD DE L’AGRICULTEUR</string>
+    <string name="personal_info_collection">AVIS DE COLLECTE DE RENSEIGNEMENTS PERSONNELS</string>
+    <string name="cs_page2_title">1.    Utilisation des Données Personnelles</string>
+    <string name="cs_page2_1">Nous pouvons utiliser et partager vos données personnelles comme suit</string>
+    <string name="cs_page2_2">"Y consentez-vous ? Veuillez cocher « ✔ » ou « oui » "</string>
+    <string name="cs_page2_3">Alimenter les Systèmes liés à ofi</string>
+    <string name="cs_page2_4">Nous pouvons collecter des données sur les agriculteurs pour alimenter des systèmes connexes où vos données peuvent être organisées puis analysées pour nous donner des informations importantes telles que les tendances et les problèmes qui affectent la chaîne d’approvisionnement ainsi que pour améliorer nos services pour vous et nos clients. Pour ce faire, les employés d’ofi et de ses sociétés affiliées et certains sous-traitants tiers auront accès à ces systèmes liés à ofi et à vos Données agricoles. Vos Données agricoles peuvent être partagées avec nos affiliés, partenaires et clients.</string>
+    <string name="cs_page2_5">Assurer la Traçabilité jusqu’au Marché</string>
+    <string name="cs_page2_6">Nous pouvons partager les Données agricoles que vous nous fournissez avec nos clients et partenaires (qui peuvent également partager les Données agricoles avec leurs clients et partenaires) afin de fournir des informations sur l’origine de leurs aliments et sur ceux qui les produisent. Cette transparence permet aux acheteurs de prendre des décisions d’achat éclairées et responsables. Ces efforts de traçabilité seront partagés avec le public.</string>
+    <string name="cs_page2_7">Trend and Issue Spotting</string>
+    <string name="cs_page2_8"> -----  </string>
+    <string name="cs_page2_9">Ventes et Promotion des Agriculteurs</string>
+    <string name="cs_page2_10">Nous pouvons utiliser vos Données agricoles pour faire des affaires avec vous et pour vous aider à identifier des opportunités pour vous permettre de développer votre entreprise et vos opérations. Le cas échéant, nous pouvons vous présenter des opportunités d’obtenir des financements, des machines, des conseils de gestion agricole, des fournitures agricoles et des assurances, en plus des opportunités de vente - qui seront toutes fournies directement par nous ou un tiers que nous vous référons. En conséquence, ces tiers auront accès à vos Données agricoles afin de vous offrir ces opportunités de vente et de développement.</string>
+    <string name="cs_page2_11">Promoting Traceability</string>
+    <string name="cs_page2_12"> ------ </string>
+    <string name="cs_page2_13">Publicité Publique et Promotion</string>
+    <string name="cs_page2_14">Ofi et ses sociétés affiliées, qui, pour éviter tout doute, incluent notamment Olam Brands BV et les clients et partenaires d’ofi peuvent utiliser les données des agriculteurs, y compris les noms, les photographies, les informations de localisation, les informations sur les produits et les interviews (le cas échéant) dans les supports publicitaires qui seront partagés publiquement, comme sur des sites Web, des publications écrites et sur des produits afin de promouvoir les achats de produits tels que ceux que vous fabriquez et de commercialiser nos initiatives de traçabilité et de durabilité</string>
+    <string name="cs_page2_15">Les Recherches</string>
+    <string name="cs_page2_16">Nous pouvons partager vos Données agricoles à l’appui d’études menées par des organisations éducatives, gouvernementales et non gouvernementales axées sur les agriculteurs locaux, les communautés, l’agriculture, la chaîne d’approvisionnement, la traçabilité, la durabilité et les études sociales connexes afin de promouvoir la collaboration communautaire et les développements dans l’espace durabilité et traçabilité. Ces organisations peuvent utiliser vos Données agricoles dans leurs propres communications électroniques ou publiées.</string>
+    <string name="cs_page3_1">Je soussigné,</string>
+    <string name="cs_page3_4">•   Lorsque je donne mon accord au nom d’un enfant ou d’un mineur, je suis soit le parent ou le tuteur légal de l’enfant ou du mineur.</string>
+    <string name="cs_page4_1">LORSQUE L’AVIS EST LU À L’INDIVIDU PAR LE PERSONNEL/REPRÉSENTANT ofi :</string>
+    <string name="cs_page4_2">Je confirme que le participant m’a écouté lire l’Avis de Collecte d’Informations Personnelles et qu’il a expressément donné son accord pour la collecte, l’utilisation, le transfert en dehors de la juridiction et la divulgation de ses Données Personnelles par ofi aux fins qui y sont énoncées.</string>
+    <string name="cs_page5_1">Déclaration de Confidentialité des Données d’Agriculteurs</string>
+    <string name="cs_page5_4">Quelles données recueillons-nous ?</string>
+    <string name="cs_page5_5">Nous pouvons collecter et traiter des données personnelles vous concernant, y compris, mais sans s’y limiter :\n
+        •	Photographies, vidéos et autres images (où votre identité personnelle est clairement identifiable) ;\n
+        •	Prénom et Nom ;\n
+        •	Données agricoles, y compris la production et l’infrastructure ;\n
+        •	Commentaires de votre part ;\n
+        •	Informations sociales, financières, géographiques et biographiques ;\n
+        •	Adresse et autres coordonnées.\n
+        •	Données de localisation lorsque vous nous autorisez l’accès à votre localisation dans l’application</string>
+    <string name="cs_page5_6">"A quelles fins utilisons-nous vos données ? "</string>
+    <string name="cs_page5_7">Nous utilisons vos données aux fins suivantes :\n
+        •	Vous fournir des services tels que des conseils agronomiques, du matériel agricole et l’accès à des services liés à l’agriculture tels que le financement, l’assurance et la logistique ;\n
+        •	Faciliter les échanges avec vous ;\n
+        •	Publication sur des canaux appartenant à ofi, y compris des sites Web, des médias sociaux et des imprimés ; \n
+        •	Soutenir nos initiatives de durabilité et de traçabilité ;\n
+        •	Identifier les tendances en agriculture qui nous permettront de mieux exploiter notre entreprise et de vous fournir des services ;\n
+        •	Commercialiser et promouvoir les produits ofi et les activités de l’entreprise ; \n
+        •	Soutenir les initiatives de recherche de nos partenaires pour soutenir la collaboration communautaire et les progrès dans les domaines de la durabilité et de la traçabilité ;\n
+        •	Démontrer nos services aux agriculteurs aux investisseurs et partenaires potentiels ; et\n
+        •	Communiquer avec vous et développer et gérer nos relations avec vous et nos partenaires commerciaux.</string>
+    <string name="cs_page5_8">Quelle est notre base légale pour la collecte et le traitement de vos données ?</string>
+    <string name="cs_page5_9">Nous ne collecterons et traiterons ces données que pour mener nos activités et poursuivre nos intérêts légitimes comme requis par ofi et nos sociétés affiliées et pour nous conformer aux obligations légales. Nous nous appuyons sur le consentement pour quelques activités de traitement (comme la communication marketing) qui peuvent être révoquées chaque fois que la personne concernée le demande.</string>
+    <string name="cs_page5_10">"Avec qui partagerons-nous ces données ? "</string>
+    <string name="cs_page5_11">"Nous pouvons partager vos données avec d’autres membres du groupe ofi, y compris des sociétés affiliées, pour atteindre les objectifs décrits ci-dessus. Nous partagerons également vos données avec les autorités gouvernementales et/ou les responsables de l’application des lois si la loi l’exige, ainsi qu’avec tous les clients, fournisseurs de services, fournisseurs et partenaires commerciaux actuels et futurs d’ofi dans la poursuite des objectifs décrits ci-dessus ou autrement avec votre consentement. "</string>
+    <string name="cs_page5_12">Où envoyons-nous vos données ?</string>
+    <string name="cs_page5_13">Outre le partage avec nos sous-traitants tiers aux fins énumérées ci-dessus, vos données peuvent parfois être transférées à l’une de nos sociétés affiliées dans un autre pays. Nous prendrons des mesures raisonnables pour nous assurer que vos données sont protégées de manière adéquate conformément à la législation pertinente en matière de protection des données qui s’applique au traitement des données dans ce pays. Lorsque vos informations personnelles sont transférées en dehors de l’EEA à une filiale ofi ou à une entité dans un pays qui n’est pas soumis à une décision d’adéquation de la Commission Européenne, vos données personnelles seront protégées par des garanties transfrontalières approuvées par la Commission Européenne, y compris des clauses contractuelles types pour le transfert de données transfrontalier</string>
+    <string name="cs_page5_14">Quelles mesures avons-nous mise en place pour protéger vos données ?</string>
+    <string name="cs_page5_15">Ofi maintient des garanties raisonnables pour protéger la confidentialité, la sécurité et l’intégrité de vos données. Bien que nous utilisions des mesures de sécurité pour aider à protéger vos données contre la divulgation non autorisée, nous ne pouvons garantir la sécurité des informations fournies sur Internet et ne serons pas responsables des violations de la sécurité au-delà de notre contrôle.</string>
+    <string name="cs_page5_16">"QUELS SONT VOS DROITS EN CE QUI CONCERNE VOS DONNÉES PERSONNELLES ? "</string>
+    <string name="cs_page5_17">"Vous pouvez choisir de ne pas fournir les données que nous demandons. Vous avez le droit de demander à ofi une copie de vos données et de vérifier, corriger ou restreindre le traitement actif de vos données. Vous pouvez demander à ofi de cesser d’utiliser vos images à tout moment, auquel cas elles ne seront pas utilisées dans les publications futures mais pourront continuer à apparaître dans les publications déjà en circulation. Vous avez le droit de déposer une plainte à tout moment auprès de l’autorité de protection des données de la région concernée. Ces droits peuvent être limités par la loi. Si vous souhaitez exercer ces droits ou si vous avez des questions à leur sujet, vous pouvez contacter ofi à l’adresse privacy@ofi.com. "</string>
+    <string name="cs_page5_18">"Combien de temps allez-vous conserver mes données ? "</string>
+    <string name="cs_page5_19">Sauf disposition contraire de la loi, ofi conservera vos données personnelles pendant la période nécessaire aux fins pour lesquelles les données ont été collectées. Ofi partagera la durée de conservation de vos données personnelles à votre demande.</string>
+    <string name="cs_page5_20">Informations de Contact</string>
+    <string name="cs_page5_21">" Si vous avez des questions concernant les données que nous détenons à votre sujet, veuillez nous envoyer un e-mail à <a href="privacy@ofi.com">privacy@ofi.com</a>."</string>
+
+
+    <string name="cs_page5_22">   </string>
+    <string name="cs_page5_23">INTERNAL GUIDANCE NOTE</string>
+    <string name="cs_page5_24">There may be a number of ways for consent to be recorded. Please consult the Legal function if your intended collection method is not covered above. The signature fields may be replaced with consent buttons, etc.</string>
+    <string name="cs_page5_25">Please consult the Legal function if your intended purpose(s) for use and disclosure of Farmer Data does not fall within any of the categories listed in paragraph 1 above. </string>
+    <string name="cs_page5_26">All consents need to be appropriately tracked and stored. Where an Olam representative is reading the notice to the individual and acknowledging his consent on behalf of the individual (e.g. by way of a slide box in a mobile app), please ensure that Olam is able to check which representative has obtained the consent. </string>
+
+    <string name="consent_statement_pageone2">Vos données personnelles incluant votre nom, âge, coordonnées (adresse e-mail, numéro de téléphone, adresse postale), profession, photographies, vidéos ou enregistrements numériques, informations biographiques, sociales et géographiques, informations sur l’agriculture et la production, et le cas échéant, celles de vos enfants ou personnes à charge (« <b>Données de l’Agriculteur</b> ») seront collectées et stockées par nous et rendues accessibles à nos clients, partenaires commerciaux et, dans certains cas, rendues publiques sur les sites Web, les médias sociaux, les publications électroniques ou écrites d’ofi. Nous vous demandons par la présente de reconnaître et de donner votre accord à la collecte, à l’utilisation et à la divulgation de vos données personnelles à cette fin, conformément au présent avis de collecte de renseignements personnels.</string>
+    <string name="consent_statement_pageone1">Il vous est demandé de fournir à Olam Food Ingredients (ci-après dénommé « <b>ofi</b> », « <b>nous</b> » <b>ou</b> « <b>notre</b> ») des données personnelles en appui aux efforts d‘ofi dans le cadre de la promotion de la durabilité et de la traçabilité dans la chaîne d‘approvisionnement et en retour pour la promotion d’un commerce responsable avec des agriculteurs tel que vous dans le monde entier (« <b>l’Objectif</b> »).</string>
+
+    <string name="allchilds_name">Nom de l’Enfant (si vous consentez au nom d’un enfant) :</string>
+    <string name="full_farmer_name">Nom Complet:</string>
+    <string name="date">Date:</string>
+    <string name="olam_connect">Olam Connect</string>
+    <string name="olam_contact">Olam Contact</string>
+    <string name="digital_sign">Digital Signature</string>
+    <string name="farmer_signature">Farmer Signature</string>
+    <string name="enum_sign">Staff Signature</string>
+    <string name="enum_name">Enumerator Nom</string>
+    <string name="farmer_sign_required">Please get signed by farmer</string>
+    <string name="staff_sign_required">Please get signed by staff</string>
+    <string name="childs_name">Nom de l\'enfant</string>
+    <string name="name">Nom:</string>
+    <string name="Please_accept_consent">You must accept consent statements to save the farmer</string>
+
+    <!-- OFI Consent Consent -->
+    <string name="please_sign_within_the_boundary_box">Veuillez signer dans la zone de délimitation</string>
+
+    <string name="search_by_photo">Recherche par photo</string>
+    <string name="no_matching_results_found">Aucun résultat correspondant trouvé</string>
+    <string name="biometric_update">Mise à jour biométrique</string>
+    <string name="activating_license">Activation des licences</string>
+    <string name="proceed_to_register">Procéder à l\'inscription</string>
+    <string name="biometric_enum">Vous êtes maintenant un recenseur biométrique</string>
+    <string name="nonbiometric_enum">Vous n\'êtes plus un recenseur biométrique</string>
+    <string name="deactivate_license_setting">Désactiver la licence</string>
+    <string name="biometric_license_deactive">Licence biométrique: Désactiver</string>
+    <string name="biometric_license_partial">Licence biométrique: Partielle</string>
+    <string name="biometric_license_active">Licence biométrique: Active</string>
+    <string name="unable_deactivate_neurotech">Impossible de désactiver. Veuillez contacter Neurotech pour désactiver</string>
+    <string name="deactivating_license">Désactivation des licences..</string>
+    <string name="biometric_license_failed_in_offline">Licence désactivée hors ligne</string>
+    <string name="biometric_license_failed">Licence biométrique: échoué</string>
+    <string name="updating_face_templates">Mise à jour des données biométriques</string>
+    <string name="updating_faceda_templates">Mise à jour de l\'état de la licence biométrique</string>
+    <string name="biometric_licence_deactivation_queue">Désactivation de la licence biométrique</string>
+    <string name="face_recognizion">Reconnaissance de visage</string>
+
+    <string name="zero_area_msg">Cannot save recorded polygon with 0ha. Please try recording a different polygon</string>
+    <string name="direct_value_below_error">Please enter value of question %1$d below %2$d</string>
+    <string name="direct_value_above_error">Please enter value of question %1$d above %2$d</string>
+    <string name="direct_value_greater_than_error">Please enter value of question %1$d within or equal to %2$d</string>
+    <string name="direct_value_less_than_error">Please enter value of question %1$d within or equal to %2$d</string>
+    <string name="direct_greater_lesser_error">Please enter value of question %1$d above %2$d or below %3$d</string>
+    <string name="min_max_error_msg">Please enter the value of question %1$d, within %2$d-%3$d</string>
+    <string name="error_msg_dropdown">The coffee tree density is higher than %1$d trees/ha. Please amend question %2$d</string>
+    <string name="common_survey_config_error">Survey config error. Please check the display config</string>
+    <string name="restriction_in_submodules">Veuillez répondre à toutes les questions obligatoires avant de continuer</string>
+    <string name="please_respond_mandatory_question">Veuillez répondre à la question obligatoire</string>
+    <string name="please_check_question">Please check Question</string>
+    <string name="please_check_dependent_question">since its dependent question is updated</string>
+    <string name="update_firebase_install_id_info">Updating Informations</string>
+    <string name="national_id_info">Please update the National ID of farmer</string>
+    <string name="attendee_name">Attendee Name:</string>
+    <string name="attendee_age">Age</string>
+    <string name="attendee_relationship">Relationship:</string>
+    <string name="attendee_sex">Sex</string>
+    <string name="add_attendee">Add Attendee</string>
+    <string name="attendee_name_hint">Enter Attendee Name</string>
+    <string name="attendee_hint_age">Enter Age</string>
+    <string name="view_attendees_count">View Attendee (~V attendees)</string>
+    <string name="add_edit_attendee">Add/Edit\n Attendee</string>
+    <string name="viewAttendee">View Attendee</string>
+    <string name="attendee">Attendee</string>
+    <string name="mandatory_msg">Please fill all the details</string>
+    <string name="add_edit">Add/Edit</string>
+    <string name="Attendee">Attendee</string>
+    <string name="Date_of_Birth_hint">MMM DD,YYYY</string>
+    <string name="cs_page2_17">2.    Lorsque vos Données agricoles sont partagées avec des tiers tels que nos clients et partenaires dans la poursuite de l’Objectif et des utilisations spécifiques consenties ci-dessus, chacun de ces clients et partenaires est un contrôleur de données à part entière et vous consentez à leur utilisation de vos données, comme indiqué ci-dessus au paragraphe 1 et comme détaillé dans la Déclaration de Confidentialité. Si l’un de ces clients et partenaires a besoin d’exploiter vos Données agricoles au-delà de l’objectif et des utilisations spécifiques consenties ci-dessus, ils peuvent vous contacter directement pour demander une autorisation supplémentaire</string>
+    <string name="cs_page2_18">3.    Vous pouvez retirer le consentement donné, demander l’accès et/ou la correction de vos Données agricoles et/ou demander des informations concernant nos politiques et pratiques à tout moment en nous contactant à l’adresse \t<a href="privacy@ofi.com">privacy@ofi.com</a>. Bien qu’aucune divulgation demandée ne soit obligatoire, le défaut de fournir vos Données agricoles et/ou le retrait ultérieur de votre consentement peut affecter notre capacité à fournir certains services que vous pouvez nous avoir demandé séparément (le cas échéant). Par exemple, votre adresse peut être requise non seulement pour faciliter la traçabilité, mais également pour nous permettre de vous livrer certains matériaux tels que des fournitures agricoles. Dans les cas où vous annulez votre accord, nous pouvons conserver ces données afin de remplir nos obligations contractuelles envers vous, mais nous n’utiliserons pas ces données à d’autres fins.</string>
+    <string name="cs_page2_19">4.    Notre Déclaration de Confidentialité des Données agricoles est fournie à titre de référence ci-dessous. Elle explique comment nous traitons et protégeons les données personnelles. Bien que vos Données Agricoles soient partagées avec les personnes indiquées ci-dessus, vos Données Agricoles que nous détenons resteront confidentielles et conformément aux lois applicables en matière de confidentialité.</string>
+    <string name="cs_page3_2">reconnais par la présente avoir lu, compris et accepté la collecte et l’utilisation de mes Données agricoles comme indiqué dans le présent Avis de Collecte d’Informations Personnelles et la Déclaration de Confidentialité des Données Agricoles et que :</string>
+    <string name="cs_page3_3">•   J’ai indiqué par un « ✔ » ou « oui » au paragraphe 1 où je consens à l’utilisation et à la collecte de mes données personnelles aux fins spécifiques qui y sont indiquées</string>
+    <string name="cs_page3_5">•   Je comprends que je ne recevrai aucune rémunération financière ou autre pour les données personnelles, y compris les images et toute propriété intellectuelle qui subsiste dans une image appartiendra à ofi.</string>
+    <string name="cs_page3_6">•   Je comprends que j’ai le droit de retirer mon accord pour moi ou mon enfant/mineur à tout moment et que lorsque cet accord est retiré, ofi n’utilisera aucune image ou donnée personnelle dans aucune publication future, mais pourra continuer à utiliser ces Données Personnelles dans les publications déjà en circulation.</string>
+    <string name="cs_page5_2">Cette politique de confidentialité définit les modes de collecte, d’utilisation et de divulgation de vos informations recueillies sur l’application. Elle complète et doit être lue conjointement avec la déclaration de confidentialité de l’ofi, qui explique les autres manières dont nous collectons et utilisons les données personnelles et est disponible sur <a href="www.ofi.com/privacy.html">www.ofi.com/privacy.html</a></string>
+    <string name="cs_page5_3">La politique d’ofi est de se conformer à toutes les lois applicables en matière de confidentialité et de protection des données. Ofi collectera et utilisera vos données uniquement à des fins spécifiées et légitimes, les traitera d’une manière compatible avec ces fins, prendra des mesures raisonnables pour s’assurer que vos données sont exactes, complètes et mises à jour (le cas échéant) et prendra les mesures appropriées pour assurer une protection adéquate de vos données.\n\n<b>Responsable des Données</b>\n\n Le responsable du traitement de vos informations sera Olam International Limited incorporé à Singapour sous le numéro d’entreprise 199504676H et l’entité affiliée concernée dans votre pays ou autrement au sein du groupe de sociétés ofi, selon le cas.\n\n Nous agissons généralement en tant que responsable du traitement des données personnelles. Cependant, dans certaines circonstances, les Partenaires commerciaux peuvent nous engager pour leur fournir certains services de traitement liés aux données personnelles. Dans de tels cas, la collecte et l’utilisation de vos données personnelles par le Partenaire commercial sont régies par ses propres politiques de confidentialité et nous nous appuyons sur leurs déclarations légales selon lesquelles nous sommes autorisés à traiter les données personnelles de la manière qu’ils proposent ou démontrent.\n\n Comme expliqué ci-dessus, nous partagerons vos informations personnelles à certaines fins spécifiées. Lorsque vos informations personnelles sont transférées en dehors de l’EEA à une filiale ofi ou à une entité dans un pays qui n’est pas soumis à une décision d’adéquation de la Commission Européenne, vos données personnelles seront protégées par des garanties transfrontalières approuvées par la Commission Européenne, y compris des clauses contractuelles types pour le transfert de données transfrontalier.</string>
+    <string name="occupation_fs">Profession :</string>
+    <string name="occupation_hint">Profession</string>
+    <string name="please_click_checkbox">Veuillez cocher toutes les cases appropriées</string>
+    <string name="clear">dégager</string>
+    <string name="update_consent_statement">Mettre à jour la déclaration de consentement</string>
+</resources>

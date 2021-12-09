@@ -229,6 +229,8 @@ public class ChildSurveyRecyclerAdapter extends RecyclerView.Adapter<ChildSurvey
             if (childModuleDto.getSurveyCode().equalsIgnoreCase(ChildLabourUtils.FOLLOWUP_SURVEY_CODE)) {
                 if (!submitted && !enabledFollowUp){
                     holder.surveyLayout.setEnabled(false);
+                    holder.surveyLayout.setBackgroundResource(R.drawable.list_item_disabled);
+                    holder.surveyName.setTextColor(mContext.getResources().getColor(R.color.ofis_list_item_disabled_text));
                 }
             }
         }catch (Exception e){}
@@ -240,9 +242,11 @@ public class ChildSurveyRecyclerAdapter extends RecyclerView.Adapter<ChildSurvey
                     if (submitted){
                         holder.statusIcon.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_status_submitted));
                         holder.surveyLayout.setEnabled(false);
+                        holder.surveyName.setTextColor(mContext.getResources().getColor(R.color.ofis_list_item_disabled_text));
                     }else {
                         if (!householdFlag) {
                             holder.surveyLayout.setEnabled(false);
+                            holder.surveyName.setTextColor(mContext.getResources().getColor(R.color.ofis_list_item_disabled_text));
                         } else {
                             holder.surveyLayout.setEnabled(true);
                         }
@@ -256,8 +260,10 @@ public class ChildSurveyRecyclerAdapter extends RecyclerView.Adapter<ChildSurvey
                     if (submitted){
                         holder.statusIcon.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_status_submitted));
                         holder.surveyLayout.setEnabled(false);
+                        holder.surveyName.setTextColor(mContext.getResources().getColor(R.color.ofis_list_item_disabled_text));
                     }else {
                         if (!inspectionFlag) {
+                            holder.surveyName.setTextColor(mContext.getResources().getColor(R.color.ofis_list_item_disabled_text));
                             holder.surveyLayout.setEnabled(false);
                         } else {
                             holder.surveyLayout.setEnabled(true);
@@ -272,9 +278,11 @@ public class ChildSurveyRecyclerAdapter extends RecyclerView.Adapter<ChildSurvey
                     if (submitted){
                         holder.statusIcon.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_status_submitted));
                         holder.surveyLayout.setEnabled(false);
+                        holder.surveyName.setTextColor(mContext.getResources().getColor(R.color.ofis_list_item_disabled_text));
                     }else{
                         if (!followupFlag) {
                             holder.surveyLayout.setEnabled(false);
+                            holder.surveyName.setTextColor(mContext.getResources().getColor(R.color.ofis_list_item_disabled_text));
                         } else {
                             holder.surveyLayout.setEnabled(true);
                         }
