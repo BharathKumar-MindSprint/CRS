@@ -5572,6 +5572,7 @@ public class DataLayer {
         return questionList;
     }
 
+
     public String getProductInfo() {
          String productdetails="";
             String[] columns = new String[]{"*"};
@@ -5596,8 +5597,8 @@ public class DataLayer {
             return productdetails;
     }
 
-
-    public long getProductIdByFarmerGroupId(long farmerGroupId) {
+     public long getProductIdByFarmerGroupId(long farmerGroupId) {
+       
         long productId=0;
         String[] columns = new String[]{"*"};
         String whereClause = OFISDBContract.FarmerGroupsEntry.COLUMN_NAME_ID+ " = ?";

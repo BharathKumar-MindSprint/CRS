@@ -686,8 +686,48 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             return values;
         }
 
-        Spinner districtSpinner = findViewById(R.id.spinner_district);
-        long district_id = districtSpinner.getSelectedItemId();
+        Spinner spinner_country = (Spinner) findViewById(R.id.spinner_country);
+        long country_id = spinner_country.getSelectedItemId();
+        if (country_id < 1) {
+
+            Toast.makeText(context, res.getString(R.string.fill_country), Toast.LENGTH_LONG).show();
+
+            return values;
+        }
+
+        Spinner spinner_region = (Spinner) findViewById(R.id.spinner_region);
+        long region_id = spinner_region.getSelectedItemId();
+        if (region_id < 1) {
+            Toast.makeText(context, res.getString(R.string.fill_region), Toast.LENGTH_LONG).show();
+
+            return values;
+        }
+
+        Spinner spinner_district = (Spinner) findViewById(R.id.spinner_district);
+        long district_id = spinner_district.getSelectedItemId();
+        if (district_id < 1) {
+            Toast.makeText(context, res.getString(R.string.fill_district), Toast.LENGTH_LONG).show();
+
+            return values;
+        }
+
+        Spinner spinner_farmer_group = (Spinner) findViewById(R.id.spinner_farmerGroup);
+        long farmergroup_id = spinner_farmer_group.getSelectedItemId();
+        if (farmergroup_id < 1) {
+
+            Toast.makeText(context, res.getString(R.string.fill_farmergroup_name), Toast.LENGTH_LONG).show();
+
+            return values;
+        }
+
+        Spinner sectionSpinner = (Spinner) findViewById(R.id.spinner_section);
+        long section = sectionSpinner.getSelectedItemId();
+        if (section < 1) {
+
+            Toast.makeText(context, res.getString(R.string.fill_section), Toast.LENGTH_LONG).show();
+
+            return values;
+        }
 
         newPlaceName = findViewById(R.id.newPlaceName);
         Spinner spinner_place = findViewById(R.id.spinner_place);
