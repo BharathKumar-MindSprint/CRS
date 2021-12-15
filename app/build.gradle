@@ -220,6 +220,24 @@ android {
             buildConfigField "int", "MATOMO_SERVER_CODE", '39'
             buildConfigField "boolean", "MATOMO_ENABLED", 'true'
         }
+
+        prodofi {
+            applicationId "com.olam.digital.ofis"
+
+            resValue "string", "contentprovider_authorities", applicationId + '.provider'
+            resValue "string", "sync_account_type", applicationId
+            buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofis"'
+            // New SIT DNS name
+            // https://otofis-zuul.olamdigital.com/
+
+            resValue "string", "applicationName", "OFI Companion"
+            resValue "string", "AUTH_SERVER_URL", 'https://digitalauth.olamnet.com/auth/realms/ofis-dse/protocol/openid-connect/'
+            buildConfigField 'String', 'HOST', '"https://otofis-zuul.olamdigital.com/"'
+
+            buildConfigField "String", "MATOMO_SERVER_URL", '"https://olammatomo.azurewebsites.net/matomo.php"'
+            buildConfigField "int", "MATOMO_SERVER_CODE", '39'
+            buildConfigField "boolean", "MATOMO_ENABLED", 'true'
+        }
     }
 
     testOptions {
@@ -245,6 +263,13 @@ android {
             res.srcDirs = ['src/uatofi/res', 'src/ofi/res']
             //  assets.srcDirs = ['src/flavorB/assets', 'src/sharedType/assets']
         }
+
+        prodofi {
+            //java.srcDirs = ['src/flavorB/java', 'src/sharedType/java']
+            res.srcDirs = ['src/prodofi/res', 'src/ofi/res']
+            //  assets.srcDirs = ['src/flavorB/assets', 'src/sharedType/assets']
+        }
+
     }
 
 

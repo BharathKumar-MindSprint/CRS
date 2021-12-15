@@ -81,6 +81,13 @@ dynatrace {
                 beaconUrl 'https://eok851.dynatrace-managed.com:9999/mbeacon/82203a30-a89c-4afb-8009-c475586c3488'
             }
         }
+        prodofi {
+            variantFilter "prodofiDebug"
+            autoStart {
+                applicationId '037a8683-44f6-4b8b-ba26-5c8bd021d473'
+                beaconUrl 'https://eok851.dynatrace-managed.com:9999/mbeacon/8f745a3a-ca48-40b4-aec4-a663c087c19f'
+            }
+        }
     }
 }
 
