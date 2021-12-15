@@ -38,8 +38,8 @@ android {
         multiDexEnabled true
 
 
-        versionCode 231
-        versionName "10.5.4"
+        versionCode 232
+        versionName "10.5.5"
     }
     buildTypes {
         debug {
