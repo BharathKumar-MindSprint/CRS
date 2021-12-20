@@ -908,11 +908,6 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                     mc.addRow(new String[]{"0", res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), "0", "", "", "", res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), "", "", "", "", "", "", "National_ID"});
                 }
 
-                boolean isBioMetric = Utilities.getBiometricEnabledPref(context, BiometricConstants.BIOMETRIC_ENABLED);
-                if (isBioMetric) {
-                    mc.addRow(new String[]{"0", res.getString(R.string.update_biomatric), res.getString(R.string.update_biomatric), res.getString(R.string.update_biomatric), res.getString(R.string.update_biomatric), res.getString(R.string.update_biomatric), res.getString(R.string.update_biomatric), res.getString(R.string.update_biomatric), res.getString(R.string.update_biomatric), res.getString(R.string.update_biomatric), "0", "", "", "", res.getString(R.string.update_biomatric_hint), res.getString(R.string.update_biomatric_hint), res.getString(R.string.update_biomatric_hint), res.getString(R.string.update_biomatric_hint), res.getString(R.string.update_biomatric_hint), res.getString(R.string.update_biomatric_hint), res.getString(R.string.update_biomatric_hint), res.getString(R.string.update_biomatric_hint), res.getString(R.string.update_biomatric_hint), "", "", "", "", "", "", "Update_Biomatric"});
-                }
-
                 Cursor fmp = dl.getFmpByFarmerId(id);
                 if (fmp.getCount() > 0) {
                     fmp.moveToFirst();

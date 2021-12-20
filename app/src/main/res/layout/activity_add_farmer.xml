@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     android:background="@color/ofis_page_background"
     tools:context="com.olam.digital.ofis.AddFarmerActivity"
+    android:id="@+id/layout_add_farmer"
     tools:ignore="Overdraw">
 
     <ImageView
