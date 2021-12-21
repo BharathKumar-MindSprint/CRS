@@ -265,7 +265,7 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
         actionbtn.setTag(nationalids.getChildCount());
         nationalidphoto.setTag(nationalids.getChildCount());
         expiryDate.setTag(nationalids.getChildCount());
-
+        ll_captureexpiry.setVisibility(View.GONE);
         expiryDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -376,7 +376,7 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
                     TextView expiryDate = nationalidinclude.findViewById(R.id.expirydate);
                     nidnumber.setFilters(new InputFilter[]{new Utils.EmojiExcludeFilter()});
                     nidnumber.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
-
+                    ll_captureexpiry.setVisibility(View.GONE);
                     spinnerArrayAdapter = new ArrayAdapter<String>(AddNationalidActivity.this, R.layout.nidtype_spinner, refreshitem);
                     spinnerArrayAdapter.setDropDownViewResource(R.layout.nidtype_spinner);
                     spinner_nidtype.setAdapter(spinnerArrayAdapter);
@@ -588,12 +588,12 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
                     }
                 }
             }
-            if (getNidExpiryDateStatus(value).equalsIgnoreCase("true")) {
+           /* if (getNidExpiryDateStatus(value).equalsIgnoreCase("true")) {
                 if (expDate.trim() == "" || expDate.trim().equalsIgnoreCase("")) {
                     Toast.makeText(this, getResources().getString(R.string.nid_exp_fill), Toast.LENGTH_SHORT).show();
                     return false;
                 }
-            }
+            }*/
             if (status) {
                 NationalIdDTO idDTO = new NationalIdDTO();
                 idDTO.setNationalidNumber(nid);
@@ -678,7 +678,7 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
                     actionbtn.setTag(nationalids.getChildCount());
                     nationalidphoto.setTag(nationalids.getChildCount());
                     EditText nidnumber = nationalidinclude.findViewById(R.id.nidnumber);
-
+                    ll_captureexpiry.setVisibility(View.GONE);
                     nidnumber.setFilters(new InputFilter[]{new Utils.EmojiExcludeFilter()});
                     nidnumber.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
 
