@@ -290,6 +290,7 @@ android {
 
 }
 
+
 sonarqube{
     properties
             {
