@@ -292,8 +292,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:id="@+id/spinner_district"
-                        android:nextFocusDown="@+id/spinner_place"
-                        android:nextFocusForward="@+id/spinner_place"
+                        android:nextFocusDown="@+id/spinner_subdistrict"
+                        android:nextFocusForward="@+id/spinner_subdistrict"
                         android:layout_weight="1" />
 
                     <ImageView
@@ -325,8 +325,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:id="@+id/spinner_place"
-                        android:nextFocusDown="@+id/spinner_place"
-                        android:nextFocusForward="@+id/spinner_place"
                         android:layout_weight="1" />
 
                     <ImageView
