@@ -662,8 +662,6 @@ public class SyncAllTask extends SyncTask {
         });
     }
 
-
-
     private void syncODRefreshToken() throws JSONException {
 
         JSONObject inputArgs = new JSONObject();
@@ -1170,7 +1168,8 @@ public class SyncAllTask extends SyncTask {
                     DynatraceHelper.requestPayload(finalEndpoint,output,context,false);
                     if (postResponse.isSuccessful()) {
                         // store the value in Child labour preferences
-                        Boolean isflenumerator = Boolean.parseBoolean(output.trim());
+//                        Boolean isflenumerator = Boolean.parseBoolean(output.trim());
+                        Boolean isflenumerator = false;
                         Utilities.saveToSharedPrefs(context, Utilities.FARMERLEAD_ENUMERATOR,null, isflenumerator);
                         System.out.println("isflenumerator_data:" + isflenumerator);
                         if(! isflenumerator) {

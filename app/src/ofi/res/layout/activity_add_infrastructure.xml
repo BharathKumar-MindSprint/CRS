@@ -297,8 +297,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:id="@+id/spinner_district"
-                        android:nextFocusDown="@+id/spinner_place"
-                        android:nextFocusForward="@+id/spinner_place"
+                        android:nextFocusDown="@+id/spinner_subdistrict"
+                        android:nextFocusForward="@+id/spinner_subdistrict"
                         android:layout_weight="1" />
 
                     <ImageView
@@ -313,13 +313,43 @@
                     <Spinner
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:id="@+id/spinner_place"
+                        android:id="@+id/spinner_subdistrict"
                         android:layout_marginRight="0dp"
                         android:layout_weight="1" />
 
 
 
                 </LinearLayout>
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingBottom="@dimen/ofis_bottom_section_padding_vertical">
+
+                        <Spinner
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/spinner_place"
+                            android:layout_weight="1" />
+
+                        <ImageView
+                            android:visibility="invisible"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:contentDescription="@string/ofis_cd_hierarchy_arrow"
+                            app:srcCompat="@drawable/ic_spinner_hierarchy_arrow"
+                            android:scaleType="center" />
+
+                        <Spinner
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:visibility="invisible"
+                            android:layout_marginRight="0dp"
+                            android:layout_weight="1" />
+
+
+                    </LinearLayout>
 
                 <LinearLayout
                     android:visibility="gone"

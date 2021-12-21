@@ -96,6 +96,7 @@ public class AddInfrastructureActivity extends BaseActivity {
     private int selectedCountry1 = 0;
     private int selectedRegion1 = 0;
     private int selectedDistrict1 = 0;
+    private int selectedSubDistrict1 = 0;
     private int selectedPlace1 = 0;
 
 
@@ -272,7 +273,7 @@ public class AddInfrastructureActivity extends BaseActivity {
         dl.createBusinessHierarchySpinners(this, context, null, selectedFarmerGroup, selectedSection);
 
         // New
-        dl.createGeographyHierarchySpinners1(this, context, null, selectedCountry1, selectedRegion1, selectedDistrict1, selectedPlace1, null,false);
+        dl.createGeographyHierarchySpinners1(this, context, null, selectedCountry1, selectedRegion1, selectedDistrict1,selectedSubDistrict1, selectedPlace1, null,false, 2);
 
 
         bindSaveButton();
@@ -503,6 +504,7 @@ public class AddInfrastructureActivity extends BaseActivity {
             selectedCountry1 = existingItem.getInt(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_COUNTRY_ID));
             selectedRegion1 = existingItem.getInt(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_REGION_ID));
             selectedDistrict1 = existingItem.getInt(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_DISTRICT_ID));
+            selectedSubDistrict1 = existingItem.getInt(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBDISTRICT_ID));
             selectedPlace1 = existingItem.getInt(existingItem.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PLACE_ID));
         }
 
@@ -1023,7 +1025,7 @@ public class AddInfrastructureActivity extends BaseActivity {
                         poiName.setVisibility(View.GONE);
                         layout_geo_old.setVisibility(View.GONE);
                         layout_geo_new.setVisibility(View.VISIBLE);
-                        dl.createGeographyHierarchySpinners1(AddInfrastructureActivity.this, context, null, selectedCountry1, selectedRegion1, selectedDistrict1,selectedPlace1, null,false);
+                        dl.createGeographyHierarchySpinners1(AddInfrastructureActivity.this, context, null, selectedCountry1, selectedRegion1, selectedDistrict1,selectedSubDistrict1, selectedPlace1, null,false, 2);
 
                     }else{
                         showPoiName();

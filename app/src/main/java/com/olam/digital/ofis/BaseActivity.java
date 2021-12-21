@@ -244,7 +244,8 @@ public class BaseActivity extends AppCompatActivity {
             long endDate = edate.getTime();
             datePickerDialog.getDatePicker().setMinDate(startDate);
             datePickerDialog.getDatePicker().setMaxDate(endDate);
-        }catch (ParseException e) { e.printStackTrace(); }
+        }catch (ParseException e) { e.printStackTrace();
+        }catch (NumberFormatException e) {e.printStackTrace();}
     }
 
     public String getNidMaxrange(String type) {

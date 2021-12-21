@@ -757,6 +757,8 @@ class OFISDB extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(OFIS_SIGNATURE_TABLE_CREATE);
 //        Update consent statement
         sqLiteDatabase.execSQL(OFIS_CONSENT_STATEMENT_CREATE);
+//        subdistrict
+        sqLiteDatabase.execSQL(OFIS_SUBDISTRICTS_TABLE_CREATE);
 //      farmerleads
         sqLiteDatabase.execSQL(OFIS_FARMERLEADS_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_FARMERASSIGNMENTS_TABLE_CREATE);
@@ -839,6 +841,7 @@ class OFISDB extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL("drop table IF EXISTS signature");
         sqLiteDatabase.execSQL("drop table IF EXISTS gps_details");
         sqLiteDatabase.execSQL("drop table IF EXISTS consentstatement");
+        sqLiteDatabase.execSQL("drop table IF EXISTS subdistricts");
         sqLiteDatabase.execSQL("drop table IF EXISTS farmerLeads");
         sqLiteDatabase.execSQL("drop table IF EXISTS assignments");
 

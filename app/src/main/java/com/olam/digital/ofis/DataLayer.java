@@ -2325,17 +2325,19 @@ public class DataLayer {
         }
     }
 
-    void createGeographyHierarchySpinners1(final AppCompatActivity activity, final Context context, final EditText farmerIdPrefix, int countrySelection, final int regionSelection, final int districtSelection, final int placeSelection, final LinearLayout phonenumbers, final boolean newPlace) {
+    void createGeographyHierarchySpinners1(final AppCompatActivity activity, final Context context, final EditText farmerIdPrefix, int countrySelection, final int regionSelection, final int districtSelection, final int subdistrictSelection, final int placeSelection, final LinearLayout phonenumbers, final boolean newPlace, int item) {
         final Spinner countrySpinner = (Spinner) activity.findViewById(R.id.spinner_country1);
         final Spinner regionSpinner = (Spinner) activity.findViewById(R.id.spinner_region1);
         final Spinner districtSpinner = (Spinner) activity.findViewById(R.id.spinner_district1);
+        final Spinner subdistrictSpinner = (Spinner) activity.findViewById(R.id.spinner_subdistrict1);
         final Spinner placeSpinner = (Spinner) activity.findViewById(R.id.spinner_place1);
-
-
-        final EditText newplace = (EditText) activity.findViewById(R.id.newPlaceName);
+        final ImageView haDistrict = (ImageView) activity.findViewById(R.id.haDistrict1);
 
         Cursor countries = getSpinnerData(OFISDBContract.CountriesEntry.TABLE_NAME, true, OFISDBContract.CountriesEntry.COLUMN_NAME_ENUMERATOR_COUNTRY, 1, true, OFISDBContract.CountriesEntry.COLUMN_NAME_COUNTRY_NAME);
         bindDataDrivenSpinner1(countrySpinner, countries, context, R.string.spinner_country_default, null, false);
+        if(item == 3){
+            countrySpinner.setEnabled(false);
+        }
 
         countrySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -2359,6 +2361,31 @@ public class DataLayer {
                         diallingcode.setText(dialling_code);
                     }
                 }
+                if (id > 0 && item == 1) {
+                    LinearLayout farmerLeadDisplayLayout = activity.findViewById(R.id.farmerLeadDisplayLayout);
+                    boolean isODOrigin = isODOrigin((int) id);
+                    boolean isFLEnumerator = Utilities.getBoolFromSharedPrefs(context, Utilities.FARMERLEAD_ENUMERATOR,false);
+                    if (!isODOrigin) {
+                        farmerLeadDisplayLayout.setVisibility(View.GONE);
+                    } else {
+                        if(isFLEnumerator) {
+                            farmerLeadDisplayLayout.setVisibility(View.VISIBLE);
+                        }else {
+                            farmerLeadDisplayLayout.setVisibility(View.GONE);
+                        }
+                    }
+                }
+
+                if (id > 0) {
+                    boolean isODOrigin = isSubdistrictCapture((int) id);
+                    if (!isODOrigin) {
+                        subdistrictSpinner.setVisibility(View.GONE);
+                        haDistrict.setVisibility(View.GONE);
+                    } else {
+                        subdistrictSpinner.setVisibility(View.VISIBLE);
+                        haDistrict.setVisibility(View.VISIBLE);
+                    }
+                }
 
                 if (regionSelection != 0) {
                     setSpinnerSelectionById(regionSelection, regionSpinner);
@@ -2374,6 +2401,9 @@ public class DataLayer {
                     } else {
                         regionSpinner.setEnabled(true);
                     }
+                }
+                if(item == 3){
+                    regionSpinner.setEnabled(false);
                 }
             }
 
@@ -2405,6 +2435,9 @@ public class DataLayer {
                         districtSpinner.setEnabled(true);
                     }
                 }
+                if(item == 3){
+                    districtSpinner.setEnabled(false);
+                }
             }
 
             @Override
@@ -2413,12 +2446,44 @@ public class DataLayer {
             }
         });
 
-        if (placeSpinner != null) {
+        if(item == 3){
+            regionSpinner.setEnabled(false);
+            districtSpinner.setEnabled(false);
+        }
+        if (placeSpinner != null && subdistrictSpinner != null) {
             districtSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> adapterView, View view, int i, long id) {
+                    try {
+                        Cursor subdistricts = getSpinnerData(OFISDBContract.SubDistrictsEntry.TABLE_NAME, true, OFISDBContract.SubDistrictsEntry.COLUMN_NAME_DISTRICT_ID, ((int) id), true, OFISDBContract.SubDistrictsEntry.COLUMN_NAME_SUBDISTRICT_NAME);
+                        bindDataDrivenSpinner1(subdistrictSpinner, subdistricts, context, R.string.spinner_subdistrict_default, null, false);
 
-                    Cursor places = getSpinnerData(OFISDBContract.PlacesEntry.TABLE_NAME, true, OFISDBContract.PlacesEntry.COLUMN_NAME_DISTRICT_ID, ((int) id), true, OFISDBContract.PlacesEntry.COLUMN_NAME_PLACE_NAME);
+                        if (subdistrictSelection != 0) {
+                            setSpinnerSelectionById(subdistrictSelection, subdistrictSpinner);
+                            if (subdistricts.getCount() == 1) {
+                                subdistrictSpinner.setSelection(1, false);
+                                subdistrictSpinner.setEnabled(false);
+                            } else {
+                                subdistrictSpinner.setEnabled(true);
+                            }
+                        } else {
+                            if (subdistricts.getCount() == 1) {
+                                subdistrictSpinner.setSelection(1, false);
+                                subdistrictSpinner.setEnabled(false);
+                            } else {
+                                subdistrictSpinner.setEnabled(true);
+                            }
+                        }
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                    boolean isODOrigin = isSubdistrictCapture((int) id);
+                    Cursor places;
+                    if (!isODOrigin) {
+                        places = getSpinnerData(OFISDBContract.PlacesEntry.TABLE_NAME, true, OFISDBContract.PlacesEntry.COLUMN_NAME_DISTRICT_ID, ((int) id), true, OFISDBContract.PlacesEntry.COLUMN_NAME_PLACE_NAME);
+                    }else {
+                        places = getSpinnerData(OFISDBContract.PlacesEntry.TABLE_NAME, true, OFISDBContract.PlacesEntry.COLUMN_NAME_SUBDISTRICT_ID, ((int) id), true, OFISDBContract.PlacesEntry.COLUMN_NAME_PLACE_NAME);
+                    }
                     if (!newPlace) {
                         bindDataDrivenSpinnerSIP1(placeSpinner, places, context, R.string.Name, null, false);
                     } else {
@@ -2449,6 +2514,41 @@ public class DataLayer {
                 }
             });
 
+
+            subdistrictSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long id) {
+
+                    Cursor places = getSpinnerData(OFISDBContract.PlacesEntry.TABLE_NAME, true, OFISDBContract.PlacesEntry.COLUMN_NAME_SUBDISTRICT_ID, ((int) id), true, OFISDBContract.PlacesEntry.COLUMN_NAME_PLACE_NAME);
+                    if (!newPlace) {
+                        bindDataDrivenSpinnerSIP1(placeSpinner, places, context,  R.string.Name, null, false);
+                    } else {
+                        bindDataDrivenSpinner1(placeSpinner, places, context,  R.string.Name, null, false);
+                    }
+
+                    if (placeSelection != 0) {
+                        setSpinnerSelectionById(placeSelection, placeSpinner);
+                    } else {
+                        if (newPlace) {
+                            if (places.getCount() == 1) {
+                                try {
+                                    placeSpinner.setSelection(2, false);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+                        }
+                    }
+
+
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> adapterView) {
+
+                }
+            });
             if (activity.findViewById(R.id.newPlaceName) != null) {
                 final EditText newPlaceName = (EditText) activity.findViewById(R.id.newPlaceName);
                 placeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -2472,6 +2572,8 @@ public class DataLayer {
                 });
             }
         }
+
+
 
         if (countrySelection != 0) {
             setSpinnerSelectionById(countrySelection, countrySpinner);
@@ -3515,7 +3617,9 @@ public class DataLayer {
         Cursor nids = getcountrynameid(countryid);
         try {
             while (nids.moveToNext()) {
-                String isSubDistCapture = nids.getString(nids.getColumnIndex(OFISDBContract.CountriesEntry.COLUMN_NAME_ISSUBDISTCAPTURE));
+//                commenting OFIS OD Logic
+//                String isSubDistCapture = nids.getString(nids.getColumnIndex(OFISDBContract.CountriesEntry.COLUMN_NAME_ISSUBDISTCAPTURE));
+                String isSubDistCapture = "false";
                 if (isSubDistCapture.equalsIgnoreCase("true")) {
                     status = true;
                     break;
@@ -4392,12 +4496,12 @@ public class DataLayer {
             if (newPlaceId > 0) {
                 newValues.put(OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID, newPlaceId);
             }
-            try {
+           /* try {
                 System.out.println("dl_odFarmerId:" + odFarmerId);
                 newValues.put(OFISDBContract.FarmerEntry.COLUMN_NAME_ODFARMERID, odFarmerId);
             }catch (Exception e){
                 e.printStackTrace();
-            }
+            }*/
 
             String[] whereArgs = new String[]{String.valueOf(localFarmerId)};
 
@@ -6195,5 +6299,30 @@ public class DataLayer {
             }
         }
         return farmerGeo;
+    }
+
+    public void updateFarmerOlamId(long editFarmerId, String olamFarmerId) {
+        try {
+            String whereClause = OFISDBContract.FarmerEntry.COLUMN_NAME_ID + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(editFarmerId)};
+            ContentValues values = new ContentValues();
+            values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_SYNCED, 1);
+            values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID, olamFarmerId);
+            db.update(OFISDBContract.FarmerEntry.TABLE_NAME, values, whereClause, whereArgs);
+            System.out.println("FarmerOlamId Updated");
+        }catch (Exception e){
+            FirebaseCrashlytics.getInstance().log(e.getMessage());
+        }
+    }
+
+    String getTempId(long farmerId) {
+        Cursor farmer = null;
+        try {
+            farmer = getFarmerById(farmerId);
+            return  farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID));
+        } finally {
+            farmer.close();
+        }
+
     }
 }
