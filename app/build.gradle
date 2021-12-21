@@ -39,8 +39,8 @@ android {
 
 
 
-        versionCode 84
-        versionName "10.7.4"
+        versionCode 232
+        versionName "10.5.5"
 
 
     }
