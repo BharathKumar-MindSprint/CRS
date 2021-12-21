@@ -6,7 +6,9 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.os.Bundle;
 import androidx.core.app.NavUtils;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+
+import android.os.Handler;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.InputType;
@@ -25,6 +27,10 @@ import com.olam.digital.ofis.matoma.MatomoHelper;
 import com.olam.digital.ofis.matoma.ScreenNameConstants;
 import com.olam.digital.ofis.recordpolygon.Utils;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 
 
 public class FindFarmerActivity extends BaseListActivity implements AdapterView.OnItemClickListener {
@@ -144,9 +150,11 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
         if (farmerList.getCount() > 0) {
             String[] adapterCols = new String[]{
                     "name",
-                    "olam_farmer_id"
+                    "olam_farmer_id",
+                    "country_id",
+                    "odFarmerId"
             };
-            int[] adapterRowViews = new int[]{R.id.farmerListFarmerName, R.id.farmerListOlamFarmerId};
+            int[] adapterRowViews = new int[]{R.id.farmerListFarmerName, R.id.farmerListOlamFarmerId,R.id.farmerListODFarmerId};
             customListAdapter_farmerAdapter = new CustomListAdapter_Farmer(context, farmerList, adapterCols, adapterRowViews, res, transactionMode);
            // setListAdapter(customListAdapter_farmerAdapter);
             listView.setAdapter(customListAdapter_farmerAdapter);

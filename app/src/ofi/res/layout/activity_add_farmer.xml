@@ -341,8 +341,36 @@
                         <Spinner
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:id="@+id/spinner_subdistrict"
+                            android:layout_weight="1" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <Spinner
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
                             android:id="@+id/spinner_place"
-                            android:background="@drawable/spinner_bg_light"
+                            android:layout_weight="1"
+                            android:nextFocusDown="@+id/spinner_place"/>
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:contentDescription="@string/ofis_cd_hierarchy_arrow"
+                            app:srcCompat="@drawable/ic_spinner_hierarchy_arrow"
+                            android:scaleType="center"
+                            android:visibility="invisible"
+                            android:id="@+id/haSubDistrict" />
+
+                        <Spinner
+                            android:visibility="invisible"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
                             android:layout_weight="1" />
 
                     </LinearLayout>

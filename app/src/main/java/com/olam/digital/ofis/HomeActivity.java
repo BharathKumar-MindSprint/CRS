@@ -1406,6 +1406,15 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             intent.putExtra(EDIT_MODE, true);
             intent.putExtra(READ_ONLY_MODE, true);
             startActivity(intent);
+        } else if (itemType.equalsIgnoreCase("updatesubdistrict")) {
+            Intent in = new Intent(this, UpdateSubdistrict.class);
+            Bundle bundle = new Bundle();
+            bundle.putString("olamfarmername", networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME)));
+            bundle.putInt(ChildLabourUtils.CHILD_FARMER_ID,networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
+            bundle.putBoolean(EDIT_MODE, true);
+            bundle.putBoolean(READ_ONLY_MODE, true);
+            in.putExtras(bundle);
+            startActivity(in);
         }else if (itemType.equalsIgnoreCase("farmer_photo")) {
             //JIRA req OW-505
             Intent intent = new Intent(this, ViewFarmerActivity.class);

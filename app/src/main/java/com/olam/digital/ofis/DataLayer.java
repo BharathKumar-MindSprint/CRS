@@ -9,9 +9,13 @@ import android.database.DatabaseUtils;
 import android.database.MatrixCursor;
 import android.database.MergeCursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteQueryBuilder;
 import android.location.Location;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.text.TextUtils;
@@ -20,6 +24,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
@@ -29,6 +34,7 @@ import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.olam.digital.ofis.childlabour.ChildLabourUtils;
 import com.olam.digital.ofis.coffeesurveyconstraints.CoffeeConstants;
+import com.olam.digital.ofis.model.FarmerLeadDTO;
 import com.olam.digital.ofis.model.NationalIdDTO;
 import com.olam.digital.ofis.recordpolygon.Utils;
 import com.olam.digital.ofis.model.FarmerGeo;
@@ -37,6 +43,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.sql.Blob;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -99,10 +106,11 @@ public class DataLayer {
         return (existingPlace.getCount() > 0);
     }
 
-    long insertNewPlace(String newPlaceName, long district_id) {
+    long insertNewPlace(String newPlaceName, long district_id, long subdistrict_id) {
         ContentValues values = new ContentValues();
         values.put(OFISDBContract.PlacesEntry.COLUMN_NAME_PLACE_NAME, newPlaceName);
         values.put(OFISDBContract.PlacesEntry.COLUMN_NAME_DISTRICT_ID, district_id);
+        values.put(OFISDBContract.PlacesEntry.COLUMN_NAME_SUBDISTRICT_ID, subdistrict_id);
         values.put(OFISDBContract.PlacesEntry.COLUMN_NAME_PLACE_TYPE, "localinsert");
 
         return db.insert(OFISDBContract.PlacesEntry.TABLE_NAME, null, values);
@@ -116,7 +124,13 @@ public class DataLayer {
         return db.query(OFISDBContract.PlacesEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
     }
 
+    Cursor getPlaceBytype(String type) {
+        String[] columns = new String[]{"*"};
+        String whereClause = OFISDBContract.PlacesEntry.COLUMN_NAME_PLACE_TYPE + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(type)};
 
+        return db.query(OFISDBContract.PlacesEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+    }
 
     Cursor getFGById(int Id) {
         String[] columns = new String[]{"*"};
@@ -333,7 +347,7 @@ public class DataLayer {
 
                 updateNetworkQueueNewFarmerEntry(networkQueueValues, farmerId);
             }
-        }catch (Exception e){}
+        }catch (Exception e){e.printStackTrace();}
 
 //        db.update(OFISDBContract.FarmerEntry.BACKUP_TABLE_NAME, values, whereClause, whereArgs);
 
@@ -1370,6 +1384,9 @@ public class DataLayer {
                 values.put(OFISDBContract.FarmerNationalIDs.COLUMN_IS_SYNCED, false);
                 values.put(OFISDBContract.FarmerNationalIDs.COLUMN_NID_TYPE, storeableNumber.getInt("nationalIdType"));
                 values.put(OFISDBContract.FarmerNationalIDs.COLUMN_NID_NUMBER, storeableNumber.getString("nationalIdNumber"));
+                if (storeableNumber.has("expiryDate")) {
+                    values.put(OFISDBContract.FarmerNationalIDs.COLUMN_NID_EXPIRY_DATE, storeableNumber.getString("expiryDate"));
+                }
                 if (storeableNumber.has("photo")) {
                     values.put(OFISDBContract.FarmerNationalIDs.COLUMN_NID_PHOTO, storeableNumber.getString("photo"));
                 }
@@ -1395,7 +1412,7 @@ public class DataLayer {
     }
 
 
-    void addLocalFarmerNationalids(ArrayList<NationalIdDTO> storeableNationalids) {
+    /*void addLocalFarmerNationalids(ArrayList<NationalIdDTO> storeableNationalids) {
         int arrayLength = storeableNationalids.size();
         try {
             for (int i = 0; i < arrayLength; i++) {
@@ -1409,7 +1426,7 @@ public class DataLayer {
         }catch (Exception e){}
 
 
-    }
+    }*/
 
     void addnewLocalFarmerNationalids(NationalIdDTO storeableNationalids) {
 //        delete value if exists
@@ -1421,6 +1438,7 @@ public class DataLayer {
         values.put(OFISDBContract.LocalFarmerNationalIDs.COLUMN_NID_TYPE, storeableNationalids.getNationalidtype());
         values.put(OFISDBContract.LocalFarmerNationalIDs.COLUMN_NID_NUMBER, storeableNationalids.getNationalidNumber());
         values.put(OFISDBContract.LocalFarmerNationalIDs.COLUMN_NID_PHOTO, storeableNationalids.getPhoto());
+        values.put(OFISDBContract.LocalFarmerNationalIDs.COLUMN_NID_EXPIRY_DATE, storeableNationalids.getExpiryDate());
         try {
             db.insert(OFISDBContract.LocalFarmerNationalIDs.TABLE_NAME, null, values);
         }catch (Exception e){}
@@ -1463,10 +1481,10 @@ public class DataLayer {
         return db.query(OFISDBContract.FarmerNationalIDs.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
     }
 
-    void updateLocalFarmerNationalids(ArrayList<NationalIdDTO> storeableNationalids) {
+   /* void updateLocalFarmerNationalids(ArrayList<NationalIdDTO> storeableNationalids) {
         db.delete(OFISDBContract.LocalFarmerNationalIDs.TABLE_NAME, null, null);
         addLocalFarmerNationalids(storeableNationalids);
-    }
+    }*/
 
     void deletelocalfarmervalues(int id) {
         String whereClause = OFISDBContract.LocalFarmerNationalIDs.COLUMN_NAME_ID + " = ?";
@@ -1477,11 +1495,11 @@ public class DataLayer {
 
     }
 
-    void deletelocalfarmervalues() {
+   /* void deletelocalfarmervalues() {
         try {
             db.delete(OFISDBContract.LocalFarmerNationalIDs.TABLE_NAME, null, null);
         }catch (Exception e){}
-    }
+    }*/
 
     Cursor getDiallingCodeByPlaceId(long placeId) {
         String placesTable = OFISDBContract.PlacesEntry.TABLE_NAME;
@@ -1855,10 +1873,301 @@ public class DataLayer {
 
     }
 
+    void loadSubdistrictSpinner(final AppCompatActivity activity, final Context context, final int districtSelection, final int subdistrictSelection) {
+        final Spinner subdistrictSpinner = (Spinner) activity.findViewById(R.id.spinner_subdistrict);
+
+        Cursor subdistricts = getSpinnerData(OFISDBContract.SubDistrictsEntry.TABLE_NAME, true, OFISDBContract.SubDistrictsEntry.COLUMN_NAME_DISTRICT_ID, districtSelection, true, OFISDBContract.SubDistrictsEntry.COLUMN_NAME_SUBDISTRICT_NAME);
+        bindDataDrivenSpinner(subdistrictSpinner, subdistricts, context, R.string.spinner_subdistrict_default, null, false);
+
+                    if (subdistrictSelection != 0) {
+                        setSpinnerSelectionById(subdistrictSelection, subdistrictSpinner);
+                        if (subdistricts.getCount() == 1) {
+                            subdistrictSpinner.setEnabled(false);
+                        } else {
+                            subdistrictSpinner.setEnabled(true);
+                        }
+                    } else {
+                        if (subdistricts.getCount() == 1) {
+                            subdistrictSpinner.setSelection(1, false);
+                            subdistrictSpinner.setEnabled(false);
+                        } else {
+                            subdistrictSpinner.setEnabled(true);
+                        }
+                    }
+
+    }
+
+    void createGeographyHierarchySpinners(final AppCompatActivity activity, final Context context, final EditText farmerIdPrefix, int countrySelection, final int regionSelection, final int districtSelection, final int subdistrictSelection, final int placeSelection, final LinearLayout phonenumbers, final boolean newPlace, int item) {
+        final Spinner countrySpinner = (Spinner) activity.findViewById(R.id.spinner_country);
+        final Spinner regionSpinner = (Spinner) activity.findViewById(R.id.spinner_region);
+        final Spinner districtSpinner = (Spinner) activity.findViewById(R.id.spinner_district);
+        final Spinner subdistrictSpinner = (Spinner) activity.findViewById(R.id.spinner_subdistrict);
+        final Spinner placeSpinner = (Spinner) activity.findViewById(R.id.spinner_place);
+        final ImageView haDistrict = (ImageView) activity.findViewById(R.id.haDistrict);
+
+
+        final EditText newplace = (EditText) activity.findViewById(R.id.newPlaceName);
+
+        Cursor countries = getSpinnerData(OFISDBContract.CountriesEntry.TABLE_NAME, true, OFISDBContract.CountriesEntry.COLUMN_NAME_ENUMERATOR_COUNTRY, 1, true, OFISDBContract.CountriesEntry.COLUMN_NAME_COUNTRY_NAME);
+        bindDataDrivenSpinner(countrySpinner, countries, context, R.string.spinner_country_default, null, false);
+        if(item == 3){
+            countrySpinner.setEnabled(false);
+        }
+
+        countrySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long id) {
+                Cursor regions = getSpinnerData(OFISDBContract.RegionsEntry.TABLE_NAME, true, OFISDBContract.RegionsEntry.COLUMN_NAME_COUNTRY_ID, ((int) id), true, OFISDBContract.RegionsEntry.COLUMN_NAME_REGION_NAME);
+                bindDataDrivenSpinner(regionSpinner, regions, context, R.string.spinner_region_default, null, false);
+                Cursor selectedCountry = (Cursor) countrySpinner.getSelectedItem();
+
+                if (farmerIdPrefix != null && id > 0) {
+                    String code = selectedCountry.getString(selectedCountry.getColumnIndex(OFISDBContract.CountriesEntry.COLUMN_NAME_CODE));
+                    String currentPrefix = farmerIdPrefix.getText().toString();
+                    String newPrefix = code + currentPrefix.substring(2);
+                    farmerIdPrefix.setText(newPrefix);
+                }
+
+                if (phonenumbers != null && id > 0) {
+                    for (int z = 0; z < phonenumbers.getChildCount(); z++) {
+                        LinearLayout phonenumber = (LinearLayout) phonenumbers.getChildAt(z);
+                        EditText diallingcode = (EditText) phonenumber.findViewById(R.id.dialling_code);
+                        String dialling_code = selectedCountry.getString(selectedCountry.getColumnIndex(OFISDBContract.CountriesEntry.COLUMN_NAME_DIALLING_CODE));
+                        diallingcode.setText(dialling_code);
+                    }
+                }
+                if (id > 0 && item == 1) {
+                    LinearLayout farmerLeadDisplayLayout = activity.findViewById(R.id.farmerLeadDisplayLayout);
+                    boolean isODOrigin = isODOrigin((int) id);
+                    boolean isFLEnumerator = Utilities.getBoolFromSharedPrefs(context, Utilities.FARMERLEAD_ENUMERATOR,false);
+                    if (!isODOrigin) {
+                        farmerLeadDisplayLayout.setVisibility(View.GONE);
+                    } else {
+                        if(isFLEnumerator) {
+                            farmerLeadDisplayLayout.setVisibility(View.VISIBLE);
+                        }else {
+                            farmerLeadDisplayLayout.setVisibility(View.GONE);
+                        }
+                    }
+                }
+
+                if (id > 0) {
+                    boolean isODOrigin = isSubdistrictCapture((int) id);
+                    if (!isODOrigin) {
+                        subdistrictSpinner.setVisibility(View.GONE);
+                        haDistrict.setVisibility(View.GONE);
+                    } else {
+                        subdistrictSpinner.setVisibility(View.VISIBLE);
+                        haDistrict.setVisibility(View.VISIBLE);
+                    }
+                }
+
+                if (regionSelection != 0) {
+                    setSpinnerSelectionById(regionSelection, regionSpinner);
+                    if (regions.getCount() == 1) {
+                        regionSpinner.setEnabled(false);
+                    } else {
+                        regionSpinner.setEnabled(true);
+                    }
+                } else {
+                    if (regions.getCount() == 1) {
+                        regionSpinner.setSelection(1, false);
+                        regionSpinner.setEnabled(false);
+                    } else {
+                        regionSpinner.setEnabled(true);
+                    }
+                }
+                if(item == 3){
+                    regionSpinner.setEnabled(false);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+        regionSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long id) {
+
+                Cursor districts = getSpinnerData(OFISDBContract.DistrictsEntry.TABLE_NAME, true, OFISDBContract.DistrictsEntry.COLUMN_NAME_REGION_ID, ((int) id), true, OFISDBContract.DistrictsEntry.COLUMN_NAME_DISTRICT_NAME);
+                bindDataDrivenSpinner(districtSpinner, districts, context, R.string.spinner_district_default, null, false);
+
+                if (districtSelection != 0) {
+                    setSpinnerSelectionById(districtSelection, districtSpinner);
+                    if (districts.getCount() == 1) {
+                        districtSpinner.setEnabled(false);
+                    } else {
+                        districtSpinner.setEnabled(true);
+                    }
+                } else {
+                    if (districts.getCount() == 1) {
+                        districtSpinner.setSelection(1, false);
+                        districtSpinner.setEnabled(false);
+                    } else {
+                        districtSpinner.setEnabled(true);
+                    }
+                }
+                if(item == 3){
+                    districtSpinner.setEnabled(false);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+        if(item == 3){
+            regionSpinner.setEnabled(false);
+            districtSpinner.setEnabled(false);
+        }
+        if (placeSpinner != null && subdistrictSpinner != null) {
+            districtSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long id) {
+                    try {
+                        Cursor subdistricts = getSpinnerData(OFISDBContract.SubDistrictsEntry.TABLE_NAME, true, OFISDBContract.SubDistrictsEntry.COLUMN_NAME_DISTRICT_ID, ((int) id), true, OFISDBContract.SubDistrictsEntry.COLUMN_NAME_SUBDISTRICT_NAME);
+                        bindDataDrivenSpinner(subdistrictSpinner, subdistricts, context, R.string.spinner_subdistrict_default, null, false);
+
+                        if (subdistrictSelection != 0) {
+                            setSpinnerSelectionById(subdistrictSelection, subdistrictSpinner);
+                            if (subdistricts.getCount() == 1) {
+                                subdistrictSpinner.setSelection(1, false);
+                                subdistrictSpinner.setEnabled(false);
+                            } else {
+                                subdistrictSpinner.setEnabled(true);
+                            }
+                        } else {
+                            if (subdistricts.getCount() == 1) {
+                                subdistrictSpinner.setSelection(1, false);
+                                subdistrictSpinner.setEnabled(false);
+                            } else {
+                                subdistrictSpinner.setEnabled(true);
+                            }
+                        }
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                    boolean isODOrigin = isSubdistrictCapture((int) id);
+                    Cursor places;
+                    if (!isODOrigin) {
+                        places = getSpinnerData(OFISDBContract.PlacesEntry.TABLE_NAME, true, OFISDBContract.PlacesEntry.COLUMN_NAME_DISTRICT_ID, ((int) id), true, OFISDBContract.PlacesEntry.COLUMN_NAME_PLACE_NAME);
+                    }else {
+                        places = getSpinnerData(OFISDBContract.PlacesEntry.TABLE_NAME, true, OFISDBContract.PlacesEntry.COLUMN_NAME_SUBDISTRICT_ID, ((int) id), true, OFISDBContract.PlacesEntry.COLUMN_NAME_PLACE_NAME);
+                    }
+                    if (!newPlace) {
+                        bindDataDrivenSpinnerSIP(placeSpinner, places, context, R.string.spinner_place_default, null, false);
+                    } else {
+                        bindDataDrivenSpinner(placeSpinner, places, context, R.string.spinner_place_default, null, false);
+                    }
+
+                    if (placeSelection != 0) {
+                        setSpinnerSelectionById(placeSelection, placeSpinner);
+                    } else {
+                        if (newPlace) {
+                            if (places.getCount() == 1) {
+                                try {
+                                    placeSpinner.setSelection(2, false);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+                        }
+                    }
+
+
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> adapterView) {
+
+                }
+            });
+
+
+            subdistrictSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long id) {
+
+                    Cursor places = getSpinnerData(OFISDBContract.PlacesEntry.TABLE_NAME, true, OFISDBContract.PlacesEntry.COLUMN_NAME_SUBDISTRICT_ID, ((int) id), true, OFISDBContract.PlacesEntry.COLUMN_NAME_PLACE_NAME);
+                    if (!newPlace) {
+                        bindDataDrivenSpinnerSIP(placeSpinner, places, context, R.string.spinner_place_default, null, false);
+                    } else {
+                        bindDataDrivenSpinner(placeSpinner, places, context, R.string.spinner_place_default, null, false);
+                    }
+
+                    if (placeSelection != 0) {
+                        setSpinnerSelectionById(placeSelection, placeSpinner);
+                    } else {
+                        if (newPlace) {
+                            if (places.getCount() == 1) {
+                                try {
+                                    placeSpinner.setSelection(2, false);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+                        }
+                    }
+
+
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> adapterView) {
+
+                }
+            });
+            if (activity.findViewById(R.id.newPlaceName) != null) {
+                final EditText newPlaceName = (EditText) activity.findViewById(R.id.newPlaceName);
+                placeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long id) {
+                        try {
+                            if (id == -1) {
+                                newPlaceName.setVisibility(View.VISIBLE);
+                            } else {
+                                newPlaceName.setVisibility(View.GONE);
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> adapterView) {
+
+                    }
+                });
+            }
+        }
+
+
+
+        if (countrySelection != 0) {
+            setSpinnerSelectionById(countrySelection, countrySpinner);
+            if (countries.getCount() == 1) {
+                countrySpinner.setEnabled(false);
+            }
+        } else {
+            if (countries.getCount() == 1) {
+                countrySpinner.setSelection(1, false);
+                countrySpinner.setEnabled(false);
+            }
+        }
+    }
+
     void createGeographyHierarchySpinners(final AppCompatActivity activity, final Context context, final EditText farmerIdPrefix, int countrySelection, final int regionSelection, final int districtSelection, final int placeSelection, final LinearLayout phonenumbers, final boolean newPlace) {
         final Spinner countrySpinner = (Spinner) activity.findViewById(R.id.spinner_country);
         final Spinner regionSpinner = (Spinner) activity.findViewById(R.id.spinner_region);
         final Spinner districtSpinner = (Spinner) activity.findViewById(R.id.spinner_district);
+        final Spinner subdistrictSpinner = (Spinner) activity.findViewById(R.id.spinner_subdistrict);
         final Spinner placeSpinner = (Spinner) activity.findViewById(R.id.spinner_place);
 
 
@@ -2016,17 +2325,19 @@ public class DataLayer {
         }
     }
 
-    void createGeographyHierarchySpinners1(final AppCompatActivity activity, final Context context, final EditText farmerIdPrefix, int countrySelection, final int regionSelection, final int districtSelection, final int placeSelection, final LinearLayout phonenumbers, final boolean newPlace) {
+    void createGeographyHierarchySpinners1(final AppCompatActivity activity, final Context context, final EditText farmerIdPrefix, int countrySelection, final int regionSelection, final int districtSelection, final int subdistrictSelection, final int placeSelection, final LinearLayout phonenumbers, final boolean newPlace, int item) {
         final Spinner countrySpinner = (Spinner) activity.findViewById(R.id.spinner_country1);
         final Spinner regionSpinner = (Spinner) activity.findViewById(R.id.spinner_region1);
         final Spinner districtSpinner = (Spinner) activity.findViewById(R.id.spinner_district1);
+        final Spinner subdistrictSpinner = (Spinner) activity.findViewById(R.id.spinner_subdistrict1);
         final Spinner placeSpinner = (Spinner) activity.findViewById(R.id.spinner_place1);
-
-
-        final EditText newplace = (EditText) activity.findViewById(R.id.newPlaceName);
+        final ImageView haDistrict = (ImageView) activity.findViewById(R.id.haDistrict1);
 
         Cursor countries = getSpinnerData(OFISDBContract.CountriesEntry.TABLE_NAME, true, OFISDBContract.CountriesEntry.COLUMN_NAME_ENUMERATOR_COUNTRY, 1, true, OFISDBContract.CountriesEntry.COLUMN_NAME_COUNTRY_NAME);
         bindDataDrivenSpinner1(countrySpinner, countries, context, R.string.spinner_country_default, null, false);
+        if(item == 3){
+            countrySpinner.setEnabled(false);
+        }
 
         countrySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -2050,6 +2361,31 @@ public class DataLayer {
                         diallingcode.setText(dialling_code);
                     }
                 }
+                if (id > 0 && item == 1) {
+                    LinearLayout farmerLeadDisplayLayout = activity.findViewById(R.id.farmerLeadDisplayLayout);
+                    boolean isODOrigin = isODOrigin((int) id);
+                    boolean isFLEnumerator = Utilities.getBoolFromSharedPrefs(context, Utilities.FARMERLEAD_ENUMERATOR,false);
+                    if (!isODOrigin) {
+                        farmerLeadDisplayLayout.setVisibility(View.GONE);
+                    } else {
+                        if(isFLEnumerator) {
+                            farmerLeadDisplayLayout.setVisibility(View.VISIBLE);
+                        }else {
+                            farmerLeadDisplayLayout.setVisibility(View.GONE);
+                        }
+                    }
+                }
+
+                if (id > 0) {
+                    boolean isODOrigin = isSubdistrictCapture((int) id);
+                    if (!isODOrigin) {
+                        subdistrictSpinner.setVisibility(View.GONE);
+                        haDistrict.setVisibility(View.GONE);
+                    } else {
+                        subdistrictSpinner.setVisibility(View.VISIBLE);
+                        haDistrict.setVisibility(View.VISIBLE);
+                    }
+                }
 
                 if (regionSelection != 0) {
                     setSpinnerSelectionById(regionSelection, regionSpinner);
@@ -2065,6 +2401,9 @@ public class DataLayer {
                     } else {
                         regionSpinner.setEnabled(true);
                     }
+                }
+                if(item == 3){
+                    regionSpinner.setEnabled(false);
                 }
             }
 
@@ -2096,6 +2435,9 @@ public class DataLayer {
                         districtSpinner.setEnabled(true);
                     }
                 }
+                if(item == 3){
+                    districtSpinner.setEnabled(false);
+                }
             }
 
             @Override
@@ -2104,12 +2446,44 @@ public class DataLayer {
             }
         });
 
-        if (placeSpinner != null) {
+        if(item == 3){
+            regionSpinner.setEnabled(false);
+            districtSpinner.setEnabled(false);
+        }
+        if (placeSpinner != null && subdistrictSpinner != null) {
             districtSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> adapterView, View view, int i, long id) {
+                    try {
+                        Cursor subdistricts = getSpinnerData(OFISDBContract.SubDistrictsEntry.TABLE_NAME, true, OFISDBContract.SubDistrictsEntry.COLUMN_NAME_DISTRICT_ID, ((int) id), true, OFISDBContract.SubDistrictsEntry.COLUMN_NAME_SUBDISTRICT_NAME);
+                        bindDataDrivenSpinner1(subdistrictSpinner, subdistricts, context, R.string.spinner_subdistrict_default, null, false);
 
-                    Cursor places = getSpinnerData(OFISDBContract.PlacesEntry.TABLE_NAME, true, OFISDBContract.PlacesEntry.COLUMN_NAME_DISTRICT_ID, ((int) id), true, OFISDBContract.PlacesEntry.COLUMN_NAME_PLACE_NAME);
+                        if (subdistrictSelection != 0) {
+                            setSpinnerSelectionById(subdistrictSelection, subdistrictSpinner);
+                            if (subdistricts.getCount() == 1) {
+                                subdistrictSpinner.setSelection(1, false);
+                                subdistrictSpinner.setEnabled(false);
+                            } else {
+                                subdistrictSpinner.setEnabled(true);
+                            }
+                        } else {
+                            if (subdistricts.getCount() == 1) {
+                                subdistrictSpinner.setSelection(1, false);
+                                subdistrictSpinner.setEnabled(false);
+                            } else {
+                                subdistrictSpinner.setEnabled(true);
+                            }
+                        }
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                    boolean isODOrigin = isSubdistrictCapture((int) id);
+                    Cursor places;
+                    if (!isODOrigin) {
+                        places = getSpinnerData(OFISDBContract.PlacesEntry.TABLE_NAME, true, OFISDBContract.PlacesEntry.COLUMN_NAME_DISTRICT_ID, ((int) id), true, OFISDBContract.PlacesEntry.COLUMN_NAME_PLACE_NAME);
+                    }else {
+                        places = getSpinnerData(OFISDBContract.PlacesEntry.TABLE_NAME, true, OFISDBContract.PlacesEntry.COLUMN_NAME_SUBDISTRICT_ID, ((int) id), true, OFISDBContract.PlacesEntry.COLUMN_NAME_PLACE_NAME);
+                    }
                     if (!newPlace) {
                         bindDataDrivenSpinnerSIP1(placeSpinner, places, context, R.string.Name, null, false);
                     } else {
@@ -2140,6 +2514,41 @@ public class DataLayer {
                 }
             });
 
+
+            subdistrictSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long id) {
+
+                    Cursor places = getSpinnerData(OFISDBContract.PlacesEntry.TABLE_NAME, true, OFISDBContract.PlacesEntry.COLUMN_NAME_SUBDISTRICT_ID, ((int) id), true, OFISDBContract.PlacesEntry.COLUMN_NAME_PLACE_NAME);
+                    if (!newPlace) {
+                        bindDataDrivenSpinnerSIP1(placeSpinner, places, context,  R.string.Name, null, false);
+                    } else {
+                        bindDataDrivenSpinner1(placeSpinner, places, context,  R.string.Name, null, false);
+                    }
+
+                    if (placeSelection != 0) {
+                        setSpinnerSelectionById(placeSelection, placeSpinner);
+                    } else {
+                        if (newPlace) {
+                            if (places.getCount() == 1) {
+                                try {
+                                    placeSpinner.setSelection(2, false);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+                        }
+                    }
+
+
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> adapterView) {
+
+                }
+            });
             if (activity.findViewById(R.id.newPlaceName) != null) {
                 final EditText newPlaceName = (EditText) activity.findViewById(R.id.newPlaceName);
                 placeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -2163,6 +2572,8 @@ public class DataLayer {
                 });
             }
         }
+
+
 
         if (countrySelection != 0) {
             setSpinnerSelectionById(countrySelection, countrySpinner);
@@ -2238,6 +2649,8 @@ public class DataLayer {
                     farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_PHOTO + ", " +
                     farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID + ", " +
                     farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_CREATED_LOCALLY + ", " +
+                    farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID + ", " +
+                    farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_ODFARMERID + ", " +
                     " 'farmer' AS transactee_type FROM " +
                     farmerTable + " INNER JOIN " + sectionsTable + " ON " + farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID +
                     " = " + sectionsTable + "." + OFISDBContract.SectionsEntry.COLUMN_NAME_ID + " INNER JOIN " + farmerGroupsTable + " ON " +
@@ -2335,6 +2748,7 @@ public class DataLayer {
         String sectionsTable = OFISDBContract.SectionsEntry.TABLE_NAME;
         if (query.length() > 0) {
             whereClause = "WHERE " + farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME + " LIKE '%" + query + "%' OR " +
+                    farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_ODFARMERID + " LIKE '%" + query + "%' OR " +
                     farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID + " LIKE '%" + query + "'";
         }
         if (selectedFarmerGroup > 0) {
@@ -2358,6 +2772,8 @@ public class DataLayer {
                 farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_PHOTO + ", " +
                 farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID + ", " +
                 farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_CREATED_LOCALLY + ", " +
+                farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID + ", " +
+                farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_ODFARMERID + ", " +
                 farmerModulesTable + "." + OFISDBContract.FarmerModulesEntry.COLUMN_NAME_ID + " as farmer_module_id, " +
                 farmerModulesTable + "." + OFISDBContract.FarmerModulesEntry.COLUMN_NAME_STATUS_STARTED + " from " +
                 farmerTable + " INNER JOIN " + sectionsTable + " ON " + farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID +
@@ -2502,6 +2918,7 @@ public class DataLayer {
         String farmerQuery = "SELECT farmers.*, districts.id as district_id, regions.id as region_id, countries.id as country_id, farmergroups.id as farmergroup_id, farmergroups.programme_id as programme_id, farmergroups.product_id as product_id, farmergroups.partner_id as partner_id " +
                 "FROM farmers " +
                 "INNER JOIN places on farmers.place_id = places.id " +
+//                "INNER JOIN subdistricts on farmers.subdistrict_id = subdistricts.id " +
                 "INNER JOIN districts on places.district_id = districts.id " +
                 "INNER JOIN regions on districts.region_id = regions.id " +
                 "INNER JOIN countries on regions.country_id = countries.id " +
@@ -2604,7 +3021,7 @@ public class DataLayer {
 
 
     // TODO remove annual survey and expires once no longer required.
-    public Cursor getFarmerModules(long id, Context context) {
+    public Cursor getFarmerModules1(long id, Context context) {
         Cursor farmer = null;
 
         try {
@@ -2789,11 +3206,19 @@ public class DataLayer {
                         "Phone"
                 });
 
+                String selectedsubdistrict = farmer.getString(farmer.getColumnIndex("subdistrictId")).trim();
+                String countryid = farmer.getString(farmer.getColumnIndex("country_id")).trim();
+                boolean isSubdistrictCapture = isSubdistrictCapture(Integer.parseInt(countryid));
+                if(isSubdistrictCapture) {
+                    if (selectedsubdistrict.equalsIgnoreCase("0")) {
+                        // update farmers subdistrict
+                        mc.addRow(new String[]{"0", res.getString(R.string.update_farmer_subdistrict), res.getString(R.string.update_farmer_subdistrict), res.getString(R.string.update_farmer_subdistrict), res.getString(R.string.update_farmer_subdistrict), res.getString(R.string.update_farmer_subdistrict), res.getString(R.string.update_farmer_subdistrict), res.getString(R.string.update_farmer_subdistrict), res.getString(R.string.update_farmer_subdistrict), res.getString(R.string.update_farmer_subdistrict), "0", "", "", "", res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), "", "", "", "", "", "", "Subdistrict"});
+                    }
+                }
                 // add update consent statement task
                 mc.addRow(new String[]{"0", res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), "0", "", "", "", res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), "", "", "", "", "", "", res.getString(R.string.consent_statement)});
 
-
-// add e-signature for existing farmers
+                // add e-signature for existing farmers
                 mc.addRow(new String[]{
                         "0",
                         res.getString(R.string.update_signature),
@@ -2953,7 +3378,10 @@ public class DataLayer {
                 output = new MergeCursor(cursors);
             }
             return output;
-        } finally {
+        }catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }finally {
             farmer.close();
         }
 
@@ -3057,6 +3485,35 @@ public class DataLayer {
         }catch (Exception e){}
     }
 
+    public void updateSubdistrict(int farmerid, ContentValues values, String olamfarmername) {
+        String whereClause = OFISDBContract.FarmerEntry.COLUMN_NAME_ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(farmerid)};
+        try {
+            db.update(OFISDBContract.FarmerEntry.TABLE_NAME, values, whereClause, whereArgs);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        try {
+             deleteNetworkQueueItemByFarmerId(farmerid, "updatesubdistrict");
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        ContentValues networkQueueValues = new ContentValues();
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "updatesubdistrict");
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, "Farmer subdistrict captured");
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, olamfarmername);
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBDISTRICT_ID, values.getAsString(OFISDBContract.FarmerEntry.COLUMN_NAME_SUBDISTRICTID));
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PLACE_ID, values.getAsString(OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID));
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT, timestamp.toString());
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPDATED_AT, timestamp.toString());
+
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID, farmerid);
+//        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID, farmerid);
+
+        insertNetworkQueueEntry(networkQueueValues);
+    }
+
     public Cursor getnationalidsbyfarmerid(long farmerid) {
         String[] columns = new String[]{"*"};
         String whereClause = OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID + " = ?";
@@ -3066,6 +3523,51 @@ public class DataLayer {
         return db.query(OFISDBContract.FarmerNationalIDs.TABLE_NAME, columns, whereClause, whereArgs, null, null, orderBy);
     }
 
+    public Cursor getassignmentbyCountryId(int countryid) {
+        String[] columns = new String[]{"*"};
+        String whereClause = OFISDBContract.FarmerAssignments.COLUMN_COUNTRY_iD + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(countryid)};
+        String orderBy = OFISDBContract.FarmerAssignments.COLUMN_COUNTRY_iD + " ASC";
+
+        return db.query(OFISDBContract.FarmerAssignments.TABLE_NAME, columns, whereClause, whereArgs, null, null, orderBy);
+    }
+
+    public Cursor getFLbycountryId(int farmerid) {
+        String[] columns = new String[]{"*"};
+        String whereClause = OFISDBContract.FarmerLeadDetails.COLUMN_COUNTRY_ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(farmerid)};
+        String orderBy = OFISDBContract.FarmerLeadDetails.COLUMN_FL_ID + " ASC";
+
+        return db.query(OFISDBContract.FarmerLeadDetails.TABLE_NAME, columns, whereClause, whereArgs, null, null, orderBy);
+    }
+
+    public Cursor getcountrynameid(long farmerid) {
+        String[] columns = new String[]{"*"};
+        String whereClause = OFISDBContract.CountriesEntry.COLUMN_NAME_ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(farmerid)};
+        String orderBy = OFISDBContract.CountriesEntry.COLUMN_NAME_ID + " ASC";
+
+        return db.query(OFISDBContract.CountriesEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, orderBy);
+    }
+
+    public Cursor getregionnameid(long farmerid) {
+        String[] columns = new String[]{"*"};
+        String whereClause = OFISDBContract.RegionsEntry.COLUMN_NAME_ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(farmerid)};
+        String orderBy = OFISDBContract.RegionsEntry.COLUMN_NAME_ID + " ASC";
+
+        return db.query(OFISDBContract.RegionsEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, orderBy);
+    }
+
+    public Cursor getdistrictnameid(long farmerid) {
+        String[] columns = new String[]{"*"};
+        String whereClause = OFISDBContract.DistrictsEntry.COLUMN_NAME_ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(farmerid)};
+        String orderBy = OFISDBContract.DistrictsEntry.COLUMN_NAME_ID + " ASC";
+
+        return db.query(OFISDBContract.DistrictsEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, orderBy);
+    }
+
     public boolean getSyncedStatus(long farmerId) {
         boolean status = false;
         Cursor nids = getnationalidsbyfarmerid(farmerId);
@@ -3073,6 +3575,52 @@ public class DataLayer {
             while (nids.moveToNext()) {
                 String isSynced = nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_IS_SYNCED));
                 if (isSynced.equalsIgnoreCase("1")) {
+                    status = true;
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            nids.close();
+        }
+
+        return status;
+    }
+
+
+    public boolean isODOrigin(int countryid) {
+        boolean status = false;
+        Cursor nids = getassignmentbyCountryId(countryid);
+        try {
+            while (nids.moveToNext()) {
+                String isODorigin = nids.getString(nids.getColumnIndex(OFISDBContract.FarmerAssignments.COLUMN_ISODORIGIN));
+                if (isODorigin.equalsIgnoreCase("true")) {
+                    status = true;
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            nids.close();
+        }
+
+        return status;
+    }
+
+    public boolean isSubdistrictCapture(int countryid) {
+        if(countryid == 0){
+            return  false;
+        }
+        boolean status = false;
+        Cursor nids = getcountrynameid(countryid);
+        try {
+            while (nids.moveToNext()) {
+//                commenting OFIS OD Logic
+//                String isSubDistCapture = nids.getString(nids.getColumnIndex(OFISDBContract.CountriesEntry.COLUMN_NAME_ISSUBDISTCAPTURE));
+                String isSubDistCapture = "false";
+                if (isSubDistCapture.equalsIgnoreCase("true")) {
                     status = true;
                     break;
                 }
@@ -3122,6 +3670,29 @@ public class DataLayer {
         return nationalList;
     }
 
+    public List<FarmerLeadDTO> getFarmerLeads(int countryId) {
+
+        List<FarmerLeadDTO> list = new ArrayList<FarmerLeadDTO>();
+//        Cursor nids = db.rawQuery("SELECT * FROM " + OFISDBContract.FarmerLeadDetails.TABLE_NAME, null);;
+        Cursor nids = getFLbycountryId(countryId);
+        try {
+            while (nids.moveToNext()) {
+                FarmerLeadDTO leadDTO = new FarmerLeadDTO();
+                leadDTO.setFarmerLeadFullName(nids.getString(nids.getColumnIndex(OFISDBContract.FarmerLeadDetails.COLUMN_FL_FULLNAME)));
+                leadDTO.setFarmerLeadDisplayId(nids.getString(nids.getColumnIndex(OFISDBContract.FarmerLeadDetails.COLUMN_FL_DISPLAYID)));
+                leadDTO.setContactNumber(nids.getString(nids.getColumnIndex(OFISDBContract.FarmerLeadDetails.COLUMN_FL_NUMBER)));
+                leadDTO.setFarmerLeadId(nids.getInt(nids.getColumnIndex(OFISDBContract.FarmerLeadDetails.COLUMN_FL_ID)));
+                list.add(leadDTO);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            nids.close();
+        }
+
+        return list;
+    }
+
     public String getNIDTypeByID(String typeId) {
         String type = null;
         try {
@@ -3133,6 +3704,54 @@ public class DataLayer {
     }
 
 
+    public String getCountryName(int id) {
+        String name = "NA";
+        Cursor nids = getcountrynameid(id);
+        try {
+            while (nids.moveToNext()) {
+                name = nids.getString(nids.getColumnIndex(OFISDBContract.CountriesEntry.COLUMN_NAME_COUNTRY_NAME));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            nids.close();
+        }
+
+        return name;
+    }
+
+
+    public String getRegionName(int id) {
+        String name = "NA";
+        Cursor nids = getregionnameid(id);
+        try {
+            while (nids.moveToNext()) {
+                name = nids.getString(nids.getColumnIndex(OFISDBContract.RegionsEntry.COLUMN_NAME_REGION_NAME));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            nids.close();
+        }
+
+        return name;
+    }
+
+    public String getDistrictName(int id) {
+        String name = "NA";
+        Cursor nids = getdistrictnameid(id);
+        try {
+            while (nids.moveToNext()) {
+                name = nids.getString(nids.getColumnIndex(OFISDBContract.DistrictsEntry.COLUMN_NAME_DISTRICT_NAME));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            nids.close();
+        }
+
+        return name;
+    }
 
     public String getPlaceName(int id) {
         String name = "NA";
@@ -3184,6 +3803,25 @@ public class DataLayer {
     }
 
 
+
+    public boolean isMultipleCountries() {
+        boolean status = false;
+        Cursor ids = null;
+
+        try {
+            ids = db.query(OFISDBContract.CountriesEntry.TABLE_NAME, new String[]{"*"}, null, null, null, null, null);
+
+            if (ids.getCount() > 1) {
+                status = true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            ids.close();
+        }
+
+        return status;
+    }
 
 
     public boolean isValueavailable(long farmerId) {
@@ -3773,6 +4411,17 @@ public class DataLayer {
 
     }
 
+    void updatePlacelocalupdate() {
+        ContentValues newValues = new ContentValues();
+        newValues.put(OFISDBContract.PlacesEntry.COLUMN_NAME_PLACE_TYPE, "VILLAGE");
+        String whereClause = OFISDBContract.PlacesEntry.COLUMN_NAME_PLACE_TYPE + " = ?";
+        String[] whereArgs = new String[]{"localinsert"};
+        try {
+            db.update(OFISDBContract.PlacesEntry.TABLE_NAME, newValues, whereClause, whereArgs);
+        }catch (Exception e){}
+
+    }
+
     void deleteSipNetworkQueueItem(int networkQueueItemId) {
         String whereClause = OFISDBContract.AnswerSipEntry.COLUMN_NAME_UPLOAD_ID + " = ?";
         String[] whereArgs = new String[]{String.valueOf(networkQueueItemId)};
@@ -3830,7 +4479,7 @@ public class DataLayer {
 
     }
 
-    void markFarmerAsSynced(int localFarmerId, int id, int farmId, int localPlaceId, int newPlaceId, String olamId) {
+    void markFarmerAsSynced(int localFarmerId, int id, int farmId, int localPlaceId, int newPlaceId, String olamId, String odFarmerId) {
         // check to see if new id is already existing
         Cursor newFarmer = db.query(OFISDBContract.FarmerEntry.TABLE_NAME, new String[]{"id"}, "id = ?", new String[]{String.valueOf(id)}, null, null, null);
 
@@ -3847,6 +4496,12 @@ public class DataLayer {
             if (newPlaceId > 0) {
                 newValues.put(OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID, newPlaceId);
             }
+           /* try {
+                System.out.println("dl_odFarmerId:" + odFarmerId);
+                newValues.put(OFISDBContract.FarmerEntry.COLUMN_NAME_ODFARMERID, odFarmerId);
+            }catch (Exception e){
+                e.printStackTrace();
+            }*/
 
             String[] whereArgs = new String[]{String.valueOf(localFarmerId)};
 
@@ -4115,7 +4770,7 @@ public class DataLayer {
         return (nqis.getCount() > 0);
     }
 
-    private Cursor getFmpByFarmerId(long farmerId) {
+    public Cursor getFmpByFarmerId(long farmerId) {
         String[] columns = new String[]{"*"};
         String whereClause = OFISDBContract.FarmManagementPlanEntry.COLUMN_NAME_FARMER_ID + " = ? ";
         String[] whereArgs = new String[]{
@@ -4132,6 +4787,12 @@ public class DataLayer {
 
         //  return  db.query(OFISDBContract.FarmManagementPlanEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
     }
+
+    public Cursor getfarmerModules(String modulesQuery, String[] modulesQueryValues) {
+        @SuppressLint("Recycle") Cursor farmerModules = db.rawQuery(modulesQuery, modulesQueryValues);
+        return farmerModules;
+    }
+
 
     Cursor getFmpSections() {
         Cursor cursor=null;
@@ -5638,5 +6299,30 @@ public class DataLayer {
             }
         }
         return farmerGeo;
+    }
+
+    public void updateFarmerOlamId(long editFarmerId, String olamFarmerId) {
+        try {
+            String whereClause = OFISDBContract.FarmerEntry.COLUMN_NAME_ID + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(editFarmerId)};
+            ContentValues values = new ContentValues();
+            values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_SYNCED, 1);
+            values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID, olamFarmerId);
+            db.update(OFISDBContract.FarmerEntry.TABLE_NAME, values, whereClause, whereArgs);
+            System.out.println("FarmerOlamId Updated");
+        }catch (Exception e){
+            FirebaseCrashlytics.getInstance().log(e.getMessage());
+        }
+    }
+
+    String getTempId(long farmerId) {
+        Cursor farmer = null;
+        try {
+            farmer = getFarmerById(farmerId);
+            return  farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID));
+        } finally {
+            farmer.close();
+        }
+
     }
 }

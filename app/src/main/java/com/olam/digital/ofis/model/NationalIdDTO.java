@@ -10,6 +10,15 @@ public class NationalIdDTO implements Serializable {
     private String nationalidtype;
     private String nationalidNumber;
     private String photo;
+    private String expiryDate;
+
+    public String getExpiryDate() {
+        return expiryDate;
+    }
+
+    public void setExpiryDate(String expiryDate) {
+        this.expiryDate = expiryDate;
+    }
 
     public int getId() {
         return id;

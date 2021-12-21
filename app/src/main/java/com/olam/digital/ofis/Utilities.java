@@ -53,6 +53,7 @@ public class Utilities {
     private static final String SHARED_PREFS_NAME = "com.olam.digital.ofis.app_prefs";
     private static final String SHARED_FIREBASE_TOKEN_UPDATED = "firebase_token_updated";
     public static final String HOUSEHOLD_ENUMERATOR = "household_enumerator";
+    public static final String FARMERLEAD_ENUMERATOR = "farmerlead_enumerator";
     public static int syctask=0;
 
 
@@ -193,6 +194,8 @@ public  static String base64ConversionForImage(String filepath)  {
             editor.putBoolean(prefName, altVal);
         }
 
+
+
         editor.apply();
 //        Passcode added - Penetration testing
         FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(context);
@@ -212,6 +215,16 @@ public  static String base64ConversionForImage(String filepath)  {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         if (value != 0) {
             editor.putLong(prefName, value);
+        }
+
+        editor.apply();
+    }
+
+    public static void saveIntToSharedPrefs(Context context, @SuppressWarnings("SameParameterValue") String prefName, int value) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        if (value != 0) {
+            editor.putInt(prefName, value);
         }
 
         editor.apply();
@@ -262,6 +275,18 @@ public  static String base64ConversionForImage(String filepath)  {
         String decryptedMsg="";
         try {
             decryptedMsg = AESCrypt.decrypt(GPSConstants.COLUMN_ENUMERATOR_NAME, s);
+        }catch (GeneralSecurityException e){
+            //handle error - could be due to incorrect password or tampered encryptedMsg
+        }
+        return decryptedMsg;
+    }
+
+    public static String getdatafromSharedPrefs(Context context, String data) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
+        String s=sharedPreferences.getString(data, "");
+        String decryptedMsg="";
+        try {
+            decryptedMsg = AESCrypt.decrypt(data, s);
         }catch (GeneralSecurityException e){
             //handle error - could be due to incorrect password or tampered encryptedMsg
         }
@@ -320,6 +345,11 @@ public  static String base64ConversionForImage(String filepath)  {
         return sharedPreferences.getLong(prefName, 0);
     }
 
+    public static int getIntFromSharedPrefs(Context context, @SuppressWarnings("SameParameterValue") String prefName) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
+
+        return sharedPreferences.getInt(prefName, 0);
+    }
 
     public static String getStringFromSharedPrefs(Context context, String prefName) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
