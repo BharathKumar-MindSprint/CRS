@@ -1216,7 +1216,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         actionbtn.setTag(nationalids.getChildCount());
         nationalidphoto.setTag(nationalids.getChildCount());
         expiryDate.setTag(nationalids.getChildCount());
-
+        ll_captureexpiry.setVisibility(View.GONE);
         expiryDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1324,6 +1324,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                     spinner_nidtype.setAdapter(spinnerArrayAdapter);
                     actionbtn.setClickable(false);
                     spinner_nidtype.setEnabled(false);
+                    ll_captureexpiry.setVisibility(View.GONE);
                     if (i == 0) {
                         niddelete.setVisibility(View.INVISIBLE);
                     } else {
@@ -2269,7 +2270,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                     spinnerArrayAdapter = new ArrayAdapter<String>(AddFarmerActivity.this, R.layout.spinner_item, refreshitem);
                     spinnerArrayAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
                     spinner_nidtype.setAdapter(spinnerArrayAdapter);
-
+                    ll_captureexpiry.setVisibility(View.GONE);
                     expiryDate.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -2383,12 +2384,12 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                 Toast.makeText(this, getResources().getString(R.string.nid_value_enter), Toast.LENGTH_SHORT).show();
                 return false;
             }
-            if (getNidExpiryDateStatus(value).equalsIgnoreCase("true")) {
+            /*if (getNidExpiryDateStatus(value).equalsIgnoreCase("true")) {
                 if (expDate.trim() == "" || expDate.trim().equalsIgnoreCase("")) {
                     Toast.makeText(this, getResources().getString(R.string.nid_exp_fill), Toast.LENGTH_SHORT).show();
                     return false;
                 }
-            }
+            }*/
             if (value.equalsIgnoreCase(SELECT_NATIONALID)) {
                 Toast.makeText(this, getResources().getString(R.string.nationalidtype_selection), Toast.LENGTH_SHORT).show();
                 return false;
