@@ -11,7 +11,9 @@ import android.database.sqlite.SQLiteOpenHelper;
 class OFISDB extends SQLiteOpenHelper {
     private static OFISDB sInstance;
 
-    private static final int DATABASE_VERSION = 136;
+
+    private static final int DATABASE_VERSION = 137;
+
 
     private static final String DATABASE_NAME = "ofismobile";
 
