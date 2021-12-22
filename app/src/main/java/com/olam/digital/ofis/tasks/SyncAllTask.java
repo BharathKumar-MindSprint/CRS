@@ -624,7 +624,8 @@ public class SyncAllTask extends SyncTask {
                             Utilities.saveToSharedPrefs(context, "COUNTRY_IDS", cid, null);
                             Utilities.saveIntToSharedPrefs(context, "COUNTRY_COUNT", 1);
                             countrycount = 1;
-                            publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.checking_isfl_enumerator));
+//                            publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.checking_isfl_enumerator));
+                            publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.updating_farmers));
                             delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_ISFL);
 
                         }catch (Exception e){e.printStackTrace();}
