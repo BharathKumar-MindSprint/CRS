@@ -870,6 +870,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             }
         }
 
+
         Spinner spinner_farmer_group = (Spinner) findViewById(R.id.spinner_farmerGroup);
         long farmergroup_id = spinner_farmer_group.getSelectedItemId();
         if (farmergroup_id < 1) {
