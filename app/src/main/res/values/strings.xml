@@ -569,8 +569,6 @@
     <string name="checking_hhgps_enumerator">Checking Household GPS Enumerator</string>
     <string name="update_consent_statement">Update Consent Statement</string>
     <string name="consent_statement">ConsentStatement</string>
-
-
     <string name="farmer_consent">FARMER CONSENT</string>
     <string name="personal_info_collection">Personal Information Collection Notice</string>
     <string name="cs_page2_title">Personal Data Use</string>
@@ -677,9 +675,6 @@
     <string name="please_respond_mandatory_question">Please respond to mandatory question</string>
     <string name="please_check_question">Please check Question </string>
     <string name="please_check_dependent_question">since its dependent question is updated</string>
-    <string name="national_id_info">Please update the National ID of farmer</string>
-    <string name="consent_duplicate_alert">Duplicate consent identified and hence cannot sync the item selected. Please note, such duplicates will be removed from the queue further.</string>
-    <string name="consent_duplicate_error">Error in saving FarmerConsent</string>
     <string name="update_farmer_subdistrict">Update Farmer\’s Subdistrict</string>
     <string name="update">Update</string>
     <string name="label_subdistrict">Subdistrict:</string>
@@ -689,11 +684,18 @@
     <string name="password">password</string>
     <string name="offline_access">offline_access</string>
     <string name="refresh_token">refresh_token</string>
-    <string name="duplicate_survey">Dupicate survey entry</string>
-    <string name="removing_duplicate_survey">Removing dupicate survey</string>
-
-
-    <string name="privacy_data">Olam Food Ingredients and our affiliates worldwide (collectively called “ofi,” “we,” “us,” “our”) understand the importance of privacy to you. This policy summarizes what personal information we may collect, how we may use this information, and other important topics relating to your privacy and data protection.\n \n
+    <string name="nid_exp_fill">Please fill Expiry Date</string>
+    <string name="checking_isfl_enumerator">Checking Farmer Lead Enumerator</string>
+    <string name="checking_enumerator_assignment">Checking Enumerator Assignments</string>
+    <string name="downloading_fldetails">Downloading Farmer Lead Details</string>
+    <string name="choose_farmerlead">Choose Farmer Lead</string>
+    <string name="fl_search">Search by Name/Id/Phone No.</string>
+    <string name="farmerlead_name">Farmer Lead Name</string>
+    <string name="farmerlead_id">Farmer Lead ID: </string>
+    <string name="farmerlead_phonenumber">Phone No: </string>
+    <string name="farmerlead_search">Search Farmer Lead</string>
+    <string name="select_farmerlead">Please select Farmer Lead</string>
+     <string name="privacy_data">Olam Food Ingredients and our affiliates worldwide (collectively called “ofi,” “we,” “us,” “our”) understand the importance of privacy to you. This policy summarizes what personal information we may collect, how we may use this information, and other important topics relating to your privacy and data protection.\n \n
 It is ofi policy to comply with all applicable privacy and data protection laws. This commitment reflects the value we place on earning and keeping the trust of our customers, business partners and others who share their personal information with us.\n \n
 This Policy applies to all websites and mobile applications (“apps”) operated by or on behalf of ofi. It also applies to personal information ofi may otherwise collect: (i) through our products and services; (ii) when you interact with us by means other than an ofi website or app, for example, in person, by telephone, or at a trade show or training; and (iii) from our customers, distributors, suppliers, vendors, and other business partners (collectively “Business Partners”).\n\n
 However, different ofi websites, apps, products, and services have different purposes and features. If additional or different disclosures are required for a specific OFI website, app, product, or service, then we provide those disclosures (“Specific Privacy Statements”) separately on, or with, the relevant website, app, product, or service. Each such specific privacy disclosure, policy, or statement supplements and amends this Policy.\n\n
@@ -907,4 +909,32 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="privacy_cache_offline">You\'re offline. Please switch on your network to view the latest privacy statement</string>
     <string name="privacy_no_cache_offline">You\'re offline. Please switch on your network to view the privacy statement</string>
     <string name="please_click_checkbox">Please click all the appropriate checkboxes</string>
+    <string name="select_country">Please select Country</string>
+    <string name="national_id_info">Please update the National ID of farmer</string>
+    <string name="odid">OD ID:</string>
+    <string name="duplicate_survey">Dupicate survey entry</string>
+    <string name="removing_duplicate_survey">Removing dupicate survey</string>
+    <string name="attendee_name">Attendee Name:</string>
+    <string name="attendee_age">Age</string>
+    <string name="attendee_relationship">Relationship:</string>
+    <string name="attendee_sex">Gender:</string>
+    <string name="add_attendee">Add Attendee</string>
+    <string name="attendee_name_hint">Enter Attendee Name</string>
+    <string name="attendee_hint_age">Enter Age</string>
+    <string name="view_attendees_count">View Attendee (~V attendees)</string>
+    <string name="add_edit_attendee">Add/Edit\n Attendee</string>
+    <string name="viewAttendee">View Attendee</string>
+    <string name="attendee">Attendee</string>
+    <string name="mandatory_msg">Please fill all the details</string>
+    <string name="add_edit">Add/Edit</string>
+    <string name="Attendee">Attendee</string>
+    <string-array name="Trainee_relationships">
+        <item>Farmer\'s son/daughter</item>
+        <item>Farmer\'s niece/nephew</item>
+        <item>Farmer\'s spouse</item>
+        <item>Other</item>
+    </string-array>
+
+    <string name="consent_duplicate_alert">Duplicate consent identified and hence cannot sync the item selected. Please note, such duplicates will be removed from the queue further.</string>
+    <string name="consent_duplicate_error">Error in saving FarmerConsent</string>
 </resources>

@@ -358,6 +358,16 @@
                 android:value=".ViewFarmerActivity" />
         </activity>
         <activity
+            android:name=".UpdateSubdistrict"
+            android:label="@string/update_farmer_subdistrict"
+            android:parentActivityName=".ViewFarmerActivity"
+            android:screenOrientation="portrait"
+            tools:ignore="UnusedAttribute">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ViewFarmerActivity" />
+        </activity>
+        <activity
             android:name="com.olam.digital.ofis.childlabour.ViewChildLabourSurveyActivity"
             android:label="@string/child_details"
             android:parentActivityName=".childlabour.ChildLabourDetailsActivity"

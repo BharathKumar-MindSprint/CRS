@@ -45,7 +45,7 @@ class UpdateSpinnerListsTask extends DatabaseTask {
                 JSONObject response = spinnerResponse.getJSONObject("outputdata");
 
                 // get the various sub lists
-                JSONArray countryArray, regionArray, districtArray, placeArray, farmergroupArray, sectionArray, productArray;
+                JSONArray countryArray, regionArray, districtArray, placeArray, farmergroupArray, sectionArray, productArray, subdistrictArray;
                 
 
                 try {
@@ -69,6 +69,16 @@ class UpdateSpinnerListsTask extends DatabaseTask {
                     FirebaseCrash.report(new Exception("UpdateSpinnerListsTask: Error filling districts table", e));
                     e.printStackTrace();
                 }
+
+//              adding subdistrict data into database
+                try {
+                    subdistrictArray = response.getJSONArray(OFISDBContract.SubDistrictsEntry.TABLE_NAME);
+                    fillTable(subdistrictArray, OFISDBContract.SubDistrictsEntry.TABLE_NAME, OFISDBContract.SubDistrictsEntry.COLUMN_LIST);
+                } catch (JSONException e) {
+                    FirebaseCrash.report(new Exception("UpdateSpinnerListsTask: Error filling districts table", e));
+                    e.printStackTrace();
+                }
+
                 try {
                     placeArray = response.getJSONArray(OFISDBContract.PlacesEntry.TABLE_NAME);
                     fillTable(placeArray, OFISDBContract.PlacesEntry.TABLE_NAME, OFISDBContract.PlacesEntry.COLUMN_LIST);

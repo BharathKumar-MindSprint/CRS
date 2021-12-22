@@ -7,28 +7,44 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.ShapeDrawable;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Handler;
+import android.os.Message;
 import android.os.StrictMode;
 import android.provider.MediaStore;
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatButton;
+import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.NavUtils;
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.FileProvider;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.telephony.PhoneNumberUtils;
+import android.text.Editable;
 import android.text.InputFilter;
+import android.text.InputType;
 import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.text.format.DateFormat;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -39,6 +55,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
@@ -46,7 +63,10 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
+import android.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -55,6 +75,12 @@ import android.widget.Toast;
 import com.github.gcacace.signaturepad.views.SignaturePad;
 import com.google.firebase.crash.FirebaseCrash;
 import com.olam.digital.ofis.authentication.AuthenticationHelper;
+import com.olam.digital.ofis.childlabour.ChildLabourDetailsActivity;
+import com.olam.digital.ofis.childlabour.ChildLabourUtils;
+import com.olam.digital.ofis.childlabour.ViewChildLabourSurveyActivity;
+import com.olam.digital.ofis.childlabour.adapter.ChildLabourRecyclerAdapter;
+import com.olam.digital.ofis.childlabour.dto.ChildrenDTO;
+import com.olam.digital.ofis.childlabour.listener.OnItemChildClickListener;
 import com.olam.digital.ofis.gps.GPSListener;
 import com.olam.digital.ofis.gps.GPSTracker;
 import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
@@ -63,6 +89,7 @@ import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.gps.utils.GPSUtils;
 import com.olam.digital.ofis.matoma.MatomoHelper;
 import com.olam.digital.ofis.matoma.ScreenNameConstants;
+import com.olam.digital.ofis.model.FarmerLeadDTO;
 import com.olam.digital.ofis.model.NationalIdDTO;
 import com.olam.digital.ofis.model.NationalIdTypeDTO;
 import com.olam.digital.ofis.recordpolygon.Utils;
@@ -70,21 +97,26 @@ import com.olam.digital.ofis.recordpolygon.Utils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.sql.Timestamp;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 // update
 public class AddFarmerActivity extends BaseActivity implements View.OnClickListener {
@@ -102,6 +134,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     private final static String CAPTURED_SELECTED_COUNTRY = "mCapturedCountry";
     private final static String CAPTURED_SELECTED_REGION = "mCapturedRegion";
     private final static String CAPTURED_SELECTED_DISTRICT = "mCapturedDistrict";
+    private final static String CAPTURED_SELECTED_SUBDISTRICT = "mCapturedSubDistrict";
     private final static String CAPTURED_SELECTED_PLACE = "mCapturedPlace";
     private final static String CAPTURED_SELECTED_FARMERGROUP = "mCapturedFarmerGroup";
     private final static String CAPTURED_SELECTED_SECTION = "mCapturedSection";
@@ -119,6 +152,12 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     ImageButton farmerPhotoActionButton;
     ImageButton farmerSignatureButton;
     EditText newPlaceName;
+    TextView farmerLeadSearch;
+    LinearLayout farmerLeadDisplayLayout;
+    String farmerleadid, farmerleadidname;
+    List<FarmerLeadDTO> flList;
+//    CustomListAdapterFarmerlead adapterFarmerlead;
+//    FarmerLeadDTO selectedFarmerLead;
     ArrayList<String> phoneNumberList;
     ArrayList<String> nationalidList;
     ArrayList<String> selectednationalidList = new ArrayList<String>();
@@ -136,8 +175,8 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     boolean isSigned = false;
     private long editFarmerId;
     private boolean editMode;
-    private int selectedCountry = 0, selectedRegion = 0, selectedDistrict = 0, selectedPlace = 0, selectedFarmerGroup = 0, selectedSection = 0;
-    private Spinner genderspinner, countrySpinner, regionSpinner, districtSpinner, placeSpinner, farmerGroupSpinner, sectionSpinner;
+    private int selectedCountry = 0, selectedRegion = 0, selectedDistrict = 0,selectedSubDistrict = 0, selectedPlace = 0, selectedFarmerGroup = 0, selectedSection = 0;
+    private Spinner genderspinner, countrySpinner, regionSpinner, districtSpinner, placeSpinner, farmerGroupSpinner, sectionSpinner, subdistrictSpinner;
     // Required for camera operations in order to save the image file on resume.
     private String mCurrentPhotoPath = null, mCurrentSignaturePhotoPath = null;
     private Uri mCapturedImageURI = null, mCapturedSignatureImageURI = null;
@@ -145,6 +184,9 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     private TextView farmerDOB;
     boolean  csStatus;
     ArrayList<String> nationalIdTypes=null;
+    boolean isFLEnumerator;
+    boolean isSubdistrictCapture;
+    PopupWindow popupWindow=null;
     /**
      * Generate unique ID from UUID.
      *
@@ -186,6 +228,24 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             return null;
         }
     };
+    private InputFilter flFilter = new InputFilter() {
+
+        @Override
+        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+
+            if (source != null && blockCharacterSet.contains(("" + source))) {
+                return "";
+            }
+            for (int i = start; i < end; i++) {
+                int type = Character.getType(source.charAt(i));
+                if (type == Character.SURROGATE || type == Character.OTHER_SYMBOL) {
+                    return "";
+                }
+            }
+            return null;
+        }
+    };
+
     // Location captured related variable
     private Location mCurrentLocation = null;
     private GPSTracker gpsTracker = null;
@@ -205,10 +265,33 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         return filePathUri + "";
     }
 
+    public static void dimBehind(PopupWindow popupWindow) {
+        View container;
+        if (popupWindow.getBackground() == null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+                container = (View) popupWindow.getContentView().getParent();
+            } else {
+                container = popupWindow.getContentView();
+            }
+        } else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                container = (View) popupWindow.getContentView().getParent().getParent();
+            } else {
+                container = (View) popupWindow.getContentView().getParent();
+            }
+        }
+        Context context = popupWindow.getContentView().getContext();
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        WindowManager.LayoutParams p = (WindowManager.LayoutParams) container.getLayoutParams();
+        p.flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND;
+        p.dimAmount = 0.7f;
+        wm.updateViewLayout(container, p);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
+//        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
         setContentView(R.layout.activity_add_farmer);
         //noinspection ConstantConditions
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -232,7 +315,19 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         phonenumbers = findViewById(R.id.phonenumbers);
         nationalids = findViewById(R.id.nationalids);
         farmerSignatureButton = findViewById(R.id.farmerSignature);
-
+        farmerLeadSearch = findViewById(R.id.farmerleadinfo);
+        farmerLeadDisplayLayout = findViewById(R.id.farmerLeadDisplayLayout);
+        isFLEnumerator = Utilities.getBoolFromSharedPrefs(context, Utilities.FARMERLEAD_ENUMERATOR,false);
+        System.out.println("isflenumerator_data2:" + isFLEnumerator);
+        /*adapterFarmerlead = new CustomListAdapterFarmerlead(this, R.layout.activity_add_farmer, flList);
+        farmerLeadSearch.setAdapter(adapterFarmerlead);
+        farmerLeadSearch.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int pos, long id) {
+                //this is the way to find selected object/item
+                selectedFarmerLead = (FarmerLeadDTO) adapterView.getItemAtPosition(pos);
+            }
+        });*/
         bindphonenumbers();
         dl.clearlocalniddbvalue();
         if (isNIDAvailable) {
@@ -255,12 +350,13 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         countrySpinner = this.findViewById(R.id.spinner_country);
         regionSpinner = this.findViewById(R.id.spinner_region);
         districtSpinner = this.findViewById(R.id.spinner_district);
+        subdistrictSpinner = this.findViewById(R.id.spinner_subdistrict);
         placeSpinner = this.findViewById(R.id.spinner_place);
         farmerGroupSpinner = this.findViewById(R.id.spinner_farmerGroup);
         sectionSpinner = this.findViewById(R.id.spinner_section);
 
         dl.createBusinessHierarchySpinners(this, context, farmerIdPrefix, selectedFarmerGroup, selectedSection);
-        dl.createGeographyHierarchySpinners(this, context, farmerIdPrefix, selectedCountry, selectedRegion, selectedDistrict, selectedPlace, phonenumbers, true);
+        dl.createGeographyHierarchySpinners(this, context, farmerIdPrefix, selectedCountry, selectedRegion, selectedDistrict, selectedSubDistrict, selectedPlace, phonenumbers, true, 1);
 
         farmerPhotoActionButton = findViewById(R.id.farmerPhotoActionButton);
         farmerPhotoActionButton.setOnClickListener(new View.OnClickListener() {
@@ -308,7 +404,45 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             gpsTracker.startLocationUpdateInitially();
  //       }
 
+        showFarmerLead();
+        System.out.println("isflenumerator_data3:" + isFLEnumerator);
+        if(! isFLEnumerator){
+            farmerLeadDisplayLayout.setVisibility(View.GONE);
+        }else {
+            boolean isMultiCountries = dl.isMultipleCountries();
+            if(isMultiCountries){
+                boolean  isODOrigin =  dl.isODOrigin(selectedCountry);
+                if(isODOrigin){
+                    showFarmerLead();
+                }else {
+                    farmerLeadDisplayLayout.setVisibility(View.GONE);
+                }
+            }else {
+                showFarmerLead();
+            }
+        }
+
     }
+
+    private void showFarmerLead() {
+
+        farmerLeadSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int countryId = (int) countrySpinner.getSelectedItemId();
+                if(countryId == 0){
+                    Toast.makeText(context, getResources().getString(R.string.select_country) , Toast.LENGTH_LONG).show();
+                    return;
+                }
+                flList = dl.getFarmerLeads(countryId);
+                System.out.println("flList:" + flList.size());
+                showPopupFarmerLead(flList);
+            }
+        });
+    }
+
+
+
 
     @Override
     protected void onResume() {
@@ -337,6 +471,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         selectedCountry = (int) countrySpinner.getSelectedItemId();
         selectedRegion = (int) regionSpinner.getSelectedItemId();
         selectedDistrict = (int) districtSpinner.getSelectedItemId();
+        selectedSubDistrict = (int) subdistrictSpinner.getSelectedItemId();
         selectedPlace = (int) placeSpinner.getSelectedItemId();
         selectedFarmerGroup = (int) farmerGroupSpinner.getSelectedItemId();
         selectedSection = (int) sectionSpinner.getSelectedItemId();
@@ -345,6 +480,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         savedInstanceState.putInt(CAPTURED_SELECTED_COUNTRY, selectedCountry);
         savedInstanceState.putInt(CAPTURED_SELECTED_REGION, selectedRegion);
         savedInstanceState.putInt(CAPTURED_SELECTED_DISTRICT, selectedDistrict);
+        savedInstanceState.putInt(CAPTURED_SELECTED_SUBDISTRICT, selectedSubDistrict);
         savedInstanceState.putInt(CAPTURED_SELECTED_PLACE, selectedPlace);
         savedInstanceState.putInt(CAPTURED_SELECTED_FARMERGROUP, selectedFarmerGroup);
         savedInstanceState.putInt(CAPTURED_SELECTED_SECTION, selectedSection);
@@ -380,13 +516,14 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         selectedCountry = savedInstanceState.getInt(CAPTURED_SELECTED_COUNTRY, 0);
         selectedRegion = savedInstanceState.getInt(CAPTURED_SELECTED_REGION, 0);
         selectedDistrict = savedInstanceState.getInt(CAPTURED_SELECTED_DISTRICT, 0);
+        selectedSubDistrict = savedInstanceState.getInt(CAPTURED_SELECTED_SUBDISTRICT, 0);
         selectedPlace = savedInstanceState.getInt(CAPTURED_SELECTED_PLACE, 0);
         selectedFarmerGroup = savedInstanceState.getInt(CAPTURED_SELECTED_FARMERGROUP, 0);
         selectedSection = savedInstanceState.getInt(CAPTURED_SELECTED_SECTION, 0);
 
         dl.createBusinessHierarchySpinners(this, context, farmerIdPrefix, selectedFarmerGroup, selectedSection);
-        dl.createGeographyHierarchySpinners(this, context, farmerIdPrefix, selectedCountry, selectedRegion, selectedDistrict, selectedPlace, phonenumbers, true);
-
+        dl.createGeographyHierarchySpinners(this, context, farmerIdPrefix, selectedCountry, selectedRegion, selectedDistrict,  selectedSubDistrict,selectedPlace, phonenumbers, true, 1);
+        showFarmerLead();
         super.onRestoreInstanceState(savedInstanceState);
     }
 
@@ -431,7 +568,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         farmerName.setText(existingItem.getString(existingItem.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME)));
 
         farmerName.setFilters(new InputFilter[]{new EmojiExcludeFilter()});
-
+        farmerLeadSearch = findViewById(R.id.farmerleadinfo);
         farmerDOB = findViewById(R.id.farmerDOB);
         dateStrToSend = existingItem.getString(existingItem.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_DOB));
         farmerDOB.setText(dateStrToSend);
@@ -441,6 +578,8 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         selectedRegion = existingItem.getInt(existingItem.getColumnIndex("region_id"));
 
         selectedDistrict = existingItem.getInt(existingItem.getColumnIndex("district_id"));
+
+        selectedSubDistrict = existingItem.getInt(existingItem.getColumnIndex("subdistrict_id"));
 
         selectedPlace = existingItem.getInt(existingItem.getColumnIndex("place_id"));
 
@@ -465,11 +604,14 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                 Utilities.setSpinnerSelectionByValue(existingGender, genderspinner);
             }
         }.start();
-
+        isFLEnumerator = Utilities.getBoolFromSharedPrefs(context, Utilities.FARMERLEAD_ENUMERATOR,false);
+        if(isFLEnumerator) {
+            farmerLeadSearch.setText(existingItem.getString(existingItem.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERLEADNAME)));
+        }
         farmerIdPrefix.setText(existingItem.getString(existingItem.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)).substring(0, 13));
         EditText farmerIdSuffix = findViewById(R.id.olamFarmerIdEnd);
         farmerIdSuffix.setText(existingItem.getString(existingItem.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)).substring(13));
-
+        showFarmerLead();
         String farmerPhotoPath = existingItem.getString(existingItem.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_PHOTO));
         if (farmerPhotoPath != null) {
             ImageButton farmerPhoto = findViewById(R.id.farmerPhoto);
@@ -655,10 +797,11 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             selectedCountry = (int) countrySpinner.getSelectedItemId();
             selectedRegion = (int) regionSpinner.getSelectedItemId();
             selectedDistrict = (int) districtSpinner.getSelectedItemId();
+            selectedSubDistrict = (int) subdistrictSpinner.getSelectedItemId();
             selectedPlace = (int) placeSpinner.getSelectedItemId();
             selectedFarmerGroup = (int) farmerGroupSpinner.getSelectedItemId();
             selectedSection = (int) sectionSpinner.getSelectedItemId();
-
+            isSubdistrictCapture = dl.isSubdistrictCapture((int) selectedCountry);
             String message = "";
             if (selectedCountry == 0) {
                 message = "Country";
@@ -668,6 +811,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
 
             } else if (selectedDistrict == 0) {
                 message = "District";
+
             } else if (selectedPlace == 0) {
 
                 message = "Place";
@@ -680,7 +824,11 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                 message = "section";
 
             }
-
+            if(isSubdistrictCapture) {
+                if (selectedSubDistrict == 0) {
+                    message = "SubDistrict";
+                }
+            }
 
             Toast.makeText(context, "Please select the " + message, Toast.LENGTH_LONG).show();
             return values;
@@ -710,6 +858,18 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
 
             return values;
         }
+
+
+        long subdistrict_id = subdistrictSpinner.getSelectedItemId();
+        if(isSubdistrictCapture) {
+            Spinner subdistrictSpinner = findViewById(R.id.spinner_subdistrict);
+            if (subdistrict_id < 1) {
+                Toast.makeText(context, res.getString(R.string.fill_subdistrict), Toast.LENGTH_LONG).show();
+
+                return values;
+            }
+        }
+
 
         Spinner spinner_farmer_group = (Spinner) findViewById(R.id.spinner_farmerGroup);
         long farmergroup_id = spinner_farmer_group.getSelectedItemId();
@@ -755,7 +915,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         }
 
         if (place_id == -1 && newPlaceName.length() > 0) {
-            place_id = dl.insertNewPlace(newPlaceNameValue, district_id);
+            place_id = dl.insertNewPlace(newPlaceNameValue, district_id ,subdistrict_id);
         }
 
         /*Switch consentFarmer = findViewById(R.id.consentFarmer);
@@ -775,6 +935,14 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                 return values;
             }
         }
+
+         /* if(isFLEnumerator){
+            String farmerleadname = farmerLeadSearch.getText().toString();
+            if(farmerleadname.equalsIgnoreCase("")){
+                Toast.makeText(context, res.getString(R.string.select_farmerlead), Toast.LENGTH_LONG).show();
+                return values;
+            }
+        }*/
 
         if (isNIDAvailable) {
             if (getnationalidSubmitStatus(nationalids).equalsIgnoreCase(DUPLICATE)) {
@@ -817,6 +985,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         long countryId = countrySpinner.getSelectedItemId();
         long regionId = regionSpinner.getSelectedItemId();
         long districtId = districtSpinner.getSelectedItemId();
+        long subdistrictId = subdistrictSpinner.getSelectedItemId();
         long farmerGroupId = farmerGroupSpinner.getSelectedItemId();
         storeableNumbers = new JSONArray();
         for (int j = 0; j < phonerowscount; j++) {
@@ -866,9 +1035,14 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID, String.valueOf(countryId));
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_REGIONID, String.valueOf(regionId));
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_DISTRICTID, String.valueOf(districtId));
+            values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBDISTRICT_ID, subdistrict_id);
+            values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_SUBDISTRICTID, String.valueOf(subdistrictId));
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID, String.valueOf(farmerGroupId));
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_ISCONSENTAVAILABLE, "true");
-
+            if(isFLEnumerator) {
+                values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERLEAD, farmerleadid);
+                values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERLEADNAME, farmerleadidname);
+            }
             Date today = new Date();
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
             String registereddate = format.format(today);
@@ -881,6 +1055,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                 }
             }
         } catch (Exception e) {
+            e.printStackTrace();
             FirebaseCrash.report(new Exception("AddFarmerActivity: Error creating farmer content values", e));
             values.clear();
         }
@@ -1030,17 +1205,49 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         niddelete.setVisibility(View.GONE);
         spinner_nidtype = nationalidinclude.findViewById(R.id.idtypespinner);
         LinearLayout ll_capturephoto = nationalidinclude.findViewById(R.id.ll_capturephoto);
+        LinearLayout ll_captureexpiry = nationalidinclude.findViewById(R.id.ll_captureexpiry);
         spinnerArrayAdapter = new ArrayAdapter<String>(AddFarmerActivity.this, R.layout.spinner_item, refreshitem);
         spinnerArrayAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         spinner_nidtype.setAdapter(spinnerArrayAdapter);
 
         EditText nidnumber = nationalidinclude.findViewById(R.id.nidnumber);
+        TextView expiryDate = nationalidinclude.findViewById(R.id.expirydate);
         ImageButton actionbtn = nationalidinclude.findViewById(R.id.nidphotoActionButton);
         ImageButton nationalidphoto = nationalidinclude.findViewById(R.id.nationalidphoto);
         actionbtn.setTag(nationalids.getChildCount());
         nationalidphoto.setTag(nationalids.getChildCount());
+        expiryDate.setTag(nationalids.getChildCount());
+        ll_captureexpiry.setVisibility(View.GONE);
+        expiryDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                Toast.makeText(AddFarmerActivity.this, "clicked", Toast.LENGTH_LONG).show();
+                final Calendar c = Calendar.getInstance();
+                int mYear = c.get(Calendar.YEAR); // current year
+                int mMonth = c.get(Calendar.MONTH); // current month
+                int mDay = c.get(Calendar.DAY_OF_MONTH); // current day
+                // date picker dialog
+                DatePickerDialog datePickerDialog = new DatePickerDialog(AddFarmerActivity.this,
+                        new DatePickerDialog.OnDateSetListener() {
 
+                            @Override
+                            public void onDateSet(DatePicker view, int year,
+                                                  int monthOfYear, int dayOfMonth) {
+                                // set day of month , month and year value in the edit text
+                               /* expiryDate.setText(dayOfMonth + "-"
+                                        + (monthOfYear + 1) + "-" + year);*/
+                                Calendar cal = Calendar.getInstance();
+                                cal.set(year, monthOfYear, dayOfMonth);
 
+                                SimpleDateFormat serverDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+                                String humanDate = serverDateFormat.format(cal.getTime());
+                                expiryDate.setText(humanDate);
+                            }
+                        }, mYear, mMonth, mDay);
+                setRangeofDatePicker(datePickerDialog,spinner_nidtype.getSelectedItem().toString());
+                datePickerDialog.show();
+            }
+        });
         spinner_nidtype.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -1053,6 +1260,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                     spinnerArrayAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
                     spinner_nidtype.setAdapter(spinnerArrayAdapter);
                     nidnumber.setText("");
+                    expiryDate.setText("");
                     nationalidphoto.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_capture_id_default));
                     dl.removeNIDPhoto(type);
                 }
@@ -1071,6 +1279,11 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                         ll_capturephoto.setVisibility(View.GONE);
                     } else {
                         ll_capturephoto.setVisibility(View.VISIBLE);
+                    }
+                    if (getNidExpiryDateStatus(spinner_nidtype.getSelectedItem().toString()).trim().equalsIgnoreCase("false")) {
+                        ll_captureexpiry.setVisibility(View.GONE);
+                    } else {
+                        ll_captureexpiry.setVisibility(View.VISIBLE);
                     }
                     ValidateSpinnerTypes();
                 }
@@ -1104,12 +1317,15 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                     ImageButton actionbtn = nationalidinclude.findViewById(R.id.nidphotoActionButton);
                     ImageButton nationalidphoto = nationalidinclude.findViewById(R.id.nationalidphoto);
                     LinearLayout ll_capturephoto = nationalidinclude.findViewById(R.id.ll_capturephoto);
+                    LinearLayout ll_captureexpiry = nationalidinclude.findViewById(R.id.ll_captureexpiry);
                     EditText nidnumber = nationalidinclude.findViewById(R.id.nidnumber);
+                    TextView expiryDate = nationalidinclude.findViewById(R.id.expirydate);
                     spinnerArrayAdapter = new ArrayAdapter<String>(AddFarmerActivity.this, R.layout.nidtype_spinner, refreshitem);
                     spinnerArrayAdapter.setDropDownViewResource(R.layout.nidtype_spinner);
                     spinner_nidtype.setAdapter(spinnerArrayAdapter);
                     actionbtn.setClickable(false);
                     spinner_nidtype.setEnabled(false);
+                    ll_captureexpiry.setVisibility(View.GONE);
                     if (i == 0) {
                         niddelete.setVisibility(View.INVISIBLE);
                     } else {
@@ -1117,6 +1333,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                     }
                     i++;
                     nidnumber.setText(nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_NUMBER)));
+                    expiryDate.setText(nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_EXPIRY_DATE)));
                     String selected_item = getNidTypebyid(nids.getInt(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_TYPE)));
                     int spinnerPosition = spinnerArrayAdapter.getPosition(selected_item);
                     spinner_nidtype.setSelection(spinnerPosition);
@@ -1138,7 +1355,37 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                         nationalidphoto.setTag(nationalids.getChildCount());
                     }
                     actionbtn.setTag(nationalids.getChildCount());
+                    expiryDate.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+//                Toast.makeText(AddFarmerActivity.this, "clicked", Toast.LENGTH_LONG).show();
+                            final Calendar c = Calendar.getInstance();
+                            int mYear = c.get(Calendar.YEAR); // current year
+                            int mMonth = c.get(Calendar.MONTH); // current month
+                            int mDay = c.get(Calendar.DAY_OF_MONTH); // current day
+                            // date picker dialog
+                            DatePickerDialog   datePickerDialog = new DatePickerDialog(AddFarmerActivity.this,
+                                    new DatePickerDialog.OnDateSetListener() {
 
+                                        @Override
+                                        public void onDateSet(DatePicker view, int year,
+                                                              int monthOfYear, int dayOfMonth) {
+                                            // set day of month , month and year value in the edit text
+                                            /* expiryDate.setText(dayOfMonth + "-"
+                                        + (monthOfYear + 1) + "-" + year);*/
+                                            Calendar cal = Calendar.getInstance();
+                                            cal.set(year, monthOfYear, dayOfMonth);
+
+                                            SimpleDateFormat serverDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+                                            String humanDate = serverDateFormat.format(cal.getTime());
+                                            expiryDate.setText(humanDate);
+
+                                        }
+                                    }, mYear, mMonth, mDay);
+                            setRangeofDatePicker(datePickerDialog,spinner_nidtype.getSelectedItem().toString());
+                            datePickerDialog.show();
+                        }
+                    });
 
                     spinner_nidtype.setOnTouchListener(new View.OnTouchListener() {
                         @Override
@@ -1170,6 +1417,11 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                                     ll_capturephoto.setVisibility(View.GONE);
                                 } else {
                                     ll_capturephoto.setVisibility(View.VISIBLE);
+                                }
+                                if (getNidExpiryDateStatus(spinner_nidtype.getSelectedItem().toString()).trim().equalsIgnoreCase("false")) {
+                                    ll_captureexpiry.setVisibility(View.GONE);
+                                } else {
+                                    ll_captureexpiry.setVisibility(View.VISIBLE);
                                 }
                                 ValidateSpinnerTypes();
                             }
@@ -1677,6 +1929,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                 typeDTO.setId(cursor.getInt(cursor.getColumnIndex(OFISDBContract.NationalIDEntry.COLUMN_NAME_ID)));
                 typeDTO.setType(cursor.getString(cursor.getColumnIndex(OFISDBContract.NationalIDEntry.COLUMN_NAME_NID_TYPE)));
                 typeDTO.setNationalIdLimit(cursor.getString(cursor.getColumnIndex(OFISDBContract.NationalIDEntry.COLUMN_NAME_NID_LIMIT)));
+                typeDTO.setExpiryDateSlider(cursor.getString(cursor.getColumnIndex(OFISDBContract.NationalIDEntry.COLUMN_NAME_EXP_DATE_SLIDER)));
                 typeDTO.setPhotoRequired(cursor.getString(cursor.getColumnIndex(OFISDBContract.NationalIDEntry.COLUMN_NAME_PHOTO_REQUIRED)));
                 typeDTO.setActive(cursor.getString(cursor.getColumnIndex(OFISDBContract.NationalIDEntry.COLUMN_NAME_NID_ACTIVE)));
                 typeDTO.setTypeFr(cursor.getString(cursor.getColumnIndex(OFISDBContract.NationalIDEntry.COLUMN_NAME_TYPE_FR)));
@@ -2006,6 +2259,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                     LinearLayout nationalidinclude = (LinearLayout) inflater.inflate(R.layout.add_nationalid, nationalids, false);
                     nationalids.addView(nationalidinclude);
                     LinearLayout ll_capturephoto = nationalidinclude.findViewById(R.id.ll_capturephoto);
+                    LinearLayout ll_captureexpiry = nationalidinclude.findViewById(R.id.ll_captureexpiry);
                     Spinner spinner_nidtype = nationalidinclude.findViewById(R.id.idtypespinner);
 
                     ImageButton actionbtn = nationalidinclude.findViewById(R.id.nidphotoActionButton);
@@ -2013,9 +2267,42 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                     actionbtn.setTag(nationalids.getChildCount());
                     nationalidphoto.setTag(nationalids.getChildCount());
                     EditText nidnumber = nationalidinclude.findViewById(R.id.nidnumber);
+                    TextView expiryDate = nationalidinclude.findViewById(R.id.expirydate);
                     spinnerArrayAdapter = new ArrayAdapter<String>(AddFarmerActivity.this, R.layout.spinner_item, refreshitem);
                     spinnerArrayAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
                     spinner_nidtype.setAdapter(spinnerArrayAdapter);
+                    ll_captureexpiry.setVisibility(View.GONE);
+                    expiryDate.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+//                Toast.makeText(AddFarmerActivity.this, "clicked", Toast.LENGTH_LONG).show();
+                            final Calendar c = Calendar.getInstance();
+                            int mYear = c.get(Calendar.YEAR); // current year
+                            int mMonth = c.get(Calendar.MONTH); // current month
+                            int mDay = c.get(Calendar.DAY_OF_MONTH); // current day
+                            // date picker dialog
+                            DatePickerDialog  datePickerDialog = new DatePickerDialog(AddFarmerActivity.this,
+                                    new DatePickerDialog.OnDateSetListener() {
+
+                                        @Override
+                                        public void onDateSet(DatePicker view, int year,
+                                                              int monthOfYear, int dayOfMonth) {
+                                            // set day of month , month and year value in the edit text
+                                            /* expiryDate.setText(dayOfMonth + "-"
+                                        + (monthOfYear + 1) + "-" + year);*/
+                                            Calendar cal = Calendar.getInstance();
+                                            cal.set(year, monthOfYear, dayOfMonth);
+
+                                            SimpleDateFormat serverDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+                                            String humanDate = serverDateFormat.format(cal.getTime());
+                                            expiryDate.setText(humanDate);
+
+                                        }
+                                    }, mYear, mMonth, mDay);
+                            setRangeofDatePicker(datePickerDialog,spinner_nidtype.getSelectedItem().toString());
+                            datePickerDialog.show();
+                        }
+                    });
                     spinner_nidtype.setOnTouchListener(new View.OnTouchListener() {
                         @Override
                         public boolean onTouch(View v, MotionEvent event) {
@@ -2047,6 +2334,11 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                                 } else {
                                     ll_capturephoto.setVisibility(View.VISIBLE);
                                 }
+                                if (getNidExpiryDateStatus(spinner_nidtype.getSelectedItem().toString()).trim().equalsIgnoreCase("false")) {
+                                    ll_captureexpiry.setVisibility(View.GONE);
+                                } else {
+                                    ll_captureexpiry.setVisibility(View.VISIBLE);
+                                }
                                 ValidateSpinnerTypes();
                             }
                         }
@@ -2069,6 +2361,8 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     }
 
 
+
+
     private boolean ValidateNIDValues() {
         boolean status = true;
         ArrayList<String> nidtype_list = new ArrayList<>();
@@ -2077,6 +2371,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         for (int j = 0; j < nidrowscount; j++) {
             LinearLayout nidrow = (LinearLayout) nationalids.getChildAt(j);
             EditText nidnumber = nidrow.findViewById(R.id.nidnumber);
+            TextView expiryDate = nidrow.findViewById(R.id.expirydate);
             Spinner nid_type = nidrow.findViewById(R.id.idtypespinner);
             LinearLayout ll_nidview = nidrow.findViewById(R.id.ll_nidview);
             LinearLayout deleteNationalid = nidrow.findViewById(R.id.deleteNationalid);
@@ -2084,11 +2379,18 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             String value = nid_type.getSelectedItem().toString();
             int type = getNidType(value);
             String nid = nidnumber.getText().toString();
+            String expDate = expiryDate.getText().toString();
 
             if (nid.trim() == "" || nid.trim().equalsIgnoreCase("")) {
                 Toast.makeText(this, getResources().getString(R.string.nid_value_enter), Toast.LENGTH_SHORT).show();
                 return false;
             }
+            /*if (getNidExpiryDateStatus(value).equalsIgnoreCase("true")) {
+                if (expDate.trim() == "" || expDate.trim().equalsIgnoreCase("")) {
+                    Toast.makeText(this, getResources().getString(R.string.nid_exp_fill), Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+            }*/
             if (value.equalsIgnoreCase(SELECT_NATIONALID)) {
                 Toast.makeText(this, getResources().getString(R.string.nationalidtype_selection), Toast.LENGTH_SHORT).show();
                 return false;
@@ -2136,7 +2438,9 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                 } else {
                     idDTO.setPhoto("");
                 }
-
+                if (getNidExpiryDateStatus(value).equalsIgnoreCase("true")) {
+                    idDTO.setExpiryDate(expDate);
+                }
                 dl.addnewLocalFarmerNationalids(idDTO);
                 nid_type.setEnabled(false);
             }
@@ -2158,6 +2462,98 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             }
             return null;
         }
+    }
+
+
+
+
+    public void showPopupFarmerLead(List<FarmerLeadDTO> flList) {
+
+        LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View popupView = inflater.inflate(R.layout.activity_findfarmerlead, null);
+        FindFarmerLeadAdapter findFarmerLeadAdapter;
+       /* popupWindow = new PopupWindow(popupView, LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        popupWindow.showAtLocation(findViewById(R.id.layout_add_farmer), Gravity.CENTER, 0, 0);
+        popupWindow.setHeight(1);
+        popupWindow.setWidth(1);
+        popupWindow.setTouchable(true);
+        popupWindow.setFocusable(false);
+        popupWindow.setOutsideTouchable(true);
+        popupWindow.setContentView(popupView);
+        popupWindow.setBackgroundDrawable(getResources().getDrawable(R.drawable.bttn_disabled));*/
+
+
+        int width = LinearLayout.LayoutParams.MATCH_PARENT;
+        int height = LinearLayout.LayoutParams.MATCH_PARENT;
+        boolean focusable = true;
+        final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
+        popupWindow.showAtLocation(findViewById(R.id.layout_add_farmer), Gravity.CENTER, 0, 0);
+         dimBehind(popupWindow);
+
+        final Dialog farmerleadDialog = new Dialog(AddFarmerActivity.this, android.R.style.Theme_Material_Dialog_Alert);
+        farmerleadDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+
+        farmerleadDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        farmerleadDialog.setContentView(R.layout.activity_findfarmerlead);
+
+        EditText searchfl = popupView.findViewById(R.id.findFLSearchBox);
+        RecyclerView farmerLeadRecyclerView = popupView.findViewById(R.id.flList);
+        findFarmerLeadAdapter = new FindFarmerLeadAdapter(flList,this);
+        RecyclerView.LayoutManager reLayoutManager = new LinearLayoutManager(getApplicationContext());
+        farmerLeadRecyclerView.setLayoutManager(reLayoutManager);
+        farmerLeadRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        ((LinearLayoutManager) reLayoutManager).setReverseLayout(true);
+        farmerLeadRecyclerView.setAdapter(findFarmerLeadAdapter);
+        farmerLeadRecyclerView.scrollToPosition(findFarmerLeadAdapter.getItemCount() - 1);
+        searchfl.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+        searchfl.setFilters(new InputFilter[] { flFilter });
+
+        searchfl.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence constraint, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable constraint) {
+                ArrayList<FarmerLeadDTO> filteredlist = new ArrayList<>();
+                for (FarmerLeadDTO farmerLeadDTO : flList) {
+                    if (farmerLeadDTO.getFarmerLeadFullName().toLowerCase().contains(constraint.toString().toLowerCase()) ||
+                            farmerLeadDTO.getFarmerLeadDisplayId().toLowerCase().contains(constraint.toString().toLowerCase()) ||
+                            farmerLeadDTO.getContactNumber().toLowerCase().contains(constraint.toString().toLowerCase())) {
+                        filteredlist.add(farmerLeadDTO);
+                    }
+                }
+                if (filteredlist.isEmpty()) {
+                    Toast.makeText(AddFarmerActivity.this, "No Data Found..", Toast.LENGTH_SHORT).show();
+                } else {
+                    findFarmerLeadAdapter.filterList(filteredlist);
+                }
+            }
+        });
+        popupView.findViewById(R.id.cancel_btn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                popupWindow.dismiss();
+            }
+        });
+
+        findFarmerLeadAdapter.setOnItemFarmerLeadClickListener(new OnItemFarmerLeadListener() {
+            @Override
+            public void onFarmerLeadClick(View view, int position, FarmerLeadDTO farmerLeadDTO) {
+                farmerLeadSearch.setText(farmerLeadDTO.getFarmerLeadFullName());
+//                getSelectedFarmerLead = farmerLeadDTO;
+                farmerleadid = farmerLeadDTO.getFarmerLeadDisplayId();
+                farmerleadidname = farmerLeadDTO.getFarmerLeadFullName();
+                popupWindow.dismiss();
+            }
+
+        });
     }
 
 }

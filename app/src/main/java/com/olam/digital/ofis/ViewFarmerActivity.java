@@ -14,6 +14,8 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.Resources;
 import android.database.Cursor;
+import android.database.MatrixCursor;
+import android.database.MergeCursor;
 import android.graphics.Bitmap;
 import android.location.Location;
 import android.net.Uri;
@@ -216,7 +218,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
     private GPSTracker gpsTracker=null;
 
     CustomListAdapter_Modules customListAdapter_modulesAdapter;
-   
+
 
     ImageView infoCloseImageView;
     LinearLayout statusInfoLayout;
@@ -431,7 +433,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 }
                 submittedModules = (!submittedModulesJSON.equals("null")) ? new JSONObject(submittedModulesJSON) : new JSONObject();
                 String moduleNameSuffix = Utilities.getLocaleSuffix(res);
-                Cursor moduleAssignments = dl.getFarmerModules(farmerId, this);
+                Cursor moduleAssignments = getFarmerModules(farmerId, this);
                 if (moduleAssignments != null && moduleAssignments.getCount() > 0) {
                     String[] adapterCols = new String[]{
                             (moduleAssignments.getColumnIndex(OFISDBContract.ModuleEntry.COLUMN_NAME_NAME + moduleNameSuffix) != -1) ? OFISDBContract.ModuleEntry.COLUMN_NAME_NAME + moduleNameSuffix : OFISDBContract.ModuleEntry.COLUMN_NAME_NAME,
@@ -656,6 +658,384 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
             FirebaseCrash.report(new Exception("ViewFarmerActivity: Error getting farmer GPS location - enumerator " + Utilities.getFromSharedPrefs(context), e));
             e.printStackTrace();
         }
+    }
+
+    public Cursor getFarmerModules(long id, Context context) {
+        Cursor farmer = null;
+
+        try {
+            farmer = dl.getFlattenedFarmer(id);
+            Cursor output = null;
+
+            if (farmer.getCount() > 0) {
+                farmer.moveToFirst();
+                String modulesQuery = "SELECT modules.id as _id, modules.name, modules.name_fr, modules.name_es, modules.name_id, modules.name_pt, modules.name_tr, modules.name_lo, modules.name_vi, modules.name_th,modules.annual_survey, " +
+                        "submodules.name as submodule_name, submodules.name_fr as submodule_name_fr, submodules.name_es as submodule_name_es, submodules.name_id as submodule_name_id, submodules.name_pt as submodule_name_pt, submodules.name_tr as submodule_name_tr, submodules.name_lo as submodule_name_lo, submodules.name_vi as submodule_name_vi, submodules.name_th as submodule_name_th, " +
+                        "modules.expires, " + "moduleassignments.recurrence_frequency, moduleassignments.recurrence_type, moduleassignments.disabled_months, " +
+                        " farmer_modules.id as farmer_module_id, farmer_modules.status_started, farmer_modules.status_finished, farmer_modules.current_submodule_id, farmer_modules.recorded_lat, farmer_modules.recorded_lng FROM moduleassignments " +
+                        " INNER JOIN modules ON moduleassignments.module_id = modules.id " +
+                        " LEFT OUTER JOIN farmer_modules ON modules.id = farmer_modules.module_id AND " +
+                        "(farmer_modules.farmer_id = ? OR farmer_modules.olam_farmer_id = ?) " +
+                        " LEFT OUTER JOIN " + OFISDBContract.SubmoduleEntry.TABLE_NAME + " ON farmer_modules.current_submodule_id = submodules.id WHERE " +
+                        "moduleassignments.childLabour != 'true' AND" +
+                        "((moduleassignment_type = 'Country' AND moduleassignment_id = ?) OR " +
+                        "(moduleassignment_type = 'Region' AND moduleassignment_id = ?) OR " +
+                        "(moduleassignment_type = 'District' AND moduleassignment_id = ?) OR " +
+                        "(moduleassignment_type = 'Place' AND moduleassignment_id = ?) OR " +
+                        "(moduleassignment_type = 'Farmer Group' AND moduleassignment_id = ?) OR " +
+                        "(moduleassignment_type = 'Section' AND moduleassignment_id = ?) OR " +
+                        "(moduleassignment_type = 'Programme' AND moduleassignment_id = ?) OR " +
+                        "(moduleassignment_type = 'Product' AND moduleassignment_id = ?) OR " +
+                        "(moduleassignment_type = 'Partner' AND moduleassignment_id = ?))";
+                String[] modulesQueryValues = new String[]{
+                        farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)),
+                        farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)),
+                        farmer.getString(farmer.getColumnIndex("country_id")),
+                        farmer.getString(farmer.getColumnIndex("region_id")),
+                        farmer.getString(farmer.getColumnIndex("district_id")),
+                        farmer.getString(farmer.getColumnIndex("place_id")),
+                        farmer.getString(farmer.getColumnIndex("farmergroup_id")),
+                        farmer.getString(farmer.getColumnIndex("section_id")),
+                        farmer.getString(farmer.getColumnIndex("programme_id")),
+                        farmer.getString(farmer.getColumnIndex("product_id")),
+                        farmer.getString(farmer.getColumnIndex("partner_id"))
+                };
+//                @SuppressLint("Recycle") Cursor farmerModules = db.rawQuery(modulesQuery, modulesQueryValues);
+                @SuppressLint("Recycle") Cursor farmerModules = dl.getfarmerModules(modulesQuery, modulesQueryValues);
+
+                String[] mcColumns = new String[]{
+                        "_id",
+                        "name",
+                        "name_fr",
+                        "name_es",
+                        "name_id",
+                        "name_pt",
+                        "name_tr",
+                        "name_lo",
+                        "name_vi",
+                        "name_th",
+                        "annual_survey",
+                        "submodule_name",
+                        "submodule_name_fr",
+                        "submodule_name_es",
+                        "submodule_name_id",
+                        "submodule_name_pt",
+                        "submodule_name_tr",
+                        "submodule_name_lo",
+                        "submodule_name_vi",
+                        "submodule_name_th",
+                        "expires",
+                        "recurrence_frequency",
+                        "recurrence_type",
+                        "disabled_months",
+                        "farmer_module_id",
+                        "status_started",
+                        "status_finished",
+                        "current_submodule_id",
+                        "recorded_lat",
+                        "recorded_lng"
+                };
+                MatrixCursor mc = new MatrixCursor(mcColumns);
+                // add new record farm location task
+                mc.addRow(new String[]{
+                        "0",
+                        res.getString(R.string.record_farm_location),
+                        res.getString(R.string.record_farm_location),
+                        res.getString(R.string.record_farm_location),
+                        res.getString(R.string.record_farm_location),
+                        res.getString(R.string.record_farm_location),
+                        res.getString(R.string.record_farm_location),
+                        res.getString(R.string.record_farm_location),
+                        res.getString(R.string.record_farm_location),
+                        res.getString(R.string.record_farm_location),
+                        "0",
+                        "",
+                        "",
+                        "",
+                        res.getString(R.string.record_farm_location_hint),
+                        res.getString(R.string.record_farm_location_hint),
+                        res.getString(R.string.record_farm_location_hint),
+                        res.getString(R.string.record_farm_location_hint),
+                        res.getString(R.string.record_farm_location_hint),
+                        res.getString(R.string.record_farm_location_hint),
+                        res.getString(R.string.record_farm_location_hint),
+                        res.getString(R.string.record_farm_location_hint),
+                        res.getString(R.string.record_farm_location_hint),
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        ""
+                });
+
+                // add new record farm polygon task
+                mc.addRow(new String[]{
+                        "0",
+                        res.getString(R.string.record_farm_polygon),
+                        res.getString(R.string.record_farm_polygon),
+                        res.getString(R.string.record_farm_polygon),
+                        res.getString(R.string.record_farm_polygon),
+                        res.getString(R.string.record_farm_polygon),
+                        res.getString(R.string.record_farm_polygon),
+                        res.getString(R.string.record_farm_polygon),
+                        res.getString(R.string.record_farm_polygon),
+                        res.getString(R.string.record_farm_polygon),
+                        "0",
+                        "",
+                        "",
+                        "",
+                        res.getString(R.string.record_farm_polygon_hint),
+                        res.getString(R.string.record_farm_polygon_hint),
+                        res.getString(R.string.record_farm_polygon_hint),
+                        res.getString(R.string.record_farm_polygon_hint),
+                        res.getString(R.string.record_farm_polygon_hint),
+                        res.getString(R.string.record_farm_polygon_hint),
+                        res.getString(R.string.record_farm_polygon_hint),
+                        res.getString(R.string.record_farm_polygon_hint),
+                        res.getString(R.string.record_farm_polygon_hint),
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "farmpolygon"
+                });
+
+                boolean isHHAvailable = Utilities.getBoolFromSharedPrefs(context, Utilities.HOUSEHOLD_ENUMERATOR, false);
+                if (isHHAvailable) {
+
+                    // add new record household location task
+                    mc.addRow(new String[]{"0", res.getString(R.string.record_hh_location), res.getString(R.string.record_hh_location), res.getString(R.string.record_hh_location), res.getString(R.string.record_hh_location), res.getString(R.string.record_hh_location), res.getString(R.string.record_hh_location), res.getString(R.string.record_hh_location), res.getString(R.string.record_hh_location), res.getString(R.string.record_hh_location), "0", "", "", "", res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), "", "", "", "", "", "", res.getString(R.string.household_farmer)});
+                }
+
+
+                // add new phone number updating task
+                mc.addRow(new String[]{
+                        "0",
+                        res.getString(R.string.update_phone_numbers),
+                        res.getString(R.string.update_phone_numbers),
+                        res.getString(R.string.update_phone_numbers),
+                        res.getString(R.string.update_phone_numbers),
+                        res.getString(R.string.update_phone_numbers),
+                        res.getString(R.string.update_phone_numbers),
+                        res.getString(R.string.update_phone_numbers),
+                        res.getString(R.string.update_phone_numbers),
+                        res.getString(R.string.update_phone_numbers),
+                        "0",
+                        "",
+                        "",
+                        "",
+                        res.getString(R.string.update_phone_numbers_hint),
+                        res.getString(R.string.update_phone_numbers_hint),
+                        res.getString(R.string.update_phone_numbers_hint),
+                        res.getString(R.string.update_phone_numbers_hint),
+                        res.getString(R.string.update_phone_numbers_hint),
+                        res.getString(R.string.update_phone_numbers_hint),
+                        res.getString(R.string.update_phone_numbers_hint),
+                        res.getString(R.string.update_phone_numbers_hint),
+                        res.getString(R.string.update_phone_numbers_hint),
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "Phone"
+                });
+
+                try {
+                    int isSynced = farmer.getInt(farmer.getColumnIndex("synced"));
+                    String selectedsubdistrict;
+                    if(isSynced == 0){
+                        selectedsubdistrict = farmer.getString(farmer.getColumnIndex("subdistrict_id")).trim();
+                    }else {
+                        selectedsubdistrict = farmer.getString(farmer.getColumnIndex("subdistrictId")).trim();
+                    }
+                    String countryid = farmer.getString(farmer.getColumnIndex("country_id")).trim();
+                    boolean isSubdistrictCapture = dl.isSubdistrictCapture(Integer.parseInt(countryid));
+                    if (isSubdistrictCapture) {
+                        if (selectedsubdistrict.equalsIgnoreCase("0")) {
+                            // update farmers subdistrict
+                            mc.addRow(new String[]{"0", res.getString(R.string.update_farmer_subdistrict), res.getString(R.string.update_farmer_subdistrict), res.getString(R.string.update_farmer_subdistrict), res.getString(R.string.update_farmer_subdistrict), res.getString(R.string.update_farmer_subdistrict), res.getString(R.string.update_farmer_subdistrict), res.getString(R.string.update_farmer_subdistrict), res.getString(R.string.update_farmer_subdistrict), res.getString(R.string.update_farmer_subdistrict), "0", "", "", "", res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), "", "", "", "", "", "", "Subdistrict"});
+                        }
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+                // add update consent statement task
+                mc.addRow(new String[]{"0", res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), "0", "", "", "", res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), "", "", "", "", "", "", res.getString(R.string.consent_statement)});
+
+                // add e-signature for existing farmers
+                mc.addRow(new String[]{
+                        "0",
+                        res.getString(R.string.update_signature),
+                        res.getString(R.string.update_signature),
+                        res.getString(R.string.update_signature),
+                        res.getString(R.string.update_signature),
+                        res.getString(R.string.update_signature),
+                        res.getString(R.string.update_signature),
+                        res.getString(R.string.update_signature),
+                        res.getString(R.string.update_signature),
+                        res.getString(R.string.update_signature),
+                        "0",
+                        "",
+                        "",
+                        "",
+                        res.getString(R.string.update_signature_hint),
+                        res.getString(R.string.update_signature_hint),
+                        res.getString(R.string.update_signature_hint),
+                        res.getString(R.string.update_signature_hint),
+                        res.getString(R.string.update_signature_hint),
+                        res.getString(R.string.update_signature_hint),
+                        res.getString(R.string.update_signature_hint),
+                        res.getString(R.string.update_signature_hint),
+                        res.getString(R.string.update_signature_hint),
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "Signature"
+                });
+
+                boolean isNIDAvailable = Utilities.getBoolFromSharedPrefs(context, "NationalID", false);
+                if (isNIDAvailable) {
+//         add national id information
+                    mc.addRow(new String[]{"0", res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), "0", "", "", "", res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), "", "", "", "", "", "", "National_ID"});
+                }
+
+                Cursor fmp = dl.getFmpByFarmerId(id);
+                if (fmp.getCount() > 0) {
+                    fmp.moveToFirst();
+                    int fmpStarted = 0;
+                    String fmpMode = "summary";
+                    if (dl.hasNqi("fmpreview", fmp.getInt(fmp.getColumnIndex(OFISDBContract.FarmManagementPlanEntry.COLUMN_NAME_ID)))) {
+                        fmpStarted = 1;
+                    } else if (dl.hasNqi("fullfmpreview", fmp.getInt(fmp.getColumnIndex(OFISDBContract.FarmManagementPlanEntry.COLUMN_NAME_ID)))) {
+                        fmpStarted = 1;
+                        fmpMode = "full";
+                    }
+
+                    mc.addRow(new String[]{
+                            "-" + fmp.getInt(fmp.getColumnIndex(OFISDBContract.FarmManagementPlanEntry.COLUMN_NAME_ID)),
+                            res.getString(R.string.review_farm_management_plan),
+                            res.getString(R.string.review_farm_management_plan),
+                            res.getString(R.string.review_farm_management_plan),
+                            res.getString(R.string.review_farm_management_plan),
+                            res.getString(R.string.review_farm_management_plan),
+                            res.getString(R.string.review_farm_management_plan),
+                            res.getString(R.string.review_farm_management_plan),
+                            res.getString(R.string.review_farm_management_plan),
+                            res.getString(R.string.review_farm_management_plan),
+                            "0",
+                            "",
+                            "",
+                            "",
+                            res.getString(R.string.review_farm_management_plan_hint),
+                            res.getString(R.string.review_farm_management_plan_hint),
+                            res.getString(R.string.review_farm_management_plan_hint),
+                            res.getString(R.string.review_farm_management_plan_hint),
+                            res.getString(R.string.review_farm_management_plan_hint),
+                            res.getString(R.string.review_farm_management_plan_hint),
+                            res.getString(R.string.review_farm_management_plan_hint),
+                            res.getString(R.string.review_farm_management_plan_hint),
+                            res.getString(R.string.review_farm_management_plan_hint),
+                            "",
+                            String.valueOf(fmp.getInt(fmp.getColumnIndex(OFISDBContract.FarmManagementPlanEntry.COLUMN_NAME_ID))),
+                            String.valueOf(fmpStarted),
+                            String.valueOf(fmp.getInt(fmp.getColumnIndex(OFISDBContract.FarmManagementPlanEntry.COLUMN_NAME_HAS_FEEDBACK))),
+                            String.valueOf(fmp.getInt(fmp.getColumnIndex(OFISDBContract.FarmManagementPlanEntry.COLUMN_NAME_STARTING_YEAR))),
+                            fmpMode,
+                            ""
+                    });
+                }
+
+                MatrixCursor childOptionsCursor = new MatrixCursor(mcColumns);
+
+                // add register child
+                if (ChildLabourUtils.isChildEnumerator) {
+                    childOptionsCursor.addRow(new String[]{
+                            "0",
+                            res.getString(R.string.register_child),
+                            res.getString(R.string.register_child),
+                            res.getString(R.string.register_child),
+                            res.getString(R.string.register_child),
+                            res.getString(R.string.register_child),
+                            res.getString(R.string.register_child),
+                            res.getString(R.string.register_child),
+                            res.getString(R.string.register_child),
+                            res.getString(R.string.register_child),
+                            "0",
+                            "",
+                            "",
+                            "",
+                            res.getString(R.string.update_childlabour_hint),
+                            res.getString(R.string.update_childlabour_hint),
+                            res.getString(R.string.update_childlabour_hint),
+                            res.getString(R.string.update_childlabour_hint),
+                            res.getString(R.string.update_childlabour_hint),
+                            res.getString(R.string.update_childlabour_hint),
+                            res.getString(R.string.update_childlabour_hint),
+                            res.getString(R.string.update_childlabour_hint),
+                            res.getString(R.string.update_childlabour_hint),
+                            "",
+                            "",
+                            "",
+                            "",
+                            "",
+                            "",
+                            ChildLabourUtils.REG_CHILD
+                    });
+
+                    // child labour survey
+                    childOptionsCursor.addRow(new String[]{
+                            "0",
+                            res.getString(R.string.child_labour_survey),
+                            res.getString(R.string.child_labour_survey),
+                            res.getString(R.string.child_labour_survey),
+                            res.getString(R.string.child_labour_survey),
+                            res.getString(R.string.child_labour_survey),
+                            res.getString(R.string.child_labour_survey),
+                            res.getString(R.string.child_labour_survey),
+                            res.getString(R.string.child_labour_survey),
+                            res.getString(R.string.child_labour_survey),
+                            "0",
+                            "",
+                            "",
+                            "",
+                            res.getString(R.string.ModuleStatus),
+                            res.getString(R.string.ModuleStatus),
+                            res.getString(R.string.ModuleStatus),
+                            res.getString(R.string.ModuleStatus),
+                            res.getString(R.string.ModuleStatus),
+                            res.getString(R.string.ModuleStatus),
+                            res.getString(R.string.ModuleStatus),
+                            res.getString(R.string.ModuleStatus),
+                            res.getString(R.string.ModuleStatus),
+                            "",
+                            "",
+                            "",
+                            "",
+                            "",
+                            "",
+                            ChildLabourUtils.CHILDLABOUR_SURVEY
+                    });
+                }
+                Cursor[] cursors = {mc, farmerModules, childOptionsCursor};
+                output = new MergeCursor(cursors);
+            }
+            return output;
+        }catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }finally {
+            farmer.close();
+        }
+
     }
 
     private void recordFarmLocation(final View v, String statement) {
@@ -1587,14 +1967,22 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                         bundle.putString("type", "update");
                         in.putExtras(bundle);
                         startActivity(in);
-                    }else if (recordedLng != null && recordedLng.getText().equals(getResources().getString(R.string.household_farmer))){
-                        polygon=false;
+                    } else if (recordedLng != null && recordedLng.getText().equals("Subdistrict")) {
+                        Intent in = new Intent(this, UpdateSubdistrict.class);
+                        Bundle bundle = new Bundle();
+                        bundle.putString("olamfarmername", farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME)));
+                        bundle.putInt(ChildLabourUtils.CHILD_FARMER_ID, (int) farmerId);
+                        in.putExtras(bundle);
+                        startActivity(in);
+
+                    } else if (recordedLng != null && recordedLng.getText().equals(getResources().getString(R.string.household_farmer))) {
+                        polygon = false;
                         household = true;
-                        recordFarmLocation(v,res.getString(R.string.are_you_at_the_farmers_hh));
+                        recordFarmLocation(v, res.getString(R.string.are_you_at_the_farmers_hh));
                     } else {
-                        polygon=false;
-                        household=false;
-                        recordFarmLocation(v,res.getString(R.string.are_you_at_the_farm));
+                        polygon = false;
+                        household = false;
+                        recordFarmLocation(v, res.getString(R.string.are_you_at_the_farm));
                     }
                 } else if (id < 0) {
                     // go to fmp review page
