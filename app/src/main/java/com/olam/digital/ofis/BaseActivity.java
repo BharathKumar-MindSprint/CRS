@@ -3,6 +3,7 @@ package com.olam.digital.ofis;
 
 import android.app.AlertDialog;
 
+import android.app.DatePickerDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -27,6 +28,8 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -36,7 +39,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -195,6 +206,66 @@ public class BaseActivity extends AppCompatActivity {
         return photostatus;
     }
 
+    public String getNidExpiryDateStatus(String type) {
+        String photostatus = "true";
+        Cursor nid = dl.getNIDPhotostatusByName(type);
+        if (nid.getCount() > 0) {
+            nid.moveToFirst();
+            photostatus = nid.getString(nid.getColumnIndex(OFISDBContract.NationalIDEntry.COLUMN_NAME_EXP_DATE_SLIDER));
+        }
+        return photostatus;
+    }
+
+    public String getNidMinrange(String type) {
+        String photostatus = "true";
+        Cursor nid = dl.getNIDPhotostatusByName(type);
+        if (nid.getCount() > 0) {
+            nid.moveToFirst();
+            photostatus = nid.getString(nid.getColumnIndex(OFISDBContract.NationalIDEntry.COLUMN_NAME_STARTYEAR));
+        }
+        return photostatus;
+    }
+
+    public void setRangeofDatePicker(DatePickerDialog datePickerDialog, String type) {
+        try {
+
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            String startyear = getNidMinrange(type);
+            String endyear = getNidMaxrange(type);
+            String month = getNidMonthRange(type);
+            String startdate = startyear + "-" + month + "-01" ;
+            Calendar cal = new GregorianCalendar(Integer.parseInt(endyear), Integer.parseInt(month), 0);
+            Date date = cal.getTime();
+//            String enddate = endyear + "-" + month + "-01" ;
+            String enddate = sdf.format(date) ;
+            Date sdate = sdf.parse(startdate);
+            Date edate = sdf.parse(enddate);
+            long startDate = sdate.getTime();
+            long endDate = edate.getTime();
+            datePickerDialog.getDatePicker().setMinDate(startDate);
+            datePickerDialog.getDatePicker().setMaxDate(endDate);
+        }catch (ParseException e) { e.printStackTrace();
+        }catch (NumberFormatException e) {e.printStackTrace();}
+    }
+
+    public String getNidMaxrange(String type) {
+        String photostatus = "true";
+        Cursor nid = dl.getNIDPhotostatusByName(type);
+        if (nid.getCount() > 0) {
+            nid.moveToFirst();
+            photostatus = nid.getString(nid.getColumnIndex(OFISDBContract.NationalIDEntry.COLUMN_NAME_ENDYEAR));
+        }
+        return photostatus;
+    }
+    public String getNidMonthRange(String type) {
+        String photostatus = "true";
+        Cursor nid = dl.getNIDPhotostatusByName(type);
+        if (nid.getCount() > 0) {
+            nid.moveToFirst();
+            photostatus = nid.getString(nid.getColumnIndex(OFISDBContract.NationalIDEntry.COLUMN_NAME_MONTH));
+        }
+        return photostatus;
+    }
     // getting nationalids type id values
     public boolean getPhotostatusByType(String type) {
         boolean photostatus = false;
@@ -234,6 +305,7 @@ public class BaseActivity extends AppCompatActivity {
                 storeableNids.put("nationalIdType", new Long(nids.getInt(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_TYPE))));
                 storeableNids.put("nationalIdNumber", nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_NUMBER)));
                 storeableNids.put("photo", nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_PHOTO)));
+                storeableNids.put("expiryDate", nids.getString(nids.getColumnIndex(OFISDBContract.FarmerNationalIDs.COLUMN_NID_EXPIRY_DATE)));
 
                 storeableNationalids.put(storeableNids);
 
@@ -246,6 +318,16 @@ public class BaseActivity extends AppCompatActivity {
 
     // getting nationalids type id values
     public String getPhotobytype(int type) {
+        String photo = null;
+        Cursor nid = dl.getPhotoByType(type);
+        if (nid.getCount() > 0) {
+            nid.moveToFirst();
+            photo = nid.getString(nid.getColumnIndex(OFISDBContract.LocalNationalIDImages.COLUMN_NID_PHOTO));
+        }
+        return photo;
+    }
+
+    public String getExpiryDatebytype(int type) {
         String photo = null;
         Cursor nid = dl.getPhotoByType(type);
         if (nid.getCount() > 0) {
@@ -374,6 +456,21 @@ public class BaseActivity extends AppCompatActivity {
             int type = getNidType(value);
             if (type == nidvalue) {
                 imageButton.setImageBitmap(bitmap);
+            }
+        }
+
+
+    }
+    public void displayExpiryDateforNID(LinearLayout nationalids, int nidvalue, String expDate) {
+        int nidrowscount = nationalids.getChildCount();
+        for (int j = 0; j < nidrowscount; j++) {
+            LinearLayout nidrow = (LinearLayout) nationalids.getChildAt(j);
+            Spinner nid_type = nidrow.findViewById(R.id.idtypespinner);
+            TextView expiryDate = nidrow.findViewById(R.id.expirydate);
+            String value = nid_type.getSelectedItem().toString();
+            int type = getNidType(value);
+            if (type == nidvalue) {
+                expiryDate.setText(expDate);
             }
         }
 

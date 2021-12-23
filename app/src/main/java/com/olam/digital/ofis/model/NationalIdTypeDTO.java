@@ -9,6 +9,7 @@ public class NationalIdTypeDTO implements Serializable {
     private String type = "type";
     private String nationalIdLimit = "nationalIdLimit";
     private String photoRequired = "photoRequired";
+    private String expiryDateSlider = "expiryDateSlider";
     private String typeFr = "typeFr";
     private String typeEs = "typeEs";
     private String typePt = "typePt";
@@ -34,6 +35,14 @@ public class NationalIdTypeDTO implements Serializable {
         this.typeTh = nationalIdTypeDTO.typeTh;
         this.active = nationalIdTypeDTO.active;
     }*/
+
+    public String getExpiryDateSlider() {
+        return expiryDateSlider;
+    }
+
+    public void setExpiryDateSlider(String expiryDateSlider) {
+        this.expiryDateSlider = expiryDateSlider;
+    }
 
     public int getId() {
         return id;

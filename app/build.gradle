@@ -1,4 +1,4 @@
-
+//apply plugin: 'com.dynatrace.instrumentation'
 apply plugin: 'com.android.application'
 apply plugin: 'org.sonarqube'
 apply plugin: 'com.google.firebase.firebase-perf'
@@ -37,8 +37,10 @@ android {
         targetSdkVersion 29
         multiDexEnabled true
 
-        versionCode 46
-        versionName "10.4.0"
+
+        versionCode 85
+        versionName "10.7.5"
+
 
     }
     buildTypes {
@@ -79,6 +81,10 @@ android {
             buildConfigField "String", "MATOMO_SERVER_URL", '"https://olammatomo.azurewebsites.net/matomo.php"'
             buildConfigField "int", "MATOMO_SERVER_CODE", '35'
             buildConfigField "boolean", "MATOMO_ENABLED", 'true'
+
+            //KeyCloak
+            resValue "string", "clientId", '"mobile-ofis-app-dev"'
+            resValue "string", "clientSecret", '"4afbbe46-ab48-4db9-8c67-dea623e691b1"'
 
         }
 
@@ -132,6 +138,11 @@ android {
 
             //New UAT DNS name
             resValue "string", "applicationName", "OFIS UAT"
+           // resValue "string", "AUTH_SERVER_URL", 'https://otofis-uat-zuul.olamdigital.com/oauth/api/v1/oauth/'
+            resValue "string", "AUTH_SERVER_URL", 'https://digitalauthdev.olamnet.com/auth/realms/ofis-dse-uat/protocol/openid-connect/'
+            buildConfigField 'String', 'HOST', '"https://otofis-uat-zuul.olamdigital.com/"'
+//            buildConfigField 'String', 'ODHOST', '"https://uat-apigateway.olamdirect.com/"'
+            buildConfigField 'String', 'ODHOST', '"https://uat-apigateway-global.olamdirect.com/"'
             resValue "string", "AUTH_SERVER_URL", 'https://digitalauthdev.olamnet.com/auth/realms/ofis-dse-manna-uat/protocol/openid-connect/'
             buildConfigField 'String', 'HOST', '"https://otofis-uat-manna-zuul.olamdigital.com/"'
             buildConfigField 'String', 'ODHOST', '"https://sit-apigateway.olamdirect.com/"'
@@ -200,6 +211,9 @@ android {
             buildConfigField "String", "MATOMO_SERVER_URL", '"https://olammatomo.azurewebsites.net/matomo.php"'
             buildConfigField "int", "MATOMO_SERVER_CODE", '35'
             buildConfigField "boolean", "MATOMO_ENABLED", 'true'
+
+            resValue "string", "clientId", '"ofis-mobile-sit"'
+            resValue "string", "clientSecret", '"d28384ec-7368-48ca-8886-91e4a17b8f3f"'
         }
 
         //noinspection GroovyMissingReturnStatement

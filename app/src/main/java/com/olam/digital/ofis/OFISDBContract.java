@@ -598,6 +598,10 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_NID_TYPE = "type";
         public static final String COLUMN_NAME_NID_LIMIT = "nationalIdLimit";
         public static final String COLUMN_NAME_PHOTO_REQUIRED = "photoRequired";
+        public static final String COLUMN_NAME_EXP_DATE_SLIDER = "expiryDateSlider";
+        public static final String COLUMN_NAME_STARTYEAR = "startYear";
+        public static final String COLUMN_NAME_ENDYEAR = "endYear";
+        public static final String COLUMN_NAME_MONTH = "month";
         public static final String COLUMN_NAME_TYPE_FR = "type_fr";
         public static final String COLUMN_NAME_TYPE_ES = "type_es";
         public static final String COLUMN_NAME_TYPE_PT = "type_pt";
@@ -615,6 +619,10 @@ public class OFISDBContract {
                     add(COLUMN_NAME_NID_TYPE);
                     add(COLUMN_NAME_NID_LIMIT);
                     add(COLUMN_NAME_PHOTO_REQUIRED);
+                    add(COLUMN_NAME_EXP_DATE_SLIDER);
+                    add(COLUMN_NAME_STARTYEAR);
+                    add(COLUMN_NAME_ENDYEAR);
+                    add(COLUMN_NAME_MONTH);
                     add(COLUMN_NAME_TYPE_FR);
                     add(COLUMN_NAME_TYPE_ES);
                     add(COLUMN_NAME_TYPE_PT);
@@ -752,6 +760,8 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_SECTIONID = "sectionId";
         public static final String COLUMN_NAME_COUNTRYID = "countryId";
         public static final String COLUMN_NAME_DISTRICTID = "districtId";
+        public static final String COLUMN_NAME_SUBDISTRICTID = "subdistrictId";
+        public static final String COLUMN_NAME_SUBDISID = "subdistrict_id";
         public static final String COLUMN_NAME_FARMERGROUPID = "farmerGroupId";
         public static final String COLUMN_NAME_REGIONID = "regionId";
         public static final String COLUMN_NAME_CONSENTFARMER = "consentFarmer";
@@ -790,6 +800,9 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_FARM_HOUSEHOLD_LNG = "householdLng";
         public static final String COLUMN_NAME_FARM_HOUSEHOLD_ID = "householdId";
         public static final String COLUMN_NAME_ISCONSENTAVAILABLE = "isConsentAvailable";
+        public static final String COLUMN_NAME_FARMERLEAD = "farmerLead";
+        public static final String COLUMN_NAME_FARMERLEADNAME = "farmerLeadName";
+        public static final String COLUMN_NAME_ODFARMERID = "odFarmerId";
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
                     add(COLUMN_NAME_ID);
@@ -813,12 +826,15 @@ public class OFISDBContract {
                     add(COLUMN_NAME_CONSENT_OTHERS);
                     add(COLUMN_NAME_COUNTRY_ID);
                     add(COLUMN_NAME_DISTRICTID);
+                    add(COLUMN_NAME_SUBDISTRICTID);
                     add(COLUMN_NAME_FARMERGROUPID);
                     add(COLUMN_NAME_REGIONID);
                     add(COLUMN_NAME_PRODUCT_ID);
                     add(COLUMN_NAME_REGISTER_DATE);
                     add(COLUMN_NAME_MODERATION_STATUS);
-
+                    add(COLUMN_NAME_FARMERLEAD);
+                    add(COLUMN_NAME_FARMERLEADNAME);
+                    add(COLUMN_NAME_ODFARMERID);
                 }}
         );
         public static final List<String> SYNC_COLUMN_LIST = Collections.unmodifiableList(
@@ -835,13 +851,16 @@ public class OFISDBContract {
                     add(COLUMN_NAME_FARM_PLOTS);
                     add(COLUMN_NAME_COUNTRY_ID);
                     add(COLUMN_NAME_DISTRICTID);
+                    add(COLUMN_NAME_SUBDISTRICTID);
                     add(COLUMN_NAME_FARMERGROUPID);
                     add(COLUMN_NAME_REGIONID);
                     add(COLUMN_NAME_PRODUCT_ID);
+                    add(COLUMN_NAME_DOB);
                     add(COLUMN_NAME_ISCONSENTAVAILABLE);
                     add(COLUMN_NAME_FARM_HOUSEHOLD_LAT);
                     add(COLUMN_NAME_FARM_HOUSEHOLD_LNG);
                     add(COLUMN_NAME_FARM_HOUSEHOLD_ID);
+                    add(COLUMN_NAME_ODFARMERID);
                 }}
         );
         public static final String COLUMN_NAME_OLAM_FARMER_ID_DISPLAY = "displayFarmerId";
@@ -892,6 +911,7 @@ public class OFISDBContract {
         public static final String COLUMN_NID_TYPE = "nationalIdType";
         public static final String COLUMN_NID_NUMBER = "nationalIdNumber";
         public static final String COLUMN_NID_PHOTO = "photo";
+        public static final String COLUMN_NID_EXPIRY_DATE = "expiryDate";
         public static final String COLUMN_IS_SYNCED = "isSynced";
         //        public static final String COLUMN_CREATEDDATE = "createddate";
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
@@ -901,6 +921,7 @@ public class OFISDBContract {
                     add(COLUMN_NID_TYPE);
                     add(COLUMN_NID_NUMBER);
                     add(COLUMN_NID_PHOTO);
+                    add(COLUMN_NID_EXPIRY_DATE);
                     add(COLUMN_IS_SYNCED);
 //                    add(COLUMN_CREATEDDATE);
                 }}
@@ -914,6 +935,7 @@ public class OFISDBContract {
         public static final String COLUMN_NID_TYPE = "nationalIdType";
         public static final String COLUMN_NID_NUMBER = "nationalIdNumber";
         public static final String COLUMN_NID_PHOTO = "photo";
+        public static final String COLUMN_NID_EXPIRY_DATE = "expiryDate";
         //        public static final String COLUMN_CREATEDDATE = "createddate";
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
@@ -922,6 +944,7 @@ public class OFISDBContract {
                     add(COLUMN_NID_TYPE);
                     add(COLUMN_NID_NUMBER);
                     add(COLUMN_NID_PHOTO);
+                    add(COLUMN_NID_EXPIRY_DATE);
 //                    add(COLUMN_CREATEDDATE);
                 }}
         );
@@ -935,6 +958,42 @@ public class OFISDBContract {
                 new ArrayList<String>() {{
                     add(COLUMN_NID_TYPE);
                     add(COLUMN_NID_PHOTO);
+                }}
+        );
+    }
+
+    public static abstract class FarmerLeadDetails implements BaseColumns {
+        public static final String TABLE_NAME = "farmerLeads";
+        public static final String COLUMN_FL_ID = "farmerLeadId";
+        public static final String COLUMN_FL_DISPLAYID = "farmerLeadDisplayId";
+        public static final String COLUMN_FL_FULLNAME = "farmerLeadFullName";
+        public static final String COLUMN_FL_NUMBER = "contactNumber";
+        public static final String COLUMN_COUNTRY_ISOCODE = "countryIsoCode";
+        public static final String COLUMN_COUNTRY_ID = "countryId";
+        public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
+                new ArrayList<String>() {{
+                    add(COLUMN_FL_ID);
+                    add(COLUMN_FL_DISPLAYID);
+                    add(COLUMN_FL_FULLNAME);
+                    add(COLUMN_FL_NUMBER);
+                    add(COLUMN_COUNTRY_ISOCODE);
+                    add(COLUMN_COUNTRY_ID);
+                }}
+        );
+    }
+
+    public static abstract class FarmerAssignments implements BaseColumns {
+        public static final String TABLE_NAME = "assignments";
+        public static final String COLUMN_PRODUCT_ID = "productId";
+        public static final String COLUMN_COUNTRY_iD = "countryId";
+        public static final String COLUMN_ISODORIGIN = "isODOrigin";
+        public static final String COLUMN_COUNTRYISOCODE = "countryIsoCode";
+        public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
+                new ArrayList<String>() {{
+                    add(COLUMN_PRODUCT_ID);
+                    add(COLUMN_COUNTRY_iD);
+                    add(COLUMN_ISODORIGIN);
+                    add(COLUMN_COUNTRYISOCODE);
                 }}
         );
     }
@@ -971,8 +1030,10 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_CODE = "code";
         public static final String COLUMN_NAME_COUNTRY_NAME = "name";
         public static final String COLUMN_NAME_DIALLING_CODE = "dialling_code";
-        public static final String COLUMN_NAME_OLAM_COUNTRY = "olam_country";
+        public static final String COLUMN_NAME_OLAM_COUNTRY = "olam_country_id";
         public static final String COLUMN_NAME_ENUMERATOR_COUNTRY = "enumerator_country";
+        public static final String COLUMN_NAME_ISSUBDISTCAPTURE = "isSubdistrictCapture";
+        public static final String COLUMN_NAME_ISOCODE = "countryIsoCode";
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
                     add(COLUMN_NAME_COUNTRY_NAME);
@@ -981,6 +1042,8 @@ public class OFISDBContract {
                     add(COLUMN_NAME_OLAM_COUNTRY);
                     add(COLUMN_NAME_ENUMERATOR_COUNTRY);
                     add(COLUMN_NAME_DIALLING_CODE);
+                    add(COLUMN_NAME_ISSUBDISTCAPTURE);
+                    add(COLUMN_NAME_ISOCODE);
                 }}
         );
     }
@@ -1028,10 +1091,25 @@ public class OFISDBContract {
         );
     }
 
+    public static abstract class SubDistrictsEntry implements BaseColumns {
+        public static final String TABLE_NAME = "subdistricts";
+        public static final String COLUMN_NAME_ID = "id";
+        public static final String COLUMN_NAME_DISTRICT_ID = "district_id";
+        public static final String COLUMN_NAME_SUBDISTRICT_NAME = "name";
+        public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
+                new ArrayList<String>() {{
+                    add(COLUMN_NAME_SUBDISTRICT_NAME);
+                    add(COLUMN_NAME_ID);
+                    add(COLUMN_NAME_DISTRICT_ID);
+                }}
+        );
+    }
+
     public static abstract class PlacesEntry implements BaseColumns {
         public static final String TABLE_NAME = "places";
         public static final String COLUMN_NAME_ID = "id";
         public static final String COLUMN_NAME_DISTRICT_ID = "district_id";
+        public static final String COLUMN_NAME_SUBDISTRICT_ID = "subdistrictId";
         public static final String COLUMN_NAME_PLACE_TYPE = "type";
         public static final String COLUMN_NAME_PLACE_NAME = "name";
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
@@ -1039,6 +1117,7 @@ public class OFISDBContract {
                     add(COLUMN_NAME_PLACE_NAME);
                     add(COLUMN_NAME_ID);
                     add(COLUMN_NAME_DISTRICT_ID);
+                    add(COLUMN_NAME_SUBDISTRICT_ID);
                     add(COLUMN_NAME_PLACE_TYPE);
                 }}
         );
@@ -1118,6 +1197,7 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_COUNTRY_ID = "country_id";
         public static final String COLUMN_NAME_REGION_ID = "region_id";
         public static final String COLUMN_NAME_DISTRICT_ID = "district_id";
+        public static final String COLUMN_NAME_SUBDISTRICT_ID = "subdistrict_id";
         public static final String COLUMN_NAME_PLACE_ID = "place_id";
         public static final String COLUMN_NAME_PRODUCT_ID = "product_id";
         public static final String COLUMN_NAME_FARMERGROUP_ID = "farmergroup_id";
@@ -1170,6 +1250,7 @@ public class OFISDBContract {
                     add(COLUMN_NAME_COUNTRY_ID);
                     add(COLUMN_NAME_REGION_ID);
                     add(COLUMN_NAME_DISTRICT_ID);
+                    add(COLUMN_NAME_SUBDISTRICT_ID);
                     add(COLUMN_NAME_PLACE_ID);
                     add(COLUMN_NAME_PRODUCT_ID);
                     add(COLUMN_NAME_FARMERGROUP_ID);
@@ -2019,6 +2100,7 @@ public class OFISDBContract {
                 put(CountriesEntry.TABLE_NAME, CountriesEntry.COLUMN_LIST);
                 put(RegionsEntry.TABLE_NAME, RegionsEntry.COLUMN_LIST);
                 put(DistrictsEntry.TABLE_NAME, DistrictsEntry.COLUMN_LIST);
+                put(SubDistrictsEntry.TABLE_NAME, SubDistrictsEntry.COLUMN_LIST);
                 put(PlacesEntry.TABLE_NAME, PlacesEntry.COLUMN_LIST);
                 put(FarmerGroupsEntry.TABLE_NAME, FarmerGroupsEntry.COLUMN_LIST);
                 put(SectionsEntry.TABLE_NAME, SectionsEntry.COLUMN_LIST);

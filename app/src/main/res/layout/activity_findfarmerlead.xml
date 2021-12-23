@@ -1,0 +1,82 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/ofis_page_background"
+    tools:context="com.olam.digital.ofis.FindFarmerActivity"
+    android:id="@+id/layout_find_farmer"
+    tools:ignore="Overdraw">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/topSection"
+        android:background="@color/ofis_farmer_screen_actions_background"
+        >
+
+        <LinearLayout
+            android:id="@+id/ll_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:weightSum="10"
+            android:background="@color/dark_gray"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_title_matchresult_dialog"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:textColor="@color/black"
+                android:padding="5dp"
+                android:text="@string/farmerlead_search"
+                android:layout_weight="9"
+                android:textAppearance="?android:textAppearanceMedium"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:src="@drawable/ic_consent_close"
+                android:layout_alignTop="@+id/signature_pad"
+                android:id="@+id/cancel_btn"
+                android:padding="10dp"
+                android:layout_weight="1"
+                android:gravity="right|end"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+            <EditText
+                android:padding="@dimen/ofis_large_pad"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textCapWords"
+                android:textColorHint="@color/ofis_base_font_white"
+                android:textSize="@dimen/ofis_input_field_text"
+                android:drawableRight="@drawable/ic_search"
+                android:id="@+id/findFLSearchBox"
+                android:textColor="@color/ofis_base_font_white"
+                android:hint="@string/fl_search"
+                android:background="@android:color/transparent"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/bottomSection"
+        android:layout_below="@+id/topSection">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/flList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:divider="@android:color/transparent"
+            android:dividerHeight="2dp"/>
+    </LinearLayout>
+
+</RelativeLayout>

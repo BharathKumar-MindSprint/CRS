@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     android:background="@color/ofis_page_background"
     tools:context="com.olam.digital.ofis.AddFarmerActivity"
+    android:id="@+id/layout_add_farmer"
     tools:ignore="Overdraw">
 
     <ImageView
@@ -329,7 +330,36 @@
                         <Spinner
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:id="@+id/spinner_subdistrict"
+                            android:layout_weight="1" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <Spinner
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
                             android:id="@+id/spinner_place"
+                            android:layout_weight="1"
+                            android:nextFocusDown="@+id/spinner_place"/>
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:contentDescription="@string/ofis_cd_hierarchy_arrow"
+                            app:srcCompat="@drawable/ic_spinner_hierarchy_arrow"
+                            android:scaleType="center"
+                            android:visibility="invisible"
+                            android:id="@+id/haSubDistrict" />
+
+                        <Spinner
+                            android:visibility="invisible"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
                             android:layout_weight="1" />
 
                     </LinearLayout>
@@ -353,6 +383,52 @@
 
                 </LinearLayout>
                 <!-- geography groups -->
+
+                <!-- display farmer lead-->
+                <LinearLayout
+                    android:id="@+id/farmerLeadDisplayLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="@dimen/ofis_large_pad"
+                    android:paddingRight="@dimen/ofis_large_pad"
+                    android:paddingBottom="@dimen/activity_vertical_margin"
+                    android:paddingTop="@dimen/activity_vertical_margin"
+                    android:background="@drawable/border_white_background"
+                    android:layout_marginTop="@dimen/ofis_med_pad"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/ofis_text_field"
+                        android:textSize="@dimen/ofis_small_text"
+                        android:text="@string/choose_farmerlead"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="@dimen/ofis_med_pad"/>
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="@dimen/ofis_large_pad"
+                        android:gravity="center"
+                        android:background="@drawable/border_underline_bg">
+
+                       <TextView
+                           android:id="@+id/farmerleadinfo"
+                           android:layout_width="match_parent"
+                           android:layout_height="match_parent"
+                           android:hint="@string/fl_search"
+                           android:textSize="@dimen/ofis_med_text"
+                           android:textColor="@color/black"
+                           android:layout_gravity="center"
+                           android:drawablePadding="@dimen/ofis_large_pad"
+                           android:drawableLeft="@drawable/ic_searchimg"/>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+                <!-- end display farmer lead -->
 
                 <!-- business groups -->
                 <LinearLayout
