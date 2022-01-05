@@ -38,8 +38,8 @@ android {
         multiDexEnabled true
 
 
-        versionCode 47
-        versionName "10.4.1"
+        versionCode 48
+        versionName "10.4.2"
 
 
     }
