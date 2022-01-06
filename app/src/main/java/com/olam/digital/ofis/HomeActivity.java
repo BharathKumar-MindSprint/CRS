@@ -81,6 +81,8 @@ import com.olam.digital.ofis.gps.utils.GPSUtils;
 import com.olam.digital.ofis.logging.FabricLogsWriter;
 import com.olam.digital.ofis.matoma.MatomoHelper;
 import com.olam.digital.ofis.matoma.ScreenNameConstants;
+import com.olam.digital.ofis.multifarm.MultiFarmUtils;
+import com.olam.digital.ofis.multifarm.UpdateMultiFarmActivity;
 import com.olam.digital.ofis.recordpolygon.RecordPolygonActivity;
 
 import org.json.JSONException;
@@ -1344,6 +1346,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         } else if (itemType.equalsIgnoreCase("farmer")) {
             Intent intent = new Intent(this, AddFarmerActivity.class);
             intent.putExtra(EDIT_FARMER_ID, (long) networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
+            intent.putExtra("farmId",(long) networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID)));
             intent.putExtra(EDIT_MODE, true);
             startActivity(intent);
         } else if (itemType.equalsIgnoreCase("farmlocation")) {
@@ -1433,6 +1436,16 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             intent.putExtras(childBundle);
 //            intent.putExtra(ChildLabourUtils.CHILD_FARMER_ID, String.valueOf(networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID))));
 //            intent.putExtra(ChildLabourUtils.CHILDLABOUR_SURVEY, networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_SURVEY_CODE)));
+            startActivity(intent);
+
+        }else if (itemType.equalsIgnoreCase("Multifarm Update")){
+            Bundle bundle=new Bundle();
+            bundle.putString("farmerId",String.valueOf(networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID))));
+            bundle.putString("farmId",String.valueOf(networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID))));
+            bundle.putBoolean("editMode",true);
+
+            Intent intent = new Intent(this, UpdateMultiFarmActivity.class);
+            intent.putExtras(bundle);
             startActivity(intent);
 
         }

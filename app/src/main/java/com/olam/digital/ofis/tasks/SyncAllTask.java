@@ -31,6 +31,7 @@ import com.olam.digital.ofis.dynatrace.DynatraceHelper;
 import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.logging.FabricLogsWriter;
 import com.olam.digital.ofis.recordpolygon.StartRecordPolygonActivity;
+import com.olam.digital.ofis.multifarm.MultiFarmUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -74,6 +75,8 @@ public class SyncAllTask extends SyncTask {
     public JSONObject spinnerResponse, moduleResponse, sipModuleResponse, farmerResponse, fmpResponse, transactionResponse, trainingResponse, tasksResponse;
     public static JSONObject childResponse,farmerLeadResponse,assignmentCheckResponse;
     public static JSONObject nationalidresponse,enumnationalidresponse;
+    public static  JSONObject multifarmRoleResponse,multifarmFarmResponse;
+
     private int syncResultCount;
     public ProgressDialog pd;
     private Resources res;
@@ -168,7 +171,16 @@ public class SyncAllTask extends SyncTask {
         } else if (op == SyncTaskOperationType.SYNC_TASKS) {
             syncTasks();
 //            syncSpinners();
-        } else if (op == SyncTaskOperationType.CHILD_ENUMERATOR) {
+        } else if (op == SyncTaskOperationType.MULTIFARM_ENABLED_ENUMERATOR) {
+            syncMultiFarmEnumerator();
+         }
+        else if (op == SyncTaskOperationType.SYNC_MULTIFARM_ROLES) {
+            syncMultiFarmRoles();
+        }
+        else if (op == SyncTaskOperationType.SYNC_MULTIFARM_EXISTING_FARMS) {
+            syncExistingMultiFarms();
+        }
+        else if (op == SyncTaskOperationType.CHILD_ENUMERATOR) {
             try {
                 syncChildEnumerator();
             } catch (Exception e) {
@@ -343,6 +355,12 @@ public class SyncAllTask extends SyncTask {
             new UpdateSipModuleListsTask(context).execute(sipModuleResponse);
             sipModuleResponse = null;
 
+
+            new UpdateMultiFarmRoleTask(context).execute(multifarmRoleResponse);
+            multifarmRoleResponse = null;
+
+            new UpdateMultiFarmFarmsTask(context).execute(multifarmFarmResponse);
+            multifarmFarmResponse = null;
 
             // Goes directly to the AsyncTask
 
@@ -928,9 +946,9 @@ public class SyncAllTask extends SyncTask {
                         }
                         moduleResponse = response;
 
-                        publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.updating_sip_training));
+                        publishProgress(SyncOperation.CONTINUE_DOWNLOADING, "Checking MultiFarm enumerator");
+                         delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.MULTIFARM_ENABLED_ENUMERATOR);
 
-                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_SIP_MODULES);
                     } else {
                         try {
                             FabricLogsWriter.printCrashLog(TAG, finalEndPoint, postResponse.code(), postResponse.networkResponse().toString(), context);
@@ -1155,6 +1173,151 @@ public class SyncAllTask extends SyncTask {
 
         });
     }
+
+    private void syncMultiFarmEnumerator() {
+        String endpoint = "";
+        endpoint = "ofisfarmer/multifarm/enableMultiFarmByEnumerator?enumeratorLoginId=" + Utilities.getFromSharedPrefs(context);
+        final String finalEndpoint = endpoint;
+        okHttpGet(context, endpoint, null, new Callback() {
+            @Override
+            public void onResponse(Call call, final Response postResponse) {
+                try {
+                    try {
+                        JSONObject  response = new JSONObject(postResponse.body().string());
+                        if (postResponse.isSuccessful()) {
+                            boolean isMultifarm = response.getBoolean("enableMultiFarm");
+                            Utilities.setMultiFarmPref(context, MultiFarmUtils.IS_MULTI_FARM_ENUMERATOR, isMultifarm);
+                            if (isMultifarm) {
+                                publishProgress(SyncOperation.CONTINUE_DOWNLOADING, "MultiFarm Roles ");
+                                delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_MULTIFARM_ROLES);
+                            }else{
+                                publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.updating_sip_training));
+                                delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_SIP_MODULES);
+                            }
+                        } else {
+                            try {
+                                FabricLogsWriter.printCrashLog(TAG, finalEndpoint, postResponse.code(), postResponse.networkResponse().toString(), context);
+                            } catch (Exception e) {
+                            }
+                            postFailureMessage(null);
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } finally {
+                        postResponse.close();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+                String failureMessage = res.getString(R.string.networking_error);
+                if (e != null) {
+                    FirebaseCrash.report(new Exception("SyncAllTask: Error in response when syncing training data", e));
+                    failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
+                }
+
+                publishProgress(SyncOperation.ERROR_RECEIVED, failureMessage);
+
+            }
+
+        });
+    }
+
+    private void syncMultiFarmRoles() {
+        String endpoint = "";
+        endpoint ="ofisfarmer/multifarm/roles";
+        final String finalEndpoint = endpoint;
+        okHttpGet(context, endpoint, null, new Callback() {
+            @Override
+            public void onResponse(Call call, final Response postResponse) {
+                try {
+                    JSONObject response = new JSONObject(postResponse.body().string());
+                    // String output = postResponse.body().string();
+                    // DynatraceHelper.requestPayload(finalEndpoint,output,context,false);
+                    if (postResponse.isSuccessful()) {
+                        multifarmRoleResponse=response;
+                        publishProgress(SyncOperation.CONTINUE_DOWNLOADING, "MultiFarm Existing");
+                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_MULTIFARM_EXISTING_FARMS);
+
+                    } else {
+                        try {
+                            FabricLogsWriter.printCrashLog(TAG, finalEndpoint, postResponse.code(), postResponse.networkResponse().toString(), context);
+                        } catch (Exception e) {
+                        }
+                        postFailureMessage(null);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    postResponse.close();
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+                String failureMessage = res.getString(R.string.networking_error);
+                if (e != null) {
+                    failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
+                }
+
+                publishProgress(SyncOperation.ERROR_RECEIVED, failureMessage);
+
+            }
+
+        });
+    }
+
+    private void syncExistingMultiFarms() {
+        String endpoint = "";
+        endpoint = "ofisfarmer/multifarm/farmerinfo/" + Utilities.getFromSharedPrefs(context);
+        final String finalEndpoint = endpoint;
+        okHttpGet(context, endpoint, null, new Callback() {
+            @Override
+            public void onResponse(Call call, final Response postResponse) {
+                try {
+                    // JSONObject response = new JSONObject(postResponse.body().string());
+                    JSONObject response = new JSONObject(postResponse.body().string());
+                    if (postResponse.isSuccessful()) {
+
+
+                        multifarmFarmResponse=response;
+
+                        publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.updating_sip_training));
+                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_SIP_MODULES);
+
+
+                    } else {
+                        try {
+                            FabricLogsWriter.printCrashLog(TAG, finalEndpoint, postResponse.code(), postResponse.networkResponse().toString(), context);
+                        } catch (Exception e) {
+                        }
+                        postFailureMessage(null);
+                    }
+                } catch (IOException | JSONException e) {
+                    e.printStackTrace();
+                } finally {
+                    postResponse.close();
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+                String failureMessage = res.getString(R.string.networking_error);
+                if (e != null) {
+                    failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
+                }
+
+                publishProgress(SyncOperation.ERROR_RECEIVED, failureMessage);
+
+            }
+
+        });
+    }
+
+
 
     private void syncFarmerLeadEnumerator() {
         String endpoint = "";
