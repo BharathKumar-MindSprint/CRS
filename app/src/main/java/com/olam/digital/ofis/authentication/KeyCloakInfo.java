@@ -6,8 +6,13 @@ public interface KeyCloakInfo {
     String dev_client_Id="ofis-mobile-dev";
     String dev_Client_Secret="4a6393cc-1442-4bc2-a9aa-8528f9edb186";
 
+    // original
     String dev_ofi_client_Id="ofi-ofis-mobile-dev";
     String dev_ofi_Client_Secret="fa94b308-d229-4304-9339-b368a7699148";
+
+    // original - Inflight Dev
+//    String dev_ofi_client_Id="mobile-ofis-app-dev";
+//    String dev_ofi_Client_Secret="4afbbe46-ab48-4db9-8c67-dea623e691b1";
 
     String dev_non_ofi_client_Id="mobile-ofis-app-dev";
     String dev_non_ofi_Client_Secret="4a6393cc-1442-4bc2-a9aa-8528f9edb186";
