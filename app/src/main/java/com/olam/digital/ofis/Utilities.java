@@ -332,6 +332,17 @@ public  static String base64ConversionForImage(String filepath)  {
        editor.commit();
    }
 
+    public static boolean getMultifarmPref(Context context,String prefName){
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
+        return sharedPreferences.getBoolean(prefName, false);
+    }
+
+    public static void setMultiFarmPref(Context context,String prefName,boolean prefValue){
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor=sharedPreferences.edit();
+        editor.putBoolean(prefName,prefValue);
+        editor.commit();
+    }
 
     public static boolean getBoolFromSharedPrefs(Context context, String prefName, boolean defaultResponse) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
