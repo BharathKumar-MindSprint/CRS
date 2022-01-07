@@ -442,7 +442,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             farmInformationLayout.setVisibility(View.GONE);
         }else{
 
-            multiFarmRoleDTOList=dl.getMultiFarmRoles();
+            multiFarmRoleDTOList=dl.getMultiFarmRoles(localeSuffix);
             rolesList.clear();
             for (MultiFarmRoleDTO multiFarmRoleDTO : multiFarmRoleDTOList){
                 rolesList.add(multiFarmRoleDTO.getName());
@@ -534,7 +534,9 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                             adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
                             farmRoleSpinner.setAdapter(adapter);
 
-                            bindFarmers(farmerNameEdittext);
+                            if(j!=0) {
+                                bindFarmers(farmerNameEdittext);
+                            }
 
 
                             //   String roleId= existingStakeHolder.getString(existingStakeHolder.getColumnIndex(OFISDBContract.FarmStakeHolderInformation.COLUMN_NAME_STAKE_HOLDER_ROLE_ID));
@@ -641,10 +643,11 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             }else {
 
                 bindFarmRoleDelete(farmRoleInclude.findViewById(R.id.farmRoleDelete));
+                bindFarmers(farmRoleInclude.findViewById(R.id.farmFarmerTV));
             }
             farmStakeholderLayout.addView(farmRoleInclude);
             bindFarmerRoles(farmRoleInclude.findViewById(R.id.farmerRoleSpinner));
-            bindFarmers(farmRoleInclude.findViewById(R.id.farmFarmerTV));
+
         });
 
 
@@ -2008,7 +2011,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                                     statusmoduration = true;
                                 }
                             }
-                            //omf-6 evana
+
                             if(MultiFarmUtils.isMultiFarmEnumerator){
 
                                 if(!farmNameEdittext.getText().toString().trim().equalsIgnoreCase("") &&
@@ -3251,15 +3254,12 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                     adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
                     farmRoleSpinner.setAdapter(adapter);
 
-                    bindFarmers(farmerNameEdittext);
-
 
                     //   String roleId= existingStakeHolder.getString(existingStakeHolder.getColumnIndex(OFISDBContract.FarmStakeHolderInformation.COLUMN_NAME_STAKE_HOLDER_ROLE_ID));
 
 
                     String farmerId = multifarmArray.getJSONObject(j).get("farmerId").toString();
 
-                    // FarmerName Setting  evana
                     if (multifarmArray.getJSONObject(j).get("farmerId").toString().equalsIgnoreCase(String.valueOf(editFarmerId))) {
                         String defaultFarmerName = ((EditText) findViewById(R.id.farmerName)).getText().toString().trim();
                         farmerNameEdittext.setText(defaultFarmerName);

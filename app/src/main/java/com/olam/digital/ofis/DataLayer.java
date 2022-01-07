@@ -6523,8 +6523,12 @@ public class DataLayer {
         return farmerSet;
     }
 
-    public List<MultiFarmRoleDTO> getMultiFarmRoles() {
+    public List<MultiFarmRoleDTO> getMultiFarmRoles(String locale) {
+        if(locale.equalsIgnoreCase("_en")){
+            locale="";
+        }
         List<MultiFarmRoleDTO> multiFarmRoleDTOList = new ArrayList<MultiFarmRoleDTO>();
+       // Cursor cursor = db.rawQuery("select * from multifarmRoles", null);
         Cursor cursor = db.rawQuery("select * from multifarmRoles", null);
         if (cursor != null) {
             try {
@@ -6532,7 +6536,7 @@ public class DataLayer {
                     while (cursor.moveToNext()) {
                         MultiFarmRoleDTO multiFarmRoleDTO = new MultiFarmRoleDTO();
                         multiFarmRoleDTO.setId(Integer.parseInt(cursor.getString(cursor.getColumnIndex(OFISDBContract.MultiFarmRoles.COLUMN_NAME_ID))));
-                        multiFarmRoleDTO.setName(cursor.getString(cursor.getColumnIndex(OFISDBContract.MultiFarmRoles.COLUMN_NAME_NAME)));
+                        multiFarmRoleDTO.setName(cursor.getString(cursor.getColumnIndex(OFISDBContract.MultiFarmRoles.COLUMN_NAME_NAME+locale)));
                         multiFarmRoleDTOList.add(multiFarmRoleDTO);
                     }
                 }

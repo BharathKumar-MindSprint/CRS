@@ -236,6 +236,8 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         mResolvingError = savedInstanceState != null && savedInstanceState.getBoolean(STATE_RESOLVING_ERROR, false);
         context = this;
         ChildLabourUtils.isChildEnumerator=Utilities.getChildLabourPref(context,ChildLabourUtils.IS_CHILD_ENUMERATOR);
+        MultiFarmUtils.isMultiFarmEnumerator = Utilities.getMultifarmPref(context, MultiFarmUtils.IS_MULTI_FARM_ENUMERATOR);
+
         res = getResources();
         dl = new DataLayer(res, context);
         pd = new ProgressDialog(context);

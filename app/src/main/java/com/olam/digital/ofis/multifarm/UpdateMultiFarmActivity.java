@@ -123,7 +123,7 @@ public class UpdateMultiFarmActivity extends BaseActivity {
         gpsTracker = new GPSTracker(this, gpsListener);
         gpsTracker.getDeviceLocation();
 
-        multiFarmRoleDTOList=dl.getMultiFarmRoles();
+        multiFarmRoleDTOList=dl.getMultiFarmRoles(Utilities.getLocaleSuffix(res));
         rolesList.clear();
         for (MultiFarmRoleDTO multiFarmRoleDTO : multiFarmRoleDTOList){
             rolesList.add(multiFarmRoleDTO.getName());
