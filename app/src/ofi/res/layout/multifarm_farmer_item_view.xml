@@ -57,13 +57,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/farmerNameTV"
-                android:textColor="@color/ofis_base_font_dark"
+                android:textColor="@color/btn_secondary_background"
+                android:textStyle="bold"
                 android:textSize="@dimen/ofis_med_text" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/farmerIdTV"
-                android:textColor="@color/ofis_list_item_subtitle"
+                android:textColor="@color/btn_secondary_background"
                 android:textSize="@dimen/ofis_small_text" />
             <TextView
                 android:layout_width="wrap_content"

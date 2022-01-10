@@ -72,10 +72,10 @@
                 android:layout_margin="@dimen/activity_horizontal_margin"
                 android:orientation="vertical">
             <TextView
-                android:text="Select from existing Farm"
                 android:layout_width="match_parent"
-                android:textColor="@color/icon_grey_palette_2"
+                android:textColor="@color/white"
                 android:layout_marginTop="5dp"
+                android:text="@string/select_from_existing_farm"
                 android:layout_height="wrap_content"/>
 
             <EditText
@@ -87,8 +87,7 @@
                 android:layout_marginTop="@dimen/margin_10"
                 android:textColor="@color/ofis_base_font_dark"
                 android:textSize="@dimen/ofis_input_field_text"
-                android:hint="Search Existing Farm"
-
+                android:hint="@string/search_existing_farm"
                 android:textColorHint="@color/icon_grey_palette_2"
                 android:background="@drawable/edittext_bg_light"
                 android:drawableRight="@drawable/ic_searchimg"
@@ -103,7 +102,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/topSection"
-        android:background="@color/ofis_page_background"
+        android:background="@color/btn_primary_inner"
         android:layout_marginBottom="@dimen/margin_10"
         android:orientation="vertical">
         <TextView
@@ -117,10 +116,10 @@
             android:layout_height="wrap_content"/>
 
         <TextView
-            android:text="Search by Nearest Farm"
+            android:text="@string/select_by_nearest_farm"
             android:layout_width="match_parent"
             android:layout_marginLeft="@dimen/activity_horizontal_margin"
-            android:textColor="@color/icon_grey_palette_2"
+            android:textColor="@color/btn_secondary_background"
             android:layout_height="wrap_content"/>
         <RelativeLayout
             android:layout_width="match_parent"
@@ -131,11 +130,13 @@
 
             <TextView
                 android:text="0km"
+                android:textColor="@color/btn_secondary_background"
                 android:layout_alignParentRight="false"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
             <TextView
                 android:text="10km"
+                android:textColor="@color/btn_secondary_background"
                 android:layout_alignParentRight="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
@@ -167,7 +168,7 @@
             android:textColor="@color/ofis_base_font_white"
             android:layout_marginLeft="@dimen/activity_vertical_margin"
             android:layout_marginRight="@dimen/activity_vertical_margin"
-            android:background="@color/btn_primary_background"
+            android:background="@drawable/rounder_cornor_btn_third_color"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
     </LinearLayout>

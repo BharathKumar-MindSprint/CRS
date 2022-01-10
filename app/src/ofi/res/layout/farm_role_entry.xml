@@ -37,6 +37,7 @@
         android:textColor="@color/ofis_base_font_dark"
         android:paddingRight="15dp"
         android:layout_gravity="center"
+
         android:background="@drawable/spinner_bg_light"/>
 
     <ImageView
