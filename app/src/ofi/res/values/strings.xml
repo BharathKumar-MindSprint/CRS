@@ -1031,4 +1031,7 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="farm_type_warning">Please Choose the Farm Type</string>
     <string name="search_existing_farm">Search Existing Farm</string>
     <string name="select_by_nearest_farm">Search by Nearest Farm</string>
+    <string name="recored_polygon_multifarm_info">Farm location already captured by a stakeholder of your farm</string>
+    <string name="recored_polygon_plot_multifarm_info">Farm polygon already captured by a stakeholder of your farm</string>
+    <string name="survey_can_be_completed_by_other_stakeholders">This survey can be  completed by the another farm stakeholder</string>
 </resources>
