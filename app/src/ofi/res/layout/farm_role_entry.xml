@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:weightSum="7">
+
+    <TextView
+        android:id="@+id/farmFarmerTV"
+        android:layout_weight="3"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:inputType="textCapWords"
+        android:padding="5dp"
+        android:layout_margin="5dp"
+        android:gravity="center_vertical"
+        android:layout_marginRight="3dp"
+        android:ellipsize="end"
+        android:drawableRight="@drawable/ic_searchimg_small"
+        android:drawablePadding="3dp"
+        android:textColor="@color/ofis_base_font_dark"
+        android:textSize="11sp"
+        android:hint="@string/Farmer_Name"
+        android:layout_gravity="center"
+        android:textColorHint="@color/icon_grey_palette_2"
+        android:background="@drawable/edittext_bg_light"
+        android:cursorVisible="false" />
+    <Spinner
+        android:id="@+id/farmerRoleSpinner"
+        android:layout_weight="3"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:layout_margin="5dp"
+        android:layout_marginLeft="3dp"
+        android:textColor="@color/ofis_base_font_dark"
+        android:paddingRight="15dp"
+        android:layout_gravity="center"
+
+        android:background="@drawable/spinner_bg_light"/>
+
+    <ImageView
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:layout_weight="1"
+        android:scaleType="fitCenter"
+        android:id="@+id/farmRoleDelete"
+        android:layout_gravity="center"
+        app:srcCompat="@drawable/ic_delete_item"
+        android:contentDescription="@string/Delete_Item"
+        tools:ignore="VectorDrawableCompat" />
+
+</LinearLayout>

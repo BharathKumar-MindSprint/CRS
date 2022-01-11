@@ -95,6 +95,9 @@ import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.gps.utils.GPSUtils;
 import com.olam.digital.ofis.matoma.MatomoHelper;
 import com.olam.digital.ofis.matoma.ScreenNameConstants;
+import com.olam.digital.ofis.multifarm.MultiFarmDTO;
+import com.olam.digital.ofis.multifarm.MultiFarmUtils;
+import com.olam.digital.ofis.multifarm.UpdateMultiFarmActivity;
 import com.olam.digital.ofis.recordpolygon.LocationBeanList;
 import com.olam.digital.ofis.recordpolygon.PlotsList;
 import com.olam.digital.ofis.recordpolygon.RecordPolygonActivity;
@@ -233,6 +236,8 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         mResolvingError = savedInstanceState != null && savedInstanceState.getBoolean(STATE_RESOLVING_ERROR, false);
         context = this;
         ChildLabourUtils.isChildEnumerator=Utilities.getChildLabourPref(context,ChildLabourUtils.IS_CHILD_ENUMERATOR);
+        MultiFarmUtils.isMultiFarmEnumerator = Utilities.getMultifarmPref(context, MultiFarmUtils.IS_MULTI_FARM_ENUMERATOR);
+
         res = getResources();
         dl = new DataLayer(res, context);
         pd = new ProgressDialog(context);
@@ -433,7 +438,11 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 }
                 submittedModules = (!submittedModulesJSON.equals("null")) ? new JSONObject(submittedModulesJSON) : new JSONObject();
                 String moduleNameSuffix = Utilities.getLocaleSuffix(res);
-                Cursor moduleAssignments = getFarmerModules(farmerId, this);
+                Cursor moduleAssignments = dl.getFarmerModules(farmerId, this);
+                int roleId=0;
+                if (Utilities.getMultifarmPref(context, MultiFarmUtils.IS_MULTI_FARM_ENUMERATOR)) {
+                     roleId = dl.getMultiFarmRoleInfoByFarmerId(String.valueOf(farmerId));
+                }
                 if (moduleAssignments != null && moduleAssignments.getCount() > 0) {
                     String[] adapterCols = new String[]{
                             (moduleAssignments.getColumnIndex(OFISDBContract.ModuleEntry.COLUMN_NAME_NAME + moduleNameSuffix) != -1) ? OFISDBContract.ModuleEntry.COLUMN_NAME_NAME + moduleNameSuffix : OFISDBContract.ModuleEntry.COLUMN_NAME_NAME,
@@ -447,7 +456,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                     int[] adapterRowViews = new int[]{R.id.moduleListModuleName, R.id.moduleListCurrentSubModuleId, R.id.moduleListStatusStarted, R.id.moduleListStatusFinished, R.id.moduleListFarmerModuleId, R.id.moduleListRecordedLat, R.id.moduleListRecordedLng};
 
                     customListAdapter_modulesAdapter =
-                            new CustomListAdapter_Modules(context, moduleAssignments, adapterCols, adapterRowViews, res, farmer, submittedModules);
+                            new CustomListAdapter_Modules(context, moduleAssignments, adapterCols, adapterRowViews, res, farmer, submittedModules,roleId,farmerId);
                     listView.setAdapter(customListAdapter_modulesAdapter);
                 }
             } catch (JSONException e) {
@@ -1979,7 +1988,14 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                         polygon = false;
                         household = true;
                         recordFarmLocation(v, res.getString(R.string.are_you_at_the_farmers_hh));
-                    } else {
+                    } else if (recordedLng != null && recordedLng.getText().equals("multifarm")){
+                        Intent in = new Intent(this, UpdateMultiFarmActivity.class);
+                        Bundle bundle=new Bundle();
+                        bundle.putLong("farmerId", farmerId);
+                        bundle.putString("olamfarmername", farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME)));
+                        in.putExtras(bundle);
+                        startActivity(in);
+                    }else {
                         polygon = false;
                         household = false;
                         recordFarmLocation(v, res.getString(R.string.are_you_at_the_farm));
