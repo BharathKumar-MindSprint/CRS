@@ -538,152 +538,163 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                     }
                 }
 
-//                if(MultiFarmUtils.isMultiFarmEnumerator) {
-//                    // Multifarm Restrict Survey
-//                    String farmSurvey = cursor.getString(cursor.getColumnIndex("isFarmSurvey"));
-//                    int currentId1 = cursor.getInt(cursor.getColumnIndex("_id"));
-//                    System.out.println(currentId1);
-//
-//                    boolean isFarmSurvey;
-//                    String farmerRoleStr = cursor.getString(cursor.getColumnIndex("fkFarmerRoleId"));
-//                    int farmerRole;
-//                    if (farmSurvey != null) {
-//                        isFarmSurvey = Boolean.parseBoolean(farmSurvey);
-//                        farmerRole = Integer.parseInt(farmerRoleStr);
-//                            if (!isFarmSurvey) {
-//                                if (farmerRole!=0) {
-//                                    if (farmerRole == roleId) {
-//                                        // Enable
-//                                        if (!submitted) {
-//                                            enabledItem.setText("true");
-//                                            linearLayout.setBackgroundResource(R.drawable.list_item);
-//                                            moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
-//                                            textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
-//                                        }else{
-//                                            linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
-//                                            moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-//                                            textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-//                                            enabledItem.setText("false");
-//                                        }
-//                                    } else {
-//                                        // Disable
-//                                         linearLayout.setOnLongClickListener(v -> {
-//
-//                                                 LayoutInflater li = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//                                                 View layout = li.inflate(R.layout.multifarm_custom_toast_layout, null);
-//                                                 TextView tv=layout.findViewById(R.id.alert_msg);
-//                                                 tv.setText(res.getString(R.string.survey_can_be_completed_by_other_stakeholders));
-//                                                 //Creating the Toast objectn
-//                                                 Toast toast = new Toast(mContext);
-//                                                 toast.setDuration(Toast.LENGTH_SHORT);
-//                                                 toast.setGravity(Gravity.BOTTOM | Gravity.FILL_HORIZONTAL, 0, 0);
-//                                                 toast.setView(layout);//setting the view of custom toast layout
-//                                                 toast.show();
-//
-//                                                 //  Toast.makeText(linearLayout.getContext(), mContext.getResources().getString(R.string.already_syned_survey_info), Toast.LENGTH_LONG).show();
-//                                             return true;
-//                                         });
-//
-//
-//                                        linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
-//                                        moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-//                                        textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-//                                        enabledItem.setText("false");
-//                                    }
-//                                }
-//                            } else {
-//                                try {
-//                                    SubmittedInfo submittedInfo = dl.isAvailableinSubmittedModules(cursor, currentId, String.valueOf(farmerId));
-//                                    if (farmerRole!=0) {
-//                                        if (farmerRole == roleId) {
-//                                            // Enable
-//                                            if (submittedInfo.isSubmitted()) {
-//                                                linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
-//                                                moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-//                                                textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-//                                                enabledItem.setText("false");
-//
-//                                                // Put listener call for the long press
-//                                                linearLayout.setOnLongClickListener(v -> {
-//                                                    if (submittedInfo.getFarmerId() != farmerId) {
-//                                                        LayoutInflater li = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//                                                        //Getting the View object as defined in the customtoast.xml file
-//                                                        View layout = li.inflate(R.layout.multifarm_custom_toast_layout, null);
-//
-//                                                        //Creating the Toast object
-//                                                        Toast toast = new Toast(mContext);
-//                                                        toast.setDuration(Toast.LENGTH_SHORT);
-//                                                        toast.setGravity(Gravity.BOTTOM | Gravity.FILL_HORIZONTAL, 0, 0);
-//                                                        toast.setView(layout);//setting the view of custom toast layout
-//                                                        toast.show();
-//                                                    }
-//                                                    return true;
-//                                                });
-//
-//                                            } else {
-//                                                enabledItem.setText("true");
-//                                                linearLayout.setBackgroundResource(R.drawable.list_item);
-//                                                moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
-//                                                textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
-//                                            }
-//                                        } else {
-//                                            // Disable
-//
-//                                            linearLayout.setOnLongClickListener(v -> {
-//
-//                                                LayoutInflater li = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//                                                View layout = li.inflate(R.layout.multifarm_custom_toast_layout, null);
-//                                                TextView tv = layout.findViewById(R.id.alert_msg);
-//                                                tv.setText(res.getString(R.string.survey_can_be_completed_by_other_stakeholders));
-//                                                //Creating the Toast objectn
-//                                                Toast toast = new Toast(mContext);
-//                                                toast.setDuration(Toast.LENGTH_SHORT);
-//                                                toast.setGravity(Gravity.BOTTOM | Gravity.FILL_HORIZONTAL, 0, 0);
-//                                                toast.setView(layout);//setting the view of custom toast layout
-//                                                toast.show();
-//
-//                                                //  Toast.makeText(linearLayout.getContext(), mContext.getResources().getString(R.string.already_syned_survey_info), Toast.LENGTH_LONG).show();
-//                                                return true;
-//                                            });
-//
-//                                            linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
-//                                            moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-//                                            textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-//                                            enabledItem.setText("false");
-//                                        }
-//                                    }else{
-//                                        ///  any stakeholder took the survey
-//                                        if (submittedInfo.isSubmitted()) {
-//                                            linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
-//                                            moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-//                                            textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-//                                            enabledItem.setText("false");
-//
-//                                            // Put listener call for the long press
-//                                            linearLayout.setOnLongClickListener(v -> {
-//                                                if (submittedInfo.getFarmerId() != farmerId) {
-//                                                    LayoutInflater li = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//                                                    //Getting the View object as defined in the customtoast.xml file
-//                                                    View layout = li.inflate(R.layout.multifarm_custom_toast_layout, null);
-//
-//                                                    //Creating the Toast object
-//                                                    Toast toast = new Toast(mContext);
-//                                                    toast.setDuration(Toast.LENGTH_SHORT);
-//                                                    toast.setGravity(Gravity.BOTTOM | Gravity.FILL_HORIZONTAL, 0, 0);
-//                                                    toast.setView(layout);//setting the view of custom toast layout
-//                                                    toast.show();
-//                                                }
-//                                                return true;
-//                                            });
-//                                    }}
-//                                } catch (JSONException e) {
-//                                    e.printStackTrace();
-//                                }
-//
-//                            }
-//
-//                    }
-//                }
+                if(MultiFarmUtils.isMultiFarmEnumerator) {
+                    // Multifarm Restrict Survey
+                    String farmSurvey = cursor.getString(cursor.getColumnIndex("isFarmSurvey"));
+                    int currentId1 = cursor.getInt(cursor.getColumnIndex("_id"));
+                    System.out.println(currentId1);
+
+                    boolean isFarmSurvey;
+                    String farmerRoleStr = cursor.getString(cursor.getColumnIndex("fkFarmerRoleId"));
+                    int farmerRole;
+                    if (farmSurvey != null) {
+                        isFarmSurvey = Boolean.parseBoolean(farmSurvey);
+                        farmerRole = Integer.parseInt(farmerRoleStr);
+                            if (!isFarmSurvey) {
+                                //// FARM-ER SURVEY CODE
+                                if (farmerRole!=0 && roleId !=0) {
+                                    if (farmerRole == roleId) {
+                                        // Enable
+                                        if (!submitted) {
+                                            enabledItem.setText("true");
+                                            linearLayout.setBackgroundResource(R.drawable.list_item);
+                                            moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
+                                            textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
+                                        }else{
+                                            linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
+                                            moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                            textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                            enabledItem.setText("false");
+                                        }
+                                    } else {
+                                        // Disable
+                                         linearLayout.setOnLongClickListener(v -> {
+
+                                                 LayoutInflater li = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                                                 View layout = li.inflate(R.layout.multifarm_custom_toast_layout, null);
+                                                 TextView tv=layout.findViewById(R.id.alert_msg);
+                                                 tv.setText(res.getString(R.string.survey_can_be_completed_by_other_stakeholders));
+                                                 //Creating the Toast objectn
+                                                 Toast toast = new Toast(mContext);
+                                                 toast.setDuration(Toast.LENGTH_SHORT);
+                                                 toast.setGravity(Gravity.BOTTOM | Gravity.FILL_HORIZONTAL, 0, 0);
+                                                 toast.setView(layout);//setting the view of custom toast layout
+                                                 toast.show();
+
+                                                 //  Toast.makeText(linearLayout.getContext(), mContext.getResources().getString(R.string.already_syned_survey_info), Toast.LENGTH_LONG).show();
+                                             return true;
+                                         });
+
+
+                                        linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
+                                        moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                        textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                        enabledItem.setText("false");
+                                    }
+                                }
+                            } else {
+                                // FARM SURVEY CODE
+                                try {
+                                    SubmittedInfo submittedInfo = dl.isAvailableinSubmittedModules(cursor, currentId, String.valueOf(farmerId));
+                                    if (farmerRole!=0 && roleId!=0) {
+                                        if (farmerRole == roleId) {
+                                            // Enable
+                                            if (submittedInfo.isSubmitted()) {
+                                                linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
+                                                moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                                textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                                enabledItem.setText("false");
+
+                                                // Put listener call for the long press
+                                                linearLayout.setOnLongClickListener(v -> {
+                                                    if (submittedInfo.getFarmerId() != farmerId) {
+                                                        LayoutInflater li = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                                                        //Getting the View object as defined in the customtoast.xml file
+                                                        View layout = li.inflate(R.layout.multifarm_custom_toast_layout, null);
+
+                                                        //Creating the Toast object
+                                                        Toast toast = new Toast(mContext);
+                                                        toast.setDuration(Toast.LENGTH_SHORT);
+                                                        toast.setGravity(Gravity.BOTTOM | Gravity.FILL_HORIZONTAL, 0, 0);
+                                                        toast.setView(layout);//setting the view of custom toast layout
+                                                        toast.show();
+                                                    }
+                                                    return true;
+                                                });
+
+                                            } else {
+
+                                                enabledItem.setText("true");
+                                                linearLayout.setBackgroundResource(R.drawable.list_item);
+                                                moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
+                                                textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
+                                            }
+                                        } else {
+                                            // Disable
+
+                                            linearLayout.setOnLongClickListener(v -> {
+
+                                                LayoutInflater li = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                                                View layout = li.inflate(R.layout.multifarm_custom_toast_layout, null);
+                                                TextView tv = layout.findViewById(R.id.alert_msg);
+                                                tv.setText(res.getString(R.string.survey_can_be_completed_by_other_stakeholders));
+                                                //Creating the Toast objectn
+                                                Toast toast = new Toast(mContext);
+                                                toast.setDuration(Toast.LENGTH_SHORT);
+                                                toast.setGravity(Gravity.BOTTOM | Gravity.FILL_HORIZONTAL, 0, 0);
+                                                toast.setView(layout);//setting the view of custom toast layout
+                                                toast.show();
+
+                                                //  Toast.makeText(linearLayout.getContext(), mContext.getResources().getString(R.string.already_syned_survey_info), Toast.LENGTH_LONG).show();
+                                                return true;
+                                            });
+
+                                            linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
+                                            moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                            textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                            enabledItem.setText("false");
+                                        }
+                                    }else {
+                                        // Farm Survey - Role is not defined for the farm stakeholders
+                                        if (roleId != 0 && farmerRole ==0) {
+                                            if (submittedInfo.isSubmitted()) {
+                                                linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
+                                                moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                                textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                                enabledItem.setText("false");
+
+                                                // Put listener call for the long press
+                                                linearLayout.setOnLongClickListener(v -> {
+                                                    if (submittedInfo.getFarmerId() != farmerId) {
+                                                        LayoutInflater li = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                                                        //Getting the View object as defined in the customtoast.xml file
+                                                        View layout = li.inflate(R.layout.multifarm_custom_toast_layout, null);
+
+                                                        //Creating the Toast object
+                                                        Toast toast = new Toast(mContext);
+                                                        toast.setDuration(Toast.LENGTH_SHORT);
+                                                        toast.setGravity(Gravity.BOTTOM | Gravity.FILL_HORIZONTAL, 0, 0);
+                                                        toast.setView(layout);//setting the view of custom toast layout
+                                                        toast.show();
+                                                    }
+                                                    return true;
+                                                });
+                                            }else{
+                                                enabledItem.setText("true");
+                                                linearLayout.setBackgroundResource(R.drawable.list_item);
+                                                moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
+                                                textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
+                                            }
+                                        }
+                                    }
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+                            }
+
+                    }
+                }
 
             }
 
