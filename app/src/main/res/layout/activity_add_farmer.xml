@@ -464,16 +464,14 @@
                             android:layout_width="wrap_content"
                             android:text="@string/create_new_farm"
                             android:textStyle="bold"
-                            android:textColor="@color/btn_secondary_background"
-                            android:buttonTint="@color/colorPrimary"
+                            android:textColor="@color/ofis_text_field"
                             android:layout_height="wrap_content"/>
                         <RadioButton
                             android:id="@+id/existingFarmRadioButton"
                             android:layout_width="wrap_content"
                             android:textStyle="bold"
-                            android:buttonTint="@color/colorPrimary"
+                            android:textColor="@color/ofis_text_field"
                             android:text="@string/select_from_existing_farm"
-                            android:textColor="@color/btn_secondary_background"
                             android:layout_marginLeft="@dimen/margin_10"
                             android:layout_height="wrap_content"/>
 
@@ -488,7 +486,7 @@
 
                         <TextView
                             android:text="@string/farm_name"
-                            android:textColor="@color/btn_secondary_background"
+                            android:textColor="@color/ofis_text_field"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"/>
 
@@ -499,18 +497,18 @@
                             android:padding="@dimen/margin_10"
                             android:layout_marginTop="@dimen/margin_10"
                             android:id="@+id/farmNameEdittext"
-                            android:textColor="@color/btn_secondary_background"
+                            android:textColor="@color/ofis_text_field"
                             android:textStyle="bold"
                             android:textSize="@dimen/ofis_input_field_text"
                             android:hint="@string/farm_name"
                             android:maxLength="100"
-                            android:digits="ABCDEFGHIJKLMNOPQRSTUVWX1Z1234567890abcdefghijklmnopqrstuvwxyz.,\/'-_ "
+                            android:digits="ABCDEFGHIJKLMNOPQRSTUVWX1Z1234567890abcdefghijklmnopqrstuvwxyz.,/'-_ \\"
                             android:textColorHint="@color/icon_grey_palette_2"
                             android:layout_marginBottom="@dimen/ofis_input_field_bottom_margin"/>
 
                         <TextView
                             android:text="@string/farm_code"
-                            android:textColor="@color/btn_secondary_background"
+                            android:textColor="@color/ofis_text_field"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"/>
                         <EditText
@@ -520,11 +518,10 @@
                             android:padding="@dimen/margin_10"
                             android:layout_marginTop="@dimen/margin_10"
                             android:id="@+id/farmCodeEdittext"
-                            android:textColor="@color/btn_secondary_background"
+                            android:textColor="@color/ofis_text_field"
                             android:textSize="@dimen/ofis_input_field_text"
                             android:hint="@string/farm_code"
                             android:textColorHint="@color/icon_grey_palette_2"
-                            android:background="@drawable/farm_code_selected_edittext"
                             android:focusable="false"
                             android:layout_marginBottom="@dimen/ofis_input_field_bottom_margin"/>
 
