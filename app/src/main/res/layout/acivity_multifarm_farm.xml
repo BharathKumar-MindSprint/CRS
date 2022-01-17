@@ -78,19 +78,35 @@
                 android:text="@string/select_from_existing_farm"
                 android:layout_height="wrap_content"/>
 
-            <EditText
-                android:id="@+id/existingFarmTV"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:inputType="textCapWords"
-                android:padding="@dimen/margin_10"
-                android:layout_marginTop="@dimen/margin_10"
-                android:textColor="@color/ofis_base_font_dark"
-                android:textSize="@dimen/ofis_input_field_text"
-                android:hint="@string/search_existing_farm"
-                android:textColorHint="@color/icon_grey_palette_2"
-                android:drawableRight="@drawable/ic_searchimg"
-                android:layout_marginBottom="@dimen/ofis_input_field_bottom_margin"/>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="@dimen/margin_10"
+                    android:background="@drawable/ofis_edit_text_holo_dark">
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textCapWords"
+                        android:textColorHint="@color/ofis_base_font_white"
+                        android:textSize="@dimen/ofis_input_field_text"
+                        android:id="@+id/existingFarmTV"
+                        android:layout_weight="1"
+                        android:textColor="@color/ofis_base_font_white"
+                        android:hint="@string/search_existing_farm"
+                        android:background="@android:color/transparent"/>
+                    <ImageButton
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:id="@+id/imageButton"
+                        android:layout_weight="8"
+                        app:srcCompat="@drawable/ic_search"
+                        android:background="@android:color/transparent"
+                        android:contentDescription="@string/Search" />
+                </LinearLayout>
+
             </LinearLayout>
 
         </LinearLayout>
@@ -111,14 +127,14 @@
             android:gravity="center"
             android:textStyle="bold"
             android:layout_margin="@dimen/margin_10"
-            android:textColor="@color/colorPrimary"
+            android:textColor="@color/ofis_text_field"
             android:layout_height="wrap_content"/>
 
         <TextView
             android:text="@string/select_by_nearest_farm"
             android:layout_width="match_parent"
             android:layout_marginLeft="@dimen/activity_horizontal_margin"
-            android:textColor="@color/btn_secondary_background"
+            android:textColor="@color/ofis_text_field"
             android:layout_height="wrap_content"/>
         <RelativeLayout
             android:layout_width="match_parent"
@@ -129,13 +145,13 @@
 
             <TextView
                 android:text="0km"
-                android:textColor="@color/btn_secondary_background"
+                android:textColor="@color/ofis_text_field"
                 android:layout_alignParentRight="false"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
             <TextView
                 android:text="10km"
-                android:textColor="@color/btn_secondary_background"
+                android:textColor="@color/ofis_text_field"
                 android:layout_alignParentRight="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
@@ -152,7 +168,7 @@
             android:layout_margin="@dimen/margin_10"
             android:layout_marginLeft="@dimen/activity_vertical_margin"
             android:layout_marginRight="@dimen/activity_vertical_margin"
-            app:bsb_second_track_color="@color/btn_primary_background"
+            app:bsb_second_track_color="@color/ofis_action_button_background"
             app:bsb_section_count="10"
             app:bsb_section_text_position="below_section_mark"
             app:bsb_show_section_mark="true"
@@ -167,7 +183,7 @@
             android:textColor="@color/ofis_base_font_white"
             android:layout_marginLeft="@dimen/activity_vertical_margin"
             android:layout_marginRight="@dimen/activity_vertical_margin"
-            android:background="@drawable/rounder_cornor_btn_third_color"
+            android:background="@color/ofis_action_button_background"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
     </LinearLayout>

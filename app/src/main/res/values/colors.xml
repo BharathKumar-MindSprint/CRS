@@ -72,4 +72,6 @@
     <color name="background_multifarm">#F2B277</color>
     <color name="btn_primary_inner">#F8F6F8</color>
 
+    <color name="radio_btn_color_primary">#dc582a</color>
+
 </resources>
