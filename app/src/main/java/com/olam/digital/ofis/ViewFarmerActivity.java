@@ -2017,8 +2017,8 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         LinearLayout farmerList = (LinearLayout) farmDetailDialog.findViewById(R.id.farmerList);
 
 //        fetch multifarm details
-        long farmId = dl.getFarmidinMultifarm(farmerId);
-        MultiFarmDTO multiFarmDTO = dl.getMultiFarmInfoObj(farmId);
+        long mfFarmId = dl.getFarmidinMultifarm(farmerId);
+        MultiFarmDTO multiFarmDTO = dl.getMultiFarmInfoObj(mfFarmId);
         JSONArray multiFarmArray=multiFarmDTO.getStakeholdersInfo();
         for(int i=0;i<multiFarmArray.length();i++){
             JSONObject jsonobject= (JSONObject) multiFarmArray.get(i);
@@ -2053,8 +2053,12 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 farmDetailDialog.dismiss();
                 Intent in = new Intent(ViewFarmerActivity.this, UpdateMultiFarmActivity.class);
                 Bundle bundle=new Bundle();
-                bundle.putLong("farmerId", farmerId);
-                bundle.putString("olamfarmername", farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME)));
+//                bundle.putLong("farmerId", farmerId);
+//                bundle.putBoolean("editMode",true);
+//                bundle.putString("olamfarmername", farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME)));
+                bundle.putString("farmerId", String.valueOf(farmerId));
+                bundle.putString("farmId", String.valueOf(mfFarmId));
+                bundle.putBoolean("editMode",true);
                 in.putExtras(bundle);
                 startActivity(in);
             }
