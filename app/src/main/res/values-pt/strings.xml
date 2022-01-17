@@ -623,4 +623,8 @@
     <string name="national_id_info">Please update the National ID of farmer</string>
     <string name="zero_area_msg">Cannot save recorded polygon with 0ha. Please try recording a different polygon</string>
     <string name="please_click_checkbox">Por favor, clique em todas as caixas de seleção apropriadas</string>
+    <string name="txt_farm_name">Farm Name:</string>
+    <string name="txt_farm_code">Farm Code:</string>
+    <string name="farmer_role">Role:</string>
+    <string name="farm_detail_confirmation_text">Please confirm if the below farm information linked is up-to-date, to proceed with the survey</string>
 </resources>

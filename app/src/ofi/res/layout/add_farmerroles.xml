@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="5dp">
+
+    <LinearLayout
+        android:layout_marginTop="@dimen/ofis_small_pad"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="2"
+        android:textAppearance="?android:textAppearanceSmall"
+        android:textStyle="normal"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/farmer_name_title"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:text="@string/Farmer_Name"
+            android:textSize="@dimen/ofis_large_text"
+            android:textColor="@color/text_label_attendee" />
+
+        <TextView
+            android:layout_weight="1"
+            android:id="@+id/farmer_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:text="@string/Farmer_Name"
+            android:textStyle="bold"
+            android:textSize="@dimen/ofis_large_text"
+            android:textColor="@color/text_label_attendee"  />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_marginTop="@dimen/ofis_small_pad"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="2"
+        android:textAppearance="?android:textAppearanceSmall"
+        android:textStyle="normal"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/farmer_role_title"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:text="@string/farmer_role"
+            android:textSize="@dimen/ofis_large_text"
+            android:textColor="@color/text_label_attendee" />
+
+        <TextView
+            android:layout_weight="1"
+            android:id="@+id/role"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:text="@string/farmer_role"
+            android:textStyle="bold"
+            android:textSize="@dimen/ofis_large_text"
+            android:textColor="@color/text_label_attendee"  />
+
+    </LinearLayout>
+
+</LinearLayout>

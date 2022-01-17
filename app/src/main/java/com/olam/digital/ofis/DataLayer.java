@@ -5565,6 +5565,60 @@ public class DataLayer {
         return available;
     }
 
+    public boolean isfarmerIdAvailableMultiFarmDB(long farmerLong) {
+        String stackholders;
+        boolean available = false;
+        String[] columns = new String[]{"*"};
+        Cursor mCursor= db.query(OFISDBContract.MultiFarmFarms.TABLE_NAME, columns, null, null, null, null, null);
+
+        try {
+            if (mCursor != null) {
+                while (mCursor.moveToNext()) {
+                    JSONArray multiFarmArray = new JSONArray(mCursor.getString(mCursor.getColumnIndex(OFISDBContract.MultiFarmFarms.COLUMN_NAME_NAME_STAKE_HOLDERS)));
+                    for(int i=0;i<multiFarmArray.length();i++){
+                        JSONObject jsonobject= (JSONObject) multiFarmArray.get(i);
+                        long farmerId = Long.valueOf(jsonobject.getLong("farmerId"));
+                        if(farmerId == farmerLong){
+                            available = true;
+                        }
+                    }
+                }
+            }
+        }catch (Exception e){
+
+        }finally {
+            mCursor.close();
+        }
+        return available;
+    }
+
+    public long getFarmidinMultifarm(long farmerLong) {
+        long farmid = 0;
+        boolean available = false;
+        String[] columns = new String[]{"*"};
+        Cursor mCursor= db.query(OFISDBContract.MultiFarmFarms.TABLE_NAME, columns, null, null, null, null, null);
+
+        try {
+            if (mCursor != null) {
+                while (mCursor.moveToNext()) {
+                    JSONArray multiFarmArray = new JSONArray(mCursor.getString(mCursor.getColumnIndex(OFISDBContract.MultiFarmFarms.COLUMN_NAME_NAME_STAKE_HOLDERS)));
+                    for(int i=0;i<multiFarmArray.length();i++){
+                        JSONObject jsonobject= (JSONObject) multiFarmArray.get(i);
+                        long farmerId = Long.valueOf(jsonobject.getLong("farmerId"));
+                        if(farmerId == farmerLong){
+                          farmid = Long.valueOf(mCursor.getString(mCursor.getColumnIndex(OFISDBContract.MultiFarmFarms.COLUMN_NAME_ID)));
+                        }
+                    }
+                }
+            }
+        }catch (Exception e){
+
+        }finally {
+            mCursor.close();
+        }
+        return farmid;
+    }
+
     public Cursor getEnumeratorCountries() {
         Cursor cursor=null;
         try {
@@ -7221,6 +7275,29 @@ public class DataLayer {
         }
         cursor.close();
         return  plotAvailable;
+    }
+
+    Cursor getFarmerRoleById(int Id) {
+        String[] columns = new String[]{"*"};
+        String whereClause = OFISDBContract.MultiFarmRoles.COLUMN_NAME_ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(Id)};
+        return db.query(OFISDBContract.MultiFarmRoles.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+    }
+
+    public String getFarmerRole(int id) {
+        String name = "NA";
+        Cursor nids = getFarmerRoleById(id);
+        try {
+            while (nids.moveToNext()) {
+                name = nids.getString(nids.getColumnIndex(OFISDBContract.MultiFarmRoles.COLUMN_NAME_NAME));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            nids.close();
+        }
+
+        return name;
     }
 }
 

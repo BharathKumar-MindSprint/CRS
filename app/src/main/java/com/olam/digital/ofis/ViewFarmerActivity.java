@@ -18,6 +18,7 @@ import android.database.MatrixCursor;
 import android.database.MergeCursor;
 import android.graphics.Bitmap;
 import android.location.Location;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -1893,32 +1894,18 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         TextView enabled = (TextView) v.findViewById(R.id.moduleListEnabled);
         if (enabled.getText().toString().equalsIgnoreCase("true")) {
             if (id > 0) {
-                TextView subModuleTv = (TextView) v.findViewById(R.id.moduleListCurrentSubModuleId);
-                TextView moduleNameTv = (TextView) v.findViewById(R.id.moduleListModuleName);
-                TextView statusStartedTv = (TextView) v.findViewById(R.id.moduleListStatusStarted);
-                TextView statusFinishedTv = (TextView) v.findViewById(R.id.moduleListStatusFinished);
-                TextView farmerModuleIdTv = (TextView) v.findViewById(R.id.moduleListFarmerModuleId);
-                TextView farmerModuleLatTv = (TextView) v.findViewById(R.id.moduleListRecordedLat);
-                TextView farmerModuleLngTv = (TextView) v.findViewById(R.id.moduleListRecordedLng);
-                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_SURVEY,  ScreenNameConstants.BUTTON_CLICKED);
-                Intent intent = new Intent(context, CompleteModuleActivity.class);
-                intent.putExtra(FARMER_ID, farmerId);
-                intent.putExtra(MODULE_ID, id);
-                intent.putExtra(FARMER_MODULE_ID, (String.valueOf(farmerModuleIdTv.getText()).equals("")) ? 0 : Long.parseLong(String.valueOf(farmerModuleIdTv.getText())));
-                intent.putExtra(SUB_MODULE_ID, (String.valueOf(subModuleTv.getText()).equals("")) ? 0 : Integer.parseInt(String.valueOf(subModuleTv.getText())));
-                intent.putExtra(FARM_ID, farmer.getInt(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_ID)));
-                intent.putExtra(STATUS_STARTED, (String.valueOf(statusStartedTv.getText()).equals("")) ? 0 : Integer.parseInt(String.valueOf(statusStartedTv.getText())));
-                intent.putExtra(STATUS_FINISHED, (String.valueOf(statusFinishedTv.getText()).equals("")) ? 0 : Integer.parseInt(String.valueOf(statusFinishedTv.getText())));
-                intent.putExtra(OLAM_FARMER_ID, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
-                intent.putExtra(MODULE_NAME, String.valueOf(moduleNameTv.getText()));
-                intent.putExtra(RECORDED_LAT, (String.valueOf(farmerModuleLatTv.getText()).equals("")) ? "" : String.valueOf(farmerModuleLatTv.getText()));
-                intent.putExtra(RECORDED_LNG, (String.valueOf(farmerModuleLatTv.getText()).equals("")) ? "" : String.valueOf(farmerModuleLngTv.getText()));
-                intent.putExtra(FARMER_NAME, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME)));
-
-                if (DynamicQuestions.getInstance() != null) {
-                    DynamicQuestions.clearInstance();
+                if (dl.isfarmerIdAvailableMultiFarmDB(farmerId)) {
+                    try {
+                        showPopupFarmDetails(v, position, id);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }else{
+                    showSurvey(v, id);
                 }
-                context.startActivity(intent);
+
+//                showSurvey(v, id);
+
             } else {
                 if (id == 0) {
                     // record farm location if necessary
@@ -2018,6 +2005,98 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 }
             }
         }
+    }
+
+    public void showPopupFarmDetails(View v, int position, long id) throws JSONException {
+        final Dialog farmDetailDialog = new Dialog(this, android.R.style.Theme_Material_Dialog_Alert);
+        farmDetailDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        farmDetailDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        farmDetailDialog.setContentView(R.layout.dialog_farmdetails);
+        farmDetailDialog.setCancelable(false);
+        farmDetailDialog.setCanceledOnTouchOutside(false);
+        LinearLayout farmerList = (LinearLayout) farmDetailDialog.findViewById(R.id.farmerList);
+
+//        fetch multifarm details
+        long farmId = dl.getFarmidinMultifarm(farmerId);
+        MultiFarmDTO multiFarmDTO = dl.getMultiFarmInfoObj(farmId);
+        JSONArray multiFarmArray=multiFarmDTO.getStakeholdersInfo();
+        for(int i=0;i<multiFarmArray.length();i++){
+            JSONObject jsonobject= (JSONObject) multiFarmArray.get(i);
+            String farmerName=jsonobject.optString("farmerName");
+            String role=dl.getFarmerRole(jsonobject.optInt("farmerRoleId"));
+            LinearLayout includeFarmerList = (LinearLayout) inflater.inflate(R.layout.add_farmerroles, farmerList, false);
+            TextView farmer_name_title = includeFarmerList.findViewById(R.id.farmer_name_title);
+            TextView farmer_name = includeFarmerList.findViewById(R.id.farmer_name);
+            TextView farmerRole = includeFarmerList.findViewById(R.id.role);
+            int farmerCount = i+1;
+            farmer_name_title.setText(getResources().getString(R.string.farmer) + " " + farmerCount + ":");
+            farmer_name.setText(farmerName);
+            farmerRole.setText(role);
+            farmerList.addView(includeFarmerList);
+        }
+
+        TextView farmName = (TextView)farmDetailDialog.findViewById(R.id.farm_name);
+        TextView farmCode = (TextView)farmDetailDialog.findViewById(R.id.farm_code);
+        farmName.setText(multiFarmDTO.getFarmName());
+        farmCode.setText(multiFarmDTO.getFarmCode());
+        farmDetailDialog.findViewById(R.id.btn_ok).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                farmDetailDialog.dismiss();
+                showSurvey(v, id);
+            }
+        });
+
+        farmDetailDialog.findViewById(R.id.btnUpdate).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                farmDetailDialog.dismiss();
+                Intent in = new Intent(ViewFarmerActivity.this, UpdateMultiFarmActivity.class);
+                Bundle bundle=new Bundle();
+                bundle.putLong("farmerId", farmerId);
+                bundle.putString("olamfarmername", farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME)));
+                in.putExtras(bundle);
+                startActivity(in);
+            }
+        });
+
+        farmDetailDialog.findViewById(R.id.btn_cancel).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                 farmDetailDialog.dismiss();
+            }
+        });
+
+        farmDetailDialog.show();
+    }
+
+    public void showSurvey(View v, long id) {
+        TextView subModuleTv = (TextView) v.findViewById(R.id.moduleListCurrentSubModuleId);
+        TextView moduleNameTv = (TextView) v.findViewById(R.id.moduleListModuleName);
+        TextView statusStartedTv = (TextView) v.findViewById(R.id.moduleListStatusStarted);
+        TextView statusFinishedTv = (TextView) v.findViewById(R.id.moduleListStatusFinished);
+        TextView farmerModuleIdTv = (TextView) v.findViewById(R.id.moduleListFarmerModuleId);
+        TextView farmerModuleLatTv = (TextView) v.findViewById(R.id.moduleListRecordedLat);
+        TextView farmerModuleLngTv = (TextView) v.findViewById(R.id.moduleListRecordedLng);
+        MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_SURVEY,  ScreenNameConstants.BUTTON_CLICKED);
+        Intent intent = new Intent(context, CompleteModuleActivity.class);
+        intent.putExtra(FARMER_ID, farmerId);
+        intent.putExtra(MODULE_ID, id);
+        intent.putExtra(FARMER_MODULE_ID, (String.valueOf(farmerModuleIdTv.getText()).equals("")) ? 0 : Long.parseLong(String.valueOf(farmerModuleIdTv.getText())));
+        intent.putExtra(SUB_MODULE_ID, (String.valueOf(subModuleTv.getText()).equals("")) ? 0 : Integer.parseInt(String.valueOf(subModuleTv.getText())));
+        intent.putExtra(FARM_ID, farmer.getInt(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_ID)));
+        intent.putExtra(STATUS_STARTED, (String.valueOf(statusStartedTv.getText()).equals("")) ? 0 : Integer.parseInt(String.valueOf(statusStartedTv.getText())));
+        intent.putExtra(STATUS_FINISHED, (String.valueOf(statusFinishedTv.getText()).equals("")) ? 0 : Integer.parseInt(String.valueOf(statusFinishedTv.getText())));
+        intent.putExtra(OLAM_FARMER_ID, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
+        intent.putExtra(MODULE_NAME, String.valueOf(moduleNameTv.getText()));
+        intent.putExtra(RECORDED_LAT, (String.valueOf(farmerModuleLatTv.getText()).equals("")) ? "" : String.valueOf(farmerModuleLatTv.getText()));
+        intent.putExtra(RECORDED_LNG, (String.valueOf(farmerModuleLatTv.getText()).equals("")) ? "" : String.valueOf(farmerModuleLngTv.getText()));
+        intent.putExtra(FARMER_NAME, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME)));
+
+        if (DynamicQuestions.getInstance() != null) {
+            DynamicQuestions.clearInstance();
+        }
+        context.startActivity(intent);
     }
 
 

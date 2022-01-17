@@ -614,4 +614,8 @@
     <string name="update_firebase_install_id_info">Updating Informations</string>
     <string name="national_id_info">Please update the National ID of farmer</string>
     <string name="please_click_checkbox">Lütfen tüm uygun onay kutularını tıklayın</string>
+    <string name="txt_farm_name">Farm Name:</string>
+    <string name="txt_farm_code">Farm Code:</string>
+    <string name="farmer_role">Role:</string>
+    <string name="farm_detail_confirmation_text">Please confirm if the below farm information linked is up-to-date, to proceed with the survey</string>
 </resources>

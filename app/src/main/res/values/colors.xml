@@ -73,5 +73,5 @@
     <color name="btn_primary_inner">#F8F6F8</color>
 
     <color name="radio_btn_color_primary">#dc582a</color>
-
+    <color name="text_label_attendee">#535353</color>
 </resources>
