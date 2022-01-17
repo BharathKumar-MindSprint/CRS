@@ -633,6 +633,10 @@
     <string name="add_child">AGREGAR NIÑO</string>
     <string name="please_click_checkbox">Haga clic en todas las casillas de verificación correspondientes.</string>
     <string name="please_sign_within_the_boundary_box">Please sign within the boundary box</string>
+    <string name="txt_farm_name">Farm Name:</string>
+    <string name="txt_farm_code">Farm Code:</string>
+    <string name="farmer_role">Role:</string>
+    <string name="farm_detail_confirmation_text">Please confirm if the below farm information linked is up-to-date, to proceed with the survey</string>
 
 </resources>
 

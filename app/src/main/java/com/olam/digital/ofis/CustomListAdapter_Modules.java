@@ -422,6 +422,7 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                 textView.setText(res.getString(R.string.review_farm_management_plan_hint));
             }
         } else {
+
             String disabled_months_string = cursor.getString(cursor.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_DISABLED_MONTHS));
             List<String> disabled_months = Arrays.asList(disabled_months_string.split("\\s*,\\s*"));
 
@@ -548,11 +549,12 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                     String farmerRoleStr = cursor.getString(cursor.getColumnIndex("fkFarmerRoleId"));
                     int farmerRole;
                     if (farmSurvey != null) {
-                        isFarmSurvey = Boolean.parseBoolean(farmSurvey);
-                        farmerRole = Integer.parseInt(farmerRoleStr);
+                        try {
+                            isFarmSurvey = Boolean.parseBoolean(farmSurvey);
+                            farmerRole = Integer.parseInt(farmerRoleStr);
                             if (!isFarmSurvey) {
                                 //// FARM-ER SURVEY CODE
-                                if (farmerRole!=0 && roleId !=0) {
+                                if (farmerRole != 0 && roleId != 0) {
                                     if (farmerRole == roleId) {
                                         // Enable
                                         if (!submitted) {
@@ -560,7 +562,7 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                                             linearLayout.setBackgroundResource(R.drawable.list_item);
                                             moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
                                             textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
-                                        }else{
+                                        } else {
                                             linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
                                             moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
                                             textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
@@ -568,22 +570,22 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                                         }
                                     } else {
                                         // Disable
-                                         linearLayout.setOnLongClickListener(v -> {
+                                        linearLayout.setOnLongClickListener(v -> {
 
-                                                 LayoutInflater li = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                                                 View layout = li.inflate(R.layout.multifarm_custom_toast_layout, null);
-                                                 TextView tv=layout.findViewById(R.id.alert_msg);
-                                                 tv.setText(res.getString(R.string.survey_can_be_completed_by_other_stakeholders));
-                                                 //Creating the Toast objectn
-                                                 Toast toast = new Toast(mContext);
-                                                 toast.setDuration(Toast.LENGTH_SHORT);
-                                                 toast.setGravity(Gravity.BOTTOM | Gravity.FILL_HORIZONTAL, 0, 0);
-                                                 toast.setView(layout);//setting the view of custom toast layout
-                                                 toast.show();
+                                            LayoutInflater li = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                                            View layout = li.inflate(R.layout.multifarm_custom_toast_layout, null);
+                                            TextView tv = layout.findViewById(R.id.alert_msg);
+                                            tv.setText(res.getString(R.string.survey_can_be_completed_by_other_stakeholders));
+                                            //Creating the Toast objectn
+                                            Toast toast = new Toast(mContext);
+                                            toast.setDuration(Toast.LENGTH_SHORT);
+                                            toast.setGravity(Gravity.BOTTOM | Gravity.FILL_HORIZONTAL, 0, 0);
+                                            toast.setView(layout);//setting the view of custom toast layout
+                                            toast.show();
 
-                                                 //  Toast.makeText(linearLayout.getContext(), mContext.getResources().getString(R.string.already_syned_survey_info), Toast.LENGTH_LONG).show();
-                                             return true;
-                                         });
+                                            //  Toast.makeText(linearLayout.getContext(), mContext.getResources().getString(R.string.already_syned_survey_info), Toast.LENGTH_LONG).show();
+                                            return true;
+                                        });
 
 
                                         linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
@@ -596,7 +598,7 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                                 // FARM SURVEY CODE
                                 try {
                                     SubmittedInfo submittedInfo = dl.isAvailableinSubmittedModules(cursor, currentId, String.valueOf(farmerId));
-                                    if (farmerRole!=0 && roleId!=0) {
+                                    if (farmerRole != 0 && roleId != 0) {
                                         if (farmerRole == roleId) {
                                             // Enable
                                             if (submittedInfo.isSubmitted()) {
@@ -654,9 +656,9 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                                             textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
                                             enabledItem.setText("false");
                                         }
-                                    }else {
+                                    } else {
                                         // Farm Survey - Role is not defined for the farm stakeholders
-                                        if (roleId != 0 && farmerRole ==0) {
+                                        if (roleId != 0 && farmerRole == 0) {
                                             if (submittedInfo.isSubmitted()) {
                                                 linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
                                                 moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
@@ -679,7 +681,7 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                                                     }
                                                     return true;
                                                 });
-                                            }else{
+                                            } else {
                                                 enabledItem.setText("true");
                                                 linearLayout.setBackgroundResource(R.drawable.list_item);
                                                 moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
@@ -692,8 +694,13 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                                 }
 
                             }
+                        }catch (NumberFormatException e){
+                            e.printStackTrace();
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+                        }
 
-                    }
                 }
 
             }
