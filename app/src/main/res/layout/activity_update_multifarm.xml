@@ -18,7 +18,7 @@
         android:id="@+id/updateFarmLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/ofis_home_screen_actions_background"
+        android:background="@color/ofis_farmer_screen_actions_background"
         android:padding="@dimen/margin_10"
         android:orientation="vertical">
 
@@ -72,7 +72,7 @@
             <TextView
                 android:text="@string/farm_name"
                 android:layout_width="match_parent"
-                android:textColor="@color/btn_secondary_background"
+                android:textColor="@color/ofis_text_field"
                 android:layout_height="wrap_content"/>
 
             <EditText
@@ -82,19 +82,19 @@
                 android:padding="@dimen/margin_10"
                 android:layout_marginTop="@dimen/margin_10"
                 android:id="@+id/farmNameEdittext"
-                android:textColor="@color/btn_secondary_background"
+                android:textColor="@color/ofis_text_field"
                 android:textStyle="bold"
                 android:textSize="@dimen/ofis_input_field_text"
                 android:hint="@string/farm_name"
                 android:maxLength="100"
-                android:digits="ABCDEFGHIJKLMNOPQRSTUVWX1Z1234567890abcdefghijklmnopqrstuvwxyz.,\/'-_ "
+                android:digits="ABCDEFGHIJKLMNOPQRSTUVWX1Z1234567890abcdefghijklmnopqrstuvwxyz.,/'-_ \\"
                 android:textColorHint="@color/icon_grey_palette_2"
                 android:layout_marginBottom="@dimen/ofis_input_field_bottom_margin"/>
 
             <TextView
                 android:text="@string/farm_code"
                 android:layout_width="match_parent"
-                android:textColor="@color/btn_secondary_background"
+                android:textColor="@color/ofis_text_field"
                 android:layout_height="wrap_content"/>
             <EditText
                 android:layout_width="match_parent"
@@ -103,12 +103,11 @@
                 android:padding="@dimen/margin_10"
                 android:layout_marginTop="@dimen/margin_10"
                 android:id="@+id/farmCodeEdittext"
-                android:textColor="@color/btn_secondary_background"
+                android:textColor="@color/ofis_text_field"
                 android:focusable="false"
                 android:textSize="@dimen/ofis_input_field_text"
                 android:hint="@string/farm_code"
                 android:textColorHint="@color/icon_grey_palette_2"
-                android:background="@drawable/farm_code_selected_edittext"
                 android:layout_marginBottom="@dimen/ofis_input_field_bottom_margin"/>
 
         </LinearLayout>

@@ -25,6 +25,7 @@
         android:hint="@string/Farmer_Name"
         android:layout_gravity="center"
         android:textColorHint="@color/icon_grey_palette_2"
+        android:background="@drawable/textview_underline"
         android:cursorVisible="false" />
     <Spinner
         android:id="@+id/farmerRoleSpinner"
