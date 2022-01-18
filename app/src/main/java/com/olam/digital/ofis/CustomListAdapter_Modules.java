@@ -551,7 +551,12 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                     if (farmSurvey != null) {
                         try {
                             isFarmSurvey = Boolean.parseBoolean(farmSurvey);
-                            farmerRole = Integer.parseInt(farmerRoleStr);
+                            try {
+                                farmerRole = Integer.parseInt(farmerRoleStr);
+                            }catch (Exception e){
+                                farmerRole=0;
+                            }
+
                             if (!isFarmSurvey) {
                                 //// FARM-ER SURVEY CODE
                                 if (farmerRole != 0 && roleId != 0) {
