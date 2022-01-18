@@ -1899,6 +1899,8 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                         showPopupFarmDetails(v, position, id);
                     } catch (JSONException e) {
                         e.printStackTrace();
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
                 }else{
                     showSurvey(v, id);
@@ -2022,8 +2024,9 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         JSONArray multiFarmArray=multiFarmDTO.getStakeholdersInfo();
         for(int i=0;i<multiFarmArray.length();i++){
             JSONObject jsonobject= (JSONObject) multiFarmArray.get(i);
-            String farmerName=jsonobject.optString("farmerName");
+//            String farmerName=jsonobject.optString("farmerName");
             String role=dl.getFarmerRole(jsonobject.optInt("farmerRoleId"));
+            String farmerName=dl.getFarmerNamefromDb(jsonobject.optLong("farmerId"));
             LinearLayout includeFarmerList = (LinearLayout) inflater.inflate(R.layout.add_farmerroles, farmerList, false);
             TextView farmer_name_title = includeFarmerList.findViewById(R.id.farmer_name_title);
             TextView farmer_name = includeFarmerList.findViewById(R.id.farmer_name);
