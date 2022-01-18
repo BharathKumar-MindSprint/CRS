@@ -6520,13 +6520,15 @@ public class DataLayer {
             try {
                 if (cursor.getCount() > 0) {
                     while (cursor.moveToNext()) {
-                        long farmerId=Long.valueOf(cursor.getString(cursor.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)));
-                        if(!farmerList.contains(farmerId)) {
-                            MultifarmFarmerDTO multifarmFarmerDTO = new MultifarmFarmerDTO();
-                            multifarmFarmerDTO.setFarmerId(farmerId);
-                            multifarmFarmerDTO.setFarmerName(cursor.getString(cursor.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME)));
-                            mfarmerList.add(multifarmFarmerDTO);
-                        }
+                        try {
+                            long farmerId=Long.valueOf(cursor.getString(cursor.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)));
+                            if(!farmerList.contains(farmerId)) {
+                                MultifarmFarmerDTO multifarmFarmerDTO = new MultifarmFarmerDTO();
+                                multifarmFarmerDTO.setFarmerId(farmerId);
+                                multifarmFarmerDTO.setFarmerName(cursor.getString(cursor.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME)));
+                                mfarmerList.add(multifarmFarmerDTO);
+                            }
+                        }catch (Exception e){}
                     }
                 }
             } catch (Exception e) {
@@ -6551,26 +6553,27 @@ public class DataLayer {
         Cursor cursor = db.rawQuery("select * from multifarmFarms", null);
         try {
             while (cursor.moveToNext()) {
-                String stakeholder=cursor.getString(cursor.getColumnIndex(OFISDBContract.MultiFarmFarms.COLUMN_NAME_NAME_STAKE_HOLDERS));
-                if (!stakeholder.equalsIgnoreCase("null") && stakeholder!=null) {
-                    JSONArray jsonArray = (new JSONArray(stakeholder));
-                    if(jsonArray!=null) {
-                        if (jsonArray.length() > 0) {
-                            int length = jsonArray.length();
-                            for (int j = 0; j < length; j++) {
-                                try {
-                                    JSONObject jsonObject = jsonArray.getJSONObject(j);
-                                    farmerSet.add(Long.valueOf(jsonObject.get("farmerId").toString()));
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
+                try {
+                    String stakeholder=cursor.getString(cursor.getColumnIndex(OFISDBContract.MultiFarmFarms.COLUMN_NAME_NAME_STAKE_HOLDERS));
+                    if (!stakeholder.equalsIgnoreCase("null") && stakeholder!=null) {
+                        JSONArray jsonArray = (new JSONArray(stakeholder));
+                        if(jsonArray!=null) {
+                            if (jsonArray.length() > 0) {
+                                int length = jsonArray.length();
+                                for (int j = 0; j < length; j++) {
+                                    try {
+                                        JSONObject jsonObject = jsonArray.getJSONObject(j);
+                                        farmerSet.add(Long.valueOf(jsonObject.get("farmerId").toString()));
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
                                 }
                             }
                         }
                     }
-                }
-
+                }catch (Exception e){}
             }
-        } catch (JSONException e) {
+        } catch (Exception e) {
             FirebaseCrashlytics.getInstance().log("NetworkLayer: Error creating Stakeholders object" + e.getMessage());
 
         }

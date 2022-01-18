@@ -956,7 +956,7 @@ public class UpdateMultiFarmActivity extends BaseActivity {
             TextView farmerNameET = stakeHolderRow.findViewById(R.id.farmFarmerTV);
             Spinner farmRoleSpinner = stakeHolderRow.findViewById(R.id.farmerRoleSpinner);
             String farmerStakeHolderId = farmerNameET.getTag().toString();
-            String farmerNameFarm = String.valueOf(farmerNameET.getText().toString().trim());
+            String farmerNameFarm = farmerNameET.getText().toString().trim();
             Object id=stakeHolderRow.getTag();
             String StakeholderId=null;
             if(id!=null){
@@ -970,13 +970,17 @@ public class UpdateMultiFarmActivity extends BaseActivity {
                     jsonObject.put("id", StakeholderId);
              //   }
 
-                if (farmerName.equalsIgnoreCase(farmerNameFarm)) {
-                    jsonObject.put("primary", true);
-                    jsonObject.put("farmerId", farmerId);
-                } else {
-                    jsonObject.put("primary", false);
-                    jsonObject.put("farmerId", Long.valueOf(farmerStakeHolderId));
-                }
+                // This condition will never gets called
+//                if (farmerName.equalsIgnoreCase(farmerNameFarm)) {
+//                    jsonObject.put("primary", true);
+//                    jsonObject.put("farmerId", farmerId);
+//                } else {
+//                    jsonObject.put("primary", false);
+//                    jsonObject.put("farmerId", Long.valueOf(farmerStakeHolderId));
+//                }
+
+                jsonObject.put("primary", false);
+                jsonObject.put("farmerId", Long.valueOf(farmerStakeHolderId));
 
                 jsonObject.put("farmerRoleId", Long.valueOf(String.valueOf(farmRoleSpinner.getTag())));
 //                if (isExistingFarm){

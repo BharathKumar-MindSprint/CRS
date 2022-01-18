@@ -448,7 +448,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             for (MultiFarmRoleDTO multiFarmRoleDTO : multiFarmRoleDTOList){
                 rolesList.add(multiFarmRoleDTO.getName());
             }
-            farmerNameInFirstNowEdit();
+          //  farmerNameInFirstNowEdit();
             bindMultiFarm();
         }
 
@@ -3359,7 +3359,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             TextView farmerNameET = stakeHolderRow.findViewById(R.id.farmFarmerTV);
             Spinner farmRoleSpinner = stakeHolderRow.findViewById(R.id.farmerRoleSpinner);
             String farmerStakeHolderId = farmerNameET.getTag().toString();
-            String farmerName = String.valueOf(farmerNameET.getText()).replace(" ", "");
+            String farmerName = farmerNameET.getText().toString().trim();
 
             Object id=stakeHolderRow.getTag();
             String StakeholderId=null;
@@ -3370,10 +3370,8 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             try {
                 jsonObject.put("farmCode",farmCode);
                 jsonObject.put("farmName",farmName);
-                //   if(isExistingFarm) {
-                jsonObject.put("id", StakeholderId);
-                //   }
 
+                jsonObject.put("farmerRoleId",Long.valueOf(String.valueOf(farmRoleSpinner.getTag())));
                 if (globalFName.equalsIgnoreCase(farmerName)){
                     jsonObject.put("primary",true);
                     jsonObject.put("farmerId",newfarmerId);
@@ -3382,12 +3380,22 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                     jsonObject.put("farmerId",Long.valueOf(farmerStakeHolderId));
                 }
 
-                jsonObject.put("farmerRoleId",Long.valueOf(String.valueOf(farmRoleSpinner.getTag())));
                 if (isExistingFarm){
                     jsonObject.put("farmsId",Long.valueOf(farmIds));
                 }else{
                     jsonObject.put("farmsId",null);
                 }
+
+             try {
+                 jsonObject.put("id", StakeholderId);
+             }catch (Exception e){}
+
+
+
+
+
+
+
 
 
             }catch (Exception e){}
