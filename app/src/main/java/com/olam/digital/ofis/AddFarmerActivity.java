@@ -437,20 +437,6 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             gpsTracker.startLocationUpdateInitially();
  //       }
 
-        MultiFarmUtils.isMultiFarmEnumerator = Utilities.getMultifarmPref(context, MultiFarmUtils.IS_MULTI_FARM_ENUMERATOR);
-        if(!MultiFarmUtils.isMultiFarmEnumerator){
-            farmInformationLayout.setVisibility(View.GONE);
-        }else{
-
-            multiFarmRoleDTOList=dl.getMultiFarmRoles(localeSuffix);
-            rolesList.clear();
-            rolesList.add("Select");
-            for (MultiFarmRoleDTO multiFarmRoleDTO : multiFarmRoleDTOList){
-                rolesList.add(multiFarmRoleDTO.getName());
-            }
-          //  farmerNameInFirstNowEdit();
-            bindMultiFarm();
-        }
 
         showFarmerLead();
         System.out.println("isflenumerator_data3:" + isFLEnumerator);
@@ -702,89 +688,6 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     }
 
 
-    private void SetUpEditedData(){
-        MultiFarmDTO existingStakeHolder = dl.getMultiFarmBySelfId(editFarmerId);
-
-        if (existingStakeHolder.getFarmId() != null){
-            newFarmEditMode=false;
-        }else{
-            newFarmEditMode=true;
-        }
-
-        JSONArray multifarmArray=existingStakeHolder.getStakeholdersInfo();
-        String[] roles=rolesList.toArray(new String[rolesList.size()]);
-        boolean position=true;
-
-
-        if (multifarmArray!=null) {
-            if (multifarmArray.length() > 0) {
-                int length = multifarmArray.length();
-                for (int j = 0; j < length; j++) {
-                    try {
-                        String farmname = multifarmArray.getJSONObject(j).get("farmerId").toString();
-                        String roleId = multifarmArray.getJSONObject(j).get("farmerRoleId").toString();
-                        String id=null;
-                        if (multifarmArray.getJSONObject(j).has("id")) {
-                            id = (multifarmArray.getJSONObject(j).getString("id"));
-                        }
-
-                        LinearLayout farmStakeholderRow = (LinearLayout) inflater.inflate(R.layout.farm_role_entry, farmStakeholderLayout, false);
-                        farmStakeholderRow.setTag(id);
-                        // Widgets
-                        TextView farmerNameEdittext = farmStakeholderRow.findViewById(R.id.farmFarmerTV);
-                        Spinner farmRoleSpinner = farmStakeholderRow.findViewById(R.id.farmerRoleSpinner);
-                        ImageView farmRoleDelete = farmStakeholderRow.findViewById(R.id.farmRoleDelete);
-
-                        // Spinner value setting part
-                        ArrayAdapter<String> adapter = new ArrayAdapter<String>(AddFarmerActivity.this, R.layout.spinner_item, roles);
-                        adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
-                        farmRoleSpinner.setAdapter(adapter);
-
-                        bindFarmers(farmerNameEdittext);
-
-
-                        //   String roleId= existingStakeHolder.getString(existingStakeHolder.getColumnIndex(OFISDBContract.FarmStakeHolderInformation.COLUMN_NAME_STAKE_HOLDER_ROLE_ID));
-
-
-                        String farmerId = multifarmArray.getJSONObject(j).get("farmerId").toString();
-
-                        // FarmerName Setting  evana
-                        if (multifarmArray.getJSONObject(j).get("farmerId").toString().equalsIgnoreCase(String.valueOf(editFarmerId))) {
-                            String defaultFarmerName = ((EditText) findViewById(R.id.farmerName)).getText().toString().trim();
-                            farmerNameEdittext.setText(defaultFarmerName);
-                        } else {
-                            String farmerNameFromDb = dl.getFarmerNamefromDb(Long.valueOf(farmerId));
-                            farmerNameEdittext.setText(farmerNameFromDb);
-                        }
-
-                        farmerNameEdittext.setTag(farmerId);
-
-                        // Should cset the farmer Name - New field incorporate
-                        farmNameEdittext.setText(multifarmArray.getJSONObject(j).get("farmName").toString());
-                        farmCodeEdittext.setText(multifarmArray.getJSONObject(j).get("farmCode").toString());
-
-                        // disable the farm delete in first record
-                        if (position) {
-                            farmRoleDelete.setVisibility(View.GONE);
-                            position = false;
-                        }
-                        // Allowing the Farmer and delete the farmer stakeholder
-                        bindFarmRoleDelete(farmStakeholderRow.findViewById(R.id.farmRoleDelete));
-                        bindFarmerRoles(farmStakeholderRow.findViewById(R.id.farmerRoleSpinner));
-                        farmRoleSpinner.setSelection(Integer.parseInt(roleId));
-                        // Set Tag in edit Mode
-                        farmRoleSpinner.setTag(roleId);
-
-
-                        farmStakeholderLayout.addView(farmStakeholderRow);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
-    }
-
     private void bindFarmers(TextView farmFarmerEditText) {
         farmFarmerEditText.setOnClickListener(v -> {
             List<MultifarmFarmerDTO> mfFarmerList=new ArrayList<>();
@@ -856,6 +759,22 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     @Override
     protected void onResume() {
         super.onResume();
+        String localeSuffix = Utilities.getLocaleSuffix(res);
+        MultiFarmUtils.isMultiFarmEnumerator = Utilities.getMultifarmPref(context, MultiFarmUtils.IS_MULTI_FARM_ENUMERATOR);
+        if(!MultiFarmUtils.isMultiFarmEnumerator){
+            farmInformationLayout.setVisibility(View.GONE);
+        }else{
+
+            multiFarmRoleDTOList=dl.getMultiFarmRoles(localeSuffix);
+            rolesList.clear();
+            rolesList.add("Select");
+            for (MultiFarmRoleDTO multiFarmRoleDTO : multiFarmRoleDTOList){
+                rolesList.add(multiFarmRoleDTO.getName());
+            }
+            //  farmerNameInFirstNowEdit();
+            bindMultiFarm();
+        }
+
         MatomoHelper.matomoScreenTracker(ScreenNameConstants.SCREEN_HOME_ACTIVITY, ScreenNameConstants.SCREEN_ADD_FARMER_ACTIVITY, ScreenNameConstants.SCREEN_ADD_FARMER);
     }
 

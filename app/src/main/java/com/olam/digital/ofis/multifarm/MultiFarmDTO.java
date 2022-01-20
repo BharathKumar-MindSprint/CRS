@@ -17,6 +17,16 @@ public class MultiFarmDTO {
     private String farmType;
     private boolean isExistingFarm;
 
+    private int synced;
+
+    public int getSynced() {
+        return synced;
+    }
+
+    public void setSynced(int synced) {
+        this.synced = synced;
+    }
+
     public boolean isExistingFarm() {
         return isExistingFarm;
     }
