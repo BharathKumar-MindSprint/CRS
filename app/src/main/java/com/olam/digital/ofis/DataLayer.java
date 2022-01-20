@@ -171,11 +171,13 @@ public class DataLayer {
         // Multi-farm Utils Polygon
         if (MultiFarmUtils.isMultiFarmEnumerator){
             String multiFarmId =getMultiFarmLocationbyId(farmerId);
-            ContentValues values1 = new ContentValues();
-            values1.put(OFISDBContract.MultiFarmFarms.COLUMN_NAME_RECORDED_PLOTS, plotJson);
-            String whereClause1 = OFISDBContract.MultiFarmFarms.COLUMN_NAME_NAME_FARM_ID + " = ?";
-            String[] whereArgs1 = new String[]{String.valueOf(multiFarmId)};
-            db.update(OFISDBContract.MultiFarmFarms.TABLE_NAME, values1, whereClause1, whereArgs1);
+            if(multiFarmId!=null) {
+                ContentValues values1 = new ContentValues();
+                values1.put(OFISDBContract.MultiFarmFarms.COLUMN_NAME_RECORDED_PLOTS, plotJson);
+                String whereClause1 = OFISDBContract.MultiFarmFarms.COLUMN_NAME_NAME_FARM_ID + " = ?";
+                String[] whereArgs1 = new String[]{String.valueOf(multiFarmId)};
+                db.update(OFISDBContract.MultiFarmFarms.TABLE_NAME, values1, whereClause1, whereArgs1);
+            }
 
         }
 
@@ -297,15 +299,18 @@ public class DataLayer {
         // Multi-farm Utils
         if (MultiFarmUtils.isMultiFarmEnumerator){
             String multiFarmId =getMultiFarmLocationbyId(farmerId);
-            farmId=Integer.parseInt(multiFarmId);
+            if (multiFarmId!=null) {
+                farmId = Integer.parseInt(multiFarmId);
+                ContentValues values1 = new ContentValues();
+                values1.put(OFISDBContract.MultiFarmFarms.COLUMN_NAME_NAME_LATITUDE, location.getLatitude());
+                values1.put(OFISDBContract.MultiFarmFarms.COLUMN_NAME_NAME_LONGITUDE, location.getLongitude());
+                String whereClause1 = OFISDBContract.MultiFarmFarms.COLUMN_NAME_NAME_FARM_ID + " = ?";
+                String[] whereArgs1 = new String[]{String.valueOf(multiFarmId)};
 
-            ContentValues values1 = new ContentValues();
-            values1.put(OFISDBContract.MultiFarmFarms.COLUMN_NAME_NAME_LATITUDE, location.getLatitude());
-            values1.put(OFISDBContract.MultiFarmFarms.COLUMN_NAME_NAME_LONGITUDE, location.getLongitude());
-            String whereClause1 = OFISDBContract.MultiFarmFarms.COLUMN_NAME_NAME_FARM_ID + " = ?";
-            String[] whereArgs1 = new String[]{String.valueOf(multiFarmId)};
-
-            db.update(OFISDBContract.MultiFarmFarms.TABLE_NAME, values1, whereClause1, whereArgs1);
+                db.update(OFISDBContract.MultiFarmFarms.TABLE_NAME, values1, whereClause1, whereArgs1);
+            }else{
+                farmId=0;
+            }
 
         }
 
@@ -4460,10 +4465,11 @@ public class DataLayer {
             return db.rawQuery("select * from " + OFISDBContract.NetworkQueueEntry.TABLE_NAME +
                             " order by case when " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE + " = 'farmer' " +
                             "THEN 1 when " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE + " = 'children' " +
-                            "THEN 2 when " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE + " = 'infrastructure' " +
-                            "THEN 3 when " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE + " = 'Polygon recorded' " +
-                            "THEN 4 when " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE + " = 'Location recorded' " +
-                            "THEN 5 ELSE 6 END, " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE,
+                            "THEN 2 when " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE + " = 'Multifarm Update' " +
+                            "THEN 3 when " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE + " = 'infrastructure' " +
+                            "THEN 4 when " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE + " = 'Polygon recorded' " +
+                            "THEN 5 when " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE + " = 'Location recorded' " +
+                            "THEN 6 ELSE 7 END, " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE,
                     null);
         }
 
@@ -5565,6 +5571,60 @@ public class DataLayer {
         return available;
     }
 
+    public boolean isfarmerIdAvailableMultiFarmDB(long farmerLong) {
+        boolean available = false;
+        String[] columns = new String[]{"*"};
+        Cursor mCursor= db.query(OFISDBContract.MultiFarmFarms.TABLE_NAME, columns, null, null, null, null, null);
+
+        try {
+            if (mCursor != null) {
+                while (mCursor.moveToNext()) {
+                    JSONArray multiFarmArray = new JSONArray(mCursor.getString(mCursor.getColumnIndex(OFISDBContract.MultiFarmFarms.COLUMN_NAME_NAME_STAKE_HOLDERS)));
+                    for(int i=0;i<multiFarmArray.length();i++){
+                        JSONObject jsonobject= (JSONObject) multiFarmArray.get(i);
+                        long farmerId = Long.valueOf(jsonobject.getLong("farmerId"));
+                        if(farmerId == farmerLong){
+                            available =true;
+                            return  available;
+                        }
+                    }
+                }
+            }
+        }catch (Exception e){
+
+        }finally {
+            mCursor.close();
+        }
+        return available;
+    }
+
+    public long getFarmidinMultifarm(long farmerLong) {
+        long farmid = 0;
+        boolean available = false;
+        String[] columns = new String[]{"*"};
+        Cursor mCursor= db.query(OFISDBContract.MultiFarmFarms.TABLE_NAME, columns, null, null, null, null, null);
+
+        try {
+            if (mCursor != null) {
+                while (mCursor.moveToNext()) {
+                    JSONArray multiFarmArray = new JSONArray(mCursor.getString(mCursor.getColumnIndex(OFISDBContract.MultiFarmFarms.COLUMN_NAME_NAME_STAKE_HOLDERS)));
+                    for(int i=0;i<multiFarmArray.length();i++){
+                        JSONObject jsonobject= (JSONObject) multiFarmArray.get(i);
+                        long farmerId = Long.valueOf(jsonobject.getLong("farmerId"));
+                        if(farmerId == farmerLong){
+                          farmid = Long.valueOf(mCursor.getString(mCursor.getColumnIndex(OFISDBContract.MultiFarmFarms.COLUMN_NAME_ID)));
+                        }
+                    }
+                }
+            }
+        }catch (Exception e){
+
+        }finally {
+            mCursor.close();
+        }
+        return farmid;
+    }
+
     public Cursor getEnumeratorCountries() {
         Cursor cursor=null;
         try {
@@ -6467,13 +6527,15 @@ public class DataLayer {
             try {
                 if (cursor.getCount() > 0) {
                     while (cursor.moveToNext()) {
-                        long farmerId=Long.valueOf(cursor.getString(cursor.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)));
-                        if(!farmerList.contains(farmerId)) {
-                            MultifarmFarmerDTO multifarmFarmerDTO = new MultifarmFarmerDTO();
-                            multifarmFarmerDTO.setFarmerId(farmerId);
-                            multifarmFarmerDTO.setFarmerName(cursor.getString(cursor.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME)));
-                            mfarmerList.add(multifarmFarmerDTO);
-                        }
+                        try {
+                            long farmerId=Long.valueOf(cursor.getString(cursor.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)));
+                            if(!farmerList.contains(farmerId)) {
+                                MultifarmFarmerDTO multifarmFarmerDTO = new MultifarmFarmerDTO();
+                                multifarmFarmerDTO.setFarmerId(farmerId);
+                                multifarmFarmerDTO.setFarmerName(cursor.getString(cursor.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME)));
+                                mfarmerList.add(multifarmFarmerDTO);
+                            }
+                        }catch (Exception e){}
                     }
                 }
             } catch (Exception e) {
@@ -6498,26 +6560,27 @@ public class DataLayer {
         Cursor cursor = db.rawQuery("select * from multifarmFarms", null);
         try {
             while (cursor.moveToNext()) {
-                String stakeholder=cursor.getString(cursor.getColumnIndex(OFISDBContract.MultiFarmFarms.COLUMN_NAME_NAME_STAKE_HOLDERS));
-                if (!stakeholder.equalsIgnoreCase("null") && stakeholder!=null) {
-                    JSONArray jsonArray = (new JSONArray(stakeholder));
-                    if(jsonArray!=null) {
-                        if (jsonArray.length() > 0) {
-                            int length = jsonArray.length();
-                            for (int j = 0; j < length; j++) {
-                                try {
-                                    JSONObject jsonObject = jsonArray.getJSONObject(j);
-                                    farmerSet.add(Long.valueOf(jsonObject.get("farmerId").toString()));
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
+                try {
+                    String stakeholder=cursor.getString(cursor.getColumnIndex(OFISDBContract.MultiFarmFarms.COLUMN_NAME_NAME_STAKE_HOLDERS));
+                    if (!stakeholder.equalsIgnoreCase("null") && stakeholder!=null) {
+                        JSONArray jsonArray = (new JSONArray(stakeholder));
+                        if(jsonArray!=null) {
+                            if (jsonArray.length() > 0) {
+                                int length = jsonArray.length();
+                                for (int j = 0; j < length; j++) {
+                                    try {
+                                        JSONObject jsonObject = jsonArray.getJSONObject(j);
+                                        farmerSet.add(Long.valueOf(jsonObject.get("farmerId").toString()));
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
                                 }
                             }
                         }
                     }
-                }
-
+                }catch (Exception e){}
             }
-        } catch (JSONException e) {
+        } catch (Exception e) {
             FirebaseCrashlytics.getInstance().log("NetworkLayer: Error creating Stakeholders object" + e.getMessage());
 
         }
@@ -6544,7 +6607,9 @@ public class DataLayer {
             } catch (Exception e) {
             }
         }
-        cursor.close();
+        if(!cursor.isClosed()){
+            cursor.close();
+        }
 
         return multiFarmRoleDTOList;
     }
@@ -6581,7 +6646,9 @@ public class DataLayer {
             } catch (Exception e) {
             }
         }
-        cursor.close();
+        if(!cursor.isClosed()){
+            cursor.close();
+        }
         return mfarmList;
     }
 
@@ -6698,6 +6765,11 @@ public class DataLayer {
             FirebaseCrashlytics.getInstance().log("NetworkLayer: Error creating Stakeholders object" + e.getMessage());
 
         }
+        if(!cursor.isClosed()){
+            cursor.close();
+        }
+
+
         return multiFarmObj;
     }
 
@@ -6782,7 +6854,9 @@ public class DataLayer {
             } catch (Exception e) {
             }
         }
-        cursor.close();
+        if(!cursor.isClosed()){
+            cursor.close();
+        }
         return multifarmDTO;
     }
 
@@ -6807,6 +6881,7 @@ public class DataLayer {
                                                 if(farmerIdStakeHolder.equalsIgnoreCase(farmerId)) {
                                                     String roleIdStr = jsonArray.getJSONObject(j).get("farmerRoleId").toString();
                                                     roleId = Integer.parseInt(roleIdStr);
+                                                    return roleId;
                                                 }
                                             } catch (JSONException e) {
                                                 e.printStackTrace();
@@ -6821,7 +6896,9 @@ public class DataLayer {
             } catch (Exception e) {
             }
         }
-        cursor.close();
+        if(!cursor.isClosed()){
+            cursor.close();
+        }
         return  roleId;
 
     }
@@ -6857,7 +6934,9 @@ public class DataLayer {
             } catch (Exception e) {
             }
         }
-        cursor.close();
+        if(!cursor.isClosed()) {
+            cursor.close();
+        }
         return multifarmDTO;
     }
 
@@ -7126,14 +7205,16 @@ public class DataLayer {
             try {
                 if (cursor.getCount() > 0) {
                     while (cursor.moveToNext()) {
-                        if (cursor.getString(cursor.getColumnIndex(OFISDBContract.MultiFarmFarms.COLUMN_NAME_NAME_STAKE_HOLDERS)).contains(String.valueOf(farmerId))){
-                            String currentLat = cursor.getString(cursor.getColumnIndex(OFISDBContract.MultiFarmFarms.COLUMN_NAME_NAME_LATITUDE));
-                            String currentLng = cursor.getString(cursor.getColumnIndex(OFISDBContract.MultiFarmFarms.COLUMN_NAME_NAME_LONGITUDE));
-                            if (currentLat != null && currentLat.length() > 0 && (!currentLat.equalsIgnoreCase("null")) && currentLng != null
-                                    && currentLng.length() > 0 && (!currentLng.equalsIgnoreCase("null"))) {
-                                return  true;
+                        try {
+                            if (cursor.getString(cursor.getColumnIndex(OFISDBContract.MultiFarmFarms.COLUMN_NAME_NAME_STAKE_HOLDERS)).contains(String.valueOf(farmerId))){
+                                String currentLat = cursor.getString(cursor.getColumnIndex(OFISDBContract.MultiFarmFarms.COLUMN_NAME_NAME_LATITUDE));
+                                String currentLng = cursor.getString(cursor.getColumnIndex(OFISDBContract.MultiFarmFarms.COLUMN_NAME_NAME_LONGITUDE));
+                                if (currentLat != null && currentLat.length() > 0 && (!currentLat.equalsIgnoreCase("null")) && currentLng != null
+                                        && currentLng.length() > 0 && (!currentLng.equalsIgnoreCase("null"))) {
+                                    return  true;
+                                }
                             }
-                        }
+                        }catch (Exception e){}
                     }
                 }
             }catch (Exception e) {}
@@ -7192,10 +7273,75 @@ public class DataLayer {
                     while (cursor.moveToNext()) {
                         if (cursor.getString(cursor.getColumnIndex(OFISDBContract.MultiFarmFarms.COLUMN_NAME_NAME_STAKE_HOLDERS)).contains(String.valueOf(farmerId))){
                              farmId = cursor.getString(cursor.getColumnIndex(OFISDBContract.MultiFarmFarms.COLUMN_NAME_NAME_FARM_ID));
-                                return  farmId;
+                             return  farmId;
                             }
                         }
                     }
+            }catch (Exception e) {}
+        }
+        cursor.close();
+        return  farmId;
+    }
+
+    public MultiFarmDTO getMultiFarmLocationSync(long farmerId) {
+        Cursor cursor = db.rawQuery("select * from multifarmFarms", null);
+        MultiFarmDTO multiFarmDTO=new MultiFarmDTO();
+        multiFarmDTO.setFarmId(null);
+        multiFarmDTO.setSynced(1);
+
+        if (cursor != null) {
+            try {
+                if (cursor.getCount() > 0) {
+                    while (cursor.moveToNext()) {
+                        if (cursor.getString(cursor.getColumnIndex(OFISDBContract.MultiFarmFarms.COLUMN_NAME_NAME_STAKE_HOLDERS)).contains(String.valueOf(farmerId))){
+                            multiFarmDTO.setFarmId(cursor.getString(cursor.getColumnIndex(OFISDBContract.MultiFarmFarms.COLUMN_NAME_NAME_FARM_ID)));
+                            multiFarmDTO.setSynced(cursor.getInt(cursor.getColumnIndex(OFISDBContract.MultiFarmFarms.COLUMN_NAME_IS_SYNCED)));
+                            return multiFarmDTO;
+                        }
+                    }
+                }
+            }catch (Exception e) {}
+        }
+        cursor.close();
+        return  multiFarmDTO;
+    }
+
+    public MultiFarmDTO getMultiFarmPolygonSync(long farmerId) {
+        Cursor cursor = db.rawQuery("select * from multifarmFarms", null);
+        MultiFarmDTO multiFarmDTO=new MultiFarmDTO();
+        multiFarmDTO.setFarmId(null);
+        multiFarmDTO.setSynced(1);
+
+        if (cursor != null) {
+            try {
+                if (cursor.getCount() > 0) {
+                    while (cursor.moveToNext()) {
+                        if (cursor.getString(cursor.getColumnIndex(OFISDBContract.MultiFarmFarms.COLUMN_NAME_NAME_STAKE_HOLDERS)).contains(String.valueOf(farmerId))){
+                            multiFarmDTO.setFarmId(cursor.getString(cursor.getColumnIndex(OFISDBContract.MultiFarmFarms.COLUMN_NAME_NAME_FARM_ID)));
+                            multiFarmDTO.setSynced(cursor.getInt(cursor.getColumnIndex(OFISDBContract.MultiFarmFarms.COLUMN_NAME_IS_SYNCED)));
+                            return multiFarmDTO;
+                        }
+                    }
+                }
+            }catch (Exception e) {}
+        }
+        cursor.close();
+        return  multiFarmDTO;
+    }
+
+    public String getMultiFarmId(long farmerId) {
+        Cursor cursor = db.rawQuery("select * from multifarmFarms", null);
+        String farmId=null;
+        if (cursor != null) {
+            try {
+                if (cursor.getCount() > 0) {
+                    while (cursor.moveToNext()) {
+                        if (cursor.getString(cursor.getColumnIndex(OFISDBContract.MultiFarmFarms.COLUMN_NAME_NAME_STAKE_HOLDERS)).contains(String.valueOf(farmerId))){
+                            farmId = cursor.getString(cursor.getColumnIndex(OFISDBContract.MultiFarmFarms.COLUMN_NAME_NAME_FARM_ID));
+                            return  farmId;
+                        }
+                    }
+                }
             }catch (Exception e) {}
         }
         cursor.close();
@@ -7221,6 +7367,54 @@ public class DataLayer {
         }
         cursor.close();
         return  plotAvailable;
+    }
+
+    Cursor getFarmerRoleById(int Id) {
+        String[] columns = new String[]{"*"};
+        String whereClause = OFISDBContract.MultiFarmRoles.COLUMN_NAME_ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(Id)};
+        return db.query(OFISDBContract.MultiFarmRoles.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+    }
+
+    public String getFarmerRole(int id) {
+        String name = "NA";
+        Cursor nids = getFarmerRoleById(id);
+        try {
+            while (nids.moveToNext()) {
+                name = nids.getString(nids.getColumnIndex(OFISDBContract.MultiFarmRoles.COLUMN_NAME_NAME));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            nids.close();
+        }
+
+        return name;
+    }
+
+    public String getFarmerNames(String farmerIds) {
+        String farmerName = "";
+        Cursor farmerCursor = null;
+        String farmerNames;
+
+        ArrayList<String> farmerNameList = new ArrayList<String>();
+
+        try {
+
+            String query="select * from farmers where id in ("+ farmerIds +")";
+            farmerCursor = db.rawQuery(query, null);
+            if (farmerCursor != null) {
+                while (farmerCursor.moveToNext()) {
+                    farmerName = farmerCursor.getString(farmerCursor.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME));
+                    farmerNameList.add(farmerName);
+                }
+            }
+        } catch (Exception e) {
+        } finally {
+            farmerCursor.close();
+        }
+        farmerNames = String.join(", ", farmerNameList);
+        return farmerNames;
     }
 }
 
