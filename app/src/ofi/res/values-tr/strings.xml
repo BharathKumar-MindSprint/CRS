@@ -723,4 +723,5 @@
     <string name="recored_polygon_multifarm_info">Farm location already captured by a stakeholder of your farm</string>
     <string name="recored_polygon_plot_multifarm_info">Farm polygon already captured by a stakeholder of your farm</string>
     <string name="survey_can_be_completed_by_other_stakeholders">This survey can be  completed by the another farm stakeholder</string>
+    <string name="multifarm_not_synced">Please sync the multifarm details first.</string>
 </resources>
