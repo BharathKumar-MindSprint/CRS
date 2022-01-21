@@ -90,6 +90,8 @@ public class UpdateMultiFarmActivity extends BaseActivity {
     MultiFarmDTO existingStakeHolder=null;
     private boolean editIsExistFarm=false;
 
+    private long farmerGroupId;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,9 +109,12 @@ public class UpdateMultiFarmActivity extends BaseActivity {
                 editFarmerId = Long.valueOf(getIntent().getExtras().getString("farmerId"));
                 editFarmId = Long.valueOf(getIntent().getExtras().getString("farmId"));
                 farmerName=dl.getFarmerNamefromDb(editFarmerId);
+                farmerGroupId=dl.getFarmerGroupById(editFarmerId);
+
             }else{
                 farmerID=getIntent().getExtras().getLong("farmerId");
                 farmerName=getIntent().getExtras().getString("olamfarmername");
+                farmerGroupId=dl.getFarmerGroupById(farmerID);
             }
         }catch (Exception e){}
 
@@ -488,7 +493,11 @@ public class UpdateMultiFarmActivity extends BaseActivity {
     private void bindFarmers(TextView farmFarmerEditText) {
                 farmFarmerEditText.setOnClickListener(v -> {
                     List<MultifarmFarmerDTO> mfFarmerList = new ArrayList<>();
-                    showPopupFarmers(mfFarmerList, farmFarmerEditText);
+                    if (farmerGroupId!=0) {
+                        showPopupFarmers(mfFarmerList, farmFarmerEditText);
+                    }else{
+                        Toast.makeText(UpdateMultiFarmActivity.this,"Farmer Group is not available for this farmer",Toast.LENGTH_SHORT).show();
+                    }
                 });
             }
 
@@ -583,8 +592,7 @@ public class UpdateMultiFarmActivity extends BaseActivity {
                 RecyclerView multiFarmFarmerRecyclerView = popupView.findViewById(R.id.multiFarmFarmerReyclerView);
 
                 ArrayList<Long> tempFarmerList=getTempFarmerList();
-
-                mfFarmerList = dl.getfarmersList(tempFarmerList);
+                mfFarmerList = dl.getfarmersList(tempFarmerList,farmerGroupId);
                 findMultiFarmFarmerAdapter = new FindMultiFarmFarmerAdapter(mfFarmerList, mContext);
                 RecyclerView.LayoutManager reLayoutManager = new LinearLayoutManager(getApplicationContext());
                 multiFarmFarmerRecyclerView.setLayoutManager(reLayoutManager);
