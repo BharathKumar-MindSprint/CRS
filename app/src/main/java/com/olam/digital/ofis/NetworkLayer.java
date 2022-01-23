@@ -2038,10 +2038,12 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         final JSONObject params = new JSONObject();
 
          int farmerID1 = networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
-        MultiFarmDTO multifarmDTO=null;
+        MultiFarmDTO multifarmDTO=new MultiFarmDTO();
         MultiFarmUtils.isMultiFarmEnumerator = Utilities.getMultifarmPref(context, MultiFarmUtils.IS_MULTI_FARM_ENUMERATOR);
         if (MultiFarmUtils.isMultiFarmEnumerator) {
             multifarmDTO = dl.getMultiFarmPolygonSync(farmerID1);
+        }else{
+            multifarmDTO.setSynced(1);
         }
 
         if (!dl.isFarmerSynced(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)))) {
@@ -2201,9 +2203,11 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         int farmerID1 = networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
 
         MultiFarmUtils.isMultiFarmEnumerator = Utilities.getMultifarmPref(context, MultiFarmUtils.IS_MULTI_FARM_ENUMERATOR);
-        MultiFarmDTO multifarmDTO=null;
+        MultiFarmDTO multifarmDTO=new MultiFarmDTO();
         if (MultiFarmUtils.isMultiFarmEnumerator) {
              multifarmDTO = dl.getMultiFarmLocationSync(farmerID1);
+        }else{
+            multifarmDTO.setSynced(1);
         }
 
         if (!dl.isFarmerSynced(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)))) {

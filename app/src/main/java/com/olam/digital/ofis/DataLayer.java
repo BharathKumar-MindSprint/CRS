@@ -6514,11 +6514,11 @@ public class DataLayer {
         return db.query(OFISDBContract.FarmStakeHolderInformation.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
     }
 
-    public List<MultifarmFarmerDTO> getfarmersList(ArrayList<Long> tempFarmerList) {
+    public List<MultifarmFarmerDTO> getfarmersList(ArrayList<Long> tempFarmerList, long farmerGroupId) {
 
         ArrayList<MultifarmFarmerDTO> mfarmerList = new ArrayList<MultifarmFarmerDTO>();
         // Show only synced farmers
-        Cursor cursor = db.rawQuery("select * from farmers where synced = 1", null);
+        Cursor cursor = db.rawQuery("select * from farmers where synced = 1 and farmerGroupId="+farmerGroupId, null);
         //  Cursor cursor = db.query(OFISDBContract.FarmerEntry.TABLE_NAME, columns, null, null, null, null, null);
 
         Set<Long> farmerList= getAllMultifarmEnabledFarmers();
@@ -6819,6 +6819,26 @@ public class DataLayer {
             farmerCursor.close();
         }
         return  farmerName;
+    }
+
+    public long getFarmerGroupById(Long farmerId) {
+        long farmerGroupId=0;
+        Cursor farmerCursor=null;
+        try {
+            String[] columns = new String[]{"*"};
+            String whereClause = OFISDBContract.FarmerEntry.COLUMN_NAME_ID + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(farmerId)};
+            farmerCursor = db.query(OFISDBContract.FarmerEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+            if (farmerCursor != null) {
+                while (farmerCursor.moveToNext()) {
+                    farmerGroupId = Long.valueOf(farmerCursor.getString(farmerCursor.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID)));
+                }
+            }
+        } catch (Exception e) {
+        }finally {
+            farmerCursor.close();
+        }
+        return  farmerGroupId;
     }
 
     public MultiFarmDTO getMultiFarmStakeHolderInfoByFarmerId(String farmerId) {

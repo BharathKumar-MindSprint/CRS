@@ -691,7 +691,13 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     private void bindFarmers(TextView farmFarmerEditText) {
         farmFarmerEditText.setOnClickListener(v -> {
             List<MultifarmFarmerDTO> mfFarmerList=new ArrayList<>();
-            showPopupFarmers(mfFarmerList,farmFarmerEditText);
+            Spinner spinner_farmer_group = (Spinner) findViewById(R.id.spinner_farmerGroup);
+            long farmergroup_id = spinner_farmer_group.getSelectedItemId();
+            if (farmergroup_id < 1) {
+                Toast.makeText(context, res.getString(R.string.fill_farmergroup_name_multifarm), Toast.LENGTH_LONG).show();
+            }else {
+                showPopupFarmers(mfFarmerList, farmFarmerEditText,farmergroup_id);
+            }
         });
     }
 
@@ -2947,7 +2953,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         });
     }
 
-    public void showPopupFarmers(List<MultifarmFarmerDTO> mfFarmerList,TextView farmerEditText) {
+    public void showPopupFarmers(List<MultifarmFarmerDTO> mfFarmerList,TextView farmerEditText,long farmerGroupId) {
         LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View popupView = inflater.inflate(R.layout.activity_multifarm_findfarmer, null);
         FindMultiFarmFarmerAdapter findMultiFarmFarmerAdapter;
@@ -2968,7 +2974,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         RecyclerView multiFarmFarmerRecyclerView = popupView.findViewById(R.id.multiFarmFarmerReyclerView);
 
         ArrayList<Long> tempFarmerList=getTempFarmerList();
-        mfFarmerList=dl.getfarmersList(tempFarmerList);
+        mfFarmerList=dl.getfarmersList(tempFarmerList,farmerGroupId);
         findMultiFarmFarmerAdapter = new FindMultiFarmFarmerAdapter(mfFarmerList,this);
         RecyclerView.LayoutManager reLayoutManager = new LinearLayoutManager(getApplicationContext());
         multiFarmFarmerRecyclerView.setLayoutManager(reLayoutManager);
