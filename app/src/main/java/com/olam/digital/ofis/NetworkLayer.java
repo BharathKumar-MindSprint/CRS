@@ -3875,8 +3875,13 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 //new
                                 JSONArray jsonResponse=new JSONArray(postResponse.body().string());
                                 JSONObject jsonObject1=jsonResponse.getJSONObject(0);
-                               String multiFarmErrorCode=jsonObject1.getString("errorCode");
-                               if(multiFarmErrorCode.equalsIgnoreCase("OFIS_3042")){
+
+                                // OFIS -25 -Hiding for UAT
+//                               String multiFarmErrorCode=jsonObject1.getString("errorCode");
+//                               if(multiFarmErrorCode.equalsIgnoreCase("OFIS_3042")){
+                                boolean x=false;
+                                   if(x){
+
                                   JSONArray errorFarmerIds=jsonObject1.getJSONArray("errorFarmerIds");
                                   if(errorFarmerIds.length()>0){
                                       ArrayList<String> Ids=new ArrayList<>();
@@ -4915,8 +4920,11 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                     //new
                                     JSONObject jsonResponse = new JSONObject(postResponse.body().string());
 
-                                    String multiFarmErrorCode = jsonResponse.getString("errorCode");
-                                    if (multiFarmErrorCode.equalsIgnoreCase("OFIS_3042")) {
+                                    // Hiding OFIS -25 ticket in UAT
+//                                    String multiFarmErrorCode = jsonResponse.getString("errorCode");
+//                                    if (multiFarmErrorCode.equalsIgnoreCase("OFIS_3042")) {
+                                        boolean x=false;
+                                        if(x){
                                         JSONArray errorFarmerIds = jsonResponse.getJSONArray("errorFarmerIds");
                                         if (errorFarmerIds.length() > 0) {
                                             ArrayList<String> Ids = new ArrayList<>();
