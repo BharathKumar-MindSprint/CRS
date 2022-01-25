@@ -777,7 +777,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                         "",
                         "",
                         "",
-                        ""
+                        "farmlocation"
                 });
 
                 // add new record farm polygon task
@@ -1984,7 +1984,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                         bundle.putString("olamfarmername", farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME)));
                         in.putExtras(bundle);
                         startActivity(in);
-                    }else {
+                    }else if (recordedLng != null && recordedLng.getText().equals("farmlocationdata")){
                         polygon = false;
                         household = false;
                         recordFarmLocation(v, res.getString(R.string.are_you_at_the_farm));

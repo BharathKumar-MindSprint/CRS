@@ -3173,7 +3173,7 @@ public class DataLayer {
                         "",
                         "",
                         "",
-                        ""
+                        "farmlocationdata"
                 });
 
                 // add new record farm polygon task

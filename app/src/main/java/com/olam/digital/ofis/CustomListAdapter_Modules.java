@@ -334,7 +334,7 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                     moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
                     textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
                 }
-            } else {
+            } else if(cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals("farmlocationdata")){
                 // Multifarm Location
                 if (MultiFarmUtils.isMultiFarmEnumerator){
                     boolean isLocationCaptured=dl.getLocationInfo(farmerId);
