@@ -7226,12 +7226,12 @@ public class DataLayer {
                     while (cursor.moveToNext()) {
                         try {
                             if (cursor.getString(cursor.getColumnIndex(OFISDBContract.MultiFarmFarms.COLUMN_NAME_NAME_STAKE_HOLDERS)).contains(String.valueOf(farmerId))){
-                                String currentLat = cursor.getString(cursor.getColumnIndex(OFISDBContract.MultiFarmFarms.COLUMN_NAME_NAME_LATITUDE));
-                                String currentLng = cursor.getString(cursor.getColumnIndex(OFISDBContract.MultiFarmFarms.COLUMN_NAME_NAME_LONGITUDE));
-                                if (currentLat != null && currentLat.length() > 0 && (!currentLat.equalsIgnoreCase("null")) && currentLng != null
-                                        && currentLng.length() > 0 && (!currentLng.equalsIgnoreCase("null"))) {
-                                    return  true;
-                                }
+                                   String currentLat = cursor.getString(cursor.getColumnIndex(OFISDBContract.MultiFarmFarms.COLUMN_NAME_NAME_LATITUDE));
+                                    String currentLng = cursor.getString(cursor.getColumnIndex(OFISDBContract.MultiFarmFarms.COLUMN_NAME_NAME_LONGITUDE));
+                                    if (currentLat != null && currentLat.length() > 0 && (!currentLat.equalsIgnoreCase("null")) && currentLng != null
+                                            && currentLng.length() > 0 && (!currentLng.equalsIgnoreCase("null"))) {
+                                        return true;
+                                    }
                             }
                         }catch (Exception e){}
                     }
