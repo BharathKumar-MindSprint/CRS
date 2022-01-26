@@ -553,43 +553,46 @@ public  static String base64ConversionForImage(String filepath)  {
 
         // now we have a width and height check orientation
         try {
-            ExifInterface exif = new ExifInterface(imagePath);
-            int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
-            int angle = exifToDegrees(orientation);
+            if (imagePath != null) {
+                ExifInterface exif = new ExifInterface(imagePath);
+                int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+                int angle = exifToDegrees(orientation);
 
-            Matrix mat = new Matrix();
-            mat.postRotate(angle);
-            Bitmap baseBitmap;
+                Matrix mat = new Matrix();
+                mat.postRotate(angle);
+                Bitmap baseBitmap;
 
-            if (angle == 90 || angle == 270) {
-                // this is a landscape image so lets create the bitmap sized appropriately
-                //noinspection SuspiciousNameCombination
-                baseBitmap = loadSizedBitmap(imagePath, saveHeight, saveWidth);
-            } else {
-                baseBitmap = loadSizedBitmap(imagePath, saveWidth, saveHeight);
+                if (angle == 90 || angle == 270) {
+                    // this is a landscape image so lets create the bitmap sized appropriately
+                    //noinspection SuspiciousNameCombination
+                    baseBitmap = loadSizedBitmap(imagePath, saveHeight, saveWidth);
+                } else {
+                    baseBitmap = loadSizedBitmap(imagePath, saveWidth, saveHeight);
+                }
+
+                if (baseBitmap != null) {
+                    Bitmap bitmap = Bitmap.createBitmap(baseBitmap, 0, 0, baseBitmap.getWidth(), baseBitmap.getHeight(), mat, true);
+
+                    // save the newly scaled and rotated image
+                    File destinationFile = new File(imagePath);
+
+                    FileOutputStream out = new FileOutputStream(destinationFile);
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 80, out);
+                    out.flush();
+                    out.close();
+                    finalImagePath = destinationFile.getAbsolutePath();
+
+                    return finalImagePath;
+                } else {
+                    return null;
+                }
             }
 
-            if (baseBitmap != null) {
-                Bitmap bitmap = Bitmap.createBitmap(baseBitmap, 0, 0, baseBitmap.getWidth(), baseBitmap.getHeight(), mat, true);
-
-                // save the newly scaled and rotated image
-                File destinationFile = new File(imagePath);
-
-                FileOutputStream out = new FileOutputStream(destinationFile);
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 80, out);
-                out.flush();
-                out.close();
-                finalImagePath = destinationFile.getAbsolutePath();
-
-                return finalImagePath;
-            } else {
-                return null;
+            } catch(IOException | OutOfMemoryError e){
+                FirebaseCrash.report(new Exception("Utilities: Error resizing image", e));
+                e.printStackTrace();
             }
 
-        } catch (IOException | OutOfMemoryError e) {
-            FirebaseCrash.report(new Exception("Utilities: Error resizing image", e));
-            e.printStackTrace();
-        }
 
         return finalImagePath;
     }

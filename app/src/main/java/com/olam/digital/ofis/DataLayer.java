@@ -58,6 +58,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -3169,11 +3170,12 @@ public class DataLayer {
                         "",
                         "",
                         "",
+                        "", "",
                         "",
                         "",
                         "",
                         "",
-                        "farmlocationdata"
+                        ""
                 });
 
                 // add new record farm polygon task
@@ -3205,7 +3207,7 @@ public class DataLayer {
                         "",
                         "",
                         "",
-                        "",
+                        "","", "",
                         "",
                         "",
                         "",
@@ -3216,7 +3218,7 @@ public class DataLayer {
                 if (isHHAvailable) {
 
                     // add new record household location task
-                    mc.addRow(new String[]{"0", res.getString(R.string.record_hh_location), res.getString(R.string.record_hh_location), res.getString(R.string.record_hh_location), res.getString(R.string.record_hh_location), res.getString(R.string.record_hh_location), res.getString(R.string.record_hh_location), res.getString(R.string.record_hh_location), res.getString(R.string.record_hh_location), res.getString(R.string.record_hh_location), "0", "", "", "", res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), "", "", "", "", "",
+                    mc.addRow(new String[]{"0", res.getString(R.string.record_hh_location), res.getString(R.string.record_hh_location), res.getString(R.string.record_hh_location), res.getString(R.string.record_hh_location), res.getString(R.string.record_hh_location), res.getString(R.string.record_hh_location), res.getString(R.string.record_hh_location), res.getString(R.string.record_hh_location), res.getString(R.string.record_hh_location), "0", "", "", "", res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), "", "", "", "", "","", "",
                             "", "", "", res.getString(R.string.household_farmer)});
                 }
 
@@ -3257,7 +3259,7 @@ public class DataLayer {
                         "",
                         "",
                         "",
-                        "",
+                        "","", "",
                         "",
                         "",
                         "",
@@ -3270,12 +3272,12 @@ public class DataLayer {
                 if(isSubdistrictCapture) {
                     if (selectedsubdistrict.equalsIgnoreCase("0")) {
                         // update farmers subdistrict
-                        mc.addRow(new String[]{"0", res.getString(R.string.update_farmer_subdistrict), res.getString(R.string.update_farmer_subdistrict), res.getString(R.string.update_farmer_subdistrict), res.getString(R.string.update_farmer_subdistrict), res.getString(R.string.update_farmer_subdistrict), res.getString(R.string.update_farmer_subdistrict), res.getString(R.string.update_farmer_subdistrict), res.getString(R.string.update_farmer_subdistrict), res.getString(R.string.update_farmer_subdistrict), "0", "", "", "", res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), "", "", "", "", "", "","", "", "Subdistrict"});
+                        mc.addRow(new String[]{"0", res.getString(R.string.update_farmer_subdistrict), res.getString(R.string.update_farmer_subdistrict), res.getString(R.string.update_farmer_subdistrict), res.getString(R.string.update_farmer_subdistrict), res.getString(R.string.update_farmer_subdistrict), res.getString(R.string.update_farmer_subdistrict), res.getString(R.string.update_farmer_subdistrict), res.getString(R.string.update_farmer_subdistrict), res.getString(R.string.update_farmer_subdistrict), "0", "", "", "", res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), "", "", "", "", "","", "", "","", "", "Subdistrict"});
                     }
                 }
                 // add update consent statement task
                 mc.addRow(new String[]{"0", res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), "0", "", "", "", res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), "", "", "", "",
-                        "", "", "", "", res.getString(R.string.consent_statement)});
+                        "", "","", "", "", "", res.getString(R.string.consent_statement)});
 
 
 // add e-signature for existing farmers
@@ -3308,7 +3310,7 @@ public class DataLayer {
                         "",
                         "",
                         "",
-                        "",
+                        "","", "",
                         "",
                         "",
                         "Signature"
@@ -3318,7 +3320,7 @@ public class DataLayer {
                 if (isNIDAvailable) {
 //         add national id information
                     mc.addRow(new String[]{"0", res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), "0", "", "", "", res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), "", "", "", "", "",
-                            "", "", "", "National_ID"});
+                            "", "","", "", "", "National_ID"});
                 }
 
 
@@ -3361,7 +3363,7 @@ public class DataLayer {
                             res.getString(R.string.review_farm_management_plan_hint),
                             "",
                             "",
-                            "",
+                            "","", "",
                             String.valueOf(fmp.getInt(fmp.getColumnIndex(OFISDBContract.FarmManagementPlanEntry.COLUMN_NAME_ID))),
                             String.valueOf(fmpStarted),
                             String.valueOf(fmp.getInt(fmp.getColumnIndex(OFISDBContract.FarmManagementPlanEntry.COLUMN_NAME_HAS_FEEDBACK))),
@@ -3405,7 +3407,7 @@ public class DataLayer {
                             "",
                             "",
                             "",
-                            "",
+                            "","", "",
                             "",
                             ChildLabourUtils.REG_CHILD
                     });
@@ -3441,7 +3443,7 @@ public class DataLayer {
                             "",
                             "",
                             "",
-                            "",
+                            "","", "",
                             "",
                             ChildLabourUtils.CHILDLABOUR_SURVEY
                     });
@@ -4640,6 +4642,35 @@ public class DataLayer {
                             db.update(OFISDBContract.MultiFarmFarms.TABLE_NAME, multiFarmValues, "farm_id = ?",whereArgsFarm);
 
                     }catch(Exception e){}
+
+                    // Update in Multifarm Stakeholder Table against farms
+                    ArrayList<ContentValues> valuesList=new ArrayList<ContentValues>();
+                    if (multifarmArray!=null) {
+                        if (multifarmArray.length() > 0) {
+                            int length = multifarmArray.length();
+                            for (int j = 0; j < length; j++) {
+                                ContentValues values=new ContentValues();
+                                values.put(OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_ID, multifarmArray.getJSONObject(j).get("id").toString());
+                                values.put(OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_FARM_ROLE_ID, multifarmArray.getJSONObject(j).get("farmerRoleId").toString());
+                                values.put(OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_NAME_FARM_ID, multifarmArray.getJSONObject(j).get("farmsId").toString());
+                                values.put(OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_NAME_FARM_CODE, multifarmArray.getJSONObject(j).get("farmCode").toString());
+                                values.put(OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_NAME_FARM_NAME, multifarmArray.getJSONObject(j).get("farmName").toString());
+                                values.put(OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_FARMER_ID, multifarmArray.getJSONObject(j).get("farmerId").toString());
+                                values.put(OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_IS_SYNCED, 1);
+                                valuesList.add(values);
+
+                                Log.d("FRANKEVANA", "valuelist: " + valuesList.toString());
+
+                            }
+                        }
+                    }
+
+                    try {
+                        updateStakeHoldersTable(valuesList,Long.valueOf(existFarmId));
+                    }catch (Exception e){}
+
+
+
                 }
 
                 ContentValues transacteeIdValue = new ContentValues();
@@ -6544,6 +6575,62 @@ public class DataLayer {
         return mfarmerList;
     }
 
+    public List<MultifarmFarmerDTO> getfarmersMultifarmList(ArrayList<Long> tempList,long farmerGroupId) {
+        ArrayList<MultifarmFarmerDTO> mfarmerList = new ArrayList<MultifarmFarmerDTO>();
+        Cursor cursor = db.rawQuery("select * from farmers where farmerGroupId ="+farmerGroupId +" and id not in (select DISTINCT farmerId from stakeHolders)", null);
+        if (cursor != null) {
+            try {
+                if (cursor.getCount() > 0) {
+                    while (cursor.moveToNext()) {
+                        try {
+                               long farmerId=Long.valueOf(cursor.getString(cursor.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)));
+                                if(!tempList.contains(farmerId)) {
+                                    MultifarmFarmerDTO multifarmFarmerDTO = new MultifarmFarmerDTO();
+                                    multifarmFarmerDTO.setFarmerId(Long.valueOf(cursor.getString(cursor.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID))));
+                                    multifarmFarmerDTO.setFarmerName(cursor.getString(cursor.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME)));
+                                    mfarmerList.add(multifarmFarmerDTO);
+                                }
+
+                        }catch (Exception e){}
+                    }
+                }
+            } catch (Exception e) {
+            }
+        }
+        cursor.close();
+        return mfarmerList;
+    }
+
+    public List<MultifarmFarmerDTO> getfarmersList1() {
+
+        ArrayList<MultifarmFarmerDTO> mfarmerList = new ArrayList<MultifarmFarmerDTO>();
+        // Show only synced farmers
+        Cursor cursor = db.rawQuery("select * from farmers where synced = 1", null);
+        //  Cursor cursor = db.query(OFISDBContract.FarmerEntry.TABLE_NAME, columns, null, null, null, null, null);
+
+        Set<Long> farmerList= getAllMultifarmEnabledFarmers();
+        if (cursor != null) {
+            try {
+                if (cursor.getCount() > 0) {
+                    while (cursor.moveToNext()) {
+                        try {
+                            long farmerId=Long.valueOf(cursor.getString(cursor.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)));
+                            if(!farmerList.contains(farmerId)) {
+                                MultifarmFarmerDTO multifarmFarmerDTO = new MultifarmFarmerDTO();
+                                multifarmFarmerDTO.setFarmerId(farmerId);
+                                multifarmFarmerDTO.setFarmerName(cursor.getString(cursor.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME)));
+                                mfarmerList.add(multifarmFarmerDTO);
+                            }
+                        }catch (Exception e){}
+                    }
+                }
+            } catch (Exception e) {
+            }
+        }
+        cursor.close();
+        return mfarmerList;
+    }
+
     public static <T> List<Long> convertSetToList(Set<Long> set)
     {// create an empty list
         List<Long> list = new ArrayList<>();
@@ -6915,9 +7002,9 @@ public class DataLayer {
             } catch (Exception e) {
             }
         }
-        if(!cursor.isClosed()){
+
             cursor.close();
-        }
+
         return  roleId;
 
     }
@@ -6985,6 +7072,33 @@ public class DataLayer {
 
             String[] whereArgsFarm11 = new String[]{String.valueOf(existFarmId)};
             db.update(OFISDBContract.MultiFarmFarms.TABLE_NAME, multiFarmValues11, "farm_id = ?", whereArgsFarm11);
+
+
+            // Update in Multifarm Stakeholder Table against farms
+            ArrayList<ContentValues> valuesList=new ArrayList<ContentValues>();
+            if (multifarmArray!=null) {
+                if (multifarmArray.length() > 0) {
+                    int length = multifarmArray.length();
+                    for (int j = 0; j < length; j++) {
+                        ContentValues values=new ContentValues();
+                        values.put(OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_ID, multifarmArray.getJSONObject(j).get("id").toString());
+                        values.put(OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_FARM_ROLE_ID, multifarmArray.getJSONObject(j).get("farmerRoleId").toString());
+                        values.put(OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_NAME_FARM_ID, multifarmArray.getJSONObject(j).get("farmsId").toString());
+                        values.put(OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_NAME_FARM_CODE, multifarmArray.getJSONObject(j).get("farmCode").toString());
+                        values.put(OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_NAME_FARM_NAME, multifarmArray.getJSONObject(j).get("farmName").toString());
+                        values.put(OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_FARMER_ID, multifarmArray.getJSONObject(j).get("farmerId").toString());
+                        values.put(OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_IS_SYNCED, 1);
+                        valuesList.add(values);
+
+
+                    }
+                }
+            }
+
+            try {
+                updateStakeHoldersTable(valuesList,Long.valueOf(existFarmId));
+            }catch (Exception e){}
+
 
 
 
@@ -7182,6 +7296,328 @@ public class DataLayer {
         return submittedInfo;
     }
 
+    public HashMap<Integer,SubmittedInfo> isAvailableinSubmittedModules1(Cursor moduleAssignments,long farmerId) throws JSONException {
+
+        HashMap<Integer,SubmittedInfo> hashMapList= new HashMap<>();
+        String farmId=getMultifarmfarmId(farmerId);
+        MultiFarmDTO multiFarmDTO=null;
+        if (farmId!=null){
+            multiFarmDTO = getMultiFarmInfoObj(Long.valueOf(farmId));
+        }else{
+            return hashMapList;
+        }
+
+       // String farmerRoleStr = cursor.getString(cursor.getColumnIndex("fkFarmerRoleId"));
+
+        if (moduleAssignments != null) {
+            try {
+                if (moduleAssignments.getCount() > 0) {
+                    while (moduleAssignments.moveToNext()) {
+                        if (moduleAssignments.getString(moduleAssignments.getColumnIndex("isFarmSurvey")).equalsIgnoreCase("true")){
+                        int cursorId= moduleAssignments.getInt(moduleAssignments.getColumnIndex("_id"));
+                         SubmittedInfo  submittedInfo = new SubmittedInfo();
+                         submittedInfo.setSubmitted(false);
+                         submittedInfo.setModuleId(cursorId);
+                         boolean submitted;
+
+
+                            // Needed Part
+                            JSONArray jsonArray = multiFarmDTO.getStakeholdersInfo();
+                            if (jsonArray != null && jsonArray.length() > 0) {
+
+                                int length = jsonArray.length();
+                                for (int j = 0; j < length; j++) {
+
+                                    try {
+                                        String farmerIdStakeHolder = jsonArray.getJSONObject(j).get("farmerId").toString();
+
+                                        //Check in NetworkTable
+                                        submitted = getModuledetailsInNetworkQueue(cursorId, farmerIdStakeHolder);
+                                        if (submitted) {
+                                            submittedInfo.setSubmitted(true);
+                                            submittedInfo.setFarmerId(Long.valueOf(farmerIdStakeHolder));
+                                            submittedInfo.setNetworkTable(true);
+                                            hashMapList.put(cursorId,submittedInfo);
+                                          //  submittedInfoList.add(submittedInfo);
+
+                                        } else{
+
+                                        // Check in submitted Modules
+                                        Cursor farmer = getFarmerById(Long.valueOf(farmerIdStakeHolder));
+                                        if (farmer.getCount() > 0) {
+                                            farmer.moveToFirst();
+
+                                            JSONObject submittedModules;
+                                            String submittedModulesJSON = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_WEBSITE_SUBMITTED_MODULES));
+                                            String Samplestr = String.valueOf("{\"modules\":null}");
+                                            if (Samplestr.equals(submittedModulesJSON)) {
+                                                submittedModulesJSON = submittedModulesJSON.replaceAll("\"modules\":null", "");
+                                            }
+                                            submittedModules = (!submittedModulesJSON.equals("null")) ? new JSONObject(submittedModulesJSON) : new JSONObject();
+
+                                            String disabled_months_string = moduleAssignments.getString(moduleAssignments.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_DISABLED_MONTHS));
+                                            List<String> disabled_months = Arrays.asList(disabled_months_string.split("\\s*,\\s*"));
+                                            try {
+                                                Calendar currentDate = Calendar.getInstance();
+                                                int recurrence_frequency = moduleAssignments.getInt(moduleAssignments.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_RECURRENCE_FREQUENCY));
+                                                String recurrence_type = moduleAssignments.getString(moduleAssignments.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_RECURRENCE_TYPE));
+                                                Calendar calculationDate = (Calendar) currentDate.clone();
+                                                boolean disable_entry = false;
+
+                                                JSONArray submittedModulesArray = submittedModules.getJSONArray("modules");
+                                                for (int i = 0; i < submittedModulesArray.length(); i++) {
+                                                    JSONObject submittedModule = submittedModulesArray.getJSONObject(i);
+                                                    JSONObject submittedModuleDetails = submittedModule.getJSONObject("module");
+
+
+                                                    if (submittedModuleDetails.has("id") && submittedModuleDetails.getInt("id") == cursorId) {
+
+                                                        if (recurrence_frequency > 0 && !disabled_months.contains(String.valueOf(currentDate.get(Calendar.MONTH)))) {
+                                                            // for recurring
+                                                            try {
+                                                                // get last submitted date
+                                                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
+                                                                Calendar lastSubmittedDate = Calendar.getInstance();
+
+                                                                //O20HS-84 - To enable the annual survey.
+                                                                calculationDate = (Calendar) currentDate.clone();
+                                                                //
+
+                                                                try {
+                                                                    lastSubmittedDate.setTime(sdf.parse(submittedModuleDetails.getString("created_at")));
+                                                                } catch (ParseException e) {
+                                                                }
+                                                                if (recurrence_type != null) {
+                                                                    if (recurrence_type.equalsIgnoreCase("years")) {
+                                                                        calculationDate.add(Calendar.YEAR, -recurrence_frequency);
+                                                                        calculationDate.set(Calendar.MONTH, Calendar.DECEMBER);
+                                                                        calculationDate.set(Calendar.DAY_OF_MONTH, 31);
+                                                                    } else if (recurrence_type.equalsIgnoreCase("months")) {
+                                                                        calculationDate.add(Calendar.MONTH, -recurrence_frequency);
+                                                                        calculationDate.set(Calendar.DAY_OF_MONTH, calculationDate.getActualMaximum(Calendar.DAY_OF_MONTH));
+                                                                    } else if (recurrence_type.equalsIgnoreCase("weeks")) {
+                                                                        calculationDate.add(Calendar.WEEK_OF_YEAR, -recurrence_frequency);
+                                                                        calculationDate.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
+                                                                    } else {
+                                                                        // must be days
+                                                                        calculationDate.add(Calendar.DAY_OF_YEAR, -recurrence_frequency);
+                                                                    }
+
+                                                                    // set the time
+                                                                    calculationDate.set(Calendar.HOUR_OF_DAY, 23);
+                                                                    calculationDate.set(Calendar.MINUTE, 59);
+                                                                    calculationDate.set(Calendar.SECOND, 59);
+                                                                    calculationDate.set(Calendar.MILLISECOND, 999);
+
+                                                                    // force the recalculation
+                                                                    calculationDate.get(Calendar.DAY_OF_MONTH);
+
+
+                                                                    if (lastSubmittedDate.after(calculationDate)) {
+                                                                        disable_entry = true;
+                                                                    }
+                                                                }
+                                                            } catch (Exception e) {
+                                                                e.printStackTrace();
+                                                            }
+                                                        } else {
+                                                            // for non-recurring
+                                                            disable_entry = true;
+                                                        }
+
+                                                        if (disable_entry) {
+                                                            submittedInfo.setSubmitted(true);
+                                                            submittedInfo.setFarmerId(Long.valueOf(farmerIdStakeHolder));
+                                                            submittedInfo.setNetworkTable(false);
+                                                            hashMapList.put(cursorId,submittedInfo);
+
+                                                            //submittedInfoList.add(submittedInfo);
+
+                                                        }
+                                                    }
+                                                }
+                                            } catch (JSONException e) {
+                                                e.printStackTrace();
+                                            }
+
+                                        }
+                                        farmer.close();
+                                    }
+                                    } catch (Exception e) {
+                                    }
+                                }
+
+                            }
+
+                            //------
+
+                        }
+
+
+                    }
+                }
+            } catch (Exception e) {
+            }
+        }
+
+
+        return hashMapList;
+    }
+
+
+
+    public SubmittedInfo isAvailableinSubmittedModules2(Cursor moduleAssignments,int cursorId,long farmerId) throws JSONException {
+
+        String farmId=getMultifarmfarmId(farmerId);
+        MultiFarmDTO multiFarmDTO=null;
+        if (farmId!=null){
+            multiFarmDTO = getMultiFarmInfoObj(Long.valueOf(farmId));
+        }
+
+
+                            SubmittedInfo  submittedInfo = new SubmittedInfo();
+                            submittedInfo.setSubmitted(false);
+                            submittedInfo.setNetworkTable(false);
+                            submittedInfo.setModuleId(cursorId);
+                            boolean submitted;
+
+
+                            // Needed Part
+                            JSONArray jsonArray = multiFarmDTO.getStakeholdersInfo();
+                            if (jsonArray != null && jsonArray.length() > 0) {
+
+                                int length = jsonArray.length();
+                                for (int j = 0; j < length; j++) {
+
+                                    try {
+                                        String farmerIdStakeHolder = jsonArray.getJSONObject(j).get("farmerId").toString();
+
+                                        //Check in NetworkTable
+                                        submitted = getModuledetailsInNetworkQueue(cursorId, farmerIdStakeHolder);
+                                        if (submitted) {
+                                            submittedInfo.setSubmitted(true);
+                                            submittedInfo.setFarmerId(Long.valueOf(farmerIdStakeHolder));
+                                            submittedInfo.setNetworkTable(true);
+                                           return  submittedInfo;
+                                            //  submittedInfoList.add(submittedInfo);
+
+                                        } else{
+
+                                            // Check in submitted Modules
+                                            Cursor farmer = getFarmerById(Long.valueOf(farmerIdStakeHolder));
+                                            if (farmer.getCount() > 0) {
+                                                farmer.moveToFirst();
+
+                                                JSONObject submittedModules;
+                                                String submittedModulesJSON = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_WEBSITE_SUBMITTED_MODULES));
+                                                String Samplestr = String.valueOf("{\"modules\":null}");
+                                                if (Samplestr.equals(submittedModulesJSON)) {
+                                                    submittedModulesJSON = submittedModulesJSON.replaceAll("\"modules\":null", "");
+                                                }
+                                                submittedModules = (!submittedModulesJSON.equals("null")) ? new JSONObject(submittedModulesJSON) : new JSONObject();
+
+                                                String disabled_months_string = moduleAssignments.getString(moduleAssignments.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_DISABLED_MONTHS));
+                                                List<String> disabled_months = Arrays.asList(disabled_months_string.split("\\s*,\\s*"));
+                                                try {
+                                                    Calendar currentDate = Calendar.getInstance();
+                                                    int recurrence_frequency = moduleAssignments.getInt(moduleAssignments.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_RECURRENCE_FREQUENCY));
+                                                    String recurrence_type = moduleAssignments.getString(moduleAssignments.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_RECURRENCE_TYPE));
+                                                    Calendar calculationDate = (Calendar) currentDate.clone();
+                                                    boolean disable_entry = false;
+
+                                                    JSONArray submittedModulesArray = submittedModules.getJSONArray("modules");
+                                                    for (int i = 0; i < submittedModulesArray.length(); i++) {
+                                                        JSONObject submittedModule = submittedModulesArray.getJSONObject(i);
+                                                        JSONObject submittedModuleDetails = submittedModule.getJSONObject("module");
+
+
+                                                        if (submittedModuleDetails.has("id") && submittedModuleDetails.getInt("id") == cursorId) {
+
+                                                            if (recurrence_frequency > 0 && !disabled_months.contains(String.valueOf(currentDate.get(Calendar.MONTH)))) {
+                                                                // for recurring
+                                                                try {
+                                                                    // get last submitted date
+                                                                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
+                                                                    Calendar lastSubmittedDate = Calendar.getInstance();
+
+                                                                    //O20HS-84 - To enable the annual survey.
+                                                                    calculationDate = (Calendar) currentDate.clone();
+                                                                    //
+
+                                                                    try {
+                                                                        lastSubmittedDate.setTime(sdf.parse(submittedModuleDetails.getString("created_at")));
+                                                                    } catch (ParseException e) {
+                                                                    }
+                                                                    if (recurrence_type != null) {
+                                                                        if (recurrence_type.equalsIgnoreCase("years")) {
+                                                                            calculationDate.add(Calendar.YEAR, -recurrence_frequency);
+                                                                            calculationDate.set(Calendar.MONTH, Calendar.DECEMBER);
+                                                                            calculationDate.set(Calendar.DAY_OF_MONTH, 31);
+                                                                        } else if (recurrence_type.equalsIgnoreCase("months")) {
+                                                                            calculationDate.add(Calendar.MONTH, -recurrence_frequency);
+                                                                            calculationDate.set(Calendar.DAY_OF_MONTH, calculationDate.getActualMaximum(Calendar.DAY_OF_MONTH));
+                                                                        } else if (recurrence_type.equalsIgnoreCase("weeks")) {
+                                                                            calculationDate.add(Calendar.WEEK_OF_YEAR, -recurrence_frequency);
+                                                                            calculationDate.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
+                                                                        } else {
+                                                                            // must be days
+                                                                            calculationDate.add(Calendar.DAY_OF_YEAR, -recurrence_frequency);
+                                                                        }
+
+                                                                        // set the time
+                                                                        calculationDate.set(Calendar.HOUR_OF_DAY, 23);
+                                                                        calculationDate.set(Calendar.MINUTE, 59);
+                                                                        calculationDate.set(Calendar.SECOND, 59);
+                                                                        calculationDate.set(Calendar.MILLISECOND, 999);
+
+                                                                        // force the recalculation
+                                                                        calculationDate.get(Calendar.DAY_OF_MONTH);
+
+
+                                                                        if (lastSubmittedDate.after(calculationDate)) {
+                                                                            disable_entry = true;
+                                                                        }
+                                                                    }
+                                                                } catch (Exception e) {
+                                                                    e.printStackTrace();
+                                                                }
+                                                            } else {
+                                                                // for non-recurring
+                                                                disable_entry = true;
+                                                            }
+
+                                                            if (disable_entry) {
+                                                                submittedInfo.setSubmitted(true);
+                                                                submittedInfo.setFarmerId(Long.valueOf(farmerIdStakeHolder));
+                                                                submittedInfo.setNetworkTable(false);
+                                                                return  submittedInfo;
+
+                                                                //submittedInfoList.add(submittedInfo);
+
+                                                            }
+                                                        }
+                                                    }
+                                                } catch (JSONException e) {
+                                                    e.printStackTrace();
+                                                }
+
+                                            }
+                                            farmer.close();
+                                        }
+                                    } catch (Exception e) {
+                                    }
+                                }
+
+                            }
+
+                            //-----
+
+
+        return submittedInfo;
+    }
+
+
+
     private boolean getModuledetailsInNetworkQueue(int currentId, String farmerIdStakeHolder) {
 
         boolean available=false;
@@ -7368,6 +7804,7 @@ public class DataLayer {
     }
 
     public boolean getPolygonInfo(long farmerId) {
+
         Cursor cursor = db.rawQuery("select * from multifarmFarms", null);
         boolean plotAvailable=false;
         if (cursor != null) {
@@ -7387,6 +7824,8 @@ public class DataLayer {
         cursor.close();
         return  plotAvailable;
     }
+
+
 
     Cursor getFarmerRoleById(int Id) {
         String[] columns = new String[]{"*"};
@@ -7435,5 +7874,157 @@ public class DataLayer {
         farmerNames = String.join(", ", farmerNameList);
         return farmerNames;
     }
+
+    public void insertStakeholderTable(ArrayList<ContentValues> allMultiStakeholders,long farmId,boolean isExistingFarm  ) {
+
+        if(isExistingFarm) {
+            String whereClause = OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_NAME_FARM_ID + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(farmId)};
+            try {
+                db.delete(OFISDBContract.MultiFarmStakeholderFarms.TABLE_NAME, whereClause, whereArgs);
+            } catch (Exception e) {
+            }
+        }
+
+        try {
+            for ( ContentValues values : allMultiStakeholders){
+                db.insert(OFISDBContract.MultiFarmStakeholderFarms.TABLE_NAME,null,values);
+            }
+        }catch (Exception e){}
+    }
+
+    public void updateStakeHoldersTable(ArrayList<ContentValues> allMultiStakeholders,long farmId){
+
+        String whereClause = OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_NAME_FARM_ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(farmId)};
+        try {
+            db.delete(OFISDBContract.MultiFarmStakeholderFarms.TABLE_NAME, whereClause, whereArgs);
+        }catch (Exception e){}
+
+        try {
+            for ( ContentValues values : allMultiStakeholders){
+                db.insert(OFISDBContract.MultiFarmStakeholderFarms.TABLE_NAME,null,values);
+            }
+        }catch (Exception e){}
+
+    }
+
+    public String getMultifarmfarmId(Long farmerId) {
+        Cursor cursor = db.rawQuery("select * from stakeHolders where farmerId ="+ farmerId, null);
+        String farmId=null;
+        if (cursor != null) {
+            try {
+                if (cursor.getCount() > 0) {
+                    while (cursor.moveToNext()) {
+                            farmId = cursor.getString(cursor.getColumnIndex(OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_NAME_FARM_ID));
+                    }
+                }
+            }catch (Exception e) {}
+        }
+        cursor.close();
+        return  farmId;
+    }
+
+    public String getMultiFarmRoleInfoByFarmerId1(String farmerId) {
+
+        Cursor cursor = db.rawQuery("select * from stakeHolders where farmerId ="+ farmerId, null);
+        String roldId=null;
+        if (cursor != null) {
+            try {
+                if (cursor.getCount() > 0) {
+                    while (cursor.moveToNext()) {
+                        roldId = cursor.getString(cursor.getColumnIndex(OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_FARM_ROLE_ID));
+                    }
+                }
+            }catch (Exception e) {}
+        }
+        cursor.close();
+        return  roldId;
+
+    }
+
+
+    public boolean getPolygonInfo1(long farmerId) {
+        boolean plotAvailable=false;
+        String farmId= getMultifarmfarmId(farmerId);
+        if(farmId==null){
+            return  plotAvailable;
+        }
+
+        Cursor cursor = db.rawQuery("select * from multifarmFarms where farm_id ="+farmId, null);
+
+        if (cursor != null) {
+            try {
+                if (cursor.getCount() > 0) {
+                    while (cursor.moveToNext()) {
+                            String plotValue = cursor.getString(cursor.getColumnIndex(OFISDBContract.MultiFarmFarms.COLUMN_NAME_RECORDED_PLOTS));
+                            if (plotValue != null && plotValue.length() > 0 && (!plotValue.equalsIgnoreCase("null"))) {
+                                return  true;
+                            }
+                    }
+                }
+            }catch (Exception e) {}
+        }
+        cursor.close();
+        return  plotAvailable;
+    }
+
+    public boolean getLocationInfo1(long farmerId) {
+        boolean locationAvailable=false;
+        String farmId= getMultifarmfarmId(farmerId);
+        if(farmId==null){
+            return  locationAvailable;
+        }
+
+        Cursor cursor = db.rawQuery("select * from multifarmFarms where farm_id ="+farmId, null);
+
+        if (cursor != null) {
+            try {
+                if (cursor.getCount() > 0) {
+                    while (cursor.moveToNext()) {
+                        try {
+                                String currentLat = cursor.getString(cursor.getColumnIndex(OFISDBContract.MultiFarmFarms.COLUMN_NAME_NAME_LATITUDE));
+                                String currentLng = cursor.getString(cursor.getColumnIndex(OFISDBContract.MultiFarmFarms.COLUMN_NAME_NAME_LONGITUDE));
+                                if (currentLat != null && currentLat.length() > 0 && (!currentLat.equalsIgnoreCase("null")) && currentLng != null
+                                        && currentLng.length() > 0 && (!currentLng.equalsIgnoreCase("null"))) {
+                                    return  true;
+                                }
+                        }catch (Exception e){}
+                    }
+                }
+            }catch (Exception e) {}
+        }
+        cursor.close();
+        return  locationAvailable;
+    }
+
+
+    public boolean isfarmerIdAvailableMultiFarmDB1(long farmerLong) {
+        boolean available = false;
+        String[] columns = new String[]{"*"};
+        Cursor mCursor= db.query(OFISDBContract.MultiFarmFarms.TABLE_NAME, columns, null, null, null, null, null);
+
+        try {
+            if (mCursor != null) {
+                while (mCursor.moveToNext()) {
+                    JSONArray multiFarmArray = new JSONArray(mCursor.getString(mCursor.getColumnIndex(OFISDBContract.MultiFarmFarms.COLUMN_NAME_NAME_STAKE_HOLDERS)));
+                    for(int i=0;i<multiFarmArray.length();i++){
+                        JSONObject jsonobject= (JSONObject) multiFarmArray.get(i);
+                        long farmerId = Long.valueOf(jsonobject.getLong("farmerId"));
+                        if(farmerId == farmerLong){
+                            available =true;
+                            return  available;
+                        }
+                    }
+                }
+            }
+        }catch (Exception e){
+
+        }finally {
+            mCursor.close();
+        }
+        return available;
+    }
+
 }
 

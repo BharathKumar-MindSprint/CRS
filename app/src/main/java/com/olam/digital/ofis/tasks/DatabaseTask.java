@@ -88,7 +88,10 @@ abstract class DatabaseTask extends AsyncTask<JSONObject, Integer, String> {
 
 
     void fillTable(JSONArray jsonArray, String tableName, List columnList) {
-        db.delete(tableName, null, null);
+      if (!tableName.equalsIgnoreCase("stakeHolders")){
+          db.delete(tableName, null, null);
+      }
+
 
         @SuppressWarnings("deprecation") DatabaseUtils.InsertHelper insertHelper = new DatabaseUtils.InsertHelper(db, tableName);
 

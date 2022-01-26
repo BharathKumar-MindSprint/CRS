@@ -2217,32 +2217,33 @@ public class OFISDBContract {
                 }}
         );
     }
-//    public static abstract class MultiFarmFarms implements BaseColumns {
-//        public static final String TABLE_NAME = "multifarmFarms";
-//        public static final String COLUMN_NAME_ID = "id";
-//        public static final String COLUMN_NAME_FARMER_ID = "farmerId";
-//        public static final String COLUMN_NAME_NAME_FARM_NAME = "farmName";
-//        public static final String COLUMN_NAME_NAME_FARM_CODE = "farmCode";
-//        public static final String COLUMN_NAME_NAME_FARM_ID = "farm_id";
-//       // public static final String COLUMN_NAME_NAME_IS_FARM_AVAILABLE = "farm_available";
-//        public static final String COLUMN_NAME_NAME_LATITUDE = "primary_lat";
-//        public static final String COLUMN_NAME_NAME_LONGITUDE = "primary_lng";
-//        public static final String COLUMN_NAME_NAME_STAKE_HOLDERS = "stakeHolders";
-//        public static final String  COLUMN_NAME_IS_SYNCED="Synced";
-//
-//        public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
-//                new ArrayList<String>() {{
-//                    add(COLUMN_NAME_ID);
-//                    add(COLUMN_NAME_FARMER_ID);
-//                    add(COLUMN_NAME_NAME_FARM_NAME);
-//                    add(COLUMN_NAME_NAME_FARM_CODE);
-//                    add(COLUMN_NAME_NAME_FARM_ID);
-//                    add(COLUMN_NAME_NAME_LATITUDE);
-//                    add(COLUMN_NAME_NAME_LONGITUDE);
-//                    add(COLUMN_NAME_NAME_STAKE_HOLDERS);
-//                    add(COLUMN_NAME_IS_SYNCED);
-//                }}
-//        );
-//    }
+
+
+    public static abstract class MultiFarmStakeholderFarms implements BaseColumns {
+        public static final String TABLE_NAME = "stakeHolders";
+        public static final String COLUMN_NAME_STAKE_HOLDER_ID = "keyId";
+        public static final String COLUMN_NAME_ID = "id";
+        public static final String COLUMN_NAME_FARMER_ID = "farmerId";
+        public static final String COLUMN_NAME_NAME_FARM_ID = "farmsId";
+        public static final String COLUMN_NAME_FARM_ROLE_ID = "farmerRoleId";
+        public static final String COLUMN_NAME_NAME_FARM_NAME = "farmName";
+        public static final String COLUMN_NAME_NAME_FARM_CODE = "farmCode";
+        public static final String COLUMN_NAME_IS_SYNCED = "synced";
+
+
+
+        public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
+                new ArrayList<String>() {{
+                    add(COLUMN_NAME_ID);
+                    add(COLUMN_NAME_FARMER_ID);
+                    add(COLUMN_NAME_NAME_FARM_ID);
+                    add(COLUMN_NAME_FARM_ROLE_ID);
+                    add(COLUMN_NAME_NAME_FARM_NAME);
+                    add(COLUMN_NAME_NAME_FARM_CODE);
+
+                }}
+        );
+    }
+
 
 }
