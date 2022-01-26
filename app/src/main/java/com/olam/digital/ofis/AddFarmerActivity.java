@@ -212,6 +212,11 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     private boolean editIsExistFarm=false;
     private long editFarmId;
 
+    List<MultifarmFarmerDTO> mfFarmerList;
+
+    List<MultifarmFarmerDTO> mfFarmerMultifarmList;
+
+
     /**
      * Generate unique ID from UUID.
      *
@@ -1984,6 +1989,11 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                                     }
                                     if (isAllRoleFarmerFilled()) {
                                        long newId= dl.updateMultiFarmInfo(getAllMultiFarmList1(editFarmerId),editFarmId,isExistingFarm,editIsExistFarm);
+
+                                        try {
+                                            dl.updateStakeHoldersTable(getAllMultiStakeholders(editFarmerId,newId),editFarmId);
+                                        }catch ( Exception e){}
+
                                         ContentValues networkQueueValues = new ContentValues();
                                         networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID, editFarmerId);
                                         networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID, newId);
@@ -2024,6 +2034,11 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
 
                             if(MultiFarmUtils.isMultiFarmEnumerator) {
                                 long newId = dl.insertMultiFarmInfo(getAllMultiFarmList1(newFarmerId), 0, isExistingFarm);
+
+                                try {
+                                    dl.insertStakeholderTable(getAllMultiStakeholders(newFarmerId,newId),newId,isExistingFarm);
+                                }catch ( Exception e){}
+
                                 dl.updateNetworkQueueFarmerEntry(newFarmerId, newId);
                             }
 
@@ -2973,7 +2988,8 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         RecyclerView multiFarmFarmerRecyclerView = popupView.findViewById(R.id.multiFarmFarmerReyclerView);
 
         ArrayList<Long> tempFarmerList=getTempFarmerList();
-        mfFarmerList=dl.getfarmersList(tempFarmerList,farmerGroupId);
+        mfFarmerList=dl.getfarmersMultifarmList(tempFarmerList,farmerGroupId);
+
         findMultiFarmFarmerAdapter = new FindMultiFarmFarmerAdapter(mfFarmerList,this);
         RecyclerView.LayoutManager reLayoutManager = new LinearLayoutManager(getApplicationContext());
         multiFarmFarmerRecyclerView.setLayoutManager(reLayoutManager);
@@ -3367,6 +3383,69 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         }
         return tempList;
     }
+
+    private ArrayList<ContentValues> getAllMultiStakeholders(long newFarmerId,long farmId) {
+        ArrayList<ContentValues> valuesArrayList=new ArrayList<ContentValues>();
+        int stakeholderCount=farmStakeholderLayout.getChildCount();
+
+        String farmName= farmNameEdittext.getText().toString().trim();
+        String farmCode=farmCodeEdittext.getText().toString().trim();
+        Object farmIdObj=farmCodeEdittext.getTag();
+        String farmIds=null;
+        if (farmIdObj!=null){
+            farmIds=farmIdObj.toString();
+        }
+        EditText fNameEt=findViewById(R.id.farmerName);
+        String globalFName=fNameEt.getText().toString().trim();
+
+        for (int j = 0; j < stakeholderCount; j++) {
+            LinearLayout stakeHolderRow = (LinearLayout) farmStakeholderLayout.getChildAt(j);
+            ContentValues values=new ContentValues();
+
+            TextView farmerNameET = stakeHolderRow.findViewById(R.id.farmFarmerTV);
+            Spinner farmRoleSpinner = stakeHolderRow.findViewById(R.id.farmerRoleSpinner);
+            String farmerStakeHolderId = farmerNameET.getTag().toString();
+            String farmerName = farmerNameET.getText().toString().trim();
+
+            Object id=stakeHolderRow.getTag();
+            String StakeholderId=null;
+            if(id!=null){
+                StakeholderId=id.toString();
+            }
+
+            try {
+
+
+                try {
+                    values.put(OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_ID,StakeholderId);
+                }catch (Exception e){
+                    values.put(OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_ID,"null");
+                }
+                values.put(OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_NAME_FARM_NAME,farmName);
+                values.put(OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_NAME_FARM_CODE,farmCode);
+                values.put(OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_FARM_ROLE_ID,Long.valueOf(String.valueOf(farmRoleSpinner.getTag())));
+                if (isExistingFarm){
+                    values.put(OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_NAME_FARM_ID,Long.valueOf(farmIds));
+                }else{
+                    values.put(OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_NAME_FARM_ID,farmId);
+                }
+
+                if (globalFName.equalsIgnoreCase(farmerName)){
+                    values.put(OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_FARMER_ID,newFarmerId);
+                }else{
+                    values.put(OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_FARMER_ID,Long.valueOf(farmerStakeHolderId));
+                }
+
+                values.put(OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_IS_SYNCED,0);
+
+            }catch (Exception e){}
+
+            valuesArrayList.add(values);
+        }
+         return valuesArrayList;
+
+    }
+
 
 
 }

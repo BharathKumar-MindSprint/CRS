@@ -32,15 +32,18 @@ public class UpdateMultiFarmRoleTask  extends DatabaseTask {
         protected String doInBackground(JSONObject... params) {
 
             JSONObject multiFarmRoleResponse = params[0];
-            JSONArray multiFarmRoleArray;
-            if (multiFarmRoleResponse!=null) {
+            if (multiFarmRoleResponse != null) {
+                JSONArray multiFarmRoleArray;
+                if (multiFarmRoleResponse != null) {
                     // get the various sub lists
-                try {
-                    multiFarmRoleArray = multiFarmRoleResponse.getJSONArray("roles");
-                    fillTable(multiFarmRoleArray, OFISDBContract.MultiFarmRoles.TABLE_NAME, OFISDBContract.MultiFarmRoles.COLUMN_LIST);
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                    try {
+                        multiFarmRoleArray = multiFarmRoleResponse.getJSONArray("roles");
+                        fillTable(multiFarmRoleArray, OFISDBContract.MultiFarmRoles.TABLE_NAME, OFISDBContract.MultiFarmRoles.COLUMN_LIST);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 }
+                return null;
             }
             return null;
         }
