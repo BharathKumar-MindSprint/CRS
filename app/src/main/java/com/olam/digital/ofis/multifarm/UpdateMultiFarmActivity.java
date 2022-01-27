@@ -137,7 +137,7 @@ public class UpdateMultiFarmActivity extends BaseActivity {
 
 
 
-        gpsListener = location -> {
+        gpsListener = location ->  {
             if (location != null) {
                 mCurrentLocation = location;
             }
@@ -167,17 +167,45 @@ public class UpdateMultiFarmActivity extends BaseActivity {
                 }
             if (isAllRoleFarmerFilled()) {
                 if (editMode){
+                    boolean isSurveyEnabled = intent.getBooleanExtra("isSurveyEnabled", false);
 
                      long newId=dl.updateMultiFarmInfo(getAllMultiFarmList1(editFarmerId), editFarmId,isExistingFarm,editIsExistFarm);
 
                     try {
                         dl.updateStakeHoldersTable(getAllMultiStakeholders(editFarmerId,newId),editFarmId);
-                    }catch ( Exception e){}
+                    }catch ( Exception e){
+                        e.printStackTrace();
+                    }
 
-                     ContentValues networkQueueValues = new ContentValues();
-                     networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID, editFarmerId);
-                     networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID, newId);
-                     dl.updateNetworkQueueMultiFarmEntry(networkQueueValues,editFarmId,editFarmerId);
+                    if(! isSurveyEnabled) {
+                        ContentValues networkQueueValues = new ContentValues();
+                        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID, editFarmerId);
+                        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID, newId);
+                        dl.updateNetworkQueueMultiFarmEntry(networkQueueValues, editFarmId, editFarmerId);
+                        finish();
+                    }else{
+                        dl.insertNetworkMultifarmUpdateQueueEntry(editFarmerId,farmerName,newId);
+                        long farmerId = Long.valueOf(getIntent().getExtras().getString("farmerId"));
+                        Intent moduleIntent = new Intent(this, CompleteModuleActivity.class);
+                        moduleIntent.putExtra(FARMER_ID, farmerId);
+                        moduleIntent.putExtra(MODULE_ID, getIntent().getLongExtra(MODULE_ID, 0));
+                        moduleIntent.putExtra(FARMER_MODULE_ID, getIntent().getLongExtra(FARMER_MODULE_ID, 0));
+                        moduleIntent.putExtra(SUB_MODULE_ID, getIntent().getIntExtra(SUB_MODULE_ID, 0));
+                        moduleIntent.putExtra(FARM_ID, getIntent().getIntExtra(FARM_ID, 0));
+                        moduleIntent.putExtra(STATUS_STARTED, getIntent().getIntExtra(STATUS_STARTED, 0));
+                        moduleIntent.putExtra(STATUS_FINISHED, getIntent().getIntExtra(STATUS_FINISHED, 0));
+                        moduleIntent.putExtra(OLAM_FARMER_ID, getIntent().getStringExtra(OLAM_FARMER_ID));
+                        moduleIntent.putExtra(MODULE_NAME, getIntent().getStringExtra(MODULE_NAME));
+                        moduleIntent.putExtra(RECORDED_LAT, getIntent().getStringExtra(RECORDED_LAT));
+                        moduleIntent.putExtra(RECORDED_LNG, getIntent().getStringExtra(RECORDED_LNG));
+                        moduleIntent.putExtra(FARMER_NAME, getIntent().getStringExtra(FARMER_NAME));
+
+                        if (DynamicQuestions.getInstance() != null) {
+                            DynamicQuestions.clearInstance();
+                        }
+                        startActivity(moduleIntent);
+                        finish();
+                    }
 
                 }else{
                      long newId= dl.insertMultiFarmInfo(getAllMultiFarmList1(farmerID), farmerID,isExistingFarm);
@@ -186,6 +214,7 @@ public class UpdateMultiFarmActivity extends BaseActivity {
                     }catch ( Exception e){}
 
                      dl.insertNetworkMultifarmUpdateQueueEntry(farmerID,farmerName,newId);
+                    finish();
                 }
 
             }else{
@@ -197,13 +226,6 @@ public class UpdateMultiFarmActivity extends BaseActivity {
                 Toast.makeText(UpdateMultiFarmActivity.this,res
                         .getString(R.string.fill_stakeholder_farm_code_name),Toast.LENGTH_LONG).show();
                 return;
-            }
-            boolean isSurveyEnabled = intent.getBooleanExtra("isSurveyEnabled", false);
-            if(isSurveyEnabled) {
-                finish();
-                showSurvey();
-            }else {
-                finish();
             }
 
 
@@ -1168,25 +1190,6 @@ public class UpdateMultiFarmActivity extends BaseActivity {
     }
 
     public void showSurvey() {
-        long farmerId = Long.valueOf(getIntent().getExtras().getString("farmerId"));
-        Cursor farmer = dl.getFarmerById(farmerId);
-        Intent intent = new Intent(this, CompleteModuleActivity.class);
-        intent.putExtra(FARMER_ID, farmerId);
-        intent.putExtra(MODULE_ID, getIntent().getLongExtra(MODULE_ID, 0));
-        intent.putExtra(FARMER_MODULE_ID, getIntent().getLongExtra(FARMER_MODULE_ID, 0));
-        intent.putExtra(SUB_MODULE_ID, getIntent().getIntExtra(SUB_MODULE_ID, 0));
-        intent.putExtra(FARM_ID, getIntent().getIntExtra(FARM_ID, 0));
-        intent.putExtra(STATUS_STARTED, getIntent().getIntExtra(STATUS_STARTED, 0));
-        intent.putExtra(STATUS_FINISHED, getIntent().getIntExtra(STATUS_FINISHED, 0));
-        intent.putExtra(OLAM_FARMER_ID, getIntent().getStringExtra(OLAM_FARMER_ID));
-        intent.putExtra(MODULE_NAME, getIntent().getStringExtra(MODULE_NAME));
-        intent.putExtra(RECORDED_LAT, getIntent().getStringExtra(RECORDED_LAT));
-        intent.putExtra(RECORDED_LNG, getIntent().getStringExtra(RECORDED_LNG));
-        intent.putExtra(FARMER_NAME, getIntent().getStringExtra(FARMER_NAME));
 
-        if (DynamicQuestions.getInstance() != null) {
-            DynamicQuestions.clearInstance();
-        }
-        startActivity(intent);
     }
 }
