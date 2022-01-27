@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
@@ -39,6 +40,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.olam.digital.ofis.BaseActivity;
+import com.olam.digital.ofis.CompleteModuleActivity;
+import com.olam.digital.ofis.DynamicQuestions;
 import com.olam.digital.ofis.OFISDBContract;
 import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.Utilities;
@@ -93,6 +96,19 @@ public class UpdateMultiFarmActivity extends BaseActivity {
     private long farmerGroupId;
     String farmMultiId=null;
 
+    private static final String FARMER_ID = "FARMER_ID";
+    private static final String MODULE_ID = "MODULE_ID";
+    private static final String FARMER_MODULE_ID = "FARMER_MODULE_ID";
+    private static final String SUB_MODULE_ID = "SUB_MODULE";
+    private static final String FARM_ID = "FARM_ID";
+    private static final String STATUS_STARTED = "STATUS_STARTED";
+    private static final String STATUS_FINISHED = "STATUS_FINISHED";
+    private static final String OLAM_FARMER_ID = "OLAM_FARMER_ID";
+    private static final String MODULE_NAME = "MODULE_NAME";
+    private static final String RECORDED_LAT = "RECORDED_LAT";
+    private static final String RECORDED_LNG = "RECORDED_LNG";
+    private static final String FARMER_NAME = "FARMER_NAME";
+    private static final String PLOT_COUNT = "PLOT_COUNT";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -182,7 +198,15 @@ public class UpdateMultiFarmActivity extends BaseActivity {
                         .getString(R.string.fill_stakeholder_farm_code_name),Toast.LENGTH_LONG).show();
                 return;
             }
-            finish();
+            boolean isSurveyEnabled = intent.getBooleanExtra("isSurveyEnabled", false);
+            if(isSurveyEnabled) {
+                finish();
+                showSurvey();
+            }else {
+                finish();
+            }
+
+
         });
     }
 
@@ -1143,5 +1167,26 @@ public class UpdateMultiFarmActivity extends BaseActivity {
 
     }
 
+    public void showSurvey() {
+        long farmerId = Long.valueOf(getIntent().getExtras().getString("farmerId"));
+        Cursor farmer = dl.getFarmerById(farmerId);
+        Intent intent = new Intent(this, CompleteModuleActivity.class);
+        intent.putExtra(FARMER_ID, farmerId);
+        intent.putExtra(MODULE_ID, getIntent().getLongExtra(MODULE_ID, 0));
+        intent.putExtra(FARMER_MODULE_ID, getIntent().getLongExtra(FARMER_MODULE_ID, 0));
+        intent.putExtra(SUB_MODULE_ID, getIntent().getIntExtra(SUB_MODULE_ID, 0));
+        intent.putExtra(FARM_ID, getIntent().getIntExtra(FARM_ID, 0));
+        intent.putExtra(STATUS_STARTED, getIntent().getIntExtra(STATUS_STARTED, 0));
+        intent.putExtra(STATUS_FINISHED, getIntent().getIntExtra(STATUS_FINISHED, 0));
+        intent.putExtra(OLAM_FARMER_ID, getIntent().getStringExtra(OLAM_FARMER_ID));
+        intent.putExtra(MODULE_NAME, getIntent().getStringExtra(MODULE_NAME));
+        intent.putExtra(RECORDED_LAT, getIntent().getStringExtra(RECORDED_LAT));
+        intent.putExtra(RECORDED_LNG, getIntent().getStringExtra(RECORDED_LNG));
+        intent.putExtra(FARMER_NAME, getIntent().getStringExtra(FARMER_NAME));
 
+        if (DynamicQuestions.getInstance() != null) {
+            DynamicQuestions.clearInstance();
+        }
+        startActivity(intent);
+    }
 }

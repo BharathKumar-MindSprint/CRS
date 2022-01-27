@@ -2073,6 +2073,8 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                         Intent in = new Intent(this, UpdateMultiFarmActivity.class);
                         Bundle bundle = new Bundle();
                         bundle.putLong("farmerId", farmerId);
+                        bundle.putBoolean("editMode",false);
+                        bundle.putBoolean("isSurveyEnabled",false);
                         bundle.putString("olamfarmername", farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME)));
                         in.putExtras(bundle);
                         startActivity(in);
@@ -2193,8 +2195,17 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
 
         farmDetailDialog.findViewById(R.id.btnUpdate).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View view) {
                 farmDetailDialog.dismiss();
+                TextView subModuleTv = (TextView) v.findViewById(R.id.moduleListCurrentSubModuleId);
+                TextView moduleNameTv = (TextView) v.findViewById(R.id.moduleListModuleName);
+                TextView statusStartedTv = (TextView) v.findViewById(R.id.moduleListStatusStarted);
+                TextView statusFinishedTv = (TextView) v.findViewById(R.id.moduleListStatusFinished);
+                TextView farmerModuleIdTv = (TextView) v.findViewById(R.id.moduleListFarmerModuleId);
+                TextView farmerModuleLatTv = (TextView) v.findViewById(R.id.moduleListRecordedLat);
+                TextView farmerModuleLngTv = (TextView) v.findViewById(R.id.moduleListRecordedLng);
+//                intent.putString(FARMER_ID, farmerId);
+
                 Intent in = new Intent(ViewFarmerActivity.this, UpdateMultiFarmActivity.class);
                 Bundle bundle=new Bundle();
 //                bundle.putLong("farmerId", farmerId);
@@ -2203,6 +2214,19 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 bundle.putString("farmerId", String.valueOf(farmerId));
                 bundle.putString("farmId", String.valueOf(mfFarmId));
                 bundle.putBoolean("editMode",true);
+                bundle.putBoolean("isSurveyEnabled",true);
+                bundle.putLong(MODULE_ID, id);
+                bundle.putLong(FARMER_MODULE_ID, (String.valueOf(farmerModuleIdTv.getText()).equals("")) ? 0 : Long.parseLong(String.valueOf(farmerModuleIdTv.getText())));
+                bundle.putLong(SUB_MODULE_ID, (String.valueOf(subModuleTv.getText()).equals("")) ? 0 : Integer.parseInt(String.valueOf(subModuleTv.getText())));
+                bundle.putLong(FARM_ID, farmer.getInt(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_ID)));
+                bundle.putLong(STATUS_STARTED, (String.valueOf(statusStartedTv.getText()).equals("")) ? 0 : Integer.parseInt(String.valueOf(statusStartedTv.getText())));
+                bundle.putLong(STATUS_FINISHED, (String.valueOf(statusFinishedTv.getText()).equals("")) ? 0 : Integer.parseInt(String.valueOf(statusFinishedTv.getText())));
+                bundle.putString(OLAM_FARMER_ID, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
+                bundle.putString(MODULE_NAME, String.valueOf(moduleNameTv.getText()));
+                bundle.putString(RECORDED_LAT, (String.valueOf(farmerModuleLatTv.getText()).equals("")) ? "" : String.valueOf(farmerModuleLatTv.getText()));
+                bundle.putString(RECORDED_LNG, (String.valueOf(farmerModuleLatTv.getText()).equals("")) ? "" : String.valueOf(farmerModuleLngTv.getText()));
+                bundle.putString(FARMER_NAME, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME)));
+
                 in.putExtras(bundle);
                 startActivity(in);
             }
