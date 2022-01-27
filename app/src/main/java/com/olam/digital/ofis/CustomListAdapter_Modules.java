@@ -653,8 +653,25 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                                                 linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
                                                 moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
                                                 textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-                                                enabledItem.setText("false");
-                                                enabledItem.setTag("hasfarm");
+
+
+                                                if (submittedInfo.isNetworkTable()){
+                                                    if(submittedInfo.getFarmerId() == farmerId) {
+                                                        enabledItem.setText("true");
+                                                        linearLayout.setBackgroundResource(R.drawable.list_item);
+                                                        moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
+                                                        textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
+                                                    }else{
+                                                        enabledItem.setText("false");
+                                                        enabledItem.setTag("hasfarm");
+                                                    }
+                                                }else{
+                                                    enabledItem.setText("false");
+                                                    enabledItem.setTag("hasfarm");
+                                                }
+
+
+
                                                 // Put listener call for the long press
                                               //  showAlertMsgIdCheck(linearLayout, res.getString(R.string.already_syned_survey_info),submittedInfo);
 
