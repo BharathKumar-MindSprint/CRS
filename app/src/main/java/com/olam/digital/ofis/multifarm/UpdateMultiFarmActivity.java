@@ -87,10 +87,11 @@ public class UpdateMultiFarmActivity extends BaseActivity {
 
     private long editFarmerId; private long editFarmId;
     private boolean newFarmEditMode=false;
-    MultiFarmDTO existingStakeHolder=null;
+    MultiFarmDTO existingStakeHolder=new MultiFarmDTO();
     private boolean editIsExistFarm=false;
 
     private long farmerGroupId;
+    String farmMultiId=null;
 
 
     @Override
@@ -152,6 +153,11 @@ public class UpdateMultiFarmActivity extends BaseActivity {
                 if (editMode){
 
                      long newId=dl.updateMultiFarmInfo(getAllMultiFarmList1(editFarmerId), editFarmId,isExistingFarm,editIsExistFarm);
+
+                    try {
+                        dl.updateStakeHoldersTable(getAllMultiStakeholders(editFarmerId,newId),editFarmId);
+                    }catch ( Exception e){}
+
                      ContentValues networkQueueValues = new ContentValues();
                      networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID, editFarmerId);
                      networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID, newId);
@@ -159,6 +165,10 @@ public class UpdateMultiFarmActivity extends BaseActivity {
 
                 }else{
                      long newId= dl.insertMultiFarmInfo(getAllMultiFarmList1(farmerID), farmerID,isExistingFarm);
+                    try {
+                        dl.insertStakeholderTable(getAllMultiStakeholders(farmerID,newId),newId,isExistingFarm);
+                    }catch ( Exception e){}
+
                      dl.insertNetworkMultifarmUpdateQueueEntry(farmerID,farmerName,newId);
                 }
 
@@ -201,18 +211,6 @@ public class UpdateMultiFarmActivity extends BaseActivity {
                     String[] roles = rolesList.toArray(new String[rolesList.size()]);
                     boolean position = true;
 
-//                    if (existingStakeHolder.getFarmId() != null){
-//                        if(!existingStakeHolder.getFarmId().equalsIgnoreCase("")){
-//                            newFarmEditMode=false;
-//                            existingFarmRadioButton.setChecked(true);
-//                        }else{
-//                            newFarmEditMode=true;
-//                            newFarmRadioButton.setChecked(true);
-//                        }
-//                    }else{
-//                        newFarmEditMode=true;
-//                        newFarmRadioButton.setChecked(true);
-//                    }
 
                     if (existingStakeHolder!=null) {
                         if (existingStakeHolder.isExistingFarm()) {
@@ -295,9 +293,16 @@ public class UpdateMultiFarmActivity extends BaseActivity {
                     }
 
                 } else {
+                    //New
+                        farmMultiId=dl.getMultifarmfarmId(farmerID);
+                       if (farmMultiId!=null){
+                           existingStakeHolder= dl.getMultiFarmStakeHolderInfoByFarmId(farmMultiId);
+                       }
 
                     // Existing
-                     existingStakeHolder=dl.getMultiFarmStakeHolderInfoByFarmerId(String.valueOf(farmerID));
+                   //  existingStakeHolder=dl.getMultiFarmStakeHolderInfoByFarmerId(String.valueOf(farmerID));
+
+
 
                     if (existingStakeHolder!=null) {
                         if (existingStakeHolder.isExistingFarm()) {
@@ -435,32 +440,34 @@ public class UpdateMultiFarmActivity extends BaseActivity {
                 addRoleFarmerLayout.setOnClickListener(v -> {
                     LinearLayout farmRoleInclude = (LinearLayout) inflater.inflate(R.layout.farm_role_entry, farmStakeholderLayout, false);
 
-//                    if (farmStakeholderLayout.getChildCount() == 0) {
-//                        // Default Farmer
-//                        //NotNeeded
-//                        String defaultFarmerName="";
-//                        if(editMode){
-//                             defaultFarmerName = dl.getFarmerNamefromDb(editFarmerId).trim();
-//                        }else{
-//                             defaultFarmerName = dl.getFarmerNamefromDb(farmerID).trim();
-//                        }
-//                        if (!defaultFarmerName.equalsIgnoreCase("") && defaultFarmerName != null) {
-//                            TextView farmerNameET = farmRoleInclude.findViewById(R.id.farmFarmerTV);
-//                            farmerNameET.setText(defaultFarmerName);
-//                            if (editMode){
-//                                farmerNameET.setTag(String.valueOf(editFarmerId));
-//                            }else{
-//                                farmerNameET.setTag(String.valueOf(farmerID));
-//                            }
-//                        } else {
-//                            // This use case will never get called
-//                            Toast.makeText(UpdateMultiFarmActivity.this, "name is empty", Toast.LENGTH_LONG).show();
-//                            return;
-//                        }
-//                        bindFarmRoleDelete(farmRoleInclude.findViewById(R.id.farmRoleDelete));
-//                    } else {
-//                        bindFarmRoleDelete(farmRoleInclude.findViewById(R.id.farmRoleDelete));
-//                    }
+                    // -- Uncomment as per madan discussion -start
+                    if (farmStakeholderLayout.getChildCount() == 0) {
+                        // Default Farmer
+                        //NotNeeded
+                        if (farmMultiId == null){
+                            String defaultFarmerName = "";
+                        if (editMode) {
+                            defaultFarmerName = dl.getFarmerNamefromDb(editFarmerId).trim();
+                        } else {
+                            defaultFarmerName = dl.getFarmerNamefromDb(farmerID).trim();
+                        }
+                        if (!defaultFarmerName.equalsIgnoreCase("") && defaultFarmerName != null) {
+                            TextView farmerNameET = farmRoleInclude.findViewById(R.id.farmFarmerTV);
+                            farmerNameET.setText(defaultFarmerName);
+                            if (editMode) {
+                                farmerNameET.setTag(String.valueOf(editFarmerId));
+                            } else {
+                                farmerNameET.setTag(String.valueOf(farmerID));
+                            }
+                        } else {
+                            // This use case will never get called
+                            Toast.makeText(UpdateMultiFarmActivity.this, "name is empty", Toast.LENGTH_LONG).show();
+                            return;
+                        }
+                    }
+                       // bindFarmRoleDelete(farmRoleInclude.findViewById(R.id.farmRoleDelete));
+                    }
+                    // -- Uncomment as per madan discussion -start
 
                     farmStakeholderLayout.addView(farmRoleInclude);
                     bindFarmerRoles(farmRoleInclude.findViewById(R.id.farmerRoleSpinner));
@@ -592,7 +599,7 @@ public class UpdateMultiFarmActivity extends BaseActivity {
                 RecyclerView multiFarmFarmerRecyclerView = popupView.findViewById(R.id.multiFarmFarmerReyclerView);
 
                 ArrayList<Long> tempFarmerList=getTempFarmerList();
-                mfFarmerList = dl.getfarmersList(tempFarmerList,farmerGroupId);
+                mfFarmerList = dl.getfarmersMultifarmList(tempFarmerList,farmerGroupId);
                 findMultiFarmFarmerAdapter = new FindMultiFarmFarmerAdapter(mfFarmerList, mContext);
                 RecyclerView.LayoutManager reLayoutManager = new LinearLayoutManager(getApplicationContext());
                 multiFarmFarmerRecyclerView.setLayoutManager(reLayoutManager);
@@ -1065,4 +1072,74 @@ public class UpdateMultiFarmActivity extends BaseActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    // Updated One
+    private ArrayList<ContentValues> getAllMultiStakeholders(long newFarmerId,long farmId) {
+
+        ArrayList<ContentValues> valuesArrayList=new ArrayList<ContentValues>();
+        int stakeholderCount = farmStakeholderLayout.getChildCount();
+
+        String farmName = farmNameEdittext.getText().toString().trim();
+        String farmCode = farmCodeEdittext.getText().toString().trim();
+        Object farmIdObj=farmCodeEdittext.getTag();
+        String farmIds=null;
+        if (farmIdObj!=null){
+            farmIds=farmIdObj.toString();
         }
+
+
+        for (int j = 0; j < stakeholderCount; j++) {
+            LinearLayout stakeHolderRow = (LinearLayout) farmStakeholderLayout.getChildAt(j);
+
+
+            ContentValues value=new ContentValues();
+
+            TextView farmerNameET = stakeHolderRow.findViewById(R.id.farmFarmerTV);
+            Spinner farmRoleSpinner = stakeHolderRow.findViewById(R.id.farmerRoleSpinner);
+            String farmerStakeHolderId = farmerNameET.getTag().toString();
+            String farmerNameFarm = farmerNameET.getText().toString().trim();
+            Object id=stakeHolderRow.getTag();
+            String StakeholderId=null;
+            if(id!=null){
+                StakeholderId=id.toString();
+            }
+
+            try {
+                try {
+                    if (StakeholderId!=null) {
+                        value.put(OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_ID, StakeholderId);
+                    }else{
+                        value.put(OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_ID,"null");
+                    }
+                }catch (Exception e){
+                    value.put(OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_ID,"null");
+                }
+                value.put(OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_NAME_FARM_NAME,farmName);
+                value.put(OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_NAME_FARM_CODE,farmCode);
+                value.put(OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_FARM_ROLE_ID,Long.valueOf(String.valueOf(farmRoleSpinner.getTag())));
+
+                value.put(OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_FARMER_ID,Long.valueOf(farmerStakeHolderId));
+
+                if (farmIds !=null) {
+                    value.put(OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_NAME_FARM_ID,Long.valueOf(farmIds));
+                }else{
+                    value.put(OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_NAME_FARM_ID,Long.valueOf(farmId));
+
+                }
+
+                value.put(OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_IS_SYNCED,0);
+
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            valuesArrayList.add(value);
+        }
+
+
+        return valuesArrayList;
+
+    }
+
+
+}
