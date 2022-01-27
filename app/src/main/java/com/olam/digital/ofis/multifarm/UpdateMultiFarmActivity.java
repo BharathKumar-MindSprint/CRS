@@ -852,29 +852,31 @@ public class UpdateMultiFarmActivity extends BaseActivity {
 
             //--- Removed s
 
-//            String defaultFarmerName="";
-//            if(editMode){
-//                defaultFarmerName = dl.getFarmerNamefromDb(editFarmerId).trim();
-//            }else{
-//                defaultFarmerName = dl.getFarmerNamefromDb(farmerID).trim();
-//            }
-//            if (!defaultFarmerName.equalsIgnoreCase("") && defaultFarmerName != null) {
-//                TextView farmerNameET = farmRoleInclude.findViewById(R.id.farmFarmerTV);
-//                farmerNameET.setText(defaultFarmerName);
-//                if (editMode){
-//                    farmerNameET.setTag(String.valueOf(editFarmerId));
-//                }else{
-//                    farmerNameET.setTag(String.valueOf(farmerID));
-//                }
-//
-//            } else {
-//                Toast.makeText(UpdateMultiFarmActivity.this, "name is empty", Toast.LENGTH_LONG).show();
-//                return;
-//            }
-//            bindFarmerRoles(farmRoleInclude.findViewById(R.id.farmerRoleSpinner));
-//            bindFarmRoleDelete(farmRoleInclude.findViewById(R.id.farmRoleDelete));
-//
-//            farmStakeholderLayout.addView(farmRoleInclude);
+            if (farmMultiId == null){
+                String defaultFarmerName = "";
+                if (editMode) {
+                    defaultFarmerName = dl.getFarmerNamefromDb(editFarmerId).trim();
+                } else {
+                    defaultFarmerName = dl.getFarmerNamefromDb(farmerID).trim();
+                }
+                if (!defaultFarmerName.equalsIgnoreCase("") && defaultFarmerName != null) {
+                    TextView farmerNameET = farmRoleInclude.findViewById(R.id.farmFarmerTV);
+                    farmerNameET.setText(defaultFarmerName);
+                    if (editMode) {
+                        farmerNameET.setTag(String.valueOf(editFarmerId));
+                    } else {
+                        farmerNameET.setTag(String.valueOf(farmerID));
+                    }
+                } else {
+                    // This use case will never get called
+                    Toast.makeText(UpdateMultiFarmActivity.this, "name is empty", Toast.LENGTH_LONG).show();
+                    return;
+                }
+                bindFarmerRoles(farmRoleInclude.findViewById(R.id.farmerRoleSpinner));
+                bindFarmRoleDelete(farmRoleInclude.findViewById(R.id.farmRoleDelete));
+
+                farmStakeholderLayout.addView(farmRoleInclude);
+            }
 
             //--- Removed
 
