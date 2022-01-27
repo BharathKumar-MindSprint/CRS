@@ -1464,7 +1464,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 bundle.putString("farmerId", String.valueOf(networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID))));
                 bundle.putString("farmId", String.valueOf(networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID))));
                 bundle.putBoolean("editMode", true);
-
+                bundle.putBoolean("isSurveyEnabled",false);
                 Intent intent = new Intent(this, UpdateMultiFarmActivity.class);
                 intent.putExtras(bundle);
                 startActivity(intent);
