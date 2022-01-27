@@ -98,6 +98,7 @@ import com.olam.digital.ofis.gps.utils.GPSUtils;
 import com.olam.digital.ofis.matoma.MatomoHelper;
 import com.olam.digital.ofis.matoma.ScreenNameConstants;
 import com.olam.digital.ofis.multifarm.MultiFarmDTO;
+import com.olam.digital.ofis.multifarm.MultiFarmStakeHolderDTO;
 import com.olam.digital.ofis.multifarm.MultiFarmUtils;
 import com.olam.digital.ofis.multifarm.SubmittedInfo;
 import com.olam.digital.ofis.multifarm.UpdateMultiFarmActivity;
@@ -1984,9 +1985,10 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         TextView enabled = (TextView) v.findViewById(R.id.moduleListEnabled);
         if (enabled.getText().toString().equalsIgnoreCase("true")) {
             if (id > 0) {
-                if (dl.isfarmerIdAvailableMultiFarmDB(farmerId)) {
+                String mfFarmId  = dl.getMultifarmfarmId(farmerId);
+                if (mfFarmId != null) {
                     try {
-                        showPopupFarmDetails(v, position, id);
+                        showPopupFarmDetails(v, position, id, mfFarmId);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     } catch (Exception e) {
@@ -2145,7 +2147,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
 
 
 
-    public void showPopupFarmDetails(View v, int position, long id) throws JSONException {
+    public void showPopupFarmDetails(View v, int position, long id, String mfFarmId) throws JSONException {
         final Dialog farmDetailDialog = new Dialog(this, android.R.style.Theme_Material_Dialog_Alert);
         farmDetailDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         farmDetailDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -2155,29 +2157,32 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         LinearLayout farmerList = (LinearLayout) farmDetailDialog.findViewById(R.id.farmerList);
 
 //        fetch multifarm details
-        long mfFarmId = dl.getFarmidinMultifarm(farmerId);
-        MultiFarmDTO multiFarmDTO = dl.getMultiFarmInfoObj(mfFarmId);
-        JSONArray multiFarmArray=multiFarmDTO.getStakeholdersInfo();
-        for(int i=0;i<multiFarmArray.length();i++){
-            JSONObject jsonobject= (JSONObject) multiFarmArray.get(i);
+            MultiFarmDTO multiFarmDTO = dl.getMultiFarmStakeHolderInfoByFarmId(mfFarmId);
+            JSONArray multiFarmArray=multiFarmDTO.getStakeholdersInfo();
+            if (multiFarmArray != null) {
+                for (int i = 0; i < multiFarmArray.length(); i++) {
+                    JSONObject jsonobject = (JSONObject) multiFarmArray.get(i);
 //            String farmerName=jsonobject.optString("farmerName");
-            String role=dl.getFarmerRole(jsonobject.optInt("farmerRoleId"));
-            String farmerName=dl.getFarmerNamefromDb(jsonobject.optLong("farmerId"));
-            LinearLayout includeFarmerList = (LinearLayout) inflater.inflate(R.layout.add_farmerroles, farmerList, false);
-            TextView farmer_name_title = includeFarmerList.findViewById(R.id.farmer_name_title);
-            TextView farmer_name = includeFarmerList.findViewById(R.id.farmer_name);
-            TextView farmerRole = includeFarmerList.findViewById(R.id.role);
-            int farmerCount = i+1;
-            farmer_name_title.setText(getResources().getString(R.string.farmer) + " " + farmerCount + ":");
-            farmer_name.setText(farmerName);
-            farmerRole.setText(role);
-            farmerList.addView(includeFarmerList);
-        }
+                    String role = dl.getFarmerRole(jsonobject.optInt("farmerRoleId"));
+                    String farmerName = dl.getFarmerNamefromDb(jsonobject.optLong("farmerId"));
+                    LinearLayout includeFarmerList = (LinearLayout) inflater.inflate(R.layout.add_farmerroles, farmerList, false);
+                    TextView farmer_name_title = includeFarmerList.findViewById(R.id.farmer_name_title);
+                    TextView farmer_name = includeFarmerList.findViewById(R.id.farmer_name);
+                    TextView farmerRole = includeFarmerList.findViewById(R.id.role);
+                    int farmerCount = i + 1;
+                    farmer_name_title.setText(getResources().getString(R.string.farmer) + " " + farmerCount + ":");
+                    farmer_name.setText(farmerName);
+                    farmerRole.setText(role);
+                    farmerList.addView(includeFarmerList);
+                }
 
-        TextView farmName = (TextView)farmDetailDialog.findViewById(R.id.farm_name);
-        TextView farmCode = (TextView)farmDetailDialog.findViewById(R.id.farm_code);
-        farmName.setText(multiFarmDTO.getFarmName());
-        farmCode.setText(multiFarmDTO.getFarmCode());
+                TextView farmName = (TextView) farmDetailDialog.findViewById(R.id.farm_name);
+                TextView farmCode = (TextView) farmDetailDialog.findViewById(R.id.farm_code);
+                farmName.setText(multiFarmDTO.getFarmName());
+                farmCode.setText(multiFarmDTO.getFarmCode());
+
+            }
+
         farmDetailDialog.findViewById(R.id.btn_ok).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

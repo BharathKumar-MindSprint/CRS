@@ -5629,6 +5629,30 @@ public class DataLayer {
         return available;
     }
 
+    public boolean isfarmerIdAvailableStakeholdersDB(long farmerLong) {
+        boolean available = false;
+        String[] columns = new String[]{"*"};
+        Cursor mCursor= db.query(OFISDBContract.MultiFarmStakeholderFarms.TABLE_NAME, columns, null, null, null, null, null);
+
+        try {
+            if (mCursor != null) {
+                while (mCursor.moveToNext()) {
+                     long farmerId = Long.valueOf(mCursor.getString(mCursor.getColumnIndex(OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_NAME_FARM_ID)));
+                        if(farmerId == farmerLong){
+                            available =true;
+                            return  available;
+                        }
+
+                }
+            }
+        }catch (Exception e){
+
+        }finally {
+            mCursor.close();
+        }
+        return available;
+    }
+
     public long getFarmidinMultifarm(long farmerLong) {
         long farmid = 0;
         boolean available = false;
@@ -6506,34 +6530,28 @@ public class DataLayer {
         }
 
     }
-    public JSONArray getMultiFarmInfo(long farmerId) {
+    public List<ContentValues> getStackholderInfo(long farmId) {
         String[] columns = new String[]{"*"};
-        String whereClause = OFISDBContract.FarmStakeHolderInformation.COLUMN_NAME_FARMER_ID + " = ?";
-        String[] whereArgs = new String[]{String.valueOf(farmerId)};
-        Cursor cursor = db.query(OFISDBContract.FarmStakeHolderInformation.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+        String whereClause = OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_NAME_FARM_ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(farmId)};
+        Cursor cursor = db.query(OFISDBContract.MultiFarmStakeholderFarms.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
         JSONArray multiFarmArray = new JSONArray();
+        List<ContentValues> stakeholersList = new ArrayList<ContentValues>();
+        ContentValues contentValues;
 
-        try {
+        if (cursor != null) {
             while (cursor.moveToNext()) {
-                JSONObject multiFarmObj = new JSONObject();
-                long farmerID = new Long(cursor.getInt(cursor.getColumnIndex(OFISDBContract.FarmStakeHolderInformation.COLUMN_NAME_STAKE_HOLDER_FARMER_ID)));
-                multiFarmObj.put("farmerRoleId", new Long(cursor.getInt(cursor.getColumnIndex(OFISDBContract.FarmStakeHolderInformation.COLUMN_NAME_STAKE_HOLDER_ROLE_ID))));
-                multiFarmObj.put("farmerId", farmerID);
-                multiFarmObj.put("farmName", cursor.getString(cursor.getColumnIndex(OFISDBContract.FarmStakeHolderInformation.COLUMN_NAME_FARM_NAME)));
-                multiFarmObj.put("farmCode", cursor.getString(cursor.getColumnIndex(OFISDBContract.FarmStakeHolderInformation.COLUMN_NAME_FARM_CODE)));
-                if (farmerID == 0) {
-                    multiFarmObj.put("primary", true);
-                } else {
-                    multiFarmObj.put("primary", false);
-                }
-                multiFarmArray.put(multiFarmObj);
-            }
-            return multiFarmArray;
-        } catch (JSONException e) {
-            FirebaseCrashlytics.getInstance().log("NetworkLayer: Error creating Stakeholders object" + e.getMessage());
+                contentValues = new ContentValues();
+                contentValues.put(OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_FARMER_ID, cursor.getString(cursor.getColumnIndex(OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_FARMER_ID)));
+                contentValues.put(OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_NAME_FARM_ID, cursor.getString(cursor.getColumnIndex(OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_NAME_FARM_ID)));
+                contentValues.put(OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_FARM_ROLE_ID, cursor.getString(cursor.getColumnIndex(OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_FARM_ROLE_ID)));
+                contentValues.put(OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_NAME_FARM_NAME, cursor.getString(cursor.getColumnIndex(OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_NAME_FARM_NAME)));
+                contentValues.put(OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_NAME_FARM_CODE, cursor.getString(cursor.getColumnIndex(OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_NAME_FARM_CODE)));
 
+                stakeholersList.add(contentValues);
+            }
         }
-        return multiFarmArray;
+        return stakeholersList;
     }
 
 
