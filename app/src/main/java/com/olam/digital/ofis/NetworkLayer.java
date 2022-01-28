@@ -3877,10 +3877,10 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 JSONObject jsonObject1=jsonResponse.getJSONObject(0);
 
                                 // OFIS -25 -Hiding for UAT
-//                               String multiFarmErrorCode=jsonObject1.getString("errorCode");
-//                               if(multiFarmErrorCode.equalsIgnoreCase("OFIS_3042")){
-                                boolean x=false;
-                                   if(x){
+                              String multiFarmErrorCode=jsonObject1.getString("errorCode");
+                              if(multiFarmErrorCode.equalsIgnoreCase("OFIS_3042")){
+//                                 boolean x=false;
+//                                    if(x){
 
                                   JSONArray errorFarmerIds=jsonObject1.getJSONArray("errorFarmerIds");
                                   if(errorFarmerIds.length()>0){
@@ -4921,10 +4921,10 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                     JSONObject jsonResponse = new JSONObject(postResponse.body().string());
 
                                     // Hiding OFIS -25 ticket in UAT
-//                                    String multiFarmErrorCode = jsonResponse.getString("errorCode");
-//                                    if (multiFarmErrorCode.equalsIgnoreCase("OFIS_3042")) {
-                                        boolean x=false;
-                                        if(x){
+                                   String multiFarmErrorCode = jsonResponse.getString("errorCode");
+                                   if (multiFarmErrorCode.equalsIgnoreCase("OFIS_3042")) {
+//                                         boolean x=false;
+//                                         if(x){
                                         JSONArray errorFarmerIds = jsonResponse.getJSONArray("errorFarmerIds");
                                         if (errorFarmerIds.length() > 0) {
                                             ArrayList<String> Ids = new ArrayList<>();
