@@ -1693,12 +1693,27 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         final long farmerId = networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
         Cursor moduleAnswers, extraInfo, farmerModule = dl.getFarmerModuleById(farmerModuleId);
 
+        // for MultiFarm
+            MultiFarmUtils.isMultiFarmEnumerator = Utilities.getMultifarmPref(context, MultiFarmUtils.IS_MULTI_FARM_ENUMERATOR);
+            MultiFarmDTO multifarmDTO=new MultiFarmDTO();
+            if (MultiFarmUtils.isMultiFarmEnumerator) {
+                multifarmDTO = dl.getMultiFarmLocationSync(farmerId);
+            }else{
+                multifarmDTO.setSynced(1);
+            }
+
         if (farmerModule.getCount() > 0) {
             if (!dl.isFarmerSynced(farmerId)) {
                 msg.what = 3;
                 msg.arg1 = total;
                 msg.arg2 =  progress;
                 msg.obj = String.valueOf(res.getString(R.string.farmer_not_synced));
+                handler.dispatchMessage(msg);
+            }else if(multifarmDTO.getSynced()==0) {
+                msg.what = 7;
+                msg.arg1 = total;
+                msg.arg2 = HomeActivity.progressItem = progress + 1;
+                msg.obj = String.valueOf(res.getString(R.string.multifarm_not_synced));
                 handler.dispatchMessage(msg);
             } else {
                 farmerModule.moveToFirst();
@@ -1741,7 +1756,18 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     submission.put("fmpreview", false);
                     submission.put("app_version",BuildConfig.VERSION_NAME);
                     submission.put(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_FARMER_ID, farmerModule.getInt(farmerModule.getColumnIndex(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_FARMER_ID)));
-                    submission.put(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_FARM_ID, farmerModule.getInt(farmerModule.getColumnIndex(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_FARM_ID)));
+
+                    if (MultiFarmUtils.isMultiFarmEnumerator) {
+                        if (multifarmDTO.getFarmId() != null) {
+                            submission.put(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_FARM_ID, Integer.parseInt(multifarmDTO.getFarmId()));
+                        }else{
+                            submission.put(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_FARM_ID, farmerModule.getInt(farmerModule.getColumnIndex(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_FARM_ID)));
+                        }
+                    }else{
+                        submission.put(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_FARM_ID, farmerModule.getInt(farmerModule.getColumnIndex(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_FARM_ID)));
+                    }
+
+
                     submission.put("recorded_lat", networkQueueItems.getDouble(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LAT)));
                     submission.put("recorded_lng", networkQueueItems.getDouble(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)));
                     submission.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ATTEMPTS, networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ATTEMPTS)));
