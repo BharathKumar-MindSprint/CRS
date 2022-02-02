@@ -4394,7 +4394,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     value.put("surveyDescription",reviewValues.getString(reviewValues.getColumnIndex(OFISDBContract.ChildVisitDetails.COLUMN_NAME_SURVEY_DESCRIPTION)));
                     String enumeratorId = Utilities.getFromSharedPrefs(context);
                     value.put("enumeratorId",Integer.parseInt(enumeratorId));
-//                     value.put("productId",(dl.getFarmerInfo(context,Long.valueOf(reviewValues.getInt(reviewValues.getColumnIndex(OFISDBContract.ChildVisitDetails.COLUMN_NAME_FARMER_ID))))).getProductId());
+                    value.put("productId",(dl.getFarmerInfo(context,Long.valueOf(reviewValues.getInt(reviewValues.getColumnIndex(OFISDBContract.ChildVisitDetails.COLUMN_NAME_FARMER_ID))))).getProductId());
                     checkavailstatus.put(value);
                 }
                 params.put("childAvailabilityStatus", checkavailstatus);
