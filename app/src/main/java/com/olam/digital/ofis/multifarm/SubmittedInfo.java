@@ -5,6 +5,15 @@ public class SubmittedInfo {
     long farmerId;
     int moduleId;
     boolean networkTable=false;
+    boolean availableInOtherFarm;
+
+    public boolean isAvailableInOtherFarm() {
+        return availableInOtherFarm;
+    }
+
+    public void setAvailableInOtherFarm(boolean availableInOtherFarm) {
+        this.availableInOtherFarm = availableInOtherFarm;
+    }
 
     public boolean isNetworkTable() {
         return networkTable;
