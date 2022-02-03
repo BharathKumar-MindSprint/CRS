@@ -59,8 +59,10 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
     boolean isAvailableInStakeHolderList;
     HashMap<Integer,SubmittedInfo> farmSubmittedHashMapList;
 
+    String multiFarmId;
 
-    CustomListAdapter_Modules(Context c, Cursor cursor, String[] adapterCols, int[] adapterRowViews, Resources res_, Cursor farmer, JSONObject submittedModules_,int roleId,long farmerId) throws JSONException {
+
+    CustomListAdapter_Modules(Context c, Cursor cursor, String[] adapterCols, int[] adapterRowViews, Resources res_, Cursor farmer, JSONObject submittedModules_,int roleId,long farmerId,String multiFarmId) throws JSONException {
         super(c, R.layout.listview_module_list, cursor, adapterCols, adapterRowViews, 0);
         this.mContext = c;
         this.layout = R.layout.listview_module_list;
@@ -76,6 +78,7 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
         this.dl = new DataLayer(res, c);
         this.roleId=roleId;
         this.farmerId=farmerId;
+        this.multiFarmId=multiFarmId;
     }
 
     @Override
@@ -599,7 +602,7 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                                 try {
   //                                  SubmittedInfo submittedInfo = dl.isAvailableinSubmittedModules(cursor, currentId, String.valueOf(farmerId));
                                //     SubmittedInfo submittedInfo =farmSubmittedHashMapList.get(currentId);
-                                      SubmittedInfo submittedInfo = dl.isAvailableinSubmittedModules2(cursor, currentId, farmerId);
+                                      SubmittedInfo submittedInfo = dl.isAvailableinSubmittedModules2(cursor, currentId, farmerId,multiFarmId);
 
                                     if (farmerRole != 0 && roleId != 0) {
                                         if (farmerRole == roleId) {
@@ -616,11 +619,20 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                                                         linearLayout.setBackgroundResource(R.drawable.list_item);
                                                         moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
                                                         textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
+                                                        textView.setText(res.getString(R.string.module_finished));
+                                                        imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_completed));
+
                                                     }else{
+                                                        if (submittedInfo.isAvailableInOtherFarm()){
+                                                            textView.setText(res.getString(R.string.ModuleStatus));
+                                                        }
                                                         enabledItem.setText("false");
                                                         enabledItem.setTag("hasfarm");
                                                     }
                                                 }else{
+                                                    if (submittedInfo.isAvailableInOtherFarm()){
+                                                        textView.setText(res.getString(R.string.ModuleStatus));
+                                                    }
                                                     enabledItem.setText("false");
                                                     enabledItem.setTag("hasfarm");
                                                 }
@@ -629,10 +641,21 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                                             //    showAlertMsgIdCheck(linearLayout, res.getString(R.string.already_syned_survey_info),submittedInfo);
 
                                             } else {
-                                                enabledItem.setText("true");
-                                                linearLayout.setBackgroundResource(R.drawable.list_item);
-                                                moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
-                                                textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
+
+                                                boolean othersAttneded=dl.isSurveyAttendedByOther(multiFarmId,farmerId,currentId);
+                                                if (othersAttneded){
+                                                    linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
+                                                    moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                                    textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                                    enabledItem.setText("false");
+                                                    enabledItem.setTag("hasfarm");
+                                                }else{
+                                                    enabledItem.setText("true");
+                                                    textView.setText(res.getString(R.string.ModuleStatus));
+                                                    linearLayout.setBackgroundResource(R.drawable.list_item);
+                                                    moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
+                                                    textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
+                                                }
                                             }
                                         } else {
                                             // Disable
@@ -661,11 +684,19 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                                                         linearLayout.setBackgroundResource(R.drawable.list_item);
                                                         moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
                                                         textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
+                                                        textView.setText(res.getString(R.string.module_finished));
+                                                        imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_completed));
                                                     }else{
+                                                        if (submittedInfo.isAvailableInOtherFarm()){
+                                                            textView.setText(res.getString(R.string.ModuleStatus));
+                                                        }
                                                         enabledItem.setText("false");
                                                         enabledItem.setTag("hasfarm");
                                                     }
                                                 }else{
+                                                    if (submittedInfo.isAvailableInOtherFarm()){
+                                                        textView.setText(res.getString(R.string.ModuleStatus));
+                                                    }
                                                     enabledItem.setText("false");
                                                     enabledItem.setTag("hasfarm");
                                                 }
@@ -676,10 +707,20 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                                               //  showAlertMsgIdCheck(linearLayout, res.getString(R.string.already_syned_survey_info),submittedInfo);
 
                                             } else {
-                                                enabledItem.setText("true");
-                                                linearLayout.setBackgroundResource(R.drawable.list_item);
-                                                moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
-                                                textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
+                                                boolean othersAttneded = dl.isSurveyAttendedByOther(multiFarmId, farmerId, currentId);
+                                                if (othersAttneded) {
+                                                    linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
+                                                    moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                                    textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                                    enabledItem.setText("false");
+                                                    enabledItem.setTag("hasfarm");
+                                                } else {
+                                                    enabledItem.setText("true");
+                                                    textView.setText(res.getString(R.string.ModuleStatus));
+                                                    linearLayout.setBackgroundResource(R.drawable.list_item);
+                                                    moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
+                                                    textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
+                                                }
                                             }
                                         }
                                     }

@@ -4659,7 +4659,6 @@ public class DataLayer {
                                 values.put(OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_IS_SYNCED, 1);
                                 valuesList.add(values);
 
-                                Log.d("FRANKEVANA", "valuelist: " + valuesList.toString());
 
                             }
                         }
@@ -4669,6 +4668,12 @@ public class DataLayer {
                         updateStakeHoldersTable(valuesList,Long.valueOf(existFarmId));
                     }catch (Exception e){}
 
+
+                    // update in the network table
+                    ContentValues networkFarmIdValues = new ContentValues();
+                    networkFarmIdValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID, farmId);
+                    String[] whereArgsFarm = new String[]{existFarmId,"module"};
+                    db.update(OFISDBContract.NetworkQueueEntry.TABLE_NAME, networkFarmIdValues, OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID + " = ? AND " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE + " = ?", whereArgsFarm);
 
 
                 }
@@ -5040,7 +5045,7 @@ public class DataLayer {
 
     }
 
-    void syncFarmerModule(int farmerModuleId, long farmerId, int moduleId, String submissionDate) {
+    void syncFarmerModule(int farmerModuleId, long farmerId, int moduleId, String submissionDate,int farmId) {
         String whereClause = OFISDBContract.AnswerEntry.COLUMN_NAME_FARMER_MODULE_ID + " = ?";
         String[] whereArgs = new String[]{String.valueOf(farmerModuleId)};
 
@@ -5059,6 +5064,7 @@ public class DataLayer {
                 JSONObject newModuleEntry = new JSONObject();
                 newModuleEntry.put("id", moduleId);
                 newModuleEntry.put("created_at", submissionDate);
+                newModuleEntry.put("farmId",farmId);
                 JSONObject newModule = new JSONObject();
                 newModule.put("module", newModuleEntry);
 
@@ -7119,7 +7125,13 @@ public class DataLayer {
             }catch (Exception e){}
 
 
+            // update in the network table
+            ContentValues networkFarmIdValues = new ContentValues();
+            networkFarmIdValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID, farmId);
+            String[] whereArgsFarm = new String[]{String.valueOf(existFarmId),"module"};
+            db.update(OFISDBContract.NetworkQueueEntry.TABLE_NAME, networkFarmIdValues, OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID + " = ? AND " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE + " = ?", whereArgsFarm);
 
+            Log.d("FRANKEVANA Update", " Existing Id: " + existFarmId+ "   New Id : "+farmId);
 
         }catch(Exception e){}
 
@@ -7166,326 +7178,326 @@ public class DataLayer {
         return jsonArray;
     }
 
-    public SubmittedInfo isAvailableinSubmittedModules(Cursor cursor,int currentId,String farmerId) throws JSONException {
-        boolean submitted = false;
+//    public SubmittedInfo isAvailableinSubmittedModules(Cursor cursor,int currentId,String farmerId) throws JSONException {
+//        boolean submitted = false;
+//
+//        SubmittedInfo submittedInfo=new SubmittedInfo();
+//        submittedInfo.setSubmitted(false);
+//        try {
+//            Cursor cursorStakeholder = db.rawQuery("select * from multifarmFarms", null);
+//            if (cursorStakeholder != null) {
+//                try {
+//                    if (cursorStakeholder.getCount() > 0) {
+//                        while (cursorStakeholder.moveToNext()) {
+//                            if (cursorStakeholder.getString(cursorStakeholder.getColumnIndex(OFISDBContract.MultiFarmFarms.COLUMN_NAME_NAME_STAKE_HOLDERS)).contains(farmerId)) {
+//                                String multifarmStakeholder = cursorStakeholder.getString(cursorStakeholder.getColumnIndex(OFISDBContract.MultiFarmFarms.COLUMN_NAME_NAME_STAKE_HOLDERS));
+//                                if (!multifarmStakeholder.equalsIgnoreCase("") && multifarmStakeholder != null) {
+//                                    JSONArray jsonArray = new JSONArray(multifarmStakeholder);
+//                                    if (jsonArray != null) {
+//                                        if (jsonArray.length() > 0) {
+//                                            int length = jsonArray.length();
+//                                            for (int j = 0; j < length; j++) {
+//                                                submittedInfo= new SubmittedInfo();
+//                                                try {
+//                                                    String farmerIdStakeHolder = jsonArray.getJSONObject(j).get("farmerId").toString();
+//
+//                                                    //Check in NetworkTable
+//                                                    submitted=getModuledetailsInNetworkQueue(currentId,farmerIdStakeHolder);
+//                                                    if(submitted){
+//                                                        submittedInfo.setSubmitted(true);
+//                                                        submittedInfo.setFarmerId(Long.valueOf(farmerIdStakeHolder));
+//                                                        return  submittedInfo;
+//                                                    }
+//
+//                                                    // Check in submitted Modules
+//                                                    Cursor farmer = getFarmerById(Long.valueOf(farmerIdStakeHolder));
+//                                                    if (farmer.getCount() > 0) {
+//                                                        farmer.moveToFirst();
+//
+//                                                        JSONObject submittedModules;
+//                                                        String submittedModulesJSON = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_WEBSITE_SUBMITTED_MODULES));
+//                                                        String Samplestr = String.valueOf("{\"modules\":null}");
+//                                                        if (Samplestr.equals(submittedModulesJSON)) {
+//                                                            submittedModulesJSON = submittedModulesJSON.replaceAll("\"modules\":null", "");
+//                                                        }
+//                                                        submittedModules = (!submittedModulesJSON.equals("null")) ? new JSONObject(submittedModulesJSON) : new JSONObject();
+//
+//                                                        String disabled_months_string = cursor.getString(cursor.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_DISABLED_MONTHS));
+//                                                        List<String> disabled_months = Arrays.asList(disabled_months_string.split("\\s*,\\s*"));
+//                                                        try {
+//                                                            Calendar currentDate = Calendar.getInstance();
+//                                                            int recurrence_frequency = cursor.getInt(cursor.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_RECURRENCE_FREQUENCY));
+//                                                            String recurrence_type = cursor.getString(cursor.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_RECURRENCE_TYPE));
+//                                                            Calendar calculationDate = (Calendar) currentDate.clone();
+//                                                            boolean disable_entry = false;
+//
+//                                                            JSONArray submittedModulesArray = submittedModules.getJSONArray("modules");
+//                                                            for (int i = 0; i < submittedModulesArray.length(); i++) {
+//                                                                JSONObject submittedModule = submittedModulesArray.getJSONObject(i);
+//                                                                JSONObject submittedModuleDetails = submittedModule.getJSONObject("module");
+//
+//
+//                                                                if (submittedModuleDetails.has("id") && submittedModuleDetails.getInt("id") == currentId) {
+//
+//                                                                    if (recurrence_frequency > 0 && !disabled_months.contains(String.valueOf(currentDate.get(Calendar.MONTH)))) {
+//                                                                        // for recurring
+//                                                                        try {
+//                                                                            // get last submitted date
+//                                                                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
+//                                                                            Calendar lastSubmittedDate = Calendar.getInstance();
+//
+//                                                                            //O20HS-84 - To enable the annual survey.
+//                                                                            calculationDate = (Calendar) currentDate.clone();
+//                                                                            //
+//
+//                                                                            try {
+//                                                                                lastSubmittedDate.setTime(sdf.parse(submittedModuleDetails.getString("created_at")));
+//                                                                            } catch (ParseException e) {
+//                                                                            }
+//                                                                            if (recurrence_type != null) {
+//                                                                                if (recurrence_type.equalsIgnoreCase("years")) {
+//                                                                                    calculationDate.add(Calendar.YEAR, -recurrence_frequency);
+//                                                                                    calculationDate.set(Calendar.MONTH, Calendar.DECEMBER);
+//                                                                                    calculationDate.set(Calendar.DAY_OF_MONTH, 31);
+//                                                                                } else if (recurrence_type.equalsIgnoreCase("months")) {
+//                                                                                    calculationDate.add(Calendar.MONTH, -recurrence_frequency);
+//                                                                                    calculationDate.set(Calendar.DAY_OF_MONTH, calculationDate.getActualMaximum(Calendar.DAY_OF_MONTH));
+//                                                                                } else if (recurrence_type.equalsIgnoreCase("weeks")) {
+//                                                                                    calculationDate.add(Calendar.WEEK_OF_YEAR, -recurrence_frequency);
+//                                                                                    calculationDate.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
+//                                                                                } else {
+//                                                                                    // must be days
+//                                                                                    calculationDate.add(Calendar.DAY_OF_YEAR, -recurrence_frequency);
+//                                                                                }
+//
+//                                                                                // set the time
+//                                                                                calculationDate.set(Calendar.HOUR_OF_DAY, 23);
+//                                                                                calculationDate.set(Calendar.MINUTE, 59);
+//                                                                                calculationDate.set(Calendar.SECOND, 59);
+//                                                                                calculationDate.set(Calendar.MILLISECOND, 999);
+//
+//                                                                                // force the recalculation
+//                                                                                calculationDate.get(Calendar.DAY_OF_MONTH);
+//
+//
+//                                                                                if (lastSubmittedDate.after(calculationDate)) {
+//                                                                                    disable_entry = true;
+//                                                                                }
+//                                                                            }
+//                                                                        } catch (Exception e) {
+//                                                                            e.printStackTrace();
+//                                                                        }
+//                                                                    } else {
+//                                                                        // for non-recurring
+//                                                                        disable_entry = true;
+//                                                                    }
+//
+//                                                                    if (disable_entry) {
+//                                                                        submitted = true;
+//                                                                        submittedInfo.setSubmitted(true);
+//                                                                        submittedInfo.setFarmerId(Long.valueOf(farmerIdStakeHolder));
+//                                                                        return  submittedInfo;
+//                                                                        //   break;
+//                                                                    }
+//                                                                }
+//                                                            }
+//                                                        } catch (JSONException e) {
+//                                                            e.printStackTrace();
+//                                                        }
+//
+//                                                    }
+//                                                    farmer.close();
+//                                                } catch (Exception e) {
+//                                                }
+//                                            }
+//                                        }
+//                                    }
+//                                }
+//                            }
+//                        }
+//                        cursorStakeholder.close();
+//
+//
+//                    }
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        } catch (Exception e) {}
+//        return submittedInfo;
+//    }
+//
+//    public HashMap<Integer,SubmittedInfo> isAvailableinSubmittedModules1(Cursor moduleAssignments,long farmerId) throws JSONException {
+//
+//        HashMap<Integer,SubmittedInfo> hashMapList= new HashMap<>();
+//        String farmId=getMultifarmfarmId(farmerId);
+//        MultiFarmDTO multiFarmDTO=null;
+//        if (farmId!=null){
+//            multiFarmDTO = getMultiFarmInfoObj(Long.valueOf(farmId));
+//        }else{
+//            return hashMapList;
+//        }
+//
+//       // String farmerRoleStr = cursor.getString(cursor.getColumnIndex("fkFarmerRoleId"));
+//
+//        if (moduleAssignments != null) {
+//            try {
+//                if (moduleAssignments.getCount() > 0) {
+//                    while (moduleAssignments.moveToNext()) {
+//                        if (moduleAssignments.getString(moduleAssignments.getColumnIndex("isFarmSurvey")).equalsIgnoreCase("true")){
+//                        int cursorId= moduleAssignments.getInt(moduleAssignments.getColumnIndex("_id"));
+//                         SubmittedInfo  submittedInfo = new SubmittedInfo();
+//                         submittedInfo.setSubmitted(false);
+//                         submittedInfo.setModuleId(cursorId);
+//                         boolean submitted;
+//
+//
+//                            // Needed Part
+//                            JSONArray jsonArray = multiFarmDTO.getStakeholdersInfo();
+//                            if (jsonArray != null && jsonArray.length() > 0) {
+//
+//                                int length = jsonArray.length();
+//                                for (int j = 0; j < length; j++) {
+//
+//                                    try {
+//                                        String farmerIdStakeHolder = jsonArray.getJSONObject(j).get("farmerId").toString();
+//
+//                                        //Check in NetworkTable
+//                                        submitted = getModuledetailsInNetworkQueue(cursorId, farmerIdStakeHolder);
+//                                        if (submitted) {
+//                                            submittedInfo.setSubmitted(true);
+//                                            submittedInfo.setFarmerId(Long.valueOf(farmerIdStakeHolder));
+//                                            submittedInfo.setNetworkTable(true);
+//                                            hashMapList.put(cursorId,submittedInfo);
+//                                          //  submittedInfoList.add(submittedInfo);
+//
+//                                        } else{
+//
+//                                        // Check in submitted Modules
+//                                        Cursor farmer = getFarmerById(Long.valueOf(farmerIdStakeHolder));
+//                                        if (farmer.getCount() > 0) {
+//                                            farmer.moveToFirst();
+//
+//                                            JSONObject submittedModules;
+//                                            String submittedModulesJSON = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_WEBSITE_SUBMITTED_MODULES));
+//                                            String Samplestr = String.valueOf("{\"modules\":null}");
+//                                            if (Samplestr.equals(submittedModulesJSON)) {
+//                                                submittedModulesJSON = submittedModulesJSON.replaceAll("\"modules\":null", "");
+//                                            }
+//                                            submittedModules = (!submittedModulesJSON.equals("null")) ? new JSONObject(submittedModulesJSON) : new JSONObject();
+//
+//                                            String disabled_months_string = moduleAssignments.getString(moduleAssignments.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_DISABLED_MONTHS));
+//                                            List<String> disabled_months = Arrays.asList(disabled_months_string.split("\\s*,\\s*"));
+//                                            try {
+//                                                Calendar currentDate = Calendar.getInstance();
+//                                                int recurrence_frequency = moduleAssignments.getInt(moduleAssignments.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_RECURRENCE_FREQUENCY));
+//                                                String recurrence_type = moduleAssignments.getString(moduleAssignments.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_RECURRENCE_TYPE));
+//                                                Calendar calculationDate = (Calendar) currentDate.clone();
+//                                                boolean disable_entry = false;
+//
+//                                                JSONArray submittedModulesArray = submittedModules.getJSONArray("modules");
+//                                                for (int i = 0; i < submittedModulesArray.length(); i++) {
+//                                                    JSONObject submittedModule = submittedModulesArray.getJSONObject(i);
+//                                                    JSONObject submittedModuleDetails = submittedModule.getJSONObject("module");
+//
+//
+//                                                    if (submittedModuleDetails.has("id") && submittedModuleDetails.getInt("id") == cursorId) {
+//
+//                                                        if (recurrence_frequency > 0 && !disabled_months.contains(String.valueOf(currentDate.get(Calendar.MONTH)))) {
+//                                                            // for recurring
+//                                                            try {
+//                                                                // get last submitted date
+//                                                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
+//                                                                Calendar lastSubmittedDate = Calendar.getInstance();
+//
+//                                                                //O20HS-84 - To enable the annual survey.
+//                                                                calculationDate = (Calendar) currentDate.clone();
+//                                                                //
+//
+//                                                                try {
+//                                                                    lastSubmittedDate.setTime(sdf.parse(submittedModuleDetails.getString("created_at")));
+//                                                                } catch (ParseException e) {
+//                                                                }
+//                                                                if (recurrence_type != null) {
+//                                                                    if (recurrence_type.equalsIgnoreCase("years")) {
+//                                                                        calculationDate.add(Calendar.YEAR, -recurrence_frequency);
+//                                                                        calculationDate.set(Calendar.MONTH, Calendar.DECEMBER);
+//                                                                        calculationDate.set(Calendar.DAY_OF_MONTH, 31);
+//                                                                    } else if (recurrence_type.equalsIgnoreCase("months")) {
+//                                                                        calculationDate.add(Calendar.MONTH, -recurrence_frequency);
+//                                                                        calculationDate.set(Calendar.DAY_OF_MONTH, calculationDate.getActualMaximum(Calendar.DAY_OF_MONTH));
+//                                                                    } else if (recurrence_type.equalsIgnoreCase("weeks")) {
+//                                                                        calculationDate.add(Calendar.WEEK_OF_YEAR, -recurrence_frequency);
+//                                                                        calculationDate.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
+//                                                                    } else {
+//                                                                        // must be days
+//                                                                        calculationDate.add(Calendar.DAY_OF_YEAR, -recurrence_frequency);
+//                                                                    }
+//
+//                                                                    // set the time
+//                                                                    calculationDate.set(Calendar.HOUR_OF_DAY, 23);
+//                                                                    calculationDate.set(Calendar.MINUTE, 59);
+//                                                                    calculationDate.set(Calendar.SECOND, 59);
+//                                                                    calculationDate.set(Calendar.MILLISECOND, 999);
+//
+//                                                                    // force the recalculation
+//                                                                    calculationDate.get(Calendar.DAY_OF_MONTH);
+//
+//
+//                                                                    if (lastSubmittedDate.after(calculationDate)) {
+//                                                                        disable_entry = true;
+//                                                                    }
+//                                                                }
+//                                                            } catch (Exception e) {
+//                                                                e.printStackTrace();
+//                                                            }
+//                                                        } else {
+//                                                            // for non-recurring
+//                                                            disable_entry = true;
+//                                                        }
+//
+//                                                        if (disable_entry) {
+//                                                            submittedInfo.setSubmitted(true);
+//                                                            submittedInfo.setFarmerId(Long.valueOf(farmerIdStakeHolder));
+//                                                            submittedInfo.setNetworkTable(false);
+//                                                            hashMapList.put(cursorId,submittedInfo);
+//
+//                                                            //submittedInfoList.add(submittedInfo);
+//
+//                                                        }
+//                                                    }
+//                                                }
+//                                            } catch (JSONException e) {
+//                                                e.printStackTrace();
+//                                            }
+//
+//                                        }
+//                                        farmer.close();
+//                                    }
+//                                    } catch (Exception e) {
+//                                    }
+//                                }
+//
+//                            }
+//
+//                            //------
+//
+//                        }
+//
+//
+//                    }
+//                }
+//            } catch (Exception e) {
+//            }
+//        }
+//
+//
+//        return hashMapList;
+//    }
 
-        SubmittedInfo submittedInfo=new SubmittedInfo();
-        submittedInfo.setSubmitted(false);
-        try {
-            Cursor cursorStakeholder = db.rawQuery("select * from multifarmFarms", null);
-            if (cursorStakeholder != null) {
-                try {
-                    if (cursorStakeholder.getCount() > 0) {
-                        while (cursorStakeholder.moveToNext()) {
-                            if (cursorStakeholder.getString(cursorStakeholder.getColumnIndex(OFISDBContract.MultiFarmFarms.COLUMN_NAME_NAME_STAKE_HOLDERS)).contains(farmerId)) {
-                                String multifarmStakeholder = cursorStakeholder.getString(cursorStakeholder.getColumnIndex(OFISDBContract.MultiFarmFarms.COLUMN_NAME_NAME_STAKE_HOLDERS));
-                                if (!multifarmStakeholder.equalsIgnoreCase("") && multifarmStakeholder != null) {
-                                    JSONArray jsonArray = new JSONArray(multifarmStakeholder);
-                                    if (jsonArray != null) {
-                                        if (jsonArray.length() > 0) {
-                                            int length = jsonArray.length();
-                                            for (int j = 0; j < length; j++) {
-                                                submittedInfo= new SubmittedInfo();
-                                                try {
-                                                    String farmerIdStakeHolder = jsonArray.getJSONObject(j).get("farmerId").toString();
-
-                                                    //Check in NetworkTable
-                                                    submitted=getModuledetailsInNetworkQueue(currentId,farmerIdStakeHolder);
-                                                    if(submitted){
-                                                        submittedInfo.setSubmitted(true);
-                                                        submittedInfo.setFarmerId(Long.valueOf(farmerIdStakeHolder));
-                                                        return  submittedInfo;
-                                                    }
-
-                                                    // Check in submitted Modules
-                                                    Cursor farmer = getFarmerById(Long.valueOf(farmerIdStakeHolder));
-                                                    if (farmer.getCount() > 0) {
-                                                        farmer.moveToFirst();
-
-                                                        JSONObject submittedModules;
-                                                        String submittedModulesJSON = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_WEBSITE_SUBMITTED_MODULES));
-                                                        String Samplestr = String.valueOf("{\"modules\":null}");
-                                                        if (Samplestr.equals(submittedModulesJSON)) {
-                                                            submittedModulesJSON = submittedModulesJSON.replaceAll("\"modules\":null", "");
-                                                        }
-                                                        submittedModules = (!submittedModulesJSON.equals("null")) ? new JSONObject(submittedModulesJSON) : new JSONObject();
-
-                                                        String disabled_months_string = cursor.getString(cursor.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_DISABLED_MONTHS));
-                                                        List<String> disabled_months = Arrays.asList(disabled_months_string.split("\\s*,\\s*"));
-                                                        try {
-                                                            Calendar currentDate = Calendar.getInstance();
-                                                            int recurrence_frequency = cursor.getInt(cursor.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_RECURRENCE_FREQUENCY));
-                                                            String recurrence_type = cursor.getString(cursor.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_RECURRENCE_TYPE));
-                                                            Calendar calculationDate = (Calendar) currentDate.clone();
-                                                            boolean disable_entry = false;
-
-                                                            JSONArray submittedModulesArray = submittedModules.getJSONArray("modules");
-                                                            for (int i = 0; i < submittedModulesArray.length(); i++) {
-                                                                JSONObject submittedModule = submittedModulesArray.getJSONObject(i);
-                                                                JSONObject submittedModuleDetails = submittedModule.getJSONObject("module");
 
 
-                                                                if (submittedModuleDetails.has("id") && submittedModuleDetails.getInt("id") == currentId) {
-
-                                                                    if (recurrence_frequency > 0 && !disabled_months.contains(String.valueOf(currentDate.get(Calendar.MONTH)))) {
-                                                                        // for recurring
-                                                                        try {
-                                                                            // get last submitted date
-                                                                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
-                                                                            Calendar lastSubmittedDate = Calendar.getInstance();
-
-                                                                            //O20HS-84 - To enable the annual survey.
-                                                                            calculationDate = (Calendar) currentDate.clone();
-                                                                            //
-
-                                                                            try {
-                                                                                lastSubmittedDate.setTime(sdf.parse(submittedModuleDetails.getString("created_at")));
-                                                                            } catch (ParseException e) {
-                                                                            }
-                                                                            if (recurrence_type != null) {
-                                                                                if (recurrence_type.equalsIgnoreCase("years")) {
-                                                                                    calculationDate.add(Calendar.YEAR, -recurrence_frequency);
-                                                                                    calculationDate.set(Calendar.MONTH, Calendar.DECEMBER);
-                                                                                    calculationDate.set(Calendar.DAY_OF_MONTH, 31);
-                                                                                } else if (recurrence_type.equalsIgnoreCase("months")) {
-                                                                                    calculationDate.add(Calendar.MONTH, -recurrence_frequency);
-                                                                                    calculationDate.set(Calendar.DAY_OF_MONTH, calculationDate.getActualMaximum(Calendar.DAY_OF_MONTH));
-                                                                                } else if (recurrence_type.equalsIgnoreCase("weeks")) {
-                                                                                    calculationDate.add(Calendar.WEEK_OF_YEAR, -recurrence_frequency);
-                                                                                    calculationDate.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
-                                                                                } else {
-                                                                                    // must be days
-                                                                                    calculationDate.add(Calendar.DAY_OF_YEAR, -recurrence_frequency);
-                                                                                }
-
-                                                                                // set the time
-                                                                                calculationDate.set(Calendar.HOUR_OF_DAY, 23);
-                                                                                calculationDate.set(Calendar.MINUTE, 59);
-                                                                                calculationDate.set(Calendar.SECOND, 59);
-                                                                                calculationDate.set(Calendar.MILLISECOND, 999);
-
-                                                                                // force the recalculation
-                                                                                calculationDate.get(Calendar.DAY_OF_MONTH);
-
-
-                                                                                if (lastSubmittedDate.after(calculationDate)) {
-                                                                                    disable_entry = true;
-                                                                                }
-                                                                            }
-                                                                        } catch (Exception e) {
-                                                                            e.printStackTrace();
-                                                                        }
-                                                                    } else {
-                                                                        // for non-recurring
-                                                                        disable_entry = true;
-                                                                    }
-
-                                                                    if (disable_entry) {
-                                                                        submitted = true;
-                                                                        submittedInfo.setSubmitted(true);
-                                                                        submittedInfo.setFarmerId(Long.valueOf(farmerIdStakeHolder));
-                                                                        return  submittedInfo;
-                                                                        //   break;
-                                                                    }
-                                                                }
-                                                            }
-                                                        } catch (JSONException e) {
-                                                            e.printStackTrace();
-                                                        }
-
-                                                    }
-                                                    farmer.close();
-                                                } catch (Exception e) {
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        cursorStakeholder.close();
-
-
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        } catch (Exception e) {}
-        return submittedInfo;
-    }
-
-    public HashMap<Integer,SubmittedInfo> isAvailableinSubmittedModules1(Cursor moduleAssignments,long farmerId) throws JSONException {
-
-        HashMap<Integer,SubmittedInfo> hashMapList= new HashMap<>();
-        String farmId=getMultifarmfarmId(farmerId);
-        MultiFarmDTO multiFarmDTO=null;
-        if (farmId!=null){
-            multiFarmDTO = getMultiFarmInfoObj(Long.valueOf(farmId));
-        }else{
-            return hashMapList;
-        }
-
-       // String farmerRoleStr = cursor.getString(cursor.getColumnIndex("fkFarmerRoleId"));
-
-        if (moduleAssignments != null) {
-            try {
-                if (moduleAssignments.getCount() > 0) {
-                    while (moduleAssignments.moveToNext()) {
-                        if (moduleAssignments.getString(moduleAssignments.getColumnIndex("isFarmSurvey")).equalsIgnoreCase("true")){
-                        int cursorId= moduleAssignments.getInt(moduleAssignments.getColumnIndex("_id"));
-                         SubmittedInfo  submittedInfo = new SubmittedInfo();
-                         submittedInfo.setSubmitted(false);
-                         submittedInfo.setModuleId(cursorId);
-                         boolean submitted;
-
-
-                            // Needed Part
-                            JSONArray jsonArray = multiFarmDTO.getStakeholdersInfo();
-                            if (jsonArray != null && jsonArray.length() > 0) {
-
-                                int length = jsonArray.length();
-                                for (int j = 0; j < length; j++) {
-
-                                    try {
-                                        String farmerIdStakeHolder = jsonArray.getJSONObject(j).get("farmerId").toString();
-
-                                        //Check in NetworkTable
-                                        submitted = getModuledetailsInNetworkQueue(cursorId, farmerIdStakeHolder);
-                                        if (submitted) {
-                                            submittedInfo.setSubmitted(true);
-                                            submittedInfo.setFarmerId(Long.valueOf(farmerIdStakeHolder));
-                                            submittedInfo.setNetworkTable(true);
-                                            hashMapList.put(cursorId,submittedInfo);
-                                          //  submittedInfoList.add(submittedInfo);
-
-                                        } else{
-
-                                        // Check in submitted Modules
-                                        Cursor farmer = getFarmerById(Long.valueOf(farmerIdStakeHolder));
-                                        if (farmer.getCount() > 0) {
-                                            farmer.moveToFirst();
-
-                                            JSONObject submittedModules;
-                                            String submittedModulesJSON = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_WEBSITE_SUBMITTED_MODULES));
-                                            String Samplestr = String.valueOf("{\"modules\":null}");
-                                            if (Samplestr.equals(submittedModulesJSON)) {
-                                                submittedModulesJSON = submittedModulesJSON.replaceAll("\"modules\":null", "");
-                                            }
-                                            submittedModules = (!submittedModulesJSON.equals("null")) ? new JSONObject(submittedModulesJSON) : new JSONObject();
-
-                                            String disabled_months_string = moduleAssignments.getString(moduleAssignments.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_DISABLED_MONTHS));
-                                            List<String> disabled_months = Arrays.asList(disabled_months_string.split("\\s*,\\s*"));
-                                            try {
-                                                Calendar currentDate = Calendar.getInstance();
-                                                int recurrence_frequency = moduleAssignments.getInt(moduleAssignments.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_RECURRENCE_FREQUENCY));
-                                                String recurrence_type = moduleAssignments.getString(moduleAssignments.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_RECURRENCE_TYPE));
-                                                Calendar calculationDate = (Calendar) currentDate.clone();
-                                                boolean disable_entry = false;
-
-                                                JSONArray submittedModulesArray = submittedModules.getJSONArray("modules");
-                                                for (int i = 0; i < submittedModulesArray.length(); i++) {
-                                                    JSONObject submittedModule = submittedModulesArray.getJSONObject(i);
-                                                    JSONObject submittedModuleDetails = submittedModule.getJSONObject("module");
-
-
-                                                    if (submittedModuleDetails.has("id") && submittedModuleDetails.getInt("id") == cursorId) {
-
-                                                        if (recurrence_frequency > 0 && !disabled_months.contains(String.valueOf(currentDate.get(Calendar.MONTH)))) {
-                                                            // for recurring
-                                                            try {
-                                                                // get last submitted date
-                                                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
-                                                                Calendar lastSubmittedDate = Calendar.getInstance();
-
-                                                                //O20HS-84 - To enable the annual survey.
-                                                                calculationDate = (Calendar) currentDate.clone();
-                                                                //
-
-                                                                try {
-                                                                    lastSubmittedDate.setTime(sdf.parse(submittedModuleDetails.getString("created_at")));
-                                                                } catch (ParseException e) {
-                                                                }
-                                                                if (recurrence_type != null) {
-                                                                    if (recurrence_type.equalsIgnoreCase("years")) {
-                                                                        calculationDate.add(Calendar.YEAR, -recurrence_frequency);
-                                                                        calculationDate.set(Calendar.MONTH, Calendar.DECEMBER);
-                                                                        calculationDate.set(Calendar.DAY_OF_MONTH, 31);
-                                                                    } else if (recurrence_type.equalsIgnoreCase("months")) {
-                                                                        calculationDate.add(Calendar.MONTH, -recurrence_frequency);
-                                                                        calculationDate.set(Calendar.DAY_OF_MONTH, calculationDate.getActualMaximum(Calendar.DAY_OF_MONTH));
-                                                                    } else if (recurrence_type.equalsIgnoreCase("weeks")) {
-                                                                        calculationDate.add(Calendar.WEEK_OF_YEAR, -recurrence_frequency);
-                                                                        calculationDate.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
-                                                                    } else {
-                                                                        // must be days
-                                                                        calculationDate.add(Calendar.DAY_OF_YEAR, -recurrence_frequency);
-                                                                    }
-
-                                                                    // set the time
-                                                                    calculationDate.set(Calendar.HOUR_OF_DAY, 23);
-                                                                    calculationDate.set(Calendar.MINUTE, 59);
-                                                                    calculationDate.set(Calendar.SECOND, 59);
-                                                                    calculationDate.set(Calendar.MILLISECOND, 999);
-
-                                                                    // force the recalculation
-                                                                    calculationDate.get(Calendar.DAY_OF_MONTH);
-
-
-                                                                    if (lastSubmittedDate.after(calculationDate)) {
-                                                                        disable_entry = true;
-                                                                    }
-                                                                }
-                                                            } catch (Exception e) {
-                                                                e.printStackTrace();
-                                                            }
-                                                        } else {
-                                                            // for non-recurring
-                                                            disable_entry = true;
-                                                        }
-
-                                                        if (disable_entry) {
-                                                            submittedInfo.setSubmitted(true);
-                                                            submittedInfo.setFarmerId(Long.valueOf(farmerIdStakeHolder));
-                                                            submittedInfo.setNetworkTable(false);
-                                                            hashMapList.put(cursorId,submittedInfo);
-
-                                                            //submittedInfoList.add(submittedInfo);
-
-                                                        }
-                                                    }
-                                                }
-                                            } catch (JSONException e) {
-                                                e.printStackTrace();
-                                            }
-
-                                        }
-                                        farmer.close();
-                                    }
-                                    } catch (Exception e) {
-                                    }
-                                }
-
-                            }
-
-                            //------
-
-                        }
-
-
-                    }
-                }
-            } catch (Exception e) {
-            }
-        }
-
-
-        return hashMapList;
-    }
-
-
-
-    public SubmittedInfo isAvailableinSubmittedModules2(Cursor moduleAssignments,int cursorId,long farmerId) throws JSONException {
+    public SubmittedInfo isAvailableinSubmittedModules2(Cursor moduleAssignments,int cursorId,long farmerId,String multifarmId) throws JSONException {
 
         String farmId=getMultifarmfarmId(farmerId);
         MultiFarmDTO multiFarmDTO=null;
@@ -7497,6 +7509,7 @@ public class DataLayer {
                             SubmittedInfo  submittedInfo = new SubmittedInfo();
                             submittedInfo.setSubmitted(false);
                             submittedInfo.setNetworkTable(false);
+                            submittedInfo.setAvailableInOtherFarm(true);
                             submittedInfo.setModuleId(cursorId);
                             boolean submitted;
 
@@ -7512,7 +7525,7 @@ public class DataLayer {
                                         String farmerIdStakeHolder = jsonArray.getJSONObject(j).get("farmerId").toString();
 
                                         //Check in NetworkTable
-                                        submitted = getModuledetailsInNetworkQueue(cursorId, farmerIdStakeHolder);
+                                        submitted = getModuledetailsInNetworkQueue1(cursorId, farmerIdStakeHolder,farmId);
                                         if (submitted) {
                                             submittedInfo.setSubmitted(true);
                                             submittedInfo.setFarmerId(Long.valueOf(farmerIdStakeHolder));
@@ -7550,71 +7563,77 @@ public class DataLayer {
                                                         JSONObject submittedModuleDetails = submittedModule.getJSONObject("module");
 
 
+
                                                         if (submittedModuleDetails.has("id") && submittedModuleDetails.getInt("id") == cursorId) {
 
-                                                            if (recurrence_frequency > 0 && !disabled_months.contains(String.valueOf(currentDate.get(Calendar.MONTH)))) {
-                                                                // for recurring
-                                                                try {
-                                                                    // get last submitted date
-                                                                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
-                                                                    Calendar lastSubmittedDate = Calendar.getInstance();
 
-                                                                    //O20HS-84 - To enable the annual survey.
-                                                                    calculationDate = (Calendar) currentDate.clone();
-                                                                    //
-
+                                                                if (recurrence_frequency > 0 && !disabled_months.contains(String.valueOf(currentDate.get(Calendar.MONTH)))) {
+                                                                    // for recurring
                                                                     try {
-                                                                        lastSubmittedDate.setTime(sdf.parse(submittedModuleDetails.getString("created_at")));
-                                                                    } catch (ParseException e) {
-                                                                    }
-                                                                    if (recurrence_type != null) {
-                                                                        if (recurrence_type.equalsIgnoreCase("years")) {
-                                                                            calculationDate.add(Calendar.YEAR, -recurrence_frequency);
-                                                                            calculationDate.set(Calendar.MONTH, Calendar.DECEMBER);
-                                                                            calculationDate.set(Calendar.DAY_OF_MONTH, 31);
-                                                                        } else if (recurrence_type.equalsIgnoreCase("months")) {
-                                                                            calculationDate.add(Calendar.MONTH, -recurrence_frequency);
-                                                                            calculationDate.set(Calendar.DAY_OF_MONTH, calculationDate.getActualMaximum(Calendar.DAY_OF_MONTH));
-                                                                        } else if (recurrence_type.equalsIgnoreCase("weeks")) {
-                                                                            calculationDate.add(Calendar.WEEK_OF_YEAR, -recurrence_frequency);
-                                                                            calculationDate.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
-                                                                        } else {
-                                                                            // must be days
-                                                                            calculationDate.add(Calendar.DAY_OF_YEAR, -recurrence_frequency);
+                                                                        // get last submitted date
+                                                                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
+                                                                        Calendar lastSubmittedDate = Calendar.getInstance();
+
+                                                                        //O20HS-84 - To enable the annual survey.
+                                                                        calculationDate = (Calendar) currentDate.clone();
+                                                                        //
+
+                                                                        try {
+                                                                            lastSubmittedDate.setTime(sdf.parse(submittedModuleDetails.getString("created_at")));
+                                                                        } catch (ParseException e) {
                                                                         }
+                                                                        if (recurrence_type != null) {
+                                                                            if (recurrence_type.equalsIgnoreCase("years")) {
+                                                                                calculationDate.add(Calendar.YEAR, -recurrence_frequency);
+                                                                                calculationDate.set(Calendar.MONTH, Calendar.DECEMBER);
+                                                                                calculationDate.set(Calendar.DAY_OF_MONTH, 31);
+                                                                            } else if (recurrence_type.equalsIgnoreCase("months")) {
+                                                                                calculationDate.add(Calendar.MONTH, -recurrence_frequency);
+                                                                                calculationDate.set(Calendar.DAY_OF_MONTH, calculationDate.getActualMaximum(Calendar.DAY_OF_MONTH));
+                                                                            } else if (recurrence_type.equalsIgnoreCase("weeks")) {
+                                                                                calculationDate.add(Calendar.WEEK_OF_YEAR, -recurrence_frequency);
+                                                                                calculationDate.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
+                                                                            } else {
+                                                                                // must be days
+                                                                                calculationDate.add(Calendar.DAY_OF_YEAR, -recurrence_frequency);
+                                                                            }
 
-                                                                        // set the time
-                                                                        calculationDate.set(Calendar.HOUR_OF_DAY, 23);
-                                                                        calculationDate.set(Calendar.MINUTE, 59);
-                                                                        calculationDate.set(Calendar.SECOND, 59);
-                                                                        calculationDate.set(Calendar.MILLISECOND, 999);
+                                                                            // set the time
+                                                                            calculationDate.set(Calendar.HOUR_OF_DAY, 23);
+                                                                            calculationDate.set(Calendar.MINUTE, 59);
+                                                                            calculationDate.set(Calendar.SECOND, 59);
+                                                                            calculationDate.set(Calendar.MILLISECOND, 999);
 
-                                                                        // force the recalculation
-                                                                        calculationDate.get(Calendar.DAY_OF_MONTH);
+                                                                            // force the recalculation
+                                                                            calculationDate.get(Calendar.DAY_OF_MONTH);
 
 
-                                                                        if (lastSubmittedDate.after(calculationDate)) {
-                                                                            disable_entry = true;
+                                                                            if (lastSubmittedDate.after(calculationDate)) {
+                                                                                disable_entry = true;
+                                                                            }
                                                                         }
+                                                                    } catch (Exception e) {
+                                                                        e.printStackTrace();
                                                                     }
-                                                                } catch (Exception e) {
-                                                                    e.printStackTrace();
+                                                                } else {
+                                                                    // for non-recurring
+                                                                    disable_entry = true;
                                                                 }
-                                                            } else {
-                                                                // for non-recurring
-                                                                disable_entry = true;
+
+                                                                if (disable_entry) {
+
+                                                                    if (submittedModuleDetails.has("farmId") && submittedModuleDetails.getInt("farmId") == Integer.parseInt(farmId)) {
+                                                                        submittedInfo.setSubmitted(true);
+                                                                        submittedInfo.setFarmerId(Long.valueOf(farmerIdStakeHolder));
+                                                                        submittedInfo.setNetworkTable(false);
+                                                                        submittedInfo.setAvailableInOtherFarm(false);
+                                                                        return submittedInfo;
+                                                                    }
+
+                                                                    //submittedInfoList.add(submittedInfo);
+
+                                                                }
                                                             }
-
-                                                            if (disable_entry) {
-                                                                submittedInfo.setSubmitted(true);
-                                                                submittedInfo.setFarmerId(Long.valueOf(farmerIdStakeHolder));
-                                                                submittedInfo.setNetworkTable(false);
-                                                                return  submittedInfo;
-
-                                                                //submittedInfoList.add(submittedInfo);
-
-                                                            }
-                                                        }
                                                     }
                                                 } catch (JSONException e) {
                                                     e.printStackTrace();
@@ -7637,7 +7656,7 @@ public class DataLayer {
 
 
 
-    private boolean getModuledetailsInNetworkQueue(int currentId, String farmerIdStakeHolder) {
+    private boolean getModuledetailsInNetworkQueue(int currentId, String farmerIdStakeHolder,String farmId) {
 
         boolean available=false;
         String[] columns = new String[]{"*"};
@@ -7646,6 +7665,31 @@ public class DataLayer {
         Cursor cursor=null;
         try {
             cursor = db.query(OFISDBContract.FarmerModulesEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+            if(cursor!=null){
+                if(cursor.getCount()>0){
+                    available=true;
+                }
+            }
+        }catch (Exception e){
+            FirebaseCrashlytics.getInstance().log(e.getMessage());
+        }
+
+        return available;
+
+    }
+
+    private boolean getModuledetailsInNetworkQueue1(int currentId, String farmerIdStakeHolder,String farmId) {
+
+        boolean available=false;
+        String[] columns = new String[]{"*"};
+        String whereClause =
+                OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_MODULE_ID + " = ? AND " +
+                        OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID + " = ? AND " +
+                OFISDBContract.FarmerModulesEntry.COLUMN_NAME_FARMER_ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(currentId),farmId, String.valueOf(farmerIdStakeHolder)};
+        Cursor cursor=null;
+        try {
+            cursor = db.query(OFISDBContract.NetworkQueueEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
             if(cursor!=null){
                 if(cursor.getCount()>0){
                     available=true;
@@ -8045,5 +8089,70 @@ public class DataLayer {
         return available;
     }
 
+    public boolean isMultifarmSubmitted() {
+        boolean available=false;
+        Cursor cursor=db.rawQuery("select * from networkqueue where submission_type in (\"farmer\",\"Multifarm Update\");",null);
+       try {
+          if (cursor !=null){
+              if(cursor.getCount()>0){
+                  available=true;
+              }
+          }
+          cursor.close();
+      }catch (Exception e){}
+
+        return  available;
+    }
+
+    public boolean isSurveyAttendedByOther(String multiFarmId,long farmerId,int cursorId) {
+
+        Cursor cursor=db.rawQuery("select * from farmers where submitted_modules like "+"'%"+multiFarmId+"%'",null);
+        String farmId=getMultifarmfarmId(farmerId);
+        MultiFarmDTO multiFarmDTO=null;
+        if (farmId!=null){
+            multiFarmDTO = getMultiFarmInfoObj(Long.valueOf(farmId));
+        }
+
+        List<String> farmerIds=new ArrayList<String>();
+        JSONArray jsonArray = multiFarmDTO.getStakeholdersInfo();
+        if (jsonArray != null) {
+            int length = jsonArray.length();
+            for (int j = 0; j < length; j++) {
+
+                try {
+                    String farmerIdStakeHolder = jsonArray.getJSONObject(j).get("farmerId").toString();
+                    farmerIds.add(farmerIdStakeHolder);
+                }catch (Exception e){}
+            }
+        }
+
+
+        try {
+            if (cursor != null) {
+                while (cursor.moveToNext()) {
+
+                    // Start
+                    String submittedModulesJSON = cursor.getString(cursor.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_WEBSITE_SUBMITTED_MODULES));
+                    String farmerIdDEb = cursor.getString(cursor.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID));
+                    if (!farmerIds.contains(farmerIdDEb)) {
+                        JSONObject submittedModules = (!submittedModulesJSON.equals("null")) ? new JSONObject(submittedModulesJSON) : new JSONObject();
+                        JSONArray submittedModulesArray = submittedModules.getJSONArray("modules");
+                        for (int i = 0; i < submittedModulesArray.length(); i++) {
+                            JSONObject submittedModule = submittedModulesArray.getJSONObject(i);
+                            JSONObject submittedModuleDetails = submittedModule.getJSONObject("module");
+                            if (submittedModuleDetails.has("id") && submittedModuleDetails.getInt("id") == cursorId) {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+        }catch (Exception e){
+
+        }finally {
+            cursor.close();
+        }
+        return  false;
+    }
 }
 
