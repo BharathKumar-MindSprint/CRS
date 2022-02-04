@@ -231,10 +231,8 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
     ImageView infoCloseImageView;
     LinearLayout statusInfoLayout;
 
-    boolean ispolygonCaptured = false;
-    boolean isLocationCaptured = false;
-    boolean isAvailableInStakeHolderList = false;
-    HashMap<Integer, SubmittedInfo> farmSubmittedHashMapList = new HashMap<>();
+    String multiFarmId=null;
+    public static boolean farmSurvey;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -443,14 +441,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
             JSONObject submittedModules;
             try {
 
-                String submittedModulesJSON = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_WEBSITE_SUBMITTED_MODULES));
-                String Samplestr = String.valueOf("{\"modules\":null}");
-                if (Samplestr.equals(submittedModulesJSON)) {
-                    submittedModulesJSON = submittedModulesJSON.replaceAll("\"modules\":null", "");
-                }
-                submittedModules = (!submittedModulesJSON.equals("null")) ? new JSONObject(submittedModulesJSON) : new JSONObject();
-                String moduleNameSuffix = Utilities.getLocaleSuffix(res);
-                Cursor moduleAssignments = getFarmerModules(farmerId, this);
+
                 // fetching Info for Multifarms
                 int roleId = 0;
                 if (Utilities.getMultifarmPref(context, MultiFarmUtils.IS_MULTI_FARM_ENUMERATOR)) {
@@ -460,6 +451,12 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                     String roleIdStr = dl.getMultiFarmRoleInfoByFarmerId1(String.valueOf(farmerId));
                     if (roleIdStr != null) {
                         roleId = Integer.parseInt(roleIdStr);
+                    }
+                    multiFarmId=dl.getMultifarmfarmId(farmerId);
+                    if(multiFarmId!=null){
+                        farmSurvey=true;
+                    }else{
+                        farmSurvey=false;
                     }
 //                            ispolygonCaptured=dl.getPolygonInfo1(farmerId);
 //                             isLocationCaptured=dl.getLocationInfo1(farmerId);
@@ -471,9 +468,23 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
 //                              }
 //
 //                             farmSubmittedHashMapList=dl.isAvailableinSubmittedModules1(moduleAssignments,farmerId);
- //                             Log.i("FRANK EVANA", "SomeText: " + new Gson().toJson(farmSubmittedHashMapList));
+                    //                             Log.i("FRANK EVANA", "SomeText: " + new Gson().toJson(farmSubmittedHashMapList));
 
+                }else{
+                    farmSurvey=false;
                 }
+
+
+                String submittedModulesJSON = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_WEBSITE_SUBMITTED_MODULES));
+                String Samplestr = String.valueOf("{\"modules\":null}");
+                if (Samplestr.equals(submittedModulesJSON)) {
+                    submittedModulesJSON = submittedModulesJSON.replaceAll("\"modules\":null", "");
+                }
+                submittedModules = (!submittedModulesJSON.equals("null")) ? new JSONObject(submittedModulesJSON) : new JSONObject();
+                String moduleNameSuffix = Utilities.getLocaleSuffix(res);
+                Cursor moduleAssignments = getFarmerModules(farmerId, this,farmSurvey);
+
+
                 if (moduleAssignments != null && moduleAssignments.getCount() > 0) {
                     String[] adapterCols = new String[]{
                             (moduleAssignments.getColumnIndex(OFISDBContract.ModuleEntry.COLUMN_NAME_NAME + moduleNameSuffix) != -1) ? OFISDBContract.ModuleEntry.COLUMN_NAME_NAME + moduleNameSuffix : OFISDBContract.ModuleEntry.COLUMN_NAME_NAME,
@@ -487,7 +498,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                     int[] adapterRowViews = new int[]{R.id.moduleListModuleName, R.id.moduleListCurrentSubModuleId, R.id.moduleListStatusStarted, R.id.moduleListStatusFinished, R.id.moduleListFarmerModuleId, R.id.moduleListRecordedLat, R.id.moduleListRecordedLng};
 
                     customListAdapter_modulesAdapter =
-                            new CustomListAdapter_Modules(context, moduleAssignments, adapterCols, adapterRowViews, res, farmer, submittedModules, roleId, farmerId);
+                            new CustomListAdapter_Modules(context, moduleAssignments, adapterCols, adapterRowViews, res, farmer, submittedModules, roleId, farmerId,multiFarmId);
 
                      // customListAdapter_modulesAdapter.setValues(roleId,ispolygonCaptured,isLocationCaptured,isAvailableInStakeHolderList,farmSubmittedHashMapList);
                     listView.setAdapter(customListAdapter_modulesAdapter);
@@ -700,7 +711,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         }
     }
 
-    public Cursor getFarmerModules(long id, Context context) {
+    public Cursor getFarmerModules(long id, Context context, boolean farmSurvey) {
         Cursor farmer = null;
 
         try {
@@ -709,24 +720,47 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
 
             if (farmer.getCount() > 0) {
                 farmer.moveToFirst();
-                String modulesQuery = "SELECT modules.id as _id, modules.name, modules.name_fr, modules.name_es, modules.name_id, modules.name_pt, modules.name_tr, modules.name_lo, modules.name_vi, modules.name_th,modules.annual_survey, " +
-                        "submodules.name as submodule_name, submodules.name_fr as submodule_name_fr, submodules.name_es as submodule_name_es, submodules.name_id as submodule_name_id, submodules.name_pt as submodule_name_pt, submodules.name_tr as submodule_name_tr, submodules.name_lo as submodule_name_lo, submodules.name_vi as submodule_name_vi, submodules.name_th as submodule_name_th, " +
-                        "modules.expires, " + "moduleassignments.recurrence_frequency, moduleassignments.recurrence_type, moduleassignments.disabled_months,moduleassignments.isFarmSurvey,moduleassignments.fkFarmerRoleId, " +
-                        " farmer_modules.id as farmer_module_id, farmer_modules.status_started, farmer_modules.status_finished, farmer_modules.current_submodule_id, farmer_modules.recorded_lat, farmer_modules.recorded_lng FROM moduleassignments " +
-                        " INNER JOIN modules ON moduleassignments.module_id = modules.id " +
-                        " LEFT OUTER JOIN farmer_modules ON modules.id = farmer_modules.module_id AND " +
-                        "(farmer_modules.farmer_id = ? OR farmer_modules.olam_farmer_id = ?) " +
-                        " LEFT OUTER JOIN " + OFISDBContract.SubmoduleEntry.TABLE_NAME + " ON farmer_modules.current_submodule_id = submodules.id WHERE " +
-                        "moduleassignments.childLabour != 'true' AND" +
-                        "((moduleassignment_type = 'Country' AND moduleassignment_id = ?) OR " +
-                        "(moduleassignment_type = 'Region' AND moduleassignment_id = ?) OR " +
-                        "(moduleassignment_type = 'District' AND moduleassignment_id = ?) OR " +
-                        "(moduleassignment_type = 'Place' AND moduleassignment_id = ?) OR " +
-                        "(moduleassignment_type = 'Farmer Group' AND moduleassignment_id = ?) OR " +
-                        "(moduleassignment_type = 'Section' AND moduleassignment_id = ?) OR " +
-                        "(moduleassignment_type = 'Programme' AND moduleassignment_id = ?) OR " +
-                        "(moduleassignment_type = 'Product' AND moduleassignment_id = ?) OR " +
-                        "(moduleassignment_type = 'Partner' AND moduleassignment_id = ?))";
+                String modulesQuery="";
+                if (farmSurvey){
+                     modulesQuery = "SELECT modules.id as _id, modules.name, modules.name_fr, modules.name_es, modules.name_id, modules.name_pt, modules.name_tr, modules.name_lo, modules.name_vi, modules.name_th,modules.annual_survey, " +
+                            "submodules.name as submodule_name, submodules.name_fr as submodule_name_fr, submodules.name_es as submodule_name_es, submodules.name_id as submodule_name_id, submodules.name_pt as submodule_name_pt, submodules.name_tr as submodule_name_tr, submodules.name_lo as submodule_name_lo, submodules.name_vi as submodule_name_vi, submodules.name_th as submodule_name_th, " +
+                            "modules.expires, " + "moduleassignments.recurrence_frequency, moduleassignments.recurrence_type, moduleassignments.disabled_months,moduleassignments.isFarmSurvey,moduleassignments.fkFarmerRoleId, " +
+                            " farmer_modules.id as farmer_module_id, farmer_modules.status_started, farmer_modules.status_finished, farmer_modules.current_submodule_id, farmer_modules.recorded_lat, farmer_modules.recorded_lng FROM moduleassignments " +
+                            " INNER JOIN modules ON moduleassignments.module_id = modules.id " +
+                            " LEFT OUTER JOIN farmer_modules ON modules.id = farmer_modules.module_id AND " +
+                            "(farmer_modules.farmer_id = ? OR farmer_modules.olam_farmer_id = ?) " +
+                            " LEFT OUTER JOIN " + OFISDBContract.SubmoduleEntry.TABLE_NAME + " ON farmer_modules.current_submodule_id = submodules.id WHERE " +
+                            "moduleassignments.childLabour != 'true' AND" +
+                            "((moduleassignment_type = 'Country' AND moduleassignment_id = ?) OR " +
+                            "(moduleassignment_type = 'Region' AND moduleassignment_id = ?) OR " +
+                            "(moduleassignment_type = 'District' AND moduleassignment_id = ?) OR " +
+                            "(moduleassignment_type = 'Place' AND moduleassignment_id = ?) OR " +
+                            "(moduleassignment_type = 'Farmer Group' AND moduleassignment_id = ?) OR " +
+                            "(moduleassignment_type = 'Section' AND moduleassignment_id = ?) OR " +
+                            "(moduleassignment_type = 'Programme' AND moduleassignment_id = ?) OR " +
+                            "(moduleassignment_type = 'Product' AND moduleassignment_id = ?) OR " +
+                            "(moduleassignment_type = 'Partner' AND moduleassignment_id = ?))";
+                }else {
+                     modulesQuery = "SELECT modules.id as _id, modules.name, modules.name_fr, modules.name_es, modules.name_id, modules.name_pt, modules.name_tr, modules.name_lo, modules.name_vi, modules.name_th,modules.annual_survey, " +
+                            "submodules.name as submodule_name, submodules.name_fr as submodule_name_fr, submodules.name_es as submodule_name_es, submodules.name_id as submodule_name_id, submodules.name_pt as submodule_name_pt, submodules.name_tr as submodule_name_tr, submodules.name_lo as submodule_name_lo, submodules.name_vi as submodule_name_vi, submodules.name_th as submodule_name_th, " +
+                            "modules.expires, " + "moduleassignments.recurrence_frequency, moduleassignments.recurrence_type, moduleassignments.disabled_months,moduleassignments.isFarmSurvey,moduleassignments.fkFarmerRoleId, " +
+                            " farmer_modules.id as farmer_module_id, farmer_modules.status_started, farmer_modules.status_finished, farmer_modules.current_submodule_id, farmer_modules.recorded_lat, farmer_modules.recorded_lng FROM moduleassignments " +
+                            " INNER JOIN modules ON moduleassignments.module_id = modules.id " +
+                            " LEFT OUTER JOIN farmer_modules ON modules.id = farmer_modules.module_id AND " +
+                            "(farmer_modules.farmer_id = ? OR farmer_modules.olam_farmer_id = ?) " +
+                            " LEFT OUTER JOIN " + OFISDBContract.SubmoduleEntry.TABLE_NAME + " ON farmer_modules.current_submodule_id = submodules.id WHERE " +
+                            "moduleassignments.childLabour != 'true' AND " +
+                            "moduleassignments.isFarmSurvey == 'false' AND" +
+                            "((moduleassignment_type = 'Country' AND moduleassignment_id = ?) OR " +
+                            "(moduleassignment_type = 'Region' AND moduleassignment_id = ?) OR " +
+                            "(moduleassignment_type = 'District' AND moduleassignment_id = ?) OR " +
+                            "(moduleassignment_type = 'Place' AND moduleassignment_id = ?) OR " +
+                            "(moduleassignment_type = 'Farmer Group' AND moduleassignment_id = ?) OR " +
+                            "(moduleassignment_type = 'Section' AND moduleassignment_id = ?) OR " +
+                            "(moduleassignment_type = 'Programme' AND moduleassignment_id = ?) OR " +
+                            "(moduleassignment_type = 'Product' AND moduleassignment_id = ?) OR " +
+                            "(moduleassignment_type = 'Partner' AND moduleassignment_id = ?))";
+                }
                 String[] modulesQueryValues = new String[]{
                         farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)),
                         farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)),
@@ -2442,5 +2476,13 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
             listView.setOnItemLongClickListener(null);
             listView.setOnClickListener(null);
         }catch (Exception e){}
+
+        try {
+            if(gpsTracker!=null) {
+                gpsTracker.stopLocationUpdates();
+            }
+        } catch (Exception e) {
+        }
+
     }
 }
