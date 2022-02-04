@@ -2019,8 +2019,8 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         TextView enabled = (TextView) v.findViewById(R.id.moduleListEnabled);
         if (enabled.getText().toString().equalsIgnoreCase("true")) {
             if (id > 0) {
-                String mfFarmId  = dl.getMultifarmfarmId(farmerId);
-                if (mfFarmId != null) {
+               String mfFarmId  = dl.getMultifarmfarmId(farmerId);
+                if (mfFarmId != null && MultiFarmUtils.isMultiFarmEnumerator) {
                     try {
                         showPopupFarmDetails(v, position, id, mfFarmId);
                     } catch (JSONException e) {
