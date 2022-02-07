@@ -1982,7 +1982,7 @@ public class DynamicQuestions {
 
                 } else {
                     String currentAnswerValue;
-                    if (isRepeaterItem && repeaterAnswers != null) {
+                    if (isRepeaterItem && repeaterAnswers != null && repeaterAnswers.getCount() > 0 ) {
                         currentAnswerValue = repeaterAnswers.getString(repeaterAnswers.getColumnIndex("answer_" + datatype));
                     } else {
                         currentAnswerValue = qCursor.getString(qCursor.getColumnIndex("answer_" + datatype));
@@ -2173,7 +2173,7 @@ public class DynamicQuestions {
 
                 } else {
                     String currentAnswerValue;
-                    if (isRepeaterItem && repeaterAnswers != null) {
+                    if (isRepeaterItem && repeaterAnswers != null && repeaterAnswers.getCount() > 0) {
                         currentAnswerValue = repeaterAnswers.getString(repeaterAnswers.getColumnIndex("answer_" + datatype));
                     } else {
                         currentAnswerValue = qCursor.getString(qCursor.getColumnIndex("answer_" + datatype));
