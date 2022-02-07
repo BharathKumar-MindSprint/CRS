@@ -1,14 +1,17 @@
+/*
 package com.olam.digital.ofis.logging;
 
 import android.util.Log;
 
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
-import timber.log.Timber;
+//import timber.log.Timber;
 
+*/
 /**
  * Created by nitin.kumar35 on 8/20/2017.
- */
+ *//*
+
 
 public class CrashReportingTree extends Timber.Tree {
 
@@ -29,3 +32,4 @@ public class CrashReportingTree extends Timber.Tree {
     }
 }
 
+*/

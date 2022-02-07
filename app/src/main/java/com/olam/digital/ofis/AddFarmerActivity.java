@@ -782,7 +782,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             for (MultiFarmRoleDTO multiFarmRoleDTO : multiFarmRoleDTOList){
                 rolesList.add(multiFarmRoleDTO.getName());
             }
-            //  farmerNameInFirstNowEdit();
+            farmerNameInFirstNowEdit();
             bindMultiFarm();
         }
 
@@ -2015,6 +2015,11 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                             if (updFarmerId > 0) {
                                 Toast.makeText(context, res.getString(R.string.Farmer_Updated), Toast.LENGTH_LONG).show();
                                 ViewFarmerActivity.farmerId = editFarmerId;
+                                if(MultiFarmUtils.isMultiFarmEnumerator) {
+                                    ViewFarmerActivity.farmSurvey =true;
+                                }else{
+                                    ViewFarmerActivity.farmSurvey =false;
+                                }
                                 //SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(editFarmerId);
                                 finish();
                                 Intent intent = new Intent(context, ViewFarmerActivity.class);
@@ -2064,6 +2069,11 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                                     collectGPSPoint(newFarmerId,farmerNameValue);
                                 }
                                 ViewFarmerActivity.farmerId = newFarmerId;
+                                if(MultiFarmUtils.isMultiFarmEnumerator) {
+                                    ViewFarmerActivity.farmSurvey =true;
+                                }else{
+                                    ViewFarmerActivity.farmSurvey =false;
+                                }
                                 finish();
                                 Intent intent = new Intent(context, ViewFarmerActivity.class);
                                 startActivity(intent);
@@ -2133,7 +2143,9 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     protected void onStop() {
         super.onStop();
         try {
-            gpsTracker.stopLocationUpdates();
+            if (gpsTracker!=null) {
+                gpsTracker.stopLocationUpdates();
+            }
         } catch (Exception e) {
         }
 

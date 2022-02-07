@@ -64,6 +64,8 @@ import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.gps.utils.GPSUtils;
 import com.olam.digital.ofis.matoma.MatomoHelper;
 import com.olam.digital.ofis.matoma.ScreenNameConstants;
+import com.olam.digital.ofis.multifarm.MultiFarmDTO;
+import com.olam.digital.ofis.multifarm.MultiFarmUtils;
 
 import org.json.JSONException;
 
@@ -166,6 +168,7 @@ public class CompleteModuleActivity extends BaseActivity {
         res = getResources();
         dl = new DataLayer(res, context);
 
+        MultiFarmUtils.isMultiFarmEnumerator = Utilities.getMultifarmPref(context, MultiFarmUtils.IS_MULTI_FARM_ENUMERATOR);
 
         DynamicQuestions.resource(res);
         setupGPS();
@@ -609,10 +612,22 @@ public class CompleteModuleActivity extends BaseActivity {
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, farmerName);
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID, farmerId);
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID, olamFarmerId);
-                    values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID, farmId);
+                    if (MultiFarmUtils.isMultiFarmEnumerator){
+                        String multifarmId=dl.getMultiFarmId(farmerId);
+                        if (multifarmId!=null){
+                            values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID, multifarmId);
+                        }else{
+                            values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID, farmId);
+                        }
+
+                    }else{
+                        values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID, farmId);
+                    }
+
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_MODULE_ID, farmerModuleId);
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LAT, recordedLat);
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG, recordedLng);
+                    values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_MODULE_ID, moduleId);
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPDATED_AT, timestamp.toString());
                     if (statusFinished == 0) {
                         values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT, timestamp.toString());

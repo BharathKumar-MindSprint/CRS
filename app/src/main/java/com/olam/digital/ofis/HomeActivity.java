@@ -117,6 +117,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     int checkvalue = 0;
     private boolean farmerSynced = true, autotimeEnabled = false;
     private boolean multifarmSynced = true;
+    private boolean farmerMultifarmSynced=true;
     private Cursor networkQueue;
     private CustomListAdapter_NetworkQueue customListAdapter_networkQueue;
     private static LinearLayout topSection;
@@ -804,6 +805,10 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                         m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, 0, 0, res.getString(R.string.multifarm_not_synced));
                         Utilities.closeProgressDialog(m_ProgressDialog, 3000);
                         enableSync();
+                    }else if(!farmerMultifarmSynced){
+                        m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, 0, 0, res.getString(R.string.sync_farmer_and_multifarm_stakeholders));
+                        Utilities.closeProgressDialog(m_ProgressDialog, 3000);
+                        enableSync();
                     }
                     else{
                         if(totalItems == 0)
@@ -836,12 +841,15 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                         isChildSynced=false;
                     } else if (msg.what == 7){
                         multifarmSynced=false;
+                    }else if (msg.what == 8){
+                        farmerMultifarmSynced=false;
                     }
                 }
             };
             farmerSynced = true;
             isChildSynced=true;
             multifarmSynced=true;
+            farmerMultifarmSynced=true;
             nl.getNetworkQueue(null);
             nl.syncNetworkQueue(null, syncHandler);
         } else {
@@ -904,6 +912,10 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                         m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, 0, 0, res.getString(R.string.multifarm_not_synced));
                         Utilities.closeProgressDialog(m_ProgressDialog, 3000);
                         enableSync();
+                    }else if (!farmerMultifarmSynced){
+                        m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, 0, 0, res.getString(R.string.sync_farmer_and_multifarm_stakeholders));
+                        Utilities.closeProgressDialog(m_ProgressDialog, 3000);
+                        enableSync();
                     }
                 }
             });
@@ -931,6 +943,8 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                         isChildSynced=false;
                     }else if (msg.what ==7){
                         multifarmSynced=false;
+                    }else if (msg.what ==8){
+                        farmerMultifarmSynced=false;
                     }
                     else {
                         finishItemSync(msg);
@@ -940,6 +954,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             farmerSynced = true;
             isChildSynced=true;
             multifarmSynced=true;
+            farmerMultifarmSynced=true;
             nl.getNetworkQueue(itemId);
             nl.syncNetworkQueueFromHome(itemId, syncHandler);
         } else {
