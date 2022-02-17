@@ -1158,6 +1158,14 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
         }
         mLastTime = currentTime;
 
+        // Capture the Logger item 
+
+        logger.addRecordToLog( currentTrackname +"-- >  Accuracy -->" + pLoc.getAccuracy()  +"\n" +
+                "    Latitude  -->"+ pLoc.getLatitude() +"\n" +
+                "    Longitude  -->"+ pLoc.getLongitude() +"\n" +
+                "    Altitude  -->"+ pLoc.getAltitude() +"\n" +
+                "    Bearing  -->"+ pLoc.getBearing()+"\n" );
+
         GeoPoint newLocation = new GeoPoint(pLoc);
         if (!myLocationOverlay.isEnabled()) {
             //we get the location for the first time:
