@@ -33,7 +33,7 @@ public class StartRecordPolygonActivity extends AppCompatActivity {
     private static final String FARMER_NAME = "FARMER_NAME";
 
     private Resources res;
-
+    Logger logger;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,6 +43,9 @@ public class StartRecordPolygonActivity extends AppCompatActivity {
         List<LocationBeanList>  aLocationBeanList = SharedPreferenceUtils.getInstance(getApplicationContext()).getAllLocations();
         String s = getPlotsJsonFromLocationBeanList(aLocationBeanList);
         Log.v("PLOTS", s);
+        logger.addRecordToLog("Polygon recording started");
+        logger.addRecordToLog("PLOTS: "+ s );
+
         saveToSyncDatabase(s);
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
         alert.setTitle("Title");
@@ -87,13 +90,16 @@ public class StartRecordPolygonActivity extends AppCompatActivity {
             plots lposition_data = new plots();
             for (plot bean : aLocationBeanList.get(i).getLocationBean()) {
                 lplotList.add(bean);
+                logger.addRecordToLog("bean: "+ bean );
             }
             lposition_data.setPlot(lplotList);
             lposition_dataList.add(lposition_data);
         }
+        logger.addRecordToLog("lposition_dataList: "+ lposition_dataList );
         lplots.setPlots(lposition_dataList);
+        logger.addRecordToLog("lplots: "+ lplots );
         lplotsList.add(lplots);
-        lPlotList.setLocation(lplotsList);
+        logger.addRecordToLog("lplotsList: "+ lplotsList );
         String json = lPlotList == null ? null : new Gson().toJson(lPlotList);
         return json;
     }
