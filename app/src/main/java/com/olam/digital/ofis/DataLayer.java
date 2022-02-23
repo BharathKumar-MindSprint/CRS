@@ -29,6 +29,7 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.olam.digital.ofis.childlabour.ChildLabourUtils;
 import com.olam.digital.ofis.coffeesurveyconstraints.CoffeeConstants;
 import com.olam.digital.ofis.model.FarmerLeadDTO;
+import com.olam.digital.ofis.model.GeoDTO;
 import com.olam.digital.ofis.model.NationalIdDTO;
 import com.olam.digital.ofis.model.FarmerGeo;
 import com.olam.digital.ofis.multifarm.MultiFarmDTO;
@@ -6499,6 +6500,29 @@ public class DataLayer {
             }
         }
         return farmerGeo;
+    }
+
+    public GeoDTO getInfoByFarmerGroupId(int farmerGroupId) {
+        GeoDTO geoDTO=new GeoDTO();
+        String[] columns = new String[]{"*"};
+        String whereClause = OFISDBContract.FarmerGroupsEntry.COLUMN_NAME_ID+ " = ?";
+        String[] whereArgs = new String[]{String.valueOf(farmerGroupId)};
+        Cursor mCursor= db.query(OFISDBContract.FarmerGroupsEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+        try {
+            if (mCursor != null) {
+                while (mCursor.moveToNext()) {
+                    geoDTO.setProductId(mCursor.getString(mCursor.getColumnIndex(OFISDBContract.FarmerGroupsEntry.COLUMN_NAME_PRODUCT_ID)));
+                    geoDTO.setPartnerId(mCursor.getString(mCursor.getColumnIndex(OFISDBContract.FarmerGroupsEntry.COLUMN_NAME_PARTNER_ID)));
+                    geoDTO.setProgrammeId(mCursor.getString(mCursor.getColumnIndex(OFISDBContract.FarmerGroupsEntry.COLUMN_NAME_PROGRAMME_ID)));
+                }
+            }
+        }catch (Exception e){
+
+        }finally {
+            mCursor.close();
+        }
+        return geoDTO;
+
     }
 
     public void updateFarmerOlamId(long editFarmerId, String olamFarmerId) {

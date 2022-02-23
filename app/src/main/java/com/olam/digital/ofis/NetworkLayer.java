@@ -41,6 +41,7 @@ import com.olam.digital.ofis.dynatrace.DynatraceHelper;
 import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
 import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.logging.FabricLogsWriter;
+import com.olam.digital.ofis.model.GeoDTO;
 import com.olam.digital.ofis.multifarm.MultiFarmDTO;
 import com.olam.digital.ofis.multifarm.MultiFarmUtils;
 import com.olam.digital.ofis.tasks.SyncAllTask;
@@ -3123,7 +3124,17 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 }
             }catch (Exception e){e.printStackTrace();}
 //            sip releated changes - uncomment farmergroupid
-            params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMERGROUP_ID, networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMERGROUP_ID)));
+            // OCA-562
+            int farmerGroupId= networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMERGROUP_ID));
+            params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMERGROUP_ID,farmerGroupId);
+
+            try {
+                GeoDTO geoDTO=dl.getInfoByFarmerGroupId(farmerGroupId);
+                params.put("programme_id", Integer.parseInt(geoDTO.getProgrammeId()));
+                params.put("partner_id", Integer.parseInt(geoDTO.getPartnerId()));
+                params.put("product_id", Integer.parseInt(geoDTO.getProductId()));
+            }catch (Exception e){}
+
             params.put("recorded_lat", networkQueueItems.getDouble(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LAT)));
             params.put("recorded_lng", networkQueueItems.getDouble(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)));
             params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ATTEMPTS, networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ATTEMPTS)));
