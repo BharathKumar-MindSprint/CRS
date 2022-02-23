@@ -179,7 +179,7 @@
         <Button
             android:id="@+id/searchFarmLocationBtn"
             android:text="@string/Search"
-            android:layout_marginTop="@dimen/margin_10"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
             android:textColor="@color/ofis_base_font_white"
             android:layout_marginLeft="@dimen/activity_vertical_margin"
             android:layout_marginRight="@dimen/activity_vertical_margin"
