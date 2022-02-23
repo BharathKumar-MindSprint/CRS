@@ -495,7 +495,7 @@
                             android:layout_height="40dp"
                             android:inputType="textCapWords"
                             android:padding="@dimen/margin_10"
-                            android:layout_marginTop="@dimen/margin_10"
+                            android:layout_marginTop="5dp"
                             android:id="@+id/farmNameEdittext"
                             android:textColor="@color/ofis_text_field"
                             android:textStyle="bold"
@@ -516,7 +516,7 @@
                             android:layout_height="40dp"
                             android:inputType="textCapWords"
                             android:padding="@dimen/margin_10"
-                            android:layout_marginTop="@dimen/margin_10"
+                            android:layout_marginTop="5dp"
                             android:id="@+id/farmCodeEdittext"
                             android:textColor="@color/ofis_text_field"
                             android:textSize="@dimen/ofis_input_field_text"
@@ -533,10 +533,19 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:animateLayoutChanges="true"
+                            android:id="@+id/farmStakeholderLayout"/>
+
+
 
                         <LinearLayout
                             android:id="@+id/addFarmerRoleLayout"
                             android:layout_width="match_parent"
+                            android:layout_marginTop="@dimen/margin_10"
                             android:layout_height="wrap_content"
                             android:orientation="horizontal">
                             <ImageView
@@ -544,6 +553,7 @@
                                 android:layout_width="27dp"
                                 android:layout_height="27dp"
                                 android:src="@drawable/ic_ofis_add"
+                                android:layout_gravity="center"
                                 android:background="@android:color/transparent"
                                 android:contentDescription="@string/Add" />
 
@@ -552,19 +562,11 @@
                                 android:textColor="@color/btnColorThird"
                                 android:layout_width="wrap_content"
                                 android:layout_marginLeft="@dimen/margin_10"
+                                android:layout_gravity="center"
                                 android:background="@android:color/transparent"
                                 android:layout_height="wrap_content"/>
                         </LinearLayout>
 
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:animateLayoutChanges="true"
-                            android:layout_weight="1"
-                            android:id="@+id/farmStakeholderLayout">
-
-                        </LinearLayout>
 
 
                     </LinearLayout>
