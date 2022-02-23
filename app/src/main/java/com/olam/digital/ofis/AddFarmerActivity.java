@@ -617,6 +617,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
 //                ImageView farmRoleDelete = farmRoleInclude.findViewById(R.id.farmRoleDelete);
 //                farmRoleDelete.setVisibility(View.GONE);
 //            }
+            newFarmRadioButton.setChecked(true);
         }
 
 

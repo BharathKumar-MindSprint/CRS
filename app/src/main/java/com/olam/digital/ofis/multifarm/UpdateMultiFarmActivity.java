@@ -343,6 +343,8 @@ public class UpdateMultiFarmActivity extends BaseActivity {
                         farmMultiId=dl.getMultifarmfarmId(farmerID);
                        if (farmMultiId!=null){
                            existingStakeHolder= dl.getMultiFarmStakeHolderInfoByFarmId(farmMultiId);
+                       }else{
+                           newFarmRadioButton.setChecked(true);
                        }
 
                     // Existing
