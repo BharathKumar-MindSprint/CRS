@@ -642,8 +642,8 @@ public class SyncAllTask extends SyncTask {
                             Utilities.saveToSharedPrefs(context, "COUNTRY_IDS", cid, null);
                             Utilities.saveIntToSharedPrefs(context, "COUNTRY_COUNT", 1);
                             countrycount = 1;
-//                            publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.checking_isfl_enumerator));
-                            publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.updating_farmers));
+                            publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.checking_isfl_enumerator));
+//                            publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.updating_farmers));
                             delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_ISFL);
 
                         }catch (Exception e){e.printStackTrace();}
@@ -1332,8 +1332,8 @@ public class SyncAllTask extends SyncTask {
                     DynatraceHelper.requestPayload(finalEndpoint,output,context,false);
                     if (postResponse.isSuccessful()) {
                         // store the value in Child labour preferences
-//                        Boolean isflenumerator = Boolean.parseBoolean(output.trim());
-                        Boolean isflenumerator = false;
+                        Boolean isflenumerator = Boolean.parseBoolean(output.trim());
+//                        Boolean isflenumerator = false;
                         Utilities.saveToSharedPrefs(context, Utilities.FARMERLEAD_ENUMERATOR,null, isflenumerator);
                         System.out.println("isflenumerator_data:" + isflenumerator);
                         if(! isflenumerator) {
