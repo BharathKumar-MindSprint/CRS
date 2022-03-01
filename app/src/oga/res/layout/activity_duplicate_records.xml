@@ -1,0 +1,390 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".biometric.DuplicateFarmerListActivity">
+
+    <LinearLayout
+        android:id="@+id/green_pop_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:background="@color/btn_primary_background">
+        <LinearLayout
+            android:id="@+id/info_layout"
+            android:layout_width="match_parent"
+            android:layout_alignParentTop="true"
+            android:orientation="horizontal"
+            android:background="@color/btn_primary_background"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginTop="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:layout_marginBottom="@dimen/activity_horizontal_margin"
+            android:weightSum="3"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_marginRight="5dp"
+                android:layout_marginBottom="5dp"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/tv_farmer_name"
+                    android:layout_width="match_parent"
+                    android:textColor="@color/white"
+                    android:layout_height="wrap_content"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:textSize="20sp"
+                    android:text="XXXXXXX XXXX"/>
+
+                <LinearLayout
+                    android:id="@+id/dobLayout"
+                    android:layout_width="match_parent"
+                    android:orientation="horizontal"
+                    android:weightSum="2"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/tv_date_of_birth_label"
+                        android:layout_width="match_parent"
+                        android:textColor="@color/white"
+                        android:textSize="16sp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/dob"/>
+
+                    <TextView
+                        android:id="@+id/tv_date_of_birth"
+                        android:layout_width="match_parent"
+                        android:textColor="@color/white"
+                        android:textSize="16sp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:text=""/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/nationalIdLayout"
+                    android:layout_width="match_parent"
+                    android:orientation="horizontal"
+                    android:weightSum="2"
+                    android:layout_marginTop="@dimen/activity_horizontal_margin"
+                    android:layout_marginRight="5dp"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:id="@+id/tv_label_national_id"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textColor="@color/white"
+                        android:textSize="14sp"
+                        android:text="@string/label_national_id"/>
+                    <TextView
+                        android:id="@+id/tv_national_id"
+                        android:layout_width="match_parent"
+                        android:layout_weight="1"
+                        android:textColor="@color/white"
+                        android:layout_height="wrap_content"
+                        android:textSize="14sp"
+                        android:ellipsize="end"
+                        android:text=""/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/countryLayout"
+                    android:layout_width="match_parent"
+                    android:orientation="horizontal"
+                    android:weightSum="2"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:id="@+id/tv_label_country"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textColor="@color/white"
+                        android:textSize="14sp"
+                        android:text="@string/label_country"/>
+                    <TextView
+                        android:id="@+id/tv_country_name"
+                        android:layout_width="match_parent"
+                        android:layout_weight="1"
+                        android:textColor="@color/white"
+                        android:layout_height="wrap_content"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        android:textSize="14sp"
+                        android:text="Ghana"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/regionLayout"
+                    android:layout_width="match_parent"
+                    android:orientation="horizontal"
+                    android:weightSum="2"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:id="@+id/tv_label_region"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textColor="@color/white"
+                        android:textSize="14sp"
+                        android:text="@string/label_region"/>
+                    <TextView
+                        android:id="@+id/tv_region_name"
+                        android:layout_width="match_parent"
+                        android:layout_weight="1"
+                        android:textColor="@color/white"
+                        android:layout_height="wrap_content"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        android:textSize="14sp"
+                        android:text="Sumatera Ultara"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/districtLayout"
+                    android:layout_width="match_parent"
+                    android:orientation="horizontal"
+                    android:weightSum="2"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:id="@+id/tv_label_district"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textColor="@color/white"
+                        android:textSize="14sp"
+                        android:text="@string/label_district"/>
+                    <TextView
+                        android:id="@+id/tv_district_name"
+                        android:layout_width="match_parent"
+                        android:layout_weight="1"
+                        android:textColor="@color/white"
+                        android:layout_height="wrap_content"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        android:textSize="14sp"
+                        android:text="Humbang Hasundutan"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/placeLayout"
+                    android:layout_width="match_parent"
+                    android:orientation="horizontal"
+                    android:weightSum="2"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:id="@+id/tv_label_place"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textColor="@color/white"
+                        android:textSize="14sp"
+                        android:text="@string/label_place"/>
+                    <TextView
+                        android:id="@+id/tv_place_name"
+                        android:layout_width="match_parent"
+                        android:layout_weight="1"
+                        android:textColor="@color/white"
+                        android:layout_height="wrap_content"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        android:textSize="14sp"
+                        android:text="Lintong Hinuto"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/farmerGroupLayout"
+                    android:layout_width="match_parent"
+                    android:orientation="horizontal"
+                    android:weightSum="2"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:id="@+id/tv_label_farmer_group"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textColor="@color/white"
+                        android:textSize="14sp"
+                        android:text="@string/label_farmer_group"/>
+                    <TextView
+                        android:id="@+id/tv_farmer_group"
+                        android:layout_width="match_parent"
+                        android:layout_weight="1"
+                        android:textColor="@color/white"
+                        android:layout_height="wrap_content"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        android:textSize="14sp"
+                        android:text="COOPYCA"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/sectionLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="5dp"
+                    android:orientation="horizontal"
+                    android:weightSum="2">
+                    <TextView
+                        android:id="@+id/tv_label_section"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/label_section"
+                        android:textColor="@color/white"
+                        android:textSize="14sp"/>
+                    <TextView
+                        android:id="@+id/tv_section"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:textColor="@color/white"
+                        android:textSize="14sp"/>
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_weight="2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:id="@+id/farmerImage"
+                    android:src="@drawable/empty_farmer_photo"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"/>
+            </LinearLayout>
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/image_alone_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/green_pop_layout"
+        android:background="@color/btn_primary_background">
+        <ImageView
+            android:id="@+id/farmer_img_alone_ImageView"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="@dimen/margin_10"
+            android:layout_marginBottom="@dimen/margin_10"
+            android:src="@drawable/empty_farmer_photo"/>
+    </RelativeLayout>
+    <LinearLayout
+        android:id="@+id/match_found_layout"
+        android:layout_below="@+id/image_alone_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginTop="@dimen/margin_10"
+        android:layout_marginBottom="@dimen/margin_10"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/duplicate_found_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_duplicate_records"
+            android:textColor="@color/ofis_base_font_dark"
+            android:textSize="18sp"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/tv_circular_duplicate_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:text="(0)"
+            android:textColor="@color/biometric_blue"
+            android:textSize="18sp"
+            android:textStyle="bold"/>
+
+        <!--        <com.olam.digital.ofis.biometric.RoundedTextView-->
+        <!--            android:id="@+id/tv_circular_duplicate_count"-->
+        <!--            android:layout_width="wrap_content"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:layout_marginLeft="5dp"-->
+        <!--            android:gravity="center"-->
+        <!--            android:padding="4dp"-->
+        <!--            android:text="0"-->
+        <!--            android:textColor="@color/black"-->
+        <!--            android:textSize="17sp"-->
+        <!--            android:textStyle="bold"/>-->
+
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_below="@+id/match_found_layout"
+        android:id="@+id/recycler_duplicates_list"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:background="@color/dull_white"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/buttons_layout"/>
+
+    <LinearLayout
+        android:id="@+id/buttons_layout"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:orientation="horizontal"
+        android:weightSum="1">
+
+        <Button
+            android:id="@+id/btn_back_to_registration"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="0.5"
+            android:background="@color/btn_secondary_background"
+            android:gravity="center"
+            android:layout_margin="5dp"
+            android:textColor="@color/white"
+            android:text="@string/back_to_registration"
+            android:textSize="15sp" />
+
+        <Button
+            android:id="@+id/btn_mark_as_unique"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="0.5"
+            android:background="@color/btn_primary_background"
+            android:textColor="@color/white"
+            android:layout_margin="5dp"
+            android:gravity="center"
+            android:text="@string/mark_as_unique"
+            android:textSize="15sp" />
+
+    </LinearLayout>
+</RelativeLayout>

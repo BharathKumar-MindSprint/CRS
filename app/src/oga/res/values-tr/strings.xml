@@ -1,0 +1,728 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--
+         DICTIONARY FILE, in order to translate just change the value not the key
+         ie, <string name="Settings">Paramètres</string>
+    -->
+    <!-- action bar and activity titles -->
+    <string name="ofis_action_bar_home">Ana Ekran</string>
+    <string name="ofis_action_bar_settings">Ayarlar</string>
+    <string name="title_activity_settings">Ayarlar</string>
+    <string name="title_activity_add_farmer">Yeni çiftçi ekle</string>
+    <string name="title_activity_add_infrastructure">Sosyal altyapı ekle</string>
+    <string name="title_activity_find_farmer">Çiftçi bul</string>
+    <string name="title_activity_view_farmer">Çiftçi detayları</string>
+    <string name="title_activity_complete_module">Tam anket modülü</string>
+
+    <!-- main stuff -->
+    <string name="app_name">OFI Yardımcısı Ayıklama</string>
+    <string name="cd_topSectionColour">Seçim için renkli arka plan</string>
+    <string name="ofis_switch_text_yes">Evet</string>
+    <string name="ofis_switch_text_no">Hayır</string>
+
+    <!-- Home screen related -->
+    <string name="Retrieving_data">Güncellemeleri kontrol ediyor…</string>
+    <string name="importing_string">|| kaydın %%\'sı içeri aktarılıyor</string>
+    <string name="spinners_up_to_date">Form verisi güncel</string>
+    <string name="updating_modules">Soru verisini indiriyor</string>
+    <string name="modules_up_to_date">Sorular güncel</string>
+    <string name="updating_farmers">Çiftçi verisini indiriyor</string>
+    <string name="farmers_up_to_date">Çiftçiler güncel</string>
+    <string name="update_complete">Güncellemeler tamamlandı</string>
+    <string name="new_farmer">Yeni çiftçi</string>
+    <!-- module row stuff -->
+    <string name="Awaiting_Sync">Bekleyen Senkronizasyon</string>
+    <!-- in XML -->
+    <string name="ofis_complete_questionnaire">Tam anket modülü</string>
+    <string name="ofis_add_infrastructure">Sosyal altyapı ekle</string>
+    <string name="ofis_add_new_farmer">Yeni çiftçi ekle</string>
+    <string name="Modules_to_submit">Verilecek öğeler</string>
+    <string name="item_synced">Öğeler başarıyla senkronize edildi.</string>
+    <string name="item_sync_error">Senkronize hatası. Lütfen yardım için bizimle bağlantı kurun</string>
+    <string name="ofis_first_run_intro">Daha önce burada bulunmadınız, değil mi? Bazı detaylar alabilir miyiz?</string>
+    <string name="ofis_first_run_save_update">Kaydet &amp; Güncelle</string>
+
+    <!-- Settings screen related -->
+    <!-- in XML -->
+    <string name="Enumerator_ID">Sayım Görevlisi Tanıtım No</string>
+
+    <!-- ADD POI related -->
+    <string name="Successfully_added">Başarılı şekilde eklendi</string>
+    <string name="Successfully_updated">Başarılı şekilde güncellendi</string>
+    <string name="ofis_select_gender">Cinsiyet</string>
+    <string name="ofis_olam_funded">Olam Fonlamalı mı?</string>
+    <string name="ofis_select_year_opened">Açılma Yılı</string>
+    <string name="ofis_select_education_level">Giriş Eğitim seviyesi</string>
+    <string name="ofis_select_product">Alınan ürün</string>
+    <string name="ofis_select_supply_type">Su Besleme Türü</string>
+    <string name="location_not_available">Konum bulunmuyor</string>
+
+    <!-- in XML -->
+    <string name="Add_Point_of_Interest">Sosyal Altyapı Ekle</string>
+    <string name="Name">İsim</string>
+    <string name="GPS_Position">GPS Konumu</string>
+
+    <!-- in XML includes -->
+    <string name="Capacity">Öğrenci Kapasitesi</string>
+    <string name="Number_of_Classrooms">Sınıf Sayısı</string>
+
+    <!-- Add farmer related -->
+    <!-- in code -->
+    <string name="Select_picture_from">Resim seç</string>
+    <string name="Camera">Kamera</string>
+    <string name="Gallery">Galeri</string>
+    <string name="Please_wait">Lütfen bekleyin…</string>
+    <string name="Please_fill_all_fields">Lütfen bütün sahaları doldurun</string>
+    <string name="Please_fill_required_fields">Lütfen Ad ve Açıklama\'yı doldurun</string>
+    <string name="id_not_unique">Çiftçi kimlik numarası özgün değil, tekrar deneyin</string>
+    <string name="Submitting_data">Veri iletiyor…</string>
+    <string name="Farmer_Added">Çiftçi Eklendi!</string>
+    <string name="Farmer_Updated">Çiftçi güncellendi</string>
+    <string name="are_you_at_the_farm">Çiftlikte misiniz?</string>
+    <string name="yes">Evet</string>
+    <string name="no">Hayır</string>
+    <string name="searching_for_loc">Yeri arıyor</string>
+    <string name="ofis_farmer_id_hint">AA-0000-AAAA-</string>
+
+    <!-- in XML -->
+    <string name="Add_Farmer">Çiftçi Ekle</string>
+    <string name="Farmer_Name">Çiftçi Adı</string>
+    <string name="Date_of_Birth">Doğum Tarihi</string>
+    <string name="Country">Ülke</string>
+    <string name="New_place_name">Yeni yer adı</string>
+    <string name="new_place_name_placeholder">Yeni yer</string>
+    <string name="Olam_Farmer_ID">Olam Çiftçi Tanıtım No</string>
+    <string name="Save">Kaydet</string>
+    <string name="Add_Signature">İmza:</string>
+    <string name="Signature">İmza</string>
+
+    <!-- Find a farmer related -->
+    <!-- in XML -->
+    <string name="Select_Farmer">Çiftçi Seç</string>
+    <string name="Search">Ara</string>
+
+    <!-- View farmer related -->
+    <!-- in XML -->
+    <string name="View_Farmer">Çiftçi Görüntüle</string>
+    <string name="Farmer_Photo">Çiftçi Fotoğrafı</string>
+    <string name="Task_list_header">Görev Listesi</string>
+    <string name="record_farm_location">Çiftlik Yerini Kaydet</string>
+    <string name="record_farm_location_hint">GPS almak için dokunun</string>
+    <string name="record_farm_location_complete">Yer kaydedildi</string>
+    <string name="record_location_timeout">Yeri bulamıyor, tekrar deneyin</string>
+    <string name="enabled_string">true</string>
+    <string name="review_farm_management_plan">Çiftlik Yönetim Planını Gözden Geçir</string>
+    <string name="review_farm_management_plan_hint">Geri bildirimi kaydetmek için dokunun</string>
+
+    <!-- For View Sub Module - questionnaire default values -->
+    <string name="ModuleTitle">Modül başlığı buraya gelecektir</string>
+    <string name="ModuleSubTitle">Modül alt başlığı buraya gelecektir</string>
+    <string name="ModuleStatus">Yeni görev</string>
+    <string name="module_in_progress">Devam ediyor: </string>
+    <string name="module_finished">Yükleme bekliyor</string>
+    <string name="ModuleAnswerHint">Cevap</string>
+
+    <!-- module action buttons -->
+    <string name="ModuleBackButton">Geri</string>
+    <string name="ModuleNextButton">İleri</string>
+    <string name="ModuleSaveButton">Kaydet</string>
+
+    <!-- errors -->
+    <string name="Internet_not_available">İnternet yok - bu görevi tamamlamak için çevrimiçi olmalısınız</string>
+    <string name="networking_error">Hata. Bu bir zaman aşımı hatası olabilir. Lütfen tekrar deneyin veya destek bölümüyle bağlantı kurun</string>
+    <string name="farmer_not_synced">Üzgünüz, fakat çiftçi henüz senkronize edilmedi. Lütfen önce çiftçi listesini senkronize edin</string>
+
+    <!-- upgrade -->
+    <string name="upgrade_message">Uygulama yükseltildi, kişisel veriniz tekrar güncelleniyor.</string>
+
+    <!-- SPINNERS -->
+
+
+    <!-- spinner default values -->
+    <string name="spinner_country_default">Ülke seç</string>
+    <string name="spinner_region_default">Yöre seç</string>
+    <string name="spinner_district_default">Bölge seç</string>
+    <string name="spinner_place_default">Yer seç</string>
+    <string name="spinner_farmergroup_default">Çiftçi grubu seç</string>
+    <string name="spinner_section_default">Bölüm seç</string>
+    <string name="spinner_product_default">Ürün seç</string>
+
+    <string-array name="poitypes">
+        <item>Okul</item>
+        <item>Sağlık Merkezi</item>
+        <item>Temiz Su Temini</item>
+        <item>Alış Merkezi</item>
+    </string-array>
+    <string name="poitype_school">Okul</string>
+    <string name="poitype_healthcentre">Sağlık Merkezi</string>
+    <string name="poitype_cleanwatersupply">Temiz Su Temini</string>
+    <string name="poitype_buyingcentre">Alış Merkezi</string>
+    <string-array name="genders">
+        <item>Erkek</item>
+        <item>Kadın</item>
+    </string-array>
+    <string name="gender_male">Erkek</string>
+    <string name="gender_female">Kadın</string>
+    <string-array name="genders_2">
+        <item>Erkek</item>
+        <item>Kadın</item>
+        <item>Karma</item>
+    </string-array>
+    <string name="gender_school_male">Erkek</string>
+    <string name="gender_school_female">Kadın</string>
+    <string name="gender_school_coeducational">Karma</string>
+    <string-array name="educationlevels">
+        <item>Fidanlık</item>
+        <item>Birincil</item>
+        <item>Genç İkincil</item>
+        <item>İkincil üst düzey</item>
+        <item>Mezun</item>
+    </string-array>
+    <string name="educationlevel_nursery">Fidanlık</string>
+    <string name="educationlevel_primary">Birincil</string>
+    <string name="educationlevel_juniorsecondary">Genç İkincil</string>
+    <string name="educationlevel_seniorsecondary">İkincil üst düzey</string>
+    <string name="educationlevel_graduate">Mezun</string>
+    <string-array name="clean_water_types">
+        <item>Kuyu</item>
+        <item>Iyi</item>
+        <item>Boru</item>
+        <item>Bahar</item>
+    </string-array>
+    <string name="cleanwatertype_borehole">Kuyu</string>
+    <string name="cleanwatertype_well">Iyi</string>
+    <string name="cleanwatertype_pipe">Boru</string>
+    <string name="cleanwatertype_spring">Bahar</string>
+    <string-array name="plotvariants">
+        <item>Aynı</item>
+        <item>Daha fazla</item>
+        <item>Daha az</item>
+    </string-array>
+    <string name="plotvariant_thesame">Aynı</string>
+    <string name="plotvariant_more">Daha fazla</string>
+    <string name="plotvariant_less">Daha az</string>
+
+    <!-- content descriptions -->
+    <string name="ofis_cd_hierarchy_arrow">Sağa bakan ok</string>
+    <string name="ofis_cd_info_icon">Bilgi ikonu</string>
+    <string name="ofis_cd_submit_all_icon">Hepsini gönder</string>
+    <string name="module_density_plot_question">Bu arsanın yoğunluğu ana arsadan daha fazla, daha az veya eşitse belirtin</string>
+    <string name="module_density_plot_question_intro">İlave Arsalar</string>
+    <string name="module_density_plot_question_result_intro">Sonuç: </string>
+    <string name="app_updated_generic_message">Uygulama için yeni bir güncelleme var, Lütfen indirmek için tıklayın</string>
+    <string name="app_update_ok">Ok</string>
+    <string name="app_update_cancel">İptal</string>
+    <string name="title_activity_review_farm_management_plan">Çiftlik Yönetim Planını Gözden Geçir</string>
+    <string name="updating_fmps">Çiftlik Yönetim Planını Güncelliyor</string>
+    <string name="fmps_up_to_date">Çiftlik Yönetim Planları güncel</string>
+    <string name="review_farm_management_plan_complete">Geri bildirim gönderildi</string>
+    <string name="review_farm_management_plan_in_progress">Gözden geçirme sürüyor</string>
+    <string name="fmp_redo_baseline">Ana veri revize edilsin mi?</string>
+    <string name="hpQId">1</string>
+    <string name="hpAId">2</string>
+    <string name="hpPqId">3</string>
+    <string name="hpRiP">4</string>
+    <string name="hpD">5</string>
+    <string name="fullreview_farm_management_plan">Çiftlik Yönetim Planı Tam İnceleme</string>
+    <string name="fullreview_farm_management_plan_in_progress">Tam inceleme devam ediyor</string>
+    <string name="fmp_are_you_sure">Bu işlem yeni bir planın yazdırılmasını gerektirecektir, devam etmek istediğinize emin misiniz?</string>
+    <string name="complete_all_required_fields">Bilgi istenen bütün yerleri göndermeden önce doldurmalısınız ( kırmızı ile gözüken sorular doldurulmalıdır *)</string>
+    <string name="ReadAndAgreeConsent">Beyanı onaylamak için okuyun ve kabul edin</string>
+    <string name="consentStatementMain1">Parçası olduğunuz Olam sürdürülebilirlik programıyla bağlantılı olarak bize kişisel bilgilerinizi vermeniz gerekmektedir. Bu kişisel bilgiler toplanacak ve Olam Çiftçi Bilgi Sistemine ("OFIS") kaydedilecektir. Kişisel bilgilerinizi toplamamız, kullanmamız ve ifşa etmemiz için verdiğiniz izni daha sonra geri alabilirsiniz. Fakat kişisel bilgilerini vermemeniz ve/veya daha sonra onayınızı geri çekmeniz sürdürülebilirlik programının parçası olmamanıza engel olabilir.</string>
+    <string name="consentStatementMain2">
+        Kişisel bilgileriniz OFIS tarafından haritalandırma yazılımında kullanılacaktır.
+    </string>
+    <string name="consentStatementMain2a">
+        Bu yazılım çiftlik ve altyapı konumları ve coğrafi yerlere göre Çiftçiler hakkında daha detaylı bilgi vermek için tasarlanmıştır.
+    </string>
+    <string name="consentStatementMain2b">
+        Analiz yazılımı.  Bu yazılım bir Çiftçinin kişisel bilgilerini toplanan veriyle karşılaştırarak programın gelecekte geliştirilmesine yardımcı olmaktadır. OFIS kullanıcıları analizi (ve Çiftçinin kişisel bilgileri gibi analizin arkasındaki veriyi) bir PDF veya excel dosyasına aktarabilir. Bu dışarı aktarma fonksiyonu Kullanıcıların örneğin programda en yüksek ve en alçak üretkenlik seviyelerine sahip olanlar belirli Çiftçileri belirleyebilmesini sağlar.
+    </string>
+    <string name="consentStatementMain2c">
+        Çiftlik Yönetim Planları. Bunlar bireysel Çiftçiler için hazırlanan ve tam üretkenlik potansiyeline ulaşmak için 3-5 yıl içerisinde çiftlikte yapılması gereken değişiklikleri vurgulayan  için özel planlardır.
+    </string>
+    <string name="consentStatementMain3">
+        Yukarıdaki 2. paragrafta belirtilen haritalandırma yazılımı, analiz yazılımı ve çiftlik yönetim planları bağlamında OFIS Kullanıcıları arasında Olam çalışanları, dünya çapındaki çiftçi grubu yönetim personeli ve müşteriler bulunmaktadır.
+    </string>
+    <string name="consentStatementMain4">
+        Sahip olduğumuz kişisel bilgileriniz gizli tutulacak fakat yukarıda belirtilen OFIS çalışanlarıyla paylaşılacaktır. Kişisel bilgileriniz yerel yargı bölgenizin dışında bir bölgeye transfer edilebilir. Böyle yaptığımızda, yürürlükteki mahremiyeti koruma kanununa göre, transfer edilen kişisel bilgilerinizin yerel yargı bölgenizde uygulanan mahremiyeti koruma kanunuyla benzer düzeyde bir koruma sağlaması için gereken adımları atacağız.
+    </string>
+    <string name="consentStatementMain5">
+        ofis@olamnet.com üzerinden Veri Koruma Memurumuzla bağlantı kurarak verdiğiniz onayı geri çekebilir, kişisel bilgilerinize erişmek ve/veya düzeltilmelerini isteyebilir ve/veya politika ve uygulamalarımızla ilgili bilgi talep edebilirsiniz.
+    </string>
+    <string name="consentStatementCheck1">Sayım Görevlisinin Kişisel Bilgi Toplama Tebligatını yüksek sesle okuduğunu, Çiftçinin bu tebligatı dinlediğini ve bu tebligatta belirtilen amaçlar bakımından Olam\'ın Çiftçinin bilgilerini toplaması, kullanması ve ilgili yargı alanı dışına transfer etmesine açıkça onay verdiğini teyit ederim.</string>
+    <string name="consentStatementCheck2">Çiftçinin Sayım Memurunun Kişisel Bilgi Toplama Tebligatını yüksek sesle dinlediğini ve belirtilen amaçlar bakımından kişisel bilgilerinin toplanması, kullanılması ve ifşa edilmesine açıkça izin verdiğini teyit ederim.</string>
+    <string name="consentStatementTitle">Kişisel Bilgi Toplama Tebligatı</string>
+    <string name="Please_accept_both_consents">Çiftçiyi kaydetmek için her iki beyanı kabul etmelisiniz</string>
+    <string name="farmer_id_min">Olam çiftçi tanıtım numarası dört haneli olmak zorundadır</string>
+    <string name="app_updated_upload_first_message">Uygulama için yeni bir güncelleme bulunuyor İndirmek için önce bütün öğeleri senkronize etmelisiniz. Lütfen bütün öğeleri senkronize etmek için tıklayın ve sonra  uygulamanızı güncellemek için ayarlara gidin.</string>
+    <string name="please_sync_before_update">Senkronize edilmeyi bekleyen öğeler var. Lütfen uygulama verilerini güncellemeden önce öğeleri senkronize edin.</string>
+    <string name="ofis_update_overdue">Bu uygulama versiyonu şu anda güncel değil. Kullanmaya devam etmeden önce uygulamayı güncellemeniz gerekiyor. Güncellemek için sağ üst taraftaki ayarlar ikonuna dokunun</string>
+    <string name="ofis_request_help">Yardım İsteyin</string>
+    <string name="Your_Name">Adınız</string>
+    <string name="Your_phone_number">Telefon numarası</string>
+    <string name="problem_description">Probleminizi açıklayın</string>
+    <plurals name="days_left_to_update">
+        <item quantity="one">30 gün sonra versiyon güncellemesi gerekmektedir. Güncelleme için %1d gününüz kaldı</item>
+        <item quantity="other">30 gün sonra versiyon güncellemesi gerekmektedir. Güncelleme için %1d gününüz kaldı</item>
+    </plurals>
+    <string name="record_transaction_button_text">İşlemi kaydet</string>
+    <string name="record_training_button">Eğitimi kaydet</string>
+    <string name="ViewTransactionsTitle">İşlemler</string>
+    <string name="Add">Ekle</string>
+    <string name="AddTransactionItemTitle">İşlem kalemi</string>
+    <string name="please_select">Lütfen seçin</string>
+    <string name="select_transaction_item_type">Tür</string>
+    <string name="ofis_select_item_product_grade">Ürün derecesi</string>
+    <string name="select_currency">Döviz</string>
+    <string name="enter_quantity">Miktar</string>
+    <string name="select_units">Birim</string>
+    <string name="updating_transaction_data">İşlem bilgisini güncelliyor</string>
+    <string name="Transaction_item_added">İşlem kalemi eklendi</string>
+    <string name="Delete_Item">Kalemi sil</string>
+    <string name="Transaction_default">İşlem</string>
+    <string name="transaction_are_you_sure">Bu işlemi silmek istediğinizden emin misiniz?</string>
+    <string name="transaction_deleted">İşlem basarıyla silindi</string>
+    <string name="complete_transaction">İşlemi tamamlayın</string>
+    <string name="Farmer_Group_Name">Çiftci grup ismi</string>
+    <string name="direction_hint">Teslim mi ediyorsunuz, teslim mi alıyorsunuz?</string>
+    <string name="transaction_added_to_queue">İşlem yüklenmek için konfirme</string>
+    <string name="Transaction_network_queue_title">İşlem</string>
+    <string name="transaction_confirmed">İşlem Konfirme</string>
+    <string name="ofis_no_transactions_text">İşlemleri eklediğinizde burada görünecek</string>
+    <string name="ofis_no_trainingrecords_text">Eğitim kayıtlarını eklediğinzide burada görünecek</string>
+    <string name="TrainingRecordsTitle">Eğitim kayıtları</string>
+    <string name="select_course">Kurs</string>
+    <string name="TrainingAttendees">Eğitim katılımcıları</string>
+    <string name="complete_record">Kayıdı tamamla</string>
+    <string name="TrainingRecordTitle">Kayıdı yönet</string>
+    <string name="select_training_module">Eğitim modülü</string>
+    <string name="Training_Photo">Eğitim fotografı</string>
+    <string name="TrainingRecordConfirmationTitle">Eğitim kayıt konfirmasyonu</string>
+    <string name="TrainingRecordConfirmationSubTitle">Eğitim kayıt konfirmasyonunu  konfirme edin</string>
+    <string name="confirm_training_record">Eğitim kayıt konfirme edin</string>
+    <string name="Select_Attendees">Katılımcıları seç</string>
+    <string name="Attendee_Name">Katılımcıların isimleri</string>
+    <string name="selected">Seçildi:</string>
+    <string name="save_selected_attendees">Seçilen katılımcıları kaydet</string>
+    <string name="Training_select_course_module_first">Lütfen bir kurs veya modül seçin ve önce bir fotograf çekin</string>
+    <string name="add_attendee_scores">Puanları ekle</string>
+    <string name="attendees_saved">Katılımcılar kaydedildi</string>
+    <string name="Training_Record_Edited">Eğitim kayıdı güncelendi</string>
+    <string name="Training_Record_Added">Eğitim kayıdı eklendi</string>
+    <string name="Add_one_attendee_to_continue">Devam edebilmek için en az bir katılımcı ekleyin</string>
+    <string name="updating_training">Eğitim datasını güncelliyor</string>
+    <string name="Attendees">Katılımcılar</string>
+    <string name="trainingrecord_are_you_sure">Bu eğitim kayıdını silmek istediğinizden emin misiniz?</string>
+    <string name="trainingrecord_deleted">Eğitim kayıdı silindi</string>
+    <string name="trainingattendee_are_you_sure">Bu katılımcıyı silmek istediğinizden emin misiniz?</string>
+    <string name="trainingattendee_deleted">Katılımcı silindi</string>
+    <string name="TrainingAttendeeScores">Katılımcının puanı</string>
+    <string name="TrainingAttendeeScoresSubTitle">Katılımcının puanını ekle veya düzelt</string>
+    <string name="save_scores">Katılımcının puanını kaydet</string>
+    <string name="attendees_scores_updated">Katılımcının puanları güncellendi</string>
+    <string name="trainingrecord_added_to_queue">Yükleme için eğitim kayıdı konfirme</string>
+    <string name="trainingrecord_confirmed">Eğitim kayıdı konfirme</string>
+    <string name="checkbox_image">Onay kutusu imgesi</string>
+    <string name="PhoneNumberHint">Telefon numarası</string>
+    <string name="PhoneNumbers">Telefon numaraları</string>
+    <string name="main_number">Birincil?</string>
+    <string name="location">Lokasyon</string>
+    <string name="update_phone_numbers">Telefon numarsını güncelle</string>
+    <string name="update_phone_numbers_hint">Güncellemek için tıkla</string>
+    <string name="select_transactee">Kiminle iletişime geçmek istiyorsunuz?</string>
+    <string name="price_per_unit">Birim Fiyat</string>
+    <string name="total_price">Toplam fiyat</string>
+    <string name="amount_paid">Tarafına Ödenen Tutar</string>
+    <string name="amount_loaned">Tarafına Borç Verilen Tutar</string>
+    <string name="amount_gifted">Tarafına Hediye Verilen Tutar</string>
+    <string name="Transaction_item_updated">İşlem kalemi güncellendi</string>
+    <string name="amount_repaid">Tarafına Geri Ödenen Tutar</string>
+    <plurals name="trainingAttendeesCount">
+        <item quantity="one">%1d katılımcı</item>
+        <item quantity="other">%1d katılımcılar</item>
+    </plurals>
+    <string name="registeredForNotifications">Görev bildirimleri almak için kayıt oldunuz.</string>
+    <string name="registerForNotificationsFailed">Görev Bildirimi Kaydı oluşturulamamıştır. Otomatik olarak daha sonra yeniden denenecektir. Bu mesajı almaya devam ederseniz destek birimine başvurun.</string>
+    <string name="NewTaskReceivedTitle">Alınan Yeni Görev</string>
+    <string name="title_activity_tasks">Görevler</string>
+    <string name="updating_tasks">Görevler Güncelleniyor.</string>
+    <string name="TaskUpdatedTitle">Görev Güncellendi.</string>
+    <string name="TaskDeletedTitle">Görev Silindi.</string>
+    <string name="take_photo">Resim Çekiniz.</string>
+    <string name="set_auto_time_message">Zaman dilimi ayarlarınız ve zamanınız otomatik olarak ayarlanmamıştır. Lütfen otomatik olarak tanımlayınız.</string>
+    <string name="buyingagent">Satınalma Komisyoncusu</string>
+    <string name="credit_balance">Alacağınız bulunmaktadır.</string>
+    <string name="ChooseBuyingAgent">Satınalma Komisyoncusunu seçiniz.</string>
+    <string name="WhoTransacting">Kimin adına iletişim kuruyorsunuz?</string>
+    <string name="PickAgentFirst">Öncelikle bir aracı seçmelisiniz.</string>
+    <string name="farmer_or_buying_agent_name">Çiftçi veya Satınalma Komisyocusunun Adı</string>
+    <string name="title_activity_find_transactee">İlgili kişiyi bulun.</string>
+    <string name="amount_repaid_and_loaned">Tarafına Geri Ödenen ve Borç Verilen Tutar</string>
+    <string name="amount_loaned_by">Tarafından Borç Verilen Tutar</string>
+    <string name="amount_repaid_by">Tarafından Geri Ödenen Tutar</string>
+    <string name="amount_repaid_and_loaned_by">Tarafından Borç Verilen ve geri ödenen tutar</string>
+    <string name="amount_paid_by">Tarafından Ödenen Tutar</string>
+    <string name="amount_gifted_by">Tarafından Hediye Edilen Tutar</string>
+    <string name="debit_balance">Borcunuz bulunmaktadır.</string>
+    <string name="cannotTransactNothingToRepay">Borcunuz bulunmamaktadır , bu yüzden işleme devam edilemeyecektir.</string>
+    <string name="cannotTransactUnableToLoan">Borcunuz bulunmaktadır , bu yüzden işleme devam edilemeyecektir.</string>
+    <string name="cannotRepayNotOwedMoney">Borcunuz bulunmamaktadır , bu yüzden işleme devam edilemeyecektir.</string>
+    <string name="cannotLoanOwedMoney">Borcunuz bulunmaktadır , bu yüzden işleme devam edilemeyecektir.</string>
+    <string name="ensure_totals_match">Lütfen tüm ödeme alanlarının toplamının, toplam tutar ile uyumluluğunu sağlayın.</string>
+    <string name="price_per_unit_default">Birim</string>
+    <string name="input_crop_finance">Girdi, Ödeme veya Mahsul</string>
+    <string name="input_crop">Girdi veya Mahsul</string>
+    <string name="input_finance">Girdi veya Ödeme</string>
+    <string name="finance_crop">Ödeme veya Mahsul</string>
+    <string name="task_mark_complete">Tamamlandı</string>
+    <string name="transaction_notes">Notlar</string>
+    <string name="cannotRepayMoreThanOwe">Borçlu olduğunuz tutardan fazlasını geri ödeyemezsiniz.</string>
+    <string name="cannotRepayMoreThanTheyOwe">Borçlu oldukları tutardan fazlasını geri ödeyemezler.</string>
+    <string name="item_in_progress">Devam ediyor</string>
+    <string name="cannot_do_mobile_money_non_farmer">Mobil para kullanarak satınalma komisyoncusundan alım yapamazsınız.</string>
+    <string name="pay_using_mobile_money_or_cash">Mobil ödeme mi yoksa nakit ödeme mi?</string>
+    <string-array name="mmCash">
+        <item>Nakit</item>
+        <item>Mobil Para</item>
+    </string-array>
+    <string name="mmCash_mobilemoney">Mobil Para</string>
+    <string name="mmCash_cash">Nakit</string>
+    <string name="mobile_money_suffix">Mobil Para kullanılıyor</string>
+    <string name="mm_transaction_initiated">Mobil para transferi başlamıştır , lütfen bekleyiniz…</string>
+    <string name="mm_transaction_checking">Transferin durumu kontrol ediliyor.</string>
+    <string name="mm_transaction_timedout">Mobil para transferiniz zamanında tamamlanmamıştır, lütfen nakit kullanınız.</string>
+    <string name="mm_transaction_awaiting_response">Mobil Para transferi yanıt bekliyor.</string>
+    <string name="mm_transaction_inprogress">Mobil para transferi devam etmektedir.</string>
+    <string name="mm_transaction_complete">Mobil Para transferi tamamlandı ve eşleşti.</string>
+    <string name="mm_transaction_failed">Mobil para transferi başarısız oldu. Lütfen nakit kullanarak deneyiniz.</string>
+    <string name="mm_transaction_confirmation">Mobil para kullanarak %1$s %2$s ödemek üzeresiniz. Lütfen transferi onaylayınız.</string>
+    <string name="mm_transaction_confirm">Onay</string>
+    <string name="place_name_not_unique">Bu yer ismi bu bölgede daha önceden bulunmaktadır. Lütfen listeden mevcut yeri seçiniz.</string>
+    <string name="title_activity_record_polygon">Bahçe poligonunu kaydet</string>
+    <string name="loading">"Yükleniyor "</string>
+    <string name="wait">Lütfen bekleyin</string>
+    <string name="save_button_text">Kaydet</string>
+    <string name="start_logging_button_text">"Bağlantıyı başlat "</string>
+    <string name="stop_logging_button_text">"Bağlantıyı durdur  "</string>
+    <string name="pause_button_text">"Duraklat "</string>
+    <string name="resume_button_text">"Devam et "</string>
+    <string name="plot">"Bahçe %1$d "</string>
+    <string name="current_track_name">"OFIS "</string>
+    <string name="plot_already_logged">"%1$s Bahçe kaydedildi "</string>
+    <string name="location_permission_alertdialog_title">"GPS erişimi için lokasyon iznine ihtiyaç var  "</string>
+    <string name="open_application_settings_msg">"Uygulama ayarlarına git "</string>
+    <string name="ready_to_save">"%1$s Kaydedilmek için hazır  "</string>
+    <string name="restart_logging">"Yeniden başlatmak ister misin ? "</string>
+    <string name="save_existing_logs">"Mevcut kayıtları kaydet "</string>
+    <string name="already_logged_and_saved">"%1$s Giriş yapıldı ve kaydedildi "</string>
+    <string name="try_again_later_msg">"Lütfen birkaç dakika sonra tekrar deneyin "</string>
+    <string name="location_not_yet_logged">"Henüz hiçbir konuma giriş yapılmadı "</string>
+    <string name="fetch_location_msg">"Konumlar getiriliyor. Lütfen bekleyin "</string>
+    <string name="gps_manager_msg">"GPS Yönetimi "</string>
+    <string name="enable_gps_msg">"GPS'i etkinleştirmek ister misin? "</string>
+    <string name="gps_turned_on">"GPS'i aç "</string>
+    <string name="storage_permission_explanation">"Veri kullanımını azaltmak ve çevrimdışı kullanım için harita döşemelerini saklamak için depolama izni gereklidir. "</string>
+    <string name="location_permission_explanation">"Bahçe coğrafi verilerini toplamak için lokasyon izni gereklidir. "</string>
+    <string name="speed_unit_kmph">"%1$d km/h "</string>
+    <string name="logging_progress_msg">"Giriş kaydediliyor "</string>
+    <string name="cancel_logging_question">"Girişi iptal et "</string>
+    <string name="cancel_logging_msg">"%1$s Giriş iptal edildi "</string>
+    <string name="not_logged_yet">"%1$s Henüz giriş yapılmadı "</string>
+    <string name="area_info">Alan: %1$s ha</string>
+    <string name="save_polygon_alertdialog_title">"Poligonu kaydet %1$s"</string>
+    <string name="save_polygon_alertdialog_msg">"%1$s Bölgesine tekrar giriş yapamayacaksınız "</string>
+    <string name="close">"Kapat "</string>
+    <string name="saved_successfully_msg">"%1$s kaydetme başarılı"</string>
+    <string name="confirm">"Onayla "</string>
+    <string name="plot_location_confirmation">"%1$s Bölgesinde misin? "</string>
+    <string name="logging_not_started_msg">"Giriş başlatılamadı "</string>
+    <string name="edit_plot_dialog_title">"Bahçe Sayısını Seç "</string>
+    <string name="existing_plots">Mevcut Bahçe Sayısı %1$d</string>
+    <string name="existing_plots_logged">Bahçeler Zaten Kaydedildi %1$d</string>
+    <string name="previous_plot_not_recorded_msg">"Bahçe %1$s Kaydedilemedi. Lütfen İlk %1$s bahçeyi kaydet."</string>
+    <string name="send_button">"Gönder "</string>
+    <string name="duplicate_phone_number">"Tekrarlanan telefon numaralarına izin verilmez. Lütfen telefon numaralarını kontrol edin "</string>
+    <string name="record_polygon_input_messege">"Kaç adet farklı bahçesi var? "</string>
+    <string name="record_polygon_input_title">"Bahçe Seviyesi Analizi "</string>
+    <string name="record_polygon_input_hint">"Bahçe numarasını gir "</string>
+    <string name="camera_and_gallery_permission_denial_msg">Kamera &amp; Galeri özelliği bu izin olmadan çalışmaz </string>
+    <string name="gps_permission_denial_msg">"Lokasyon özelliği bu izin olmadan çalışmaz "</string>
+    <string name="phone_state_permission_denial_msg">"Aygıtların IMEI numarasının alınması için Telefon izni gereklidir.  "</string>
+    <string name="permission_permanent_denial_title">"İzin daimi olarak reddedildi "</string>
+    <string name="permission_permanent_denial_msg">"İzin talebi daimi olarak reddedildi. Lütfen uygulama ayarlarından izinleri sağlayın. "</string>
+    <string name="go_to_settings_msg">"Uygulama ayarlarından erişim iznine izin ver. Ayarlara git.  "</string>
+    <string name="record_farm_polygon">"Bahçe poligonunu kaydet "</string>
+    <string name="record_farm_polygon_hint">Bahçe poligonunu kaydetmek için tıklayın</string>
+    <string name="record_farm_polygon_complete">"Poligon kaydedildi "</string>
+    <string name="submit">"Gönder "</string>
+    <string name="cancel">"Reddet "</string>
+    <string name="valid_count_msg">"Geçerli bir sayı gir "</string>
+    <string name="plot_recording_module_finished">"Bahçe kaydı tamamlandı "</string>
+    <string name="untick_task">"İşaretlenmemiş görev "</string>
+    <string name="untick_task_msg">"Bu görevi tamamlanmamış olarak işaretlemek istediğinizden emin misiniz? "</string>
+    <string name="updating_master_details">Ana detaylar indiriliyor</string>
+    <string name="authentication_failed">Kimlik doğrulama başarısız. Lütfen tekrar deneyin</string>
+    <string name="enumerator_empty">Lütfen kullanıcı ID numaranızı girin</string>
+    <string name="please_answer_all_questions">Lütfen tüm soruları cevaplayın</string>
+    <string name="are_you_ready_to_polygon_record">"Poligonu kaydetmeye hazır mısınız? "</string>
+    <string name="phone_number_recorded">Kaydedilen telefon numarası</string>
+    <string name="survey_data">Downloading Survey Data</string>
+    <string name="loggin_In">Giriş</string>
+    <string name="data_initialization">Veri başlatma</string>
+    <string name="fetching_location">Konum alınıyor</string>
+    <string name="please_fill_dob">Lütfen üretici doğum tarihini doldurun</string>
+    <string name="please_fill_farmer_name">Lütfen üretici adını doldurun</string>
+    <string name="please_fill_the">Lütfen yer seçin</string>
+    <string name="updating_sip_training">Sosyal altyapı noktaları</string>
+    <string name="invalid_imei_msg">Kimlik doğrulama başarısız oldu. Lütfen yardım için bize ulaşın</string>
+    <string name="household_question">Farmer has any children under 18 doing household?</string>
+    <string name="title_child_labour">Register Child</string>
+    <string name="inspection_question">No children found on farm (Inspection)</string>
+    <string name="followup_question">Any children found during follow-up?</string>
+    <string name="add_child">Add Child</string>
+    <string name="full_name">Child name</string>
+    <string name="age">Age</string>
+    <string name="add">Add</string>
+    <string name="checking_child_enumerator">Checking Child Enumerator</string>
+    <string name="visit_detail">Visit Detail</string>
+    <string name="child_visit_details_inserted" />
+    <string name="child_register_successfully">Child registered Successfully</string>
+    <string name="child_details">Child Details</string>
+    <string name="child_not_synced">Sorry, but the child has not yet been synced. Please sync the child first</string>
+    <string name="fill_child_name">Please fill the child name</string>
+    <string name="yrs">yrs</string>
+    <string name="child_max_limit">You have allowed maximum 30 children to register per farmer</string>
+    <string name="new_child">New Child</string>
+    <string name="child">Child</string>
+    <string name="farmer">Farmer</string>
+    <string name="household">Household Visit Detail</string>
+    <string name="inspection">Inspection Visit Detail</string>
+    <string name="followup">FollowUp Visit Detail</string>
+    <string name="child_updated_successfully">Child Updated Successfully</string>
+    <string name="downloading_child_data">Downloading Child Enumerator Details</string>
+    <string name="no_child_registered">Register Child to enable the surveys</string>
+    <string name="please_select_Age">Please select Age</string>
+    <string name="capture_my_location_button_text">Capture My location</string>
+    <string name="enumerator_location_capture">Enumerator Location Capture</string>
+    <string name="checking_biometric_enumerator">Biyometrik Numaralandırıcıyı Kontrol Etme</string>
+    <string name="validating_facial_match">Yüz eşleşmesi için doğrulama</string>
+    <string name="back_to_registration">Kayda Geri Dön</string>
+    <string name="no_duplicates_found">Yinelenen kişi bulunamadı</string>
+    <string name="moderation_info">Yeni kayıt işlemine devam edildiğinde, listelenen yinelenen kayıtlar yine de denetleme için gönderilecektir.</string>
+    <string name="continue_biometric">Devam et</string>
+    <string name="cancel_biometric">İptal</string>
+    <string name="mark_as_unique">Benzersiz olarak işaretle</string>
+    <string name="label_national_id">Ulusal Kimliği:</string>
+    <string name="label_country" >Ülke:</string>
+    <string name="label_region">Yöre seç:</string>
+    <string name="label_district">Bölge seç:</string>
+    <string name="label_place">Yer seç:</string>
+    <string name="label_farmer_group">Çiftçi grubu seç:</string>
+    <string name="title_duplicate_records">Yinelenen Kayıtlar</string>
+    <string name="back_to_registration_info">Yeni kayıt işlemine devam edildiğinde, listelenen yinelenen kayıtlar yine de denetleme için gönderilecektir.</string>
+    <string name="match">Eşleşme</string>
+    <string name="dob">Doğum tarihi</string>
+    <string name="view_farmer_info">Devam ederken, listelenen kayıtlar denetleme için gönderilecektir</string>
+    <string name="unique">Benzersiz</string>
+    <string name="maximum_five_records">Bir seferde en fazla 5 kayıt seçilebilir</string>
+    <string name="view_mark_as_unique_info">Kayıt (lar) ikinci seviye moderasyon için gönderilecektir. Yine de başka aktiviteler gerçekleştirmenize izin verilecek</string>
+    <string name="update_biomatric">Biyometrik Güncelle</string>
+    <string name="update_biomatric_hint">Güncellemek için tıkla</string>
+    <string name="label_duplicate_found">Yinelenen kişiler bulundu</string>
+    <string name="title_list_of_duplicates">Yinelenenlerin Listesi</string>
+    <string name="label_duplicate_records">Yinelenen Kayıtlar</string>
+    <string name="label_section">Bölüm seç:</string>
+    <string name="photo_not_matching">Fotoğraf eşleşmiyor</string>
+    <string name="updating_farmer_images">Biyometrik Çiftçi Görüntülerini Güncelleme</string>
+
+    <!-- OFI Consent Consent -->
+    <string name="farmer_consent">ÇİFTÇİ MUVAFAKATNAMESİ</string>
+    <string name="personal_info_collection">"KİŞİSEL BİLGİ TOPLAMA BİLDİRİMİ "</string>
+    <string name="cs_page2_title">1.    Kişisel Verilerin Kullanımı</string>
+    <string name="cs_page2_1">Kişisel verilerinizi aşağıdaki gibi kullanabilir ve paylaşabiliriz</string>
+    <string name="cs_page2_2">İzin veriyor musunuz ? Lütfen “✔” işareti koyun ya da “evet” yazın</string>
+    <string name="cs_page2_3">Verilerin ofi ile ilişkili sistemlere girilmesi</string>
+    <string name="cs_page2_4">Çiftçi Verilerini, tedarik zincirini etkileyen trend ve sorunlar gibi konularda önemli bilgiler edinmek ve size ve müşterilerimize sunduğumuz hizmetleri iyileştirmek amacıyla düzenlenip analiz edildiği ofi ile ilişkili sistemlere girmek için toplayabiliriz. Bunun yapılabilmesi için söz konusu ofi ile ilişkili Sistemlere ve Çiftçi Verilerine, ofi ve iştiraklerinin yanı sıra belirli 3. kişi işlemcilerin çalışanları erişim sahibi olur. Çiftçi Verileriniz; iştiraklerimiz, iş ortaklarımız ve müşterilerimizle paylaşılabilir.</string>
+    <string name="cs_page2_5">Piyasaya İzlenebilirlik Sağlama</string>
+    <string name="cs_page2_6">Gıdalarının nereden tedarik edildiği ve kim tarafından üretildiğine dair içgörü sağlamak için bize verdiğiniz Çiftçi Verilerini müşterilerimiz ve iş ortaklarımızla paylaşabiliriz (onlar da Çiftçi Verilerini kendi müşterileri ve iş ortaklarıyla paylaşabilirler). Bu şeffaflık alıcıların bilgilendirilmiş ve sorumlu satın alma kararları vermelerine izin verir. Bu izlenebilirlik çabaları kamuoyuyla paylaşılacaktır.</string>
+    <string name="cs_page2_7">Trend and Issue Spotting</string>
+    <string name="cs_page2_8"> -----  </string>
+    <string name="cs_page2_9">Çiftçi Satışları ve Geliştirme</string>
+    <string name="cs_page2_10">Çiftçi Verilerinizi sizinle iş yapmak ve iş ve operasyonlarınızı büyütme fırsatlarını tespit etmenize yardımcı olmak için kullanabiliriz. Uygun olduğu durumlarda size satış fırsatlarının yanı sıra finansman, makineler, çiftlik yönetim danışmanlığı, çiftlik levazımatı ve sigorta edinme olanakları sunabiliriz -bunların hepsi size ya doğrudan bizim tarafımızdan ya da size yönlendireceğimiz üçüncü kişilerce sağlanacaktır. Buna göre, size bu satış ve geliştime fırsatlarının sunulabilmesi için bu üçüncü kişilerin Çiftçi Verilerinize erişimi sağlanacaktır.</string>
+    <string name="cs_page2_11">Promoting Traceability</string>
+    <string name="cs_page2_12"> ------ </string>
+    <string name="cs_page2_13">Kamu Reklamları ve Tanıtım</string>
+    <string name="cs_page2_14">Ofi ve iştirakleri, bunlar, şüpheye mahal vermemek adına, Olam Brands B.V. ile ofi müşterileri ve iş ortaklarını da dahil olmak üzere sizin ürettikleriniz gibi ürünlerin satın alınmasına yönelik tanıtımını yapmak ve izlenebilirlik ile sürdürülebilirlik girişimlerimizi pazarlamak amacıyla fotoğraf, konum bilgisi, ürün bilgisi ve röportajlar (verildiyse) da dahil olmak üzere Çiftçi Verilerini web siteleri, basılı yayınlar ve ürünler gibi mecralarda halka açık bir şekilde paylaşılan reklam malzemelerinde kullanabilir</string>
+    <string name="cs_page2_15">Araştırma</string>
+    <string name="cs_page2_16">Topluluk içerisindeki işbirliğini ve sürdürülebilirlik ile izlenebilirlik alanlarındaki gelişmeleri teşvik etmek amacıyla Çiftçi Verilerinizi; eğitim kurumları, devlet kuruluşları ve sivil toplum örgütlerinin yaptığı ve yerel çiftçiler, topluluklar, tarım, tedarik zinciri, izlenebilirlik ve sürdürülebilirlik konularına odaklanan çalışmalar ve toplumsal bilinç sahibi çalışmaları desteklemek amacıyla paylaşabiliriz. Bu kuruluşlar Çiftçi Verilerini kendi elektronik veya yayımlanmış iletişimlerinde kullanabilirler.</string>
+    <string name="cs_page3_1">Ben</string>
+    <string name="cs_page3_2">"bu Kişisel Bilgi Toplama Bildirimi ve Çiftçi Verileri Gizlilik Beyanını okuduğumu, anladığımı ve Çiftçi Verilerimin bu belgelerde belirtilen şekilde toplanmasını ve kullanılmasına razı olduğumu onaylıyorum ve ayrıca; "</string>
+    <string name="cs_page3_3">•   Kişisel verilerimin burada belirtilen belirli amaçlar için kullanılmasına ve toplanmasına Paragraf 1’de “✔” işaretiyle veya “evet” yazarak rıza gösterdiğimi onaylıyorum</string>
+    <string name="cs_page3_4">"•   Bir çocuk adına rıza gösteriyorsam bu çocuğun veya küçüğün ebeveyni veya yasal vasisi durumundayımdır. "</string>
+    <string name="cs_page4_1">"BEYANIN KİŞİYE ofi PERSONELİ/TEMSİLCİSİ TARAFINDAN SESLİ OLARAK OKUNDUĞU DURUMLARDA: "</string>
+    <string name="cs_page4_2">"Katılımcının Kişisel Bilgi Toplama Beyanını okuduğum sırada beni dinlediğini ve kişisel verilerinin ofi tarafından burada belirtilen amaçlar için toplanması, kullanılması, yetki alanı dışına aktarılmasına ve açıklanmasına açık rıza verdiğini tasdik ederim. "</string>
+    <string name="cs_page5_1">Çiftçi Verileri Gizlilik Beyanı</string>
+    <string name="cs_page5_3">Ofi politikası gereği yürürlükteki tüm gizlilik ve veri koruma kanunlarına uymaktadır. Ofi, kişisel verilerinizi yalnızca belirtilen ve  amaçlar için toplar ve kullanır, bu amaçlara uygun bir şekilde işler, verilerinizin doğru ve tam olduğundan ve güncel tutulduğundan (gerektiğinde) emin olmak için makul adımlar atar ve verilerinize yeterli koruma sağlamak için uygun önlemler alır.\n\n<b>Veri Sorumlusu</b>\n\n Bilgilerinizin veri sorumlusu uygun olduğu üzere 199504676H şirket numarasıyla Singapur\'da kurulu bulunan Olam International Limited ve ülkenizde bulunan ya da ofi şirketlyer grubu bünyesindeki ilgili iştirak olacaktır.\n\n Kişisel veriler için genelde biz veri sorumlusu olarak hareket ediyoruz. Ancak bazı durumlarda İş Ortaklarımız kendilerine kişisel verilerle ilgili belirli işleme hizmetleri sunmamız için bizi görevlendirebiliyor. Böyle durumlarda kişisel verilerinizin İş Ortağı tarafından toplaması ve kullanması onun gizlilik politikalarına göre yönetilir ve kişisel verileri İş Ortağının önerdiği veya gösterdiği şekilde işlemek için yetkili olduğumuz konusunda onun yasal beyanlarını dayanak alırız.\n\n Yukarıda açıklandığı gibi, kişisel bilgilerinizi kati şekilde belirlenmiş amaçlar için paylaşırız. Kişisel bilgilerinizin AEA dışına, AB Komisyonunun aldığı bir yeterlilik kararına tabi olmayan bir ülkedeki bir ofi iştiraki veya kurumuna aktarıldığı durumlarda, kişisel verileriniz sınır ötesi veri aktarımına yönelik standart sözleşme maddeleri de dahil olmak üzere AB Komisyonunun onayladığı sınır ötesi korumalarla korunur.</string>
+    <string name="cs_page5_4">"Hangi verileri topluyoruz? "</string>
+    <string name="cs_page5_5">Sizinle ilgili aşağıdakilerle sınırlı olmamak kaydıyla verileri toplayabilir ve işleyebiliriz: \n
+        •	Fotoğraflar, videolar ve diğer görseller (kimliğinizin açıkça tanımlanabildiği);\n
+        •	Adınız ve soyadınız: \n
+        •	Verim ve altyapı da dahil olmak üzere çiftçilik verileriniz;\n
+        •	Sizden gelen geri bildirimler;\n
+        •	Sosyal, finansal, coğrafi ve biyografik bilgiler;\n
+        •	Adres ve diğer iletişim bilgileri.\n
+        •	Uygulamada konumunuza erişmemize izin vermeniz durumunda konum verileri.</string>
+    <string name="cs_page5_6">"Verilerinizi hangi amaçla kullanıyoruz? "</string>
+    <string name="cs_page5_7">Bu verileri aşağıdaki amaçlar için kullanabiliriz: \n
+        •	Size tarımbilim tavsiyeleri, çiftçilik levazımatı gibi hizmetleri sunmak ve finansman, sigorta ve lojistik gibi çiftçilikle ilgili hizmetlere erişim sağlamak;\n
+        •	Sizinle ticaret yapmayı kolaylaştırmak;\n
+        •	Web siteleri, sosyal medya ve basılı yayınlar da dahil olmak üzere ofi’ye ait kanallarda yayım; \n
+        •	Sürdürülebilirlik ve izlenebilirlik girişimlerimizi desteklemek;\n
+        •	Şirketimizi daha iyi işletmemizi ve size daha iyi hizmet sunmamızı sağlayacak tarım trendlerini tespit etmek;\n
+        •	Ofi ürünlerini ve kurumsal faaliyetlerini pazarlamak ve tanıtmak; \n
+        •	Sürdürülebilirlik ve izlenebilirlik alanlarında yapılan topluluk işbirliği ve geliştirmeleri desteklemek amacıyla iş ortaklarımızca yapılan araştırma girişimleri desteklemek;\n
+        •	Çiftçi hizmetlerimizi potansiyel yatırımcı ve iş ortaklarına göstermek; ve\n
+        •	Sizinle iletişim kurmak ve sizinle ve iş ortaklarımızla ilişkilerimizi geliştirmek ve yönetmek.</string>
+    <string name="cs_page5_8">Verilerinizi toplamamız ve işlememizin yasal dayanağı nedir?</string>
+    <string name="cs_page5_9">Bu verileri yalnızca işimizi yapmak, ofi ve iştiraklerimizin meşru menfaatlerini savunmak ve yasal yükümlülüklerimizi yerine getirmek için toplayıp işleriz. Az sayıda işleme faaliyeti için (pazarlama iletişimi gibi) rızayı esas alırız ve bu rıza veri sahibi istediği an geri çekilebilir</string>
+    <string name="cs_page5_10">"Bu verileri kimlerle paylaşıyoruz? "</string>
+    <string name="cs_page5_11">"Verilerinizi yukarıda belirtilen amaçlara ulaşmak için için iştirakler de dahil olmak üzere ofi grubunun diğer şirketleriyle paylaşabiliriz. Verilerinizi kanunen mecbur olunan durumlarda  hükümet makamları ve/veya kolluk kuvvetleri yetkilileriyle de ve yukarıda belirtilen amaçları yerine getirmek için veya rızanıı üzerine ofi'nin mevcut ve gelecekteki müşterileri, hizmet sağlayıcıları, tedarikçileri ve iş ortaklarıyla paylaşırız. "</string>
+    <string name="cs_page5_12">"Verilerinizi nereye gönderiyoruz? "</string>
+    <string name="cs_page5_13">Verilerinizi yukarıda belirtilen amaçlar için üçüncü kişi işlemcilerimizle paylaşmanın yanı sıra, verilerinizi zaman zaman başka bir ülkedeki iştiraklerimizden birine aktarabiliriz. Verilerinizin, o ülkede veri işleme üzerinde geçerli olan ilgili veri koruma mevzuatına uygun olarak yeterli düzeyde korunmasını sağlamak için makul adımlar atarız. AEA bölgesinde bulunan bir çiftçiyseniz, kişisel bilgilerinizin AEA dışına, AB Komisyonunun aldığı bir yeterlilik kararına tabi olmayan bir ülkedeki bir iştirak veya kuruma aktarıldığı durumlarda, kişisel verileriniz sınır ötesi veri aktarımına yönelik standart sözleşme maddeleri de dahil olmak üzere AB Komisyonunun onayladığı sınır ötesi tedbirlerle korunmaktadır.</string>
+    <string name="cs_page5_14">Verilerinizi korumak için hangi önlemleri aldık?</string>
+    <string name="cs_page5_15">Ofi, verilerinizin gizlilik, güvenlik ve bütünlüğünü korumak için makul tedbirleri idame ettirir. Verilerinizi izinsiz açıklanmaya karşı korumak için güvenlik önlemleri uyguluyor olmamıza rağmen internet üzerinden sağlanan bilgilerin güvenliğini garanti edemeyiz ve makul kontrolümüz dışındaki güvenlik ihlallerinden sorumlu olmayacağızdır.</string>
+    <string name="cs_page5_16">"Verilerinizle ilgili hangi haklara sahipsiniz? "</string>
+    <string name="cs_page5_17">"Sizden istediğimiz verileri vermemeyi seçebilirsiniz. Ofi’den verilerinizin bir kopyasını isteme ve verilerinizi doğrulama, düzeltme ve aktif işlenmesini kısıtlama hakkına sahipsiniz. Ofi’den görüntülerinizi kullanmayı sonlandırmasını her zaman isteyebilirsiniz. Bu durumda görüntüleriniz sonraki yayınlarda kullanılmaz ancak halihazırda dolaşımda olan yayınlarda görünmeye devam edebilir. İlgili bölgedeki veri koruma otoritesine her zaman şikayet etme hakkına sahipsiniz. Bu haklar kanunla sınırlandırılabilir. Bu hakları kullanmak isterseniz veya bu haklara dair sorularınız olursa ofi ile privacy@ofi.com adresi üzerinden iletişime geçebilirsiniz. "</string>
+    <string name="cs_page5_18">"Verilerimi ne kadar süre saklıyorsunuz? "</string>
+    <string name="cs_page5_19">Ofi kanunda aksi belirtilen durumlar haricinde kişisel verilerinizi verinin toplandığı amaçlar için gerektiği süre boyunca saklar. Ofi, kişisel verilerinizin saklanacağı süreyi talebiniz üzerine sizinle paylaşır.</string>
+    <string name="cs_page5_20">İletişim Bilgileri</string>
+    <string name="cs_page5_21">Sizinle ilgili tuttuğumuz verilerle ilgili herhangi bir sorunuz varsa lütfen e-postayla <a href="privacy@ofi.com">privacy@ofi.com</a> adresine gönderin.</string>
+
+
+    <string name="cs_page5_22">   </string>
+    <string name="cs_page5_23">INTERNAL GUIDANCE NOTE</string>
+    <string name="cs_page5_24">There may be a number of ways for consent to be recorded. Please consult the Legal function if your intended collection method is not covered above. The signature fields may be replaced with consent buttons, etc.</string>
+    <string name="cs_page5_25">Please consult the Legal function if your intended purpose(s) for use and disclosure of Farmer Data does not fall within any of the categories listed in paragraph 1 above. </string>
+    <string name="cs_page5_26">All consents need to be appropriately tracked and stored. Where an Olam representative is reading the notice to the individual and acknowledging his consent on behalf of the individual (e.g. by way of a slide box in a mobile app), please ensure that Olam is able to check which representative has obtained the consent. </string>
+
+    <string name="consent_statement_pageone2">Ad, yaş, iletişim bilgileri (e-posta adresi, telefon numarası, posta adresi), meslek, fotoğraflar, videolar veya dijital kayıtlar, biyografik, sosyal ve coğrafi bilgiler, çiftçilik ve verim bilgileri de dahil olmak üzere kişisel verileriniz ve geçerli olan yerlerde çocuklarınız ve bakmakla yükümlü olduğunuz kişilerin verileri (“<b>Çiftçi Verileri</b>”) tarafımızca toplanacak ve saklanacak ve müşterilerimiz, iş ortaklarımızın erişimine açılacak ve bazı durumlarda ofi\'nin web siteleri, sosyal medya, elektronik veya basılı yayınları aracılığıyla halka açık hale getirilecektir. İşbu belgeyle, bu amaç doğrultusunda, kişisel verinizin bu Kişisel Bilgi Toplama Bildirimine uygun olarak toplanması, kullanılması ve açıklamasını kabul etmeniz ve buna rıza göstermeniz istenmektedir.</string>
+    <string name="consent_statement_pageone1">"Olam Food Ingredients’in (bundan böyle “<b>ofi</b>” veya “<b>biz</b>” olarak anılacaktır) tedarik zincirindeki sürdürülebilirlik ve izlenebilirlik çalışmalarına destek olmak ve dünya çapında sizin gibi çiftçilerle sorumlu ticaret yapılmasını desteklemek amacıyla (“<b>Amaç</b>”) kişisel verilerinizi ofi’ye sağlamanız istenmektedir. "</string>
+
+    <string name="allchilds_name">Çocuğun Adı (çocuk adına rıza gösteriliyorsa):</string>
+    <string name="full_farmer_name">Adı Soyadı:</string>
+    <string name="date">Tarih:</string>
+    <string name="olam_connect">Olam Connect</string>
+    <string name="olam_contact">Olam İletişim Sorumlusu</string>
+    <string name="digital_sign">Digital İmza</string>
+    <string name="farmer_signature">Farmer İmza</string>
+    <string name="enum_sign">Staff İmza</string>
+    <string name="enum_name">Enumerator Adı</string>
+    <string name="farmer_sign_required">Please get signed by farmer</string>
+    <string name="staff_sign_required">Please get signed by staff</string>
+    <string name="childs_name">Çocuğun Adı</string>
+    <string name="name">Adı:</string>
+    <string name="Please_accept_consent">You must accept consent statements to save the farmer</string>
+
+
+    <!-- OFI Consent Consent -->
+    <string name="please_sign_within_the_boundary_box">Lütfen sınır kutusunun içini imzalayın</string>
+
+
+
+    <string name="matching_farmer_records">Çiftçi Kayıtlarını Eşleştirme</string>
+    <string name="matching_results_found">Eşleşen sonuçlar bulundu</string>
+    <string name="back_to_search">Aramaya Dön</string>
+    <string name="proceed_to_registration">Kayıt işlemine devam edin</string>
+    <string name="back">Geri</string>
+    <string name="search_by_photo">Fotoğrafla ara</string>
+    <string name="no_matching_results_found">Eşleşen sonuç bulunamadı</string>
+    <string name="biometric_update">Biyometrik güncelleme</string>
+    <string name="farmer_photo_validation">Lütfen çiftçi fotoğrafı yükleyin</string>
+    <string name="activating_license">Lisansların etkinleştirilmesi</string>
+    <string name="proceed_to_register">Kayıt İşlemine Devam Et</string>
+    <string name="biometric_enum">Artık bir Biyometrik numaralandırıcısınız</string>
+    <string name="nonbiometric_enum">Artık bir Biyometrik numaralandırıcı değilsiniz</string>
+    <string name="deactivate_license_setting">Lisansı Devre Dışı Bırak</string>
+    <string name="biometric_license_deactive">Biyometrik Lisans: Deaktif</string>
+    <string name="biometric_license_partial">Biyometrik Lisans: Kısmi</string>
+    <string name="biometric_license_active">Biyometrik Lisans: Aktif</string>
+    <string name="unable_deactivate_neurotech">Devre Dışı Bırakılamıyor. Devre dışı bırakmak için lütfen Neurotech ile iletişime geçin</string>
+    <string name="deactivating_license">Lisansları Devre Dışı Bırakma ..</string>
+    <string name="biometric_license_failed_in_offline">Çevrimdışında Devre Dışı Bırakılan Lisans</string>
+    <string name="biometric_license_failed">Biyometrik Lisans: başarısız oldu</string>
+    <string name="updating_face_templates">Biyometrik Verileri Güncelleme</string>
+    <string name="updating_faceda_templates">Biyometrik Lisans Durumunun Güncellenmesi</string>
+    <string name="biometric_licence_deactivation_queue">Biyometrik Lisans Devre Dışı Bırakma</string>
+    <string name="face_recognizion">Yüz tanıma</string>
+
+    <string name="zero_area_msg">Cannot save recorded polygon with 0ha. Please try recording a different polygon</string>
+    <string name="direct_value_below_error">Please enter value of question %1$d below %2$d</string>
+    <string name="direct_value_above_error">Please enter value of question %1$d above %2$d</string>
+    <string name="direct_value_greater_than_error">Please enter value of question %1$d within or equal to %2$d</string>
+    <string name="direct_value_less_than_error">Please enter value of question %1$d within or equal to %2$d</string>
+    <string name="direct_greater_lesser_error">Please enter value of question %1$d above %2$d or below %3$d</string>
+    <string name="min_max_error_msg">Please enter the value of question %1$d, within %2$d-%3$d</string>
+    <string name="error_msg_dropdown">The coffee tree density is higher than %1$d trees/ha. Please amend question %2$d</string>
+    <string name="common_survey_config_error">Survey config error. Please check the display config</string>
+    <string name="restriction_in_submodules">Please respond to all the mandatory questions to proceed</string>
+    <string name="please_respond_mandatory_question">Please respond to mandatory question</string>
+    <string name="please_check_question">Please check Question</string>
+    <string name="please_check_dependent_question">since its dependent question is updated</string>
+    <string name="update_firebase_install_id_info">Updating Informations</string>
+    <string name="national_id_info">Please update the National ID of farmer</string>
+    <string name="attendee_name">Attendee Name:</string>
+    <string name="attendee_age">Age</string>
+    <string name="attendee_relationship">Relationship:</string>
+    <string name="attendee_sex">Sex</string>
+    <string name="add_attendee">Add Attendee</string>
+    <string name="attendee_name_hint">Enter Attendee Name</string>
+    <string name="attendee_hint_age">Enter Age</string>
+    <string name="view_attendees_count">View Attendee (~V attendees)</string>
+    <string name="add_edit_attendee">Add/Edit Attendee</string>
+    <string name="viewAttendee">View Attendee</string>
+    <string name="attendee">Attendee</string>
+    <string name="mandatory_msg">Please fill all the details</string>
+    <string name="add_edit">Add/Edit</string>
+    <string name="Attendee">Attendee</string>
+    <string name="Date_of_Birth_hint">MMM DD,YYYY</string>
+    <string name="cs_page2_17">2.    Çiftçi Verileriniz müşterilerimiz ve iş ortaklarımız gibi üçüncü kişilerle Amaç ve yukarıda izin verilen belirli kullanımlar doğrultusunda paylaşıldığında, bu müşteriler ve iş ortaklarının her biri kendi adına hareket eden veri denetleyicileri olurlar ve yukarıda Paragraf 1\'de belirtilen ve Gizlilik Bildiriminde ayrıntıları verilen şekilde bu kişilerin verilerinizi kullanmasına rıza göstermiş olursunuz. Bu müşteri veya iş ortaklarından herhangi birisinin Çiftçi Verilerinizi Amaç veya yukarıda kabul edilen belirli kullanımların dışında kullanması gerekirse, ek rıza istemek için sizinle doğrudan iletişime geçebilirler.</string>
+    <string name="cs_page2_18">3.    Verdiğiniz rızayı geri çekmek, Çiftçi Verilerinize erişim ve/veya bu verilerde düzeltme talep etmek ve/veya politika ve uygulamalarımız hakkında bilgi istemek için <a href="privacy@ofi.com">privacy@ofi.com</a> adresinden bizimle her zaman iletişime geçebilirsiniz. Sizden istediğimiz hiçbir bilgiyi açıklamak zorunda değilsiniz, ancak Çiftçi Verilerinizi sunmamanız ve/veya rızanızı sonradan geri çekmeniz durumunda, bizden ayrıca talep edebileceğiniz belirli hizmetleri sunma imkanımızı (duruma göre) etkileyebilir. Örneğin adresiniz yalnızca izlenebilirliğe yardımcı olmak için değil, size çiftçilik levazımatı gibi belirli malzemeleri teslim etmemiz için de gerekli olabilir. Rızanızı geri çekerseniz bu verileri size karşı sözleşme yükümlülüklerimizi yerine getirmek için saklayabiliriz ancak başka hiçbir amaç için kullanmayız</string>
+    <string name="cs_page2_19">4.    Çiftçi Verileri Gizlilik Beyanı aşağıda bilginize sunulmuştur. Bu belge kişisel verileri nasıl ele aldığımızı ve koruduğumuzu açıklamaktadır. Çiftçi Verileriniz yukarıda belirtilen kişilerle paylaşılacak olmakla birlikte, bizde bulunan Çiftçi Verileriniz gizli ve yürürlükteki gizlilik kanunlarına uygun bir şekilde tutulacaktır</string>
+    <string name="cs_page3_5">"•   Görüntüler de dahil olmak üzere kişisel veriler karşılığına hiçbir finansal veya başka türde ödeme almayacağımı ve görüntüler üzerindeki tüm fikri mülkiyetin ofi’ye ait olacağını anlıyorum. "</string>
+    <string name="cs_page3_6">•   Kendim veya çocuğum/küçük adına rızamı her zaman geri çekme hakkına sahip olduğumu ve bu rızayı geri çektiğim durumlarda ofi\'nin görüntü veya kişisel verilerimi sonraki yayınlarında kullanmayacağını ancak bu Kişisel Verileri halihazırda dolaşımda olan yayınlarında kullanmaya devam edebileceğini anlıyorum</string>
+    <string name="cs_page5_2">Bu gizlilik politikası uygulama üzerinden toplanan bilgilerinizin toplanma, kullanım ve açıklanma biçimlerini beyan etmektedir. Bu belge, kişisel veri toplarken ve kullanırken yararlandığımız ek yöntemleri açıklayan ve <a href="www.ofi.com/privacy.html">www.ofi.com/privacy.html</a>  adresinde mrevcut olan ofi Gizlilik Bildirimine tamamlayıcı niteliğindedir ve onunla birlikte okunmalıdır.</string>
+    <string name="occupation_fs">Meslek:</string>
+    <string name="occupation_hint">Meslek</string>
+    <string name="please_click_checkbox">Lütfen tüm uygun onay kutularını tıklayın</string>
+    <string name="clear">açık</string>
+    <string name="update_consent_statement">Onay Beyanını Güncelle</string>
+
+    <string name="update_farm_information">Update Farm Information</string>
+    <string name="select_from_existing_farm">Select from existing Farm</string>
+    <string name="create_new_farm">create new farm</string>
+    <string name="add_farm_Information">Add Farm Information</string>
+    <string name="search_farmer">Search Farmer</string>
+    <string name="multifarm_name_search">Search by Name</string>
+    <string name="farm_information">Farm Information</string>
+    <string name="farm_name">Farm Name</string>
+    <string name="farm_code">Farm Code</string>
+    <string name="add_stakeholder">Add Farm Stakeholder</string>
+    <string name="no_match_found">No match found</string>
+    <string name="please_enter_farmer_name">Please enter farmer name and click Add</string>
+    <string name="delink_confirmation">Are you sure to delink the stakeholder?</string>
+    <string name="stakeholder_validation">Please add atleast one stakeholder to proceed</string>
+    <string name="fill_stakeholder_name_role">Please fill all the stakeholder informations</string>
+    <string name="fill_stakeholder_farm_code_name">Please fill the farm name and code</string>
+    <string name="already_syned_survey_info">This survey has already been completed by the other farm stakeholder</string>
+    <string name="record_polygon_location_complete">Polygon Captured</string>
+    <string name="farm_type_warning">Please Choose the Farm Type</string>
+    <string name="search_existing_farm">Search Existing Farm</string>
+    <string name="select_by_nearest_farm">Search by Nearest Farm</string>
+    <string name="recored_polygon_multifarm_info">Farm location already captured by a stakeholder of your farm</string>
+    <string name="recored_polygon_plot_multifarm_info">Farm polygon already captured by a stakeholder of your farm</string>
+    <string name="survey_can_be_completed_by_other_stakeholders">This survey can be  completed by the another farm stakeholder</string>
+    <string name="multifarm_not_synced">Please sync the multifarm details first.</string>
+    <string name="fill_farmergroup_name_multifarm">Please select Farmer Group before adding Farm Stakeholders</string>
+</resources>

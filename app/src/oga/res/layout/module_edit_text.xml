@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<EditText xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="40dp"
+    android:padding="@dimen/margin_10"
+    android:textColor="@color/ofis_base_font_dark"
+    android:textColorHint="@color/icon_grey_palette_2"
+    android:background="@drawable/edittext_bg_light"
+    android:textSize="@dimen/ofis_input_field_text"
+    android:hint="@string/ModuleAnswerHint">
+
+</EditText>

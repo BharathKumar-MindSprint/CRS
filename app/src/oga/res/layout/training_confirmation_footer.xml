@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="right"
+    android:paddingTop="@dimen/ofis_small_pad"
+    android:paddingRight="@dimen/ofis_small_pad"
+    android:paddingBottom="@dimen/ofis_small_pad">
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/text_button_width_height"
+        android:text="@string/confirm_training_record"
+        android:textAllCaps="true"
+        android:background="@color/ofis_action_button_background"
+        android:textColor="@color/ofis_base_font_white"
+        android:textSize="@dimen/ofis_micro_text"
+        android:paddingLeft="@dimen/ofis_med_pad"
+        android:paddingRight="@dimen/ofis_med_pad"
+        android:id="@+id/confirmTrainingRecord"/>
+</LinearLayout>

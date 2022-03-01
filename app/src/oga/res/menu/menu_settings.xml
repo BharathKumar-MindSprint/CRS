@@ -1,0 +1,10 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context="com.olam.digital.ofis.CompleteModuleActivity">
+    <item android:id="@+id/action_home"
+        android:title="@string/ofis_action_bar_home"
+        android:icon="@drawable/ic_action_home"
+        android:orderInCategory="100"
+        app:showAsAction="always" />
+</menu>

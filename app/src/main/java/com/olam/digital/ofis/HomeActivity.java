@@ -405,6 +405,25 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 clientId=KeyCloakInfo.prod_ofi_client_Id;
                 clientSecret=KeyCloakInfo.prod_ofi_Client_Secret;
                 break;
+
+                // OGA
+            case "devoga":
+                clientId=KeyCloakInfo.dev_oga_client_Id;
+                clientSecret=KeyCloakInfo.dev_oga_Client_Secret;
+                break;
+            case "sitoga":
+                clientId=KeyCloakInfo.sit_oga_client_Id;
+                clientSecret=KeyCloakInfo.sit_oga_Client_Secret;
+                break;
+            case "uatoga":
+                clientId=KeyCloakInfo.uat_oga_client_Id;
+                clientSecret=KeyCloakInfo.uat_oga_Client_Secret;
+                break;
+            case "prodoga":
+                clientId=KeyCloakInfo.prod_oga_client_Id;
+                clientSecret=KeyCloakInfo.prod_oga_Client_Secret;
+                break;
+
         }
         Utilities.setKeycloakClientDetails(context,KeyCloakInfo.Client_Id,clientId);
         Utilities.setKeycloakClientDetails(context,KeyCloakInfo.Client_Secret,clientSecret);
@@ -418,6 +437,9 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         }else if (environment.equalsIgnoreCase("devofi") || environment.equalsIgnoreCase("sitofi") ||
                 environment.equalsIgnoreCase("uatofi") || environment.equalsIgnoreCase("prodofi")){
             OpUnit="OFI";
+        }else if (environment.equalsIgnoreCase("devoga") || environment.equalsIgnoreCase("sitoga") ||
+                environment.equalsIgnoreCase("uatoga") || environment.equalsIgnoreCase("prodoga")){
+            OpUnit="OGA";
         }else{
              OpUnit="nil";
         }

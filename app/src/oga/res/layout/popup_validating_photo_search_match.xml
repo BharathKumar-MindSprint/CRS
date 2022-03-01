@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_margin="@dimen/activity_horizontal_margin">
+
+        <RelativeLayout
+            android:id="@+id/rl_popup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:paddingBottom="16dp">
+            <ImageButton
+                android:id="@+id/closeBtn"
+                android:layout_alignParentRight="true"
+                android:background="@drawable/ic_cross"
+                android:layout_marginTop="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+            </ImageButton>
+
+            <LinearLayout
+                android:id="@+id/infoLinearLayout"
+                android:orientation="vertical"
+                android:layout_below="@+id/closeBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/black"
+                    android:text="@string/validating_facial_match"/>
+
+                <ImageView
+                    android:id="@+id/farmerImageView"
+                    android:layout_width="230dp"
+                    android:layout_height="301dp"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="@dimen/margin_10"
+                    android:background="@drawable/empty_farmer_photo" />
+
+                <ProgressBar
+                    android:id="@+id/progressBar"
+                    android:theme="@style/progressBarGrey"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="5dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true">
+                </ProgressBar>
+
+
+                <ImageView
+                    android:id="@+id/completeImageView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_noun_complete"
+                    android:layout_marginTop="5dp"
+                    android:layout_gravity="center" />
+
+                <TextView
+                    android:id="@+id/no_duplicates_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:layout_marginTop="5dp"
+                    android:textSize="16sp"
+                    android:textColor="@color/black"
+                    android:text="@string/no_duplicates_found"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:orientation="horizontal"
+                    android:weightSum="2"
+                    android:layout_height="wrap_content">
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/backBtn"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginRight="5dp"
+                        android:layout_weight="1"
+                        android:background="@color/btn_secondary_background"
+                        android:gravity="center"
+                       android:padding="5dp"
+                        android:text="@string/back_to_search"
+                        android:textColor="@color/white"
+                        android:textSize="16sp" />
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/navigateToRegistrationBtn"
+                        android:text="@string/proceed_to_register"
+                        android:layout_width="match_parent"
+                        android:textColor="@color/white"
+                        android:layout_marginTop="10dp"
+                        android:layout_weight="1"
+                        android:background="@color/btn_primary_background"
+                        android:paddingLeft="5dp"
+                        android:layout_gravity="center"
+                        android:paddingRight="5dp"
+                        android:gravity="center"
+                        android:padding="5dp"
+                        android:textSize="16sp"
+                        android:layout_marginLeft="5dp"
+                        android:layout_height="wrap_content"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+        </RelativeLayout>
+    </androidx.cardview.widget.CardView>
+</RelativeLayout>

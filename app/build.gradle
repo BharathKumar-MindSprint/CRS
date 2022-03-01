@@ -60,9 +60,9 @@ android {
                 checkReleaseBuilds false
                 abortOnError false
             }
-            minifyEnabled false
-            shrinkResources false
-//            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
         }
     }
@@ -257,6 +257,84 @@ android {
             buildConfigField "int", "MATOMO_SERVER_CODE", '39'
             buildConfigField "boolean", "MATOMO_ENABLED", 'false'
         }
+
+        // OGA
+        devoga {
+            // Original
+            applicationId "com.olam.digital.ofisdebug"
+            resValue "string", "contentprovider_authorities", applicationId + '.provider'
+            resValue "string", "sync_account_type", applicationId
+            buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofisdebug"'
+
+            resValue "string", "applicationName", "OGA DEV"
+            //  resValue "string", "AUTH_SERVER_URL", 'https://otofis-dev-zuul.olamdigital.com/oauth/api/v1/oauth/'
+            resValue "string", "AUTH_SERVER_URL", 'https://digitalauthdev.olamnet.com/auth/realms/ofis-dse-manna-dev/protocol/openid-connect/'
+            buildConfigField 'String', 'HOST', '"https://otofis-dev-manna-zuul.olamdigital.com/"'
+            buildConfigField 'String', 'ODHOST', '"https://manna-dev-apigateway.olamdirect.com/"'
+
+            buildConfigField "String", "MATOMO_SERVER_URL", '"https://olammatomo.azurewebsites.net/matomo.php"'
+            buildConfigField "int", "MATOMO_SERVER_CODE", '35'
+            buildConfigField "boolean", "MATOMO_ENABLED", 'false'
+
+        }
+
+        sitoga {
+            applicationId "com.olam.digital.ofispreprod"
+
+            resValue "string", "contentprovider_authorities", applicationId + '.provider'
+            resValue "string", "sync_account_type", applicationId
+            buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofispreprod"'
+
+            // New SIT DNS name
+            resValue "string", "applicationName", "OGA SIT"
+            resValue "string", "AUTH_SERVER_URL", 'https://digitalauthdev.olamnet.com/auth/realms/ofis-dse-manna-sit/protocol/openid-connect/'
+            buildConfigField 'String', 'HOST', '"https://otofis-sit-manna-zuul.olamdigital.com/"'
+            buildConfigField 'String', 'ODHOST', '"https://manna-sit-apigateway.olamdirect.com/"'
+//            buildConfigField 'String', 'ODHOST', '"https://sit-apigateway.olamdirect.com/"'
+//            resValue "string", "AUTH_SERVER_URL", 'https://digitalauthdev.olamnet.com/auth/realms/ofis-dse-sit/protocol/openid-connect/'
+//            buildConfigField 'String', 'HOST', '"https://otofis-sit-zuul.olamdigital.com/"'
+//            buildConfigField 'String', 'ODHOST', '"https://sit-apigateway.olamdirect.com/"'
+
+            buildConfigField "String", "MATOMO_SERVER_URL", '"https://olammatomo.azurewebsites.net/matomo.php"'
+            buildConfigField "int", "MATOMO_SERVER_CODE", '35'
+            buildConfigField "boolean", "MATOMO_ENABLED", 'false'
+        }
+
+        uatoga{
+            applicationId "com.olam.digital.ofispreprod"
+
+            resValue "string", "contentprovider_authorities", applicationId + '.provider'
+            resValue "string", "sync_account_type", applicationId
+            buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofispreprod"'
+
+            resValue "string", "applicationName", "OFI OGA"
+            resValue "string", "AUTH_SERVER_URL", 'https://digitalauthdev.olamnet.com/auth/realms/ofis-dse-manna-uat/protocol/openid-connect/'
+            buildConfigField 'String', 'HOST', '"https://otofis-uat-manna-zuul.olamdigital.com/"'
+            buildConfigField 'String', 'ODHOST', '"https://uat-apigateway.olamdirect.com/"'
+
+            buildConfigField "String", "MATOMO_SERVER_URL", '"https://olammatomo.azurewebsites.net/matomo.php"'
+            buildConfigField "int", "MATOMO_SERVER_CODE", '35'
+            buildConfigField "boolean", "MATOMO_ENABLED", 'false'
+
+        }
+
+        prodoga {
+            applicationId "com.olam.digital.ofis"
+
+            resValue "string", "contentprovider_authorities", applicationId + '.provider'
+            resValue "string", "sync_account_type", applicationId
+            buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofis"'
+
+            resValue "string", "applicationName", "OGA Companion"
+            resValue "string", "AUTH_SERVER_URL", 'https://digitalauth.olamnet.com/auth/realms/ofis-dse/protocol/openid-connect/'
+            buildConfigField 'String', 'HOST', '"https://otofis-zuul.olamdigital.com/"'
+
+            buildConfigField "String", "MATOMO_SERVER_URL", '"https://olammatomo.azurewebsites.net/matomo.php"'
+            buildConfigField "int", "MATOMO_SERVER_CODE", '39'
+            buildConfigField "boolean", "MATOMO_ENABLED", 'false'
+        }
+
+
     }
 
     testOptions {
@@ -287,6 +365,20 @@ android {
             //java.srcDirs = ['src/flavorB/java', 'src/sharedType/java']
             res.srcDirs = ['src/prodofi/res', 'src/ofi/res']
             //  assets.srcDirs = ['src/flavorB/assets', 'src/sharedType/assets']
+        }
+
+        // OGA
+        devoga {
+            res.srcDirs = ['src/devoga/res', 'src/oga/res']
+        }
+        sitoga {
+            res.srcDirs = ['src/sitoga/res', 'src/oga/res']
+        }
+        uatoga {
+            res.srcDirs = ['src/uatoga/res', 'src/oga/res']
+        }
+        prodoga {
+            res.srcDirs = ['src/prodoga/res', 'src/oga/res']
         }
 
     }

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="ofis_actionbar_background">#dddddd</color>
+    <color name="ofis_base_font_dark">#222222</color>
+    <color name="ofis_base_font_white">#ffffff</color>
+    <color name="ofis_text_field">#DE000000</color>
+    <color name="colorBackroundWhite">#f0f2ea</color>
+    <color name="ofis_text_field_read_only">#80000000</color>
+<!--    <color name="ofis_input_field_separator">#26000000</color>-->
+    <color name="ofis_list_header_text">#DE000000</color>
+    <color name="ofis_list_item_background">#ffffff</color>
+    <color name="gray">#707070</color>
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+
+    <color name="ofis_action_button_disabled">#9da1a2</color>
+    <color name="ofis_list_item_border">#40000000</color>
+    <color name="ofis_spinner_divider">#ff333333</color>
+    <color name="ofis_repeater_item_border">#7d7d7d</color>
+    <color name="ofis_consent_statement_background">@color/ofis_actionbar_background</color>
+    <color name="light_cream">#EDE5DC</color>
+    <color name="ofis_red">#be3a34</color>
+    <color name="clmrs_green">#A0C800</color>
+
+
+    <color name="green">#698715</color>
+
+
+    <color name="clmrs_bg">#FAFAFA</color>
+    <color name="clmrs_bg_gray">#DEDAD4</color>
+    <color name="clmrs_tv_green">#0B4B52</color>
+    <color name="clmrs_yellow">#FD8104</color>
+    <color name="clmrs_tv_grey">#6C5D56</color>
+
+
+    <color name="gender_selected">#c6c6c5</color>
+    <color name="gender_selected_text">#6C5D56</color>
+    <color name="child_survey_row">#9E948E</color>
+    <color name="child_visitdetailbg">#00869D</color>
+
+    <color name="cs_color">#101010</color>
+
+    <color name="orange">#DE5215</color>
+    <color name="grey">#707070</color>
+    <color name="biometric_blue">#00869D</color>
+    <color name="gray_text">#858585</color>
+    <color name="dull_white">#FAFAFA</color>
+    <color name="disabled_gray">#CCCCCC</color>
+    <color name="dark_orange">#DC582A</color>
+
+    <color name="dark_gray">#E9E9E9</color>
+
+    <color name="blue_attendee_text">#00ACC6</color>
+    <color name="black_attendee">#262626</color>
+    <color name="text_label_attendee">#535353</color>
+    <color name="background_attendee">#FAFAFA</color>
+
+
+    <!-- updated for OFI -->
+    <color name="ofis_farmer_screen_actions_background">#FF7000</color>
+    <color name="ofis_action_button_background">#2E2D2C</color>
+    <color name="ofis_home_screen_actions_background">#FF7000</color>
+    <color name="ofis_home_screen_midsection_background">#FF7000</color>
+    <color name="ofis_poi_screen_top_background_school">#FF7000</color>
+    <color name="btn_primary_background">#FF7000</color>
+    <color name="btn_secondary_background">#2E2D2C</color>
+    <color name="btn_primary_inner">#F8F6F8</color>
+    <color name="cs_checkbox">#FF7000</color>
+    <color name="color_secondary_3">#FED4B3</color>
+    <color name="btnColorPrimary">#FF7000</color>
+    <color name="btnColorThird">#f78c2a</color>
+    <color name="ofis_page_background">#F8F6F8</color>
+    <color name="ofis_btn_danger">#ea0029</color>
+
+<!--    // dealing disable buttion-->
+    <color name="btn_primary_disabled">#c6c6c5</color>
+    <color name="btn_disabled_text">#878786</color>
+
+    <!--    // dealing icons buttion-->
+    <color name="icon_primary">#f78c2a</color>
+<!--    <color name="icon_grey_palette_2">#878786</color> -->
+    <color name="icon_grey_palette_2">#C6C6C5</color>
+    <color name="icon_secondary_palette_4">#6dba00</color>
+
+    <color name="sub_task_header_bg">#ECECEC</color>
+
+    <color name="edit_text_hint">#878786</color>
+
+    <color name="spinner_dropdown_text_color">#4a4949</color>
+
+    <color name="ofis_spinner_item_background">@color/white</color>
+
+    <color name="colorPrimary">#FF7000</color>
+    <color name="colorPrimaryDark"></color>
+    <color name="colorAccent">#FF7000</color>
+
+    <color name="ofis_list_item_disabled_background">#ECECEC</color>
+    <color name="ofis_list_item_disabled_text">#878786</color>
+    <color name="ofis_list_item_subtitle">#878786</color>
+    <color name="ofis_input_field_separator">#26000000</color>
+
+    <color name="child_selected_text_color">#FF7000</color>
+    <color name="gender_selected_textcolor">#ffffff</color>
+    <color name="background_multifarm">#F2B277</color>
+</resources>

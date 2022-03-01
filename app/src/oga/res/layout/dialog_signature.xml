@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:weightSum="1"
+    android:gravity="center"
+    android:background="@android:color/transparent"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:background="@color/white"
+        android:layout_weight="0.9"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/ll_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:gravity="center"
+            android:weightSum="10"
+            android:background="@color/white"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_title_matchresult_dialog"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:textColor="@color/black"
+                android:padding="5dp"
+                android:text="@string/Signature"
+                android:layout_weight="9"
+                android:textAppearance="?android:textAppearanceMedium"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                bind:srcCompat="@drawable/ic_consent_close"
+                android:layout_alignTop="@+id/signature_pad"
+                android:id="@+id/btn_cancel_signature"
+                android:padding="10dp"
+                android:layout_weight="1"
+                android:gravity="right|end"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+        <View
+            android:id="@+id/view"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_below="@+id/ll_title"
+            android:background="@drawable/border_grey_bg"/>
+        <!-- bottom section - updated -->
+        <com.github.gcacace.signaturepad.views.SignaturePad
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            app:penColor="@color/black"
+            app:penMaxWidth="5dp"
+            app:penMinWidth="7dp"
+            android:id="@+id/signature_pad"
+            android:layout_width="match_parent"
+            android:layout_above="@+id/ll_footer"
+            android:layout_below="@+id/tv_info"
+            android:background="@drawable/ic_signature_bg"
+            android:layout_height="match_parent"
+            android:layout_margin="@dimen/margin_10"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:src="@drawable/ic_consent_close"
+            android:id="@+id/tv_info"
+            android:layout_below="@id/ll_title"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:textColor="@color/black"
+            android:padding="10dp"
+            android:text="@string/please_sign_within_the_boundary_box"
+            android:textAppearance="?android:textAppearanceMedium"
+            android:textStyle="bold"
+            android:layout_height="wrap_content" />
+
+        <LinearLayout
+            android:layout_margin="@dimen/margin_10"
+            android:id="@+id/ll_footer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/imgv_clear_signature"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="@color/ofis_base_font_white"
+                android:background="@color/btn_secondary_background"
+                android:padding="5dp"
+                android:text="@string/clear" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"/>
+            <Button
+                android:id="@+id/btn_add_signature"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="@color/white"
+                android:background="@color/ofis_action_button_background"
+                android:text="@string/confirm" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+
+</LinearLayout>
