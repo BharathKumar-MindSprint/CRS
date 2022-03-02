@@ -84,7 +84,7 @@
                         android:id="@+id/farmerDOB"
                         android:hint="@string/Date_of_Birth_hint"
                         android:inputType="none"
-                        android:drawableRight="@drawable/ic_icon_calendar_1"
+                        android:drawableRight="@drawable/ic_icon_feather_calendar"
                         android:drawablePadding="5dp"
                         android:background="@drawable/datepicker_bg"
                         android:padding="@dimen/margin_10"
@@ -161,7 +161,8 @@
                             android:layout_gravity="right|center"
                             android:background="@android:color/transparent"
                             android:contentDescription="@string/Add"
-                            app:srcCompat="@drawable/ic_ofis_add" />
+                            app:srcCompat="@drawable/ic_ofis_add"
+                            tools:ignore="VectorDrawableCompat" />
 
                     </LinearLayout>
                 </LinearLayout>
@@ -515,13 +516,13 @@
                             android:text="@string/create_new_farm"
                             android:textStyle="bold"
                             android:textColor="@color/btn_secondary_background"
-                            android:buttonTint="@color/colorPrimary"
+                            android:theme="@style/RadioButtonStyle"
                             android:layout_height="wrap_content"/>
                         <RadioButton
                             android:id="@+id/existingFarmRadioButton"
                             android:layout_width="wrap_content"
                             android:textStyle="bold"
-                            android:buttonTint="@color/colorPrimary"
+                            android:theme="@style/RadioButtonStyle"
                             android:text="@string/select_from_existing_farm"
                             android:textColor="@color/btn_secondary_background"
                             android:layout_marginLeft="@dimen/margin_10"
@@ -612,7 +613,7 @@
 
                             <TextView
                                 android:text="@string/add_stakeholder"
-                                android:textColor="@color/btnColorThird"
+                                android:textColor="@color/btnColorPrimary"
                                 android:layout_width="wrap_content"
                                 android:layout_gravity="center"
                                 android:layout_marginLeft="@dimen/margin_10"
@@ -796,6 +797,7 @@
                         android:contentDescription="@string/ofis_cd_hierarchy_arrow"
                         app:srcCompat="@drawable/ic_spinner_hierarchy_arrow"
                         android:scaleType="center"
+                        android:visibility="gone"
                         android:id="@+id/imageView4"
                         android:paddingLeft="3dp"
                         android:paddingRight="3dp"/>
@@ -924,7 +926,8 @@
                 android:padding="0dp"
                 android:adjustViewBounds="false"
                 android:background="@android:color/transparent"
-                android:scaleType="fitXY" />
+                android:scaleType="fitXY"
+                tools:ignore="VectorDrawableCompat" />
         </RelativeLayout>
 
     </LinearLayout>

@@ -46,9 +46,9 @@
             android:id="@+id/btn_no"
             android:layout_width="100dp"
             android:text="@string/cancel"
-            android:textColor="@color/ofis_base_font_white"
+            android:background="@drawable/btn_primary_outlines"
+            android:textColor="@color/btnColorPrimary"
             android:layout_toLeftOf="@+id/btn_yes"
-            android:background="@drawable/btn_secondary_bg"
             android:layout_marginRight="@dimen/margin_10"
             android:layout_height="40dp"/>
 

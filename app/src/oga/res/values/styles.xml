@@ -7,6 +7,7 @@
         <item name="spinnerDropDownItemStyle">@style/SpinnerItem.DropDownItem</item>
         <item name="dropDownListViewStyle">@style/StandardSpinner</item>
         <item name="actionBarStyle">@style/AppTheme.ActionBarStyle</item>
+
     </style>
 
     <style name="AppCompactTheme" parent="Theme.AppCompat.Light">
@@ -112,7 +113,15 @@
 
     <style name="CheckboxStyle" parent="AppTheme">
         <item name="colorAccent">@color/cs_checkbox</item>
-        <item name="buttonTint">@color/colorPrimary</item>
+        <item name="android:textColorSecondary">#2E2D2C</item>
+<!--        <item name="buttonTint">@color/radio_checkbox__color_tint</item>-->
+    </style>
+
+    <style name="RadioButtonStyle" parent="AppTheme">
+
+        <item name="colorAccent">@color/cs_checkbox</item>
+        <item name="android:textColorSecondary">#2E2D2C</item>
+        <!--        <item name="buttonTint">@color/radio_checkbox__color_tint</item>-->
     </style>
 
 

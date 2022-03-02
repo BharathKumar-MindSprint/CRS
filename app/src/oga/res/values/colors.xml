@@ -56,19 +56,22 @@
     <color name="background_attendee">#FAFAFA</color>
 
 
-    <!-- updated for OFI -->
+    <!-- updated for OGA -->
     <color name="ofis_farmer_screen_actions_background">#FF7000</color>
     <color name="ofis_action_button_background">#2E2D2C</color>
     <color name="ofis_home_screen_actions_background">#FF7000</color>
     <color name="ofis_home_screen_midsection_background">#FF7000</color>
     <color name="ofis_poi_screen_top_background_school">#FF7000</color>
-    <color name="btn_primary_background">#FF7000</color>
+    <color name="btn_primary_background">#2E2D2C</color>
     <color name="btn_secondary_background">#2E2D2C</color>
-    <color name="btn_primary_inner">#F8F6F8</color>
+    <color name="btn_primary_inner">#FFFFFF</color>
     <color name="cs_checkbox">#FF7000</color>
     <color name="color_secondary_3">#FED4B3</color>
-    <color name="btnColorPrimary">#FF7000</color>
+
+    <color name="btnColorPrimary">#2E2D2C</color>
     <color name="btnColorThird">#f78c2a</color>
+
+
     <color name="ofis_page_background">#F8F6F8</color>
     <color name="ofis_btn_danger">#ea0029</color>
 
@@ -82,7 +85,7 @@
     <color name="icon_grey_palette_2">#C6C6C5</color>
     <color name="icon_secondary_palette_4">#6dba00</color>
 
-    <color name="sub_task_header_bg">#ECECEC</color>
+    <color name="sub_task_header_bg">#2E2D2C</color>
 
     <color name="edit_text_hint">#878786</color>
 
@@ -102,4 +105,8 @@
     <color name="child_selected_text_color">#FF7000</color>
     <color name="gender_selected_textcolor">#ffffff</color>
     <color name="background_multifarm">#F2B277</color>
+
+
+    <color name="radio_checkbox__color_tint">#2E2D2C</color>
+    <color name="info_icon_msg_text">#FF3000</color>
 </resources>

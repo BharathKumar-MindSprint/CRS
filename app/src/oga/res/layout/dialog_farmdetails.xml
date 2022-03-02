@@ -157,8 +157,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:textSize="@dimen/ofis_large_text"
-                android:textColor="@color/ofis_base_font_white"
-                android:background="@drawable/btn_primary_rec"
+                android:background="@drawable/btn_primary_outlines"
+                android:textColor="@color/btnColorPrimary"
                 android:layout_marginRight="@dimen/ofis_med_pad"
                 android:layout_marginLeft="@dimen/ofis_large_pad"
                 android:text="@string/msg_ok" />
@@ -173,7 +173,7 @@
                 android:textSize="@dimen/ofis_large_text"
                 android:layout_marginLeft="@dimen/ofis_med_pad"
                 android:layout_marginRight="@dimen/ofis_large_pad"
-                android:background="@drawable/btn_orange_rec"
+                android:background="@drawable/btn_primary_bg"
                 android:text="@string/update" />
 
         </LinearLayout>

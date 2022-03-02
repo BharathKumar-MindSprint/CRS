@@ -99,7 +99,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/middleSection"
         android:paddingBottom="@dimen/ofis_small_pad"
-        android:paddingLeft="@dimen/home_activity_horizontal_margin"
+        android:paddingLeft="@dimen/ofis_small_pad"
         android:paddingRight="@dimen/home_activity_horizontal_margin"
         android:paddingTop="0dp">
 
@@ -185,7 +185,7 @@
                 android:layout_marginTop="@dimen/ofis_small_pad"
                 android:paddingRight="@dimen/ofis_micro_pad"
                 android:text="@string/Modules_to_submit"
-                android:textColor="@color/ofis_base_font_dark"
+                android:textColor="@color/ofis_base_font_white"
                 android:textSize="@dimen/ofis_med_text"
                 tools:ignore="RtlHardcoded" />
 
@@ -195,7 +195,7 @@
                 android:background="@drawable/itemlist_total_background"
                 android:id="@+id/networkQueueCount"
                 android:text="0"
-                android:textColor="@color/ofis_base_font_white"
+                android:textColor="@color/ofis_base_font_dark"
                 android:textSize="@dimen/ofis_small_text"
                 android:gravity="center"
                 android:layout_marginTop="@dimen/ofis_micro_pad"
@@ -212,7 +212,7 @@
                 android:id="@+id/syncAll"
                 android:layout_marginTop="@dimen/ofis_micro_pad"
                 android:contentDescription="@string/ofis_cd_submit_all_icon"
-                card_view:srcCompat="@drawable/ic_upload_list"
+                card_view:srcCompat="@drawable/ic_upload_list_white"
                 android:scaleType="fitXY"
                 android:layout_alignParentRight="true"
                 android:background="@android:color/transparent"

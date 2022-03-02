@@ -81,7 +81,8 @@
                 android:id="@+id/imageView_pic"
                 app:srcCompat="@drawable/ic_upload_list"
                 android:contentDescription="@string/Farmer_Photo"
-                android:layout_gravity="center_vertical|center_horizontal" />
+                android:layout_gravity="center_vertical|center_horizontal"
+                tools:ignore="VectorDrawableCompat" />
         </LinearLayout>
     </LinearLayout>
 

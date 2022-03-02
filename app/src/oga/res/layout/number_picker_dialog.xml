@@ -41,9 +41,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:background="@color/btn_secondary_background"
+            android:background="@drawable/btn_primary_outlines"
+            android:textColor="@color/btnColorPrimary"
             android:text="@string/cancel"
-            android:textColor="@color/ofis_base_font_white"
             android:textSize="15sp" />
 
         <Button

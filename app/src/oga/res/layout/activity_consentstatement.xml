@@ -813,7 +813,7 @@
                                 android:paddingTop="20dp"
                                 android:paddingBottom="20dp"
                                 android:gravity="center"
-                                android:background="@color/btnColorThird"
+                                android:background="@color/btnColorPrimary"
                                 android:textSize="@dimen/ofis_med_text"
                                 android:textColor="@color/white" />
 
@@ -950,7 +950,7 @@
                                     android:paddingTop="20dp"
                                     android:paddingBottom="20dp"
                                     android:gravity="center"
-                                    android:background="@color/btnColorThird"
+                                    android:background="@color/btnColorPrimary"
                                     android:textSize="@dimen/ofis_med_text"
                                     android:textColor="@color/white" />
 
