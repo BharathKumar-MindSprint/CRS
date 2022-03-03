@@ -13,7 +13,7 @@
         android:id="@+id/TaskListIcon"
         android:contentDescription="@string/ofis_cd_submit_all_icon"
         android:layout_marginTop="@dimen/ofis_small_pad"
-        app:srcCompat="@drawable/ic_action_tasks"
+        app:srcCompat="@drawable/oga_action"
         android:scaleType="fitXY"
         android:background="@android:color/transparent" />
 

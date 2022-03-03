@@ -8,7 +8,7 @@
         app:showAsAction="always" />
     <item android:id="@+id/action_settings"
         android:title="@string/ofis_action_bar_settings"
-        android:icon="@drawable/ic_action_settings"
+        android:icon="@drawable/oga_settings"
         android:orderInCategory="200"
         app:showAsAction="always" />
 </menu>

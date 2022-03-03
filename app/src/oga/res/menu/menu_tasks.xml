@@ -4,12 +4,12 @@
     tools:context="com.olam.digital.ofis.CompleteModuleActivity">
     <item android:id="@+id/action_home"
         android:title="@string/ofis_action_bar_home"
-        android:icon="@drawable/ic_action_home"
+        android:icon="@drawable/oga_home"
         android:orderInCategory="100"
         app:showAsAction="always" />
     <item android:id="@+id/action_settings"
         android:title="@string/ofis_action_bar_settings"
-        android:icon="@drawable/ic_action_settings"
+        android:icon="@drawable/oga_settings"
         android:orderInCategory="200"
         app:showAsAction="always" />
 </menu>

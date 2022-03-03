@@ -85,6 +85,7 @@
     <string name="item_synced">Item(s) synced successfully.</string>
     <string name="item_sync_error">Error syncing. Please contact us for help</string>
     <string name="ofis_first_run_intro">You haven\'t been around here before, have you? May we have some details?</string>
+    <string name="olam_logo_text">Olam Farmer Information System</string>
     <string name="ofis_first_run_save_update">Save &amp; Update</string>
 
     <!-- Settings screen related -->
