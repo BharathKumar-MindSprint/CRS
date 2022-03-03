@@ -74,4 +74,6 @@
 
     <color name="radio_btn_color_primary">#dc582a</color>
     <color name="text_label_attendee">#535353</color>
+    <color name="signature_pad">#F8F8F8</color>
+    <color name="header_color">#2E2D2C</color>
 </resources>
