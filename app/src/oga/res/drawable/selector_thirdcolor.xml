@@ -2,7 +2,7 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item android:drawable="@drawable/bttn_disabled" android:state_enabled="false"/>
-    <item android:drawable="@color/btnColorThird" android:state_pressed="true"/>
-    <item android:drawable="@color/btnColorThird"/>
+    <item android:drawable="@color/btnColorPrimary" android:state_pressed="true"/>
+    <item android:drawable="@color/btnColorPrimary"/>
 
 </selector>

@@ -344,12 +344,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:id="@+id/phonenumbersCloseButton"
-                app:srcCompat="@drawable/ic_consent_close"
+                app:srcCompat="@drawable/ic_cross_oga"
                 android:background="@android:color/transparent"
                 android:layout_weight="1"
                 android:layout_gravity="end|top"
                 android:contentDescription="@string/ofis_switch_text_no"
-                android:scaleType="fitStart" />
+                android:scaleType="fitStart"
+                tools:ignore="VectorDrawableCompat" />
         </LinearLayout>
 
         <ScrollView
@@ -435,9 +436,10 @@
                             android:scaleType="fitXY"
                             android:background="@android:color/transparent"
                             android:layout_marginRight="@dimen/ofis_bottom_section_padding_horizontal"
-                            android:layout_marginTop="@dimen/phone_number_plus_offset"
+                            android:layout_marginTop="-23dp"
+                            android:layout_marginBottom="14dp"
                             android:contentDescription="@string/Add"
-                            />
+                            tools:ignore="VectorDrawableCompat" />
 
                     </LinearLayout>
 
