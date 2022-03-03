@@ -22,6 +22,6 @@
         android:layout_width="0dp"
         android:id="@+id/cbCheckBox"
         android:layout_weight="1"
-        style="@style/CheckboxStyle"
+        android:theme="@style/CheckboxStyle"
         android:layout_gravity="center_horizontal" />
 </TableRow>

@@ -23,6 +23,7 @@ import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.FileProvider;
 
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -30,6 +31,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.crash.FirebaseCrash;
@@ -342,27 +344,64 @@ public class TrainingRecord extends BaseListActivity{
     }
 
     public void deleteTrainingAttendee(final int attendeeId) {
+//        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+//        builder
+//                .setCancelable(true)
+//                .setNegativeButton(res.getString(R.string.app_update_cancel), new DialogInterface.OnClickListener() {
+//                    public void onClick(DialogInterface dialog, int id) {
+//                        dialog.cancel();
+//                    }
+//                })
+//                .setMessage(res.getString(R.string.trainingattendee_are_you_sure))
+//                .setPositiveButton(res.getString(R.string.app_update_ok), new DialogInterface.OnClickListener() {
+//                    public void onClick(DialogInterface dialog, int id) {
+//                        if (dl.deleteTrainingAttendeeById(attendeeId) > 0) {
+//                            trainingAttendees.close();
+//                            trainingAttendees = dl.getTrainingAttendeesByTrainingRecordId(trainingRecordId);
+//                            customListAdapter_selectedAttendees.swapCursor(trainingAttendees);
+//                            Toast.makeText(context, res.getString(R.string.trainingattendee_deleted), Toast.LENGTH_LONG).show();
+//                        }
+//                    }
+//                });
+//        AlertDialog alert = builder.create();
+//        alert.show();
+
+        // New Approach
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder
-                .setCancelable(true)
-                .setNegativeButton(res.getString(R.string.app_update_cancel), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
-                    }
-                })
-                .setMessage(res.getString(R.string.trainingattendee_are_you_sure))
-                .setPositiveButton(res.getString(R.string.app_update_ok), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        if (dl.deleteTrainingAttendeeById(attendeeId) > 0) {
-                            trainingAttendees.close();
-                            trainingAttendees = dl.getTrainingAttendeesByTrainingRecordId(trainingRecordId);
-                            customListAdapter_selectedAttendees.swapCursor(trainingAttendees);
-                            Toast.makeText(context, res.getString(R.string.trainingattendee_deleted), Toast.LENGTH_LONG).show();
-                        }
-                    }
-                });
+        builder.setCancelable(false);
+        LayoutInflater inflater = this.getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.common_alert_dialog, null);
+        builder.setView(dialogView);
+        TextView tvMsg = (TextView) dialogView.findViewById(R.id.tv_msg);
+        tvMsg.setText(res.getString(R.string.trainingattendee_are_you_sure));
+        Button btnNo = (Button) dialogView.findViewById(R.id.btn_no);
+        btnNo.setText(res.getString(R.string.app_update_cancel));
+        Button btnYes = (Button) dialogView.findViewById(R.id.btn_yes);
+        btnYes.setText(res.getString(R.string.app_update_ok));
         AlertDialog alert = builder.create();
+        btnNo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                alert.dismiss();
+            }
+        });
+
+        btnYes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (dl.deleteTrainingAttendeeById(attendeeId) > 0) {
+                    trainingAttendees.close();
+                    trainingAttendees = dl.getTrainingAttendeesByTrainingRecordId(trainingRecordId);
+                    customListAdapter_selectedAttendees.swapCursor(trainingAttendees);
+                    Toast.makeText(context, res.getString(R.string.trainingattendee_deleted), Toast.LENGTH_LONG).show();
+                    alert.dismiss();
+                }
+            }
+        });
+
         alert.show();
+
+
     }
 
     //------------------------Temp Testing for OW-431 - Start-----------------------------

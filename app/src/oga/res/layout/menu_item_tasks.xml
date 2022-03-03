@@ -15,15 +15,16 @@
         android:layout_marginTop="@dimen/ofis_small_pad"
         app:srcCompat="@drawable/oga_action"
         android:scaleType="fitXY"
-        android:background="@android:color/transparent" />
+        android:background="@android:color/transparent"
+        tools:ignore="VectorDrawableCompat" />
 
     <TextView
         android:layout_width="20dp"
         android:layout_height="20dp"
-        android:background="@drawable/itemlist_total_background"
+        android:background="@drawable/list_item_total_background_task"
         android:id="@+id/TaskListCount"
         android:text="0"
-        android:textColor="@color/ofis_base_font_white"
+        android:textColor="@color/ofis_base_font_dark"
         android:textSize="@dimen/ofis_small_text"
         android:gravity="center"
         android:layout_marginLeft="-10dp"

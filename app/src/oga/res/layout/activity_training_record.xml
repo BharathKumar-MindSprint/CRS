@@ -114,7 +114,8 @@
                     android:scaleType="fitStart"
                     android:layout_below="@+id/trainingPhoto"
                     android:layout_alignRight="@+id/trainingPhoto"
-                    android:layout_marginTop="-22dp"/>
+                    android:layout_marginTop="-22dp"
+                    tools:ignore="VectorDrawableCompat" />
             </RelativeLayout>
 
         </LinearLayout>
@@ -149,7 +150,7 @@
                 android:layout_weight="7"
                 android:text="@string/TrainingAttendees"
                 android:id="@+id/AddTrainingAttendeesTitle"
-                android:textColor="@color/ofis_base_font_dark"
+                android:textColor="@color/ofis_base_font_white"
                 android:paddingLeft="@dimen/ofis_med_pad"
                 android:gravity="center_vertical"
                 android:textAllCaps="true"
@@ -161,12 +162,12 @@
                 android:layout_width="@dimen/standard_button_width_height"
                 android:layout_height="@dimen/standard_button_width_height"
                 android:id="@+id/addTrainingAttendees"
-                card_view:srcCompat="@drawable/ic_ofis_add"
+                card_view:srcCompat="@drawable/ic_ofis_add_white"
                 android:scaleType="fitXY"
                 android:background="@android:color/transparent"
                 android:layout_marginRight="@dimen/ofis_bottom_section_padding_horizontal"
                 android:contentDescription="@string/Add"
-                />
+                tools:ignore="VectorDrawableCompat" />
 
         </LinearLayout>
     </androidx.cardview.widget.CardView>
@@ -197,7 +198,7 @@
             android:layout_width="wrap_content"
             android:layout_height="@dimen/text_button_width_height"
             android:layout_alignParentLeft="true"
-            android:background="@color/btnColorThird"
+            android:background="@color/btnColorPrimary"
             android:paddingLeft="@dimen/ofis_med_pad"
             android:paddingRight="@dimen/ofis_med_pad"
             android:text="@string/add_attendee_scores"
@@ -275,7 +276,7 @@
                 android:contentDescription="@string/Save"
                 android:layout_centerVertical="true"
                 android:layout_alignParentRight="true"
-                />
+                tools:ignore="VectorDrawableCompat" />
 
         </RelativeLayout>
 

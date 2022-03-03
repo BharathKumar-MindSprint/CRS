@@ -27,7 +27,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp"
                 android:text="@string/full_name"
-                android:textColor="@color/clmrs_tv_grey" />
+                android:textColor="@color/btnColorPrimary" />
 
             <EditText
                 android:id="@+id/fullnameEditText"
@@ -57,7 +57,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp"
                 android:text="@string/ofis_select_gender"
-                android:textColor="@color/clmrs_tv_grey" />
+                android:textColor="@color/btnColorPrimary" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -104,7 +104,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/age"
-                android:textColor="@color/clmrs_tv_grey" />
+                android:textColor="@color/btnColorPrimary" />
 
             <RelativeLayout
                 android:layout_width="match_parent"

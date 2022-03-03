@@ -59,7 +59,7 @@
                 android:padding="0dp"
                 android:text="0"
                 android:textStyle="bold"
-                android:textColor="@color/ofis_base_font_white"
+                android:textColor="@color/btnColorPrimary"
                 android:textSize="@dimen/ofis_small_text"
                 tools:ignore="HardcodedText" />
 
@@ -154,7 +154,7 @@
                 android:layout_weight="4"
                 android:text="@string/save_selected_attendees"
                 android:textAllCaps="true"
-                android:background="@color/btnColorThird"
+                android:background="@color/btnColorPrimary"
                 android:textColor="@color/ofis_base_font_white"
                 android:textSize="@dimen/ofis_micro_text"
                 android:id="@+id/addSelectedAttendees" />

@@ -148,7 +148,7 @@
 
                 <TextView
                     android:text="@string/add_stakeholder"
-                    android:textColor="@color/btnColorThird"
+                    android:textColor="@color/btnColorPrimary"
                     android:layout_width="wrap_content"
                     android:layout_marginLeft="@dimen/margin_10"
                     android:layout_gravity="center"

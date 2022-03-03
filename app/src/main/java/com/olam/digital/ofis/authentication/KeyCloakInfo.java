@@ -47,8 +47,8 @@ public interface KeyCloakInfo {
     String dev_oga_Client_Secret ="";
     String sit_oga_client_Id ="ofi-ofis-mobile-sit" ;
     String sit_oga_Client_Secret = "e6e3d814-c600-4149-a240-54066cb0926a";
-    String uat_oga_client_Id ="" ;
-    String uat_oga_Client_Secret = "";
+    String uat_oga_client_Id ="ofi-ofis-mobile-uat" ;
+    String uat_oga_Client_Secret = "70efcd6c-ec13-49e9-9c0c-888a4e1d4276";
     String prod_oga_client_Id = "";
     String prod_oga_Client_Secret ="" ;
 }

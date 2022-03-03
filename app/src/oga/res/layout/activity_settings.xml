@@ -100,7 +100,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/ofis_large_pad"
                 android:layout_marginTop="@dimen/margin_10"
-                android:background="@color/btnColorThird"
+                android:background="@color/colorPrimary"
                 android:paddingLeft="15dp"
                 android:paddingRight="15dp"
                 android:text="@string/view_privacy_consent"
