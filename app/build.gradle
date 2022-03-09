@@ -38,8 +38,10 @@ android {
         multiDexEnabled true
 
 
-        versionCode 49
-        versionName "10.4.3"
+
+        versionCode 50
+        versionName "10.4.4"
+
 
 
     }
@@ -76,11 +78,11 @@ android {
           //  resValue "string", "AUTH_SERVER_URL", 'https://otofis-dev-zuul.olamdigital.com/oauth/api/v1/oauth/'
             resValue "string", "AUTH_SERVER_URL", 'https://digitalauthdev.olamnet.com/auth/realms/ofis-dse-manna-dev/protocol/openid-connect/'
             buildConfigField 'String', 'HOST', '"https://otofis-dev-manna-zuul.olamdigital.com/"'
-            buildConfigField 'String', 'ODHOST', '"https://dev-apigateway.olamdirect.com/"'
+            buildConfigField 'String', 'ODHOST', '"https://manna-dev-apigateway.olamdirect.com/"'
 
             buildConfigField "String", "MATOMO_SERVER_URL", '"https://olammatomo.azurewebsites.net/matomo.php"'
             buildConfigField "int", "MATOMO_SERVER_CODE", '35'
-            buildConfigField "boolean", "MATOMO_ENABLED", 'true'
+            buildConfigField "boolean", "MATOMO_ENABLED", 'false'
 
             //KeyCloak
             resValue "string", "clientId", '"mobile-ofis-app-dev"'
@@ -99,11 +101,11 @@ android {
             //  resValue "string", "AUTH_SERVER_URL", 'https://otofis-dev-zuul.olamdigital.com/oauth/api/v1/oauth/'
             resValue "string", "AUTH_SERVER_URL", 'https://digitalauthdev.olamnet.com/auth/realms/ofis-dse-manna-dev/protocol/openid-connect/'
             buildConfigField 'String', 'HOST', '"https://otofis-dev-manna-zuul.olamdigital.com/"'
-            buildConfigField 'String', 'ODHOST', '"https://dev-apigateway.olamdirect.com/"'
+            buildConfigField 'String', 'ODHOST', '"https://manna-dev-apigateway.olamdirect.com/"'
 
             buildConfigField "String", "MATOMO_SERVER_URL", '"https://olammatomo.azurewebsites.net/matomo.php"'
             buildConfigField "int", "MATOMO_SERVER_CODE", '35'
-            buildConfigField "boolean", "MATOMO_ENABLED", 'true'
+            buildConfigField "boolean", "MATOMO_ENABLED", 'false'
 
         }
 
@@ -118,14 +120,15 @@ android {
             resValue "string", "applicationName", "OFI SIT"
             resValue "string", "AUTH_SERVER_URL", 'https://digitalauthdev.olamnet.com/auth/realms/ofis-dse-manna-sit/protocol/openid-connect/'
             buildConfigField 'String', 'HOST', '"https://otofis-sit-manna-zuul.olamdigital.com/"'
-            buildConfigField 'String', 'ODHOST', '"https://sit-apigateway.olamdirect.com/"'
+            buildConfigField 'String', 'ODHOST', '"https://manna-sit-apigateway.olamdirect.com/"'
+//            buildConfigField 'String', 'ODHOST', '"https://sit-apigateway.olamdirect.com/"'
 //            resValue "string", "AUTH_SERVER_URL", 'https://digitalauthdev.olamnet.com/auth/realms/ofis-dse-sit/protocol/openid-connect/'
 //            buildConfigField 'String', 'HOST', '"https://otofis-sit-zuul.olamdigital.com/"'
 //            buildConfigField 'String', 'ODHOST', '"https://sit-apigateway.olamdirect.com/"'
 
             buildConfigField "String", "MATOMO_SERVER_URL", '"https://olammatomo.azurewebsites.net/matomo.php"'
             buildConfigField "int", "MATOMO_SERVER_CODE", '35'
-            buildConfigField "boolean", "MATOMO_ENABLED", 'true'
+            buildConfigField "boolean", "MATOMO_ENABLED", 'false'
         }
 
 
@@ -142,14 +145,14 @@ android {
             resValue "string", "AUTH_SERVER_URL", 'https://digitalauthdev.olamnet.com/auth/realms/ofis-dse-uat/protocol/openid-connect/'
             buildConfigField 'String', 'HOST', '"https://otofis-uat-zuul.olamdigital.com/"'
 //            buildConfigField 'String', 'ODHOST', '"https://uat-apigateway.olamdirect.com/"'
-            buildConfigField 'String', 'ODHOST', '"https://uat-apigateway-global.olamdirect.com/"'
+            buildConfigField 'String', 'ODHOST', '"https://uat-apigateway.olamdirect.com/"'
             resValue "string", "AUTH_SERVER_URL", 'https://digitalauthdev.olamnet.com/auth/realms/ofis-dse-manna-uat/protocol/openid-connect/'
             buildConfigField 'String', 'HOST', '"https://otofis-uat-manna-zuul.olamdigital.com/"'
-            buildConfigField 'String', 'ODHOST', '"https://sit-apigateway.olamdirect.com/"'
+//            buildConfigField 'String', 'ODHOST', '"https://sit-apigateway.olamdirect.com/"'
 
             buildConfigField "String", "MATOMO_SERVER_URL", '"https://olammatomo.azurewebsites.net/matomo.php"'
             buildConfigField "int", "MATOMO_SERVER_CODE", '35'
-            buildConfigField "boolean", "MATOMO_ENABLED", 'true'
+            buildConfigField "boolean", "MATOMO_ENABLED", 'false'
 
         }
 
@@ -164,11 +167,11 @@ android {
             resValue "string", "applicationName", "OFI UAT"
             resValue "string", "AUTH_SERVER_URL", 'https://digitalauthdev.olamnet.com/auth/realms/ofis-dse-manna-uat/protocol/openid-connect/'
             buildConfigField 'String', 'HOST', '"https://otofis-uat-manna-zuul.olamdigital.com/"'
-            buildConfigField 'String', 'ODHOST', '"https://sit-apigateway.olamdirect.com/"'
+            buildConfigField 'String', 'ODHOST', '"https://uat-apigateway.olamdirect.com/"'
 
             buildConfigField "String", "MATOMO_SERVER_URL", '"https://olammatomo.azurewebsites.net/matomo.php"'
             buildConfigField "int", "MATOMO_SERVER_CODE", '35'
-            buildConfigField "boolean", "MATOMO_ENABLED", 'true'
+            buildConfigField "boolean", "MATOMO_ENABLED", 'false'
 
         }
 
@@ -184,11 +187,11 @@ android {
             resValue "string", "applicationName", "OFIS SIT"
             resValue "string", "AUTH_SERVER_URL", 'https://digitalauthdev.olamnet.com/auth/realms/ofis-dse-manna-sit/protocol/openid-connect/'
             buildConfigField 'String', 'HOST', '"https://otofis-sit-manna-zuul.olamdigital.com/"'
-            buildConfigField 'String', 'ODHOST', '"https://sit-apigateway.olamdirect.com/"'
-
+//            buildConfigField 'String', 'ODHOST', '"https://sit-apigateway.olamdirect.com/"'
+            buildConfigField 'String', 'ODHOST', '"https://manna-sit-apigateway.olamdirect.com/"'
             buildConfigField "String", "MATOMO_SERVER_URL", '"https://olammatomo.azurewebsites.net/matomo.php"'
             buildConfigField "int", "MATOMO_SERVER_CODE", '35'
-            buildConfigField "boolean", "MATOMO_ENABLED", 'true'
+            buildConfigField "boolean", "MATOMO_ENABLED", 'false'
             //KeyCloak
             resValue "string", "clientId", '"ofis-mobile-sit"'
             resValue "string", "clientSecret", '"d28384ec-7368-48ca-8886-91e4a17b8f3f"'
@@ -210,7 +213,7 @@ android {
 
             buildConfigField "String", "MATOMO_SERVER_URL", '"https://olammatomo.azurewebsites.net/matomo.php"'
             buildConfigField "int", "MATOMO_SERVER_CODE", '35'
-            buildConfigField "boolean", "MATOMO_ENABLED", 'true'
+            buildConfigField "boolean", "MATOMO_ENABLED", 'false'
 
             resValue "string", "clientId", '"ofis-mobile-sit"'
             resValue "string", "clientSecret", '"d28384ec-7368-48ca-8886-91e4a17b8f3f"'
@@ -233,7 +236,7 @@ android {
 
             buildConfigField "String", "MATOMO_SERVER_URL", '"https://olammatomo.azurewebsites.net/matomo.php"'
             buildConfigField "int", "MATOMO_SERVER_CODE", '39'
-            buildConfigField "boolean", "MATOMO_ENABLED", 'true'
+            buildConfigField "boolean", "MATOMO_ENABLED", 'false'
         }
 
         prodofi {
@@ -252,7 +255,7 @@ android {
 
             buildConfigField "String", "MATOMO_SERVER_URL", '"https://olammatomo.azurewebsites.net/matomo.php"'
             buildConfigField "int", "MATOMO_SERVER_CODE", '39'
-            buildConfigField "boolean", "MATOMO_ENABLED", 'true'
+            buildConfigField "boolean", "MATOMO_ENABLED", 'false'
         }
     }
 
@@ -335,7 +338,7 @@ dependencies {
         implementation 'com.github.MKergall:osmbonuspack:6.4'
         // dexter runtime permissions
         implementation 'com.karumi:dexter:4.2.0'
-        implementation 'com.jakewharton.timber:timber:4.7.1'
+//        implementation 'com.jakewharton.timber:timber:4.7.1'
         //    implementation 'com.auth0.android:jwtdecode:1.2.0'
 //    implementation 'com.dynatrace.agent:agent-android:7.+'
 
@@ -374,6 +377,7 @@ dependencies {
         implementation platform('com.google.firebase:firebase-bom:26.5.0')
         implementation 'com.google.firebase:firebase-crashlytics'
         implementation 'com.google.firebase:firebase-analytics'
+        implementation 'com.xw.repo:bubbleseekbar:3.20'
 
     }
 

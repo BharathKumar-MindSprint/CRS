@@ -698,4 +698,31 @@
     <string name="clear">แจ่มใส</string>
     <string name="update_consent_statement">อัปเดตคำชี้แจงความยินยอม</string>
     <string name="cs_page5_21">หากมีข้อสงสัยใด ๆ เกี่ยวกับข้อมูลที่เราจัดเก็บไว้เกี่ยวกับคุณ กรุณาส่งอีเมลถึงเราที่ <a href="privacy@ofi.com">privacy@ofi.com</a>.</string>
+
+    <string name="update_farm_information">Update Farm Information</string>
+    <string name="select_from_existing_farm">Select from existing Farm</string>
+    <string name="create_new_farm">create new farm</string>
+    <string name="add_farm_Information">Add Farm Information</string>
+    <string name="search_farmer">Search Farmer</string>
+    <string name="multifarm_name_search">Search by Name</string>
+    <string name="farm_information">Farm Information</string>
+    <string name="farm_name">Farm Name</string>
+    <string name="farm_code">Farm Code</string>
+    <string name="add_stakeholder">Add Farm Stakeholder</string>
+    <string name="no_match_found">No match found</string>
+    <string name="please_enter_farmer_name">Please enter farmer name and click Add</string>
+    <string name="delink_confirmation">Are you sure to delink the stakeholder?</string>
+    <string name="stakeholder_validation">Please add atleast one stakeholder to proceed</string>
+    <string name="fill_stakeholder_name_role">Please fill all the stakeholder informations</string>
+    <string name="fill_stakeholder_farm_code_name">Please fill the farm name and code</string>
+    <string name="already_syned_survey_info">This survey has already been completed by the other farm stakeholder</string>
+    <string name="record_polygon_location_complete">Polygon Captured</string>
+    <string name="farm_type_warning">Please Choose the Farm Type</string>
+    <string name="search_existing_farm">Search Existing Farm</string>
+    <string name="select_by_nearest_farm">Search by Nearest Farm</string>
+    <string name="recored_polygon_multifarm_info">Farm location already captured by a stakeholder of your farm</string>
+    <string name="recored_polygon_plot_multifarm_info">Farm polygon already captured by a stakeholder of your farm</string>
+    <string name="survey_can_be_completed_by_other_stakeholders">This survey can be  completed by the another farm stakeholder</string>
+    <string name="multifarm_not_synced">Please sync the multifarm details first.</string>
+    <string name="fill_farmergroup_name_multifarm">Please select Farmer Group before adding Farm Stakeholders</string>
 </resources>

@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
@@ -18,6 +19,9 @@ import android.provider.Settings;
 import androidx.appcompat.app.AlertDialog;
 import android.util.Base64;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,6 +41,9 @@ import com.olam.digital.ofis.dynatrace.DynatraceHelper;
 import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
 import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.logging.FabricLogsWriter;
+import com.olam.digital.ofis.model.GeoDTO;
+import com.olam.digital.ofis.multifarm.MultiFarmDTO;
+import com.olam.digital.ofis.multifarm.MultiFarmUtils;
 import com.olam.digital.ofis.tasks.SyncAllTask;
 import com.olam.digital.ofis.tasks.SyncTaskOperationType;
 
@@ -837,6 +844,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             postConsentStatement(networkQueueItemId, handler, msg, total, progress, itemId);
         }else if(itemType.equalsIgnoreCase("updatesubdistrict")){
             postSubdistrictData(networkQueueItemId, handler, msg, total, progress, itemId);
+        }else if(itemType.equalsIgnoreCase("Multifarm Update")){
+            postMultiFarmUpdate(networkQueueItemId, handler, msg, total, progress, itemId);
         }
 
     }
@@ -1685,12 +1694,29 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         final long farmerId = networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
         Cursor moduleAnswers, extraInfo, farmerModule = dl.getFarmerModuleById(farmerModuleId);
 
+        // for MultiFarm
+            MultiFarmUtils.isMultiFarmEnumerator = Utilities.getMultifarmPref(context, MultiFarmUtils.IS_MULTI_FARM_ENUMERATOR);
+//            MultiFarmDTO multifarmDTO=new MultiFarmDTO();
+//            if (MultiFarmUtils.isMultiFarmEnumerator) {
+//                multifarmDTO = dl.getMultiFarmLocationSync(farmerId);
+//            }else{
+//                multifarmDTO.setSynced(1);
+//            }
+
+            boolean isFarmerMultifarmSynced=dl.isMultifarmSubmitted();
+
         if (farmerModule.getCount() > 0) {
             if (!dl.isFarmerSynced(farmerId)) {
                 msg.what = 3;
                 msg.arg1 = total;
                 msg.arg2 =  progress;
                 msg.obj = String.valueOf(res.getString(R.string.farmer_not_synced));
+                handler.dispatchMessage(msg);
+            }else if(MultiFarmUtils.isMultiFarmEnumerator && isFarmerMultifarmSynced) {
+                msg.what = 8;
+                msg.arg1 = total;
+                msg.arg2 = HomeActivity.progressItem = progress + 1;
+                msg.obj = String.valueOf(res.getString(R.string.sync_farmer_and_multifarm_stakeholders));
                 handler.dispatchMessage(msg);
             } else {
                 farmerModule.moveToFirst();
@@ -1733,7 +1759,18 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     submission.put("fmpreview", false);
                     submission.put("app_version",BuildConfig.VERSION_NAME);
                     submission.put(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_FARMER_ID, farmerModule.getInt(farmerModule.getColumnIndex(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_FARMER_ID)));
-                    submission.put(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_FARM_ID, farmerModule.getInt(farmerModule.getColumnIndex(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_FARM_ID)));
+
+//                    int farmId=farmerModule.getInt(farmerModule.getColumnIndex(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_FARM_ID));
+//                    if (MultiFarmUtils.isMultiFarmEnumerator) {
+//                        if (multifarmDTO.getFarmId() != null) {
+//                            farmId= networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID));
+//                        }
+//                    }
+//                    submission.put(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_FARM_ID, farmId);
+                    int farmId=networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID));
+                    submission.put(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_FARM_ID,farmId);
+
+
                     submission.put("recorded_lat", networkQueueItems.getDouble(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LAT)));
                     submission.put("recorded_lng", networkQueueItems.getDouble(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)));
                     submission.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ATTEMPTS, networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ATTEMPTS)));
@@ -1908,12 +1945,13 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         submission.put("questions_included", "");
                         submission.put("answers", answers);
                     }
-                    Log.i("POST", "" + submission.toString());
+                    Log.i("FRANKEVANAPOST", "" + submission.toString());
                     DynatraceHelper.requestPayload(DynatraceConstants.REQUEST+" "+endPoint,submission.toString(),context,true);
                     //increase the count - Adjustment code
                    // recordFailedUpload(0, 0, networkQueueItemId);
 
                     final String finalEndPoint = endPoint;
+                    final int finalFarmId=farmId;
                     okHttpPost(context, endPoint, submission, new Callback() {
                         @Override
                         public void onResponse(Call call, Response postResponse) {
@@ -1933,7 +1971,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                             if (res.getString(R.string.duplicate_survey).equalsIgnoreCase(errorItem)){
                                                 // Do the Activity if the duplicate entry is there
                                                 dl.deleteNetworkQueueItem(networkQueueItemId);
-                                                dl.syncFarmerModule(farmerModuleId, farmerId, moduleId, submissionDate);
+                                                dl.syncFarmerModule(farmerModuleId, farmerId, moduleId, submissionDate,finalFarmId);
 
                                                  // Update the message
                                                 statusMessage = res.getString(R.string.item_synced);
@@ -1944,7 +1982,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                     }else{
                                         // Existing Logic
                                         dl.deleteNetworkQueueItem(networkQueueItemId);
-                                        dl.syncFarmerModule(farmerModuleId, farmerId, moduleId, submissionDate);
+                                        dl.syncFarmerModule(farmerModuleId, farmerId, moduleId, submissionDate,finalFarmId);
 
                                         statusMessage = res.getString(R.string.item_synced);
                                         msg.what = 1;
@@ -2029,26 +2067,55 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         endpoint = "ofisfarmer/farmer/addfarm";
         final JSONObject params = new JSONObject();
 
+         int farmerID1 = networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
+        MultiFarmDTO multifarmDTO=new MultiFarmDTO();
+        MultiFarmUtils.isMultiFarmEnumerator = Utilities.getMultifarmPref(context, MultiFarmUtils.IS_MULTI_FARM_ENUMERATOR);
+        if (MultiFarmUtils.isMultiFarmEnumerator) {
+            multifarmDTO = dl.getMultiFarmPolygonSync(farmerID1);
+        }else{
+            multifarmDTO.setSynced(1);
+        }
+
         if (!dl.isFarmerSynced(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)))) {
             msg.what = 3;
             msg.arg1 = total;
             msg.arg2 = HomeActivity.progressItem =  progress + 1;
             msg.obj = String.valueOf(res.getString(R.string.farmer_not_synced));
             handler.dispatchMessage(msg);
+        }else if(multifarmDTO.getSynced()==0) {
+            msg.what = 7;
+            msg.arg1 = total;
+            msg.arg2 = HomeActivity.progressItem = progress + 1;
+            msg.obj = String.valueOf(res.getString(R.string.multifarm_not_synced));
+            handler.dispatchMessage(msg);
         } else {
             try {
                 int farmerID = networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
                 params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID, farmerID);
-                try{
-                    int farmId = dl.getFarmId(farmerID);
-                    if(farmId != 0){
-                        params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID, farmId);
-                    }else{
+                int farmId = dl.getFarmId(farmerID);
+                if(MultiFarmUtils.isMultiFarmEnumerator){
+                    try {
+                        String farmMultifarmId=dl.getMultiFarmLocationbyId(farmerID);
+                        if (farmMultifarmId!=null) {
+                            params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID, Integer.parseInt(farmMultifarmId));
+                        }else{
+                            params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID, farmId);
+                        }
+                    }catch (Exception e){}
+
+
+                }else {
+                    try {
+                        if (farmId != 0) {
+                            params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID, farmId);
+                        } else {
+                            params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID, networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID)));
+                        }
+                    } catch (Exception e) {
                         params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID, networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID)));
                     }
-                }catch (Exception e){
-                    params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID, networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID)));
                 }
+
                 params.put("farm_plots", networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_PLOTS)));
                 params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ATTEMPTS, networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ATTEMPTS)));
                 if (networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID)) > 0 && networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FULLY_SYNCED)) == 0) {
@@ -2163,24 +2230,50 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
         final JSONObject params = new JSONObject();
 
+        int farmerID1 = networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
+
+        MultiFarmUtils.isMultiFarmEnumerator = Utilities.getMultifarmPref(context, MultiFarmUtils.IS_MULTI_FARM_ENUMERATOR);
+        MultiFarmDTO multifarmDTO=new MultiFarmDTO();
+        if (MultiFarmUtils.isMultiFarmEnumerator) {
+             multifarmDTO = dl.getMultiFarmLocationSync(farmerID1);
+        }else{
+            multifarmDTO.setSynced(1);
+        }
+
         if (!dl.isFarmerSynced(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)))) {
             msg.what = 3;
             msg.arg1 = total;
             msg.arg2 = HomeActivity.progressItem = progress + 1;
             msg.obj = String.valueOf(res.getString(R.string.farmer_not_synced));
             handler.dispatchMessage(msg);
-        } else {
+        }else if(multifarmDTO.getSynced()==0) {
+            msg.what = 7;
+            msg.arg1 = total;
+            msg.arg2 = HomeActivity.progressItem = progress + 1;
+            msg.obj = String.valueOf(res.getString(R.string.multifarm_not_synced));
+            handler.dispatchMessage(msg);
+        }else {
 
             try {
                 int farmerID = networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
                 params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID, farmerID);
                 try{
                     int farmId = dl.getFarmId(farmerID);
-                    if(farmId != 0){
-                        params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID, farmId);
+
+                    if (MultiFarmUtils.isMultiFarmEnumerator){
+                            if (multifarmDTO.getFarmId() != null) {
+                                params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID, Integer.parseInt(multifarmDTO.getFarmId()));
+                            } else {
+                                params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID, farmId);
+                            }
                     }else{
-                        params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID, networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID)));
+                        if (farmId!=0) {
+                            params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID, farmId);
+                        }else{
+                            params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID, networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID)));
+                        }
                     }
+
                 }catch (Exception e){
                     params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID, networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID)));
                 }
@@ -3031,7 +3124,17 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 }
             }catch (Exception e){e.printStackTrace();}
 //            sip releated changes - uncomment farmergroupid
-            params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMERGROUP_ID, networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMERGROUP_ID)));
+            // OCA-562
+            int farmerGroupId= networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMERGROUP_ID));
+            params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMERGROUP_ID,farmerGroupId);
+
+            try {
+                GeoDTO geoDTO=dl.getInfoByFarmerGroupId(farmerGroupId);
+                params.put("programme_id", Integer.parseInt(geoDTO.getProgrammeId()));
+                params.put("partner_id", Integer.parseInt(geoDTO.getPartnerId()));
+                params.put("product_id", Integer.parseInt(geoDTO.getProductId()));
+            }catch (Exception e){}
+
             params.put("recorded_lat", networkQueueItems.getDouble(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LAT)));
             params.put("recorded_lng", networkQueueItems.getDouble(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)));
             params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ATTEMPTS, networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ATTEMPTS)));
@@ -3743,6 +3846,53 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 FirebaseCrashlytics.getInstance().log(e.getMessage());
             }
 
+            JSONArray multiFarmArray=null;
+            String farmsId =null;
+
+            try {
+                boolean isMultiFarm =  Utilities.getMultifarmPref(context, MultiFarmUtils.IS_MULTI_FARM_ENUMERATOR);
+                if(isMultiFarm){
+                    try {
+                        MultiFarmDTO multiFarmDTO = dl.getMultiFarmInfoObj(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID)));
+                        multiFarmArray=multiFarmDTO.getStakeholdersInfo();
+                        jsonObject.put("multifarmStakeholder",multiFarmArray);
+                        jsonObject.put("farmName",multiFarmDTO.getFarmName());
+                        jsonObject.put("farmCode",multiFarmDTO.getFarmCode());
+                        farmsId=multiFarmDTO.getFarmId();
+
+                        if(multiFarmDTO.isExistingFarm()){
+                            jsonObject.put("farmId",farmsId);
+                        }else{
+                            jsonObject.put("farmId",null);
+                        }
+
+//                        String enumeratorId = Utilities.getFromSharedPrefs(context);
+//                        jsonObject.put("enumeratorId",Integer.parseInt(enumeratorId));
+
+                    }catch (Exception e){}
+
+                }
+            }catch (Exception e){
+                FirebaseCrashlytics.getInstance().log(e.getMessage());
+            }
+
+
+//            if (biometric) {
+//                JSONArray jsonArr=new JSONArray();
+//                try {
+//                    String duplicateFarmers = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_DUPLICATE_RECORDS));
+//                    if (duplicateFarmers != null && !duplicateFarmers.equalsIgnoreCase("")) {
+//                        jsonArr = new JSONArray(duplicateFarmers);
+//                    }
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//                try {
+//                    jsonObject.put("dupicates", jsonArr);
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//            }
             final JSONArray jsonArray=new JSONArray();
             jsonArray.put(jsonObject);
             System.out.println("Register_Farmer_Data: " + jsonArray.toString());
@@ -3751,6 +3901,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             if (endpoint.length() > 0) {
 
                 final String finalTempOlamFarmerID = tempOlamFarmerID;
+                final String finalFarmsId = farmsId;
                 okHttpArrayPost(context, endpoint, jsonArray, new Callback() {
                     @Override
                     public void onResponse(Call call, Response postResponse) {
@@ -3764,32 +3915,67 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 //new
                                 JSONArray jsonResponse=new JSONArray(postResponse.body().string());
                                 JSONObject jsonObject1=jsonResponse.getJSONObject(0);
-                                /*String farmUniqueID=SharedPreferenceUtils
-                                        .getInstance(context)
-                                        .getFarmerID(finalTempOlamFarmerID);*/
-//                                SharedPreferenceUtils.getInstance(context).setFarmerID(jsonObject1.getString("olamFarmerId"), String.valueOf(farmUniqueID));
-                               //Fixed for biomatric
-                               // dl.updateSyncedStatus(localFarmerId);
-                                dl.updateSyncedStatusFixed(localFarmerId, jsonObject1.getInt("id"));
-//                                dl.markFarmerAsSynced(localFarmerId, jsonObject1.getInt("id"), jsonObject1.getInt("farmId"), localPlaceId, jsonObject1.getInt("placeId"),jsonObject1.getString("olamFarmerId"),jsonObject1.getString("odFarmerId"));
-                                dl.markFarmerAsSynced(localFarmerId, jsonObject1.getInt("id"), jsonObject1.getInt("farmId"), localPlaceId, jsonObject1.getInt("placeId"),jsonObject1.getString("olamFarmerId"),"odFarmerId");
-                                dl.deleteNetworkQueueItem(networkQueueItemId);
-                                initGPSSync();
-                                statusMessage = res.getString(R.string.item_synced);
-                                msg.what = 1;
-                                msg.arg1 = total;
-                                msg.arg2 = HomeActivity.progressItem = progress + 1;
-                                msg.obj = statusMessage;
-                                handler.dispatchMessage(msg);
-                                // update the cursor if this is part of a multi-sync
-                                if (originalSyncRequestItemId == null) {
-                                    getNetworkQueue(null);
-                                }
-                                syncNetworkQueue(originalSyncRequestItemId, handler);
+
+                                // OFIS -25 -Hiding for UAT
+                              String multiFarmErrorCode=jsonObject1.getString("errorCode");
+                              if(multiFarmErrorCode.equalsIgnoreCase("OFIS_3042")){
+//                                 boolean x=false;
+//                                    if(x){
+
+                                  JSONArray errorFarmerIds=jsonObject1.getJSONArray("errorFarmerIds");
+                                  if(errorFarmerIds.length()>0){
+                                      ArrayList<String> Ids=new ArrayList<>();
+                                      for(int i=0;i<errorFarmerIds.length();i++){
+                                        String farmerId= errorFarmerIds.getString(i);
+                                        Ids.add(farmerId);
+                                      }
+
+                                      String farmerNames=dl.getFarmerNames(Ids.toString().replace("[","").replace("]",""));
+                                      handler.postDelayed(() -> {
+                                          // Your task goes here
+                                          popupMultifarmInfo(farmerNames);
+                                          return;
+                                      },1000);
+                                      postFailureMessage(handler, null, msg, 2, total, progress, res.getString(R.string.item_sync_error), "submitting farmer");
+
+                                  }
+                                   postFailureMessage(handler, null, msg, 2, total, progress, res.getString(R.string.item_sync_error), "submitting farmer");
+
+                               }else{
+                                   // update MultiFarm Table
+                                   //dl.updateFarmerId(localFarmerId, jsonObject1.getInt("id"));
+                                   boolean isMultiFarm =  Utilities.getMultifarmPref(context, MultiFarmUtils.IS_MULTI_FARM_ENUMERATOR);
+                                   JSONArray jsonArrayMultiFarm = null;
+                                   if(isMultiFarm) {
+                                       if (jsonObject1.getJSONArray("multifarmStakeholder") != null) {
+                                           jsonArrayMultiFarm = jsonObject1.getJSONArray("multifarmStakeholder");
+                                       }
+                                   }
+
+
+                                   //Fixed for biomatric
+                                   // dl.updateSyncedStatus(localFarmerId);
+                                   dl.updateSyncedStatusFixed(localFarmerId, jsonObject1.getInt("id"));
+                                   dl.markFarmerAsSynced(localFarmerId, jsonObject1.getInt("id"), jsonObject1.getInt("farmId"), localPlaceId, jsonObject1.getInt("placeId"),jsonObject1.getString("olamFarmerId"),jsonObject1.getString("olamFarmerId"),isMultiFarm,jsonArrayMultiFarm, finalFarmsId);
+                                   dl.deleteNetworkQueueItem(networkQueueItemId);
+                                   initGPSSync();
+                                   statusMessage = res.getString(R.string.item_synced);
+                                   msg.what = 1;
+                                   msg.arg1 = total;
+                                   msg.arg2 = HomeActivity.progressItem = progress + 1;
+                                   msg.obj = statusMessage;
+                                   handler.dispatchMessage(msg);
+                                   // update the cursor if this is part of a multi-sync
+                                   if (originalSyncRequestItemId == null) {
+                                       getNetworkQueue(null);
+                                   }
+                                   syncNetworkQueue(originalSyncRequestItemId, handler);
+                               }
+
+
                             } else {
                                 try {
                                     FabricLogsWriter.printCrashLog(TAG, endpoint,postResponse.code(),"Request : "+jsonArray.toString() + " Response  " +postResponse.networkResponse().toString(),context);
-                                    System.out.println(endpoint + " "+ postResponse.code() + "Request : "+jsonArray.toString() + " Response  " +postResponse.networkResponse().toString());
                                 }catch (Exception e){FirebaseCrashlytics.getInstance().log(e.getMessage());}
                                 long server_item_id = 0, fully_synced = 0;
 
@@ -4715,4 +4901,184 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             FirebaseCrashlytics.getInstance().log("NetworkLayer: Error creating module post object"+e.getMessage());
         }
     }
+
+
+    private void postMultiFarmUpdate(final int networkQueueItemId, final Handler handler, final Message msg, final int total, final int progress, final Integer originalSyncRequestItemId) {
+        Cursor farmer = dl.getFarmerById(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
+        final String endpoint="ofisfarmer/multifarm/update";
+        if (!dl.isFarmerSynced(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)))) {
+            msg.what = 3;
+            msg.arg1 = total;
+            msg.arg2 = HomeActivity.progressItem = progress + 1;
+            msg.obj = String.valueOf(res.getString(R.string.farmer_not_synced));
+            handler.dispatchMessage(msg);
+        }else {
+
+            if (farmer.getCount() > 0) {
+                farmer.moveToFirst();
+
+                JSONArray multiFarmArray=null;
+                boolean isExistingFarm=false;
+                String farmIds=null;
+                JSONObject jsonObject = new JSONObject();
+                try {
+                    MultiFarmDTO multiFarmDTO = dl.getMultiFarmInfoObj(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID)));
+                    multiFarmArray=multiFarmDTO.getStakeholdersInfo();
+                    jsonObject.put("multifarmStakeholder",multiFarmArray);
+                    jsonObject.put("farmName",multiFarmDTO.getFarmName());
+                    jsonObject.put("farmCode",multiFarmDTO.getFarmCode());
+                    jsonObject.put("enumeratorId",Long.valueOf( Utilities.getFromSharedPrefs(context)));
+                    jsonObject.put("farmerId",Long.valueOf(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID))));
+
+
+                     farmIds=multiFarmDTO.getFarmId();
+
+
+                    if(multiFarmDTO.isExistingFarm()){
+                        isExistingFarm=true;
+                        jsonObject.put("farmAvailable",true);
+                        jsonObject.put("farmId",farmIds);
+                    }else{
+                        isExistingFarm=false;
+                        jsonObject.put("farmAvailable",false);
+                        jsonObject.put("farmId",null);
+                    }
+
+                }catch (Exception e){}
+
+                DynatraceHelper.requestPayload(DynatraceConstants.REQUEST+" "+endpoint,jsonObject.toString(),context,true);
+                if (endpoint.length() > 0) {
+                    boolean finalIsExistingFarm = isExistingFarm;
+                    String finalFarmIds = farmIds;
+                    okHttpPost(context, endpoint, jsonObject, new Callback() {
+                        @Override
+                        public void onResponse(Call call, Response postResponse) {
+                            try {
+                                String statusMessage;
+
+                                if (postResponse.isSuccessful()) {
+                                    //new
+                                    JSONObject jsonResponse = new JSONObject(postResponse.body().string());
+
+                                    // Hiding OFIS -25 ticket in UAT
+                                   String multiFarmErrorCode = jsonResponse.getString("errorCode");
+                                   if (multiFarmErrorCode.equalsIgnoreCase("OFIS_3042")) {
+//                                         boolean x=false;
+//                                         if(x){
+                                        JSONArray errorFarmerIds = jsonResponse.getJSONArray("errorFarmerIds");
+                                        if (errorFarmerIds.length() > 0) {
+                                            ArrayList<String> Ids = new ArrayList<>();
+                                            for (int i = 0; i < errorFarmerIds.length(); i++) {
+                                                String farmerId = errorFarmerIds.getString(i);
+                                                Ids.add(farmerId);
+                                            }
+
+                                            String farmerNames = dl.getFarmerNames(Ids.toString().replace("[", "").replace("]", ""));
+                                            handler.postDelayed(() -> {
+                                                // Your task goes here
+                                                popupMultifarmInfo(farmerNames);
+                                                return;
+                                            }, 1000);
+                                            postFailureMessage(handler, null, msg, 2, total, progress, res.getString(R.string.item_sync_error), "submitting farmer");
+
+                                        }
+                                        postFailureMessage(handler, null, msg, 2, total, progress, res.getString(R.string.item_sync_error), "submitting farmer");
+                                    } else {
+
+                                        boolean isExistin = finalIsExistingFarm;
+                                    JSONArray jsonArrayMultiFarm = null;
+                                    String farmerId = null, farmId = null;
+
+                                    if (jsonResponse.getJSONArray("multifarmStakeholder") != null) {
+                                        jsonArrayMultiFarm = jsonResponse.getJSONArray("multifarmStakeholder");
+                                        farmerId = jsonResponse.getString("farmerId");
+                                        farmId = jsonArrayMultiFarm.getJSONObject(0).getString("farmsId");
+                                    }
+
+                                    dl.updateMultifarmInfo(isExistin, Long.valueOf(finalFarmIds), Long.valueOf(farmId), jsonArrayMultiFarm);
+                                    dl.deleteNetworkQueueItem(networkQueueItemId);
+                                    //  dl.updateSyncedStatus(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
+                                    statusMessage = res.getString(R.string.item_synced);
+                                    msg.what = 1;
+                                    msg.arg1 = total;
+                                    msg.arg2 = HomeActivity.progressItem = progress + 1;
+                                    msg.obj = statusMessage;
+                                    handler.dispatchMessage(msg);
+                                    // update the cursor if this is part of a multi-sync
+                                    if (originalSyncRequestItemId == null) {
+                                        getNetworkQueue(null);
+                                    }
+                                    syncNetworkQueue(originalSyncRequestItemId, handler);
+                                }
+
+                                } else {
+
+                                    // Added
+                                    if (postResponse.code() == 401 ) {
+                                        FailureGetRefreshToken(handler, originalSyncRequestItemId, msg, 2, total, progress, null, "submitting farmer");
+                                    } else {
+
+                                        postFailureMessage(handler, null, msg, 2, total, progress, null, "submitting farmer");
+                                             }
+                                }
+                                postResponse.close();
+                            } catch (JSONException | IOException e) {
+
+                                // OW-752 - fixed
+                                //Same farmer ID on different devices
+                                recordFailedUpload(0, 0, networkQueueItemId);
+                                String failureMessage = res.getString(R.string.item_sync_error);
+                                postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting farmer");
+                                FirebaseCrashlytics.getInstance().log("NetworkLayer: Error getting farmer post failure response"+e.getMessage());
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call call, IOException e) {
+                            try {
+                                recordFailedUpload(0, 0, networkQueueItemId);
+
+                                String failureMessage = res.getString(R.string.networking_error);
+                                if (e != null) {
+                                    failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
+                                }
+                                postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting survey module");
+                            } catch (Exception onfailEx) {
+                                String failureMessage = res.getString(R.string.networking_error);
+                                postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting survey module");
+                                FirebaseCrashlytics.getInstance().log(failureMessage+e.getMessage());
+                                onfailEx.printStackTrace();
+                            }
+                        }
+
+                    });
+                }
+            }
+        }
+    }
+
+    public void popupMultifarmInfo(String msg) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setCancelable(false);
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+        View dialogView= inflater.inflate(R.layout.common_alert_dialog, null);
+        builder.setView(dialogView);
+        TextView tvMsg=(TextView)dialogView.findViewById(R.id.tv_msg);
+        TextView tvTitle= dialogView.findViewById(R.id.tv_title);
+        tvTitle.setVisibility(View.VISIBLE);
+        tvTitle.setText("Notification");
+        tvTitle.setVisibility(View.GONE);
+        tvMsg.setText("Already farms are mapped with the stakeholder "+ msg +". Kindly map again");
+        Button btnNo = (Button)dialogView.findViewById(R.id.btn_no);
+        btnNo.setVisibility(View.GONE);
+        Button btnYes = (Button)dialogView.findViewById(R.id.btn_yes);
+        btnYes.setText(res.getString(R.string.msg_ok));
+        AlertDialog alert = builder.create();
+        AlertDialog finalAlert = alert;
+        btnYes.setOnClickListener(view -> finalAlert.dismiss());
+        alert.show();
+        return;
+    }
+
+
 }

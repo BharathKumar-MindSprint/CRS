@@ -203,6 +203,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
         }
     };
     private LocationRequest locationRequest;
+    Logger logger;
     // boolean flag to toggle the ui
 //    private Boolean mRequestingLocationUpdates;
     @Override
@@ -223,7 +224,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_TITLE);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-
+        logger.addRecordToLog("Record polygon activity started");
 
         Dexter.withActivity(this)
                 .withPermission(Manifest.permission.ACCESS_FINE_LOCATION)
@@ -231,6 +232,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                     @Override
                     public void onPermissionGranted(PermissionGrantedResponse response) {
 //                        mRequestingLocationUpdates = true;
+                        logger.addRecordToLog("onPermissionGranted");
                         startLocationUpdates();
                     }
 
@@ -299,6 +301,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
         mStartLoggingButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                logger.addRecordToLog("mStartLoggingButton");
                 MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_START_LOGGING,  ScreenNameConstants.BUTTON_CLICKED);
                 if(pause.getText().toString().equalsIgnoreCase("resume")){
 
@@ -1061,6 +1064,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
     }
 
     boolean startLocationUpdates() {
+        logger.addRecordToLog("startLocationUpdates");
         boolean result = false;
         for (final String provider : mLocationManager.getProviders(true)) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
@@ -1075,6 +1079,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
     @Override
     protected void onPause() {
         super.onPause();
+        logger.addRecordToLog("onPause checkSelfPermission");
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             mLocationManager.removeUpdates(this);
         }
@@ -1152,6 +1157,14 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
             return;
         }
         mLastTime = currentTime;
+
+        // Capture the Logger item 
+
+        logger.addRecordToLog( currentTrackname +"-- >  Accuracy -->" + pLoc.getAccuracy()  +"\n" +
+                "    Latitude  -->"+ pLoc.getLatitude() +"\n" +
+                "    Longitude  -->"+ pLoc.getLongitude() +"\n" +
+                "    Altitude  -->"+ pLoc.getAltitude() +"\n" +
+                "    Bearing  -->"+ pLoc.getBearing()+"\n" );
 
         GeoPoint newLocation = new GeoPoint(pLoc);
         if (!myLocationOverlay.isEnabled()) {
@@ -1742,18 +1755,23 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
     }
 
     private boolean startUpdate() {
+        logger.addRecordToLog("startLocationUpdates");
         locationRequest = new LocationRequest();
         locationRequest.setInterval(INTERVAL);
         locationRequest.setFastestInterval(FASTEST_INTERVAL);
         locationRequest.setPriority(new GPSTracker(this).getLocationMode());
         locationRequest.setSmallestDisplacement(DISPLACEMENT);
+        logger.addRecordToLog("INTERVAL :" + INTERVAL +"\n" +
+                "FASTEST_INTERVAL :" + FASTEST_INTERVAL +"\n" +
+                "Priority: " +  new GPSTracker(this).getLocationMode() +"\n" +
+                "SmallestDisplacement: " +    DISPLACEMENT );
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             Toast.makeText(this, "Permission Required", Toast.LENGTH_SHORT).show();
             return false;
         } else {
-
+            logger.addRecordToLog("getFusedLocationProviderClient");
             getFusedLocationProviderClient(this).requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper());
             return true;
         }

@@ -1981,11 +1981,13 @@ public class DynamicQuestions {
                     }
 
                 } else {
-                    String currentAnswerValue;
-                    if (isRepeaterItem && repeaterAnswers != null) {
+                    String currentAnswerValue = null;
+                    if (isRepeaterItem && repeaterAnswers != null && repeaterAnswers.getCount() > 0 ) {
                         currentAnswerValue = repeaterAnswers.getString(repeaterAnswers.getColumnIndex("answer_" + datatype));
                     } else {
-                        currentAnswerValue = qCursor.getString(qCursor.getColumnIndex("answer_" + datatype));
+                        if (qCursor.getColumnIndex("answer_" + datatype) != -1) {
+                            currentAnswerValue = qCursor.getString(qCursor.getColumnIndex("answer_" + datatype));
+                        }
                     }
 
                     for (int i = 0; i < spinner.getCount(); i++) {
@@ -2172,11 +2174,13 @@ public class DynamicQuestions {
                     }
 
                 } else {
-                    String currentAnswerValue;
-                    if (isRepeaterItem && repeaterAnswers != null) {
+                    String currentAnswerValue = null;
+                    if (isRepeaterItem && repeaterAnswers != null && repeaterAnswers.getCount() > 0) {
                         currentAnswerValue = repeaterAnswers.getString(repeaterAnswers.getColumnIndex("answer_" + datatype));
                     } else {
-                        currentAnswerValue = qCursor.getString(qCursor.getColumnIndex("answer_" + datatype));
+                        if (qCursor.getColumnIndex("answer_" + datatype) != -1) {
+                            currentAnswerValue = qCursor.getString(qCursor.getColumnIndex("answer_" + datatype));
+                        }
                     }
 
                     for (int i = 0; i < spinner.getCount(); i++) {

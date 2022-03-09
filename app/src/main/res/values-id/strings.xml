@@ -608,4 +608,8 @@
     <string name="national_id_info">Please update the National ID of farmer</string>
     <string name="please_click_checkbox">Silakan klik semua kotak centang yang sesuai</string>
     <string name="please_sign_within_the_boundary_box">Silakan masuk di dalam kotak batas</string>
+    <string name="txt_farm_name">Farm Name:</string>
+    <string name="txt_farm_code">Farm Code:</string>
+    <string name="farmer_role">Role:</string>
+    <string name="farm_detail_confirmation_text">Please confirm if the below farm information linked is up-to-date, to proceed with the survey</string>
 </resources>

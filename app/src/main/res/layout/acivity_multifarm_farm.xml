@@ -1,0 +1,209 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/ofis_page_background"
+    tools:context="com.olam.digital.ofis.FindFarmerActivity"
+    android:id="@+id/layout_find_farmer"
+    tools:ignore="Overdraw">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/topSection"
+        android:background="@color/ofis_farmer_screen_actions_background">
+
+        <LinearLayout
+            android:id="@+id/ll_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:weightSum="10"
+            android:background="@color/dark_gray"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:visibility="gone"
+                android:layout_width="wrap_content"
+                android:src="@drawable/ic_consent_close"
+                android:layout_alignTop="@+id/signature_pad"
+                android:id="@+id/back_btn"
+                android:padding="10dp"
+                android:layout_weight="1"
+                android:gravity="left|end"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/tv_title_matchresult_dialog"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:textColor="@color/black"
+                android:padding="5dp"
+                android:layout_marginLeft="10dp"
+                android:text="@string/add_farm_Information"
+                android:layout_weight="9"
+                android:textAppearance="?android:textAppearanceMedium"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:src="@drawable/ic_close_info"
+                android:layout_alignTop="@+id/signature_pad"
+                android:id="@+id/cancel_btn"
+                android:padding="10dp"
+                android:layout_weight="1"
+                android:gravity="right|end"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/existingFarmLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/activity_horizontal_margin"
+                android:orientation="vertical">
+            <TextView
+                android:layout_width="match_parent"
+                android:textColor="@color/white"
+                android:layout_marginTop="5dp"
+                android:text="@string/select_from_existing_farm"
+                android:layout_height="wrap_content"/>
+
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="@dimen/margin_10"
+                    android:background="@drawable/ofis_edit_text_holo_dark">
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textCapWords"
+                        android:textColorHint="@color/ofis_base_font_white"
+                        android:textSize="@dimen/ofis_input_field_text"
+                        android:id="@+id/existingFarmTV"
+                        android:layout_weight="1"
+                        android:textColor="@color/ofis_base_font_white"
+                        android:hint="@string/search_existing_farm"
+                        android:background="@android:color/transparent"/>
+                    <ImageButton
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:id="@+id/imageButton"
+                        android:layout_weight="8"
+                        app:srcCompat="@drawable/ic_search"
+                        android:background="@android:color/transparent"
+                        android:contentDescription="@string/Search" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/searchSection"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/topSection"
+        android:background="@color/btn_primary_inner"
+        android:layout_marginBottom="@dimen/margin_10"
+        android:orientation="vertical">
+        <TextView
+            android:text="-OR-"
+            android:layout_width="match_parent"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:layout_margin="@dimen/margin_10"
+            android:textColor="@color/ofis_text_field"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:text="@string/select_by_nearest_farm"
+            android:layout_width="match_parent"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:textColor="@color/ofis_text_field"
+            android:layout_height="wrap_content"/>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_marginTop="@dimen/margin_10"
+            android:layout_marginLeft="@dimen/activity_vertical_margin"
+            android:layout_marginRight="@dimen/activity_vertical_margin"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:text="0km"
+                android:textColor="@color/ofis_text_field"
+                android:layout_alignParentRight="false"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <TextView
+                android:text="10km"
+                android:textColor="@color/ofis_text_field"
+                android:layout_alignParentRight="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </RelativeLayout>
+
+        <com.xw.repo.BubbleSeekBar
+            android:id="@+id/seekbarKM"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:bsb_auto_adjust_section_mark="true"
+            app:bsb_max="10"
+            app:bsb_rtl="false"
+            android:layout_margin="@dimen/margin_10"
+            android:layout_marginLeft="@dimen/activity_vertical_margin"
+            android:layout_marginRight="@dimen/activity_vertical_margin"
+            app:bsb_second_track_color="@color/ofis_action_button_background"
+            app:bsb_section_count="10"
+            app:bsb_section_text_position="below_section_mark"
+            app:bsb_show_section_mark="true"
+            app:bsb_show_section_text="true"
+            app:bsb_show_thumb_text="true"
+            app:bsb_touch_to_seek="true"/>
+
+        <Button
+            android:id="@+id/searchFarmLocationBtn"
+            android:text="@string/Search"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:textColor="@color/ofis_base_font_white"
+            android:layout_marginLeft="@dimen/activity_vertical_margin"
+            android:layout_marginRight="@dimen/activity_vertical_margin"
+            android:background="@color/ofis_action_button_background"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+
+
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/bottomSection"
+        android:layout_margin="@dimen/margin_10"
+        android:layout_below="@+id/searchSection">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/multiFarmFarmReyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:divider="@android:color/transparent"
+            android:dividerHeight="2dp"/>
+    </LinearLayout>
+
+</RelativeLayout>

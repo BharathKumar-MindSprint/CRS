@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/btn_white_rec"
+    android:layout_height="wrap_content">
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/btn_white_rec">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:weightSum="1"
+        android:layout_margin="5dp"
+        android:background="@drawable/btn_white_rec"
+        android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:id="@+id/ll_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:background="@drawable/btn_white_rec"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tv_farminfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="5dp"
+            android:textColor="@color/text_label_attendee"
+            android:paddingLeft="15dp"
+            android:text="@string/farm_detail_confirmation_text"
+            android:layout_weight="9"
+            android:textSize="@dimen/ofis_large_text"
+            android:textStyle="normal" />
+
+        <ImageView
+            android:id="@+id/btn_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="left|end"
+            android:padding="10dp"
+            android:layout_alignRight="@id/tv_farminfo"
+            bind:srcCompat="@drawable/ic_cross"
+            tools:ignore="VectorDrawableCompat" />
+
+    </LinearLayout>
+
+
+
+    <LinearLayout
+        android:layout_marginTop="@dimen/ofis_large_pad"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_marginTop="@dimen/ofis_small_pad"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="2"
+            android:paddingLeft="15dp"
+            android:textAppearance="?android:textAppearanceSmall"
+            android:textStyle="normal"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/farmer_name_title"
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:text="@string/txt_farm_name"
+                android:textSize="@dimen/ofis_large_text"
+                android:textColor="@color/text_label_attendee" />
+
+            <TextView
+                android:layout_weight="1"
+                android:id="@+id/farm_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:text="@string/farm_name"
+                android:textStyle="bold"
+                android:textSize="@dimen/ofis_large_text"
+                android:textColor="@color/text_label_attendee"  />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_marginTop="@dimen/ofis_small_pad"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="2"
+            android:paddingLeft="15dp"
+            android:textAppearance="?android:textAppearanceSmall"
+            android:textStyle="normal"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/farm_code_title"
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:text="@string/txt_farm_code"
+                android:textSize="@dimen/ofis_large_text"
+                android:textColor="@color/text_label_attendee" />
+
+            <TextView
+                android:layout_weight="1"
+                android:id="@+id/farm_code"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:text="@string/farm_code"
+                android:textStyle="bold"
+                android:textSize="@dimen/ofis_large_text"
+                android:textColor="@color/text_label_attendee"  />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_marginTop="@dimen/ofis_small_pad"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingLeft="15dp"
+        android:animateLayoutChanges="true"
+        android:id="@+id/farmerList">
+
+    </LinearLayout>
+
+        <LinearLayout
+            android:layout_margin="@dimen/margin_10"
+            android:padding="@dimen/ofis_large_pad"
+            android:id="@+id/ll_footer"
+            android:paddingLeft="15dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btn_ok"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="@dimen/ofis_large_text"
+                android:textColor="@color/ofis_base_font_white"
+                android:background="@color/ofis_action_button_background"
+                android:layout_marginRight="@dimen/ofis_med_pad"
+                android:layout_marginLeft="@dimen/ofis_large_pad"
+                android:text="@string/msg_ok" />
+
+
+            <Button
+                android:id="@+id/btnUpdate"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="@color/white"
+                android:textSize="@dimen/ofis_large_text"
+                android:layout_marginLeft="@dimen/ofis_med_pad"
+                android:layout_marginRight="@dimen/ofis_large_pad"
+                android:background="@color/ofis_action_button_background"
+                android:text="@string/update" />
+
+        </LinearLayout>
+    </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

@@ -12,7 +12,7 @@ class OFISDB extends SQLiteOpenHelper {
     private static OFISDB sInstance;
 
 
-    private static final int DATABASE_VERSION = 137;
+    private static final int DATABASE_VERSION = 140;
 
 
     private static final String DATABASE_NAME = "ofismobile";
@@ -197,6 +197,7 @@ class OFISDB extends SQLiteOpenHelper {
             + " ( " + OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_MODULE_ID + " INTEGER, "
             + OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_MODULEASSIGNMENT_ID + " INTEGER, " + OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_MODULEASSIGNMENT_TYPE + " TEXT, "
             + OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_IS_CHILD_LABOUR + " TEXT, " + OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_SURVEY_CODE + " TEXT, "
+            + OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_IS_FARM_SURVEY + " TEXT, " + OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_ROLE_ID + " TEXT, "
             + OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_RECURRENCE_FREQUENCY + " INTEGER, " + OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_RECURRENCE_TYPE + " TEXT, " +
             OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_START_DATE + " TEXT, "
             + OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_DISABLED_MONTHS + " TEXT)";
@@ -665,6 +666,46 @@ class OFISDB extends SQLiteOpenHelper {
             OFISDBContract.Subquestionanswer.COLUMN_NAME_REPORT_YEAR + " TEXT, "+OFISDBContract.Subquestionanswer.COLUMN_NAME_POSITION + " TEXT)";
 
 
+    private static final String OFIS_MULTIFARM_FARM_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.FarmStakeHolderInformation.TABLE_NAME
+            + " ( " + OFISDBContract.FarmStakeHolderInformation.COLUMN_NAME_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+            + OFISDBContract.FarmStakeHolderInformation.COLUMN_NAME_FARMER_ID + " TEXT, "
+            + OFISDBContract.FarmStakeHolderInformation.COLUMN_NAME_FARM_NAME + " TEXT, "
+            + OFISDBContract.FarmStakeHolderInformation.COLUMN_NAME_FARMER_NAME + " TEXT, "
+            + OFISDBContract.FarmStakeHolderInformation.COLUMN_NAME_FARM_CODE + " TEXT, "
+            + OFISDBContract.FarmStakeHolderInformation.COLUMN_NAME_STAKE_HOLDER_FARMER_NAME + " TEXT, "
+            + OFISDBContract.FarmStakeHolderInformation.COLUMN_NAME_FARM_ID + " TEXT, "
+            + OFISDBContract.FarmStakeHolderInformation.COLUMN_NAME_STAKE_HOLDER_FARMER_ID + " TEXT, "
+            + OFISDBContract.FarmStakeHolderInformation.COLUMN_NAME_STAKE_HOLDER_ROLE_ID + " TEXT, "
+            + OFISDBContract.FarmStakeHolderInformation.COLUMN_NAME_STAKE_HOLDER_SYNC + " INTEGER )";
+
+    // create SubModules
+    private static final String OFIS_MULTIFARM_ROLES_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.MultiFarmRoles.TABLE_NAME
+            + " ( " + OFISDBContract.MultiFarmRoles.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.MultiFarmRoles.COLUMN_NAME_NAME + " TEXT, "
+            + OFISDBContract.MultiFarmRoles.COLUMN_NAME_NAME_FR + " TEXT, " + OFISDBContract.MultiFarmRoles.COLUMN_NAME_NAME_ES + " TEXT, "
+            + OFISDBContract.MultiFarmRoles.COLUMN_NAME_NAME_ID + " TEXT, " + OFISDBContract.MultiFarmRoles.COLUMN_NAME_NAME_PT + " TEXT, "
+            + OFISDBContract.MultiFarmRoles.COLUMN_NAME_NAME_TR + " TEXT, " + OFISDBContract.MultiFarmRoles.COLUMN_NAME_NAME_LO + " TEXT, "
+            + OFISDBContract.MultiFarmRoles.COLUMN_NAME_NAME_VI + " TEXT, " + OFISDBContract.MultiFarmRoles.COLUMN_NAME_NAME_TH + " TEXT )";
+
+
+    private static final String OFIS_MULTIFARM_FARMS_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.MultiFarmFarms.TABLE_NAME
+            + " ( " + OFISDBContract.MultiFarmFarms.COLUMN_NAME_NAME_FARM_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.MultiFarmFarms.COLUMN_NAME_FARMER_ID + " TEXT, "
+            + OFISDBContract.MultiFarmFarms.COLUMN_NAME_NAME_FARM_NAME + " TEXT, " + OFISDBContract.MultiFarmFarms.COLUMN_NAME_NAME_FARM_CODE + " TEXT, "
+            + OFISDBContract.MultiFarmFarms.COLUMN_NAME_RECORDED_PLOTS+ " TEXT, "
+            + OFISDBContract.MultiFarmFarms.COLUMN_NAME_EXISTING_FARM_TYPE + " INTEGER DEFAULT 1, "
+            + OFISDBContract.MultiFarmFarms.COLUMN_NAME_NAME_LATITUDE + " TEXT, "  + OFISDBContract.MultiFarmFarms.COLUMN_NAME_NAME_LONGITUDE + " TEXT, "
+            + OFISDBContract.MultiFarmFarms.COLUMN_NAME_NAME_STAKE_HOLDERS + " TEXT, " + OFISDBContract.MultiFarmFarms.COLUMN_NAME_IS_SYNCED + " INTEGER DEFAULT 0)";
+
+    private static final String OFIS_MULTIFARM_FARMS_STAKEHOLDER_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.MultiFarmStakeholderFarms.TABLE_NAME
+            + " ( " + OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_STAKE_HOLDER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+            + OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_ID + " TEXT, "
+            + OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_FARMER_ID + " TEXT, "
+            + OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_NAME_FARM_ID + " TEXT, "
+            + OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_FARM_ROLE_ID+ " TEXT, "
+            + OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_NAME_FARM_NAME + " TEXT, "
+            + OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_NAME_FARM_CODE + " TEXT, "
+            + OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_IS_SYNCED + " INTEGER DEFAULT 1)";
+
+
     public static OFISDB getInstance(Context context) {
         if (sInstance == null) {
             sInstance = new OFISDB(context.getApplicationContext());
@@ -764,6 +805,11 @@ class OFISDB extends SQLiteOpenHelper {
 //      farmerleads
         sqLiteDatabase.execSQL(OFIS_FARMERLEADS_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_FARMERASSIGNMENTS_TABLE_CREATE);
+
+     //   sqLiteDatabase.execSQL(OFIS_MULTIFARM_FARM_TABLE_CREATE);
+        sqLiteDatabase.execSQL(OFIS_MULTIFARM_ROLES_TABLE_CREATE);
+        sqLiteDatabase.execSQL(OFIS_MULTIFARM_FARMS_TABLE_CREATE);
+        sqLiteDatabase.execSQL(OFIS_MULTIFARM_FARMS_STAKEHOLDER_TABLE_CREATE);
     }
 
     @Override
@@ -846,6 +892,11 @@ class OFISDB extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL("drop table IF EXISTS subdistricts");
         sqLiteDatabase.execSQL("drop table IF EXISTS farmerLeads");
         sqLiteDatabase.execSQL("drop table IF EXISTS assignments");
+
+      //  sqLiteDatabase.execSQL("drop table IF EXISTS farmStakeHolder");
+        sqLiteDatabase.execSQL("drop table IF EXISTS multifarmRoles");
+        sqLiteDatabase.execSQL("drop table IF EXISTS multifarmFarms");
+        sqLiteDatabase.execSQL("drop table IF EXISTS stakeHolders");
 
         onCreate(sqLiteDatabase);
     }

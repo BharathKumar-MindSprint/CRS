@@ -260,6 +260,8 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_SURVEY_CODE = "surveyCode";
         public static final  String COLUMN_NAME_START_DATE="startDate";
         public static final String COLUMN_NAME_IS_CHILD_LABOUR = "childLabour";
+        public static final String COLUMN_NAME_IS_FARM_SURVEY = "isFarmSurvey";
+        public static final String COLUMN_NAME_ROLE_ID = "fkFarmerRoleId";
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
                     add(COLUMN_NAME_ID);
@@ -272,6 +274,8 @@ public class OFISDBContract {
                     add(COLUMN_NAME_SURVEY_CODE);
                     add(COLUMN_NAME_IS_CHILD_LABOUR);
                     add(COLUMN_NAME_START_DATE);
+                    add(COLUMN_NAME_IS_FARM_SURVEY);
+                    add(COLUMN_NAME_ROLE_ID);
                 }}
         );
     }
@@ -904,6 +908,36 @@ public class OFISDBContract {
         );
     }
 
+    public static abstract class FarmStakeHolderInformation implements BaseColumns {
+        public static final String TABLE_NAME = "farmStakeHolder";
+        public static final String COLUMN_NAME_ID = "id";
+        public static final String COLUMN_NAME_FARMER_ID = "farmerId";
+        public static final String COLUMN_NAME_FARMER_NAME = "farmerName";
+
+        public static final String COLUMN_NAME_FARM_NAME = "farmName";
+        public static final String COLUMN_NAME_FARM_CODE = "farmCode";
+        public static final String COLUMN_NAME_FARM_ID = "farmID";
+
+        public static final String COLUMN_NAME_STAKE_HOLDER_FARMER_ID = "stakeHolderfarmerId";
+        public static final String COLUMN_NAME_STAKE_HOLDER_FARMER_NAME = "stakeHolderfarmerName";
+        public static final String COLUMN_NAME_STAKE_HOLDER_ROLE_ID = "stakeHolderRoleId";
+
+        public static final String COLUMN_NAME_STAKE_HOLDER_SYNC= "synced";
+
+        public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
+                new ArrayList<String>() {{
+                    add(COLUMN_NAME_ID);
+                    add(COLUMN_NAME_FARMER_ID);
+                    add(COLUMN_NAME_FARM_NAME);
+                    add(COLUMN_NAME_FARM_CODE);
+                    add(COLUMN_NAME_STAKE_HOLDER_FARMER_ID);
+                    add(COLUMN_NAME_STAKE_HOLDER_ROLE_ID);
+                    add(COLUMN_NAME_STAKE_HOLDER_SYNC);
+                    add(COLUMN_NAME_STAKE_HOLDER_FARMER_NAME);
+                    add(COLUMN_NAME_FARM_ID);
+                }}
+        );
+    }
     public static abstract class FarmerNationalIDs implements BaseColumns {
         public static final String TABLE_NAME = "farmernationalids";
         public static final String COLUMN_NAME_ID = "id";
@@ -2126,6 +2160,90 @@ public class OFISDBContract {
                 put(SignatureEntry.TABLE_NAME, SignatureEntry.COLUMN_LIST);
             }};
 
+    public static abstract class MultiFarmRoles implements BaseColumns {
+        public static final String TABLE_NAME = "multifarmRoles";
+        public static final String COLUMN_NAME_ID = "id";
+        public static final String COLUMN_NAME_NAME = "name";
+        public static final String COLUMN_NAME_NAME_FR = "name_fr";
+        public static final String COLUMN_NAME_NAME_ES = "name_es";
+        public static final String COLUMN_NAME_NAME_ID = "name_id";
+        public static final String COLUMN_NAME_NAME_PT = "name_pt";
+        public static final String COLUMN_NAME_NAME_TR = "name_tr";
+        public static final String COLUMN_NAME_NAME_LO = "name_lo";
+        public static final String COLUMN_NAME_NAME_VI = "name_vi";
+        public static final String COLUMN_NAME_NAME_TH = "name_th";
+        public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
+                new ArrayList<String>() {{
+                    add(COLUMN_NAME_ID);
+                    add(COLUMN_NAME_NAME);
+                    add(COLUMN_NAME_NAME_FR);
+                    add(COLUMN_NAME_NAME_ES);
+                    add(COLUMN_NAME_NAME_ID);
+                    add(COLUMN_NAME_NAME_PT);
+                    add(COLUMN_NAME_NAME_TR);
+                    add(COLUMN_NAME_NAME_LO);
+                    add(COLUMN_NAME_NAME_VI);
+                    add(COLUMN_NAME_NAME_TH);
+                }}
+        );
+    }
+
+    public static abstract class MultiFarmFarms implements BaseColumns {
+        public static final String TABLE_NAME = "multifarmFarms";
+        public static final String COLUMN_NAME_ID = "farm_id";
+        public static final String COLUMN_NAME_FARMER_ID = "farmerId";
+        public static final String COLUMN_NAME_NAME_FARM_NAME = "farmName";
+        public static final String COLUMN_NAME_NAME_FARM_CODE = "farmCode";
+        public static final String COLUMN_NAME_NAME_FARM_ID = "farm_id";
+        public static final String COLUMN_NAME_EXISTING_FARM_TYPE = "farmType";
+        public static final String COLUMN_NAME_RECORDED_PLOTS= "positionData";
+       // public static final String COLUMN_NAME_NAME_IS_FARM_AVAILABLE = "farm_available";
+        public static final String COLUMN_NAME_NAME_LATITUDE = "primary_lat";
+        public static final String COLUMN_NAME_NAME_LONGITUDE = "primary_lng";
+        public static final String COLUMN_NAME_NAME_STAKE_HOLDERS = "stakeHolders";
+        public static final String  COLUMN_NAME_IS_SYNCED="Synced";
+
+        public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
+                new ArrayList<String>() {{
+                    add(COLUMN_NAME_NAME_FARM_ID);
+                    add(COLUMN_NAME_FARMER_ID);
+                    add(COLUMN_NAME_NAME_FARM_NAME);
+                    add(COLUMN_NAME_NAME_FARM_CODE);
+                    add(COLUMN_NAME_RECORDED_PLOTS);
+                    add(COLUMN_NAME_NAME_LATITUDE);
+                    add(COLUMN_NAME_NAME_LONGITUDE);
+                    add(COLUMN_NAME_NAME_STAKE_HOLDERS);
+                    add(COLUMN_NAME_IS_SYNCED);
+                }}
+        );
+    }
+
+
+    public static abstract class MultiFarmStakeholderFarms implements BaseColumns {
+        public static final String TABLE_NAME = "stakeHolders";
+        public static final String COLUMN_NAME_STAKE_HOLDER_ID = "keyId";
+        public static final String COLUMN_NAME_ID = "id";
+        public static final String COLUMN_NAME_FARMER_ID = "farmerId";
+        public static final String COLUMN_NAME_NAME_FARM_ID = "farmsId";
+        public static final String COLUMN_NAME_FARM_ROLE_ID = "farmerRoleId";
+        public static final String COLUMN_NAME_NAME_FARM_NAME = "farmName";
+        public static final String COLUMN_NAME_NAME_FARM_CODE = "farmCode";
+        public static final String COLUMN_NAME_IS_SYNCED = "synced";
+
+
+
+        public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
+                new ArrayList<String>() {{
+                    add(COLUMN_NAME_ID);
+                    add(COLUMN_NAME_FARMER_ID);
+                    add(COLUMN_NAME_NAME_FARM_ID);
+                    add(COLUMN_NAME_FARM_ROLE_ID);
+                    add(COLUMN_NAME_NAME_FARM_NAME);
+                    add(COLUMN_NAME_NAME_FARM_CODE);
+
+                }}
+        );
+    }
 
 
 }
