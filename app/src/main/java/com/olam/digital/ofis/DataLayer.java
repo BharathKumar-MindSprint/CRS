@@ -3682,8 +3682,8 @@ public class DataLayer {
         try {
             while (nids.moveToNext()) {
 //                commenting OFIS OD Logic
-                String isSubDistCapture = nids.getString(nids.getColumnIndex(OFISDBContract.CountriesEntry.COLUMN_NAME_ISSUBDISTCAPTURE));
-//                String isSubDistCapture = "false";
+//                String isSubDistCapture = nids.getString(nids.getColumnIndex(OFISDBContract.CountriesEntry.COLUMN_NAME_ISSUBDISTCAPTURE));
+                String isSubDistCapture = "false";
                 if (isSubDistCapture.equalsIgnoreCase("true")) {
                     status = true;
                     break;
