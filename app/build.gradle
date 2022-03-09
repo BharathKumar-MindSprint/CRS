@@ -38,8 +38,9 @@ android {
         multiDexEnabled true
 
 
-        versionCode 96
-        versionName "10.8.6"
+
+        versionCode 50
+        versionName "10.4.4"
 
 
 
@@ -231,6 +232,7 @@ android {
             resValue "string", "applicationName", "OFIS Companion"
             resValue "string", "AUTH_SERVER_URL", 'https://digitalauth.olamnet.com/auth/realms/ofis-dse/protocol/openid-connect/'
             buildConfigField 'String', 'HOST', '"https://otofis-zuul.olamdigital.com/"'
+            buildConfigField 'String', 'ODHOST', '"https://sit-apigateway.olamdirect.com/"'
 
             buildConfigField "String", "MATOMO_SERVER_URL", '"https://olammatomo.azurewebsites.net/matomo.php"'
             buildConfigField "int", "MATOMO_SERVER_CODE", '39'
@@ -249,6 +251,7 @@ android {
             resValue "string", "applicationName", "OFI Companion"
             resValue "string", "AUTH_SERVER_URL", 'https://digitalauth.olamnet.com/auth/realms/ofis-dse/protocol/openid-connect/'
             buildConfigField 'String', 'HOST', '"https://otofis-zuul.olamdigital.com/"'
+            buildConfigField 'String', 'ODHOST', '"https://sit-apigateway.olamdirect.com/"'
 
             buildConfigField "String", "MATOMO_SERVER_URL", '"https://olammatomo.azurewebsites.net/matomo.php"'
             buildConfigField "int", "MATOMO_SERVER_CODE", '39'
