@@ -43,7 +43,7 @@
                         android:id="@+id/nationalidphoto"
                         android:layout_width="74dp"
                         android:tooltipText="@string/captureid"
-                        android:background="@drawable/empty_farmer_icon"
+                        android:background="@drawable/ic_nid_group"
                         android:layout_height="94dp"
                         tools:ignore="VectorDrawableCompat" />
 

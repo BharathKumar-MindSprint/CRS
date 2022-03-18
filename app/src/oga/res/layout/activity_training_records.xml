@@ -8,9 +8,9 @@
     tools:context="com.olam.digital.ofis.TrainingRecords">
 
     <ImageView
+        android:id="@+id/topSectionBackground"
         android:layout_width="match_parent"
         android:layout_height="70dp"
-        android:id="@+id/topSectionBackground"
         android:background="@color/ofis_farmer_screen_actions_background"
         android:contentDescription="@string/cd_topSectionColour" />
 
@@ -85,23 +85,22 @@
         <RelativeLayout
             android:orientation="horizontal"
             android:layout_width="0dp"
-            android:layout_height="85dp"
+            android:layout_height="75dp"
             android:layout_weight="2"
             android:paddingTop="10dp"
             android:paddingLeft="0dp"
             android:paddingRight="10dp">
 
             <ImageButton
+                android:id="@+id/addTrainingRecord"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/addTrainingRecord"
-                app:srcCompat="@drawable/ic_ofis_add"
-                android:scaleType="center"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
                 android:background="@android:color/transparent"
                 android:contentDescription="@string/Save"
-                android:layout_centerVertical="true"
-                android:layout_alignParentRight="true"
-                />
+                android:scaleType="center"
+                app:srcCompat="@drawable/ic_ofis_add" />
 
         </RelativeLayout>
 
