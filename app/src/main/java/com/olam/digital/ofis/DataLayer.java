@@ -4575,12 +4575,12 @@ public class DataLayer {
             if (newPlaceId > 0) {
                 newValues.put(OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID, newPlaceId);
             }
-            /*try {
+            try {
                 System.out.println("dl_odFarmerId:" + odFarmerId);
-                newValues.put(OFISDBContract.FarmerEntry.COLUMN_NAME_ODFARMERID, odFarmerId);
+                newValues.put(OFISDBContract.FarmerEntry.COLUMN_NAME_ODFARMERID, "null");
             }catch (Exception e){
                 e.printStackTrace();
-            }*/
+            }
 
             String[] whereArgs = new String[]{String.valueOf(localFarmerId)};
 
