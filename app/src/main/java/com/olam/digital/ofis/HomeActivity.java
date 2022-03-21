@@ -881,11 +881,11 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
     public void setupSyncAllBtn(boolean isClickable){
         if(isClickable){
-            syncAll.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_icon_sync_black));
+            syncAll.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_sync_all_white));
             syncAll.setEnabled(true);
         }else{
             syncAll.setEnabled(false);
-            syncAll.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_icon_sync_black));
+            syncAll.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_upload_gray));
         }
     }
 

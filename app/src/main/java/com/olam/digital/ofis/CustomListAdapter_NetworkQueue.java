@@ -52,11 +52,11 @@ class CustomListAdapter_NetworkQueue extends SimpleCursorAdapter {
                 environment.equalsIgnoreCase("uatoga") || environment.equalsIgnoreCase("prodoga")) {
 
             if (isClickable) {
-                imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_black_location));
+                imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_blacklocation));
                 imageView.setEnabled(true);
             } else {
                 imageView.setEnabled(false);
-                imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_gray_location));
+                imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_graylocation));
             }
         }else {
             if (isClickable) {
