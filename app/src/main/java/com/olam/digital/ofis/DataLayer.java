@@ -1991,7 +1991,13 @@ public class DataLayer {
                         haDistrict.setVisibility(View.GONE);
                     } else {
                         subdistrictSpinner.setVisibility(View.VISIBLE);
-                        haDistrict.setVisibility(View.VISIBLE);
+                        String environment=BuildConfig.FLAVOR;
+                        if (environment.equalsIgnoreCase("devofi") || environment.equalsIgnoreCase("sitofi") ||
+                                environment.equalsIgnoreCase("uatofi") || environment.equalsIgnoreCase("prodofi")) {
+                            haDistrict.setVisibility(View.GONE);
+                        }else{
+                            haDistrict.setVisibility(View.VISIBLE);
+                        }
                     }
                 }
 
