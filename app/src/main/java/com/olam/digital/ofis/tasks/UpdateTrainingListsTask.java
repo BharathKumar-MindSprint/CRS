@@ -43,7 +43,7 @@ class UpdateTrainingListsTask extends DatabaseTask {
                     JSONObject response = trainingResponse.getJSONObject("outputdata");
 
                     // get the various sub lists
-                    JSONArray coursesArray, courseAssignmentsArray, trainingModulesArray, completionCriteriaArray;
+                    JSONArray coursesArray, courseAssignmentsArray, trainingModulesArray, completionCriteriaArray,relationShipArray;
 
                     try {
                         coursesArray = response.getJSONArray(OFISDBContract.Course.TABLE_NAME);
@@ -69,6 +69,14 @@ class UpdateTrainingListsTask extends DatabaseTask {
                     try {
                         completionCriteriaArray = response.getJSONArray(OFISDBContract.CompletionCriteria.TABLE_NAME);
                         fillTable(completionCriteriaArray, OFISDBContract.CompletionCriteria.TABLE_NAME, OFISDBContract.CompletionCriteria.COLUMN_LIST);
+                    } catch (JSONException e) {
+                        FirebaseCrash.report(new Exception("UpdateTrainingListsTask: Error filling completion criteria table", e));
+                        e.printStackTrace();
+                    }
+
+                    try {
+                        relationShipArray = response.getJSONArray(OFISDBContract.TrainingAttendeeRelationShip.TABLE_NAME);
+                        fillTable(relationShipArray, OFISDBContract.TrainingAttendeeRelationShip.TABLE_NAME, OFISDBContract.TrainingAttendeeRelationShip.COLUMN_LIST);
                     } catch (JSONException e) {
                         FirebaseCrash.report(new Exception("UpdateTrainingListsTask: Error filling completion criteria table", e));
                         e.printStackTrace();

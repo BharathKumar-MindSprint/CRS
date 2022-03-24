@@ -30,6 +30,7 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.olam.digital.ofis.childlabour.ChildLabourUtils;
 import com.olam.digital.ofis.coffeesurveyconstraints.CoffeeConstants;
 import com.olam.digital.ofis.model.Attendee;
+import com.olam.digital.ofis.model.AttendeeRelations;
 import com.olam.digital.ofis.model.FarmerLeadDTO;
 import com.olam.digital.ofis.model.GeoDTO;
 import com.olam.digital.ofis.model.NationalIdDTO;
@@ -8197,6 +8198,38 @@ public class DataLayer {
         return cursor;
     }
 
+    public JSONArray getTraineeRelationshipByRecordId(int trainingRecordId,Context context) {
+        String[] columns = new String[]{"*"};
+        String whereClause = OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINING_RECORD_ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(trainingRecordId)};
+        Cursor cursor=null;
+        JSONArray jsonArray=new JSONArray();
+        try {
+            cursor = db.query(OFISDBContract.TrainingAttendeeRelations.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+            if (cursor.getCount()>0){
+                if(cursor != null && cursor.moveToFirst()) {
+                    do {
+                        JSONObject jsonObject1=new JSONObject();
+                        jsonObject1.put("trainingattendeesId",cursor.getString(cursor.getColumnIndex(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_FARMER_ID)));
+                        jsonObject1.put("enumeratorsId",Utilities.getFromSharedPrefs(context));
+                        jsonObject1.put("attendeesName",cursor.getString(cursor.getColumnIndex(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINEE_NAME)));
+                        jsonObject1.put("attendeesAge",cursor.getString(cursor.getColumnIndex(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINEE_AGE)) );
+                        jsonObject1.put("relationshipId",cursor.getString(cursor.getColumnIndex(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINEE_RELATIONSHIP_ID)));
+                        jsonObject1.put("attendeesGender", cursor.getString(cursor.getColumnIndex(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINEE_GENDER)));
+                        jsonObject1.put("active", "true");
+                        jsonArray.put(jsonObject1);
+                    } while (cursor.moveToNext());
+                }
+            }
+
+        }catch (Exception e){
+            FirebaseCrashlytics.getInstance().log(e.getMessage());
+        }finally {
+            cursor.close();
+        }
+        return jsonArray;
+    }
+
     public void addOrUpdateTrainees(Context context, long farmerId, int trainingRecordId, ArrayList<Attendee> attendeeList) {
 
         String[] columns = new String[]{"*"};
@@ -8273,6 +8306,94 @@ public class DataLayer {
         }catch (Exception e){}
 
         return hashMap;
+    }
+
+
+//    public JSONObject getJsonAttendeeDetails(Cursor trainingAttendees, int trainingRecordId){
+//        JSONObject jsonObject=null;
+//        JSONArray jsonArray=new JSONArray();
+//        try {
+//            if (trainingAttendees != null) {
+//
+//                while (trainingAttendees.moveToNext()) {
+//                    Cursor cursor=null;
+//                    try {
+//                        jsonArray.put("farmerId")
+//
+//                        long farmerId=Long.valueOf(trainingAttendees.getString(trainingAttendees.getColumnIndex(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_FARMER_ID)));
+//                        cursor=  getTraineeRelationship(trainingRecordId,farmerId);
+//                        if (cursor!=null){
+//                            hashMap.put(farmerId,cursor.getCount());
+//                        }
+//                    }catch (Exception e){
+//                    }finally {
+//                        cursor.close();
+//                    }
+//                }
+//            }
+//        }catch (Exception e){}
+//    }
+
+    public List<AttendeeRelations> getTrainingRelations(RegisterAdditionalTrainee registerAdditionalTrainee,String locale) {
+        List<AttendeeRelations> attendeeRelationsList=new ArrayList<AttendeeRelations>();
+        if(locale.equalsIgnoreCase("_en")){
+            locale="";
+        }
+            Cursor cursor = db.rawQuery("select * from farmerRelationShips", null);
+            if (cursor != null) {
+                try {
+                    if (cursor.getCount() > 0) {
+                        while (cursor.moveToNext()) {
+                            AttendeeRelations attendeeRelations = new AttendeeRelations();
+                            attendeeRelations.setId(Integer.parseInt(cursor.getString(cursor.getColumnIndex(OFISDBContract.TrainingAttendeeRelationShip.COLUMN_NAME_ID))));
+                            attendeeRelations.setName(cursor.getString(cursor.getColumnIndex(OFISDBContract.TrainingAttendeeRelationShip.COLUMN_NAME_NAME+locale)));
+                            attendeeRelationsList.add(attendeeRelations);
+                        }
+                    }
+                } catch (Exception e) {
+                }
+            }
+            if(!cursor.isClosed()){
+                cursor.close();
+            }
+
+        return attendeeRelationsList;
+    }
+
+    public void deleteAttendeeByTrainingId(int farmerId, long trainingRecordId) {
+
+        String[] columns = new String[]{"*"};
+        String whereClause = OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINING_RECORD_ID + " = ? AND " + OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_FARMER_ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(trainingRecordId), String.valueOf(farmerId)};
+        Cursor cursor=null;
+        try {
+            db.delete(OFISDBContract.TrainingAttendeeRelations.TABLE_NAME, whereClause, whereArgs);
+        }catch (Exception e){
+            FirebaseCrashlytics.getInstance().log(e.getMessage());
+        }
+
+    }
+
+    public boolean isCaptureAttendeeEligible(long trainingModuleId) {
+
+        boolean isCaptureAttendee=false;
+
+        Cursor cursor=db.rawQuery("select * from trainingmodules where id="+trainingModuleId,null);
+        try {
+            if (cursor !=null){
+                if(cursor.getCount()>0){
+                    while (cursor.moveToNext()) {
+                        isCaptureAttendee=Boolean.parseBoolean(cursor.getString(cursor.getColumnIndex(OFISDBContract.TrainingModule.COLUMN_NAME_CAPTURE_ATTENDEE)));
+                    }
+                }
+            }
+            cursor.close();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return isCaptureAttendee;
+
     }
 }
 

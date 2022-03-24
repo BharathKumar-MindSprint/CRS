@@ -2025,6 +2025,7 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_NAME_LO = "name_lo";
         public static final String COLUMN_NAME_NAME_VI = "name_vi";
         public static final String COLUMN_NAME_NAME_TH = "name_th";
+        public static final String COLUMN_NAME_CAPTURE_ATTENDEE = "captureAdditionalAttendees";
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
                     add(COLUMN_NAME_ID);
@@ -2039,6 +2040,7 @@ public class OFISDBContract {
                     add(COLUMN_NAME_NAME_LO);
                     add(COLUMN_NAME_NAME_VI);
                     add(COLUMN_NAME_NAME_TH);
+                    add(COLUMN_NAME_CAPTURE_ATTENDEE);
                 }}
         );
 
@@ -2200,6 +2202,34 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_NAME_LO = "name_lo";
         public static final String COLUMN_NAME_NAME_VI = "name_vi";
         public static final String COLUMN_NAME_NAME_TH = "name_th";
+        public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
+                new ArrayList<String>() {{
+                    add(COLUMN_NAME_ID);
+                    add(COLUMN_NAME_NAME);
+                    add(COLUMN_NAME_NAME_FR);
+                    add(COLUMN_NAME_NAME_ES);
+                    add(COLUMN_NAME_NAME_ID);
+                    add(COLUMN_NAME_NAME_PT);
+                    add(COLUMN_NAME_NAME_TR);
+                    add(COLUMN_NAME_NAME_LO);
+                    add(COLUMN_NAME_NAME_VI);
+                    add(COLUMN_NAME_NAME_TH);
+                }}
+        );
+    }
+
+    public static abstract class TrainingAttendeeRelationShip implements BaseColumns {
+        public static final String TABLE_NAME = "farmerRelationShips";
+        public static final String COLUMN_NAME_ID = "id";
+        public static final String COLUMN_NAME_NAME = "relationshipName";
+        public static final String COLUMN_NAME_NAME_FR = "relationshipName_fr";
+        public static final String COLUMN_NAME_NAME_ES = "relationshipName_es";
+        public static final String COLUMN_NAME_NAME_ID = "relationshipName_id";
+        public static final String COLUMN_NAME_NAME_PT = "relationshipName_pt";
+        public static final String COLUMN_NAME_NAME_TR = "relationshipName_tr";
+        public static final String COLUMN_NAME_NAME_LO = "relationshipName_lo";
+        public static final String COLUMN_NAME_NAME_VI = "relationshipName_vi";
+        public static final String COLUMN_NAME_NAME_TH = "relationshipName_th";
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
                     add(COLUMN_NAME_ID);

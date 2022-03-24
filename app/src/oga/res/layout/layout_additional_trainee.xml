@@ -60,6 +60,7 @@
             android:layout_width="match_parent"
             android:layout_weight="1"
             android:hint="@string/attendee_name_hint"
+            android:inputType="textCapWords"
             android:textSize="13sp"
             android:paddingLeft="4dp"
             android:textColor="@color/text_label_attendee"

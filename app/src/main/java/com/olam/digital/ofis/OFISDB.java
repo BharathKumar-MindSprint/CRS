@@ -648,7 +648,9 @@ class OFISDB extends SQLiteOpenHelper {
     private static final String OFIS_TRAININGMODULE_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.TrainingModule.TABLE_NAME
             + " ( " + OFISDBContract.TrainingModule.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.TrainingModule.COLUMN_NAME_COURSE_ID + " INTEGER, "
             + OFISDBContract.TrainingModule.COLUMN_COMPLETIONCRITERION_ID + " INTEGER, " + OFISDBContract.TrainingModule.COLUMN_NAME_NAME + " TEXT, "
-            + OFISDBContract.TrainingModule.COLUMN_NAME_NAME_FR + " TEXT, " + OFISDBContract.TrainingModule.COLUMN_NAME_NAME_ES + " TEXT, "
+            + OFISDBContract.TrainingModule.COLUMN_NAME_NAME_FR + " TEXT, "
+            + OFISDBContract.TrainingModule.COLUMN_NAME_NAME_ES + " TEXT, "
+            + OFISDBContract.TrainingModule.COLUMN_NAME_CAPTURE_ATTENDEE + " TEXT, "
             + OFISDBContract.TrainingModule.COLUMN_NAME_NAME_ID + " TEXT, " + OFISDBContract.TrainingModule.COLUMN_NAME_NAME_PT + " TEXT, "
             + OFISDBContract.TrainingModule.COLUMN_NAME_NAME_TR + " TEXT, " + OFISDBContract.TrainingModule.COLUMN_NAME_NAME_LO + " TEXT, "
             + OFISDBContract.TrainingModule.COLUMN_NAME_NAME_VI + " TEXT, " + OFISDBContract.TrainingModule.COLUMN_NAME_NAME_TH + " TEXT )";
@@ -711,6 +713,14 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_NAME_FARM_NAME + " TEXT, "
             + OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_NAME_FARM_CODE + " TEXT, "
             + OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_IS_SYNCED + " INTEGER DEFAULT 1)";
+
+
+    private static final String OFIS_TRAINING_RELATIONS_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.TrainingAttendeeRelationShip.TABLE_NAME
+            + " ( " + OFISDBContract.TrainingAttendeeRelationShip.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.TrainingAttendeeRelationShip.COLUMN_NAME_NAME + " TEXT, "
+            + OFISDBContract.TrainingAttendeeRelationShip.COLUMN_NAME_NAME_FR + " TEXT, " + OFISDBContract.TrainingAttendeeRelationShip.COLUMN_NAME_NAME_ES + " TEXT, "
+            + OFISDBContract.TrainingAttendeeRelationShip.COLUMN_NAME_NAME_ID + " TEXT, " + OFISDBContract.TrainingAttendeeRelationShip.COLUMN_NAME_NAME_PT + " TEXT, "
+            + OFISDBContract.TrainingAttendeeRelationShip.COLUMN_NAME_NAME_TR + " TEXT, " + OFISDBContract.TrainingAttendeeRelationShip.COLUMN_NAME_NAME_LO + " TEXT, "
+            + OFISDBContract.TrainingAttendeeRelationShip.COLUMN_NAME_NAME_VI + " TEXT, " + OFISDBContract.TrainingAttendeeRelationShip.COLUMN_NAME_NAME_TH + " TEXT )";
 
 
     public static OFISDB getInstance(Context context) {
@@ -819,6 +829,7 @@ class OFISDB extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(OFIS_MULTIFARM_FARMS_STAKEHOLDER_TABLE_CREATE);
         // OW-2949
         sqLiteDatabase.execSQL(OFIS_TRAINING_RELATIONSHIP_ATTENDEE_TABLE_CREATE);
+        sqLiteDatabase.execSQL(OFIS_TRAINING_RELATIONS_TABLE_CREATE);
 
 
     }
@@ -904,6 +915,7 @@ class OFISDB extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL("drop table IF EXISTS farmerLeads");
         sqLiteDatabase.execSQL("drop table IF EXISTS assignments");
         sqLiteDatabase.execSQL("drop table IF EXISTS trainingattendeesRelations");
+        sqLiteDatabase.equals("drop table IF EXISTS trainingAttendeesRelationship");
 
       //  sqLiteDatabase.execSQL("drop table IF EXISTS farmStakeHolder");
         sqLiteDatabase.execSQL("drop table IF EXISTS multifarmRoles");

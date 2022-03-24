@@ -47,7 +47,6 @@
     <color name="gender_selected_text">#6C5D56</color>
     <color name="child_survey_row">#9E948E</color>
     <color name="child_visitdetailbg">#00869D</color>
-
     <color name="cs_color">#101010</color>
 
     <color name="orange">#DE5215</color>
@@ -57,17 +56,32 @@
     <color name="dull_white">#FAFAFA</color>
     <color name="disabled_gray">#CCCCCC</color>
     <color name="dark_orange">#DC582A</color>
-
-    <color name="dark_gray">#E9E9E9</color>
-
     <color name="lightblue">#c3e2e8</color>
-
-
-    <color name="blue_attendee_text">#00ACC6</color>
-    <color name="black_attendee">#262626</color>
-    <color name="text_label_attendee">#535353</color>
-    <color name="background_attendee">#FAFAFA</color>
+    <color name="dark_gray">#E9E9E9</color>
 
 
     <!-- updated -->
+    <!--    // dealing disable buttion-->
+    <color name="btn_primary_disabled">#c6c6c5</color>
+    <color name="btn_disabled_text">#878786</color>
+    <color name="btnColorPrimary">#dc582a</color>
+    <color name="btnColorThird">#f78c2a</color>
+    <color name="ofis_btn_danger">#ea0029</color>
+    <color name="btn_primary_background">#dc582a</color>
+    <color name="btn_secondary_background">#dc582a</color>
+    <color name="colorPrimary">#dc582a</color>
+    <color name="icon_grey_palette_2">#878786</color>
+
+    <color name="child_selected_text_color">#000</color>
+    <color name="gender_selected_textcolor">#000000</color>
+    <color name="background_multifarm">#F2B277</color>
+    <color name="btn_primary_inner">#F8F6F8</color>
+
+    <color name="radio_btn_color_primary">#dc582a</color>
+    <color name="blue_attendee_text">#00ACC6</color>
+    <color name="black_attendee">#262626</color>
+    <color name="background_attendee">#FAFAFA</color>
+    <color name="text_label_attendee">#535353</color>
+    <color name="signature_pad">#F8F8F8</color>
+    <color name="header_color">#2E2D2C</color>
 </resources>

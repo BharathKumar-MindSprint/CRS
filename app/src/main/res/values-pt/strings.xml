@@ -635,12 +635,13 @@
     <string name="attendee_name_hint">Enter Attendee Name</string>
     <string name="attendee_hint_age">Enter Age</string>
     <string name="view_attendees_count">View Attendee (~V attendees)</string>
-    <string name="add_edit_attendee">Add/Edit\n Attendee</string>
+    <string name="add_edit_attendee">Add Attendee</string>
     <string name="viewAttendee">View Attendee</string>
     <string name="attendee">Attendee</string>
     <string name="mandatory_msg">Please fill all the details</string>
     <string name="add_edit">Add/Edit</string>
     <string name="Attendee">Attendee</string>
+    <string name="select_relationship_with_farmer">Select Relationship With Farmer</string>
 
 
 </resources>

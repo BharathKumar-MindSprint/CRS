@@ -8,6 +8,10 @@
     android:layout_height="wrap_content"
     android:paddingLeft="@dimen/ofis_med_pad"
     android:paddingRight="@dimen/ofis_med_pad"
+    android:layout_marginLeft="@dimen/activity_vertical_margin"
+    android:layout_marginRight="@dimen/activity_vertical_margin"
+    android:layout_marginTop="@dimen/activity_vertical_margin"
+    android:background="@drawable/list_item"
     android:paddingTop="@dimen/ofis_list_itemseparator"
     android:paddingBottom="@dimen/ofis_list_itemseparator">
 
@@ -17,7 +21,6 @@
         android:layout_width="match_parent"
         android:id="@+id/rowlin"
         android:layout_height="wrap_content"
-        android:background="@drawable/list_item"
         android:baselineAligned="false"
         android:weightSum="8"
         tools:ignore="UselessParent">
@@ -135,14 +138,8 @@
                     android:layout_marginBottom="@dimen/ofis_small_pad"
                     android:visibility="gone"/>
 
+
             </LinearLayout>
-            <TextView
-                android:id="@+id/tvViewAddendees"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/view_attendees_count"
-                android:textColor="@color/blue_attendee_text"
-                android:textSize="@dimen/ofis_small_text" />
 
         </LinearLayout>
 
@@ -199,6 +196,14 @@
         </LinearLayout>
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/tvViewAddendees"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/view_attendees_count"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:textColor="@color/blue_attendee_text"
+        android:textSize="@dimen/ofis_small_text" />
 
 </LinearLayout>
 

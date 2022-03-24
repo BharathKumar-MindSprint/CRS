@@ -96,6 +96,7 @@ public class TrainingRecord extends BaseListActivity{
 //    GPSListener gpsListener=null;
 //    private GPSTracker gpsTracker=null;
    public static HashMap<Long,Integer> farmerAttendeeList =null;
+   public static boolean isCaptureAttendee;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,6 +118,10 @@ public class TrainingRecord extends BaseListActivity{
         editMode = intent.getBooleanExtra(EDIT_MODE, false);
         readOnlyMode = intent.getBooleanExtra(READ_ONLY_MODE, false);
 
+//        if (trainingModuleId!=0){
+//            isCaptureAttendee=dl.isCaptureAttendeeEligible(trainingModuleId);
+//        }
+
         courseSpinner = (Spinner) this.findViewById(R.id.spinner_course);
         trainingModuleSpinner = (Spinner) this.findViewById(R.id.spinner_training_module);
 
@@ -128,7 +133,7 @@ public class TrainingRecord extends BaseListActivity{
 // Moving this to OnResume
         if (editMode) {
             getTrainingRecord();
-           // getTrainingAttendees();
+          //  getTrainingAttendees();
         }
 
         trainingPhotoActionButton = (ImageButton) findViewById(R.id.trainingPhotoActionButton);
@@ -195,6 +200,7 @@ public class TrainingRecord extends BaseListActivity{
         savedInstanceState.putLong(EDIT_TRAININGRECORD_ID, trainingRecordId);
         savedInstanceState.putLong(COURSE_ID, courseId);
         savedInstanceState.putLong(TRAINING_MODULE_ID, trainingModuleId);
+        savedInstanceState.putBoolean("CAPTURE_TRAINEE",isCaptureAttendee);
 
         super.onSaveInstanceState(savedInstanceState);
     }
@@ -222,6 +228,9 @@ public class TrainingRecord extends BaseListActivity{
         if (savedInstanceState.containsKey(TRAINING_MODULE_ID)) {
             trainingModuleId = savedInstanceState.getLong(TRAINING_MODULE_ID);
             dl.setSpinnerSelectionById((int)trainingModuleId, trainingModuleSpinner);
+        }
+        if (savedInstanceState.containsKey("CAPTURE_TRAINEE")) {
+            isCaptureAttendee = savedInstanceState.getBoolean("CAPTURE_TRAINEE");
         }
 
         super.onRestoreInstanceState(savedInstanceState);
@@ -349,27 +358,6 @@ public class TrainingRecord extends BaseListActivity{
     }
 
     public void deleteTrainingAttendee(final int attendeeId) {
-//        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-//        builder
-//                .setCancelable(true)
-//                .setNegativeButton(res.getString(R.string.app_update_cancel), new DialogInterface.OnClickListener() {
-//                    public void onClick(DialogInterface dialog, int id) {
-//                        dialog.cancel();
-//                    }
-//                })
-//                .setMessage(res.getString(R.string.trainingattendee_are_you_sure))
-//                .setPositiveButton(res.getString(R.string.app_update_ok), new DialogInterface.OnClickListener() {
-//                    public void onClick(DialogInterface dialog, int id) {
-//                        if (dl.deleteTrainingAttendeeById(attendeeId) > 0) {
-//                            trainingAttendees.close();
-//                            trainingAttendees = dl.getTrainingAttendeesByTrainingRecordId(trainingRecordId);
-//                            customListAdapter_selectedAttendees.swapCursor(trainingAttendees);
-//                            Toast.makeText(context, res.getString(R.string.trainingattendee_deleted), Toast.LENGTH_LONG).show();
-//                        }
-//                    }
-//                });
-//        AlertDialog alert = builder.create();
-//        alert.show();
 
         // New Approach
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -396,6 +384,9 @@ public class TrainingRecord extends BaseListActivity{
             public void onClick(View view) {
                 if (dl.deleteTrainingAttendeeById(attendeeId) > 0) {
                     trainingAttendees.close();
+                    // Deleting from Relationship table
+                    dl.deleteAttendeeByTrainingId(attendeeId,trainingRecordId);
+
                     trainingAttendees = dl.getTrainingAttendeesByTrainingRecordId(trainingRecordId);
                     customListAdapter_selectedAttendees.swapCursor(trainingAttendees);
                     Toast.makeText(context, res.getString(R.string.trainingattendee_deleted), Toast.LENGTH_LONG).show();
@@ -536,9 +527,17 @@ public class TrainingRecord extends BaseListActivity{
                 MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.SPINNER_TRAINING_MODULE,  ScreenNameConstants.SPINNER_CHANGED);
                 boolean hasSwapped = (trainingModuleId != id);
                 trainingModuleId = id;
+
+                // get the capture training Attendee eligibility
+                if (trainingModuleId != 0 ) {
+                    isCaptureAttendee = dl.isCaptureAttendeeEligible(trainingModuleId);
+                    getTrainingAttendees();
+                }
+
                 if (editMode && trainingModuleId != 0 && !firstLoad && hasSwapped) {
                     addOrUpdateTrainingRecord();
                     getTrainingRecord();
+
                     if (trainingAttendees != null && trainingAttendees.getCount() > 0) {
                         dl.wipeAttendeeScores(trainingRecordId);
                         getTrainingAttendees();

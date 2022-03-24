@@ -19,8 +19,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.olam.digital.ofis.model.Attendee;
+import com.olam.digital.ofis.model.AttendeeRelations;
+import com.olam.digital.ofis.multifarm.MultiFarmRoleDTO;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class RegisterAdditionalTrainee extends BaseActivity {
 
@@ -37,6 +40,9 @@ public class RegisterAdditionalTrainee extends BaseActivity {
     int trainingRecordId;
     long farmerId;
     boolean editAttendee;
+    private List<AttendeeRelations> attendeeRelationsList=null;
+    private List<String> relationShipList=new ArrayList<>();
+    private String[] relationShips=null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +50,16 @@ public class RegisterAdditionalTrainee extends BaseActivity {
         setContentView(R.layout.layout_register_additional_trainee);
         initWidget();
         getIntentDetails();
+
+        // get Relationships
+        String locale=Utilities.getLocaleSuffix(res);
+        attendeeRelationsList=dl.getTrainingRelations(this, locale);
+        relationShipList.clear();
+        relationShipList.add(getResources().getString(R.string.select_relationship_with_farmer));
+        for (AttendeeRelations attendeeRelations : attendeeRelationsList){
+            relationShipList.add(attendeeRelations.getName());
+        }
+
         setInitialData();
         fillTraineeRelationship();
         if(parentGroup.getChildCount()==0){
@@ -51,7 +67,7 @@ public class RegisterAdditionalTrainee extends BaseActivity {
         }
         if (!editAttendee) {
             btnAddAttendee.setVisibility(View.GONE);
-            btnSaveAttendees.setText(getResources().getString(R.string.back));
+            btnSaveAttendees.setText("Back");
             tvAddAttendeeDesc.setText(getResources().getString(R.string.viewAttendee));
         }
 
@@ -80,12 +96,16 @@ public class RegisterAdditionalTrainee extends BaseActivity {
                     EditText etAttendeeName = (EditText) child.findViewById(R.id.etTraineeName);
                     EditText etAttendeeAge = (EditText) child.findViewById(R.id.etTraineeAge);
                     Spinner spinnerRelationship = (Spinner) child.findViewById(R.id.spinnerRelationship);
+
                     String relationShip = (String) spinnerRelationship.getSelectedItem();
+
+
                     Spinner spinnerGender = (Spinner) child.findViewById(R.id.spinnerGender);
                     String gender = (String) spinnerGender.getSelectedItem();
 
                     if (etAttendeeName.getText().toString().trim().equalsIgnoreCase("")
-                            || etAttendeeAge.getText().toString().trim().equalsIgnoreCase("")){
+                            || etAttendeeAge.getText().toString().trim().equalsIgnoreCase("")
+                            || spinnerRelationship.getSelectedItemId() == 0){
                          allAvailable=false;
                     }
 
@@ -114,13 +134,21 @@ public class RegisterAdditionalTrainee extends BaseActivity {
         ImageView btnDeleteAttendee = childAttendeeView.findViewById(R.id.btndeleteAttendee);
 
         Spinner spinnerRelationship=childAttendeeView.findViewById(R.id.spinnerRelationship);
-        String[] relationships = getResources().getStringArray(R.array.Trainee_relationships);
+
+        // Old
+      //  String[] relationships = getResources().getStringArray(R.array.Trainee_relationships);
+
+        //New
+        String[] relationships = relationShipList.toArray(new String[relationShipList.size()]);
+
         ArrayAdapter<String> relationshipAdapter = new ArrayAdapter<String>(this, R.layout.spinner_item,relationships);
+        relationshipAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         spinnerRelationship.setAdapter(relationshipAdapter);
 
         Spinner spinnerGender=childAttendeeView.findViewById(R.id.spinnerGender);
         String[] gender = getResources().getStringArray(R.array.genders);
         ArrayAdapter<String> genderAdapter = new ArrayAdapter<String>(this, R.layout.spinner_item,gender);
+        genderAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         spinnerGender.setAdapter(genderAdapter);
 
         TextView  lblAttendee=childAttendeeView.findViewById(R.id.lblAttendee);
@@ -190,16 +218,26 @@ public class RegisterAdditionalTrainee extends BaseActivity {
                     etAttendeeAge.setText(AgeItem);
 
                     Spinner spinnerRelationship=(Spinner) child.findViewById(R.id.spinnerRelationship);
-                    String[] relationships = getResources().getStringArray(R.array.Trainee_relationships);
+
+                    //Old
+                   // String[] relationships = getResources().getStringArray(R.array.Trainee_relationships);
+
+                    //New
+                    String[] relationships = relationShipList.toArray(new String[relationShipList.size()]);
+
+                    //frank
                     ArrayAdapter<String> relationshipAdapter = new ArrayAdapter<String>(this, R.layout.spinner_item,relationships);
+                    relationshipAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
                     spinnerRelationship.setAdapter(relationshipAdapter);
                     spinnerRelationship.setSelection(Integer.parseInt(relationshipItem));
 
                     Spinner  spinnerGender=(Spinner) child.findViewById(R.id.spinnerGender);
                     String[] gender = getResources().getStringArray(R.array.genders);
                     ArrayAdapter<String> genderAdapter = new ArrayAdapter<String>(this, R.layout.spinner_item,gender);
+                    genderAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
                     spinnerGender.setAdapter(genderAdapter);
                     spinnerGender.setSelection(Integer.parseInt(genderItem));
+
                     if (!editAttendee) {
                         btnDeleteAttendee.setVisibility(View.GONE);
                     }
