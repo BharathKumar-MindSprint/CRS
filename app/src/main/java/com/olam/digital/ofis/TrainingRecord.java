@@ -118,9 +118,6 @@ public class TrainingRecord extends BaseListActivity{
         editMode = intent.getBooleanExtra(EDIT_MODE, false);
         readOnlyMode = intent.getBooleanExtra(READ_ONLY_MODE, false);
 
-//        if (trainingModuleId!=0){
-//            isCaptureAttendee=dl.isCaptureAttendeeEligible(trainingModuleId);
-//        }
 
         courseSpinner = (Spinner) this.findViewById(R.id.spinner_course);
         trainingModuleSpinner = (Spinner) this.findViewById(R.id.spinner_training_module);
@@ -382,11 +379,12 @@ public class TrainingRecord extends BaseListActivity{
         btnYes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                // Deleting from Relationship table before training attendee removed
+                dl.deleteAttendeeByTrainingId(attendeeId,trainingRecordId);
+
                 if (dl.deleteTrainingAttendeeById(attendeeId) > 0) {
                     trainingAttendees.close();
-                    // Deleting from Relationship table
-                    dl.deleteAttendeeByTrainingId(attendeeId,trainingRecordId);
-
                     trainingAttendees = dl.getTrainingAttendeesByTrainingRecordId(trainingRecordId);
                     customListAdapter_selectedAttendees.swapCursor(trainingAttendees);
                     Toast.makeText(context, res.getString(R.string.trainingattendee_deleted), Toast.LENGTH_LONG).show();

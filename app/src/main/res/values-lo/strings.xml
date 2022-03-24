@@ -620,5 +620,8 @@
     <string name="add_edit">Add/Edit</string>
     <string name="Attendee">Attendee</string>
     <string name="select_relationship_with_farmer">Select Relationship With Farmer</string>
+    <string name="attendee_name1">Attendee Name</string>
+    <string name="attendee_relationship1">Relationship</string>
+    <string name="attendee_sex1">Gender</string>
 </resources>
 

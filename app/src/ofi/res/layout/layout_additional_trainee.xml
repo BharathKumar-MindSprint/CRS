@@ -50,7 +50,7 @@
         <TextView
             android:id="@+id/lblTraineeName"
             android:layout_width="match_parent"
-            android:text="@string/attendee_name"
+            android:text="@string/attendee_name1"
             android:textStyle="bold"
             android:textColor="@color/ofis_base_font_dark"
             android:layout_height="wrap_content"/>
@@ -82,7 +82,7 @@
         <TextView
             android:id="@+id/lblTraineeRelationship"
             android:layout_width="match_parent"
-            android:text="@string/attendee_relationship"
+            android:text="@string/attendee_relationship1"
             android:textStyle="bold"
             android:textColor="@color/ofis_base_font_dark"
             android:layout_height="wrap_content"/>
@@ -142,7 +142,7 @@
         <TextView
             android:id="@+id/lblTraineeGender"
             android:layout_width="match_parent"
-            android:text="@string/attendee_sex"
+            android:text="@string/attendee_sex1"
             android:textStyle="bold"
             android:textColor="@color/ofis_base_font_dark"
             android:layout_height="wrap_content"/>

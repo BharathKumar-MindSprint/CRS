@@ -8269,19 +8269,22 @@ public class DataLayer {
     }
 
     public int getFarmerByAttendeeItem(int itemId) {
-        Cursor cursor=getFarmerIdByItem(itemId);
+
         int farmerId = 0;
         try {
-            if (cursor != null) {
-                while (cursor.moveToNext()) {
-                    farmerId = Integer.parseInt(cursor.getString(cursor.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_FARMER_ID)));
+            Cursor cursor=db.rawQuery("select * from trainingattendees where id="+itemId,null);
+            try {
+                if (cursor != null) {
+                    while (cursor.moveToNext()) {
+                        farmerId = Integer.parseInt(cursor.getString(cursor.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_FARMER_ID)));
+                    }
                 }
+            }catch (Exception e){
+            }finally {
+                cursor.close();
             }
-        }catch (Exception e){
+        }catch (Exception e){}
 
-        }finally {
-            cursor.close();
-        }
         return  farmerId;
     }
 
@@ -8309,31 +8312,6 @@ public class DataLayer {
     }
 
 
-//    public JSONObject getJsonAttendeeDetails(Cursor trainingAttendees, int trainingRecordId){
-//        JSONObject jsonObject=null;
-//        JSONArray jsonArray=new JSONArray();
-//        try {
-//            if (trainingAttendees != null) {
-//
-//                while (trainingAttendees.moveToNext()) {
-//                    Cursor cursor=null;
-//                    try {
-//                        jsonArray.put("farmerId")
-//
-//                        long farmerId=Long.valueOf(trainingAttendees.getString(trainingAttendees.getColumnIndex(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_FARMER_ID)));
-//                        cursor=  getTraineeRelationship(trainingRecordId,farmerId);
-//                        if (cursor!=null){
-//                            hashMap.put(farmerId,cursor.getCount());
-//                        }
-//                    }catch (Exception e){
-//                    }finally {
-//                        cursor.close();
-//                    }
-//                }
-//            }
-//        }catch (Exception e){}
-//    }
-
     public List<AttendeeRelations> getTrainingRelations(RegisterAdditionalTrainee registerAdditionalTrainee,String locale) {
         List<AttendeeRelations> attendeeRelationsList=new ArrayList<AttendeeRelations>();
         if(locale.equalsIgnoreCase("_en")){
@@ -8360,12 +8338,17 @@ public class DataLayer {
         return attendeeRelationsList;
     }
 
-    public void deleteAttendeeByTrainingId(int farmerId, long trainingRecordId) {
+    public void deleteAttendeeByTrainingId(int attendeeId, long trainingRecordId) {
 
-        String[] columns = new String[]{"*"};
+        // getfarmer Id from Attendee Id
+         int farmerId=0;
+        try {
+           farmerId=getFarmerByAttendeeItem(attendeeId);
+        }catch (Exception e){}
+
+
         String whereClause = OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINING_RECORD_ID + " = ? AND " + OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_FARMER_ID + " = ?";
         String[] whereArgs = new String[]{String.valueOf(trainingRecordId), String.valueOf(farmerId)};
-        Cursor cursor=null;
         try {
             db.delete(OFISDBContract.TrainingAttendeeRelations.TABLE_NAME, whereClause, whereArgs);
         }catch (Exception e){
@@ -8394,6 +8377,16 @@ public class DataLayer {
 
         return isCaptureAttendee;
 
+    }
+
+    public void deleteTrainingAttendeeRelations(long trainingRecordId) {
+
+        try {
+            String attendeeWhereClause = OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINING_RECORD_ID + " = ?";
+            String[] attendeeWhereArgs = new String[]{String.valueOf(trainingRecordId)};
+            db.delete(OFISDBContract.TrainingAttendeeRelations.TABLE_NAME, attendeeWhereClause, attendeeWhereArgs);
+
+        }catch (Exception e){}
     }
 }
 

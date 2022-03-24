@@ -51,7 +51,7 @@
             android:id="@+id/lblTraineeName"
             android:layout_width="match_parent"
             android:layout_weight="1"
-            android:text="@string/attendee_name"
+            android:text="@string/attendee_name1"
             android:textColor="@color/text_label_attendee"
             android:layout_height="wrap_content"/>
 
@@ -81,7 +81,7 @@
             android:id="@+id/lblTraineeRelationship"
             android:layout_width="match_parent"
             android:layout_weight="1"
-            android:text="@string/attendee_relationship"
+            android:text="@string/attendee_relationship1"
             android:textColor="@color/text_label_attendee"
             android:layout_height="wrap_content"/>
 
@@ -139,7 +139,7 @@
             android:id="@+id/lblTraineeGender"
             android:layout_width="match_parent"
             android:layout_weight="1"
-            android:text="@string/attendee_sex"
+            android:text="@string/attendee_sex1"
             android:layout_height="wrap_content"/>
 
         <Spinner

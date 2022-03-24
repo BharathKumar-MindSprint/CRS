@@ -1219,6 +1219,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             }
                             dl.deleteNetworkQueueItem(networkQueueItemId);
                             dl.deleteTrainingRecord(trainingRecordId);
+                            dl.deleteTrainingAttendeeRelations(trainingRecordId);
                             statusMessage = res.getString(R.string.item_synced);
                             msg.what = 1;
                             msg.arg1 = total;

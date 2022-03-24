@@ -18,6 +18,7 @@
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_above="@+id/btnSaveAttendees"
             android:background="@color/background_attendee"
             android:layout_below="@+id/topSection">
 
