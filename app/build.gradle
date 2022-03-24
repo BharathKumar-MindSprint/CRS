@@ -38,20 +38,17 @@ android {
         multiDexEnabled true
 
 
-
-
-
-        versionCode 253
-        versionName "10.7.6"
+        versionCode 257
+        versionName "10.8.0"
 
 
 
     }
     buildTypes {
         debug {
-            minifyEnabled false
-            shrinkResources false
-//            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.config
         }
         release {

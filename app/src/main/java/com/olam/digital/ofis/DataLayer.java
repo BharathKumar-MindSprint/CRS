@@ -1997,7 +1997,9 @@ public class DataLayer {
                         subdistrictSpinner.setVisibility(View.VISIBLE);
                         String environment=BuildConfig.FLAVOR;
                         if (environment.equalsIgnoreCase("devoga") || environment.equalsIgnoreCase("sitoga") ||
-                                environment.equalsIgnoreCase("uatoga") || environment.equalsIgnoreCase("prodoga")) {
+                                environment.equalsIgnoreCase("uatoga") || environment.equalsIgnoreCase("prodoga") ||
+                           environment.equalsIgnoreCase("devofi") || environment.equalsIgnoreCase("sitofi") ||
+                                environment.equalsIgnoreCase("uatofi") || environment.equalsIgnoreCase("prodofi")) {
 
                             haDistrict.setVisibility(View.INVISIBLE);
                         }else {
@@ -6741,7 +6743,7 @@ public class DataLayer {
                     while (cursor.moveToNext()) {
                         MultiFarmRoleDTO multiFarmRoleDTO = new MultiFarmRoleDTO();
                         multiFarmRoleDTO.setId(Integer.parseInt(cursor.getString(cursor.getColumnIndex(OFISDBContract.MultiFarmRoles.COLUMN_NAME_ID))));
-                        multiFarmRoleDTO.setName(cursor.getString(cursor.getColumnIndex(OFISDBContract.MultiFarmRoles.COLUMN_NAME_NAME+locale)));
+                        multiFarmRoleDTO.setName(cursor.getString(cursor.getColumnIndex(OFISDBContract.MultiFarmRoles.COLUMN_NAME_NAME)));
                         multiFarmRoleDTOList.add(multiFarmRoleDTO);
                     }
                 }
