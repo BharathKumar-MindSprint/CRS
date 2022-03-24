@@ -1994,7 +1994,14 @@ public class DataLayer {
                         haDistrict.setVisibility(View.GONE);
                     } else {
                         subdistrictSpinner.setVisibility(View.VISIBLE);
-                        haDistrict.setVisibility(View.VISIBLE);
+                        String environment=BuildConfig.FLAVOR;
+                        if (environment.equalsIgnoreCase("devoga") || environment.equalsIgnoreCase("sitoga") ||
+                                environment.equalsIgnoreCase("uatoga") || environment.equalsIgnoreCase("prodoga")) {
+
+                            haDistrict.setVisibility(View.INVISIBLE);
+                        }else {
+                            haDistrict.setVisibility(View.VISIBLE);
+                        }
                     }
                 }
 
@@ -2419,7 +2426,14 @@ public class DataLayer {
                         haDistrict.setVisibility(View.GONE);
                     } else {
                         subdistrictSpinner.setVisibility(View.VISIBLE);
-                        haDistrict.setVisibility(View.VISIBLE);
+                        String environment=BuildConfig.FLAVOR;
+                        if (environment.equalsIgnoreCase("devoga") || environment.equalsIgnoreCase("sitoga") ||
+                                environment.equalsIgnoreCase("uatoga") || environment.equalsIgnoreCase("prodoga")) {
+
+                            haDistrict.setVisibility(View.INVISIBLE);
+                        }else {
+                            haDistrict.setVisibility(View.VISIBLE);
+                        }
                     }
                 }
 
@@ -4565,7 +4579,7 @@ public class DataLayer {
             }
             try {
                 System.out.println("dl_odFarmerId:" + odFarmerId);
-                newValues.put(OFISDBContract.FarmerEntry.COLUMN_NAME_ODFARMERID, odFarmerId);
+                newValues.put(OFISDBContract.FarmerEntry.COLUMN_NAME_ODFARMERID, "null");
             }catch (Exception e){
                 e.printStackTrace();
             }

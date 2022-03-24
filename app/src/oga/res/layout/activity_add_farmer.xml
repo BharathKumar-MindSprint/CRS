@@ -902,17 +902,17 @@
             android:id="@+id/wrapper_farmerPhoto">
 
             <ImageButton
+                android:id="@+id/farmerPhoto"
                 android:layout_width="84dp"
                 android:layout_height="112dp"
-                android:id="@+id/farmerPhoto"
-                android:layout_marginTop="5dp"
-                android:contentDescription="@string/Farmer_Photo"
-                app:srcCompat="@drawable/empty_farmer_icon"
-                android:background="@android:color/transparent"
-                android:scaleType="fitStart"
-                android:layout_alignParentLeft="false"
                 android:layout_alignParentStart="false"
-                android:layout_alignParentBottom="true" />
+                android:layout_alignParentLeft="false"
+                android:layout_alignParentBottom="true"
+                android:layout_marginTop="5dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/Farmer_Photo"
+                android:scaleType="fitStart"
+                app:srcCompat="@drawable/empty_farmer_icon" />
 
             <ImageButton
                 android:layout_width="@dimen/standard_button_width_height"
