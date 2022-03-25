@@ -38,7 +38,7 @@ android {
         multiDexEnabled true
 
 
-        versionCode 95
+        versionCode 96
         versionName "10.8.6"
 
 
