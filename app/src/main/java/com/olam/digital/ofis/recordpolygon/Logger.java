@@ -25,7 +25,7 @@ public class Logger {
 
     public static void addRecordToLog(String message) {
 
-
+/*
         File root = Environment.getExternalStorageDirectory();
         File dir = new File(root.getAbsolutePath() + "/OFISPolyTest");
         if(!dir.exists()) {
@@ -58,7 +58,7 @@ public class Logger {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-
+*/
     }
 }
 
