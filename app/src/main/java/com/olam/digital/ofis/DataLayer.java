@@ -2431,7 +2431,9 @@ public class DataLayer {
                         subdistrictSpinner.setVisibility(View.VISIBLE);
                         String environment=BuildConfig.FLAVOR;
                         if (environment.equalsIgnoreCase("devoga") || environment.equalsIgnoreCase("sitoga") ||
-                                environment.equalsIgnoreCase("uatoga") || environment.equalsIgnoreCase("prodoga")) {
+                                environment.equalsIgnoreCase("uatoga") || environment.equalsIgnoreCase("prodoga") ||
+                                environment.equalsIgnoreCase("devofi") || environment.equalsIgnoreCase("sitofi") ||
+                                environment.equalsIgnoreCase("uatofi") || environment.equalsIgnoreCase("prodofi")) {
 
                             haDistrict.setVisibility(View.INVISIBLE);
                         }else {
