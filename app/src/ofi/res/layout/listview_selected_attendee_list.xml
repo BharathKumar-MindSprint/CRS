@@ -6,6 +6,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@drawable/list_item"
     android:paddingLeft="@dimen/ofis_med_pad"
     android:paddingRight="@dimen/ofis_med_pad"
     android:paddingTop="@dimen/ofis_list_itemseparator"
@@ -17,7 +18,7 @@
         android:layout_width="match_parent"
         android:id="@+id/rowlin"
         android:layout_height="wrap_content"
-        android:background="@drawable/list_item"
+
         android:baselineAligned="false"
         android:weightSum="8"
         tools:ignore="UselessParent">
@@ -45,6 +46,8 @@
                 android:layout_height="wrap_content"
                 android:text="@string/Farmer_Name"
                 android:id="@+id/attendeeName"
+                android:ellipsize="end"
+                android:maxLines="1"
                 android:textColor="@color/ofis_base_font_dark"
                 android:textSize="@dimen/ofis_med_text" />
 
@@ -136,6 +139,7 @@
                     android:visibility="gone"/>
 
             </LinearLayout>
+
             <TextView
                 android:id="@+id/tvViewAddendees"
                 android:layout_width="match_parent"
@@ -150,7 +154,6 @@
         <LinearLayout
             android:id="@+id/addAttndeesLayout"
             android:orientation="vertical"
-            android:visibility="invisible"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
             <ImageView
@@ -201,6 +204,15 @@
         </LinearLayout>
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/tvViewAddendees"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/view_attendees_count"
+        android:textColor="@color/btnColorPrimary"
+        android:textStyle="bold"
+        android:layout_marginLeft="@dimen/margin_10"
+        android:textSize="@dimen/ofis_small_text" />
 
 </LinearLayout>
 

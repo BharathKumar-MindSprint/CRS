@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:background="@color/btn_primary_background"
+    android:orientation="horizontal"
+    android:weightSum="10"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/group_title"
+        android:text="Group Title"
+        android:layout_marginLeft="@dimen/margin_10"
+        android:layout_weight="9"
+        android:padding="@dimen/margin_10"
+        android:layout_gravity="center"
+        android:textSize="15sp"
+        android:textColor="@color/ofis_base_font_white"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <ImageView
+        android:id="@+id/expImageView"
+        android:layout_width="wrap_content"
+        android:layout_weight="1"
+        android:src="@drawable/ic_dropdown_arrow"
+        android:layout_alignParentRight="true"
+        android:padding="20dp"
+        android:layout_height="wrap_content"/>
+
+</LinearLayout>

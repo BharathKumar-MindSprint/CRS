@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:weightSum="13">
+
+
+
+    <LinearLayout
+        android:id="@+id/ll_nidview"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="11.5"
+        android:layout_marginTop="5dp"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="10.8"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+
+
+            <LinearLayout
+                android:id="@+id/ll_capturephoto"
+                android:layout_width="105dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+
+                <LinearLayout
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <ImageButton
+                        android:id="@+id/nationalidphoto"
+                        android:layout_width="74dp"
+                        android:tooltipText="@string/captureid"
+                        android:background="@drawable/ic_nid_group"
+                        android:layout_height="94dp"
+                        tools:ignore="VectorDrawableCompat" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="bottom|end">
+                        <ImageButton
+                            android:layout_width="@dimen/button_width_height"
+                            android:layout_height="@dimen/button_width_height"
+                            android:id="@+id/nidphotoActionButton"
+                            android:contentDescription="@string/Camera"
+                            app:srcCompat="@drawable/ic_actionbutton_camera"
+                            android:layout_marginLeft="5dp"
+                            android:adjustViewBounds="false"
+                            android:background="@android:color/transparent"
+                            android:scaleType="fitXY"
+                            tools:ignore="VectorDrawableCompat" />
+                    </LinearLayout>
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                >
+
+
+                <Spinner
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/idtypespinner"
+                    android:hint="@string/idtype"
+                    android:layout_weight="1"
+                    android:layout_marginTop="@dimen/ofis_input_field_bottom_margin"
+                    android:layout_marginBottom="@dimen/ofis_list_itemseparator"
+                    android:layout_marginRight="@dimen/ofis_input_field_bottom_margin"
+                    android:layout_marginLeft="@dimen/ofis_input_field_bottom_margin"
+                    android:theme="@style/AppCompactTheme"
+                    android:nextFocusDown="@+id/spinner_region" />
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textCapWords"
+                    android:id="@+id/nidnumber"
+                    android:textSize="@dimen/ofis_input_field_text"
+                    android:hint="@string/nationalidno"
+                    android:layout_marginTop="@dimen/ofis_list_itemseparator"
+                    android:background="@drawable/edittext_bg_light"
+                    android:padding="@dimen/margin_10"
+                    android:textColor="@color/ofis_base_font_dark"
+                    android:textColorHint="@color/icon_grey_palette_2"
+                    android:layout_marginBottom="@dimen/ofis_input_field_bottom_margin"
+                    android:layout_marginRight="@dimen/ofis_input_field_bottom_margin"
+                    android:layout_marginLeft="@dimen/ofis_input_field_bottom_margin"/>
+
+                <LinearLayout
+                    android:visibility="gone"
+                    android:id="@+id/ll_captureexpiry"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/expirydate"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/datepicker_bg"
+                        android:drawableRight="@drawable/ic_icon_calendar_1"
+                        android:drawablePadding="5dp"
+                        android:gravity="left|center"
+                        android:hint="@string/valid_until"
+                        android:inputType="textCapWords"
+                        android:padding="@dimen/margin_10"
+                        android:paddingLeft="3dp"
+                        android:textSize="@dimen/ofis_input_field_text" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/deleteNationalid"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1.5"
+        android:gravity="bottom|end">
+    <ImageView
+        android:gravity="top|end"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter"
+        app:srcCompat="@drawable/ic_delete_item"
+        android:contentDescription="@string/Delete_Item" />
+    </LinearLayout>
+</LinearLayout>

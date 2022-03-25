@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/activity_horizontal_margin">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_centerInParent="true"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/verification_info_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16dp"
+            android:padding="@dimen/margin_10"
+            android:text="@string/moderation_info"/>
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_below="@+id/verification_info_tv"
+            android:layout_marginTop="@dimen/margin_10"
+            android:layout_alignParentRight="true"
+            android:orientation="horizontal"
+           android:layout_margin="@dimen/margin_10"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/cancel_btn"
+                android:text="@string/cancel_biometric"
+                android:layout_width="wrap_content"
+                android:background="@drawable/btn_primary_outlines"
+                android:textColor="@color/btnColorPrimary"
+                android:textSize="16sp"
+                android:padding="7dp"
+                android:layout_marginRight="@dimen/activity_horizontal_margin"
+                android:layout_height="wrap_content"/>
+            <TextView
+                android:id="@+id/continue_btn"
+                android:text="@string/continue_biometric"
+                android:background="@color/btn_primary_background"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:padding="7dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+
+
+    </RelativeLayout>
+
+</RelativeLayout>

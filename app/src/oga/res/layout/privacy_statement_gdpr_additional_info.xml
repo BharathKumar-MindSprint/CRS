@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_margin="@dimen/activity_horizontal_margin"
+    android:layout_height="match_parent">
+
+    <TextView android:layout_margin="@dimen/activity_horizontal_margin"
+        android:layout_width="match_parent"
+        android:text="@string/gdpr_data"
+        android:layout_height="wrap_content"/>
+
+    <HorizontalScrollView android:layout_margin="@dimen/activity_horizontal_margin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TableLayout
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:gravity="center">
+            <TableRow  android:padding="5dp">
+                <TextView
+                    android:textStyle="bold"
+                    android:layout_width="@dimen/table_width200"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/gdpr_data_t1" />
+                <TextView
+                    android:textStyle="bold"
+                    android:layout_width="@dimen/table_width200"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/gdpr_data_t_ans1" />
+            </TableRow>
+            <TableRow  android:padding="5dp">
+                <TextView
+                    android:layout_width="@dimen/table_width200"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/gdpr_data_t2" />
+                <TextView 
+                    android:layout_width="@dimen/table_width200"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/gdpr_data_t_ans2" />
+            </TableRow>
+            <TableRow  android:padding="5dp">
+                <TextView
+                    android:layout_width="@dimen/table_width200"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/gdpr_data_t3" />
+                <TextView 
+                    android:layout_width="@dimen/table_width200"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/gdpr_data_t_ans3" />
+            </TableRow>
+            <TableRow  android:padding="5dp">
+                <TextView
+                    android:layout_width="@dimen/table_width200"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/gdpr_data_t4" />
+                <TextView 
+                    android:layout_width="@dimen/table_width200"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/gdpr_data_t_ans4" />
+            </TableRow>
+            <TableRow  android:padding="5dp">
+                <TextView
+                    android:layout_width="@dimen/table_width200"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/gdpr_data_t5" />
+                <TextView 
+                    android:layout_width="@dimen/table_width200"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/gdpr_data_t_ans5" />
+            </TableRow>
+            <TableRow  android:padding="5dp">
+                <TextView
+                    android:layout_width="@dimen/table_width200"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/gdpr_data_t6" />
+                <TextView 
+                    android:layout_width="@dimen/table_width200"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/gdpr_data_t_ans6" />
+            </TableRow>
+            <TableRow  android:padding="5dp">
+                <TextView
+                    android:layout_width="@dimen/table_width200"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/gdpr_data_t7" />
+                <TextView 
+                    android:layout_width="@dimen/table_width200"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/gdpr_data_t_ans7" />
+            </TableRow>
+            <TableRow  android:padding="5dp">
+                <TextView
+                    android:layout_width="@dimen/table_width200"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/gdpr_data_t8" />
+                <TextView 
+                    android:layout_width="@dimen/table_width200"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/gdpr_data_t_ans8" />
+            </TableRow>
+            <TableRow  android:padding="5dp">
+                <TextView
+                    android:layout_width="@dimen/table_width200"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/gdpr_data_t9" />
+                <TextView 
+                    android:layout_width="@dimen/table_width200"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/gdpr_data_t_ans9" />
+            </TableRow>
+
+
+        </TableLayout>
+
+    </HorizontalScrollView>
+
+
+    <TextView android:layout_margin="@dimen/activity_horizontal_margin"
+        android:layout_width="match_parent"
+        android:text="@string/gdpr_data2"
+        android:layout_height="wrap_content"/>
+
+    <TextView android:layout_margin="@dimen/activity_horizontal_margin"
+        android:layout_width="match_parent"
+        android:text="@string/gdpr_data3"
+        android:layout_height="wrap_content"/>
+</LinearLayout>
