@@ -3,6 +3,8 @@ package com.olam.digital.ofis;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.text.InputFilter;
+import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -94,6 +96,7 @@ public class RegisterAdditionalTrainee extends BaseActivity {
                 for (int index = 0; index < childCount; index++) {
                     View child = parentGroup.getChildAt(index);
                     EditText etAttendeeName = (EditText) child.findViewById(R.id.etTraineeName);
+                    etAttendeeName.setFilters(new InputFilter[]{new EmojiExcludeFilter()});
                     EditText etAttendeeAge = (EditText) child.findViewById(R.id.etTraineeAge);
                     Spinner spinnerRelationship = (Spinner) child.findViewById(R.id.spinnerRelationship);
 
@@ -129,12 +132,29 @@ public class RegisterAdditionalTrainee extends BaseActivity {
         });
     }
 
+    public static class EmojiExcludeFilter implements InputFilter {
+        private String blockCharacterSet = "~#^|$%&*!'\"";
+        @Override
+        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+            for (int i = start; i < end; i++) {
+                int type = Character.getType(source.charAt(i));
+                if (type == Character.SURROGATE || type == Character.OTHER_SYMBOL ||
+                        (source != null && blockCharacterSet.contains(("" + source)))) {
+                    return "";
+                }
+            }
+            return null;
+        }
+    }
+
     private void inflateAttendeeLayout(){
         View childAttendeeView = inflater.inflate(R.layout.layout_additional_trainee, containerLayout, false);
         ImageView btnDeleteAttendee = childAttendeeView.findViewById(R.id.btndeleteAttendee);
 
         Spinner spinnerRelationship=childAttendeeView.findViewById(R.id.spinnerRelationship);
 
+        EditText etAttendeeName = (EditText) childAttendeeView.findViewById(R.id.etTraineeName);
+        etAttendeeName.setFilters(new InputFilter[]{new EmojiExcludeFilter()});
         // Old
       //  String[] relationships = getResources().getStringArray(R.array.Trainee_relationships);
 
@@ -212,6 +232,7 @@ public class RegisterAdditionalTrainee extends BaseActivity {
                     lblAttendee.setText(getResources().getString(R.string.attendee)+" "+count);
 
                     EditText etAttendeeName=(EditText) child.findViewById(R.id.etTraineeName);
+                    etAttendeeName.setFilters(new InputFilter[]{new EmojiExcludeFilter()});
                     etAttendeeName.setText(nameItem);
 
                     EditText etAttendeeAge=(EditText) child.findViewById(R.id.etTraineeAge);

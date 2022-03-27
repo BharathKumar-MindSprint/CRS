@@ -169,7 +169,7 @@
                 android:textSize="12sp"
                 android:layout_marginRight="5dp"
                 android:layout_marginBottom="5dp"
-                android:textColor="@color/dark_orange" />
+                android:textColor="@color/btnColorPrimary" />
 
         </LinearLayout>
 
@@ -188,7 +188,7 @@
                 android:adjustViewBounds="true"
                 android:scaleType="fitCenter"
                 android:id="@+id/deleteItem"
-                app:srcCompat="@drawable/ic_delete_item"
+                app:srcCompat="@drawable/ic_delete_icon_stake1"
                 android:contentDescription="@string/Delete_Item"
                 android:layout_gravity="center_vertical|center_horizontal" />
         </LinearLayout>
@@ -199,7 +199,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/view_attendees_count"
-        android:textColor="@color/btnColorPrimary"
+        android:textColor="@color/colorPrimary"
         android:textStyle="bold"
         android:layout_marginLeft="@dimen/margin_10"
         android:textSize="@dimen/ofis_small_text" />

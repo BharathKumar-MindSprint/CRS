@@ -6,6 +6,7 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import androidx.annotation.NonNull;
 
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -70,6 +71,7 @@ class CustomListAdapter_SelectedAttendees extends SimpleCursorAdapter {
         ImageView imageView = (ImageView) view.findViewById(R.id.deleteItem);
         ImageView tvAddAttendee=(ImageView) view.findViewById(R.id.addTrainingAttendeesIv);
         TextView tvViewAttendees=(TextView) view.findViewById(R.id.tvViewAddendees);
+        tvViewAttendees.setPaintFlags(tvViewAttendees.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
 
         final TextView trainingAttendeeId = (TextView) view.findViewById(R.id.trainingAttendeeId);
 

@@ -140,15 +140,6 @@
 
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/tvViewAddendees"
-                android:layout_width="match_parent"
-                android:visibility="gone"
-                android:layout_height="wrap_content"
-                android:text="@string/view_attendees_count"
-                android:textColor="@color/blue_attendee_text"
-                android:textSize="@dimen/ofis_small_text" />
-
         </LinearLayout>
 
         <LinearLayout
