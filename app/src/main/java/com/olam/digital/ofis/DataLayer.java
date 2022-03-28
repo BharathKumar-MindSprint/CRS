@@ -2431,7 +2431,9 @@ public class DataLayer {
                         subdistrictSpinner.setVisibility(View.VISIBLE);
                         String environment=BuildConfig.FLAVOR;
                         if (environment.equalsIgnoreCase("devoga") || environment.equalsIgnoreCase("sitoga") ||
-                                environment.equalsIgnoreCase("uatoga") || environment.equalsIgnoreCase("prodoga")) {
+                                environment.equalsIgnoreCase("uatoga") || environment.equalsIgnoreCase("prodoga") ||
+                                environment.equalsIgnoreCase("devofi") || environment.equalsIgnoreCase("sitofi") ||
+                                environment.equalsIgnoreCase("uatofi") || environment.equalsIgnoreCase("prodofi")) {
 
                             haDistrict.setVisibility(View.INVISIBLE);
                         }else {
@@ -3701,8 +3703,8 @@ public class DataLayer {
         try {
             while (nids.moveToNext()) {
 //                commenting OFIS OD Logic
-                String isSubDistCapture = nids.getString(nids.getColumnIndex(OFISDBContract.CountriesEntry.COLUMN_NAME_ISSUBDISTCAPTURE));
-//                String isSubDistCapture = "false";
+//                String isSubDistCapture = nids.getString(nids.getColumnIndex(OFISDBContract.CountriesEntry.COLUMN_NAME_ISSUBDISTCAPTURE));
+                String isSubDistCapture = "false";
                 if (isSubDistCapture.equalsIgnoreCase("true")) {
                     status = true;
                     break;
