@@ -183,12 +183,13 @@ public class RegisterAdditionalTrainee extends BaseActivity {
             }
         });
         parentGroup.addView(childAttendeeView);
-        ViewTreeObserver vto = scrollView.getViewTreeObserver();
-        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            public void onGlobalLayout() {
-                scrollView.scrollTo(0, 0);
-            }
-        });
+        // Disabling scroll option - OFIS-1172
+//        ViewTreeObserver vto = scrollView.getViewTreeObserver();
+//        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+//            public void onGlobalLayout() {
+//                scrollView.scrollTo(0, 0);
+//            }
+//        });
     }
 
     private void setInitialData() {
