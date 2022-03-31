@@ -156,4 +156,11 @@ public class TrainingRecords extends BaseListActivity implements AdapterView.OnI
 
         context.startActivity(intent);
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent = new Intent(this, HomeActivity.class);
+        startActivity(intent);
+    }
 }
