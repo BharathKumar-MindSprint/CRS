@@ -12,7 +12,7 @@ class OFISDB extends SQLiteOpenHelper {
     private static OFISDB sInstance;
 
 
-    private static final int DATABASE_VERSION = 140;
+    private static final int DATABASE_VERSION = 141;
 
 
     private static final String DATABASE_NAME = "ofismobile";
