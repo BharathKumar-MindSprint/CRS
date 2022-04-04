@@ -176,6 +176,7 @@
         android:layout_below="@+id/trainingAttendeesHeader"
         android:layout_above="@+id/buttonContainer"
         android:paddingBottom="@dimen/ofis_list_itemseparator"
+        android:layout_margin="@dimen/margin_10"
         android:dividerHeight="0dp" />
 
     <!-- base button -->

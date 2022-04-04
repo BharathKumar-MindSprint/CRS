@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_marginTop="10dp"
+    android:background="@drawable/border_grey_bg">
+
+    <LinearLayout
+        android:id="@+id/row_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:weightSum="2"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:id="@+id/layout_personal_info"
+            android:orientation="vertical"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/tv_item_percentage_match"
+                android:layout_width="match_parent"
+                android:textColor="@color/biometric_blue"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:text="100% Match"/>
+
+            <ImageView
+                android:id="@+id/img_farmer"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="7dp"
+                android:layout_width="72dp"
+                android:background="@drawable/empty_farmer_photo"
+                android:layout_height="72dp" />
+
+            <TextView
+                android:id="@+id/tv_item_farmer_name"
+                android:layout_width="match_parent"
+                android:textColor="@color/biometric_blue"
+                android:textStyle="bold"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:text="Akoi Kouaklan Bla"/>
+            <TextView
+                android:id="@+id/tv_item_date_of_birth"
+                android:layout_width="match_parent"
+                android:textColor="@color/biometric_blue"
+                android:textSize="14sp"
+                android:layout_marginTop="5dp"
+                android:layout_height="wrap_content"
+                android:text="DOB: 11/12/1974"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_geo_info"
+            android:orientation="vertical"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/tv_item_national_id"
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+                android:textColor="@color/gray_text"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:layout_marginTop="5dp"
+                android:text="CG11132 (Passport)"/>
+
+            <TextView
+                android:id="@+id/tv_item_country_name"
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+                android:textColor="@color/gray_text"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:layout_marginTop="5dp"
+                android:text="Ghana"/>
+            <TextView
+                android:id="@+id/tv_item_region_name"
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+                android:textColor="@color/gray_text"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:layout_marginTop="5dp"
+                android:text="Sumatera Ultara"/>
+
+            <TextView
+                android:id="@+id/tv_item_district_name"
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+                android:textColor="@color/gray_text"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:layout_marginTop="5dp"
+                android:text="Humbang Hasundutan"/>
+
+            <TextView
+                android:id="@+id/tv_item_place_name"
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+                android:textColor="@color/gray_text"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:layout_marginTop="5dp"
+                android:text="Lintong Hinuto"/>
+
+            <TextView
+                android:id="@+id/tv_item_farmer_group"
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+                android:textColor="@color/gray_text"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:layout_marginTop="5dp"
+                android:text="COOPYCA"/>
+
+            <TextView
+                android:id="@+id/tv_item_section"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_weight="1"
+                android:text="A SELWI LINE"
+                android:textColor="@color/gray_text"
+                android:textSize="14sp"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

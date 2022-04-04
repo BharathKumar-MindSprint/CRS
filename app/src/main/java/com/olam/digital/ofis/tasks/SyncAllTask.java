@@ -642,8 +642,8 @@ public class SyncAllTask extends SyncTask {
                             Utilities.saveToSharedPrefs(context, "COUNTRY_IDS", cid, null);
                             Utilities.saveIntToSharedPrefs(context, "COUNTRY_COUNT", 1);
                             countrycount = 1;
-                            publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.checking_isfl_enumerator));
-//                            publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.updating_farmers));
+//                            publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.checking_isfl_enumerator));
+                         //   publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.updating_farmers));
                             delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_ISFL);
 
                         }catch (Exception e){e.printStackTrace();}
@@ -946,8 +946,13 @@ public class SyncAllTask extends SyncTask {
                         }
                         moduleResponse = response;
 
+                        // MARCH-10- Go-Live
                         publishProgress(SyncOperation.CONTINUE_DOWNLOADING, "Checking MultiFarm enumerator");
-                         delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.MULTIFARM_ENABLED_ENUMERATOR);
+                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.MULTIFARM_ENABLED_ENUMERATOR);
+
+//                        Utilities.setMultiFarmPref(context, MultiFarmUtils.IS_MULTI_FARM_ENUMERATOR, false);
+//                        publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.updating_sip_training));
+//                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_SIP_MODULES);
 
                     } else {
                         try {

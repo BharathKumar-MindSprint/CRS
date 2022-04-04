@@ -100,6 +100,13 @@ public class TrainingRecords extends BaseListActivity implements AdapterView.OnI
                             }
                             Toast.makeText(context, res.getString(R.string.trainingrecord_deleted), Toast.LENGTH_LONG).show();
                         }
+
+                        // delete training record
+                        try {
+                             dl.deleteTrainingAttendeeRelations(trainingRecordId);
+                        }catch (Exception e){}
+
+
                     }
                 });
         AlertDialog alert = builder.create();
@@ -148,5 +155,12 @@ public class TrainingRecords extends BaseListActivity implements AdapterView.OnI
         }
 
         context.startActivity(intent);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent = new Intent(this, HomeActivity.class);
+        startActivity(intent);
     }
 }

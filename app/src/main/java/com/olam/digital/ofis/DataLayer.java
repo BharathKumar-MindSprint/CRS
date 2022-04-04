@@ -26,8 +26,11 @@ import android.widget.TextView;
 
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
+
 import com.olam.digital.ofis.childlabour.ChildLabourUtils;
 import com.olam.digital.ofis.coffeesurveyconstraints.CoffeeConstants;
+import com.olam.digital.ofis.model.Attendee;
+import com.olam.digital.ofis.model.AttendeeRelations;
 import com.olam.digital.ofis.model.FarmerLeadDTO;
 import com.olam.digital.ofis.model.GeoDTO;
 import com.olam.digital.ofis.model.NationalIdDTO;
@@ -49,6 +52,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -1991,11 +1995,16 @@ public class DataLayer {
                         haDistrict.setVisibility(View.GONE);
                     } else {
                         subdistrictSpinner.setVisibility(View.VISIBLE);
-                         String environment=BuildConfig.FLAVOR;
-                        if (environment.equalsIgnoreCase("devofi") || environment.equalsIgnoreCase("sitofi") ||
+
+                        String environment=BuildConfig.FLAVOR;
+                        if (environment.equalsIgnoreCase("devoga") || environment.equalsIgnoreCase("sitoga") ||
+                                environment.equalsIgnoreCase("uatoga") || environment.equalsIgnoreCase("prodoga") ||
+                           environment.equalsIgnoreCase("devofi") || environment.equalsIgnoreCase("sitofi") ||
                                 environment.equalsIgnoreCase("uatofi") || environment.equalsIgnoreCase("prodofi")) {
-                            haDistrict.setVisibility(View.GONE);
-                        }else{
+
+                            haDistrict.setVisibility(View.INVISIBLE);
+                        }else {
+
                             haDistrict.setVisibility(View.VISIBLE);
                         }
                     }
@@ -2422,7 +2431,16 @@ public class DataLayer {
                         haDistrict.setVisibility(View.GONE);
                     } else {
                         subdistrictSpinner.setVisibility(View.VISIBLE);
-                        haDistrict.setVisibility(View.VISIBLE);
+                        String environment=BuildConfig.FLAVOR;
+                        if (environment.equalsIgnoreCase("devoga") || environment.equalsIgnoreCase("sitoga") ||
+                                environment.equalsIgnoreCase("uatoga") || environment.equalsIgnoreCase("prodoga") ||
+                                environment.equalsIgnoreCase("devofi") || environment.equalsIgnoreCase("sitofi") ||
+                                environment.equalsIgnoreCase("uatofi") || environment.equalsIgnoreCase("prodofi")) {
+
+                            haDistrict.setVisibility(View.INVISIBLE);
+                        }else {
+                            haDistrict.setVisibility(View.VISIBLE);
+                        }
                     }
                 }
 
@@ -3589,7 +3607,6 @@ public class DataLayer {
         String whereClause = OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID + " = ?";
         String[] whereArgs = new String[]{String.valueOf(farmerid)};
         String orderBy = OFISDBContract.FarmerNationalIDs.COLUMN_NAME_ID + " ASC";
-
         return db.query(OFISDBContract.FarmerNationalIDs.TABLE_NAME, columns, whereClause, whereArgs, null, null, orderBy);
     }
 
@@ -3689,7 +3706,7 @@ public class DataLayer {
             while (nids.moveToNext()) {
 //                commenting OFIS OD Logic
                 String isSubDistCapture = nids.getString(nids.getColumnIndex(OFISDBContract.CountriesEntry.COLUMN_NAME_ISSUBDISTCAPTURE));
-//                String isSubDistCapture = "false";
+  //              String isSubDistCapture = "false";
                 if (isSubDistCapture.equalsIgnoreCase("true")) {
                     status = true;
                     break;
@@ -6466,7 +6483,7 @@ public class DataLayer {
     }
 
      public long getProductIdByFarmerGroupId(long farmerGroupId) {
-       
+
         long productId=0;
         String[] columns = new String[]{"*"};
         String whereClause = OFISDBContract.FarmerGroupsEntry.COLUMN_NAME_ID+ " = ?";
@@ -8172,6 +8189,210 @@ public class DataLayer {
             cursor.close();
         }
         return  false;
+    }
+
+    public Cursor getTraineeRelationship(int trainingRecordId, long farmerId) {
+        String[] columns = new String[]{"*"};
+        String whereClause = OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINING_RECORD_ID + " = ? AND " + OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_FARMER_ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(trainingRecordId), String.valueOf(farmerId)};
+        Cursor cursor=null;
+        try {
+            cursor = db.query(OFISDBContract.TrainingAttendeeRelations.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+        }catch (Exception e){
+            FirebaseCrashlytics.getInstance().log(e.getMessage());
+        }
+        return cursor;
+    }
+
+    public JSONArray getTraineeRelationshipByRecordId(int trainingRecordId,Context context) {
+        String[] columns = new String[]{"*"};
+        String whereClause = OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINING_RECORD_ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(trainingRecordId)};
+        Cursor cursor=null;
+        JSONArray jsonArray=new JSONArray();
+        try {
+            cursor = db.query(OFISDBContract.TrainingAttendeeRelations.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+            if (cursor.getCount()>0){
+                if(cursor != null && cursor.moveToFirst()) {
+                    do {
+                        JSONObject jsonObject1=new JSONObject();
+                        jsonObject1.put("trainingattendeesId",cursor.getString(cursor.getColumnIndex(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_FARMER_ID)));
+                        jsonObject1.put("enumeratorsId",Utilities.getFromSharedPrefs(context));
+                        jsonObject1.put("attendeesName",cursor.getString(cursor.getColumnIndex(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINEE_NAME)));
+                        jsonObject1.put("attendeesAge",cursor.getString(cursor.getColumnIndex(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINEE_AGE)) );
+                        jsonObject1.put("relationshipId",cursor.getString(cursor.getColumnIndex(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINEE_RELATIONSHIP_ID)));
+                        jsonObject1.put("attendeesGender", cursor.getString(cursor.getColumnIndex(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINEE_GENDER)));
+                        jsonObject1.put("active", "true");
+                        jsonArray.put(jsonObject1);
+                    } while (cursor.moveToNext());
+                }
+            }
+
+        }catch (Exception e){
+            FirebaseCrashlytics.getInstance().log(e.getMessage());
+        }finally {
+            cursor.close();
+        }
+        return jsonArray;
+    }
+
+    public void addOrUpdateTrainees(Context context, long farmerId, int trainingRecordId, ArrayList<Attendee> attendeeList) {
+
+        String[] columns = new String[]{"*"};
+        String whereClause = OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINING_RECORD_ID + " = ? AND " + OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_FARMER_ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(trainingRecordId), String.valueOf(farmerId)};
+        Cursor traineeCursor=null;
+        try {
+            traineeCursor = db.query(OFISDBContract.TrainingAttendeeRelations.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+        }catch (Exception e){
+            FirebaseCrashlytics.getInstance().log(e.getMessage());
+        }
+        if (traineeCursor != null && traineeCursor.getCount() > 0) {
+            db.delete(OFISDBContract.TrainingAttendeeRelations.TABLE_NAME, whereClause, whereArgs);
+        }
+
+        if (attendeeList.size()>0) {
+            for (Attendee attendee : attendeeList) {
+                ContentValues values = new ContentValues();
+                values.put(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_FARMER_ID, farmerId);
+                values.put(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINING_RECORD_ID, trainingRecordId);
+                values.put(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINEE_NAME, attendee.getTraineeName());
+                values.put(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINEE_AGE, attendee.getTraineeAge());
+                values.put(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINEE_RELATIONSHIP, attendee.getTraineeRelationship());
+                values.put(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINEE_RELATIONSHIP_ID, attendee.getTraineeRelationshipId());
+                values.put(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINEE_GENDER, attendee.getTraineeGender());
+                values.put(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINEE_GENDER_ID, attendee.getTraineeGenderId());
+                db.insert(OFISDBContract.TrainingAttendeeRelations.TABLE_NAME, null, values);
+            }
+        }
+    }
+
+    private Cursor getFarmerIdByItem(int itemId) {
+        String[] columns = new String[]{"*"};
+        String whereClause = OFISDBContract.TrainingAttendee.COLUMN_NAME_ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(itemId)};
+        return db.query(OFISDBContract.TrainingAttendee.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+    }
+
+    public int getFarmerByAttendeeItem(int itemId) {
+
+        int farmerId = 0;
+        try {
+            Cursor cursor=db.rawQuery("select * from trainingattendees where id="+itemId,null);
+            try {
+                if (cursor != null) {
+                    while (cursor.moveToNext()) {
+                        farmerId = Integer.parseInt(cursor.getString(cursor.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_FARMER_ID)));
+                    }
+                }
+            }catch (Exception e){
+            }finally {
+                cursor.close();
+            }
+        }catch (Exception e){}
+
+        return  farmerId;
+    }
+
+    public HashMap<Long, Integer> prepareAttendeeCountList(Cursor trainingAttendees, int trainingRecordId) {
+        HashMap<Long,Integer> hashMap=new HashMap<Long,Integer>();
+        try {
+            if (trainingAttendees != null) {
+                while (trainingAttendees.moveToNext()) {
+                    Cursor cursor=null;
+                    try {
+                        long farmerId=Long.valueOf(trainingAttendees.getString(trainingAttendees.getColumnIndex(OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_FARMER_ID)));
+                        cursor=  getTraineeRelationship(trainingRecordId,farmerId);
+                        if (cursor!=null){
+                            hashMap.put(farmerId,cursor.getCount());
+                        }
+                    }catch (Exception e){
+                    }finally {
+                        cursor.close();
+                    }
+                }
+            }
+        }catch (Exception e){}
+
+        return hashMap;
+    }
+
+
+    public List<AttendeeRelations> getTrainingRelations(RegisterAdditionalTrainee registerAdditionalTrainee,String locale) {
+        List<AttendeeRelations> attendeeRelationsList=new ArrayList<AttendeeRelations>();
+        if(locale.equalsIgnoreCase("_en")){
+            locale="";
+        }
+            Cursor cursor = db.rawQuery("select * from farmerRelationShips", null);
+            if (cursor != null) {
+                try {
+                    if (cursor.getCount() > 0) {
+                        while (cursor.moveToNext()) {
+                            AttendeeRelations attendeeRelations = new AttendeeRelations();
+                            attendeeRelations.setId(Integer.parseInt(cursor.getString(cursor.getColumnIndex(OFISDBContract.TrainingAttendeeRelationShip.COLUMN_NAME_ID))));
+                            attendeeRelations.setName(cursor.getString(cursor.getColumnIndex(OFISDBContract.TrainingAttendeeRelationShip.COLUMN_NAME_NAME+locale)));
+                            attendeeRelationsList.add(attendeeRelations);
+                        }
+                    }
+                } catch (Exception e) {
+                }
+            }
+            if(!cursor.isClosed()){
+                cursor.close();
+            }
+
+        return attendeeRelationsList;
+    }
+
+    public void deleteAttendeeByTrainingId(int attendeeId, long trainingRecordId) {
+
+        // getfarmer Id from Attendee Id
+         int farmerId=0;
+        try {
+           farmerId=getFarmerByAttendeeItem(attendeeId);
+        }catch (Exception e){}
+
+
+        String whereClause = OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINING_RECORD_ID + " = ? AND " + OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_FARMER_ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(trainingRecordId), String.valueOf(farmerId)};
+        try {
+            db.delete(OFISDBContract.TrainingAttendeeRelations.TABLE_NAME, whereClause, whereArgs);
+        }catch (Exception e){
+            FirebaseCrashlytics.getInstance().log(e.getMessage());
+        }
+
+    }
+
+    public boolean isCaptureAttendeeEligible(long trainingModuleId) {
+
+        boolean isCaptureAttendee=false;
+
+        Cursor cursor=db.rawQuery("select * from trainingmodules where id="+trainingModuleId,null);
+        try {
+            if (cursor !=null){
+                if(cursor.getCount()>0){
+                    while (cursor.moveToNext()) {
+                        isCaptureAttendee=Boolean.parseBoolean(cursor.getString(cursor.getColumnIndex(OFISDBContract.TrainingModule.COLUMN_NAME_CAPTURE_ATTENDEE)));
+                    }
+                }
+            }
+            cursor.close();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return isCaptureAttendee;
+
+    }
+
+    public void deleteTrainingAttendeeRelations(long trainingRecordId) {
+
+        try {
+            String attendeeWhereClause = OFISDBContract.TrainingAttendeeRelations.COLUMN_NAME_TRAINING_RECORD_ID + " = ?";
+            String[] attendeeWhereArgs = new String[]{String.valueOf(trainingRecordId)};
+            db.delete(OFISDBContract.TrainingAttendeeRelations.TABLE_NAME, attendeeWhereClause, attendeeWhereArgs);
+
+        }catch (Exception e){}
     }
 }
 

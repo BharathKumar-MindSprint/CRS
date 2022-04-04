@@ -1,0 +1,727 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--
+         DICTIONARY FILE, in order to translate just change the value not the key
+         ie, <string name="Settings">Paramètres</string>
+    -->
+    <!-- action bar and activity titles -->
+    <string name="ofis_action_bar_home">Trang chủ</string>
+    <string name="ofis_action_bar_settings">Cài đặt</string>
+    <string name="title_activity_settings">Thiết lập</string>
+    <string name="title_activity_add_farmer">Thêm Nông hộ mới</string>
+    <string name="title_activity_add_infrastructure">Thêm cơ sở hạ tầng về Xã hội</string>
+    <string name="title_activity_find_farmer">Tìm kiếm Nông hộ</string>
+    <string name="title_activity_view_farmer">Chi tiết Nông hộ</string>
+    <string name="title_activity_complete_module">Mục bảng hỏi hoàn tất</string>
+
+    <!-- main stuff -->
+    <string name="app_name">Hiệu chỉnh đồng hành Olam Agri</string>
+    <string name="cd_topSectionColour">Chọn màu nền cho mục</string>
+    <string name="ofis_switch_text_yes">Có</string>
+    <string name="ofis_switch_text_no">Không</string>
+
+    <!-- Home screen related -->
+    <string name="Retrieving_data">Đang kiểm tra cập nhật…</string>
+    <string name="importing_string">Nhập %% của || các hồ sơ</string>
+    <string name="spinners_up_to_date">Dữ liệu biểu mẫu đã cập nhật.</string>
+    <string name="updating_modules">Đang tải dữ liệu các câu hỏi</string>
+    <string name="modules_up_to_date">Các câu hỏi đã cập nhật.</string>
+    <string name="updating_farmers">Đang tải dữ liệu Nông hộ</string>
+    <string name="farmers_up_to_date">Các nông hộ đã được cập nhật</string>
+    <string name="update_complete">Cập nhật hoàn tất</string>
+    <string name="new_farmer">Nông hộ mới</string>
+    <!-- module row stuff -->
+    <string name="Awaiting_Sync">Chờ đợi để đồng bộ</string>
+    <!-- in XML -->
+    <string name="ofis_complete_questionnaire">Mục bảng hỏi hoàn tất</string>
+    <string name="ofis_add_infrastructure">Thêm cơ sở hạ tầng về Xã hội</string>
+    <string name="ofis_add_new_farmer">Thêm Nông hộ mới</string>
+    <string name="Modules_to_submit">Các mục để gửi</string>
+    <string name="item_synced">Các mục đồng bộ đã được hoàn thành.</string>
+    <string name="item_sync_error">Lỗi đồng bộ. Hãy liên hệ với chúng tôi để được giúp đỡ</string>
+    <string name="ofis_first_run_intro">Bạn đã không ở đây từ trước đúng không? Chúng tôi có thể có một số thông tin chi tiết?</string>
+    <string name="ofis_first_run_save_update">Lưu lại và cập nhật</string>
+
+    <!-- Settings screen related -->
+    <!-- in XML -->
+    <string name="Enumerator_ID">Mã số Nhân viên thu thập</string>
+
+    <!-- ADD POI related -->
+    <string name="Successfully_added">Thêm vào hoàn tất</string>
+    <string name="Successfully_updated">Cập nhật hoàn tất</string>
+    <string name="ofis_select_gender">Giới tính</string>
+    <string name="ofis_olam_funded">Được Olam tài trợ?</string>
+    <string name="ofis_select_year_opened">Năm bắt đầu</string>
+    <string name="ofis_select_education_level">Mục nhập trình độ học vấn</string>
+    <string name="ofis_select_product">Sản phẩm đã mua</string>
+    <string name="ofis_select_supply_type">Loại thiết bị cung cấp nước</string>
+    <string name="location_not_available">Vị trí không tồn tại</string>
+
+    <!-- in XML -->
+    <string name="Add_Point_of_Interest">Thêm cơ sở hạ tầng về Xã hội</string>
+    <string name="Name">Tên</string>
+    <string name="GPS_Position">Vị trí GPS</string>
+
+    <!-- in XML includes -->
+    <string name="Capacity">Dân số</string>
+    <string name="Number_of_Classrooms">Số lượng lớp học</string>
+
+    <!-- Add farmer related -->
+    <!-- in code -->
+    <string name="Select_picture_from">Chọn hình ảnh từ</string>
+    <string name="Camera">Máy ảnh</string>
+    <string name="Gallery">Thư viện</string>
+    <string name="Please_wait">Xin chờ trong giây lát…</string>
+    <string name="Please_fill_all_fields">Hãy điền vào tất cả các trường</string>
+    <string name="Please_fill_required_fields">Vui lòng điền tên và mô tả</string>
+    <string name="id_not_unique">Mã số nông hộ này không phải duy nhất, hãy thử lại</string>
+    <string name="Submitting_data">Đang gửi dữ liệu…</string>
+    <string name="Farmer_Added">Nông hộ đã được thêm !</string>
+    <string name="Farmer_Updated">Nông hộ đã được cập nhật</string>
+    <string name="are_you_at_the_farm">Bạn có ở tại nông trại không?</string>
+    <string name="yes">Đồng ý</string>
+    <string name="no">Không</string>
+    <string name="searching_for_loc">Đang tìm kiếm địa điểm</string>
+    <string name="ofis_farmer_id_hint">AA-0000-AAAA-</string>
+
+    <!-- in XML -->
+    <string name="Add_Farmer">Thêm Nông hộ</string>
+    <string name="Farmer_Name">Tên Nông hộ</string>
+    <string name="Date_of_Birth">Ngày sinh</string>
+    <string name="Country">Quốc gia</string>
+    <string name="New_place_name">Tên địa điểm mới</string>
+    <string name="new_place_name_placeholder">Địa điểm mới</string>
+    <string name="Olam_Farmer_ID">Mã Nông hộ Olam</string>
+    <string name="Save">Lưu lại</string>
+    <string name="Add_Signature">Ký tên:</string>
+    <string name="Signature">Ký tên</string>
+
+    <!-- Find a farmer related -->
+    <!-- in XML -->
+    <string name="Select_Farmer">Chọn Nông hộ</string>
+    <string name="Search">Tìm kiếm</string>
+
+    <!-- View farmer related -->
+    <!-- in XML -->
+    <string name="View_Farmer">Xem nông hộ</string>
+    <string name="Farmer_Photo">Ảnh nông hộ</string>
+    <string name="Task_list_header">Danh sách công việc</string>
+    <string name="record_farm_location">Ghi vị trí nông trại</string>
+    <string name="record_farm_location_hint">Nhấp vào để chọn GPS</string>
+    <string name="record_farm_location_complete">Vị trí đã được ghi</string>
+    <string name="record_location_timeout">Không thể tìm thấy địa điểm, xin thử lại</string>
+    <string name="enabled_string">true</string>
+    <string name="review_farm_management_plan">Xem lại kế hoạch quản lý nông trại</string>
+    <string name="review_farm_management_plan_hint">Nhấn để ghi phản hồi</string>
+
+    <!-- For View Sub Module - questionnaire default values -->
+    <string name="ModuleTitle">Mục tiêu đề</string>
+    <string name="ModuleSubTitle">Mục phụ đề </string>
+    <string name="ModuleStatus">Tác vụ mới</string>
+    <string name="module_in_progress">Trong tiến trình: </string>
+    <string name="module_finished">Chờ tải lên</string>
+    <string name="ModuleAnswerHint">Trả lời</string>
+
+    <!-- module action buttons -->
+    <string name="ModuleBackButton">Quay lại</string>
+    <string name="ModuleNextButton">Tiếp theo</string>
+    <string name="ModuleSaveButton">Lưu</string>
+
+    <!-- errors -->
+    <string name="Internet_not_available">Không có kết nối Internet - Bạn phải kết nối mạng để hoàn thành mục này.</string>
+    <string name="networking_error">Lỗi. Có lẽ đã quá thời gian, hãy thử lại, hoặc liên hệ hỗ trợ.</string>
+    <string name="farmer_not_synced">Xin lỗi, nhưng nông hộ chưa được đồng bộ. Hãy đồng bộ nông hộ trước.</string>
+
+    <!-- upgrade -->
+    <string name="upgrade_message">Ứng dụng này đã được nâng cấp, cập nhật lại dữ liệu cá nhân của bạn</string>
+
+    <!-- SPINNERS -->
+
+
+    <!-- spinner default values -->
+    <string name="spinner_country_default">Chọn Quốc gia</string>
+    <string name="spinner_region_default">Chọn vùng</string>
+    <string name="spinner_district_default">Chọn Quận/Huyện</string>
+    <string name="spinner_place_default">Chọn địa điểm</string>
+    <string name="spinner_farmergroup_default">Chọn nhóm Nông hộ</string>
+    <string name="spinner_section_default">Chọn bộ phận</string>
+    <string name="spinner_product_default">Chọn sản phẩm</string>
+
+    <string-array name="poitypes">
+        <item>Trường học</item><!-- sch -->
+        <item>Trung tâm Y tế</item><!-- hc -->
+        <item>Nguồn cung cấp nước sạch</item><!-- cws -->
+        <item>Các đại lý thu mua</item><!-- bc -->
+    </string-array>
+    <string name="poitype_school">Trường học</string>
+    <string name="poitype_healthcentre">Trung tâm Y tế</string>
+    <string name="poitype_cleanwatersupply">Nguồn cung cấp nước sạch</string>
+    <string name="poitype_buyingcentre">Các đại lý thu mua</string>
+    <string-array name="genders">
+        <item>Nam</item><!-- male -->
+        <item>Nữ</item><!-- female -->
+    </string-array>
+    <string name="gender_male">Nam</string>
+    <string name="gender_female">Nữ</string>
+    <string-array name="genders_2">
+        <item>Nam</item><!-- male -->
+        <item>Nữ</item><!-- female -->
+        <item>Kết hợp dạy cả nam và nữ</item><!-- coed -->
+    </string-array>
+    <string name="gender_school_male">Nam</string>
+    <string name="gender_school_female">Nữ</string>
+    <string name="gender_school_coeducational">Kết hợp dạy cả nam và nữ</string>
+    <string-array name="educationlevels">
+        <item>Mẫu giáo</item><!-- Nursery -->
+        <item>Tiểu học</item><!-- primary -->
+        <item>Trung học cơ sở</item><!-- junior secondary -->
+        <item>Trung học phổ thông</item><!-- Senior secondary -->
+        <item>Tốt nghiệp</item><!-- graduate -->
+    </string-array>
+    <string name="educationlevel_nursery">Mẫu giáo</string>
+    <string name="educationlevel_primary">Tiểu học</string>
+    <string name="educationlevel_juniorsecondary">Trung học cơ sở</string>
+    <string name="educationlevel_seniorsecondary">Trung học phổ thông</string>
+    <string name="educationlevel_graduate">Tốt nghiệp</string>
+    <string-array name="clean_water_types">
+        <item>Giếng khoan</item><!-- borehole -->
+        <item>Giếng nước đào</item><!-- well -->
+        <item>Ống nước</item><!-- pipe -->
+        <item>Suối</item><!-- spring -->
+    </string-array>
+    <string name="cleanwatertype_borehole">Giếng khoan</string>
+    <string name="cleanwatertype_well">Giếng nước đào</string>
+    <string name="cleanwatertype_pipe">Ống nước</string>
+    <string name="cleanwatertype_spring">Suối</string>
+    <string-array name="plotvariants">
+        <item>Tương tự</item><!-- the same -->
+        <item>Nhiều hơn</item><!-- more -->
+        <item>Ít hơn</item><!-- less -->
+    </string-array>
+    <string name="plotvariant_thesame">Tương tự</string>
+    <string name="plotvariant_more">Nhiều hơn</string>
+    <string name="plotvariant_less">Ít hơn</string>
+
+    <!-- content descriptions -->
+    <string name="ofis_cd_hierarchy_arrow">Mũi tên chỉ hướng phải</string>
+    <string name="ofis_cd_info_icon">Biểu tượng thông tin</string>
+    <string name="ofis_cd_submit_all_icon">Gửi tất cả</string>
+    <string name="module_density_plot_question">Kích thước của lô/rẫy này là lớn hơn, nhỏ hơn hay bằng với lô/rẫy chính?</string>
+    <string name="module_density_plot_question_intro">Thêm các lô/rẫy</string>
+    <string name="module_density_plot_question_result_intro">Kết quả: </string>
+    <string name="app_updated_generic_message">Bản cập nhật mới cho ứng dụng đã sẵn sàng. Nhấn ok để tải về.</string>
+    <string name="app_update_ok">OK</string>
+    <string name="app_update_cancel">Hủy</string>
+    <string name="title_activity_review_farm_management_plan">Xem lại kế hoạch quản lý nông trại</string>
+    <string name="updating_fmps">Cập nhật các kế hoạch quản lý nông trại</string>
+    <string name="fmps_up_to_date">Quản lý nông trại đã được cập nhật</string>
+    <string name="review_farm_management_plan_complete">Phản hồi đã đươc gửi</string>
+    <string name="review_farm_management_plan_in_progress">Đang trong tiến trình xem lại</string>
+    <string name="fmp_redo_baseline">Sửa đổi cơ sở dữ liệu?</string>
+    <string name="hpQId">1</string>
+    <string name="hpAId">2</string>
+    <string name="hpPqId">3</string>
+    <string name="hpRiP">4</string>
+    <string name="hpD">5</string>
+    <string name="fullreview_farm_management_plan">Xem đầy đủ kế hoạch quản lý nông trại</string>
+    <string name="fullreview_farm_management_plan_in_progress">Trong tiến trình xem đầy đủ</string>
+    <string name="fmp_are_you_sure">Điều này sẽ yêu cầu một kế hoạch mới được in, bạn có chắc chắn muốn tiếp tục?</string>
+    <string name="complete_all_required_fields">Bạn phải hoàn thành tất cả các trường bắt buộc trước khi bạn có thể gửi mục này</string>
+    <string name="ReadAndAgreeConsent">Đọc và đồng ý với các điều khoản cam kết</string>
+    <string name="consentStatementMain1">Điều này là cần thiết cho bạn để cung cấp các cho chúng tôi các thông tin cá nhân liên quan đến chương trình phát triển bền vững của Olam với bạn là một phần trong đó. Thông tin cá nhân này sẽ được thu thập và lưu trữ trên Hệ thống quản lý thông tin nông hộ "OFIS". Sau này, bạn có thể rút lại bất kỳ các cam kết với chúng tôi về việc được thu thập. sử dụng và tiết lộ thông tin cá nhân của bạn. Tuy nhiên, bạn sẽ không thể tiếp tục tham gia vào các chương trình phát triển bền vững nếu không cung cấp các dữ liệu cá nhân của bạn hoặc rút lui.</string>
+    <string name="consentStatementMain2">
+        Dữ liệu cá nhân của bạn sẽ được sử dụng trên OFIS để giúp bổ sung thông tin vào:
+    </string>
+    <string name="consentStatementMain2a">
+        Phần mềm định vị và bản đồ. Nó được thiết kế để giới thiệu vị trí của nông trại và các cơ sở hạ tầng khác, và có các thông tin chi tiết hơn được liên kết với vị trí địa lý của các Nông hộ.
+    </string>
+    <string name="consentStatementMain2b">
+        Phần mềm phân tích. Điều này nhìn vào các thông tin cá nhân của Nông hộ đối với các dữ liệu tổng hợp để giúp xác định phương hướng trong tương lai của chương trình. Người sử dụng của OFIS có thể trích xuất các phân tích (và dữ liệu sau phân tích, như thông tin cá nhân của nông hộ) vào file dạng PDF hoặc Excel. Chức năng trích xuất thông tin này đồng ý cho Người sử dụng xác định cụ thể các Nông hộ, với, ví dụ, năng suất cao nhất hoặc thấp nhất trong chương trình.
+    </string>
+    <string name="consentStatementMain2c">
+        Các kế hoạch quản lý nông trại. Nó sẽ thiết kế ra các kế hoạch áp dụng cho từng cá nhân, nêu bật những thay đổi cần thiết để thực hiện trên nông trại với hơn 3-5 năm để đạt được đầy đủ các năng suất tiềm năng.
+    </string>
+    <string name="consentStatementMain3">
+        Người sử dụng OFIS bao gồm cả các nhân viên của Olam, nhân viên quản lý nhóm Nông hộ và các khách hàng trên toàn cầu, phù hợp với Phần mềm định vị, Phần mềm phân tích và Các kế hoạch quản lý nông trại trong đoạn 2 ở trên.
+    </string>
+    <string name="consentStatementMain4">
+        Thông tin cá nhân của bạn được chúng tôi giữ bí mật, nhưng nó sẽ được chia sẻ với các người suer dụng OFIS như đã nêu trên. Thông tin cá nhân của bạn có thể sẽ được trao đổi đến một nơi ở bên ngoài khu vực thẩm quyền của bạn. Tùy thuộc vào luật áp dụng riêng tư ở khu vực mà chúng tôi sử dụng dữ liệu, chúng tôi sẽ thực hiện các bước để chắc chắn rằng các tiêu chuẩn bảo vệ đối với các thông tin chúng tôi đã trao đổi là tương tự với các tiêu chuẩn, luật riêng tư và thẩm quyền tại khu vực của bạn.
+    </string>
+    <string name="consentStatementMain5">
+        Bạn có thể rút lại bất cứ cam kết nào đã đưa ra, yêu cầu được truy cập và/hoặc sửa đổi thông tin cá nhân của bạn và/hoặc yêu cẩu thông tin về các chính sách và thủ tục, bằng cách liên lạc với nhân viên bảo vệ dữ liệu thông qua ofis@olamnet.com.
+    </string>
+    <string name="consentStatementCheck1">Tôi xác nhận rằng Nông hộ đã được nghe Nhân viên thu thập nói về Lưu ý khi thu thập thông tin cá nhân và anh ấy đã tuyệt đối cam kết thẩm quyền về việc thu thập, sử dụng, trao đổi bên ngoài và tiết lộ thông tin cá nhân bởi Olam cho các mục đích được đặt ra trong đó.</string>
+    <string name="consentStatementCheck2">Tôi xác nhận rằng Nông hộ đã được nghe Nhân viên thu thập nói về Lưu ý khi thu thập thông tin cá nhân và anh ấy sẽ xác nhận rằng đã bày tỏ sự cam kết từ tất cả các cá nhân mà dữ liệu đã được ông cung cấp để thu thập, sử dụng và tiết lộ cho các mục đích được nêu trên.</string>
+    <string name="consentStatementTitle">Lưu ý về thu thập thông tin cá nhân</string>
+    <string name="Please_accept_both_consents">Bạn phải đồng ý cả hai tuyên bố cam kết để lưu nông hộ</string>
+    <string name="farmer_id_min">Mã Nông hộ Olam phải dài hơn 4 chữ số.</string>
+    <string name="app_updated_upload_first_message">Bản cập nhật mới cho phần mềm đã sẵn sàng. Để tả về, bạn phải đồng bộ tất cả các dữ kiện trước. Nhấn ok để đồng bộ, và vào mục Thiết lập để cập nhật ứng dụng.</string>
+    <string name="please_sync_before_update">Không có khoản mục đang chờ để được đồng bộ. Xin vui lòng đồng bộ các khoản mục trước khi cập nhật bất kỳ dữ liệu của ứng dụng.</string>
+    <string name="ofis_update_overdue">Phiên bản này của ứng dụng hiện đã hết hạn, bạn phải cập nhật ứng dụng trước khi có thể sử dụng nó. Chọn biểu tượng cài đặt ở phía trên bên phải để cập nhật</string>
+    <string name="ofis_request_help">Xin giúp đỡ</string>
+    <string name="Your_Name">Tên của bạn</string>
+    <string name="Your_phone_number">Tên Số điện thoại</string>
+    <string name="problem_description">Mô tả vấn đề mà bạn đang gặp phải</string>
+    <plurals name="days_left_to_update">
+        <item quantity="one">Phiên bản cập nhật được yêu cầu sau 30 ngày. Bạn có %1d ngày còn lại để cập nhật.</item>
+        <item quantity="other">Phiên bản cập nhật được yêu cầu sau 30 ngày. Bạn có %1d ngày còn lại để cập nhật.</item>
+    </plurals>
+    <string name="record_transaction_button_text">Dữ liệu giao dịch</string>
+    <string name="record_training_button">Dữ liệu tập huấn</string>
+    <string name="ViewTransactionsTitle">Các giao dịch</string>
+    <string name="Add">Thêm</string>
+    <string name="AddTransactionItemTitle">Khoản mục giao dịch</string>
+    <string name="please_select">Xin hãy chọn</string>
+    <string name="select_transaction_item_type">Kiểu</string>
+    <string name="ofis_select_item_product_grade">Loại sản phẩm</string>
+    <string name="select_currency">Loại tiền tệ</string>
+    <string name="enter_quantity">Số lượng</string>
+    <string name="select_units">Đơn vị</string>
+    <string name="updating_transaction_data">Đang cập nhật dữ liệu giao dịch</string>
+    <string name="Transaction_item_added">Mục giao dịch đã được thêm</string>
+    <string name="Delete_Item">Xóa mục</string>
+    <string name="Transaction_default">Giao dịch</string>
+    <string name="transaction_are_you_sure">Bạn có chắc chắn muốn xóa giao dịch này?</string>
+    <string name="transaction_deleted">Giao dịch đã được xóa</string>
+    <string name="complete_transaction">Giao dịch hoàn tất</string>
+    <string name="Farmer_Group_Name">Tên nhóm nông dân</string>
+    <string name="direction_hint">Bạn đang cho hay nhận nó</string>
+    <string name="transaction_added_to_queue">Giao dịch đã được xác nhận để tải lên</string>
+    <string name="Transaction_network_queue_title">Giao dịch</string>
+    <string name="transaction_confirmed">Giao dịch đã được xác nhận</string>
+    <string name="ofis_no_transactions_text">Khi bạn thêm vào các giao dịch, nó sẽ xuất hiện ở đây</string>
+    <string name="ofis_no_trainingrecords_text">Khi bạn thêm vào các hồ sơ tập huấn, nó sẽ xuất hiện ở đây</string>
+    <string name="TrainingRecordsTitle">Hồ sơ tập huấn</string>
+    <string name="select_course">Chương trình</string>
+    <string name="TrainingAttendees">Những người tham gia tập huấn</string>
+    <string name="complete_record">Hồ sơ đã hoàn thành</string>
+    <string name="TrainingRecordTitle">Quản lý hồ sơ tập huấn</string>
+    <string name="select_training_module">Khoản mục tập huấn</string>
+    <string name="Training_Photo">Hình ảnh tập huấn</string>
+    <string name="TrainingRecordConfirmationTitle">Đơn xác nhận hồ sơ tập huấn</string>
+    <string name="TrainingRecordConfirmationSubTitle">Xác nhận hồ sơ tập huấn cho đơn xác nhận</string>
+    <string name="confirm_training_record">Xác nhận hồ sơ tập huấn</string>
+    <string name="Select_Attendees">Chọn người tham dự</string>
+    <string name="Attendee_Name">Tên người tham dự</string>
+    <string name="selected">Chọn:</string>
+    <string name="save_selected_attendees">Lưu lại những người tham dự đã được chọn</string>
+    <string name="Training_select_course_module_first">Hãy chọn một khóa học, khoản mục và chụp ảnh trước tiên</string>
+    <string name="add_attendee_scores">Thêm điểm số</string>
+    <string name="attendees_saved">Người tham dự đã được lưu</string>
+    <string name="Training_Record_Edited">Hồ sơ tập huấn đã được cập nhật</string>
+    <string name="Training_Record_Added">Hồ sơ tập huấn đã được thêm</string>
+    <string name="Add_one_attendee_to_continue">Thêm tối thiểu một người tham dự để tiếp tục</string>
+    <string name="updating_training">Cập nhật dữ liệu đào tạo/tập huấn</string>
+    <string name="Attendees">Những người tham dự</string>
+    <string name="trainingrecord_are_you_sure">Bạn có chắc chắn muốn xóa hồ sơ tập huấn này?</string>
+    <string name="trainingrecord_deleted">Hồ sơ tập huấn đã được xóa</string>
+    <string name="trainingattendee_are_you_sure">Bạn có chắc chắn muốn xóa người tham dự này?</string>
+    <string name="trainingattendee_deleted">Người tham dự đã được xóa</string>
+    <string name="TrainingAttendeeScores">Điểm của người tham dự</string>
+    <string name="TrainingAttendeeScoresSubTitle">Thêm hoặc chỉnh sửa điểm của người tham dự</string>
+    <string name="save_scores">Lưu điểm của người tham dự</string>
+    <string name="attendees_scores_updated">Điểm của người tham dự đã được cập nhật</string>
+    <string name="trainingrecord_added_to_queue">Hồ sơ tập huấn đã được xác nhận để tải lên</string>
+    <string name="trainingrecord_confirmed">Hồ sơ tập huấn đã đượ xác nhận</string>
+    <string name="checkbox_image">Hộp lựa chọn hình ảnh</string>
+    <string name="PhoneNumberHint">Số điện thoại</string>
+    <string name="PhoneNumbers">Số điện thoại</string>
+    <string name="main_number">Liên lạc chính?</string>
+    <string name="location">Vị trí</string>
+    <string name="update_phone_numbers">Cập nhật số điện thoại</string>
+    <string name="update_phone_numbers_hint">Nhấn để cập nhật</string>
+    <string name="select_transactee">Bạn đang giao dịch với ai?</string>
+    <string name="price_per_unit">giá mỗi</string>
+    <string name="total_price">Tổng giá</string>
+    <string name="amount_paid">Số tiền trả cho</string>
+    <string name="amount_loaned">Số tiền cho vay</string>
+    <string name="amount_gifted">Số tiền khuyên góp cho</string>
+    <string name="Transaction_item_updated">Khoản mục giao dịch đã được cập nhật</string>
+    <string name="amount_repaid">Số tiền hoàn trả cho</string>
+    <plurals name="trainingAttendeesCount">
+        <item quantity="one">%1d Người tham dự</item>
+        <item quantity="other">%1d Những người tham dự</item>
+    </plurals>
+    <string name="registeredForNotifications">Bây giờ bạn đăng ký để nhận nhiệm vụ</string>
+    <string name="registerForNotificationsFailed">Đăng ký thông báo nhiệm vụ không thành công. Điều này sẽ tự động thử lại sau. Nếu bạn tiếp tục nhận được thông báo này, vui lòng liên hệ hỗ trợ.</string>
+    <string name="NewTaskReceivedTitle">Nhiệm vụ mới nhận</string>
+    <string name="title_activity_tasks">Nhiệm vụ</string>
+    <string name="updating_tasks">Thêm nhiệm vụ</string>
+    <string name="TaskUpdatedTitle">Cập nhập nhiệm vụ</string>
+    <string name="TaskDeletedTitle">Giao dịch bị hủy</string>
+    <string name="take_photo">Chụp ảnh</string>
+    <string name="set_auto_time_message">Thời gian và múi giờ của bạn không được thiết lập tự động. Vui lòng thiết lập tự động</string>
+    <string name="buyingagent">Người đại diện mua hàng</string>
+    <string name="credit_balance">Nợ bạn</string>
+    <string name="ChooseBuyingAgent">Chọn người đại diện mua hàng</string>
+    <string name="WhoTransacting">Bạn đang giao dịch thay cho ai?</string>
+    <string name="PickAgentFirst">Bạn phải chọn một đại lý đầu tiên</string>
+    <string name="farmer_or_buying_agent_name">Tên của nông dân hoặc tên người đại diện mua hàng</string>
+    <string name="title_activity_find_transactee">Tìm giao dịch</string>
+    <string name="amount_repaid_and_loaned">Số tiền hoàn trả và cho mượn</string>
+    <string name="amount_loaned_by">Số tiền cho vay bởi</string>
+    <string name="amount_repaid_by">Số tiền hoàn trả bởi</string>
+    <string name="amount_repaid_and_loaned_by">Số tiền hoàn trả và mượn bởi</string>
+    <string name="amount_paid_by">Số tiền trả bởi</string>
+    <string name="amount_gifted_by">Số tiền khuyên góp bởi</string>
+    <string name="debit_balance">Bạn nợ</string>
+    <string name="cannotTransactNothingToRepay">Bạn không nợ tiền nên không thể hoàn thành giao dịch này</string>
+    <string name="cannotTransactUnableToLoan">Bạn nợ tiền nên không thể hoàn thành giao dịch này.</string>
+    <string name="cannotRepayNotOwedMoney">Bạn không nợ tiền nên không thể hoàn thành giao dịch này</string>
+    <string name="cannotLoanOwedMoney">Bạn đang nợ tiền nên không thể hoàn thành giao dịch này.</string>
+    <string name="ensure_totals_match">Hãy đảm bảo tổng các lĩnh vực thanh toán khớp với giá tổng.</string>
+    <string name="price_per_unit_default">Đơn vị</string>
+    <string name="input_crop_finance">Đầu vào, tài chínhhoặc trồng cây.</string>
+    <string name="input_crop">Đầu vào hoặc mùa vụ.</string>
+    <string name="input_finance">Đầu vào hoặc tài chính</string>
+    <string name="finance_crop">Tài chính hoặc mùa vụ</string>
+    <string name="task_mark_complete">Hoàn thành</string>
+    <string name="transaction_notes">Ghi nhớ</string>
+    <string name="cannotRepayMoreThanOwe">Ông/bà không thể trả lại nhiều hơn số ông/bà nợ</string>
+    <string name="cannotRepayMoreThanTheyOwe">Họ không thể trả lại nhiều hơn số họ nợ</string>
+    <string name="item_in_progress">Trong tiến trình</string>
+    <string name="cannot_do_mobile_money_non_farmer">Bạn không thể dùng Tiền di động để mua hàng từ đại lý mua hàng</string>
+    <string name="pay_using_mobile_money_or_cash">Thanh toán bằng Tiền di động hay tiền mặt?</string>
+    <string-array name="mmCash">
+        <item>Tiền mặt</item>
+        <item>Tiền di động</item>
+    </string-array>
+    <string name="mmCash_mobilemoney">Tiền di động</string>
+    <string name="mmCash_cash">Tiền mặt</string>
+    <string name="mobile_money_suffix">Đang sử dụng Tiền di động</string>
+    <string name="mm_transaction_initiated">Giao dịch Tiền di động bắt đầu, vui lòng đợi…</string>
+    <string name="mm_transaction_checking">Đang kiểm tra trạng thái giao dịch</string>
+    <string name="mm_transaction_timedout">Giao dịch Tiền di động của bạn không hoàn thành đúng thời gian, Vui lòng dùng tiền mặt.</string>
+    <string name="mm_transaction_awaiting_response">Giao dịch Tiền di động đang chờ thực hiện.</string>
+    <string name="mm_transaction_inprogress">Giao dịch Tiền di động đang tiến hành.</string>
+    <string name="mm_transaction_complete">Gia dịch Tiền di động đã đồng bộ và hoàn thành</string>
+    <string name="mm_transaction_failed">Giao dịch Tiền di động không thành công. Vui lòng thử dùng tiền mặt.</string>
+    <string name="mm_transaction_confirmation">Bạn sẽ phải trả %1$s %2$s khi dùng Tiền di động. Vui lòng xác nhận giao dịch</string>
+    <string name="mm_transaction_confirm">Xác nhận</string>
+    <string name="place_name_not_unique">Tên của địa điểm đã có trong quận/huyện này. Vui lòng chọn địa điểm hiện tại từ danh sách.</string>
+    <string name="title_activity_record_polygon">Diện tích lô</string>
+    <string name="loading">"Đang tải "</string>
+    <string name="wait">Xin chờ</string>
+    <string name="save_button_text">Lưu</string>
+    <string name="start_logging_button_text">"Bắt đầu đăng nhập "</string>
+    <string name="stop_logging_button_text">"Dừng đăng nhập "</string>
+    <string name="pause_button_text">"Tạm dừng "</string>
+    <string name="resume_button_text">"Tiếp tục "</string>
+    <string name="plot">"Lô số %1$d "</string>
+    <string name="current_track_name">"Tên trên OFIS  "</string>
+    <string name="plot_already_logged">"Lô số %1$s đã đăng ký "</string>
+    <string name="location_permission_alertdialog_title">"Cho phép truy cập GPS "</string>
+    <string name="open_application_settings_msg">"Vào cài đặt App "</string>
+    <string name="ready_to_save">"Sẵn sàng lưu Lô số %1$s "</string>
+    <string name="restart_logging">"Bạn muốn khởi động lại đăng nhập không? "</string>
+    <string name="save_existing_logs">"Lưu bản ghi hiện có! "</string>
+    <string name="already_logged_and_saved">"Đã đăng nhập và lưu Lô số %1$s! "</string>
+    <string name="try_again_later_msg">"Hãy thử lại sau vài phút! "</string>
+    <string name="location_not_yet_logged">"Bạn chưa Đăng nhập vào Địa điểm nào! "</string>
+    <string name="fetch_location_msg">"Đang dò tìm vị trí. Xin đợi! "</string>
+    <string name="gps_manager_msg">"Quản lý GPS "</string>
+    <string name="enable_gps_msg">"Bạn muốn bật GPS không? "</string>
+    <string name="gps_turned_on">"Bật GPS! "</string>
+    <string name="storage_permission_explanation">"Cần lưu ô bản đồ để giảm sử dụng dữ liệu và để sử dụng ngoại tuyến. "</string>
+    <string name="location_permission_explanation">"Cho phép thu thập dữ liệu địa lý lô. "</string>
+    <string name="speed_unit_kmph">"%1$d km/h "</string>
+    <string name="logging_progress_msg">"Đang đăng nhập! "</string>
+    <string name="cancel_logging_question">"Hủy đăng nhập "</string>
+    <string name="cancel_logging_msg">"%1$s đã hủy đăng nhập! "</string>
+    <string name="not_logged_yet">"%1$s chưa đăng ký! "</string>
+    <string name="area_info">"Diện tích: %1$s ha "</string>
+    <string name="save_polygon_alertdialog_title">"Lưu Lô số %1$s không? "</string>
+    <string name="save_polygon_alertdialog_msg">"Bạn không thể đăng nhập lại %1$s "</string>
+    <string name="close">"Đóng "</string>
+    <string name="saved_successfully_msg">"Lưu thành công Lô số %1$s ! "</string>
+    <string name="confirm">"Xác nhận "</string>
+    <string name="plot_location_confirmation">"Bạn có đang ở Lô số %1$s không? "</string>
+    <string name="logging_not_started_msg">"Không thể đăng nhập! "</string>
+    <string name="edit_plot_dialog_title">"Chọn số Lô "</string>
+    <string name="existing_plots">Số Lô hiện tại %1$d</string>
+    <string name="existing_plots_logged">Các Lô đã ghi %1$d</string>
+    <string name="previous_plot_not_recorded_msg">"Lô số %1$s chưa ghi. Xin hãy ghi Lô số %1$s trước."</string>
+    <string name="send_button">"Gửi "</string>
+    <string name="duplicate_phone_number">"Không cho phép Số Điện thoại trùng lặp. Vui lòng kiểm tra mục nhập số điện thoại "</string>
+    <string name="record_polygon_input_messege">"Có bao nhiêu lô? "</string>
+    <string name="record_polygon_input_title">"Phân tích mức lô "</string>
+    <string name="record_polygon_input_hint">"Nhập số Lô "</string>
+    <string name="camera_and_gallery_permission_denial_msg">Cho phép tính năng Máy ảnh và Thư viện hoạt động</string>
+    <string name="gps_permission_denial_msg">"Cho phép Tính năng Vị trí hoạt động "</string>
+    <string name="phone_state_permission_denial_msg">"Cho phép lấy số EMEI của thiết bị "</string>
+    <string name="permission_permanent_denial_title">"Từ chối vĩnh viễn "</string>
+    <string name="permission_permanent_denial_msg">"Từ chối vĩnh viễn. Vui lòng cung cấp quyền từ Cài đặt ứng dụng. "</string>
+    <string name="go_to_settings_msg">"Cho phép từ Cài đặt. Có đi tới Cài đặt không? "</string>
+    <string name="record_farm_polygon">"Ghi diện tích lô "</string>
+    <string name="record_farm_polygon_hint">Bấm để ghi diện tích lô</string>
+    <string name="record_farm_polygon_complete">"Đã ghi Diện tích lô "</string>
+    <string name="submit">"Gửi đi "</string>
+    <string name="cancel">"Hủy "</string>
+    <string name="valid_count_msg">"Nhập số hợp lệ! "</string>
+    <string name="plot_recording_module_finished">"Hoàn thành ghi Lô "</string>
+    <string name="untick_task">"Nhiệm vụ không ghi "</string>
+    <string name="untick_task_msg">"Bạn muốn đánh dấu đây là nhiệm vụ dở dang? "</string>
+    <string name="updating_master_details">Tải xuống chi tiết dữ liệu.</string>
+    <string name="authentication_failed">Lỗi xác thực . Vui lòng thử lại.</string>
+    <string name="enumerator_empty">Nhập ID điều tra viên.</string>
+    <string name="please_answer_all_questions">Trả lời tất cả các câu sau.</string>
+    <string name="are_you_ready_to_polygon_record">Bạn sẵn sàng ghi diện tích chưa?</string>
+    <string name="phone_number_recorded">Đã lưu số điện thoại.</string>
+    <string name="survey_data">Downloading Survey Data</string>
+    <string name="loggin_In">Đăng nhập.</string>
+    <string name="data_initialization">Thiết lập dữ liệu.</string>
+    <string name="fetching_location">Lấy vị trí.</string>
+    <string name="please_fill_dob">Điền ngày tháng năm sinh của nông dân.</string>
+    <string name="please_fill_farmer_name">Điền tên nông dân.</string>
+    <string name="please_fill_the">Chọn địa điểm.</string>
+    <string name="updating_sip_training">Địa điểm cơ sở hạ tầng.</string>
+    <string name="invalid_imei_msg">Lỗi xác thực . Vui lòng liên hệ với chúng tôi để được hỗ trợ</string>
+    <string name="household_question">Farmer has any children under 18 doing household?</string>
+    <string name="title_child_labour">Register Child</string>
+    <string name="inspection_question">No children found on farm (Inspection)</string>
+    <string name="followup_question">Any children found during follow-up?</string>
+    <string name="add_child">Add Child</string>
+    <string name="full_name">Child name</string>
+    <string name="age">Age</string>
+    <string name="add">Add</string>
+    <string name="checking_child_enumerator">Checking Child Enumerator</string>
+    <string name="visit_detail">Visit Detail</string>
+    <string name="child_visit_details_inserted" />
+    <string name="child_register_successfully">Child registered Successfully</string>
+    <string name="child_details">Child Details</string>
+    <string name="child_not_synced">Sorry, but the child has not yet been synced. Please sync the child first</string>
+    <string name="fill_child_name">Please fill the child name</string>
+    <string name="yrs">yrs</string>
+    <string name="child_max_limit">You have allowed maximum 30 children to register per farmer</string>
+    <string name="new_child">New Child</string>
+    <string name="child">Child</string>
+    <string name="farmer">Farmer</string>
+    <string name="household">Household Visit Detail</string>
+    <string name="inspection">Inspection Visit Detail</string>
+    <string name="followup">FollowUp Visit Detail</string>
+    <string name="child_updated_successfully">Child Updated Successfully</string>
+    <string name="downloading_child_data">Downloading Child Enumerator Details</string>
+    <string name="no_child_registered">Register Child to enable the surveys</string>
+    <string name="please_select_Age">Please select Age</string>
+    <string name="capture_my_location_button_text">Capture My location</string>
+    <string name="enumerator_location_capture">Enumerator Location Capture</string>
+    <string name="validating_facial_match">Xác thực cho khớp khuôn mặt</string>
+    <string name="back_to_registration">Quay lại Đăng ký</string>
+    <string name="no_duplicates_found">Không tìm thấy bản sao</string>
+    <string name="moderation_info">Khi tiếp tục đăng ký mới, các bản ghi trùng lặp được liệt kê sẽ luôn được gửi để kiểm duyệt</string>
+    <string name="continue_biometric">Tiếp tục</string>
+    <string name="cancel_biometric">Hủy</string>
+    <string name="mark_as_unique">Đánh dấu là duy nhất</string>
+    <string name="label_national_id">ID quốc gia:</string>
+    <string name="label_country" >Quốc gia:</string>
+    <string name="label_region">Chọn vùng:</string>
+    <string name="label_district">Quận/Huyện:</string>
+    <string name="label_place">địa điểm:</string>
+    <string name="label_farmer_group">Chọn nhóm Nông hộ:</string>
+    <string name="title_duplicate_records">Bản ghi trùng lặp</string>
+    <string name="back_to_registration_info">Khi tiếp tục đăng ký mới, các bản ghi trùng lặp được liệt kê sẽ luôn được gửi để kiểm duyệt</string>
+    <string name="match">Trận đấu</string>
+    <string name="dob">Ngày sinh</string>
+    <string name="view_farmer_info">Khi tiếp tục, các bản ghi được liệt kê sẽ được gửi để kiểm duyệt</string>
+    <string name="unique">Độc nhất</string>
+    <string name="maximum_five_records">Chỉ có thể chọn tối đa 5 bản ghi cùng một lúc</string>
+    <string name="view_mark_as_unique_info">(Các) bản ghi sẽ được gửi để kiểm duyệt cấp hai. Bạn sẽ luôn được phép thực hiện các hoạt động khác</string>
+    <string name="update_biomatric">Cập nhật sinh trắc học</string>
+    <string name="update_biomatric_hint">Nhấn để cập nhật</string>
+    <string name="farmer_photo_validation">Vui lòng tải lên ảnh nông dân</string>
+    <string name="label_duplicate_found">Các bản sao được tìm thấy</string>
+    <string name="title_list_of_duplicates">Danh sách các bản sao</string>
+    <string name="label_duplicate_records">Bản ghi trùng lặp</string>
+    <string name="label_section">Section:</string>
+    <string name="photo_not_matching">Ảnh không khớp</string>
+    <string name="updating_farmer_images">Cập nhật hình ảnh nông dân sinh trắc học</string>
+
+    <!-- Olam Agri Consent Consent -->
+    <string name="farmer_consent">SỰ ĐỒNG Ý CỦA NGƯỜI NÔNG DÂN</string>
+    <string name="personal_info_collection">"THÔNG BÁO THU THẬP THÔNG TIN CÁ NHÂN "</string>
+    <string name="cs_page2_title">1.    Sử dụng Dữ liệu Cá nhân</string>
+    <string name="cs_page2_1">Chúng tôi có thể sử dụng và chia sẻ dữ liệu cá nhân của bạn như sau</string>
+    <string name="cs_page2_2">Bạn có đồng ý không? Vui lòng đánh dấu “✔ “ vào hoặc "có"</string>
+    <string name="cs_page2_3">Đưa vào các hệ thống liên quan đến Olam Agri</string>
+    <string name="cs_page2_4">Chúng tôi có thể thu thập Dữ liệu Nông dân để đưa vào các hệ thống liên quan đến Olam Agri nơi dữ liệu của bạn có thể được sắp xếp và sau đó phân tích để cung cấp cho chúng tôi những hiểu biết quan trọng như xu hướng và các vấn đề ảnh hưởng đến chuỗi cung ứng cũng như cải thiện dịch vụ của chúng tôi cho bạn và khách hàng của chúng tôi. Để làm như vậy, nhân viên của Olam Agri và các chi nhánh của Olam Agri và một số người xử lý bên thứ 3 nhất định sẽ có quyền truy cập vào các Hệ thống liên quan đến Olam Agri và Dữ liệu Nông dân của bạn. Dữ liệu Nông dân của bạn có thể được chia sẻ với các chi nhánh, đối tác và khách hàng của chúng tôi</string>
+    <string name="cs_page2_5">Cung cấp khả năng truy xuất nguồn gốc cho thị trường</string>
+    <string name="cs_page2_6">Chúng tôi có thể chia sẻ Dữ liệu Nông dân mà bạn cung cấp cho khách hàng và đối tác của chúng tôi (những người cũng có thể chia sẻ Dữ liệu Nông dân với khách hàng và đối tác của họ) để cung cấp thông tin chi tiết về nguồn gốc thực phẩm của họ và ai đang sản xuất. Sự minh bạch này cho phép người mua đưa ra quyết định mua hàng có trách nhiệm và sáng suốt. Những nỗ lực truy xuất nguồn gốc này sẽ được chia sẻ với công chúng.</string>
+    <string name="cs_page2_7">Trend and Issue Spotting</string>
+    <string name="cs_page2_8"> -----  </string>
+    <string name="cs_page2_9">Bán hàng và Phát triển Nông dân</string>
+    <string name="cs_page2_10">Chúng tôi có thể sử dụng Dữ liệu Nông dân của bạn để hợp tác kinh doanh với bạn và giúp xác định các cơ hội để bạn phát triển doanh nghiệp và hoạt động của mình. Khi thích hợp, chúng tôi có thể giới thiệu cho bạn các cơ hội nhận được tài chính, máy móc, tư vấn quản lý trang trại, vật tư trang trại và bảo hiểm, ngoài các cơ hội bán hàng - tất cả những cơ hội này sẽ được cung cấp trực tiếp bởi chúng tôi hoặc bên thứ ba mà chúng tôi giới thiệu cho bạn. Theo đó, các bên thứ ba này sẽ được cung cấp quyền truy cập vào Dữ liệu Nông dân của bạn để cung cấp các cơ hội phát triển và bán hàng này cho bạn.</string>
+    <string name="cs_page2_11">Promoting Traceability</string>
+    <string name="cs_page2_12"> ------ </string>
+    <string name="cs_page2_13">Quảng cáo và khuyến mại cho công chúng</string>
+    <string name="cs_page2_14">Olam Agri và các chi nhánh của Olam Agri, để tránh nghi ngờ, bao gồm cả Olam Brands BV và khách hàng và đối tác của Olam Agri có thể sử dụng Dữ liệu Nông dân bao gồm tên, ảnh, thông tin vị trí, thông tin sản phẩm và các cuộc phỏng vấn (nếu được cung cấp) trong các tài liệu quảng cáo sẽ được chia sẻ công khai, chẳng hạn như trên các trang web, các ấn phẩm bằng văn bản và trên các sản phẩm để thúc đẩy việc mua các sản phẩm như sản phẩm do bạn sản xuất và tiếp thị các sáng kiến về tính bền vững và truy xuất nguồn gốc của chúng tôi</string>
+    <string name="cs_page2_15">Nghiên cứu</string>
+    <string name="cs_page2_16">Chúng tôi có thể chia sẻ Dữ liệu Nông dân của bạn để hỗ trợ các nghiên cứu của các tổ chức giáo dục, chính phủ và phi chính phủ tập trung vào những người nông dân tại địa phương, cộng đồng, nông nghiệp, chuỗi cung ứng, truy xuất nguồn gốc, tính bền vững và các nghiên cứu nhằm nâng cao nhận thức xã hội liên quan cho mục đích thúc đẩy sự hợp tác và phát triển cộng đồng theo hướng bền vững và tạo điều kiện truy xuất nguồn gốc. Các tổ chức như vậy có thể sử dụng Dữ liệu Nông dân của bạn trong các thông tin liên lạc điện tử hoặc được xuất bản của riêng họ.</string>
+    <string name="cs_page3_1">Tôi,</string>
+    <string name="cs_page3_3">"•   Tôi đã chỉ ra bằng “✔“ hoặc “có” trong Đoạn 1 khi tôi đồng ý sử dụng và thu thập dữ liệu cá nhân của tôi cho các mục đích cụ thể được trình bày ở đó.  "</string>
+    <string name="cs_page4_1">TRƯỜNG HỢP THÔNG BÁO ĐƯỢC NHÂN VIÊN/ĐẠI DIỆN Olam Agri ĐỌC CHO TỪNG CÁ NHÂN:</string>
+    <string name="cs_page4_2">"Tôi xác nhận rằng Người tham gia đã lắng nghe tôi đọc Thông báo Thu thập Thông tin Cá nhân và họ đã đồng ý rõ ràng đối với việc Olam Agri thu thập, sử dụng, chuyển giao bên ngoài khu vực pháp lý và tiết lộ dữ liệu cá nhân của họ cho các mục đích nêu trong đó. "</string>
+    <string name="cs_page5_1">Tuyên bố về Quyền Riêng tư của Dữ liệu Nông dân</string>
+    <string name="cs_page5_3">Chính sách của Olam Agri là tuân thủ tất cả các luật hiện hành về quyền riêng tư và bảo vệ dữ liệu. Olam Agri sẽ chỉ thu thập và sử dụng dữ liệu của bạn cho các mục đích cụ thể và hợp pháp, xử lý dữ liệu theo cách phù hợp với các mục đích đó, thực hiện các bước hợp lý để đảm bảo rằng dữ liệu của bạn là chính xác, đầy đủ và được cập nhật (khi cần thiết) và thực hiện các biện pháp thích hợp để cung cấp sự bảo vệ thích đáng cho dữ liệu của bạn.\n\n<b>Đơn vị kiểm soát dữ liệu</b>\n\n Đơn vị kiểm soát dữ liệu cho thông tin của bạn sẽ là Olam Global Agri Holdings Pte. Ltd. và tổ chức liên kết có liên quan ở quốc gia của bạn, nếu có.\n\n Chúng tôi thường đóng vai trò là đơn vị kiểm soát dữ liệu cho dữ liệu cá nhân. Tuy nhiên, trong một số trường hợp nhất định, Đối tác Kinh doanh có thể tham gia với chúng tôi để cung cấp cho họ các dịch vụ xử lý nhất định liên quan đến dữ liệu cá nhân. Trong những trường hợp như vậy, việc thu thập và sử dụng dữ liệu cá nhân của Đối tác Kinh doanh chịu sự điều chỉnh của các chính sách bảo mật của chính họ và chúng tôi dựa vào các cam kết pháp lý của họ mà chúng tôi được phép xử lý dữ liệu cá nhân theo cách họ đề xuất hoặc trình bày.\n\n Như đã giải thích ở trên, chúng tôi sẽ chia sẻ thông tin cá nhân của bạn cho một số mục đích cụ thể. Trường hợp thông tin cá nhân của bạn được chuyển ra ngoài EEA cho một chi nhánh của Olam Agri hoặc một tổ chức ở một quốc gia không phải tuân theo quyết định đầy đủ của Ủy ban Liên minh Châu Âu, thì dữ liệu cá nhân của bạn sẽ được bảo vệ bởi các biện pháp bảo vệ xuyên biên giới đã được Ủy ban Liên minh Châu Âu phê duyệt bao gồm các điều khoản hợp đồng tiêu chuẩn để truyền dữ liệu xuyên biên giới</string>
+    <string name="cs_page5_4">"Chúng tôi thu thập dữ liệu gì? "</string>
+    <string name="cs_page5_5">Chúng tôi có thể thu thập và xử lý dữ liệu cá nhân về bạn bao gồm nhưng không giới hạn: \n
+        •	Ảnh, video và các hình ảnh khác (nơi nhận dạng rõ ràng danh tính cá nhân của bạn);\n
+        •	Họ và tên; \n
+        •	Dữ liệu canh tác bao gồm sản lượng và cơ sở hạ tầng;\n
+        •	Phản hồi từ bạn;\n
+        •	Thông tin xã hội, tài chính, địa lý và tiểu sử;\n
+        •	Địa chỉ và các thông tin chi tiết liên hệ khác.\n
+        •	Dữ liệu vị trí khi bạn cho phép chúng tôi truy cập vào vị trí của bạn trong ứng dụng</string>
+    <string name="cs_page5_6">"Chúng tôi sử dụng dữ liệu của bạn cho những mục đích gì? "</string>
+    <string name="cs_page5_7">Chúng tôi có thể sử dụng dữ liệu này cho các mục đích sau: \n
+        •	Cung cấp các dịch vụ cho bạn như tư vấn nông học, vật tư canh tác và tiếp cận các dịch vụ liên quan đến canh tác như tài chính, bảo hiểm và hậu cần;\n
+        •	Tạo điều kiện thuận lợi cho các giao dịch với bạn;\n
+        •	Xuất bản trên các kênh thuộc sở hữu của Olam Agri bao gồm các trang web, phương tiện truyền thông xã hội và bản in; \n
+        •	Hỗ trợ các sáng kiến về tính bền vững và truy xuất nguồn gốc của chúng tôi;\n
+        •	Xác định các xu hướng trong nông nghiệp mà sẽ cho phép chúng tôi vận hành doanh nghiệp và cung cấp dịch vụ tốt hơn cho bạn;\n
+        •	Tiếp thị và quảng bá sản phẩm Olam Agri và các hoạt động của công ty; \n
+        •	Hỗ trợ các sáng kiến nghiên cứu của các đối tác của chúng tôi nhằm thúc đẩy sự hợp tác và phát triển cộng đồng theo hướng bền vững và tạo điều kiện truy xuất nguồn gốc.\n
+        •	Giới thiệu các dịch vụ nông dân của chúng tôi cho các nhà đầu tư và đối tác tiềm năng; và\n
+        •	Liên lạc với bạn; phát triển và quản lý các mối quan hệ của chúng tôi với bạn và các đối tác kinh doanh của chúng tôi.</string>
+    <string name="cs_page5_8">"Cơ sở pháp lý của chúng tôi để thu thập và xử lý dữ liệu của bạn là gì? "</string>
+    <string name="cs_page5_9">Chúng tôi sẽ chỉ thu thập và xử lý dữ liệu này, để tiến hành hoạt động kinh doanh và theo đuổi lợi ích hợp pháp của chúng tôi theo yêu cầu của Olam Agri và các chi nhánh của chúng tôi cũng như tuân thủ các nghĩa vụ pháp lý. Chúng tôi dựa trên sự đồng ý đối với một số hoạt động xử lý (như truyền thông tiếp thị) có thể bị thu hồi bất cứ khi nào chủ thể dữ liệu yêu cầu.</string>
+    <string name="cs_page5_10">"Chúng tôi sẽ chia sẻ dữ liệu này với ai? "</string>
+    <string name="cs_page5_11">"Chúng tôi có thể chia sẻ dữ liệu của bạn với các thành viên khác của nhóm Olam Agri, bao gồm bất kỳ chi nhánh nào, để đạt được các mục đích được mô tả ở trên. Chúng tôi cũng sẽ chia sẻ dữ liệu của bạn với các cơ quan chính phủ và/hoặc các quan chức thực thi pháp luật nếu luật pháp ủy quyền và bất kỳ khách hàng, nhà cung cấp dịch vụ, đơn vị cung ứng cũng như đối tác kinh doanh hiện tại và tương lai nào của Olam Agri theo đuổi các mục đích được mô tả ở trên hoặc theo cách khác với sự đồng ý của bạn. "</string>
+    <string name="cs_page5_12">"Chúng tôi sẽ gửi dữ liệu của bạn đến đâu? "</string>
+    <string name="cs_page5_13">Ngoài việc chia sẻ với các đơn vị xử lý bên thứ ba của chúng tôi cho các mục đích được liệt kê ở trên, đôi khi dữ liệu của bạn có thể được chuyển đến một trong các chi nhánh của chúng tôi ở một quốc gia khác. Chúng tôi sẽ thực hiện các bước hợp lý để đảm bảo rằng dữ liệu của bạn được bảo vệ thích đáng theo luật bảo vệ dữ liệu liên quan áp dụng cho việc xử lý dữ liệu tại quốc gia đó. Nếu bạn là một người nông dân ở EEA, nơi thông tin cá nhân của bạn được chuyển ra ngoài EEA cho một chi nhánh hoặc một tổ chức ở một quốc gia không phải tuân theo quyết định đầy đủ của Ủy ban Liên minh Châu Âu, thì dữ liệu cá nhân của bạn sẽ được bảo vệ theo các biện pháp bảo vệ xuyên biên giới đã được Ủy ban Liên minh Châu Âu phê duyệt bao gồm các điều khoản hợp đồng tiêu chuẩn về truyền dữ liệu xuyên biên giới.</string>
+    <string name="cs_page5_14">Chúng tôi có những biện pháp nào để bảo vệ dữ liệu của bạn?</string>
+    <string name="cs_page5_15">Olam Agri duy trì các biện pháp bảo vệ hợp lý để bảo vệ tính bí mật, bảo mật và tính toàn vẹn của dữ liệu của bạn. Mặc dù chúng tôi sử dụng các biện pháp bảo mật để giúp bảo vệ dữ liệu của bạn khỏi bị tiết lộ trái phép, nhưng chúng tôi không thể đảm bảo tính bảo mật của thông tin được cung cấp qua internet và sẽ không chịu trách nhiệm về những vi phạm bảo mật nằm ngoài tầm kiểm soát hợp lý của chúng tôi.</string>
+    <string name="cs_page5_16">"Bạn có quyền gì liên quan đến dữ liệu của mình? "</string>
+    <string name="cs_page5_17">"Bạn có thể chọn không cung cấp dữ liệu mà chúng tôi yêu cầu. Bạn có quyền yêu cầu Olam Agri một bản sao dữ liệu của bạn và xác minh, chỉnh sửa hoặc hạn chế việc xử lý chủ động dữ liệu của bạn. Bạn có thể yêu cầu Olam Agri ngừng sử dụng hình ảnh của bạn bất kỳ lúc nào và trong trường hợp đó, hình ảnh sẽ không được sử dụng trong các ấn phẩm sau này nhưng có thể tiếp tục xuất hiện trên các ấn phẩm đã được lưu hành. Bạn có quyền khiếu nại bất cứ lúc nào với cơ quan bảo vệ dữ liệu trong khu vực liên quan. Các quyền này có thể bị giới hạn theo luật định. Nếu bạn muốn thực hiện các quyền này hoặc có bất kỳ câu hỏi nào về các quyền này, bạn có thể liên hệ với Olam Agri tại <a href="privacy@olamagri.com">privacy@olamagri.com</a>. "</string>
+    <string name="cs_page5_18">"Dữ liệu của bạn được lưu giữ trong bao lâu? "</string>
+    <string name="cs_page5_19">Trừ khi có yêu cầu khác của pháp luật, Olam Agri sẽ lưu giữ dữ liệu cá nhân của bạn trong khoảng thời gian cần thiết cho các mục đích mà dữ liệu được thu thập. Olam Agri sẽ chia sẻ thông tin về khoảng thời gian lưu giữ dữ liệu cá nhân của bạn theo yêu cầu của bạn.</string>
+    <string name="cs_page5_20">Chi tiết liên hệ</string>
+    <string name="cs_page5_21">Nếu bạn có bất kỳ câu hỏi nào liên quan đến dữ liệu về bạn mà chúng tôi nắm giữ, vui lòng gửi email cho chúng tôi theo địa chỉ <a href="privacy@olamagri.com">privacy@olamagri.com</a>.</string>
+
+
+    <string name="cs_page5_22">   </string>
+    <string name="cs_page5_23">INTERNAL GUIDANCE NOTE</string>
+    <string name="cs_page5_24">There may be a number of ways for consent to be recorded. Please consult the Legal function if your intended collection method is not covered above. The signature fields may be replaced with consent buttons, etc.</string>
+    <string name="cs_page5_25">Please consult the Legal function if your intended purpose(s) for use and disclosure of Farmer Data does not fall within any of the categories listed in paragraph 1 above. </string>
+    <string name="cs_page5_26">All consents need to be appropriately tracked and stored. Where an Olam representative is reading the notice to the individual and acknowledging his consent on behalf of the individual (e.g. by way of a slide box in a mobile app), please ensure that Olam is able to check which representative has obtained the consent. </string>
+
+    <string name="consent_statement_pageone2">"Dữ liệu cá nhân của bạn bao gồm tên, tuổi, thông tin liên hệ (địa chỉ e-mail, số điện thoại, địa chỉ gửi thư đường bưu điện), nghề nghiệp, ảnh, video hoặc bản ghi kỹ thuật số, tiểu sử, thông tin xã hội và địa lý, thông tin nông nghiệp và sản lượng, cũng như thông tin về con cái hoặc người phụ thuộc của bạn (“<b>Dữ liệu Nông dân</b>”) sẽ được chúng tôi thu thập và lưu trữ và có thể truy cập được cho khách hàng, đối tác kinh doanh của chúng tôi và trong một số trường hợp, được công khai trên các trang web, phương tiện truyền thông xã hội, các ấn phẩm điện tử hoặc văn bản của Olam Agri. Chúng tôi yêu cầu bạn thừa nhận và đồng ý với việc thu thập, sử dụng và tiết lộ dữ liệu cá nhân của bạn cho mục đích này theo Thông báo Thu thập Thông tin Cá nhân này. "</string>
+    <string name="consent_statement_pageone1">"Bạn được yêu cầu cung cấp Thành phần Thực phẩm Olam (sau đây được gọi là “<b>Olam Agri</b>” hoặc “<b>chúng tôi</b>”) cùng với dữ liệu cá nhân để hỗ trợ những nỗ lực của Olam Agri nhằm thúc đẩy tính bền vững và khả năng truy xuất nguồn gốc trong chuỗi cung ứng và lần lượt thúc đẩy thương mại có trách nhiệm với những người nông dân như bạn trên toàn cầu (“<b>Mục đích</b>”). "</string>
+
+    <string name="allchilds_name">Tên của trẻ (nếu đồng ý thay mặt cho trẻ):</string>
+    <string name="full_farmer_name">Tên đầy đủ:</string>
+    <string name="date">Ngày:</string>
+    <string name="olam_connect">Olam Connect</string>
+    <string name="olam_contact">Người liên hệ Olam</string>
+    <string name="digital_sign">kỹ thuật số Chữ ký</string>
+    <string name="farmer_signature">nông phu Chữ ký</string>
+    <string name="enum_sign">Nhân Viên Chữ ký</string>
+    <string name="enum_name">Enumerator Tên</string>
+    <string name="farmer_sign_required">Vui lòng có chữ ký của nông dân</string>
+    <string name="staff_sign_required">Vui lòng có chữ ký của nhân viên</string>
+    <string name="childs_name">Tên của Trẻ</string>
+    <string name="name">Tên:</string>
+    <string name="Please_accept_consent">Bạn phải chấp nhận các tuyên bố đồng ý để cứu người nông dân</string>
+
+    <!-- Olam Agri Consent Consent -->
+    <string name="please_sign_within_the_boundary_box">Vui lòng ký tên trong ô ranh giới</string>
+
+
+
+    <string name="matching_farmer_records">Đối sánh hồ sơ nông dân</string>
+    <string name="matching_results_found">Tìm thấy kết quả phù hợp</string>
+    <string name="back_to_search">Quay lại Tìm kiếm</string>
+    <string name="proceed_to_registration">Tiến hành đăng ký</string>
+    <string name="back">Trở lại</string>
+    <string name="search_by_photo">Tìm kiếm bằng ảnh</string>
+    <string name="no_matching_results_found">Không tìm thấy kết quả phù hợp</string>
+    <string name="biometric_update">Cập nhật sinh trắc học</string>
+    <string name="checking_biometric_enumerator">Kiểm tra điều tra sinh trắc học</string>
+    <string name="activating_license">Kích hoạt giấy phép</string>
+    <string name="proceed_to_register">Tiến hành Đăng ký</string>
+    <string name="biometric_enum">Bạn hiện là một điều tra viên Sinh trắc học</string>
+    <string name="nonbiometric_enum">Bạn không còn là người điều tra Sinh trắc học</string>
+    <string name="deactivate_license_setting">Hủy kích hoạt giấy phép</string>
+    <string name="biometric_license_deactive">Giấy phép sinh trắc học: Không hoạt động</string>
+    <string name="biometric_license_partial">Giấy phép sinh trắc học: Một phần</string>
+    <string name="biometric_license_active">Giấy phép sinh trắc học: Hoạt động</string>
+    <string name="unable_deactivate_neurotech">Không thể hủy kích hoạt. Vui lòng liên hệ với Neurotech để hủy kích hoạt</string>
+    <string name="deactivating_license">Đang hủy kích hoạt giấy phép ..</string>
+    <string name="biometric_license_failed_in_offline">Giấy phép bị vô hiệu hóa khi ngoại tuyến</string>
+    <string name="biometric_license_failed">Giấy phép sinh trắc học: thất bại</string>
+    <string name="updating_face_templates">Cập nhật dữ liệu sinh trắc học</string>
+    <string name="updating_faceda_templates">Cập nhật Trạng thái Giấy phép Sinh trắc học</string>
+    <string name="biometric_licence_deactivation_queue">Hủy kích hoạt giấy phép sinh trắc học</string>
+    <string name="face_recognizion">Nhận dạng khuôn mặt</string>
+
+    <string name="zero_area_msg">Cannot save recorded polygon with 0ha. Please try recording a different polygon</string>
+    <string name="direct_value_below_error">Please enter value of question %1$d below %2$d</string>
+    <string name="direct_value_above_error">Please enter value of question %1$d above %2$d</string>
+    <string name="direct_value_greater_than_error">Please enter value of question %1$d within or equal to %2$d</string>
+    <string name="direct_value_less_than_error">Please enter value of question %1$d within or equal to %2$d</string>
+    <string name="direct_greater_lesser_error">Please enter value of question %1$d above %2$d or below %3$d</string>
+    <string name="min_max_error_msg">Please enter the value of question %1$d, within %2$d-%3$d</string>
+    <string name="error_msg_dropdown">The coffee tree density is higher than %1$d trees/ha. Please amend question %2$d</string>
+    <string name="common_survey_config_error">Survey config error. Please check the display config</string>
+    <string name="restriction_in_submodules">Vui lòng trả lời tất cả các câu hỏi bắt buộc để tiếp tục</string>
+    <string name="please_respond_mandatory_question">Vui lòng trả lời câu hỏi bắt buộc</string>
+    <string name="please_check_question">Silakan periksa Pertanyaan</string>
+    <string name="please_check_dependent_question">karena pertanyaan dependennya diperbarui</string>
+    <string name="update_firebase_install_id_info">Updating Informations</string>
+    <string name="national_id_info">Please update the National ID of farmer</string>
+    <string name="attendee_name">Attendee Name:</string>
+    <string name="attendee_age">Age</string>
+    <string name="attendee_relationship">Relationship:</string>
+    <string name="attendee_sex">Sex</string>
+    <string name="add_attendee">Add Attendee</string>
+    <string name="attendee_name_hint">Enter Attendee Name</string>
+    <string name="attendee_hint_age">Enter Age</string>
+    <string name="view_attendees_count">View Attendee (~V attendees)</string>
+    <string name="add_edit_attendee">Add Attendee</string>
+    <string name="viewAttendee">View Attendee</string>
+    <string name="attendee">Attendee</string>
+    <string name="mandatory_msg">Please fill all the details</string>
+    <string name="add_edit">Add/Edit</string>
+    <string name="Attendee">Attendee</string>
+    <string name="Date_of_Birth_hint">MMM DD,YYYY</string>
+    <string name="cs_page2_17">2.    Khi Dữ liệu Nông dân của bạn được chia sẻ với các bên thứ ba, chẳng hạn như khách hàng và đối tác của chúng tôi để thực hiện Mục đích và các mục đích sử dụng cụ thể được đồng ý ở trên, mỗi khách hàng và đối tác này là người kiểm soát dữ liệu theo quyền riêng của họ và bạn đồng ý cho họ sử dụng dữ liệu của bạn như đã nêu ở trên trong Đoạn 1 và như được nêu chi tiết trong Tuyên bố về Quyền Riêng tư. Nếu bất kỳ khách hàng và đối tác nào như vậy yêu cầu sử dụng Dữ liệu Nông dân của bạn ngoài Mục đích và các mục đích sử dụng cụ thể được đồng ý ở trên, họ có thể trực tiếp liên hệ với bạn để yêu cầu bạn đồng ý thêm.</string>
+    <string name="cs_page2_18">3.    Bạn có thể rút lại sự đồng ý đã đưa ra, yêu cầu về quyền truy cập và/hoặc chỉnh sửa Dữ liệu Nông dân của bạn và/hoặc yêu cầu cung cấp thông tin về các chính sách và thông lệ của chúng tôi bất kỳ lúc nào bằng cách liên hệ với chúng tôi tại <a href="privacy@olamagri.com">privacy@olamagri.com</a>. Mặc dù yêu cầu không tiết lộ là bắt buộc, nhưng việc không cung cấp Dữ liệu Nông dân của bạn và/hoặc sau đó rút lại sự đồng ý của bạn có thể ảnh hưởng đến khả năng của chúng tôi trong việc cung cấp một số dịch vụ mà bạn có thể yêu cầu riêng từ chúng tôi (tùy từng trường hợp). Ví dụ: địa chỉ của bạn có thể được yêu cầu không chỉ để hỗ trợ truy xuất nguồn gốc, mà còn để chúng tôi cung cấp một số vật liệu nhất định cho bạn, chẳng hạn như vật tư trồng trọt. Trong những trường hợp bạn rút lại sự đồng ý, chúng tôi có thể giữ lại dữ liệu đó để thực hiện các nghĩa vụ theo hợp đồng của chúng tôi đối với bạn nhưng sẽ không sử dụng dữ liệu đó cho bất kỳ mục đích nào khác</string>
+    <string name="cs_page2_19">4.    Tuyên bố về Quyền Riêng tư Dữ liệu Nông dân của chúng tôi được cung cấp để bạn tham khảo bên dưới. Nó giải thích cách chúng tôi xử lý và bảo vệ dữ liệu cá nhân. Mặc dù Dữ liệu Nông dân của bạn sẽ được chia sẻ với những người được nêu ở trên, nhưng Dữ liệu Nông dân của bạn do chúng tôi nắm giữ sẽ được giữ bí mật và tuân theo luật hiện hành về quyền riêng tư.</string>
+    <string name="cs_page3_2">"theo đây xác nhận rằng tôi đã đọc, hiểu và đồng ý với việc thu thập và sử dụng Dữ liệu Nông dân của mình như được nêu trong Thông báo Thu thập Thông tin Cá nhân này và Tuyên bố Bảo mật Dữ liệu Nông dân và rằng: "</string>
+    <string name="cs_page3_4">"•   Khi tôi đồng ý thay mặt cho trẻ em hoặc trẻ vị thành niên, thì tôi là cha mẹ hoặc người giám hộ hợp pháp của trẻ em hoặc trẻ vị thành niên đó. "</string>
+    <string name="cs_page3_5">"•   Tôi hiểu rằng tôi sẽ không nhận bất kỳ khoản thù lao tài chính hoặc thù lao nào khác cho bất kỳ dữ liệu cá nhân nào bao gồm bất kỳ hình ảnh nào và bất kỳ tài sản trí tuệ nào tồn tại trong bất kỳ hình ảnh nào sẽ thuộc về Olam Agri. "</string>
+    <string name="cs_page3_6">•   Tôi hiểu rằng tôi có quyền rút lại sự đồng ý đối với tôi hoặc con tôi/trẻ vị thành niên bất kỳ lúc nào và khi rút lại sự đồng ý đó, Olam Agri sẽ không sử dụng bất kỳ hình ảnh hoặc dữ liệu cá nhân nào trong bất kỳ ấn phẩm nào trong tương lai, nhưng có thể tiếp tục sử dụng Dữ liệu Cá nhân đó trong các ấn phẩm đã được lưu hành</string>
+    <string name="cs_page5_2">Chính sách về quyền riêng tư này quy định các chế độ thu thập, sử dụng và tiết lộ thông tin của bạn được thu thập trên ứng dụng. Nó bổ sung và nên được đọc cùng với Tuyên bố về Quyền Riêng tư của Olam Agri, giải thích các cách bổ sung mà chúng tôi thu thập và sử dụng dữ liệu cá nhân và có sẵn trên <a href="www.olamagri.com/privacy.html">www.olamagri.com/privacy.html</a></string>
+    <string name="occupation_fs">Nghề nghiệp:</string>
+    <string name="occupation_hint">Nghề nghiệp</string>
+    <string name="please_click_checkbox">Vui lòng nhấp vào tất cả các hộp kiểm thích hợp</string>
+    <string name="clear">sạch</string>
+    <string name="update_consent_statement">Cập nhật Tuyên bố về sự đồng ý</string>
+
+    <string name="update_farm_information">Update Farm Information</string>
+    <string name="select_from_existing_farm">Select from existing Farm</string>
+    <string name="create_new_farm">create new farm</string>
+    <string name="add_farm_Information">Add Farm Information</string>
+    <string name="search_farmer">Search Farmer</string>
+    <string name="multifarm_name_search">Search by Name</string>
+    <string name="farm_information">Farm Information</string>
+    <string name="farm_name">Farm Name</string>
+    <string name="farm_code">Farm Code</string>
+    <string name="add_stakeholder">Add Farm Stakeholder</string>
+    <string name="no_match_found">No match found</string>
+    <string name="please_enter_farmer_name">Please enter farmer name and click Add</string>
+    <string name="delink_confirmation">Are you sure to delink the stakeholder?</string>
+    <string name="stakeholder_validation">Please add atleast one stakeholder to proceed</string>
+    <string name="fill_stakeholder_name_role">Please fill all the stakeholder informations</string>
+    <string name="fill_stakeholder_farm_code_name">Please fill the farm name and code</string>
+    <string name="already_syned_survey_info">This survey has already been completed by the other farm stakeholder</string>
+    <string name="record_polygon_location_complete">Polygon Captured</string>
+    <string name="farm_type_warning">Please Choose the Farm Type</string>
+    <string name="search_existing_farm">Search Existing Farm</string>
+    <string name="select_by_nearest_farm">Search by Nearest Farm</string>
+    <string name="recored_polygon_multifarm_info">Farm location already captured by a stakeholder of your farm</string>
+    <string name="recored_polygon_plot_multifarm_info">Farm polygon already captured by a stakeholder of your farm</string>
+    <string name="survey_can_be_completed_by_other_stakeholders">This survey can be  completed by the another farm stakeholder</string>
+    <string name="multifarm_not_synced">Please sync the multifarm details first.</string>
+    <string name="fill_farmergroup_name_multifarm">Please select Farmer Group before adding Farm Stakeholders</string>
+</resources>

@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/consentStatementHolder"
+        android:orientation="vertical"
+         android:background="@drawable/border_white_cs"
+        >
+
+
+        <LinearLayout
+            android:id="@+id/fullnameLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:weightSum="2"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/farmer_name_title"
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:text="@string/full_farmer_name"
+                android:textSize="@dimen/ofis_large_text"
+                android:textColor="@color/clmrs_tv_grey" />
+
+            <TextView
+                android:layout_weight="1"
+                android:id="@+id/farmer_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:text="@string/Farmer_Name"
+                android:textStyle="bold"
+                android:textSize="@dimen/ofis_xlarge_text"
+                android:textColor="@color/black" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:weightSum="2"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/title_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:layout_weight="1"
+                android:textSize="@dimen/ofis_large_text"
+                android:text="@string/full_name"
+                android:textColor="@color/clmrs_tv_grey" />
+
+            <EditText
+                android:id="@+id/childname"
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:background="@drawable/border_grey_bg"
+                android:hint="@string/full_name"
+                android:inputType="textPersonName"
+                android:paddingLeft="10dp"
+                android:maxLength="150"
+                android:textColor="@android:color/black" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:weightSum="2"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:text="@string/date"
+                android:textSize="@dimen/ofis_large_text"
+                android:textColor="@color/clmrs_tv_grey" />
+
+            <TextView
+                android:layout_weight="1"
+                android:id="@+id/date"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:text="XX"
+                android:textStyle="bold"
+                android:textSize="@dimen/ofis_xlarge_text"
+                android:textColor="@color/black" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:weightSum="2"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:layout_weight="1"
+                android:textSize="@dimen/ofis_large_text"
+                android:text="@string/olam_contact"
+                android:textColor="@color/clmrs_tv_grey" />
+
+            <EditText
+                android:id="@+id/olam_contact"
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:background="@drawable/border_grey_bg"
+                android:hint="@string/olam_contact"
+                android:inputType="textPersonName"
+                android:paddingLeft="10dp"
+                android:maxLength="150"
+                android:textColor="@android:color/black" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:weightSum="2"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:layout_weight="1"
+                android:textSize="@dimen/ofis_large_text"
+                android:text="@string/digital_sign"
+                android:textColor="@color/clmrs_tv_grey" />
+
+            <TextView
+                android:layout_weight="1"
+                android:id="@+id/farmer_signature"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:text="@string/farmer_signature"
+                android:textStyle="bold"
+                android:paddingTop="15dp"
+                android:paddingBottom="15dp"
+                android:gravity="center"
+                android:background="@color/ofis_farmer_screen_actions_background"
+                android:textSize="@dimen/ofis_med_text"
+                android:textColor="@color/white" />
+
+
+
+
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TableLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/ofis_large_pad"
+                android:paddingRight="@dimen/ofis_large_pad"
+                android:paddingTop="@dimen/ofis_large_pad">
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/ofis_consent_statement_row_bottom_margin"
+                    android:weightSum="10"
+                    android:gravity="top">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="10" android:textStyle="bold"
+                        android:textColor="@color/cs_color"
+                        android:textSize="@dimen/ofis_med_text"
+                        android:text="@string/cs_page4_1" />
+                </TableRow>
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/ofis_consent_statement_row_bottom_margin"
+                    android:weightSum="10"
+                    android:gravity="top">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="10"
+                        android:textSize="@dimen/ofis_med_text"
+                        android:text="@string/cs_page4_2"/>
+                </TableRow>
+
+            </TableLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:weightSum="2"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:layout_weight="1"
+                    android:textSize="@dimen/ofis_large_text"
+                    android:text="@string/enum_sign"
+                    android:textColor="@color/clmrs_tv_grey" />
+
+                <TextView
+                    android:layout_weight="1"
+                    android:id="@+id/enum_signature"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:text="@string/enum_sign"
+                    android:textStyle="bold"
+                    android:paddingTop="15dp"
+                    android:paddingBottom="15dp"
+                    android:gravity="center"
+                    android:background="@color/ofis_farmer_screen_actions_background"
+                    android:textSize="@dimen/ofis_med_text"
+                    android:textColor="@color/white" />
+
+
+
+
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+</LinearLayout>

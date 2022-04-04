@@ -1,14 +1,19 @@
 package com.olam.digital.ofis;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.database.Cursor;
 import androidx.annotation.NonNull;
+
+import android.graphics.Paint;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
@@ -17,6 +22,7 @@ import com.google.firebase.crash.FirebaseCrash;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
 import java.util.Iterator;
 
 /**
@@ -31,9 +37,14 @@ class CustomListAdapter_SelectedAttendees extends SimpleCursorAdapter {
     private final TrainingRecord trainingRecord;
     private final JSONObject scoringColumns;
     private final String columnSuffix;
+    private final  Context mContext;
+    private DataLayer dl;
+    private HashMap<Long,Integer> farmerAttendeeList;
+    private long trainingRecordId;
 
-    public CustomListAdapter_SelectedAttendees(Context c, Cursor cursor, String[] adapterCols, int[] adapterRowViews, Resources res_, boolean readOnlyMode_, TrainingRecord trainingRecord_, JSONObject scoringColumns_, String columnSuffix_) {
+    public CustomListAdapter_SelectedAttendees(Context c, Cursor cursor, String[] adapterCols, int[] adapterRowViews, Resources res_, boolean readOnlyMode_, TrainingRecord trainingRecord_, JSONObject scoringColumns_, String columnSuffix_,DataLayer dl_,HashMap<Long,Integer> farmerAttendeeList,long trainingRecordId) {
         super(c, R.layout.listview_selected_attendee_list, cursor, adapterCols, adapterRowViews, 0);
+
         this.layout = R.layout.listview_selected_attendee_list;
         this.inflater = LayoutInflater.from(c);
         this.res = res_;
@@ -41,6 +52,10 @@ class CustomListAdapter_SelectedAttendees extends SimpleCursorAdapter {
         this.trainingRecord = trainingRecord_;
         this.scoringColumns = scoringColumns_;
         this.columnSuffix = columnSuffix_;
+        this.mContext=c;
+        this.dl=dl_;
+        this.farmerAttendeeList=farmerAttendeeList;
+        this.trainingRecordId=trainingRecordId;
     }
 
     @Override
@@ -52,8 +67,14 @@ class CustomListAdapter_SelectedAttendees extends SimpleCursorAdapter {
     public void bindView(@NonNull View view, Context context, @NonNull Cursor cursor) {
         super.bindView(view, context, cursor);
         LinearLayout linearLayout = (LinearLayout) view.findViewById(R.id.rowlin);
+        LinearLayout attendeesLayout=view.findViewById(R.id.addAttndeesLayout);
         ImageView imageView = (ImageView) view.findViewById(R.id.deleteItem);
+        ImageView tvAddAttendee=(ImageView) view.findViewById(R.id.addTrainingAttendeesIv);
+        TextView tvViewAttendees=(TextView) view.findViewById(R.id.tvViewAddendees);
+        tvViewAttendees.setPaintFlags(tvViewAttendees.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+
         final TextView trainingAttendeeId = (TextView) view.findViewById(R.id.trainingAttendeeId);
+
 
         if (readOnlyMode) {
             linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
@@ -104,6 +125,47 @@ class CustomListAdapter_SelectedAttendees extends SimpleCursorAdapter {
         }
 
         if (trainingRecord != null) {
+
+            // View Attendees logic
+            if (TrainingRecord.isCaptureAttendee && !readOnlyMode) {
+                long id = dl.getFarmerByAttendeeItem(Integer.parseInt(String.valueOf(trainingAttendeeId.getText())));
+                if (farmerAttendeeList.get(id) > 0) {
+                    tvViewAttendees.setText((context.getResources().getString(R.string.view_attendees_count)).replace("~V", String.valueOf(farmerAttendeeList.get(id))));
+                    tvViewAttendees.setVisibility(View.VISIBLE);
+                } else {
+                    tvViewAttendees.setVisibility(View.INVISIBLE);
+                }
+
+                attendeesLayout.setOnClickListener(view1 -> {
+
+                    int farmerId = dl.getFarmerByAttendeeItem(Integer.parseInt(String.valueOf(trainingAttendeeId.getText())));
+                    long trainingRecordId = trainingRecord.trainingRecordId;
+                    Intent addIntent = new Intent(mContext, RegisterAdditionalTrainee.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putString("traineeRecordId", String.valueOf(trainingRecordId));
+                    bundle.putString("farmerId", String.valueOf(farmerId));
+                    bundle.putBoolean("isEdit", true);
+                    addIntent.putExtras(bundle);
+                    mContext.startActivity(addIntent);
+                });
+
+                tvViewAttendees.setOnClickListener(view12 -> {
+                    int farmerId = dl.getFarmerByAttendeeItem(Integer.parseInt(String.valueOf(trainingAttendeeId.getText())));
+                    long trainingRecordId = trainingRecord.trainingRecordId;
+                    Intent addIntent = new Intent(mContext, RegisterAdditionalTrainee.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putString("traineeRecordId", String.valueOf(trainingRecordId));
+                    bundle.putString("farmerId", String.valueOf(farmerId));
+                    bundle.putBoolean("isEdit", false);
+                    addIntent.putExtras(bundle);
+                    mContext.startActivity(addIntent);
+                });
+            }else{
+                attendeesLayout.setVisibility(View.INVISIBLE);
+                tvViewAttendees.setVisibility(View.INVISIBLE);
+            }
+            // End
+
             imageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -112,6 +174,30 @@ class CustomListAdapter_SelectedAttendees extends SimpleCursorAdapter {
                 }
             });
         } else  {
+            // Confirmation screen
+            // View Attendees logic
+//            long id = dl.getFarmerByAttendeeItem(Integer.parseInt(String.valueOf(trainingAttendeeId.getText())));
+//            if (farmerAttendeeList.get(id)>0) {
+//                tvViewAttendees.setText((context.getResources().getString(R.string.view_attendees_count)).replace("~V", String.valueOf(farmerAttendeeList.get(id))));
+//                tvViewAttendees.setVisibility(View.VISIBLE);
+//            } else{
+//                tvViewAttendees.setVisibility(View.INVISIBLE);
+//            }
+//            tvViewAttendees.setOnClickListener(view12 -> {
+//                int farmerId = dl.getFarmerByAttendeeItem(Integer.parseInt(String.valueOf(trainingAttendeeId.getText())));
+//                Intent addIntent =new Intent(mContext, RegisterAdditionalTrainee.class);
+//                Bundle bundle = new Bundle();
+//                bundle.putString("traineeRecordId", String.valueOf(trainingRecordId));
+//                bundle.putString("farmerId", String.valueOf(farmerId));
+//                bundle.putBoolean("isEdit",false);
+//                addIntent.putExtras(bundle);
+//                mContext.startActivity(addIntent);
+//            });
+
+            tvViewAttendees.setVisibility(View.GONE);
+            attendeesLayout.setVisibility(View.GONE);
+
+
             linearLayout.setBackgroundResource(0);
             LinearLayout deleteItemWrapper = (LinearLayout) view.findViewById(R.id.deleteItemWrapper);
             deleteItemWrapper.setVisibility(View.GONE);

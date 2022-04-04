@@ -199,7 +199,7 @@ public class TrainingRecordConfirmation extends BaseListActivity {
                     R.id.criterion_percentage,
                     R.id.criterion_grade
             };
-            CustomListAdapter_SelectedAttendees customListAdapter_selectedAttendees = new CustomListAdapter_SelectedAttendees(context, trainingAttendees, adapterCols, adapterRowViews, res, false, null, scoringColumns, columnSuffix);
+            CustomListAdapter_SelectedAttendees customListAdapter_selectedAttendees = new CustomListAdapter_SelectedAttendees(context, trainingAttendees, adapterCols, adapterRowViews, res, false, null, scoringColumns, columnSuffix,dl,TrainingRecord.farmerAttendeeList,trainingRecordId);
 
             listView.setAdapter(customListAdapter_selectedAttendees);
             listView.setOnItemClickListener(null);

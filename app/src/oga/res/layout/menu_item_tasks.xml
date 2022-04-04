@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="32dp"
+    android:layout_height="match_parent"
+    android:layout_gravity="right"
+    android:id="@+id/TasksIconWrapper">
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/TaskListIcon"
+        android:contentDescription="@string/ofis_cd_submit_all_icon"
+        android:layout_marginTop="@dimen/ofis_small_pad"
+        app:srcCompat="@drawable/oga_action"
+        android:scaleType="fitXY"
+        android:background="@android:color/transparent"
+        tools:ignore="VectorDrawableCompat" />
+
+    <TextView
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:background="@drawable/list_item_total_background_task"
+        android:id="@+id/TaskListCount"
+        android:text="0"
+        android:textColor="@color/ofis_base_font_dark"
+        android:textSize="@dimen/ofis_small_text"
+        android:gravity="center"
+        android:layout_marginLeft="-10dp"
+        android:padding="0dp"
+        tools:ignore="HardcodedText" />
+
+</LinearLayout>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:id="@+id/repeater_item_number"
+        android:background="@color/ofis_action_button_background"
+        android:textColor="@color/ofis_base_font_white"
+        android:paddingLeft="@dimen/ofis_micro_pad"
+        android:paddingRight="@dimen/ofis_micro_pad"
+        android:paddingTop="@dimen/ofis_large_pad"
+        android:paddingBottom="@dimen/ofis_large_pad"
+        android:textSize="@dimen/ofis_med_text"
+        android:layout_marginBottom="@dimen/ofis_micro_pad" />
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/repeater_item"
+        android:paddingLeft="@dimen/ofis_module_repeateritem_padding"
+        android:paddingBottom="@dimen/ofis_module_repeateritem_padding"
+        />
+</LinearLayout>

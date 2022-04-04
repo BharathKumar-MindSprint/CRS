@@ -179,7 +179,8 @@
         android:layout_below="@+id/trainingAttendeesHeader"
         android:layout_above="@+id/buttonContainer"
         android:paddingBottom="@dimen/ofis_list_itemseparator"
-        android:dividerHeight="0dp" />
+        android:layout_margin="@dimen/margin_10"
+        android:dividerHeight="2dp" />
 
     <!-- base button -->
     <RelativeLayout
