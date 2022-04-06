@@ -865,6 +865,8 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                         multifarmSynced=false;
                     }else if (msg.what == 8){
                         farmerMultifarmSynced=false;
+                    }else if(msg.what ==9) {
+                        closePopup(msg);
                     }
                 }
             };
@@ -967,6 +969,8 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                         multifarmSynced=false;
                     }else if (msg.what ==8){
                         farmerMultifarmSynced=false;
+                    }else if(msg.what ==9) {
+                        closePopup(msg);
                     }
                     else {
                         finishItemSync(msg);
@@ -1000,6 +1004,29 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                   //  String pdUpdate = msg.obj.toString();
                 //    m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, totalItems/*msg.arg1*/, /*progressItem*/msg.arg2, pdUpdate);
                     Utilities.closeProgressDialog(m_ProgressDialog, 3000);
+                }
+                networkQueue.close();
+//                customListAdapter_networkQueue.swapCursor(networkQueue);
+                enableSync();
+                networkQueue = dl.getNetworkQueue();
+                String queueTotal = Integer.toString(networkQueue.getCount());
+                queueCount.setText(queueTotal);
+                totalItems = networkQueue.getCount();
+                if (networkQueue.getCount() == 0) {
+                    TextView nomodulestosubmittext = (TextView) findViewById(R.id.nomodulestosubmittext);
+                    nomodulestosubmittext.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+    }
+
+    private void closePopup(final Message msg) {
+        mainHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                if (m_ProgressDialog!=null && m_ProgressDialog.isShowing())
+                {
+                    Utilities.closeProgressDialog(m_ProgressDialog, 200);
                 }
                 networkQueue.close();
 //                customListAdapter_networkQueue.swapCursor(networkQueue);

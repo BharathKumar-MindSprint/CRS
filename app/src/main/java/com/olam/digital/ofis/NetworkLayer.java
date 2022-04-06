@@ -1993,6 +1993,22 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                                 statusMessage = res.getString(R.string.item_synced);
                                                 msg.obj = statusMessage;
                                                 handler.dispatchMessage(msg);
+                                            }else if(response.getInt("statusCode") == 3035){
+
+                                               statusMessage = res.getString(R.string.item_synced);
+                                                msg.obj = statusMessage;
+                                                msg.what=9;
+                                                handler.dispatchMessage(msg);
+                                                // Do the Activity if the duplicate entry is there
+                                                dl.deleteNetworkQueueItem(networkQueueItemId);
+                                                dl.syncFarmerModule(farmerModuleId, farmerId, moduleId, submissionDate,finalFarmId);
+
+                                                handler.postDelayed(() -> {
+                                                    // Your task goes here
+                                                    popupMsgInfo(errorItem);
+                                                    return;
+                                                },500);
+
                                             }
                                         }
                                     }else{
@@ -5095,6 +5111,29 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         alert.show();
         return;
     }
+
+    public void popupMsgInfo(String msg) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setCancelable(false);
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+        View dialogView= inflater.inflate(R.layout.common_alert_dialog, null);
+        builder.setView(dialogView);
+        TextView tvMsg=(TextView)dialogView.findViewById(R.id.tv_msg);
+        TextView tvTitle= dialogView.findViewById(R.id.tv_title);
+        tvTitle.setVisibility(View.GONE);
+        tvTitle.setText("Notification");
+        tvMsg.setText(msg);
+        Button btnNo = (Button)dialogView.findViewById(R.id.btn_no);
+        btnNo.setVisibility(View.GONE);
+        Button btnYes = (Button)dialogView.findViewById(R.id.btn_yes);
+        btnYes.setText(res.getString(R.string.msg_ok));
+        AlertDialog alert = builder.create();
+        AlertDialog finalAlert = alert;
+        btnYes.setOnClickListener(view -> finalAlert.dismiss());
+        alert.show();
+        return;
+    }
+
 
 
 }
