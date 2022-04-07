@@ -259,8 +259,7 @@
     <string name="app_updated_upload_first_message">Há uma nova atualização para este aplicativo. Para baixar, você deve sincronizar todos os itens primeiro. Por favor, clique  OK para sincronizar e depois vá em "Configurações" para atualizar seu aplicativo.</string>
     <string name="please_sync_before_update">Há itens aguardando para serem sincronizados. Por favor, sincronize antes de atualizar qualquer dado.</string>
     <string name="ofis_update_overdue">Esta versão do aplicativo está desatualizada. Você precisa atualizar antes de continuar. Clique no ícone de "Configurações" no topo, canto direito, para atualizar.</string>
-    <string name="ofis_request_help">Pergunte ajudar</string>
-    <string name="Your_Name">Seu nome</string>
+   <string name="Your_Name">Seu nome</string>
     <string name="Your_phone_number">Seu Telefone</string>
     <string name="problem_description">Descreva o problema que você está tendo</string>
     <plurals name="days_left_to_update">
@@ -508,8 +507,6 @@
     <string name="no_child_registered">Cadastre-se criança para habilitar as pesquisas</string>
     <string name="please_select_Age">Selecione a idade</string>
 
-
-    <string name="capture_my_location_button_text">Capture My location</string>
     <string name="enumerator_location_capture">Enumerator Location Capture</string>
     <string name="checking_biometric_enumerator">Verificando Enumerador Biométrico</string>
     <string name="validating_facial_match">Validando para correspondência facial</string>
@@ -706,7 +703,6 @@
     <string name="occupation_hint">Ocupação</string>
     <string name="please_click_checkbox">Por favor, clique em todas as caixas de seleção apropriadas</string>
     <string name="clear">clara</string>
-    <string name="update_consent_statement">Atualizar declaração de consentimento</string>
 
     <string name="update_farm_information">Update Farm Information</string>
     <string name="select_from_existing_farm">Select from existing Farm</string>
@@ -734,4 +730,13 @@
     <string name="survey_can_be_completed_by_other_stakeholders">This survey can be  completed by the another farm stakeholder</string>
     <string name="multifarm_not_synced">Please sync the multifarm details first.</string>
     <string name="fill_farmergroup_name_multifarm">Please select Farmer Group before adding Farm Stakeholders</string>
+
+    <string name="update_consent_statement">Atualizar declaração de consentimento</string>
+    <string name="update_signature">Atualizar assinatura</string>
+    <string name="update_signature_hint">Toque para atualizar</string>
+    <string name="update_tab_hint">Toque para atualizar</string>
+    <string name="record_hh_location">Registrar a localização da família</string>
+    <string name="are_you_at_the_farmers_hh">Você está na casa do produtor?</string>
+    <string name="capture_my_location_button_text">Gravar minha localização</string>
+    <string name="ofis_request_help">Solicitar ajuda</string>
 </resources>
