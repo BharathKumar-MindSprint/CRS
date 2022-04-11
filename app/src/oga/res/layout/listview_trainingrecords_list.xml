@@ -117,8 +117,8 @@
             android:layout_weight="1"
             android:gravity="center">
             <ImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:adjustViewBounds="true"
                 android:scaleType="fitCenter"
                 android:id="@+id/deleteTrainingRecord"

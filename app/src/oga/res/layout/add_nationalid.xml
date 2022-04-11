@@ -144,13 +144,14 @@
         android:layout_height="match_parent"
         android:layout_weight="1.5"
         android:gravity="bottom|end">
-    <ImageView
-        android:gravity="top|end"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:adjustViewBounds="true"
-        android:scaleType="fitCenter"
-        app:srcCompat="@drawable/ic_delete_item"
-        android:contentDescription="@string/Delete_Item" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="25dp"
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/Delete_Item"
+            android:gravity="top|end"
+            android:scaleType="fitCenter"
+            app:srcCompat="@drawable/ic_delete_icon_stake" />
     </LinearLayout>
 </LinearLayout>
