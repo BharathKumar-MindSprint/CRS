@@ -60,7 +60,9 @@ public class PrivacyStatementWebViewActivity extends  BasePrivacyActivity{
 
        //
         if (BuildConfig.FLAVOR.contains("oga")){
-            webView.loadUrl("https://stg-msm.olamagri.com/privacy.html");
+           // webView.loadUrl("https://stg-msm.olamagri.com/privacy.html");
+            // Livr URL
+            webView.loadUrl("https://www.olamagri.com/privacy.html");
         }else {
             webView.loadUrl("https://www.ofi.com/privacy.html");
         }
