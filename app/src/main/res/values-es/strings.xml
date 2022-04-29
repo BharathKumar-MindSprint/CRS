@@ -605,6 +605,20 @@
     <string name="please_check_dependent_question">since its dependent question is updated</string>
     <string name="update_firebase_install_id_info">Updating Informations</string>
     <string name="national_id_info">Please update the National ID of farmer</string>
+    <string name="attendee_name">Attendee Name:</string>
+    <string name="attendee_age">Age</string>
+    <string name="attendee_relationship">Relationship:</string>
+    <string name="attendee_sex">Sex</string>
+    <string name="add_attendee">Add Attendee</string>
+    <string name="attendee_name_hint">Enter Attendee Name</string>
+    <string name="attendee_hint_age">Enter Age</string>
+    <string name="view_attendees_count">View Attendee (~V attendees)</string>
+    <string name="add_edit_attendee">Add Attendee</string>
+    <string name="viewAttendee">View Attendee</string>
+    <string name="attendee">Attendee</string>
+    <string name="mandatory_msg">Please fill all the details</string>
+    <string name="add_edit">Add/Edit</string>
+    <string name="Attendee">Attendee</string>
 
 
     <string name="household_question">¿El agricultor tiene hijos menores de 18 años en el hogar?</string>
@@ -618,13 +632,17 @@
     <string name="register_child">Registro de niño(a)</string>
     <string name="child_labour_survey">Encuestas trabajo infantil</string>
     <string name="add_child">AGREGAR NIÑO</string>
-  
+
     <string name="please_click_checkbox">Haga clic en todas las casillas de verificación correspondientes.</string>
     <string name="please_sign_within_the_boundary_box">Please sign within the boundary box</string>
     <string name="txt_farm_name">Farm Name:</string>
     <string name="txt_farm_code">Farm Code:</string>
     <string name="farmer_role">Role:</string>
     <string name="farm_detail_confirmation_text">Please confirm if the below farm information linked is up-to-date, to proceed with the survey</string>
+    <string name="select_relationship_with_farmer">Select Relationship With Farmer</string>
+    <string name="attendee_name1">Attendee Name</string>
+    <string name="attendee_relationship1">Relationship</string>
+    <string name="attendee_sex1">Gender</string>
 
 </resources>
 

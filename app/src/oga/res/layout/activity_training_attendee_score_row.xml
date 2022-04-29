@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingLeft="@dimen/ofis_med_pad"
+    android:paddingRight="@dimen/ofis_med_pad"
+    android:paddingTop="@dimen/ofis_list_itemseparator"
+    android:paddingBottom="@dimen/ofis_list_itemseparator">
+
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:id="@+id/rowlin"
+        android:layout_height="wrap_content"
+        android:minHeight="60dp"
+        android:background="@drawable/list_item"
+        android:baselineAligned="false"
+        tools:ignore="UselessParent">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/itemTextContainer"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp">
+
+            <TextView
+                android:id="@+id/trainingAttendeeId"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:visibility="gone" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/Farmer_Name"
+                android:id="@+id/attendeeName"
+                android:textColor="@color/ofis_base_font_dark"
+                android:textSize="@dimen/ofis_med_text" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="@dimen/ofis_small_pad">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:id="@+id/wrapper_attended"
+                        android:background="@drawable/left_border"
+                        android:paddingLeft="@dimen/ofis_med_pad"
+                        android:layout_marginLeft="@dimen/ofis_med_pad"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/label_attended"
+                            android:textColor="@color/ofis_list_item_subtitle"
+                            android:textSize="@dimen/ofis_small_text"
+                            android:textAllCaps="true"
+                            android:textStyle="bold"/>
+
+                        <CheckBox
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/criterion_attended"/>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:id="@+id/wrapper_passed"
+                        android:background="@drawable/left_border"
+                        android:paddingLeft="@dimen/ofis_med_pad"
+                        android:layout_marginLeft="@dimen/ofis_med_pad"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/label_passed"
+                            android:textColor="@color/ofis_list_item_subtitle"
+                            android:textSize="@dimen/ofis_small_text"
+                            android:textAllCaps="true"
+                            android:textStyle="bold"/>
+
+                        <CheckBox
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:theme="@style/CheckboxStyle"
+                            android:id="@+id/criterion_passed"/>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="@dimen/ofis_small_pad">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:id="@+id/wrapper_prescore"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/label_prescore"
+                            android:textColor="@color/ofis_list_item_subtitle"
+                            android:textSize="@dimen/ofis_small_text"
+                            android:textAllCaps="true"
+                            android:textStyle="bold"/>
+
+                        <EditText
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/criterion_prescore"
+                            android:textColor="@color/ofis_base_font_dark"
+                            android:textColorHint="@color/icon_grey_palette_2"
+                            android:background="@drawable/edittext_bg_light"
+                            android:padding="@dimen/margin_10"
+                            android:textSize="@dimen/ofis_small_text"
+                            android:inputType="numberDecimal"
+                            android:hint="@string/ModuleAnswerHint"/>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:id="@+id/wrapper_postscore"
+                        android:background="@drawable/left_border"
+                        android:paddingLeft="@dimen/ofis_med_pad"
+                        android:layout_marginLeft="@dimen/ofis_med_pad"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/label_postscore"
+                            android:textColor="@color/ofis_list_item_subtitle"
+                            android:textSize="@dimen/ofis_small_text"
+                            android:textAllCaps="true"
+                            android:textStyle="bold"/>
+
+                        <EditText
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/criterion_postscore"
+                            android:textColor="@color/ofis_base_font_dark"
+                            android:textColorHint="@color/icon_grey_palette_2"
+                            android:background="@drawable/edittext_bg_light"
+                            android:padding="@dimen/margin_10"
+                            android:textSize="@dimen/ofis_small_text"
+                            android:inputType="numberDecimal"
+                            android:hint="@string/ModuleAnswerHint"/>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:id="@+id/wrapper_score"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/label_score"
+                        android:textColor="@color/ofis_list_item_subtitle"
+                        android:textSize="@dimen/ofis_small_text"
+                        android:textAllCaps="true"
+                        android:textStyle="bold"/>
+
+                    <EditText
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/criterion_score"
+                        android:textColor="@color/ofis_base_font_dark"
+                        android:textColorHint="@color/icon_grey_palette_2"
+                        android:background="@drawable/edittext_bg_light"
+                        android:padding="@dimen/margin_10"
+                        android:textSize="@dimen/ofis_small_text"
+                        android:inputType="numberDecimal"
+                        android:hint="@string/ModuleAnswerHint"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:id="@+id/wrapper_percentage"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/label_percentage"
+                        android:textColor="@color/ofis_list_item_subtitle"
+                        android:textSize="@dimen/ofis_small_text"
+                        android:textAllCaps="true"
+                        android:textStyle="bold"/>
+
+                    <EditText
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/criterion_percentage"
+                        android:textColor="@color/ofis_base_font_dark"
+                        android:textColorHint="@color/icon_grey_palette_2"
+                        android:background="@drawable/edittext_bg_light"
+                        android:padding="@dimen/margin_10"
+                        android:textSize="@dimen/ofis_small_text"
+                        android:inputType="numberDecimal"
+                        android:hint="@string/ModuleAnswerHint"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:id="@+id/wrapper_grade"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/label_grade"
+                        android:textColor="@color/ofis_list_item_subtitle"
+                        android:textSize="@dimen/ofis_small_text"
+                        android:textAllCaps="true"
+                        android:textStyle="bold"/>
+
+                    <EditText
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/criterion_grade"
+                        android:textColor="@color/ofis_base_font_dark"
+                        android:textColorHint="@color/icon_grey_palette_2"
+                        android:background="@drawable/edittext_bg_light"
+                        android:padding="@dimen/margin_10"
+                        android:textSize="@dimen/ofis_small_text"
+                        android:hint="@string/ModuleAnswerHint"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

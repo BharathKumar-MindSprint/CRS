@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/margin_10"
+    android:weightSum="12">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1.5"
+        android:gravity="center">
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:theme="@style/RadioButtonStyle"
+            android:id="@+id/primary_number" />
+
+    </LinearLayout>
+
+    <EditText
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="3"
+        android:id="@+id/dialling_code"
+        android:textColor="@color/ofis_base_font_dark"
+        android:textColorHint="@color/edit_text_hint"
+        android:background="@drawable/edittext_bg_light"
+        android:padding="@dimen/margin_10"
+        android:hint=""
+        android:clickable="false"
+        android:cursorVisible="false"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:textSize="@dimen/ofis_small_text"
+        android:maxLines="1"
+        />
+
+    <EditText
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="6"
+        android:id="@+id/phonenumber"
+        android:textColor="@color/ofis_base_font_dark"
+        android:textColorHint="@color/edit_text_hint"
+        android:background="@drawable/edittext_bg_light"
+        android:padding="@dimen/margin_10"
+        android:textSize="@dimen/ofis_small_text"
+        android:digits="0123456789"
+        android:hint="@string/PhoneNumberHint"
+        android:layout_marginLeft="@dimen/ofis_small_pad"
+        android:inputType="phone"/>
+
+    <ImageView
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:layout_weight="1.5"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter"
+        android:id="@+id/deleteNumber"
+        android:padding="5dp"
+        app:srcCompat="@drawable/ic_delete_icon_stake"
+        android:contentDescription="@string/Delete_Item"
+        tools:ignore="VectorDrawableCompat" />
+
+</LinearLayout>

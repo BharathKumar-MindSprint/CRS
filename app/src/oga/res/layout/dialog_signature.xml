@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:weightSum="1"
+    android:gravity="center"
+    android:background="@android:color/transparent"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:background="@drawable/border_grey_bg"
+        android:layout_weight="0.9"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/ll_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:gravity="center"
+            android:weightSum="10"
+            android:paddingTop="@dimen/ofis_large_pad"
+            android:background="@color/white"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_title_matchresult_dialog"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:textColor="@color/header_color"
+                android:padding="5dp"
+                android:textSize="17dp"
+                android:text="@string/Signature"
+                android:layout_weight="9"
+                android:textAppearance="?android:textAppearanceMedium"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                bind:srcCompat="@drawable/oga_cross"
+                android:layout_alignTop="@+id/signature_pad"
+                android:id="@+id/btn_cancel_signature"
+                android:padding="10dp"
+                android:layout_weight="1"
+                android:gravity="right|end"
+                android:layout_height="wrap_content"
+                tools:ignore="VectorDrawableCompat" />
+        </LinearLayout>
+
+        <View
+            android:id="@+id/view"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:visibility="gone"
+            android:layout_below="@+id/ll_title"
+            android:background="@drawable/border_grey_bg"/>
+        <!-- bottom section - updated -->
+        <com.github.gcacace.signaturepad.views.SignaturePad
+            android:id="@+id/signature_pad"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/ll_footer"
+            android:layout_below="@+id/tv_info"
+            android:layout_marginStart="@dimen/margin_10"
+            android:layout_marginTop="@dimen/margin_10"
+            android:layout_marginEnd="@dimen/margin_10"
+            android:layout_marginBottom="@dimen/margin_10"
+            android:background="@drawable/signature_pad_bg"
+            bind:penColor="@color/black"
+            bind:penMaxWidth="5dp"
+            bind:penMinWidth="7dp" />
+
+        <TextView
+            android:id="@+id/tv_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/ll_title"
+            android:layout_marginStart="5dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="5dp"
+            android:paddingLeft="5dp"
+            android:paddingTop="5dp"
+            android:paddingRight="10dp"
+            android:paddingBottom="5dp"
+            android:src="@drawable/ic_consent_close"
+            android:text="@string/please_sign_within_the_boundary_box"
+            android:textAppearance="?android:textAppearanceMedium"
+            android:textColor="@color/header_color"
+            android:textSize="13dp"
+            android:textStyle="normal" />
+
+        <LinearLayout
+            android:layout_margin="@dimen/margin_10"
+            android:id="@+id/ll_footer"
+            android:paddingBottom="@dimen/ofis_large_pad"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/imgv_clear_signature"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:textColor="@color/btnColorPrimary"
+                android:background="@drawable/border_dark_bg"
+                android:padding="5dp"
+                android:textAllCaps="false"
+                android:textSize="13dp"
+                android:text="@string/clear" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"/>
+            <Button
+                android:id="@+id/btn_add_signature"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:textColor="@color/white"
+                android:textSize="13dp"
+                android:textAllCaps="false"
+                android:background="@color/ofis_action_button_background"
+                android:text="@string/confirm" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+
+</LinearLayout>

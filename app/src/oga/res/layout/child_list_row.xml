@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/itemCardView"
+    app:contentPaddingBottom="5dp"
+    app:contentPaddingTop="5dp"
+    app:contentPaddingRight="10dp"
+    app:contentPaddingLeft="10dp"
+    android:background="@color/ofis_base_font_white">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:background="@color/ofis_base_font_white"
+        android:weightSum="3">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_weight="2"
+            android:weightSum="3">
+
+            <TextView
+                android:id="@+id/name"
+                android:layout_width="70dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_margin="5dp"
+                android:gravity="center|left"
+                android:paddingLeft="5dp"
+                android:layout_weight="2"
+                android:textStyle="bold"
+                android:textSize="14dp"
+                android:maxLength="20"
+                android:text="@string/full_name" />
+
+            <TextView
+                android:id="@+id/gender"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:textSize="14dp"
+                android:paddingLeft="5dp"
+                android:text="@string/gender_male" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:weightSum="2">
+
+            <TextView
+                android:id="@+id/age"
+                android:layout_width="40dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textSize="14dp"
+                android:paddingLeft="5dp"
+                android:text="16 yrs" />
+
+            <ImageView
+                android:id="@+id/arrow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:gravity="center"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                app:srcCompat="@drawable/ic_right_arrow" />
+        </LinearLayout>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

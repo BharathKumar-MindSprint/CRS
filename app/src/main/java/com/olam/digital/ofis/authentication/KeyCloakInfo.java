@@ -42,6 +42,18 @@ public interface KeyCloakInfo {
 
     String Client_Id = "keycloakClientId";
     String Client_Secret = "keycloakClientSecret";
+
+    String dev_oga_client_Id ="oga-ofis-mobile-dev" ;
+    String dev_oga_Client_Secret ="7ac7f179-eda8-4bfd-ac14-5d6e26dbf110";
+
+    String sit_oga_client_Id ="oga-ofis-mobile-sit" ;
+    String sit_oga_Client_Secret = "bc8bd8e5-ebe4-4aa5-bc18-408e8fca1087";
+
+    String uat_oga_client_Id ="oga-ofis-mobile-uat" ;
+    String uat_oga_Client_Secret = "374690e8-d189-4886-8e4b-3f32b253947a";
+
+    String prod_oga_client_Id = "";
+    String prod_oga_Client_Secret ="" ;
 }
 
 

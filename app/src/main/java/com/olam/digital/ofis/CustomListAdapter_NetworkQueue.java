@@ -47,14 +47,26 @@ class CustomListAdapter_NetworkQueue extends SimpleCursorAdapter {
         ImageView imageView = (ImageView) view.findViewById(R.id.imageView_pic);
         final TextView networkQueueId = (TextView) view.findViewById(R.id.networkQueueId);
 
-        if(isClickable){
-            imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_upload_list));
-            imageView.setEnabled(true);
-        }else{
-            imageView.setEnabled(false);
-            imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_icon_sync_black));
-        }
+        String environment=BuildConfig.FLAVOR;
+        if (environment.equalsIgnoreCase("devoga") || environment.equalsIgnoreCase("sitoga") ||
+                environment.equalsIgnoreCase("uatoga") || environment.equalsIgnoreCase("prodoga")) {
 
+            if (isClickable) {
+                imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_blacklocation));
+                imageView.setEnabled(true);
+            } else {
+                imageView.setEnabled(false);
+                imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_graylocation));
+            }
+        }else {
+            if (isClickable) {
+                imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_upload_list));
+                imageView.setEnabled(true);
+            } else {
+                imageView.setEnabled(false);
+                imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_icon_sync_black));
+            }
+        }
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

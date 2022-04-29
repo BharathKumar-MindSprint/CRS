@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingLeft="@dimen/ofis_large_pad"
+    android:paddingRight="@dimen/ofis_large_pad"
+    android:paddingTop="@dimen/ofis_list_itemseparator"
+    android:paddingBottom="@dimen/ofis_list_itemseparator">
+
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:id="@+id/rowlin"
+        android:layout_height="wrap_content"
+        android:minHeight="60dp"
+        android:background="@drawable/list_item"
+        android:baselineAligned="false"
+        android:weightSum="8"
+        tools:ignore="UselessParent">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:id="@+id/itemTextContainer"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:layout_weight="7">
+
+            <TextView
+                android:id="@+id/networkQueueId"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:visibility="gone" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/Farmer_Name"
+                android:id="@+id/networkQueueName"
+                android:textColor="@color/ofis_base_font_dark"
+                android:textSize="@dimen/ofis_med_text" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/Awaiting_Sync"
+                android:id="@+id/networkQueuePoiType"
+                android:textColor="@color/ofis_list_item_subtitle"
+                android:textSize="@dimen/ofis_small_text" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/Awaiting_Sync"
+                android:id="@+id/networkQueueOlamFarmerId"
+                android:textColor="@color/ofis_list_item_subtitle"
+                android:textSize="@dimen/ofis_small_text" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@drawable/left_border"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:layout_weight="1"
+            android:gravity="center">
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:adjustViewBounds="false"
+                android:padding="@dimen/ofis_large_pad"
+                android:maxHeight="@dimen/text_button_width_height"
+                android:scaleType="center"
+                android:id="@+id/imageView_pic"
+                app:srcCompat="@drawable/ic_upload_list"
+                android:contentDescription="@string/Farmer_Photo"
+                android:layout_gravity="center_vertical|center_horizontal"
+                tools:ignore="VectorDrawableCompat" />
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>
+
+

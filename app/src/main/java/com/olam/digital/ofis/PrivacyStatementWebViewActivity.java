@@ -57,7 +57,15 @@ public class PrivacyStatementWebViewActivity extends  BasePrivacyActivity{
         webView.getSettings().setSupportZoom(true);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
-        webView.loadUrl("https://www.ofi.com/privacy.html");
+
+       //
+        if (BuildConfig.FLAVOR.contains("oga")){
+           // webView.loadUrl("https://stg-msm.olamagri.com/privacy.html");
+            // Livr URL
+            webView.loadUrl("https://www.olamagri.com/privacy.html");
+        }else {
+            webView.loadUrl("https://www.ofi.com/privacy.html");
+        }
         webView.setWebChromeClient( new MyWebChromeClient());
         webView.setWebViewClient( new webClient());
 

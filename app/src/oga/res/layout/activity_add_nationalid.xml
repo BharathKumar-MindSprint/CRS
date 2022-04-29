@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/ofis_page_background"
+    tools:context="com.olam.digital.ofis.AddFarmerActivity"
+    tools:ignore="Overdraw">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@color/ofis_page_background">
+    <!-- national id implementation   -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/ofis_large_pad"
+        android:paddingRight="@dimen/ofis_large_pad"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:background="@drawable/border_white_background"
+        android:layout_marginTop="@dimen/ofis_med_pad"
+        android:baselineAligned="false">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="10.8"
+
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/ofis_base_font_dark"
+                android:textSize="@dimen/ofis_small_text"
+                android:text="@string/nationalid"
+                android:textStyle="bold"
+                android:layout_marginBottom="@dimen/ofis_med_pad"/>
+
+            <LinearLayout
+                android:layout_weight="10.8"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:animateLayoutChanges="true"
+                android:id="@+id/nationalids">
+
+            </LinearLayout>
+           <!-- <com.olam.digital.ofis.tasks.NonScrollListView
+                android:layout_weight="10.8"
+                android:id="@+id/list_nationalids"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>-->
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="30dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingTop="@dimen/ofis_bottom_section_padding_vertical"
+            android:layout_marginBottom="2dp"
+            android:gravity="bottom|end">
+
+            <ImageButton
+                android:id="@+id/addnid"
+                android:layout_width="@dimen/small_button_width_height"
+                android:layout_height="@dimen/small_button_width_height"
+                android:scaleType="fitXY"
+                android:layout_gravity="right|center"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/Add"
+                app:srcCompat="@drawable/ic_ofis_add" />
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/save"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="center"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginBottom="40dp"
+        android:background="@drawable/btn_primary_bg"
+        android:gravity="center"
+        android:text="@string/Save"
+        android:textAllCaps="true"
+        android:textColor="@color/ofis_base_font_white"
+        android:textSize="20dp"
+        android:textStyle="bold" />
+</LinearLayout>
+</ScrollView>

@@ -405,6 +405,25 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 clientId=KeyCloakInfo.prod_ofi_client_Id;
                 clientSecret=KeyCloakInfo.prod_ofi_Client_Secret;
                 break;
+
+                // OGA
+            case "devoga":
+                clientId=KeyCloakInfo.dev_oga_client_Id;
+                clientSecret=KeyCloakInfo.dev_oga_Client_Secret;
+                break;
+            case "sitoga":
+                clientId=KeyCloakInfo.sit_oga_client_Id;
+                clientSecret=KeyCloakInfo.sit_oga_Client_Secret;
+                break;
+            case "uatoga":
+                clientId=KeyCloakInfo.uat_oga_client_Id;
+                clientSecret=KeyCloakInfo.uat_oga_Client_Secret;
+                break;
+            case "prodoga":
+                clientId=KeyCloakInfo.prod_oga_client_Id;
+                clientSecret=KeyCloakInfo.prod_oga_Client_Secret;
+                break;
+
         }
         Utilities.setKeycloakClientDetails(context,KeyCloakInfo.Client_Id,clientId);
         Utilities.setKeycloakClientDetails(context,KeyCloakInfo.Client_Secret,clientSecret);
@@ -418,6 +437,9 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         }else if (environment.equalsIgnoreCase("devofi") || environment.equalsIgnoreCase("sitofi") ||
                 environment.equalsIgnoreCase("uatofi") || environment.equalsIgnoreCase("prodofi")){
             OpUnit="OFI";
+        }else if (environment.equalsIgnoreCase("devoga") || environment.equalsIgnoreCase("sitoga") ||
+                environment.equalsIgnoreCase("uatoga") || environment.equalsIgnoreCase("prodoga")){
+            OpUnit="OGA";
         }else{
              OpUnit="nil";
         }
@@ -843,6 +865,8 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                         multifarmSynced=false;
                     }else if (msg.what == 8){
                         farmerMultifarmSynced=false;
+                    }else if(msg.what ==9) {
+                        closePopup(msg);
                     }
                 }
             };
@@ -859,11 +883,11 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
     public void setupSyncAllBtn(boolean isClickable){
         if(isClickable){
-            syncAll.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_upload_list));
+            syncAll.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_sync_all_white));
             syncAll.setEnabled(true);
         }else{
             syncAll.setEnabled(false);
-            syncAll.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_icon_sync_black));
+            syncAll.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_upload_gray));
         }
     }
 
@@ -945,6 +969,8 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                         multifarmSynced=false;
                     }else if (msg.what ==8){
                         farmerMultifarmSynced=false;
+                    }else if(msg.what ==9) {
+                        closePopup(msg);
                     }
                     else {
                         finishItemSync(msg);
@@ -978,6 +1004,29 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                   //  String pdUpdate = msg.obj.toString();
                 //    m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, totalItems/*msg.arg1*/, /*progressItem*/msg.arg2, pdUpdate);
                     Utilities.closeProgressDialog(m_ProgressDialog, 3000);
+                }
+                networkQueue.close();
+//                customListAdapter_networkQueue.swapCursor(networkQueue);
+                enableSync();
+                networkQueue = dl.getNetworkQueue();
+                String queueTotal = Integer.toString(networkQueue.getCount());
+                queueCount.setText(queueTotal);
+                totalItems = networkQueue.getCount();
+                if (networkQueue.getCount() == 0) {
+                    TextView nomodulestosubmittext = (TextView) findViewById(R.id.nomodulestosubmittext);
+                    nomodulestosubmittext.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+    }
+
+    private void closePopup(final Message msg) {
+        mainHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                if (m_ProgressDialog!=null && m_ProgressDialog.isShowing())
+                {
+                    Utilities.closeProgressDialog(m_ProgressDialog, 200);
                 }
                 networkQueue.close();
 //                customListAdapter_networkQueue.swapCursor(networkQueue);
