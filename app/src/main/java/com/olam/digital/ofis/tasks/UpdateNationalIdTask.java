@@ -35,7 +35,6 @@ class UpdateNationalIdTask extends DatabaseTask {
     protected String doInBackground(JSONObject... params) {
 
             JSONObject nationalidResponse = params[0];
-                System.out.println("getNationalIDsByEnumerator:" + nationalidResponse.toString());
                 try {
                     JSONArray nationalidArray = nationalidResponse.getJSONArray("nationalids");
                     if (nationalidArray.length()>0) {
@@ -46,6 +45,8 @@ class UpdateNationalIdTask extends DatabaseTask {
                     }
                 } catch (JSONException e) {
                     FirebaseCrash.report(new Exception("UpdatenationalIdTask: Error filling nationalids table", e));
+                    e.printStackTrace();
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
 
