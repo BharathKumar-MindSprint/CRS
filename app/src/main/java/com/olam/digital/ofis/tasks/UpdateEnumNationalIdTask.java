@@ -42,6 +42,8 @@ class UpdateEnumNationalIdTask extends DatabaseTask {
                 } catch (JSONException e) {
                     FirebaseCrash.report(new Exception("UpdatenationalIdTask: Error filling nationalids table", e));
                     e.printStackTrace();
+                } catch (Exception e){
+                    e.printStackTrace();
                 }
 
 
