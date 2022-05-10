@@ -19,6 +19,8 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.os.SystemClock;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -62,6 +64,8 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
     // Runtime Permission Request Code
     private final static int MY_PERMISSIONS_REQUEST = 9999;
     Button buttonPrivacyConsent;
+    private long lastClickTime = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,8 +83,11 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
         buttonSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (SystemClock.elapsedRealtime() - lastClickTime < 3000){
+                    return;
+                }else {
                 // For clear cache functionality
-               // FileUtils.deleteQuietly(context.getCacheDir());
+                // FileUtils.deleteQuietly(context.getCacheDir());
                 // Request Permission only for Android Version Marshmallow and above
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     // Check Phone Permission
@@ -103,6 +110,8 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
                     // Call methods directly for Android versions lower than Marshmallow
                     bindSaveButton();
                 }
+            }
+                lastClickTime=SystemClock.elapsedRealtime();
             }
         });
 
