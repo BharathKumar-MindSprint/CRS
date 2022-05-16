@@ -40,8 +40,8 @@ android {
 
 
 
-        versionCode 51
-        versionName "10.4.5"
+        versionCode 52
+        versionName "10.4.6"
 
 
 
