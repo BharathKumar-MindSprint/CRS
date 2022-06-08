@@ -42,6 +42,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/title_activity_tasks"
                 android:id="@+id/taskListItemText"
+                android:autoLink="web"
                 android:textColor="@color/ofis_base_font_dark"
                 android:textSize="@dimen/ofis_med_text" />
             <TextView

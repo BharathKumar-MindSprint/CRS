@@ -4,6 +4,9 @@ import android.content.Context;
 import android.content.res.Resources;
 
 import androidx.core.content.ContextCompat;
+
+import android.graphics.Color;
+import android.text.method.LinkMovementMethod;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -77,6 +80,8 @@ public class MyCustomListAdapter_Tasks extends BaseAdapter {
             linearLayout.setBackgroundResource(R.drawable.list_item);
             taskText.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
             taskText.setTextSize(TypedValue.COMPLEX_UNIT_PX, res.getDimension(R.dimen.ofis_med_text));
+            taskText.setMovementMethod(LinkMovementMethod.getInstance());
+            taskText.setLinkTextColor(Color.BLUE);
             taskDate.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
 
             if (completed == 1) {
