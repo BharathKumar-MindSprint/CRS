@@ -3,12 +3,17 @@ package com.olam.digital.ofis;
 import android.content.Context;
 import android.content.res.Resources;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
+
+import android.graphics.Color;
+import android.text.method.LinkMovementMethod;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -27,6 +32,7 @@ public class MyCustomListAdapter_Tasks extends BaseAdapter {
     private Resources res;
     private ArrayList<TasksDTO> tasksDTOArrayList;
     private Context context;
+    private boolean iscompleted = true;
     public MyCustomListAdapter_Tasks(Context context, ArrayList<TasksDTO> tasksDTOArrayList, String[] adapterCols, int[] adapterRowViews, Resources res_) {
         this.context = context;
         this.tasksDTOArrayList = tasksDTOArrayList;
@@ -77,6 +83,10 @@ public class MyCustomListAdapter_Tasks extends BaseAdapter {
             linearLayout.setBackgroundResource(R.drawable.list_item);
             taskText.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
             taskText.setTextSize(TypedValue.COMPLEX_UNIT_PX, res.getDimension(R.dimen.ofis_med_text));
+            taskText.setMovementMethod(LinkMovementMethod.getInstance());
+            taskText.setLinkTextColor(Color.BLUE);
+            taskText.setFocusable(false);
+            taskText.setClickable(true);
             taskDate.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
 
             if (completed == 1) {
@@ -94,6 +104,7 @@ public class MyCustomListAdapter_Tasks extends BaseAdapter {
                 String creator = tasksDTO.getTaskCreator();
                 taskDate.setText(creator + " | " + outputFormat.format(createdDate));
             }
+
         } catch (ParseException e) {
             e.printStackTrace();
         }
