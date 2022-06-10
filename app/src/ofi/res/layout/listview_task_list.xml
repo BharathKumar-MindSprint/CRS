@@ -38,15 +38,15 @@
             android:gravity="center_vertical">
 
             <TextView
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/title_activity_tasks"
                 android:id="@+id/taskListItemText"
-                android:autoLink="web"
+                android:autoLink="web|email|phone"
                 android:textColor="@color/ofis_base_font_dark"
                 android:textSize="@dimen/ofis_med_text" />
             <TextView
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/title_activity_tasks"
                 android:id="@+id/taskListItemDate"
@@ -55,6 +55,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/ll_capturetask"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="3.5"

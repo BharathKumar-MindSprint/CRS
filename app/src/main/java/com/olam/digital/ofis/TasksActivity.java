@@ -123,7 +123,7 @@ ListView listView;
        // setListAdapter(myCustomListAdapter_tasks);
     }
 
-    private ArrayList<TasksDTO> generatetasksDTOList(Cursor tasks) {
+    public static ArrayList<TasksDTO> generatetasksDTOList(Cursor tasks) {
         ArrayList<TasksDTO> tasksDTOArrayTemp = new ArrayList<>();
         TasksDTO tasksDTO;
         if(tasks.getCount() > 0){
@@ -140,7 +140,7 @@ ListView listView;
         return tasksDTOArrayTemp;
     }
 
-    private void updateTasks() {
+    public void updateTasks() {
         tasks = dl.getTasks();
         if(tasksDTOArrayList != null && !tasksDTOArrayList.isEmpty())
             tasksDTOArrayList.clear();
@@ -240,67 +240,77 @@ ListView listView;
 
     }
 
+
+
     @Override
     public void onItemClick(AdapterView<?> l, View v, int position, long id) {
-        TasksDTO tasksDTO = (TasksDTO) l.getAdapter().getItem(position);
-        final ImageView imageView = (ImageView) v.findViewById(R.id.cbImage);
-        final TextView completedText = (TextView) v.findViewById(R.id.taskCompleted);
-        final LinearLayout linearLayout = (LinearLayout) v.findViewById(R.id.rowlin);
-        completed = "1".equals(tasksDTO.getTaskCompletedStatus());
+        System.out.print("itemclicked.....");
+        final LinearLayout ll_capturetask = (LinearLayout) v.findViewById(R.id.ll_capturetask);
+        ll_capturetask.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                TasksDTO tasksDTO = (TasksDTO) l.getAdapter().getItem(position);
+                final ImageView imageView = (ImageView) v.findViewById(R.id.cbImage);
+                final TextView completedText = (TextView) v.findViewById(R.id.taskCompleted);
+                final LinearLayout linearLayout = (LinearLayout) v.findViewById(R.id.rowlin);
 
-        if (completed) {
+                completed = "1".equals(tasksDTO.getTaskCompletedStatus());
+                if (completed) {
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(context);
-            builder.setCancelable(false);
-            LayoutInflater inflater = this.getLayoutInflater();
-            View dialogView= inflater.inflate(R.layout.common_alert_dialog, null);
-            builder.setView(dialogView);
-            TextView tvMsg=(TextView)dialogView.findViewById(R.id.tv_msg);
-            TextView tvTitle= dialogView.findViewById(R.id.tv_title);
-            tvTitle.setVisibility(View.VISIBLE);
-            tvTitle.setText(R.string.untick_task);
-            tvMsg.setText(res.getString(R.string.untick_task_msg));
-            Button btnNo = (Button)dialogView.findViewById(R.id.btn_no);
-            Button btnYes = (Button)dialogView.findViewById(R.id.btn_yes);
-            AlertDialog alert = builder.create();
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                    builder.setCancelable(false);
+                    LayoutInflater inflater = TasksActivity.this.getLayoutInflater();
+                    View dialogView= inflater.inflate(R.layout.common_alert_dialog, null);
+                    builder.setView(dialogView);
+                    TextView tvMsg=(TextView)dialogView.findViewById(R.id.tv_msg);
+                    TextView tvTitle= dialogView.findViewById(R.id.tv_title);
+                    tvTitle.setVisibility(View.VISIBLE);
+                    tvTitle.setText(R.string.untick_task);
+                    tvMsg.setText(res.getString(R.string.untick_task_msg));
+                    Button btnNo = (Button)dialogView.findViewById(R.id.btn_no);
+                    Button btnYes = (Button)dialogView.findViewById(R.id.btn_yes);
+                    AlertDialog alert = builder.create();
 
-            btnNo.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                 alert.dismiss();
-                }
-            });
-            btnYes.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_check_box_outline_blank));
-                    linearLayout.setBackgroundResource(R.drawable.list_item);
-                    completedText.setText("0");
-                    completed = false;
-                    if (dl.updateTaskStatus(completed, id) > 0) {
+                    btnNo.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            alert.dismiss();
+                        }
+                    });
+                    btnYes.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_check_box_outline_blank));
+                            linearLayout.setBackgroundResource(R.drawable.list_item);
+                            completedText.setText("0");
+                            completed = false;
+                            if (dl.updateTaskStatus(completed, id) > 0) {
 //                                myCustomListAdapter_tasks.notifyDataSetChanged();
-                        updateTasks();
-                    }
-                    alert.dismiss();
-                }
-            });
+                                updateTasks();
+                            }
+                            alert.dismiss();
+                        }
+                    });
 
-            alert.show();
+                    alert.show();
 
             /*imageView.setImageDrawable(ContextCompat.getDrawable(context, android.R.drawable.checkbox_off_background));
             linearLayout.setBackgroundResource(R.drawable.list_item);
             completedText.setText("0");
             completed = false;*/
-        } else {
-            imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_check_box));
-            linearLayout.setBackgroundResource(R.drawable.list_item_selected);
-            completedText.setText("1");
-            completed = true;
-            if (dl.updateTaskStatus(completed, id) > 0) {
+                } else {
+                    imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_check_box));
+                    linearLayout.setBackgroundResource(R.drawable.list_item_selected);
+                    completedText.setText("1");
+                    completed = true;
+                    if (dl.updateTaskStatus(completed, id) > 0) {
 //                myCustomListAdapter_tasks.notifyDataSetChanged();
-                updateTasks();
+                        updateTasks();
+                    }
+                }
             }
-        }
+        });
+
 
     }
 }
