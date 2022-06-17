@@ -94,7 +94,7 @@
     <color name="ofis_spinner_item_background">@color/white</color>
 
     <color name="colorPrimary">#FF7000</color>
-    <color name="colorPrimaryDark"></color>
+    <color name="colorPrimaryDark">#000000</color>
     <color name="colorAccent">#FF7000</color>
 
     <color name="ofis_list_item_disabled_background">#E9E9E9</color>
