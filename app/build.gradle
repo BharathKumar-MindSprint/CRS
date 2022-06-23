@@ -39,11 +39,9 @@ android {
 
 
 
-
-        versionCode 269
-        versionName "10.9.2"
-
-
+        versionCode 53
+        versionName "10.4.7"
+        
 
     }
     buildTypes {
