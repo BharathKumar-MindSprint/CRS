@@ -882,7 +882,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             syncAll.setEnabled(true);
         }else{
             syncAll.setEnabled(false);
-            syncAll.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_upload_gray1));
+            syncAll.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_upload_gray));
         }
     }
 
@@ -1051,7 +1051,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             @Override
             public void onClick(View view) {
                 syncAll.setEnabled(false);
-                syncAll.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_upload_gray1));
+                syncAll.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_upload_gray));
 //                final Handler handler = new Handler(Looper.getMainLooper());
                 MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_SYNC_ALL_ITEM,  ScreenNameConstants.BUTTON_CLICKED);
                 if (SystemClock.elapsedRealtime() - lastClickTime < 3000){
