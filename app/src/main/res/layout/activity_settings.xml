@@ -51,6 +51,17 @@
                 android:textColorHint="@color/ofis_base_font_white"
                 android:textSize="@dimen/ofis_input_field_text" />
 
+            <TextView
+                android:id="@+id/deviceid"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/ofis_med_text"
+                android:gravity="right"
+                android:textColor="@color/ofis_base_font_white"
+                android:textStyle="bold"
+                android:layout_marginTop="10dp"
+                android:text="Device id"/>
+
         </LinearLayout>
 
     </LinearLayout>
@@ -90,7 +101,19 @@
                 android:paddingLeft="15dp"
                 android:paddingRight="15dp"
                 android:text="@string/ofis_request_help"
+                android:layout_marginBottom="@dimen/ofis_large_pad"
                 android:textColor="@color/ofis_base_font_white" />
+
+            <Button
+                android:id="@+id/reenterpasscode"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:background="@color/ofis_action_button_background"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
+                android:text="@string/reenter_passcode"
+                android:textColor="@color/ofis_base_font_white" />
+
             <Button
                 android:id="@+id/buttonPrivacyConsent"
                 android:layout_width="wrap_content"
@@ -101,6 +124,7 @@
                 android:visibility="gone"
                 android:text="@string/ofis_request_help"
                 android:textColor="@color/ofis_base_font_white" />
+
 
         </LinearLayout>
 
