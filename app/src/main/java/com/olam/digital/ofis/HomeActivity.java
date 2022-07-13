@@ -26,13 +26,11 @@ import android.os.StrictMode;
 import android.os.SystemClock;
 import android.provider.Settings;
 
-import androidx.appcompat.app.ActionBar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AlertDialog;
 import androidx.cardview.widget.CardView;
 
-import android.text.format.Formatter;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -56,13 +54,11 @@ import android.widget.Toast;
 import com.dynatrace.android.agent.Dynatrace;
 import com.google.android.gms.security.ProviderInstaller;
 import com.google.firebase.crash.FirebaseCrash;
-import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.Gson;
 import com.olam.digital.ofis.authentication.AccessTokenTask;
 import com.olam.digital.ofis.authentication.AuthenticationClient;
 import com.olam.digital.ofis.authentication.AuthenticationHelper;
 import com.olam.digital.ofis.authentication.AuthenticationInterface;
-import com.olam.digital.ofis.authentication.DeviceIDxctractor;
 import com.olam.digital.ofis.authentication.KeyCloakInfo;
 import com.olam.digital.ofis.authentication.OnAccessTokenInterface;
 import com.olam.digital.ofis.authentication.model.AuthRequestDTO;
@@ -90,7 +86,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.sql.Timestamp;
-import java.util.Locale;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
@@ -887,7 +882,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             syncAll.setEnabled(true);
         }else{
             syncAll.setEnabled(false);
-            syncAll.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_upload_gray));
+            syncAll.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_upload_gray1));
         }
     }
 
@@ -1056,7 +1051,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             @Override
             public void onClick(View view) {
                 syncAll.setEnabled(false);
-                syncAll.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_upload_gray));
+                syncAll.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_upload_gray1));
 //                final Handler handler = new Handler(Looper.getMainLooper());
                 MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_SYNC_ALL_ITEM,  ScreenNameConstants.BUTTON_CLICKED);
                 if (SystemClock.elapsedRealtime() - lastClickTime < 3000){

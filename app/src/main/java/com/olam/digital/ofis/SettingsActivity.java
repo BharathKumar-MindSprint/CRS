@@ -21,6 +21,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.SystemClock;
+import android.provider.Settings;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,6 +33,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.olam.digital.ofis.authentication.AccessTokenTask;
@@ -63,8 +65,9 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
     private boolean updateData=false;
     // Runtime Permission Request Code
     private final static int MY_PERMISSIONS_REQUEST = 9999;
-    Button buttonPrivacyConsent;
+    Button buttonPrivacyConsent, buttonReenterPasscode;
     private long lastClickTime = 0;
+    TextView deviceid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,7 +82,18 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         buttonSave = (Button) findViewById(R.id.buttonSave);
+        TextView deviceid = (TextView) findViewById(R.id.deviceid);
+        deviceid.setText(getResources().getString(R.string.android_id) + Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID));
         buttonPrivacyConsent=(Button) findViewById(R.id.buttonPrivacyConsent);
+        buttonReenterPasscode=(Button) findViewById(R.id.reenterpasscode);
+        buttonReenterPasscode.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Utilities.saveToSharedPrefs(SettingsActivity.this, "FIRST_RUN", "", true);
+                Intent in = new Intent(SettingsActivity.this, HomeActivity.class);
+                startActivity(in);
+            }
+        });
         buttonSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
