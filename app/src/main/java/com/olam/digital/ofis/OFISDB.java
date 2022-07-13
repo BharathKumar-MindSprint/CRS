@@ -860,7 +860,7 @@ class OFISDB extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL("drop table IF EXISTS farmergroups;");
         sqLiteDatabase.execSQL("drop table IF EXISTS sections;");
         sqLiteDatabase.execSQL("drop table IF EXISTS products;");
-        sqLiteDatabase.execSQL("drop table IF EXISTS networkqueue;");
+//        sqLiteDatabase.execSQL("drop table IF EXISTS networkqueue;");
         sqLiteDatabase.execSQL("drop table IF EXISTS farm_management_plans;");
         sqLiteDatabase.execSQL("drop table IF EXISTS fmp_sections;");
         sqLiteDatabase.execSQL("drop table IF EXISTS fmp_entries;");
@@ -915,7 +915,7 @@ class OFISDB extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL("drop table IF EXISTS farmerLeads");
         sqLiteDatabase.execSQL("drop table IF EXISTS assignments");
         sqLiteDatabase.execSQL("drop table IF EXISTS trainingattendeesRelations");
-        sqLiteDatabase.equals("drop table IF EXISTS trainingAttendeesRelationship");
+        sqLiteDatabase.execSQL("drop table IF EXISTS trainingAttendeesRelationship");
 
       //  sqLiteDatabase.execSQL("drop table IF EXISTS farmStakeHolder");
         sqLiteDatabase.execSQL("drop table IF EXISTS multifarmRoles");

@@ -972,5 +972,6 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="attendee_name1">Attendee Name</string>
     <string name="attendee_relationship1">Relationship</string>
     <string name="attendee_sex1">Gender</string>
-
+    <string name="reenter_passcode">Reenter Passcode</string>
+    <string name="android_id">Device Install ID: </string>
 </resources>
