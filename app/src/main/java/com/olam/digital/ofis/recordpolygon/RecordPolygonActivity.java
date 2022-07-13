@@ -1395,6 +1395,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                 lats.add(locationBean.getLat());
                 lons.add(locationBean.getLng());
                 geoPoints.add(currentLocation);
+                updateUIWithPolygon(geoPoints, trackId);
             }
         }
         if (lats.size() > 0) {
