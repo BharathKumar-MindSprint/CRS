@@ -1664,8 +1664,14 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                     } else {
                         dl.updateFarmerPhoneNumbers(farmerId, storeableNumbers);
                         ContentValues nqiValues = new ContentValues();
-
-                        collectGPSPoint(GPSConstants.MODULE_UPDATE_PHONE_NUMBER, mCurrentCapturedLocation, farmerId);
+                        if (mCurrentCapturedLocation != null) {
+                              collectGPSPoint(GPSConstants.MODULE_UPDATE_PHONE_NUMBER, mCurrentCapturedLocation, farmerId);
+                        } else if (mCurrentCapturedLocation == null || !gpsTracker.isGpsEnabled()) {
+                            gpsTracker.getDeviceLocation();
+                            return;
+                        } else {
+                            //
+                        }
                         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
                         nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "phonenumbers");
                         nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, res.getString(R.string.update_phone_numbers));
@@ -2390,8 +2396,14 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
 //                            setCapturedSignatureImageURI(fileUri);
 //                            setCurrentSignaturePhotoPath(fileUri.getPath());
                                 dl.updateSignature(context, farmerId, fileUri.getPath(),farmerNameStr);
+                                if (mCurrentCapturedLocation != null) {
+                                    collectGPSPoint(GPSConstants.MODULE_UPDATE_SIGNATURE,mCurrentCapturedLocation,farmerId);
+                                } else if (mCurrentCapturedLocation == null || !gpsTracker.isGpsEnabled()) {
+                                    gpsTracker.getDeviceLocation();
+                                } else {
+                                    //
+                                }
 
-                                collectGPSPoint(GPSConstants.MODULE_UPDATE_SIGNATURE,mCurrentCapturedLocation,farmerId);
 
                                 try (FileOutputStream out = new FileOutputStream(photoFile)) {
                                     mSignaturePad.getTransparentSignatureBitmap().compress(Bitmap.CompressFormat.PNG, 100, out); // bmp is your Bitmap instance
