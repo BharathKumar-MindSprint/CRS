@@ -40,8 +40,9 @@ android {
 
 
 
-        versionCode 271
-        versionName "10.9.4"
+
+        versionCode 105
+        versionName "10.9.5"
 
 
 
