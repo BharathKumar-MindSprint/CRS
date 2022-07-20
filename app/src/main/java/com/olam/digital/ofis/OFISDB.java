@@ -2,7 +2,9 @@ package com.olam.digital.ofis;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 /**
  * Created by bengallienne on 29/11/14. - update
@@ -12,7 +14,7 @@ class OFISDB extends SQLiteOpenHelper {
     private static OFISDB sInstance;
 
 
-    private static final int DATABASE_VERSION = 141;
+    private static final int DATABASE_VERSION = 142;
 
 
     private static final String DATABASE_NAME = "ofismobile";
@@ -836,6 +838,20 @@ class OFISDB extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i2) {
+//        droptables(sqLiteDatabase);
+
+        sqLiteDatabase.execSQL(OFIS_TRAINING_RELATIONSHIP_ATTENDEE_TABLE_CREATE);
+        sqLiteDatabase.execSQL(OFIS_TRAINING_RELATIONS_TABLE_CREATE);
+        try {
+            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.TrainingModule.TABLE_NAME + " ADD COLUMN captureAdditionalAttendees TEXT default null");
+        } catch (SQLiteException ex) {
+            ex.printStackTrace();
+        }
+
+        onCreate(sqLiteDatabase);
+    }
+
+    private void droptables(SQLiteDatabase sqLiteDatabase) {
         sqLiteDatabase.execSQL("drop table IF EXISTS modules;");
         sqLiteDatabase.execSQL("drop table IF EXISTS submodules;");
         sqLiteDatabase.execSQL("drop table IF EXISTS sip_group;");
@@ -917,11 +933,9 @@ class OFISDB extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL("drop table IF EXISTS trainingattendeesRelations");
         sqLiteDatabase.execSQL("drop table IF EXISTS trainingAttendeesRelationship");
 
-      //  sqLiteDatabase.execSQL("drop table IF EXISTS farmStakeHolder");
+        //  sqLiteDatabase.execSQL("drop table IF EXISTS farmStakeHolder");
         sqLiteDatabase.execSQL("drop table IF EXISTS multifarmRoles");
         sqLiteDatabase.execSQL("drop table IF EXISTS multifarmFarms");
         sqLiteDatabase.execSQL("drop table IF EXISTS stakeHolders");
-
-        onCreate(sqLiteDatabase);
     }
 }
