@@ -27,7 +27,7 @@
     <uses-feature
         android:name="android.hardware.Camera"
         android:required="true" />
-
+    <uses-sdk tools:overrideLibrary="com.dynatrace.android.agent"/>
     <uses-feature android:name="android.hardware.location.gps" />
     <uses-feature android:name="android.hardware.usb.host" />
     <!-- updated -->
