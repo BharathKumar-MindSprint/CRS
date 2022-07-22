@@ -37,12 +37,8 @@ android {
         targetSdkVersion 29
         multiDexEnabled true
 
-
-
         versionCode 273
         versionName "10.9.6"
-
-
 
 
     }
