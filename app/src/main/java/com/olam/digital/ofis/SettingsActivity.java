@@ -22,6 +22,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.SystemClock;
 import android.provider.Settings;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -89,9 +90,7 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
         buttonReenterPasscode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Utilities.saveToSharedPrefs(SettingsActivity.this, "FIRST_RUN", "", true);
-                Intent in = new Intent(SettingsActivity.this, HomeActivity.class);
-                startActivity(in);
+                dialogLogout();
             }
         });
         buttonSave.setOnClickListener(new View.OnClickListener() {
@@ -481,4 +480,39 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
 
         nl.sendForHelp(helpName, countryId, helpPhoneNo, helpDescription, helpHandler);
     }
+
+    private void dialogLogout() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setCancelable(false);
+        LayoutInflater inflater = this.getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.common_alert_dialog, null);
+        builder.setView(dialogView);
+        TextView tvMsg = (TextView) dialogView.findViewById(R.id.tv_msg);
+        tvMsg.setText(res.getString(R.string.logout_note));
+        Button btnNo = (Button) dialogView.findViewById(R.id.btn_no);
+        Button btnYes = (Button) dialogView.findViewById(R.id.btn_yes);
+        AlertDialog alert = builder.create();
+        btnNo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                alert.dismiss();
+            }
+        });
+
+        btnYes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                alert.dismiss();
+                Utilities.saveToSharedPrefs(SettingsActivity.this, "FIRST_RUN", "", true);
+                Intent in = new Intent(SettingsActivity.this, HomeActivity.class);
+                startActivity(in);
+            }
+        });
+
+        alert.show();
+    }
+
+
+
+
 }
