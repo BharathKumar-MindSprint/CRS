@@ -974,4 +974,7 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="attendee_sex1">Gender</string>
     <string name="reenter_passcode">Logout</string>
     <string name="android_id">Device Install ID: </string>
+    <string name="logout_note">Are you sure want to logout? </string>
+
+
 </resources>
