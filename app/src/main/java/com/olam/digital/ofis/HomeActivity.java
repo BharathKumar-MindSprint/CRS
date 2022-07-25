@@ -167,7 +167,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     private long lastitemClickTime = 0;
     private boolean isChildSynced=true;
     ListView listView;
-
+    private Boolean existingUser = false;
     private Location mCurrentLocation=null;
     GPSListener gpsListener=null;
     private GPSTracker gpsTracker=null;
@@ -229,6 +229,14 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
       //  }
         if (sharedPreferences.getBoolean("FIRST_RUN",true)) {
             firstRunSection.setVisibility(View.VISIBLE);
+            if(!enumeratorId.equalsIgnoreCase("")) {
+                existingUser = true;
+                enumeratorID.setText(enumeratorId);
+                enumeratorID.setFocusable(false);
+                passcode.setFocusable(true);
+                enumeratorID.setFocusableInTouchMode(false);
+                enumeratorID.setClickable(false);
+            }
         }
 
             Account mAccount = CreateSyncAcount();
@@ -677,7 +685,11 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             Utilities.saveLongToSharedPrefs(context, "VERSION_NUM", BuildConfig.VERSION_CODE);
             Utilities.saveToSharedPrefs(context, "ENUMERATOR_ID", enumeratorID.getText().toString(), null);
             Utilities.saveToSharedPrefs(context, "PASSCODE", passcode.getText().toString(), null);
-            nl.syncData();
+            if(!existingUser) {
+                nl.syncData();
+            }else {
+                completeFirstSetup();
+            }
             //nl.postFirebaseToken(FirebaseInstanceId.getInstance().getToken());
         } else {
             Toast.makeText(context, R.string.Please_fill_all_fields, Toast.LENGTH_SHORT).show();
