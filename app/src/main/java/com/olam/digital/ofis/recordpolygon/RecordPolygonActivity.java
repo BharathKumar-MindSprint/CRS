@@ -1127,11 +1127,13 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
             mKmlOverlay = (FolderOverlay) mKmlDocument.mKmlRoot.buildOverlay(map, buildDefaultStyle(), null, mKmlDocument);
             map.getOverlays().add(mKmlOverlay);
             map.invalidate();
-        }catch (Exception e){}
+        }catch (Exception e){
+           e.printStackTrace();
+        }
     }
 
     Style buildDefaultStyle() {
-        Drawable defaultKmlMarker = ResourcesCompat.getDrawable(getResources(), R.drawable.ic_record_polygon, null);
+        Drawable defaultKmlMarker = ResourcesCompat.getDrawable(getResources(), R.drawable.record_polygon, null);
         Bitmap bitmap = ((BitmapDrawable) defaultKmlMarker).getBitmap();
         return new Style(bitmap, Color.RED, 5.0f, Color.RED);
     }
