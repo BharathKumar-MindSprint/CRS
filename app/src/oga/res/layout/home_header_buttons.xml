@@ -103,6 +103,31 @@
         android:paddingRight="@dimen/home_activity_horizontal_margin"
         android:paddingTop="0dp">
 
+        <androidx.cardview.widget.CardView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            card_view:cardBackgroundColor="@color/ofis_home_screen_midsection_background"
+            card_view:cardElevation="@dimen/ofis_elevation_height"
+            android:layout_marginTop="-4dp"
+            card_view:cardUseCompatPadding="true"
+            android:id="@+id/downloadSurveyWrapper"
+            android:layout_marginLeft="@dimen/ofis_small_pad">
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="@string/download_survey_data"
+                android:id="@+id/downloadSurveyData"
+                android:textColor="@color/ofis_base_font_white"
+                android:drawableTop="@drawable/ic_surveylist"
+                android:drawablePadding="10dp"
+                android:textSize="@dimen/ofis_micro_text"
+                android:background="@android:color/transparent"
+                tools:ignore="ButtonStyle"
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp" />
+        </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
             android:layout_width="0dp"
