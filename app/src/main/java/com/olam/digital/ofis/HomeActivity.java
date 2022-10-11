@@ -68,6 +68,7 @@ import com.olam.digital.ofis.childlabour.ChildLabourCompleteModuleActivity;
 import com.olam.digital.ofis.childlabour.ChildLabourUtils;
 import com.olam.digital.ofis.childlabour.ChildVisitDetailActivity;
 import com.olam.digital.ofis.childlabour.ViewChildLabourSurveyActivity;
+import com.olam.digital.ofis.downloadsurvey.ListDownSurveys;
 import com.olam.digital.ofis.dynatrace.DynatraceHelper;
 import com.olam.digital.ofis.gps.GPSListener;
 import com.olam.digital.ofis.gps.GPSTracker;
@@ -1056,9 +1057,17 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         Button addSocialInfra = (Button) findViewById(R.id.AddSocialInfrastructure);
         Button captureLocation = (Button) findViewById(R.id.captureLocation);
         Button recordTraining = (Button) findViewById(R.id.RecordFarmerTraining);
+        Button downloadSurvey = (Button) findViewById(R.id.downloadSurveyData);
         syncAll = (ImageButton) findViewById(R.id.syncAll);
         boolean can_transact = Utilities.getBoolFromSharedPrefs(context, "can_transact", false);
 
+        downloadSurvey.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent in = new Intent(context, ListDownSurveys.class);
+                startActivity(in);
+            }
+        });
         syncAll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

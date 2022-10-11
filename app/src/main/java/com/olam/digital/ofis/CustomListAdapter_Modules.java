@@ -529,6 +529,14 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
             if (!submitted) {
                 enabledItem.setText("true");
                 linearLayout.setBackgroundResource(R.drawable.list_item);
+                boolean viewExistingdata = dl.hasExistingAns(String.valueOf(farmerId));
+                int viewSurvey = dl.getModuleViewStatus(String.valueOf(currentId));
+
+                if(viewExistingdata) {
+                    moduleTitle.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, R.drawable.ic_folder, 0);
+                }else{
+                    moduleTitle.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, 0, 0);
+                }
                 moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
                 textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
                 if ((cursor.getInt(cursor.getColumnIndex(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_STATUS_STARTED)) == 1) && (cursor.getInt(cursor.getColumnIndex(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_STATUS_FINISHED)) == 0)) {

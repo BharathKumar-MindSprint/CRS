@@ -913,18 +913,18 @@
                 android:layout_alignParentBottom="true" />
 
             <ImageButton
+                android:id="@+id/farmerPhotoActionButton"
                 android:layout_width="@dimen/standard_button_width_height"
                 android:layout_height="@dimen/standard_button_width_height"
-                android:id="@+id/farmerPhotoActionButton"
-                android:contentDescription="@string/Camera"
-                app:srcCompat="@drawable/ic_actionbutton_camera"
                 android:layout_alignParentEnd="false"
-                android:layout_alignParentBottom="true"
                 android:layout_alignParentRight="true"
-                android:padding="0dp"
+                android:layout_alignParentBottom="true"
                 android:adjustViewBounds="false"
                 android:background="@android:color/transparent"
-                android:scaleType="fitXY" />
+                android:contentDescription="@string/Camera"
+                android:padding="0dp"
+                android:scaleType="fitXY"
+                app:srcCompat="@drawable/ic_actionbutton_camera" />
         </RelativeLayout>
 
     </LinearLayout>

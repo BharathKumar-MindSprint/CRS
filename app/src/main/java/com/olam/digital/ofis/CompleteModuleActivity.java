@@ -2,6 +2,7 @@ package com.olam.digital.ofis;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -20,14 +21,19 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 
+import android.text.Html;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -64,6 +70,7 @@ import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.gps.utils.GPSUtils;
 import com.olam.digital.ofis.matoma.MatomoHelper;
 import com.olam.digital.ofis.matoma.ScreenNameConstants;
+import com.olam.digital.ofis.multifarm.FindMultiFarmFarmerAdapter;
 import com.olam.digital.ofis.multifarm.MultiFarmDTO;
 import com.olam.digital.ofis.multifarm.MultiFarmUtils;
 
@@ -141,7 +148,7 @@ public class CompleteModuleActivity extends BaseActivity {
     private GPSTracker gpsTracker=null;
 
     public static ScrollView scrollView;
-
+    LinearLayout viewSurveyAnswer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -176,6 +183,7 @@ public class CompleteModuleActivity extends BaseActivity {
         dynamicQuestions = DynamicQuestions.getInstance(this, Utilities.getLocaleSuffix(res), dl);
 
         dynamicQuestions.questionsSection = (LinearLayout) findViewById(R.id.questionsSection);
+        viewSurveyAnswer = (LinearLayout) findViewById(R.id.view_surveyans);
         dynamicQuestions.inflater = (LayoutInflater) context.getSystemService(LAYOUT_INFLATER_SERVICE);
         dynamicQuestions.reportingYear = getReportingYear();
 
@@ -203,7 +211,6 @@ public class CompleteModuleActivity extends BaseActivity {
         } else if (subModuleId != 0) {
             questions = dl.getQuestionsBySubModuleId(subModuleId);
             dynamicQuestions.hasAnswers = false;
-
             moveToCurrentSubModule(subModuleId);
         } else {
             dynamicQuestions.hasAnswers = false;
@@ -216,7 +223,18 @@ public class CompleteModuleActivity extends BaseActivity {
             }
 
         }
-
+        boolean viewExistingdata = dl.hasExistingAns(String.valueOf(farmerId));
+        if(viewExistingdata) {
+            viewSurveyAnswer.setVisibility(View.GONE);
+        }else{
+            viewSurveyAnswer.setVisibility(View.VISIBLE);
+        }
+        viewSurveyAnswer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showPopupSurveyAnswers();
+            }
+        });
         initDynamicQuestions();
         setupSubModuleQuestions();
 
@@ -255,6 +273,8 @@ public class CompleteModuleActivity extends BaseActivity {
 
 //        }
 }
+
+
 
     private void checkTime() {
         try {
@@ -948,6 +968,98 @@ public class CompleteModuleActivity extends BaseActivity {
         intent.setData(uri);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
+    }
+
+    private void showPopupSurveyAnswers() {
+        LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View popupView = inflater.inflate(R.layout.activity_existingsurveyans, null);
+        int width = LinearLayout.LayoutParams.MATCH_PARENT;
+        int height = LinearLayout.LayoutParams.MATCH_PARENT;
+        boolean focusable = true;
+        final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
+        popupWindow.showAtLocation(findViewById(R.id.layout_complete_module), Gravity.CENTER, 0, 0);
+        dimBehind(popupWindow);
+
+        final Dialog surveyDialog = new Dialog(CompleteModuleActivity.this, android.R.style.Theme_Material_Dialog_Alert);
+        surveyDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+
+        surveyDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        surveyDialog.setContentView(R.layout.activity_existingsurveyans);
+        dynamicQuestions.questionsSection = (LinearLayout) popupView.findViewById(R.id.questionsSection);
+
+        Cursor questions = dl.retrieveQuestionsAndAnswersBySubModuleId(subModuleId, farmerId, farmerModuleId);
+        try {
+            if(questions != null){
+             while (questions.moveToNext()) {
+                 /*LinearLayout questionInclude = (LinearLayout) inflaterQuestions.inflate(R.layout.question_answer_row, questionsSection, false);
+                 questionsSection.addView(questionInclude);
+                 TextView questionText = (TextView) questionInclude.findViewById(R.id.questionText);
+                 TextView answerText = (TextView) questionInclude.findViewById(R.id.answerText);
+                 String questionColumnSuffix = Utilities.getLocaleSuffix(res);
+                 int columnIndex = (questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION + questionColumnSuffix) != -1) ? questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION + questionColumnSuffix) : questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION);
+                 questionText.setText(questions.getString(columnIndex));
+                 answerText.setText("Answer Here");*/
+
+                 String displayType = questions.getString(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE));
+                 if (displayType.replaceAll(" ", "").toLowerCase().equals("checkbox")) {
+                     dynamicQuestions.renderCheckBoxQuestion(questions, dynamicQuestions.questionsSection, farmerId, farmerModuleId);
+                 } else if (displayType.replaceAll(" ", "").toLowerCase().equals("datepicker")) {
+                     dynamicQuestions.renderDatePickerQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null);
+                 } else if (displayType.replaceAll(" ", "").toLowerCase().equals("decimal")) {
+                     dynamicQuestions.renderTextBoxQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null);
+                 } else if (displayType.replaceAll(" ", "").toLowerCase().equals("dropdown")) {
+                     dynamicQuestions.renderDropDownQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
+                 } else if (displayType.replaceAll(" ", "").toLowerCase().equals("photocheckbox")) {
+                     dynamicQuestions.renderPhotoCheckboxQuestion(questions, farmerId, farmerModuleId, res, getPackageName());
+                 } else if (displayType.replaceAll(" ", "").toLowerCase().equals("repeater")) {
+                     dynamicQuestions.renderRepeaterQuestion(questions, farmerId, olamFarmerId, farmerModuleId, res);
+                 } else if (displayType.replaceAll(" ", "").toLowerCase().equals("textbox")) {
+                     dynamicQuestions.renderTextBoxQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null);
+                 } else if (displayType.replaceAll(" ", "").toLowerCase().equals("yesno") || displayType.replaceAll(" ", "").toLowerCase().equals("yes/no")) {
+                     dynamicQuestions.renderYesNoQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
+                 } else if (displayType.replaceAll(" ", "").toLowerCase().equals("farmtreedensity")) {
+                     dynamicQuestions.renderTreeDensityQuestion(questions, res);
+                 } else if (displayType.replaceAll(" ", "").toLowerCase().equals("photoupload")) {
+                     dynamicQuestions.renderPhotoUploadQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
+                 }
+             }
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        TextView moduleText = (TextView) popupView.findViewById(R.id.completeModuleSubModule);
+        int columnIndex = (subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME + dynamicQuestions.questionColumnSuffix) != -1) ? subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME + dynamicQuestions.questionColumnSuffix) : subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME);
+        moduleText.setText(moduleName + " - " + subModules.getString(columnIndex));
+        popupView.findViewById(R.id.cancel_btn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                popupWindow.dismiss();
+            }
+        });
+    }
+
+    public static void dimBehind(PopupWindow popupWindow) {
+        View container;
+        if (popupWindow.getBackground() == null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+                container = (View) popupWindow.getContentView().getParent();
+            } else {
+                container = popupWindow.getContentView();
+            }
+        } else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                container = (View) popupWindow.getContentView().getParent().getParent();
+            } else {
+                container = (View) popupWindow.getContentView().getParent();
+            }
+        }
+        Context context = popupWindow.getContentView().getContext();
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+       WindowManager.LayoutParams p = (WindowManager.LayoutParams) container.getLayoutParams();
+        p.flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND;
+        p.dimAmount = 0.7f;
+        wm.updateViewLayout(container, p);
     }
 
 }
