@@ -8407,6 +8407,16 @@ public class DataLayer {
         return cursor;
     }
 
+    public Cursor getViewModulesByFarmerID(String farmerId) {
+        Cursor cursor = db.rawQuery("SELECT modules.id as id, modules.name, modules.name_fr, modules.name_es, modules.name_id, modules.name_pt, " +
+                " modules.name_tr, modules.name_lo, modules.name_vi, modules.name_th, moduleassignments.view_module, " +
+                " moduleassignments.moduleassignment_type, moduleassignments.moduleassignment_id,"+
+                " moduleassignments.isFarmSurvey FROM moduleassignments  " +
+                " JOIN modules ON moduleassignments.module_id = modules.id  " +
+                " WHERE moduleassignments.childLabour != 'true' AND moduleassignments.isFarmSurvey == 'false'  AND moduleassignments.view_module = '1'",null);
+        return cursor;
+    }
+
     public ArrayList<ModuleDTO> viewModuleList() {
         ArrayList<ModuleDTO> list= new ArrayList<ModuleDTO>();
         Cursor moduleList = getViewModules();
@@ -8461,8 +8471,8 @@ public class DataLayer {
 
     public boolean hasExistingAns(String farmerId) {
         String[] columns = new String[]{"*"};
-        String whereClause = OFISDBContract.AnswerEntry.COLUMN_NAME_FARMER_ID + " = ? AND " + OFISDBContract.AnswerEntry.COLUMN_IS_SYNCED +" is not NULL";
-        String[] whereArgs = new String[]{String.valueOf(farmerId)};
+        String whereClause = OFISDBContract.AnswerEntry.COLUMN_NAME_FARMER_ID + " = ? AND " + OFISDBContract.AnswerEntry.COLUMN_IS_SYNCED +" = ? ";
+        String[] whereArgs = new String[]{String.valueOf(farmerId),"1"};
         Cursor cursor = db.query(OFISDBContract.AnswerEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
         boolean exists = (cursor.getCount() > 0);
         cursor.close();
