@@ -163,6 +163,26 @@
                 android:value="com.olam.digital.ofis.FindFarmerActivity" />
         </activity>
         <activity
+            android:name="com.olam.digital.ofis.downloadsurvey.DownloadSurveyData"
+            android:label="@string/download_survey_data"
+            android:parentActivityName="com.olam.digital.ofis.FindFarmerActivity"
+            android:screenOrientation="portrait"
+            tools:ignore="UnusedAttribute">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.olam.digital.ofis.FindFarmerActivity" />
+        </activity>
+        <activity
+            android:name="com.olam.digital.ofis.downloadsurvey.ListDownSurveys"
+            android:label="@string/download_survey_data"
+            android:parentActivityName="com.olam.digital.ofis.FindFarmerActivity"
+            android:screenOrientation="portrait"
+            tools:ignore="UnusedAttribute">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.olam.digital.ofis.FindFarmerActivity" />
+        </activity>
+        <activity
             android:name="com.olam.digital.ofis.recordpolygon.RecordPolygonActivity"
             android:label="@string/title_activity_record_polygon"
             android:parentActivityName="com.olam.digital.ofis.ViewFarmerActivity"
@@ -349,6 +369,16 @@
         </activity>
         <activity
             android:name=".ConsentStatementActivity"
+            android:label="@string/update_consent_statement"
+            android:parentActivityName=".ViewFarmerActivity"
+            android:screenOrientation="portrait"
+            tools:ignore="UnusedAttribute">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ViewFarmerActivity" />
+        </activity>
+        <activity
+            android:name=".ConsentwithAudioActivity"
             android:label="@string/update_consent_statement"
             android:parentActivityName=".ViewFarmerActivity"
             android:screenOrientation="portrait"

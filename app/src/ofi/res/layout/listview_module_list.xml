@@ -98,15 +98,16 @@
             android:layout_marginTop="8dp"
             android:layout_weight="4"
             android:layout_marginBottom="8dp">
+
             <ImageView
+                android:id="@+id/moduleListModuleIcon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
                 android:adjustViewBounds="true"
-                android:scaleType="fitCenter"
-                android:id="@+id/moduleListModuleIcon"
-                app:srcCompat="@drawable/ic_status_new"
                 android:contentDescription="@string/Farmer_Photo"
-                android:layout_centerInParent="true" />
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/ic_status_new" />
         </RelativeLayout>
     </LinearLayout>
 

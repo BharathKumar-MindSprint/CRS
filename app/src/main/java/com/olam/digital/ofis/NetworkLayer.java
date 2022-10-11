@@ -41,6 +41,7 @@ import com.olam.digital.ofis.authentication.KeyCloakInfo;
 import com.olam.digital.ofis.authentication.model.AuthRequestDTO;
 import com.olam.digital.ofis.authentication.model.AuthenticationDTO;
 import com.olam.digital.ofis.childlabour.ChildLabourUtils;
+import com.olam.digital.ofis.downloadsurvey.dto.AnswerRequestDTO;
 import com.olam.digital.ofis.dynatrace.DynatraceConstants;
 import com.olam.digital.ofis.dynatrace.DynatraceHelper;
 import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
@@ -165,7 +166,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         this.dl = new DataLayer(res, context);
     }
 
-    boolean isPhoneOnline() {
+    public boolean isPhoneOnline() {
         ConnectivityManager cm =
                 (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 
@@ -3385,13 +3386,23 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
     }
 
-    void syncData() {
+    public void syncData() {
         pd = Utilities.openProgressDialog(context, res.getString(R.string.Retrieving_data), false);
         SyncAllTask syncAllTask = new SyncAllTask(context);
         syncAllTask.setProgressDialog(pd);
         syncAllTask.setResources(res);
         syncAllTask.setDelegate(this);
         syncAllTask.execute(SyncTaskOperationType.CHECK_VERSION);
+
+    }
+
+    public void DownloadSurveyData(AnswerRequestDTO answerRequestDTO) {
+        pd = Utilities.openProgressDialog(context, res.getString(R.string.downloading), false);
+        SyncAllTask syncAllTask = new SyncAllTask(context,answerRequestDTO);
+        syncAllTask.setProgressDialog(pd);
+        syncAllTask.setResources(res);
+        syncAllTask.setDelegate(this);
+        syncAllTask.execute(SyncTaskOperationType.SYNC_SURVEYANSWERS);
 
     }
 

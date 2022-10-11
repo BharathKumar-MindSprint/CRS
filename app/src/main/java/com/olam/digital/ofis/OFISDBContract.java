@@ -262,6 +262,7 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_IS_CHILD_LABOUR = "childLabour";
         public static final String COLUMN_NAME_IS_FARM_SURVEY = "isFarmSurvey";
         public static final String COLUMN_NAME_ROLE_ID = "fkFarmerRoleId";
+        public static final String COLUMN_NAME_VIEW_MODULE = "view_module";
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
                     add(COLUMN_NAME_ID);
@@ -276,6 +277,7 @@ public class OFISDBContract {
                     add(COLUMN_NAME_START_DATE);
                     add(COLUMN_NAME_IS_FARM_SURVEY);
                     add(COLUMN_NAME_ROLE_ID);
+                    add(COLUMN_NAME_VIEW_MODULE);
                 }}
         );
     }
@@ -532,6 +534,7 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_ANSWER_DATE = "answer_date";
         public static final String COLUMN_NAME_ANSWER_TEXT = "answer_text";
         public static final String COLUMN_NAME_ANSWER_REPORTING_YEAR = "reporting_year";
+        public static final String COLUMN_IS_SYNCED = "isSynced";
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
                     add(COLUMN_NAME_ID);
@@ -550,6 +553,7 @@ public class OFISDBContract {
                     add(COLUMN_NAME_ANSWER_DATE);
                     add(COLUMN_NAME_ANSWER_TEXT);
                     add(COLUMN_NAME_ANSWER_REPORTING_YEAR);
+                    add(COLUMN_IS_SYNCED);
                 }}
         );
     }
@@ -2303,5 +2307,26 @@ public class OFISDBContract {
         );
     }
 
+    public static abstract class DownloadedSurveyList implements BaseColumns {
+        public static final String TABLE_NAME = "downloadedSurveys";
+        public static final String COLUMN_NAME_ID = "id";
+        public static final String COLUMN_NAME_MODULE_ID = "moduleId";
+        public static final String COLUMN_NAME_MODULE_NAME = "moduleName";
+        public static final String COLUMN_NAME_FARMER_GROUP = "farmerGroupId";
+        public static final String COLUMN_NAME_SECTION = "sectionId";
+        public static final String COLUMN_NAME_LISTED_NAME = "listedName";
+        public static final String COLUMN_NAME_SAVED_DATE = "savedOn";
+        public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
+                new ArrayList<String>() {{
+                    add(COLUMN_NAME_ID);
+                    add(COLUMN_NAME_MODULE_ID);
+                    add(COLUMN_NAME_MODULE_NAME);
+                    add(COLUMN_NAME_FARMER_GROUP);
+                    add(COLUMN_NAME_SECTION);
+                    add(COLUMN_NAME_LISTED_NAME);
+                    add(COLUMN_NAME_SAVED_DATE);
+                }}
+        );
+    }
 
 }

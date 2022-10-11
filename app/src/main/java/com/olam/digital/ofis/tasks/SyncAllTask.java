@@ -26,6 +26,8 @@ import com.olam.digital.ofis.authentication.KeyCloakInfo;
 import com.olam.digital.ofis.authentication.model.AuthRequestDTO;
 import com.olam.digital.ofis.authentication.model.AuthenticationDTO;
 import com.olam.digital.ofis.childlabour.ChildLabourUtils;
+import com.olam.digital.ofis.downloadsurvey.DownloadSurveyData;
+import com.olam.digital.ofis.downloadsurvey.dto.AnswerRequestDTO;
 import com.olam.digital.ofis.dynatrace.DynatraceConstants;
 import com.olam.digital.ofis.dynatrace.DynatraceHelper;
 import com.olam.digital.ofis.gps.utils.GPSConstants;
@@ -68,11 +70,11 @@ public class SyncAllTask extends SyncTask {
          * 4 = NEW_UPDATE AVAILABLE
          */
 
-        CONTINUE_DOWNLOADING, START_IMPORT, ERROR_RECEIVED, NEW_UPDATE_AVAILABLE
+        CONTINUE_DOWNLOADING, START_IMPORT, ERROR_RECEIVED, NEW_UPDATE_AVAILABLE, START_SURVEYANSIMPORT
     }
 
     public static final String TAG = "SyncAllTask";
-    public JSONObject spinnerResponse, moduleResponse, sipModuleResponse, farmerResponse, fmpResponse, transactionResponse, trainingResponse, tasksResponse;
+    public JSONObject spinnerResponse, moduleResponse, sipModuleResponse, farmerResponse, fmpResponse, transactionResponse, trainingResponse, tasksResponse, answerResponse;
     public static JSONObject childResponse,farmerLeadResponse,assignmentCheckResponse;
     public static JSONObject nationalidresponse,enumnationalidresponse;
     public static  JSONObject multifarmRoleResponse,multifarmFarmResponse;
@@ -85,9 +87,15 @@ public class SyncAllTask extends SyncTask {
     ArrayList<String> isoCodes = new ArrayList<>();
     ArrayList<String> countryIds = new ArrayList<>();
     private SyncAllTaskDelegate delegate;
+    AnswerRequestDTO answerRequestDTO;
 
     public SyncAllTask(Context context) {
         super(context);
+    }
+
+    public SyncAllTask(Context context, AnswerRequestDTO answerRequestDTO) {
+        super(context);
+        this.answerRequestDTO = answerRequestDTO;
     }
 
     public void setDelegate(SyncAllTaskDelegate delegate) {
@@ -210,6 +218,12 @@ public class SyncAllTask extends SyncTask {
         }else if (op == SyncTaskOperationType.SYNC_ISFL) {
             try {
                 syncFarmerLeadEnumerator();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }else if (op == SyncTaskOperationType.SYNC_SURVEYANSWERS) {
+            try {
+                syncSurveyAnswers();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -337,75 +351,86 @@ public class SyncAllTask extends SyncTask {
                 String pdUpdate = (String) values[1];
                 pd = Utilities.updateProgressDialog(pd, 0, 0, pdUpdate);
             }
+        } else if (operation == SyncOperation.START_SURVEYANSIMPORT) {
+            new UpdateSurveyAnswerTask(context).execute(answerResponse);
+            answerResponse = null;
+            if (pd != null && pd.isShowing()) {
+                Utilities.closeProgressDialog(pd, 4000);
+            }
+            DownloadSurveyData.refreshDownloadedSurveyList(answerRequestDTO);
         } else if (operation == SyncOperation.START_IMPORT) {
             /*if (pd != null && pd.isShowing()) {
                 String pdUpdate = (String) values[1];
                 pd = Utilities.updateProgressDialog(pd, 0, 0, pdUpdate);
             }
 */
-            // Goes directly to the AsyncTask
-            new UpdateSpinnerListsTask(context, pd).execute(spinnerResponse);
-            spinnerResponse = null;
 
-            // Goes directly to the AsyncTask
-            new UpdateModuleListsTask(context).execute(moduleResponse);
-            moduleResponse = null;
+                // Goes directly to the AsyncTask
+                new UpdateSpinnerListsTask(context, pd).execute(spinnerResponse);
+                spinnerResponse = null;
 
-            // Goes directly to the AsyncTask
-            new UpdateSipModuleListsTask(context).execute(sipModuleResponse);
-            sipModuleResponse = null;
+                // Goes directly to the AsyncTask
+                new UpdateModuleListsTask(context).execute(moduleResponse);
+                moduleResponse = null;
+
+                // Goes directly to the AsyncTask
+                new UpdateSipModuleListsTask(context).execute(sipModuleResponse);
+                sipModuleResponse = null;
 
 
-            new UpdateMultiFarmRoleTask(context).execute(multifarmRoleResponse);
-            multifarmRoleResponse = null;
+                new UpdateMultiFarmRoleTask(context).execute(multifarmRoleResponse);
+                multifarmRoleResponse = null;
 
-            new UpdateMultiFarmFarmsTask(context).execute(multifarmFarmResponse);
-            multifarmFarmResponse = null;
+                new UpdateMultiFarmFarmsTask(context).execute(multifarmFarmResponse);
+                multifarmFarmResponse = null;
 
-            // Goes directly to the AsyncTask
+                // Goes directly to the AsyncTask
 
-            // not in this scope
+                // not in this scope
 //            new UpdateFmpTask(context).execute(fmpResponse);
 //            fmpResponse = null;
 
-            // Goes directly to the AsyncTask
-            //new UpdateTransactionListsTask(context).execute(transactionResponse);
-            //transactionResponse = null;
+                // Goes directly to the AsyncTask
+                //new UpdateTransactionListsTask(context).execute(transactionResponse);
+                //transactionResponse = null;
 
-            // Goes directly to the AsyncTask
-            new UpdateTrainingListsTask(context).execute(trainingResponse);
-            trainingResponse = null;
+                // Goes directly to the AsyncTask
+                new UpdateTrainingListsTask(context).execute(trainingResponse);
+                trainingResponse = null;
 
-            // Goes directly to the AsyncTask
-            new UpdateTasksListsTask(context).execute(tasksResponse);
-            tasksResponse = null;
+                // Goes directly to the AsyncTask
+                new UpdateTasksListsTask(context).execute(tasksResponse);
+                tasksResponse = null;
 
-            // Goes directly to the AsyncTask
-            new UpdateFarmersTask(context).execute(farmerResponse);
-            farmerResponse = null;
+                // Goes directly to the AsyncTask
+                new UpdateFarmersTask(context).execute(farmerResponse);
+                farmerResponse = null;
 
-            new UpdateChildrenTask(context).execute(childResponse);
-            childResponse=null;
+                new UpdateChildrenTask(context).execute(childResponse);
+                childResponse = null;
 
-            new UpdateFarmerLeadTask(context).execute(farmerLeadResponse);
-            farmerLeadResponse=null;
+                new UpdateFarmerLeadTask(context).execute(farmerLeadResponse);
+                farmerLeadResponse = null;
 
-            new UpdateAssignmentTask(context).execute(assignmentCheckResponse);
-            assignmentCheckResponse=null;
+                new UpdateAssignmentTask(context).execute(assignmentCheckResponse);
+                assignmentCheckResponse = null;
 
-            new UpdateNationalIdTask(context).execute(nationalidresponse);
-            nationalidresponse = null;
+                new UpdateNationalIdTask(context).execute(nationalidresponse);
+                nationalidresponse = null;
 
-            new UpdateEnumNationalIdTask(context).execute(enumnationalidresponse);
-            enumnationalidresponse = null;
+                new UpdateEnumNationalIdTask(context).execute(enumnationalidresponse);
+                enumnationalidresponse = null;
+
+                if (Utilities.getBoolFromSharedPrefs(context, "FIRST_RUN", true)) {
+                    HomeActivity.completeFirstSetup();
+                }
+
             /*if (pd != null && pd.isShowing()) {
                 String pdUpdate = res.getString(R.string.update_complete);
                 pd = Utilities.updateProgressDialog(pd, syncResultCount, syncResultCount, pdUpdate);
                 Utilities.closeProgressDialog(pd, 1000);
             }*/
-            if (Utilities.getBoolFromSharedPrefs(context, "FIRST_RUN", true)) {
-                HomeActivity.completeFirstSetup();
-            }
+
 
         } else if (operation == SyncOperation.ERROR_RECEIVED) {
             if (pd != null && pd.isShowing()) {
@@ -1611,14 +1636,10 @@ public class SyncAllTask extends SyncTask {
 
                         if (response.getString("status").equals("unchanged")) {
                             String progress = res.getString(R.string.farmers_up_to_date);
-
                             publishProgress(SyncOperation.START_IMPORT, progress, syncResultCount);
-
                         }
                         farmerResponse = response;
-
                         String progress = res.getString(R.string.importing_string).replace("%%", "0").replace("||", String.valueOf(syncResultCount));
-
                         publishProgress(SyncOperation.START_IMPORT, progress, syncResultCount);
 
                     } else {
@@ -1651,7 +1672,6 @@ public class SyncAllTask extends SyncTask {
         });
     }
 
-
     private void syncChildren() throws JSONException {
         JSONObject inputArgs = new JSONObject();
         long enumeratorCountryId = Utilities.getLongFromSharedPrefs(context, "ENUMERATOR_COUNTRY_ID");
@@ -1679,7 +1699,6 @@ public class SyncAllTask extends SyncTask {
 //                            publishProgress(SyncOperation.START_IMPORT, progress, syncResultCount);
 //
 //                        }
-                        //                   http://www.mocky.io/v2/5d619ffb32000059008e6134
                         JSONObject jsonObject=new JSONObject();
                         try {
                             jsonObject.put("child",response);
@@ -1709,6 +1728,51 @@ public class SyncAllTask extends SyncTask {
                 String failureMessage = res.getString(R.string.networking_error);
                 if (e != null) {
                     FirebaseCrash.report(new Exception("SyncAllTask: Error in response when syncing farmer data", e));
+                    failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
+                }
+
+                publishProgress(SyncOperation.ERROR_RECEIVED, failureMessage);
+
+            }
+
+        });
+    }
+
+    private void syncSurveyAnswers(){
+
+        String endpoint = "";
+        endpoint = "ofissurvey/survey/getRecentSurveyAnswers?module_id="+Integer.parseInt(answerRequestDTO.getModule_id())
+                +"&farmergroup_id="+Integer.parseInt(answerRequestDTO.getFarmerGroupId())
+                +"&section_id="+Integer.parseInt(answerRequestDTO.getSectionId());
+//        endpoint = "ofissurvey/survey/getRecentSurveyAnswers?module_id=3&farmergroup_id=1&section_id=659";
+        okHttpGet(context, endpoint, null, new Callback() {
+            @Override
+            public void onResponse(Call call, final Response postResponse) {
+//                try {
+                try {
+                    JSONArray response = new JSONArray(postResponse.body().string());
+                    if (postResponse.isSuccessful()) {
+
+
+                        Utilities.isAppAlive = true;
+                        JSONObject jsonObject = new JSONObject();
+                        jsonObject.put("answers", response);
+                        answerResponse = jsonObject;
+                        publishProgress(SyncOperation.START_SURVEYANSIMPORT, "Downloading Survey Answers", syncResultCount);
+                    }
+                } catch (JSONException | IOException e) {
+                    e.printStackTrace();
+                } finally {
+                    postResponse.close();
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+                String failureMessage = res.getString(R.string.networking_error);
+                if (e != null) {
+                    FirebaseCrash.report(new Exception("SyncAllTask: Error in response when syncing survey answers data", e));
                     failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
                 }
 
