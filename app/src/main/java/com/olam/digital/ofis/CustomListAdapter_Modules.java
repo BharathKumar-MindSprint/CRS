@@ -52,6 +52,7 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
     private JSONArray submittedModulesArray;
     private String moduleColumnSuffix = "";
     int roleId;
+    String viewModule = "0";
     long farmerId;
 
     boolean ispolygonCaptured;
@@ -530,9 +531,9 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                 enabledItem.setText("true");
                 linearLayout.setBackgroundResource(R.drawable.list_item);
                 boolean viewExistingdata = dl.hasExistingAns(String.valueOf(farmerId));
-                int viewSurvey = dl.getModuleViewStatus(String.valueOf(currentId));
+                viewModule = cursor.getString(cursor.getColumnIndex("view_module"));
 
-                if(viewExistingdata) {
+                if(viewExistingdata && viewModule.equalsIgnoreCase("1")) {
                     moduleTitle.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, R.drawable.ic_folder, 0);
                 }else{
                     moduleTitle.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, 0, 0);

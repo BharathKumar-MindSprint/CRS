@@ -95,6 +95,7 @@ public class CompleteModuleActivity extends BaseActivity {
     private String recordedLat;
     private String recordedLng;
     private String farmerName;
+    private String viewModuleAns;
     private Cursor subModules, questions;
     public static Cursor allQuestions;
     private Context context;
@@ -114,6 +115,7 @@ public class CompleteModuleActivity extends BaseActivity {
     private static final String RECORDED_LAT = "RECORDED_LAT";
     private static final String RECORDED_LNG = "RECORDED_LNG";
     private static final String FARMER_NAME = "FARMER_NAME";
+    private static final String VIEW_MODULE = "VIEW_MODULE";
     private long networkQueueId = 0;
     public static boolean editMode = false;
 
@@ -169,6 +171,7 @@ public class CompleteModuleActivity extends BaseActivity {
         recordedLat = intent.getStringExtra(RECORDED_LAT);
         recordedLng = intent.getStringExtra(RECORDED_LNG);
         farmerName = intent.getStringExtra(FARMER_NAME);
+        viewModuleAns = intent.getStringExtra(VIEW_MODULE);
         scrollView= findViewById(R.id.scrollView);
 
         context = this;
@@ -223,11 +226,12 @@ public class CompleteModuleActivity extends BaseActivity {
             }
 
         }
+
         boolean viewExistingdata = dl.hasExistingAns(String.valueOf(farmerId));
-        if(viewExistingdata) {
-            viewSurveyAnswer.setVisibility(View.GONE);
-        }else{
+        if(viewModuleAns.equalsIgnoreCase("1") && viewExistingdata ) {
             viewSurveyAnswer.setVisibility(View.VISIBLE);
+        }else{
+            viewSurveyAnswer.setVisibility(View.GONE);
         }
         viewSurveyAnswer.setOnClickListener(new View.OnClickListener() {
             @Override
