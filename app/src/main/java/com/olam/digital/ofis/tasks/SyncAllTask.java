@@ -352,12 +352,19 @@ public class SyncAllTask extends SyncTask {
                 pd = Utilities.updateProgressDialog(pd, 0, 0, pdUpdate);
             }
         } else if (operation == SyncOperation.START_SURVEYANSIMPORT) {
+            int ansCount = 0;
             new UpdateSurveyAnswerTask(context).execute(answerResponse);
+            try {
+               JSONArray ansArray = answerResponse.getJSONArray("answers");
+               ansCount = ansArray.length();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
             answerResponse = null;
             if (pd != null && pd.isShowing()) {
                 Utilities.closeProgressDialog(pd, 4000);
             }
-            DownloadSurveyData.refreshDownloadedSurveyList(answerRequestDTO);
+            DownloadSurveyData.refreshDownloadedSurveyList(answerRequestDTO,ansCount);
         } else if (operation == SyncOperation.START_IMPORT) {
             /*if (pd != null && pd.isShowing()) {
                 String pdUpdate = (String) values[1];
