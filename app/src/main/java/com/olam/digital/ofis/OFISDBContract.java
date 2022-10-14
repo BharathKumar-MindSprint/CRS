@@ -418,6 +418,7 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_VALUE_VI = "value_vi";
         public static final String COLUMN_NAME_VALUE_TH = "value_th";
         public static final String COLUMN_NAME_PHOTO = "photo";
+        public static final String COLUMN_NAME_COUNTRYLOOKUPVALUE = "countryLookUpValueDtos";
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
                     add(COLUMN_NAME_ID);
@@ -433,6 +434,7 @@ public class OFISDBContract {
                     add(COLUMN_NAME_VALUE_VI);
                     add(COLUMN_NAME_VALUE_TH);
                     add(COLUMN_NAME_PHOTO);
+                    add(COLUMN_NAME_COUNTRYLOOKUPVALUE);
                 }}
         );
     }

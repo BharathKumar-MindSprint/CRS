@@ -76,6 +76,7 @@ public class DownloadSurveyData extends BaseActivity implements OnAccessTokenInt
             ModuleDTO moduleDTO = (ModuleDTO) bundle.getSerializable("module");
             moduleId = moduleDTO.getModule_id();
             moduleName = moduleDTO.getName();
+            this.setTitle(moduleName);
         }
 
         downloadData.setOnClickListener(new View.OnClickListener() {

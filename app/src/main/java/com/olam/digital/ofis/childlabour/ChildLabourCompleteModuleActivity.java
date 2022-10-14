@@ -144,7 +144,6 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
     GPSListener gpsListener=null;
     private GPSTracker gpsTracker=null;
 
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -244,8 +243,8 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
         dynamicQuestions.questionsSection = (LinearLayout) findViewById(R.id.questionsSection);
         dynamicQuestions.inflater = (LayoutInflater) context.getSystemService(LAYOUT_INFLATER_SERVICE);
         dynamicQuestions.reportingYear = getReportingYear();
-
-
+        LinearLayout viewSurveyAnswer = (LinearLayout) findViewById(R.id.view_surveyans);
+        viewSurveyAnswer.setVisibility(View.GONE);
         subModules = dl.getSubmodulesByModuleId(moduleId);
 
         Utilities.subModuleId = subModuleId;
