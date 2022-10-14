@@ -8545,10 +8545,12 @@ public class DataLayer {
         }catch (Exception e){e.printStackTrace();}
     }
 
-    public ArrayList<AnswerRequestDTO> getDownloadedSurveyList() {
+    public ArrayList<AnswerRequestDTO> getDownloadedSurveyList(String moduleId) {
         ArrayList<AnswerRequestDTO> list= new ArrayList<AnswerRequestDTO>();
         try {
-            Cursor moduleList=db.rawQuery("SELECT * FROM " + OFISDBContract.DownloadedSurveyList.TABLE_NAME, null);
+            Cursor moduleList=db.rawQuery("SELECT * FROM " + OFISDBContract.DownloadedSurveyList.TABLE_NAME
+                    + " WHERE " + OFISDBContract.DownloadedSurveyList.COLUMN_NAME_MODULE_ID
+                    + " = " + moduleId, null);
             AnswerRequestDTO moduleDTO;
             if (moduleList.getCount() > 0) {
                 while (moduleList.moveToNext()) {
@@ -8563,7 +8565,12 @@ public class DataLayer {
                             getSectionName(Integer.parseInt(sectionId)) +
                             "(Farmers:" + farmerCountBySectionId(sectionId) + ")");
                     moduleDTO.setDateTime(moduleList.getString(moduleList.getColumnIndex(OFISDBContract.DownloadedSurveyList.COLUMN_NAME_SAVED_DATE)));
-                    list.add(moduleDTO);
+                    if(getFGName(Integer.parseInt(farmerGroupId))!= "NA" ||
+                            getSectionName(Integer.parseInt(sectionId)) != "NA" ||
+                            farmerCountBySectionId(sectionId) > 0){
+                        list.add(moduleDTO);
+                    }
+
                 }
             }
         }catch (Exception e){

@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -51,7 +52,7 @@ public class DownloadSurveyData extends BaseActivity implements OnAccessTokenInt
     private static Context staticContext;
     private static RecyclerView moduleListRecyclerView;
     private static DownloadedModuleAdapter downloadedModuleAdapter;
-
+    private static LinearLayout bottomSection;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,6 +71,7 @@ public class DownloadSurveyData extends BaseActivity implements OnAccessTokenInt
         farmerGroupSpinner = (Spinner) findViewById(R.id.spinner_farmerGroup);
         sectionSpinner = (Spinner) findViewById(R.id.spinner_section);
         moduleListRecyclerView = (RecyclerView) findViewById(R.id.downloadedList);
+        bottomSection = (LinearLayout) findViewById(R.id.bottomSection);
         dl = new DataLayer(res, this);
         Bundle bundle = this.getIntent().getExtras();
         if (bundle != null) {
@@ -134,7 +136,7 @@ public class DownloadSurveyData extends BaseActivity implements OnAccessTokenInt
             }
         });
         try {
-            ArrayList<AnswerRequestDTO> moduleList = dl.getDownloadedSurveyList();
+            ArrayList<AnswerRequestDTO> moduleList = dl.getDownloadedSurveyList(moduleId);
             loadData(dl, moduleList);
         }catch (Exception e){
             e.printStackTrace();
@@ -178,7 +180,7 @@ public class DownloadSurveyData extends BaseActivity implements OnAccessTokenInt
 
     }
 
-    private static void dialogLogout(DataLayer dl, AnswerRequestDTO moduleDTO, int position) {
+    private static void dialogLogout(DataLayer dl, AnswerRequestDTO moduleDTO, int position, String module_id) {
         AlertDialog.Builder builder = new AlertDialog.Builder(DownloadSurveyData.staticContext);
         builder.setCancelable(false);
         LayoutInflater inflater = LayoutInflater.from(staticContext);
@@ -203,11 +205,11 @@ public class DownloadSurveyData extends BaseActivity implements OnAccessTokenInt
                 dl.deleteDownloadedSurveys(moduleDTO.getFarmerGroupId(), moduleDTO.getSectionId());
 //                downloadedModuleAdapter.resetItem(dl.getDownloadedSurveyList());
 //                downloadedModuleAdapter.notifyItemChanged(position);
-                if(dl.getDownloadedSurveyList().size()==0){
+                if(dl.getDownloadedSurveyList(module_id).size()==0){
                     recordCount.setVisibility(View.GONE);
                 }
                 Toast.makeText(staticContext, "Record Deleted", Toast.LENGTH_LONG).show();
-                loadData(dl,dl.getDownloadedSurveyList());
+                loadData(dl,dl.getDownloadedSurveyList(module_id));
             }
         });
 
@@ -223,7 +225,7 @@ public class DownloadSurveyData extends BaseActivity implements OnAccessTokenInt
             AnswerRequestDTO answerRequestDTO = answerRequestDTOS[0];
 
             dl.addDownloadedSurveyList(answerRequestDTO);
-            moduleList = dl.getDownloadedSurveyList();
+            moduleList = dl.getDownloadedSurveyList(answerRequestDTO.getModule_id());
 
             return "";
         }
@@ -240,6 +242,7 @@ public class DownloadSurveyData extends BaseActivity implements OnAccessTokenInt
 
     public static void loadData(DataLayer dl, ArrayList<AnswerRequestDTO> moduleList) {
         if(moduleList.size() > 0) {
+            bottomSection.setVisibility(View.VISIBLE);
             recordCount.setText("Total records Downloaded: " +moduleList.size());
             downloadedModuleAdapter = new DownloadedModuleAdapter(moduleList, staticContext);
             RecyclerView.LayoutManager reLayoutManager = new LinearLayoutManager(staticContext);
@@ -254,12 +257,14 @@ public class DownloadSurveyData extends BaseActivity implements OnAccessTokenInt
             downloadedModuleAdapter.setOnItemClickListener(new OnItemDownloadedSurveyClickListener() {
                 @Override
                 public void onModuleClick(View view, int position, AnswerRequestDTO moduleDTO) {
-                    dialogLogout(dl,moduleDTO,position);
+                    dialogLogout(dl,moduleDTO,position, moduleDTO.getModule_id());
                     /*dl.deleteDownloadedSurveys(moduleDTO.getFarmerGroupId(), moduleDTO.getSectionId());
                     downloadedModuleAdapter.resetItem(dl.getDownloadedSurveyList());
                     downloadedModuleAdapter.notifyItemChanged(position);*/
                 }
             });
+        }else {
+            bottomSection.setVisibility(View.GONE);
         }
     }
 }
