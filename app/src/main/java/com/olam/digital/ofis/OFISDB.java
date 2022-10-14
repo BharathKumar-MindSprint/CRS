@@ -244,7 +244,7 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE_ID + " TEXT, " + OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE_PT + " TEXT, "
             + OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE_TR + " TEXT, " + OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE_LO + " TEXT, "
             + OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE_VI + " TEXT, " + OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE_TH + " TEXT, "
-            + OFISDBContract.LookupValuesEntry.COLUMN_NAME_PHOTO + " TEXT )";
+            + OFISDBContract.LookupValuesEntry.COLUMN_NAME_COUNTRYLOOKUPVALUE + " TEXT, " + OFISDBContract.LookupValuesEntry.COLUMN_NAME_PHOTO + " TEXT )";
 
 //    private static final String OFIS_QUESTION_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.QuestionEntry.TABLE_NAME +
 //            " ( " + OFISDBContract.QuestionEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.QuestionEntry.COLUMN_NAME_SUBMODULE_ID + " INTEGER, "
@@ -860,6 +860,21 @@ class OFISDB extends SQLiteOpenHelper {
         }
 
 //      if less than 143
+        try {
+            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ModuleAssignmentsEntry.TABLE_NAME + " ADD COLUMN view_module INTEGER default null");
+        } catch (SQLiteException ex) {
+            ex.printStackTrace();
+        }
+        try {
+            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.AnswerEntry.TABLE_NAME + " ADD COLUMN isSynced TEXT default null");
+        } catch (SQLiteException ex) {
+            ex.printStackTrace();
+        }
+        try {
+            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.LookupValuesEntry.TABLE_NAME + " ADD COLUMN countryLookUpValueDtos TEXT default null");
+        } catch (SQLiteException ex) {
+            ex.printStackTrace();
+        }
         sqLiteDatabase.execSQL(OFIS_DOWNLOADED_SURVEYLIST_TABLE_CREATE);
         onCreate(sqLiteDatabase);
     }

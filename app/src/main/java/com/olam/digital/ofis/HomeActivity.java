@@ -69,6 +69,7 @@ import com.olam.digital.ofis.childlabour.ChildLabourUtils;
 import com.olam.digital.ofis.childlabour.ChildVisitDetailActivity;
 import com.olam.digital.ofis.childlabour.ViewChildLabourSurveyActivity;
 import com.olam.digital.ofis.downloadsurvey.ListDownSurveys;
+import com.olam.digital.ofis.downloadsurvey.dto.ModuleDTO;
 import com.olam.digital.ofis.dynatrace.DynatraceHelper;
 import com.olam.digital.ofis.gps.GPSListener;
 import com.olam.digital.ofis.gps.GPSTracker;
@@ -87,6 +88,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
@@ -1058,9 +1060,20 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         Button captureLocation = (Button) findViewById(R.id.captureLocation);
         Button recordTraining = (Button) findViewById(R.id.RecordFarmerTraining);
         Button downloadSurvey = (Button) findViewById(R.id.downloadSurveyData);
+        CardView downloadSurveyWrapper = (CardView) findViewById(R.id.downloadSurveyWrapper);
         syncAll = (ImageButton) findViewById(R.id.syncAll);
         boolean can_transact = Utilities.getBoolFromSharedPrefs(context, "can_transact", false);
-
+        try {
+            ArrayList<ModuleDTO> duplicateList = dl.viewModuleList();
+            ArrayList<ModuleDTO> moduleList = dl.removeDuplicateModule(duplicateList);
+            if (moduleList == null || moduleList.size() == 0) {
+                downloadSurveyWrapper.setVisibility(View.GONE);
+            }else{
+                downloadSurveyWrapper.setVisibility(View.VISIBLE);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         downloadSurvey.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

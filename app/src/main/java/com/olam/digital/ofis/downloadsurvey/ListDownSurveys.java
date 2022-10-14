@@ -35,34 +35,38 @@ public class ListDownSurveys extends BaseActivity {
     }
 
     private void populateModuleList() {
-        ArrayList<ModuleDTO> duplicateList = dl.viewModuleList();
-        ArrayList<ModuleDTO> moduleList = dl.removeDuplicateModule(duplicateList);
-        if(moduleList!=null && moduleList.size()>0){
-            filterModuleRecyclerAdapter = new FilterModuleRecyclerAdapter(moduleList,this);
-            RecyclerView.LayoutManager reLayoutManager = new LinearLayoutManager(getApplicationContext());
-            moduleListRecyclerView.setLayoutManager(reLayoutManager);
-            DividerItemDecoration itemDecoration = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
-            itemDecoration.setDrawable(getResources().getDrawable(R.drawable.list_seperator_divider));
-            moduleListRecyclerView.addItemDecoration(itemDecoration);
+        try {
+            ArrayList<ModuleDTO> duplicateList = dl.viewModuleList();
+            ArrayList<ModuleDTO> moduleList = dl.removeDuplicateModule(duplicateList);
+            if (moduleList != null && moduleList.size() > 0) {
+                filterModuleRecyclerAdapter = new FilterModuleRecyclerAdapter(moduleList, this);
+                RecyclerView.LayoutManager reLayoutManager = new LinearLayoutManager(getApplicationContext());
+                moduleListRecyclerView.setLayoutManager(reLayoutManager);
+                DividerItemDecoration itemDecoration = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
+                itemDecoration.setDrawable(getResources().getDrawable(R.drawable.list_seperator_divider));
+                moduleListRecyclerView.addItemDecoration(itemDecoration);
 
-            moduleListRecyclerView.setItemAnimator(new DefaultItemAnimator());
-            ((LinearLayoutManager) reLayoutManager).setReverseLayout(true);
-            moduleListRecyclerView.setAdapter(filterModuleRecyclerAdapter);
-            moduleListRecyclerView.scrollToPosition(filterModuleRecyclerAdapter.getItemCount() - 1);
-            filterModuleRecyclerAdapter.setOnItemClickListener(new OnItemSurveyClickListener() {
-                @Override
-                public void onModuleClick(View view, int position, ModuleDTO moduleDTO) {
+                moduleListRecyclerView.setItemAnimator(new DefaultItemAnimator());
+                ((LinearLayoutManager) reLayoutManager).setReverseLayout(true);
+                moduleListRecyclerView.setAdapter(filterModuleRecyclerAdapter);
+                moduleListRecyclerView.scrollToPosition(filterModuleRecyclerAdapter.getItemCount() - 1);
+                filterModuleRecyclerAdapter.setOnItemClickListener(new OnItemSurveyClickListener() {
+                    @Override
+                    public void onModuleClick(View view, int position, ModuleDTO moduleDTO) {
                     /*Toast.makeText(ListDownSurveys.this, moduleDTO.getName() +"\n id type:"
                                     + moduleDTO.getModule_id() + "\n"
                                     + moduleDTO.getModuleassignment_type() + "\n"
                                     + moduleDTO.getModuleassignment_id()
                             ,Toast.LENGTH_LONG).show();*/
-                    Bundle bundle=new Bundle();
-                    bundle.putSerializable("module", moduleDTO);
-                    startActivity(new Intent(ListDownSurveys.this, DownloadSurveyData.class).putExtras(bundle));
-                }
-            });
+                        Bundle bundle = new Bundle();
+                        bundle.putSerializable("module", moduleDTO);
+                        startActivity(new Intent(ListDownSurveys.this, DownloadSurveyData.class).putExtras(bundle));
+                    }
+                });
 
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 
