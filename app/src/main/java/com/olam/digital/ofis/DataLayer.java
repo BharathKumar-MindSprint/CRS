@@ -8550,7 +8550,7 @@ public class DataLayer {
         try {
             Cursor moduleList=db.rawQuery("SELECT * FROM " + OFISDBContract.DownloadedSurveyList.TABLE_NAME
                     + " WHERE " + OFISDBContract.DownloadedSurveyList.COLUMN_NAME_MODULE_ID
-                    + " = " + moduleId, null);
+                    + " = " + moduleId + " ORDER BY " + OFISDBContract.DownloadedSurveyList.COLUMN_NAME_SAVED_DATE + " DESC", null);
             AnswerRequestDTO moduleDTO;
             if (moduleList.getCount() > 0) {
                 while (moduleList.moveToNext()) {

@@ -173,10 +173,12 @@ public class DownloadSurveyData extends BaseActivity implements OnAccessTokenInt
         }
     }
 
-    public static void refreshDownloadedSurveyList(AnswerRequestDTO answerRequestDTO){
-//        Toast.makeText( staticContext,"Download completed",Toast.LENGTH_LONG).show();
-        new surveyTask().execute(answerRequestDTO);
-
+    public static void refreshDownloadedSurveyList(AnswerRequestDTO answerRequestDTO, int ansCount){
+        if(ansCount >0) {
+            new surveyTask().execute(answerRequestDTO);
+        }else{
+            Toast.makeText(staticContext, "No records found", Toast.LENGTH_LONG).show();
+        }
 
     }
 
@@ -251,9 +253,9 @@ public class DownloadSurveyData extends BaseActivity implements OnAccessTokenInt
             itemDecoration.setDrawable(staticContext.getResources().getDrawable(R.drawable.list_seperator_divider));
             moduleListRecyclerView.addItemDecoration(itemDecoration);
             moduleListRecyclerView.setItemAnimator(new DefaultItemAnimator());
-            ((LinearLayoutManager) reLayoutManager).setReverseLayout(true);
+            ((LinearLayoutManager) reLayoutManager).setReverseLayout(false);
             moduleListRecyclerView.setAdapter(downloadedModuleAdapter);
-            moduleListRecyclerView.scrollToPosition(downloadedModuleAdapter.getItemCount() - 1);
+            ((LinearLayoutManager) reLayoutManager).scrollToPosition(0);
             downloadedModuleAdapter.setOnItemClickListener(new OnItemDownloadedSurveyClickListener() {
                 @Override
                 public void onModuleClick(View view, int position, AnswerRequestDTO moduleDTO) {
