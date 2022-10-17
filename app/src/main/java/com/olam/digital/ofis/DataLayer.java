@@ -3479,10 +3479,23 @@ public class DataLayer {
 
     // modules tasks
     Cursor getLookupValuesForQuestion(int questionId, String questionColumn) {
-        String[] tableColumns = new String[]{questionColumn, "id as _id", OFISDBContract.LookupValuesEntry.COLUMN_NAME_POSITION};
-
+        String type = Utilities.type;
+        String productId = Utilities.productId;
+        String countryId = Utilities.countryId;
         String querySelection = OFISDBContract.LookupValuesEntry.COLUMN_NAME_QUESTION_ID + " = ?";
         String[] querySelectionValue = new String[]{String.valueOf(questionId)};
+        if(type.equalsIgnoreCase("CHILD_PRODUCT")){
+            String value = "%\"country_id\":" +
+                    Long.parseLong(countryId) +
+                    ",\"product_id\":" +
+                    Long.parseLong(productId) +"%";
+            querySelection = OFISDBContract.LookupValuesEntry.COLUMN_NAME_QUESTION_ID + " = ? AND "
+                    + OFISDBContract.LookupValuesEntry.COLUMN_NAME_COUNTRYLOOKUPVALUE + " LIKE ? ";
+           querySelectionValue = new String[]{String.valueOf(questionId), value};
+        }
+        String[] tableColumns = new String[]{questionColumn, "id as _id", OFISDBContract.LookupValuesEntry.COLUMN_NAME_POSITION};
+
+
         String orderByValue = OFISDBContract.LookupValuesEntry.COLUMN_NAME_POSITION + " ASC";
 
         return db.query(OFISDBContract.LookupValuesEntry.TABLE_NAME, tableColumns, querySelection, querySelectionValue, null, null, orderByValue);
@@ -8632,6 +8645,31 @@ public class DataLayer {
         };
 
         return db.rawQuery(sql, whereArgs);
+    }
+
+    public String getIdByFarmerId(long farmerId, String type) {
+
+        String productId = null;
+        String[] columns = new String[]{"*"};
+        String whereClause = OFISDBContract.FarmerEntry.COLUMN_NAME_ID+ " = ?";
+        String[] whereArgs = new String[]{String.valueOf(farmerId)};
+        Cursor mCursor= db.query(OFISDBContract.FarmerEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+        try {
+            if (mCursor != null) {
+                while (mCursor.moveToNext()) {
+                    if(type == "Product") {
+                        productId = String.valueOf(mCursor.getString(mCursor.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID)));
+                    }else if(type == "Country"){
+                        productId = String.valueOf(mCursor.getString(mCursor.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID)));
+                    }
+                }
+            }
+        }catch (Exception e){
+
+        }finally {
+            mCursor.close();
+        }
+        return productId;
     }
 
 }

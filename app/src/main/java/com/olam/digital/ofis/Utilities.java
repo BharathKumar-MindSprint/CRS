@@ -59,6 +59,9 @@ public class Utilities {
 
 
     public  static  long farmerId;
+    public  static String productId;
+    public  static String countryId;
+    public  static String type = "NA";
     public  static  String olamFarmerId;
     public  static  int moduleId;
 
