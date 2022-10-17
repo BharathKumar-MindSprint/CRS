@@ -109,7 +109,7 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
     private static final String RECORDED_LAT = "RECORDED_LAT";
     private static final String RECORDED_LNG = "RECORDED_LNG";
     private static final String FARMER_NAME = "FARMER_NAME";
-    private static final String CHILD_ID="CHILD_ID";
+    private static final String CHILDPRODUCT="CHILD_PRODUCT";
     private long networkQueueId = 0;
 
     // for GPS location system
@@ -256,6 +256,9 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
 
         Utilities.packagename=getPackageName();
 
+        Utilities.productId = dl.getIdByFarmerId(farmerId,"Product");
+        Utilities.countryId = dl.getIdByFarmerId(farmerId,"Country");
+        Utilities.type = CHILDPRODUCT;
         if (statusStarted != 0 || statusFinished != 0) {
 
             dynamicQuestions.hasAnswers = true;
