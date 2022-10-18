@@ -208,6 +208,7 @@ public class CompleteModuleActivity extends BaseActivity {
         if (statusStarted != 0 || statusFinished != 0) {
 
             dynamicQuestions.hasAnswers = true;
+            dynamicQuestions.viewAnswer = false;
             questions = dl.getQuestionsAndAnswersBySubModuleId(subModuleId, farmerId, farmerModuleId);
 
             moveToCurrentSubModule(subModuleId);
@@ -227,12 +228,9 @@ public class CompleteModuleActivity extends BaseActivity {
 
         }
 
-        boolean viewExistingdata = dl.hasExistingAns(String.valueOf(farmerId));
-        if(viewModuleAns.equalsIgnoreCase("1") && viewExistingdata ) {
-            viewSurveyAnswer.setVisibility(View.VISIBLE);
-        }else{
-            viewSurveyAnswer.setVisibility(View.GONE);
-        }
+
+
+
         viewSurveyAnswer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -479,7 +477,19 @@ public class CompleteModuleActivity extends BaseActivity {
                 }catch (Exception e){}
             }
         });
-
+        long farmerGroupId = dl.getFarmerGroupById(farmerId);
+        long sectionId = dl.getSectionByFarmerId(farmerId);
+        boolean value = dl.farmerExistByfarmerGroupSection(farmerGroupId,sectionId,moduleId);
+        if(value){
+            boolean viewExistingdata = dl.isSurveyAnsDownloaded(subModuleId, farmerId);
+            if(viewExistingdata){
+                viewSurveyAnswer.setVisibility(View.VISIBLE);
+            }else{
+                viewSurveyAnswer.setVisibility(View.GONE);
+            }
+        }else{
+            viewSurveyAnswer.setVisibility(View.GONE);
+        }
     }
 
     private int getReportingYear() {
@@ -986,7 +996,8 @@ public class CompleteModuleActivity extends BaseActivity {
 
         final Dialog surveyDialog = new Dialog(CompleteModuleActivity.this, android.R.style.Theme_Material_Dialog_Alert);
         surveyDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-
+        surveyDialog.setCancelable(false);
+        surveyDialog.setCanceledOnTouchOutside(false);
         surveyDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         surveyDialog.setContentView(R.layout.activity_existingsurveyans);
         dynamicQuestions.questionsSection = (LinearLayout) popupView.findViewById(R.id.questionsSection);
@@ -1003,7 +1014,8 @@ public class CompleteModuleActivity extends BaseActivity {
                  int columnIndex = (questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION + questionColumnSuffix) != -1) ? questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION + questionColumnSuffix) : questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION);
                  questionText.setText(questions.getString(columnIndex));
                  answerText.setText("Answer Here");*/
-
+                 dynamicQuestions.hasAnswers = true;
+                 dynamicQuestions.viewAnswer = true;
                  String displayType = questions.getString(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE));
                  if (displayType.replaceAll(" ", "").toLowerCase().equals("checkbox")) {
                      dynamicQuestions.renderCheckBoxQuestion(questions, dynamicQuestions.questionsSection, farmerId, farmerModuleId);
@@ -1039,6 +1051,7 @@ public class CompleteModuleActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 popupWindow.dismiss();
+                dynamicQuestions.viewAnswer = false;
             }
         });
     }

@@ -530,11 +530,25 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
             if (!submitted) {
                 enabledItem.setText("true");
                 linearLayout.setBackgroundResource(R.drawable.list_item);
-                boolean viewExistingdata = dl.hasExistingAns(String.valueOf(farmerId));
+                /*boolean viewExistingdata = dl.hasExistingAns(String.valueOf(farmerId));
+//                viewModule = cursor.getString(cursor.getColumnIndex("view_module"));
                 viewModule = cursor.getString(cursor.getColumnIndex("view_module"));
 
                 if(viewExistingdata && viewModule.equalsIgnoreCase("1")) {
                     moduleTitle.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, R.drawable.ic_folder, 0);
+                }else{
+                    moduleTitle.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, 0, 0);
+                }*/
+                long farmerGroupId = dl.getFarmerGroupById(farmerId);
+                long sectionId = dl.getSectionByFarmerId(farmerId);
+                boolean value = dl.farmerExistByfarmerGroupSection(farmerGroupId,sectionId,currentId);
+                if(value){
+                    boolean viewExistingdata = dl.isSurveyAnsDownloadedByModuleId(currentId, farmerId);
+                    if(viewExistingdata){
+                        moduleTitle.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, R.drawable.ic_folder, 0);
+                    }else{
+                        moduleTitle.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, 0, 0);
+                    }
                 }else{
                     moduleTitle.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, 0, 0);
                 }

@@ -282,9 +282,17 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.AnswerEntry.COLUMN_NAME_OLAM_FARMER_ID + " TEXT, " + OFISDBContract.AnswerEntry.COLUMN_NAME_FARM_ID + " INTEGER, "
             + OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_INT + " INTEGER, " + OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_BOOL + " INTEGER, "
             + OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_DECIMAL + " NUMERIC, " + OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_DATE + " TEXT, "
-            + OFISDBContract.AnswerEntry.COLUMN_IS_SYNCED + " TEXT, "
             + OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_TEXT + " TEXT, " + OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_REPORTING_YEAR + " TEXT )";
 
+    private static final String OFIS_SAVED_ANSWER_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.SavedAnswerEntry.TABLE_NAME +
+            " ( " + OFISDBContract.SavedAnswerEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + OFISDBContract.SavedAnswerEntry.COLUMN_NAME_QUESTION_ID + " INTEGER, "
+            + OFISDBContract.SavedAnswerEntry.COLUMN_NAME_PARENT_QUESTION_ID + " INTEGER, " + OFISDBContract.SavedAnswerEntry.COLUMN_NAME_REPEATER_ITEM_POSITION + " INTEGER, "
+            + OFISDBContract.SavedAnswerEntry.COLUMN_NAME_SUBMODULE_ID + " INTEGER, " + OFISDBContract.SavedAnswerEntry.COLUMN_NAME_FARMER_MODULE_ID + " INTEGER, "
+            + OFISDBContract.SavedAnswerEntry.COLUMN_NAME_FMP_ID + " INTEGER, " + OFISDBContract.SavedAnswerEntry.COLUMN_NAME_FARMER_ID + " INTEGER, "
+            + OFISDBContract.SavedAnswerEntry.COLUMN_NAME_OLAM_FARMER_ID + " TEXT, " + OFISDBContract.SavedAnswerEntry.COLUMN_NAME_FARM_ID + " INTEGER, "
+            + OFISDBContract.SavedAnswerEntry.COLUMN_NAME_ANSWER_INT + " INTEGER, " + OFISDBContract.SavedAnswerEntry.COLUMN_NAME_ANSWER_BOOL + " INTEGER, "
+            + OFISDBContract.SavedAnswerEntry.COLUMN_NAME_ANSWER_DECIMAL + " NUMERIC, " + OFISDBContract.SavedAnswerEntry.COLUMN_NAME_ANSWER_DATE + " TEXT, "
+            + OFISDBContract.SavedAnswerEntry.COLUMN_NAME_ANSWER_TEXT + " TEXT, " + OFISDBContract.SavedAnswerEntry.COLUMN_NAME_ANSWER_REPORTING_YEAR + " TEXT )";
 
     private static final String OFIS_ANSWER_CHILD_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.AnswerChildEntry.TABLE_NAME +
             " ( " + OFISDBContract.AnswerChildEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + OFISDBContract.AnswerChildEntry.COLUMN_NAME_QUESTION_ID + " INTEGER, "
@@ -844,6 +852,7 @@ class OFISDB extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(OFIS_TRAINING_RELATIONS_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_DOWNLOADED_SURVEYLIST_TABLE_CREATE);
 
+        sqLiteDatabase.execSQL(OFIS_SAVED_ANSWER_TABLE_CREATE);
 
     }
 
@@ -865,17 +874,14 @@ class OFISDB extends SQLiteOpenHelper {
         } catch (SQLiteException ex) {
             ex.printStackTrace();
         }
-        try {
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.AnswerEntry.TABLE_NAME + " ADD COLUMN isSynced TEXT default null");
-        } catch (SQLiteException ex) {
-            ex.printStackTrace();
-        }
+
         try {
             sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.LookupValuesEntry.TABLE_NAME + " ADD COLUMN countryLookUpValueDtos TEXT default null");
         } catch (SQLiteException ex) {
             ex.printStackTrace();
         }
         sqLiteDatabase.execSQL(OFIS_DOWNLOADED_SURVEYLIST_TABLE_CREATE);
+        sqLiteDatabase.execSQL(OFIS_SAVED_ANSWER_TABLE_CREATE);
         onCreate(sqLiteDatabase);
     }
 

@@ -484,6 +484,7 @@ public class AddInfrastructureActivity extends BaseActivity {
 
         subModulesSpinner.setSelection(selectedSubModulePOI);
         dynamicQuestions.hasAnswers = true;
+        dynamicQuestions.viewAnswer = false;
         questions = dl.getSIPQuestionsAndAnswersByUploadId(uploadId, subModuleId);
         dynamicQuestions.questionsSection.removeAllViews();
 //        dynamicQuestions

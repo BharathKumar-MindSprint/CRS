@@ -167,11 +167,11 @@ abstract class DatabaseTask extends AsyncTask<JSONObject, Integer, String> {
             db.update(OFISDBContract.FarmerNationalIDs.TABLE_NAME, values, null, null);
         }
 
-        if(tableName.equals(OFISDBContract.AnswerEntry.TABLE_NAME)){
+       /* if(tableName.equals(OFISDBContract.AnswerEntry.TABLE_NAME)){
             ContentValues values = new ContentValues();
             values.put(OFISDBContract.AnswerEntry.COLUMN_IS_SYNCED, true);
             db.update(OFISDBContract.AnswerEntry.TABLE_NAME, values, null, null);
-        }
+        }*/
 
         // Updating] Synced
         if(tableName.equals(OFISDBContract.MultiFarmFarms.TABLE_NAME)){

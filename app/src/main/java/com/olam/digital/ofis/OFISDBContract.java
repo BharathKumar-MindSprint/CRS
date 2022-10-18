@@ -536,7 +536,6 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_ANSWER_DATE = "answer_date";
         public static final String COLUMN_NAME_ANSWER_TEXT = "answer_text";
         public static final String COLUMN_NAME_ANSWER_REPORTING_YEAR = "reporting_year";
-        public static final String COLUMN_IS_SYNCED = "isSynced";
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
                     add(COLUMN_NAME_ID);
@@ -555,7 +554,46 @@ public class OFISDBContract {
                     add(COLUMN_NAME_ANSWER_DATE);
                     add(COLUMN_NAME_ANSWER_TEXT);
                     add(COLUMN_NAME_ANSWER_REPORTING_YEAR);
-                    add(COLUMN_IS_SYNCED);
+                }}
+        );
+    }
+
+    public static abstract class SavedAnswerEntry implements BaseColumns {
+        public static final String TABLE_NAME = "savedAnswers";
+        public static final String COLUMN_NAME_ID = "id";
+        public static final String COLUMN_NAME_QUESTION_ID = "question_id";
+        public static final String COLUMN_NAME_PARENT_QUESTION_ID = "parent_question_id";
+        public static final String COLUMN_NAME_REPEATER_ITEM_POSITION = "repeater_item_position";
+        public static final String COLUMN_NAME_SUBMODULE_ID = "submodule_id";
+        public static final String COLUMN_NAME_FARMER_MODULE_ID = "farmer_module_id";
+        public static final String COLUMN_NAME_FMP_ID = "fmp_id";
+        public static final String COLUMN_NAME_FARMER_ID = "farmer_id";
+        public static final String COLUMN_NAME_OLAM_FARMER_ID = "olam_farmer_id";
+        public static final String COLUMN_NAME_FARM_ID = "farm_id";
+        public static final String COLUMN_NAME_ANSWER_INT = "answer_int";
+        public static final String COLUMN_NAME_ANSWER_BOOL = "answer_boolean";
+        public static final String COLUMN_NAME_ANSWER_DECIMAL = "answer_decimal";
+        public static final String COLUMN_NAME_ANSWER_DATE = "answer_date";
+        public static final String COLUMN_NAME_ANSWER_TEXT = "answer_text";
+        public static final String COLUMN_NAME_ANSWER_REPORTING_YEAR = "reporting_year";
+        public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
+                new ArrayList<String>() {{
+                    add(COLUMN_NAME_ID);
+                    add(COLUMN_NAME_QUESTION_ID);
+                    add(COLUMN_NAME_PARENT_QUESTION_ID);
+                    add(COLUMN_NAME_REPEATER_ITEM_POSITION);
+                    add(COLUMN_NAME_SUBMODULE_ID);
+                    add(COLUMN_NAME_FARMER_MODULE_ID);
+                    add(COLUMN_NAME_FMP_ID);
+                    add(COLUMN_NAME_FARMER_ID);
+                    add(COLUMN_NAME_OLAM_FARMER_ID);
+                    add(COLUMN_NAME_FARM_ID);
+                    add(COLUMN_NAME_ANSWER_INT);
+                    add(COLUMN_NAME_ANSWER_BOOL);
+                    add(COLUMN_NAME_ANSWER_DECIMAL);
+                    add(COLUMN_NAME_ANSWER_DATE);
+                    add(COLUMN_NAME_ANSWER_TEXT);
+                    add(COLUMN_NAME_ANSWER_REPORTING_YEAR);
                 }}
         );
     }

@@ -96,6 +96,7 @@ public class DynamicQuestions {
     public int reportingYear;
     public boolean updatingHundredPercent;
     public boolean hasAnswers;
+    public boolean viewAnswer;
     public LayoutInflater inflater;
     public String questionColumnSuffix;
     public LinearLayout questionsSection;
@@ -401,6 +402,7 @@ public class DynamicQuestions {
 
     private void saveCalculatedAnswerEntry(int questionId, int answerId, int repeaterItemPosition, String answer, String subAnswers) {
         try {
+            if(viewAnswer) return;
             if (answer.length() > 0) {
                 boolean isNew = true;
                 for (int i = 0; i < answerSet.size(); i++) {
@@ -447,6 +449,7 @@ public class DynamicQuestions {
 
     private void saveAnswerEntry(int questionId, int answerId, int parentQuestionId, int repeaterItemPosition, String datatype, String answer) {
         try {
+            if(viewAnswer) return;
             if (answer.length() > 0) {
                 boolean isNew = true;
                 for (int i = 0; i < answerSet.size(); i++) {
@@ -489,12 +492,14 @@ public class DynamicQuestions {
             }
 
         } catch (JSONException e) {
+            e.printStackTrace();
             FirebaseCrashlytics.getInstance().log(e.getMessage());
         }
     }
 
     private void saveAnswerEntry(int questionId, int answerId, int parentQuestionId, int repeaterItemPosition, String datatype, String answer, float min, float max) {
         try {
+            if(viewAnswer) return;
             if (answer.length() > 0) {
                 boolean isNew = true;
                 for (int i = 0; i < answerSet.size(); i++) {
@@ -3584,6 +3589,11 @@ public class DynamicQuestions {
             }
 
             if (currentAnswerString != null) {
+                    if(currentAnswerString.equalsIgnoreCase("true")){
+                        currentAnswerString = "1";
+                    }else if(currentAnswerString.equalsIgnoreCase("false")){
+                        currentAnswerString = "0";
+                    }
                 currentAnswer = Integer.parseInt(currentAnswerString);
             }
 
