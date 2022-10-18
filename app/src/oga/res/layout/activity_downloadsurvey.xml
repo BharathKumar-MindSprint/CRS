@@ -92,7 +92,7 @@
                 android:id="@+id/downloadData"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@color/btnColorThird"
+                android:background="@color/ofis_action_button_background"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
                 android:text="@string/download"
