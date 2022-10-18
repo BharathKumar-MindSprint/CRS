@@ -17,6 +17,7 @@ import android.database.CursorIndexOutOfBoundsException;
 import android.graphics.Typeface;
 import android.location.Location;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -176,6 +177,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     private GPSTracker gpsTracker=null;
     private Boolean newGps;
     ImageButton syncAll;
+    static CardView downloadSurveyWrapper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -205,7 +207,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         recordTrainingWrapper = (CardView) findViewById(R.id.recordTrainingWrapper);
 
         enumeratorID = (EditText) findViewById(R.id.enumeratorID);
-
+        downloadSurveyWrap();
         String enumeratorId=Utilities.getFromSharedPrefs(context);
         if(!enumeratorId.equalsIgnoreCase("")) {
             if (DynatraceHelper.isAppClosed) {
@@ -218,6 +220,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         passcode = (EditText) findViewById(R.id.passcode);
         saveUpdateButton = (Button) findViewById(R.id.buttonSaveUpdate);
         topSection = (LinearLayout) findViewById(R.id.topSectionWrapper);
+        downloadSurveyWrapper = (CardView) findViewById(R.id.downloadSurveyWrapper);
         StrictMode.ThreadPolicy policy =
                 new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
@@ -731,6 +734,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             @Override
             public void onAnimationEnd(Animation animation) {
                 mainSection.removeView(firstRunSection);
+                new viewSurveyWrapper().execute();
             }
 
             @Override
@@ -1053,17 +1057,8 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         });
     }
 
-    private void bindButtons() {
-        Button addNewFarmer = (Button) findViewById(R.id.AddNewFarmer);
-        Button completeModule = (Button) findViewById(R.id.CompleteQuestionnaireModule);
-        Button addSocialInfra = (Button) findViewById(R.id.AddSocialInfrastructure);
-        Button captureLocation = (Button) findViewById(R.id.captureLocation);
-        Button recordTraining = (Button) findViewById(R.id.RecordFarmerTraining);
-        Button downloadSurvey = (Button) findViewById(R.id.downloadSurveyData);
-        CardView downloadSurveyWrapper = (CardView) findViewById(R.id.downloadSurveyWrapper);
-        syncAll = (ImageButton) findViewById(R.id.syncAll);
-        boolean can_transact = Utilities.getBoolFromSharedPrefs(context, "can_transact", false);
-        try {
+    private void downloadSurveyWrap(){
+       try {
             ArrayList<ModuleDTO> duplicateList = dl.viewModuleList();
             ArrayList<ModuleDTO> moduleList = dl.removeDuplicateModule(duplicateList);
             if (moduleList == null || moduleList.size() == 0) {
@@ -1074,6 +1069,35 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         }catch (Exception e){
             e.printStackTrace();
         }
+    }
+
+    private static void downloadSurvey(){
+
+        try {
+            DataLayer dl = new DataLayer(staticContext.getResources(), staticContext);
+            ArrayList<ModuleDTO> duplicateList = dl.viewModuleList();
+            ArrayList<ModuleDTO> moduleList = dl.removeDuplicateModule(duplicateList);
+            if (moduleList == null || moduleList.size() == 0) {
+                downloadSurveyWrapper.setVisibility(View.GONE);
+            }else{
+                downloadSurveyWrapper.setVisibility(View.VISIBLE);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    private void bindButtons() {
+        Button addNewFarmer = (Button) findViewById(R.id.AddNewFarmer);
+        Button completeModule = (Button) findViewById(R.id.CompleteQuestionnaireModule);
+        Button addSocialInfra = (Button) findViewById(R.id.AddSocialInfrastructure);
+        Button captureLocation = (Button) findViewById(R.id.captureLocation);
+        Button recordTraining = (Button) findViewById(R.id.RecordFarmerTraining);
+        Button downloadSurvey = (Button) findViewById(R.id.downloadSurveyData);
+
+        syncAll = (ImageButton) findViewById(R.id.syncAll);
+        boolean can_transact = Utilities.getBoolFromSharedPrefs(context, "can_transact", false);
+        downloadSurveyWrap();
         downloadSurvey.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -1570,5 +1594,31 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     public void onBackPressed() {
         //super.onBackPressed();
       //  Toast.makeText(this,"Disable the back press",Toast.LENGTH_LONG).show();
+    }
+
+    private static class viewSurveyWrapper extends AsyncTask<Object, Boolean, Boolean> {
+        ArrayList<ModuleDTO> moduleList = new ArrayList<>();
+        @Override
+        protected Boolean doInBackground(Object... objects) {
+            try {
+                DataLayer dl = new DataLayer(staticContext.getResources(), staticContext);
+                ArrayList<ModuleDTO> duplicateList = dl.viewModuleList();
+                moduleList = dl.removeDuplicateModule(duplicateList);
+
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            super.onPostExecute(aBoolean);
+            if (moduleList == null || moduleList.size() == 0) {
+                downloadSurveyWrapper.setVisibility(View.GONE);
+            }else{
+                downloadSurveyWrapper.setVisibility(View.VISIBLE);
+            }
+        }
     }
 }

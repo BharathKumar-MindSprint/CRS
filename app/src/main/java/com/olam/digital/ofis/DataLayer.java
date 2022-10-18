@@ -8618,11 +8618,11 @@ public class DataLayer {
                     moduleDTO.setSectionId(sectionId);
                     moduleDTO.setListedName(getFGName(Integer.parseInt(farmerGroupId)) + "-" +
                             getSectionName(Integer.parseInt(sectionId)) +
-                            "(Farmers:" + farmerCountBySubmoduleid(moduleIdval) + ")");
+                            "(Farmers:" + farmerCountBySectionId(sectionId) + ")");
                     moduleDTO.setDateTime(moduleList.getString(moduleList.getColumnIndex(OFISDBContract.DownloadedSurveyList.COLUMN_NAME_SAVED_DATE)));
-                    if(getFGName(Integer.parseInt(farmerGroupId))!= "NA" ||
-                            getSectionName(Integer.parseInt(sectionId)) != "NA" ||
-                            farmerCountBySubmoduleid(moduleIdval) > 0){
+                    if(getFGName(Integer.parseInt(farmerGroupId))!= "NA" &&
+                            getSectionName(Integer.parseInt(sectionId)) != "NA" &&
+                            farmerCountBySectionId(sectionId) > 0){
                         list.add(moduleDTO);
                     }
 
@@ -8644,29 +8644,31 @@ public class DataLayer {
     }
 
     public int farmerCountBySubmoduleid(String id) {
-        ArrayList<String> sid = new ArrayList<>() ;
+        ArrayList<Integer> sid = new ArrayList<>() ;
         String result = null;
+        int records = 0;
         Cursor submoduleids =getSubmodulesByModuleId(Long.parseLong(id));
         if (submoduleids != null) {
             while (submoduleids.moveToNext()) {
-                String subModule = String.valueOf(submoduleids.getString(submoduleids.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_ID)));
+                int subModule = Integer.parseInt(submoduleids.getString(submoduleids.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_ID)));
                 sid.add(subModule);
             }
             if (sid.size() > 0) {
                 StringBuilder sb = new StringBuilder();
-                for (String s : sid) {
+                for (int s : sid) {
                     sb.append(s).append(",");
                 }
                 result = sb.deleteCharAt(sb.length() - 1).toString();
             }
         }
-//        String[] columns = new String[]{"*"};
-//        String whereClause = OFISDBContract.SavedAnswerEntry.COLUMN_NAME_FARMER_ID + " = ? AND "
-//                + OFISDBContract.SavedAnswerEntry.COLUMN_NAME_SUBMODULE_ID + " IN (?)";
-//        String[] whereArgs = new String[]{String.valueOf(id), result};
-//        Cursor data = db.query(OFISDBContract.SavedAnswerEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
-        Cursor data = db.rawQuery("SELECT COUNT(DISTINCT farmer_id) FROM answers WHERE submodule_id in (" + result + ")", null);
-        return data.getCount();
+        Cursor data = db.rawQuery("SELECT COUNT(DISTINCT farmer_id) as countRecords FROM savedAnswers WHERE submodule_id in (" + result + ")", null);
+        if (data != null) {
+            while (data.moveToNext()) {
+                records = Integer.parseInt(data.getString(data.getColumnIndex("countRecords")));
+            }
+            }
+        return records;
+
 
     }
 
