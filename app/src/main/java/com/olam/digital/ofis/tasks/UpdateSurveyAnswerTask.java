@@ -37,7 +37,7 @@ class UpdateSurveyAnswerTask extends DatabaseTask {
             JSONArray ansArray;
             try {
                  ansArray = answerResponse.getJSONArray("answers");
-                 fillTable(ansArray, OFISDBContract.AnswerEntry.TABLE_NAME, OFISDBContract.AnswerEntry.COLUMN_LIST);
+                 fillTable(ansArray, OFISDBContract.SavedAnswerEntry.TABLE_NAME, OFISDBContract.SavedAnswerEntry.COLUMN_LIST);
 
             } catch (JSONException e) {
                 FirebaseCrash.report(new Exception("UpdateSurveyAnswerTask: Error filling Answer table", e));

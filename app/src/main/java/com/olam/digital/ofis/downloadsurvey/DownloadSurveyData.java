@@ -244,6 +244,7 @@ public class DownloadSurveyData extends BaseActivity implements OnAccessTokenInt
 
     public static void loadData(DataLayer dl, ArrayList<AnswerRequestDTO> moduleList) {
         if(moduleList.size() > 0) {
+            recordCount.setVisibility(View.VISIBLE);
             bottomSection.setVisibility(View.VISIBLE);
             recordCount.setText("Total records Downloaded: " +moduleList.size());
             downloadedModuleAdapter = new DownloadedModuleAdapter(moduleList, staticContext);

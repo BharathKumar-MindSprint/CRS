@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/question_wrapper"
+    android:paddingLeft="@dimen/ofis_large_pad"
+    android:paddingRight="@dimen/ofis_large_pad"
+    android:paddingBottom="@dimen/ofis_large_pad"
+    android:paddingTop="@dimen/ofis_large_pad"
+    android:background="@drawable/border_white_background"
+    android:layout_marginBottom="@dimen/ofis_large_pad">
+
+    <TextView
+        android:id="@+id/questionText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/ofis_text_field"
+        android:textSize="@dimen/ofis_input_field_text"
+        android:textStyle="bold"
+        android:paddingBottom="@dimen/ofis_large_pad"
+        />
+
+    <TextView
+        android:id="@+id/answerText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/ofis_text_field"
+        android:textSize="@dimen/ofis_input_field_text"/>
+
+</LinearLayout>

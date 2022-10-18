@@ -262,6 +262,7 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
         if (statusStarted != 0 || statusFinished != 0) {
 
             dynamicQuestions.hasAnswers = true;
+            dynamicQuestions.viewAnswer = false;
             questions = dl.getChildQuestionsAndAnswersBySubModuleId(subModuleId, farmerId, farmerModuleId);
 
             moveToCurrentSubModule(subModuleId);
