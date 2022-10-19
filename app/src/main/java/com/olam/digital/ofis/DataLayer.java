@@ -1586,8 +1586,21 @@ public class DataLayer {
                     tableColumns[i] = (columnList.get(i).equals("id")) ? columnList.get(i) + " AS _id" : columnList.get(i);
                 }
             }
+            String type = Utilities.type;
+            String countryId = Utilities.countryId;
+            String productId =Utilities.productId;
             String querySelection = (getByRelationship) ? getByColumnName + " = ?" : null;
             String[] querySelectionValue = (getByRelationship) ? new String[]{String.valueOf(getByColumnValue)} : null;
+            if(type.equalsIgnoreCase("CHILD_PRODUCT") &&
+            table.equalsIgnoreCase(OFISDBContract.LookupValuesEntry.TABLE_NAME)) {
+                String value = "%\"country_id\":" +
+                        Long.parseLong(countryId) +
+                        ",\"product_id\":" +
+                        Long.parseLong(productId) + "%";
+                querySelection = (getByRelationship) ? getByColumnName + " = ? AND "
+                        + OFISDBContract.LookupValuesEntry.COLUMN_NAME_COUNTRYLOOKUPVALUE + " LIKE ? " : null;
+                querySelectionValue = (getByRelationship) ? new String[]{String.valueOf(getByColumnValue),value} : null;
+            }
             String orderByValue = (orderByColumn) ? orderByColumnName + " " + "ASC" : null;
             if (OFISDBContract.productSipEntry.TABLE_NAME.trim().toLowerCase().equals(table.trim().toLowerCase())) {
                 orderByValue = OFISDBContract.productSipEntry.COLUMN_NAME_PRODUCT_NAME + " " + "ASC";
