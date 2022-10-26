@@ -1586,8 +1586,25 @@ public class DataLayer {
                     tableColumns[i] = (columnList.get(i).equals("id")) ? columnList.get(i) + " AS _id" : columnList.get(i);
                 }
             }
+            String type = Utilities.type;
+            String countryId = Utilities.countryId;
+            String productId =Utilities.productId;
             String querySelection = (getByRelationship) ? getByColumnName + " = ?" : null;
             String[] querySelectionValue = (getByRelationship) ? new String[]{String.valueOf(getByColumnValue)} : null;
+            try {
+                if (type.equalsIgnoreCase("CHILD_PRODUCT") &&
+                        table.equalsIgnoreCase(OFISDBContract.LookupValuesEntry.TABLE_NAME)) {
+                    String value = "%\"country_id\":" +
+                            Long.parseLong(countryId) +
+                            ",\"product_id\":" +
+                            Long.parseLong(productId) + "%";
+                    querySelection = (getByRelationship) ? getByColumnName + " = ? AND "
+                            + OFISDBContract.LookupValuesEntry.COLUMN_NAME_COUNTRYLOOKUPVALUE + " LIKE ? " : null;
+                    querySelectionValue = (getByRelationship) ? new String[]{String.valueOf(getByColumnValue), value} : null;
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }
             String orderByValue = (orderByColumn) ? orderByColumnName + " " + "ASC" : null;
             if (OFISDBContract.productSipEntry.TABLE_NAME.trim().toLowerCase().equals(table.trim().toLowerCase())) {
                 orderByValue = OFISDBContract.productSipEntry.COLUMN_NAME_PRODUCT_NAME + " " + "ASC";
@@ -1598,6 +1615,68 @@ public class DataLayer {
         }
 
         return null;
+    }
+
+    public Cursor getFGSpinnerData(ArrayList<Integer> fgList) {
+        String result = null;
+        if (fgList.size() > 0) {
+            StringBuilder sb = new StringBuilder();
+            for (int s : fgList) {
+                sb.append(s).append(",");
+            }
+            result = sb.deleteCharAt(sb.length() - 1).toString();
+        }
+        List<String> columnList = OFISDBContract.ALL_TABLES.get(OFISDBContract.FarmerGroupsEntry.TABLE_NAME);
+        String[] tableColumns = new String[columnList.size()];
+        for (int i = 0; i < columnList.size(); i++) {
+            tableColumns[i] = (columnList.get(i).equals("id")) ? columnList.get(i) + " AS _id" : columnList.get(i);
+        }
+        StringBuilder sb1 = new StringBuilder();
+        for (String s : tableColumns) {
+            sb1.append(s).append(",");
+        }
+        String columns = sb1.deleteCharAt(sb1.length() - 1).toString();
+        Cursor cursor=null;
+        try {
+             cursor = db.rawQuery("SELECT "+ columns +" FROM " + OFISDBContract.FarmerGroupsEntry.TABLE_NAME +
+                    " WHERE " + OFISDBContract.FarmerGroupsEntry.COLUMN_NAME_ID
+                    + " IN (" + result + ")"  ,null);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return cursor;
+    }
+
+    public Cursor getSectionSpinnerData(int fg,String moduleId) {
+        String result = null;
+        /*if (fgList.size() > 0) {
+            StringBuilder sb = new StringBuilder();
+            for (int s : fgList) {
+                sb.append(s).append(",");
+            }
+            result = sb.deleteCharAt(sb.length() - 1).toString();
+        }*/
+        List<String> columnList = OFISDBContract.ALL_TABLES.get(OFISDBContract.FarmerGroupsEntry.TABLE_NAME);
+        String[] tableColumns = new String[columnList.size()];
+        for (int i = 0; i < columnList.size(); i++) {
+            tableColumns[i] = (columnList.get(i).equals("id")) ? columnList.get(i) + " AS _id" : columnList.get(i);
+        }
+        StringBuilder sb1 = new StringBuilder();
+        for (String s : tableColumns) {
+            sb1.append(s).append(",");
+        }
+        String columns = sb1.deleteCharAt(sb1.length() - 1).toString();
+        Cursor cursor=null;
+        try {
+            cursor = db.rawQuery("SELECT "+ columns +" FROM " + OFISDBContract.FarmerGroupsEntry.TABLE_NAME +
+                    " WHERE " + OFISDBContract.FarmerGroupsEntry.COLUMN_NAME_ID
+                    + " IN (" + result + ")"  ,null);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return cursor;
     }
 
     public void bindDataDrivenSpinner(Spinner spinner, Cursor cursor, Context context, int placeholderTextResId, String textColumnName, boolean showAsWhite) {
@@ -3479,10 +3558,27 @@ public class DataLayer {
 
     // modules tasks
     Cursor getLookupValuesForQuestion(int questionId, String questionColumn) {
-        String[] tableColumns = new String[]{questionColumn, "id as _id", OFISDBContract.LookupValuesEntry.COLUMN_NAME_POSITION};
-
+        String type = Utilities.type;
+        String productId = Utilities.productId;
+        String countryId = Utilities.countryId;
         String querySelection = OFISDBContract.LookupValuesEntry.COLUMN_NAME_QUESTION_ID + " = ?";
         String[] querySelectionValue = new String[]{String.valueOf(questionId)};
+        try {
+            if (type.equalsIgnoreCase("CHILD_PRODUCT")) {
+                String value = "%\"country_id\":" +
+                        Long.parseLong(countryId) +
+                        ",\"product_id\":" +
+                        Long.parseLong(productId) + "%";
+                querySelection = OFISDBContract.LookupValuesEntry.COLUMN_NAME_QUESTION_ID + " = ? AND "
+                        + OFISDBContract.LookupValuesEntry.COLUMN_NAME_COUNTRYLOOKUPVALUE + " LIKE ? ";
+                querySelectionValue = new String[]{String.valueOf(questionId), value};
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        String[] tableColumns = new String[]{questionColumn, "id as _id", OFISDBContract.LookupValuesEntry.COLUMN_NAME_POSITION};
+
+
         String orderByValue = OFISDBContract.LookupValuesEntry.COLUMN_NAME_POSITION + " ASC";
 
         return db.query(OFISDBContract.LookupValuesEntry.TABLE_NAME, tableColumns, querySelection, querySelectionValue, null, null, orderByValue);
@@ -8548,13 +8644,73 @@ public class DataLayer {
         return name;
     }
 
-    public int getModuleViewStatus(String moduleId) {
-        int status = 0;
-        Cursor nids =  db.query(OFISDBContract.ModuleAssignmentsEntry.TABLE_NAME, new String[]{"*"}, "module_id = ?",
-                new String[]{moduleId}, null, null, null);
+    public ArrayList<Integer> getAssignedFGs(String moduleId) {
+        ArrayList<Integer> fgIds = new ArrayList<>();
+        Cursor nids =  db.query(OFISDBContract.ModuleAssignmentsEntry.TABLE_NAME, new String[]{"*"}, "module_id = ? AND moduleassignment_type = ? ",
+                new String[]{moduleId,"Farmer Group"}, null, null, null);
         try {
             while (nids.moveToNext()) {
-                status = nids.getInt(nids.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_VIEW_MODULE));
+               int val = nids.getInt(nids.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_MODULEASSIGNMENT_ID));
+               fgIds.add(val);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            nids.close();
+        }
+        return fgIds;
+    }
+
+    public ArrayList<Integer> getSectionFGs(ArrayList<Integer> sectionIds) {
+        String result = null;
+        ArrayList<Integer> fgIds = new ArrayList<>();
+        if (sectionIds.size() > 0) {
+            StringBuilder sb = new StringBuilder();
+            for (int s : sectionIds) {
+                sb.append(s).append(",");
+            }
+            result = sb.deleteCharAt(sb.length() - 1).toString();
+        }
+       Cursor nids = db.rawQuery("SELECT * FROM " + OFISDBContract.SectionsEntry.TABLE_NAME +
+                " WHERE " + OFISDBContract.SectionsEntry.COLUMN_NAME_FARMERGROUP_ID
+                + " IN (" + result + ")"  ,null);
+        try {
+            while (nids.moveToNext()) {
+                int val = nids.getInt(nids.getColumnIndex(OFISDBContract.SectionsEntry.COLUMN_NAME_FARMERGROUP_ID));
+                fgIds.add(val);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            nids.close();
+        }
+        return fgIds;
+    }
+
+    public ArrayList<Integer> getAssignedSections(String moduleId) {
+        ArrayList<Integer> ids = new ArrayList<>();
+        Cursor nids =  db.query(OFISDBContract.ModuleAssignmentsEntry.TABLE_NAME, new String[]{"*"}, "module_id = ? AND moduleassignment_type = ? ",
+                new String[]{moduleId,"Section"}, null, null, null);
+        try {
+            while (nids.moveToNext()) {
+                int val = nids.getInt(nids.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_MODULEASSIGNMENT_ID));
+                ids.add(val);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            nids.close();
+        }
+        return ids;
+    }
+
+    public boolean isAssignedwithtype(String moduleId, String type) {
+        boolean status = false;
+        Cursor nids =  db.query(OFISDBContract.ModuleAssignmentsEntry.TABLE_NAME, new String[]{"*"}, "module_id = ? AND moduleassignment_type = ? ",
+                new String[]{moduleId,type}, null, null, null);
+        try {
+            while (nids.moveToNext()) {
+               status = true;
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -8707,6 +8863,31 @@ public class DataLayer {
         };
 
         return db.rawQuery(sql, whereArgs);
+    }
+
+    public String getIdByFarmerId(long farmerId, String type) {
+
+        String productId = null;
+        String[] columns = new String[]{"*"};
+        String whereClause = OFISDBContract.FarmerEntry.COLUMN_NAME_ID+ " = ?";
+        String[] whereArgs = new String[]{String.valueOf(farmerId)};
+        Cursor mCursor= db.query(OFISDBContract.FarmerEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+        try {
+            if (mCursor != null) {
+                while (mCursor.moveToNext()) {
+                    if(type == "Product") {
+                        productId = String.valueOf(mCursor.getString(mCursor.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID)));
+                    }else if(type == "Country"){
+                        productId = String.valueOf(mCursor.getString(mCursor.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID)));
+                    }
+                }
+            }
+        }catch (Exception e){
+
+        }finally {
+            mCursor.close();
+        }
+        return productId;
     }
 
 }
