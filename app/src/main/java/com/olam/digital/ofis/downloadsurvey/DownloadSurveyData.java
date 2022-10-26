@@ -104,13 +104,42 @@ public class DownloadSurveyData extends BaseActivity implements OnAccessTokenInt
     }
 
     private void setUpSearchFunctionality() {
-        Cursor farmerGroups = dl.getSpinnerData(OFISDBContract.FarmerGroupsEntry.TABLE_NAME, false, null, null, true, OFISDBContract.FarmerGroupsEntry.COLUMN_NAME_FARMERGROUP_NAME);
+        boolean isCountry = dl.isAssignedwithtype(moduleId, "Country");
+        boolean isRegion = dl.isAssignedwithtype(moduleId, "Region");
+        boolean isDistrict = dl.isAssignedwithtype(moduleId, "District");
+//        boolean isSubdistrict = dl.isAssignedwithtype(moduleId, "SubDistrict");
+        boolean isPlace = dl.isAssignedwithtype(moduleId, "Place");
+        boolean isProduct = dl.isAssignedwithtype(moduleId, "Product");
+        boolean isPartner = dl.isAssignedwithtype(moduleId, "Partner");
+        boolean isfgs = false;
+        boolean isSections = false;
+        if(!isCountry && !isRegion && !isDistrict && !isPlace && !isProduct && !isPartner){
+            isfgs = dl.isAssignedwithtype(moduleId, "Farmer Group");
+            isSections = dl.isAssignedwithtype(moduleId, "Section");
+        }
+
+        ArrayList<Integer> fgList,sectionList = new ArrayList<>();
+//        boolean sectionSelection = false;
+        Cursor farmerGroups = dl.getSpinnerData(OFISDBContract.FarmerGroupsEntry.TABLE_NAME, false, null, null, true, OFISDBContract.FarmerGroupsEntry.COLUMN_NAME_FARMERGROUP_NAME);;
+        if(isfgs) {
+            fgList = dl.getAssignedFGs(moduleId);
+            farmerGroups = dl.getFGSpinnerData(fgList);
+        }else if (isSections){
+//            sectionSelection = true;
+            sectionList = dl.getAssignedSections(moduleId);
+            fgList = dl.getSectionFGs(sectionList);
+            farmerGroups = dl.getFGSpinnerData(fgList);
+        }
         dl.bindDataDrivenSpinner(farmerGroupSpinner, farmerGroups, context, R.string.spinner_farmergroup_default, OFISDBContract.FarmerGroupsEntry.COLUMN_NAME_FARMERGROUP_NAME, true);
 
+//        boolean finalIsSections = sectionSelection;
         farmerGroupSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 Cursor sections = dl.getSpinnerData(OFISDBContract.SectionsEntry.TABLE_NAME, true, OFISDBContract.SectionsEntry.COLUMN_NAME_FARMERGROUP_ID, ((int) id), true, OFISDBContract.SectionsEntry.COLUMN_NAME_SECTION_NAME);
+//                if(finalIsSections){
+//                    sections = dl.getSectionSpinnerData((int) id,moduleId);
+//                }
                 dl.bindDataDrivenSpinner(sectionSpinner, sections, context, R.string.spinner_section_default, OFISDBContract.FarmerGroupsEntry.COLUMN_NAME_FARMERGROUP_NAME, true);
 
                 selectedFarmerGroup = id;
