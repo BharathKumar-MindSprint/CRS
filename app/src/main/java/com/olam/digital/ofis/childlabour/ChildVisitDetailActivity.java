@@ -306,16 +306,20 @@ public class ChildVisitDetailActivity  extends BaseActivity implements View.OnCl
             //  hide the household for Turkey/Hazelnut
             Cursor mCursor= dl.getFarmerById(Long.valueOf(farmerId));
             String countryId = null;
+            String productId = null;
             if (mCursor.getCount() > 0) {
                 mCursor.moveToFirst();
                 countryId = mCursor.getString(mCursor.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID));
-            }
-            if (countryId!=null){
-                if (countryId.equalsIgnoreCase("32")){
-                    houseHoldCheckBox.setEnabled(false);
-                    houseHoldCheckBox.setBackgroundColor(ContextCompat.getColor(this, R.color.clmrs_bg_gray));
+                productId = mCursor.getString(mCursor.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID));
+                if (countryId!=null){
+                    if (countryId.equalsIgnoreCase("32") ||
+                            (countryId.equalsIgnoreCase("16") && productId.equalsIgnoreCase("6"))){
+                        houseHoldCheckBox.setEnabled(false);
+                        houseHoldCheckBox.setBackgroundColor(ContextCompat.getColor(this, R.color.clmrs_bg_gray));
+                    }
                 }
             }
+
         }catch (Exception e){
             e.printStackTrace();
         }
