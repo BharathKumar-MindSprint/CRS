@@ -95,11 +95,8 @@ public class StartRecordPolygonActivity extends AppCompatActivity {
             lposition_data.setPlot(lplotList);
             lposition_dataList.add(lposition_data);
         }
-        logger.addRecordToLog("lposition_dataList: "+ lposition_dataList );
         lplots.setPlots(lposition_dataList);
-        logger.addRecordToLog("lplots: "+ lplots );
         lplotsList.add(lplots);
-        logger.addRecordToLog("lplotsList: "+ lplotsList );
         String json = lPlotList == null ? null : new Gson().toJson(lPlotList);
         return json;
     }

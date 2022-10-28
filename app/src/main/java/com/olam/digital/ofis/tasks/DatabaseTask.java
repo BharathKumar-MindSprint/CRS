@@ -89,7 +89,8 @@ abstract class DatabaseTask extends AsyncTask<JSONObject, Integer, String> {
 
     void fillTable(JSONArray jsonArray, String tableName, List columnList) {
       if (!tableName.equalsIgnoreCase("stakeHolders") ||
-              !tableName.equalsIgnoreCase("savedAnswers")){
+              !tableName.equalsIgnoreCase("savedAnswers") ||
+              !tableName.equalsIgnoreCase("downloadedSurveys")){
               db.delete(tableName, null, null);
       }
 
@@ -168,13 +169,6 @@ abstract class DatabaseTask extends AsyncTask<JSONObject, Integer, String> {
             db.update(OFISDBContract.FarmerNationalIDs.TABLE_NAME, values, null, null);
         }
 
-       /* if(tableName.equals(OFISDBContract.AnswerEntry.TABLE_NAME)){
-            ContentValues values = new ContentValues();
-            values.put(OFISDBContract.AnswerEntry.COLUMN_IS_SYNCED, true);
-            db.update(OFISDBContract.AnswerEntry.TABLE_NAME, values, null, null);
-        }*/
-
-        // Updating] Synced
         if(tableName.equals(OFISDBContract.MultiFarmFarms.TABLE_NAME)){
             int lastItemId;
             try {
