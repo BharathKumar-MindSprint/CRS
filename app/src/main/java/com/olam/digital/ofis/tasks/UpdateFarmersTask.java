@@ -41,7 +41,7 @@ class UpdateFarmersTask extends DatabaseTask {
                 JSONObject response = farmerResponse.getJSONObject("outputData");
 
 
-                JSONArray farmerArray, phonenumbersArray;
+                JSONArray farmerArray = null, phonenumbersArray,plotsArray;
                 // child visit array start
                 try {
                     JSONArray childvisitArray = farmerResponse.getJSONArray("childrenVisit");
@@ -68,6 +68,25 @@ class UpdateFarmersTask extends DatabaseTask {
                     FirebaseCrash.report(new Exception("UpdateFarmersTask: Error filling phone numbers table", e));
                     e.printStackTrace();
                 }
+                try{
+                    plotsArray = new JSONArray();
+                    for (int j = 0; j < farmerArray.length(); j++) {
+                        JSONObject farmerObject = farmerArray.getJSONObject(j);
+                        JSONArray plotArray = farmerObject.getJSONArray(OFISDBContract.PlotEntry.TABLE_NAME);
+                        for (int i = 0; i < plotArray.length(); i++) {
+                            JSONObject plotObject = plotArray.getJSONObject(i);
+                            plotObject.put(OFISDBContract.PlotEntry.COLUMN_NAME_FARMER_ID,farmerObject.get("id"));
+                            plotsArray.put(plotObject);
+                        }
+                    }
+                    if(plotsArray.length() > 0 ) {
+                        fillTable(plotsArray, OFISDBContract.PlotEntry.TABLE_NAME, OFISDBContract.PlotEntry.COLUMN_LIST);
+                    }
+                }catch (Exception e){
+                  e.printStackTrace();
+                }
+
+
             }
 
         } catch (JSONException e) {
