@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -10,14 +10,32 @@
         android:orientation="vertical"
         android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/tv_title"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:text="@string/about_message"
-            android:textColor="@color/black"
-            android:textSize="18sp"
-            android:layout_height="wrap_content"/>
+            android:orientation="horizontal"
+            android:weightSum="20"
+            android:layout_height="match_parent">
 
+            <TextView
+                android:id="@+id/tv_title"
+                android:layout_width="wrap_content"
+                android:layout_weight="19"
+                android:text="@string/about_message"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                android:layout_height="wrap_content"/>
+
+            <ImageButton
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:id="@+id/plotClose"
+                app:srcCompat="@drawable/ic_consent_close"
+                android:background="@android:color/transparent"
+                android:layout_weight="1"
+                android:layout_gravity="right|end"
+                android:contentDescription="@string/ofis_switch_text_no"
+                android:scaleType="fitStart" />
+        </LinearLayout>
         <TextView
             android:id="@+id/tv_msg"
             android:layout_width="match_parent"
@@ -73,6 +91,7 @@
                     android:textSize="16sp"
                     android:textStyle="bold"
                     android:paddingLeft="5dp"
+                    android:textColor="@color/btn_primary_background"
                     android:gravity="center|left"/>
 
             </LinearLayout>
@@ -95,13 +114,13 @@
 
             <Button
                 android:id="@+id/btn_yes"
-                android:layout_alignParentRight="true"
                 android:layout_width="100dp"
-                android:textColor="@color/ofis_base_font_white"
-                android:background="@drawable/btn_primary_bg"
+                android:layout_height="40dp"
+                android:layout_alignParentRight="true"
                 android:layout_marginLeft="@dimen/margin_10"
+                android:background="@drawable/btn_primary_bg"
                 android:text="@string/submit"
-                android:layout_height="40dp"/>
+                android:textColor="@color/ofis_base_font_white" />
 
 
         </RelativeLayout>
