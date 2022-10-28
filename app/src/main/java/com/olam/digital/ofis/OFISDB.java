@@ -202,7 +202,8 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_IS_FARM_SURVEY + " TEXT, " + OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_ROLE_ID + " TEXT, "
             + OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_RECURRENCE_FREQUENCY + " INTEGER, " + OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_RECURRENCE_TYPE + " TEXT, " +
             OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_START_DATE + " TEXT, " +
-            OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_VIEW_MODULE + " INTEGER, "
+            OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_VIEW_MODULE + " INTEGER, " +
+            OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_IS_PLOT_SURVEY + " TEXT, "
             + OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_DISABLED_MONTHS + " TEXT)";
 
     private static final String OFIS_FARMERMODULES_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.FarmerModulesEntry.TABLE_NAME
@@ -332,6 +333,7 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.FarmerEntry.COLUMN_NAME_MODERATION_STATUS + " TEXT, "
             + OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERLEAD + " TEXT, "
             + OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERLEADNAME + " TEXT, "
+            + OFISDBContract.FarmerEntry.COLUMN_NAME_PLOT + " TEXT, "
             + OFISDBContract.FarmerEntry.COLUMN_NAME_CONSENT_FARMER + " INTEGER DEFAULT 1, " + OFISDBContract.FarmerEntry.COLUMN_NAME_CONSENT_OTHERS + " INTEGER DEFAULT 1)";
 
     private static final String OFIS_BACKUP_FARMER_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.FarmerEntry.BACKUP_TABLE_NAME +
@@ -435,9 +437,9 @@ class OFISDB extends SQLiteOpenHelper {
     private static final String OFIS_PRODUCTS_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.ProductsEntry.TABLE_NAME
             + " ( " + OFISDBContract.ProductsEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.ProductsEntry.COLUMN_NAME_PRODUCT_NAME + " TEXT )";
 
+    private static final String OFIS_PLOT_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.PlotEntry.TABLE_NAME
+            + " ( " + OFISDBContract.PlotEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.PlotEntry.COLUMN_NAME_FARMER_ID + " INTEGER, " + OFISDBContract.PlotEntry.COLUMN_NAME_PLOT_NAME + " TEXT )";
 
-    //JIRA req OW-505 - added photo column
-    //JIRA req OW-505 - added photo column
     private static final String OFIS_NETWORKQUEUE_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.NetworkQueueEntry.TABLE_NAME +
             " ( " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ID + " TEXT, "
             + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE + " TEXT, "
@@ -853,6 +855,7 @@ class OFISDB extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(OFIS_DOWNLOADED_SURVEYLIST_TABLE_CREATE);
 
         sqLiteDatabase.execSQL(OFIS_SAVED_ANSWER_TABLE_CREATE);
+        sqLiteDatabase.execSQL(OFIS_PLOT_TABLE_CREATE);
 
     }
 
@@ -880,8 +883,21 @@ class OFISDB extends SQLiteOpenHelper {
         } catch (SQLiteException ex) {
             ex.printStackTrace();
         }
+
+        try {
+            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ModuleAssignmentsEntry.TABLE_NAME + " ADD COLUMN isPlotSurvey TEXT default null");
+        } catch (SQLiteException ex) {
+            ex.printStackTrace();
+        }
+
+        try {
+            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.FarmerEntry.TABLE_NAME + " ADD COLUMN plot TEXT default null");
+        } catch (SQLiteException ex) {
+            ex.printStackTrace();
+        }
         sqLiteDatabase.execSQL(OFIS_DOWNLOADED_SURVEYLIST_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_SAVED_ANSWER_TABLE_CREATE);
+        sqLiteDatabase.execSQL(OFIS_PLOT_TABLE_CREATE);
         onCreate(sqLiteDatabase);
     }
 

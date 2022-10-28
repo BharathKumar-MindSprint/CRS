@@ -261,6 +261,7 @@ public class OFISDBContract {
         public static final  String COLUMN_NAME_START_DATE="startDate";
         public static final String COLUMN_NAME_IS_CHILD_LABOUR = "childLabour";
         public static final String COLUMN_NAME_IS_FARM_SURVEY = "isFarmSurvey";
+        public static final String COLUMN_NAME_IS_PLOT_SURVEY = "isPlotSurvey";
         public static final String COLUMN_NAME_ROLE_ID = "fkFarmerRoleId";
         public static final String COLUMN_NAME_VIEW_MODULE = "view_module";
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
@@ -278,6 +279,7 @@ public class OFISDBContract {
                     add(COLUMN_NAME_IS_FARM_SURVEY);
                     add(COLUMN_NAME_ROLE_ID);
                     add(COLUMN_NAME_VIEW_MODULE);
+                    add(COLUMN_NAME_IS_PLOT_SURVEY);
                 }}
         );
     }
@@ -851,6 +853,7 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_FARMERLEAD = "farmerLead";
         public static final String COLUMN_NAME_FARMERLEADNAME = "farmerLeadName";
         public static final String COLUMN_NAME_ODFARMERID = "odFarmerId";
+        public static final String COLUMN_NAME_PLOT = "plot";
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
                     add(COLUMN_NAME_ID);
@@ -883,6 +886,7 @@ public class OFISDBContract {
                     add(COLUMN_NAME_FARMERLEAD);
                     add(COLUMN_NAME_FARMERLEADNAME);
                     add(COLUMN_NAME_ODFARMERID);
+                    add(COLUMN_NAME_PLOT);
                 }}
         );
         public static final List<String> SYNC_COLUMN_LIST = Collections.unmodifiableList(
@@ -2365,6 +2369,21 @@ public class OFISDBContract {
                     add(COLUMN_NAME_SECTION);
                     add(COLUMN_NAME_LISTED_NAME);
                     add(COLUMN_NAME_SAVED_DATE);
+                }}
+        );
+    }
+
+    public static abstract class PlotEntry implements BaseColumns {
+        public static final String TABLE_NAME = "plot";
+        public static final String COLUMN_NAME_ID = "id";
+        public static final String COLUMN_NAME_FARMER_ID = "farmerId";
+        public static final String COLUMN_NAME_PLOT_NAME = "plotName";
+
+        public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
+                new ArrayList<String>() {{
+                    add(COLUMN_NAME_ID);
+                    add(COLUMN_NAME_FARMER_ID);
+                    add(COLUMN_NAME_PLOT_NAME);
                 }}
         );
     }
