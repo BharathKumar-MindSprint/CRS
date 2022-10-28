@@ -14,7 +14,7 @@ class OFISDB extends SQLiteOpenHelper {
     private static OFISDB sInstance;
 
 
-    private static final int DATABASE_VERSION = 143;
+    private static final int DATABASE_VERSION = 144;
 
 
     private static final String DATABASE_NAME = "ofismobile";
@@ -438,7 +438,10 @@ class OFISDB extends SQLiteOpenHelper {
             + " ( " + OFISDBContract.ProductsEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.ProductsEntry.COLUMN_NAME_PRODUCT_NAME + " TEXT )";
 
     private static final String OFIS_PLOT_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.PlotEntry.TABLE_NAME
-            + " ( " + OFISDBContract.PlotEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.PlotEntry.COLUMN_NAME_FARMER_ID + " INTEGER, " + OFISDBContract.PlotEntry.COLUMN_NAME_PLOT_NAME + " TEXT )";
+            + " ( " + OFISDBContract.PlotEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " +
+            OFISDBContract.PlotEntry.COLUMN_NAME_FARMER_ID + " INTEGER, " +
+            OFISDBContract.PlotEntry.COLUMN_IS_SYNCED + " TEXT, " +
+            OFISDBContract.PlotEntry.COLUMN_NAME_PLOT_NAME + " TEXT )";
 
     private static final String OFIS_NETWORKQUEUE_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.NetworkQueueEntry.TABLE_NAME +
             " ( " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ID + " TEXT, "

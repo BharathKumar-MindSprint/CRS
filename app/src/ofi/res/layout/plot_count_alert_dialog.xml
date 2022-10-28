@@ -1,19 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
     android:layout_width="match_parent"
     android:padding="@dimen/activity_horizontal_margin"
     android:orientation="vertical"
     android:layout_height="match_parent">
 
+   <LinearLayout
+    android:layout_width="match_parent"
+    android:orientation="horizontal"
+    android:weightSum="20"
+    android:layout_height="match_parent">
+
     <TextView
         android:id="@+id/tv_title"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
+        android:layout_weight="19"
         android:text="@string/about_message"
         android:textColor="@color/black"
         android:textSize="18sp"
         android:layout_height="wrap_content"/>
 
+       <ImageButton
+           android:layout_width="20dp"
+           android:layout_height="20dp"
+           android:id="@+id/plotClose"
+           app:srcCompat="@drawable/ic_consent_close"
+           android:background="@android:color/transparent"
+           android:layout_weight="1"
+           android:layout_gravity="right|end"
+           android:contentDescription="@string/ofis_switch_text_no"
+           android:scaleType="fitStart" />
+   </LinearLayout>
     <TextView
         android:id="@+id/tv_msg"
         android:layout_width="match_parent"
@@ -23,7 +45,7 @@
         android:textSize="16sp"
         android:layout_height="wrap_content"/>
 
-    <EditText
+    <!--<EditText
         android:id="@+id/et_number_plot"
         android:layout_width="match_parent"
         android:hint="@string/record_polygon_input_hint"
@@ -34,8 +56,46 @@
         android:textColorHint="@color/icon_grey_palette_2"
         android:textColor="@color/ofis_base_font_dark"
         android:layout_marginTop="@dimen/margin_10"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"/>-->
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/margin_10"
+            android:animateLayoutChanges="true"
+            android:id="@+id/plotList">
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/addPlot"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal">
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:gravity="center|left"
+                android:src="@drawable/ic_ofis_add"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/add_plot"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:paddingLeft="5dp"
+            android:textColor="@color/btn_primary_background"
+            android:gravity="center|left"/>
+
+    </LinearLayout>
+    </LinearLayout>
     <RelativeLayout
         android:id="@+id/btnLayout"
         android:layout_width="match_parent"
@@ -54,13 +114,13 @@
 
         <Button
             android:id="@+id/btn_yes"
-            android:layout_alignParentRight="true"
             android:layout_width="100dp"
-            android:textColor="@color/ofis_base_font_white"
-            android:background="@drawable/btn_primary_bg"
+            android:layout_height="40dp"
+            android:layout_alignParentRight="true"
             android:layout_marginLeft="@dimen/margin_10"
+            android:background="@drawable/btn_primary_bg"
             android:text="@string/submit"
-            android:layout_height="40dp"/>
+            android:textColor="@color/ofis_base_font_white" />
 
 
     </RelativeLayout>
@@ -68,3 +128,4 @@
 
 
 </LinearLayout>
+</ScrollView>

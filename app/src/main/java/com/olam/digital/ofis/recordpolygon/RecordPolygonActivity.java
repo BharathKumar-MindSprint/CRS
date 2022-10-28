@@ -1,7 +1,6 @@
 package com.olam.digital.ofis.recordpolygon;
 
 import android.Manifest;
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Intent;
@@ -36,13 +35,15 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.NumberPicker;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -158,7 +159,8 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
 
     private Button mStartLoggingButton;
 
-    private TextView farmerName, olamFarmerId;
+    private TextView farmerName, olamFarmerId, txtPlotName;
+    ;
     private ImageView recordingStatus;
     private Button pause, startStop, bttnSave;
     //private ImageButton currentLocation;
@@ -204,6 +206,9 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
     };
     private LocationRequest locationRequest;
     Logger logger;
+    ArrayList<String> plotNameList;
+    private LinearLayout plotList;
+
     // boolean flag to toggle the ui
 //    private Boolean mRequestingLocationUpdates;
     @Override
@@ -270,6 +275,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
 
         farmerName = (TextView) findViewById(R.id.farmer_name);
         olamFarmerId = (TextView) findViewById(R.id.olam_farmer_id);
+        txtPlotName = (TextView) findViewById(R.id.plot_name);
         areaInfo = (TextView) findViewById(R.id.areaInfo);
         if (!TextUtils.isEmpty(mFarmerName)) {
             farmerName.setText(mFarmerName);
@@ -277,9 +283,11 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
         if (!TextUtils.isEmpty(mOlamFarmerId)) {
             olamFarmerId.setText(mOlamFarmerId);
         }
+        loadPlotName(0);
         spinnerArray = new String[lPlotCount];
         for (int i = 0; i < lPlotCount; i++) {
             spinnerArray[i] = getResources().getString(R.string.plot, (i + 1));
+
             //SharedPreferenceUtils.getInstance(getApplicationContext()).removePlotUsingKey("Plot " + (i + 1));
         }
         spinnerPlotList = (Spinner) findViewById(R.id.plot_number);
@@ -1283,6 +1291,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
             previousTrackname = getResources().getString(R.string.plot, (position + 1));
         else
             previousTrackname = getResources().getString(R.string.plot, position);
+        loadPlotName(position);
         areaInfo.setText("");
         if (mIsLoggingStarted) {
             String currentPlotName = "";
@@ -1313,6 +1322,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                     public void onClick(View view) {
                         alert.dismiss();
                         spinnerPlotList.setSelection(currentLoggingTrackSpinnerPosition);
+                        loadPlotName(currentLoggingTrackSpinnerPosition);
                     }
                 });
                 btnYes.setOnClickListener(new View.OnClickListener() {
@@ -1336,6 +1346,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
             previousTrackname = getResources().getString(R.string.plot, (position + 1));
         else
             previousTrackname = getResources().getString(R.string.plot, position);
+
         if (!checkPlotEntryExistInPreference()) {
             showToastMessage(getResources().getString(R.string.not_logged_yet, currentTrackname));
             initializeKMLDocument();
@@ -1548,7 +1559,8 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                 if (farmId.equalsIgnoreCase(mOlamFarmerId) && syncFlag.equals("false")) {
                     JSONObject plotsObj = new JSONObject(c.getString(c.getColumnIndex(OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_JSON)));
                     plotsObj.putOpt("plotid", c.getString(c.getColumnIndex(OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_NAME)));
-
+                    String name = loadPlotName(currentLoggingTrackSpinnerPosition);
+                    plotsObj.putOpt("plot_name", name);
                     plotsArray.put(plotsObj);
                 }
 
@@ -1673,7 +1685,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
 
     }
 
-    public void showEditPlotsDialog(View view) {
+   /* public void showEditPlotsDialog(View view) {
         final Dialog dialog = new Dialog(RecordPolygonActivity.this);
         dialog.setContentView(R.layout.number_picker_dialog);
         dialog.setTitle(R.string.edit_plot_dialog_title);
@@ -1725,8 +1737,172 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
             }
         });
         dialog.show();
+    }*/
+
+    public void showEditPlotsDialog(View v) {
+        DataLayer dl = new DataLayer(getResources(), RecordPolygonActivity.this);
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(RecordPolygonActivity.this);
+            builder.setCancelable(false);
+            LayoutInflater inflater = this.getLayoutInflater();
+            View dialogView = inflater.inflate(R.layout.plot_count_alert_dialog, null);
+            builder.setView(dialogView);
+            TextView tvMsg = (TextView) dialogView.findViewById(R.id.tv_msg);
+            TextView tvTitle = (TextView) dialogView.findViewById(R.id.tv_title);
+            LinearLayout tvAddPlot = (LinearLayout) dialogView.findViewById(R.id.addPlot);
+            plotList = (LinearLayout) dialogView.findViewById(R.id.plotList);
+//            EditText edTxtNumberOfPlots = (EditText) dialogView.findViewById(R.id.et_number_plot);
+            tvTitle.setText(this.getResources().getString(R.string.record_polygon_input_title));
+            tvMsg.setText(this.getResources().getString(R.string.record_polygon_input_messege));
+            Button btnNo = (Button) dialogView.findViewById(R.id.btn_no);
+            ImageButton plotClose = (ImageButton) dialogView.findViewById(R.id.plotClose);
+            Button btnYes = (Button) dialogView.findViewById(R.id.btn_yes);
+            AlertDialog alert = builder.create();
+            alert.show();
+            alert.getWindow().clearFlags( WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE |WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
+            alert.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+            loadPlotLayout(inflater);
+
+            tvAddPlot.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    LinearLayout plotLayout = (LinearLayout) inflater.inflate(R.layout.add_plot, plotList, false);
+                    plotList.addView(plotLayout);
+                    TextView plotCount = plotLayout.findViewById(R.id.plotCount);
+                    EditText plotName = plotLayout.findViewById(R.id.plotName);
+                    LinearLayout plotDelete = plotLayout.findViewById(R.id.deletePlot);
+                    plotCount.setText("Plot " + plotList.getChildCount());
+                    bindPlotDelete(plotDelete);
+                }
+            });
+
+            plotClose.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    alert.dismiss();
+                }
+            });
+
+
+            btnNo.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    alert.dismiss();
+                }
+            });
+
+            btnYes.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+//                    String lPlotCountString = edTxtNumberOfPlots.getText().toString();
+                    ArrayList<String> plotNames = getAllPlotValues();
+                    dl.insertNewPlot(String.valueOf(mFarmerId),plotNames);
+                    /*String lPlotCountString = "1";
+                    int lPlotCount = 0;
+                    if (!TextUtils.isEmpty(lPlotCountString)) {
+                        lPlotCount = Integer.parseInt(lPlotCountString);
+                    }*/
+                    int lPlotCount = plotNames.size();
+                    if (lPlotCount > 0) {
+                        spinnerArray = (String[]) resizeArray(spinnerArray, lPlotCount);
+                        for (int i = 0; i < lPlotCount; i++) {
+                            spinnerArray[i] = getResources().getString(R.string.plot, (i + 1));
+                        }
+                        spinnerArrayAdapter = new ArrayAdapter<String>
+                                (RecordPolygonActivity.this, android.R.layout.simple_spinner_item,
+                                        spinnerArray);
+                        spinnerArrayAdapter.setDropDownViewResource(android.R.layout
+                                .simple_spinner_dropdown_item);
+                        spinnerPlotList.setAdapter(spinnerArrayAdapter);
+                        SharedPreferenceUtils.getInstance(getApplicationContext()).setPlotCount("" + mOlamFarmerId, lPlotCount);
+                        alert.dismiss();
+                    } else {
+                        Toast.makeText(getApplicationContext(), R.string.valid_count_msg, Toast.LENGTH_LONG).show();
+                    }
+                }
+            });
+
+
     }
 
+    public String loadPlotName(int position){
+        String name = "Plot 0";
+        position = position + 1;
+        DataLayer dl = new DataLayer(getResources(), RecordPolygonActivity.this);
+        Cursor plotIds = dl.fetchPlotids(String.valueOf(mFarmerId));
+        if(plotIds.getCount() > 0) {
+            int size = plotIds.getCount();
+            for (int i = 1; i <= size; i++) {
+                plotIds.moveToNext();
+                if(position == i){
+                    name = plotIds.getString(plotIds.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_PLOT_NAME));
+                    txtPlotName.setText(name);
+                }
+            }
+        }
+        return name;
+    }
+
+    public void loadPlotLayout(LayoutInflater inflater) {
+        DataLayer dl = new DataLayer(getResources(), RecordPolygonActivity.this);
+        plotList.removeAllViews();
+        Cursor plotIds = dl.fetchPlotids(String.valueOf(mFarmerId));
+        if(plotIds.getCount() > 0){
+            int size = plotIds.getCount();
+            for (int i = 1; i <= size; i++) {
+                plotIds.moveToNext();
+                LinearLayout plotLayout = (LinearLayout) inflater.inflate(R.layout.add_plot, plotList, false);
+                plotList.addView(plotLayout);
+                TextView plotCount = plotLayout.findViewById(R.id.plotCount);
+                EditText plotName = plotLayout.findViewById(R.id.plotName);
+                LinearLayout plotDelete = plotLayout.findViewById(R.id.deletePlot);
+                plotCount.setText("Plot " + i);
+                String name = plotIds.getString(plotIds.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_PLOT_NAME));
+                if(! name.equalsIgnoreCase("null")){
+                    plotName.setText(name);
+                }
+                if(i == 1){
+                    plotDelete.setVisibility(View.INVISIBLE);
+                }else{
+                    plotDelete.setVisibility(View.VISIBLE);
+                }
+
+                plotName.setFocusableInTouchMode(true);
+                bindPlotDelete(plotDelete);
+
+            }
+        } else {
+            LinearLayout plotLayout = (LinearLayout) inflater.inflate(R.layout.add_plot, plotList, false);
+            plotList.addView(plotLayout);
+            TextView plotCount = plotLayout.findViewById(R.id.plotCount);
+            EditText plotName = plotLayout.findViewById(R.id.plotName);
+            LinearLayout plotDelete = plotLayout.findViewById(R.id.deletePlot);
+            plotDelete.setVisibility(View.GONE);
+            bindPlotDelete(plotDelete);
+        }
+    }
+
+    private void bindPlotDelete(LinearLayout trashbutton) {
+        trashbutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LinearLayout numberrow = (LinearLayout) v.getParent();
+                ((ViewGroup) numberrow.getParent()).removeView(numberrow);
+            }
+        });
+    }
+
+    private ArrayList<String> getAllPlotValues() {
+        plotNameList = new ArrayList<String>();
+        int plotRowsCount = plotList.getChildCount();
+        for (int j = 0; j < plotRowsCount; j++) {
+            LinearLayout plotNameRow = (LinearLayout) plotList.getChildAt(j);
+            EditText plotName = (EditText) plotNameRow.findViewById(R.id.plotName);
+            String plotNameValue = String.valueOf(plotName.getText());
+            plotNameList.add(plotNameValue);
+        }
+        return plotNameList;
+    }
     /**
      * Reallocates an array with a new size, and copies the contents
      * of the old array to the new array.

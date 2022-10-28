@@ -25,12 +25,11 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight=".3"
                 android:orientation="vertical">
 
                 <TextView
@@ -38,66 +37,82 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/ofis_input_field_bottom_margin"
-                    android:layout_weight=".5"
                     android:background="@drawable/edittext_bg_dark"
                     android:padding="@dimen/margin_10"
                     android:maxLines="1"
                     android:textColor="@color/ofis_base_font_dark"
                     android:textColorHint="@color/icon_grey_palette_2"
                     android:textSize="@dimen/ofis_input_field_text" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="3">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_weight=".5"
+                    android:weightSum="5">
+
+                <Spinner
+                    android:id="@+id/plot_number"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textColor="@color/ofis_base_font_white" />
+
+                <TextView
+                    android:id="@+id/plot_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/ofis_input_field_bottom_margin"
+                    android:layout_marginLeft="@dimen/ofis_input_field_bottom_margin"
+                    android:background="@drawable/edittext_bg_dark"
+                    android:padding="@dimen/margin_10"
+                    android:maxLines="1"
+                    android:layout_weight="4"
+                    android:textColor="@color/ofis_base_font_dark"
+                    android:textColorHint="@color/icon_grey_palette_2"
+                    android:textSize="@dimen/ofis_input_field_text" />
+
+            </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="right|end"
+                    android:orientation="horizontal">
+                <ImageButton
+                    android:id="@+id/edit_plot_number"
+                    android:layout_width="37dp"
+                    android:layout_height="37dp"
+                    android:layout_gravity="left|end"
+                    android:layout_margin="10dp"
+                    android:background="@drawable/edit_plot_circular_button"
+                    android:onClick="showEditPlotsDialog" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/olam_farmer_id"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/ofis_input_field_bottom_margin"
-                    android:layout_weight=".5"
                     android:background="@drawable/edittext_bg_dark"
                     android:padding="@dimen/margin_10"
                     android:maxLines="1"
                     android:textColor="@color/ofis_base_font_dark"
                     android:textColorHint="@color/icon_grey_palette_2"
                     android:textSize="@dimen/ofis_input_field_text" />
-            </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight=".7"
-                android:orientation="vertical">
-
-                <Spinner
-                    android:id="@+id/plot_number"
-
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight=".5"
-                    android:textColor="@color/ofis_base_font_white" />
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1">
-
-                    <ImageButton
-                        android:id="@+id/edit_plot_number"
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        android:layout_marginTop="10dp"
-                        android:layout_alignParentRight="true"
-                        android:onClick="showEditPlotsDialog"
-                        android:background="@drawable/edit_plot_circular_button" />
-
-                    <ImageButton
-                        android:id="@+id/delete_plot"
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginRight="10dp"
-                        android:layout_toLeftOf="@id/edit_plot_number"
-                        android:visibility="gone"
-                        android:background="@drawable/delete_plot_circular_button"/>
-                </RelativeLayout>
             </LinearLayout>
 
         </LinearLayout>

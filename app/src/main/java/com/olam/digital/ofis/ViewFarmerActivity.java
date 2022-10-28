@@ -48,6 +48,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
@@ -157,6 +158,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
 
     private RelativeLayout phoneNumbersHolder;
     private LinearLayout phonenumbers;
+    private LinearLayout plotList;
     private LayoutInflater inflater;
     private Animation mSlideBottomUp;
     private Animation mSlideBottomDown;
@@ -202,6 +204,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
     private boolean mResolvingError = false;
 
     ArrayList<String> phoneNumberList;
+    ArrayList<String> plotNameList;
 
     //JIRA req OW-505
     ImageButton farmerPhotoActionButton;
@@ -1356,31 +1359,17 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
     }
 
     private void recordFarmPolygon(final View v) {
-        /*final int lFarmID = (int) SharedPreferenceUtils.getInstance(getApplicationContext()).getFarmerID();
-        final int lFarmID = (int) ViewFarmerActivity.farmerId;
-        final int lFarmID = farmer.getInt(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_ID));*/
-
-        /**
-         * Here we used SharedPreference to map OLAM Farmer ID with UUID.
-         * Plot count value is important to showing alert to enter plots number of farmer at first time.
-         */
-        /*final String strFarmID =  SharedPreferenceUtils
-                .getInstance(getApplicationContext())
-                .getFarmerID(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));*/
         final String strFarmID = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID));
-
-        // Some farm Id is getting null.
         DataLayer dl = new DataLayer(getResources(), ViewFarmerActivity.this);
-        dl.fetchPlotData(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
+//        dl.fetchPlotData(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
         int count = 0;
-//        if(strFarmID != "0"){
         try {
 //            count = SharedPreferenceUtils.getInstance(getApplicationContext()).getPlotCount(""+strFarmID);
-            count = dl.fetchPlotData(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
+//            count = dl.fetchPlotData(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
+            count = dl.fetchPlotCountByFarmerID(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)));
         } catch (Exception e) {
             count = 0;
         }
-
 
         Log.d("ViewFarmerActivity", "Plot Count = " + count);
         if (count == 0) {
@@ -1391,36 +1380,37 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
             builder.setView(dialogView);
             TextView tvMsg = (TextView) dialogView.findViewById(R.id.tv_msg);
             TextView tvTitle = (TextView) dialogView.findViewById(R.id.tv_title);
-            EditText edTxtNumberOfPlots = (EditText) dialogView.findViewById(R.id.et_number_plot);
+            LinearLayout tvAddPlot = (LinearLayout) dialogView.findViewById(R.id.addPlot);
+            plotList = (LinearLayout) dialogView.findViewById(R.id.plotList);
+//            EditText edTxtNumberOfPlots = (EditText) dialogView.findViewById(R.id.et_number_plot);
             tvTitle.setText(res.getString(R.string.record_polygon_input_title));
             tvMsg.setText(res.getString(R.string.record_polygon_input_messege));
             Button btnNo = (Button) dialogView.findViewById(R.id.btn_no);
+            ImageButton plotClose = (ImageButton) dialogView.findViewById(R.id.plotClose);
             Button btnYes = (Button) dialogView.findViewById(R.id.btn_yes);
             AlertDialog alert = builder.create();
             alert.show();
+            alert.getWindow().clearFlags( WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE |WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
+            alert.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+            loadPlotLayout();
 
-            edTxtNumberOfPlots.addTextChangedListener(new TextWatcher() {
+            tvAddPlot.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
+                public void onClick(View view) {
+                    LinearLayout plotLayout = (LinearLayout) inflater.inflate(R.layout.add_plot, plotList, false);
+                    plotList.addView(plotLayout);
+                    TextView plotCount = plotLayout.findViewById(R.id.plotCount);
+                    EditText plotName = plotLayout.findViewById(R.id.plotName);
+                    LinearLayout plotDelete = plotLayout.findViewById(R.id.deletePlot);
+                    plotCount.setText("Plot " + plotList.getChildCount());
+                    bindPlotDelete(plotDelete);
                 }
+            });
 
+            plotClose.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    String str = String.valueOf(s);
-                    if (str.length() > 3) {
-                        int num = Integer.parseInt(str);
-                        if (num >= 1001) {
-                            edTxtNumberOfPlots.setError("We are supporting up to max 1000 plots");
-                            edTxtNumberOfPlots.findFocus();
-                            edTxtNumberOfPlots.setText("");
-                        }
-                    }
-                }
-
-                @Override
-                public void afterTextChanged(Editable s) {
-
+                public void onClick(View view) {
+                    alert.dismiss();
                 }
             });
 
@@ -1435,11 +1425,16 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
             btnYes.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    String lPlotCountString = edTxtNumberOfPlots.getText().toString();
+//                    String lPlotCountString = edTxtNumberOfPlots.getText().toString();
+                    String farmerID = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID));
+                    ArrayList<String> plotNames = getAllPlotValues();
+                    dl.insertNewPlot(farmerID,plotNames);
+                    /*String lPlotCountString = "1";
                     int lPlotCount = 0;
                     if (!TextUtils.isEmpty(lPlotCountString)) {
                         lPlotCount = Integer.parseInt(lPlotCountString);
-                    }
+                    }*/
+                    int lPlotCount = plotNames.size();
                     if (lPlotCount > 0) {
                         Intent recordPolygonIntent = new Intent(context, RecordPolygonActivity.class);
                         recordPolygonIntent.putExtra(FARMER_ID, farmerId);
@@ -1467,6 +1462,66 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
             startActivity(recordPolygonIntent);
         }
 
+    }
+
+    private void loadPlotLayout() {
+        plotList.removeAllViews();
+        Cursor plotIds = dl.fetchPlotids(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)));
+        if(plotIds.getCount() > 0){
+            int size = plotIds.getCount();
+            for (int i = 1; i <= size; i++) {
+                plotIds.moveToNext();
+                LinearLayout plotLayout = (LinearLayout) inflater.inflate(R.layout.add_plot, plotList, false);
+                plotList.addView(plotLayout);
+                TextView plotCount = plotLayout.findViewById(R.id.plotCount);
+                EditText plotName = plotLayout.findViewById(R.id.plotName);
+                LinearLayout plotDelete = plotLayout.findViewById(R.id.deletePlot);
+                plotCount.setText("Plot " + i);
+                String name = plotIds.getString(plotIds.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_PLOT_NAME));
+                if(! name.equalsIgnoreCase("null")){
+                    plotName.setText(name);
+                }
+                if(i == 1){
+                    plotDelete.setVisibility(View.INVISIBLE);
+                }else{
+                    plotDelete.setVisibility(View.VISIBLE);
+                }
+
+                plotName.setFocusableInTouchMode(true);
+                bindPlotDelete(plotDelete);
+
+            }
+        } else {
+            LinearLayout plotLayout = (LinearLayout) inflater.inflate(R.layout.add_plot, plotList, false);
+            plotList.addView(plotLayout);
+            TextView plotCount = plotLayout.findViewById(R.id.plotCount);
+            EditText plotName = plotLayout.findViewById(R.id.plotName);
+            LinearLayout plotDelete = plotLayout.findViewById(R.id.deletePlot);
+            plotDelete.setVisibility(View.GONE);
+            bindPlotDelete(plotDelete);
+        }
+    }
+
+    private void bindPlotDelete(LinearLayout trashbutton) {
+        trashbutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LinearLayout numberrow = (LinearLayout) v.getParent();
+                ((ViewGroup) numberrow.getParent()).removeView(numberrow);
+            }
+        });
+    }
+
+    private ArrayList<String> getAllPlotValues() {
+        plotNameList = new ArrayList<String>();
+        int plotRowsCount = plotList.getChildCount();
+        for (int j = 0; j < plotRowsCount; j++) {
+            LinearLayout plotNameRow = (LinearLayout) plotList.getChildAt(j);
+            EditText plotName = (EditText) plotNameRow.findViewById(R.id.plotName);
+            String plotNameValue = String.valueOf(plotName.getText());
+            plotNameList.add(plotNameValue);
+        }
+        return plotNameList;
     }
 
     private void bindnumberdelete(ImageView trashbutton) {

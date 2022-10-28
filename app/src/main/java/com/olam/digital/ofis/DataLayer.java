@@ -242,6 +242,49 @@ public class DataLayer {
 
     }
 
+    public Cursor fetchPlotids(String id) {
+        String[] columns = new String[]{"*"};
+        String whereClause = OFISDBContract.PlotEntry.COLUMN_NAME_FARMER_ID + " = ? AND " + OFISDBContract.PlotEntry.COLUMN_IS_SYNCED + " != ? ";
+        String[] whereArgs = new String[]{String.valueOf(id),"1"};
+        Cursor data = db.query(OFISDBContract.PlotEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+        return data;
+
+    }
+
+    public int fetchPlotCountByFarmerID(String id) {
+        String[] columns = new String[]{"*"};
+        String whereClause = OFISDBContract.PlotEntry.COLUMN_NAME_FARMER_ID + " = ? AND "
+                + OFISDBContract.PlotEntry.COLUMN_IS_SYNCED + " = ? ";
+        String[] whereArgs = new String[]{String.valueOf(id),"0"};
+        Cursor data = db.query(OFISDBContract.PlotEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+        return data.getCount();
+
+    }
+
+    public void insertNewPlot(String farmerId, ArrayList<String> allPlotValues) {
+        if(allPlotValues.size() > 0){
+            String whereClause = OFISDBContract.PlotEntry.COLUMN_NAME_FARMER_ID + " = ? AND "
+                                    + OFISDBContract.PlotEntry.COLUMN_IS_SYNCED + " = ? ";
+            String[] whereArgs = new String[]{String.valueOf(farmerId),"0"};
+
+            db.delete(OFISDBContract.PlotEntry.TABLE_NAME, whereClause, whereArgs);
+        }
+        for(int i=0; i<allPlotValues.size(); i++) {
+            Long tsLong = System.currentTimeMillis()/1000;
+            int tempval = (int) (tsLong + allPlotValues.size() + i);
+            ContentValues plotValues = new ContentValues();
+            plotValues.put(OFISDBContract.PlotEntry.COLUMN_NAME_FARMER_ID, farmerId);
+            plotValues.put(OFISDBContract.PlotEntry.COLUMN_IS_SYNCED, "0");
+            plotValues.put(OFISDBContract.PlotEntry.COLUMN_NAME_PLOT_NAME, allPlotValues.get(i));
+            plotValues.put(OFISDBContract.PlotEntry.COLUMN_NAME_ID, tempval);
+            long plotGeoDBInsert = db.insert(OFISDBContract.PlotEntry.TABLE_NAME, null, plotValues);
+
+            if (plotGeoDBInsert == -1) {
+                Log.e(TAG, "Error to insert data into the PlotEntry DB");
+            }
+        }
+    }
+
     //------------------------Temp Functions for DB data check - Start-----------------------------
     public Cursor getTempData() {
         String[] columns = new String[]{"*"};

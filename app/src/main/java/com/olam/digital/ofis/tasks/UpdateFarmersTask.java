@@ -76,6 +76,7 @@ class UpdateFarmersTask extends DatabaseTask {
                         for (int i = 0; i < plotArray.length(); i++) {
                             JSONObject plotObject = plotArray.getJSONObject(i);
                             plotObject.put(OFISDBContract.PlotEntry.COLUMN_NAME_FARMER_ID,farmerObject.get("id"));
+                            plotObject.put(OFISDBContract.PlotEntry.COLUMN_IS_SYNCED,"1");
                             plotsArray.put(plotObject);
                         }
                     }
