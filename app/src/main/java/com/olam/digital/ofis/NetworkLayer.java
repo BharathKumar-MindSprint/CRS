@@ -2172,12 +2172,17 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                                     // Getting JSON Array node
                                     JSONArray locationJsonArray = null;
-                                    locationJsonArray = jsonServerRespObj.getJSONArray("location");
+                                    locationJsonArray = jsonServerRespObj.getJSONArray("plots");
 
                                     // looping through All locationJsonArray
                                     for (int i = 0; i < locationJsonArray.length(); i++) {
                                         JSONObject plotDataObj = locationJsonArray.getJSONObject(i);
-                                        dl.updatePlotGeoDataAfterSync(plotDataObj.getString("plotid"), Integer.toString(plotDataObj.getInt("serverid")));
+//                                        dl.updatePlotGeoDataAfterSync(plotDataObj.getString("plotid"), Integer.toString(plotDataObj.getInt("serverid")));
+                                        dl.updatePlotGeoDataAfterSync(plotDataObj.getString("id"), plotDataObj.getString("plotId"));
+                                        //                                {"farmId":216778,"farmerId":228862,"plots":[{"id":322982,"plotId":"plot1_CI-0001-AN59-0080","plotName":"t"}]}
+                                        final String[] split = plotDataObj.getString("plotId").split("_");
+                                        final String type = split[0];
+                                        dl.updatePlotDataAfterSync(plotDataObj.getString("id"), plotDataObj.getString("plotName"), jsonServerRespObj.getString("farmerId"), type.substring(4));
                                     }
 
                                 } catch (JSONException e) {

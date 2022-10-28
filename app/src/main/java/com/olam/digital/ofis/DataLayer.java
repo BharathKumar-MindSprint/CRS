@@ -42,6 +42,7 @@ import com.olam.digital.ofis.multifarm.MultiFarmRoleDTO;
 import com.olam.digital.ofis.multifarm.MultiFarmUtils;
 import com.olam.digital.ofis.multifarm.MultifarmFarmerDTO;
 import com.olam.digital.ofis.multifarm.SubmittedInfo;
+import com.olam.digital.ofis.recordpolygon.RecordPolygonActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -307,22 +308,45 @@ public class DataLayer {
         return db.query(OFISDBContract.PlotGeoData.TABLE_NAME, columns, null, null, null, null, null);
     }
 
-    /**
-     * update plot geo data table after sync success
-     *
-     * @param plotName unique plot name
-     * @param serverId server id (get from server response after sync success)
-     */
-    public void updatePlotGeoDataAfterSync(String plotName, String serverId) {
 
-        ContentValues updatePlotGeoDataAfterSyncValues = new ContentValues();
-        updatePlotGeoDataAfterSyncValues.put(OFISDBContract.PlotGeoData.COLUMN_NAME_SERVER_ID, serverId);
-        updatePlotGeoDataAfterSyncValues.put(OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_SYNC_FLAG, "true");
+    public void updatePlotGeoDataAfterSync(String plotId, String plotName) {
+        try {
+            ContentValues updatePlotGeoDataAfterSyncValues = new ContentValues();
+            updatePlotGeoDataAfterSyncValues.put(OFISDBContract.PlotGeoData.COLUMN_NAME_SERVER_ID, plotId);
+            updatePlotGeoDataAfterSyncValues.put(OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_SYNC_FLAG, "true");
+            String whereClause = OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_NAME + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(plotName)};
+            int updatedRows = db.update(OFISDBContract.PlotGeoData.TABLE_NAME, updatePlotGeoDataAfterSyncValues, whereClause, whereArgs);
+          }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 
-        String whereClause = OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_NAME + " = ?";
-        String[] whereArgs = new String[]{String.valueOf(plotName)};
-
-        int updatedRows = db.update(OFISDBContract.PlotGeoData.TABLE_NAME, updatePlotGeoDataAfterSyncValues, whereClause, whereArgs);
+    public void updatePlotDataAfterSync(String plotId, String plotName, String farmerId, String plotPosition) {
+        try {
+            int tempId = 0;
+            int position = Integer.parseInt(plotPosition.trim());
+            Cursor plotIds = fetchPlotids(String.valueOf(farmerId));
+            if(plotIds.getCount() > 0) {
+                int size = plotIds.getCount();
+                for (int i = 1; i <= size; i++) {
+                    plotIds.moveToNext();
+                    if(position == i){
+                        tempId = plotIds.getInt(plotIds.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_ID));
+                    }
+                }
+            }
+            ContentValues updatePlotGeoDataAfterSyncValues = new ContentValues();
+            updatePlotGeoDataAfterSyncValues.put(OFISDBContract.PlotEntry.COLUMN_NAME_ID, plotId);
+            updatePlotGeoDataAfterSyncValues.put(OFISDBContract.PlotEntry.COLUMN_IS_SYNCED, "1");
+            String whereClause = OFISDBContract.PlotEntry.COLUMN_NAME_PLOT_NAME + " = ? AND " +
+                    OFISDBContract.PlotEntry.COLUMN_NAME_FARMER_ID + " = ? AND " +
+                    OFISDBContract.PlotEntry.COLUMN_NAME_ID + " = ? ";
+            String[] whereArgs = new String[]{String.valueOf(plotName), farmerId, String.valueOf(tempId)};
+            int updatedRows = db.update(OFISDBContract.PlotEntry.TABLE_NAME, updatePlotGeoDataAfterSyncValues, whereClause, whereArgs);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     int updateFarmerLocation(long farmerId, Location location, String olamFarmerId, int farmId, String farmerName) {
