@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/ofis_page_background"
+    android:paddingTop="@dimen/ofis_list_itemseparator"
+    android:paddingBottom="@dimen/ofis_list_itemseparator">
+
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:id="@+id/rowlin"
+        android:layout_height="wrap_content"
+        android:minHeight="60dp"
+        android:weightSum="5"
+        android:background="@drawable/list_item"
+        android:baselineAligned="false"
+        tools:ignore="UselessParent">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/itemTextContainer"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:layout_weight="1">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/moduleListFarmerModuleId"
+                android:visibility="gone"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/moduleListCurrentSubModuleId"
+                android:visibility="gone"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/moduleListStatusStarted"
+                android:visibility="gone"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/moduleListStatusFinished"
+                android:visibility="gone"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/moduleListEnabled"
+                android:text="@string/enabled_string"
+                android:visibility="gone"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/moduleListRecordedLat"
+                android:text="@string/enabled_string"
+                android:visibility="gone"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/moduleListRecordedLng"
+                android:text="@string/enabled_string"
+                android:visibility="gone"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/viewModuleAnswers"
+                android:text="@string/enabled_string"
+                android:visibility="gone"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/ModuleTitle"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:id="@+id/moduleListModuleName"
+                android:textColor="@color/ofis_base_font_dark"
+                android:textSize="@dimen/ofis_med_text" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ModuleStatus"
+                android:id="@+id/moduleListModuleStatus"
+                android:textColor="@color/ofis_list_item_subtitle"
+                android:textSize="@dimen/ofis_small_text" />
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/left_border"
+            android:layout_marginTop="8dp"
+            android:layout_weight="4"
+            android:layout_marginBottom="8dp">
+
+            <ImageView
+                android:id="@+id/moduleListModuleIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:adjustViewBounds="true"
+                android:contentDescription="@string/Farmer_Photo"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/ic_status_new" />
+        </RelativeLayout>
+    </LinearLayout>
+
+</LinearLayout>
+
+

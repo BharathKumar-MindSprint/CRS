@@ -465,7 +465,7 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LAT + " TEXT, " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG + " TEXT, "
             + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_PLOTS + " TEXT, "
             + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_COUNTRY_ID + " INTEGER, " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_REGION_ID + " INTEGER, "
-            + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_DISTRICT_ID + " INTEGER, "
+            + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_DISTRICT_ID + " INTEGER, " +  OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PLOT_ID + " INTEGER, "
             + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBDISTRICT_ID + " INTEGER, "+ OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PLACE_ID + " INTEGER, "
             + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PRODUCT_ID + " INTEGER, " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMERGROUP_ID + " INTEGER, "
             + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CAPACITY + " INTEGER," + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_NUM_CLASSROOMS + " INTEGER, "
@@ -895,6 +895,12 @@ class OFISDB extends SQLiteOpenHelper {
 
         try {
             sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.FarmerEntry.TABLE_NAME + " ADD COLUMN plot TEXT default null");
+        } catch (SQLiteException ex) {
+            ex.printStackTrace();
+        }
+
+        try {
+            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.NetworkQueueEntry.TABLE_NAME + " ADD COLUMN plot_id INTEGER default null");
         } catch (SQLiteException ex) {
             ex.printStackTrace();
         }

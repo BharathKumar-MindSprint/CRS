@@ -116,6 +116,8 @@ public class CompleteModuleActivity extends BaseActivity {
     private static final String RECORDED_LNG = "RECORDED_LNG";
     private static final String FARMER_NAME = "FARMER_NAME";
     private static final String VIEW_MODULE = "VIEW_MODULE";
+    private static final String ISPLOTSURVEY = "ISPLOTSURVEY";
+    private static final String PLOTID = "PLOTID";
     private long networkQueueId = 0;
     public static boolean editMode = false;
 
@@ -151,6 +153,8 @@ public class CompleteModuleActivity extends BaseActivity {
 
     public static ScrollView scrollView;
     LinearLayout viewSurveyAnswer;
+    int plotId = 0;
+    String isPlotSurvey;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -172,8 +176,12 @@ public class CompleteModuleActivity extends BaseActivity {
         recordedLng = intent.getStringExtra(RECORDED_LNG);
         farmerName = intent.getStringExtra(FARMER_NAME);
         viewModuleAns = intent.getStringExtra(VIEW_MODULE);
+        isPlotSurvey = intent.getStringExtra(ISPLOTSURVEY);
+        if(isPlotSurvey.equalsIgnoreCase("true")) {
+            plotId = intent.getIntExtra(PLOTID, 0);
+        }
+        Toast.makeText(this, "PlotId:" + plotId,Toast.LENGTH_SHORT).show();
         scrollView= findViewById(R.id.scrollView);
-
         context = this;
         res = getResources();
         dl = new DataLayer(res, context);
@@ -645,6 +653,7 @@ public class CompleteModuleActivity extends BaseActivity {
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, moduleName);
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, farmerName);
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID, farmerId);
+                    values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PLOT_ID, plotId);
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID, olamFarmerId);
                     if (MultiFarmUtils.isMultiFarmEnumerator){
                         String multifarmId=dl.getMultiFarmId(farmerId);
