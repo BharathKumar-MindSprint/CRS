@@ -983,4 +983,6 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="view_recent_survey_data"><u>View Recent Survey Data</u></string>
     <string name="add_plot"><u>Add Plot</u></string>
     <string name="plot_name">Plot Name</string>
+    <string name="plot_survey">Plot Survey</string>
+    <string name="plot_notification_info">Please update plot survey(s) for the farmer</string>
 </resources>

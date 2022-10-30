@@ -1304,7 +1304,7 @@ public class OFISDBContract {
 
         // Add for accuracu capture
         public static final String COLUMN_NAME_ACCURACY = "accuracy";
-
+        public static final String COLUMN_NAME_PLOT_ID = "plot_id";
 
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
@@ -1354,6 +1354,7 @@ public class OFISDBContract {
                     add(COLUMN_NAME_IS_VILLAGE);
                     add(COLUMN_NAME_SIGNATURE);
                     add(COLUMN_NAME_ACCURACY);
+                    add(COLUMN_NAME_PLOT_ID);
                 }}
         );
 

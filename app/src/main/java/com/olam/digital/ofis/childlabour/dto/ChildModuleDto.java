@@ -36,6 +36,62 @@ public class ChildModuleDto implements Serializable {
     private String recorded_lng;
     private String surveyCode;
     private String startDate;
+    private int plotId;
+    private String plotName;
+    private String isPlotSurvey;
+    private String isFarmSurvey;
+    private String view_module;
+    private String fkFarmerRoleId;
+
+    public String getFkFarmerRoleId() {
+        return fkFarmerRoleId;
+    }
+
+    public void setFkFarmerRoleId(String fkFarmerRoleId) {
+        this.fkFarmerRoleId = fkFarmerRoleId;
+    }
+
+    public String getIsFarmSurvey() {
+        return isFarmSurvey;
+    }
+
+    public void setIsFarmSurvey(String isFarmSurvey) {
+        this.isFarmSurvey = isFarmSurvey;
+    }
+
+    public int getPlotId() {
+        return plotId;
+    }
+
+    public void setPlotId(int plotId) {
+        this.plotId = plotId;
+    }
+
+    public String getView_module() {
+        return view_module;
+    }
+
+    public void setView_module(String view_module) {
+        this.view_module = view_module;
+    }
+
+    public String getIsPlotSurvey() {
+        return isPlotSurvey;
+    }
+
+    public void setIsPlotSurvey(String isPlotSurvey) {
+        this.isPlotSurvey = isPlotSurvey;
+    }
+
+
+
+    public String getPlotName() {
+        return plotName;
+    }
+
+    public void setPlotName(String plotName) {
+        this.plotName = plotName;
+    }
 
     public String getStartDate() {
         return startDate;

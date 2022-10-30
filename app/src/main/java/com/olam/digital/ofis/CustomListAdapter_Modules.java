@@ -199,7 +199,15 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                 moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
                 textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
                 textView.setText(res.getString(R.string.ModuleStatus));
+            }else if (cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals("PlotSurvey")) {
 
+                imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_childsurvey));
+                enabledItem.setText("true");
+
+                linearLayout.setBackgroundResource(R.drawable.list_item);
+                moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
+                textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
+                textView.setText(res.getString(R.string.ModuleStatus));
             }else if (cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals("multifarm")) {
                 boolean updateWaiting = dl.networkEntryTypeExistsByFarmerId("Multifarm Update", currentFarmer.getLong(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)));
                 if (updateWaiting || currentFarmer.getInt(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_SYNCED)) == 0) {
@@ -572,8 +580,7 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                     }
                 }
             }
-
-                if(MultiFarmUtils.isMultiFarmEnumerator) {
+            if(MultiFarmUtils.isMultiFarmEnumerator) {
 
                     try{
 
