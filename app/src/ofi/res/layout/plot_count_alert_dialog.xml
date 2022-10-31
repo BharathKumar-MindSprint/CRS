@@ -75,9 +75,9 @@
 
         <LinearLayout
             android:id="@+id/addPlot"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
+            android:gravity="left"
             android:orientation="horizontal">
             <ImageView
                 android:layout_width="30dp"
@@ -85,14 +85,14 @@
                 android:gravity="center|left"
                 android:src="@drawable/ic_ofis_add"/>
         <TextView
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/add_plot"
             android:textSize="16sp"
             android:textStyle="bold"
             android:paddingLeft="5dp"
             android:textColor="@color/btn_primary_background"
-            android:gravity="center|left"/>
+            android:layout_gravity="center|left"/>
 
     </LinearLayout>
     </LinearLayout>

@@ -1559,8 +1559,8 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                 if (farmId.equalsIgnoreCase(mOlamFarmerId) && syncFlag.equals("false")) {
                     JSONObject plotsObj = new JSONObject(c.getString(c.getColumnIndex(OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_JSON)));
                     plotsObj.putOpt("plotid", c.getString(c.getColumnIndex(OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_NAME)));
-                    String name = loadPlotName(currentLoggingTrackSpinnerPosition);
-                    plotsObj.putOpt("plot_name", name);
+//                    String name = loadPlotName(currentLoggingTrackSpinnerPosition);
+                    plotsObj.putOpt("plot_name", txtPlotName.getText().toString());
                     plotsArray.put(plotsObj);
                 }
 
