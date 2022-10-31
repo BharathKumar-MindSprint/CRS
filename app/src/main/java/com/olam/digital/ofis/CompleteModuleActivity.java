@@ -20,6 +20,7 @@ import android.provider.Settings;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import android.text.Html;
 import android.text.TextUtils;
@@ -54,6 +55,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.crash.FirebaseCrash;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionDeniedResponse;
@@ -116,6 +118,8 @@ public class CompleteModuleActivity extends BaseActivity {
     private static final String RECORDED_LNG = "RECORDED_LNG";
     private static final String FARMER_NAME = "FARMER_NAME";
     private static final String VIEW_MODULE = "VIEW_MODULE";
+    private static final String ISPLOTSURVEY = "ISPLOTSURVEY";
+    private static final String PLOTID = "PLOTID";
     private long networkQueueId = 0;
     public static boolean editMode = false;
 
@@ -151,6 +155,8 @@ public class CompleteModuleActivity extends BaseActivity {
 
     public static ScrollView scrollView;
     LinearLayout viewSurveyAnswer;
+    int plotId = 0;
+    String isPlotSurvey;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -172,8 +178,14 @@ public class CompleteModuleActivity extends BaseActivity {
         recordedLng = intent.getStringExtra(RECORDED_LNG);
         farmerName = intent.getStringExtra(FARMER_NAME);
         viewModuleAns = intent.getStringExtra(VIEW_MODULE);
-        scrollView= findViewById(R.id.scrollView);
 
+        try {
+            isPlotSurvey = intent.getStringExtra(ISPLOTSURVEY);
+            if (isPlotSurvey.equalsIgnoreCase("true")) {
+                plotId = intent.getIntExtra(PLOTID, 0);
+            }
+        }catch (Exception e){}
+        scrollView= findViewById(R.id.scrollView);
         context = this;
         res = getResources();
         dl = new DataLayer(res, context);
@@ -182,7 +194,20 @@ public class CompleteModuleActivity extends BaseActivity {
 
         DynamicQuestions.resource(res);
         setupGPS();
+        gpsListener=new GPSListener() {
+            @Override
+            public void onGPSClick(Location location) {
+                if (location!=null){
+                    mCurrentCapturedLocation=location;
+                }
+            }
+        };
+        gpsTracker=new GPSTracker(this,gpsListener);
+        // gpsTracker.getDeviceLocation();
+//        if (gpsTracker.isGpsEnabled()){
+        gpsTracker.startLocationUpdateInitially();
 
+//        }
         dynamicQuestions = DynamicQuestions.getInstance(this, Utilities.getLocaleSuffix(res), dl);
 
         dynamicQuestions.questionsSection = (LinearLayout) findViewById(R.id.questionsSection);
@@ -260,20 +285,7 @@ public class CompleteModuleActivity extends BaseActivity {
         setupFooter();
         dynamicQuestions.SurveyType="other";
 
-        gpsListener=new GPSListener() {
-            @Override
-            public void onGPSClick(Location location) {
-                if (location!=null){
-                    mCurrentCapturedLocation=location;
-                }
-            }
-        };
-        gpsTracker=new GPSTracker(this,gpsListener);
-       // gpsTracker.getDeviceLocation();
-//        if (gpsTracker.isGpsEnabled()){
-            gpsTracker.startLocationUpdateInitially();
 
-//        }
 }
 
 
@@ -551,6 +563,18 @@ public class CompleteModuleActivity extends BaseActivity {
                     dynamicQuestions.renderTreeDensityQuestion(questions, res);
                 } else if (displayType.replaceAll(" ", "").toLowerCase().equals("photoupload")) {
                     dynamicQuestions.renderPhotoUploadQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
+                }else if (displayType.replaceAll(" ", "").toLowerCase().equals("location")) {
+                    renderCaptureLocationQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1);
+                   /* try{
+                        if (mCurrentCapturedLocation!=null){
+                            dynamicQuestions.renderCaptureLocationQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1,null,mCurrentCapturedLocation);
+                        }else {
+                            if (mCurrentCapturedLocation == null || !gpsTracker.isGpsEnabled()) {
+                                gpsTracker.getDeviceLocation();
+                                return;
+                            }
+                        }
+                    }catch (Exception e){}*/
                 }
             } while (questions.moveToNext());
         }
@@ -645,6 +669,7 @@ public class CompleteModuleActivity extends BaseActivity {
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, moduleName);
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, farmerName);
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID, farmerId);
+                    values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PLOT_ID, plotId);
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID, olamFarmerId);
                     if (MultiFarmUtils.isMultiFarmEnumerator){
                         String multifarmId=dl.getMultiFarmId(farmerId);
@@ -1037,6 +1062,18 @@ public class CompleteModuleActivity extends BaseActivity {
                      dynamicQuestions.renderTreeDensityQuestion(questions, res);
                  } else if (displayType.replaceAll(" ", "").toLowerCase().equals("photoupload")) {
                      dynamicQuestions.renderPhotoUploadQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
+                 } else if (displayType.replaceAll(" ", "").toLowerCase().equals("Location")) {
+                     renderCaptureLocationQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1);
+                    /* try{
+                         if (mCurrentCapturedLocation!=null){
+                             dynamicQuestions.renderCaptureLocationQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1,null,mCurrentCapturedLocation);
+                         }else {
+                             if (mCurrentCapturedLocation == null || !gpsTracker.isGpsEnabled()) {
+                                 gpsTracker.getDeviceLocation();
+                                 return;
+                             }
+                         }
+                     }catch (Exception e){}*/
                  }
              }
             }
@@ -1054,6 +1091,51 @@ public class CompleteModuleActivity extends BaseActivity {
                 dynamicQuestions.viewAnswer = false;
             }
         });
+    }
+
+    public void renderCaptureLocationQuestion(Cursor qCursor, boolean isRepeaterItem, LinearLayout parentLayout, final int parentQuestionId, final int repeaterItemPosition) {
+        LayoutInflater inflater = this.getLayoutInflater();
+        LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
+        dynamicQuestions.renderQuestion(qCursor, isRepeaterItem, (isRepeaterItem) ? parentLayout : questionWrapper);
+
+        final String datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
+        final int questionId = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
+        int answerIdTemp = 0;
+        final int answerId = answerIdTemp;
+
+        try {
+            final TextView textView = (TextView) inflater.inflate(R.layout.module_location_upload_question, (isRepeaterItem) ? parentLayout : questionWrapper, false);
+            textView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    try{
+                        if (mCurrentCapturedLocation!=null){
+
+                        }else {
+                            if (mCurrentCapturedLocation == null || !gpsTracker.isGpsEnabled()) {
+                                gpsTracker.getDeviceLocation();
+                                return;
+                            }
+                        }
+                        String locationValue = mCurrentCapturedLocation.getLatitude() +","+mCurrentCapturedLocation.getLongitude();
+                        dynamicQuestions.saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, locationValue );
+                        textView.setText(context.getResources().getString(R.string.record_farm_location_complete));
+                        textView.setBackgroundResource(R.drawable.list_item_disabled);
+                        textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                        textView.setEnabled(false);
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+
+                }
+            });
+
+            questionWrapper.addView(textView);
+            parentLayout.addView(questionWrapper);
+
+        } catch (Exception e) {
+            FirebaseCrashlytics.getInstance().log("DynamicQuestions: Error creating date picker display :" +e.getMessage());
+        }
     }
 
     public static void dimBehind(PopupWindow popupWindow) {

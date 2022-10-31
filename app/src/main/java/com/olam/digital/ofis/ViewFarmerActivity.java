@@ -90,6 +90,7 @@ import com.karumi.dexter.listener.single.PermissionListener;
 import com.olam.digital.ofis.childlabour.ChildLabourDetailsActivity;
 import com.olam.digital.ofis.childlabour.ChildLabourUtils;
 import com.olam.digital.ofis.childlabour.RegisterChildActivity;
+import com.olam.digital.ofis.downloadsurvey.ViewPlotSurveyActivity;
 import com.olam.digital.ofis.gps.GPSListener;
 import com.olam.digital.ofis.gps.GPSTracker;
 import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
@@ -232,8 +233,8 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
     CustomListAdapter_Modules customListAdapter_modulesAdapter;
 
 
-    ImageView infoCloseImageView;
-    LinearLayout statusInfoLayout;
+    ImageView infoCloseImageView,plotInfoCloseImageView;
+    LinearLayout statusInfoLayout,plotStatusInfoLayout;
 
     String multiFarmId=null;
     public static boolean farmSurvey;
@@ -284,24 +285,40 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 statusInfoLayout.setVisibility(View.GONE);
             }
         });
+        plotInfoCloseImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                plotStatusInfoLayout.setVisibility(View.GONE);
+            }
+        });
 
     }
 
     private void initiaizeInfoWidget() {
         infoCloseImageView = findViewById(R.id.info_close_btn);
         statusInfoLayout = findViewById(R.id.layout_notification);
+        plotInfoCloseImageView = findViewById(R.id.plot_info_close_btn);
+        plotStatusInfoLayout = findViewById(R.id.plot_layout_notification);
     }
 
     private void showInfo() {
         boolean isNIDAvailable = Utilities.getBoolFromSharedPrefs(context, "NationalID", false);
         if (isNIDAvailable) {
             boolean available = dl.isValueavailable(farmerId);
-            if (!available) {
+           if (!available) {
                 statusInfoLayout.setVisibility(View.VISIBLE);
             } else {
                 statusInfoLayout.setVisibility(View.GONE);
             }
         }
+        int pendingSync = dl.fetchPlotCountByFarmerID(String.valueOf(farmerId));
+        int totalCount = dl.fetchPlotTotalCount(String.valueOf(farmerId));
+        if (totalCount > 0 && pendingSync == 0) {
+             plotStatusInfoLayout.setVisibility(View.VISIBLE);
+        } else {
+             plotStatusInfoLayout.setVisibility(View.GONE);
+        }
+
     }
 
 
@@ -734,7 +751,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                             " LEFT OUTER JOIN farmer_modules ON modules.id = farmer_modules.module_id AND " +
                             "(farmer_modules.farmer_id = ? OR farmer_modules.olam_farmer_id = ?) " +
                             " LEFT OUTER JOIN " + OFISDBContract.SubmoduleEntry.TABLE_NAME + " ON farmer_modules.current_submodule_id = submodules.id WHERE " +
-                            "moduleassignments.childLabour != 'true' AND" +
+                             "moduleassignments.isPlotSurvey != 'true' AND " + "moduleassignments.childLabour != 'true' AND" +
                             "((moduleassignment_type = 'Country' AND moduleassignment_id = ?) OR " +
                             "(moduleassignment_type = 'Region' AND moduleassignment_id = ?) OR " +
                             "(moduleassignment_type = 'District' AND moduleassignment_id = ?) OR " +
@@ -754,6 +771,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                             "(farmer_modules.farmer_id = ? OR farmer_modules.olam_farmer_id = ?) " +
                             " LEFT OUTER JOIN " + OFISDBContract.SubmoduleEntry.TABLE_NAME + " ON farmer_modules.current_submodule_id = submodules.id WHERE " +
                             "moduleassignments.childLabour != 'true' AND " +
+                             "moduleassignments.isPlotSurvey != 'true' AND "+
                             "moduleassignments.isFarmSurvey == 'false' AND" +
                             "((moduleassignment_type = 'Country' AND moduleassignment_id = ?) OR " +
                             "(moduleassignment_type = 'Region' AND moduleassignment_id = ?) OR " +
@@ -996,7 +1014,14 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
 //         add national id information
                     mc.addRow(new String[]{"0", res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), "0", "", "", "", res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), "", "", "", "", "", "", "","", "", "National_ID"});
                 }
-
+               /* int pendingSync = dl.fetchPlotCountByFarmerID(String.valueOf(farmerId));
+                int totalCount = dl.fetchPlotTotalCount(String.valueOf(farmerId));
+                */
+                int farmSurveyCount = dl.isPlotSurveyModuleAvailable(farmerId,true);
+                int farmerSurveyCount = dl.isPlotSurveyModuleAvailable(farmerId,false);
+                if (farmSurveyCount > 0 || farmerSurveyCount > 0) {
+                    mc.addRow(new String[]{"0", res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), "0", "", "", "", res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), "", "", "", "", "", "", "", "", "", "PlotSurvey"});
+                }
                 Cursor fmp = dl.getFmpByFarmerId(id);
                 if (fmp.getCount() > 0) {
                     fmp.moveToFirst();
@@ -2124,6 +2149,12 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                     } else if (recordedLng != null && recordedLng.getText().equals(ChildLabourUtils.CHILDLABOUR_SURVEY)) {
                         MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_CHILD_LABOUR_SURVEY, ScreenNameConstants.BUTTON_CLICKED);
                         Intent in = new Intent(this, ChildLabourDetailsActivity.class);
+                        Bundle bundle = new Bundle();
+                        bundle.putLong(ChildLabourUtils.CHILD_FARMER_ID, farmerId);
+                        in.putExtras(bundle);
+                        startActivity(in);
+                    } else if (recordedLng != null && recordedLng.getText().equals("PlotSurvey")) {
+                        Intent in = new Intent(this, ViewPlotSurveyActivity.class);
                         Bundle bundle = new Bundle();
                         bundle.putLong(ChildLabourUtils.CHILD_FARMER_ID, farmerId);
                         in.putExtras(bundle);

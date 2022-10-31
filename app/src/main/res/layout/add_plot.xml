@@ -55,7 +55,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/plotName"
-                    android:digits="abcdefghijklmnopqrstuvwxyz1234567890- "
+                    android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890- "
                     android:textSize="@dimen/ofis_input_field_text"
                     android:hint="@string/plot_name"
                     android:maxLength="100"

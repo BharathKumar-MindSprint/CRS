@@ -28,9 +28,13 @@ import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 import com.olam.digital.ofis.childlabour.ChildLabourUtils;
+import com.olam.digital.ofis.childlabour.dto.ChildModuleDto;
+import com.olam.digital.ofis.childlabour.dto.ChildrenDTO;
 import com.olam.digital.ofis.coffeesurveyconstraints.CoffeeConstants;
 import com.olam.digital.ofis.downloadsurvey.dto.AnswerRequestDTO;
+import com.olam.digital.ofis.downloadsurvey.dto.FarmerDTO;
 import com.olam.digital.ofis.downloadsurvey.dto.ModuleDTO;
+import com.olam.digital.ofis.downloadsurvey.dto.PlotDTO;
 import com.olam.digital.ofis.model.Attendee;
 import com.olam.digital.ofis.model.AttendeeRelations;
 import com.olam.digital.ofis.model.FarmerLeadDTO;
@@ -42,6 +46,7 @@ import com.olam.digital.ofis.multifarm.MultiFarmRoleDTO;
 import com.olam.digital.ofis.multifarm.MultiFarmUtils;
 import com.olam.digital.ofis.multifarm.MultifarmFarmerDTO;
 import com.olam.digital.ofis.multifarm.SubmittedInfo;
+import com.olam.digital.ofis.recordpolygon.RecordPolygonActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -248,7 +253,26 @@ public class DataLayer {
         String[] whereArgs = new String[]{String.valueOf(id),"1"};
         Cursor data = db.query(OFISDBContract.PlotEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
         return data;
+    }
 
+    public ArrayList<PlotDTO> fetchSyncedPlotIds(String id) {
+        ArrayList<PlotDTO> plotDTOArrayList = new ArrayList<>();
+        String[] columns = new String[]{"*"};
+        String whereClause = OFISDBContract.PlotEntry.COLUMN_NAME_FARMER_ID + " = ? AND " + OFISDBContract.PlotEntry.COLUMN_IS_SYNCED + " = ? ";
+        String[] whereArgs = new String[]{String.valueOf(id),"1"};
+        Cursor plotIds = db.query(OFISDBContract.PlotEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+        int i = 0;
+        while (plotIds.moveToNext()) {
+            i++;
+            PlotDTO plotDTO = new PlotDTO();
+            int plotId = plotIds.getInt(plotIds.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_ID));
+            String plotName = "Plot " + i;
+            plotDTO.setPlotId(plotId);
+            plotDTO.setPlotName(plotName);
+            plotDTOArrayList.add(plotDTO);
+        }
+
+        return plotDTOArrayList;
     }
 
     public int fetchPlotCountByFarmerID(String id) {
@@ -261,6 +285,14 @@ public class DataLayer {
 
     }
 
+    public int fetchPlotTotalCount(String id) {
+        String[] columns = new String[]{"*"};
+        String whereClause = OFISDBContract.PlotEntry.COLUMN_NAME_FARMER_ID + " = ? ";
+        String[] whereArgs = new String[]{String.valueOf(id)};
+        Cursor data = db.query(OFISDBContract.PlotEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+        return data.getCount();
+
+    }
     public void insertNewPlot(String farmerId, ArrayList<String> allPlotValues) {
         if(allPlotValues.size() > 0){
             String whereClause = OFISDBContract.PlotEntry.COLUMN_NAME_FARMER_ID + " = ? AND "
@@ -285,6 +317,23 @@ public class DataLayer {
         }
     }
 
+    public FarmerDTO getFarmerDTO(String farmerId) {
+        Cursor cursor = getFarmerById(Long.parseLong(farmerId));
+        FarmerDTO farmerDTO = new FarmerDTO();
+        if (cursor.getCount() > 0) {
+            cursor.moveToFirst();
+            farmerDTO = new FarmerDTO();
+            farmerDTO.setId(cursor.getString(cursor.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)));
+            farmerDTO.setName(cursor.getString(cursor.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME)));
+            farmerDTO.setSynced(cursor.getString(cursor.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_SYNCED)));
+            farmerDTO.setCreatedAt(cursor.getString(cursor.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_REGISTER_DATE)));
+            farmerDTO.setSubmittedModules(cursor.getString(cursor.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_WEBSITE_SUBMITTED_MODULES)));
+
+        }
+
+        return farmerDTO;
+    }
+
     //------------------------Temp Functions for DB data check - Start-----------------------------
     public Cursor getTempData() {
         String[] columns = new String[]{"*"};
@@ -307,22 +356,45 @@ public class DataLayer {
         return db.query(OFISDBContract.PlotGeoData.TABLE_NAME, columns, null, null, null, null, null);
     }
 
-    /**
-     * update plot geo data table after sync success
-     *
-     * @param plotName unique plot name
-     * @param serverId server id (get from server response after sync success)
-     */
-    public void updatePlotGeoDataAfterSync(String plotName, String serverId) {
 
-        ContentValues updatePlotGeoDataAfterSyncValues = new ContentValues();
-        updatePlotGeoDataAfterSyncValues.put(OFISDBContract.PlotGeoData.COLUMN_NAME_SERVER_ID, serverId);
-        updatePlotGeoDataAfterSyncValues.put(OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_SYNC_FLAG, "true");
+    public void updatePlotGeoDataAfterSync(String plotId, String plotName) {
+        try {
+            ContentValues updatePlotGeoDataAfterSyncValues = new ContentValues();
+            updatePlotGeoDataAfterSyncValues.put(OFISDBContract.PlotGeoData.COLUMN_NAME_SERVER_ID, plotId);
+            updatePlotGeoDataAfterSyncValues.put(OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_SYNC_FLAG, "true");
+            String whereClause = OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_NAME + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(plotName)};
+            int updatedRows = db.update(OFISDBContract.PlotGeoData.TABLE_NAME, updatePlotGeoDataAfterSyncValues, whereClause, whereArgs);
+          }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 
-        String whereClause = OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_NAME + " = ?";
-        String[] whereArgs = new String[]{String.valueOf(plotName)};
-
-        int updatedRows = db.update(OFISDBContract.PlotGeoData.TABLE_NAME, updatePlotGeoDataAfterSyncValues, whereClause, whereArgs);
+    public void updatePlotDataAfterSync(String plotId, String plotName, String farmerId, String plotPosition) {
+        try {
+            int tempId = 0;
+            int position = Integer.parseInt(plotPosition.trim());
+            Cursor plotIds = fetchPlotids(String.valueOf(farmerId));
+            if(plotIds.getCount() > 0) {
+                int size = plotIds.getCount();
+                for (int i = 1; i <= size; i++) {
+                    plotIds.moveToNext();
+                    if(position == i){
+                        tempId = plotIds.getInt(plotIds.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_ID));
+                    }
+                }
+            }
+            ContentValues updatePlotGeoDataAfterSyncValues = new ContentValues();
+            updatePlotGeoDataAfterSyncValues.put(OFISDBContract.PlotEntry.COLUMN_NAME_ID, plotId);
+            updatePlotGeoDataAfterSyncValues.put(OFISDBContract.PlotEntry.COLUMN_IS_SYNCED, "1");
+            String whereClause = OFISDBContract.PlotEntry.COLUMN_NAME_PLOT_NAME + " = ? AND " +
+                    OFISDBContract.PlotEntry.COLUMN_NAME_FARMER_ID + " = ? AND " +
+                    OFISDBContract.PlotEntry.COLUMN_NAME_ID + " = ? ";
+            String[] whereArgs = new String[]{String.valueOf(plotName), farmerId, String.valueOf(tempId)};
+            int updatedRows = db.update(OFISDBContract.PlotEntry.TABLE_NAME, updatePlotGeoDataAfterSyncValues, whereClause, whereArgs);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     int updateFarmerLocation(long farmerId, Location location, String olamFarmerId, int farmId, String farmerName) {
@@ -3200,9 +3272,21 @@ public class DataLayer {
         }
     }
 
+    public int isPlotSurveyModuleAvailable(long farmerId, boolean isfarmSurvey) {
+        int count = 0;
+        Cursor cursor = getFarmerModules(farmerId,isfarmSurvey);
+        try {
+            if (cursor != null) {
+                count = cursor.getCount();
+            }
+        } catch (Exception e) {
+            FirebaseCrashlytics.getInstance().log(e.getMessage());
+        }
 
-    // TODO remove annual survey and expires once no longer required.
-    public Cursor getFarmerModules(long id, Context context) {
+        return count;
+    }
+
+    public Cursor getFarmerModules(long id, boolean farmSurvey) {
         Cursor farmer = null;
 
         try {
@@ -3211,24 +3295,48 @@ public class DataLayer {
 
             if (farmer.getCount() > 0) {
                 farmer.moveToFirst();
-                String modulesQuery = "SELECT modules.id as _id, modules.name, modules.name_fr, modules.name_es, modules.name_id, modules.name_pt, modules.name_tr, modules.name_lo, modules.name_vi, modules.name_th,modules.annual_survey, " +
-                        "submodules.name as submodule_name, submodules.name_fr as submodule_name_fr, submodules.name_es as submodule_name_es, submodules.name_id as submodule_name_id, submodules.name_pt as submodule_name_pt, submodules.name_tr as submodule_name_tr, submodules.name_lo as submodule_name_lo, submodules.name_vi as submodule_name_vi, submodules.name_th as submodule_name_th, " +
-                        "modules.expires, " + "moduleassignments.recurrence_frequency, moduleassignments.recurrence_type, moduleassignments.disabled_months,moduleassignments.isFarmSurvey,moduleassignments.fkFarmerRoleId, " +
-                        " farmer_modules.id as farmer_module_id, farmer_modules.status_started, farmer_modules.status_finished, farmer_modules.current_submodule_id, farmer_modules.recorded_lat, farmer_modules.recorded_lng FROM moduleassignments " +
-                        " INNER JOIN modules ON moduleassignments.module_id = modules.id " +
-                        " LEFT OUTER JOIN farmer_modules ON modules.id = farmer_modules.module_id AND " +
-                        "(farmer_modules.farmer_id = ? OR farmer_modules.olam_farmer_id = ?) " +
-                        " LEFT OUTER JOIN " + OFISDBContract.SubmoduleEntry.TABLE_NAME + " ON farmer_modules.current_submodule_id = submodules.id WHERE " +
-                        "moduleassignments.childLabour != 'true' AND" +
-                        "((moduleassignment_type = 'Country' AND moduleassignment_id = ?) OR " +
-                        "(moduleassignment_type = 'Region' AND moduleassignment_id = ?) OR " +
-                        "(moduleassignment_type = 'District' AND moduleassignment_id = ?) OR " +
-                        "(moduleassignment_type = 'Place' AND moduleassignment_id = ?) OR " +
-                        "(moduleassignment_type = 'Farmer Group' AND moduleassignment_id = ?) OR " +
-                        "(moduleassignment_type = 'Section' AND moduleassignment_id = ?) OR " +
-                        "(moduleassignment_type = 'Programme' AND moduleassignment_id = ?) OR " +
-                        "(moduleassignment_type = 'Product' AND moduleassignment_id = ?) OR " +
-                        "(moduleassignment_type = 'Partner' AND moduleassignment_id = ?))";
+                String modulesQuery="";
+                if (farmSurvey){
+                    modulesQuery = "SELECT modules.id as _id, modules.name, modules.name_fr, modules.name_es, modules.name_id, modules.name_pt, modules.name_tr, modules.name_lo, modules.name_vi, modules.name_th,modules.annual_survey, " +
+                            "submodules.name as submodule_name, submodules.name_fr as submodule_name_fr, submodules.name_es as submodule_name_es, submodules.name_id as submodule_name_id, submodules.name_pt as submodule_name_pt, submodules.name_tr as submodule_name_tr, submodules.name_lo as submodule_name_lo, submodules.name_vi as submodule_name_vi, submodules.name_th as submodule_name_th, " +
+                            "modules.expires, " + "moduleassignments.recurrence_frequency, moduleassignments.recurrence_type, moduleassignments.disabled_months,moduleassignments.isFarmSurvey,moduleassignments.isPlotSurvey,moduleassignments.view_module,moduleassignments.fkFarmerRoleId, " +
+                            " farmer_modules.id as farmer_module_id, farmer_modules.status_started, farmer_modules.status_finished, farmer_modules.current_submodule_id, farmer_modules.recorded_lat, farmer_modules.recorded_lng FROM moduleassignments " +
+                            " INNER JOIN modules ON moduleassignments.module_id = modules.id " +
+                            " LEFT OUTER JOIN farmer_modules ON modules.id = farmer_modules.module_id AND " +
+                            "(farmer_modules.farmer_id = ? OR farmer_modules.olam_farmer_id = ?) " +
+                            " LEFT OUTER JOIN " + OFISDBContract.SubmoduleEntry.TABLE_NAME + " ON farmer_modules.current_submodule_id = submodules.id WHERE " +
+                            "moduleassignments.isPlotSurvey == 'true' AND " + "moduleassignments.childLabour != 'true' AND" +
+                            "((moduleassignment_type = 'Country' AND moduleassignment_id = ?) OR " +
+                            "(moduleassignment_type = 'Region' AND moduleassignment_id = ?) OR " +
+                            "(moduleassignment_type = 'District' AND moduleassignment_id = ?) OR " +
+                            "(moduleassignment_type = 'Place' AND moduleassignment_id = ?) OR " +
+                            "(moduleassignment_type = 'Farmer Group' AND moduleassignment_id = ?) OR " +
+                            "(moduleassignment_type = 'Section' AND moduleassignment_id = ?) OR " +
+                            "(moduleassignment_type = 'Programme' AND moduleassignment_id = ?) OR " +
+                            "(moduleassignment_type = 'Product' AND moduleassignment_id = ?) OR " +
+                            "(moduleassignment_type = 'Partner' AND moduleassignment_id = ?))";
+                }else {
+                    modulesQuery = "SELECT modules.id as _id, modules.name, modules.name_fr, modules.name_es, modules.name_id, modules.name_pt, modules.name_tr, modules.name_lo, modules.name_vi, modules.name_th,modules.annual_survey, " +
+                            "submodules.name as submodule_name, submodules.name_fr as submodule_name_fr, submodules.name_es as submodule_name_es, submodules.name_id as submodule_name_id, submodules.name_pt as submodule_name_pt, submodules.name_tr as submodule_name_tr, submodules.name_lo as submodule_name_lo, submodules.name_vi as submodule_name_vi, submodules.name_th as submodule_name_th, " +
+                            "modules.expires, " + "moduleassignments.recurrence_frequency, moduleassignments.recurrence_type, moduleassignments.disabled_months,moduleassignments.isFarmSurvey,moduleassignments.isPlotSurvey,moduleassignments.view_module,moduleassignments.fkFarmerRoleId, " +
+                            " farmer_modules.id as farmer_module_id, farmer_modules.status_started, farmer_modules.status_finished, farmer_modules.current_submodule_id, farmer_modules.recorded_lat, farmer_modules.recorded_lng FROM moduleassignments " +
+                            " INNER JOIN modules ON moduleassignments.module_id = modules.id " +
+                            " LEFT OUTER JOIN farmer_modules ON modules.id = farmer_modules.module_id AND " +
+                            "(farmer_modules.farmer_id = ? OR farmer_modules.olam_farmer_id = ?) " +
+                            " LEFT OUTER JOIN " + OFISDBContract.SubmoduleEntry.TABLE_NAME + " ON farmer_modules.current_submodule_id = submodules.id WHERE " +
+                            "moduleassignments.childLabour != 'true' AND " +
+                            "moduleassignments.isPlotSurvey == 'true' AND "+
+                            "moduleassignments.isFarmSurvey == 'false' AND" +
+                            "((moduleassignment_type = 'Country' AND moduleassignment_id = ?) OR " +
+                            "(moduleassignment_type = 'Region' AND moduleassignment_id = ?) OR " +
+                            "(moduleassignment_type = 'District' AND moduleassignment_id = ?) OR " +
+                            "(moduleassignment_type = 'Place' AND moduleassignment_id = ?) OR " +
+                            "(moduleassignment_type = 'Farmer Group' AND moduleassignment_id = ?) OR " +
+                            "(moduleassignment_type = 'Section' AND moduleassignment_id = ?) OR " +
+                            "(moduleassignment_type = 'Programme' AND moduleassignment_id = ?) OR " +
+                            "(moduleassignment_type = 'Product' AND moduleassignment_id = ?) OR " +
+                            "(moduleassignment_type = 'Partner' AND moduleassignment_id = ?))";
+                }
                 String[] modulesQueryValues = new String[]{
                         farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)),
                         farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)),
@@ -3242,7 +3350,8 @@ public class DataLayer {
                         farmer.getString(farmer.getColumnIndex("product_id")),
                         farmer.getString(farmer.getColumnIndex("partner_id"))
                 };
-                @SuppressLint("Recycle") Cursor farmerModules = db.rawQuery(modulesQuery, modulesQueryValues);
+//                @SuppressLint("Recycle") Cursor farmerModules = db.rawQuery(modulesQuery, modulesQueryValues);
+                @SuppressLint("Recycle") Cursor farmerModules = getfarmerModules(modulesQuery, modulesQueryValues);
 
                 String[] mcColumns = new String[]{
                         "_id",
@@ -3270,6 +3379,8 @@ public class DataLayer {
                         "recurrence_type",
                         "disabled_months",
                         "isFarmSurvey",
+                        "isPlotSurvey",
+                        "view_module",
                         "fkFarmerRoleId",
                         "farmer_module_id",
                         "status_started",
@@ -3279,324 +3390,13 @@ public class DataLayer {
                         "recorded_lng"
                 };
                 MatrixCursor mc = new MatrixCursor(mcColumns);
-                // add new record farm location task
-                mc.addRow(new String[]{
-                        "0",
-                        res.getString(R.string.record_farm_location),
-                        res.getString(R.string.record_farm_location),
-                        res.getString(R.string.record_farm_location),
-                        res.getString(R.string.record_farm_location),
-                        res.getString(R.string.record_farm_location),
-                        res.getString(R.string.record_farm_location),
-                        res.getString(R.string.record_farm_location),
-                        res.getString(R.string.record_farm_location),
-                        res.getString(R.string.record_farm_location),
-                        "0",
-                        "",
-                        "",
-                        "",
-                        res.getString(R.string.record_farm_location_hint),
-                        res.getString(R.string.record_farm_location_hint),
-                        res.getString(R.string.record_farm_location_hint),
-                        res.getString(R.string.record_farm_location_hint),
-                        res.getString(R.string.record_farm_location_hint),
-                        res.getString(R.string.record_farm_location_hint),
-                        res.getString(R.string.record_farm_location_hint),
-                        res.getString(R.string.record_farm_location_hint),
-                        res.getString(R.string.record_farm_location_hint),
-                        "",
-                        "",
-                        "",
-                        "",
-                        "", "",
-                        "",
-                        "",
-                        "",
-                        "",
-                        ""
-                });
-
-                // add new record farm polygon task
-                mc.addRow(new String[]{
-                        "0",
-                        res.getString(R.string.record_farm_polygon),
-                        res.getString(R.string.record_farm_polygon),
-                        res.getString(R.string.record_farm_polygon),
-                        res.getString(R.string.record_farm_polygon),
-                        res.getString(R.string.record_farm_polygon),
-                        res.getString(R.string.record_farm_polygon),
-                        res.getString(R.string.record_farm_polygon),
-                        res.getString(R.string.record_farm_polygon),
-                        res.getString(R.string.record_farm_polygon),
-                        "0",
-                        "",
-                        "",
-                        "",
-                        res.getString(R.string.record_farm_polygon_hint),
-                        res.getString(R.string.record_farm_polygon_hint),
-                        res.getString(R.string.record_farm_polygon_hint),
-                        res.getString(R.string.record_farm_polygon_hint),
-                        res.getString(R.string.record_farm_polygon_hint),
-                        res.getString(R.string.record_farm_polygon_hint),
-                        res.getString(R.string.record_farm_polygon_hint),
-                        res.getString(R.string.record_farm_polygon_hint),
-                        res.getString(R.string.record_farm_polygon_hint),
-                        "",
-                        "",
-                        "",
-                        "",
-                        "","", "",
-                        "",
-                        "",
-                        "",
-                        "farmpolygon"
-                });
-
-                boolean isHHAvailable = Utilities.getBoolFromSharedPrefs(context, Utilities.HOUSEHOLD_ENUMERATOR, false);
-                if (isHHAvailable) {
-
-                    // add new record household location task
-                    mc.addRow(new String[]{"0", res.getString(R.string.record_hh_location), res.getString(R.string.record_hh_location), res.getString(R.string.record_hh_location), res.getString(R.string.record_hh_location), res.getString(R.string.record_hh_location), res.getString(R.string.record_hh_location), res.getString(R.string.record_hh_location), res.getString(R.string.record_hh_location), res.getString(R.string.record_hh_location), "0", "", "", "", res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), "", "", "", "", "","", "",
-                            "", "", "", res.getString(R.string.household_farmer)});
-                }
-
-                MultiFarmUtils.isMultiFarmEnumerator = Utilities.getChildLabourPref(context, MultiFarmUtils.IS_MULTI_FARM_ENUMERATOR);
-                if( MultiFarmUtils.isMultiFarmEnumerator){
-                    // add new record for update multifarm
-                    mc.addRow(new String[]{"0", res.getString(R.string.update_farm_information), res.getString(R.string.update_farm_information), res.getString(R.string.update_farm_information), res.getString(R.string.update_farm_information), res.getString(R.string.update_farm_information), res.getString(R.string.update_farm_information), res.getString(R.string.update_farm_information), res.getString(R.string.update_farm_information), res.getString(R.string.update_farm_information), "0", "", "", "", res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), "", "", "", "", "",
-                            "", "", "", "multifarm"});
-
-                }
-
-                // add new phone number updating task
-                mc.addRow(new String[]{
-                        "0",
-                        res.getString(R.string.update_phone_numbers),
-                        res.getString(R.string.update_phone_numbers),
-                        res.getString(R.string.update_phone_numbers),
-                        res.getString(R.string.update_phone_numbers),
-                        res.getString(R.string.update_phone_numbers),
-                        res.getString(R.string.update_phone_numbers),
-                        res.getString(R.string.update_phone_numbers),
-                        res.getString(R.string.update_phone_numbers),
-                        res.getString(R.string.update_phone_numbers),
-                        "0",
-                        "",
-                        "",
-                        "",
-                        res.getString(R.string.update_phone_numbers_hint),
-                        res.getString(R.string.update_phone_numbers_hint),
-                        res.getString(R.string.update_phone_numbers_hint),
-                        res.getString(R.string.update_phone_numbers_hint),
-                        res.getString(R.string.update_phone_numbers_hint),
-                        res.getString(R.string.update_phone_numbers_hint),
-                        res.getString(R.string.update_phone_numbers_hint),
-                        res.getString(R.string.update_phone_numbers_hint),
-                        res.getString(R.string.update_phone_numbers_hint),
-                        "",
-                        "",
-                        "",
-                        "",
-                        "","", "",
-                        "",
-                        "",
-                        "",
-                        "Phone"
-                });
-
-                String selectedsubdistrict = farmer.getString(farmer.getColumnIndex("subdistrictId")).trim();
-                String countryid = farmer.getString(farmer.getColumnIndex("country_id")).trim();
-                boolean isSubdistrictCapture = isSubdistrictCapture(Integer.parseInt(countryid));
-                if(isSubdistrictCapture) {
-                    if (selectedsubdistrict.equalsIgnoreCase("0")) {
-                        // update farmers subdistrict
-                        mc.addRow(new String[]{"0", res.getString(R.string.update_farmer_subdistrict), res.getString(R.string.update_farmer_subdistrict), res.getString(R.string.update_farmer_subdistrict), res.getString(R.string.update_farmer_subdistrict), res.getString(R.string.update_farmer_subdistrict), res.getString(R.string.update_farmer_subdistrict), res.getString(R.string.update_farmer_subdistrict), res.getString(R.string.update_farmer_subdistrict), res.getString(R.string.update_farmer_subdistrict), "0", "", "", "", res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), "", "", "", "", "","", "", "","", "", "Subdistrict"});
-                    }
-                }
-                // add update consent statement task
-                mc.addRow(new String[]{"0", res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), res.getString(R.string.update_consent_statement), "0", "", "", "", res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), res.getString(R.string.update_tab_hint), "", "", "", "",
-                        "", "","", "", "", "", res.getString(R.string.consent_statement)});
-
-
-// add e-signature for existing farmers
-                mc.addRow(new String[]{
-                        "0",
-                        res.getString(R.string.update_signature),
-                        res.getString(R.string.update_signature),
-                        res.getString(R.string.update_signature),
-                        res.getString(R.string.update_signature),
-                        res.getString(R.string.update_signature),
-                        res.getString(R.string.update_signature),
-                        res.getString(R.string.update_signature),
-                        res.getString(R.string.update_signature),
-                        res.getString(R.string.update_signature),
-                        "0",
-                        "",
-                        "",
-                        "",
-                        res.getString(R.string.update_signature_hint),
-                        res.getString(R.string.update_signature_hint),
-                        res.getString(R.string.update_signature_hint),
-                        res.getString(R.string.update_signature_hint),
-                        res.getString(R.string.update_signature_hint),
-                        res.getString(R.string.update_signature_hint),
-                        res.getString(R.string.update_signature_hint),
-                        res.getString(R.string.update_signature_hint),
-                        res.getString(R.string.update_signature_hint),
-                        "",
-                        "",
-                        "",
-                        "",
-                        "",
-                        "","", "",
-                        "",
-                        "",
-                        "Signature"
-                });
-
-                boolean isNIDAvailable = Utilities.getBoolFromSharedPrefs(context, "NationalID", false);
-                if (isNIDAvailable) {
-//         add national id information
-                    mc.addRow(new String[]{"0", res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), "0", "", "", "", res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), "", "", "", "", "",
-                            "", "","", "", "", "National_ID"});
-                }
-
-
-
-                Cursor fmp = getFmpByFarmerId(id);
-                if (fmp.getCount() > 0) {
-                    fmp.moveToFirst();
-                    int fmpStarted = 0;
-                    String fmpMode = "summary";
-                    if (hasNqi("fmpreview", fmp.getInt(fmp.getColumnIndex(OFISDBContract.FarmManagementPlanEntry.COLUMN_NAME_ID)))) {
-                        fmpStarted = 1;
-                    } else if (hasNqi("fullfmpreview", fmp.getInt(fmp.getColumnIndex(OFISDBContract.FarmManagementPlanEntry.COLUMN_NAME_ID)))) {
-                        fmpStarted = 1;
-                        fmpMode = "full";
-                    }
-
-                    mc.addRow(new String[]{
-                            "-" + fmp.getInt(fmp.getColumnIndex(OFISDBContract.FarmManagementPlanEntry.COLUMN_NAME_ID)),
-                            res.getString(R.string.review_farm_management_plan),
-                            res.getString(R.string.review_farm_management_plan),
-                            res.getString(R.string.review_farm_management_plan),
-                            res.getString(R.string.review_farm_management_plan),
-                            res.getString(R.string.review_farm_management_plan),
-                            res.getString(R.string.review_farm_management_plan),
-                            res.getString(R.string.review_farm_management_plan),
-                            res.getString(R.string.review_farm_management_plan),
-                            res.getString(R.string.review_farm_management_plan),
-                            "0",
-                            "",
-                            "",
-                            "",
-                            res.getString(R.string.review_farm_management_plan_hint),
-                            res.getString(R.string.review_farm_management_plan_hint),
-                            res.getString(R.string.review_farm_management_plan_hint),
-                            res.getString(R.string.review_farm_management_plan_hint),
-                            res.getString(R.string.review_farm_management_plan_hint),
-                            res.getString(R.string.review_farm_management_plan_hint),
-                            res.getString(R.string.review_farm_management_plan_hint),
-                            res.getString(R.string.review_farm_management_plan_hint),
-                            res.getString(R.string.review_farm_management_plan_hint),
-                            "",
-                            "",
-                            "","", "",
-                            String.valueOf(fmp.getInt(fmp.getColumnIndex(OFISDBContract.FarmManagementPlanEntry.COLUMN_NAME_ID))),
-                            String.valueOf(fmpStarted),
-                            String.valueOf(fmp.getInt(fmp.getColumnIndex(OFISDBContract.FarmManagementPlanEntry.COLUMN_NAME_HAS_FEEDBACK))),
-                            String.valueOf(fmp.getInt(fmp.getColumnIndex(OFISDBContract.FarmManagementPlanEntry.COLUMN_NAME_STARTING_YEAR))),
-                            fmpMode,
-                            ""
-                    });
-                }
-
-                MatrixCursor childOptionsCursor = new MatrixCursor(mcColumns);
-
-                // add register child
-                if (ChildLabourUtils.isChildEnumerator) {
-                    childOptionsCursor.addRow(new String[]{
-                            "0",
-                            res.getString(R.string.register_child),
-                            res.getString(R.string.register_child),
-                            res.getString(R.string.register_child),
-                            res.getString(R.string.register_child),
-                            res.getString(R.string.register_child),
-                            res.getString(R.string.register_child),
-                            res.getString(R.string.register_child),
-                            res.getString(R.string.register_child),
-                            res.getString(R.string.register_child),
-                            "0",
-                            "",
-                            "",
-                            "",
-                            res.getString(R.string.update_childlabour_hint),
-                            res.getString(R.string.update_childlabour_hint),
-                            res.getString(R.string.update_childlabour_hint),
-                            res.getString(R.string.update_childlabour_hint),
-                            res.getString(R.string.update_childlabour_hint),
-                            res.getString(R.string.update_childlabour_hint),
-                            res.getString(R.string.update_childlabour_hint),
-                            res.getString(R.string.update_childlabour_hint),
-                            res.getString(R.string.update_childlabour_hint),
-                            "",
-                            "",
-                            "",
-                            "",
-                            "",
-                            "",
-                            "","", "",
-                            "",
-                            ChildLabourUtils.REG_CHILD
-                    });
-
-                    // child labour survey
-                    childOptionsCursor.addRow(new String[]{
-                            "0",
-                            res.getString(R.string.child_labour_survey),
-                            res.getString(R.string.child_labour_survey),
-                            res.getString(R.string.child_labour_survey),
-                            res.getString(R.string.child_labour_survey),
-                            res.getString(R.string.child_labour_survey),
-                            res.getString(R.string.child_labour_survey),
-                            res.getString(R.string.child_labour_survey),
-                            res.getString(R.string.child_labour_survey),
-                            res.getString(R.string.child_labour_survey),
-                            "0",
-                            "",
-                            "",
-                            "",
-                            res.getString(R.string.ModuleStatus),
-                            res.getString(R.string.ModuleStatus),
-                            res.getString(R.string.ModuleStatus),
-                            res.getString(R.string.ModuleStatus),
-                            res.getString(R.string.ModuleStatus),
-                            res.getString(R.string.ModuleStatus),
-                            res.getString(R.string.ModuleStatus),
-                            res.getString(R.string.ModuleStatus),
-                            res.getString(R.string.ModuleStatus),
-                            "",
-                            "",
-                            "",
-                            "",
-                            "",
-                            "",
-                            "","", "",
-                            "",
-                            ChildLabourUtils.CHILDLABOUR_SURVEY
-                    });
-                }
-                Cursor[] cursors = {mc, farmerModules, childOptionsCursor};
+                Cursor[] cursors = {mc, farmerModules};
                 output = new MergeCursor(cursors);
             }
             return output;
-        }catch (Exception e){
-            e.printStackTrace();
-            return null;
-        }finally {
+        } finally {
             farmer.close();
         }
-
     }
 
     // modules tasks
@@ -7851,7 +7651,162 @@ public class DataLayer {
         return submittedInfo;
     }
 
+    public SubmittedInfo isAvailableinSubmittedModules2(ChildModuleDto moduleAssignments, int cursorId, long farmerId, String multifarmId) throws JSONException {
 
+        String farmId=getMultifarmfarmId(farmerId);
+        MultiFarmDTO multiFarmDTO=null;
+        if (farmId!=null){
+            multiFarmDTO = getMultiFarmInfoObj(Long.valueOf(farmId));
+        }
+
+
+        SubmittedInfo  submittedInfo = new SubmittedInfo();
+        submittedInfo.setSubmitted(false);
+        submittedInfo.setNetworkTable(false);
+        submittedInfo.setAvailableInOtherFarm(true);
+        submittedInfo.setModuleId(cursorId);
+        boolean submitted;
+
+
+        // Needed Part
+        JSONArray jsonArray = multiFarmDTO.getStakeholdersInfo();
+        if (jsonArray != null && jsonArray.length() > 0) {
+
+            int length = jsonArray.length();
+            for (int j = 0; j < length; j++) {
+
+                try {
+                    String farmerIdStakeHolder = jsonArray.getJSONObject(j).get("farmerId").toString();
+
+                    //Check in NetworkTable
+                    submitted = getModuledetailsInNetworkQueue1(cursorId, farmerIdStakeHolder,farmId);
+                    if (submitted) {
+                        submittedInfo.setSubmitted(true);
+                        submittedInfo.setFarmerId(Long.valueOf(farmerIdStakeHolder));
+                        submittedInfo.setNetworkTable(true);
+                        return  submittedInfo;
+                        //  submittedInfoList.add(submittedInfo);
+
+                    } else{
+
+                        // Check in submitted Modules
+                        Cursor farmer = getFarmerById(Long.valueOf(farmerIdStakeHolder));
+                        if (farmer.getCount() > 0) {
+                            farmer.moveToFirst();
+
+                            JSONObject submittedModules;
+                            String submittedModulesJSON = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_WEBSITE_SUBMITTED_MODULES));
+                            String Samplestr = String.valueOf("{\"modules\":null}");
+                            if (Samplestr.equals(submittedModulesJSON)) {
+                                submittedModulesJSON = submittedModulesJSON.replaceAll("\"modules\":null", "");
+                            }
+                            submittedModules = (!submittedModulesJSON.equals("null")) ? new JSONObject(submittedModulesJSON) : new JSONObject();
+
+                            String disabled_months_string = moduleAssignments.getDisabled_months();
+                            List<String> disabled_months = Arrays.asList(disabled_months_string.split("\\s*,\\s*"));
+                            try {
+                                Calendar currentDate = Calendar.getInstance();
+                                int recurrence_frequency = Integer.parseInt(moduleAssignments.getRecurrence_frequency());
+                                String recurrence_type = moduleAssignments.getRecurrence_type();
+                                Calendar calculationDate = (Calendar) currentDate.clone();
+                                boolean disable_entry = false;
+
+                                JSONArray submittedModulesArray = submittedModules.getJSONArray("modules");
+                                for (int i = 0; i < submittedModulesArray.length(); i++) {
+                                    JSONObject submittedModule = submittedModulesArray.getJSONObject(i);
+                                    JSONObject submittedModuleDetails = submittedModule.getJSONObject("module");
+
+
+
+                                    if (submittedModuleDetails.has("id") && submittedModuleDetails.getInt("id") == cursorId) {
+
+
+                                        if (recurrence_frequency > 0 && !disabled_months.contains(String.valueOf(currentDate.get(Calendar.MONTH)))) {
+                                            // for recurring
+                                            try {
+                                                // get last submitted date
+                                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
+                                                Calendar lastSubmittedDate = Calendar.getInstance();
+
+                                                //O20HS-84 - To enable the annual survey.
+                                                calculationDate = (Calendar) currentDate.clone();
+                                                //
+
+                                                try {
+                                                    lastSubmittedDate.setTime(sdf.parse(submittedModuleDetails.getString("created_at")));
+                                                } catch (ParseException e) {
+                                                }
+                                                if (recurrence_type != null) {
+                                                    if (recurrence_type.equalsIgnoreCase("years")) {
+                                                        calculationDate.add(Calendar.YEAR, -recurrence_frequency);
+                                                        calculationDate.set(Calendar.MONTH, Calendar.DECEMBER);
+                                                        calculationDate.set(Calendar.DAY_OF_MONTH, 31);
+                                                    } else if (recurrence_type.equalsIgnoreCase("months")) {
+                                                        calculationDate.add(Calendar.MONTH, -recurrence_frequency);
+                                                        calculationDate.set(Calendar.DAY_OF_MONTH, calculationDate.getActualMaximum(Calendar.DAY_OF_MONTH));
+                                                    } else if (recurrence_type.equalsIgnoreCase("weeks")) {
+                                                        calculationDate.add(Calendar.WEEK_OF_YEAR, -recurrence_frequency);
+                                                        calculationDate.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
+                                                    } else {
+                                                        // must be days
+                                                        calculationDate.add(Calendar.DAY_OF_YEAR, -recurrence_frequency);
+                                                    }
+
+                                                    // set the time
+                                                    calculationDate.set(Calendar.HOUR_OF_DAY, 23);
+                                                    calculationDate.set(Calendar.MINUTE, 59);
+                                                    calculationDate.set(Calendar.SECOND, 59);
+                                                    calculationDate.set(Calendar.MILLISECOND, 999);
+
+                                                    // force the recalculation
+                                                    calculationDate.get(Calendar.DAY_OF_MONTH);
+
+
+                                                    if (lastSubmittedDate.after(calculationDate)) {
+                                                        disable_entry = true;
+                                                    }
+                                                }
+                                            } catch (Exception e) {
+                                                e.printStackTrace();
+                                            }
+                                        } else {
+                                            // for non-recurring
+                                            disable_entry = true;
+                                        }
+
+                                        if (disable_entry) {
+
+                                            if (submittedModuleDetails.has("farmId") && submittedModuleDetails.getInt("farmId") == Integer.parseInt(farmId)) {
+                                                submittedInfo.setSubmitted(true);
+                                                submittedInfo.setFarmerId(Long.valueOf(farmerIdStakeHolder));
+                                                submittedInfo.setNetworkTable(false);
+                                                submittedInfo.setAvailableInOtherFarm(false);
+                                                return submittedInfo;
+                                            }
+
+                                            //submittedInfoList.add(submittedInfo);
+
+                                        }
+                                    }
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
+                        }
+                        farmer.close();
+                    }
+                } catch (Exception e) {
+                }
+            }
+
+        }
+
+        //-----
+
+
+        return submittedInfo;
+    }
 
     private boolean getModuledetailsInNetworkQueue(int currentId, String farmerIdStakeHolder,String farmId) {
 

@@ -408,6 +408,16 @@
                 android:value=".childlabour.ChildLabourDetailsActivity" />
         </activity>
         <activity
+            android:name=".downloadsurvey.ViewPlotSurveyActivity"
+            android:label="@string/plot_survey"
+            android:parentActivityName=".ViewFarmerActivity"
+            android:screenOrientation="portrait"
+            tools:ignore="UnusedAttribute">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ViewFarmerActivity" />
+        </activity>
+        <activity
             android:name="com.olam.digital.ofis.childlabour.ChildLabourCompleteModuleActivity"
             android:label="@string/child_details"
             android:parentActivityName=".childlabour.ChildLabourCompleteModuleActivity"

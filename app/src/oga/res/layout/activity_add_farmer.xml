@@ -555,7 +555,7 @@
                             android:textSize="@dimen/ofis_input_field_text"
                             android:hint="@string/farm_name"
                             android:maxLength="100"
-                            android:digits="ABCDEFGHIJKLMNOPQRSTUVWX1Z1234567890abcdefghijklmnopqrstuvwxyz.,/'-_ \\"
+                            android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyz.,/'-_ \\"
                             android:textColorHint="@color/icon_grey_palette_2"
                             android:background="@drawable/edittext_bg_light"
                             android:layout_marginBottom="@dimen/ofis_input_field_bottom_margin"/>
