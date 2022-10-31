@@ -1,17 +1,7 @@
 package com.olam.digital.ofis.downloadsurvey.adapter;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Locale;
-
 import android.content.Context;
 import android.content.res.Resources;
-import android.database.Cursor;
 import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,11 +15,9 @@ import androidx.core.content.ContextCompat;
 
 import com.google.firebase.crash.FirebaseCrash;
 import com.olam.digital.ofis.DataLayer;
-import com.olam.digital.ofis.OFISDBContract;
 import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.Utilities;
 import com.olam.digital.ofis.childlabour.dto.ChildModuleDto;
-import com.olam.digital.ofis.downloadsurvey.ViewPlotSurveyActivity;
 import com.olam.digital.ofis.downloadsurvey.dto.FarmerDTO;
 import com.olam.digital.ofis.downloadsurvey.dto.PlotDTO;
 import com.olam.digital.ofis.multifarm.MultiFarmUtils;
@@ -38,6 +26,14 @@ import com.olam.digital.ofis.multifarm.SubmittedInfo;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
 
 public class CustomExpandableListAdapter extends BaseExpandableListAdapter {
     private final int roleId;

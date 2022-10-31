@@ -13,6 +13,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.location.Location;
 import android.net.Uri;
 import android.os.CountDownTimer;
 import android.os.StrictMode;
@@ -447,7 +448,7 @@ public class DynamicQuestions {
         }
     }
 
-    private void saveAnswerEntry(int questionId, int answerId, int parentQuestionId, int repeaterItemPosition, String datatype, String answer) {
+    public void saveAnswerEntry(int questionId, int answerId, int parentQuestionId, int repeaterItemPosition, String datatype, String answer) {
         try {
             if(viewAnswer) return;
             if (answer.length() > 0) {
@@ -713,7 +714,7 @@ public class DynamicQuestions {
         }
     }
 
-    private void renderQuestion(Cursor qCursor, boolean isRepeaterItem, LinearLayout parentLayout) {
+    public void renderQuestion(Cursor qCursor, boolean isRepeaterItem, LinearLayout parentLayout) {
         TextView tv;
         tv = (TextView) inflater.inflate((isRepeaterItem) ? R.layout.module_repeater_item_question : R.layout.module_question, parentLayout, false);
 
@@ -1293,6 +1294,46 @@ public class DynamicQuestions {
 
 
         } catch (JSONException | ParseException e) {
+            FirebaseCrashlytics.getInstance().log("DynamicQuestions: Error creating date picker display :" +e.getMessage());
+        }
+    }
+
+    public void renderCaptureLocationQuestion(Cursor qCursor, boolean isRepeaterItem, LinearLayout parentLayout, final int parentQuestionId, final int repeaterItemPosition, Cursor repeaterAnswers, Location mCurrentCapturedLocation) {
+        LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
+        renderQuestion(qCursor, isRepeaterItem, (isRepeaterItem) ? parentLayout : questionWrapper);
+
+        final String datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
+        final int questionId = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
+        int answerIdTemp = 0;
+        if (hasAnswers) {
+            if (isRepeaterItem && repeaterAnswers != null && repeaterAnswers.getCount() > 0) {
+                answerIdTemp = repeaterAnswers.getInt(repeaterAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ID));
+            } else {
+                if (qCursor.getColumnIndex("answer_id") != -1) {
+                    answerIdTemp = qCursor.getInt(qCursor.getColumnIndex("answer_id"));
+                }
+            }
+        }
+        final int answerId = answerIdTemp;
+
+        try {
+             final TextView textView = (TextView) inflater.inflate(R.layout.module_location_upload_question, (isRepeaterItem) ? parentLayout : questionWrapper, false);
+             textView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+//                            String locationValue = mCurrentCapturedLocation.getLatitude() +","+mCurrentCapturedLocation.getLongitude();
+                            saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, "locationValue" );
+                            textView.setText(context.getResources().getString(R.string.record_farm_location_complete));
+                            textView.setBackgroundResource(R.drawable.list_item_disabled);
+                            textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                            textView.setEnabled(false);
+                        }
+                    });
+
+                   questionWrapper.addView(textView);
+                   parentLayout.addView(questionWrapper);
+
+        } catch (Exception e) {
             FirebaseCrashlytics.getInstance().log("DynamicQuestions: Error creating date picker display :" +e.getMessage());
         }
     }

@@ -1,6 +1,5 @@
 package com.olam.digital.ofis.downloadsurvey;
 
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -8,13 +7,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.olam.digital.ofis.BaseActivity;
 import com.olam.digital.ofis.CompleteModuleActivity;
@@ -23,19 +17,11 @@ import com.olam.digital.ofis.DynamicQuestions;
 import com.olam.digital.ofis.OFISDBContract;
 import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.Utilities;
-import com.olam.digital.ofis.childlabour.ChildLabourCompleteModuleActivity;
 import com.olam.digital.ofis.childlabour.ChildLabourUtils;
-import com.olam.digital.ofis.childlabour.adapter.ChildSurveyRecyclerAdapter;
-import com.olam.digital.ofis.childlabour.businesslogic.ChildLabourLogic;
 import com.olam.digital.ofis.childlabour.dto.ChildModuleDto;
-import com.olam.digital.ofis.childlabour.dto.ChildrenDTO;
-import com.olam.digital.ofis.childlabour.listener.OnItemSurveyListener;
 import com.olam.digital.ofis.downloadsurvey.adapter.CustomExpandableListAdapter;
-import com.olam.digital.ofis.downloadsurvey.adapter.PlotSurveyRecyclerAdapter;
 import com.olam.digital.ofis.downloadsurvey.dto.FarmerDTO;
 import com.olam.digital.ofis.downloadsurvey.dto.PlotDTO;
-import com.olam.digital.ofis.matoma.MatomoHelper;
-import com.olam.digital.ofis.matoma.ScreenNameConstants;
 import com.olam.digital.ofis.multifarm.MultiFarmUtils;
 
 import org.json.JSONArray;
@@ -43,9 +29,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 // Handles and shows the child list in the screen before taking the survey
