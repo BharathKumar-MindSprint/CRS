@@ -212,6 +212,7 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.FarmerModulesEntry.COLUMN_NAME_FARM_ID + " INTEGER, " + OFISDBContract.FarmerModulesEntry.COLUMN_NAME_CURRENT_SUBMODULE_ID + " INTEGER, "
             + OFISDBContract.FarmerModulesEntry.COLUMN_NAME_STATUS_STARTED + " INTEGER, " + OFISDBContract.FarmerModulesEntry.COLUMN_NAME_STATUS_FINISHED + " INTEGER, "
             + OFISDBContract.FarmerModulesEntry.COLUMN_NAME_RECORDED_LAT + " TEXT, " + OFISDBContract.FarmerModulesEntry.COLUMN_NAME_RECORDED_LNG + " TEXT, "
+            + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PLOT_ID + " INTEGER, "
             + OFISDBContract.FarmerModulesEntry.COLUMN_NAME_STARTED_DATE + " TEXT )";
 
     private static final String OFIS_FARMERCHILD_MODULES_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.FarmerChildModulesEntry.TABLE_NAME
@@ -901,6 +902,12 @@ class OFISDB extends SQLiteOpenHelper {
 
         try {
             sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.NetworkQueueEntry.TABLE_NAME + " ADD COLUMN plot_id INTEGER default null");
+        } catch (SQLiteException ex) {
+            ex.printStackTrace();
+        }
+
+        try {
+            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.FarmerModulesEntry.TABLE_NAME + " ADD COLUMN plot_id INTEGER default null");
         } catch (SQLiteException ex) {
             ex.printStackTrace();
         }

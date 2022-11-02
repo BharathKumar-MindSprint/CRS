@@ -297,6 +297,7 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_RECORDED_LAT = "recorded_lat";
         public static final String COLUMN_NAME_RECORDED_LNG = "recorded_lng";
         public static final String COLUMN_NAME_STARTED_DATE = "started_date";
+        public static final String COLUMN_NAME_PLOT_ID = "plot_id";
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
                     add(COLUMN_NAME_ID);
@@ -310,6 +311,7 @@ public class OFISDBContract {
                     add(COLUMN_NAME_RECORDED_LAT);
                     add(COLUMN_NAME_RECORDED_LNG);
                     add(COLUMN_NAME_STARTED_DATE);
+                    add(COLUMN_NAME_PLOT_ID);
                 }}
         );
     }

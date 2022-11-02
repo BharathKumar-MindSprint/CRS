@@ -93,6 +93,9 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
         super.bindView(view, context, cursor);
 
         int currentId = cursor.getInt(cursor.getColumnIndex("_id"));
+        if(currentId == 164) {
+            System.out.println("CURRENTID_:" + currentId);
+        }
         LinearLayout linearLayout = (LinearLayout) view.findViewById(R.id.rowlin);
         ImageView imageView = (ImageView) view.findViewById(R.id.moduleListModuleIcon);
         TextView moduleTitle = (TextView) view.findViewById(R.id.moduleListModuleName);
@@ -444,14 +447,23 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
 
             String disabled_months_string = cursor.getString(cursor.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_DISABLED_MONTHS));
             List<String> disabled_months = Arrays.asList(disabled_months_string.split("\\s*,\\s*"));
-
+            if(currentId == 164) {
+                System.out.println("CURRENTID_:disabled_months_string" +  disabled_months_string);
+                System.out.println("CURRENTID_:disabled_months" + disabled_months.size());
+            }
+            if(currentId == 164) {
+                System.out.println("CURRENTID_:hasSubmittedModules" +  hasSubmittedModules);
+            }
             if (hasSubmittedModules) {
                 try {
                     int recurrence_frequency = cursor.getInt(cursor.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_RECURRENCE_FREQUENCY));
                     String recurrence_type = cursor.getString(cursor.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_RECURRENCE_TYPE));
                     Calendar calculationDate = (Calendar) currentDate.clone();
                     boolean disable_entry = false;
-
+                    if(currentId == 164) {
+                        System.out.println("CURRENTID_:recurrence_frequency" +  recurrence_frequency);
+                        System.out.println("CURRENTID_:recurrence_type" +  recurrence_type);
+                    }
                     for (int i = 0; i < submittedModulesArray.length(); i++) {
                         JSONObject submittedModule = submittedModulesArray.getJSONObject(i);
                         JSONObject submittedModuleDetails = submittedModule.getJSONObject("module");
@@ -535,6 +547,9 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                     e.printStackTrace();
                 }
             }
+            if(currentId == 164) {
+                        System.out.println("CURRENTID_:submitted" +  submitted);
+            }
             if (!submitted) {
                 enabledItem.setText("true");
                 linearLayout.setBackgroundResource(R.drawable.list_item);
@@ -562,6 +577,10 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                 }
                 moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
                 textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
+                 if(currentId == 164) {
+                        System.out.println("CURRENTID_:COLUMN_NAME_STATUS_STARTED" +  (cursor.getInt(cursor.getColumnIndex(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_STATUS_STARTED))));
+                        System.out.println("CURRENTID_:COLUMN_NAME_STATUS_STARTED" +  (cursor.getInt(cursor.getColumnIndex(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_STATUS_FINISHED))));
+                 }
                 if ((cursor.getInt(cursor.getColumnIndex(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_STATUS_STARTED)) == 1) && (cursor.getInt(cursor.getColumnIndex(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_STATUS_FINISHED)) == 0)) {
                     int columnIndex = (cursor.getColumnIndex("submodule_name" + moduleColumnSuffix) == -1) ? cursor.getColumnIndex("submodule_name") : cursor.getColumnIndex("submodule_name" + moduleColumnSuffix);
                     textView.setText(res.getString(R.string.module_in_progress) + cursor.getString(columnIndex));
@@ -672,7 +691,7 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
 
                                             } else {
 
-                                                boolean othersAttneded=dl.isSurveyAttendedByOther(multiFarmId,farmerId,currentId);
+                                                boolean othersAttneded=dl.isSurveyAttendedByOther(multiFarmId,farmerId,currentId,0);
                                                 if (othersAttneded){
                                                     linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
                                                     moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
@@ -737,7 +756,7 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                                               //  showAlertMsgIdCheck(linearLayout, res.getString(R.string.already_syned_survey_info),submittedInfo);
 
                                             } else {
-                                                boolean othersAttneded = dl.isSurveyAttendedByOther(multiFarmId, farmerId, currentId);
+                                                boolean othersAttneded = dl.isSurveyAttendedByOther(multiFarmId, farmerId, currentId, 0);
                                                 if (othersAttneded) {
                                                     linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
                                                     moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));

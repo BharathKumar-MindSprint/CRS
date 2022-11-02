@@ -1387,17 +1387,18 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         final String strFarmID = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID));
         DataLayer dl = new DataLayer(getResources(), ViewFarmerActivity.this);
 //        dl.fetchPlotData(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
-        int count = 0;
+        int count = 0, recordedPlotcount = 0;
         try {
 //            count = SharedPreferenceUtils.getInstance(getApplicationContext()).getPlotCount(""+strFarmID);
-//            count = dl.fetchPlotData(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
+            recordedPlotcount = dl.fetchPlotData(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
             count = dl.fetchPlotCountByFarmerID(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)));
         } catch (Exception e) {
             count = 0;
+            recordedPlotcount = 0;
         }
 
         Log.d("ViewFarmerActivity", "Plot Count = " + count);
-        if (count == 0) {
+        if (recordedPlotcount == 0) {
             AlertDialog.Builder builder = new AlertDialog.Builder(context);
             builder.setCancelable(false);
             LayoutInflater inflater = this.getLayoutInflater();

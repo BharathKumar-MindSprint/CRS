@@ -361,6 +361,7 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID, farmerId);
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID, farmerNameQueue);
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID, farmId);
+                    values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PLOT_ID, 0);
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_MODULE_ID, farmerModuleId);
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LAT, recordedLat);
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG, recordedLng);
@@ -371,7 +372,7 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
                         values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT, timestamp.toString());
                         networkQueueId = dl.insertNetworkQueueEntry(values);
                     } else {
-                        dl.updateNetworkQueueFarmerAndChildModuleEntry(values, farmerModuleId,"childmodule");
+                        dl.updateNetworkQueueFarmerAndChildModuleEntry(values, farmerModuleId,"childmodule",0);
                     }
                     statusFinished = 1;
                     saveSubModule("finish");

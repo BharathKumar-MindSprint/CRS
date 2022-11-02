@@ -1710,7 +1710,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         final int farmerModuleId = networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_MODULE_ID));
         final long farmerId = networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
         Cursor moduleAnswers, extraInfo, farmerModule = dl.getFarmerModuleById(farmerModuleId);
-
+        int plotId = 0;
         // for MultiFarm
             MultiFarmUtils.isMultiFarmEnumerator = Utilities.getMultifarmPref(context, MultiFarmUtils.IS_MULTI_FARM_ENUMERATOR);
 //            MultiFarmDTO multifarmDTO=new MultiFarmDTO();
@@ -1790,7 +1790,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                     submission.put("recorded_lat", networkQueueItems.getDouble(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LAT)));
                     submission.put("recorded_lng", networkQueueItems.getDouble(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)));
-                    int plotId = networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PLOT_ID));
+                    plotId = networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PLOT_ID));
                     if(plotId != 0) {
                         submission.put("plot_id", plotId);
                     }
@@ -1973,6 +1973,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                     final String finalEndPoint = endPoint;
                     final int finalFarmId=farmId;
+                    int finalPlotId = plotId;
                     okHttpPost(context, endPoint, submission, new Callback() {
                         @Override
                         public void onResponse(Call call, Response postResponse) {
@@ -1992,7 +1993,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                             if (res.getString(R.string.duplicate_survey).equalsIgnoreCase(errorItem)){
                                                 // Do the Activity if the duplicate entry is there
                                                 dl.deleteNetworkQueueItem(networkQueueItemId);
-                                                dl.syncFarmerModule(farmerModuleId, farmerId, moduleId, submissionDate,finalFarmId);
+                                                dl.syncFarmerModule(farmerModuleId, farmerId, moduleId, submissionDate,finalFarmId, finalPlotId);
 
                                                  // Update the message
                                                 statusMessage = res.getString(R.string.item_synced);
@@ -2006,7 +2007,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                                 handler.dispatchMessage(msg);
                                                 // Do the Activity if the duplicate entry is there
                                                 dl.deleteNetworkQueueItem(networkQueueItemId);
-                                                dl.syncFarmerModule(farmerModuleId, farmerId, moduleId, submissionDate,finalFarmId);
+                                                dl.syncFarmerModule(farmerModuleId, farmerId, moduleId, submissionDate,finalFarmId, finalPlotId);
 
                                                 handler.postDelayed(() -> {
                                                     // Your task goes here
@@ -2019,7 +2020,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                     }else{
                                         // Existing Logic
                                         dl.deleteNetworkQueueItem(networkQueueItemId);
-                                        dl.syncFarmerModule(farmerModuleId, farmerId, moduleId, submissionDate,finalFarmId);
+                                        dl.syncFarmerModule(farmerModuleId, farmerId, moduleId, submissionDate,finalFarmId,finalPlotId);
 
                                         statusMessage = res.getString(R.string.item_synced);
                                         msg.what = 1;

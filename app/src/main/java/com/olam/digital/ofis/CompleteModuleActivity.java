@@ -688,11 +688,13 @@ public class CompleteModuleActivity extends BaseActivity {
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG, recordedLng);
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_MODULE_ID, moduleId);
                     values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPDATED_AT, timestamp.toString());
-                    if (statusFinished == 0) {
+                    boolean exist = dl.isPlotSavedinNetworkLayer(farmerId, plotId, farmerModuleId);
+//                    if (statusFinished == 0) {
+                    if (! exist) {
                         values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT, timestamp.toString());
                         networkQueueId = dl.insertNetworkQueueEntry(values);
                     } else {
-                        dl.updateNetworkQueueFarmerAndChildModuleEntry(values, farmerModuleId,"module");
+                        dl.updateNetworkQueueFarmerAndChildModuleEntry(values, farmerModuleId,"module",plotId);
                     }
                     statusFinished = 1;
                     saveSubModule("finish");
@@ -738,10 +740,11 @@ public class CompleteModuleActivity extends BaseActivity {
         // first time saving this module?
         if (farmerModuleId == 0) {
             statusStarted = 1;
-            farmerModuleId = dl.insertFarmerModule(moduleId, farmerId, olamFarmerId, farmId, subModuleId, statusStarted, recordedLat, recordedLng);
+            farmerModuleId = dl.insertFarmerModule(moduleId, farmerId, olamFarmerId, farmId, subModuleId, statusStarted, recordedLat, recordedLng, plotId);
             if (isLastPage && networkQueueId > 0) {
                 ContentValues values = new ContentValues();
                 values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_MODULE_ID, farmerModuleId);
+                values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PLOT_ID, plotId);
                 dl.updateNetworkQueueEntry(values, networkQueueId);
             }
         }
@@ -826,7 +829,10 @@ public class CompleteModuleActivity extends BaseActivity {
                 Toast.makeText(context, res.getString(R.string.complete_all_required_fields_mandatry), Toast.LENGTH_LONG).show();
             }
         }
-        dl.updateFarmerModule(farmerModuleId, subModuleId, statusStarted, statusFinished);
+        if (action.equalsIgnoreCase("exit")) {
+            statusFinished = 0;
+        }
+        dl.updateFarmerModule(farmerModuleId, subModuleId, statusStarted, statusFinished, plotId);
         if (action.equalsIgnoreCase("exit")) {
             if(bool){
                 ViewFarmerActivity.farmerId = farmerId;
