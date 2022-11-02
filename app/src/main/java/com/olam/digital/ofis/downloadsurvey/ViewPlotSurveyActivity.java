@@ -289,8 +289,8 @@ public class ViewPlotSurveyActivity extends BaseActivity {
                         childModuleDto.setName(moduleAssignments.getString(moduleAssignments.getColumnIndex((moduleAssignments.getColumnIndex(OFISDBContract.ModuleEntry.COLUMN_NAME_NAME + moduleNameSuffix) != -1) ? OFISDBContract.ModuleEntry.COLUMN_NAME_NAME + moduleNameSuffix : OFISDBContract.ModuleEntry.COLUMN_NAME_NAME)));
                         childModuleDto.setSubmodule_name(moduleAssignments.getString(moduleAssignments.getColumnIndex((moduleAssignments.getColumnIndex("submodule_name" + moduleNameSuffix) != -1) ? "submodule_name" + moduleNameSuffix : "submodule_name")));
 
-//                        childModuleDto.setStatus_started(moduleAssignments.getString(moduleAssignments.getColumnIndex("status_started")));
-//                        childModuleDto.setStatus_finished(moduleAssignments.getString(moduleAssignments.getColumnIndex("status_finished")));
+                        childModuleDto.setStatus_started(moduleAssignments.getString(moduleAssignments.getColumnIndex("status_started")));
+                        childModuleDto.setStatus_finished(moduleAssignments.getString(moduleAssignments.getColumnIndex("status_finished")));
                         childModuleDto.setFarmer_module_id(moduleAssignments.getString(moduleAssignments.getColumnIndex("farmer_module_id")));
                         childModuleDto.setCurrent_submodule_id(moduleAssignments.getString(moduleAssignments.getColumnIndex("current_submodule_id")));
                         childModuleDto.setIsFarmSurvey(moduleAssignments.getString(moduleAssignments.getColumnIndex("isFarmSurvey")));
@@ -298,6 +298,7 @@ public class ViewPlotSurveyActivity extends BaseActivity {
                         childModuleDto.setDisabled_months(moduleAssignments.getString(moduleAssignments.getColumnIndex("disabled_months")));
                         childModuleDto.setRecurrence_frequency(moduleAssignments.getString(moduleAssignments.getColumnIndex("recurrence_frequency")));
                         childModuleDto.setRecurrence_type(moduleAssignments.getString(moduleAssignments.getColumnIndex("recurrence_type")));
+//                        childModuleDto.setPlot_id(moduleAssignments.getInt(moduleAssignments.getColumnIndex("plot_id")));
 
                         childModuleDto.setRecorded_lat(moduleAssignments.getString(moduleAssignments.getColumnIndex("recorded_lat")));
                         childModuleDto.setRecorded_lng(moduleAssignments.getString(moduleAssignments.getColumnIndex("recorded_lng")));
@@ -324,7 +325,9 @@ public class ViewPlotSurveyActivity extends BaseActivity {
         intent.putExtra(FARMER_ID, farmerID);
         intent.putExtra(MODULE_ID, Long.parseLong(childModuleDto.get_id()));
         try {
-            intent.putExtra(FARMER_MODULE_ID, Long.parseLong(childModuleDto.getFarmer_module_id()));
+            String farmerModuleId = dl.getFarmerModuleIdByPlotId(Long.parseLong(childModuleDto.get_id()),farmerID,plotDTO.getPlotId());
+            intent.putExtra(FARMER_MODULE_ID, Long.parseLong(farmerModuleId));
+//            intent.putExtra(FARMER_MODULE_ID, Long.parseLong(childModuleDto.getFarmer_module_id()));
         }catch (Exception e){}
 
         try {

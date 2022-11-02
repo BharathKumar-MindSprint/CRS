@@ -560,12 +560,15 @@ public class DataLayer {
 //        db.update(OFISDBContract.NetworkQueueEntry.TABLE_NAME, values, whereClause, whereArgs);
 //    }
 
-    public void updateNetworkQueueFarmerAndChildModuleEntry(ContentValues values, long farmerModuleId, String type) {
+    public void updateNetworkQueueFarmerAndChildModuleEntry(ContentValues values, long farmerModuleId, String type, int plotId) {
         try {
-            String whereClause = OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_MODULE_ID + " = ? AND " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE + " = ?";
+            String whereClause = OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_MODULE_ID + " = ? AND "
+                    + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE + " = ? AND"
+                    + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PLOT_ID + " = ?";
             String[] whereArgs = new String[]{
                     String.valueOf(farmerModuleId),
-                    type
+                    type,
+                    String.valueOf(plotId)
             };
             db.update(OFISDBContract.NetworkQueueEntry.TABLE_NAME, values, whereClause, whereArgs);
         }catch (Exception e){}
@@ -590,6 +593,21 @@ public class DataLayer {
             updated = db.update(OFISDBContract.NetworkQueueEntry.TABLE_NAME, values, whereClause, whereArgs);
         }catch (Exception e){}
         return updated;
+    }
+
+    public boolean isPlotSavedinNetworkLayer(long farmerId, int plotId, long farmerModuleId) {
+        String[] columns = new String[]{"*"};
+        String whereClause = OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID + " = ? AND "
+                +OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PLOT_ID + " = ? AND "
+                + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_MODULE_ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(farmerId), String.valueOf(plotId), String.valueOf(farmerModuleId)};
+
+        Cursor cursor = db.query(OFISDBContract.NetworkQueueEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+        boolean exists = (cursor.getCount() > 0);
+        cursor.close();
+
+
+        return exists;
     }
 
     public long insertNetworkQueueEntry(ContentValues values) {
@@ -3314,7 +3332,7 @@ public class DataLayer {
                             "(moduleassignment_type = 'Section' AND moduleassignment_id = ?) OR " +
                             "(moduleassignment_type = 'Programme' AND moduleassignment_id = ?) OR " +
                             "(moduleassignment_type = 'Product' AND moduleassignment_id = ?) OR " +
-                            "(moduleassignment_type = 'Partner' AND moduleassignment_id = ?))";
+                            "(moduleassignment_type = 'Partner' AND moduleassignment_id = ?)) GROUP BY modules.id";
                 }else {
                     modulesQuery = "SELECT modules.id as _id, modules.name, modules.name_fr, modules.name_es, modules.name_id, modules.name_pt, modules.name_tr, modules.name_lo, modules.name_vi, modules.name_th,modules.annual_survey, " +
                             "submodules.name as submodule_name, submodules.name_fr as submodule_name_fr, submodules.name_es as submodule_name_es, submodules.name_id as submodule_name_id, submodules.name_pt as submodule_name_pt, submodules.name_tr as submodule_name_tr, submodules.name_lo as submodule_name_lo, submodules.name_vi as submodule_name_vi, submodules.name_th as submodule_name_th, " +
@@ -3335,7 +3353,7 @@ public class DataLayer {
                             "(moduleassignment_type = 'Section' AND moduleassignment_id = ?) OR " +
                             "(moduleassignment_type = 'Programme' AND moduleassignment_id = ?) OR " +
                             "(moduleassignment_type = 'Product' AND moduleassignment_id = ?) OR " +
-                            "(moduleassignment_type = 'Partner' AND moduleassignment_id = ?))";
+                            "(moduleassignment_type = 'Partner' AND moduleassignment_id = ?)) GROUP BY modules.id";
                 }
                 String[] modulesQueryValues = new String[]{
                         farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)),
@@ -4174,7 +4192,7 @@ public class DataLayer {
     }
 
 
-    public long insertFarmerModule(long moduleId, long farmerId, String olamFarmerId, int farmId, int subModuleId, int statusStarted, String recordedLat, String recordedLng) {
+    public long insertFarmerModule(long moduleId, long farmerId, String olamFarmerId, int farmId, int subModuleId, int statusStarted, String recordedLat, String recordedLng, int plotId) {
         ContentValues farmerModuleValues = new ContentValues();
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         farmerModuleValues.put(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_MODULE_ID, moduleId);
@@ -4187,6 +4205,7 @@ public class DataLayer {
         farmerModuleValues.put(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_RECORDED_LAT, recordedLat);
         farmerModuleValues.put(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_RECORDED_LNG, recordedLng);
         farmerModuleValues.put(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_STARTED_DATE, timestamp.toString());
+        farmerModuleValues.put(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_PLOT_ID, plotId);
         long rowId=0;
         try {
             rowId=db.insert(OFISDBContract.FarmerModulesEntry.TABLE_NAME, null, farmerModuleValues);
@@ -4380,11 +4399,12 @@ public class DataLayer {
     }
 
 
-    public void updateFarmerModule(long farmerModuleId, int subModuleId, int statusStarted, int statusFinished) {
+    public void updateFarmerModule(long farmerModuleId, int subModuleId, int statusStarted, int statusFinished, int plotId) {
         ContentValues values = new ContentValues();
         values.put(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_CURRENT_SUBMODULE_ID, subModuleId);
         values.put(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_STATUS_STARTED, statusStarted);
         values.put(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_STATUS_FINISHED, statusFinished);
+        values.put(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_PLOT_ID, plotId);
 
         String whereClause = OFISDBContract.FarmerModulesEntry.COLUMN_NAME_ID + " = ?";
         String[] whereArgs = new String[]{String.valueOf(farmerModuleId)};
@@ -4999,7 +5019,7 @@ public class DataLayer {
 
     }
 
-    void syncFarmerModule(int farmerModuleId, long farmerId, int moduleId, String submissionDate,int farmId) {
+    void syncFarmerModule(int farmerModuleId, long farmerId, int moduleId, String submissionDate,int farmId, int plotId) {
         String whereClause = OFISDBContract.AnswerEntry.COLUMN_NAME_FARMER_MODULE_ID + " = ?";
         String[] whereArgs = new String[]{String.valueOf(farmerModuleId)};
 
@@ -5019,6 +5039,7 @@ public class DataLayer {
                 newModuleEntry.put("id", moduleId);
                 newModuleEntry.put("created_at", submissionDate);
                 newModuleEntry.put("farmId",farmId);
+                newModuleEntry.put("plotId",plotId);
                 JSONObject newModule = new JSONObject();
                 newModule.put("module", newModuleEntry);
 
@@ -7522,7 +7543,7 @@ public class DataLayer {
                                         String farmerIdStakeHolder = jsonArray.getJSONObject(j).get("farmerId").toString();
 
                                         //Check in NetworkTable
-                                        submitted = getModuledetailsInNetworkQueue1(cursorId, farmerIdStakeHolder,farmId);
+                                        submitted = getModuledetailsInNetworkQueue1(cursorId, farmerIdStakeHolder,farmId,0);
                                         if (submitted) {
                                             submittedInfo.setSubmitted(true);
                                             submittedInfo.setFarmerId(Long.valueOf(farmerIdStakeHolder));
@@ -7651,7 +7672,7 @@ public class DataLayer {
         return submittedInfo;
     }
 
-    public SubmittedInfo isAvailableinSubmittedModules2(ChildModuleDto moduleAssignments, int cursorId, long farmerId, String multifarmId) throws JSONException {
+    public SubmittedInfo isAvailableinSubmittedModules2(ChildModuleDto moduleAssignments, int cursorId, long farmerId, String multifarmId, int plotId) throws JSONException {
 
         String farmId=getMultifarmfarmId(farmerId);
         MultiFarmDTO multiFarmDTO=null;
@@ -7679,7 +7700,7 @@ public class DataLayer {
                     String farmerIdStakeHolder = jsonArray.getJSONObject(j).get("farmerId").toString();
 
                     //Check in NetworkTable
-                    submitted = getModuledetailsInNetworkQueue1(cursorId, farmerIdStakeHolder,farmId);
+                    submitted = getModuledetailsInNetworkQueue1(cursorId, farmerIdStakeHolder,farmId,plotId);
                     if (submitted) {
                         submittedInfo.setSubmitted(true);
                         submittedInfo.setFarmerId(Long.valueOf(farmerIdStakeHolder));
@@ -7808,12 +7829,14 @@ public class DataLayer {
         return submittedInfo;
     }
 
-    private boolean getModuledetailsInNetworkQueue(int currentId, String farmerIdStakeHolder,String farmId) {
+    public boolean getModuledetailsByPlotId(int currentId, long farmerId ,int plotId) {
 
         boolean available=false;
         String[] columns = new String[]{"*"};
-        String whereClause = OFISDBContract.FarmerModulesEntry.COLUMN_NAME_MODULE_ID + " = ? AND " + OFISDBContract.FarmerModulesEntry.COLUMN_NAME_FARMER_ID + " = ?";
-        String[] whereArgs = new String[]{String.valueOf(currentId), String.valueOf(farmerIdStakeHolder)};
+        String whereClause = OFISDBContract.FarmerModulesEntry.COLUMN_NAME_MODULE_ID + " = ? AND "
+                + OFISDBContract.FarmerModulesEntry.COLUMN_NAME_FARMER_ID + " = ? AND "
+                + OFISDBContract.FarmerModulesEntry.COLUMN_NAME_PLOT_ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(currentId), String.valueOf(farmerId),String.valueOf(plotId)};
         Cursor cursor=null;
         try {
             cursor = db.query(OFISDBContract.FarmerModulesEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
@@ -7830,15 +7853,70 @@ public class DataLayer {
 
     }
 
-    private boolean getModuledetailsInNetworkQueue1(int currentId, String farmerIdStakeHolder,String farmId) {
+    public String getFarmerModuleIdByPlotId(long currentId, long farmerId ,int plotId) {
+
+        String farmer_module_id = "0";
+        String[] columns = new String[]{"*"};
+        String whereClause = OFISDBContract.FarmerModulesEntry.COLUMN_NAME_MODULE_ID + " = ? AND "
+                + OFISDBContract.FarmerModulesEntry.COLUMN_NAME_FARMER_ID + " = ? AND "
+                + OFISDBContract.FarmerModulesEntry.COLUMN_NAME_PLOT_ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(currentId), String.valueOf(farmerId),String.valueOf(plotId)};
+        Cursor cursor=null;
+        try {
+            cursor = db.query(OFISDBContract.FarmerModulesEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+            if(cursor!=null){
+                if(cursor.getCount()>0){
+                    while (cursor.moveToNext()) {
+                        farmer_module_id = cursor.getString(cursor.getColumnIndex(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_ID));
+                    }
+                }
+            }
+        }catch (Exception e){
+            FirebaseCrashlytics.getInstance().log(e.getMessage());
+        }
+
+        return farmer_module_id;
+
+    }
+
+    public ChildModuleDto getFarmerModuleDetailsByPlotId(long currentId, long farmerId ,int plotId) {
+        ChildModuleDto moduleDto = null;
+        String farmer_module_id = "0";
+        String[] columns = new String[]{"*"};
+        String whereClause = OFISDBContract.FarmerModulesEntry.COLUMN_NAME_MODULE_ID + " = ? AND "
+                + OFISDBContract.FarmerModulesEntry.COLUMN_NAME_FARMER_ID + " = ? AND "
+                + OFISDBContract.FarmerModulesEntry.COLUMN_NAME_PLOT_ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(currentId), String.valueOf(farmerId),String.valueOf(plotId)};
+        Cursor cursor=null;
+        try {
+            cursor = db.query(OFISDBContract.FarmerModulesEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+            if(cursor!=null){
+                if(cursor.getCount()>0){
+                    while (cursor.moveToNext()) {
+                        moduleDto = new ChildModuleDto();
+                        moduleDto.setStatus_started(cursor.getString(cursor.getColumnIndex(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_STATUS_STARTED)));
+                        moduleDto.setStatus_finished(cursor.getString(cursor.getColumnIndex(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_STATUS_FINISHED)));
+                    }
+                }
+            }
+        }catch (Exception e){
+            FirebaseCrashlytics.getInstance().log(e.getMessage());
+        }
+
+        return moduleDto;
+
+    }
+
+    private boolean getModuledetailsInNetworkQueue1(int currentId, String farmerIdStakeHolder,String farmId, int plotId) {
 
         boolean available=false;
         String[] columns = new String[]{"*"};
         String whereClause =
                 OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_MODULE_ID + " = ? AND " +
                         OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID + " = ? AND " +
-                OFISDBContract.FarmerModulesEntry.COLUMN_NAME_FARMER_ID + " = ?";
-        String[] whereArgs = new String[]{String.valueOf(currentId),farmId, String.valueOf(farmerIdStakeHolder)};
+                        OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID + " = ? AND " +
+                OFISDBContract.FarmerModulesEntry.COLUMN_NAME_PLOT_ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(currentId),farmId, String.valueOf(farmerIdStakeHolder),String.valueOf(plotId)};
         Cursor cursor=null;
         try {
             cursor = db.query(OFISDBContract.NetworkQueueEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
@@ -8256,7 +8334,7 @@ public class DataLayer {
         return  available;
     }
 
-    public boolean isSurveyAttendedByOther(String multiFarmId,long farmerId,int cursorId) {
+    public boolean isSurveyAttendedByOther(String multiFarmId,long farmerId,int cursorId, int plotId) {
 
         Cursor cursor=db.rawQuery("select * from farmers where submitted_modules like "+"'%"+multiFarmId+"%'",null);
         String farmId=getMultifarmfarmId(farmerId);
@@ -8293,7 +8371,20 @@ public class DataLayer {
                             JSONObject submittedModule = submittedModulesArray.getJSONObject(i);
                             JSONObject submittedModuleDetails = submittedModule.getJSONObject("module");
                             if (submittedModuleDetails.has("id") && submittedModuleDetails.getInt("id") == cursorId) {
-                                return true;
+                                if(plotId != 0) {
+                                    if (submittedModuleDetails.has("plotId")) {
+                                        try {
+                                            int plot_id = submittedModuleDetails.getInt("plotId");
+                                            if (plot_id == plotId) {
+                                                return true;
+                                            }
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                }else {
+                                    return true;
+                                }
                             }
                         }
                     }
