@@ -17,41 +17,50 @@
 
     <!-- Custom error message section -->
     <LinearLayout
-        android:id="@+id/layout_notification"
-        android:orientation="horizontal"
+        android:id="@+id/layout_notification1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:weightSum="1"
-        android:visibility="gone"
-        android:background="@color/color_secondary_3"
-        android:padding="@dimen/activity_horizontal_margin"
         android:layout_below="@+id/topSectionBackground"
-        android:baselineAligned="false">
-        <ImageView
-            android:id="@+id/info_status_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:src="@drawable/ic_info_icon_oga"
-            android:layout_weight="0.1"/>
+        android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/info_text"
-            android:layout_height="wrap_content"
+        <LinearLayout
+            android:id="@+id/layout_notification"
             android:layout_width="match_parent"
-            android:paddingLeft="@dimen/margin_10"
-            android:paddingRight="@dimen/margin_10"
-            android:layout_marginTop="3dp"
-            android:layout_marginBottom="3dp"
-            android:layout_weight="0.8"
-            android:text="@string/national_id_info"
-            android:textColor="@color/info_icon_msg_text" />
-        <ImageView
-            android:id="@+id/info_close_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:src="@drawable/ic_cross_oga"
-            android:layout_weight="0.1"/>
-    </LinearLayout>
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/topSectionBackground"
+            android:background="@color/color_secondary_3"
+            android:baselineAligned="false"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            android:padding="@dimen/activity_horizontal_margin"
+            android:weightSum="1">
+
+            <ImageView
+                android:id="@+id/info_status_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="0.1"
+                android:src="@drawable/ic_info_icon_oga" />
+
+            <TextView
+                android:id="@+id/info_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:layout_marginBottom="3dp"
+                android:layout_weight="0.8"
+                android:paddingLeft="@dimen/margin_10"
+                android:paddingRight="@dimen/margin_10"
+                android:text="@string/national_id_info"
+                android:textColor="@color/info_icon_msg_text" />
+
+            <ImageView
+                android:id="@+id/info_close_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="0.1"
+                android:src="@drawable/ic_cross_oga" />
+        </LinearLayout>
 
     <LinearLayout
         android:id="@+id/plot_layout_notification"
@@ -59,16 +68,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:weightSum="1"
-        android:visibility="gone"
-        android:background="@color/lightblue"
+        android:background="@color/color_secondary_3"
         android:padding="@dimen/activity_horizontal_margin"
+        android:layout_marginTop="1dp"
+        android:visibility="gone"
         android:layout_below="@+id/topSectionBackground"
         android:baselineAligned="false">
         <ImageView
             android:id="@+id/plot_info_status_icon"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:src="@drawable/ic_info_icon"
+            android:src="@drawable/ic_info_icon_oga"
             android:layout_weight="0.1"/>
 
         <TextView
@@ -86,8 +96,9 @@
             android:id="@+id/plot_info_close_btn"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:src="@drawable/ic_close_info"
+            android:src="@drawable/ic_info_icon_oga"
             android:layout_weight="0.1"/>
+    </LinearLayout>
     </LinearLayout>
 
     <!-- bottom section -->
@@ -95,7 +106,7 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/layout_notification"
+        android:layout_below="@+id/layout_notification1"
         android:baselineAligned="false">
 
         <LinearLayout

@@ -7,6 +7,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 
@@ -180,24 +181,27 @@ public class ViewPlotSurveyActivity extends BaseActivity {
                     ).show();*/
 //                    TextView txtView=view.findViewById(R.id.moduleListModuleName);
 //                    moduleName=txtView.getText().toString();
-                    PlotDTO plotDTO = expandableListTitle.get(groupPosition);
-                    ChildModuleDto childModuleDto = expandableListDetail.get(
-                            expandableListTitle.get(groupPosition)).get(
-                            childPosition);
-                    moduleName=childModuleDto.getName();
-                    Bundle bundle=new Bundle();
-                    bundle.putString(ChildLabourUtils.CHILD_FARMER_ID,String.valueOf(farmerID));
-                    bundle.putSerializable("childModule", childModuleDto);
-                    bundle.putSerializable("farmerDTO", farmerDTO);
+                    TextView enabled = (TextView) v.findViewById(R.id.moduleListEnabled);
+                    if (enabled.getText().toString().equalsIgnoreCase("true")) {
+                        PlotDTO plotDTO = expandableListTitle.get(groupPosition);
+                        ChildModuleDto childModuleDto = expandableListDetail.get(
+                                expandableListTitle.get(groupPosition)).get(
+                                childPosition);
+                        moduleName = childModuleDto.getName();
+                        Bundle bundle = new Bundle();
+                        bundle.putString(ChildLabourUtils.CHILD_FARMER_ID, String.valueOf(farmerID));
+                        bundle.putSerializable("childModule", childModuleDto);
+                        bundle.putSerializable("farmerDTO", farmerDTO);
 
-                    Intent intent=new Intent(ViewPlotSurveyActivity.this, CompleteModuleActivity.class);
-                    intent.putExtras(bundle);
-                    setRequiredData(intent,childModuleDto,plotDTO);
-                    // show the list of surveys
-                    if (DynamicQuestions.getInstance() != null) {
-                        DynamicQuestions.clearInstance();
+                        Intent intent = new Intent(ViewPlotSurveyActivity.this, CompleteModuleActivity.class);
+                        intent.putExtras(bundle);
+                        setRequiredData(intent, childModuleDto, plotDTO);
+                        // show the list of surveys
+                        if (DynamicQuestions.getInstance() != null) {
+                            DynamicQuestions.clearInstance();
+                        }
+                        startActivity(intent);
                     }
-                    startActivity(intent);
                     return false;
                 }
             });

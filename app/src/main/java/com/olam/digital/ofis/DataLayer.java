@@ -3510,6 +3510,18 @@ public class DataLayer {
 
     }
 
+    public void updateSyncedStatusPlot(long farmerid, long updatedFarmerId) {
+        try {
+            ContentValues values = new ContentValues();
+            values.put(OFISDBContract.PlotEntry.COLUMN_NAME_FARMER_ID, updatedFarmerId);
+            String whereClause = OFISDBContract.PlotEntry.COLUMN_NAME_FARMER_ID + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(farmerid)};
+            db.update(OFISDBContract.PlotEntry.TABLE_NAME, values, whereClause, whereArgs);
+        } catch (Exception e) {
+        }
+
+    }
+
 
     public void updateModerationStatus(long farmerid, boolean moderationstatus) {
         ContentValues values = new ContentValues();
