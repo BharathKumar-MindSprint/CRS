@@ -42,6 +42,15 @@ public class ChildModuleDto implements Serializable {
     private String isFarmSurvey;
     private String view_module;
     private String fkFarmerRoleId;
+    private int plot_id;
+
+    public int getPlot_id() {
+        return plot_id;
+    }
+
+    public void setPlot_id(int plot_id) {
+        this.plot_id = plot_id;
+    }
 
     public String getFkFarmerRoleId() {
         return fkFarmerRoleId;
