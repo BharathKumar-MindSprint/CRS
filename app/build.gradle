@@ -37,8 +37,8 @@ android {
         targetSdkVersion 29
         multiDexEnabled true
 
-        versionCode 286
-        versionName "11.1.0"
+        versionCode 291
+        versionName "11.1.5"
 
 
     }
@@ -442,9 +442,9 @@ dependencies {
         // Optional - Mock the JSON Object. Because jsonobject will come under instrumentation test.
         testImplementation 'org.json:json:20140107'
 
-        implementation('com.github.danysantiago:sendgrid-android:1') {
+       /* implementation('com.github.danysantiago:sendgrid-android:1') {
             exclude group: 'org.apache.httpcomponents', module: 'httpclient'
-        }
+        }*/
         implementation "com.github.tarek360:instacapture:2.0.1"
         implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
         implementation 'com.github.bumptech.glide:glide:4.8.0'
