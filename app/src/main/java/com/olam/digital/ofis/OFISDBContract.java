@@ -924,6 +924,7 @@ public class OFISDBContract {
         public static final String TABLE_NAME = "plotgeodata";
         public static final String COLUMN_NAME_PLOT_ID = "plot_id";
         public static final String COLUMN_NAME_PLOT_NAME = "plot_name";
+        public static final String COLUMN_NAME_ENTEREDPLOT_NAME = "enteredPlotName";
         public static final String COLUMN_NAME_FARM_ID = "farm_id";
         public static final String COLUMN_NAME_SERVER_ID = "server_id";
         public static final String COLUMN_NAME_PLOT_JSON = "plotjson";

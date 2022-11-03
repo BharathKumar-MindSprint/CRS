@@ -102,16 +102,11 @@ public class CustomExpandableListAdapter extends BaseExpandableListAdapter {
         boolean submitted = false;
 //        expandedListTextView.setText(expandedListText);
         moduleTitle.setText(childModuleDto.getName());
-        textView.setText("New Task");
+        textView.setText(res.getString(R.string.ModuleStatus));
         int currentId = Integer.parseInt(childModuleDto.get_id());
-        System.out.println("CURRENTID_:EL" +currentId);
         int status_started = 0;
         int status_finished = 0;
         try {
-            if(currentId == 164) {
-                System.out.println("CURRENTID_EL:COLUMN_NAME_STATUS_STARTED" +  childModuleDto.getStatus_started());
-                System.out.println("CURRENTID_EL:COLUMN_NAME_STATUS_STARTED" +  childModuleDto.getStatus_finished());
-            }
             PlotDTO plotDTO = expandableListTitle.get(listPosition);
             ChildModuleDto moduleDto = dl.getFarmerModuleDetailsByPlotId(Long.parseLong(childModuleDto.get_id()),farmerId,plotDTO.getPlotId());
 //            String statusStarted = childModuleDto.getStatus_started();
@@ -164,23 +159,12 @@ public class CustomExpandableListAdapter extends BaseExpandableListAdapter {
 
             String disabled_months_string = childModuleDto.getDisabled_months();
             List<String> disabled_months = Arrays.asList(disabled_months_string.split("\\s*,\\s*"));
-            if(currentId == 164) {
-                System.out.println("CURRENTID_EL:disabled_months_string" +  disabled_months_string);
-                System.out.println("CURRENTID_EL:disabled_months" + disabled_months.size());
-            }
-            if(currentId == 164) {
-                System.out.println("CURRENTID_EL:hasSubmittedModules" +  hasSubmittedModules);
-            }
             if (hasSubmittedModules) {
                 try {
                     int recurrence_frequency = Integer.parseInt(childModuleDto.getRecurrence_frequency());
                     String recurrence_type = childModuleDto.getRecurrence_type();
                     Calendar calculationDate = (Calendar) currentDate.clone();
                     boolean disable_entry = false;
-                    if(currentId == 164) {
-                        System.out.println("CURRENTID_EL:recurrence_frequency" +  recurrence_frequency);
-                        System.out.println("CURRENTID_EL:recurrence_type" +  recurrence_type);
-                    }
                     for (int i = 0; i < submittedModulesArray.length(); i++) {
                         JSONObject submittedModule = submittedModulesArray.getJSONObject(i);
                         JSONObject submittedModuleDetails = submittedModule.getJSONObject("module");
@@ -191,12 +175,7 @@ public class CustomExpandableListAdapter extends BaseExpandableListAdapter {
                         if (submittedModuleDetails.has("id") &&
                                 submittedModuleDetails.getInt("id") == currentId &&
                                 submittedModuleDetails.getInt("plotId") == plotId ) {
-                        if(currentId == 164) {
-                            try {
-                                System.out.println("CURRENTID_EL:plotId" + plotId);
-                            }catch (Exception e){}
-                        }
-                            if (recurrence_frequency > 0 && !disabled_months.contains(String.valueOf(currentDate.get(Calendar.MONTH)))) {
+                       if (recurrence_frequency > 0 && !disabled_months.contains(String.valueOf(currentDate.get(Calendar.MONTH)))) {
                                 // for recurring
                                 try {
                                     // get last submitted date
@@ -272,9 +251,7 @@ public class CustomExpandableListAdapter extends BaseExpandableListAdapter {
                     e.printStackTrace();
                 }
             }
-            if(currentId == 164) {
-                        System.out.println("CURRENTID_EL:submitted" +  submitted);
-            }
+
             if (!submitted) {
                 enabledItem.setText("true");
                 linearLayout.setBackgroundResource(R.drawable.list_item);

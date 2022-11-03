@@ -217,11 +217,12 @@ public class DataLayer {
      * @param plotName    plot name (Ex: plot1_farmid, plot2_farmid)
      * @param plotGeoData plot geo data json
      */
-    public void updatePlotGeoData(String farmerId, String plotName, String plotGeoData) {
+    public void updatePlotGeoData(String farmerId, String plotName, String plotGeoData, String enteredPlotName) {
 
         ContentValues plotGeoValues = new ContentValues();
         plotGeoValues.put(OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_NAME, plotName);
         plotGeoValues.put(OFISDBContract.PlotGeoData.COLUMN_NAME_FARM_ID, farmerId);
+        plotGeoValues.put(OFISDBContract.PlotGeoData.COLUMN_NAME_ENTEREDPLOT_NAME, enteredPlotName);
 
         //temp. added server_id to avoid null, later will update server_id with web-services response actual value (at sync with server)
         if (!plotGeoValues.containsKey(OFISDBContract.PlotGeoData.COLUMN_NAME_SERVER_ID)) {
@@ -280,6 +281,16 @@ public class DataLayer {
         String whereClause = OFISDBContract.PlotEntry.COLUMN_NAME_FARMER_ID + " = ? AND "
                 + OFISDBContract.PlotEntry.COLUMN_IS_SYNCED + " = ? ";
         String[] whereArgs = new String[]{String.valueOf(id),"0"};
+        Cursor data = db.query(OFISDBContract.PlotEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+        return data.getCount();
+
+    }
+
+    public int fetchSyncedPlotCountByFarmerID(String id) {
+        String[] columns = new String[]{"*"};
+        String whereClause = OFISDBContract.PlotEntry.COLUMN_NAME_FARMER_ID + " = ? AND "
+                + OFISDBContract.PlotEntry.COLUMN_IS_SYNCED + " = ? ";
+        String[] whereArgs = new String[]{String.valueOf(id),"1"};
         Cursor data = db.query(OFISDBContract.PlotEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
         return data.getCount();
 
@@ -3505,6 +3516,18 @@ public class DataLayer {
             String whereClause = OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID + " = ?";
             String[] whereArgs = new String[]{String.valueOf(farmerid)};
             db.update(OFISDBContract.FarmerNationalIDs.TABLE_NAME, values, whereClause, whereArgs);
+        } catch (Exception e) {
+        }
+
+    }
+
+    public void updateSyncedStatusPlot(long farmerid, long updatedFarmerId) {
+        try {
+            ContentValues values = new ContentValues();
+            values.put(OFISDBContract.PlotEntry.COLUMN_NAME_FARMER_ID, updatedFarmerId);
+            String whereClause = OFISDBContract.PlotEntry.COLUMN_NAME_FARMER_ID + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(farmerid)};
+            db.update(OFISDBContract.PlotEntry.TABLE_NAME, values, whereClause, whereArgs);
         } catch (Exception e) {
         }
 

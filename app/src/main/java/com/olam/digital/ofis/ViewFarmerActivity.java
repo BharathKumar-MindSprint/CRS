@@ -256,7 +256,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         pd = new ProgressDialog(context);
 
         //farmerId = SharedPreferenceUtils.getInstance(getApplicationContext()).getFarmerID();
-
+        initiaizeInfoWidget();
         setupGPS();
         setupUI();
         setupPhoneNumberDialog();
@@ -278,7 +278,6 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         //      }
 
         // Show popup OW-2909
-        initiaizeInfoWidget();
         infoCloseImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -311,14 +310,6 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 statusInfoLayout.setVisibility(View.GONE);
             }
         }
-        int pendingSync = dl.fetchPlotCountByFarmerID(String.valueOf(farmerId));
-        int totalCount = dl.fetchPlotTotalCount(String.valueOf(farmerId));
-        if (totalCount > 0 && pendingSync == 0) {
-             plotStatusInfoLayout.setVisibility(View.VISIBLE);
-        } else {
-             plotStatusInfoLayout.setVisibility(View.GONE);
-        }
-
     }
 
 
@@ -504,7 +495,13 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 submittedModules = (!submittedModulesJSON.equals("null")) ? new JSONObject(submittedModulesJSON) : new JSONObject();
                 String moduleNameSuffix = Utilities.getLocaleSuffix(res);
                 Cursor moduleAssignments = getFarmerModules(farmerId, this,farmSurvey);
-
+                boolean isAtLeastOnePlotSurveyCaptured = validateBySubmittedModule(submittedModules);
+                boolean isPlotSurveyPending = checkPendingPlotSurvey(submittedModules);
+                if (isPlotSurveyPending) {
+                    plotStatusInfoLayout.setVisibility(View.VISIBLE);
+                } else {
+                    plotStatusInfoLayout.setVisibility(View.GONE);
+                }
                 if (moduleAssignments != null && moduleAssignments.getCount() > 0) {
                     String[] adapterCols = new String[]{
                             (moduleAssignments.getColumnIndex(OFISDBContract.ModuleEntry.COLUMN_NAME_NAME + moduleNameSuffix) != -1) ? OFISDBContract.ModuleEntry.COLUMN_NAME_NAME + moduleNameSuffix : OFISDBContract.ModuleEntry.COLUMN_NAME_NAME,
@@ -519,7 +516,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                     int[] adapterRowViews = new int[]{R.id.moduleListModuleName, R.id.moduleListCurrentSubModuleId, R.id.moduleListStatusStarted, R.id.moduleListStatusFinished, R.id.moduleListFarmerModuleId, R.id.moduleListRecordedLat, R.id.moduleListRecordedLng, R.id.viewModuleAnswers};
 
                     customListAdapter_modulesAdapter =
-                            new CustomListAdapter_Modules(context, moduleAssignments, adapterCols, adapterRowViews, res, farmer, submittedModules, roleId, farmerId,multiFarmId);
+                            new CustomListAdapter_Modules(context, moduleAssignments, adapterCols, adapterRowViews, res, farmer, submittedModules, roleId, farmerId,multiFarmId, isAtLeastOnePlotSurveyCaptured);
 
                      // customListAdapter_modulesAdapter.setValues(roleId,ispolygonCaptured,isLocationCaptured,isAvailableInStakeHolderList,farmSubmittedHashMapList);
                     listView.setAdapter(customListAdapter_modulesAdapter);
@@ -578,6 +575,70 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         });
 
 
+    }
+
+    private boolean validateBySubmittedModule(JSONObject submittedModules) {
+        boolean valid = false;
+        try {
+            int totalCount = dl.fetchPlotTotalCount(String.valueOf(farmerId));
+            if(totalCount > 0) {
+                JSONArray submittedModulesArray = submittedModules.getJSONArray("modules");
+                for (int i = 0; i < submittedModulesArray.length(); i++) {
+                    JSONObject submittedModule = submittedModulesArray.getJSONObject(i);
+                    JSONObject submittedModuleDetails = submittedModule.getJSONObject("module");
+                    if (submittedModuleDetails.has("plotId") && submittedModuleDetails.getString("plotId") != "null") {
+                        valid = true;
+                    }
+                }
+            }else {
+                valid = true;
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return valid;
+    }
+
+    private boolean checkPendingPlotSurvey(JSONObject submittedModules) {
+        boolean valid = false;
+        try {
+            Cursor moduleAssignments = dl.getFarmerModules(farmerId,farmSurvey);
+            int moduleCount = moduleAssignments.getCount();
+            int plotCount = dl.fetchPlotTotalCount(String.valueOf(farmerId));
+            int expectedSurveySubmission = moduleCount * plotCount;
+            int actualSurveySubmission = 0;
+            while(moduleAssignments.moveToNext()) {
+                int moduleId = moduleAssignments.getInt(moduleAssignments.getColumnIndex("_id"));
+                if (expectedSurveySubmission > 0) {
+                    if(submittedModules.length() > 0) {
+                        JSONArray submittedModulesArray = submittedModules.getJSONArray("modules");
+                        if (submittedModulesArray.length() > 0) {
+                            for (int i = 0; i < submittedModulesArray.length(); i++) {
+                                JSONObject submittedModule = submittedModulesArray.getJSONObject(i);
+                                JSONObject submittedModuleDetails = submittedModule.getJSONObject("module");
+                                if (submittedModuleDetails.has("plotId") && submittedModuleDetails.getString("plotId") != "null") {
+                                    if (submittedModuleDetails.has("id") && submittedModuleDetails.getInt("id") == moduleId) {
+                                        actualSurveySubmission++;
+                                    }
+                                }
+                            }
+                        }
+                    }else{
+                        valid = true;
+                        break;
+                    }
+                    if (expectedSurveySubmission > actualSurveySubmission) {
+                        valid = true;
+                    } else {
+                        valid = false;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            valid = true;
+            e.printStackTrace();
+        }
+        return valid;
     }
 
     @SuppressLint("SetTextI18n")
@@ -1017,9 +1078,8 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                /* int pendingSync = dl.fetchPlotCountByFarmerID(String.valueOf(farmerId));
                 int totalCount = dl.fetchPlotTotalCount(String.valueOf(farmerId));
                 */
-                int farmSurveyCount = dl.isPlotSurveyModuleAvailable(farmerId,true);
-                int farmerSurveyCount = dl.isPlotSurveyModuleAvailable(farmerId,false);
-                if (farmSurveyCount > 0 || farmerSurveyCount > 0) {
+                int farmPlotCount = dl.fetchSyncedPlotCountByFarmerID(String.valueOf(farmerId));
+                if (farmPlotCount > 0) {
                     mc.addRow(new String[]{"0", res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), "0", "", "", "", res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), "", "", "", "", "", "", "", "", "", "PlotSurvey"});
                 }
                 Cursor fmp = dl.getFmpByFarmerId(id);
@@ -1283,27 +1343,6 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 });
     }
 
-    String getPlotsJsonFromLocationBeanList(List<LocationBeanList> aLocationBeanList) {
-        PlotsList lPlotList = new PlotsList();
-        List<location> lplotsList = new ArrayList<>();
-        List<plots> lposition_dataList = new ArrayList<>();
-        location lplots = new location();
-        for (int i = 0; i < aLocationBeanList.size(); i++) {
-            List<plot> lplotList = new ArrayList<>();
-            plots lposition_data = new plots();
-            for (plot bean : aLocationBeanList.get(i).getLocationBean()) {
-                lplotList.add(bean);
-            }
-            lposition_data.setPlot(lplotList);
-            lposition_dataList.add(lposition_data);
-        }
-        lplots.setPlots(lposition_dataList);
-        lplotsList.add(lplots);
-        lPlotList.setLocation(lplotsList);
-        String json = lPlotList == null ? null : new Gson().toJson(lPlotList);
-        return json;
-    }
-
     private void enableFarmPolygon(final View v) {
         pd = new ProgressDialog(ViewFarmerActivity.this);
         pd.setCancelable(false);
@@ -1534,6 +1573,10 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
             public void onClick(View v) {
                 LinearLayout numberrow = (LinearLayout) v.getParent();
                 ((ViewGroup) numberrow.getParent()).removeView(numberrow);
+                String farmerID = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID));
+                ArrayList<String> plotNames = getAllPlotValues();
+                dl.insertNewPlot(farmerID,plotNames);
+                loadPlotLayout();
             }
         });
     }
