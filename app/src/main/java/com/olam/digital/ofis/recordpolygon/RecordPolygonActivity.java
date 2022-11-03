@@ -1457,7 +1457,8 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                 String plotGeoJson = SharedPreferenceUtils.getInstance(getApplicationContext()).setLocationBeanList(currentTrackname, lLocationBeanList);
 
                 String plotId = currentTrackname.toLowerCase().replace(" ", "").toString().concat("_" + mOlamFarmerId);
-                savePlotGeoDataJsonToDatabase(plotGeoJson, plotId);
+                String plotName = txtPlotName.getText().toString();
+                savePlotGeoDataJsonToDatabase(plotGeoJson, plotId, plotName);
                 JSONObject jObj=new JSONObject();
                 try {
                     String encodedPlotsJson = Base64.encodeToString(plotGeoJson.getBytes(), Base64.NO_WRAP);
@@ -1519,13 +1520,13 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
      * @param plotGeoJson plot geo data json
      * @param plotName    plot name is unique name for identifying plot
      */
-    void savePlotGeoDataJsonToDatabase(String plotGeoJson, String plotName) {
+    void savePlotGeoDataJsonToDatabase(String plotGeoJson, String plotName, String enteredPlotName) {
         DataLayer dl = new DataLayer(getResources(), RecordPolygonActivity.this);
         if (plotGeoJson != null) {
             //plotGeoJson = Base64.encodeToString(plotGeoJson.getBytes(), Base64.NO_WRAP);
 
             if (plotName != null && plotGeoJson != null) {
-                dl.updatePlotGeoData(mOlamFarmerId, plotName, plotGeoJson);
+                dl.updatePlotGeoData(mOlamFarmerId, plotName, plotGeoJson,enteredPlotName);
             }
         }
     }
@@ -1559,8 +1560,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                 if (farmId.equalsIgnoreCase(mOlamFarmerId) && syncFlag.equals("false")) {
                     JSONObject plotsObj = new JSONObject(c.getString(c.getColumnIndex(OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_JSON)));
                     plotsObj.putOpt("plotid", c.getString(c.getColumnIndex(OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_NAME)));
-//                    String name = loadPlotName(currentLoggingTrackSpinnerPosition);
-                    plotsObj.putOpt("plot_name", txtPlotName.getText().toString());
+                    plotsObj.putOpt("plot_name", c.getString(c.getColumnIndex(OFISDBContract.PlotGeoData.COLUMN_NAME_ENTEREDPLOT_NAME)));
                     plotsArray.put(plotsObj);
                 }
 

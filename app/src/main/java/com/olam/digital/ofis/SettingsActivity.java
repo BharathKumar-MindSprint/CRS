@@ -38,19 +38,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.olam.digital.ofis.authentication.AccessTokenTask;
-import com.olam.digital.ofis.authentication.DeviceIDxctractor;
 import com.olam.digital.ofis.authentication.OnAccessTokenInterface;
 import com.olam.digital.ofis.authentication.model.AuthRequestDTO;
 import com.olam.digital.ofis.matoma.MatomoHelper;
 import com.olam.digital.ofis.matoma.ScreenNameConstants;
 import com.olam.digital.ofis.model.CountriesDTO;
 
-import org.apache.commons.io.FileUtils;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 
 public class SettingsActivity extends AppCompatActivity implements OnAccessTokenInterface {
