@@ -1740,7 +1740,8 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
     }*/
 
     public void showEditPlotsDialog(View v) {
-        DataLayer dl = new DataLayer(getResources(), RecordPolygonActivity.this);
+//        if(! mIsLoggingStarted) {
+            DataLayer dl = new DataLayer(getResources(), RecordPolygonActivity.this);
 
             AlertDialog.Builder builder = new AlertDialog.Builder(RecordPolygonActivity.this);
             builder.setCancelable(false);
@@ -1759,7 +1760,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
             Button btnYes = (Button) dialogView.findViewById(R.id.btn_yes);
             AlertDialog alert = builder.create();
             alert.show();
-            alert.getWindow().clearFlags( WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE |WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
+            alert.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
             alert.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
             loadPlotLayout(inflater);
 
@@ -1796,7 +1797,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                 public void onClick(View view) {
 //                    String lPlotCountString = edTxtNumberOfPlots.getText().toString();
                     ArrayList<String> plotNames = getAllPlotValues();
-                    dl.insertNewPlot(String.valueOf(mFarmerId),plotNames);
+                    dl.insertNewPlot(String.valueOf(mFarmerId), plotNames);
                     /*String lPlotCountString = "1";
                     int lPlotCount = 0;
                     if (!TextUtils.isEmpty(lPlotCountString)) {
@@ -1822,7 +1823,9 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                 }
             });
 
-
+//        }else{
+//            showToastMessage("Logging in progess! You can't edit plot data");
+//        }
     }
 
     public String loadPlotName(int position){
@@ -1861,12 +1864,12 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                 if(! name.equalsIgnoreCase("null")){
                     plotName.setText(name);
                 }
-                if(i == 1){
+                int count = getTotalLoggedPlotCount() + 1;
+                if(i == 1 || i == count){
                     plotDelete.setVisibility(View.INVISIBLE);
                 }else{
                     plotDelete.setVisibility(View.VISIBLE);
                 }
-
                 plotName.setFocusableInTouchMode(true);
                 bindPlotDelete(plotDelete);
 
@@ -1888,6 +1891,11 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
             public void onClick(View v) {
                 LinearLayout numberrow = (LinearLayout) v.getParent();
                 ((ViewGroup) numberrow.getParent()).removeView(numberrow);
+                DataLayer dl = new DataLayer(getResources(), RecordPolygonActivity.this);
+                ArrayList<String> plotNames = getAllPlotValues();
+                dl.insertNewPlot(String.valueOf(mFarmerId),plotNames);
+                LayoutInflater inflater = getLayoutInflater();
+                loadPlotLayout(inflater);
             }
         });
     }
