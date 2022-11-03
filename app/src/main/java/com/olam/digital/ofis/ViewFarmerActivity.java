@@ -610,15 +610,22 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
             while(moduleAssignments.moveToNext()) {
                 int moduleId = moduleAssignments.getInt(moduleAssignments.getColumnIndex("_id"));
                 if (expectedSurveySubmission > 0) {
-                    JSONArray submittedModulesArray = submittedModules.getJSONArray("modules");
-                    for (int i = 0; i < submittedModulesArray.length(); i++) {
-                        JSONObject submittedModule = submittedModulesArray.getJSONObject(i);
-                        JSONObject submittedModuleDetails = submittedModule.getJSONObject("module");
-                        if (submittedModuleDetails.has("plotId") && submittedModuleDetails.getString("plotId") != "null") {
-                            if (submittedModuleDetails.has("id") && submittedModuleDetails.getInt("id") == moduleId) {
-                            actualSurveySubmission++;
+                    if(submittedModules.length() > 0) {
+                        JSONArray submittedModulesArray = submittedModules.getJSONArray("modules");
+                        if (submittedModulesArray.length() > 0) {
+                            for (int i = 0; i < submittedModulesArray.length(); i++) {
+                                JSONObject submittedModule = submittedModulesArray.getJSONObject(i);
+                                JSONObject submittedModuleDetails = submittedModule.getJSONObject("module");
+                                if (submittedModuleDetails.has("plotId") && submittedModuleDetails.getString("plotId") != "null") {
+                                    if (submittedModuleDetails.has("id") && submittedModuleDetails.getInt("id") == moduleId) {
+                                        actualSurveySubmission++;
+                                    }
+                                }
                             }
                         }
+                    }else{
+                        valid = true;
+                        break;
                     }
                     if (expectedSurveySubmission > actualSurveySubmission) {
                         valid = true;
@@ -628,6 +635,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 }
             }
         } catch (Exception e) {
+            valid = true;
             e.printStackTrace();
         }
         return valid;
@@ -1070,7 +1078,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                /* int pendingSync = dl.fetchPlotCountByFarmerID(String.valueOf(farmerId));
                 int totalCount = dl.fetchPlotTotalCount(String.valueOf(farmerId));
                 */
-                int farmPlotCount = dl.fetchPlotTotalCount(String.valueOf(farmerId));
+                int farmPlotCount = dl.fetchSyncedPlotCountByFarmerID(String.valueOf(farmerId));
                 if (farmPlotCount > 0) {
                     mc.addRow(new String[]{"0", res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), "0", "", "", "", res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), "", "", "", "", "", "", "", "", "", "PlotSurvey"});
                 }
@@ -1335,27 +1343,6 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 });
     }
 
-    String getPlotsJsonFromLocationBeanList(List<LocationBeanList> aLocationBeanList) {
-        PlotsList lPlotList = new PlotsList();
-        List<location> lplotsList = new ArrayList<>();
-        List<plots> lposition_dataList = new ArrayList<>();
-        location lplots = new location();
-        for (int i = 0; i < aLocationBeanList.size(); i++) {
-            List<plot> lplotList = new ArrayList<>();
-            plots lposition_data = new plots();
-            for (plot bean : aLocationBeanList.get(i).getLocationBean()) {
-                lplotList.add(bean);
-            }
-            lposition_data.setPlot(lplotList);
-            lposition_dataList.add(lposition_data);
-        }
-        lplots.setPlots(lposition_dataList);
-        lplotsList.add(lplots);
-        lPlotList.setLocation(lplotsList);
-        String json = lPlotList == null ? null : new Gson().toJson(lPlotList);
-        return json;
-    }
-
     private void enableFarmPolygon(final View v) {
         pd = new ProgressDialog(ViewFarmerActivity.this);
         pd.setCancelable(false);
@@ -1586,6 +1573,10 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
             public void onClick(View v) {
                 LinearLayout numberrow = (LinearLayout) v.getParent();
                 ((ViewGroup) numberrow.getParent()).removeView(numberrow);
+                String farmerID = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID));
+                ArrayList<String> plotNames = getAllPlotValues();
+                dl.insertNewPlot(farmerID,plotNames);
+                loadPlotLayout();
             }
         });
     }
