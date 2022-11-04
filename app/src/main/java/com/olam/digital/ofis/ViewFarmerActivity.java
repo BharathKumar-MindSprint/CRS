@@ -1437,7 +1437,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         }
 
         Log.d("ViewFarmerActivity", "Plot Count = " + count);
-        if (recordedPlotcount == 0) {
+        if (recordedPlotcount == 0 || count == 0) {
             AlertDialog.Builder builder = new AlertDialog.Builder(context);
             builder.setCancelable(false);
             LayoutInflater inflater = this.getLayoutInflater();
@@ -1546,7 +1546,8 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 if(! name.equalsIgnoreCase("null")){
                     plotName.setText(name);
                 }
-                if(i == 1){
+                int count = dl.fetchPlotData(String.valueOf(farmerId));
+                if(i == 1 || i <= count){
                     plotDelete.setVisibility(View.INVISIBLE);
                 }else{
                     plotDelete.setVisibility(View.VISIBLE);
