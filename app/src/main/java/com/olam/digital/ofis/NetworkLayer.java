@@ -2186,8 +2186,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                         dl.updatePlotGeoDataAfterSync(plotDataObj.getString("id"), plotDataObj.getString("plotId"));
                                         //                                {"farmId":216778,"farmerId":228862,"plots":[{"id":322982,"plotId":"plot1_CI-0001-AN59-0080","plotName":"t"}]}
                                         final String[] split = plotDataObj.getString("plotId").split("_");
-                                        final String type = split[0];
-                                        dl.updatePlotDataAfterSync(plotDataObj.getString("id"), plotDataObj.getString("plotName"), jsonServerRespObj.getString("farmerId"), type.substring(4));
+                                        final String type = "0";
+                                        dl.updatePlotDataAfterSync(plotDataObj.getString("id"), plotDataObj.getString("plotName"), String.valueOf(farmerID));
                                     }
 
                                 } catch (JSONException e) {
