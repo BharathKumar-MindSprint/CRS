@@ -1547,7 +1547,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                     plotName.setText(name);
                 }
                 int count = dl.fetchPlotData(String.valueOf(farmerId));
-                if(i == 1 || i == count){
+                if(i == 1 || i <= count){
                     plotDelete.setVisibility(View.INVISIBLE);
                 }else{
                     plotDelete.setVisibility(View.VISIBLE);

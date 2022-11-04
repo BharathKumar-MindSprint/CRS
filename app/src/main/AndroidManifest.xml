@@ -157,6 +157,7 @@
             android:label="@string/title_activity_view_farmer"
             android:parentActivityName="com.olam.digital.ofis.FindFarmerActivity"
             android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize"
             tools:ignore="UnusedAttribute">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -187,6 +188,7 @@
             android:label="@string/title_activity_record_polygon"
             android:parentActivityName="com.olam.digital.ofis.ViewFarmerActivity"
             android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize"
             tools:ignore="UnusedAttribute">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

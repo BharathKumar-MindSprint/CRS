@@ -634,12 +634,16 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
 
     int getTotalLoggedPlotCount() {
         int count = 0;
-        for (int i = 0; i < lPlotCount; i++) {
-            LocationBeanList LocationBeanList = SharedPreferenceUtils.
-                    getInstance(getApplicationContext()).getLocationBeanList(spinnerArray[i]);
-            if (LocationBeanList != null) {
-                count++;
+        try {
+            for (int i = 0; i < lPlotCount; i++) {
+                LocationBeanList LocationBeanList = SharedPreferenceUtils.
+                        getInstance(getApplicationContext()).getLocationBeanList(spinnerArray[i]);
+                if (LocationBeanList != null) {
+                    count++;
+                }
             }
+        }catch (Exception e){
+            e.printStackTrace();
         }
         return count;
     }
@@ -1329,6 +1333,8 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                     @Override
                     public void onClick(View view) {
                         alert.dismiss();
+                        spinnerPlotList.setSelection(currentLoggingTrackSpinnerPosition);
+                        loadPlotName(currentLoggingTrackSpinnerPosition);
                         showToastMessage(getResources().getString(R.string.cancel_logging_msg, currentTrackname));
                         mLocationBeanList = new ArrayList<>();
                         initializeKMLDocument();
@@ -1865,7 +1871,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                     plotName.setText(name);
                 }
                 int count = getTotalLoggedPlotCount() + 1;
-                if(i == 1 || i == count){
+                if(i == 1 || i <= count){
                     plotDelete.setVisibility(View.INVISIBLE);
                 }else{
                     plotDelete.setVisibility(View.VISIBLE);

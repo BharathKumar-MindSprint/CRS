@@ -256,6 +256,14 @@ public class DataLayer {
         return data;
     }
 
+    public Cursor fetchPlotId(String id) {
+        String[] columns = new String[]{"*"};
+        String whereClause = OFISDBContract.PlotEntry.COLUMN_NAME_FARMER_ID + " = ? AND " + OFISDBContract.PlotEntry.COLUMN_IS_SYNCED + " != ? ";
+        String[] whereArgs = new String[]{String.valueOf(id),"0"};
+        Cursor data = db.query(OFISDBContract.PlotEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+        return data;
+    }
+
     public ArrayList<PlotDTO> fetchSyncedPlotIds(String id) {
         ArrayList<PlotDTO> plotDTOArrayList = new ArrayList<>();
         String[] columns = new String[]{"*"};
@@ -381,11 +389,31 @@ public class DataLayer {
         }
     }
 
+    public void deletePlotDataBycount(String farmerId, int plotSubmittedCount){
+        Cursor plotIds = fetchPlotids(String.valueOf(farmerId));
+        if(plotIds.getCount() > 0) {
+            int size = plotIds.getCount();
+            for (int i = 1; i <= size; i++) {
+                plotIds.moveToNext();
+                if(i <= plotSubmittedCount){
+                   int id = plotIds.getInt(plotIds.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_ID));
+                    String table = OFISDBContract.PlotEntry.TABLE_NAME;
+                    String whereClause = OFISDBContract.PlotEntry.COLUMN_NAME_ID + " = ? ";
+                    String[] whereArgs = new String[]{
+                            String.valueOf(id),
+                    };
+
+                    db.delete(table, whereClause, whereArgs);
+                }
+            }
+        }
+    }
+
     public void updatePlotDataAfterSync(String plotId, String plotName, String farmerId, String plotPosition) {
         try {
             int tempId = 0;
             int position = Integer.parseInt(plotPosition.trim());
-            Cursor plotIds = fetchPlotids(String.valueOf(farmerId));
+            Cursor plotIds = fetchPlotId(String.valueOf(farmerId));
             if(plotIds.getCount() > 0) {
                 int size = plotIds.getCount();
                 for (int i = 1; i <= size; i++) {
