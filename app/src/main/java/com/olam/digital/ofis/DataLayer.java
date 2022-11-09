@@ -239,6 +239,18 @@ public class DataLayer {
         }
     }
 
+    public void updatePlottedName(int selectedPlotId, String plotName, long mFarmerId) {
+        try {
+            ContentValues values = new ContentValues();
+            values.put(OFISDBContract.PlotEntry.COLUMN_NAME_PLOTTED_NAME, plotName);
+            String whereClause = OFISDBContract.PlotEntry.COLUMN_NAME_FARMER_ID + " = ? AND " +
+                    OFISDBContract.PlotEntry.COLUMN_NAME_ID + " = ? ";
+            String[] whereArgs = new String[]{String.valueOf(mFarmerId),String.valueOf(selectedPlotId)};
+            db.update(OFISDBContract.PlotEntry.TABLE_NAME, values, whereClause, whereArgs);
+        } catch (Exception e) {
+        }
+    }
+
     public int fetchPlotData(String id) {
         String[] columns = new String[]{"*"};
         String whereClause = OFISDBContract.PlotGeoData.COLUMN_NAME_FARM_ID + " = ?";
@@ -410,7 +422,7 @@ public class DataLayer {
         }
     }
 
-    public void updatePlotDataAfterSync(String plotId, String plotName, String farmerId) {
+    public void updatePlotDataAfterSync(String plotId, String plotName, String farmerId, String plottedName) {
         try {
             /*int tempId = 0;
             int position = Integer.parseInt(plotPosition.trim());
@@ -424,10 +436,15 @@ public class DataLayer {
                     }
                 }
             }*/
+
             System.out.println("DATAVALK_:" + farmerId + " and " + plotId + " " + plotName);
             String plotTable = OFISDBContract.PlotEntry.TABLE_NAME;
-            String where = OFISDBContract.PlotEntry.COLUMN_NAME_FARMER_ID + " = ? AND " + OFISDBContract.PlotEntry.COLUMN_IS_SYNCED + " = ? ";
-            String[] args = new String[]{String.valueOf(farmerId),"0"};
+//            String where = OFISDBContract.PlotEntry.COLUMN_NAME_FARMER_ID + " = ? AND " + OFISDBContract.PlotEntry.COLUMN_IS_SYNCED + " = ? ";
+//            String[] args = new String[]{String.valueOf(farmerId),"0"};
+            String where = OFISDBContract.PlotEntry.COLUMN_NAME_FARMER_ID + " = ? AND "
+                     + OFISDBContract.PlotEntry.COLUMN_IS_SYNCED + " = ? AND "
+                     + OFISDBContract.PlotEntry.COLUMN_NAME_PLOTTED_NAME + " = ? ";
+            String[] args = new String[]{String.valueOf(farmerId),"0",plottedName};
             db.delete(plotTable, where, args);
             ContentValues updatePlotGeoDataAfterSyncValues = new ContentValues();
             updatePlotGeoDataAfterSyncValues.put(OFISDBContract.PlotEntry.COLUMN_NAME_ID, plotId);
@@ -9034,6 +9051,7 @@ public class DataLayer {
         }
         return productId;
     }
+
 
 }
 

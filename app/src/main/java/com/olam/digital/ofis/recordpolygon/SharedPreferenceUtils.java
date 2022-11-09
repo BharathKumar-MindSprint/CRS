@@ -118,7 +118,7 @@ public class SharedPreferenceUtils {
         return new Gson().fromJson(json, LocationBeanList.class);
     }
 
-    void removePlotUsingKey(String aPlotKey) {
+    public void removePlotUsingKey(String aPlotKey) {
         aPlotKey += getFarmID();
         mSharedPreferencesEditor.remove(aPlotKey);
         mSharedPreferencesEditor.apply();
@@ -131,5 +131,23 @@ public class SharedPreferenceUtils {
 
     public int getPlotCount(String lFarmID) {
         return mSharedPreferences.getInt(lFarmID, 0);
+    }
+
+    public List<LocationBeanList> removeAllLocations(String olam_farmer_id) {
+        int count = getPlotCount(olam_farmer_id);
+        if (count == 0) {
+            return null;
+        }
+        List<LocationBeanList> lListLocationBean = new ArrayList<>();
+        for (int i = 0; i < count; i++) {
+            String key = "Plot " + (i + 1);
+            key += olam_farmer_id;
+            mSharedPreferencesEditor.remove(key);
+            mSharedPreferencesEditor.apply();
+        }
+        if (lListLocationBean.size() > 0) {
+            return lListLocationBean;
+        }
+        return null;
     }
 }
