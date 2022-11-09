@@ -208,7 +208,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
     Logger logger;
     ArrayList<String> plotNameList;
     private LinearLayout plotList;
-
+    int selectedPlotId;
     // boolean flag to toggle the ui
 //    private Boolean mRequestingLocationUpdates;
     @Override
@@ -1533,6 +1533,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
 
             if (plotName != null && plotGeoJson != null) {
                 dl.updatePlotGeoData(mOlamFarmerId, plotName, plotGeoJson,enteredPlotName);
+                dl.updatePlottedName(selectedPlotId,plotName,mFarmerId);
             }
         }
     }
@@ -1845,6 +1846,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                 plotIds.moveToNext();
                 if(position == i){
                     name = plotIds.getString(plotIds.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_PLOT_NAME));
+                    selectedPlotId = plotIds.getInt(plotIds.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_ID));
                     txtPlotName.setText(name);
                 }
             }
