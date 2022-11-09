@@ -2382,6 +2382,7 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_ID = "id";
         public static final String COLUMN_NAME_FARMER_ID = "farmerId";
         public static final String COLUMN_NAME_PLOT_NAME = "plotName";
+        public static final String COLUMN_NAME_PLOTTED_NAME = "plottedName";
         public static final String COLUMN_IS_SYNCED = "isSynced";
 
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
@@ -2389,6 +2390,7 @@ public class OFISDBContract {
                     add(COLUMN_NAME_ID);
                     add(COLUMN_NAME_FARMER_ID);
                     add(COLUMN_NAME_PLOT_NAME);
+                    add(COLUMN_NAME_PLOTTED_NAME);
                     add(COLUMN_IS_SYNCED);
                 }}
         );

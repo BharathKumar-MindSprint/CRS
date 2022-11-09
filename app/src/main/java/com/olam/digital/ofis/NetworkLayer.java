@@ -50,6 +50,7 @@ import com.olam.digital.ofis.logging.FabricLogsWriter;
 import com.olam.digital.ofis.model.GeoDTO;
 import com.olam.digital.ofis.multifarm.MultiFarmDTO;
 import com.olam.digital.ofis.multifarm.MultiFarmUtils;
+import com.olam.digital.ofis.recordpolygon.SharedPreferenceUtils;
 import com.olam.digital.ofis.tasks.SyncAllTask;
 import com.olam.digital.ofis.tasks.SyncTaskOperationType;
 
@@ -2129,6 +2130,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         } else {
             try {
                 int farmerID = networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
+                String olamFarmerId = networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID));
                 params.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID, farmerID);
                 int farmId = dl.getFarmId(farmerID);
                 if(MultiFarmUtils.isMultiFarmEnumerator){
@@ -2178,16 +2180,15 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                     // Getting JSON Array node
                                     JSONArray locationJsonArray = null;
                                     locationJsonArray = jsonServerRespObj.getJSONArray("plots");
-
+                                     SharedPreferenceUtils.getInstance(context).removeAllLocations(olamFarmerId);
                                     // looping through All locationJsonArray
                                     for (int i = 0; i < locationJsonArray.length(); i++) {
                                         JSONObject plotDataObj = locationJsonArray.getJSONObject(i);
 //                                        dl.updatePlotGeoDataAfterSync(plotDataObj.getString("plotid"), Integer.toString(plotDataObj.getInt("serverid")));
                                         dl.updatePlotGeoDataAfterSync(plotDataObj.getString("id"), plotDataObj.getString("plotId"));
                                         //                                {"farmId":216778,"farmerId":228862,"plots":[{"id":322982,"plotId":"plot1_CI-0001-AN59-0080","plotName":"t"}]}
-                                        final String[] split = plotDataObj.getString("plotId").split("_");
-                                        final String type = "0";
-                                        dl.updatePlotDataAfterSync(plotDataObj.getString("id"), plotDataObj.getString("plotName"), String.valueOf(farmerID));
+
+                                        dl.updatePlotDataAfterSync(plotDataObj.getString("id"), plotDataObj.getString("plotName"), String.valueOf(farmerID),plotDataObj.getString("plotId"));
                                     }
 
                                 } catch (JSONException e) {
