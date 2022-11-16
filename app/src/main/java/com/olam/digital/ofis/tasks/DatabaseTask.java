@@ -88,9 +88,9 @@ abstract class DatabaseTask extends AsyncTask<JSONObject, Integer, String> {
 
 
     void fillTable(JSONArray jsonArray, String tableName, List columnList) {
-      if (!tableName.equalsIgnoreCase("stakeHolders") ||
-              !tableName.equalsIgnoreCase("savedAnswers") ||
-              !tableName.equalsIgnoreCase("downloadedSurveys")){
+      if ((! tableName.equalsIgnoreCase("stakeHolders"))
+              && (tableName != OFISDBContract.SavedAnswerEntry.TABLE_NAME)
+              && (tableName != OFISDBContract.DownloadedSurveyList.TABLE_NAME)){
               db.delete(tableName, null, null);
       }
 

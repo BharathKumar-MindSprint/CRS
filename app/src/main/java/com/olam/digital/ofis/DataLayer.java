@@ -8886,9 +8886,10 @@ public class DataLayer {
         try {
             String table = OFISDBContract.DownloadedSurveyList.TABLE_NAME;
               String[] whereArgs = new String[]{
-                   answerRequestDTO.getFarmerGroupId(),answerRequestDTO.getSectionId()
+                   answerRequestDTO.getFarmerGroupId(),answerRequestDTO.getSectionId(),answerRequestDTO.getModule_id()
             };
-            String whereClause = OFISDBContract.DownloadedSurveyList.COLUMN_NAME_FARMER_GROUP + " = ? AND " + OFISDBContract.DownloadedSurveyList.COLUMN_NAME_SECTION + " = ? ";
+            String whereClause = OFISDBContract.DownloadedSurveyList.COLUMN_NAME_FARMER_GROUP + " = ? AND " + OFISDBContract.DownloadedSurveyList.COLUMN_NAME_SECTION + " = ? AND "
+                    + OFISDBContract.DownloadedSurveyList.COLUMN_NAME_MODULE_ID + " = ? ";
             db.delete(table, whereClause, whereArgs);
 
             Date today = new Date();
@@ -8923,11 +8924,11 @@ public class DataLayer {
                     moduleDTO.setSectionId(sectionId);
                     moduleDTO.setListedName(getFGName(Integer.parseInt(farmerGroupId)) + "-" +
                             getSectionName(Integer.parseInt(sectionId)) +
-                            "(Farmers:" + farmerCountBySectionId(sectionId) + ")");
+                            "(Farmers:" + farmerCountByModuleSectionIds(moduleIdval,sectionId) + ")");
                     moduleDTO.setDateTime(moduleList.getString(moduleList.getColumnIndex(OFISDBContract.DownloadedSurveyList.COLUMN_NAME_SAVED_DATE)));
                     if(getFGName(Integer.parseInt(farmerGroupId))!= "NA" &&
                             getSectionName(Integer.parseInt(sectionId)) != "NA" &&
-                            farmerCountBySectionId(sectionId) > 0){
+                            farmerCountByModuleSectionIds(moduleIdval,sectionId) > 0){
                         list.add(moduleDTO);
                     }
 
@@ -8946,6 +8947,20 @@ public class DataLayer {
         Cursor data = db.query(OFISDBContract.FarmerEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
         return data.getCount();
 
+    }
+
+    public int farmerCountByModuleId(String id) {
+        String[] columns = new String[]{"DISTINCT farmer_id"};
+        String whereClause = OFISDBContract.SavedAnswerEntry.COLUMN_NAME_FARMER_MODULE_ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(id)};
+        Cursor data = db.query(OFISDBContract.SavedAnswerEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+        return data.getCount();
+
+    }
+
+    public int farmerCountByModuleSectionIds(String moduleId,String sectionId) {
+        Cursor data = db.rawQuery("SELECT DISTINCT farmer_id FROM savedAnswers a inner join farmers b on a.farmer_id = b.id where a.farmer_module_id = "+ moduleId +" and b.section_id ="+ sectionId, null);
+        return data.getCount();
     }
 
     public int farmerCountBySubmoduleid(String id) {
@@ -8977,13 +8992,17 @@ public class DataLayer {
 
     }
 
-    public void deleteDownloadedSurveys(String fgId, String sectionId) {
-        String deleteAnswersRecord = "DELETE FROM " + OFISDBContract.SavedAnswerEntry.TABLE_NAME + " WHERE " + OFISDBContract.SavedAnswerEntry.COLUMN_NAME_FARMER_ID
+    public void deleteDownloadedSurveys(String fgId, String sectionId, String moduleId) {
+        String deleteAnswersRecord = "DELETE FROM " + OFISDBContract.SavedAnswerEntry.TABLE_NAME + " WHERE "
+                + OFISDBContract.SavedAnswerEntry.COLUMN_NAME_FARMER_MODULE_ID + " =" + moduleId + " AND "
+                + OFISDBContract.SavedAnswerEntry.COLUMN_NAME_FARMER_ID
                 + " IN ( SELECT " + OFISDBContract.FarmerEntry.COLUMN_NAME_ID + " FROM " + OFISDBContract.FarmerEntry.TABLE_NAME
                 + " WHERE " + OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID + " =" + fgId
-                + " AND " + OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID+ " =" + sectionId + ");";
+                + " AND " + OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID+ " =" + sectionId
+                + ");";
         String deleteSurveyRecord = "DELETE FROM " + OFISDBContract.DownloadedSurveyList.TABLE_NAME
                 + " WHERE " + OFISDBContract.DownloadedSurveyList.COLUMN_NAME_FARMER_GROUP + " =" + fgId
+                + " AND " + OFISDBContract.DownloadedSurveyList.COLUMN_NAME_MODULE_ID+ " =" + moduleId
                 + " AND " + OFISDBContract.DownloadedSurveyList.COLUMN_NAME_SECTION+ " =" + sectionId + ";";
         db.execSQL(deleteAnswersRecord);
         db.execSQL(deleteSurveyRecord);
