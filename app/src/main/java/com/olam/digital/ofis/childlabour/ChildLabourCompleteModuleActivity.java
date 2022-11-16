@@ -534,15 +534,15 @@ public class ChildLabourCompleteModuleActivity extends BaseActivity {
                 if (displayType.replaceAll(" ", "").toLowerCase().equals("checkbox")) {
                     dynamicQuestions.renderCheckBoxQuestionChild(questions, dynamicQuestions.questionsSection, farmerId, farmerModuleId);
                 } else if (displayType.replaceAll(" ", "").toLowerCase().equals("datepicker")) {
-                    dynamicQuestions.renderDatePickerQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null);
+                    dynamicQuestions.renderDatePickerQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, false);
                 } else if (displayType.replaceAll(" ", "").toLowerCase().equals("decimal")) {
                     dynamicQuestions.renderTextBoxQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null);
                 } else if (displayType.replaceAll(" ", "").toLowerCase().equals("dropdown")) {
                     dynamicQuestions.renderDropDownQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
                 } else if (displayType.replaceAll(" ", "").toLowerCase().equals("photocheckbox")) {
-                    dynamicQuestions.renderPhotoCheckboxQuestion(questions, farmerId, farmerModuleId, res, getPackageName());
+                    dynamicQuestions.renderPhotoCheckboxQuestion(questions, farmerId, farmerModuleId, res, getPackageName(), false);
                 } else if (displayType.replaceAll(" ", "").toLowerCase().equals("repeater")) {
-                    dynamicQuestions.renderRepeaterQuestion(questions, farmerId, olamFarmerId, farmerModuleId, res);
+                    dynamicQuestions.renderRepeaterQuestion(questions, farmerId, olamFarmerId, farmerModuleId, res, false);
                 } else if (displayType.replaceAll(" ", "").toLowerCase().equals("textbox")) {
                     dynamicQuestions.renderTextBoxQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null);
                 } else if (displayType.replaceAll(" ", "").toLowerCase().equals("yesno") || displayType.replaceAll(" ", "").toLowerCase().equals("yes/no")) {
