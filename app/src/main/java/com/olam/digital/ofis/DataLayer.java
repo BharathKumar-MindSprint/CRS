@@ -4247,6 +4247,23 @@ public class DataLayer {
         return db.query(OFISDBContract.AnswerEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
     }
 
+
+    Cursor getSavedAnswersForQuestionByFarmer(int questionId, long farmerId, long farmerModuleId) {
+        String[] columns = new String[]{"*"};
+        String farmerQuery = OFISDBContract.SavedAnswerEntry.COLUMN_NAME_FARMER_ID + " = ? ";
+        String farmerQueryValue = String.valueOf(farmerId);
+
+        String whereClause = OFISDBContract.SavedAnswerEntry.COLUMN_NAME_QUESTION_ID + " = ? AND " + farmerQuery;
+//                + " AND " + OFISDBContract.SavedAnswerEntry.COLUMN_NAME_FARMER_MODULE_ID + " = ?";
+        String[] whereArgs = new String[]{
+                String.valueOf(questionId),
+                farmerQueryValue,
+//                String.valueOf(farmerModuleId)
+        };
+
+        return db.query(OFISDBContract.SavedAnswerEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+    }
+
     // get the child answers from dropdown
     Cursor getAnswersForQuestionByChild(int questionId, long farmerId, long farmerModuleId) {
         String[] columns = new String[]{"*"};
@@ -4363,6 +4380,25 @@ public class DataLayer {
         };
 
         return db.query(OFISDBContract.AnswerEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+    }
+
+    Cursor getRepeaterSavedAnswersForQuestionByPosition(int questionId, int position, long farmerId, long farmerModuleId) {
+        String[] columns = new String[]{"*"};
+
+        String farmerQuery = OFISDBContract.SavedAnswerEntry.COLUMN_NAME_FARMER_ID + " = ? ";
+        String farmerQueryValue = String.valueOf(farmerId);
+
+        String whereClause = OFISDBContract.SavedAnswerEntry.COLUMN_NAME_QUESTION_ID + " = ? AND " + OFISDBContract.SavedAnswerEntry.COLUMN_NAME_REPEATER_ITEM_POSITION
+                + " = ? AND " + farmerQuery ;
+//                + " AND " + OFISDBContract.SavedAnswerEntry.COLUMN_NAME_FARMER_MODULE_ID + " = ?";
+        String[] whereArgs = new String[]{
+                String.valueOf(questionId),
+                String.valueOf(position),
+                farmerQueryValue,
+//                String.valueOf(farmerModuleId)
+        };
+
+        return db.query(OFISDBContract.SavedAnswerEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
     }
 
     public void updateSubModuleAnswers(ArrayList<JSONObject> answerSet, long farmerModuleId, int subModuleId, long farmerId, String olamFarmerId, int farmId, String type) {

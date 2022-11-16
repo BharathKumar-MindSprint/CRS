@@ -393,17 +393,17 @@ public class ReviewFarmManagementPlan extends BaseActivity {
                 String displayType = fmpBaselineQuestions.getString(fmpBaselineQuestions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE));
 
                 if (displayType.toLowerCase().equals("checkbox")) {
-                    dynamicQuestions.renderCheckBoxQuestion(fmpBaselineQuestions, dynamicQuestions.questionsSection, farmerId, 0);
+                    dynamicQuestions.renderCheckBoxQuestion(fmpBaselineQuestions, dynamicQuestions.questionsSection, farmerId, 0, false);
                 } else if (displayType.toLowerCase().equals("datepicker")) {
-                    dynamicQuestions.renderDatePickerQuestion(fmpBaselineQuestions, false, dynamicQuestions.questionsSection, 0, -1, null);
+                    dynamicQuestions.renderDatePickerQuestion(fmpBaselineQuestions, false, dynamicQuestions.questionsSection, 0, -1, null, false);
                 } else if (displayType.toLowerCase().equals("decimal")) {
                     dynamicQuestions.renderTextBoxQuestion(fmpBaselineQuestions, false, dynamicQuestions.questionsSection, 0, -1, null);
                 } else if (displayType.toLowerCase().equals("dropdown")) {
                     dynamicQuestions.renderDropDownQuestion(fmpBaselineQuestions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
                 } else if (displayType.toLowerCase().equals("photocheckbox")) {
-                    dynamicQuestions.renderPhotoCheckboxQuestion(fmpBaselineQuestions, farmerId, 0, res, getPackageName());
+                    dynamicQuestions.renderPhotoCheckboxQuestion(fmpBaselineQuestions, farmerId, 0, res, getPackageName(), false);
                 } else if (displayType.toLowerCase().equals("repeater")) {
-                    dynamicQuestions.renderRepeaterQuestion(fmpBaselineQuestions, farmerId, olamFarmerId, 0, res);
+                    dynamicQuestions.renderRepeaterQuestion(fmpBaselineQuestions, farmerId, olamFarmerId, 0, res, false);
                 } else if (displayType.toLowerCase().equals("textbox")) {
                     dynamicQuestions.renderTextBoxQuestion(fmpBaselineQuestions, false, dynamicQuestions.questionsSection, 0, -1, null);
                 } else if (displayType.toLowerCase().equals("yesno")) {
