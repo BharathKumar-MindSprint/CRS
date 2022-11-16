@@ -593,6 +593,11 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
             }else {
                 valid = true;
             }
+            Cursor moduleAssignments = dl.getFarmerModules(farmerId,farmSurvey);
+            int moduleCount = moduleAssignments.getCount();
+            if(moduleCount == 0){
+                valid = true;
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -607,6 +612,9 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
             int plotCount = dl.fetchPlotTotalCount(String.valueOf(farmerId));
             int expectedSurveySubmission = moduleCount * plotCount;
             int actualSurveySubmission = 0;
+            if(moduleCount == 0){
+                valid = false;
+            }
             while(moduleAssignments.moveToNext()) {
                 int moduleId = moduleAssignments.getInt(moduleAssignments.getColumnIndex("_id"));
                 if (expectedSurveySubmission > 0) {
@@ -1079,7 +1087,8 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 int totalCount = dl.fetchPlotTotalCount(String.valueOf(farmerId));
                 */
                 int farmPlotCount = dl.fetchSyncedPlotCountByFarmerID(String.valueOf(farmerId));
-                if (farmPlotCount > 0) {
+                Cursor moduleAssignments = dl.getFarmerModules(farmerId,farmSurvey);
+                if (farmPlotCount > 0 && moduleAssignments.getCount() > 0) {
                     mc.addRow(new String[]{"0", res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), "0", "", "", "", res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), "", "", "", "", "", "", "", "", "", "PlotSurvey"});
                 }
                 Cursor fmp = dl.getFmpByFarmerId(id);
