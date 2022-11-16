@@ -153,6 +153,7 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                 } else {*/
                 if (MultiFarmUtils.isMultiFarmEnumerator){
                     boolean ispolygonCaptured=dl.getPolygonInfo1(farmerId);
+                    int fetchPlotCountByFarmerID=dl.fetchSyncedPlotCountByFarmerID(String.valueOf(farmerId));
                     if (ispolygonCaptured){
                         imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_location_found));
                         enabledItem.setText("false");

@@ -233,7 +233,7 @@ public class DownloadSurveyData extends BaseActivity implements OnAccessTokenInt
             @Override
             public void onClick(View view) {
                 alert.dismiss();
-                dl.deleteDownloadedSurveys(moduleDTO.getFarmerGroupId(), moduleDTO.getSectionId());
+                dl.deleteDownloadedSurveys(moduleDTO.getFarmerGroupId(), moduleDTO.getSectionId(),module_id);
 //                downloadedModuleAdapter.resetItem(dl.getDownloadedSurveyList());
 //                downloadedModuleAdapter.notifyItemChanged(position);
                 if(dl.getDownloadedSurveyList(module_id).size()==0){
