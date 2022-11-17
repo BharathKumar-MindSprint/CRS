@@ -235,8 +235,8 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
     CustomListAdapter_Modules customListAdapter_modulesAdapter;
 
 
-    ImageView infoCloseImageView,plotInfoCloseImageView;
-    LinearLayout statusInfoLayout,plotStatusInfoLayout;
+    ImageView infoCloseImageView,plotInfoCloseImageView,consentInfoCloseImageView;
+    LinearLayout statusInfoLayout,plotStatusInfoLayout,consentStatusInfoLayout;
 
     String multiFarmId=null;
     public static boolean farmSurvey;
@@ -292,7 +292,12 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 plotStatusInfoLayout.setVisibility(View.GONE);
             }
         });
-
+        consentInfoCloseImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                consentStatusInfoLayout.setVisibility(View.GONE);
+            }
+        });
     }
 
     private void initiaizeInfoWidget() {
@@ -300,6 +305,8 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         statusInfoLayout = findViewById(R.id.layout_notification);
         plotInfoCloseImageView = findViewById(R.id.plot_info_close_btn);
         plotStatusInfoLayout = findViewById(R.id.plot_layout_notification);
+        consentInfoCloseImageView = findViewById(R.id.consent_info_close_btn);
+        consentStatusInfoLayout = findViewById(R.id.consent_layout_notification);
     }
 
     private void showInfo() {
@@ -503,6 +510,12 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                     plotStatusInfoLayout.setVisibility(View.VISIBLE);
                 } else {
                     plotStatusInfoLayout.setVisibility(View.GONE);
+                }
+                String isConsentavailable = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ISCONSENTAVAILABLE));
+                if (isConsentavailable != null && isConsentavailable.length() > 0 && isConsentavailable.equalsIgnoreCase("true")) {
+                    consentStatusInfoLayout.setVisibility(View.GONE);
+                }else{
+                    consentStatusInfoLayout.setVisibility(View.VISIBLE);
                 }
                 if (moduleAssignments != null && moduleAssignments.getCount() > 0) {
                     String[] adapterCols = new String[]{
