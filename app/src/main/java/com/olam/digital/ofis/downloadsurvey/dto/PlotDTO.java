@@ -7,7 +7,16 @@ public class PlotDTO implements Serializable {
 
 
     private String plotName;
+    private String plotActualName;
     private int plotId;
+
+    public String getPlotActualName() {
+        return plotActualName;
+    }
+
+    public void setPlotActualName(String plotActualName) {
+        this.plotActualName = plotActualName;
+    }
 
     public String getPlotName() {
         return plotName;

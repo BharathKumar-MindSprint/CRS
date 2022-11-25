@@ -290,6 +290,7 @@ public class DataLayer {
             String plotName = "Plot " + i;
             plotDTO.setPlotId(plotId);
             plotDTO.setPlotName(plotName);
+            plotDTO.setPlotActualName(plotIds.getString(plotIds.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_PLOT_NAME)));
             plotDTOArrayList.add(plotDTO);
         }
 
