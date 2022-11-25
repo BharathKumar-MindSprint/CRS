@@ -534,6 +534,12 @@ public class CustomExpandableListAdapter extends BaseExpandableListAdapter {
         TextView plotId = (TextView) convertView.findViewById(R.id.plotId);
         plotName.setTypeface(null, Typeface.BOLD);
         plotName.setText(plotDTO.getPlotName());
+        String name = plotDTO.getPlotActualName();
+        if(name.length() > 0 && ! name.equalsIgnoreCase("null")){
+            plotName.setText(plotDTO.getPlotName() +" - "+ plotDTO.getPlotActualName());
+        }else{
+            plotName.setText(plotDTO.getPlotName());
+        }
         plotId.setText("Plot ID:"+plotDTO.getPlotId());
         return convertView;
     }
