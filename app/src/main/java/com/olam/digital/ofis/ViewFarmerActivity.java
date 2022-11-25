@@ -595,13 +595,17 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         try {
             int totalCount = dl.fetchPlotTotalCount(String.valueOf(farmerId));
             if(totalCount > 0) {
-                JSONArray submittedModulesArray = submittedModules.getJSONArray("modules");
-                for (int i = 0; i < submittedModulesArray.length(); i++) {
-                    JSONObject submittedModule = submittedModulesArray.getJSONObject(i);
-                    JSONObject submittedModuleDetails = submittedModule.getJSONObject("module");
-                    if (submittedModuleDetails.has("plotId") && submittedModuleDetails.getString("plotId") != "null") {
-                        valid = true;
+                if(submittedModules.length() > 0) {
+                    JSONArray submittedModulesArray = submittedModules.getJSONArray("modules");
+                    for (int i = 0; i < submittedModulesArray.length(); i++) {
+                        JSONObject submittedModule = submittedModulesArray.getJSONObject(i);
+                        JSONObject submittedModuleDetails = submittedModule.getJSONObject("module");
+                        if (submittedModuleDetails.has("plotId") && submittedModuleDetails.getString("plotId") != "null") {
+                            valid = true;
+                        }
                     }
+                }else{
+                    valid = false;
                 }
             }else {
                 valid = true;
@@ -612,6 +616,8 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 valid = true;
             }
         } catch (JSONException e) {
+            e.printStackTrace();
+        }catch (Exception e) {
             e.printStackTrace();
         }
         return valid;
