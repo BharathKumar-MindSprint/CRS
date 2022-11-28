@@ -195,6 +195,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     private String dateStrToSend;
     private TextView farmerDOB;
     boolean  csStatus;
+    int consentId;
     ArrayList<String> nationalIdTypes=null;
     boolean isFLEnumerator;
     boolean isSubdistrictCapture;
@@ -383,6 +384,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                     populateExistingValues(existingItem);
                 }
             }
+            consentId = dl.getConsentIdByFarmerId(editFarmerId);
         }
 
         countrySpinner = this.findViewById(R.id.spinner_country);
@@ -502,6 +504,9 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                         TextView farmerNameET = stakeHolderRow.findViewById(R.id.farmFarmerTV);
                         farmerNameET.setText(s.toString());
                     }
+                }
+                if(csStatus) {
+                    dl.updateConsentValue(s.toString(), consentId);
                 }
             }
         });
@@ -1410,6 +1415,9 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_SUBDISTRICTID, String.valueOf(subdistrictId));
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID, String.valueOf(farmerGroupId));
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_ISCONSENTAVAILABLE, "true");
+            if (!editMode) {
+                values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_CONSENT_ID, consentId);
+            }
             long productId = dl.getProductIdByFarmerGroupId(farmerGroupId);
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID, String.valueOf(productId));
             if(isFLEnumerator) {
@@ -2057,7 +2065,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                                 dl.updateFarmerPhoneNumbers(newFarmerId, storeableNumbers);
                                 EditText farmerName = findViewById(R.id.farmerName);
                                 String farmerNameValue = String.valueOf(farmerName.getText()).trim();
-                                dl.updateFarmerIdforConsentStatement(newFarmerId, farmerNameValue);
+                                dl.updateFarmerIdByConsentId(newFarmerId, consentId);
                                 if (isNIDAvailable) {
                                     boolean moduretationstatus = dl.updateFarmerNationalids(context, newFarmerId, storeableNationalids, "1", "name");
                                     if (moduretationstatus) {
@@ -2425,6 +2433,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         switch (requestCode) {
             case REQUEST_CHECK_CONSENT_STATEMENT:
                 csStatus = imageReturnedIntent.getBooleanExtra("STATUS", false);
+                consentId = imageReturnedIntent.getIntExtra("CONSENT_ID", 0);
             case REQUEST_CHECK_SETTINGS:
                 if (resultCode == -1) {
                     gpsTracker.getDeviceLocation();

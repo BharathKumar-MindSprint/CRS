@@ -2857,9 +2857,9 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
     }
 
 
-    private JSONObject farmerConsentStatment(long farmerId, String displayFarmerId) {
+    private JSONObject farmerConsentStatment(long consentId, String displayFarmerId) {
         final JSONObject params = new JSONObject();
-        Cursor child = dl.getConsentStatementById(farmerId);
+        Cursor child = dl.getConsentStatementByConsentId(consentId);
         if (child.getCount() > 0) {
             child.moveToFirst();
             try {
@@ -3869,12 +3869,9 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
             JSONArray nidstosend = farmernationalids(networkQueueItems
                     .getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
-            JSONObject consentStatement = farmerConsentStatment(networkQueueItems
-                    .getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)),
+           JSONObject consentStatement = farmerConsentStatment(farmer.getInt(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_CONSENT_ID)),
                     farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
-//            JSONArray farmerRegistrationPhoneNumberDTOList = farmerPhoneNumbers(networkQueueItems
-//                    .getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
-            try {
+           try {
                 jsonObject.put("consentStatement",consentStatement);
             } catch (JSONException e) {
                 FirebaseCrashlytics.getInstance().log(e.getMessage());
