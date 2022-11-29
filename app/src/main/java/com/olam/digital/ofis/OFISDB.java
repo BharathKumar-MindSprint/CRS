@@ -336,7 +336,6 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERLEAD + " TEXT, "
             + OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERLEADNAME + " TEXT, "
             + OFISDBContract.FarmerEntry.COLUMN_NAME_PLOT + " TEXT, "
-            + OFISDBContract.FarmerEntry.COLUMN_NAME_CONSENT_ID + " INTEGER, "
             + OFISDBContract.FarmerEntry.COLUMN_NAME_CONSENT_FARMER + " INTEGER DEFAULT 1, " + OFISDBContract.FarmerEntry.COLUMN_NAME_CONSENT_OTHERS + " INTEGER DEFAULT 1)";
 
     private static final String OFIS_BACKUP_FARMER_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.FarmerEntry.BACKUP_TABLE_NAME +
@@ -899,12 +898,6 @@ class OFISDB extends SQLiteOpenHelper {
 
         try {
             sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.FarmerEntry.TABLE_NAME + " ADD COLUMN plot TEXT default null");
-        } catch (SQLiteException ex) {
-            ex.printStackTrace();
-        }
-
-        try {
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.FarmerEntry.TABLE_NAME + " ADD COLUMN consentId INTEGER default null");
         } catch (SQLiteException ex) {
             ex.printStackTrace();
         }

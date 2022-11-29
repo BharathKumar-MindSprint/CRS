@@ -2857,9 +2857,9 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
     }
 
 
-    private JSONObject farmerConsentStatment(long consentId, String displayFarmerId) {
+    private JSONObject farmerConsentStatment(long farmerId, String displayFarmerId) {
         final JSONObject params = new JSONObject();
-        Cursor child = dl.getConsentStatementByConsentId(consentId);
+        Cursor child = dl.getConsentStatementById(farmerId);
         if (child.getCount() > 0) {
             child.moveToFirst();
             try {
@@ -3869,7 +3869,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
             JSONArray nidstosend = farmernationalids(networkQueueItems
                     .getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
-           JSONObject consentStatement = farmerConsentStatment(farmer.getInt(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_CONSENT_ID)),
+            JSONObject consentStatement = farmerConsentStatment(networkQueueItems
+                            .getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)),
                     farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
            try {
                 jsonObject.put("consentStatement",consentStatement);

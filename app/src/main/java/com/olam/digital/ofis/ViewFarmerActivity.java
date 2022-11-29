@@ -1,5 +1,7 @@
 package com.olam.digital.ofis;
 
+import static com.olam.digital.ofis.BaseActivity.UPDATE;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -2256,7 +2258,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                         bundle.putString("displayFarmerId", olamFarmerIdStr);
                         bundle.putString("olamfarmername", farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME)));
                         bundle.putLong("FarmerId", farmerId);
-                        bundle.putString("type", "update");
+                        bundle.putString("type", UPDATE);
                         in.putExtras(bundle);
                         startActivity(in);
                     } else if (recordedLng != null && recordedLng.getText().equals("Subdistrict")) {
