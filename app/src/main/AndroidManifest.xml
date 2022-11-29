@@ -112,6 +112,7 @@
         <activity
             android:name="com.olam.digital.ofis.HomeActivity"
             android:label="@string/applicationName"
+            android:exported="true"
             android:screenOrientation="portrait">
               <intent-filter>
                     <action android:name="android.intent.action.MAIN" />
