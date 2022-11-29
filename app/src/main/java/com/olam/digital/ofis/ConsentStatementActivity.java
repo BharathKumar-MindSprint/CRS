@@ -293,11 +293,13 @@ public class ConsentStatementActivity extends BaseActivity implements View.OnCli
                 String registereddate = format.format(today);
                 contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_CONFIRMED_DATE,registereddate);
                 dataLayer.insertConsentStatementDetails(contentValue,olamfarmername,type);
+                int consentId = dataLayer.getConsentCount();
                 if(type.equalsIgnoreCase("update")){
                     dataLayer.updateConsentStatus(farmerId);
                 }
                 Intent intent=new Intent();
                 intent.putExtra("STATUS",true);
+                intent.putExtra("CONSENT_ID",consentId);
                 setResult(2,intent);
                 finish();
 

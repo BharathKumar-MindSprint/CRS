@@ -1699,6 +1699,17 @@ public class DataLayer {
 
     }
 
+    void updateFarmerIdByConsentId(long farmerId, int consentId) {
+        ContentValues values = new ContentValues();
+        values.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_FARMER_ID, farmerId);
+        String whereClause = OFISDBContract.ConsentStatementEntry.COLUMN_NAME_ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(consentId)};
+        try {
+            db.update(OFISDBContract.ConsentStatementEntry.TABLE_NAME, values, whereClause, whereArgs);
+        }catch (Exception e){}
+
+    }
+
     public boolean updateFarmerNationalids(Context context, long farmerId, JSONArray storeableNationalids, String status, String farmername) {
         String whereClause = OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID + " = ?";
         String[] whereArgs = new String[]{String.valueOf(farmerId)};
@@ -5979,6 +5990,39 @@ public class DataLayer {
         return cursor;
     }
 
+    public Cursor getConsentStatementByConsentId(long id) {
+        String[] columns = new String[]{"*"};
+        String whereClause = OFISDBContract.ConsentStatementEntry.COLUMN_NAME_ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(id)};
+        Cursor cursor=null;
+        try {
+            cursor=db.query(OFISDBContract.ConsentStatementEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+        }catch (Exception e){FirebaseCrashlytics.getInstance().log(e.getMessage());}
+
+        return cursor;
+    }
+
+    public int getConsentIdByFarmerId(long farmerID) {
+
+        int consentId=0;
+        Cursor farmerCursor=null;
+        try {
+            String[] columns = new String[]{"*"};
+            String whereClause = OFISDBContract.FarmerEntry.COLUMN_NAME_ID + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(farmerID)};
+            farmerCursor = db.query(OFISDBContract.FarmerEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+            if (farmerCursor != null) {
+                while (farmerCursor.moveToNext()) {
+                    consentId = farmerCursor.getInt(farmerCursor.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID));
+                }
+            }
+        } catch (Exception e) {
+        }finally {
+            farmerCursor.close();
+        }
+        return  consentId;
+    }
+
     public Cursor getConsentStatementByName(String name) {
         String[] columns = new String[]{"*"};
         String whereClause = OFISDBContract.ConsentStatementEntry.COLUMN_NAME_FARMER + " = ?";
@@ -6209,6 +6253,19 @@ public class DataLayer {
         }
     }
 
+    public void updateConsentValue(String farmerName, int consentId) {
+        try {
+            String whereClause = OFISDBContract.ConsentStatementEntry.COLUMN_NAME_ID + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(consentId)};
+            ContentValues values = new ContentValues();
+            values.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_FARMER, farmerName);
+            values.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_OLAM_FARMER_NAME, farmerName);
+            db.update(OFISDBContract.ConsentStatementEntry.TABLE_NAME, values, whereClause, whereArgs);
+        }catch (Exception e){
+            FirebaseCrashlytics.getInstance().log(e.getMessage());
+        }
+    }
+
     public void updateChildDetails(String editChildId, String childNameValue, String childGender, String age) {
         try {
             String whereClause = OFISDBContract.GPSDetails.COLUMN_NAME_CHILD_ID + " = ?";
@@ -6396,10 +6453,10 @@ public class DataLayer {
 
 
 
-    public int getDuplicateListCount() {
+    public int getConsentCount() {
         int count = 0;
         try {
-            Cursor cursor = db.rawQuery("select * from duplicate_farmers", null);
+            Cursor cursor = db.rawQuery("select * from " + OFISDBContract.ConsentStatementEntry.TABLE_NAME, null);
             if (cursor != null) {
                 count = cursor.getCount();
             }
