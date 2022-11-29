@@ -6253,10 +6253,10 @@ public class DataLayer {
         }
     }
 
-    public void updateConsentValue(String farmerName, int consentId) {
+    public void updateConsentValue(String farmerName, long farmerId) {
         try {
-            String whereClause = OFISDBContract.ConsentStatementEntry.COLUMN_NAME_ID + " = ?";
-            String[] whereArgs = new String[]{String.valueOf(consentId)};
+            String whereClause = OFISDBContract.ConsentStatementEntry.COLUMN_NAME_FARMER_ID + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(farmerId)};
             ContentValues values = new ContentValues();
             values.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_FARMER, farmerName);
             values.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_OLAM_FARMER_NAME, farmerName);

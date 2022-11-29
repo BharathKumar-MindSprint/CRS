@@ -64,6 +64,11 @@ public class BaseActivity extends AppCompatActivity {
     public final static String DUPLICATE = "duplicate";
     public final static String ENTER_NID = "novalues";
     public final static String SELECT_NATIONALID = "ID TYPE";
+    public final static String STATUS = "STATUS";
+    public final static String CONSENTVALUE = "CONSENTVALUE";
+    public final static String NEW = "new";
+    public final static String UPDATE = "update";
+
     private final BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
