@@ -2396,4 +2396,38 @@ public class OFISDBContract {
         );
     }
 
+    public static abstract class NotificationAssignments implements BaseColumns {
+        public static final String TABLE_NAME = "notification";
+        public static final String COLUMN_NAME_ID = "id";
+        public static final String COLUMN_FARMER_ID = "farmerId";
+        public static final String COLUMN_CHILD_ID = "childId";
+        public static final String COLUMN_CREATEDAT = "createdAt";
+        public static final String COLUMN_MODULEID = "moduleId";
+        public static final String COLUMN_STATUS = "status";
+        public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
+                new ArrayList<String>() {{
+                    add(COLUMN_FARMER_ID);
+                    add(COLUMN_CHILD_ID);
+                    add(COLUMN_CREATEDAT);
+                    add(COLUMN_MODULEID);
+                    add(COLUMN_STATUS);
+                }}
+        );
+    }
+
+    public static abstract class NotificationModuleAssignments implements BaseColumns {
+        public static final String TABLE_NAME = "notificationModules";
+        public static final String COLUMN_NAME_ID = "id";
+        public static final String COLUMN_MODULENAME = "moduleName";
+        public static final String COLUMN_NAME_MSG= "message";
+        public static final String COLUMN_TOTALCOUNT = "totalCount";
+        public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
+                new ArrayList<String>() {{
+                    add(COLUMN_MODULENAME);
+                    add(COLUMN_NAME_MSG);
+                    add(COLUMN_NAME_ID);
+                    add(COLUMN_TOTALCOUNT);
+                }}
+        );
+    }
 }

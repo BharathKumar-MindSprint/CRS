@@ -45,7 +45,10 @@ public class ChildLabourUtils {
     public static final String HOUSEHOLD_ENABLED="householdEnabled";
     public static final String INSPECTION_ENABLED="inspectionEnabled";
     public static final String FOLLOWUP_ENABLED="followupEnabled";
-
+    public static final String SMARTNOTIFICATION_ENDPOINT="ofischild/child/getdetailsbyenumaratorid/?enumeratorId=";
+    public static final String PAGENUMBER_CONSTANT="&pageNo=";
+    public static final String LIMIT_CONSTANT="&limit=";
+    public static final String MODULE_CONSTANT="&module=";
 
 
     public static String getTranslatedGender(Context mContext, String gender) {
