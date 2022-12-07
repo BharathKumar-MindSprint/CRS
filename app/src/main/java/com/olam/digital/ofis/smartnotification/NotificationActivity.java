@@ -33,7 +33,6 @@ import java.util.Comparator;
 
 public class NotificationActivity extends BaseListActivity {
 
-    private Context context;
     private static RecyclerView notificationListRecyclerView;
     private static SmartNotificationAdapter smartNotificationAdapter;
     Spinner moduleSpinner;
@@ -52,7 +51,6 @@ public class NotificationActivity extends BaseListActivity {
     }
   
     private void init() {
-        context = this;
         res = getResources();
         dl = new DataLayer(res, this);
         moduleSpinner = (Spinner) findViewById(R.id.spinnerModuletype);
@@ -68,6 +66,8 @@ public class NotificationActivity extends BaseListActivity {
         notificationListRecyclerView.setItemAnimator(new DefaultItemAnimator());
         ((LinearLayoutManager) reLayoutManager).setReverseLayout(false);
         ((LinearLayoutManager) reLayoutManager).scrollToPosition(0);
+        smartNotificationAdapter = new SmartNotificationAdapter(notificationList, this);
+        notificationListRecyclerView.setAdapter(smartNotificationAdapter);
         loadNotificationData();
         sortIcon.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,7 +88,8 @@ public class NotificationActivity extends BaseListActivity {
                 }else{
                     notificationList = dl.getSmartNotificationList(position);
                 }
-                loadNotificationData();
+                smartNotificationAdapter.resetItem(notificationList);
+                smartNotificationAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -110,12 +111,12 @@ public class NotificationActivity extends BaseListActivity {
                 }
             }
         });
-        loadNotificationData();
+        smartNotificationAdapter.resetItem(notificationList);
+        smartNotificationAdapter.notifyDataSetChanged();
     }
 
     private void loadNotificationData() {
-        smartNotificationAdapter = new SmartNotificationAdapter(notificationList, this);
-        notificationListRecyclerView.setAdapter(smartNotificationAdapter);
+
         smartNotificationAdapter.setOnItemClickListener(new OnItemNotificationClickListener() {
             @Override
             public void onNotificationClick(View view, int position, NotificationDTO notificationDTO) {
