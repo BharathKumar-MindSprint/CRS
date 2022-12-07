@@ -81,7 +81,9 @@ public class Utilities {
     public static String LO = "lo";
     public static String VI = "vi";
     public static String TH = "th";
-
+    public static int notificationLimit=500;
+    public static String READ = "R";
+    public static String UNREAD = "U";
 
 public  static String base64ConversionForImage(String filepath)  {
     String encoded="";

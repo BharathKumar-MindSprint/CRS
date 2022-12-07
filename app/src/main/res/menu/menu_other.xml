@@ -7,6 +7,11 @@
         android:icon="@drawable/ic_action_home"
         android:orderInCategory="100"
         app:showAsAction="always" />
+    <item android:id="@+id/action_notification"
+        android:title="@string/notification"
+        app:actionProviderClass="com.olam.digital.ofis.smartnotification.NotificationActionProvider"
+        android:orderInCategory="100"
+        app:showAsAction="always" />
     <item android:id="@+id/action_tasks"
         android:title="@string/title_activity_tasks"
         app:actionProviderClass="com.olam.digital.ofis.taskActionProvider"
