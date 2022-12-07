@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.icu.util.EthiopicCalendar;
 import android.net.Uri;
 import androidx.appcompat.app.AlertDialog;
 import android.util.Log;
@@ -1820,41 +1821,55 @@ public class SyncAllTask extends SyncTask {
                         if(pageNumber == 1) {
                             repeaterCount = totalCount / Utilities.notificationLimit;
                         }
-                        JSONArray currentArray = response.getJSONArray(Utilities.NOTIFICATIONLIST);
-                        for (int i = 0; i < currentArray.length(); i++) {
-                            String moduleName = response.getString(Utilities.MODULE);
-                            if(moduleName.equalsIgnoreCase(Utilities.FDP)){
-                                currentArray.getJSONObject(i).put(OFISDBContract.NotificationAssignments.COLUMN_MODULEID,1);
-                            }else{
-                                currentArray.getJSONObject(i).put(OFISDBContract.NotificationAssignments.COLUMN_MODULEID,2);
+                        try {
+                            JSONArray currentArray = response.getJSONArray(Utilities.NOTIFICATIONLIST);
+                            if (currentArray.length() > 0) {
+                                for (int i = 0; i < currentArray.length(); i++) {
+                                    String moduleName = response.getString(Utilities.MODULE);
+                                    if (moduleName.equalsIgnoreCase(Utilities.FDP)) {
+                                        currentArray.getJSONObject(i).put(OFISDBContract.NotificationAssignments.COLUMN_MODULEID, 1);
+                                    } else {
+                                        currentArray.getJSONObject(i).put(OFISDBContract.NotificationAssignments.COLUMN_MODULEID, 2);
+                                    }
+                                    currentArray.getJSONObject(i).put(OFISDBContract.NotificationAssignments.COLUMN_STATUS, Utilities.UNREAD);
+                                    notificationArray.put(currentArray.getJSONObject(i));
+                                }
                             }
-                            currentArray.getJSONObject(i).put(OFISDBContract.NotificationAssignments.COLUMN_STATUS,Utilities.UNREAD);
-                            notificationArray.put(currentArray.getJSONObject(i));
+                        }catch (JSONException e){
+                            e.printStackTrace();
                         }
                         publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.downloading_notification));
                         if(repeaterCount > pageNumber) {
                             int nextPage = pageNumber + 1;
                             syncSmartNotification(notificationModuleId, nextPage);
                         }else{
-                            JSONObject module = new JSONObject();
-                            module.put(OFISDBContract.NotificationModuleAssignments.COLUMN_TOTALCOUNT, response.getString(OFISDBContract.NotificationModuleAssignments.COLUMN_TOTALCOUNT));
-                            module.put(OFISDBContract.NotificationModuleAssignments.COLUMN_NAME_MSG, response.getString(OFISDBContract.NotificationModuleAssignments.COLUMN_NAME_MSG));
-                            String moduleName = response.getString(Utilities.MODULE);
-                            module.put(OFISDBContract.NotificationModuleAssignments.COLUMN_MODULENAME, moduleName);
-                            if(moduleName.equalsIgnoreCase(Utilities.FDP)){
-                                module.put(OFISDBContract.NotificationModuleAssignments.COLUMN_NAME_ID, 1);
-                            }else{
-                                module.put(OFISDBContract.NotificationModuleAssignments.COLUMN_NAME_ID, 2);
+                            try {
+                                JSONObject module = new JSONObject();
+                                module.put(OFISDBContract.NotificationModuleAssignments.COLUMN_TOTALCOUNT, response.getString(OFISDBContract.NotificationModuleAssignments.COLUMN_TOTALCOUNT));
+                                module.put(OFISDBContract.NotificationModuleAssignments.COLUMN_NAME_MSG, response.getString(OFISDBContract.NotificationModuleAssignments.COLUMN_NAME_MSG));
+                                String moduleName = response.getString(Utilities.MODULE);
+                                module.put(OFISDBContract.NotificationModuleAssignments.COLUMN_MODULENAME, moduleName);
+                                if (moduleName.equalsIgnoreCase(Utilities.FDP)) {
+                                    module.put(OFISDBContract.NotificationModuleAssignments.COLUMN_NAME_ID, 1);
+                                } else {
+                                    module.put(OFISDBContract.NotificationModuleAssignments.COLUMN_NAME_ID, 2);
+                                }
+                                moduleArray.put(module);
+                            }catch (Exception e){
+                                e.printStackTrace();
                             }
-                            moduleArray.put(module);
                             String[] ids = context.getResources().getStringArray(R.array.notification_module_id);
                             int totalModules = ids.length;
-                              if(totalModules > notificationModuleId){
+                            if(totalModules > notificationModuleId){
                                 int nextModule = notificationModuleId + 1;
                                 syncSmartNotification(nextModule, 1);
                             }else {
-                                notificationResponse.put(Utilities.NOTIFICATIONLIST, notificationArray);
-                                notificationResponse.put(Utilities.MODULELIST, moduleArray);
+                                  try {
+                                      notificationResponse.put(Utilities.NOTIFICATIONLIST, notificationArray);
+                                      notificationResponse.put(Utilities.MODULELIST, moduleArray);
+                                  }catch (JSONException e){
+                                      e.printStackTrace();
+                                  }
                                 publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.checking_child_enumerator));
                                 delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.CHILD_ENUMERATOR);
                             }
