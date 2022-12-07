@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.olam.digital.ofis.DataLayer;
 import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.Utilities;
+import com.olam.digital.ofis.downloadsurvey.dto.AnswerRequestDTO;
 import com.olam.digital.ofis.smartnotification.TimeUtils;
 import com.olam.digital.ofis.smartnotification.dto.NotificationDTO;
 import com.olam.digital.ofis.smartnotification.listener.OnItemNotificationClickListener;
@@ -29,19 +30,21 @@ public class SmartNotificationAdapter extends RecyclerView.Adapter<SmartNotifica
 
     private OnItemNotificationClickListener onItemNotificationClickListener;
     private List<NotificationDTO> notificationDTOList;
-    private Context mContext;
     public DataLayer dl;
     public Resources res;
 
     public SmartNotificationAdapter(List<NotificationDTO> notificationDTOList, Context context) {
         this.notificationDTOList=notificationDTOList;
-        this.mContext=context;
         res = context.getResources();
         dl = new DataLayer(res, context);
     }
 
     public void setOnItemClickListener(OnItemNotificationClickListener clickListener) {
         this.onItemNotificationClickListener = clickListener;
+    }
+
+    public void resetItem(List<NotificationDTO> notificationDTOList){
+        this.notificationDTOList=notificationDTOList;
     }
 
     @NonNull

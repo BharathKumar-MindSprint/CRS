@@ -33,7 +33,7 @@ public class UpdateNotificationTask extends DatabaseTask {
 
             JSONArray notificationArray,moduleArray;
             try {
-                notificationArray = notifyResponse.getJSONArray("notificationDetailsList");
+                notificationArray = notifyResponse.getJSONArray(Utilities.NOTIFICATIONLIST);
                 fillTable(notificationArray, OFISDBContract.NotificationAssignments.TABLE_NAME, OFISDBContract.NotificationAssignments.COLUMN_LIST);
             } catch (JSONException e) {
                 FirebaseCrash.report(new Exception("NotificationAssignmentsTask: Error filling NotificationAssignments table", e));
@@ -41,7 +41,7 @@ public class UpdateNotificationTask extends DatabaseTask {
             }
 
             try {
-                moduleArray = notifyResponse.getJSONArray("moduleList");
+                moduleArray = notifyResponse.getJSONArray(Utilities.MODULELIST);
                 fillTable(moduleArray, OFISDBContract.NotificationModuleAssignments.TABLE_NAME, OFISDBContract.NotificationModuleAssignments.COLUMN_LIST);
             } catch (JSONException e) {
                 FirebaseCrash.report(new Exception("NotificationModuleAssignments: Error filling NotificationModuleAssignments table", e));

@@ -232,7 +232,6 @@ public class SyncAllTask extends SyncTask {
         }else if (op == SyncTaskOperationType.SYNC_SMART_NOTIFICATION) {
             try {
                 String[] ids = context.getResources().getStringArray(R.array.notification_module_id);
-                System.out.println("getdetailsbyenumaratorid:" + ids[0]);
                 notificationModuleId = Integer.parseInt(ids[0]);
                 syncSmartNotification(notificationModuleId,1);
             } catch (Exception e) {
@@ -1807,29 +1806,29 @@ public class SyncAllTask extends SyncTask {
     private void syncSmartNotification(int notificationModuleId, int pageNumber){
 
         String endpoint = "";
-        endpoint = "ofischild/child/getdetailsbyenumaratorid/?enumeratorId="+ Utilities.getFromSharedPrefs(context)
-                +"&pageNo="+pageNumber
-                +"&limit="+Utilities.notificationLimit
-                +"&module=" + notificationModuleId;
+        endpoint = ChildLabourUtils.SMARTNOTIFICATION_ENDPOINT+ Utilities.getFromSharedPrefs(context)
+                +ChildLabourUtils.PAGENUMBER_CONSTANT+pageNumber
+                +ChildLabourUtils.LIMIT_CONSTANT+Utilities.notificationLimit
+                +ChildLabourUtils.MODULE_CONSTANT + notificationModuleId;
         okHttpGet(context, endpoint, null, new Callback() {
             @Override
             public void onResponse(Call call, final Response postResponse) {
                 try {
                     JSONObject response = new JSONObject(postResponse.body().string());
                     if (postResponse.isSuccessful()) {
-                        int totalCount = response.getInt("totalCount");
+                        int totalCount = response.getInt(OFISDBContract.NotificationModuleAssignments.COLUMN_TOTALCOUNT);
                         if(pageNumber == 1) {
                             repeaterCount = totalCount / Utilities.notificationLimit;
                         }
-                        JSONArray currentArray = response.getJSONArray("notificationDetailsList");
+                        JSONArray currentArray = response.getJSONArray(Utilities.NOTIFICATIONLIST);
                         for (int i = 0; i < currentArray.length(); i++) {
-                            String moduleName = response.getString("module");
-                            if(moduleName.equalsIgnoreCase("FDP")){
-                                currentArray.getJSONObject(i).put("moduleId",1);
+                            String moduleName = response.getString(Utilities.MODULE);
+                            if(moduleName.equalsIgnoreCase(Utilities.FDP)){
+                                currentArray.getJSONObject(i).put(OFISDBContract.NotificationAssignments.COLUMN_MODULEID,1);
                             }else{
-                                currentArray.getJSONObject(i).put("moduleId",2);
+                                currentArray.getJSONObject(i).put(OFISDBContract.NotificationAssignments.COLUMN_MODULEID,2);
                             }
-                            currentArray.getJSONObject(i).put("status",Utilities.UNREAD);
+                            currentArray.getJSONObject(i).put(OFISDBContract.NotificationAssignments.COLUMN_STATUS,Utilities.UNREAD);
                             notificationArray.put(currentArray.getJSONObject(i));
                         }
                         publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.downloading_notification));
@@ -1838,14 +1837,14 @@ public class SyncAllTask extends SyncTask {
                             syncSmartNotification(notificationModuleId, nextPage);
                         }else{
                             JSONObject module = new JSONObject();
-                            module.put("totalCount", response.getString("totalCount"));
-                            module.put("message", response.getString("message"));
-                            String moduleName = response.getString("module");
-                            module.put("moduleName", moduleName);
-                            if(moduleName.equalsIgnoreCase("FDP")){
-                                module.put("id", 1);
+                            module.put(OFISDBContract.NotificationModuleAssignments.COLUMN_TOTALCOUNT, response.getString(OFISDBContract.NotificationModuleAssignments.COLUMN_TOTALCOUNT));
+                            module.put(OFISDBContract.NotificationModuleAssignments.COLUMN_NAME_MSG, response.getString(OFISDBContract.NotificationModuleAssignments.COLUMN_NAME_MSG));
+                            String moduleName = response.getString(Utilities.MODULE);
+                            module.put(OFISDBContract.NotificationModuleAssignments.COLUMN_MODULENAME, moduleName);
+                            if(moduleName.equalsIgnoreCase(Utilities.FDP)){
+                                module.put(OFISDBContract.NotificationModuleAssignments.COLUMN_NAME_ID, 1);
                             }else{
-                                module.put("id", 2);
+                                module.put(OFISDBContract.NotificationModuleAssignments.COLUMN_NAME_ID, 2);
                             }
                             moduleArray.put(module);
                             String[] ids = context.getResources().getStringArray(R.array.notification_module_id);
@@ -1854,8 +1853,8 @@ public class SyncAllTask extends SyncTask {
                                 int nextModule = notificationModuleId + 1;
                                 syncSmartNotification(nextModule, 1);
                             }else {
-                                notificationResponse.put("notificationDetailsList", notificationArray);
-                                notificationResponse.put("moduleList", moduleArray);
+                                notificationResponse.put(Utilities.NOTIFICATIONLIST, notificationArray);
+                                notificationResponse.put(Utilities.MODULELIST, moduleArray);
                                 publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.checking_child_enumerator));
                                 delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.CHILD_ENUMERATOR);
                             }
