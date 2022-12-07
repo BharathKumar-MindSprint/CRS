@@ -506,6 +506,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 Cursor moduleAssignments = getFarmerModules(farmerId, this,farmSurvey);
                 boolean isAtLeastOnePlotSurveyCaptured = validateBySubmittedModule(submittedModules);
                 boolean isPlotSurveyPending = checkPendingPlotSurvey(submittedModules);
+                showInfo();
                 if (isPlotSurveyPending) {
                     plotStatusInfoLayout.setVisibility(View.VISIBLE);
                 } else {
@@ -516,6 +517,8 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                     consentStatusInfoLayout.setVisibility(View.GONE);
                 }else{
                     consentStatusInfoLayout.setVisibility(View.VISIBLE);
+                    plotStatusInfoLayout.setVisibility(View.GONE);
+                    statusInfoLayout.setVisibility(View.GONE);
                 }
                 if (moduleAssignments != null && moduleAssignments.getCount() > 0) {
                     String[] adapterCols = new String[]{
@@ -2642,7 +2645,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
     protected void onResume() {
         super.onResume();
         setupUI();
-        showInfo();
+
         MatomoHelper.matomoScreenTracker(ScreenNameConstants.SCREEN_FIND_FARMER_ACTIVITY, ScreenNameConstants.SCREEN_VIEW_FARMER_ACTIVITY, ScreenNameConstants.SCREEN_VIEW_FARMER);
     }
 
