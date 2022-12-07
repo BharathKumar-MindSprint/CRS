@@ -47,6 +47,7 @@ import com.olam.digital.ofis.multifarm.MultiFarmUtils;
 import com.olam.digital.ofis.multifarm.MultifarmFarmerDTO;
 import com.olam.digital.ofis.multifarm.SubmittedInfo;
 import com.olam.digital.ofis.recordpolygon.RecordPolygonActivity;
+import com.olam.digital.ofis.smartnotification.dto.NotificationDTO;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -9165,6 +9166,101 @@ public class DataLayer {
         return productId;
     }
 
+    public ArrayList<NotificationDTO> getSmartNotificationList() {
+        ArrayList<NotificationDTO> notificationList = new ArrayList<>();
+        String[] columns = new String[]{"*"};
+        Cursor nIds = db.query(OFISDBContract.NotificationAssignments.TABLE_NAME, columns, null, null, null, null, null);
+        int i = 0;
+        while (nIds.moveToNext()) {
+            i++;
+            NotificationDTO notificationDTO = new NotificationDTO();
+            notificationDTO.setId(nIds.getInt(nIds.getColumnIndex(OFISDBContract.NotificationAssignments.COLUMN_NAME_ID)));
+            notificationDTO.setChildId(nIds.getInt(nIds.getColumnIndex(OFISDBContract.NotificationAssignments.COLUMN_CHILD_ID)));
+            notificationDTO.setFarmerId(nIds.getInt(nIds.getColumnIndex(OFISDBContract.NotificationAssignments.COLUMN_FARMER_ID)));
+            notificationDTO.setModuleId(nIds.getInt(nIds.getColumnIndex(OFISDBContract.NotificationAssignments.COLUMN_MODULEID)));
+            notificationDTO.setCreatedAt(nIds.getString(nIds.getColumnIndex(OFISDBContract.NotificationAssignments.COLUMN_CREATEDAT)));
+            notificationDTO.setStatus(nIds.getString(nIds.getColumnIndex(OFISDBContract.NotificationAssignments.COLUMN_STATUS)));
+            notificationList.add(notificationDTO);
+        }
 
+        return notificationList;
+    }
+
+    public ArrayList<NotificationDTO> getSmartNotificationList(int moduleId) {
+        ArrayList<NotificationDTO> notificationList = new ArrayList<>();
+        String[] columns = new String[]{"*"};
+        String whereClause = OFISDBContract.NotificationAssignments.COLUMN_MODULEID+ " = ? ";
+        String[] whereArgs = new String[]{String.valueOf(moduleId)};
+        Cursor nIds = db.query(OFISDBContract.NotificationAssignments.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+        int i = 0;
+        while (nIds.moveToNext()) {
+            i++;
+            NotificationDTO notificationDTO = new NotificationDTO();
+            notificationDTO.setId(nIds.getInt(nIds.getColumnIndex(OFISDBContract.NotificationAssignments.COLUMN_NAME_ID)));
+            notificationDTO.setChildId(nIds.getInt(nIds.getColumnIndex(OFISDBContract.NotificationAssignments.COLUMN_CHILD_ID)));
+            notificationDTO.setFarmerId(nIds.getInt(nIds.getColumnIndex(OFISDBContract.NotificationAssignments.COLUMN_FARMER_ID)));
+            notificationDTO.setModuleId(nIds.getInt(nIds.getColumnIndex(OFISDBContract.NotificationAssignments.COLUMN_MODULEID)));
+            notificationDTO.setCreatedAt(nIds.getString(nIds.getColumnIndex(OFISDBContract.NotificationAssignments.COLUMN_CREATEDAT)));
+            notificationDTO.setStatus(nIds.getString(nIds.getColumnIndex(OFISDBContract.NotificationAssignments.COLUMN_STATUS)));
+            notificationList.add(notificationDTO);
+        }
+
+        return notificationList;
+    }
+
+    public String getMessageByModuleId(int moduleId) {
+        String message="";
+        Cursor moduleCursor=null;
+        try {
+            String[] columns = new String[]{"*"};
+            String whereClause = OFISDBContract.NotificationModuleAssignments.COLUMN_NAME_ID + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(moduleId)};
+            moduleCursor = db.query(OFISDBContract.NotificationModuleAssignments.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+            if (moduleCursor != null) {
+                while (moduleCursor.moveToNext()) {
+                    message = moduleCursor.getString(moduleCursor.getColumnIndex(OFISDBContract.NotificationModuleAssignments.COLUMN_NAME_MSG));
+                }
+            }
+        } catch (Exception e) {
+        }finally {
+            moduleCursor.close();
+        }
+        return  message;
+    }
+
+
+    public void removeNotificationModule(int moduleId) {
+        String table = OFISDBContract.NotificationAssignments.TABLE_NAME;
+        String[] whereArgs = new String[]{ String.valueOf(moduleId) };
+        String whereClause = OFISDBContract.NotificationAssignments.COLUMN_NAME_ID + " = ? ";
+        db.delete(table, whereClause, whereArgs);
+    }
+
+    public int getNotificationCount() {
+        int count = 0;
+        try {
+            String table = OFISDBContract.NotificationAssignments.TABLE_NAME;
+            String[] whereArgs = new String[]{ Utilities.UNREAD };
+            String[] columns = new String[]{"*"};
+            String whereClause = OFISDBContract.NotificationAssignments.COLUMN_STATUS + " = ? ";
+            Cursor cursor = db.query(table, columns, whereClause, whereArgs, null, null, null);
+            if (cursor != null) {
+                count = cursor.getCount();
+            }
+            cursor.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return count;
+    }
+
+    public void updateNotificationModule(int farmerId) {
+        String table = OFISDBContract.NotificationAssignments.TABLE_NAME;
+        String[] whereArgs = new String[]{ String.valueOf(farmerId) };
+        String whereClause = OFISDBContract.NotificationAssignments.COLUMN_FARMER_ID + " = ? ";
+        ContentValues values = new ContentValues();
+        values.put(OFISDBContract.NotificationAssignments.COLUMN_STATUS, Utilities.READ);
+        db.update(table,values, whereClause, whereArgs);
+    }
 }
 

@@ -14,7 +14,7 @@ class OFISDB extends SQLiteOpenHelper {
     private static OFISDB sInstance;
 
 
-    private static final int DATABASE_VERSION = 145;
+    private static final int DATABASE_VERSION = 146;
 
 
     private static final String DATABASE_NAME = "ofismobile";
@@ -750,6 +750,19 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_NAME_FARM_CODE + " TEXT, "
             + OFISDBContract.MultiFarmStakeholderFarms.COLUMN_NAME_IS_SYNCED + " INTEGER DEFAULT 1)";
 
+    private static final String OFIS_NOTIFICATION_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.NotificationAssignments.TABLE_NAME
+            + " ( " + OFISDBContract.NotificationAssignments.COLUMN_NAME_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            OFISDBContract.NotificationAssignments.COLUMN_FARMER_ID + " INTEGER, " +
+            OFISDBContract.NotificationAssignments.COLUMN_CHILD_ID + " INTEGER, " +
+            OFISDBContract.NotificationAssignments.COLUMN_MODULEID + " INTEGER, " +
+            OFISDBContract.NotificationAssignments.COLUMN_STATUS + " TEXT, " +
+            OFISDBContract.NotificationAssignments.COLUMN_CREATEDAT + " TEXT )";
+
+    private static final String OFIS_NOTIFICATION_MODULELIST_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.NotificationModuleAssignments.TABLE_NAME
+            + " ( " + OFISDBContract.NotificationModuleAssignments.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " +
+            OFISDBContract.NotificationModuleAssignments.COLUMN_MODULENAME + " TEXT, " +
+            OFISDBContract.NotificationModuleAssignments.COLUMN_TOTALCOUNT + " INTEGER, " +
+            OFISDBContract.NotificationModuleAssignments.COLUMN_NAME_MSG + " TEXT )";
 
     public static OFISDB getInstance(Context context) {
         if (sInstance == null) {
@@ -862,6 +875,8 @@ class OFISDB extends SQLiteOpenHelper {
 
         sqLiteDatabase.execSQL(OFIS_SAVED_ANSWER_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_PLOT_TABLE_CREATE);
+        sqLiteDatabase.execSQL(OFIS_NOTIFICATION_TABLE_CREATE);
+        sqLiteDatabase.execSQL(OFIS_NOTIFICATION_MODULELIST_TABLE_CREATE);
 
     }
 
@@ -922,6 +937,8 @@ class OFISDB extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(OFIS_DOWNLOADED_SURVEYLIST_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_SAVED_ANSWER_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_PLOT_TABLE_CREATE);
+        sqLiteDatabase.execSQL(OFIS_NOTIFICATION_TABLE_CREATE);
+        sqLiteDatabase.execSQL(OFIS_NOTIFICATION_MODULELIST_TABLE_CREATE);
         onCreate(sqLiteDatabase);
     }
 
