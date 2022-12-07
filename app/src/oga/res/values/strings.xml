@@ -1052,7 +1052,7 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="plot_name">Plot Name</string>
     <string name="plot_survey">Plot Survey</string>
     <string name="plot_notification_info">Please update plot survey(s) for the farmer</string>
-    <string name="consent_info">Please update consent farmers and consent others for the farmer</string>
+    <string name="consent_info">Please update the consent for the farmer</string>
     <string-array name="notification_module_id">
         <item>1</item> <!--FDP-->
         <item>2</item> <!--CLMRS-->
