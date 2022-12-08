@@ -662,7 +662,6 @@ public class SyncAllTask extends SyncTask {
                     if (postResponse.isSuccessful()) {
                         try {
                             JSONArray countryArray = response.getJSONArray("assignments");
-                            System.out.println("CountryAssignmentData:" + countryArray.toString());
                             JSONObject item = new JSONObject();
                             int length = countryArray.length();
                             for (int j = 0; j < length; j++) {
@@ -678,7 +677,6 @@ public class SyncAllTask extends SyncTask {
 //                                Utilities.saveToSharedPrefs(context, "COUNTRY_CODE", counrtyCode.substring(0,2), null);
                             }
                             assignmentCheckResponse = response;
-                            System.out.println("isoCodesize:"+isoCodes.size());
                             Gson gson = new Gson();
                             List<String> textList = new ArrayList<String>(isoCodes);
                             List<String> cidsList = new ArrayList<String>(countryIds);
@@ -735,15 +733,7 @@ public class SyncAllTask extends SyncTask {
         Type type = new TypeToken<ArrayList<String>>() {}.getType();
         isoCodes = gson.fromJson(jsonText, type);
         int countrycount = Utilities.getIntFromSharedPrefs(context, "COUNTRY_COUNT");
-        System.out.println("isoCodesize2:" + isoCodes.size() + " and count" + countrycount );
         String counrtyCode = isoCodes.get(countrycount-1);
-//        String counrtyCode = "ID";
-        System.out.println("SAT_Country_code:" + counrtyCode);
-      /*  inputArgs.put("appInstanceId", counrtyCode + "_OFIS_DO_INTERFACE");
-        inputArgs.put("clientId",8);
-        inputArgs.put("id", counrtyCode + "_OFIS_DO_INTERFACE");
-        inputArgs.put("languageIsoCode", "en");
-        inputArgs.put("password", "Olam123+");*/
         inputArgs.put("userId", counrtyCode + "_OFIS_DO_INTERFACE");
         inputArgs.put("password", "Olam123+");
         inputArgs.put("system", "od");
@@ -820,7 +810,6 @@ public class SyncAllTask extends SyncTask {
                         }catch (Exception e){}
                         try {
                             JSONArray countryArray = response.getJSONObject("outputdata").getJSONArray("countries");
-                            System.out.println("CountrySpinners:" + countryArray.toString());
                             JSONObject item = new JSONObject();
                             int length = countryArray.length();
                             for (int j = 0; j < length; j++) {
@@ -888,10 +877,8 @@ public class SyncAllTask extends SyncTask {
                     isoCodes = gson.fromJson(jsonText, type);
                     countryIds = gson.fromJson(cids, type);
                     int countrycount = Utilities.getIntFromSharedPrefs(context, "COUNTRY_COUNT");
-                    System.out.println("isoCodesize3:" + isoCodes.size() + " and count" + countrycount );
                     String counrtyCode = isoCodes.get(countrycount-1);
                     String counrtyid = countryIds.get(countrycount-1);
-                    System.out.println("SAT_Country_code:" + counrtyCode);
                     JSONArray response = new JSONArray(postResponse.body().string());
                     DynatraceHelper.requestPayload(finalEndPoint,response.toString(),context,false);
                     if (postResponse.isSuccessful()) {
@@ -982,7 +969,6 @@ public class SyncAllTask extends SyncTask {
                 try {
                     JSONObject response = new JSONObject(postResponse.body().string());
                     DynatraceHelper.requestPayload(finalEndPoint,response.toString(),context,false);
-                    System.out.println("Surveyresponse_sync:" + response.toString());
                     if (postResponse.isSuccessful()) {
                         syncResultCount = syncResultCount + response.getInt("resultcount");
                         if (response.getString("status").equals("unchanged")) {
@@ -992,10 +978,8 @@ public class SyncAllTask extends SyncTask {
                         }
                         moduleResponse = response;
 
-                        // MARCH-10- Go-Live
-                        publishProgress(SyncOperation.CONTINUE_DOWNLOADING, "Checking MultiFarm enumerator");
-                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.MULTIFARM_ENABLED_ENUMERATOR);
-
+                        publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.downloading_notification));
+                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_SMART_NOTIFICATION);
 //                        Utilities.setMultiFarmPref(context, MultiFarmUtils.IS_MULTI_FARM_ENUMERATOR, false);
 //                        publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.updating_sip_training));
 //                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_SIP_MODULES);
@@ -1190,9 +1174,8 @@ public class SyncAllTask extends SyncTask {
                         Boolean ishousehold = Boolean.parseBoolean(output.trim());
                         Utilities.saveToSharedPrefs(context, Utilities.HOUSEHOLD_ENUMERATOR,null, ishousehold);
 
-                        publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.downloading_notification));
-                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_SMART_NOTIFICATION);
-
+                        publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.checking_child_enumerator));
+                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.CHILD_ENUMERATOR);
 
 
                     } else {
@@ -1378,23 +1361,15 @@ public class SyncAllTask extends SyncTask {
             @Override
             public void onResponse(Call call, final Response postResponse) {
                 try {
-                    // JSONObject response = new JSONObject(postResponse.body().string());
                     String output = postResponse.body().string();
                     DynatraceHelper.requestPayload(finalEndpoint,output,context,false);
                     if (postResponse.isSuccessful()) {
-                        // store the value in Child labour preferences
                         Boolean isflenumerator = Boolean.parseBoolean(output.trim());
-//                        Boolean isflenumerator = false;
                         Utilities.saveToSharedPrefs(context, Utilities.FARMERLEAD_ENUMERATOR,null, isflenumerator);
-                        System.out.println("isflenumerator_data:" + isflenumerator);
                         if(! isflenumerator) {
                             publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.updating_farmers));
                             delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_FARMERS);
-                        }else{/*
-//                            publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.checking_isfl_enumerator));
-                            publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.checking_isfl_enumerator));
-//                            delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_OD_TOKEN);
-                            delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_ENUM_ASSIGNMENT);*/
+                        }else{
                             publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.checking_isfl_enumerator));
                             delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_OD_TOKEN);
                         }
@@ -1863,19 +1838,29 @@ public class SyncAllTask extends SyncTask {
                                 e.printStackTrace();
                             }
                             String[] ids = context.getResources().getStringArray(R.array.notification_module_id);
-                            int totalModules = ids.length;
-                            if(totalModules > notificationModuleId){
-                                int nextModule = notificationModuleId + 1;
+                            String[] withoutClmrsIds = context.getResources().getStringArray(R.array.notifications_noclmrs);
+                            boolean isChildEnumerator = Utilities.getChildLabourPref(context, ChildLabourUtils.IS_CHILD_ENUMERATOR);
+                            int totalModules;
+                            if(isChildEnumerator){
+                                totalModules = ids.length;
+                            }else{
+                                totalModules = withoutClmrsIds.length;
+                            }
+                             if(totalModules > notificationModuleId){
+                                 int nextModule = notificationModuleId + 1;
                                 syncSmartNotification(nextModule, 1);
                             }else {
                                   try {
-                                      notificationResponse.put(Utilities.NOTIFICATIONLIST, notificationArray);
-                                      notificationResponse.put(Utilities.MODULELIST, moduleArray);
-                                  }catch (JSONException e){
+                                      notificationResponse = new JSONObject();
+                                      notificationResponse.put("notificationDetailsList", notificationArray);
+                                      notificationResponse.put("moduleList", moduleArray);
+                                  }catch (Exception e){
                                       e.printStackTrace();
                                   }
-                                publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.checking_child_enumerator));
-                                delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.CHILD_ENUMERATOR);
+                                notificationArray = new JSONArray();
+                                moduleArray = new JSONArray();
+                                publishProgress(SyncOperation.CONTINUE_DOWNLOADING, "Checking MultiFarm enumerator");
+                                delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.MULTIFARM_ENABLED_ENUMERATOR);
                             }
                         }
                     }

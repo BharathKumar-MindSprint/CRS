@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -19,10 +20,11 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.olam.digital.ofis.BaseListActivity;
-import com.olam.digital.ofis.ConsentStatementActivity;
 import com.olam.digital.ofis.DataLayer;
 import com.olam.digital.ofis.R;
+import com.olam.digital.ofis.Utilities;
 import com.olam.digital.ofis.ViewFarmerActivity;
+import com.olam.digital.ofis.childlabour.ChildLabourUtils;
 import com.olam.digital.ofis.smartnotification.adapter.SmartNotificationAdapter;
 import com.olam.digital.ofis.smartnotification.dto.NotificationDTO;
 import com.olam.digital.ofis.smartnotification.listener.OnItemNotificationClickListener;
@@ -41,7 +43,8 @@ public class NotificationActivity extends BaseListActivity {
     public Resources res;
     boolean ascending = true;
     ArrayList<NotificationDTO> notificationList;
-
+    boolean isChildEnumerator;
+    ArrayAdapter<String> spinnerArrayAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,6 +59,14 @@ public class NotificationActivity extends BaseListActivity {
         moduleSpinner = (Spinner) findViewById(R.id.spinnerModuletype);
         notificationListRecyclerView = (RecyclerView) findViewById(R.id.notificationList);
         sortIcon = (ImageButton) findViewById(R.id.sortingButton);
+        isChildEnumerator = Utilities.getChildLabourPref(this, ChildLabourUtils.IS_CHILD_ENUMERATOR);
+        if(isChildEnumerator) {
+            spinnerArrayAdapter = new ArrayAdapter<String>(NotificationActivity.this, R.layout.spinner_item, res.getStringArray(R.array.notification_modules));
+        }else{
+            spinnerArrayAdapter = new ArrayAdapter<String>(NotificationActivity.this, R.layout.spinner_item, res.getStringArray(R.array.notification_modules_noclmrs));
+        }
+        spinnerArrayAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+        moduleSpinner.setAdapter(spinnerArrayAdapter);
         notificationList = dl.getSmartNotificationList();
         RecyclerView.LayoutManager reLayoutManager = new LinearLayoutManager(this);
         notificationListRecyclerView.setLayoutManager(reLayoutManager);

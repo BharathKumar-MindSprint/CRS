@@ -86,6 +86,10 @@ abstract class DatabaseTask extends AsyncTask<JSONObject, Integer, String> {
         db.endTransaction();
     }
 
+    void clearNotificationTable(){
+        db.delete(OFISDBContract.NotificationAssignments.TABLE_NAME, null, null);
+        db.delete(OFISDBContract.NotificationModuleAssignments.TABLE_NAME, null, null);
+    }
 
     void fillTable(JSONArray jsonArray, String tableName, List columnList) {
       if ((! tableName.equalsIgnoreCase("stakeHolders"))
