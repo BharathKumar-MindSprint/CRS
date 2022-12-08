@@ -1,7 +1,5 @@
 package com.olam.digital.ofis.smartnotification;
 
-
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -41,7 +39,7 @@ public class NotificationActivity extends BaseListActivity {
     ImageButton sortIcon;
     public DataLayer dl;
     public Resources res;
-    boolean ascending = true;
+    boolean ascending = false;
     ArrayList<NotificationDTO> notificationList;
     boolean isChildEnumerator;
     ArrayAdapter<String> spinnerArrayAdapter;
@@ -69,14 +67,15 @@ public class NotificationActivity extends BaseListActivity {
         moduleSpinner.setAdapter(spinnerArrayAdapter);
         notificationList = dl.getSmartNotificationList();
         RecyclerView.LayoutManager reLayoutManager = new LinearLayoutManager(this);
-        notificationListRecyclerView.setLayoutManager(reLayoutManager);
         DividerItemDecoration itemDecoration = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
         itemDecoration.setDrawable(res.getDrawable(R.drawable.list_seperator_divider));
         notificationListRecyclerView.addItemDecoration(itemDecoration);
         notificationListRecyclerView.setHasFixedSize(true);
         notificationListRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        ((LinearLayoutManager) reLayoutManager).setReverseLayout(false);
+        ((LinearLayoutManager) reLayoutManager).setReverseLayout(true);
+        ((LinearLayoutManager) reLayoutManager).setStackFromEnd(true);
         ((LinearLayoutManager) reLayoutManager).scrollToPosition(0);
+        notificationListRecyclerView.setLayoutManager(reLayoutManager);
         smartNotificationAdapter = new SmartNotificationAdapter(notificationList, this);
         notificationListRecyclerView.setAdapter(smartNotificationAdapter);
         loadNotificationData();
@@ -122,7 +121,6 @@ public class NotificationActivity extends BaseListActivity {
                 }
             }
         });
-        smartNotificationAdapter.resetItem(notificationList);
         smartNotificationAdapter.notifyDataSetChanged();
     }
 
