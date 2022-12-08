@@ -1822,17 +1822,19 @@ public class SyncAllTask extends SyncTask {
                             repeaterCount = totalCount / Utilities.notificationLimit;
                         }
                         try {
-                            JSONArray currentArray = response.getJSONArray(Utilities.NOTIFICATIONLIST);
-                            if (currentArray.length() > 0) {
-                                for (int i = 0; i < currentArray.length(); i++) {
-                                    String moduleName = response.getString(Utilities.MODULE);
-                                    if (moduleName.equalsIgnoreCase(Utilities.FDP)) {
-                                        currentArray.getJSONObject(i).put(OFISDBContract.NotificationAssignments.COLUMN_MODULEID, 1);
-                                    } else {
-                                        currentArray.getJSONObject(i).put(OFISDBContract.NotificationAssignments.COLUMN_MODULEID, 2);
+                            if(totalCount > 0) {
+                                JSONArray currentArray = response.getJSONArray(Utilities.NOTIFICATIONLIST);
+                                if (currentArray.length() > 0) {
+                                    for (int i = 0; i < currentArray.length(); i++) {
+                                        String moduleName = response.getString(Utilities.MODULE);
+                                        if (moduleName.equalsIgnoreCase(Utilities.FDP)) {
+                                            currentArray.getJSONObject(i).put(OFISDBContract.NotificationAssignments.COLUMN_MODULEID, 1);
+                                        } else {
+                                            currentArray.getJSONObject(i).put(OFISDBContract.NotificationAssignments.COLUMN_MODULEID, 2);
+                                        }
+                                        currentArray.getJSONObject(i).put(OFISDBContract.NotificationAssignments.COLUMN_STATUS, Utilities.UNREAD);
+                                        notificationArray.put(currentArray.getJSONObject(i));
                                     }
-                                    currentArray.getJSONObject(i).put(OFISDBContract.NotificationAssignments.COLUMN_STATUS, Utilities.UNREAD);
-                                    notificationArray.put(currentArray.getJSONObject(i));
                                 }
                             }
                         }catch (JSONException e){
@@ -1844,17 +1846,19 @@ public class SyncAllTask extends SyncTask {
                             syncSmartNotification(notificationModuleId, nextPage);
                         }else{
                             try {
-                                JSONObject module = new JSONObject();
-                                module.put(OFISDBContract.NotificationModuleAssignments.COLUMN_TOTALCOUNT, response.getString(OFISDBContract.NotificationModuleAssignments.COLUMN_TOTALCOUNT));
-                                module.put(OFISDBContract.NotificationModuleAssignments.COLUMN_NAME_MSG, response.getString(OFISDBContract.NotificationModuleAssignments.COLUMN_NAME_MSG));
-                                String moduleName = response.getString(Utilities.MODULE);
-                                module.put(OFISDBContract.NotificationModuleAssignments.COLUMN_MODULENAME, moduleName);
-                                if (moduleName.equalsIgnoreCase(Utilities.FDP)) {
-                                    module.put(OFISDBContract.NotificationModuleAssignments.COLUMN_NAME_ID, 1);
-                                } else {
-                                    module.put(OFISDBContract.NotificationModuleAssignments.COLUMN_NAME_ID, 2);
+                                if(totalCount > 0) {
+                                    JSONObject module = new JSONObject();
+                                    module.put(OFISDBContract.NotificationModuleAssignments.COLUMN_TOTALCOUNT, response.getString(OFISDBContract.NotificationModuleAssignments.COLUMN_TOTALCOUNT));
+                                    module.put(OFISDBContract.NotificationModuleAssignments.COLUMN_NAME_MSG, response.getString(OFISDBContract.NotificationModuleAssignments.COLUMN_NAME_MSG));
+                                    String moduleName = response.getString(Utilities.MODULE);
+                                    module.put(OFISDBContract.NotificationModuleAssignments.COLUMN_MODULENAME, moduleName);
+                                    if (moduleName.equalsIgnoreCase(Utilities.FDP)) {
+                                        module.put(OFISDBContract.NotificationModuleAssignments.COLUMN_NAME_ID, 1);
+                                    } else {
+                                        module.put(OFISDBContract.NotificationModuleAssignments.COLUMN_NAME_ID, 2);
+                                    }
+                                    moduleArray.put(module);
                                 }
-                                moduleArray.put(module);
                             }catch (Exception e){
                                 e.printStackTrace();
                             }
