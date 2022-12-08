@@ -9169,7 +9169,8 @@ public class DataLayer {
     public ArrayList<NotificationDTO> getSmartNotificationList() {
         ArrayList<NotificationDTO> notificationList = new ArrayList<>();
         String[] columns = new String[]{"*"};
-        Cursor nIds = db.query(OFISDBContract.NotificationAssignments.TABLE_NAME, columns, null, null, null, null, null);
+        String orderBy = OFISDBContract.NotificationAssignments.COLUMN_CREATEDAT + " ASC";
+        Cursor nIds = db.query(OFISDBContract.NotificationAssignments.TABLE_NAME, columns, null, null, null, null, orderBy);
         int i = 0;
         while (nIds.moveToNext()) {
             i++;
@@ -9191,7 +9192,8 @@ public class DataLayer {
         String[] columns = new String[]{"*"};
         String whereClause = OFISDBContract.NotificationAssignments.COLUMN_MODULEID+ " = ? ";
         String[] whereArgs = new String[]{String.valueOf(moduleId)};
-        Cursor nIds = db.query(OFISDBContract.NotificationAssignments.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+        String orderBy = OFISDBContract.NotificationAssignments.COLUMN_CREATEDAT + " ASC";
+        Cursor nIds = db.query(OFISDBContract.NotificationAssignments.TABLE_NAME, columns, whereClause, whereArgs, null, null, orderBy);
         int i = 0;
         while (nIds.moveToNext()) {
             i++;
