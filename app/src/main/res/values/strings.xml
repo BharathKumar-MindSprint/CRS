@@ -990,6 +990,9 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
         <item>1</item> <!--FDP-->
         <item>2</item> <!--CLMRS-->
     </string-array>
+    <string-array name="notifications_noclmrs">
+        <item>1</item> <!--FDP-->
+    </string-array>
     <string name="downloading_notification">Downloading Notification Data</string>
     <string name="notification">Notification</string>
     <string name="notifications">Notifications</string>
@@ -998,6 +1001,9 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
         <item>All</item> <!--All-->
         <item>FDP</item> <!--FDP-->
         <item>CLMRS Follow-up</item> <!--CLMRS-->
+    </string-array>
+    <string-array name="notification_modules_noclmrs">
+        <item>FDP</item> <!--FDP-->
     </string-array>
     <string name="info_notification_close">Notification was removed from this list</string>
 </resources>
