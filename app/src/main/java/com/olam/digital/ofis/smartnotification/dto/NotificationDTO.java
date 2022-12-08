@@ -3,7 +3,7 @@ package com.olam.digital.ofis.smartnotification.dto;
 import java.io.Serializable;
 
 // Pojo class for village details
-public class NotificationDTO implements Serializable {
+public class NotificationDTO implements Comparable<NotificationDTO> {
 
     private int id;
     private int farmerId;
@@ -58,5 +58,10 @@ public class NotificationDTO implements Serializable {
 
     public void setCreatedAt(String createdAt) {
         this.createdAt = createdAt;
+    }
+
+    @Override
+    public int compareTo(NotificationDTO o) {
+        return getCreatedAt().compareTo(o.getCreatedAt());
     }
 }
