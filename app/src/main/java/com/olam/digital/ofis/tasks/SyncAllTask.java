@@ -1871,7 +1871,7 @@ public class SyncAllTask extends SyncTask {
                                   try {
                                       notificationResponse.put(Utilities.NOTIFICATIONLIST, notificationArray);
                                       notificationResponse.put(Utilities.MODULELIST, moduleArray);
-                                  }catch (JSONException e){
+                                  }catch (Exception e){
                                       e.printStackTrace();
                                   }
                                 publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.checking_child_enumerator));
