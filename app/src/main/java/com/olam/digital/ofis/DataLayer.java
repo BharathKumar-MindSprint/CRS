@@ -7098,6 +7098,26 @@ public class DataLayer {
         return  farmerName;
     }
 
+    public String getChildNamefromDb(Long childId) {
+        String childName="";
+        Cursor cursor=null;
+        try {
+            String[] columns = new String[]{"*"};
+            String whereClause = OFISDBContract.ChildEntry.COLUMN_NAME_ONLINE_ID + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(childId)};
+            cursor=db.query(OFISDBContract.ChildEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+            if (cursor != null) {
+                while (cursor.moveToNext()) {
+                    childName = cursor.getString(cursor.getColumnIndex(OFISDBContract.ChildEntry.COLUMN_NAME_CHILD_NAME));
+                }
+            }
+        } catch (Exception e) {
+        }finally {
+            cursor.close();
+        }
+        return  childName;
+    }
+
     public long getFarmerGroupById(Long farmerId) {
         long farmerGroupId=0;
         Cursor farmerCursor=null;
