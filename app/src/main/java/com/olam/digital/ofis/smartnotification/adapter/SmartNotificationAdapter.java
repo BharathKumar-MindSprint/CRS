@@ -71,8 +71,11 @@ public class SmartNotificationAdapter extends RecyclerView.Adapter<SmartNotifica
         int moduleId = notificationDTO.getModuleId();
         holder.message.setText(dl.getMessageByModuleId(moduleId));
         if(moduleId == 1){
+            holder.childName.setVisibility(View.GONE);
             holder.moduleIcon.setImageDrawable(res.getDrawable(R.drawable.ic_fdp_notify));
         }else if (moduleId == 2){
+            int childId = notificationDTO.getChildId();
+            holder.childName.setText(dl.getChildNamefromDb(Long.valueOf(childId)));
             holder.moduleIcon.setImageDrawable(res.getDrawable(R.drawable.ic_child_notify));
         }
         String status = notificationDTO.getStatus();
@@ -95,7 +98,7 @@ public class SmartNotificationAdapter extends RecyclerView.Adapter<SmartNotifica
     }
 
     public class NotificationHolder extends RecyclerView.ViewHolder {
-        TextView farmerName,dataTime,message;
+        TextView farmerName,dataTime,message,childName;
         ImageView statusIcon,moduleIcon;
         CardView rowItem;
 
@@ -103,6 +106,7 @@ public class SmartNotificationAdapter extends RecyclerView.Adapter<SmartNotifica
             super(itemView);
             rowItem = (CardView) itemView.findViewById(R.id.rowCardView);
             farmerName = itemView.findViewById(R.id.farmerName);
+            childName = itemView.findViewById(R.id.childName);
             message = itemView.findViewById(R.id.message);
             dataTime = itemView.findViewById(R.id.dataTime);
             statusIcon = itemView.findViewById(R.id.statusIcon);
