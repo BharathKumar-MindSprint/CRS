@@ -73,9 +73,10 @@ public class NotificationActivity extends BaseListActivity {
         notificationListRecyclerView.setHasFixedSize(true);
         notificationListRecyclerView.setItemAnimator(new DefaultItemAnimator());
         ((LinearLayoutManager) reLayoutManager).setReverseLayout(false);
-        ((LinearLayoutManager) reLayoutManager).setStackFromEnd(true);
-        ((LinearLayoutManager) reLayoutManager).scrollToPosition(0);
+//        ((LinearLayoutManager) reLayoutManager).setStackFromEnd(true);
         notificationListRecyclerView.setLayoutManager(reLayoutManager);
+        ((LinearLayoutManager) reLayoutManager).scrollToPosition(0);
+        notificationListRecyclerView.scrollToPosition(0);
         smartNotificationAdapter = new SmartNotificationAdapter(notificationList, this);
         notificationListRecyclerView.setAdapter(smartNotificationAdapter);
         loadNotificationData();
