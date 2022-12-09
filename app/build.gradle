@@ -37,8 +37,8 @@ android {
         targetSdkVersion 29
         multiDexEnabled true
 
-        versionCode 303
-        versionName "11.2.8"
+        versionCode 304
+        versionName "11.2.9"
 
 
     }
