@@ -72,7 +72,7 @@ public class NotificationActivity extends BaseListActivity {
         notificationListRecyclerView.addItemDecoration(itemDecoration);
         notificationListRecyclerView.setHasFixedSize(true);
         notificationListRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        ((LinearLayoutManager) reLayoutManager).setReverseLayout(true);
+        ((LinearLayoutManager) reLayoutManager).setReverseLayout(false);
         ((LinearLayoutManager) reLayoutManager).setStackFromEnd(true);
         ((LinearLayoutManager) reLayoutManager).scrollToPosition(0);
         notificationListRecyclerView.setLayoutManager(reLayoutManager);
