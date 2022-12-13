@@ -9189,8 +9189,10 @@ public class DataLayer {
     public ArrayList<NotificationDTO> getSmartNotificationList() {
         ArrayList<NotificationDTO> notificationList = new ArrayList<>();
         String[] columns = new String[]{"*"};
+        String whereClause = OFISDBContract.NotificationAssignments.COLUMN_STATUS+ " != ? ";
+        String[] whereArgs = new String[]{Utilities.DELETED};
         String orderBy = OFISDBContract.NotificationAssignments.COLUMN_CREATEDAT + " DESC";
-        Cursor nIds = db.query(OFISDBContract.NotificationAssignments.TABLE_NAME, columns, null, null, null, null, orderBy);
+        Cursor nIds = db.query(OFISDBContract.NotificationAssignments.TABLE_NAME, columns, whereClause, whereArgs, null, null, orderBy);
         int i = 0;
         while (nIds.moveToNext()) {
             i++;
@@ -9207,11 +9209,26 @@ public class DataLayer {
         return notificationList;
     }
 
+    public ArrayList<Integer> getNotificationFarmers() {
+        ArrayList<Integer> notificationList = new ArrayList<>();
+        String[] columns = new String[]{"*"};
+        String orderBy = OFISDBContract.NotificationAssignments.COLUMN_CREATEDAT ;
+        Cursor nIds = db.query(OFISDBContract.NotificationAssignments.TABLE_NAME, columns, null, null, null, null, orderBy);
+        int i = 0;
+        while (nIds.moveToNext()) {
+           i++;
+           notificationList.add(nIds.getInt(nIds.getColumnIndex(OFISDBContract.NotificationAssignments.COLUMN_FARMER_ID)));
+        }
+
+        return notificationList;
+    }
+
     public ArrayList<NotificationDTO> getSmartNotificationList(int moduleId) {
         ArrayList<NotificationDTO> notificationList = new ArrayList<>();
         String[] columns = new String[]{"*"};
-        String whereClause = OFISDBContract.NotificationAssignments.COLUMN_MODULEID+ " = ? ";
-        String[] whereArgs = new String[]{String.valueOf(moduleId)};
+        String whereClause = OFISDBContract.NotificationAssignments.COLUMN_MODULEID+ " = ? AND "
+                + OFISDBContract.NotificationAssignments.COLUMN_STATUS+ " != ? ";
+        String[] whereArgs = new String[]{String.valueOf(moduleId),Utilities.DELETED};
         String orderBy = OFISDBContract.NotificationAssignments.COLUMN_CREATEDAT + " DESC";
         Cursor nIds = db.query(OFISDBContract.NotificationAssignments.TABLE_NAME, columns, whereClause, whereArgs, null, null, orderBy);
         int i = 0;
@@ -9255,7 +9272,19 @@ public class DataLayer {
         String table = OFISDBContract.NotificationAssignments.TABLE_NAME;
         String[] whereArgs = new String[]{ String.valueOf(moduleId) };
         String whereClause = OFISDBContract.NotificationAssignments.COLUMN_NAME_ID + " = ? ";
-        db.delete(table, whereClause, whereArgs);
+//        db.delete(table, whereClause, whereArgs);
+        ContentValues values = new ContentValues();
+        values.put(OFISDBContract.NotificationAssignments.COLUMN_STATUS, Utilities.DELETED);
+        db.update(table,values, whereClause, whereArgs);
+    }
+
+    public void deleteNotificationByFarmerId(ArrayList<Integer> farmerList) {
+        for(int farmerId : farmerList) {
+            String table = OFISDBContract.NotificationAssignments.TABLE_NAME;
+            String[] whereArgs = new String[]{String.valueOf(farmerId)};
+            String whereClause = OFISDBContract.NotificationAssignments.COLUMN_FARMER_ID + " = ? ";
+            db.delete(table, whereClause, whereArgs);
+        }
     }
 
     public int getNotificationCount() {

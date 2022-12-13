@@ -84,6 +84,7 @@ public class Utilities {
     public static int notificationLimit=500;
     public static String READ = "R";
     public static String UNREAD = "U";
+    public static String DELETED = "D";
     public static String NOTIFICATIONLIST = "notificationDetailsList";
     public static String MODULELIST = "moduleList";
     public static String FDP = "FDP";
