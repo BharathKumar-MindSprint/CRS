@@ -426,20 +426,7 @@ public class DataLayer {
 
     public void updatePlotDataAfterSync(String plotId, String plotName, String farmerId, String plottedName) {
         try {
-            /*int tempId = 0;
-            int position = Integer.parseInt(plotPosition.trim());
-            Cursor plotIds = fetchPlotId(String.valueOf(farmerId));
-            if(plotIds.getCount() > 0) {
-                int size = plotIds.getCount();
-                for (int i = 1; i <= size; i++) {
-                    plotIds.moveToNext();
-                    if(position == i){
-                        tempId = plotIds.getInt(plotIds.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_ID));
-                    }
-                }
-            }*/
 
-            System.out.println("DATAVALK_:" + farmerId + " and " + plotId + " " + plotName);
             String plotTable = OFISDBContract.PlotEntry.TABLE_NAME;
 //            String where = OFISDBContract.PlotEntry.COLUMN_NAME_FARMER_ID + " = ? AND " + OFISDBContract.PlotEntry.COLUMN_IS_SYNCED + " = ? ";
 //            String[] args = new String[]{String.valueOf(farmerId),"0"};
@@ -4668,7 +4655,6 @@ public class DataLayer {
                 newValues.put(OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID, newPlaceId);
             }
             try {
-                System.out.println("dl_odFarmerId:" + odFarmerId);
                 newValues.put(OFISDBContract.FarmerEntry.COLUMN_NAME_ODFARMERID, "null");
             }catch (Exception e){
                 e.printStackTrace();
@@ -6687,7 +6673,6 @@ public class DataLayer {
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_SYNCED, 1);
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID, olamFarmerId);
             db.update(OFISDBContract.FarmerEntry.TABLE_NAME, values, whereClause, whereArgs);
-            System.out.println("FarmerOlamId Updated");
         }catch (Exception e){
             FirebaseCrashlytics.getInstance().log(e.getMessage());
         }

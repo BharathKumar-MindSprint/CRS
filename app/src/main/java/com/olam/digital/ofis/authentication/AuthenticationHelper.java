@@ -36,7 +36,6 @@ public class AuthenticationHelper {
             return null;
         } else {
             try {
-                System.out.println("TESTINSIT_TOKEN:" + (new Gson().fromJson(decryptedMsg, AuthenticationDTO.class)));
                 return (new Gson().fromJson(decryptedMsg, AuthenticationDTO.class));
             } catch (Exception e) {
                 return null;

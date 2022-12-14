@@ -267,7 +267,6 @@ public class ConsentStatementActivity extends BaseActivity implements View.OnCli
                     page++;
                     reachedbottom = false;
                     loadpage();
-                    System.out.println("page value:" + page);
                 }
 
 
@@ -309,7 +308,6 @@ public class ConsentStatementActivity extends BaseActivity implements View.OnCli
             loadpage();
             scrollView.scrollTo(0, scrollView.getBottom());
             addingGlobalLayoutListener();
-            System.out.println("page value:" + page);
         }else if(id == R.id.farmer_signature){
             showSignatureDialog(getResources().getString(R.string.farmer));
         }else if(id == R.id.enum_signature){

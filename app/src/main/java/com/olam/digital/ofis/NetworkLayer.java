@@ -205,7 +205,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 .post(body)
                 .build();
 
-        System.out.println("okHttpArrayPost_Request:" + request);
         okHttpClient.newCall(request).enqueue(callback);
     }
 
@@ -239,7 +238,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 .post(body)
                 .build();
 
-        System.out.println("okhttppost_Request:" + request);
         okHttpClient.newCall(request).enqueue(callback);
     }
 
@@ -271,7 +269,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 .post(body)
                 .build();
 
-        System.out.println("okhttppost_Request:" + request);
         okHttpClient.newCall(request).enqueue(callback);
     }
 
@@ -303,7 +300,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 .url(fullUrl)
                 .put(body)
                 .build();
-        System.out.println("okHttpPut_Request:" + request);
+
         okHttpClient.newCall(request).enqueue(callback);
     }
 
@@ -354,7 +351,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 .url(fullUrl)
                 .post(body)
                 .build();
-        System.out.println("okHttpMSPost_Request:" + request);
         okHttpClient.newCall(request).enqueue(callback);
     }
 
@@ -434,8 +430,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             new AuthenticationHelper(context).setAuthenticationDTO(newAuthDTO);
             postData(originalSyncRequestItemId, handler);
 
-        }else{
-            System.out.println("Recheck_testsip");
         }
     }
 
@@ -3798,8 +3792,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 if(isFLEnumerator){
                     jsonObject.put(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERLEAD,farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERLEAD)));
                     jsonObject.put(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERLEADNAME, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERLEADNAME)));
-                    System.out.println("FarmerLeadinfo:" + farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERLEAD)) + " and " +
-                            farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERLEADNAME)));
                 }
 
                 if (networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID)) > 0 && networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FULLY_SYNCED)) == 0) {
@@ -3947,7 +3939,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 //            }
             final JSONArray jsonArray=new JSONArray();
             jsonArray.put(jsonObject);
-            System.out.println("Register_Farmer_Data: " + jsonArray.toString());
             Log.d("NL", "Register_Farmer_Data: " + jsonArray.toString());
             DynatraceHelper.requestPayload(DynatraceConstants.REQUEST+" "+endpoint,jsonArray.toString(),context,true);
             if (endpoint.length() > 0) {
