@@ -79,7 +79,6 @@
 //            }
 //
 //        }catch (Exception e){
-//            System.out.println(e);
 //        }
 //
 //        assertEquals(2, surveyCodeList.size());

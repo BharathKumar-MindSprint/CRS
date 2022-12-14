@@ -3421,8 +3421,6 @@ public class DynamicQuestions {
 
         if (selectCondition) {
             for (String retval : questionId.split(",")) {
-                System.out.println(retval);
-
                 int question_id = Integer.parseInt(retval);
 
                 //logic for yes or no question

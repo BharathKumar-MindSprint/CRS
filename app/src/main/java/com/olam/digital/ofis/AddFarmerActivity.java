@@ -357,16 +357,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         farmerLeadSearch = findViewById(R.id.farmerleadinfo);
         farmerLeadDisplayLayout = findViewById(R.id.farmerLeadDisplayLayout);
         isFLEnumerator = Utilities.getBoolFromSharedPrefs(context, Utilities.FARMERLEAD_ENUMERATOR,false);
-        System.out.println("isflenumerator_data2:" + isFLEnumerator);
-        /*adapterFarmerlead = new CustomListAdapterFarmerlead(this, R.layout.activity_add_farmer, flList);
-        farmerLeadSearch.setAdapter(adapterFarmerlead);
-        farmerLeadSearch.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int pos, long id) {
-                //this is the way to find selected object/item
-                selectedFarmerLead = (FarmerLeadDTO) adapterView.getItemAtPosition(pos);
-            }
-        });*/
+
         bindphonenumbers();
         dl.clearlocalniddbvalue();
         if (isNIDAvailable) {
@@ -445,7 +436,6 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
 
 
         showFarmerLead();
-        System.out.println("isflenumerator_data3:" + isFLEnumerator);
         if(! isFLEnumerator){
             farmerLeadDisplayLayout.setVisibility(View.GONE);
         }else {
@@ -475,7 +465,6 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                     return;
                 }
                 flList = dl.getFarmerLeads(countryId);
-                System.out.println("flList:" + flList.size());
                 showPopupFarmerLead(flList);
             }
         });
