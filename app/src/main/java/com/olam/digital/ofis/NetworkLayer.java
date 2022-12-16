@@ -2712,7 +2712,19 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                         postFailureMessage(handler, response, msg, 2, total, progress, null, "submitting cs location");
                                         FirebaseCrash.report(new Exception(response.optString("errors", res.getString(R.string.item_sync_error)) + " : submitting cs location"));
                                         if(response.toString().contains(context.getResources().getString(R.string.consent_duplicate_error))){
-                                           showAlertMessage(networkQueueItemId);
+                                            statusMessage = "Data cleared";
+                                            msg.what = 1;
+                                            msg.arg1 = total;
+                                            msg.arg2 = progress;
+                                            msg.obj = statusMessage;
+                                            handler.dispatchMessage(msg);
+                                            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    showAlertMessage(originalSyncRequestItemId, handler, networkQueueItemId);
+                                                }
+                                            });
+
                                         }
                                     }
                                 } catch (JSONException | IOException e) {
@@ -2753,13 +2765,28 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         }
     }
 
-    private void showAlertMessage(int networkQueueItemId) {
+    void syncNetworkQueueConsent(Integer itemId, Handler handler) {
+        if (networkQueueItems.getCount() > 0 && !networkQueueItems.isAfterLast()) {
+            if (networkQueueItems.moveToNext()) {
+                syncNetworkQueueItem(itemId, handler);
+            } else {
+                Message msg = handler.obtainMessage(2, networkQueueItems.getCount(), networkQueueItems.getPosition(), "Data cleared");
+                handler.dispatchMessage(msg);
+            }
+        } else {
+            Message msg = handler.obtainMessage(2, networkQueueItems.getCount(), networkQueueItems.getPosition(), "Data cleared");
+            handler.dispatchMessage(msg);
+        }
+    }
+
+    private void showAlertMessage(int networkQueueItemId, Handler handler, int queueItemId) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setMessage(context.getResources().getString(R.string.consent_duplicate_alert))
                 .setCancelable(false)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        dl.deleteNetworkQueueItem(networkQueueItemId);
+                        syncNetworkQueueConsent(networkQueueItemId, handler);
+                        dl.deleteNetworkQueueItem(queueItemId);
                     }
                 });
         AlertDialog alert = builder.create();
