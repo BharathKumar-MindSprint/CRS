@@ -2791,12 +2791,12 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 .setCancelable(false)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        syncNetworkQueueConsent(networkQueueItemId, handler);
-                        dl.deleteNetworkQueueItem(queueItemId);
                     }
                 });
         AlertDialog alert = builder.create();
         alert.show();
+        dl.deleteNetworkQueueItem(queueItemId);
+        syncNetworkQueueConsent(networkQueueItemId, handler);
     }
 
     // get farmer phone numbers
