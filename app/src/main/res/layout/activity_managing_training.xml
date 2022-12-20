@@ -30,7 +30,7 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/ofis_text_field"
                 android:textSize="@dimen/ofis_small_text"
-                android:text="Course Selection *"
+                android:text="@string/course_selection"
                 android:textStyle="bold"
                 android:layout_marginBottom="@dimen/ofis_med_pad"/>
 
@@ -62,13 +62,14 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:layout_weight="1">
+                    android:layout_weight="1"
+                    android:layout_marginRight="@dimen/margin_10">
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="@color/ofis_text_field"
                         android:textSize="@dimen/ofis_small_text"
-                        android:text="Module Selection *"
+                        android:text="@string/module_selection"
                         android:textStyle="bold"
                         android:layout_marginBottom="@dimen/ofis_med_pad"/>
 
@@ -77,17 +78,11 @@
                         android:layout_height="wrap_content"
                         android:id="@+id/spinner_module"
                         android:layout_weight="1"
-                        android:nextFocusDown="@+id/spinner_language"/>
+                        android:nextFocusDown="@+id/spinner_language"
+                        android:paddingRight="20dp"
+                       />
                 </LinearLayout>
 
-                <ImageView
-                    android:id="@+id/haDistrict"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="20dp"
-                    android:contentDescription="@string/ofis_cd_hierarchy_arrow"
-                    android:scaleType="center"
-                    app:srcCompat="@drawable/ic_spinner_hierarchy_arrow" />
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -98,7 +93,7 @@
                         android:layout_height="wrap_content"
                         android:textColor="@color/ofis_text_field"
                         android:textSize="@dimen/ofis_small_text"
-                        android:text="Language Selection *"
+                        android:text="@string/language_selection"
                         android:textStyle="bold"
                         android:layout_marginBottom="@dimen/ofis_med_pad"/>
                     <Spinner
@@ -144,7 +139,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/media_text"
-                android:text="Media"
+                android:text="@string/media"
                 android:gravity="center"/>
 
         </RelativeLayout>
@@ -167,9 +162,9 @@
 
             <ImageView
                 android:id="@+id/caution_img"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:src="@drawable/caution" />
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/ic_warning" />
 
             <LinearLayout
                 android:id="@+id/text_layout"
@@ -185,7 +180,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:padding="10dp"
-                    android:text="Oops! Training data is available only online"
+                    android:text="@string/Alert_text_line1"
                     android:textAlignment="center"
                     android:textColor="@color/black"
                     android:textSize="14sp"
@@ -197,7 +192,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:paddingBottom="10dp"
-                    android:text="Please turn on your mobile data."
+                    android:text="@string/Alert_text_line2"
                     android:textAlignment="center"
                     android:textColor="#FF0000"
                     android:textSize="16sp"
@@ -211,7 +206,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@color/ofis_action_button_background"
-                android:text="Retry"
+                android:text="@string/retry_btn_text"
                 android:textColor="@color/white" />
 
         </LinearLayout>

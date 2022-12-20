@@ -25,7 +25,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DocumentListAdapter extends RecyclerView.Adapter<DocumentListAdapter.ViewHolder> {
-
+    private final static String FILENAME = "Filename";
+    private final static String DOCID = "DocId";
+    private final static String PDF="pdf";
     public List<DocumentList.data> arrayList;
     public DocumentListAdapter(List<DocumentList.data> arrayList) {
         this.arrayList=arrayList;
@@ -45,17 +47,17 @@ public class DocumentListAdapter extends RecyclerView.Adapter<DocumentListAdapte
         DocumentList.data data=arrayList.get(position);
         holder.detail.setText(data.getDescription());
         holder.file.setText(data.getFileName());
-        if(data.getFileFormat().equals("pdf")){
-             holder.imageView.setImageResource(R.drawable.pdf2);
+        if(data.getFileFormat().equals(PDF)){
+             holder.imageView.setImageResource(R.drawable.ic_pdf);
         }else{
-            holder.imageView.setImageResource(R.drawable.docx);
+            holder.imageView.setImageResource(R.drawable.ic_word);
         }
         holder.linearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(context, WebViewer.class);
-                intent.putExtra("Filename",data.getFileName());
-                intent.putExtra("DocId",data.gettDocsLanId() );
+                intent.putExtra(FILENAME,data.getFileName());
+                intent.putExtra(DOCID,data.gettDocsLanId() );
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(intent);
             }
@@ -82,20 +84,4 @@ public class DocumentListAdapter extends RecyclerView.Adapter<DocumentListAdapte
     }
 
 }
-//    ConnectivityManager manager = (ConnectivityManager) context.getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-//    @SuppressLint("MissingPermission") NetworkInfo networkInfo = manager.getActiveNetworkInfo();
-//    boolean isConnected = networkInfo != null && networkInfo.isConnectedOrConnecting();
-//                if(isConnected){
-//                        Intent intent = new Intent(context, WebViewer.class);
-//        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//        context.startActivity(intent);
-//        }else{
-//        ManagingTrainingActivity activity=(ManagingTrainingActivity) view.getContext();
-//        NetworkFragment frag=new NetworkFragment();
-//        activity.getSupportFragmentManager()
-//        .beginTransaction()
-//        .replace(R.id.parent_layout,frag)
-//        .addToBackStack(null)
-//        .commit();
-//
-//        }
+

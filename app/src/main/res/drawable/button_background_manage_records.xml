@@ -2,5 +2,4 @@
     <selector xmlns:android="http://schemas.android.com/apk/res/android">
         <item android:state_pressed="true"
             android:drawable="@color/ofis_action_button_background"/> <!-- pressed -->
-<!--        <item android:drawable="@color/disabled_gray"/> &lt;!&ndash; default &ndash;&gt;-->
 </selector>
