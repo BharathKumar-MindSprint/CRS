@@ -468,6 +468,9 @@ dependencies {
         implementation 'com.google.firebase:firebase-analytics'
         implementation 'com.xw.repo:bubbleseekbar:3.20'
 
+    //pdf viewer
+    implementation 'com.github.barteksc:android-pdf-viewer:2.8.2'
+
     }
 
     apply plugin: 'com.google.gms.google-services'
