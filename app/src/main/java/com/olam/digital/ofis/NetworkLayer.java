@@ -205,7 +205,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 .post(body)
                 .build();
 
-        System.out.println("okHttpArrayPost_Request:" + request);
         okHttpClient.newCall(request).enqueue(callback);
     }
 
@@ -239,7 +238,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 .post(body)
                 .build();
 
-        System.out.println("okhttppost_Request:" + request);
         okHttpClient.newCall(request).enqueue(callback);
     }
 
@@ -271,7 +269,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 .post(body)
                 .build();
 
-        System.out.println("okhttppost_Request:" + request);
         okHttpClient.newCall(request).enqueue(callback);
     }
 
@@ -303,7 +300,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 .url(fullUrl)
                 .put(body)
                 .build();
-        System.out.println("okHttpPut_Request:" + request);
+
         okHttpClient.newCall(request).enqueue(callback);
     }
 
@@ -354,7 +351,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 .url(fullUrl)
                 .post(body)
                 .build();
-        System.out.println("okHttpMSPost_Request:" + request);
         okHttpClient.newCall(request).enqueue(callback);
     }
 
@@ -434,8 +430,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             new AuthenticationHelper(context).setAuthenticationDTO(newAuthDTO);
             postData(originalSyncRequestItemId, handler);
 
-        }else{
-            System.out.println("Recheck_testsip");
         }
     }
 
@@ -2718,7 +2712,19 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                         postFailureMessage(handler, response, msg, 2, total, progress, null, "submitting cs location");
                                         FirebaseCrash.report(new Exception(response.optString("errors", res.getString(R.string.item_sync_error)) + " : submitting cs location"));
                                         if(response.toString().contains(context.getResources().getString(R.string.consent_duplicate_error))){
-                                           showAlertMessage(networkQueueItemId);
+                                            statusMessage = "Data cleared";
+                                            msg.what = 1;
+                                            msg.arg1 = total;
+                                            msg.arg2 = progress;
+                                            msg.obj = statusMessage;
+                                            handler.dispatchMessage(msg);
+                                            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    showAlertMessage(originalSyncRequestItemId, handler, networkQueueItemId);
+                                                }
+                                            });
+
                                         }
                                     }
                                 } catch (JSONException | IOException e) {
@@ -2759,17 +2765,32 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         }
     }
 
-    private void showAlertMessage(int networkQueueItemId) {
+    void syncNetworkQueueConsent(Integer itemId, Handler handler) {
+        if (networkQueueItems.getCount() > 0 && !networkQueueItems.isAfterLast()) {
+            if (networkQueueItems.moveToNext()) {
+                syncNetworkQueueItem(itemId, handler);
+            } else {
+                Message msg = handler.obtainMessage(2, networkQueueItems.getCount(), networkQueueItems.getPosition(), "Data cleared");
+                handler.dispatchMessage(msg);
+            }
+        } else {
+            Message msg = handler.obtainMessage(2, networkQueueItems.getCount(), networkQueueItems.getPosition(), "Data cleared");
+            handler.dispatchMessage(msg);
+        }
+    }
+
+    private void showAlertMessage(int networkQueueItemId, Handler handler, int queueItemId) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setMessage(context.getResources().getString(R.string.consent_duplicate_alert))
                 .setCancelable(false)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        dl.deleteNetworkQueueItem(networkQueueItemId);
                     }
                 });
         AlertDialog alert = builder.create();
         alert.show();
+        dl.deleteNetworkQueueItem(queueItemId);
+        syncNetworkQueueConsent(networkQueueItemId, handler);
     }
 
     // get farmer phone numbers
@@ -3798,8 +3819,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 if(isFLEnumerator){
                     jsonObject.put(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERLEAD,farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERLEAD)));
                     jsonObject.put(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERLEADNAME, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERLEADNAME)));
-                    System.out.println("FarmerLeadinfo:" + farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERLEAD)) + " and " +
-                            farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERLEADNAME)));
                 }
 
                 if (networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID)) > 0 && networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FULLY_SYNCED)) == 0) {
@@ -3870,11 +3889,9 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             JSONArray nidstosend = farmernationalids(networkQueueItems
                     .getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
             JSONObject consentStatement = farmerConsentStatment(networkQueueItems
-                    .getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)),
+                            .getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)),
                     farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
-//            JSONArray farmerRegistrationPhoneNumberDTOList = farmerPhoneNumbers(networkQueueItems
-//                    .getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
-            try {
+           try {
                 jsonObject.put("consentStatement",consentStatement);
             } catch (JSONException e) {
                 FirebaseCrashlytics.getInstance().log(e.getMessage());
@@ -3949,7 +3966,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 //            }
             final JSONArray jsonArray=new JSONArray();
             jsonArray.put(jsonObject);
-            System.out.println("Register_Farmer_Data: " + jsonArray.toString());
             Log.d("NL", "Register_Farmer_Data: " + jsonArray.toString());
             DynatraceHelper.requestPayload(DynatraceConstants.REQUEST+" "+endpoint,jsonArray.toString(),context,true);
             if (endpoint.length() > 0) {

@@ -195,6 +195,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     private String dateStrToSend;
     private TextView farmerDOB;
     boolean  csStatus;
+    ContentValues consentValue;
     ArrayList<String> nationalIdTypes=null;
     boolean isFLEnumerator;
     boolean isSubdistrictCapture;
@@ -356,16 +357,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         farmerLeadSearch = findViewById(R.id.farmerleadinfo);
         farmerLeadDisplayLayout = findViewById(R.id.farmerLeadDisplayLayout);
         isFLEnumerator = Utilities.getBoolFromSharedPrefs(context, Utilities.FARMERLEAD_ENUMERATOR,false);
-        System.out.println("isflenumerator_data2:" + isFLEnumerator);
-        /*adapterFarmerlead = new CustomListAdapterFarmerlead(this, R.layout.activity_add_farmer, flList);
-        farmerLeadSearch.setAdapter(adapterFarmerlead);
-        farmerLeadSearch.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int pos, long id) {
-                //this is the way to find selected object/item
-                selectedFarmerLead = (FarmerLeadDTO) adapterView.getItemAtPosition(pos);
-            }
-        });*/
+
         bindphonenumbers();
         dl.clearlocalniddbvalue();
         if (isNIDAvailable) {
@@ -444,7 +436,6 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
 
 
         showFarmerLead();
-        System.out.println("isflenumerator_data3:" + isFLEnumerator);
         if(! isFLEnumerator){
             farmerLeadDisplayLayout.setVisibility(View.GONE);
         }else {
@@ -474,7 +465,6 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                     return;
                 }
                 flList = dl.getFarmerLeads(countryId);
-                System.out.println("flList:" + flList.size());
                 showPopupFarmerLead(flList);
             }
         });
@@ -503,6 +493,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                         farmerNameET.setText(s.toString());
                     }
                 }
+                if(editMode) dl.updateConsentValue(s.toString(),editFarmerId);
             }
         });
     }
@@ -1410,7 +1401,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_SUBDISTRICTID, String.valueOf(subdistrictId));
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID, String.valueOf(farmerGroupId));
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_ISCONSENTAVAILABLE, "true");
-            long productId = dl.getProductIdByFarmerGroupId(farmerGroupId);
+           long productId = dl.getProductIdByFarmerGroupId(farmerGroupId);
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID, String.valueOf(productId));
             if(isFLEnumerator) {
                 values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERLEAD, farmerleadid);
@@ -1909,7 +1900,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                 }
                 Intent in = new Intent(AddFarmerActivity.this, ConsentStatementActivity.class);
                 Bundle bundle=new Bundle();
-                bundle.putString("type", "new");
+                bundle.putString("type", NEW);
                 bundle.putString("displayFarmerId", "");
                 bundle.putString("olamfarmername", farmerNameValue);
                 if(editMode){
@@ -2057,7 +2048,11 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                                 dl.updateFarmerPhoneNumbers(newFarmerId, storeableNumbers);
                                 EditText farmerName = findViewById(R.id.farmerName);
                                 String farmerNameValue = String.valueOf(farmerName.getText()).trim();
-                                dl.updateFarmerIdforConsentStatement(newFarmerId, farmerNameValue);
+                                consentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_FARMER_ID,newFarmerId);
+                                consentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_FARMER,farmerNameValue);
+                                consentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_OLAM_FARMER_NAME,farmerNameValue);
+
+                                dl.insertConsentStatementDetails(consentValue,farmerNameValue,"new");
                                 if (isNIDAvailable) {
                                     boolean moduretationstatus = dl.updateFarmerNationalids(context, newFarmerId, storeableNationalids, "1", "name");
                                     if (moduretationstatus) {
@@ -2424,7 +2419,8 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
 
         switch (requestCode) {
             case REQUEST_CHECK_CONSENT_STATEMENT:
-                csStatus = imageReturnedIntent.getBooleanExtra("STATUS", false);
+                csStatus = imageReturnedIntent.getBooleanExtra(STATUS, false);
+                consentValue = imageReturnedIntent.getParcelableExtra(CONSENTVALUE);
             case REQUEST_CHECK_SETTINGS:
                 if (resultCode == -1) {
                     gpsTracker.getDeviceLocation();

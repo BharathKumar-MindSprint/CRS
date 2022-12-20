@@ -128,7 +128,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     private SharedPreferences sharedPreferences;
     private static final String SHARED_PREFS_NAME = "com.olam.digital.ofis.app_prefs";
     private static final String SHARED_FIREBASE_TOKEN_UPDATED = "firebase_token_updated";
-    private static MenuItem settingsButton, tasksButton;
+    private static MenuItem settingsButton, tasksButton, notificationButton;
     private Handler mainHandler;
 
     private final static String EDIT_FARMER_ID = "EDIT_FARMER_ID";
@@ -714,6 +714,9 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         if (tasksButton != null) {
             tasksButton.setVisible(true);
         }
+        if (notificationButton != null) {
+            notificationButton.setVisible(true);
+        }
 
 //        boolean can_transact = Utilities.getBoolFromSharedPrefs(staticContext, "can_transact", false);
 //        if (!can_transact) {
@@ -1238,6 +1241,8 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 settingsButton.setVisible(false);
                 tasksButton = menu.findItem(R.id.action_tasks);
                 tasksButton.setVisible(false);
+                notificationButton = menu.findItem(R.id.action_notification);
+                notificationButton.setVisible(false);
             }
         }
 

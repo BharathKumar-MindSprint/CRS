@@ -13,6 +13,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.olam.digital.ofis.smartnotification.NotificationActivity;
+
 /**
  * Base list activity Created by ben on 13/11/2016.
  */
@@ -72,6 +74,11 @@ public class BaseListActivity extends AppCompatActivity {
             return true;
         }
 
+        if (id == R.id.action_notification) {
+            Intent intent = new Intent(this, NotificationActivity.class);
+            startActivity(intent);
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 }

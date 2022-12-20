@@ -100,8 +100,11 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
         TextView textView = (TextView) view.findViewById(R.id.moduleListModuleStatus);
         TextView enabledItem = (TextView) view.findViewById(R.id.moduleListEnabled);
         boolean submitted = false;
-
+        String isConsentAvailable = currentFarmer.getString(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ISCONSENTAVAILABLE));
+        final boolean isConsentTrue = isConsentAvailable != null && isConsentAvailable.length() > 0 && isConsentAvailable.equalsIgnoreCase("true");
         if (currentId == 0) {
+
+            if(isConsentTrue){
             if (cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals("Phone")) {
                 boolean updateWaiting = dl.networkEntryTypeExistsByFarmerId("phonenumbers", currentFarmer.getLong(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)));
                 if (updateWaiting || currentFarmer.getInt(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_SYNCED)) == 0) {
@@ -151,9 +154,10 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                     textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
                     textView.setText(res.getString(R.string.plot_recording_module_finished));
                 } else {*/
-                if (MultiFarmUtils.isMultiFarmEnumerator){
-                    boolean ispolygonCaptured=dl.getPolygonInfo1(farmerId);
-                    if (ispolygonCaptured){
+                if (MultiFarmUtils.isMultiFarmEnumerator) {
+                    boolean ispolygonCaptured = dl.getPolygonInfo1(farmerId);
+                    int fetchPlotCountByFarmerID = dl.fetchSyncedPlotCountByFarmerID(String.valueOf(farmerId));
+                    if (ispolygonCaptured) {
                         imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_location_found));
                         enabledItem.setText("false");
                         enabledItem.setTag("poly");
@@ -162,7 +166,7 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                         moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
                         textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
                         textView.setText(res.getString(R.string.record_polygon_location_complete));
-                    }else{
+                    } else {
                         imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_location_searching));
                         enabledItem.setText("true");
 
@@ -171,7 +175,7 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                         textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
                         textView.setText(res.getString(R.string.update_phone_numbers_hint));
                     }
-                }else {
+                } else {
                     imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_record_polygon));
                     enabledItem.setText("true");
 
@@ -181,7 +185,7 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                     textView.setText(res.getString(R.string.update_phone_numbers_hint));
                 }
                 //}
-            }else if (cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals(ChildLabourUtils.REG_CHILD)) {
+            } else if (cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals(ChildLabourUtils.REG_CHILD)) {
 
                 imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_child));
                 enabledItem.setText("true");
@@ -191,7 +195,7 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                 textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
                 textView.setText(res.getString(R.string.update_childlabour_hint));
 
-            }else if (cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals(ChildLabourUtils.CHILDLABOUR_SURVEY)) {
+            } else if (cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals(ChildLabourUtils.CHILDLABOUR_SURVEY)) {
 
                 imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_childsurvey));
                 enabledItem.setText("true");
@@ -200,7 +204,7 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                 moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
                 textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
                 textView.setText(res.getString(R.string.ModuleStatus));
-            }else if (cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals("PlotSurvey")) {
+            } else if (cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals("PlotSurvey")) {
 
                 imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_childsurvey));
                 enabledItem.setText("true");
@@ -209,7 +213,7 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                 moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
                 textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
                 textView.setText(res.getString(R.string.ModuleStatus));
-            }else if (cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals("multifarm")) {
+            } else if (cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals("multifarm")) {
                 boolean updateWaiting = dl.networkEntryTypeExistsByFarmerId("Multifarm Update", currentFarmer.getLong(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)));
                 if (updateWaiting || currentFarmer.getInt(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_SYNCED)) == 0) {
 
@@ -244,22 +248,22 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                     textView.setText("Multifarm update");
                 }
 
-            }else if (cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals("Signature")) {
+            } else if (cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals("Signature")) {
                 boolean updateWaiting = dl.networkEntryTypeExistsByFarmerId("signature", currentFarmer.getLong(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)));
                 boolean farmerupdateWaiting = dl.networkEntryTypeExistsByFarmerId("farmer", currentFarmer.getLong(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)));
                 long farmerId = currentFarmer.getLong(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID));
                 boolean isSignCaptured = false;
-                if(farmerupdateWaiting){
-                    isSignCaptured =  dl.isSignatureCaptured(farmerId);
+                if (farmerupdateWaiting) {
+                    isSignCaptured = dl.isSignatureCaptured(farmerId);
                 }
-                if(updateWaiting || isSignCaptured) {
+                if (updateWaiting || isSignCaptured) {
                     imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_completed));
                     enabledItem.setText("false");
 
                     linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
                     moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
                     textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-                }else{
+                } else {
                     imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_childsurvey));
                     enabledItem.setText("true");
 
@@ -268,7 +272,7 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                     textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
                     textView.setText(res.getString(R.string.update_signature_hint));
                 }
-            }else if (cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals("National_ID")) {
+            } else if (cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals("National_ID")) {
                 boolean updateWaiting = dl.networkEntryTypeExistsByFarmerId("farmer", currentFarmer.getLong(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)));
                 boolean nidupdateWaiting = dl.networkEntryTypeExistsByFarmerId("National_ID", currentFarmer.getLong(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)));
                 long farmerId = currentFarmer.getLong(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID));
@@ -304,7 +308,7 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                     moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
                     textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
                 }
-            } else if(cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals(context.getResources().getString(R.string.household_farmer))){
+            } else if (cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals(context.getResources().getString(R.string.household_farmer))) {
                 String currenthhLat = currentFarmer.getString(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_HOUSEHOLD_LAT));
                 String currenthhLng = currentFarmer.getString(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_HOUSEHOLD_LNG));
                 if (currenthhLat != null && currenthhLat.length() > 0 && (!currenthhLat.equalsIgnoreCase("null")) && currenthhLng != null && currenthhLng.length() > 0 && (!currenthhLng.equalsIgnoreCase("null"))) {
@@ -322,27 +326,11 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                     textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
                     textView.setText(res.getString(R.string.record_farm_location_hint));
                 }
-            } else if(cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals(context.getResources().getString(R.string.consent_statement))) {
-                String isConsentavailable = currentFarmer.getString(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ISCONSENTAVAILABLE));
-                Log.d("CustomListAdapter", "isConsentavailable? :" + isConsentavailable);
-                if (isConsentavailable != null && isConsentavailable.length() > 0 && isConsentavailable.equalsIgnoreCase("true")) {
-                    imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_consentstmts));
-                    enabledItem.setText("false");
-                    linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
-                    moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-                    textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-                } else {
-                    imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_consentstmts));
-                    enabledItem.setText("true");
-                    linearLayout.setBackgroundResource(R.drawable.list_item);
-                    moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
-                    textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
-                }
-            } else{
+            } else {
                 // Multifarm Location
-                if (MultiFarmUtils.isMultiFarmEnumerator){
-                   boolean isLocationCaptured=dl.getLocationInfo1(farmerId);
-                    if (isLocationCaptured){
+                if (MultiFarmUtils.isMultiFarmEnumerator) {
+                    boolean isLocationCaptured = dl.getLocationInfo1(farmerId);
+                    if (isLocationCaptured) {
                         imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_location_found));
                         enabledItem.setText("false");
                         enabledItem.setTag("loc");
@@ -352,47 +340,47 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                         moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
                         textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
                         textView.setText(res.getString(R.string.record_farm_location_complete));
-                    }else{
+                    } else {
 
                         // Multifarm . But Not in the stakeholder list
-                       String farmId=dl.getMultifarmfarmId(farmerId);
-                      // boolean isAvailableInStakeHolderList= dl.isfarmerIdAvailableMultiFarmDB(farmerId);
-                       if (farmId!=null){
-                           imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_location_searching));
-                           enabledItem.setText("true");
+                        String farmId = dl.getMultifarmfarmId(farmerId);
+                        // boolean isAvailableInStakeHolderList= dl.isfarmerIdAvailableMultiFarmDB(farmerId);
+                        if (farmId != null) {
+                            imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_location_searching));
+                            enabledItem.setText("true");
 
-                           linearLayout.setBackgroundResource(R.drawable.list_item);
-                           moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
-                           textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
-                           textView.setText(res.getString(R.string.record_farm_location_hint));
-                       }else{
+                            linearLayout.setBackgroundResource(R.drawable.list_item);
+                            moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
+                            textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
+                            textView.setText(res.getString(R.string.record_farm_location_hint));
+                        } else {
 
-                           // Not available in multifarm Db . Consider as normal farmer
-                           String currentLat = currentFarmer.getString(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_PRIMARY_LAT));
-                           String currentLng = currentFarmer.getString(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_PRIMARY_LNG));
-                           if (currentLat != null && currentLat.length() > 0 && (!currentLat.equalsIgnoreCase("null")) && currentLng != null && currentLng.length() > 0 && (!currentLng.equalsIgnoreCase("null"))) {
-                               imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_location_found));
-                               enabledItem.setText("false");
+                            // Not available in multifarm Db . Consider as normal farmer
+                            String currentLat = currentFarmer.getString(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_PRIMARY_LAT));
+                            String currentLng = currentFarmer.getString(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_PRIMARY_LNG));
+                            if (currentLat != null && currentLat.length() > 0 && (!currentLat.equalsIgnoreCase("null")) && currentLng != null && currentLng.length() > 0 && (!currentLng.equalsIgnoreCase("null"))) {
+                                imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_location_found));
+                                enabledItem.setText("false");
 
-                               linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
-                               moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-                               textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-                               textView.setText(res.getString(R.string.record_farm_location_complete));
-                           } else {
-                               imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_location_searching));
-                               enabledItem.setText("true");
+                                linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
+                                moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                textView.setText(res.getString(R.string.record_farm_location_complete));
+                            } else {
+                                imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_location_searching));
+                                enabledItem.setText("true");
 
-                               linearLayout.setBackgroundResource(R.drawable.list_item);
-                               moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
-                               textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
-                               textView.setText(res.getString(R.string.record_farm_location_hint));
-                           }
+                                linearLayout.setBackgroundResource(R.drawable.list_item);
+                                moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
+                                textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
+                                textView.setText(res.getString(R.string.record_farm_location_hint));
+                            }
 
-                       }
+                        }
 
                     }
 
-                }else {
+                } else {
 
                     String currentLat = currentFarmer.getString(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_PRIMARY_LAT));
                     String currentLng = currentFarmer.getString(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_PRIMARY_LNG));
@@ -415,34 +403,68 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                     }
                 }
             }
-        } else if (currentId < 0) {
-            if (cursor.getInt(cursor.getColumnIndex(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_STATUS_FINISHED)) == 1) {
-                imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_submitted));
+        }else{
+                imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_consentstmts));
                 enabledItem.setText("false");
-
                 linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
                 moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
                 textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-                textView.setText(res.getString(R.string.review_farm_management_plan_complete));
-            } else if ((cursor.getInt(cursor.getColumnIndex(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_STATUS_STARTED)) == 1) && (cursor.getInt(cursor.getColumnIndex(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_STATUS_FINISHED)) == 0)) {
-                imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_saved));
-                enabledItem.setText("true");
 
-                linearLayout.setBackgroundResource(R.drawable.list_item);
-                moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
-                textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
-                textView.setText(res.getString(R.string.review_farm_management_plan_in_progress));
-            } else {
-                imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_fmp_available));
-                enabledItem.setText("true");
+        }
+        if (cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals(context.getResources().getString(R.string.consent_statement))) {
+                Log.d("CustomListAdapter", "isConsentavailable? :" + isConsentAvailable);
+                if (isConsentTrue) {
+                    imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_consentstmts));
+                    enabledItem.setText("false");
+                    linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
+                    moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                    textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                } else {
+                    imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_consentstmts));
+                    enabledItem.setText("true");
+                    linearLayout.setBackgroundResource(R.drawable.list_item);
+                    moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
+                    textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
+                }
+        }
+        } else if (currentId < 0) {
+           
+            if (isConsentTrue) {
+                if (cursor.getInt(cursor.getColumnIndex(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_STATUS_FINISHED)) == 1) {
+                    imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_submitted));
+                    enabledItem.setText("false");
 
-                linearLayout.setBackgroundResource(R.drawable.list_item);
-                moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
-                textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
-                textView.setText(res.getString(R.string.review_farm_management_plan_hint));
+                    linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
+                    moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                    textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                    textView.setText(res.getString(R.string.review_farm_management_plan_complete));
+                } else if ((cursor.getInt(cursor.getColumnIndex(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_STATUS_STARTED)) == 1) && (cursor.getInt(cursor.getColumnIndex(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_STATUS_FINISHED)) == 0)) {
+                    imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_saved));
+                    enabledItem.setText("true");
+
+                    linearLayout.setBackgroundResource(R.drawable.list_item);
+                    moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
+                    textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
+                    textView.setText(res.getString(R.string.review_farm_management_plan_in_progress));
+                } else {
+                    imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_fmp_available));
+                    enabledItem.setText("true");
+
+                    linearLayout.setBackgroundResource(R.drawable.list_item);
+                    moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
+                    textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
+                    textView.setText(res.getString(R.string.review_farm_management_plan_hint));
+                }
+            }else{
+                linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
+                moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                enabledItem.setText("false");
+                enabledItem.setTag("hasfarm");
             }
         } else {
-            if (isAtLeastOnePlotSurveyCaptured) {
+             if (isAtLeastOnePlotSurveyCaptured && 
+                    isConsentAvailable != null && isConsentAvailable.length() > 0 && isConsentAvailable.equalsIgnoreCase("true")) {
                 String disabled_months_string = cursor.getString(cursor.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_DISABLED_MONTHS));
                 List<String> disabled_months = Arrays.asList(disabled_months_string.split("\\s*,\\s*"));
                 if (hasSubmittedModules) {
@@ -778,6 +800,8 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                 enabledItem.setText("false");
                 enabledItem.setTag("hasfarm");
             }
+            
+            
         }
     }
 

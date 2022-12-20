@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.icu.util.EthiopicCalendar;
 import android.net.Uri;
 import androidx.appcompat.app.AlertDialog;
 import android.util.Log;
@@ -75,10 +76,11 @@ public class SyncAllTask extends SyncTask {
 
     public static final String TAG = "SyncAllTask";
     public JSONObject spinnerResponse, moduleResponse, sipModuleResponse, farmerResponse, fmpResponse, transactionResponse, trainingResponse, tasksResponse, answerResponse;
-    public static JSONObject childResponse,farmerLeadResponse,assignmentCheckResponse;
+    public static JSONObject childResponse,farmerLeadResponse,assignmentCheckResponse, notificationResponse = new JSONObject();
     public static JSONObject nationalidresponse,enumnationalidresponse;
     public static  JSONObject multifarmRoleResponse,multifarmFarmResponse;
-
+    public static JSONArray notificationArray = new JSONArray();
+    public static JSONArray moduleArray = new JSONArray();
     private int syncResultCount;
     public ProgressDialog pd;
     private Resources res;
@@ -88,7 +90,8 @@ public class SyncAllTask extends SyncTask {
     ArrayList<String> countryIds = new ArrayList<>();
     private SyncAllTaskDelegate delegate;
     AnswerRequestDTO answerRequestDTO;
-
+    int notificationModuleId;
+    int repeaterCount ;
     public SyncAllTask(Context context) {
         super(context);
     }
@@ -224,6 +227,14 @@ public class SyncAllTask extends SyncTask {
         }else if (op == SyncTaskOperationType.SYNC_SURVEYANSWERS) {
             try {
                 syncSurveyAnswers();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }else if (op == SyncTaskOperationType.SYNC_SMART_NOTIFICATION) {
+            try {
+                String[] ids = context.getResources().getStringArray(R.array.notification_module_id);
+                notificationModuleId = Integer.parseInt(ids[0]);
+                syncSmartNotification(notificationModuleId,1);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -427,6 +438,9 @@ public class SyncAllTask extends SyncTask {
 
                 new UpdateEnumNationalIdTask(context).execute(enumnationalidresponse);
                 enumnationalidresponse = null;
+
+                new UpdateNotificationTask(context).execute(notificationResponse);
+                notificationResponse = null;
 
                 if (Utilities.getBoolFromSharedPrefs(context, "FIRST_RUN", true)) {
                     HomeActivity.completeFirstSetup();
@@ -648,7 +662,6 @@ public class SyncAllTask extends SyncTask {
                     if (postResponse.isSuccessful()) {
                         try {
                             JSONArray countryArray = response.getJSONArray("assignments");
-                            System.out.println("CountryAssignmentData:" + countryArray.toString());
                             JSONObject item = new JSONObject();
                             int length = countryArray.length();
                             for (int j = 0; j < length; j++) {
@@ -664,7 +677,6 @@ public class SyncAllTask extends SyncTask {
 //                                Utilities.saveToSharedPrefs(context, "COUNTRY_CODE", counrtyCode.substring(0,2), null);
                             }
                             assignmentCheckResponse = response;
-                            System.out.println("isoCodesize:"+isoCodes.size());
                             Gson gson = new Gson();
                             List<String> textList = new ArrayList<String>(isoCodes);
                             List<String> cidsList = new ArrayList<String>(countryIds);
@@ -721,15 +733,7 @@ public class SyncAllTask extends SyncTask {
         Type type = new TypeToken<ArrayList<String>>() {}.getType();
         isoCodes = gson.fromJson(jsonText, type);
         int countrycount = Utilities.getIntFromSharedPrefs(context, "COUNTRY_COUNT");
-        System.out.println("isoCodesize2:" + isoCodes.size() + " and count" + countrycount );
         String counrtyCode = isoCodes.get(countrycount-1);
-//        String counrtyCode = "ID";
-        System.out.println("SAT_Country_code:" + counrtyCode);
-      /*  inputArgs.put("appInstanceId", counrtyCode + "_OFIS_DO_INTERFACE");
-        inputArgs.put("clientId",8);
-        inputArgs.put("id", counrtyCode + "_OFIS_DO_INTERFACE");
-        inputArgs.put("languageIsoCode", "en");
-        inputArgs.put("password", "Olam123+");*/
         inputArgs.put("userId", counrtyCode + "_OFIS_DO_INTERFACE");
         inputArgs.put("password", "Olam123+");
         inputArgs.put("system", "od");
@@ -806,7 +810,6 @@ public class SyncAllTask extends SyncTask {
                         }catch (Exception e){}
                         try {
                             JSONArray countryArray = response.getJSONObject("outputdata").getJSONArray("countries");
-                            System.out.println("CountrySpinners:" + countryArray.toString());
                             JSONObject item = new JSONObject();
                             int length = countryArray.length();
                             for (int j = 0; j < length; j++) {
@@ -874,10 +877,8 @@ public class SyncAllTask extends SyncTask {
                     isoCodes = gson.fromJson(jsonText, type);
                     countryIds = gson.fromJson(cids, type);
                     int countrycount = Utilities.getIntFromSharedPrefs(context, "COUNTRY_COUNT");
-                    System.out.println("isoCodesize3:" + isoCodes.size() + " and count" + countrycount );
                     String counrtyCode = isoCodes.get(countrycount-1);
                     String counrtyid = countryIds.get(countrycount-1);
-                    System.out.println("SAT_Country_code:" + counrtyCode);
                     JSONArray response = new JSONArray(postResponse.body().string());
                     DynatraceHelper.requestPayload(finalEndPoint,response.toString(),context,false);
                     if (postResponse.isSuccessful()) {
@@ -968,7 +969,6 @@ public class SyncAllTask extends SyncTask {
                 try {
                     JSONObject response = new JSONObject(postResponse.body().string());
                     DynatraceHelper.requestPayload(finalEndPoint,response.toString(),context,false);
-                    System.out.println("Surveyresponse_sync:" + response.toString());
                     if (postResponse.isSuccessful()) {
                         syncResultCount = syncResultCount + response.getInt("resultcount");
                         if (response.getString("status").equals("unchanged")) {
@@ -978,10 +978,8 @@ public class SyncAllTask extends SyncTask {
                         }
                         moduleResponse = response;
 
-                        // MARCH-10- Go-Live
-                        publishProgress(SyncOperation.CONTINUE_DOWNLOADING, "Checking MultiFarm enumerator");
-                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.MULTIFARM_ENABLED_ENUMERATOR);
-
+                        publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.downloading_notification));
+                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_SMART_NOTIFICATION);
 //                        Utilities.setMultiFarmPref(context, MultiFarmUtils.IS_MULTI_FARM_ENUMERATOR, false);
 //                        publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.updating_sip_training));
 //                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_SIP_MODULES);
@@ -1180,7 +1178,6 @@ public class SyncAllTask extends SyncTask {
                         delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.CHILD_ENUMERATOR);
 
 
-
                     } else {
                         try {
                             FabricLogsWriter.printCrashLog(TAG, finalEndpoint, postResponse.code(), postResponse.networkResponse().toString(), context);
@@ -1364,23 +1361,15 @@ public class SyncAllTask extends SyncTask {
             @Override
             public void onResponse(Call call, final Response postResponse) {
                 try {
-                    // JSONObject response = new JSONObject(postResponse.body().string());
                     String output = postResponse.body().string();
                     DynatraceHelper.requestPayload(finalEndpoint,output,context,false);
                     if (postResponse.isSuccessful()) {
-                        // store the value in Child labour preferences
                         Boolean isflenumerator = Boolean.parseBoolean(output.trim());
-//                        Boolean isflenumerator = false;
                         Utilities.saveToSharedPrefs(context, Utilities.FARMERLEAD_ENUMERATOR,null, isflenumerator);
-                        System.out.println("isflenumerator_data:" + isflenumerator);
                         if(! isflenumerator) {
                             publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.updating_farmers));
                             delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_FARMERS);
-                        }else{/*
-//                            publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.checking_isfl_enumerator));
-                            publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.checking_isfl_enumerator));
-//                            delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_OD_TOKEN);
-                            delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_ENUM_ASSIGNMENT);*/
+                        }else{
                             publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.checking_isfl_enumerator));
                             delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_OD_TOKEN);
                         }
@@ -1766,6 +1755,114 @@ public class SyncAllTask extends SyncTask {
                         jsonObject.put("answers", response);
                         answerResponse = jsonObject;
                         publishProgress(SyncOperation.START_SURVEYANSIMPORT, "Downloading Survey Answers", syncResultCount);
+                    }
+                } catch (JSONException | IOException e) {
+                    e.printStackTrace();
+                } finally {
+                    postResponse.close();
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+                String failureMessage = res.getString(R.string.networking_error);
+                if (e != null) {
+                    FirebaseCrash.report(new Exception("SyncAllTask: Error in response when syncing survey answers data", e));
+                    failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
+                }
+
+                publishProgress(SyncOperation.ERROR_RECEIVED, failureMessage);
+
+            }
+
+        });
+    }
+
+    private void syncSmartNotification(int notificationModuleId, int pageNumber){
+
+        String endpoint = "";
+        endpoint = ChildLabourUtils.SMARTNOTIFICATION_ENDPOINT+ Utilities.getFromSharedPrefs(context)
+                +ChildLabourUtils.PAGENUMBER_CONSTANT+pageNumber
+                +ChildLabourUtils.LIMIT_CONSTANT+Utilities.notificationLimit
+                +ChildLabourUtils.MODULE_CONSTANT + notificationModuleId;
+        okHttpGet(context, endpoint, null, new Callback() {
+            @Override
+            public void onResponse(Call call, final Response postResponse) {
+                try {
+                    JSONObject response = new JSONObject(postResponse.body().string());
+                    if (postResponse.isSuccessful()) {
+                        int totalCount = response.getInt(OFISDBContract.NotificationModuleAssignments.COLUMN_TOTALCOUNT);
+                        if(pageNumber == 1) {
+                            repeaterCount = totalCount / Utilities.notificationLimit;
+                        }
+                        try {
+                            if(totalCount > 0) {
+                                JSONArray currentArray = response.getJSONArray(Utilities.NOTIFICATIONLIST);
+                                if (currentArray.length() > 0) {
+                                    for (int i = 0; i < currentArray.length(); i++) {
+                                        String moduleName = response.getString(Utilities.MODULE);
+                                        if (moduleName.equalsIgnoreCase(Utilities.FDP)) {
+                                            currentArray.getJSONObject(i).put(OFISDBContract.NotificationAssignments.COLUMN_MODULEID, 1);
+                                        } else {
+                                            currentArray.getJSONObject(i).put(OFISDBContract.NotificationAssignments.COLUMN_MODULEID, 2);
+                                        }
+                                        currentArray.getJSONObject(i).put(OFISDBContract.NotificationAssignments.COLUMN_STATUS, Utilities.UNREAD);
+                                        notificationArray.put(currentArray.getJSONObject(i));
+                                    }
+                                }
+                            }
+                        }catch (JSONException e){
+                            e.printStackTrace();
+                        }
+                        publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.downloading_notification));
+                        if(repeaterCount > pageNumber) {
+                            int nextPage = pageNumber + 1;
+                            syncSmartNotification(notificationModuleId, nextPage);
+                        }else{
+                            try {
+                                if(totalCount > 0) {
+                                    JSONObject module = new JSONObject();
+                                    module.put(OFISDBContract.NotificationModuleAssignments.COLUMN_TOTALCOUNT, response.getString(OFISDBContract.NotificationModuleAssignments.COLUMN_TOTALCOUNT));
+                                    module.put(OFISDBContract.NotificationModuleAssignments.COLUMN_NAME_MSG, response.getString(OFISDBContract.NotificationModuleAssignments.COLUMN_NAME_MSG));
+                                    String moduleName = response.getString(Utilities.MODULE);
+                                    module.put(OFISDBContract.NotificationModuleAssignments.COLUMN_MODULENAME, moduleName);
+                                    if (moduleName.equalsIgnoreCase(Utilities.FDP)) {
+                                        module.put(OFISDBContract.NotificationModuleAssignments.COLUMN_NAME_ID, 1);
+                                    } else {
+                                        module.put(OFISDBContract.NotificationModuleAssignments.COLUMN_NAME_ID, 2);
+                                    }
+                                    moduleArray.put(module);
+                                }
+                            }catch (Exception e){
+                                e.printStackTrace();
+                            }
+                            String[] ids = context.getResources().getStringArray(R.array.notification_module_id);
+                            String[] withoutClmrsIds = context.getResources().getStringArray(R.array.notifications_noclmrs);
+                            boolean isChildEnumerator = Utilities.getChildLabourPref(context, ChildLabourUtils.IS_CHILD_ENUMERATOR);
+                            int totalModules;
+                            if(isChildEnumerator){
+                                totalModules = ids.length;
+                            }else{
+                                totalModules = withoutClmrsIds.length;
+                            }
+                             if(totalModules > notificationModuleId){
+                                 int nextModule = notificationModuleId + 1;
+                                syncSmartNotification(nextModule, 1);
+                            }else {
+                                  try {
+                                      notificationResponse = new JSONObject();
+                                      notificationResponse.put("notificationDetailsList", notificationArray);
+                                      notificationResponse.put("moduleList", moduleArray);
+                                  }catch (Exception e){
+                                      e.printStackTrace();
+                                  }
+                                notificationArray = new JSONArray();
+                                moduleArray = new JSONArray();
+                                publishProgress(SyncOperation.CONTINUE_DOWNLOADING, "Checking MultiFarm enumerator");
+                                delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.MULTIFARM_ENABLED_ENUMERATOR);
+                            }
+                        }
                     }
                 } catch (JSONException | IOException e) {
                     e.printStackTrace();

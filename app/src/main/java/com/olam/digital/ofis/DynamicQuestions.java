@@ -1169,7 +1169,7 @@ public class DynamicQuestions {
         target.setImageBitmap(bitmap);
     }
 
-    public void renderDatePickerQuestion(Cursor qCursor, boolean isRepeaterItem, LinearLayout parentLayout, final int parentQuestionId, final int repeaterItemPosition, Cursor repeaterAnswers) {
+    public void renderDatePickerQuestion(Cursor qCursor, boolean isRepeaterItem, LinearLayout parentLayout, final int parentQuestionId, final int repeaterItemPosition, Cursor repeaterAnswers, boolean isSavedAns) {
         LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
         renderQuestion(qCursor, isRepeaterItem, (isRepeaterItem) ? parentLayout : questionWrapper);
 
@@ -2478,7 +2478,7 @@ public class DynamicQuestions {
     }
 
 
-    public void renderCheckBoxQuestion(Cursor questions, LinearLayout parentLayout, long farmerId, long farmerModuleId) {
+    public void renderCheckBoxQuestion(Cursor questions, LinearLayout parentLayout, long farmerId, long farmerModuleId, boolean isSavedAns) {
         LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
         renderQuestion(questions, false, questionWrapper);
 
@@ -2488,9 +2488,12 @@ public class DynamicQuestions {
         boolean tempSingleSelect = false;
 
         Cursor checkboxes = dl.getSpinnerData(OFISDBContract.LookupValuesEntry.TABLE_NAME, true, OFISDBContract.LookupValuesEntry.COLUMN_NAME_QUESTION_ID, questionId, true, OFISDBContract.LookupValuesEntry.COLUMN_NAME_POSITION);
-
-        Cursor cbAnswers = dl.getAnswersForQuestionByFarmer(questionId, farmerId, farmerModuleId);
-
+        Cursor cbAnswers;
+        if(isSavedAns) {
+             cbAnswers = dl.getSavedAnswersForQuestionByFarmer(questionId, farmerId, farmerModuleId);
+        }else{
+             cbAnswers = dl.getAnswersForQuestionByFarmer(questionId, farmerId, farmerModuleId);
+        }
         // is this a question we can only select one answer to?
         // get display config
         try {
@@ -3034,7 +3037,7 @@ public class DynamicQuestions {
     }
 
 
-    public void renderPhotoCheckboxQuestion(Cursor questions, long farmerId, long farmerModuleId, Resources res, String packageName) {
+    public void renderPhotoCheckboxQuestion(Cursor questions, long farmerId, long farmerModuleId, Resources res, String packageName, boolean isSavedAns) {
         LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, questionsSection, false);
         renderQuestion(questions, false, questionWrapper);
 
@@ -3044,8 +3047,12 @@ public class DynamicQuestions {
         boolean tempSingleSelect = false;
 
         Cursor photoCheckboxes = dl.getSpinnerData(OFISDBContract.LookupValuesEntry.TABLE_NAME, true, OFISDBContract.LookupValuesEntry.COLUMN_NAME_QUESTION_ID, questionId, true, OFISDBContract.LookupValuesEntry.COLUMN_NAME_POSITION);
-        Cursor photoCbAnswers = dl.getAnswersForQuestionByFarmer(questionId, farmerId, farmerModuleId);
-
+        Cursor photoCbAnswers;
+        if(isSavedAns) {
+             photoCbAnswers = dl.getSavedAnswersForQuestionByFarmer(questionId, farmerId, farmerModuleId);
+        }else{
+             photoCbAnswers = dl.getAnswersForQuestionByFarmer(questionId, farmerId, farmerModuleId);
+        }
         // is this a question we can only select one answer to?
         // get display config
         try {
@@ -3139,7 +3146,7 @@ public class DynamicQuestions {
     }
 
 
-    public void renderRepeaterQuestion(Cursor questions, final long farmerId, final String olamFarmerId, final long farmerModuleId, final Resources res) {
+    public void renderRepeaterQuestion(Cursor questions, final long farmerId, final String olamFarmerId, final long farmerModuleId, final Resources res, boolean isSavedAns) {
         LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, questionsSection, false);
         renderQuestion(questions, false, questionWrapper);
         resources = res;
@@ -3181,7 +3188,7 @@ public class DynamicQuestions {
                         if (id > 0 || zeroAcceptable) {
                             saveAnswerEntry(questionId, answerId, 0, -1, datatype, spinner.getSelectedItem().toString());
                             if (id > 0) {
-                                renderRepeaterItems(questionId, id, repeaterItemsWrapper, farmerId, olamFarmerId, farmerModuleId, res);
+                                renderRepeaterItems(questionId, id, repeaterItemsWrapper, farmerId, olamFarmerId, farmerModuleId, res, isSavedAns);
                             } else {
                                 removeRepeaterAnswers(questionId);
                                 repeaterItemsWrapper.removeAllViews();
@@ -3279,7 +3286,7 @@ public class DynamicQuestions {
                         if (id > 0 || zeroAcceptable) {
                             saveAnswerEntry(questionId, answerId, 0, -1, datatype, spinner.getSelectedItem().toString());
                             if (id > 0) {
-                                renderRepeaterItems(questionId, id, repeaterItemsWrapper, farmerId, olamFarmerId, farmerModuleId, res);
+                                renderRepeaterItems(questionId, id, repeaterItemsWrapper, farmerId, olamFarmerId, farmerModuleId, res, false);
                             } else {
                                 removeRepeaterAnswers(questionId);
                                 repeaterItemsWrapper.removeAllViews();
@@ -3338,7 +3345,7 @@ public class DynamicQuestions {
         return displayType;
     }
 
-    private void renderRepeaterItems(int questionId, long repetitions, LinearLayout repeaterItemsWrapper, long farmerId, String olamFarmerId, long farmerModuleId, Resources res) {
+    private void renderRepeaterItems(int questionId, long repetitions, LinearLayout repeaterItemsWrapper, long farmerId, String olamFarmerId, long farmerModuleId, Resources res, boolean isSavedAns) {
         Cursor repeaterQuestions = dl.getRepeaterItemsForQuestion(questionId);
         // Cursor repeaterQuestions = dl.getRepeaterItemsForQuestion1(questionId);
 
@@ -3360,13 +3367,17 @@ public class DynamicQuestions {
                                 String displayType = repeaterItemDisplayType(repeaterQuestions);
                                 Cursor repeaterAnswers = null;
                                 try {
-                                    repeaterAnswers = dl.getRepeaterAnswersForQuestionByPosition(repeaterQuestions.getInt(repeaterQuestions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID)), i, farmerId, farmerModuleId);
+                                    if(isSavedAns) {
+                                        repeaterAnswers = dl.getRepeaterSavedAnswersForQuestionByPosition(repeaterQuestions.getInt(repeaterQuestions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID)), i, farmerId, farmerModuleId);
+                                    }else{
+                                        repeaterAnswers = dl.getRepeaterAnswersForQuestionByPosition(repeaterQuestions.getInt(repeaterQuestions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID)), i, farmerId, farmerModuleId);
+                                    }
                                     if (repeaterAnswers.getCount() > 0) {
                                         repeaterAnswers.moveToFirst();
                                     }
 
                                     if (displayType.toLowerCase().equals("datepicker")) {
-                                        renderDatePickerQuestion(repeaterQuestions, true, repeaterItemsInner, questionId, i, repeaterAnswers);
+                                        renderDatePickerQuestion(repeaterQuestions, true, repeaterItemsInner, questionId, i, repeaterAnswers, true);
                                     } else if (displayType.toLowerCase().equals("decimal")) {
                                         renderTextBoxQuestion(repeaterQuestions, true, repeaterItemsInner, questionId, i, repeaterAnswers);
                                     } else if (displayType.toLowerCase().equals("dropdown")) {
@@ -3410,8 +3421,6 @@ public class DynamicQuestions {
 
         if (selectCondition) {
             for (String retval : questionId.split(",")) {
-                System.out.println(retval);
-
                 int question_id = Integer.parseInt(retval);
 
                 //logic for yes or no question

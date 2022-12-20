@@ -1,0 +1,85 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/ofis_page_background"
+    tools:context="com.olam.digital.ofis.HomeActivity"
+    android:id="@+id/layout_find_farmer"
+    tools:ignore="Overdraw">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/topSection"
+        android:background="@color/ofis_farmer_screen_actions_background"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin">
+
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="@string/notification_type"
+                android:id="@+id/pageTitle"
+                android:textColor="@color/ofis_base_font_white"
+                android:textSize="@dimen/ofis_small_text"
+                android:paddingBottom="@dimen/ofis_input_field_bottom_margin"
+                android:layout_weight="1" />
+
+
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="4"
+            android:layout_alignParentEnd="true">
+            <Spinner
+                android:id="@+id/spinnerModuletype"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="0dp"
+                android:layout_marginLeft="0dp"
+                android:layout_weight="1"
+                android:focusable="true"
+                android:focusableInTouchMode="true" />
+
+            <ImageButton
+                android:id="@+id/sortingButton"
+                android:layout_width="@dimen/small_button_width_height"
+                android:layout_height="@dimen/small_button_width_height"
+                android:adjustViewBounds="false"
+                android:layout_gravity="center"
+                android:layout_marginRight="5dp"
+                android:layout_marginLeft="15dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/Camera"
+                android:padding="0dp"
+                android:scaleType="fitXY"
+                android:layout_alignParentRight="true"
+                app:srcCompat="@drawable/ic_sorting" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/bottomSection"
+        android:layout_below="@+id/topSection">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/notificationList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:divider="@android:color/transparent"
+            android:dividerHeight="0dp"/>
+    </LinearLayout>
+
+</RelativeLayout>

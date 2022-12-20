@@ -26,12 +26,11 @@ import java.util.List;
 abstract class DatabaseTask extends AsyncTask<JSONObject, Integer, String> {
 
     private SQLiteDatabase db;
-
-    DatabaseTask() {
-    }
+    Context context;
 
     DatabaseTask(Context context) {
         db = Utilities.getWriteableDb(context);
+        this.context = context;
     }
 
     void updateTasks(JSONArray jsonArray) {
@@ -86,11 +85,73 @@ abstract class DatabaseTask extends AsyncTask<JSONObject, Integer, String> {
         db.endTransaction();
     }
 
+    void updateNotification(JSONArray jsonArray) throws JSONException {
+        DataLayer dl = new DataLayer(context.getResources(),context);
+        ArrayList<Integer> existingFarmerList = dl.getNotificationFarmers();
+        ArrayList<Integer> currentFarmerList = new ArrayList<>();
+        db.beginTransaction();
+        if(jsonArray != null) {
+            JSONObject item;
+            int length = jsonArray.length();
+
+            publishProgress(0, length);
+            for (int k = 0; k < length; k++) {
+                JSONObject data = jsonArray.getJSONObject(k);
+                int farmerId = data.optInt(OFISDBContract.NotificationAssignments.COLUMN_FARMER_ID, 0);
+                currentFarmerList.add(farmerId);
+            }
+            ArrayList<Integer> removableList = new ArrayList<Integer>(existingFarmerList);
+            removableList.removeAll(currentFarmerList);
+            dl.deleteNotificationByFarmerId(removableList);
+            for (int j = 0; j < length; j++) {
+                try {
+                    item = jsonArray.getJSONObject(j);
+                    int farmerId = item.optInt(OFISDBContract.NotificationAssignments.COLUMN_FARMER_ID, 0);
+                    int moduleId = item.optInt(OFISDBContract.NotificationAssignments.COLUMN_MODULEID, 0);
+                    int childId = item.optInt(OFISDBContract.NotificationAssignments.COLUMN_CHILD_ID, 0);
+                    String createdAt = item.optString(OFISDBContract.NotificationAssignments.COLUMN_CREATEDAT, "");
+
+                    if (farmerId > 0 && createdAt.length() > 0) {
+                        ContentValues values = new ContentValues();
+
+                        String[] columns = new String[]{"*"};
+                        String whereClause = OFISDBContract.NotificationAssignments.COLUMN_FARMER_ID + " = ? AND "
+                                            + OFISDBContract.NotificationAssignments.COLUMN_CHILD_ID + " = ? AND "
+                                            + OFISDBContract.NotificationAssignments.COLUMN_MODULEID + " = ? AND "
+                                            + OFISDBContract.NotificationAssignments.COLUMN_CREATEDAT + " = ?";
+                        String[] whereArgs = new String[]{String.valueOf(farmerId),String.valueOf(childId),
+                                String.valueOf(moduleId),createdAt};
+
+                        Cursor existingNotification = db.query(OFISDBContract.NotificationAssignments.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+
+                        if ( existingNotification.getCount() == 0) {
+                            values.put(OFISDBContract.NotificationAssignments.COLUMN_FARMER_ID, item.optInt(OFISDBContract.NotificationAssignments.COLUMN_FARMER_ID, 0));
+                            values.put(OFISDBContract.NotificationAssignments.COLUMN_CHILD_ID, item.optInt(OFISDBContract.NotificationAssignments.COLUMN_CHILD_ID, 0));
+                            values.put(OFISDBContract.NotificationAssignments.COLUMN_MODULEID, item.optInt(OFISDBContract.NotificationAssignments.COLUMN_MODULEID, 0));
+                            values.put(OFISDBContract.NotificationAssignments.COLUMN_STATUS, item.optString(OFISDBContract.NotificationAssignments.COLUMN_STATUS, null));
+                            values.put(OFISDBContract.NotificationAssignments.COLUMN_CREATEDAT, item.optString(OFISDBContract.NotificationAssignments.COLUMN_CREATEDAT, ""));
+                            db.insert(OFISDBContract.NotificationAssignments.TABLE_NAME, null, values);
+                        }
+                        existingNotification.close();
+                    }
+
+                } catch (JSONException e) {
+                    FirebaseCrash.report(new Exception("DatabaseTask: Error updating tasks", e));
+                    e.printStackTrace();
+                } catch (Exception e){
+                    e.printStackTrace();
+                }
+                publishProgress(j, length);
+            }
+        }
+        db.setTransactionSuccessful();
+        db.endTransaction();
+    }
 
     void fillTable(JSONArray jsonArray, String tableName, List columnList) {
-      if (!tableName.equalsIgnoreCase("stakeHolders") ||
-              !tableName.equalsIgnoreCase("savedAnswers") ||
-              !tableName.equalsIgnoreCase("downloadedSurveys")){
+      if ((! tableName.equalsIgnoreCase("stakeHolders"))
+              && (tableName != OFISDBContract.SavedAnswerEntry.TABLE_NAME)
+              && (tableName != OFISDBContract.DownloadedSurveyList.TABLE_NAME)){
               db.delete(tableName, null, null);
       }
 
@@ -117,7 +178,6 @@ abstract class DatabaseTask extends AsyncTask<JSONObject, Integer, String> {
                 e.printStackTrace();
             }
             insertHelper.prepareForInsert();
-
             // bind the columns we are after
             for (int k = 0; k < columnKeys.size(); k++) {
 //                try {
@@ -188,100 +248,6 @@ abstract class DatabaseTask extends AsyncTask<JSONObject, Integer, String> {
             ContentValues values = new ContentValues();
             values.put(OFISDBContract.MultiFarmFarms.COLUMN_NAME_IS_SYNCED, true);
             db.update(OFISDBContract.MultiFarmFarms.TABLE_NAME, values, null, null);
-        }
-
-        if (tableName.equals(OFISDBContract.PlacesEntry.TABLE_NAME)) {
-            int lastPlaceId;
-            try {
-                lastPlaceId = item.getInt("id");
-                ContentValues values = new ContentValues();
-                values.put(OFISDBContract.PlacesEntry.COLUMN_NAME_ID, (lastPlaceId + 100000));
-                long newPlaceSeedId = db.insert(OFISDBContract.PlacesEntry.TABLE_NAME, null, values);
-                if (newPlaceSeedId != 0) {
-                    db.delete(OFISDBContract.PlacesEntry.TABLE_NAME, OFISDBContract.PlacesEntry.COLUMN_NAME_ID + " = ?", new String[]{String.valueOf(newPlaceSeedId)});
-                }
-            } catch (JSONException e) {
-                FirebaseCrash.report(new Exception("DatabaseTask: Error creating seed for places table", e));
-                e.printStackTrace();
-            }
-        }
-    }
-
-    void fillTableConditinalOptional(JSONArray jsonArray, String tableName, List columnList) {
-        db.delete(tableName, null, null);
-
-        @SuppressWarnings("deprecation") DatabaseUtils.InsertHelper insertHelper = new DatabaseUtils.InsertHelper(db, tableName);
-
-        // generate array of table column ids
-        ArrayList<Integer> columnKeys = new ArrayList<>();
-        for (int i = 0; i < columnList.size(); i++) {
-            columnKeys.add(insertHelper.getColumnIndex(columnList.get(i).toString()));
-        }
-
-        // now loop through array and insert in to table
-        db.beginTransaction();
-        JSONObject item = new JSONObject();
-        int length = jsonArray.length();
-        publishProgress(0, length);
-
-        for (int j = 0; j < length; j++) {
-            try {
-                if (item.getString("is_subset_questions_required").equalsIgnoreCase("true")) {
-                    JSONObject object = jsonArray.getJSONObject(j);
-                    JSONArray SubQuestion = object.getJSONArray("conditional_questions");
-                    for (int lengtharray = 0; lengtharray > object.length(); lengtharray++) {
-
-                        //  item =jsonArray.getJSONObject(j)
-                    }
-
-
-                } else {
-                    item = jsonArray.getJSONObject(j);
-
-                }
-
-
-            } catch (JSONException e) {
-                FirebaseCrash.report(new Exception("DatabaseTask: Error getting JSON object for table filling", e));
-                e.printStackTrace();
-            }
-            insertHelper.prepareForInsert();
-
-            // bind the columns we are after
-            for (int k = 0; k < columnKeys.size(); k++) {
-                try {
-                    if(columnList.get(k).toString()!= null)
-                        insertHelper.bind(columnKeys.get(k), item.getString(columnList.get(k).toString()));
-
-                } catch (JSONException e) {
-                    FirebaseCrash.report(new Exception("DatabaseTask: Error binding column for table filling", e));
-                    e.printStackTrace();
-                }
-            }
-
-            insertHelper.execute();
-
-            publishProgress(j, length);
-
-        }
-
-        db.setTransactionSuccessful();
-        db.endTransaction();
-
-        if (tableName.equals(OFISDBContract.FarmerEntry.TABLE_NAME)) {
-            int lastItemId;
-            try {
-                lastItemId = item.getInt("id");
-                ContentValues values = new ContentValues();
-                values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_ID, (lastItemId + 100000));
-                long newSeedId = db.insert(OFISDBContract.FarmerEntry.TABLE_NAME, null, values);
-                if (newSeedId != 0) {
-                    db.delete(OFISDBContract.FarmerEntry.TABLE_NAME, OFISDBContract.FarmerEntry.COLUMN_NAME_ID + " = ?", new String[]{String.valueOf(newSeedId)});
-                }
-            } catch (JSONException e) {
-                FirebaseCrash.report(new Exception("DatabaseTask: Error creating seed for farmer table", e));
-                e.printStackTrace();
-            }
         }
 
         if (tableName.equals(OFISDBContract.PlacesEntry.TABLE_NAME)) {

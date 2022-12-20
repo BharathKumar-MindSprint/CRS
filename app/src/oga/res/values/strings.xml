@@ -1052,4 +1052,25 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="plot_name">Plot Name</string>
     <string name="plot_survey">Plot Survey</string>
     <string name="plot_notification_info">Please update plot survey(s) for the farmer</string>
+    <string name="consent_info">Please update the consent for the farmer</string>
+    <string-array name="notification_module_id">
+        <item>1</item> <!--FDP-->
+        <item>2</item> <!--CLMRS-->
+    </string-array>
+    <string-array name="notifications_noclmrs">
+        <item>1</item> <!--FDP-->
+    </string-array>
+    <string name="downloading_notification">Downloading Notification Data</string>
+    <string name="notification">Notification</string>
+    <string name="notifications">Notifications</string>
+    <string name="notification_type">Notification Type</string>
+    <string-array name="notification_modules">
+        <item>All</item> <!--All-->
+        <item>FDP</item> <!--FDP-->
+        <item>CLMRS Follow-up</item> <!--CLMRS-->
+    </string-array>
+    <string-array name="notification_modules_noclmrs">
+        <item>FDP</item> <!--FDP-->
+    </string-array>
+    <string name="info_notification_close">Notification was removed from this list</string>
 </resources>

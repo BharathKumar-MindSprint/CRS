@@ -267,7 +267,6 @@ public class ConsentStatementActivity extends BaseActivity implements View.OnCli
                     page++;
                     reachedbottom = false;
                     loadpage();
-                    System.out.println("page value:" + page);
                 }
 
 
@@ -292,12 +291,13 @@ public class ConsentStatementActivity extends BaseActivity implements View.OnCli
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
                 String registereddate = format.format(today);
                 contentValue.put(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_CONFIRMED_DATE,registereddate);
-                dataLayer.insertConsentStatementDetails(contentValue,olamfarmername,type);
-                if(type.equalsIgnoreCase("update")){
+               if(type.equalsIgnoreCase(UPDATE)){
                     dataLayer.updateConsentStatus(farmerId);
+                    dataLayer.insertConsentStatementDetails(contentValue,olamfarmername,type);
                 }
                 Intent intent=new Intent();
-                intent.putExtra("STATUS",true);
+                intent.putExtra(STATUS,true);
+                intent.putExtra(CONSENTVALUE,contentValue);
                 setResult(2,intent);
                 finish();
 
@@ -308,7 +308,6 @@ public class ConsentStatementActivity extends BaseActivity implements View.OnCli
             loadpage();
             scrollView.scrollTo(0, scrollView.getBottom());
             addingGlobalLayoutListener();
-            System.out.println("page value:" + page);
         }else if(id == R.id.farmer_signature){
             showSignatureDialog(getResources().getString(R.string.farmer));
         }else if(id == R.id.enum_signature){

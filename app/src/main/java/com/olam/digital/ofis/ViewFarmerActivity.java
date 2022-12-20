@@ -1,5 +1,7 @@
 package com.olam.digital.ofis;
 
+import static com.olam.digital.ofis.BaseActivity.UPDATE;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -233,8 +235,8 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
     CustomListAdapter_Modules customListAdapter_modulesAdapter;
 
 
-    ImageView infoCloseImageView,plotInfoCloseImageView;
-    LinearLayout statusInfoLayout,plotStatusInfoLayout;
+    ImageView infoCloseImageView,plotInfoCloseImageView,consentInfoCloseImageView;
+    LinearLayout statusInfoLayout,plotStatusInfoLayout,consentStatusInfoLayout;
 
     String multiFarmId=null;
     public static boolean farmSurvey;
@@ -290,7 +292,12 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 plotStatusInfoLayout.setVisibility(View.GONE);
             }
         });
-
+        consentInfoCloseImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                consentStatusInfoLayout.setVisibility(View.GONE);
+            }
+        });
     }
 
     private void initiaizeInfoWidget() {
@@ -298,6 +305,8 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         statusInfoLayout = findViewById(R.id.layout_notification);
         plotInfoCloseImageView = findViewById(R.id.plot_info_close_btn);
         plotStatusInfoLayout = findViewById(R.id.plot_layout_notification);
+        consentInfoCloseImageView = findViewById(R.id.consent_info_close_btn);
+        consentStatusInfoLayout = findViewById(R.id.consent_layout_notification);
     }
 
     private void showInfo() {
@@ -497,10 +506,19 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 Cursor moduleAssignments = getFarmerModules(farmerId, this,farmSurvey);
                 boolean isAtLeastOnePlotSurveyCaptured = validateBySubmittedModule(submittedModules);
                 boolean isPlotSurveyPending = checkPendingPlotSurvey(submittedModules);
+                showInfo();
                 if (isPlotSurveyPending) {
                     plotStatusInfoLayout.setVisibility(View.VISIBLE);
                 } else {
                     plotStatusInfoLayout.setVisibility(View.GONE);
+                }
+                String isConsentavailable = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ISCONSENTAVAILABLE));
+                if (isConsentavailable != null && isConsentavailable.length() > 0 && isConsentavailable.equalsIgnoreCase("true")) {
+                    consentStatusInfoLayout.setVisibility(View.GONE);
+                }else{
+                    consentStatusInfoLayout.setVisibility(View.VISIBLE);
+                    plotStatusInfoLayout.setVisibility(View.GONE);
+                    statusInfoLayout.setVisibility(View.GONE);
                 }
                 if (moduleAssignments != null && moduleAssignments.getCount() > 0) {
                     String[] adapterCols = new String[]{
@@ -582,18 +600,29 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         try {
             int totalCount = dl.fetchPlotTotalCount(String.valueOf(farmerId));
             if(totalCount > 0) {
-                JSONArray submittedModulesArray = submittedModules.getJSONArray("modules");
-                for (int i = 0; i < submittedModulesArray.length(); i++) {
-                    JSONObject submittedModule = submittedModulesArray.getJSONObject(i);
-                    JSONObject submittedModuleDetails = submittedModule.getJSONObject("module");
-                    if (submittedModuleDetails.has("plotId") && submittedModuleDetails.getString("plotId") != "null") {
-                        valid = true;
+                if(submittedModules.length() > 0) {
+                    JSONArray submittedModulesArray = submittedModules.getJSONArray("modules");
+                    for (int i = 0; i < submittedModulesArray.length(); i++) {
+                        JSONObject submittedModule = submittedModulesArray.getJSONObject(i);
+                        JSONObject submittedModuleDetails = submittedModule.getJSONObject("module");
+                        if (submittedModuleDetails.has("plotId") && submittedModuleDetails.getString("plotId") != "null") {
+                            valid = true;
+                        }
                     }
+                }else{
+                    valid = false;
                 }
             }else {
                 valid = true;
             }
+            Cursor moduleAssignments = dl.getFarmerModules(farmerId,farmSurvey);
+            int moduleCount = moduleAssignments.getCount();
+            if(moduleCount == 0){
+                valid = true;
+            }
         } catch (JSONException e) {
+            e.printStackTrace();
+        }catch (Exception e) {
             e.printStackTrace();
         }
         return valid;
@@ -607,6 +636,9 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
             int plotCount = dl.fetchPlotTotalCount(String.valueOf(farmerId));
             int expectedSurveySubmission = moduleCount * plotCount;
             int actualSurveySubmission = 0;
+            if(moduleCount == 0){
+                valid = false;
+            }
             while(moduleAssignments.moveToNext()) {
                 int moduleId = moduleAssignments.getInt(moduleAssignments.getColumnIndex("_id"));
                 if (expectedSurveySubmission > 0) {
@@ -1079,7 +1111,8 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 int totalCount = dl.fetchPlotTotalCount(String.valueOf(farmerId));
                 */
                 int farmPlotCount = dl.fetchSyncedPlotCountByFarmerID(String.valueOf(farmerId));
-                if (farmPlotCount > 0) {
+                Cursor moduleAssignments = dl.getFarmerModules(farmerId,farmSurvey);
+                if (farmPlotCount > 0 && moduleAssignments.getCount() > 0) {
                     mc.addRow(new String[]{"0", res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), res.getString(R.string.plot_survey), "0", "", "", "", res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), res.getString(R.string.ModuleStatus), "", "", "", "", "", "", "", "", "", "PlotSurvey"});
                 }
                 Cursor fmp = dl.getFmpByFarmerId(id);
@@ -2228,7 +2261,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                         bundle.putString("displayFarmerId", olamFarmerIdStr);
                         bundle.putString("olamfarmername", farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME)));
                         bundle.putLong("FarmerId", farmerId);
-                        bundle.putString("type", "update");
+                        bundle.putString("type", UPDATE);
                         in.putExtras(bundle);
                         startActivity(in);
                     } else if (recordedLng != null && recordedLng.getText().equals("Subdistrict")) {
@@ -2612,7 +2645,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
     protected void onResume() {
         super.onResume();
         setupUI();
-        showInfo();
+
         MatomoHelper.matomoScreenTracker(ScreenNameConstants.SCREEN_FIND_FARMER_ACTIVITY, ScreenNameConstants.SCREEN_VIEW_FARMER_ACTIVITY, ScreenNameConstants.SCREEN_VIEW_FARMER);
     }
 
