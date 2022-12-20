@@ -17,6 +17,8 @@ import retrofit2.Response;
 public class WebViewer extends BaseActivity {
     PDFView pdfView;
     Integer Docid;
+    private final static String FILENAME = "Filename";
+    private final static String DOCID = "DocId";
     RelativeLayout Progressbar;
     @SuppressLint("MissingInflatedId")
     @Override
@@ -24,15 +26,13 @@ public class WebViewer extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_web_viewer);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
-//                WindowManager.LayoutParams.FLAG_SECURE);
         Intent mIntent = getIntent();
-        int intValue = mIntent.getIntExtra("DocId", 0);
-        String Title=mIntent.getStringExtra("Filename");
+        int intValue = mIntent.getIntExtra(DOCID, 0);
+        String Title=mIntent.getStringExtra(FILENAME);
         if(Title!=null){
             setTitle(Title);
         }else{
-            setTitle("Document Viewer");
+            setTitle(getString(R.string.document_viewer));
         }
         Docid=intValue;
         pdfView = findViewById(R.id.idPDFView);
@@ -53,7 +53,7 @@ public class WebViewer extends BaseActivity {
                                .load();
                    }else{
                        Progressbar.setVisibility(View.INVISIBLE);
-                       showAlert("Failed to load Document");
+                       showAlert(getString(R.string.failed_to_load_document));
                    }
                }
 
@@ -68,9 +68,9 @@ public class WebViewer extends BaseActivity {
     private void showAlert(String msg) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(msg);
-        builder.setTitle("Alert !");
+        builder.setTitle(getString(R.string.Alert_txt));
         builder.setCancelable(false);
-        builder.setPositiveButton("Ok", (DialogInterface.OnClickListener) (dialog, which) -> {
+        builder.setPositiveButton(R.string.ok, (DialogInterface.OnClickListener) (dialog, which) -> {
             Intent intent = new Intent(context, ManagingTrainingActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(intent);

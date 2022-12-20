@@ -45,7 +45,6 @@ public class ManagingTrainingActivity extends BaseActivity  implements AdapterVi
     private ArrayAdapter<String> Language_Arrayadapter;
     private LinearLayout r1;
     private ProgressDialog progressDialog;
-    private String Alert_msg="Oops!!! Something went wrong. Please contact the administrator.";
     private boolean CourseList_Flag=false;
 
     @SuppressLint("MissingInflatedId")
@@ -56,8 +55,8 @@ public class ManagingTrainingActivity extends BaseActivity  implements AdapterVi
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         init();
         progressDialog = new ProgressDialog(this);
-        progressDialog.setTitle("Please wait");
-        progressDialog.setMessage("Loading .....");
+        progressDialog.setTitle(getString(R.string.PleaseWait));
+        progressDialog.setMessage(getString(R.string.Loading));
         progressDialog.show();
         mIntentFilter=new IntentFilter();
         mIntentFilter.addAction("checkinternet");
@@ -85,8 +84,7 @@ public class ManagingTrainingActivity extends BaseActivity  implements AdapterVi
                     Network_frame.setVisibility(View.INVISIBLE);
 
                 } else {
-                    String msg="Please check the Internet Connection";
-                    showAlert(msg);
+                    showAlert(getString(R.string.Please_check_the_Internet_Connection));
                 }
             }
         });
@@ -110,13 +108,12 @@ public class ManagingTrainingActivity extends BaseActivity  implements AdapterVi
                                 for (int i = 0; i < data.size(); i++) {
                                     Asset_name[i] = data.get(i).getAssetType();
                                     Button btn = new Button(ManagingTrainingActivity.this);
-                                    LinearLayout.LayoutParams mar = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                                     r1.removeAllViews();
                                     recyclerView.setVisibility(View.INVISIBLE);
                                     r1.addView(btn);
                                     btn.setText(Asset_name[i]);
                                     btn.setWidth(500);
-                                    btn.setHeight(170);
+                                    btn.setHeight(100);
                                     if(i==0){
                                           btn.setTextColor(getResources().getColor(R.color.white));
                                           btn.setBackgroundColor(getResources().getColor(R.color.ofis_action_button_background));
@@ -142,7 +139,7 @@ public class ManagingTrainingActivity extends BaseActivity  implements AdapterVi
                 }
                 else {
                     progressDialog.cancel();
-                    showAlert(Alert_msg);
+                    showAlert(getString(R.string.Alert_message_to_contact_administrator));
                 }
 
             }
@@ -187,9 +184,9 @@ public class ManagingTrainingActivity extends BaseActivity  implements AdapterVi
     private void showAlert(String msg) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(msg);
-        builder.setTitle("Alert !");
+        builder.setTitle(R.string.Alert_txt);
         builder.setCancelable(false);
-        builder.setPositiveButton("Ok", (DialogInterface.OnClickListener) (dialog, which) -> {
+        builder.setPositiveButton(R.string.ok, (DialogInterface.OnClickListener) (dialog, which) -> {
             dialog.cancel();
         });
         AlertDialog alertDialog = builder.create();
@@ -226,18 +223,18 @@ public class ManagingTrainingActivity extends BaseActivity  implements AdapterVi
                            recyclerView.setLayoutManager(new LinearLayoutManager(ManagingTrainingActivity.this));
                            recyclerView.setAdapter(adapter);
                        }else{
-                           Toast.makeText(ManagingTrainingActivity.this, "Error in getData", Toast.LENGTH_SHORT).show();
+                           Toast.makeText(ManagingTrainingActivity.this, R.string.error, Toast.LENGTH_SHORT).show();
                        }
                    }else{
-                       Toast.makeText(ManagingTrainingActivity.this, "No data Found", Toast.LENGTH_SHORT).show();
+                       Toast.makeText(ManagingTrainingActivity.this, R.string.no_data_found, Toast.LENGTH_SHORT).show();
                    }
                }else{
-                   showAlert(Alert_msg);
+                   showAlert(getString(R.string.Alert_message_to_contact_administrator));
                }
             }
             @Override
             public void onFailure(Call<DocumentList> call, Throwable t) {
-                Toast.makeText(ManagingTrainingActivity.this, "Error in Document API call"+t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(ManagingTrainingActivity.this, t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -257,7 +254,7 @@ public class ManagingTrainingActivity extends BaseActivity  implements AdapterVi
                     if (LanguageList != null && LanguageList.size() > 0) {
                         String[] Languages = new String[LanguageList.size()];
                         ArrayList<String> lang_arr =new ArrayList<>();
-                        lang_arr.add("Select Language");
+                        lang_arr.add(getString(R.string.select_language));
                         for (int i = 0; i < LanguageList.size(); i++) {
                             lang_arr.add(LanguageList.get(i).getLanguageName());
                             Languages[i] = LanguageList.get(i).getLanguageName();
@@ -291,13 +288,13 @@ public class ManagingTrainingActivity extends BaseActivity  implements AdapterVi
 
                 }
             }else{
-                showAlert(Alert_msg);
+                showAlert(getString(R.string.Alert_message_to_contact_administrator));
             }
             }
 
             @Override
             public void onFailure(Call<Languages> call, Throwable t) {
-                Toast.makeText(ManagingTrainingActivity.this, "Error in Language API call"+t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(ManagingTrainingActivity.this, t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -316,7 +313,7 @@ public class ManagingTrainingActivity extends BaseActivity  implements AdapterVi
                         if (ModuleList != null && ModuleList.size() > 0) {
                             String[] Modules = new String[ModuleList.size()];
                             ArrayList<String> mod_arr = new ArrayList<>();
-                            mod_arr.add("Select Module");
+                            mod_arr.add(getString(R.string.select_module));
                             for (int i = 0; i < ModuleList.size(); i++) {
                                 mod_arr.add(ModuleList.get(i).getModuleName());
                                 Modules[i] = ModuleList.get(i).getModuleName();
@@ -350,14 +347,12 @@ public class ManagingTrainingActivity extends BaseActivity  implements AdapterVi
                     }
                 } else {
                         progressDialog.cancel();
-                        showAlert(Alert_msg);
+                         showAlert(getString(R.string.Alert_message_to_contact_administrator));
                     }
                 }
-
-
             @Override
             public void onFailure(Call<Module> call, Throwable t) {
-                Toast.makeText(ManagingTrainingActivity.this, "Error in Module API call"+t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(ManagingTrainingActivity.this, t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -377,7 +372,7 @@ public class ManagingTrainingActivity extends BaseActivity  implements AdapterVi
                      if (CourseList != null && CourseList.size() > 0) {
                          ArrayList<String> arr =new ArrayList<>();
                          String[] Course = new String[CourseList.size()];
-                         arr.add("Select Course");
+                         arr.add(getString(R.string.selecting_course));
                          for ( int i = 0; i < CourseList.size(); i++) {
                              arr.add(CourseList.get(i).getCourseName());
                              Course[i] = CourseList.get(i).getCourseName();
@@ -422,7 +417,7 @@ public class ManagingTrainingActivity extends BaseActivity  implements AdapterVi
              }else{
                  CourseList_Flag=false;
                  progressDialog.cancel();
-                 showAlert(Alert_msg);
+                 showAlert(getString(R.string.Alert_message_to_contact_administrator));
              }
             }
             @Override
