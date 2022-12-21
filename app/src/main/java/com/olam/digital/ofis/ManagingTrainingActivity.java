@@ -1,5 +1,7 @@
 package com.olam.digital.ofis;
 
+import static com.olam.digital.ofis.EnableMultiDex.context;
+
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.annotation.SuppressLint;
@@ -23,11 +25,17 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.olam.digital.ofis.downloadsurvey.DownloadSurveyData;
+import com.olam.digital.ofis.downloadsurvey.ListDownSurveys;
+import com.olam.digital.ofis.downloadsurvey.dto.ModuleDTO;
 import com.olam.digital.ofis.model.Assets;
 import com.olam.digital.ofis.model.Course;
 import com.olam.digital.ofis.model.DocumentList;
 import com.olam.digital.ofis.model.Languages;
 import com.olam.digital.ofis.model.Module;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import retrofit2.Call;
@@ -46,6 +54,7 @@ public class ManagingTrainingActivity extends BaseActivity  implements AdapterVi
     private LinearLayout r1;
     private ProgressDialog progressDialog;
     private boolean CourseList_Flag=false;
+    ItemClickListener itemClickListener;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -218,10 +227,19 @@ public class ManagingTrainingActivity extends BaseActivity  implements AdapterVi
                            recyclerView.setVisibility(View.VISIBLE);
                            List<DocumentList.data> data=response.body().getData();
                            RecyclerView recyclerView = (RecyclerView)findViewById(R.id.recycler_view);
-                           DocumentListAdapter adapter = new DocumentListAdapter(data);
+                           DocumentListAdapter adapter = new DocumentListAdapter(data,itemClickListener);
                            recyclerView.setHasFixedSize(true);
                            recyclerView.setLayoutManager(new LinearLayoutManager(ManagingTrainingActivity.this));
                            recyclerView.setAdapter(adapter);
+                           adapter.itemClickListener(new ItemClickListener(){
+                               @Override
+                               public void onClick(View view, int position, DocumentList.data documentList) {
+                                   Bundle bundle = new Bundle();
+                                   bundle.putString("DocumentList", String.valueOf(documentList));
+                                   bundle.putSerializable("DocumentList", documentList);
+                                   startActivity(new Intent(ManagingTrainingActivity.this, WebViewer.class).putExtras(bundle));
+                               }
+                           } );
                        }else{
                            Toast.makeText(ManagingTrainingActivity.this, R.string.error, Toast.LENGTH_SHORT).show();
                        }

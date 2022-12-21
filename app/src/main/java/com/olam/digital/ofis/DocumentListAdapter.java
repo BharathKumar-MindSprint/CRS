@@ -25,12 +25,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DocumentListAdapter extends RecyclerView.Adapter<DocumentListAdapter.ViewHolder> {
-    private final static String FILENAME = "Filename";
-    private final static String DOCID = "DocId";
     private final static String PDF="pdf";
     public List<DocumentList.data> arrayList;
-    public DocumentListAdapter(List<DocumentList.data> arrayList) {
+    private com.olam.digital.ofis.ItemClickListener ItemClickListener;
+
+    public DocumentListAdapter(List<DocumentList.data> arrayList,ItemClickListener itemClickListener) {
         this.arrayList=arrayList;
+        this.ItemClickListener=itemClickListener;
     }
     @NonNull
     @Override
@@ -43,7 +44,7 @@ public class DocumentListAdapter extends RecyclerView.Adapter<DocumentListAdapte
     }
 
     @Override
-    public void onBindViewHolder(@NonNull DocumentListAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull DocumentListAdapter.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
         DocumentList.data data=arrayList.get(position);
         holder.detail.setText(data.getDescription());
         holder.file.setText(data.getFileName());
@@ -55,11 +56,7 @@ public class DocumentListAdapter extends RecyclerView.Adapter<DocumentListAdapte
         holder.linearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(context, WebViewer.class);
-                intent.putExtra(FILENAME,data.getFileName());
-                intent.putExtra(DOCID,data.gettDocsLanId() );
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                context.startActivity(intent);
+                ItemClickListener.onClick(view,position,data);
             }
         });
     }
@@ -68,6 +65,11 @@ public class DocumentListAdapter extends RecyclerView.Adapter<DocumentListAdapte
     public int getItemCount() {
         return arrayList.size();
     }
+
+    public void itemClickListener(ItemClickListener documentList) {
+        this.ItemClickListener=documentList;
+    }
+
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public ImageView imageView;
