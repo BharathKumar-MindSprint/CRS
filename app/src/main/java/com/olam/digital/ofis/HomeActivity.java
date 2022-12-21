@@ -1204,7 +1204,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 @Override
                 public void onClick(View v) {
                     MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_RECORD_TRAINING,  ScreenNameConstants.BUTTON_CLICKED);
-                    Intent intent = new Intent(context, TrainingRecords.class);
+                    Intent intent = new Intent(context, Records.class);
                     context.startActivity(intent);
                 }
             });
