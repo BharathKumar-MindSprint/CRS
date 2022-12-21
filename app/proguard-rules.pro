@@ -157,3 +157,4 @@
 -keep class com.sun.jna.** { *; }
 
 -dontwarn com.sun.jna.**
+-keep class com.shockwave.**
