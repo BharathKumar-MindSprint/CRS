@@ -3,6 +3,7 @@ package com.olam.digital.ofis.model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 public class DocumentList {
@@ -46,7 +47,7 @@ public class DocumentList {
         this.data = data;
     }
 
-    public static class data{
+    public static class data implements Serializable {
         @SerializedName("description")
          @Expose
         String description;

@@ -56,7 +56,7 @@ public class Interceptor implements okhttp3.Interceptor {
                         }
 
                     }else{
-                        Toast.makeText(context, "Error in refresh token Api call", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context,R.string.error, Toast.LENGTH_SHORT).show();
                     }
                 }
 

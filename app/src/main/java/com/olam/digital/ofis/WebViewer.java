@@ -9,6 +9,9 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
 import com.github.barteksc.pdfviewer.PDFView;
+import com.olam.digital.ofis.downloadsurvey.dto.ModuleDTO;
+import com.olam.digital.ofis.model.DocumentList;
+
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -17,8 +20,8 @@ import retrofit2.Response;
 public class WebViewer extends BaseActivity {
     PDFView pdfView;
     Integer Docid;
-    private final static String FILENAME = "Filename";
-    private final static String DOCID = "DocId";
+    String Title;
+    int  intValue;
     RelativeLayout Progressbar;
     @SuppressLint("MissingInflatedId")
     @Override
@@ -26,9 +29,12 @@ public class WebViewer extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_web_viewer);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        Intent mIntent = getIntent();
-        int intValue = mIntent.getIntExtra(DOCID, 0);
-        String Title=mIntent.getStringExtra(FILENAME);
+        Bundle bundle = this.getIntent().getExtras();
+        if (bundle != null) {
+            DocumentList.data document = ( DocumentList.data) bundle.getSerializable("DocumentList");
+            Title=document.getFileName();
+            intValue=document.gettDocsLanId();
+        }
         if(Title!=null){
             setTitle(Title);
         }else{
