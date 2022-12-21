@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/LinearLayout"
+    android:paddingLeft="15dp"
+    android:paddingRight="15dp"
+    android:paddingTop="@dimen/ofis_list_itemseparator"
+    android:paddingBottom="@dimen/ofis_list_itemseparator"
+    >
+ <androidx.cardview.widget.CardView
+     android:layout_width="match_parent"
+     android:layout_height="wrap_content"
+     >
+     <LinearLayout
+         android:layout_width="match_parent"
+         android:layout_height="match_parent"
+         android:orientation="horizontal"
+         android:id="@+id/list_item_layout"
+         android:minHeight="60dp"
+         android:background="#e6e6e6"
+        >
+         <ImageView
+             android:id="@+id/imageView"
+             android:layout_margin="@dimen/margin_10"
+             android:layout_width="40dp"
+             android:layout_height="40dp"
+             android:adjustViewBounds="true"
+             android:scaleType="fitCenter"
+             android:maxHeight="60dp"
+             />
+
+         <LinearLayout
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:orientation="vertical"
+             android:layout_margin="@dimen/margin_10"
+             >
+             <TextView
+                 android:id="@+id/tnFileList"
+                 android:layout_width="match_parent"
+                 android:layout_height="wrap_content"
+                 android:layout_weight="1"
+                 android:text="@string/file_name"
+                 android:textStyle="bold"
+                 android:ellipsize="end"
+                 android:maxLines="1"
+                 android:textColor="@color/ofis_base_font_dark"
+                 android:textSize="@dimen/ofis_med_text"
+                 />
+
+             <TextView
+                 android:id="@+id/tvDetailList"
+                 android:layout_width="match_parent"
+                 android:layout_height="wrap_content"
+                 android:layout_weight="1"
+                 android:text="@string/description"
+                 android:ellipsize="end"
+                 android:maxLines="1"
+                 android:textColor="@color/ofis_list_item_subtitle"
+                 android:textSize="@dimen/ofis_small_text" />
+         </LinearLayout>
+     </LinearLayout>
+
+ </androidx.cardview.widget.CardView>
+
+</LinearLayout>

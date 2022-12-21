@@ -44,6 +44,38 @@
         android:theme="@style/AppCompactTheme"
         tools:replace="android:supportsRtl,android:allowBackup,android:theme"
         tools:ignore="GoogleAppIndexingWarning,UnusedAttribute">
+        <activity
+            android:name=".Records"
+            android:parentActivityName=".HomeActivity"
+            android:label="Manage Training"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".WebViewer"
+            android:parentActivityName=".ManagingTrainingActivity"
+            android:label="Viewer"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".ManagingTrainingActivity"
+            android:label="Manage Training Records"
+            android:parentActivityName=".Records"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+
+        <service
+            android:name=".MyService"
+            android:enabled="true"
+            android:exported="true"></service>
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
@@ -248,7 +280,7 @@
         <activity
             android:name="com.olam.digital.ofis.TrainingRecords"
             android:label="@string/TrainingRecordsTitle"
-            android:parentActivityName="com.olam.digital.ofis.HomeActivity"
+            android:parentActivityName=".Records"
             android:screenOrientation="portrait"
             tools:ignore="UnusedAttribute">
             <meta-data
