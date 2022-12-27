@@ -1,9 +1,5 @@
-package com.olam.digital.ofis;
+package com.olam.digital.ofis.ManageTrainingRecords;
 
-import static com.olam.digital.ofis.EnableMultiDex.context;
-
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -12,10 +8,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.ColorStateList;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -23,38 +19,43 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
-
-import com.olam.digital.ofis.downloadsurvey.DownloadSurveyData;
-import com.olam.digital.ofis.downloadsurvey.ListDownSurveys;
-import com.olam.digital.ofis.downloadsurvey.dto.ModuleDTO;
-import com.olam.digital.ofis.model.Assets;
-import com.olam.digital.ofis.model.Course;
-import com.olam.digital.ofis.model.DocumentList;
-import com.olam.digital.ofis.model.Languages;
-import com.olam.digital.ofis.model.Module;
-
-import java.io.Serializable;
+import androidx.viewpager.widget.ViewPager;
+import com.google.android.material.tabs.TabLayout;
+import com.olam.digital.ofis.BaseActivity;
+import com.olam.digital.ofis.ManageTrainingRecords.Services.MyService;
+import com.olam.digital.ofis.ManageTrainingRecords.Listener.ItemClickListener;
+import com.olam.digital.ofis.ManageTrainingRecords.Services.ManageRecords;
+import com.olam.digital.ofis.ManageTrainingRecords.adapter.ViewpageAdapter;
+import com.olam.digital.ofis.R;
+import com.olam.digital.ofis.ManageTrainingRecords.Services.RetrofitClient;
+import com.olam.digital.ofis.ManageTrainingRecords.model.Assets;
+import com.olam.digital.ofis.ManageTrainingRecords.model.Course;
+import com.olam.digital.ofis.ManageTrainingRecords.model.DocumentList;
+import com.olam.digital.ofis.ManageTrainingRecords.model.Languages;
+import com.olam.digital.ofis.ManageTrainingRecords.model.Module;
 import java.util.ArrayList;
 import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ManagingTrainingActivity extends BaseActivity  implements AdapterView.OnItemSelectedListener {
+public class ManagingTrainingActivity extends BaseActivity implements TabLayout.OnTabSelectedListener {
     private Spinner courseSpinner,moduleSpinner,languageSpinner;
-    private TextView Media_Text;
     private Button retry_btn;
-    private RecyclerView recyclerView;
     private RelativeLayout Home_frame;
     private RelativeLayout Network_frame;
     private IntentFilter mIntentFilter;
     private ArrayAdapter<String> Language_Arrayadapter;
     private LinearLayout r1;
+    private RelativeLayout tab;
     private ProgressDialog progressDialog;
     private boolean CourseList_Flag=false;
-    ItemClickListener itemClickListener;
+    TabLayout tabLayout;
+    private ViewPager viewpager;
+    String[] Asset_name;
+    List<DocumentList.data> data;
+    ViewpageAdapter adapter;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -69,7 +70,7 @@ public class ManagingTrainingActivity extends BaseActivity  implements AdapterVi
         progressDialog.show();
         mIntentFilter=new IntentFilter();
         mIntentFilter.addAction("checkinternet");
-        Intent serviceIntent= new Intent(this,MyService.class);
+        Intent serviceIntent= new Intent(this, MyService.class);
         startService(serviceIntent);
         if(isOnline(getApplicationContext())){
             if(CourseList_Flag==false){
@@ -82,7 +83,6 @@ public class ManagingTrainingActivity extends BaseActivity  implements AdapterVi
             Network_frame.setVisibility(View.VISIBLE);
             Home_frame.setVisibility(View.INVISIBLE);
         }
-        Media_Text.setVisibility(View.INVISIBLE);
         retry_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -100,47 +100,26 @@ public class ManagingTrainingActivity extends BaseActivity  implements AdapterVi
     }
 
     private void AssetsMethod( int CourseLanguageId) {
-        Media_Text.setVisibility(View.INVISIBLE);
-        recyclerView.setVisibility(View.INVISIBLE);
-        ManageRecords AllAssets=RetrofitClient.getRetrofit().create(ManageRecords.class);
+        tab.setVisibility(View.INVISIBLE);
+        viewpager=findViewById(R.id.viewpager);
+        ManageRecords AllAssets= RetrofitClient.getRetrofit().create(ManageRecords.class);
         Call<Assets> call=AllAssets.getAllAsset(CourseLanguageId);
         call.enqueue(new Callback<Assets>() {
             @Override
             public void onResponse(Call<Assets> call, Response<Assets> response) {
                 if(response.code()==200){
-                    if(response.body().getStatusCode()==200){
-                        if(response.body().getData()!=null) {
+                    if(response.body().getStatusCode()==200) {
+                        if (response.body().getData() != null) {
                             List<Assets.data> data = response.body().getData();
                             if (data != null && data.size() > 0) {
-                                String[] Asset_name = new String[data.size()];
-                                DocList(data.get(0).getCourseAssetTypeId(),CourseLanguageId);
+                                Asset_name = new String[data.size()];
+                                tabLayout.removeAllTabs();
+                                progressDialog.cancel();
+                                r1.setVisibility(View.VISIBLE);
+                                tab.setVisibility(View.VISIBLE);
                                 for (int i = 0; i < data.size(); i++) {
                                     Asset_name[i] = data.get(i).getAssetType();
-                                    Button btn = new Button(ManagingTrainingActivity.this);
-                                    r1.removeAllViews();
-                                    recyclerView.setVisibility(View.INVISIBLE);
-                                    r1.addView(btn);
-                                    btn.setText(Asset_name[i]);
-                                    btn.setWidth(500);
-                                    btn.setHeight(100);
-                                    if(i==0){
-                                          btn.setTextColor(getResources().getColor(R.color.white));
-                                          btn.setBackgroundColor(getResources().getColor(R.color.ofis_action_button_background));
-                                    }else{
-                                        btn.setBackgroundColor(getResources().getColor(R.color.disabled_gray));
-                                    }
-                                    r1.setVisibility(View.VISIBLE);
-                                    int finalI1 = i;
-                                    progressDialog.cancel();
-                                    btn.setOnClickListener(new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View view) {
-                                              btn.setTextColor(getResources().getColor(R.color.white));
-                                              btn.setBackgroundColor(getResources().getColor(R.color.ofis_action_button_background));
-                                            DocList(data.get(finalI1).getCourseAssetTypeId(),CourseLanguageId);
-
-                                        }
-                                    });
+                                    DocList(data.get(i).getCourseAssetTypeId(), CourseLanguageId);
                                 }
                             }
                         }
@@ -206,16 +185,16 @@ public class ManagingTrainingActivity extends BaseActivity  implements AdapterVi
         courseSpinner=(Spinner)findViewById(R.id.spinner_course);
         moduleSpinner=(Spinner)findViewById(R.id.spinner_module);
         languageSpinner=(Spinner)findViewById(R.id.spinner_language);
-        Media_Text=(TextView)findViewById(R.id.media_text);
-        recyclerView=(RecyclerView)findViewById(R.id.recycler_view);
         Home_frame=(RelativeLayout)findViewById(R.id.home_layout);
         Network_frame=(RelativeLayout)findViewById(R.id.check_network);
         retry_btn=(Button)findViewById(R.id.retry_btn);
         r1 = (LinearLayout) findViewById(R.id.TabviewLayout);
+        tab=(RelativeLayout) findViewById(R.id.ListRelativeLayout);
+        tabLayout=findViewById(R.id.tablayout);
     }
 
     private void DocList(int coursesAssetTypeId,int coursesLanguageId) {
-        recyclerView.setVisibility(View.INVISIBLE);
+        tab.setVisibility(View.INVISIBLE);
         ManageRecords AllDocumentList=RetrofitClient.getRetrofit().create(ManageRecords.class);
         Call<DocumentList> call=AllDocumentList.getAllDocuments(coursesAssetTypeId,coursesLanguageId);
         call.enqueue(new Callback<DocumentList>() {
@@ -224,22 +203,17 @@ public class ManagingTrainingActivity extends BaseActivity  implements AdapterVi
                if(response.code()==200){
                    if(response.body()!=null){
                        if(response.body().getData()!=null){
-                           recyclerView.setVisibility(View.VISIBLE);
-                           List<DocumentList.data> data=response.body().getData();
-                           RecyclerView recyclerView = (RecyclerView)findViewById(R.id.recycler_view);
-                           DocumentListAdapter adapter = new DocumentListAdapter(data,itemClickListener);
-                           recyclerView.setHasFixedSize(true);
-                           recyclerView.setLayoutManager(new LinearLayoutManager(ManagingTrainingActivity.this));
-                           recyclerView.setAdapter(adapter);
-                           adapter.itemClickListener(new ItemClickListener(){
-                               @Override
-                               public void onClick(View view, int position, DocumentList.data documentList) {
-                                   Bundle bundle = new Bundle();
-                                   bundle.putString("DocumentList", String.valueOf(documentList));
-                                   bundle.putSerializable("DocumentList", documentList);
-                                   startActivity(new Intent(ManagingTrainingActivity.this, WebViewer.class).putExtras(bundle));
-                               }
-                           } );
+                           tab.setVisibility(View.VISIBLE);
+                           data=response.body().getData();
+                           tabLayout.setupWithViewPager(viewpager);
+                           adapter=new ViewpageAdapter(getSupportFragmentManager(),data,Asset_name);
+                           viewpager.setAdapter(adapter);
+                           tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
+                           tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+                           tabLayout.setTabTextColors(ColorStateList.valueOf(getResources().getColor(R.color.white)));
+                           tabLayout.setTabTextColors(getResources().getColor(R.color.black), getResources().getColor(R.color.white));
+                           new TabLayout.TabLayoutOnPageChangeListener(tabLayout);
+                           tabLayout.setOnTabSelectedListener(ManagingTrainingActivity.this);
                        }else{
                            Toast.makeText(ManagingTrainingActivity.this, R.string.error, Toast.LENGTH_SHORT).show();
                        }
@@ -327,7 +301,6 @@ public class ManagingTrainingActivity extends BaseActivity  implements AdapterVi
                     if (response.body() != null) {
                         progressDialog.cancel();
                         List<Module.data> ModuleList = response.body().getData();
-
                         if (ModuleList != null && ModuleList.size() > 0) {
                             String[] Modules = new String[ModuleList.size()];
                             ArrayList<String> mod_arr = new ArrayList<>();
@@ -342,7 +315,7 @@ public class ManagingTrainingActivity extends BaseActivity  implements AdapterVi
                                     String item = moduleSpinner.getSelectedItem().toString();
                                     int courseTrainingModuleId;
                                     r1.setVisibility(View.INVISIBLE);
-                                    recyclerView.setVisibility(View.INVISIBLE);
+                                    tab.setVisibility(View.INVISIBLE);
                                     for (int j = 0; j < ModuleList.size(); j++) {
                                         Modules[j] = ModuleList.get(j).getModuleName();
                                         if (Modules[j] == item) {
@@ -405,8 +378,7 @@ public class ManagingTrainingActivity extends BaseActivity  implements AdapterVi
                                      Language_Arrayadapter.clear();
                                      Language_Arrayadapter.notifyDataSetChanged();
                                      r1.setVisibility(View.INVISIBLE);
-                                     recyclerView.setVisibility(View.INVISIBLE);
-                                     Media_Text.setVisibility(View.INVISIBLE);
+                                     tab.setVisibility(View.INVISIBLE);
                                  }
                                  for (int j = 0; j < CourseList.size(); j++) {
                                      Course[j] = CourseList.get(j).getCourseName();
@@ -467,15 +439,20 @@ public class ManagingTrainingActivity extends BaseActivity  implements AdapterVi
     }
 
     @Override
-    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+    public void onTabSelected(TabLayout.Tab tab) {
+        viewpager.setCurrentItem(tab.getPosition());
 
     }
 
     @Override
-    public void onNothingSelected(AdapterView<?> adapterView) {
+    public void onTabUnselected(TabLayout.Tab tab) {
 
     }
 
+    @Override
+    public void onTabReselected(TabLayout.Tab tab) {
+
+    }
 }
 
 
