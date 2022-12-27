@@ -77,7 +77,7 @@ public class BaseActivity extends AppCompatActivity {
     };
     public DataLayer dl;
     public Resources res;
-    Context context;
+    public Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

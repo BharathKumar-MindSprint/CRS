@@ -1,9 +1,10 @@
-package com.olam.digital.ofis;
+package com.olam.digital.ofis.ManageTrainingRecords.Services;
 
 import static com.olam.digital.ofis.EnableMultiDex.context;
 import android.os.SystemClock;
-import android.util.Log;
 import android.widget.Toast;
+import com.olam.digital.ofis.R;
+import com.olam.digital.ofis.Utilities;
 import com.olam.digital.ofis.authentication.AuthenticationClient;
 import com.olam.digital.ofis.authentication.AuthenticationHelper;
 import com.olam.digital.ofis.authentication.AuthenticationInterface;
@@ -30,13 +31,13 @@ public class Interceptor implements okhttp3.Interceptor {
         dispatcher.setMaxRequests(1);
         if (response.code()==401) {
             AuthenticationDTO authenticationDTO = new AuthenticationHelper(context).getAuthenticationDTO();
-            String clientId=Utilities.getKeyCloakClientDetails(context, KeyCloakInfo.Client_Id);
+            String clientId= Utilities.getKeyCloakClientDetails(context, KeyCloakInfo.Client_Id);
             String clientSecret=Utilities.getKeyCloakClientDetails(context,KeyCloakInfo.Client_Secret);
             String grantType=context.getResources().getString(R.string.refresh_token);
             String refreshToken=authenticationDTO.getRefreshToken();
             // Keycloak Refresh Token Call
             AuthenticationInterface authenticationInterface = AuthenticationClient.createService(AuthenticationInterface.class, context);
-            retrofit2.Call<AuthenticationDTO> authCall = authenticationInterface.getKeyCloakRefreshToken(clientId,clientSecret,grantType,refreshToken);
+            Call<AuthenticationDTO> authCall = authenticationInterface.getKeyCloakRefreshToken(clientId,clientSecret,grantType,refreshToken);
 
             authCall.enqueue(new Callback<AuthenticationDTO>() {
                 @Override
