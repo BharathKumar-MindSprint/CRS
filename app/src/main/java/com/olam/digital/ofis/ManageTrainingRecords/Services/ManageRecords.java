@@ -1,10 +1,10 @@
-package com.olam.digital.ofis;
+package com.olam.digital.ofis.ManageTrainingRecords.Services;
 
-import com.olam.digital.ofis.model.Assets;
-import com.olam.digital.ofis.model.Course;
-import com.olam.digital.ofis.model.DocumentList;
-import com.olam.digital.ofis.model.Languages;
-import com.olam.digital.ofis.model.Module;
+import com.olam.digital.ofis.ManageTrainingRecords.model.Assets;
+import com.olam.digital.ofis.ManageTrainingRecords.model.Course;
+import com.olam.digital.ofis.ManageTrainingRecords.model.DocumentList;
+import com.olam.digital.ofis.ManageTrainingRecords.model.Languages;
+import com.olam.digital.ofis.ManageTrainingRecords.model.Module;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;

@@ -1,4 +1,4 @@
-package com.olam.digital.ofis;
+package com.olam.digital.ofis.ManageTrainingRecords.Services;
 
 import android.annotation.SuppressLint;
 import android.app.Service;

@@ -1,41 +1,34 @@
-package com.olam.digital.ofis;
-
-import static com.olam.digital.ofis.EnableMultiDex.context;
+package com.olam.digital.ofis.ManageTrainingRecords.adapter;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
-import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.olam.digital.ofis.model.DocumentList;
+import com.olam.digital.ofis.ManageTrainingRecords.Listener.ItemClickListener;
+import com.olam.digital.ofis.R;
+import com.olam.digital.ofis.ManageTrainingRecords.model.DocumentList;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class DocumentListAdapter extends RecyclerView.Adapter<DocumentListAdapter.ViewHolder> {
     private final static String PDF="pdf";
     public List<DocumentList.data> arrayList;
-    private com.olam.digital.ofis.ItemClickListener ItemClickListener;
+    private com.olam.digital.ofis.ManageTrainingRecords.Listener.ItemClickListener ItemClickListener;
 
-    public DocumentListAdapter(List<DocumentList.data> arrayList,ItemClickListener itemClickListener) {
+    public DocumentListAdapter(List<DocumentList.data> arrayList, com.olam.digital.ofis.ManageTrainingRecords.Listener.ItemClickListener itemClickListener) {
         this.arrayList=arrayList;
         this.ItemClickListener=itemClickListener;
     }
     @NonNull
     @Override
-    public DocumentListAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
         View listItem= layoutInflater.inflate(R.layout.item_doc_pdf_cardview, parent, false);
@@ -44,19 +37,19 @@ public class DocumentListAdapter extends RecyclerView.Adapter<DocumentListAdapte
     }
 
     @Override
-    public void onBindViewHolder(@NonNull DocumentListAdapter.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, @SuppressLint("RecyclerView") int position) {
         DocumentList.data data=arrayList.get(position);
         holder.detail.setText(data.getDescription());
         holder.file.setText(data.getFileName());
         if(data.getFileFormat().equals(PDF)){
-             holder.imageView.setImageResource(R.drawable.ic_pdf);
+             holder.imageView.setImageResource(R.drawable.ic_action_pdf);
         }else{
-            holder.imageView.setImageResource(R.drawable.ic_word);
+            holder.imageView.setImageResource(R.drawable.ic_action_word);
         }
         holder.linearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ItemClickListener.onClick(view,position,data);
+                ItemClickListener.onClick(view,position,arrayList);
             }
         });
     }

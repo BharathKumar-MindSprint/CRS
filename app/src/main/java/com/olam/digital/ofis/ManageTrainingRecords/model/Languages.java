@@ -1,4 +1,4 @@
-package com.olam.digital.ofis.model;
+package com.olam.digital.ofis.ManageTrainingRecords.model;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

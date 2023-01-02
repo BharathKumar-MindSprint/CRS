@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".Records"
+    tools:context=".ManageTrainingRecords.Records"
 
     >
     <RelativeLayout
@@ -35,7 +35,6 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_alignParentRight="true"
-            android:layout_margin="@dimen/margin_10"
             android:layout_marginStart="@dimen/margin_10"
             android:layout_marginTop="@dimen/margin_10"
             android:layout_marginEnd="@dimen/margin_10"
@@ -43,8 +42,7 @@
             android:adjustViewBounds="true"
             android:maxHeight="60dp"
             android:scaleType="fitCenter"
-            android:src="@drawable/save"
-            app:tint="@color/white" />
+            android:src="@drawable/icon_save"/>
     </RelativeLayout>
     <RelativeLayout
         android:id="@+id/training_records_btn"
@@ -68,19 +66,18 @@
             android:textAlignment="center"
             android:textColor="@color/white"
             android:textSize="18sp" />
+
         <ImageView
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_margin="@dimen/margin_10"
+            android:layout_alignParentRight="true"
             android:layout_marginStart="@dimen/margin_10"
             android:layout_marginTop="@dimen/margin_10"
             android:layout_marginEnd="@dimen/margin_10"
             android:layout_marginBottom="@dimen/margin_10"
             android:adjustViewBounds="true"
             android:maxHeight="60dp"
-            android:src="@drawable/download"
-            android:layout_alignParentRight="true"
-            app:tint="@color/white"
+            android:src="@drawable/icon_download"
             />
     </RelativeLayout>
 
