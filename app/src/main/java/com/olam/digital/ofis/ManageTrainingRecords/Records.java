@@ -1,10 +1,14 @@
-package com.olam.digital.ofis;
+package com.olam.digital.ofis.ManageTrainingRecords;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.RelativeLayout;
+
+import com.olam.digital.ofis.BaseActivity;
+import com.olam.digital.ofis.R;
+import com.olam.digital.ofis.TrainingRecords;
 
 public class Records extends BaseActivity {
 private RelativeLayout Manage_Training_Records,Training_Records;

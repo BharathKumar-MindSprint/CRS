@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ManagingTrainingActivity"
+    tools:context=".ManageTrainingRecords.ManagingTrainingActivity"
     android:id="@+id/parent_layout"
     android:background="@color/white"
     >
@@ -75,7 +75,7 @@
 
                     <Spinner
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="35dp"
                         android:id="@+id/spinner_module"
                         android:layout_weight="1"
                         android:nextFocusDown="@+id/spinner_language"
@@ -98,7 +98,7 @@
                         android:layout_marginBottom="@dimen/ofis_med_pad"/>
                     <Spinner
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="35dp"
                         android:id="@+id/spinner_language"
                         android:layout_weight="1" />
                 </LinearLayout>
@@ -107,40 +107,40 @@
 
         </LinearLayout>
         <!--    Tab View-->
-        <HorizontalScrollView
+        <LinearLayout
+            android:id="@+id/TabviewLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/scrollView"
-            android:layout_below="@+id/topLinearLayout">
-            <LinearLayout
-                android:id="@+id/TabviewLayout"
+            android:layout_below="@+id/topLinearLayout"
+            android:layout_margin="10dp"
+            android:orientation="horizontal"
+            >
+            <!--                Buttons are created dynamically-->
+            <com.google.android.material.tabs.TabLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/scrollView"
-                android:layout_margin="10dp"
-                android:orientation="horizontal"
-                >
-<!--                Buttons are created dynamically-->
-            </LinearLayout>
-        </HorizontalScrollView >
+                android:layout_height="match_parent"
+                android:id="@+id/tablayout"
+                app:tabMaxWidth="@dimen/table_width200"
+                app:tabBackground="@drawable/tab_indicator"
+                app:tabTextColor="@color/white"
+                app:tabSelectedTextColor="@color/white"
+                app:tabMinWidth="180dp"
+                />
+
+        </LinearLayout>
         <!--    List based on tabview-->
 
         <RelativeLayout
             android:id="@+id/ListRelativeLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/scrollView"
+            android:layout_below="@+id/TabviewLayout"
             >
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycler_view"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-            <TextView
+            <androidx.viewpager.widget.ViewPager
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/media_text"
-                android:text="@string/media"
-                android:gravity="center"/>
+                android:id="@+id/viewpager"
+                />
 
         </RelativeLayout>
     </RelativeLayout>
@@ -164,7 +164,7 @@
                 android:id="@+id/caution_img"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:src="@drawable/ic_warning" />
+                android:src="@drawable/icon_warning" />
 
             <LinearLayout
                 android:id="@+id/text_layout"
