@@ -5,6 +5,7 @@ import com.olam.digital.ofis.ManageTrainingRecords.model.Course;
 import com.olam.digital.ofis.ManageTrainingRecords.model.DocumentList;
 import com.olam.digital.ofis.ManageTrainingRecords.model.Languages;
 import com.olam.digital.ofis.ManageTrainingRecords.model.Module;
+import com.olam.digital.ofis.ManageTrainingRecords.model.ViewFile;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -31,6 +32,6 @@ public interface ManageRecords {
     Call<Assets> getAllAsset(@Query("courseLanguageId") int courseLanguageId);
 
     @GET("ofistraining/file/stream/{courseLanguageDocId}")
-    Call<ResponseBody> getBytes(@Path("courseLanguageDocId") int courseLanguageDocId);
+    Call<ViewFile> getBytes(@Path("courseLanguageDocId") int courseLanguageDocId);
 
 }
