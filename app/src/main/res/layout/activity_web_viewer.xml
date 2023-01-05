@@ -5,12 +5,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ManageTrainingRecords.WebViewer"
-    android:orientation="vertical">
-
-    <com.github.barteksc.pdfviewer.PDFView
-        android:id="@+id/idPDFView"
+    >
+    <WebView
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:id="@+id/doc_view"
+        />
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
