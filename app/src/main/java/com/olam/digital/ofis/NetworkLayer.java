@@ -2718,7 +2718,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                         postFailureMessage(handler, response, msg, 2, total, progress, null, "submitting cs location");
                                         FirebaseCrash.report(new Exception(response.optString("errors", res.getString(R.string.item_sync_error)) + " : submitting cs location"));
                                         if(response.toString().contains(context.getResources().getString(R.string.consent_duplicate_error))){
-                                            statusMessage = "Data cleared";
+                                            statusMessage = res.getString(R.string.item_synced);
                                             msg.what = 1;
                                             msg.arg1 = total;
                                             msg.arg2 = progress;
