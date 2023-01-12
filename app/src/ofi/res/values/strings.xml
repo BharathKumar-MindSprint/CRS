@@ -1072,4 +1072,5 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
         <item>FDP</item> <!--FDP-->
     </string-array>
     <string name="info_notification_close">Notification was removed from this list</string>
+    <string name="consent_duplicate_alert">The consent is already agreed by the farmer and we see a duplicate identified now. This duplicate will be removed from the queue further.</string>
 </resources>
