@@ -935,7 +935,7 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
         <item>Other</item>
     </string-array>
 
-    <string name="consent_duplicate_alert">Duplicate consent identified and hence cannot sync the item selected. Please note, such duplicates will be removed from the queue further.</string>
+    <string name="consent_duplicate_alert">The consent is already agreed by the farmer and we see a duplicate identified now. This duplicate will be removed from the queue further.</string>
     <string name="consent_duplicate_error">Error in saving FarmerConsent</string>
     <string name="update_farm_information">Update Farm Information</string>
     <string name="select_from_existing_farm">Select from existing Farm</string>
