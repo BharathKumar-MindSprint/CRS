@@ -459,48 +459,56 @@ public class CompleteModuleActivity extends BaseActivity {
     }
 
     private void setupTopSection() {
-        TextView moduleNameTv = (TextView) findViewById(R.id.completeModuleModuleTitle);
-        TextView subModuleNameTv = (TextView) findViewById(R.id.completeModuleSubModuleTitle);
+        try {
+            TextView moduleNameTv = (TextView) findViewById(R.id.completeModuleModuleTitle);
+            TextView subModuleNameTv = (TextView) findViewById(R.id.completeModuleSubModuleTitle);
 
-        moduleNameTv.setText(moduleName);
+            moduleNameTv.setText(moduleName);
 
-        moduleNameTv.post(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    if (moduleNameTv.getLineCount()>4){
-                        moduleNameTv.setMaxLines(4);
-                        moduleNameTv.setEllipsize(TextUtils.TruncateAt.END);}
-                }catch (Exception e){}
-            }
-        });
+            moduleNameTv.post(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        if (moduleNameTv.getLineCount() > 4) {
+                            moduleNameTv.setMaxLines(4);
+                            moduleNameTv.setEllipsize(TextUtils.TruncateAt.END);
+                        }
+                    } catch (Exception e) {
+                    }
+                }
+            });
 
 
             int columnIndex = (subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME + dynamicQuestions.questionColumnSuffix) != -1) ? subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME + dynamicQuestions.questionColumnSuffix) : subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME);
             subModuleNameTv.setText(subModules.getString(columnIndex));
 
-        subModuleNameTv.post(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    if (subModuleNameTv.getLineCount()>4){
-                        subModuleNameTv.setMaxLines(4);
-                        subModuleNameTv.setEllipsize(TextUtils.TruncateAt.END);}
-                }catch (Exception e){}
-            }
-        });
-        long farmerGroupId = dl.getFarmerGroupById(farmerId);
-        long sectionId = dl.getSectionByFarmerId(farmerId);
-        boolean value = dl.farmerExistByfarmerGroupSection(farmerGroupId,sectionId,moduleId);
-        if(value){
-            boolean viewExistingdata = dl.isSurveyAnsDownloaded(subModuleId, farmerId);
-            if(viewExistingdata){
-                viewSurveyAnswer.setVisibility(View.VISIBLE);
-            }else{
+            subModuleNameTv.post(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        if (subModuleNameTv.getLineCount() > 4) {
+                            subModuleNameTv.setMaxLines(4);
+                            subModuleNameTv.setEllipsize(TextUtils.TruncateAt.END);
+                        }
+                    } catch (Exception e) {
+                    }
+                }
+            });
+            long farmerGroupId = dl.getFarmerGroupById(farmerId);
+            long sectionId = dl.getSectionByFarmerId(farmerId);
+            boolean value = dl.farmerExistByfarmerGroupSection(farmerGroupId, sectionId, moduleId);
+            if (value) {
+                boolean viewExistingdata = dl.isSurveyAnsDownloaded(subModuleId, farmerId);
+                if (viewExistingdata) {
+                    viewSurveyAnswer.setVisibility(View.VISIBLE);
+                } else {
+                    viewSurveyAnswer.setVisibility(View.GONE);
+                }
+            } else {
                 viewSurveyAnswer.setVisibility(View.GONE);
             }
-        }else{
-            viewSurveyAnswer.setVisibility(View.GONE);
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 
