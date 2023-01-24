@@ -1095,16 +1095,18 @@ public class CompleteModuleActivity extends BaseActivity {
         }catch (Exception e){
             e.printStackTrace();
         }
-        TextView moduleText = (TextView) popupView.findViewById(R.id.completeModuleSubModule);
-        int columnIndex = (subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME + dynamicQuestions.questionColumnSuffix) != -1) ? subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME + dynamicQuestions.questionColumnSuffix) : subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME);
-        moduleText.setText(moduleName + " - " + subModules.getString(columnIndex));
-        popupView.findViewById(R.id.cancel_btn).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                popupWindow.dismiss();
-                dynamicQuestions.viewAnswer = false;
-            }
-        });
+            TextView moduleText = (TextView) popupView.findViewById(R.id.completeModuleSubModule);
+            try {
+                int columnIndex = (subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME + dynamicQuestions.questionColumnSuffix) != -1) ? subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME + dynamicQuestions.questionColumnSuffix) : subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME);
+                moduleText.setText(moduleName + " - " + subModules.getString(columnIndex));
+            }catch (Exception e){e.printStackTrace();}
+            popupView.findViewById(R.id.cancel_btn).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    popupWindow.dismiss();
+                    dynamicQuestions.viewAnswer = false;
+                }
+            });
     }
 
     public void renderCaptureLocationQuestion(Cursor qCursor, boolean isRepeaterItem, LinearLayout parentLayout, final int parentQuestionId, final int repeaterItemPosition) {
