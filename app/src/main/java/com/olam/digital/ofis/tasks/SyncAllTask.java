@@ -667,6 +667,8 @@ public class SyncAllTask extends SyncTask {
                             for (int j = 0; j < length; j++) {
                                 item = countryArray.getJSONObject(j);
                                 boolean isODOrigin = item.getBoolean("isODOrigin");
+                                boolean isEnableAgroLearn = item.getBoolean("isEnableAgrolearn");
+                                Utilities.saveToSharedPrefs(context, Utilities.AGROLEARN_ENUMERATOR,null, isEnableAgroLearn);
                                 if(isODOrigin){
                                     String code = item.getString("countryIsoCode").substring(0,2);
                                     isoCodes.add(code);

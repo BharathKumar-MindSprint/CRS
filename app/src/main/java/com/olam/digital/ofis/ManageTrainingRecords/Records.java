@@ -9,6 +9,7 @@ import android.widget.RelativeLayout;
 import com.olam.digital.ofis.BaseActivity;
 import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.TrainingRecords;
+import com.olam.digital.ofis.Utilities;
 
 public class Records extends BaseActivity {
 private RelativeLayout Manage_Training_Records,Training_Records;
@@ -20,7 +21,12 @@ private RelativeLayout Manage_Training_Records,Training_Records;
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         Manage_Training_Records=findViewById(R.id.manage_training_btn);
         Training_Records=findViewById(R.id.training_records_btn);
-
+        boolean isEnableAgroLearn = Utilities.getBoolFromSharedPrefs(context, Utilities.AGROLEARN_ENUMERATOR,false);
+        if(isEnableAgroLearn) {
+            Manage_Training_Records.setVisibility(View.VISIBLE);
+        }else{
+            Manage_Training_Records.setVisibility(View.GONE);
+        }
         Manage_Training_Records.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
