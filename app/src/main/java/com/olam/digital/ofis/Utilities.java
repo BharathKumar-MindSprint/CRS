@@ -54,6 +54,7 @@ public class Utilities {
     private static final String SHARED_FIREBASE_TOKEN_UPDATED = "firebase_token_updated";
     public static final String HOUSEHOLD_ENUMERATOR = "household_enumerator";
     public static final String FARMERLEAD_ENUMERATOR = "farmerlead_enumerator";
+    public static final String AGROLEARN_ENUMERATOR = "isEnableAgrolearn";
     public static int syctask=0;
 
 
