@@ -1,5 +1,5 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
-apply plugin: 'com.dynatrace.instrumentation'
+//apply plugin: 'com.dynatrace.instrumentation'
 
 buildscript {
     repositories {
@@ -10,7 +10,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.1.2'
+        classpath 'com.android.tools.build:gradle:4.2.2'
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -19,7 +19,7 @@ buildscript {
         classpath 'com.google.firebase:firebase-plugins:1.1.5'
 
        // classpath 'com.dynatrace.tools:android:7.2.+'
-        classpath 'com.dynatrace.tools.android:gradle-plugin:8.+'
+//        classpath 'com.dynatrace.tools.android:gradle-plugin:8.+'
 
         classpath 'com.google.gms:google-services:4.3.5'
         classpath 'com.google.firebase:firebase-crashlytics-gradle:2.5.0'
@@ -29,7 +29,7 @@ buildscript {
     }
 }
 
-dynatrace {
+/*dynatrace {
     configurations {
         prod {
             variantFilter "prodDebug"
@@ -119,7 +119,7 @@ dynatrace {
             }
         }
     }
-}
+}*/
 
 //plugins {
 //    id "org.sonarqube" version "2.7"
