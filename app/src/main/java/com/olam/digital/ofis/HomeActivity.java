@@ -52,7 +52,7 @@ import android.widget.Toast;
 
 //import com.crashlytics.android.answers.Answers;
 //import com.crashlytics.android.answers.LoginEvent;
-import com.dynatrace.android.agent.Dynatrace;
+//import com.dynatrace.android.agent.Dynatrace;
 import com.google.android.gms.security.ProviderInstaller;
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.gson.Gson;
@@ -212,9 +212,9 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         String enumeratorId=Utilities.getFromSharedPrefs(context);
         if(!enumeratorId.equalsIgnoreCase("")) {
             if (DynatraceHelper.isAppClosed) {
-                Dynatrace.identifyUser(enumeratorId);
-                DynatraceHelper.isAppClosed=false;
-                DynatraceHelper.findNetworkSpeed(this);
+//                Dynatrace.identifyUser(enumeratorId);
+//                DynatraceHelper.isAppClosed=false;
+//                DynatraceHelper.findNetworkSpeed(this);
             }
         }
 //        Passcode added - Penetration testing
@@ -1293,7 +1293,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             new AuthenticationHelper(this).setPassode(passcode.getText().toString());
 
 
-            Dynatrace.identifyUser(enumeratorID.getText().toString());
+//            Dynatrace.identifyUser(enumeratorID.getText().toString());
             DynatraceHelper.isAppClosed=false;
             DynatraceHelper.findNetworkSpeed(this);
             doInitialCheck();

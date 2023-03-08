@@ -6,8 +6,8 @@ import android.net.ConnectivityManager;
 import android.net.NetworkCapabilities;
 import android.os.Build;
 
-import com.dynatrace.android.agent.DTXAction;
-import com.dynatrace.android.agent.Dynatrace;
+//import com.dynatrace.android.agent.DTXAction;
+//import com.dynatrace.android.agent.Dynatrace;
 
 public class DynatraceHelper {
 
@@ -32,11 +32,11 @@ public class DynatraceHelper {
 
     public static void findNetworkSpeed(Context context){
         try {
-            InternetSpeedModel speedModel = requestNetworkSpeed(context);
+           /* InternetSpeedModel speedModel = requestNetworkSpeed(context);
             DTXAction actionSpeed = Dynatrace.enterAction( " Internet Speed");
             actionSpeed.reportValue("Download Speed", speedModel.getDownSpeed() + " Mbps");
             actionSpeed.reportValue("Upload Speed", speedModel.getUpSpeed()  + " Mbps");
-            actionSpeed.leaveAction();
+            actionSpeed.leaveAction();*/
         }catch (Exception e){}
     }
 

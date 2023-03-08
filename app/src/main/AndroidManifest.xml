@@ -27,7 +27,7 @@
     <uses-feature
         android:name="android.hardware.Camera"
         android:required="true" />
-    <uses-sdk tools:overrideLibrary="com.dynatrace.android.agent"/>
+<!--    <uses-sdk tools:overrideLibrary="com.dynatrace.android.agent"/>-->
     <uses-feature android:name="android.hardware.location.gps" />
     <uses-feature android:name="android.hardware.usb.host" />
     <!-- updated -->
@@ -417,7 +417,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ViewFarmerActivity" />
         </activity>
-        <activity
+       <!-- <activity
             android:name=".ConsentwithAudioActivity"
             android:label="@string/update_consent_statement"
             android:parentActivityName=".ViewFarmerActivity"
@@ -426,7 +426,7 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ViewFarmerActivity" />
-        </activity>
+        </activity>-->
         <activity
             android:name=".UpdateSubdistrict"
             android:label="@string/update_farmer_subdistrict"
