@@ -726,7 +726,7 @@
     <string name="enter_nationalids">Veuillez entrer les détails de l\'ID national</string>
     <string name="view_tab_hint">Tapez pour voir</string>
     <string name="add_tab_hint">Tapez pour ajouter</string>
-    <string name="add_nationalid">Ajouter une carte d\'identité</string>
+    <string name="add_nationalid">Ajouter le numéro de la carte</string>
     <string name="update_nationalid">Mettre à jour la carte d\'identité </string>
     <string name="view_nationalid">Afficher la carte d\'identité </string>
     <string name="nationalidtype_selection">Veuillez sélectionner le type de la carte d\'identité </string>
@@ -772,7 +772,7 @@
     <string name="attendee_sex1">Genre</string>
     <string name="please_check_question">Veuillez vérifier la question</string>
     <string name="please_check_dependent_question">puisque sa question dépendante est mise à jour</string>
-    <string name="national_id_info">Veuillez mettre à jour la carte national du producteur</string>
+    <string name="national_id_info">Actualiser le numéro de la carte nationale du producteur</string>
     <string name="zero_area_msg">Impossible de sauvegarder le polygone enregistré avec 0ha. Veuillez essayer d\'enregistrer un autre polygone</string>
     <string name="direct_value_below_error">Veuillez entrer la valeur de la question %1 d inférieure à %2 d</string>
     <string name="direct_value_above_error">Veuillez saisir la valeur de la question %1 d supérieure à %2 d</string>
@@ -793,10 +793,31 @@
     <string name="survey_data">Téléchargement des données de l\'enquête</string>
     <string name="update_consent_statement">Mise à jour de la déclaration de consentement </string>
     <string name="capture_my_location_button_text">Capturer mon emplacement</string>
-    <string name="record_hh_location">Enregistrer l\'emplacement du ménage </string>
+    <string name="record_hh_location">Enregistrer la localisation du ménage </string>
     <string name="update_signature">Mettre à jour la signature </string>
     <string name="update_signature_hint">Tapez pour mettre à jour </string>
     <string name="are_you_at_the_farmers_hh">Êtes-vous au menage du producteur ? </string>
     <string name="ofis_request_help">Demandez de l\'aide</string>
+    <string-array name="Trainee_relationships">
+        <item>Fils/fille du fermier</item>
+        <item>Nièce/neveu du/de la fermier/ère</item>
+        <item>Conjoint de l\'agriculteur</item>
+        <item>Autre</item>
+    </string-array>
+    <string name="Alert_txt">Alerte !</string>
+    <string name="media">Médias</string>
+    <string name="select_language">Sélectionner la langue</string>
+    <string name="training_records">Dossiers de formation</string>
+    <string name="manage_training_documents">Gérer les documents de formation</string>
+    <string name="failed_to_load_document">Échec du chargement du document</string>
+    <string name="document_viewer">Visualisateur de documents</string>
+    <string name="no_data_found">Aucune donnée trouvée</string>
+    <string name="select_module">Sélectionnez le module</string>
+    <string name="selecting_course">Sélectionner le cours</string>
+    <string name="error">Erreur</string>
+    <string name="Please_check_the_Internet_Connection">Veuillez vérifier la connexion Internet</string>
+    <string name="Alert_message_to_contact_administrator">Oups ! !! Un problème est survenu. Veuillez contacter l\'administrateur.</string>
+    <string name="Alert_text_line1">Oups ! Les données de formation sont disponibles uniquement en ligne</string>
+    <string name="Alert_text_line2">Veuillez activer vos données mobiles.</string>
 
 </resources>

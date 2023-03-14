@@ -1073,4 +1073,20 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     </string-array>
     <string name="info_notification_close">Notification was removed from this list</string>
     <string name="consent_duplicate_alert">The consent is already agreed by the farmer and we see a duplicate identified now. This duplicate will be removed from the queue further.</string>
+    <string name="Alert_txt">Alert !</string>
+    <string name="media">Media</string>
+    <string name="select_language">Select Language</string>
+    <string name="training_records">Training Records</string>
+    <string name="manage_training_documents">Manage Training Documents</string>
+    <string name="failed_to_load_document">Échec du chargement du document</string>
+    <string name="document_viewer">Document Viewer</string>
+    <string name="no_data_found">No data Found</string>
+    <string name="select_module">Select Module</string>
+    <string name="error">Error</string>
+    <string name="Please_check_the_Internet_Connection">Please check the Internet Connection</string>
+    <string name="Alert_message_to_contact_administrator">Oops!!! Something went wrong. Please contact the administrator.</string>
+    <string name="Alert_text_line1">Oops! Training data is available only online</string>
+    <string name="Alert_text_line2">Please turn on your mobile data.</string>
+
+
 </resources>
