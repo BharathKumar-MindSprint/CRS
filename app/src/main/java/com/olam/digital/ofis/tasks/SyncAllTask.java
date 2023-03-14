@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.icu.util.EthiopicCalendar;
 import android.net.Uri;
 import androidx.appcompat.app.AlertDialog;
 import android.util.Log;
@@ -14,7 +13,6 @@ import com.google.firebase.crash.FirebaseCrash;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.olam.digital.ofis.BuildConfig;
-import com.olam.digital.ofis.DataLayer;
 import com.olam.digital.ofis.HomeActivity;
 import com.olam.digital.ofis.OFISDBContract;
 import com.olam.digital.ofis.R;
@@ -24,16 +22,13 @@ import com.olam.digital.ofis.authentication.AuthenticationHelper;
 import com.olam.digital.ofis.authentication.AuthenticationInterface;
 import com.olam.digital.ofis.authentication.DeviceIDxctractor;
 import com.olam.digital.ofis.authentication.KeyCloakInfo;
-import com.olam.digital.ofis.authentication.model.AuthRequestDTO;
 import com.olam.digital.ofis.authentication.model.AuthenticationDTO;
 import com.olam.digital.ofis.childlabour.ChildLabourUtils;
 import com.olam.digital.ofis.downloadsurvey.DownloadSurveyData;
 import com.olam.digital.ofis.downloadsurvey.dto.AnswerRequestDTO;
-import com.olam.digital.ofis.dynatrace.DynatraceConstants;
 import com.olam.digital.ofis.dynatrace.DynatraceHelper;
 import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.logging.FabricLogsWriter;
-import com.olam.digital.ofis.recordpolygon.StartRecordPolygonActivity;
 import com.olam.digital.ofis.multifarm.MultiFarmUtils;
 
 import org.json.JSONArray;
@@ -49,7 +44,6 @@ import java.util.List;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
-import okhttp3.internal.Util;
 
 /**
  * Created by ben on 24/02/16.
@@ -269,7 +263,16 @@ public class SyncAllTask extends SyncTask {
                     publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.updating_master_details));
                     delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_SPINNERS);
                 } else {
-                    postFailureMessage(null);
+                    try {
+                        JSONObject response = new JSONObject(postResponse.body().string());
+                        postFailureMessage(response);
+                    } catch (JSONException e) {
+                       e.printStackTrace();
+                    } catch (IOException e) {
+                       e.printStackTrace();
+                    }
+
+
                 }
             }
 
