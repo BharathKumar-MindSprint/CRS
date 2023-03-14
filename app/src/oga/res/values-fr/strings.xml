@@ -722,7 +722,7 @@
     <string name="enter_nationalids">Veuillez entrer les détails de l\'ID national</string>
     <string name="view_tab_hint">Tapez pour voir</string>
     <string name="add_tab_hint">Tapez pour ajouter</string>
-    <string name="add_nationalid">Ajouter le numéro de la carte</string>
+    <string name="add_nationalid">Ajouter le numéro de la carte nationale</string>
     <string name="update_nationalid">Mettre à jour la carte d\'identité </string>
     <string name="view_nationalid">Afficher la carte d\'identité </string>
     <string name="nationalidtype_selection">Veuillez sélectionner le type de la carte d\'identité </string>
