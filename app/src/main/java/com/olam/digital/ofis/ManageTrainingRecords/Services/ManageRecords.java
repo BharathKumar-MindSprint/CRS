@@ -16,7 +16,7 @@ import retrofit2.http.Query;
 public interface ManageRecords {
 
     @GET("ofistraining/ofis/mobile/course/master/allcourses")
-    Call<Course> getAllCourses();
+    Call<Course> getAllCourses(@Query("enumeratorLoginId") String enumeratorLoginId);
 
     @GET("ofistraining/ofis/mobile/course/module")
     Call<Module> getAllModules(@Query("id") int id);
