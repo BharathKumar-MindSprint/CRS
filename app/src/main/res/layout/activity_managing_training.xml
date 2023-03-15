@@ -124,7 +124,7 @@
                 app:tabBackground="@drawable/tab_indicator"
                 app:tabTextColor="@color/white"
                 app:tabSelectedTextColor="@color/white"
-                app:tabMinWidth="180dp"
+                app:tabMinWidth="185dp"
                 />
 
         </LinearLayout>
@@ -136,7 +136,7 @@
             android:layout_height="match_parent"
             android:layout_below="@+id/TabviewLayout"
             >
-            <androidx.viewpager.widget.ViewPager
+            <com.olam.digital.ofis.ManageTrainingRecords.adapter.CustomViewPager
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/viewpager"
