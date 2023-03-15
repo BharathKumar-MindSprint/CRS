@@ -26,6 +26,7 @@ import com.olam.digital.ofis.BaseActivity;
 import com.olam.digital.ofis.ManageTrainingRecords.Services.MyService;
 import com.olam.digital.ofis.ManageTrainingRecords.Listener.ItemClickListener;
 import com.olam.digital.ofis.ManageTrainingRecords.Services.ManageRecords;
+import com.olam.digital.ofis.ManageTrainingRecords.adapter.CustomViewPager;
 import com.olam.digital.ofis.ManageTrainingRecords.adapter.ViewpageAdapter;
 import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.ManageTrainingRecords.Services.RetrofitClient;
@@ -34,8 +35,12 @@ import com.olam.digital.ofis.ManageTrainingRecords.model.Course;
 import com.olam.digital.ofis.ManageTrainingRecords.model.DocumentList;
 import com.olam.digital.ofis.ManageTrainingRecords.model.Languages;
 import com.olam.digital.ofis.ManageTrainingRecords.model.Module;
+import com.olam.digital.ofis.authentication.AuthenticationHelper;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -52,7 +57,7 @@ public class ManagingTrainingActivity extends BaseActivity implements TabLayout.
     private ProgressDialog progressDialog;
     private boolean CourseList_Flag=false;
     TabLayout tabLayout;
-    private ViewPager viewpager;
+    private CustomViewPager viewpager;
     String[] Asset_name;
     List<DocumentList.data> data;
     ViewpageAdapter adapter;
@@ -74,6 +79,7 @@ public class ManagingTrainingActivity extends BaseActivity implements TabLayout.
         startService(serviceIntent);
         if(isOnline(getApplicationContext())){
             if(CourseList_Flag==false){
+                Spinnerhint();
                 courseSpinnerMethod();
             }
             Home_frame.setVisibility(View.VISIBLE);
@@ -98,7 +104,26 @@ public class ManagingTrainingActivity extends BaseActivity implements TabLayout.
             }
         });
     }
-
+    private void Spinnerhint(){
+        //course hint
+        ArrayList<String> course_arr = new ArrayList<>();
+        course_arr.add(getString(R.string.selecting_course));
+        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(ManagingTrainingActivity.this,R.layout.spinner_item, course_arr);
+        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
+        courseSpinner.setAdapter(spinnerArrayAdapter);
+        //module hint
+        ArrayList<String> mod_arr = new ArrayList<>();
+        mod_arr.add(getString(R.string.select_module));
+        ArrayAdapter<String> moduleArrayAdapter = new ArrayAdapter<String>(ManagingTrainingActivity.this, R.layout.spinner_item, mod_arr);
+        moduleArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
+        moduleSpinner.setAdapter(moduleArrayAdapter);
+        //language hint
+        ArrayList<String> language_arr = new ArrayList<>();
+        language_arr.add(getString(R.string.select_language));
+        ArrayAdapter<String> languageArrayadapter = new ArrayAdapter<String>(ManagingTrainingActivity.this, R.layout.spinner_item, language_arr);
+        languageArrayadapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
+        languageSpinner.setAdapter(languageArrayadapter);
+    }
     private void AssetsMethod( int CourseLanguageId) {
         tab.setVisibility(View.INVISIBLE);
         viewpager=findViewById(R.id.viewpager);
@@ -146,6 +171,7 @@ public class ManagingTrainingActivity extends BaseActivity implements TabLayout.
             if(intent.getAction().equals("checkinternet")){
                 if(intent.getStringExtra("online_status").equals("true")){
                     if(CourseList_Flag==false){
+                        Spinnerhint();
                         courseSpinnerMethod();
                     }
                     Home_frame.setVisibility(View.VISIBLE);
@@ -206,14 +232,22 @@ public class ManagingTrainingActivity extends BaseActivity implements TabLayout.
                            tab.setVisibility(View.VISIBLE);
                            data=response.body().getData();
                            tabLayout.setupWithViewPager(viewpager);
-                           adapter=new ViewpageAdapter(getSupportFragmentManager(),data,Asset_name);
+                           String[] name = {"Document","Media"};
+                           adapter=new ViewpageAdapter(getSupportFragmentManager(),data,name);
                            viewpager.setAdapter(adapter);
-                           tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
+                           viewpager.setPagingEnabled(false);
                            tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
                            tabLayout.setTabTextColors(ColorStateList.valueOf(getResources().getColor(R.color.white)));
-                           tabLayout.setTabTextColors(getResources().getColor(R.color.black), getResources().getColor(R.color.white));
+                           tabLayout.setTabTextColors(getResources().getColor(R.color.black),getResources().getColor(R.color.white));
                            new TabLayout.TabLayoutOnPageChangeListener(tabLayout);
                            tabLayout.setOnTabSelectedListener(ManagingTrainingActivity.this);
+                           LinearLayout tabStrip = ((LinearLayout)tabLayout.getChildAt(0));
+                           tabStrip.getChildAt(1).setOnTouchListener(new View.OnTouchListener() {
+                               @Override
+                               public boolean onTouch(View v, MotionEvent event) {
+                                   return true;
+                               }
+                           });
                        }else{
                            Toast.makeText(ManagingTrainingActivity.this, R.string.error, Toast.LENGTH_SHORT).show();
                        }
@@ -350,7 +384,8 @@ public class ManagingTrainingActivity extends BaseActivity implements TabLayout.
 
     private void courseSpinnerMethod() {
         ManageRecords AllCourse=RetrofitClient.getRetrofit().create(ManageRecords.class);
-        Call<Course> call=AllCourse.getAllCourses();
+        String EnumeratorID=new AuthenticationHelper(context).getuserName();
+        Call<Course> call=AllCourse.getAllCourses(EnumeratorID);
         call.enqueue(new Callback<Course>() {
             @Override
             public void onResponse(Call<Course> call, Response<Course> response) {
@@ -376,7 +411,13 @@ public class ManagingTrainingActivity extends BaseActivity implements TabLayout.
                                  int Id;
                                  if(Language_Arrayadapter!=null&&position!=0){
                                      Language_Arrayadapter.clear();
+                                     //language hint
+                                     ArrayList<String> language_arr = new ArrayList<>();
+                                     language_arr.add(getString(R.string.select_language));
+                                     ArrayAdapter<String> languageArrayadapter = new ArrayAdapter<String>(ManagingTrainingActivity.this, R.layout.spinner_item, language_arr);
+                                     languageArrayadapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                                      Language_Arrayadapter.notifyDataSetChanged();
+                                     languageSpinner.setAdapter(languageArrayadapter);
                                      r1.setVisibility(View.INVISIBLE);
                                      tab.setVisibility(View.INVISIBLE);
                                  }
