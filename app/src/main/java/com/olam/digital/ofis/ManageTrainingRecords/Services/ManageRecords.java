@@ -6,10 +6,18 @@ import com.olam.digital.ofis.ManageTrainingRecords.model.DocumentList;
 import com.olam.digital.ofis.ManageTrainingRecords.model.Languages;
 import com.olam.digital.ofis.ManageTrainingRecords.model.Module;
 import com.olam.digital.ofis.ManageTrainingRecords.model.ViewFile;
+import com.olam.digital.ofis.farmplandownload.model.AccessTokenReqBody;
+import com.olam.digital.ofis.farmplandownload.model.AccessTokenResp;
+import com.olam.digital.ofis.farmplandownload.model.DownloadFormList;
+import com.olam.digital.ofis.farmplandownload.model.DownloadUrlRequestBody;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
+import retrofit2.http.Headers;
+import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
@@ -33,5 +41,21 @@ public interface ManageRecords {
 
     @GET("ofistraining/file/stream/{courseLanguageDocId}")
     Call<ViewFile> getBytes(@Path("courseLanguageDocId") int courseLanguageDocId);
+
+    @POST("ofismaster/master/externalLogin")
+    Call<AccessTokenResp> getAccessToken(@Body AccessTokenReqBody accessTokenReqBody);
+
+
+    @GET("ofisreports/reports/farmplan")
+    Call<DownloadFormList> getAllFarmFormList(@Header("App-Id") int AppId
+            , @Query("userId") String userId
+            , @Query("enumeratorId") Integer enumeratorId
+            , @Query("odAccessToken") String odAccessToken);
+
+
+    @Headers({"Content-Type: application/json"})
+//@Streaming
+    @POST("storageconnect/api/v1/common")
+    Call<ResponseBody> getDownloadUrl(@Body DownloadUrlRequestBody downloadUrlRequestBody);
 
 }

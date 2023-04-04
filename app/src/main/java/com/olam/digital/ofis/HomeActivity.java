@@ -73,6 +73,7 @@ import com.olam.digital.ofis.childlabour.ViewChildLabourSurveyActivity;
 import com.olam.digital.ofis.downloadsurvey.ListDownSurveys;
 import com.olam.digital.ofis.downloadsurvey.dto.ModuleDTO;
 import com.olam.digital.ofis.dynatrace.DynatraceHelper;
+import com.olam.digital.ofis.farmplandownload.DownloadFarmPlanActivity;
 import com.olam.digital.ofis.gps.GPSListener;
 import com.olam.digital.ofis.gps.GPSTracker;
 import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
@@ -179,7 +180,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     private Boolean newGps;
     ImageButton syncAll;
     static CardView downloadSurveyWrapper;
-
+    private static CardView cardview_downloadFarmplan;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -284,6 +285,33 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
             }
         }
+        boolean isFarmPlanAvailable = Utilities.getBoolFromSharedPrefs(context, Utilities.DOWNLOAD_FARMPLAN,false);
+        cardview_downloadFarmplan =findViewById(R.id.cardview_downloadFarmplan);
+        if(isFarmPlanAvailable){
+            cardview_downloadFarmplan.setVisibility(View.GONE);
+        }
+        Button downloadFarmplan = (Button) findViewById(R.id.DownloadFarmPlan);
+        if (nl.isPhoneOnline()) {
+            downloadFarmplan.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_ADD_NEW_FARMER,  ScreenNameConstants.BUTTON_CLICKED);
+                    Intent intent = new Intent(context, DownloadFarmPlanActivity.class);
+                    context.startActivity(intent);
+
+                }
+            });
+        }else{
+            downloadFarmplan.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    downloadFarmplan.setEnabled(false);
+                    Toast.makeText(context, res.getString(R.string.Internet_not_available), Toast.LENGTH_LONG).show();
+                }
+            });
+
+        }
+
 
 
 
