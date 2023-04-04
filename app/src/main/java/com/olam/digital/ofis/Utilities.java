@@ -55,6 +55,8 @@ public class Utilities {
     public static final String HOUSEHOLD_ENUMERATOR = "household_enumerator";
     public static final String FARMERLEAD_ENUMERATOR = "farmerlead_enumerator";
     public static final String AGROLEARN_ENUMERATOR = "isEnableAgrolearn";
+
+    public static final String DOWNLOAD_FARMPLAN = "isFarmPlanAvailable";
     public static int syctask=0;
 
 

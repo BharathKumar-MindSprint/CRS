@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/list_item"
+    app:cardElevation="10dp"
+    app:cardCornerRadius="5dp"
+    android:layout_margin="10dp">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/rowCardView"
+        android:layout_width="match_parent"
+        android:layout_height="60dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:id="@+id/rl_child_survey_row"
+            android:gravity="center_vertical"
+            android:padding="5dp"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/farmProductName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="2dp"
+                android:textStyle="bold"
+                android:layout_centerInParent="true"
+                android:layout_alignParentLeft="true"
+                android:textColor="@color/black"
+                android:textSize="15dp" />
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:layout_marginRight="5dp"
+                android:padding="2dp"
+                android:layout_toStartOf="@+id/downlod_Icon"
+                android:background="#C0C0C8" />
+
+            <ImageView
+                android:id="@+id/downlod_Icon"
+                android:layout_width="wrap_content"
+                android:layout_gravity="center"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:padding="5dp"
+                app:srcCompat="@drawable/ic_download_black" />
+        </RelativeLayout>
+
+    </androidx.cardview.widget.CardView>
+
+
+</LinearLayout>
