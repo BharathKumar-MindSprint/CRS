@@ -757,8 +757,9 @@ public class SyncAllTask extends SyncTask {
                             Utilities.saveToSharedPrefs(context,"ODTOKEN",accessToken,null);
                         }catch (Exception e){}
 
-                       publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.checking_isfarmplan_available));
-                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_CROP_PLAN);
+                        publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.downloading_fldetails));
+                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_OD_FLDETAILS);
+
                     } else {
                         try {
                             FabricLogsWriter.printCrashLog(TAG, finalEndPoint, postResponse.code(), postResponse.networkResponse().toString(), context);
