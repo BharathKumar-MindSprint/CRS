@@ -509,7 +509,10 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
         alert.show();
     }
 
+    public static void completeSetup() {
+        HomeActivity.GetAccessToken("settings");
 
+    }
 
 
 }

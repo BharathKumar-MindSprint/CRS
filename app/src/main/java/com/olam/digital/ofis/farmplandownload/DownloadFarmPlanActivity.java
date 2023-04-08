@@ -1,6 +1,8 @@
 package com.olam.digital.ofis.farmplandownload;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DownloadManager;
 import android.app.ProgressDialog;
@@ -10,6 +12,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -21,6 +24,8 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -40,12 +45,16 @@ import com.olam.digital.ofis.farmplandownload.model.DownloadFormList;
 import com.olam.digital.ofis.farmplandownload.model.DownloadUrlRequestBody;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.lang.reflect.Type;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -64,10 +73,10 @@ public class DownloadFarmPlanActivity extends BaseActivity implements ItemClickL
     List<DownloadFormList.data> data1;
     ItemClickListener itemClickListener;
     String enumeratorId;
-    String userID = "ID_OFIS_DO_INTERFACE";
+
     ArrayList<String> isoCodes = new ArrayList<>();
     private ProgressDialog progressDialog;
-    String counrtyCodeNew= "ID_OFIS_DO_INTERFACE";
+    String counrtyCodeNew;
     String password = "Olam123+";
     String system = "od";
     String odAccessToken;
@@ -82,6 +91,9 @@ public class DownloadFarmPlanActivity extends BaseActivity implements ItemClickL
     String fileNameDownload = "";
     File file;
     Uri uri;
+    String finalFilepath;
+    String finalFilepathPdf;
+    File dir;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -106,6 +118,7 @@ public class DownloadFarmPlanActivity extends BaseActivity implements ItemClickL
             }
         });
 
+
         recyclerView = findViewById(R.id.rvFarmPlanList);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -113,17 +126,9 @@ public class DownloadFarmPlanActivity extends BaseActivity implements ItemClickL
 
         try {
 
-            Gson gson = new Gson();
-            String jsonText = Utilities.getdatafromSharedPrefs(DownloadFarmPlanActivity.this, "COUNTRY_CODE");
-            Type type = new TypeToken<ArrayList<String>>() {}.getType();
-            isoCodes = gson.fromJson(jsonText, type);
-            int countrycount = Utilities.getIntFromSharedPrefs(DownloadFarmPlanActivity.this, "COUNTRY_COUNT");
-            //String counrtyCode = isoCodes.get(countrycount-1);
-
-
-            int countryCodeee = Utilities.getIntFromSharedPrefs(context, "COUNTRY_CODENEW");
-            String counrtyCode_UserId = String.valueOf(countryCodeee) +"_OFIS_DO_INTERFACE";
-            Log.d("PREF_COUNTRYCOde",counrtyCode_UserId);
+            String isoCode = Utilities.getdatafromSharedPrefs(context,"CountryUserID");
+            Log.d("COUNTRY_CODENEWPREFFF", isoCode);
+            counrtyCodeNew =isoCode+"_OFIS_DO_INTERFACE";
 
 
 
@@ -163,8 +168,15 @@ public class DownloadFarmPlanActivity extends BaseActivity implements ItemClickL
                         Toast.makeText(context, res.getString(R.string.Internet_not_available), Toast.LENGTH_LONG).show();
                     }
 
+                }else if(response.code()==400){
+                    progressDialog.hide();
+                    showAlert(response.message());
+                    //showAlert("Unable to fetch country name for the ISOCode"+response.message());
+                }else if (response.code()==500){
+                    progressDialog.hide();
+                    showAlert("Internal Server Error, Please Contact Admin!!"+response.message());
                 }else{
-                    showAlert(getString(R.string.Alert_message_to_contact_administrator));
+
                 }
             }
             @Override
@@ -188,12 +200,11 @@ public class DownloadFarmPlanActivity extends BaseActivity implements ItemClickL
                Log.e("ListOnRequest",call.toString());
 
                 if(response.code()==200){
-                    Toast.makeText(DownloadFarmPlanActivity.this, "Farm Plan is available to download", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(DownloadFarmPlanActivity.this, "Farm Plan is available to download", Toast.LENGTH_SHORT).show();
                     progressDialog.hide();
-                    if(response.body()!=null){
+                    if(response.body()!=null && response.body().getStatusCode()==200){
                         if(response.body().getData()!=null){
                             data1 =response.body().getData();
-
 
                             Log.e("ListRespValue",response.body().getStatusMessage());
 
@@ -201,16 +212,24 @@ public class DownloadFarmPlanActivity extends BaseActivity implements ItemClickL
                             recyclerView.setAdapter(downloadFarmPlanAdapter);
 
                         }else{
-
-                            Toast.makeText(DownloadFarmPlanActivity.this, R.string.error, Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(DownloadFarmPlanActivity.this,response.body().getStatusMessage(), Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(DownloadFarmPlanActivity.this, R.string.error, Toast.LENGTH_SHORT).show();
+                            showAlert(response.body().getStatusMessage());
                         }
                     }else{
-
-                        Toast.makeText(DownloadFarmPlanActivity.this, R.string.no_data_found, Toast.LENGTH_SHORT).show();
+                        showAlert(response.body().getStatusMessage());
+                       // Toast.makeText(DownloadFarmPlanActivity.this, R.string.no_data_found, Toast.LENGTH_SHORT).show();
                     }
-                }else{
+                }else if(response.code()==400){
                     progressDialog.hide();
-                    showAlert(getString(R.string.Alert_message_to_contact_administrator));
+                    showAlert(response.message().toString());
+                    //Toast.makeText(DownloadFarmPlanActivity.this,"Bad Request", Toast.LENGTH_SHORT).show();
+                    //Log.d("BadRequest-",response.message());
+                }else if(response.code()==500){
+                    progressDialog.hide();
+                    showAlert("Internal Server Error, Please Contact Admin!!-"+response.message().toString());
+                }else{
+                    showAlert("Server Issue!!"+response.message().toString());
                 }
             }
             @Override
@@ -244,11 +263,16 @@ public class DownloadFarmPlanActivity extends BaseActivity implements ItemClickL
 
         String currentString = filepath;
         String[] separated = currentString.split("/");
-        String finalFilepath = separated[1].trim();
+         finalFilepath = separated[1].trim();
         String finalrootobject = rootobject;
 
         Log.d("FINALRootObj",finalrootobject);
         Log.d("FINALFilePATH",finalFilepath);
+
+        String chapterNumber = finalFilepath;
+        int index = chapterNumber.indexOf(".");
+        finalFilepathPdf = chapterNumber.substring(0,index);
+        Log.d("FINALLLLLPath",finalFilepathPdf);
 
         DownloadUrlRequestBody modal = new DownloadUrlRequestBody(finalrootobject,finalFilepath);
 
@@ -258,28 +282,32 @@ public class DownloadFarmPlanActivity extends BaseActivity implements ItemClickL
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
 
-                if (response.isSuccessful()) {
+                if (response.code()==200) {
                     progressDialog.hide();
                    // Log.d("DownloadServerSuccess", "file download was a success? " + writtenToDisk);
-                   // Toast.makeText(DownloadFarmPlanActivity.this, "Data added to API"+response.code(), Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(DownloadFarmPlanActivity.this, "Data added to API"+response.code(), Toast.LENGTH_SHORT).show();
 
                     boolean writtenToDisk = writeResponseBodyToDisk(response.body());
+                    Log.d("DownloadServerSuccess", "file download was a success? " + writtenToDisk);
                     if (writtenToDisk) {
-                        File mediaStorageDir = new File(
+                       /* File mediaStorageDir = new File(
                                 Environment
-                                        .getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
-                                "OFIS");
+                                        .getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+                                        +"/"+"OFIS");
+                        mediaStorageDir.mkdirs();*/
 
-                        File mediaFile = new File(mediaStorageDir.getPath() + File.separator
-                                + "Crop_Origin_FarmPlan " + ".pdf");
+                        File root = android.os.Environment.getExternalStorageDirectory();
+                         dir = new File (root.getAbsolutePath() +"/"+"OFIS");
+                        dir.mkdirs();
+
+                        File mediaFile = new File(dir + File.separator
+                                +finalFilepathPdf+ ".pdf");
 
                         fileNameDownload = mediaFile.getName();
 
                         //fileNameDownload = "Statement_" + request.getAccountNumber() + "_from" + ".pdf";
                         //File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), fileNameDownload);
-                         file = new File(Environment
-                                .getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-                                + "/" + fileNameDownload);
+                         file = new File(dir+"/"+fileNameDownload);
                          uri = FileProvider.getUriForFile(DownloadFarmPlanActivity.this, BuildConfig.APPLICATION_ID + ".provider",file);
                         try {
                             Intent intent = new Intent(Intent.ACTION_VIEW);
@@ -294,12 +322,21 @@ public class DownloadFarmPlanActivity extends BaseActivity implements ItemClickL
 
                     }
 
-                } else {
-                    Log.d("DownloadServerFailed", "server contact failed");
+                } else if(response.code()==400){
+                    progressDialog.hide();
+                    showAlert(response.message().toString());
+                    Toast.makeText(DownloadFarmPlanActivity.this,"Bad Request", Toast.LENGTH_SHORT).show();
+                    Log.d("BadRequest-",response.message());
+                }else if(response.code()==401){
+                    progressDialog.hide();
+                    showAlert("Authorization Failed!!"+response.message().toString());
+                }else if(response.code()==500){
+                    progressDialog.hide();
+                    showAlert("Internal Server Error, Please Contact Admin!!-"+response.message().toString());
+                } else{
+                    progressDialog.hide();
+                    showAlert("Something Went wrong!!"+response.message().toString());
                 }
-
-
-
             }
 
             @Override
@@ -311,25 +348,30 @@ public class DownloadFarmPlanActivity extends BaseActivity implements ItemClickL
     }
 
 
-
-         private boolean writeResponseBodyToDisk(ResponseBody body) {
+    private boolean writeResponseBodyToDisk(ResponseBody body) {
              try {
                  // todo change the file location/name according to your needs
-                 File mediaStorageDir = new File(
+               /*  File mediaStorageDir = new File(
                          Environment
-                                 .getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
-                         "OFIS");
+                                 .getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+                         +"/"+"OFIS");
+                 mediaStorageDir.mkdirs();*/
 
+                 File root = android.os.Environment.getExternalStorageDirectory();
+                  dir = new File (root.getAbsolutePath() +"/"+"OFIS");
+                 dir.mkdirs();
+
+                 File mediaFile = new File(dir + File.separator
+                         +finalFilepathPdf+ ".pdf");
+/*
                  File mediaFile = new File(mediaStorageDir.getPath() + File.separator
-                         + "Crop_Origin_FarmPlan " + ".pdf");
+                         +finalFilepathPdf+ ".pdf");*/
 
                  fileNameDownload = mediaFile.getName();
 
                  //fileNameDownload = "File name" + request.getAccountNumber() + "_from" + time.format("%k : %M : %S") + ".pdf";
                  //File futureStudioIconFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), fileNameDownload);
-                 File futureStudioIconFile = new File(Environment
-                         .getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-                         + "/" + fileNameDownload);
+                 File futureStudioIconFile = new File(dir+"/"+fileNameDownload);
                  InputStream inputStream = null;
                  OutputStream outputStream = null;
                  try {
@@ -365,8 +407,6 @@ public class DownloadFarmPlanActivity extends BaseActivity implements ItemClickL
          }
 
 
-
-
     private void showAlert(String msg) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(msg);
@@ -379,6 +419,7 @@ public class DownloadFarmPlanActivity extends BaseActivity implements ItemClickL
         alertDialog.show();
 
     }
+
 
     public boolean isOnline(Context c){
         ConnectivityManager cm=(ConnectivityManager)c.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -395,20 +436,35 @@ public class DownloadFarmPlanActivity extends BaseActivity implements ItemClickL
 
          rootobject = fileUrl;
          filepath =fileName;
-        File fileChk = new File(String.valueOf(uri));
-        if (fileChk.isFile()) {
-            Toast.makeText(DownloadFarmPlanActivity.this, uri + "/n exists", Toast.LENGTH_SHORT).show();
+
+        String currentString1 = filepath;
+        String[] separated1 = currentString1.split("/");
+        String finalFilepath1 = separated1[1].trim();
+
+
+       // Log.d("FINALRootObj",finalFilepath1);
+       // Log.d("FINALFilePATH",finalFilepath);
+
+        String chapterNumbe1r = finalFilepath1;
+        int index = chapterNumbe1r.indexOf(".");
+        String finalFilepathPdf1 = chapterNumbe1r.substring(0,index);
+
+        //String path = String.valueOf(getContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS+"/"+finalFilepath1);
+
+
+        String path = (dir+"/"+finalFilepath1);
+        File fileChk = new File(path);
+        if (fileChk.exists()) {
+            showAlertIsDownloadAgain("File is Already Available,Do You want to download it Again!!");
         } else {
-            Toast.makeText(DownloadFarmPlanActivity.this, getResources().getString(R.string.downloading), Toast.LENGTH_SHORT).show();
-
+            // ...
+            if(isOnline(getApplicationContext())){
+                getDownloadUrl();
+                Toast.makeText(DownloadFarmPlanActivity.this, "Downloading", Toast.LENGTH_SHORT).show();
+            }else {
+                Toast.makeText(context, res.getString(R.string.Internet_not_available), Toast.LENGTH_LONG).show();
+            }
         }
-
-        if(isOnline(getApplicationContext())){
-            getDownloadUrl();
-        }else {
-            Toast.makeText(context, res.getString(R.string.Internet_not_available), Toast.LENGTH_LONG).show();
-        }
-
 
     }
 
@@ -446,5 +502,30 @@ public class DownloadFarmPlanActivity extends BaseActivity implements ItemClickL
         super.onStop();
         unregisterReceiver(onDownloadComplete);
     }
+
+    private void showAlertIsDownloadAgain(String msg) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(msg);
+        builder.setTitle(R.string.Alert_txt);
+        builder.setCancelable(false);
+        builder.setPositiveButton("YES", (DialogInterface.OnClickListener) (dialog, which) -> {
+            if(isOnline(getApplicationContext())){
+                getDownloadUrl();
+                Toast.makeText(DownloadFarmPlanActivity.this, "Downloading", Toast.LENGTH_SHORT).show();
+            }else {
+                Toast.makeText(context, res.getString(R.string.Internet_not_available), Toast.LENGTH_LONG).show();
+            }
+            dialog.cancel();
+        });
+        builder.setNegativeButton("NO", (DialogInterface.OnClickListener) (dialog, which) -> {
+            dialog.cancel();
+        });
+
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+
+    }
+
+
 
 }

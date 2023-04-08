@@ -16,6 +16,7 @@ import com.olam.digital.ofis.BuildConfig;
 import com.olam.digital.ofis.HomeActivity;
 import com.olam.digital.ofis.OFISDBContract;
 import com.olam.digital.ofis.R;
+import com.olam.digital.ofis.SettingsActivity;
 import com.olam.digital.ofis.Utilities;
 import com.olam.digital.ofis.authentication.AuthenticationClient;
 import com.olam.digital.ofis.authentication.AuthenticationHelper;
@@ -447,6 +448,8 @@ public class SyncAllTask extends SyncTask {
 
                 if (Utilities.getBoolFromSharedPrefs(context, "FIRST_RUN", true)) {
                     HomeActivity.completeFirstSetup();
+                }else{
+                    SettingsActivity.completeSetup();
                 }
 
             /*if (pd != null && pd.isShowing()) {
@@ -822,6 +825,7 @@ public class SyncAllTask extends SyncTask {
                                 counrtyCode = item.getString("countryIsoCode");
 
                                 Utilities.saveToSharedPrefs(context, "COUNTRY_CODE", counrtyCode.substring(0,2), null);
+                                Utilities.saveToSharedPrefs(context, "CountryUserID", counrtyCode.substring(0,2), null);
                             }
                         }catch (Exception e){e.printStackTrace();}
                         syncResultCount = syncResultCount + response.getInt("resultcount");
