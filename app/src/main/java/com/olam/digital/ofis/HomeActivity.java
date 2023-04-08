@@ -16,6 +16,8 @@ import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
 import android.graphics.Typeface;
 import android.location.Location;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -61,6 +63,7 @@ import com.olam.digital.ofis.authentication.AccessTokenTask;
 import com.olam.digital.ofis.authentication.AuthenticationClient;
 import com.olam.digital.ofis.authentication.AuthenticationHelper;
 import com.olam.digital.ofis.authentication.AuthenticationInterface;
+import com.olam.digital.ofis.authentication.DeviceIDxctractor;
 import com.olam.digital.ofis.authentication.KeyCloakInfo;
 import com.olam.digital.ofis.authentication.OnAccessTokenInterface;
 import com.olam.digital.ofis.authentication.model.AuthRequestDTO;
@@ -74,6 +77,9 @@ import com.olam.digital.ofis.downloadsurvey.ListDownSurveys;
 import com.olam.digital.ofis.downloadsurvey.dto.ModuleDTO;
 import com.olam.digital.ofis.dynatrace.DynatraceHelper;
 import com.olam.digital.ofis.farmplandownload.DownloadFarmPlanActivity;
+import com.olam.digital.ofis.farmplandownload.model.AccessTokenReqBody;
+import com.olam.digital.ofis.farmplandownload.model.AccessTokenResp;
+import com.olam.digital.ofis.farmplandownload.model.DownloadFormList;
 import com.olam.digital.ofis.gps.GPSListener;
 import com.olam.digital.ofis.gps.GPSTracker;
 import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
@@ -91,7 +97,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
@@ -111,7 +123,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     private static Resources staticRes;
     private Resources res;
     private HomeActivity me;
-    private DataLayer dl;
+    private static DataLayer dl;
     private NetworkLayer nl;
     private ProgressDialog m_ProgressDialog = null;
     private ProgressDialog mDialogLoading=null;
@@ -178,9 +190,20 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     GPSListener gpsListener=null;
     private GPSTracker gpsTracker=null;
     private Boolean newGps;
+    private boolean islocationenabled = false;
+    static String ipAddress,date;
     ImageButton syncAll;
     static CardView downloadSurveyWrapper;
     private static CardView cardview_downloadFarmplan;
+   static String counrtyCodeNew;
+
+    static String password = "Olam123+";
+    static String system = "od";
+    private static ProgressDialog progressDialog;
+    static String odAccessToken;
+
+    static boolean isdownloadfarmplan;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -209,6 +232,13 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         recordTrainingWrapper = (CardView) findViewById(R.id.recordTrainingWrapper);
 
         enumeratorID = (EditText) findViewById(R.id.enumeratorID);
+        //
+
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setTitle(getString(R.string.PleaseWait));
+        progressDialog.setMessage(getString(R.string.Loading));
+
+
         downloadSurveyWrap();
         String enumeratorId=Utilities.getFromSharedPrefs(context);
         if(!enumeratorId.equalsIgnoreCase("")) {
@@ -262,6 +292,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                     SYNC_INTERVAL
             );
 
+
         // Request Permission only for Android Version Marshmallow and above
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             // Check Phone Permission
@@ -285,35 +316,25 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
             }
         }
-        boolean isFarmPlanAvailable = Utilities.getBoolFromSharedPrefs(context, Utilities.DOWNLOAD_FARMPLAN,false);
+
         cardview_downloadFarmplan =findViewById(R.id.cardview_downloadFarmplan);
-        if(isFarmPlanAvailable){
+       boolean isCropAvailable =  Utilities.getBoolFromSharedPrefs(staticContext, "DISPLAY_CROPPLAN", false);
+        if(isCropAvailable){
+            cardview_downloadFarmplan.setVisibility(View.VISIBLE);
+        }else{
             cardview_downloadFarmplan.setVisibility(View.GONE);
         }
+
         Button downloadFarmplan = (Button) findViewById(R.id.DownloadFarmPlan);
-        if (nl.isPhoneOnline()) {
-            downloadFarmplan.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_ADD_NEW_FARMER,  ScreenNameConstants.BUTTON_CLICKED);
-                    Intent intent = new Intent(context, DownloadFarmPlanActivity.class);
-                    context.startActivity(intent);
+        downloadFarmplan.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_ADD_NEW_FARMER,  ScreenNameConstants.BUTTON_CLICKED);
+                Intent intent = new Intent(context, DownloadFarmPlanActivity.class);
+                context.startActivity(intent);
 
-                }
-            });
-        }else{
-            downloadFarmplan.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    downloadFarmplan.setEnabled(false);
-                    Toast.makeText(context, res.getString(R.string.Internet_not_available), Toast.LENGTH_LONG).show();
-                }
-            });
-
-        }
-
-
-
+            }
+        });
 
         saveUpdateButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -400,6 +421,8 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         try {
             MultiFarmUtils.isMultiFarmEnumerator = Utilities.getMultifarmPref(context, MultiFarmUtils.IS_MULTI_FARM_ENUMERATOR);
         }catch (Exception e){}
+
+
     }
     private void setKeycloakCredentials(String environment) {
         String clientId = null;
@@ -1527,6 +1550,12 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 //long farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
                 //SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(farmerId);
                 startActivity(intent);
+            } else if (itemType.equalsIgnoreCase("biometric_update")) {
+                Intent intent = new Intent(this, ViewFarmerActivity.class);
+                ViewFarmerActivity.farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
+                //long farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
+                //SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(farmerId);
+                startActivity(intent);
             } else if (itemType.equalsIgnoreCase("farmpolygon")) {
                 Intent recordPolygonIntent = new Intent(this, RecordPolygonActivity.class);
                 final String lFarmID = networkQueue.getString(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID));
@@ -1653,6 +1682,162 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             }else{
                 downloadSurveyWrapper.setVisibility(View.VISIBLE);
             }
+
+            GetAccessToken("home");
+
+        }
+    }
+
+
+    //
+    public static void GetAccessToken(String value) {
+        String isoCode = Utilities.getdatafromSharedPrefs(staticContext,"CountryUserID");
+        Log.d("COUNTRY_CODENEWPREFFF", isoCode);
+        counrtyCodeNew =isoCode+"_OFIS_DO_INTERFACE";
+
+        progressDialog.show();
+        final AccessTokenReqBody accessTokenReqBody = new AccessTokenReqBody(counrtyCodeNew,password,system);
+
+        ManageRecords GetAccessToken= RetrofitClient.getRetrofit().create(ManageRecords.class);
+        Call<AccessTokenResp> call=GetAccessToken.getAccessToken(accessTokenReqBody);
+        call.enqueue(new Callback<AccessTokenResp>() {
+            @Override
+            public void onResponse(Call<AccessTokenResp> call, Response<AccessTokenResp> response) {
+                if(response.code()==200){
+                    progressDialog.hide();
+
+                    odAccessToken = response.body().getAccessToken();
+
+                    //Toast.makeText(DownloadFarmPlanActivity.this,odAccessToken, Toast.LENGTH_SHORT).show();
+                    Log.e("OD_AccessTOKEN",odAccessToken);
+
+
+                        DownloadFormList("home");
+
+                }else if(response.code()==400){
+                    progressDialog.hide();
+                    Utilities.saveToSharedPrefs(staticContext, "DISPLAY_CROPPLAN", "", false);
+                    if(value.equalsIgnoreCase("home")){
+                        cardview_downloadFarmplan.setVisibility(View.GONE);
+                    }
+                   // showAlert("Unable to fetch country name for the ISOCode"+response.message());
+                }else if (response.code()==500){
+                    progressDialog.hide();
+                    Utilities.saveToSharedPrefs(staticContext, "DISPLAY_CROPPLAN", "", false);
+                    if(value.equalsIgnoreCase("home")){
+                        cardview_downloadFarmplan.setVisibility(View.GONE);
+                    }
+                   // showAlert("Internal Server Error, Please Contact Admin!!"+response.message());
+                }else{
+
+                }
+            }
+            @Override
+            public void onFailure(Call<AccessTokenResp> call, Throwable t) {
+                progressDialog.hide();
+                Toast.makeText(staticContext, t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+    }
+
+    /*Get DownLoad Farm Form List*/
+    public static void DownloadFormList(String value) {
+        progressDialog.show();
+       // String userEnumeratorID = enumeratorID.getText().toString().trim();
+        ManageRecords AllFarmFormList= RetrofitClient.getRetrofit().create(ManageRecords.class);
+        Call<DownloadFormList> call=AllFarmFormList.getAllFarmFormList(1,counrtyCodeNew, Integer.valueOf(Utilities.getFromSharedPrefs(staticContext)),odAccessToken);
+        call.enqueue(new Callback<DownloadFormList>() {
+
+            @Override
+            public void onResponse(Call<DownloadFormList> call, Response<DownloadFormList> response) {
+                Log.e("ListOnResponse",response.message());
+                Log.e("ListOnRequest",call.toString());
+
+                if(response.code()==200){
+                    //Toast.makeText(DownloadFarmPlanActivity.this, "Farm Plan is available to download", Toast.LENGTH_SHORT).show();
+                    progressDialog.hide();
+                    if(response.body()!=null && response.body().getStatusCode()==200){
+                        if(response.body().getData()!=null){
+                            //data1 =response.body().getData();
+
+                            ArrayList < DownloadFormList.data > dataArrayList = response.body().getData();;
+                           // dataArrayList = response.body().getData();
+                            //String[] names = new String[dataArrayList.size()];
+                            for (int i = 0; i < dataArrayList.size(); i++) {
+                                 isdownloadfarmplan = dataArrayList.get(i).isIsdownloadfarmplan();
+                                 Log.d("FARMPLAN_Status", String.valueOf(isdownloadfarmplan));
+
+                                 if(isdownloadfarmplan && dataArrayList.size()>0){
+                                     Utilities.saveToSharedPrefs(staticContext, "DISPLAY_CROPPLAN", "", true);
+                                     if(value.equalsIgnoreCase("home")){
+                                         cardview_downloadFarmplan.setVisibility(View.VISIBLE);
+                                     }
+
+                                }else{
+                                     Utilities.saveToSharedPrefs(staticContext, "DISPLAY_CROPPLAN", "", false);
+                                     if(value.equalsIgnoreCase("home")){
+                                         cardview_downloadFarmplan.setVisibility(View.GONE);
+                                     }
+
+                                 }
+
+
+                            }
+
+                            Log.e("ListRespValue",response.body().getStatusMessage());
+
+
+                        }else{
+                            //Toast.makeText(DownloadFarmPlanActivity.this,response.body().getStatusMessage(), Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(DownloadFarmPlanActivity.this, R.string.error, Toast.LENGTH_SHORT).show();
+                            showAlert(response.body().getStatusMessage());
+                        }
+                    }else{
+                        showAlert(response.body().getStatusMessage());
+                        // Toast.makeText(DownloadFarmPlanActivity.this, R.string.no_data_found, Toast.LENGTH_SHORT).show();
+                    }
+                }else if(response.code()==400){
+                    progressDialog.hide();
+                    //showAlert(response.message().toString());
+                    //Toast.makeText(staticContext,"Bad Request", Toast.LENGTH_SHORT).show();
+                    Log.d("BadRequest-",response.message());
+                }else if(response.code()==500){
+                    progressDialog.hide();
+                    //showAlert("Internal Server Error, Please Contact Admin!!-"+response.message().toString());
+                }else{
+                    showAlert("Server Issue!!"+response.message().toString());
+                }
+            }
+            @Override
+            public void onFailure(Call<DownloadFormList> call, Throwable t) {
+                progressDialog.hide();
+                Toast.makeText(staticContext, t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+    }
+
+    private static void showAlert(String msg) {
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(staticContext);
+        builder.setMessage(msg);
+        builder.setTitle(R.string.Alert_txt);
+        builder.setCancelable(false);
+        builder.setPositiveButton(R.string.ok, (DialogInterface.OnClickListener) (dialog, which) -> {
+            dialog.cancel();
+        });
+        android.app.AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+
+    }
+
+    public boolean isOnline(Context c){
+        ConnectivityManager cm=(ConnectivityManager)c.getSystemService(Context.CONNECTIVITY_SERVICE);
+        @SuppressLint("MissingPermission") NetworkInfo ni=cm.getActiveNetworkInfo();
+        if(ni !=null && ni.isConnectedOrConnecting()){
+            return true;
+        }else{
+            return false;
         }
     }
 }
