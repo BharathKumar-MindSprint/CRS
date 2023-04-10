@@ -40,7 +40,7 @@ public class DownloadFarmPlanAdapter extends RecyclerView.Adapter<DownloadFarmPl
     @Override
     public void onBindViewHolder(@NonNull DownloadFarmPlanHolder holder,@SuppressLint("RecyclerView") int position) {
         DownloadFormList.data data =arrayList.get(position);
-        holder.farmProductName.setText(data.getProductName());
+        holder.farmProductName.setText(data.getProductName() +"-" + data.getCountry());
         holder.downlod_Icon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
