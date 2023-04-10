@@ -37,8 +37,8 @@ android {
         targetSdkVersion 29
         multiDexEnabled true
 
-        versionCode 318
-        versionName "11.4.3"
+        versionCode 321
+        versionName "11.4.6"
 
 
     }
@@ -119,7 +119,7 @@ android {
             resValue "string", "AUTH_SERVER_URL", 'https://digitalauthdev.olamnet.com/auth/realms/ofis-dse-manna-sit/protocol/openid-connect/'
             buildConfigField 'String', 'HOST', '"https://otofis-sit-manna-zuul.olamdigital.com/"'
             buildConfigField 'String', 'ODHOST', '"https://manna-sit-apigateway.olamdirect.com/"'
-            buildConfigField 'String', 'DOWNLOADURL', '"https://ofisdevscs-manna.olamdigital.com/"'
+            buildConfigField 'String', 'DOWNLOADURL', '"https://ofissitscs-manna.olamdigital.com/"'
 //            buildConfigField 'String', 'ODHOST', '"https://sit-apigateway.olamdirect.com/"'
 //            resValue "string", "AUTH_SERVER_URL", 'https://digitalauthdev.olamnet.com/auth/realms/ofis-dse-sit/protocol/openid-connect/'
 //            buildConfigField 'String', 'HOST', '"https://otofis-sit-zuul.olamdigital.com/"'
@@ -148,7 +148,7 @@ android {
             resValue "string", "AUTH_SERVER_URL", 'https://digitalauthdev.olamnet.com/auth/realms/ofis-dse-manna-uat/protocol/openid-connect/'
             buildConfigField 'String', 'HOST', '"https://otofis-uat-manna-zuul.olamdigital.com/"'
 //            buildConfigField 'String', 'ODHOST', '"https://sit-apigateway.olamdirect.com/"'
-            buildConfigField 'String', 'DOWNLOADURL', '"https://ofisdevscs-manna.olamdigital.com/"'
+            buildConfigField 'String', 'DOWNLOADURL', '"https://ofisuatscs-manna.olamdigital.com"'
 
             buildConfigField "String", "MATOMO_SERVER_URL", '"https://olammatomo.azurewebsites.net/matomo.php"'
             buildConfigField "int", "MATOMO_SERVER_CODE", '35'
@@ -168,7 +168,7 @@ android {
             resValue "string", "AUTH_SERVER_URL", 'https://digitalauthdev.olamnet.com/auth/realms/ofis-dse-manna-uat/protocol/openid-connect/'
             buildConfigField 'String', 'HOST', '"https://otofis-uat-manna-zuul.olamdigital.com/"'
             buildConfigField 'String', 'ODHOST', '"https://uat-apigateway.olamdirect.com/"'
-            buildConfigField 'String', 'DOWNLOADURL', '"https://ofisdevscs-manna.olamdigital.com/"'
+            buildConfigField 'String', 'DOWNLOADURL', '"https://ofisuatscs-manna.olamdigital.com"'
 
             buildConfigField "String", "MATOMO_SERVER_URL", '"https://olammatomo.azurewebsites.net/matomo.php"'
             buildConfigField "int", "MATOMO_SERVER_CODE", '35'
@@ -190,7 +190,7 @@ android {
             buildConfigField 'String', 'HOST', '"https://otofis-sit-manna-zuul.olamdigital.com/"'
 //            buildConfigField 'String', 'ODHOST', '"https://sit-apigateway.olamdirect.com/"'
             buildConfigField 'String', 'ODHOST', '"https://manna-sit-apigateway.olamdirect.com/"'
-            buildConfigField 'String', 'DOWNLOADURL', '"https://ofisdevscs-manna.olamdigital.com/"'
+            buildConfigField 'String', 'DOWNLOADURL', '"https://ofissitscs-manna.olamdigital.com/"'
             buildConfigField "String", "MATOMO_SERVER_URL", '"https://olammatomo.azurewebsites.net/matomo.php"'
             buildConfigField "int", "MATOMO_SERVER_CODE", '35'
             buildConfigField "boolean", "MATOMO_ENABLED", 'false'
@@ -254,7 +254,7 @@ android {
             resValue "string", "AUTH_SERVER_URL", 'https://digitalauth.olamnet.com/auth/realms/ofis-dse/protocol/openid-connect/'
             buildConfigField 'String', 'HOST', '"https://otofis-zuul.olamdigital.com/"'
             buildConfigField 'String', 'ODHOST', '"https://sit-apigateway.olamdirect.com/"'
-            buildConfigField 'String', 'DOWNLOADURL', '"https://ofisdevscs-manna.olamdigital.com/"'
+            buildConfigField 'String', 'DOWNLOADURL', '"https://ofissitscs-manna.olamdigital.com/"'
             buildConfigField "String", "MATOMO_SERVER_URL", '"https://olammatomo.azurewebsites.net/matomo.php"'
             buildConfigField "int", "MATOMO_SERVER_CODE", '39'
             buildConfigField "boolean", "MATOMO_ENABLED", 'false'
@@ -292,7 +292,7 @@ android {
             resValue "string", "AUTH_SERVER_URL", 'https://digitalauthdev.olamnet.com/auth/realms/ofis-dse-manna-sit/protocol/openid-connect/'
             buildConfigField 'String', 'HOST', '"https://otofis-sit-manna-zuul.olamdigital.com/"'
             buildConfigField 'String', 'ODHOST', '"https://manna-sit-apigateway.olamdirect.com/"'
-            buildConfigField 'String', 'DOWNLOADURL', '"https://ofisdevscs-manna.olamdigital.com/"'
+            buildConfigField 'String', 'DOWNLOADURL', '"https://ofissitscs-manna.olamdigital.com"'
 //            buildConfigField 'String', 'ODHOST', '"https://sit-apigateway.olamdirect.com/"'
 //            resValue "string", "AUTH_SERVER_URL", 'https://digitalauthdev.olamnet.com/auth/realms/ofis-dse-sit/protocol/openid-connect/'
 //            buildConfigField 'String', 'HOST', '"https://otofis-sit-zuul.olamdigital.com/"'
@@ -314,7 +314,7 @@ android {
             resValue "string", "AUTH_SERVER_URL", 'https://digitalauthdev.olamnet.com/auth/realms/ofis-dse-manna-uat/protocol/openid-connect/'
             buildConfigField 'String', 'HOST', '"https://otofis-uat-manna-zuul.olamdigital.com/"'
             buildConfigField 'String', 'ODHOST', '"https://uat-apigateway.olamdirect.com/"'
-            buildConfigField 'String', 'DOWNLOADURL', '"https://ofisdevscs-manna.olamdigital.com/"'
+            buildConfigField 'String', 'DOWNLOADURL', '"https://ofisuatscs-manna.olamdigital.com"'
             buildConfigField "String", "MATOMO_SERVER_URL", '"https://olammatomo.azurewebsites.net/matomo.php"'
             buildConfigField "int", "MATOMO_SERVER_CODE", '35'
             buildConfigField "boolean", "MATOMO_ENABLED", 'false'
