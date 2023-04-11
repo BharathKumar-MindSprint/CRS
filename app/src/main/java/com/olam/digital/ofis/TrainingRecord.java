@@ -743,7 +743,8 @@ public class TrainingRecord extends BaseListActivity{
         if (photoFile != null) {
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             if ((intent.resolveActivity(getPackageManager()) != null)) {
-                Uri photoURI = FileProvider.getUriForFile(TrainingRecord.this, getApplicationContext().getPackageName() + ".profileimage.fileprovider", photoFile);
+                //Uri photoURI = FileProvider.getUriForFile(TrainingRecord.this, getApplicationContext().getPackageName() + ".profileimage.fileprovider", photoFile);
+                Uri photoURI = FileProvider.getUriForFile(TrainingRecord.this, getApplicationContext().getPackageName() + ".fileprovider", photoFile);
 
                 // Samsung Galaxy S3 Fix
                 List<ResolveInfo> resInfoList = getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);

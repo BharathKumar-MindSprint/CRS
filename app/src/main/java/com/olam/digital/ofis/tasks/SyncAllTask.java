@@ -387,28 +387,28 @@ public class SyncAllTask extends SyncTask {
             }
 */
 
-                // Goes directly to the AsyncTask
-                new UpdateSpinnerListsTask(context, pd).execute(spinnerResponse);
-                spinnerResponse = null;
+            // Goes directly to the AsyncTask
+            new UpdateSpinnerListsTask(context, pd).execute(spinnerResponse);
+            spinnerResponse = null;
 
-                // Goes directly to the AsyncTask
-                new UpdateModuleListsTask(context).execute(moduleResponse);
-                moduleResponse = null;
+            // Goes directly to the AsyncTask
+            new UpdateModuleListsTask(context).execute(moduleResponse);
+            moduleResponse = null;
 
-                // Goes directly to the AsyncTask
-                new UpdateSipModuleListsTask(context).execute(sipModuleResponse);
-                sipModuleResponse = null;
+            // Goes directly to the AsyncTask
+            new UpdateSipModuleListsTask(context).execute(sipModuleResponse);
+            sipModuleResponse = null;
 
 
-                new UpdateMultiFarmRoleTask(context).execute(multifarmRoleResponse);
-                multifarmRoleResponse = null;
+            new UpdateMultiFarmRoleTask(context).execute(multifarmRoleResponse);
+            multifarmRoleResponse = null;
 
-                new UpdateMultiFarmFarmsTask(context).execute(multifarmFarmResponse);
-                multifarmFarmResponse = null;
+            new UpdateMultiFarmFarmsTask(context).execute(multifarmFarmResponse);
+            multifarmFarmResponse = null;
 
-                // Goes directly to the AsyncTask
+            // Goes directly to the AsyncTask
 
-                // not in this scope
+            // not in this scope
 //            new UpdateFmpTask(context).execute(fmpResponse);
 //            fmpResponse = null;
 
@@ -424,27 +424,27 @@ public class SyncAllTask extends SyncTask {
                 new UpdateTasksListsTask(context).execute(tasksResponse);
                 tasksResponse = null;
 
-                // Goes directly to the AsyncTask
-                new UpdateFarmersTask(context).execute(farmerResponse);
-                farmerResponse = null;
+            // Goes directly to the AsyncTask
+            new UpdateFarmersTask(context).execute(farmerResponse);
+            farmerResponse = null;
 
                 new UpdateChildrenTask(context).execute(childResponse);
                 childResponse = null;
 
-                new UpdateFarmerLeadTask(context).execute(farmerLeadResponse);
-                farmerLeadResponse = null;
+            new UpdateFarmerLeadTask(context).execute(farmerLeadResponse);
+            farmerLeadResponse = null;
 
-                new UpdateAssignmentTask(context).execute(assignmentCheckResponse);
-                assignmentCheckResponse = null;
+            new UpdateAssignmentTask(context).execute(assignmentCheckResponse);
+            assignmentCheckResponse = null;
 
-                new UpdateNationalIdTask(context).execute(nationalidresponse);
-                nationalidresponse = null;
+            new UpdateNationalIdTask(context).execute(nationalidresponse);
+            nationalidresponse = null;
 
-                new UpdateEnumNationalIdTask(context).execute(enumnationalidresponse);
-                enumnationalidresponse = null;
+            new UpdateEnumNationalIdTask(context).execute(enumnationalidresponse);
+            enumnationalidresponse = null;
 
-                new UpdateNotificationTask(context).execute(notificationResponse);
-                notificationResponse = null;
+            new UpdateNotificationTask(context).execute(notificationResponse);
+            notificationResponse = null;
 
                 if (Utilities.getBoolFromSharedPrefs(context, "FIRST_RUN", true)) {
                     HomeActivity.completeFirstSetup();
@@ -1855,17 +1855,17 @@ public class SyncAllTask extends SyncTask {
                             }else{
                                 totalModules = withoutClmrsIds.length;
                             }
-                             if(totalModules > notificationModuleId){
-                                 int nextModule = notificationModuleId + 1;
+                            if(totalModules > notificationModuleId){
+                                int nextModule = notificationModuleId + 1;
                                 syncSmartNotification(nextModule, 1);
                             }else {
-                                  try {
-                                      notificationResponse = new JSONObject();
-                                      notificationResponse.put("notificationDetailsList", notificationArray);
-                                      notificationResponse.put("moduleList", moduleArray);
-                                  }catch (Exception e){
-                                      e.printStackTrace();
-                                  }
+                                try {
+                                    notificationResponse = new JSONObject();
+                                    notificationResponse.put("notificationDetailsList", notificationArray);
+                                    notificationResponse.put("moduleList", moduleArray);
+                                }catch (Exception e){
+                                    e.printStackTrace();
+                                }
                                 notificationArray = new JSONArray();
                                 moduleArray = new JSONArray();
                                 publishProgress(SyncOperation.CONTINUE_DOWNLOADING, "Checking MultiFarm enumerator");

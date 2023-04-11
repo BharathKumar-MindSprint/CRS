@@ -12,7 +12,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -73,7 +72,7 @@ public class DownloadFarmPlanActivity extends BaseActivity implements ItemClickL
     List<DownloadFormList.data> data1;
     ItemClickListener itemClickListener;
     String enumeratorId;
-
+    String userID = "ID_OFIS_DO_INTERFACE";
     ArrayList<String> isoCodes = new ArrayList<>();
     private ProgressDialog progressDialog;
     String counrtyCodeNew;
@@ -117,7 +116,6 @@ public class DownloadFarmPlanActivity extends BaseActivity implements ItemClickL
 
             }
         });
-
 
         recyclerView = findViewById(R.id.rvFarmPlanList);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -176,7 +174,7 @@ public class DownloadFarmPlanActivity extends BaseActivity implements ItemClickL
                     progressDialog.hide();
                     showAlert("Internal Server Error, Please Contact Admin!!"+response.message());
                 }else{
-
+                    //showAlert(getString(R.string.Alert_message_to_contact_administrator));
                 }
             }
             @Override
@@ -205,6 +203,7 @@ public class DownloadFarmPlanActivity extends BaseActivity implements ItemClickL
                     if(response.body()!=null && response.body().getStatusCode()==200){
                         if(response.body().getData()!=null){
                             data1 =response.body().getData();
+
 
                             Log.e("ListRespValue",response.body().getStatusMessage());
 
@@ -285,7 +284,7 @@ public class DownloadFarmPlanActivity extends BaseActivity implements ItemClickL
                 if (response.code()==200) {
                     progressDialog.hide();
                    // Log.d("DownloadServerSuccess", "file download was a success? " + writtenToDisk);
-                    //Toast.makeText(DownloadFarmPlanActivity.this, "Data added to API"+response.code(), Toast.LENGTH_SHORT).show();
+                   // Toast.makeText(DownloadFarmPlanActivity.this, "Data added to API"+response.code(), Toast.LENGTH_SHORT).show();
 
                     boolean writtenToDisk = writeResponseBodyToDisk(response.body());
                     Log.d("DownloadServerSuccess", "file download was a success? " + writtenToDisk);
@@ -308,7 +307,7 @@ public class DownloadFarmPlanActivity extends BaseActivity implements ItemClickL
                         //fileNameDownload = "Statement_" + request.getAccountNumber() + "_from" + ".pdf";
                         //File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), fileNameDownload);
                          file = new File(dir+"/"+fileNameDownload);
-                         uri = FileProvider.getUriForFile(DownloadFarmPlanActivity.this, BuildConfig.APPLICATION_ID + ".provider",file);
+                         uri = FileProvider.getUriForFile(DownloadFarmPlanActivity.this, BuildConfig.APPLICATION_ID + ".fileprovider",file);
                         try {
                             Intent intent = new Intent(Intent.ACTION_VIEW);
                             intent.setDataAndType(uri, "application/pdf");
@@ -334,9 +333,11 @@ public class DownloadFarmPlanActivity extends BaseActivity implements ItemClickL
                     progressDialog.hide();
                     showAlert("Internal Server Error, Please Contact Admin!!-"+response.message().toString());
                 } else{
-                    progressDialog.hide();
                     showAlert("Something Went wrong!!"+response.message().toString());
                 }
+
+
+
             }
 
             @Override
@@ -407,6 +408,8 @@ public class DownloadFarmPlanActivity extends BaseActivity implements ItemClickL
          }
 
 
+
+
     private void showAlert(String msg) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(msg);
@@ -465,6 +468,7 @@ public class DownloadFarmPlanActivity extends BaseActivity implements ItemClickL
                 Toast.makeText(context, res.getString(R.string.Internet_not_available), Toast.LENGTH_LONG).show();
             }
         }
+
 
     }
 
