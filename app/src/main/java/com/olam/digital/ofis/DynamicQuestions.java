@@ -909,7 +909,8 @@ public class DynamicQuestions {
                 if (photoFile != null) {
                     Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                      if ((intent.resolveActivity(context.getPackageManager()) != null)) {
-                            Uri photoURI = FileProvider.getUriForFile(context, context.getApplicationContext().getPackageName() + ".profileimage.fileprovider", photoFile);
+                            //Uri photoURI = FileProvider.getUriForFile(context, context.getApplicationContext().getPackageName() + ".profileimage.fileprovider", photoFile);
+                            Uri photoURI = FileProvider.getUriForFile(context, context.getApplicationContext().getPackageName() + ".fileprovider", photoFile);
 
                             // Samsung Galaxy S3 Fix
                             List<ResolveInfo> resInfoList = context.getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);

@@ -2275,7 +2275,8 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         if (photoFile != null) {
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             if ((intent.resolveActivity(getPackageManager()) != null)) {
-                Uri photoURI = FileProvider.getUriForFile(AddFarmerActivity.this, getApplicationContext().getPackageName() + ".profileimage.fileprovider", photoFile);
+                //Uri photoURI = FileProvider.getUriForFile(AddFarmerActivity.this, getApplicationContext().getPackageName() + ".profileimage.fileprovider", photoFile);
+                Uri photoURI = FileProvider.getUriForFile(AddFarmerActivity.this, getApplicationContext().getPackageName() + ".fileprovider", photoFile);
 
                 // Samsung Galaxy S3 Fix
                 List<ResolveInfo> resInfoList = getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
@@ -2321,7 +2322,8 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                     if (photoFile != null) {
                         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                         if ((intent.resolveActivity(getPackageManager()) != null)) {
-                            Uri photoURI = FileProvider.getUriForFile(AddFarmerActivity.this, getApplicationContext().getPackageName() + ".profileimage.fileprovider", photoFile);
+                            //Uri photoURI = FileProvider.getUriForFile(AddFarmerActivity.this, getApplicationContext().getPackageName() + ".profileimage.fileprovider", photoFile);
+                            Uri photoURI = FileProvider.getUriForFile(AddFarmerActivity.this, getApplicationContext().getPackageName() + ".fileprovider", photoFile);
 
                             // Samsung Galaxy S3 Fix
                             List<ResolveInfo> resInfoList = getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
