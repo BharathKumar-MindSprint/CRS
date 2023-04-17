@@ -201,8 +201,7 @@ abstract class DatabaseTask extends AsyncTask<JSONObject, Integer, String> {
 
         }
 
-        db.setTransactionSuccessful();
-        db.endTransaction();
+
 
         if (tableName.equals(OFISDBContract.FarmerEntry.TABLE_NAME)) {
             int lastItemId;
@@ -265,6 +264,8 @@ abstract class DatabaseTask extends AsyncTask<JSONObject, Integer, String> {
                 e.printStackTrace();
             }
         }
+        db.setTransactionSuccessful();
+        db.endTransaction();
     }
 
 

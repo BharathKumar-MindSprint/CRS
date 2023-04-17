@@ -765,8 +765,15 @@ class OFISDB extends SQLiteOpenHelper {
             OFISDBContract.NotificationModuleAssignments.COLUMN_NAME_MSG + " TEXT )";
 
     public static OFISDB getInstance(Context context) {
-        if (sInstance == null) {
+        /*if (sInstance == null) {
             sInstance = new OFISDB(context.getApplicationContext());
+        }*/
+        if (sInstance == null) {
+            synchronized (OFISDB.class) {
+                if (sInstance == null) {
+                    sInstance = new OFISDB(context.getApplicationContext());
+                }
+            }
         }
         return sInstance;
     }
