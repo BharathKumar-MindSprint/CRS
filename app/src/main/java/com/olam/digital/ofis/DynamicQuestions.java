@@ -3187,9 +3187,17 @@ public class DynamicQuestions {
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                         if (id > 0 || zeroAcceptable) {
+                            int existingItemsSize = repeaterItemsWrapper.getChildCount();
+                            removeRepeaterAnswers(questionId);
+                            for (int j = 0; j < existingItemsSize; j++) {
+                                removeRepeaterAnswer(questionId, j);
+                            }
+                            repeaterItemsWrapper.removeAllViews();
+                            removeAnswerEntry(questionId, answerId);
                             saveAnswerEntry(questionId, answerId, 0, -1, datatype, spinner.getSelectedItem().toString());
+                            renderRepeaterItems(questionId, id, repeaterItemsWrapper, farmerId, olamFarmerId, farmerModuleId, res, isSavedAns);
                             if (id > 0) {
-                                renderRepeaterItems(questionId, id, repeaterItemsWrapper, farmerId, olamFarmerId, farmerModuleId, res, isSavedAns);
+
                             } else {
                                 removeRepeaterAnswers(questionId);
                                 repeaterItemsWrapper.removeAllViews();
