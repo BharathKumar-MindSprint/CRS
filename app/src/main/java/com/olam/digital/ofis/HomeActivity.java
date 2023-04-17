@@ -77,6 +77,7 @@ import com.olam.digital.ofis.downloadsurvey.ListDownSurveys;
 import com.olam.digital.ofis.downloadsurvey.dto.ModuleDTO;
 import com.olam.digital.ofis.dynatrace.DynatraceHelper;
 import com.olam.digital.ofis.farmplandownload.DownloadFarmPlanActivity;
+import com.olam.digital.ofis.farmplandownload.DownloadFarmPlanAdapter;
 import com.olam.digital.ofis.farmplandownload.model.AccessTokenReqBody;
 import com.olam.digital.ofis.farmplandownload.model.AccessTokenResp;
 import com.olam.digital.ofis.farmplandownload.model.DownloadFormList;
@@ -292,7 +293,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                     SYNC_INTERVAL
             );
 
-
         // Request Permission only for Android Version Marshmallow and above
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             // Check Phone Permission
@@ -421,8 +421,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         try {
             MultiFarmUtils.isMultiFarmEnumerator = Utilities.getMultifarmPref(context, MultiFarmUtils.IS_MULTI_FARM_ENUMERATOR);
         }catch (Exception e){}
-
-
     }
     private void setKeycloakCredentials(String environment) {
         String clientId = null;
@@ -1743,7 +1741,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
     /*Get DownLoad Farm Form List*/
     public static void DownloadFormList(String value) {
-        progressDialog.show();
+        //progressDialog.show();
        // String userEnumeratorID = enumeratorID.getText().toString().trim();
         ManageRecords AllFarmFormList= RetrofitClient.getRetrofit().create(ManageRecords.class);
         Call<DownloadFormList> call=AllFarmFormList.getAllFarmFormList(1,counrtyCodeNew, Integer.valueOf(Utilities.getFromSharedPrefs(staticContext)),odAccessToken);
@@ -1756,7 +1754,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
                 if(response.code()==200){
                     //Toast.makeText(DownloadFarmPlanActivity.this, "Farm Plan is available to download", Toast.LENGTH_SHORT).show();
-                    progressDialog.hide();
+                   // progressDialog.hide();
                     if(response.body()!=null && response.body().getStatusCode()==200){
                         if(response.body().getData()!=null){
                             //data1 =response.body().getData();
@@ -1779,40 +1777,35 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                      if(value.equalsIgnoreCase("home")){
                                          cardview_downloadFarmplan.setVisibility(View.GONE);
                                      }
-
                                  }
-
-
                             }
-
                             Log.e("ListRespValue",response.body().getStatusMessage());
-
 
                         }else{
                             //Toast.makeText(DownloadFarmPlanActivity.this,response.body().getStatusMessage(), Toast.LENGTH_SHORT).show();
                             //Toast.makeText(DownloadFarmPlanActivity.this, R.string.error, Toast.LENGTH_SHORT).show();
-                            showAlert(response.body().getStatusMessage());
+                            //showAlert(response.body().getStatusMessage());
                         }
                     }else{
-                        showAlert(response.body().getStatusMessage());
+                       // showAlert(response.body().getStatusMessage());
                         // Toast.makeText(DownloadFarmPlanActivity.this, R.string.no_data_found, Toast.LENGTH_SHORT).show();
                     }
                 }else if(response.code()==400){
-                    progressDialog.hide();
+                   // progressDialog.hide();
                     //showAlert(response.message().toString());
                     //Toast.makeText(staticContext,"Bad Request", Toast.LENGTH_SHORT).show();
                     Log.d("BadRequest-",response.message());
                 }else if(response.code()==500){
-                    progressDialog.hide();
+                    //progressDialog.hide();
                     //showAlert("Internal Server Error, Please Contact Admin!!-"+response.message().toString());
                 }else{
-                    showAlert("Server Issue!!"+response.message().toString());
+                   // showAlert("Server Issue!!"+response.message().toString());
                 }
             }
             @Override
             public void onFailure(Call<DownloadFormList> call, Throwable t) {
-                progressDialog.hide();
-                Toast.makeText(staticContext, t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                //progressDialog.hide();
+                //Toast.makeText(staticContext, t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
             }
         });
 
