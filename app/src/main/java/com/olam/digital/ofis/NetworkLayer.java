@@ -2727,7 +2727,11 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                             new Handler(Looper.getMainLooper()).post(new Runnable() {
                                                 @Override
                                                 public void run() {
-                                                    showAlertMessage(originalSyncRequestItemId, handler, networkQueueItemId);
+                                                    try {
+                                                        showAlertMessage(originalSyncRequestItemId, handler, networkQueueItemId);
+                                                    }catch (Exception e){
+                                                        e.printStackTrace();
+                                                    }
                                                 }
                                             });
 
@@ -2785,18 +2789,18 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         }
     }
 
-    private void showAlertMessage(int networkQueueItemId, Handler handler, int queueItemId) {
+    private void showAlertMessage(int originalSyncRequestItemId, Handler handler, int queueItemId) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setMessage(context.getResources().getString(R.string.consent_duplicate_alert))
                 .setCancelable(false)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
+                        dl.deleteNetworkQueueItem(queueItemId);
+                        syncNetworkQueue(originalSyncRequestItemId, handler);
                     }
                 });
         AlertDialog alert = builder.create();
         alert.show();
-        dl.deleteNetworkQueueItem(queueItemId);
-        syncNetworkQueueConsent(networkQueueItemId, handler);
     }
 
     // get farmer phone numbers
