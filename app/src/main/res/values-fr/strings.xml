@@ -259,7 +259,6 @@
     <string name="app_updated_upload_first_message">Il y a une nouvelle mises à jour disponible pour l\'application. Pour la télécharger, vous devez d\'abord synchroniser tous les éléments. Veuillez cliquer "OK" pour synchroniser tous les éléments puis allez dans la section Paramètres pour actualiser l\'application.</string>
     <string name="please_sync_before_update">Il y a des éléments qui attendent d\'être synchronisés. Veuillez synchroniser ces éléments avant de mettre à jour vos données sur l\'application.</string>
     <string name="ofis_update_overdue">Cette version de l\'application est maintenant expirée. Vous devez mettre à jour l\'application avant de pouvoir continuer à l\'utiliser. Cliquez sur l\'icone "Paramètres" dans le coin supérieur à droite de l\'écran pour mettre à jour</string>
-    <string name="ofis_request_help">Demander de l\'aide</string>
     <string name="Your_Name">Votre Nom</string>
     <string name="Your_phone_number">Votre Numéro de téléphone</string>
     <string name="problem_description">Veuillez décrire le problème que vous rencontrez</string>
