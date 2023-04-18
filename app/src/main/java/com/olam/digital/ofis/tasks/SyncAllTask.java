@@ -301,7 +301,7 @@ public class SyncAllTask extends SyncTask {
         }
 
 //        String url = "http://13.76.131.132:8080/farmerdata/sipquestionnaire/getAllSIPQuestionnaireData";
-        String url = "farmer-data/farmerdata/sipquestionnaire/getAllSIPQuestionnaireData";
+        String url = "ofisfarmer-data/farmerdata/sipquestionnaire/getAllSIPQuestionnaireData";
         final String finalEndpoint = url;
         okHttpPost(context, url, inputArgs, new Callback() {
             @Override
@@ -801,8 +801,8 @@ public class SyncAllTask extends SyncTask {
         //old end point
         //    endPoint="sync_spinners";
         // new end point
-        // endPoint="farmer-data/farmerdata/getcountryspinners/1127";
-        endPoint = "farmer-data/farmerdata/getcountryspinners/" + Utilities.getFromSharedPrefs(context);
+        // endPoint="ofisfarmer-data/farmerdata/getcountryspinners/1127";
+        endPoint = "ofisfarmer-data/farmerdata/getcountryspinners/" + Utilities.getFromSharedPrefs(context);
         final String finalEndPoint = endPoint;
         okHttpGet(context, endPoint, inputArgs, new Callback() {
             @Override
@@ -1626,7 +1626,7 @@ public class SyncAllTask extends SyncTask {
         }
 
         String endpoint = "";
-        endpoint = "farmer-data/farmerdata/getfarmerdetailsbyenumeratorid/" + Utilities.getFromSharedPrefs(context);
+        endpoint = "ofisfarmer-data/farmerdata/getfarmerdetailsbyenumeratorid/" + Utilities.getFromSharedPrefs(context);
         final String finalEndpoint = endpoint;
         okHttpGet(context, endpoint, inputArgs, new Callback() {
             @Override

@@ -3263,7 +3263,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             }
 
 //                    String url = "http://13.76.2.201:8080/farmerdata/socialinfra/saveAllSipAnswers/";
-            final String url = "farmer-data/farmerdata/socialinfra/saveAllSipAnswers/";
+            final String url = "ofisfarmer-data/farmerdata/socialinfra/saveAllSipAnswers/";
             DynatraceHelper.requestPayload(DynatraceConstants.REQUEST+" "+url,params.toString(),context,true);
             okHttpPost(context, url, params, new Callback() {
                 @Override
