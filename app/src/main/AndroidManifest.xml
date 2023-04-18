@@ -487,6 +487,16 @@
                 android:value="com.olam.digital.ofis.HomeActivity" />
         </activity>
 
+        <activity
+            android:name="com.olam.digital.ofis.farmplandownload.DownloadFarmPlanActivity"
+            android:label="@string/download_farm_plan"
+            android:parentActivityName="com.olam.digital.ofis.HomeActivity"
+            android:screenOrientation="portrait"
+            tools:ignore="UnusedAttribute">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.olam.digital.ofis.HomeActivity"/>
+        </activity>
     </application>
 
 </manifest>
