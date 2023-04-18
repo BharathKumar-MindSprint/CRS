@@ -1091,7 +1091,7 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="media">Media</string>
 
     <string name="offline_deactivation">You’re offline. Please switch on your network to deactivate license files</string>
-    <string name="download_farm_plan">Download Farm Plan</string>
+    <string name="download_farm_plan">DDownload Crop Plan</string>
     <string name="downloading_farm_plan">Downloading Farm Plan</string>
-    <string name="checking_isfarmplan_available">Checking Download Farm Plan Status</string>
+    <string name="checking_isfarmplan_available">Checking Download Crop Plan Status</string>
 </resources>
