@@ -3449,7 +3449,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         // old end point
         // endpoint = "uploadFarmerFile";
         // new end point
-        endpoint = "utility/uploadFarmerFile";
+        endpoint = "ofisutility/uploadFarmerFile";
         final JSONObject params = new JSONObject();
         if (!dl.isFarmerSynced(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)))) {
             msg.what = 3;

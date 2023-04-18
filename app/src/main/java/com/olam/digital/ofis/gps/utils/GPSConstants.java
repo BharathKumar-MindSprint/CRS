@@ -29,6 +29,6 @@ public class GPSConstants {
     public static final String COLUMN_ENUMERATOR_NAME = "enumeratorName";
 
   //  public static final String SYNC_END_POINT = "ofismaster/master/enumeratorgpstracking";
-    public static final String SYNC_END_POINT = "enumeratorgpstracker/gps-tracking/enumeratorgpstracking";
+    public static final String SYNC_END_POINT = "ofisenumeratorgpstracker/gps-tracking/enumeratorgpstracking";
 
 }
