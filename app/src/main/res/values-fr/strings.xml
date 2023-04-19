@@ -597,38 +597,40 @@
     <string name="update_firebase_install_id_info">Updating Informations</string>
     <string name="please_click_checkbox">Veuillez cocher toutes les cases appropriées</string>
     <string name="please_sign_within_the_boundary_box">Please sign within the boundary box</string>
-    <string name="txt_farm_name">Farm Name:</string>
-    <string name="txt_farm_code">Farm Code:</string>
-   <string name="attendee_sex">Sex</string>
+   <!-- <string name="txt_farm_name">Farm Name:</string>-->
+   <!-- <string name="txt_farm_code">Farm Code:</string>-->
+  <!-- <string name="attendee_sex">Sex</string>-->
    <string name="multifarm_not_synced">Veuillez synchroniser les détails de plantation multiple en premier.</string>
-    <string name="fill_farmergroup_name_multifarm">Veuillez sélectionner le groupe de producteurs avant d\'ajouter les parties prenantes de plantation.</string>
-    <string name="sync_farmer_and_multifarm_stakeholders">Veuillez synchroniser la mise à jour du nouveau producteur et des parties prenantes de la plantation avant de soumettre l\'enquête sur la plantation. </string>
+   <!-- <string name="fill_farmergroup_name_multifarm">Veuillez sélectionner le groupe de producteurs avant d\'ajouter les parties prenantes
+        de plantation.</string>-->
+  <!--  <string name="sync_farmer_and_multifarm_stakeholders">Veuillez synchroniser la mise à jour du nouveau producteur et des parties prenantes
+        de la plantation avant de soumettre l\'enquête sur la plantation. </string>-->
     <string name="consent_duplicate_alert">Un consentement en double a été identifié et ne peut donc pas être synchronisé avec l\'élément sélectionné. Veuillez noter que ces doublons seront supprimés de la file d\'attente ultérieurement.</string>
-    <string name="consent_duplicate_error">Erreur dans la sauvegarde du consentement de le producteur</string>
-    <string name="update_farm_information">Mise à jour des informations sur la plantation</string>
+  <!--  <string name="consent_duplicate_error">Erreur dans la sauvegarde du consentement de le producteur</string>-->
+    <!--<string name="update_farm_information">Mise à jour des informations sur la plantation</string>-->
     <string name="select_from_existing_farm">Sélectionner dans une plantation existante</string>
-    <string name="create_new_farm">créer une nouvelle plantation</string>
+   <!-- <string name="create_new_farm">créer une nouvelle plantation</string>
     <string name="add_farm_Information">Ajouter des informations sur la plantation</string>
-    <string name="search_farmer">Rechercher un producteur</string>
+    <string name="search_farmer">Rechercher un producteur</string>-->
     <string name="multifarm_name_search">Recherche par nom</string>
-    <string name="farm_information">Informations sur la plantation</string>
+    <!--<string name="farm_information">Informations sur la plantation</string>
     <string name="farm_name">Nom de la plantation</string>
     <string name="farm_code">Code de la plantation</string>
-    <string name="add_stakeholder">Ajouter une partie prenante de la plantation</string>
+    <string name="add_stakeholder">Ajouter une partie prenante de la plantation</string>-->
     <string name="no_match_found">Aucune correspondance trouvée</string>
     <string name="please_enter_farmer_name">Veuillez entrer le nom de le producteur et cliquer sur Ajouter</string>
     <string name="delink_confirmation">Etes-vous sûr de vouloir délier la partie prenante ?</string>
     <string name="stakeholder_validation">Veuillez ajouter au moins une partie prenante pour continuer.</string>
     <string name="fill_stakeholder_name_role">Veuillez remplir toutes les informations sur la partie prenante</string>
-    <string name="fill_stakeholder_farm_code_name">Veuillez indiquer le nom et le code de la plantation</string>
-    <string name="already_syned_survey_info">Cette enquête a déjà été complétée par l\'autre partie prenante de la plantation.</string>
+    <!--<string name="fill_stakeholder_farm_code_name">Veuillez indiquer le nom et le code de la plantation</string>
+    <string name="already_syned_survey_info">Cette enquête a déjà été complétée par l\'autre partie prenante de la plantation.</string>-->
     <string name="record_polygon_location_complete">Polygone capturé</string>
-    <string name="farm_type_warning">Veuillz choisir le type de plantation</string>
+ <!--   <string name="farm_type_warning">Veuillz choisir le type de plantation</string>
     <string name="search_existing_farm">Rechercher une plantation existante</string>
     <string name="select_by_nearest_farm">Recherche par plantation la plus proche</string>
     <string name="recored_polygon_multifarm_info">Emplacement de la plantation déjà capturé par une partie prenante de votre plantation</string>
     <string name="recored_polygon_plot_multifarm_info">Polygone de la plantation déjà capturé par une partie prenante de votre plantation</string>
-    <string name="survey_can_be_completed_by_other_stakeholders">Cette enquête peut être complétée par un autre acteur de plantation.</string>
+    <string name="survey_can_be_completed_by_other_stakeholders">Cette enquête peut être complétée par un autre acteur de plantation.</string>-->
     <string name="password">mot de passe</string>
     <string name="nid_exp_fill">Veuillez indiquer la date d\'expiration</string>
     <string name="checking_isfl_enumerator">Vérification de l\'enumerateur principal de le producteur</string>
@@ -685,7 +687,7 @@
     <string name="privacy_cache_offline">Vous n\'êtes pas en ligne. Veuillez allumer votre réseau pour consulter la dernière déclaration de confidentialité.</string>
     <string name="privacy_no_cache_offline">Vous n\'êtes pas en ligne. Veuillez allumer votre réseau pour consulter la déclaration de confidentialité.</string>
     <string name="select_country">Veuillez sélectionner le pays</string>
-    <string name="odid">identifiant Olam Direct</string>
+   <!-- <string name="odid">identifiant Olam Direct</string>-->
     <string name="duplicate_survey">Entrée d\'enquête en double</string>
     <string name="removing_duplicate_survey">Suppression de l\'enquête en double</string>
    <string name="farmer_role">Rôle</string>
@@ -696,20 +698,20 @@
     <string name="add_attendee">Ajouter un participant</string>
     <string name="attendee_name_hint">Entrez le nom du participant</string>
     <string name="attendee_hint_age">Saisir l\'âge</string>
-    <string name="view_attendees_count">Voir le participant (~V participants)</string>
+   <!-- <string name="view_attendees_count">Voir le participant (~V participants)</string>-->
     <string name="add_edit_attendee">Ajouter un participant</string>
     <string name="viewAttendee">Afficher le participant</string>
     <string name="attendee">Participant</string>
     <string name="mandatory_msg">Veuillez remplir tous les détails</string>
     <string name="add_edit">Ajouter/Modifier</string>
     <string name="Attendee">Participant</string>
-    <string name="select_relationship_with_farmer">Sélectionnez la relation avec le producteur</string>
+  <!--  <string name="select_relationship_with_farmer">Sélectionnez la relation avec le producteur</string>-->
     <string name="attendee_name1">Nom du participant</string>
-    <string name="attendee_relationship1">Lien de parenté</string>
-    <string name="attendee_sex1">Genre</string>
+   <!-- <string name="attendee_relationship1">Lien de parenté</string>-->
+    <!--<string name="attendee_sex1">Genre</string>-->
     <string name="please_check_question">Veuillez vérifier la question</string>
     <string name="please_check_dependent_question">puisque sa question dépendante est mise à jour</string>
-    <string name="national_id_info">Actualiser le numéro de la carte nationale du producteur</string>
+   <!-- <string name="national_id_info">Actualiser le numéro de la carte nationale du producteur</string>-->
     <string name="zero_area_msg">Impossible de sauvegarder le polygone enregistré avec 0ha. Veuillez essayer d\'enregistrer un autre polygone</string>
     <string name="direct_value_below_error">Veuillez entrer la valeur de la question %1 d inférieure à %2 d</string>
     <string name="direct_value_above_error">Veuillez saisir la valeur de la question %1 d supérieure à %2 d</string>
@@ -757,5 +759,314 @@
     <string name="Alert_text_line1">Oups ! Les données de formation sont disponibles uniquement en ligne</string>
     <string name="Alert_text_line2">Veuillez activer vos données mobiles.</string>
 
+
+
+    <!--Newly Add strings-->
+
+    <string name="Passcode">Code d\'accès</string>
+    <string name="spinner_subdistrict_default">Sous-district</string>
+    <string name="complete_all_required_fields_mandatry">Erreur de configuration de l\'enquête. Veuillez soumettre une demande d\'aide.</string>
+    <string name="authentication_attempt">Veuillez attendre 30 minutes pour que votre connexion soit activée et réessayez avec votre même ID d\'agent recenseur et votre code d\'accès.</string>
+    <string name="detail_view">Vue détaillée</string>
+    <string name="update_tab_hint">Tapez pour mettre à jour</string>
+    <string name="offline_access">accès hors ligne</string>
+    <string name="refresh_token">jeton de rafraîchissement</string>
+
+    <string name="privacy_data">"Olam Food Ingredients et ses filiales dans le monde entier (collectivement appelés "ofi", "nous", "notre") comprennent l\'importance de la confidentialité pour vous. Cette politique résume les informations personnelles que nous sommes susceptibles de recueillir, la manière dont nous pouvons utiliser ces informations, ainsi que d\'autres sujets importants relatifs à votre vie privée et à la protection des données.
+ Notre politique est de nous conformer à toutes les lois applicables en matière de confidentialité et de protection des données. Cet engagement reflète la valeur que nous accordons au fait de gagner et de conserver la confiance de nos clients, partenaires commerciaux et autres personnes qui partagent leurs informations personnelles avec nous.\n \n
+ Cette politique s\'applique à tous les sites Web et à toutes les applications mobiles ("apps") exploités par ou au nom d\'ofi. Elle s\'applique également aux informations personnelles que ofi peut collecter : (i) par le biais de nos produits et services ; (ii) lorsque vous interagissez avec nous par des moyens autres qu\'un site Web ou une application ofi, par exemple, en personne, par téléphone, ou lors d\'un salon professionnel ou d\'une formation ; et (iii) auprès de nos clients, distributeurs, fournisseurs, vendeurs et autres partenaires commerciaux (collectivement "Partenaires commerciaux").
+ Cependant, les différents sites Web, applications, produits et services de ofi ont des objectifs et des caractéristiques différents. Si des divulgations supplémentaires ou différentes sont requises pour un site Internet, une application, un produit ou un service spécifique d\'OFI, nous fournissons ces divulgations ("Déclarations de confidentialité spécifiques") séparément sur, ou avec, le site Internet, l\'application, le produit ou le service concerné. Chacune de ces divulgations, politiques ou déclarations de confidentialité spécifiques complète et modifie la présente politique.
+ "</string>
+
+    <string name="general_principels">Principes généraux de la collecte, de l\'utilisation et de la divulgation des informations personnelles par ofi</string>
+    <string name="general_principels_data">"Dans la présente déclaration de confidentialité, les "données personnelles" ou "informations personnelles" désignent toute information concernant un individu qui peut être identifié à partir de cette information ou à partir de cette information combinée à d\'autres informations auxquelles nous sommes susceptibles d\'avoir accès, y compris, sans s\'y limiter, des informations telles que le nom, l\'adresse, le numéro de téléphone, l\'adresse électronique, les numéros d\'identification, les données de localisation et les identifiants en ligne".
+ En outre, le terme "traitement" désigne toute opération effectuée sur des informations personnelles, que ce soit ou non par des moyens automatiques, comme la collecte, l\'enregistrement, l\'organisation, la structuration, le stockage, l\'adaptation ou la modification, la récupération, la consultation, l\'acquisition, la détention, l\'utilisation, la divulgation par transmission, la diffusion ou toute autre mise à disposition, l\'alignement ou la combinaison, la restriction, l\'effacement ou la destruction.
+ Dans la mesure où la loi applicable l\'exige, chaque fois qu\'elle collecte des informations personnelles, l\'entreprise s\'engage à :\n\n
+          vous fournir un avis sur nos pratiques en matière de données.
+          collecter vos informations personnelles uniquement à des fins spécifiques et légitimes. Les informations que nous recueillons seront pertinentes, adéquates et non excessives au regard des objectifs pour lesquels elles sont collectées.\n
+          traiterons vos informations personnelles d\'une manière cohérente avec les objectifs pour lesquels elles ont été collectées ou auxquels vous avez consenti.
+          prendre des mesures raisonnables pour s\'assurer que vos informations personnelles sont fiables pour l\'usage auquel elles sont destinées, qu\'elles sont exactes, complètes et, le cas échéant, mises à jour ; et\n\n
+          prendre les mesures appropriées, par contrat ou autrement, pour fournir une protection adéquate aux informations personnelles qui sont divulguées à une tierce partie ou transférées dans un autre pays, y compris les transferts au sein du pays.
+ Vous avez le choix quant aux informations personnelles que vous fournissez à ofi. Vous pouvez choisir de ne pas fournir les informations que nous demandons, mais si vous le faites, il se peut que nous ne soyons pas en mesure de vous fournir un service pertinent ou une fonctionnalité particulière pour un site Web, une application ou un produit d\'ofi.
+ "</string>
+    <string name="ofi_info">Informations personnelles recueillies par ofi</string>
+    <string name="ofi_info_data">" ofi " recueille les types d\'informations personnelles suivants : \n\n\n
+Informations que vous fournissez :\n\n
+- informations de contact, telles que votre nom, le nom de votre société, l\'intitulé de votre poste, votre adresse, votre adresse électronique et votre numéro de téléphone;\n\n
+- des informations supplémentaires vous concernant pour nous aider à mieux vous connaître, telles que votre sexe, votre âge, votre date de naissance, votre nationalité, votre état civil, les détails sur les personnes à votre charge, vos antécédents professionnels, vos associations professionnelles et vos numéros d\'enregistrement, des informations sur la façon dont vous utilisez nos produits et des informations démographiques ;\n\n
+- les informations financières nécessaires au traitement des ventes et des achats, telles que les informations relatives aux cartes de crédit ou aux comptes ou les numéros d\'identification fiscale;\n\n
+- informations de connexion, y compris, le cas échéant, les informations de compte de médias sociaux à des fins de connexion;\n\n
+- les commentaires, les questions, les opinions, les demandes et les commandes ou les ventes que vous pouvez faire ; et\N\N
+- en ce qui concerne nos agriculteurs et nos fournisseurs, des informations telles que la géolocalisation des exploitations ou des entreprises, les rendements des produits et les informations analytiques connexes concernant les exploitations ou les entreprises telles que les inventaires et les méthodes d\'exploitation, les données financières telles que les informations de financement, les prix, les salaires et les informations d\'identification des agriculteurs/fournisseurs telles que les photographies, les signatures et les certificats vérifiant l\'identité et la formation.
+Informations provenant de partenaires commerciaux et d\'autres tiers : \n\n
+- ofi recueille des informations personnelles par l\'intermédiaire de ses partenaires commerciaux. Ces informations peuvent inclure des informations de contact, telles que le nom, le nom de la société, le titre du poste, l\'adresse, l\'adresse e-mail, le numéro de téléphone, la formation, les informations sur les achats et les ventes.
+- ofi obtient également des informations personnelles à partir d\'autres sources tierces, y compris des sources publiques et commerciales.
+Informations recueillies automatiquement à partir de votre appareil : \n\n
+- ofi recueille des informations techniques sur votre appareil, telles que les identifiants de l\'appareil et de la publicité, le type de navigateur, les pages que vous consultez et la manière générale dont vous naviguez sur le site, les données de localisation, l\'adresse de protocole Internet ("IP"), le système d\'exploitation, la date et l\'heure de votre visite et certains journaux de serveur à des fins d\'administration du système. . ofi collecte ces informations automatiquement à partir de votre appareil et de votre navigateur web par le biais de cookies et de technologies similaires.
+"</string>
+
+    <string name="cookies_header">Cookies et technologies similaires</string>
+    <string name="ofi_personal_info">Comment OFI utilise vos renseignements personnels</string>
+    <string name="sharing_info">Quand nous partageons vos renseignements personnels</string>
+    <string name="sharing_info_data">"Nous ne divulguerons pas vos informations personnelles, sauf sur une base légale et mesurée, comme suit:\n\n
+- Avec d\'autres entités d\'ofi. Nous partageons vos informations personnelles avec d\'autres entités ofi, y compris celles situées dans différents pays. Lorsque nous le faisons, ces autres entités ofi utiliseront vos informations d\'une manière conforme à la présente politique, à toute déclaration de confidentialité spécifique applicable et à toutes les lois applicables en matière de confidentialité et de protection des données.
+- Services d\'assistance. Nous partageons également vos informations personnelles avec des tiers que nous engageons pour nous fournir des services d\'assistance. Ces tiers sont tenus d\'utiliser les informations personnelles que nous partageons avec eux uniquement pour fournir des services en notre nom et de traiter vos informations personnelles conformément à toutes les lois applicables en matière de confidentialité et de protection des données.
+- Partenaires commerciaux. Dans certains cas, nous partagerons vos informations personnelles avec des tiers qui s\'associent à nous pour fournir des produits et services à nos clients, tels que des distributeurs dans le cadre de nos opérations commerciales ou même avec des organisations non gouvernementales qui partagent notre engagement en matière de traçabilité et de durabilité lorsqu\'il s\'agit de données sur les agriculteurs et les sources d\'approvisionnement. Si nous le faisons, nous exigeons de ces tiers qu\'ils utilisent ces informations d\'une manière conforme à la présente politique, à toute déclaration de confidentialité spécifique applicable et à toutes les lois applicables en matière de confidentialité et de protection des données.
+- Obligations légales. Nous partagerons également vos informations personnelles avec des tiers lorsque nous pensons en toute bonne foi que la divulgation est nécessaire : (i) pour se conformer à une loi, un règlement, une ordonnance du tribunal ou toute autre procédure légale ; (ii) pour détecter, prévenir et répondre à une fraude, une violation de la propriété intellectuelle, une violation de nos contrats ou accords, une violation de la loi ou toute autre utilisation abusive des sites Web, applications, produits ou services d\'ofi ; (iii) pour protéger les droits ou la propriété d\'ofi ou votre santé, sécurité, bien-être, droits ou propriété ou ceux d\'autrui ; ou (iv) dans des circonstances similaires. Si un tel événement se produit, nous prendrons les mesures appropriées pour protéger vos informations personnelles.\n\n
+- Vente de l\'entreprise. Dans le cas où notre entreprise serait vendue ou intégrée à une autre entreprise, vos données seront divulguées à nos conseillers et au conseiller de tout acheteur potentiel et seront transmises aux nouveaux propriétaires de l\'entreprise.
+- Avec votre permission/à votre demande. Nous partagerons également vos informations avec votre permission ou à votre demande.
+- De manière anonyme. Nous partageons des informations anonymes ou agrégées en interne et avec des tiers à toutes fins utiles. Ces informations ne vous identifieront pas individuellement.\n
+"</string>
+    <string name="crossbordertrasfer">Transfert transfrontalier</string>
+
+    <string name="crossbordertrasfer_data">Vos informations personnelles peuvent être stockées et traitées dans tout pays où nous avons des bureaux ou des Centres de données, des services hébergés ou dans lesquels nous engageons des prestataires de services externes. Vos informations personnelles peuvent être transférées vers des pays en dehors de votre pays de résidence, y compris Singapour, qui peuvent avoir des lois de protection et de traitement des données différentes de celles de votre pays. Un tel transfert ne peut avoir lieu que conformément à la loi de votre juridiction et dans la mesure
+     où celle-ci l\'autorise, mais sachez que les lois et pratiques relatives à la protection des informations personnelles sont susceptibles d\'être différentes, et dans certains cas plus faibles, que celles de votre juridiction d\'origine. Quoi qu\'il en soit, dans tous les cas, nous appliquerons les dispositions de la présente déclaration
+     de confidentialité à vos informations personnelles, où qu\'elles se trouvent.</string>
+    <string name="security_personal">Sécurité de vos informations personnelles</string>
+    <string name="security_personal_data">ofi met en place des mesures de sécurité raisonnables pour protéger la confidentialité, la sécurité et l\'intégrité de vos informations personnelles. Bien que nous utilisions des mesures de sécurité pour aider à protéger vos informations personnelles contre toute divulgation non autorisée, nous ne pouvons pas garantir la sécurité des informations fournies sur Internet et ne serons pas responsables des violations de la sécurité au-delà de notre contrôle raisonnable.</string>
+    <string name="retention_personal">Conservation de vos informations personnelles</string>
+    <string name="retention_personal_data">" OFI " conservera vos informations personnelles pendant une durée n\'excédant pas celle nécessaire aux fins pour lesquelles les données ont été collectées. La durée de conservation de vos informations personnelles varie et dépend de l\'objectif et de l\'utilisation des informations recueillies. Il existe des exigences légales pour lesquelles nous conservons certains
+     types de données pendant des périodes spécifiques."</string>
+    <string name="children_ps">Enfants</string>
+    <string name="children_data">Nous ne collectons ni ne traitons les données personnelles des enfants n\'ayant pas atteint l\'âge minimum requis par la législation locale en vigueur, sauf pour des services spécifiques et avec le consentement du titulaire de la responsabilité parentale.</string>
+    <string name="links_to_website">Liens vers d\'autres sites web</string>
+    <string name="links_to_website_data">Nous avons des liens vers d\'autres apps, plugins ou sites web qui ne sont pas détenus ou contrôlés par ofi. Nous ne sommes pas responsables de la sécurité ou de la confidentialité des informations recueillies par ces applications ou sites Web. Vous devez faire preuve de prudence et consulter les déclarations de confidentialité applicables aux sites Web et services tiers que vous utilisez. L\'utilisation de mécanismes de suivi en ligne par ces sites Web et services tiers est soumise aux politiques de confidentialité de ces tiers, et non à la présente déclaration de confidentialité.</string>
+    <string name="RandC">Demandes et clarifications</string>
+    <string name="RandC_data">Si vous avez besoin de clarifications ou si vous avez des demandes concernant les informations personnelles que nous détenons à votre sujet, veuillez adresser vos questions à notre équipe chargée de la confidentialité des données à l\'adresse privacy@ofi.com.</string>
+    <string name="gdpr">GDPR : Informations complémentaires</string>
+
+    <string name="gdpr_data">" Lorsque le GDPR est applicable et que vous êtes dans l\'UE, et/ou lorsque le contrôleur de données est une société ofi établie dans l\'UE, alors :
+Base juridique du traitement.
+Nous ne traiterons pas les données personnelles sans avoir une raison légale de le faire. Nous traitons vos données personnelles lorsque cela est nécessaire pour l\'exécution d\'un contrat auquel vous êtes partie, ou lorsque cela est nécessaire pour le respect d\'une obligation légale ou lorsque cela est requis, avec votre consentement préalable. Nous traitons également vos données personnelles pour les intérêts légitimes d\'ofi, sauf lorsque ces intérêts sont supplantés par vos intérêts ou vos droits et libertés fondamentaux. Plus précisément, les bases juridiques des différentes façons dont nous traitons vos données personnelles (énumérées et expliquées ci-dessus dans la section " Comment ofi utilise vos données personnelles ") sont les suivantes :
+
+Vos droitsInformations supplémentaires pour les résidents de Californie
+La loi vous confère certains droits en ce qui concerne les informations que nous recueillons auprès de vous. Parmi ces droits, vous avez le droit de nous demander une copie de vos données personnelles, de vérifier, corriger ou restreindre (arrêter tout traitement actif) de vos données personnelles.
+En outre, vous pouvez vous opposer au traitement de vos données personnelles dans certaines circonstances (à savoir, lorsque nous n\'avons pas à traiter les données pour satisfaire à une exigence contractuelle ou à une autre exigence légale, ou lorsque nous utilisons les données à des fins de marketing direct).
+Ces droits peuvent être limités, par exemple si la satisfaction de votre demande révèle des données personnelles concernant une autre personne, ou si vous nous demandez de supprimer des informations que nous sommes tenus de conserver en vertu de la loi ou que nous avons des intérêts légitimes à conserver.
+Vous avez le choix en ce qui concerne les informations personnelles que vous nous fournissez. Vous pouvez choisir de ne pas fournir les informations que nous demandons, mais si vous le faites, il se peut que nous ne soyons pas en mesure de vous fournir un service pertinent ou une fonctionnalité particulière pour un site web, une application ou un produit d\'ofi.
+Si vous souhaitez exercer l\'un de ces droits susmentionnés ou vous renseigner à ce sujet, vous pouvez nous envoyer un courriel à l\'adresse ci-dessous.
+Dans votre courriel, indiquez clairement votre demande et précisez le site Web ou l\'application d\'ofi auquel votre demande se réfère et nous dirigerons votre demande vers le contrôleur de données approprié. Si vous avez des préoccupations non résolues, vous avez le droit de vous plaindre auprès d\'une autorité de protection des données appropriée où vous vivez, travaillez ou où vous pensez qu\'une violation a pu se produire.
+Courriel : privacy@ofi.com
+Contrôleur des données
+Le contrôleur des données pour vos informations sera Olam International Limited Singapore (OIL SG) et l\'entité ofi compétente dans votre pays, le cas échéant. OIL SG sera une société de groupe pour toutes les entités juridiques d\'Oi et fera partie du groupe d\'Oi ltd.Nous agissons généralement en tant que contrôleur de données pour les données personnelles. Cependant, dans certaines circonstances, les Partenaires commerciaux peuvent nous engager pour leur fournir certains services de traitement liés aux données personnelles. Dans de tels cas, la collecte et l\'utilisation de vos données personnelles par le Partenaire commercial sont régies par ses propres politiques de confidentialité et non par la présente Déclaration de confidentialité et nous nous appuyons sur leurs déclarations légales selon lesquelles ils sont autorisés à traiter les données personnelles de la manière qu\'ils proposent ou démontrent.
+Comme expliqué ci-dessus, nous partagerons vos informations personnelles à certaines fins spécifiques. Lorsque vos informations personnelles sont transférées en dehors de l\'EEE à une société affiliée d\'ofi ou à une entité située dans un pays qui ne fait pas l\'objet d\'une décision d\'adéquation de la part de la Commission européenne, vos données personnelles seront protégées par des garanties transfrontalières approuvées par la Commission européenne, y compris des clauses contractuelles standard pour le transfert transfrontalier de données.
+"</string>
+
+    <string name="gdpr_data_t1"> Comment ofi utilise vos informations personnelles </string>
+    <string name="gdpr_data_t_ans1"> Base juridique</string>
+    <string name="gdpr_data_t2"> Développer et gérer nos relations avec vous et nos partenaires commerciaux </string>
+    <string name="gdpr_data_t_ans2"> Intérêt légitime, et lorsqu\'une relation contractuelle existe, afin de remplir nos obligations contractuelles envers vous.</string>
+    <string name="gdpr_data_t3"> Assurer la traçabilité de la chaîne d\'approvisionnement </string>
+    <string name="gdpr_data_t_ans3"> Intérêt légitime</string>
+    <string name="gdpr_data_t4"> Favoriser les carrières </string>
+    <string name="gdpr_data_t_ans4"> Intérêt légitime </string>
+    <string name="gdpr_data_t5"> Communiquer avec vous concernant les services auxquels vous êtes partie  </string>
+    <string name="gdpr_data_t_ans5"> Intérêt légitime</string>
+    <string name="gdpr_data_t6"> Fournir et améliorer nos sites web, applications, produits et services </string>
+    <string name="gdpr_data_t_ans6"> Intérêt légitime </string>
+    <string name="gdpr_data_t7"> Traiter les questions juridiques  </string>
+    <string name="gdpr_data_t_ans7"> Obligation légale </string>
+    <string name="gdpr_data_t8"> Gérer les visiteurs du bureau  </string>
+    <string name="gdpr_data_t_ans8"> Intérêt légitime </string>
+    <string name="gdpr_data_t9"> Communications et analyses marketing </string>
+    <string name="gdpr_data_t_ans9"> Consentement</string>
+    <string name="addional_info">Informations supplémentaires pour les résidents de Californie</string>
+
+    <string name="addional_info_data">"Vos droits
+Les résidents de Californie peuvent avoir, conformément à la CCPA, les droits suivants concernant leurs informations personnelles auprès d\'ofi, qui s\'appliquent différemment selon les circonstances : droit t.1o d\'accéder à vos informations, droit à la portabilité des données et droit à la suppression. ofi ne vend pas et ne vendra pas d\'informations personnelles (mais si nous le faisions, vous pourriez avoir le droit de refuser de telles ventes de vos informations personnelles). La plupart de ces droits ne sont pas absolus. Nous ne ferons aucune discrimination à votre encontre et ne vous refuserons aucun produit ou service pour avoir exercé l\'un ou l\'autre de ces droits. Pour plus d\'informations ou pour exercer l\'un de ces droits, vous pouvez nous contacter à l\'adresse privacy@ofi.com.
+Ou vous pouvez nous écrire à l\'adresse suivante
+Olam Americas Inc
+205 East River Park Place
+Suite 310
+Fresno, CA 93720
+Numéro gratuit (USA) : (833) 718-1023
+
+Nos activités de collecte de données en Californie
+Le tableau ci-dessous indique des exemples de certaines des catégories d\'informations personnelles que nous sommes susceptibles de collecter
+    auprès des résidents de Californie."</string>
+
+    <string name="additional_info_data2">" Informations supplémentaires pour les résidents du Nevada et du Maine aux États-Unis
+Conformément aux Nevada Revised Statutes Chapter 603A et Maine Revised Statutes 35-a M.R.S. 9301, les résidents du Nevada et du Maine
+    respectivement peuvent avoir le droit de refuser la vente de leurs informations personnelles,
+    cependant Olam ne vend pas et ne vendra pas d\'informations personnelles. Nous ne ferons aucune discrimination à votre encontre
+    et ne vous refuserons aucun produit ou service pour avoir exercé ces droits. Pour plus d\'informations ou pour consulter et modifier
+    vos informations personnelles, ou pour exercer l\'un de vos droits, vous pouvez nous contacter à l\'adresse privacy@ofi.com ou au numéro
+    gratuit (USA) : (833) 718-1023."</string>
+    <string name="Privacy_change">Modifications de la présente déclaration de confidentialité</string>
+    <string name="Privacy_change_data">À mesure que nous ajoutons de nouvelles caractéristiques et fonctionnalités à nos produits et services,
+    nous pouvons être amenés à mettre à jour ou à réviser la présente Déclaration de confidentialité. Nous nous réservons le droit de
+    mettre à jour cette Déclaration de confidentialité de temps à autre en publiant les mises à jour sur notre site Web ou nos applications.
+    Toute mise à jour entrera en vigueur immédiatement après sa publication et s\'appliquera à toutes les informations recueillies à votre
+    sujet ou, le cas échéant, à votre consentement. Vous êtes libre de décider d\'accepter ou non une version modifiée de la présente
+    déclaration de confidentialité. Si vous n\'acceptez pas les modifications, vous devez cesser toute utilisation ultérieure de notre site web
+    ou de notre appli.</string>
+    <string name="row1value1">	Des identifiants tels qu\'un vrai nom, un pseudonyme, une adresse postale, un identifiant personnel unique,
+    un identifiant en ligne, une adresse de protocole Internet, une adresse électronique, un nom de compte, un numéro de sécurité sociale,
+    un numéro de permis de conduire, un numéro de passeport ou d\'autres identifiants similaires. </string>
+    <string name="row1value2">Toutes les catégories d\'informations personnelles décrites dans la sous-section (e) de la section 1798.80 :
+    " Les informations personnelles " désignent toute information qui identifie, concerne, décrit ou peut être associée à un individu
+    particulier, y compris, mais sans s\'y limiter, son nom, sa signature, son numéro de sécurité sociale, ses caractéristiques ou sa
+    description physiques, son adresse, son numéro de téléphone, son numéro de passeport, son numéro de permis de conduire ou de
+    carte d\'identité nationale, son numéro de police d\'assurance, son éducation, son emploi, ses antécédents professionnels,
+    son numéro de compte bancaire, son numéro de carte de crédit, son numéro de carte de débit ou toute autre information financière,
+    médicale ou d\'assurance maladie. "Les "informations personnelles" ne comprennent pas les informations accessibles au public qui sont
+    légalement mises à la disposition du grand public à partir des dossiers des administrations fédérales, étatiques ou locales."</string>
+
+    <string name="row1value3">Caractéristiques des classifications protégées en vertu de la loi californienne ou fédérale (les classes comprennent
+    la race, la couleur, la religion, l\'origine nationale, le sexe (y compris la grossesse, l\'accouchement et les conditions médicales
+    connexes), le handicap, le congé, l\'âge, le statut de citoyenneté, les informations génétiques, l\'ascendance, l\'allaitement,
+    l\'état civil, l\'identité de genre, l\'expression de genre, l\'orientation sexuelle, la condition médicale, y compris le SIDA/VIH,
+    les activités et affiliations politiques, le statut militaire et de vétéran, et le statut de victime de violence domestique,
+    d\'agression ou de harcèlement).</string>
+    <string name="row1value4">Informations commerciales, y compris les dossiers sur les biens personnels, les produits ou services achetés,
+    obtenus ou envisagés, ou d\'autres historiques ou tendances d\'achat ou de consommation.</string>
+    <string name="row1value5">Informations relatives à l\'activité sur Internet ou sur d\'autres réseaux électroniques, y compris,
+    mais sans s\'y limiter, l\'historique de navigation, l\'historique de recherche et les informations concernant
+    l\'interaction d\'un consommateur avec un site Internet, une application ou une publicité.</string>
+    <string name="row1value6">Informations audio, électroniques, visuelles, thermiques, olfactives ou similaires.</string>
+    <string name="row1value7">Informations professionnelles ou liées à l\'emploi.</string>
+    <string name="row1value8">Informations relatives à l\'éducation, définies comme des informations qui ne sont pas des informations personnelles
+    identifiables accessibles au public, telles que définies dans le Family Educational Rights and
+    Privacy Act (20 U.S.C. section 1232g, 34 C.F.R. Part 99).</string>
+
+    <string name="row2value1">"Clients/candidats à un emploi/autres tiers
+ Pour gérer nos opérations commerciales et administrer nos relations avec les clients.
+ Pour vous fournir un marketing pertinent (par exemple, des informations sur des événements ou des services susceptibles de vous intéresser).
+ Pour répondre aux obligations légales et de conformité (par exemple, vérification de l\'identité des nouveaux clients, prévention de
+    la fraude/du blanchiment d\'argent).
+ Pour étudier la candidature d\'individus à des postes d\'employés ou d\'entrepreneurs et gérer les procédures d\'intégration.
+ Employés Gérer et fournir la rémunération, les avantages sociaux et autres allocations liées au travail.
+ Gérer la main-d\'œuvre (par exemple, gérer les activités professionnelles, les évaluations de performance et les promotions,
+    préparer les organigrammes de l\'entreprise, gérer la dotation en personnel et la gestion des équipes au sein des entités et
+    entre elles, gérer et contrôler les voyages d\'affaires, effectuer des analyses de la main-d\'œuvre, gérer les talents et
+    le développement de carrière, gérer les congés des employés, planifier la succession, fournir des références d\'emploi,
+    gérer la formation en matière d\'éthique et de conformité, faciliter et fournir des services pour la réinstallation et
+    le déplacement des employés et de leur famille au niveau local et international).
+ Se conformer aux obligations du droit du travail.
+ Communiquer avec les employés et leurs contacts désignés en cas d\'urgence.
+ Répondre aux demandes d\'informations légales et/ou réglementaires.
+ Respecter les responsabilités financières de l\'entreprise (audit, comptabilité et exigences fiscales).
+ Gérer les technologies de l\'information de l\'entreprise (par exemple, le support informatique, le répertoire d\'entreprise,
+    la sécurité informatique).
+ Effectuer des contrôles de sécurité (dans la mesure où la loi le permet)."</string>
+    <string name="row2value2">Voir la section 1 ci-dessus.</string>
+    <string name="row2value3"> Uniquement dans la mesure strictement nécessaire aux fins décrites à la section 1 ci-dessus concernant
+     les données des employés et dans la mesure où cela est autrement requis dans le cadre de la gestion de la relation
+     de travail (par exemple, congés de maladie, indemnités de maladie, accidents du travail, autres réclamations
+     liées à l\'emploi, adaptation du handicap sur le lieu de travail, congé de maternité, etc.)
+ Uniquement dans la mesure requise pour se conformer aux obligations légales ou autres bonnes pratiques de la
+     Société (par exemple, AML, lois sur l\'égalité, suivi de la diversité et de l\'inclusion, etc.)
+ </string>
+    <string name="row2value4">Voir la section 1 ci-dessus.</string>
+    <string name="row2value5"> Pour rendre notre site web plus intuitif et plus facile à utiliser.
+ Pour protéger la sécurité et le fonctionnement efficace de notre site web.
+ </string>
+    <string name="row2value6">Audio/visuel - lorsque cela est nécessaire pour des raisons légales/réglementaires.</string>
+    <string name="row2value7">Voir la section 1 ci-dessus en ce qui concerne les employés et les candidats à l\'emploi.</string>
+    <string name="row2value8">Voir la section 1 ci-dessus en ce qui concerne les employés et les candidats à un emploi.</string>
+    <string name="row3value1">De la personne concernée, de nos sociétés affiliées, des contreparties à des transactions ou à des
+     litiges avec les personnes concernées, des employeurs, des agents ou des conseillers professionnels autorisés à divulguer des
+     données au nom de la personne concernée et d\'autres sources accessibles au public ou sur abonnement.</string>
+    <string name="row3value2">Voir la section 1 ci-dessus.</string>
+    <string name="row4value2">Voir la section 1 ci-dessus.</string>
+    <string name="row3value3">Voir la section 1 ci-dessus.</string>
+    <string name="row3value4">Voir la section 1 ci-dessus.</string>
+    <string name="row3value5">Via les sites web des entreprises.</string>
+    <string name="row3value6">Conférences téléphoniques et vidéoconférences avec des clients et d\'autres tiers.</string>
+    <string name="row3value7">Voir section 1 ci-dessus en ce qui concerne les employés et les candidats à l\'emploi.</string>
+    <string name="row3value8">Voir la section 1 ci-dessus en ce qui concerne les employés et les candidats à l\'emploi.</string>
+    <string name="row4value1"> Nos affiliés ,Fournisseurs et prestataires de services lorsque cela est nécessaire pour exécuter des
+     fonctions en notre nom (par exemple, les fournisseurs de services d\'infrastructure/TI, les fournisseurs de services
+     relatifs à l\'accueil des clients, aux voyages internationaux, à la finance, à la gestion de la relation client,
+     à l\'analyse commerciale et au marketing, ainsi qu\'à l\'accueil de conférences et d\'événements).
+ Les institutions financières (pour la facturation et le paiement).
+ Les entreprises acheteuses - dans le cadre d\'une vente d\'actifs de l\'entreprise, d\'une transition de service vers un autre
+     fournisseur ou en cas d\'insolvabilité, de faillite ou d\'insolvabilité.
+ Divulgations obligatoires et demandes légales (par exemple, pour se conformer à une assignation à comparaître, à une ordonnance
+     du tribunal ou à toute autre procédure légale ou pour se conformer à toute demande réglementaire, gouvernementale ou autre demande
+     juridiquement contraignante).</string>
+    <string name="row4value3">" Affiliés ".
+ Fournisseurs et prestataires de services lorsque cela est nécessaire pour exécuter des fonctions en notre nom.
+ Divulgations obligatoires et réclamations légales (par exemple, pour se conformer à toute assignation, ordonnance du tribunal
+     ou autre procédure légale ou pour se conformer à toute demande réglementaire, gouvernementale ou autre demande juridiquement contraignante).
+ "</string>
+    <string name="row4value4">Voir la section 1 ci-dessus.</string>
+    <string name="row4value5">" A nos prestataires de services dans la mesure nécessaire à la fourniture de services informatiques en notre nom.
+ Sociétés affiliées
+ "</string>
+
+    <string name="row4value6">" Affiliés ". À nos prestataires de services dans la mesure nécessaire à la fourniture de services informatiques
+     en notre nom.Divulgations obligatoires et réclamations légales (par exemple, pour se conformer à toute assignation,
+     ordonnance d\'un tribunal ou autre procédure légale ou pour se conformer à toute demande réglementaire, gouvernementale ou autre
+     demande juridiquement contraignante)."</string>
+    <string name="row4value7">Voir la section 1 ci-dessus en ce qui concerne les employés et les candidats à l\'emploi.</string>
+    <string name="row4value8">Voir la section 1 ci-dessus en ce qui concerne les employés et les candidats à un emploi.</string>
+    <string name="title1">Section</string>
+    <string name="title5">Nous avons partagé ces informations personnelles avec les catégories de tiers suivantes :</string>
+    <string name="title4">Nous avons recueilli ces informations personnelles auprès des catégories de sources suivantes :</string>
+    <string name="title2">Catégorie d\'informations personnelles</string>
+    <string name="title3">Nous avons recueilli ces informations personnelles pour les utiliser aux fins professionnelles ou commerciales
+     suivantes :</string>
+    <string name="Privacy">Confidentialité</string>
+    <string name="title_privacy_statement">Déclaration de confidentialité</string>
+    <string name="msg_ok">OK</string>
+
+     <string name="national_id_info">Veuillez mettre à jour l\'ID national de l\'agriculteur</string>
+     <string name="odid">OD ID :</string>
+     <string name="attendee_sex">Sexe :</string>
+     <string name="view_attendees_count">Afficher le participant (~V participants)</string>
+     <string name="consent_duplicate_error">Erreur dans la sauvegarde du consentement de l\'agriculteur</string>
+     <string name="update_farm_information">Mettre à jour les informations sur l\'exploitation</string>
+     <string name="create_new_farm">créer une nouvelle ferme</string>
+     <string name="add_farm_Information">Ajouter des informations sur l\'exploitation</string>
+     <string name="search_farmer">Rechercher un agriculteur</string>
+     <string name="farm_information">Informations sur la ferme</string>
+     <string name="farm_name">Nom de la ferme</string>
+     <string name="farm_code">Code de l\'exploitation</string>
+     <string name="add_stakeholder">Ajouter une partie prenante de l\'exploitation</string>
+     <string name="fill_stakeholder_farm_code_name">Veuillez indiquer le nom et le code de l\'exploitation</string>
+     <string name="already_syned_survey_info">Cette enquête a déjà été complétée par l\'autre partie prenante de l\'exploitation.</string>
+     <string name="farm_type_warning">Veuillez choisir le type de ferme</string>
+     <string name="search_existing_farm">Rechercher une ferme existante</string>
+     <string name="select_by_nearest_farm">Recherche par ferme la plus proche</string>
+     <string name="recored_polygon_multifarm_info">Emplacement de la ferme déjà capturé par une partie prenante de votre ferme</string>
+     <string name="recored_polygon_plot_multifarm_info">Polygone de la ferme déjà capturé par une partie prenante de votre ferme</string>
+     <string name="survey_can_be_completed_by_other_stakeholders">Cette enquête peut être complétée par un autre acteur de l\'exploitation.</string>
+     <string name="txt_farm_name">Nom de la ferme :</string>
+     <string name="txt_farm_code">Code de l\'exploitation :</string>
+     <string name="fill_farmergroup_name_multifarm">Veuillez sélectionner le groupe d\'agriculteurs avant d\'ajouter les parties prenantes de l\'exploitation.</string>
+     <string name="sync_farmer_and_multifarm_stakeholders"> Veuillez synchroniser la mise à jour du nouvel agriculteur et des parties prenantes de la multifamille avant de soumettre l\'enquête sur la multifamille .</string>
+     <string name="select_relationship_with_farmer">Sélectionnez la relation avec l\'agriculteur</string>
+    <string name="attendee_relationship1">Relation</string>
+     <string name="attendee_sex1">Sexe</string>
+
+
+    <string name="reenter_passcode">Déconnexion</string>
+    <string name="android_id">ID d\'installation de l\'appareil : </string>
+    <string name="logout_note">Êtes-vous sûr de vouloir vous déconnecter ? </string>
+    <string name="download_survey_data">Télécharger les données de l\'enquête</string>
+    <string name="select_fgsection">Sélectionnez le groupe d\'agriculteurs et la section</string>
+    <string name="download">Télécharger</string>
+    <string name="downloading">Téléchargement...</string>
+    <string name="survey_ans_downloaded">Données de réponse à l\'enquête téléchargées</string>
+    <string name="view_recent_survey_data">Voir les données récentes de l\'enquête</string>
+    <string name="add_plot">Ajouter une parcelle</string>
+    <string name="plot_name">Nom de la placette</string>
+    <string name="plot_survey">Enquête sur la parcelle</string>
+    <string name="plot_notification_info">Veuillez mettre à jour l\'enquête sur la parcelle pour l\'agriculteur.</string>
+    <string name="consent_info">Veuillez mettre à jour le consentement pour l\'agriculteur</string>
+    <string name="downloading_notification">Téléchargement des données de notification</string>
+    <string name="notification">Notification</string>
+    <string name="notifications">Notifications</string>
+    <string name="notification_type">Type de notification</string>
+    <string name="info_notification_close">La notification a été supprimée de cette liste</string>
+    <string name="course_selection">Sélection de cours *</string>
+    <string name="module_selection">Sélection des modules *</string>
+    <string name="language_selection">Sélection de la langue *</string>
+    <string name="retry_btn_text">Réessayer</string>
+    <string name="file_name">Nom du fichier</string>
+    <string name="description">Description</string>
+    <string name="Loading">Chargement de</string>
+    <string name="PleaseWait">Veuillez patienter</string>
 
 </resources>

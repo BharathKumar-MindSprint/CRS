@@ -16,7 +16,7 @@
     <string name="title_activity_complete_module">Remplir le questionnaire</string>
 
     <!-- main stuff -->
-    <string name="app_name">Olam Agri Compagnon Debug</string>
+    <string name="app_name">OFIS Compagnon Debug</string>
     <string name="cd_topSectionColour">Fonds coloré pour la section</string>
     <string name="ofis_switch_text_yes">Oui</string>
     <string name="ofis_switch_text_no">Non</string>
@@ -507,107 +507,79 @@
     <string name="downloading_child_data">Téléchargement des informations de l\’enumérateur</string>
     <string name="no_child_registered">Enregistrer l\'enfant pour activer les enquêtes</string>
     <string name="please_select_Age">Veuillez selectionner l\'âge</string>
-    <string name="checking_biometric_enumerator">Vérification de l\'énumérateur biométrique</string>
-    <string name="validating_facial_match">Validation du match facial</string>
-    <string name="back_to_registration">Retour à l\'inscription</string>
-    <string name="no_duplicates_found">Aucun doublon trouvé</string>
-    <string name="moderation_info">Lors de la nouvelle inscription, les enregistrements en double répertoriés seront de toute façon envoyés pour modération</string>
-    <string name="continue_biometric">Continuer</string>
-    <string name="cancel_biometric">Annuler</string>
-    <string name="mark_as_unique">Marquer comme unique</string>
-    <string name="label_national_id">carte d\'identité:</string>
-    <string name="label_country" >Pays:</string>
-    <string name="label_region">région:</string>
-    <string name="label_district">quartier:</string>
-    <string name="label_place">lieu:</string>
-    <string name="label_farmer_group">l\'organisation de planteurs:</string>
-    <string name="title_duplicate_records">Enregistrements en double</string>
-    <string name="back_to_registration_info">Lors de la nouvelle inscription, les enregistrements en double répertoriés seront de toute façon envoyés pour modération</string>
-    <string name="match">Rencontre</string>
-    <string name="dob">Date de naissance</string>
-    <string name="view_farmer_info">En continuant, les enregistrements répertoriés seront envoyés pour modératio</string>
-    <string name="unique">Unique</string>
-    <string name="maximum_five_records">Seul un maximum de 5 enregistrements peut être sélectionné à la fois</string>
-    <string name="view_mark_as_unique_info">Les enregistrements seront envoyés pour une modération de deuxième niveau. Vous serez de toute façon autorisé à effectuer d\'autres activités</string>
-    <string name="update_biomatric">Mettre à jour biométrique</string>
-    <string name="update_biomatric_hint">Tap to Entrez des données pour actualiserupdate</string>
-    <string name="farmer_photo_validation">Veuillez télécharger la photo du fermier</string>
-    <string name="label_duplicate_found">Doubles trouvés</string>
-    <string name="title_list_of_duplicates">Liste des doublons</string>
-    <string name="label_duplicate_records">Enregistrements en double</string>
-    <string name="label_section">section:</string>
-    <string name="photo_not_matching">La photo ne correspond pas</string>
-    <string name="updating_farmer_images">Mise à jour des images biométriques des agriculteurs</string>
-    <string name="matching_farmer_records">Correspondance des enregistrements des agriculteurs</string>
-    <string name="matching_results_found">Résultats correspondants trouvés</string>
-    <string name="back_to_search">Retour à la recherche</string>
-    <string name="proceed_to_registration">Procéder à l\'inscription</string>
-    <string name="back">Arrière</string>
 
-    <!-- OFI Consent Consent -->
-    <string name="farmer_consent">L’ACCORD DE L’AGRICULTEUR</string>
+    <string name="farmer_consent">CONSENTEMENT DES AGRICULTEURS</string>
     <string name="personal_info_collection">AVIS DE COLLECTE DE RENSEIGNEMENTS PERSONNELS</string>
-    <string name="cs_page2_title">1.    Utilisation des Données Personnelles</string>
-    <string name="cs_page2_1">Nous pouvons utiliser et partager vos données personnelles comme suit</string>
-    <string name="cs_page2_2">"Y consentez-vous ? Veuillez cocher « ✔ » ou « oui » "</string>
-    <string name="cs_page2_3">Alimenter les Systèmes liés à Olam Agri</string>
-    <string name="cs_page2_4">Nous pouvons collecter des données sur les agriculteurs pour alimenter des systèmes connexes où vos données peuvent être organisées puis analysées pour nous donner des informations importantes telles que les tendances et les problèmes qui affectent la chaîne d’approvisionnement ainsi que pour améliorer nos services pour vous et nos clients. Pour ce faire, les employés d’Olam Agri et de ses sociétés affiliées et certains sous-traitants tiers auront accès à ces systèmes liés à Olam Agri et à vos Données agricoles. Vos Données agricoles peuvent être partagées avec nos affiliés, partenaires et clients.</string>
-    <string name="cs_page2_5">Assurer la Traçabilité jusqu’au Marché</string>
-    <string name="cs_page2_6">Nous pouvons partager les Données agricoles que vous nous fournissez avec nos clients et partenaires (qui peuvent également partager les Données agricoles avec leurs clients et partenaires) afin de fournir des informations sur l’origine de leurs aliments et sur ceux qui les produisent. Cette transparence permet aux acheteurs de prendre des décisions d’achat éclairées et responsables. Ces efforts de traçabilité seront partagés avec le public.</string>
+    <string name="consent_statement_pageone2">Vos données personnelles, y compris votre nom, âge, vos coordonnées (adresse e-mail, numéro de téléphone, adresse postale), vos photographies, vidéos ou enregistrements numériques, vos informations biographiques, sociales et géographiques, financières, des informations sur l\'agriculture et la production, vos commentaires, et  le cas échéant, celles de vos enfants ou des personnes à votre charge ( «Données d’agriculteurs» ) seront collectées et stockées par nous et accessibles pour nos clients, partenaires commerciaux et, dans certains cas, rendues publiques sur nos sites Web Olam, sur les réseaux sociaux, les publications électroniques ou écrites. Cela comprend le système d\’information des agriculteurs Olam («OFIS») et/ou la plate-forme AtSource ( «AtSource»), qui sont des bases de données et des outils en ligne contenant des données relatives aux agriculteurs, utilisées par nous et par nos clients et partenaires. Nous vous demandons par la présente de reconnaître et de donner votre consentement à la collecte, à l\’utilisation et à la divulgation de vos données personnelles à cette fin, conformément au présent Avis de collecte de renseignements personnels.</string>
+    <string name="consent_statement_pageone1">Il vous est demandé de fournir à Olam International Limited (ci-après appelé «Olam», «nous») des données personnelles afin de soutenir les efforts d\'Olam pour promouvoir la durabilité et la traçabilité dans la chaîne d\'approvisionnement et, par conséquent, pour promouvoir le commerce responsable avec des agriculteurs tels que vous à travers le monde (l\' «Objet»).</string>
+    <string name="cs_page2_title">Utilisation de données personnelles</string>
+    <string name="cs_page2_1">Nous utiliserons et partagerons vos données personnelles comme suit</string>
+    <string name="cs_page2_2">Y consentez-vous ?   Merci de cocher (✔") ou marquer « oui » </string>
+    <string name="cs_page2_3">Alimenter les bases OFIS et autres bases de données Olam</string>
+    <string name="cs_page2_4">Nous collecterons des données sur les agriculteurs pour alimenter les bases OFIS et d\'autres bases de données Olam où vos données peuvent être organisées, puis analysées pour nous donner des indications importantes telles que les tendances et les problèmes susceptibles d\'affecter la chaîne d\'approvisionnement. Pour ce faire, les employés d\’Olam et de ses filiales et certains sous-traitants tiers auront accès à vos Données d\’agriculteur. Ces bases de données et les informations qu\'elles contiennent peuvent être partagées avec nos affiliés, partenaires et clients.</string>
+    <string name="cs_page2_5">Assurer la traçabilité sur le marché</string>
+    <string name="cs_page2_6">Nous partagerons les Données d’agriculteur que vous nous fournirez avec nos clients et partenaires (qui partageront également les Données d’agriculteurs avec leurs clients et partenaires), afin de leur permettre de savoir d\'où proviennent leurs denrées alimentaires et qui les produit. Cette transparence permet aux acheteurs de prendre des décisions d\’achat éclairées et responsables.</string>
     <string name="cs_page2_7">Trend and Issue Spotting</string>
-    <string name="cs_page2_8"> -----  </string>
-    <string name="cs_page2_9">Ventes et Promotion des Agriculteurs</string>
-    <string name="cs_page2_10">Nous pouvons utiliser vos Données agricoles pour faire des affaires avec vous et pour vous aider à identifier des opportunités pour vous permettre de développer votre entreprise et vos opérations. Le cas échéant, nous pouvons vous présenter des opportunités d’obtenir des financements, des machines, des conseils de gestion agricole, des fournitures agricoles et des assurances, en plus des opportunités de vente - qui seront toutes fournies directement par nous ou un tiers que nous vous référons. En conséquence, ces tiers auront accès à vos Données agricoles afin de vous offrir ces opportunités de vente et de développement.</string>
-    <string name="cs_page2_11">Promoting Traceability</string>
-    <string name="cs_page2_12"> ------ </string>
-    <string name="cs_page2_13">Publicité Publique et Promotion</string>
-    <string name="cs_page2_14">Olam Agri et ses sociétés affiliées, qui, pour éviter tout doute, incluent notamment Olam Brands BV et les clients et partenaires d’Olam Agri peuvent utiliser les données des agriculteurs, y compris les noms, les photographies, les informations de localisation, les informations sur les produits et les interviews (le cas échéant) dans les supports publicitaires qui seront partagés publiquement, comme sur des sites Web, des publications écrites et sur des produits afin de promouvoir les achats de produits tels que ceux que vous fabriquez et de commercialiser nos initiatives de traçabilité et de durabilité</string>
-    <string name="cs_page2_15">Les Recherches</string>
-    <string name="cs_page2_16">Nous pouvons partager vos Données agricoles à l’appui d’études menées par des organisations éducatives, gouvernementales et non gouvernementales axées sur les agriculteurs locaux, les communautés, l’agriculture, la chaîne d’approvisionnement, la traçabilité, la durabilité et les études sociales connexes afin de promouvoir la collaboration communautaire et les développements dans l’espace durabilité et traçabilité. Ces organisations peuvent utiliser vos Données agricoles dans leurs propres communications électroniques ou publiées.</string>
-    <string name="cs_page3_1">Je soussigné,</string>
-    <string name="cs_page3_4">•   Lorsque je donne mon accord au nom d’un enfant ou d’un mineur, je suis soit le parent ou le tuteur légal de l’enfant ou du mineur.</string>
-    <string name="cs_page4_1">LORSQUE L’AVIS EST LU À L’INDIVIDU PAR LE PERSONNEL/REPRÉSENTANT Olam Agri :</string>
-    <string name="cs_page4_2">Je confirme que le participant m’a écouté lire l’Avis de Collecte d’Informations Personnelles et qu’il a expressément donné son accord pour la collecte, l’utilisation, le transfert en dehors de la juridiction et la divulgation de ses Données Personnelles par Olam Agri aux fins qui y sont énoncées.</string>
-    <string name="cs_page5_1">Déclaration de Confidentialité des Données d’Agriculteurs</string>
+    <string name="cs_page2_8">We will work with our internal teams and service providers to organize, process, and analyse the Farmer Data you share with us in order to identify trends and issues that may affect the supply chain. </string>
+    <string name="cs_page2_9">Ventes et développement des agriculteurs</string>
+    <string name="cs_page2_10">Nous utiliserons vos Données agriculteurs et les données agrégées de l\'OFIS pour vous aider à identifier les possibilités de développement de votre entreprise et de vos activités. Si les circonstances y sont favorables, nous pourrons vous présenter des possibilités de financement, de machines, de conseils en gestion agricole, de fournitures agricoles et des assurances, en plus des opportunités de vente - toutes ces possibilités seront fournies directement par nous ou par un tiers que nous vous recommanderons. Par conséquent, ces tiers auront accès à vos Données d\’agriculteur.</string>
+    <string name="cs_page2_11">Promotion de la traçabilité</string>
+    <string name="cs_page2_12">Nous utiliserons vos Données d\'agriculteur pour promouvoir les programmes de traçabilité que nous menons, notamment sur OFIS, AtSource et d\'autres médias tels que nos sites Web affiliés, ainsi que à travers des communications directes. Cela signifie que nous utiliserons les Données agriculteurs dans des documents d\’information et des présentations partagées entre nous, nos clients (et les clients potentiels), et nos partenaires (et partenaires potentiels), qui peuvent contribuer à faire progresser la traçabilité et la viabilité. </string>
+    <string name="cs_page2_13">Publicité et promotion</string>
+    <string name="cs_page2_14">Olam ses clients et partenaires utiliseront les données d\’agriculteurs, y compris les noms, les photographies, les informations sur l\'emplacement, les informations sur les produits et les entrevues (si elles ont été fournies) dans le matériel publicitaire qui sera partagé publiquement, comme sur les sites Web, les publications écrites et sur les produits. L\'objectif est de promouvoir l\'achat de produits tels que ceux que vous produisez, ainsi que de promouvoir nos initiatives de soutien aux agriculteurs, de traçabilité et de durabilité.</string>
+    <string name="cs_page2_15">Recherche</string>
+    <string name="cs_page2_16">Nous partagerons vos Données d’agriculteur à l’appui d’études menées par des organisations éducatives, gouvernementales et non gouvernementales axées sur les agriculteurs locaux, les communautés, l\’agriculture, la chaîne d\’approvisionnement, la traçabilité, la durabilité et les études sociales connexes afin de promouvoir la collaboration communautaire et les développements dans le domaine de la viabilité et la traçabilité. Ces organisations peuvent également utiliser vos données d’agriculteur dans leurs propres communications électroniques ou publiées.</string>
+    <string name="cs_page2_17">Lorsque les Données agriculteurs sont partagées avec des tiers tels que nos clients et partenaires dans la poursuite de l\’Objet et les utilisations spécifiques consenties ci-dessus, chacun de ces clients et partenaires devient contrôleur de données à part entière et vous consentez à ce qu\’ils utilisent vos données comme indiqué ci-dessus au Paragraphe 1 et comme indiqué dans la Déclaration de confidentialité.</string>
+    <string name="cs_page2_18">Vous pouvez à tout moment retirer le consentement donné, demander l\'accès et/ou la correction de vos Données d\’agriculteur et/ou demander des informations concernant nos politiques et pratiques en nous contactant à l\'adresse suivante <a href="privacy@olamnet.com">privacy@olamnet.com</a>. Bien qu\’aucune divulgation demandée ne soit obligatoire, le fait de ne pas fournir vos Données agriculteur et/ou le retrait ultérieur de votre consentement peut affecter notre capacité à fournir certains services que vous avez pu nous demander séparément (le cas échéant). Par exemple, votre adresse peut être nécessaire non seulement pour contribuer à la traçabilité, mais aussi pour que nous puissions vous livrer certains matériaux tels que du matériel agricole. Dans les cas où vous révoquiez votre consentement, nous pourrons conserver ces données afin de remplir nos obligations contractuelles envers vous, mais nous n\’utiliserons pas ces données à d\’autres fins.</string>
+    <string name="cs_page2_19">Notre Déclaration de confidentialité des Données d’agriculteurs est fournie ci-dessous pour votre information. La Déclaration de confidentialité explique comment nous traitons et protégeons les données personnelles. Bien que vos Données d\’agriculteur soient partagées avec les personnes indiquées ci-dessus, vos Données d\’agriculteur que nous détenons resteront confidentielles et seront stockées sur nos serveurs à Singapour, conformément aux lois applicables en matière de protection de la vie privée.</string>
+    <string name="cs_page3_1">Je, soussigné,</string>
+    <string name="cs_page3_2">reconnais par la présente que j\'ai lu, compris et accepté les dispositions de cet Avis de collecte de renseignements personnels et de la Déclaration de confidentialité des données d’agriculteurs et que:</string>
+    <string name="cs_page3_3">J’ai indiqué par un “<b><i>✔</i></b>“ ou par «oui» au Paragraphe 1 que je consens à l\’utilisation et à la collecte de mes données personnelles aux fins spécifiques qui y sont indiquées. </string>
+    <string name="cs_page3_4">Lorsque je donne mon consentement au nom d\'un enfant ou d\'un mineur, je suis soit le parent, soit le tuteur légal de l\'enfant ou du mineur.</string>
+    <string name="cs_page3_5">Je comprends que je ne recevrai aucune rémunération financière ou autre pour toute donnée personnelle, y compris pour des images et que toute propriété intellectuelle qui subsiste dans une image appartiendra à Olam.</string>
+    <string name="cs_page3_6">Je comprends que j\’ai le droit de retirer mon consentement ou celui de mon enfant/mineur à tout moment et que lorsque ce consentement est retiré, Olam n\’utilisera pas d\’images ou de données personnelles dans des publications futures, mais peut continuer à utiliser ces données personnelles dans les publications déjà en circulation.</string>
+    <string name="cs_page4_1"> LORSQUE L\’AVIS EST LU À HAUTE VOIX À LA PERSONNE PAR LE PERSONNEL/REPRÉSENTANT D’OLAM :</string>
+    <string name="cs_page4_2">Je confirme que le participant a écouté ma lecture de l\’Avis de collecte de renseignements personnels et qu\’il a expressément donné son consentement pour la collecte, l\’utilisation, le transfert à l\’extérieur de la juridiction et la divulgation de ses données personnelles par Olam aux fins qui y sont énoncées.</string>
+    <string name="cs_page5_1">Déclaration de confidentialité des données d’agriculteur</string>
+    <string name="cs_page5_2">La présente politique décrit l\'utilisation par Olam et ses filiales de vos Données d\’agriculteur, recueillies en vertu de l\'Avis de collecte d\'informations personnelles signé par vous (\‘ l\’Avis\’). Elle est complémentaire à l\’Avis et à la Déclaration de confidentialité du Groupe Olam, disponibles sur w<a href="www.olamgroup.com/privacy.html">www.olamgroup.com/privacy.html</a> et doit être lue en même temps que l\’Avis et et la Déclaration. En cas d\'incohérence, l\’Avis prévaudra sur la présente Déclaration de confidentialité des Données d\’agriculteurs et la Déclaration de confidentialité du Groupe Olam (dans cet ordre).</string>
+    <string name="cs_page5_3">Olam a pour politique de se conformer à toutes les lois applicables en matière de protection de la vie privée et des données. Olam ne recueillera et n\'utilisera vos données qu\'à des fins précises et légitimes, les traitera d\’une manière compatible avec ces objectifs, prendra des mesures raisonnables pour s’assurer que vos données sont exactes, complètes et mises à jour (si nécessaire) et prendra les mesures appropriées pour assurer une protection adéquate de vos données.</string>
     <string name="cs_page5_4">Quelles données recueillons-nous ?</string>
-    <string name="cs_page5_5">Nous pouvons collecter et traiter des données personnelles vous concernant, y compris, mais sans s’y limiter :\n
-        •	Photographies, vidéos et autres images (où votre identité personnelle est clairement identifiable) ;\n
-        •	Prénom et Nom ;\n
-        •	Données agricoles, y compris la production et l’infrastructure ;\n
-        •	Commentaires de votre part ;\n
-        •	Informations sociales, financières, géographiques et biographiques ;\n
-        •	Adresse et autres coordonnées.\n
-        •	Données de localisation lorsque vous nous autorisez l’accès à votre localisation dans l’application</string>
-    <string name="cs_page5_6">"A quelles fins utilisons-nous vos données ? "</string>
-    <string name="cs_page5_7">Nous utilisons vos données aux fins suivantes :\n
-        •	Vous fournir des services tels que des conseils agronomiques, du matériel agricole et l’accès à des services liés à l’agriculture tels que le financement, l’assurance et la logistique ;\n
-        •	Faciliter les échanges avec vous ;\n
-        •	Publication sur des canaux appartenant à Olam Agri, y compris des sites Web, des médias sociaux et des imprimés ; \n
-        •	Soutenir nos initiatives de durabilité et de traçabilité ;\n
-        •	Identifier les tendances en agriculture qui nous permettront de mieux exploiter notre entreprise et de vous fournir des services ;\n
-        •	Commercialiser et promouvoir les produits Olam Agri et les activités de l’entreprise ; \n
-        •	Soutenir les initiatives de recherche de nos partenaires pour soutenir la collaboration communautaire et les progrès dans les domaines de la durabilité et de la traçabilité ;\n
-        •	Démontrer nos services aux agriculteurs aux investisseurs et partenaires potentiels ; et\n
-        •	Communiquer avec vous et développer et gérer nos relations avec vous et nos partenaires commerciaux.</string>
-    <string name="cs_page5_8">Quelle est notre base légale pour la collecte et le traitement de vos données ?</string>
-    <string name="cs_page5_9">Nous ne collecterons et traiterons ces données que pour mener nos activités et poursuivre nos intérêts légitimes comme requis par Olam Agri et nos sociétés affiliées et pour nous conformer aux obligations légales. Nous nous appuyons sur le consentement pour quelques activités de traitement (comme la communication marketing) qui peuvent être révoquées chaque fois que la personne concernée le demande.</string>
-    <string name="cs_page5_10">"Avec qui partagerons-nous ces données ? "</string>
-    <string name="cs_page5_11">"Nous pouvons partager vos données avec d’autres membres du groupe Olam Agri, y compris des sociétés affiliées, pour atteindre les objectifs décrits ci-dessus. Nous partagerons également vos données avec les autorités gouvernementales et/ou les responsables de l’application des lois si la loi l’exige, ainsi qu’avec tous les clients, fournisseurs de services, fournisseurs et partenaires commerciaux actuels et futurs d’Olam Agri dans la poursuite des objectifs décrits ci-dessus ou autrement avec votre consentement. "</string>
-    <string name="cs_page5_12">Où envoyons-nous vos données ?</string>
-    <string name="cs_page5_13">Outre le partage avec nos sous-traitants tiers aux fins énumérées ci-dessus, vos données peuvent parfois être transférées à l’une de nos sociétés affiliées dans un autre pays. Nous prendrons des mesures raisonnables pour nous assurer que vos données sont protégées de manière adéquate conformément à la législation pertinente en matière de protection des données qui s’applique au traitement des données dans ce pays. Lorsque vos informations personnelles sont transférées en dehors de l’EEA à une filiale Olam Agri ou à une entité dans un pays qui n’est pas soumis à une décision d’adéquation de la Commission Européenne, vos données personnelles seront protégées par des garanties transfrontalières approuvées par la Commission Européenne, y compris des clauses contractuelles types pour le transfert de données transfrontalier</string>
-    <string name="cs_page5_14">Quelles mesures avons-nous mise en place pour protéger vos données ?</string>
-    <string name="cs_page5_15">Olam Agri maintient des garanties raisonnables pour protéger la confidentialité, la sécurité et l’intégrité de vos données. Bien que nous utilisions des mesures de sécurité pour aider à protéger vos données contre la divulgation non autorisée, nous ne pouvons garantir la sécurité des informations fournies sur Internet et ne serons pas responsables des violations de la sécurité au-delà de notre contrôle.</string>
-    <string name="cs_page5_16">"QUELS SONT VOS DROITS EN CE QUI CONCERNE VOS DONNÉES PERSONNELLES ? "</string>
-    <string name="cs_page5_17">"Vous pouvez choisir de ne pas fournir les données que nous demandons. Vous avez le droit de demander à Olam Agri une copie de vos données et de vérifier, corriger ou restreindre le traitement actif de vos données. Vous pouvez demander à Olam Agri de cesser d’utiliser vos images à tout moment, auquel cas elles ne seront pas utilisées dans les publications futures mais pourront continuer à apparaître dans les publications déjà en circulation. Vous avez le droit de déposer une plainte à tout moment auprès de l’autorité de protection des données de la région concernée. Ces droits peuvent être limités par la loi. Si vous souhaitez exercer ces droits ou si vous avez des questions à leur sujet, vous pouvez contacter Olam Agri à l’adresse <a href="privacy@olamagri.com">privacy@olamagri.com</a>.. "</string>
-    <string name="cs_page5_18">"Combien de temps allez-vous conserver mes données ? "</string>
-    <string name="cs_page5_19">Sauf disposition contraire de la loi, Olam Agri conservera vos données personnelles pendant la période nécessaire aux fins pour lesquelles les données ont été collectées. Olam Agri partagera la durée de conservation de vos données personnelles à votre demande.</string>
-    <string name="cs_page5_20">Informations de Contact</string>
-    <string name="cs_page5_21">" Si vous avez des questions concernant les données que nous détenons à votre sujet, veuillez nous envoyer un e-mail à <a href="privacy@olamagri.com">privacy@olamagri.com</a>."</string>
-    <string name="cs_page5_22">   </string>
-    <string name="consent_statement_pageone2">Vos données personnelles incluant votre nom, âge, coordonnées (adresse e-mail, numéro de téléphone, adresse postale), profession, photographies, vidéos ou enregistrements numériques, informations biographiques, sociales et géographiques, informations sur l’agriculture et la production, et le cas échéant, celles de vos enfants ou personnes à charge (« <b>Données de l’Agriculteur</b> ») seront collectées et stockées par nous et rendues accessibles à nos clients, partenaires commerciaux et, dans certains cas, rendues publiques sur les sites Web, les médias sociaux, les publications électroniques ou écrites d’Olam Agri. Nous vous demandons par la présente de reconnaître et de donner votre accord à la collecte, à l’utilisation et à la divulgation de vos données personnelles à cette fin, conformément au présent avis de collecte de renseignements personnels.</string>
-    <string name="consent_statement_pageone1">Il vous est demandé de fournir à Olam Food Ingredients (ci-après dénommé « <b>Olam Agri</b> », « <b>nous</b> » <b>ou</b> « <b>notre</b> ») des données personnelles en appui aux efforts d‘Olam Agri dans le cadre de la promotion de la durabilité et de la traçabilité dans la chaîne d‘approvisionnement et en retour pour la promotion d’un commerce responsable avec des agriculteurs tel que vous dans le monde entier (« <b>l’Objectif</b> »).</string>
-    <string name="allchilds_name">Nom de l’Enfant (si vous consentez au nom d’un enfant) :</string>
-    <string name="full_farmer_name">Nom Complet:</string>
+    <string name="cs_page5_5">Nous recueillons et traitons des données personnelles vous concernant, y compris, mais sans s\’y limiter :\n
+•	Photographies, vidéos et autres images (lorsque votre identité personnelle est clairement identifiable) ;\n
+•	Prénom et nom de famille ;\n
+•	Production et infrastructure agricoles ;\n
+•	Vos commentaires pouvant inclure des données personnelles ;\n
+•	Informations sociales, financières, géographiques et biographiques ;\n
+•	Pays de résidence et autres coordonnés ; et\n
+•	Profession.
+</string>
+    <string name="cs_page5_6">À quelles fins utilisons-nous vos données ?</string>
+    <string name="cs_page5_7">Nous utilisons ces données aux fins suivantes :\n
+•	Vous offrir des services ;\n
+•	Communiquer avec vous ; \n
+•	Promouvoir nos initiatives en matière de viabilité et de traçabilité ;\n
+•	Commercialiser et promouvoir les produits Olam et les activités de l\'entreprise sur les canaux appartenant à Olam, notamment les sites Web, les médias sociaux et les imprimés, et placer de manière proactive le contenu dans des publications médiatiques externes (imprimées et en ligne) ;\n
+•	Soutenir les initiatives de recherche de nos partenaires afin de favoriser la collaboration communautaire et les progrès dans les domaines de la viabilité et de la traçabilité ;\n
+•	Identifier les tendances, les enjeux et les risques sur les marchés agricoles et dans la chaîne d’approvisionnement ; Et\n
+•	Développer et gérer nos relations avec vous et avec nos partenaires commerciaux.
+</string>
+    <string name="cs_page5_8">Quelle est notre base juridique pour la collecte et le traitement de vos données ?</string>
+    <string name="cs_page5_9">Nous ne recueillerons et traiterons ces données qu’avec (a) votre consentement ; (b) le cas échéant, comme l’exigent Olam et nos filiales, pour mener nos activités et poursuivre nos intérêts légitimes ; (c) à des fins raisonnablement attendues ou légitimes, conformément à la législation applicable en matière de protection des données.</string>
+    <string name="cs_page5_10">Avec qui partagerons-nous ces données ?</string>
+    <string name="cs_page5_11">Nous partagerons vos données avec d/’autres membres du groupe Olam, y compris toute filiale, pour atteindre les objectifs décrits ci-dessus. Nous partagerons également vos données avec les autorités gouvernementales et/ou les responsables de l\'application de la loi si la loi l\'exige, ainsi qu\'avec tous les clients, prestataires de services, fournisseurs et partenaires commerciaux actuel et futur d\'Olam dans la poursuite des objectifs décrits ci-dessus, ou autrement avec votre consentement.</string>
+    <string name="cs_page5_12">Où enverrons-nous vos données ?</string>
+    <string name="cs_page5_13">À l\'exception du partage avec nos sous-traitants tiers pour les raisons énumérées ci-dessus, vos données peuvent être transférées de temps en temps à l\'une de nos filiales dans un autre pays. Nous prendrons des mesures raisonnables pour nous assurer que vos données seront protégées de manière adéquate et conformément à la législation sur la protection des données en vigueur dans le pays concerné. Lorsque vos informations personnelles seront transférées en dehors de l\’EEE à une filiale d\’Olam ou à une entité d\’un pays qui n\’est pas soumis à une décision de conformité de la Commission Européenne, vos données personnelles seront protégées par des garanties transfrontalières approuvées par la Commission Européenne, y compris des clauses contractuelles standard pour le transfert transfrontalier de données.</string>
+    <string name="cs_page5_14">Quelles mesures avons-nous mises en place pour protéger vos données ?</string>
+    <string name="cs_page5_15">Olam maintient des garanties raisonnables pour protéger la confidentialité, la sécurité et l\’intégrité de vos données. Bien que nous utilisions des mesures de sécurité pour protéger vos données contre la divulgation non autorisée, nous ne pouvons pas garantir la sécurité des informations fournies sur Internet et ne seront pas responsables d’atteintes à la sécurité au-delà de notre contrôle raisonnable.</string>
+    <string name="cs_page5_16">Quels sont vos droits en ce qui concerne vos données ?</string>
+    <string name="cs_page5_17">Vous pouvez choisir de ne pas fournir les données que nous vous demandons. Vous avez le droit de demander à Olam une copie de vos données et de vérifier, corriger ou restreindre le traitement actif de vos données. Vous pouvez demander à Olam de cesser d’utiliser vos images à tout moment, auquel cas elles ne seront pas utilisées dans les publications futures, mais pourront continuer à apparaître dans les publications déjà en circulation. Ces droits peuvent être limités par la loi. Si vous souhaitez exercer ces droits ou si vous avez des questions à ce sujet, vous pouvez contacter Olam à l\’adresse électronique indiquée ci-dessous.</string>
+    <string name="cs_page5_18">Combien de temps allez-vous conserver mes données ?</string>
+    <string name="cs_page5_19">Sauf disposition contraire de la loi, Olam conservera vos données personnelles pour une période nécessaire aux fins pour lesquelles elles ont été collectées.</string>
+    <string name="cs_page5_20">Coordonnées</string>
+    <string name="cs_page5_21">Le responsable du traitement de vos données est Olam International Limited, sauf indication contraire de l\'entité Olam concernée dans votre pays. Si vous avez des questions relatives aux données que nous détenons à votre sujet, merci de nous envoyer un courrier électronique à l\'adresse suivante <a href="privacy@olamnet.com">privacy@olamnet.com</a>.</string>
+    <string name="cs_page5_22">La déclaration de confidentialité du groupe Olam, qui explique les autres méthodes de collecte et d\'utilisation des données personnelles, se trouve à l\'adresse suivante: <a href="www.olamgroup.com/privacy.html">www.olamgroup.com/privacy.html</a></string>
+
+    <string name="full_farmer_name">Nom Complet</string>
     <string name="date">Date:</string>
     <string name="olam_connect">Olam Connect</string>
     <string name="olam_contact">Olam Contact</string>
@@ -618,76 +590,47 @@
     <string name="childs_name">Nom de l\'enfant</string>
     <string name="name">Nom:</string>
 
-    <string name="search_by_photo">Recherche par photo</string>
-    <string name="no_matching_results_found">Aucun résultat correspondant trouvé</string>
-    <string name="biometric_update">Mise à jour biométrique</string>
-    <string name="activating_license">Activation des licences</string>
-    <string name="proceed_to_register">Procéder à l\'inscription</string>
-    <string name="biometric_enum">Vous êtes maintenant un recenseur biométrique</string>
-    <string name="nonbiometric_enum">Vous n\'êtes plus un recenseur biométrique</string>
-    <string name="deactivate_license_setting">Désactiver la licence</string>
-    <string name="biometric_license_deactive">Licence biométrique: Désactiver</string>
-    <string name="biometric_license_partial">Licence biométrique: Partielle</string>
-    <string name="biometric_license_active">Licence biométrique: Active</string>
-    <string name="unable_deactivate_neurotech">Impossible de désactiver. Veuillez contacter Neurotech pour désactiver</string>
-    <string name="deactivating_license">Désactivation des licences..</string>
-    <string name="biometric_license_failed_in_offline">Licence désactivée hors ligne</string>
-    <string name="biometric_license_failed">Licence biométrique: échoué</string>
-    <string name="biometric_licence_deactivation_queue">Désactivation de la licence biométrique</string>
-    <string name="face_recognizion">Reconnaissance de visage</string>
-
-
-    <string name="Date_of_Birth_hint">MMM DD,YYYY</string>
-    <string name="cs_page2_17">2.    Lorsque vos Données agricoles sont partagées avec des tiers tels que nos clients et partenaires dans la poursuite de l’Objectif et des utilisations spécifiques consenties ci-dessus, chacun de ces clients et partenaires est un contrôleur de données à part entière et vous consentez à leur utilisation de vos données, comme indiqué ci-dessus au paragraphe 1 et comme détaillé dans la Déclaration de Confidentialité. Si l’un de ces clients et partenaires a besoin d’exploiter vos Données agricoles au-delà de l’objectif et des utilisations spécifiques consenties ci-dessus, ils peuvent vous contacter directement pour demander une autorisation supplémentaire</string>
-    <string name="cs_page2_18">3.    Vous pouvez retirer le consentement donné, demander l’accès et/ou la correction de vos Données agricoles et/ou demander des informations concernant nos politiques et pratiques à tout moment en nous contactant à l’adresse \t<a href="privacy@olamagri.com">privacy@olamagri.com</a>. Bien qu’aucune divulgation demandée ne soit obligatoire, le défaut de fournir vos Données agricoles et/ou le retrait ultérieur de votre consentement peut affecter notre capacité à fournir certains services que vous pouvez nous avoir demandé séparément (le cas échéant). Par exemple, votre adresse peut être requise non seulement pour faciliter la traçabilité, mais également pour nous permettre de vous livrer certains matériaux tels que des fournitures agricoles. Dans les cas où vous annulez votre accord, nous pouvons conserver ces données afin de remplir nos obligations contractuelles envers vous, mais nous n’utiliserons pas ces données à d’autres fins.</string>
-    <string name="cs_page2_19">4.    Notre Déclaration de Confidentialité des Données agricoles est fournie à titre de référence ci-dessous. Elle explique comment nous traitons et protégeons les données personnelles. Bien que vos Données Agricoles soient partagées avec les personnes indiquées ci-dessus, vos Données Agricoles que nous détenons resteront confidentielles et conformément aux lois applicables en matière de confidentialité.</string>
-    <string name="cs_page3_2">reconnais par la présente avoir lu, compris et accepté la collecte et l’utilisation de mes Données agricoles comme indiqué dans le présent Avis de Collecte d’Informations Personnelles et la Déclaration de Confidentialité des Données Agricoles et que :</string>
-    <string name="cs_page3_3">•   J’ai indiqué par un « ✔ » ou « oui » au paragraphe 1 où je consens à l’utilisation et à la collecte de mes données personnelles aux fins spécifiques qui y sont indiquées</string>
-    <string name="cs_page3_5">•   Je comprends que je ne recevrai aucune rémunération financière ou autre pour les données personnelles, y compris les images et toute propriété intellectuelle qui subsiste dans une image appartiendra à Olam Agri.</string>
-    <string name="cs_page3_6">•   Je comprends que j’ai le droit de retirer mon accord pour moi ou mon enfant/mineur à tout moment et que lorsque cet accord est retiré, Olam Agri n’utilisera aucune image ou donnée personnelle dans aucune publication future, mais pourra continuer à utiliser ces Données Personnelles dans les publications déjà en circulation.</string>
-    <string name="cs_page5_2">Cette politique de confidentialité définit les modes de collecte, d’utilisation et de divulgation de vos informations recueillies sur l’application. Elle complète et doit être lue conjointement avec la déclaration de confidentialité de l’Olam Agri, qui explique les autres manières dont nous collectons et utilisons les données personnelles et est disponible sur <a href="www.Olam Agri.com/privacy.html">www.Olam Agri.com/privacy.html</a></string>
-    <string name="cs_page5_3">La politique d’Olam Agri est de se conformer à toutes les lois applicables en matière de confidentialité et de protection des données. Olam Agri collectera et utilisera vos données uniquement à des fins spécifiées et légitimes, les traitera d’une manière compatible avec ces fins, prendra des mesures raisonnables pour s’assurer que vos données sont exactes, complètes et mises à jour (le cas échéant) et prendra les mesures appropriées pour assurer une protection adéquate de vos données.\n\n<b>Responsable des Données</b>\n\n Le responsable du traitement de vos informations sera Olam Global Agri Holdings Pte. Ltd. et l\'entité affiliée concernée dans votre pays, le cas échéant.\n\n Nous agissons généralement en tant que responsable du traitement des données personnelles. Cependant, dans certaines circonstances, les Partenaires commerciaux peuvent nous engager pour leur fournir certains services de traitement liés aux données personnelles. Dans de tels cas, la collecte et l’utilisation de vos données personnelles par le Partenaire commercial sont régies par ses propres politiques de confidentialité et nous nous appuyons sur leurs déclarations légales selon lesquelles nous sommes autorisés à traiter les données personnelles de la manière qu’ils proposent ou démontrent.\n\n Comme expliqué ci-dessus, nous partagerons vos informations personnelles à certaines fins spécifiées. Lorsque vos informations personnelles sont transférées en dehors de l’EEA à une filiale Olam Agri ou à une entité dans un pays qui n’est pas soumis à une décision d’adéquation de la Commission Européenne, vos données personnelles seront protégées par des garanties transfrontalières approuvées par la Commission Européenne, y compris des clauses contractuelles types pour le transfert de données transfrontalier.</string>
-    <string name="occupation_fs">Profession :</string>
-    <string name="occupation_hint">Profession</string>
-
+    <string name="allchilds_name">Noms de tous les enfants (le cas échéant)</string>
 
     <string name="restriction_in_submodules">Veuillez répondre à toutes les questions obligatoires avant de continuer</string>
     <string name="please_respond_mandatory_question">Veuillez répondre à la question obligatoire</string>
     <string name="update_firebase_install_id_info">Updating Informations</string>
     <string name="please_click_checkbox">Veuillez cocher toutes les cases appropriées</string>
     <string name="please_sign_within_the_boundary_box">Please sign within the boundary box</string>
-    <string name="txt_farm_name">Farm Name:</string>
-    <string name="txt_farm_code">Farm Code:</string>
-    <string name="attendee_sex">Sex</string>
+    <!-- <string name="txt_farm_name">Farm Name:</string>-->
+    <!-- <string name="txt_farm_code">Farm Code:</string>-->
+    <!-- <string name="attendee_sex">Sex</string>-->
     <string name="multifarm_not_synced">Veuillez synchroniser les détails de plantation multiple en premier.</string>
-    <string name="fill_farmergroup_name_multifarm">Veuillez sélectionner le groupe de producteurs avant d\'ajouter les parties prenantes de plantation.</string>
-    <string name="sync_farmer_and_multifarm_stakeholders">Veuillez synchroniser la mise à jour du nouveau producteur et des parties prenantes de la plantation avant de soumettre l\'enquête sur la plantation. </string>
+    <!-- <string name="fill_farmergroup_name_multifarm">Veuillez sélectionner le groupe de producteurs avant d\'ajouter les parties prenantes
+         de plantation.</string>-->
+    <!--  <string name="sync_farmer_and_multifarm_stakeholders">Veuillez synchroniser la mise à jour du nouveau producteur et des parties prenantes
+          de la plantation avant de soumettre l\'enquête sur la plantation. </string>-->
     <string name="consent_duplicate_alert">Un consentement en double a été identifié et ne peut donc pas être synchronisé avec l\'élément sélectionné. Veuillez noter que ces doublons seront supprimés de la file d\'attente ultérieurement.</string>
-    <string name="consent_duplicate_error">Erreur dans la sauvegarde du consentement de le producteur</string>
-    <string name="update_farm_information">Mise à jour des informations sur la plantation</string>
+    <!--  <string name="consent_duplicate_error">Erreur dans la sauvegarde du consentement de le producteur</string>-->
+    <!--<string name="update_farm_information">Mise à jour des informations sur la plantation</string>-->
     <string name="select_from_existing_farm">Sélectionner dans une plantation existante</string>
-    <string name="create_new_farm">créer une nouvelle plantation</string>
-    <string name="add_farm_Information">Ajouter des informations sur la plantation</string>
-    <string name="search_farmer">Rechercher un producteur</string>
+    <!-- <string name="create_new_farm">créer une nouvelle plantation</string>
+     <string name="add_farm_Information">Ajouter des informations sur la plantation</string>
+     <string name="search_farmer">Rechercher un producteur</string>-->
     <string name="multifarm_name_search">Recherche par nom</string>
-    <string name="farm_information">Informations sur la plantation</string>
+    <!--<string name="farm_information">Informations sur la plantation</string>
     <string name="farm_name">Nom de la plantation</string>
     <string name="farm_code">Code de la plantation</string>
-    <string name="add_stakeholder">Ajouter une partie prenante de la plantation</string>
+    <string name="add_stakeholder">Ajouter une partie prenante de la plantation</string>-->
     <string name="no_match_found">Aucune correspondance trouvée</string>
     <string name="please_enter_farmer_name">Veuillez entrer le nom de le producteur et cliquer sur Ajouter</string>
     <string name="delink_confirmation">Etes-vous sûr de vouloir délier la partie prenante ?</string>
     <string name="stakeholder_validation">Veuillez ajouter au moins une partie prenante pour continuer.</string>
     <string name="fill_stakeholder_name_role">Veuillez remplir toutes les informations sur la partie prenante</string>
-    <string name="fill_stakeholder_farm_code_name">Veuillez indiquer le nom et le code de la plantation</string>
-    <string name="already_syned_survey_info">Cette enquête a déjà été complétée par l\'autre partie prenante de la plantation.</string>
+    <!--<string name="fill_stakeholder_farm_code_name">Veuillez indiquer le nom et le code de la plantation</string>
+    <string name="already_syned_survey_info">Cette enquête a déjà été complétée par l\'autre partie prenante de la plantation.</string>-->
     <string name="record_polygon_location_complete">Polygone capturé</string>
-    <string name="farm_type_warning">Veuillz choisir le type de plantation</string>
-    <string name="search_existing_farm">Rechercher une plantation existante</string>
-    <string name="select_by_nearest_farm">Recherche par plantation la plus proche</string>
-    <string name="recored_polygon_multifarm_info">Emplacement de la plantation déjà capturé par une partie prenante de votre plantation</string>
-    <string name="recored_polygon_plot_multifarm_info">Polygone de la plantation déjà capturé par une partie prenante de votre plantation</string>
-    <string name="survey_can_be_completed_by_other_stakeholders">Cette enquête peut être complétée par un autre acteur de plantation.</string>
+    <!--   <string name="farm_type_warning">Veuillz choisir le type de plantation</string>
+       <string name="search_existing_farm">Rechercher une plantation existante</string>
+       <string name="select_by_nearest_farm">Recherche par plantation la plus proche</string>
+       <string name="recored_polygon_multifarm_info">Emplacement de la plantation déjà capturé par une partie prenante de votre plantation</string>
+       <string name="recored_polygon_plot_multifarm_info">Polygone de la plantation déjà capturé par une partie prenante de votre plantation</string>
+       <string name="survey_can_be_completed_by_other_stakeholders">Cette enquête peut être complétée par un autre acteur de plantation.</string>-->
     <string name="password">mot de passe</string>
     <string name="nid_exp_fill">Veuillez indiquer la date d\'expiration</string>
     <string name="checking_isfl_enumerator">Vérification de l\'enumerateur principal de le producteur</string>
@@ -744,7 +687,7 @@
     <string name="privacy_cache_offline">Vous n\'êtes pas en ligne. Veuillez allumer votre réseau pour consulter la dernière déclaration de confidentialité.</string>
     <string name="privacy_no_cache_offline">Vous n\'êtes pas en ligne. Veuillez allumer votre réseau pour consulter la déclaration de confidentialité.</string>
     <string name="select_country">Veuillez sélectionner le pays</string>
-    <string name="odid">identifiant Olam Direct</string>
+    <!-- <string name="odid">identifiant Olam Direct</string>-->
     <string name="duplicate_survey">Entrée d\'enquête en double</string>
     <string name="removing_duplicate_survey">Suppression de l\'enquête en double</string>
     <string name="farmer_role">Rôle</string>
@@ -755,20 +698,20 @@
     <string name="add_attendee">Ajouter un participant</string>
     <string name="attendee_name_hint">Entrez le nom du participant</string>
     <string name="attendee_hint_age">Saisir l\'âge</string>
-    <string name="view_attendees_count">Voir le participant (~V participants)</string>
+    <!-- <string name="view_attendees_count">Voir le participant (~V participants)</string>-->
     <string name="add_edit_attendee">Ajouter un participant</string>
     <string name="viewAttendee">Afficher le participant</string>
     <string name="attendee">Participant</string>
     <string name="mandatory_msg">Veuillez remplir tous les détails</string>
     <string name="add_edit">Ajouter/Modifier</string>
     <string name="Attendee">Participant</string>
-    <string name="select_relationship_with_farmer">Sélectionnez la relation avec le producteur</string>
+    <!--  <string name="select_relationship_with_farmer">Sélectionnez la relation avec le producteur</string>-->
     <string name="attendee_name1">Nom du participant</string>
-    <string name="attendee_relationship1">Lien de parenté</string>
-    <string name="attendee_sex1">Genre</string>
+    <!-- <string name="attendee_relationship1">Lien de parenté</string>-->
+    <!--<string name="attendee_sex1">Genre</string>-->
     <string name="please_check_question">Veuillez vérifier la question</string>
     <string name="please_check_dependent_question">puisque sa question dépendante est mise à jour</string>
-    <string name="national_id_info">Actualiser le numéro de la carte nationale du producteur</string>
+    <!-- <string name="national_id_info">Actualiser le numéro de la carte nationale du producteur</string>-->
     <string name="zero_area_msg">Impossible de sauvegarder le polygone enregistré avec 0ha. Veuillez essayer d\'enregistrer un autre polygone</string>
     <string name="direct_value_below_error">Veuillez entrer la valeur de la question %1 d inférieure à %2 d</string>
     <string name="direct_value_above_error">Veuillez saisir la valeur de la question %1 d supérieure à %2 d</string>
@@ -815,5 +758,315 @@
     <string name="Alert_message_to_contact_administrator">Oups ! !! Un problème est survenu. Veuillez contacter l\'administrateur.</string>
     <string name="Alert_text_line1">Oups ! Les données de formation sont disponibles uniquement en ligne</string>
     <string name="Alert_text_line2">Veuillez activer vos données mobiles.</string>
+
+
+
+    <!--Newly Add strings-->
+
+    <string name="Passcode">Code d\'accès</string>
+    <string name="spinner_subdistrict_default">Sous-district</string>
+    <string name="complete_all_required_fields_mandatry">Erreur de configuration de l\'enquête. Veuillez soumettre une demande d\'aide.</string>
+    <string name="authentication_attempt">Veuillez attendre 30 minutes pour que votre connexion soit activée et réessayez avec votre même ID d\'agent recenseur et votre code d\'accès.</string>
+    <string name="detail_view">Vue détaillée</string>
+    <string name="update_tab_hint">Tapez pour mettre à jour</string>
+    <string name="offline_access">accès hors ligne</string>
+    <string name="refresh_token">jeton de rafraîchissement</string>
+
+    <string name="privacy_data">"Olam Food Ingredients et ses filiales dans le monde entier (collectivement appelés "ofi", "nous", "notre") comprennent l\'importance de la confidentialité pour vous. Cette politique résume les informations personnelles que nous sommes susceptibles de recueillir, la manière dont nous pouvons utiliser ces informations, ainsi que d\'autres sujets importants relatifs à votre vie privée et à la protection des données.
+ Notre politique est de nous conformer à toutes les lois applicables en matière de confidentialité et de protection des données. Cet engagement reflète la valeur que nous accordons au fait de gagner et de conserver la confiance de nos clients, partenaires commerciaux et autres personnes qui partagent leurs informations personnelles avec nous.\n \n
+ Cette politique s\'applique à tous les sites Web et à toutes les applications mobiles ("apps") exploités par ou au nom d\'ofi. Elle s\'applique également aux informations personnelles que ofi peut collecter : (i) par le biais de nos produits et services ; (ii) lorsque vous interagissez avec nous par des moyens autres qu\'un site Web ou une application ofi, par exemple, en personne, par téléphone, ou lors d\'un salon professionnel ou d\'une formation ; et (iii) auprès de nos clients, distributeurs, fournisseurs, vendeurs et autres partenaires commerciaux (collectivement "Partenaires commerciaux").
+ Cependant, les différents sites Web, applications, produits et services de ofi ont des objectifs et des caractéristiques différents. Si des divulgations supplémentaires ou différentes sont requises pour un site Internet, une application, un produit ou un service spécifique d\'OFI, nous fournissons ces divulgations ("Déclarations de confidentialité spécifiques") séparément sur, ou avec, le site Internet, l\'application, le produit ou le service concerné. Chacune de ces divulgations, politiques ou déclarations de confidentialité spécifiques complète et modifie la présente politique.
+ "</string>
+
+    <string name="general_principels">Principes généraux de la collecte, de l\'utilisation et de la divulgation des informations personnelles par ofi</string>
+    <string name="general_principels_data">"Dans la présente déclaration de confidentialité, les "données personnelles" ou "informations personnelles" désignent toute information concernant un individu qui peut être identifié à partir de cette information ou à partir de cette information combinée à d\'autres informations auxquelles nous sommes susceptibles d\'avoir accès, y compris, sans s\'y limiter, des informations telles que le nom, l\'adresse, le numéro de téléphone, l\'adresse électronique, les numéros d\'identification, les données de localisation et les identifiants en ligne".
+ En outre, le terme "traitement" désigne toute opération effectuée sur des informations personnelles, que ce soit ou non par des moyens automatiques, comme la collecte, l\'enregistrement, l\'organisation, la structuration, le stockage, l\'adaptation ou la modification, la récupération, la consultation, l\'acquisition, la détention, l\'utilisation, la divulgation par transmission, la diffusion ou toute autre mise à disposition, l\'alignement ou la combinaison, la restriction, l\'effacement ou la destruction.
+ Dans la mesure où la loi applicable l\'exige, chaque fois qu\'elle collecte des informations personnelles, l\'entreprise s\'engage à :\n\n
+          vous fournir un avis sur nos pratiques en matière de données.
+          collecter vos informations personnelles uniquement à des fins spécifiques et légitimes. Les informations que nous recueillons seront pertinentes, adéquates et non excessives au regard des objectifs pour lesquels elles sont collectées.\n
+          traiterons vos informations personnelles d\'une manière cohérente avec les objectifs pour lesquels elles ont été collectées ou auxquels vous avez consenti.
+          prendre des mesures raisonnables pour s\'assurer que vos informations personnelles sont fiables pour l\'usage auquel elles sont destinées, qu\'elles sont exactes, complètes et, le cas échéant, mises à jour ; et\n\n
+          prendre les mesures appropriées, par contrat ou autrement, pour fournir une protection adéquate aux informations personnelles qui sont divulguées à une tierce partie ou transférées dans un autre pays, y compris les transferts au sein du pays.
+ Vous avez le choix quant aux informations personnelles que vous fournissez à ofi. Vous pouvez choisir de ne pas fournir les informations que nous demandons, mais si vous le faites, il se peut que nous ne soyons pas en mesure de vous fournir un service pertinent ou une fonctionnalité particulière pour un site Web, une application ou un produit d\'ofi.
+ "</string>
+    <string name="ofi_info">Informations personnelles recueillies par ofi</string>
+    <string name="ofi_info_data">" ofi " recueille les types d\'informations personnelles suivants : \n\n\n
+Informations que vous fournissez :\n\n
+- informations de contact, telles que votre nom, le nom de votre société, l\'intitulé de votre poste, votre adresse, votre adresse électronique et votre numéro de téléphone;\n\n
+- des informations supplémentaires vous concernant pour nous aider à mieux vous connaître, telles que votre sexe, votre âge, votre date de naissance, votre nationalité, votre état civil, les détails sur les personnes à votre charge, vos antécédents professionnels, vos associations professionnelles et vos numéros d\'enregistrement, des informations sur la façon dont vous utilisez nos produits et des informations démographiques ;\n\n
+- les informations financières nécessaires au traitement des ventes et des achats, telles que les informations relatives aux cartes de crédit ou aux comptes ou les numéros d\'identification fiscale;\n\n
+- informations de connexion, y compris, le cas échéant, les informations de compte de médias sociaux à des fins de connexion;\n\n
+- les commentaires, les questions, les opinions, les demandes et les commandes ou les ventes que vous pouvez faire ; et\N\N
+- en ce qui concerne nos agriculteurs et nos fournisseurs, des informations telles que la géolocalisation des exploitations ou des entreprises, les rendements des produits et les informations analytiques connexes concernant les exploitations ou les entreprises telles que les inventaires et les méthodes d\'exploitation, les données financières telles que les informations de financement, les prix, les salaires et les informations d\'identification des agriculteurs/fournisseurs telles que les photographies, les signatures et les certificats vérifiant l\'identité et la formation.
+Informations provenant de partenaires commerciaux et d\'autres tiers : \n\n
+- ofi recueille des informations personnelles par l\'intermédiaire de ses partenaires commerciaux. Ces informations peuvent inclure des informations de contact, telles que le nom, le nom de la société, le titre du poste, l\'adresse, l\'adresse e-mail, le numéro de téléphone, la formation, les informations sur les achats et les ventes.
+- ofi obtient également des informations personnelles à partir d\'autres sources tierces, y compris des sources publiques et commerciales.
+Informations recueillies automatiquement à partir de votre appareil : \n\n
+- ofi recueille des informations techniques sur votre appareil, telles que les identifiants de l\'appareil et de la publicité, le type de navigateur, les pages que vous consultez et la manière générale dont vous naviguez sur le site, les données de localisation, l\'adresse de protocole Internet ("IP"), le système d\'exploitation, la date et l\'heure de votre visite et certains journaux de serveur à des fins d\'administration du système. . ofi collecte ces informations automatiquement à partir de votre appareil et de votre navigateur web par le biais de cookies et de technologies similaires.
+"</string>
+
+    <string name="cookies_header">Cookies et technologies similaires</string>
+    <string name="ofi_personal_info">Comment OFI utilise vos renseignements personnels</string>
+    <string name="sharing_info">Quand nous partageons vos renseignements personnels</string>
+    <string name="sharing_info_data">"Nous ne divulguerons pas vos informations personnelles, sauf sur une base légale et mesurée, comme suit:\n\n
+- Avec d\'autres entités d\'ofi. Nous partageons vos informations personnelles avec d\'autres entités ofi, y compris celles situées dans différents pays. Lorsque nous le faisons, ces autres entités ofi utiliseront vos informations d\'une manière conforme à la présente politique, à toute déclaration de confidentialité spécifique applicable et à toutes les lois applicables en matière de confidentialité et de protection des données.
+- Services d\'assistance. Nous partageons également vos informations personnelles avec des tiers que nous engageons pour nous fournir des services d\'assistance. Ces tiers sont tenus d\'utiliser les informations personnelles que nous partageons avec eux uniquement pour fournir des services en notre nom et de traiter vos informations personnelles conformément à toutes les lois applicables en matière de confidentialité et de protection des données.
+- Partenaires commerciaux. Dans certains cas, nous partagerons vos informations personnelles avec des tiers qui s\'associent à nous pour fournir des produits et services à nos clients, tels que des distributeurs dans le cadre de nos opérations commerciales ou même avec des organisations non gouvernementales qui partagent notre engagement en matière de traçabilité et de durabilité lorsqu\'il s\'agit de données sur les agriculteurs et les sources d\'approvisionnement. Si nous le faisons, nous exigeons de ces tiers qu\'ils utilisent ces informations d\'une manière conforme à la présente politique, à toute déclaration de confidentialité spécifique applicable et à toutes les lois applicables en matière de confidentialité et de protection des données.
+- Obligations légales. Nous partagerons également vos informations personnelles avec des tiers lorsque nous pensons en toute bonne foi que la divulgation est nécessaire : (i) pour se conformer à une loi, un règlement, une ordonnance du tribunal ou toute autre procédure légale ; (ii) pour détecter, prévenir et répondre à une fraude, une violation de la propriété intellectuelle, une violation de nos contrats ou accords, une violation de la loi ou toute autre utilisation abusive des sites Web, applications, produits ou services d\'ofi ; (iii) pour protéger les droits ou la propriété d\'ofi ou votre santé, sécurité, bien-être, droits ou propriété ou ceux d\'autrui ; ou (iv) dans des circonstances similaires. Si un tel événement se produit, nous prendrons les mesures appropriées pour protéger vos informations personnelles.\n\n
+- Vente de l\'entreprise. Dans le cas où notre entreprise serait vendue ou intégrée à une autre entreprise, vos données seront divulguées à nos conseillers et au conseiller de tout acheteur potentiel et seront transmises aux nouveaux propriétaires de l\'entreprise.
+- Avec votre permission/à votre demande. Nous partagerons également vos informations avec votre permission ou à votre demande.
+- De manière anonyme. Nous partageons des informations anonymes ou agrégées en interne et avec des tiers à toutes fins utiles. Ces informations ne vous identifieront pas individuellement.\n
+"</string>
+    <string name="crossbordertrasfer">Transfert transfrontalier</string>
+
+    <string name="crossbordertrasfer_data">Vos informations personnelles peuvent être stockées et traitées dans tout pays où nous avons des bureaux ou des Centres de données, des services hébergés ou dans lesquels nous engageons des prestataires de services externes. Vos informations personnelles peuvent être transférées vers des pays en dehors de votre pays de résidence, y compris Singapour, qui peuvent avoir des lois de protection et de traitement des données différentes de celles de votre pays. Un tel transfert ne peut avoir lieu que conformément à la loi de votre juridiction et dans la mesure
+     où celle-ci l\'autorise, mais sachez que les lois et pratiques relatives à la protection des informations personnelles sont susceptibles d\'être différentes, et dans certains cas plus faibles, que celles de votre juridiction d\'origine. Quoi qu\'il en soit, dans tous les cas, nous appliquerons les dispositions de la présente déclaration
+     de confidentialité à vos informations personnelles, où qu\'elles se trouvent.</string>
+    <string name="security_personal">Sécurité de vos informations personnelles</string>
+    <string name="security_personal_data">ofi met en place des mesures de sécurité raisonnables pour protéger la confidentialité, la sécurité et l\'intégrité de vos informations personnelles. Bien que nous utilisions des mesures de sécurité pour aider à protéger vos informations personnelles contre toute divulgation non autorisée, nous ne pouvons pas garantir la sécurité des informations fournies sur Internet et ne serons pas responsables des violations de la sécurité au-delà de notre contrôle raisonnable.</string>
+    <string name="retention_personal">Conservation de vos informations personnelles</string>
+    <string name="retention_personal_data">" OFI " conservera vos informations personnelles pendant une durée n\'excédant pas celle nécessaire aux fins pour lesquelles les données ont été collectées. La durée de conservation de vos informations personnelles varie et dépend de l\'objectif et de l\'utilisation des informations recueillies. Il existe des exigences légales pour lesquelles nous conservons certains
+     types de données pendant des périodes spécifiques."</string>
+    <string name="children_ps">Enfants</string>
+    <string name="children_data">Nous ne collectons ni ne traitons les données personnelles des enfants n\'ayant pas atteint l\'âge minimum requis par la législation locale en vigueur, sauf pour des services spécifiques et avec le consentement du titulaire de la responsabilité parentale.</string>
+    <string name="links_to_website">Liens vers d\'autres sites web</string>
+    <string name="links_to_website_data">Nous avons des liens vers d\'autres apps, plugins ou sites web qui ne sont pas détenus ou contrôlés par ofi. Nous ne sommes pas responsables de la sécurité ou de la confidentialité des informations recueillies par ces applications ou sites Web. Vous devez faire preuve de prudence et consulter les déclarations de confidentialité applicables aux sites Web et services tiers que vous utilisez. L\'utilisation de mécanismes de suivi en ligne par ces sites Web et services tiers est soumise aux politiques de confidentialité de ces tiers, et non à la présente déclaration de confidentialité.</string>
+    <string name="RandC">Demandes et clarifications</string>
+    <string name="RandC_data">Si vous avez besoin de clarifications ou si vous avez des demandes concernant les informations personnelles que nous détenons à votre sujet, veuillez adresser vos questions à notre équipe chargée de la confidentialité des données à l\'adresse privacy@ofi.com.</string>
+    <string name="gdpr">GDPR : Informations complémentaires</string>
+
+    <string name="gdpr_data">" Lorsque le GDPR est applicable et que vous êtes dans l\'UE, et/ou lorsque le contrôleur de données est une société ofi établie dans l\'UE, alors :
+Base juridique du traitement.
+Nous ne traiterons pas les données personnelles sans avoir une raison légale de le faire. Nous traitons vos données personnelles lorsque cela est nécessaire pour l\'exécution d\'un contrat auquel vous êtes partie, ou lorsque cela est nécessaire pour le respect d\'une obligation légale ou lorsque cela est requis, avec votre consentement préalable. Nous traitons également vos données personnelles pour les intérêts légitimes d\'ofi, sauf lorsque ces intérêts sont supplantés par vos intérêts ou vos droits et libertés fondamentaux. Plus précisément, les bases juridiques des différentes façons dont nous traitons vos données personnelles (énumérées et expliquées ci-dessus dans la section " Comment ofi utilise vos données personnelles ") sont les suivantes :
+
+Vos droitsInformations supplémentaires pour les résidents de Californie
+La loi vous confère certains droits en ce qui concerne les informations que nous recueillons auprès de vous. Parmi ces droits, vous avez le droit de nous demander une copie de vos données personnelles, de vérifier, corriger ou restreindre (arrêter tout traitement actif) de vos données personnelles.
+En outre, vous pouvez vous opposer au traitement de vos données personnelles dans certaines circonstances (à savoir, lorsque nous n\'avons pas à traiter les données pour satisfaire à une exigence contractuelle ou à une autre exigence légale, ou lorsque nous utilisons les données à des fins de marketing direct).
+Ces droits peuvent être limités, par exemple si la satisfaction de votre demande révèle des données personnelles concernant une autre personne, ou si vous nous demandez de supprimer des informations que nous sommes tenus de conserver en vertu de la loi ou que nous avons des intérêts légitimes à conserver.
+Vous avez le choix en ce qui concerne les informations personnelles que vous nous fournissez. Vous pouvez choisir de ne pas fournir les informations que nous demandons, mais si vous le faites, il se peut que nous ne soyons pas en mesure de vous fournir un service pertinent ou une fonctionnalité particulière pour un site web, une application ou un produit d\'ofi.
+Si vous souhaitez exercer l\'un de ces droits susmentionnés ou vous renseigner à ce sujet, vous pouvez nous envoyer un courriel à l\'adresse ci-dessous.
+Dans votre courriel, indiquez clairement votre demande et précisez le site Web ou l\'application d\'ofi auquel votre demande se réfère et nous dirigerons votre demande vers le contrôleur de données approprié. Si vous avez des préoccupations non résolues, vous avez le droit de vous plaindre auprès d\'une autorité de protection des données appropriée où vous vivez, travaillez ou où vous pensez qu\'une violation a pu se produire.
+Courriel : privacy@ofi.com
+Contrôleur des données
+Le contrôleur des données pour vos informations sera Olam International Limited Singapore (OIL SG) et l\'entité ofi compétente dans votre pays, le cas échéant. OIL SG sera une société de groupe pour toutes les entités juridiques d\'Oi et fera partie du groupe d\'Oi ltd.Nous agissons généralement en tant que contrôleur de données pour les données personnelles. Cependant, dans certaines circonstances, les Partenaires commerciaux peuvent nous engager pour leur fournir certains services de traitement liés aux données personnelles. Dans de tels cas, la collecte et l\'utilisation de vos données personnelles par le Partenaire commercial sont régies par ses propres politiques de confidentialité et non par la présente Déclaration de confidentialité et nous nous appuyons sur leurs déclarations légales selon lesquelles ils sont autorisés à traiter les données personnelles de la manière qu\'ils proposent ou démontrent.
+Comme expliqué ci-dessus, nous partagerons vos informations personnelles à certaines fins spécifiques. Lorsque vos informations personnelles sont transférées en dehors de l\'EEE à une société affiliée d\'ofi ou à une entité située dans un pays qui ne fait pas l\'objet d\'une décision d\'adéquation de la part de la Commission européenne, vos données personnelles seront protégées par des garanties transfrontalières approuvées par la Commission européenne, y compris des clauses contractuelles standard pour le transfert transfrontalier de données.
+"</string>
+
+    <string name="gdpr_data_t1"> Comment ofi utilise vos informations personnelles </string>
+    <string name="gdpr_data_t_ans1"> Base juridique</string>
+    <string name="gdpr_data_t2"> Développer et gérer nos relations avec vous et nos partenaires commerciaux </string>
+    <string name="gdpr_data_t_ans2"> Intérêt légitime, et lorsqu\'une relation contractuelle existe, afin de remplir nos obligations contractuelles envers vous.</string>
+    <string name="gdpr_data_t3"> Assurer la traçabilité de la chaîne d\'approvisionnement </string>
+    <string name="gdpr_data_t_ans3"> Intérêt légitime</string>
+    <string name="gdpr_data_t4"> Favoriser les carrières </string>
+    <string name="gdpr_data_t_ans4"> Intérêt légitime </string>
+    <string name="gdpr_data_t5"> Communiquer avec vous concernant les services auxquels vous êtes partie  </string>
+    <string name="gdpr_data_t_ans5"> Intérêt légitime</string>
+    <string name="gdpr_data_t6"> Fournir et améliorer nos sites web, applications, produits et services </string>
+    <string name="gdpr_data_t_ans6"> Intérêt légitime </string>
+    <string name="gdpr_data_t7"> Traiter les questions juridiques  </string>
+    <string name="gdpr_data_t_ans7"> Obligation légale </string>
+    <string name="gdpr_data_t8"> Gérer les visiteurs du bureau  </string>
+    <string name="gdpr_data_t_ans8"> Intérêt légitime </string>
+    <string name="gdpr_data_t9"> Communications et analyses marketing </string>
+    <string name="gdpr_data_t_ans9"> Consentement</string>
+    <string name="addional_info">Informations supplémentaires pour les résidents de Californie</string>
+
+    <string name="addional_info_data">"Vos droits
+Les résidents de Californie peuvent avoir, conformément à la CCPA, les droits suivants concernant leurs informations personnelles auprès d\'ofi, qui s\'appliquent différemment selon les circonstances : droit t.1o d\'accéder à vos informations, droit à la portabilité des données et droit à la suppression. ofi ne vend pas et ne vendra pas d\'informations personnelles (mais si nous le faisions, vous pourriez avoir le droit de refuser de telles ventes de vos informations personnelles). La plupart de ces droits ne sont pas absolus. Nous ne ferons aucune discrimination à votre encontre et ne vous refuserons aucun produit ou service pour avoir exercé l\'un ou l\'autre de ces droits. Pour plus d\'informations ou pour exercer l\'un de ces droits, vous pouvez nous contacter à l\'adresse privacy@ofi.com.
+Ou vous pouvez nous écrire à l\'adresse suivante
+Olam Americas Inc
+205 East River Park Place
+Suite 310
+Fresno, CA 93720
+Numéro gratuit (USA) : (833) 718-1023
+
+Nos activités de collecte de données en Californie
+Le tableau ci-dessous indique des exemples de certaines des catégories d\'informations personnelles que nous sommes susceptibles de collecter
+    auprès des résidents de Californie."</string>
+
+    <string name="additional_info_data2">" Informations supplémentaires pour les résidents du Nevada et du Maine aux États-Unis
+Conformément aux Nevada Revised Statutes Chapter 603A et Maine Revised Statutes 35-a M.R.S. 9301, les résidents du Nevada et du Maine
+    respectivement peuvent avoir le droit de refuser la vente de leurs informations personnelles,
+    cependant Olam ne vend pas et ne vendra pas d\'informations personnelles. Nous ne ferons aucune discrimination à votre encontre
+    et ne vous refuserons aucun produit ou service pour avoir exercé ces droits. Pour plus d\'informations ou pour consulter et modifier
+    vos informations personnelles, ou pour exercer l\'un de vos droits, vous pouvez nous contacter à l\'adresse privacy@ofi.com ou au numéro
+    gratuit (USA) : (833) 718-1023."</string>
+    <string name="Privacy_change">Modifications de la présente déclaration de confidentialité</string>
+    <string name="Privacy_change_data">À mesure que nous ajoutons de nouvelles caractéristiques et fonctionnalités à nos produits et services,
+    nous pouvons être amenés à mettre à jour ou à réviser la présente Déclaration de confidentialité. Nous nous réservons le droit de
+    mettre à jour cette Déclaration de confidentialité de temps à autre en publiant les mises à jour sur notre site Web ou nos applications.
+    Toute mise à jour entrera en vigueur immédiatement après sa publication et s\'appliquera à toutes les informations recueillies à votre
+    sujet ou, le cas échéant, à votre consentement. Vous êtes libre de décider d\'accepter ou non une version modifiée de la présente
+    déclaration de confidentialité. Si vous n\'acceptez pas les modifications, vous devez cesser toute utilisation ultérieure de notre site web
+    ou de notre appli.</string>
+    <string name="row1value1">	Des identifiants tels qu\'un vrai nom, un pseudonyme, une adresse postale, un identifiant personnel unique,
+    un identifiant en ligne, une adresse de protocole Internet, une adresse électronique, un nom de compte, un numéro de sécurité sociale,
+    un numéro de permis de conduire, un numéro de passeport ou d\'autres identifiants similaires. </string>
+    <string name="row1value2">Toutes les catégories d\'informations personnelles décrites dans la sous-section (e) de la section 1798.80 :
+    " Les informations personnelles " désignent toute information qui identifie, concerne, décrit ou peut être associée à un individu
+    particulier, y compris, mais sans s\'y limiter, son nom, sa signature, son numéro de sécurité sociale, ses caractéristiques ou sa
+    description physiques, son adresse, son numéro de téléphone, son numéro de passeport, son numéro de permis de conduire ou de
+    carte d\'identité nationale, son numéro de police d\'assurance, son éducation, son emploi, ses antécédents professionnels,
+    son numéro de compte bancaire, son numéro de carte de crédit, son numéro de carte de débit ou toute autre information financière,
+    médicale ou d\'assurance maladie. "Les "informations personnelles" ne comprennent pas les informations accessibles au public qui sont
+    légalement mises à la disposition du grand public à partir des dossiers des administrations fédérales, étatiques ou locales."</string>
+
+    <string name="row1value3">Caractéristiques des classifications protégées en vertu de la loi californienne ou fédérale (les classes comprennent
+    la race, la couleur, la religion, l\'origine nationale, le sexe (y compris la grossesse, l\'accouchement et les conditions médicales
+    connexes), le handicap, le congé, l\'âge, le statut de citoyenneté, les informations génétiques, l\'ascendance, l\'allaitement,
+    l\'état civil, l\'identité de genre, l\'expression de genre, l\'orientation sexuelle, la condition médicale, y compris le SIDA/VIH,
+    les activités et affiliations politiques, le statut militaire et de vétéran, et le statut de victime de violence domestique,
+    d\'agression ou de harcèlement).</string>
+    <string name="row1value4">Informations commerciales, y compris les dossiers sur les biens personnels, les produits ou services achetés,
+    obtenus ou envisagés, ou d\'autres historiques ou tendances d\'achat ou de consommation.</string>
+    <string name="row1value5">Informations relatives à l\'activité sur Internet ou sur d\'autres réseaux électroniques, y compris,
+    mais sans s\'y limiter, l\'historique de navigation, l\'historique de recherche et les informations concernant
+    l\'interaction d\'un consommateur avec un site Internet, une application ou une publicité.</string>
+    <string name="row1value6">Informations audio, électroniques, visuelles, thermiques, olfactives ou similaires.</string>
+    <string name="row1value7">Informations professionnelles ou liées à l\'emploi.</string>
+    <string name="row1value8">Informations relatives à l\'éducation, définies comme des informations qui ne sont pas des informations personnelles
+    identifiables accessibles au public, telles que définies dans le Family Educational Rights and
+    Privacy Act (20 U.S.C. section 1232g, 34 C.F.R. Part 99).</string>
+
+    <string name="row2value1">"Clients/candidats à un emploi/autres tiers
+ Pour gérer nos opérations commerciales et administrer nos relations avec les clients.
+ Pour vous fournir un marketing pertinent (par exemple, des informations sur des événements ou des services susceptibles de vous intéresser).
+ Pour répondre aux obligations légales et de conformité (par exemple, vérification de l\'identité des nouveaux clients, prévention de
+    la fraude/du blanchiment d\'argent).
+ Pour étudier la candidature d\'individus à des postes d\'employés ou d\'entrepreneurs et gérer les procédures d\'intégration.
+ Employés Gérer et fournir la rémunération, les avantages sociaux et autres allocations liées au travail.
+ Gérer la main-d\'œuvre (par exemple, gérer les activités professionnelles, les évaluations de performance et les promotions,
+    préparer les organigrammes de l\'entreprise, gérer la dotation en personnel et la gestion des équipes au sein des entités et
+    entre elles, gérer et contrôler les voyages d\'affaires, effectuer des analyses de la main-d\'œuvre, gérer les talents et
+    le développement de carrière, gérer les congés des employés, planifier la succession, fournir des références d\'emploi,
+    gérer la formation en matière d\'éthique et de conformité, faciliter et fournir des services pour la réinstallation et
+    le déplacement des employés et de leur famille au niveau local et international).
+ Se conformer aux obligations du droit du travail.
+ Communiquer avec les employés et leurs contacts désignés en cas d\'urgence.
+ Répondre aux demandes d\'informations légales et/ou réglementaires.
+ Respecter les responsabilités financières de l\'entreprise (audit, comptabilité et exigences fiscales).
+ Gérer les technologies de l\'information de l\'entreprise (par exemple, le support informatique, le répertoire d\'entreprise,
+    la sécurité informatique).
+ Effectuer des contrôles de sécurité (dans la mesure où la loi le permet)."</string>
+    <string name="row2value2">Voir la section 1 ci-dessus.</string>
+    <string name="row2value3"> Uniquement dans la mesure strictement nécessaire aux fins décrites à la section 1 ci-dessus concernant
+     les données des employés et dans la mesure où cela est autrement requis dans le cadre de la gestion de la relation
+     de travail (par exemple, congés de maladie, indemnités de maladie, accidents du travail, autres réclamations
+     liées à l\'emploi, adaptation du handicap sur le lieu de travail, congé de maternité, etc.)
+ Uniquement dans la mesure requise pour se conformer aux obligations légales ou autres bonnes pratiques de la
+     Société (par exemple, AML, lois sur l\'égalité, suivi de la diversité et de l\'inclusion, etc.)
+ </string>
+    <string name="row2value4">Voir la section 1 ci-dessus.</string>
+    <string name="row2value5"> Pour rendre notre site web plus intuitif et plus facile à utiliser.
+ Pour protéger la sécurité et le fonctionnement efficace de notre site web.
+ </string>
+    <string name="row2value6">Audio/visuel - lorsque cela est nécessaire pour des raisons légales/réglementaires.</string>
+    <string name="row2value7">Voir la section 1 ci-dessus en ce qui concerne les employés et les candidats à l\'emploi.</string>
+    <string name="row2value8">Voir la section 1 ci-dessus en ce qui concerne les employés et les candidats à un emploi.</string>
+    <string name="row3value1">De la personne concernée, de nos sociétés affiliées, des contreparties à des transactions ou à des
+     litiges avec les personnes concernées, des employeurs, des agents ou des conseillers professionnels autorisés à divulguer des
+     données au nom de la personne concernée et d\'autres sources accessibles au public ou sur abonnement.</string>
+    <string name="row3value2">Voir la section 1 ci-dessus.</string>
+    <string name="row4value2">Voir la section 1 ci-dessus.</string>
+    <string name="row3value3">Voir la section 1 ci-dessus.</string>
+    <string name="row3value4">Voir la section 1 ci-dessus.</string>
+    <string name="row3value5">Via les sites web des entreprises.</string>
+    <string name="row3value6">Conférences téléphoniques et vidéoconférences avec des clients et d\'autres tiers.</string>
+    <string name="row3value7">Voir section 1 ci-dessus en ce qui concerne les employés et les candidats à l\'emploi.</string>
+    <string name="row3value8">Voir la section 1 ci-dessus en ce qui concerne les employés et les candidats à l\'emploi.</string>
+    <string name="row4value1"> Nos affiliés ,Fournisseurs et prestataires de services lorsque cela est nécessaire pour exécuter des
+     fonctions en notre nom (par exemple, les fournisseurs de services d\'infrastructure/TI, les fournisseurs de services
+     relatifs à l\'accueil des clients, aux voyages internationaux, à la finance, à la gestion de la relation client,
+     à l\'analyse commerciale et au marketing, ainsi qu\'à l\'accueil de conférences et d\'événements).
+ Les institutions financières (pour la facturation et le paiement).
+ Les entreprises acheteuses - dans le cadre d\'une vente d\'actifs de l\'entreprise, d\'une transition de service vers un autre
+     fournisseur ou en cas d\'insolvabilité, de faillite ou d\'insolvabilité.
+ Divulgations obligatoires et demandes légales (par exemple, pour se conformer à une assignation à comparaître, à une ordonnance
+     du tribunal ou à toute autre procédure légale ou pour se conformer à toute demande réglementaire, gouvernementale ou autre demande
+     juridiquement contraignante).</string>
+    <string name="row4value3">" Affiliés ".
+ Fournisseurs et prestataires de services lorsque cela est nécessaire pour exécuter des fonctions en notre nom.
+ Divulgations obligatoires et réclamations légales (par exemple, pour se conformer à toute assignation, ordonnance du tribunal
+     ou autre procédure légale ou pour se conformer à toute demande réglementaire, gouvernementale ou autre demande juridiquement contraignante).
+ "</string>
+    <string name="row4value4">Voir la section 1 ci-dessus.</string>
+    <string name="row4value5">" A nos prestataires de services dans la mesure nécessaire à la fourniture de services informatiques en notre nom.
+ Sociétés affiliées
+ "</string>
+
+    <string name="row4value6">" Affiliés ". À nos prestataires de services dans la mesure nécessaire à la fourniture de services informatiques
+     en notre nom.Divulgations obligatoires et réclamations légales (par exemple, pour se conformer à toute assignation,
+     ordonnance d\'un tribunal ou autre procédure légale ou pour se conformer à toute demande réglementaire, gouvernementale ou autre
+     demande juridiquement contraignante)."</string>
+    <string name="row4value7">Voir la section 1 ci-dessus en ce qui concerne les employés et les candidats à l\'emploi.</string>
+    <string name="row4value8">Voir la section 1 ci-dessus en ce qui concerne les employés et les candidats à un emploi.</string>
+    <string name="title1">Section</string>
+    <string name="title5">Nous avons partagé ces informations personnelles avec les catégories de tiers suivantes :</string>
+    <string name="title4">Nous avons recueilli ces informations personnelles auprès des catégories de sources suivantes :</string>
+    <string name="title2">Catégorie d\'informations personnelles</string>
+    <string name="title3">Nous avons recueilli ces informations personnelles pour les utiliser aux fins professionnelles ou commerciales
+     suivantes :</string>
+    <string name="Privacy">Confidentialité</string>
+    <string name="title_privacy_statement">Déclaration de confidentialité</string>
+    <string name="msg_ok">OK</string>
+
+    <string name="national_id_info">Veuillez mettre à jour l\'ID national de l\'agriculteur</string>
+    <string name="odid">OD ID :</string>
+    <string name="attendee_sex">Sexe :</string>
+    <string name="view_attendees_count">Afficher le participant (~V participants)</string>
+    <string name="consent_duplicate_error">Erreur dans la sauvegarde du consentement de l\'agriculteur</string>
+    <string name="update_farm_information">Mettre à jour les informations sur l\'exploitation</string>
+    <string name="create_new_farm">créer une nouvelle ferme</string>
+    <string name="add_farm_Information">Ajouter des informations sur l\'exploitation</string>
+    <string name="search_farmer">Rechercher un agriculteur</string>
+    <string name="farm_information">Informations sur la ferme</string>
+    <string name="farm_name">Nom de la ferme</string>
+    <string name="farm_code">Code de l\'exploitation</string>
+    <string name="add_stakeholder">Ajouter une partie prenante de l\'exploitation</string>
+    <string name="fill_stakeholder_farm_code_name">Veuillez indiquer le nom et le code de l\'exploitation</string>
+    <string name="already_syned_survey_info">Cette enquête a déjà été complétée par l\'autre partie prenante de l\'exploitation.</string>
+    <string name="farm_type_warning">Veuillez choisir le type de ferme</string>
+    <string name="search_existing_farm">Rechercher une ferme existante</string>
+    <string name="select_by_nearest_farm">Recherche par ferme la plus proche</string>
+    <string name="recored_polygon_multifarm_info">Emplacement de la ferme déjà capturé par une partie prenante de votre ferme</string>
+    <string name="recored_polygon_plot_multifarm_info">Polygone de la ferme déjà capturé par une partie prenante de votre ferme</string>
+    <string name="survey_can_be_completed_by_other_stakeholders">Cette enquête peut être complétée par un autre acteur de l\'exploitation.</string>
+    <string name="txt_farm_name">Nom de la ferme :</string>
+    <string name="txt_farm_code">Code de l\'exploitation :</string>
+    <string name="fill_farmergroup_name_multifarm">Veuillez sélectionner le groupe d\'agriculteurs avant d\'ajouter les parties prenantes de l\'exploitation.</string>
+    <string name="sync_farmer_and_multifarm_stakeholders"> Veuillez synchroniser la mise à jour du nouvel agriculteur et des parties prenantes de la multifamille avant de soumettre l\'enquête sur la multifamille .</string>
+    <string name="select_relationship_with_farmer">Sélectionnez la relation avec l\'agriculteur</string>
+    <string name="attendee_relationship1">Relation</string>
+    <string name="attendee_sex1">Sexe</string>
+
+
+    <string name="reenter_passcode">Déconnexion</string>
+    <string name="android_id">ID d\'installation de l\'appareil : </string>
+    <string name="logout_note">Êtes-vous sûr de vouloir vous déconnecter ? </string>
+    <string name="download_survey_data">Télécharger les données de l\'enquête</string>
+    <string name="select_fgsection">Sélectionnez le groupe d\'agriculteurs et la section</string>
+    <string name="download">Télécharger</string>
+    <string name="downloading">Téléchargement...</string>
+    <string name="survey_ans_downloaded">Données de réponse à l\'enquête téléchargées</string>
+    <string name="view_recent_survey_data">Voir les données récentes de l\'enquête</string>
+    <string name="add_plot">Ajouter une parcelle</string>
+    <string name="plot_name">Nom de la placette</string>
+    <string name="plot_survey">Enquête sur la parcelle</string>
+    <string name="plot_notification_info">Veuillez mettre à jour l\'enquête sur la parcelle pour l\'agriculteur.</string>
+    <string name="consent_info">Veuillez mettre à jour le consentement pour l\'agriculteur</string>
+    <string name="downloading_notification">Téléchargement des données de notification</string>
+    <string name="notification">Notification</string>
+    <string name="notifications">Notifications</string>
+    <string name="notification_type">Type de notification</string>
+    <string name="info_notification_close">La notification a été supprimée de cette liste</string>
+    <string name="course_selection">Sélection de cours *</string>
+    <string name="module_selection">Sélection des modules *</string>
+    <string name="language_selection">Sélection de la langue *</string>
+    <string name="retry_btn_text">Réessayer</string>
+    <string name="file_name">Nom du fichier</string>
+    <string name="description">Description</string>
+    <string name="Loading">Chargement de</string>
+    <string name="PleaseWait">Veuillez patienter</string>
 
 </resources>
