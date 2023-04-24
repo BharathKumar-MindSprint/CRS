@@ -557,8 +557,10 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
     }
 
     void syncTasks(final String syncedOrDelivered) {
-        final Cursor tasks = (syncedOrDelivered.equalsIgnoreCase(OFISDBContract.Task.COLUMN_NAME_SYNCED)) ? dl.getCompletedUnSyncedTasks() : dl.getNewlyDeliveredTasks();
-        JSONObject uploadSyncTask = new JSONObject();
+        Cursor tasks = null;
+        try {
+            tasks = (syncedOrDelivered.equalsIgnoreCase(OFISDBContract.Task.COLUMN_NAME_SYNCED)) ? dl.getCompletedUnSyncedTasks() : dl.getNewlyDeliveredTasks();
+            JSONObject uploadSyncTask = new JSONObject();
         if (tasks.getCount() > 0) {
             try {
                 JSONObject tasksPayload = new JSONObject();
@@ -634,6 +636,11 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 });
             } catch (JSONException e) {
                 FirebaseCrashlytics.getInstance().log("NetworkLayer: Error in posting tasks request "+ e.getMessage());
+            }
+        }
+        } finally {
+            if (tasks != null) {
+                tasks.close();
             }
         }
     }
@@ -866,7 +873,10 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         final Message msg = handler.obtainMessage();
         final JSONObject transactionItem = new JSONObject();
 
-        Cursor transactionItemRecord = dl.getTransactionItemById(transactionItemId);
+        Cursor transactionItemRecord = null;
+        try {
+
+            transactionItemRecord = dl.getTransactionItemById(transactionItemId);
 
         if (transactionItemRecord.getCount() > 0) {
             transactionItemRecord.moveToFirst();
@@ -978,6 +988,12 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 }
             }
         }
+
+        } finally {
+            if (transactionItemRecord != null) {
+                transactionItemRecord.close();
+            }
+        }
     }
 
     private void startMobileMoneyTimer(JSONObject response) {
@@ -1002,7 +1018,10 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         final Message msg = handler.obtainMessage();
         // create json objects
         JSONObject transactionItem = new JSONObject();
-        Cursor transactionItemRecord = dl.getTransactionItemById(transactionItemId);
+        Cursor transactionItemRecord = null;
+        try {
+
+            transactionItemRecord = dl.getTransactionItemById(transactionItemId);
 
         if (transactionItemRecord.getCount() > 0) {
             transactionItemRecord.moveToFirst();
@@ -1078,6 +1097,11 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 FirebaseCrashlytics.getInstance().log("NetworkLayer: Error creating transaction check object "+ e.getMessage());
             }
         }
+        } finally {
+            if (transactionItemRecord != null) {
+                transactionItemRecord.close();
+            }
+        }
     }
 
     private void postTrainingRecord(final int networkQueueItemId, final Handler handler, final Message msg, final int total, final int progress, final Integer originalSyncRequestItemId) {
@@ -1085,7 +1109,9 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         RequestBody requestBody = null;
 
         final long trainingRecordId = networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_TRAINING_RECORD_ID));
-        Cursor trainingRecord = dl.getTrainingRecordById(trainingRecordId, "");
+        Cursor trainingRecord = null;
+        try {
+            trainingRecord = dl.getTrainingRecordById(trainingRecordId, "");
 
         String endpoint="";
         // old end point
@@ -1273,6 +1299,9 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 });
             }
         }
+        } finally {
+            trainingRecord.close();
+        }
     }
 
 
@@ -1284,7 +1313,9 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         final int transactionItemId = networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_TRANSACTION_ITEM_ID));
         final long farmerId = networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
 
-        Cursor transactionItemRecord = dl.getTransactionItemById(transactionItemId);
+        Cursor transactionItemRecord = null;
+        try {
+            transactionItemRecord = dl.getTransactionItemById(transactionItemId);
 
         if (transactionItemRecord.getCount() > 0) {
             transactionItemRecord.moveToFirst();
@@ -1385,6 +1416,11 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     FirebaseCrashlytics.getInstance().log("NetworkLayer: Error creating transaction post object "+e.getMessage());
 
                 }
+            }
+        }
+        } finally {
+            if (transactionItemRecord != null) {
+                transactionItemRecord.close();
             }
         }
     }
@@ -1542,7 +1578,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         final long farmerId = networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
         final String olamFarmerId = networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID));
         final int farmId = networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID));
-        Cursor fmpAnswers;
+
 
         try {
             final String submissionDate = networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT));
@@ -1559,7 +1595,10 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 submission.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID, networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SERVERITEM_ID)));
             }
 
-            fmpAnswers = dl.getAnswersByFmpId(fmpId);
+            Cursor fmpAnswers = null;
+
+            try{
+                fmpAnswers = dl.getAnswersByFmpId(fmpId);
 
             if (fmpAnswers.getCount() > 0) {
 
@@ -1680,6 +1719,13 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 });
                 Log.i("POST", "" + submission.toString());
             }
+
+            }finally {
+
+                if (fmpAnswers != null) {
+                    fmpAnswers.close();
+                }
+            }
         } catch (JSONException e) {
             FirebaseCrashlytics.getInstance().log("NetworkLayer: Error creating full fmp review post object "+ e.getMessage());
 
@@ -1704,7 +1750,13 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         String IMEI = Utilities.getIMEI(context);
         final int farmerModuleId = networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_MODULE_ID));
         final long farmerId = networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
-        Cursor moduleAnswers, extraInfo, farmerModule = dl.getFarmerModuleById(farmerModuleId);
+
+
+            Cursor farmerModule = null;
+            Cursor moduleAnswers = null;
+            Cursor extraInfo = null;
+
+        //Cursor moduleAnswers, extraInfo, farmerModule = dl.getFarmerModuleById(farmerModuleId);
         int plotId = 0;
         // for MultiFarm
             MultiFarmUtils.isMultiFarmEnumerator = Utilities.getMultifarmPref(context, MultiFarmUtils.IS_MULTI_FARM_ENUMERATOR);
@@ -1716,7 +1768,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 //            }
 
             boolean isFarmerMultifarmSynced=dl.isMultifarmSubmitted();
-
+            try {
+                farmerModule = dl.getFarmerModuleById(farmerModuleId);
         if (farmerModule.getCount() > 0) {
             if (!dl.isFarmerSynced(farmerId)) {
                 msg.what = 3;
@@ -2089,6 +2142,11 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 }
             }
         }
+            } finally {
+                farmerModule.close();
+                extraInfo.close();
+                moduleAnswers.close();
+            }
  }catch (CursorIndexOutOfBoundsException e){}
     }
 
@@ -2524,7 +2582,9 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     params.put("enumeratorId", enumeratorId);
                 }*/
                 // test for existence of new place name
-                 Cursor place = dl.getPlaceBytype("localinsert");
+                Cursor place = null;
+                try {
+                    place = dl.getPlaceBytype("localinsert");
                 if (place != null) {
                     place.moveToFirst();
                        try {
@@ -2533,6 +2593,11 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             params.put("new_place", "true");
                         }catch (Exception e){
                             FirebaseCrashlytics.getInstance().log(e.getMessage());
+                    }
+                }
+                } finally {
+                    if (place != null) {
+                        place.close();
                     }
                 }
                 DynatraceHelper.requestPayload(DynatraceConstants.REQUEST+" "+endpoint,params.toString(),context,true);
@@ -2637,9 +2702,11 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     params.put("enumeratorId", enumeratorId);
                 }
 
+                Cursor child = null;
+                try {
+                    child = dl.getConsentStatementById(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
 
-                Cursor child = dl.getConsentStatementById(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
-                 if (child.getCount() > 0) {
+                    if (child.getCount() > 0) {
                      child.moveToFirst();
                      try {
                          params.put("farmerName", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_FARMER)));
@@ -2677,6 +2744,12 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                          FirebaseCrashlytics.getInstance().log(e.getMessage());
                      }
                  }
+
+                } finally {
+                    if (child != null) {
+                        child.close();
+                    }
+                }
                 DynatraceHelper.requestPayload(DynatraceConstants.REQUEST+" "+endpoint,params.toString(),context,true);
                 if (endpoint.length() > 0) {
                     final String finalEndpoint = endpoint;
@@ -2884,7 +2957,10 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
     private JSONObject farmerConsentStatment(long farmerId, String displayFarmerId) {
         final JSONObject params = new JSONObject();
-        Cursor child = dl.getConsentStatementById(farmerId);
+
+        Cursor child = null;
+        try {
+            child = dl.getConsentStatementById(farmerId);
         if (child.getCount() > 0) {
             child.moveToFirst();
             try {
@@ -2928,6 +3004,11 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 params.put("confirmedDate", child.getString(child.getColumnIndex(OFISDBContract.ConsentStatementEntry.COLUMN_NAME_CONFIRMED_DATE)));
             } catch (Exception e) {
                 FirebaseCrashlytics.getInstance().log(e.getMessage());
+            }
+        }
+        } finally {
+            if (child != null) {
+                child.close();
             }
         }
         return params;
@@ -3173,7 +3254,10 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         String storageDir = (context.getExternalFilesDir(null) != null) ? context.getExternalFilesDir(null).getPath() + "/" : "/";
 
         final String uploadId = networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPLOAD_ID));
-        Cursor moduleAnswers= dl.getAnswersSipByUploadId(uploadId);
+        Cursor moduleAnswers = null;
+        try {
+            moduleAnswers = dl.getAnswersSipByUploadId(uploadId);
+
         try {
             if(enumeratorId != null) {
                 long enumerator_Id = Integer.parseInt(enumeratorId);
@@ -3339,6 +3423,11 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             postFailureMessage(handler, null, msg, 2, total, progress, null, "submitting survey module");
             FirebaseCrashlytics.getInstance().log("NetworkLayer: Error creating module post object"+e.getMessage());
         }
+        } finally {
+            if (moduleAnswers != null) {
+                moduleAnswers.close();
+            }
+        }
     }
 
     // inbound sync functions
@@ -3459,9 +3548,11 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             handler.dispatchMessage(msg);
         } else {
             try {
+                Cursor farmer = null;
+                try {
+                    farmer = dl.getFarmerById(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
 
-                Cursor farmer = dl.getFarmerById(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
-                if (farmer.getCount() > 0) {
+                    if (farmer.getCount() > 0) {
                     farmer.moveToFirst();
                     params.put(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME)));
                     params.put(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
@@ -3474,6 +3565,11 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         }catch (Exception e){
                             FirebaseCrashlytics.getInstance().log(e.getMessage());
                         }
+                    }
+                }
+                } finally {
+                    if (farmer != null) {
+                        farmer.close();
                     }
                 }
                 DynatraceHelper.requestPayload(DynatraceConstants.REQUEST+" "+endpoint,params.toString(),context,true);
@@ -3576,8 +3672,11 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             handler.dispatchMessage(msg);
         } else {
             try {
-                Cursor child = dl.getChildById(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_CHILD_ID)));
-                int tempChildId = 0;
+                Cursor child = null;
+                try {
+                    child = dl.getChildById(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_CHILD_ID)));
+
+                    int tempChildId = 0;
                 final String endpoint = "ofischild/child/saveall";
 
                 if (child.getCount() > 0) {
@@ -3754,6 +3853,12 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         });
                     }
                 }
+                } finally {
+                    if (child != null) {
+                        child.close();
+                    }
+                }
+
             }catch (Exception e){
                 recordFailedUpload(0, 0, networkQueueItemId);
                 postFailureMessage(handler, null, msg, 2, total, progress, null, "submitting Child Register");
@@ -3767,8 +3872,10 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
     // Farmer Registration Code
     private void postFarmer(final int networkQueueItemId, final Handler handler, final Message msg, final int total, final int progress, final Integer originalSyncRequestItemId) {
-        Cursor farmer = dl.getFarmerById(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
-        final boolean isFLEnumerator = Utilities.getBoolFromSharedPrefs(context, Utilities.FARMERLEAD_ENUMERATOR,false);
+        Cursor farmer = null;
+        try {
+            farmer = dl.getFarmerById(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
+            final boolean isFLEnumerator = Utilities.getBoolFromSharedPrefs(context, Utilities.FARMERLEAD_ENUMERATOR,false);
         //old end point
         // String endpoint = "farmers/add";
         // New End point
@@ -4104,6 +4211,9 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 });
             }
         }
+        } finally {
+            farmer.close();
+        }
     }
 
     private String getEncodedImage(String farmerPhotoPath) {
@@ -4170,8 +4280,13 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         final long farmerId = networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
         final long childNwId=networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_CHILD_ID));
         final String surveyCode=networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_SURVEY_CODE));
-        Cursor moduleAnswers, extraInfo, farmerModule = dl.getFarmerChildModuleById(farmerModuleId);
+        Cursor  farmerModule = null;
+        Cursor  extraInfo = null;
+        Cursor moduleAnswers = null;
 
+        // farmer child register should check
+        try {
+            farmerModule = dl.getFarmerChildModuleById(farmerModuleId);
         // farmer child register should check
 
         if (farmerModule.getCount() > 0) {
@@ -4451,7 +4566,11 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 }
             }
         }
-
+        }finally {
+            farmerModule.close();
+            extraInfo.close();
+            moduleAnswers.close();
+        }
     }
 
     //    Post visit details  - CLMRS
@@ -4678,7 +4797,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
 
     private void postFarmerNationalids(final int networkQueueItemId, final Handler handler, final Message msg, final int total, final int progress, final Integer originalSyncRequestItemId) {
-        Cursor farmer = dl.getFarmerById(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
+       // Cursor farmer = dl.getFarmerById(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
         //old end point
         // String endpoint = "farmers/add";
         // New End point
@@ -4690,6 +4809,9 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             msg.obj = String.valueOf(res.getString(R.string.farmer_not_synced));
             handler.dispatchMessage(msg);
         }else {
+            Cursor farmer = null;
+            try {
+                farmer = dl.getFarmerById(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
 
             if (farmer.getCount() > 0) {
                 farmer.moveToFirst();
@@ -4788,6 +4910,11 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     });
                 }
             }
+            } finally {
+                if (farmer != null) {
+                    farmer.close();
+                }
+            }
         }
     }
 
@@ -4795,6 +4922,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         try {
             final String endpoint = GPSConstants.SYNC_END_POINT;
             final JSONArray jsonArray = new JSONArray();
+
             Cursor gpsData = dl.getGeoTrackList();
             if (gpsData.getCount() > 0) {
                 isGpsSyncProcessing=true;
@@ -4979,7 +5107,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
 
     private void postMultiFarmUpdate(final int networkQueueItemId, final Handler handler, final Message msg, final int total, final int progress, final Integer originalSyncRequestItemId) {
-        Cursor farmer = dl.getFarmerById(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
+        //Cursor farmer = dl.getFarmerById(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
         final String endpoint="ofisfarmer/multifarm/update";
         if (!dl.isFarmerSynced(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)))) {
             msg.what = 3;
@@ -4988,6 +5116,9 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             msg.obj = String.valueOf(res.getString(R.string.farmer_not_synced));
             handler.dispatchMessage(msg);
         }else {
+            Cursor farmer = null;
+            try {
+                farmer = dl.getFarmerById(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
 
             if (farmer.getCount() > 0) {
                 farmer.moveToFirst();
@@ -5129,6 +5260,12 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     });
                 }
             }
+            } finally {
+                if (farmer != null) {
+                    farmer.close();
+                }
+            }
+
         }
     }
 
