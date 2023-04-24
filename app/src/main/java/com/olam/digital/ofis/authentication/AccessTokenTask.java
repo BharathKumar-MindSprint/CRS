@@ -73,7 +73,7 @@ public class AccessTokenTask extends AsyncTask<Object, Object, String> {
                 // auth Response code is 400 for when sync existing enumerator from Old Apk
             //    if (authResponse.code() == 401 || authResponse.code() == 400) {
                     // Keycloak parameters - Using Access Token
-                    String grantType1 = mContext.getResources().getString(R.string.password);
+                    String grantType1 = Utilities.PASSWORD;
                     String scope = mContext.getResources().getString(R.string.offline_access);
                     Call<AuthenticationDTO> authCall1 = authenticationInterface.getKeyCloakAuthToken(clientId,
                             authRequestDTO.getUsername(), authRequestDTO.getPasscode(), grantType1, clientSecret, scope);
