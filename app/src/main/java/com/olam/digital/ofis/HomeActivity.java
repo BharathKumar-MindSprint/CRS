@@ -537,7 +537,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
         String clientId=Utilities.getKeyCloakClientDetails(context,KeyCloakInfo.Client_Id);
         String clientSecret=Utilities.getKeyCloakClientDetails(context,KeyCloakInfo.Client_Secret);
-        String grantType=getResources().getString(R.string.password);
+        String grantType=Utilities.PASSWORD;
         String scope=getResources().getString(R.string.offline_access);
 
         // Check the need of DTO

@@ -92,6 +92,7 @@ public class Utilities {
     public static String MODULELIST = "moduleList";
     public static String FDP = "FDP";
     public static String MODULE = "module";
+    public static String PASSWORD = "password";
 
 public  static String base64ConversionForImage(String filepath)  {
     String encoded="";
