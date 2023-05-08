@@ -106,6 +106,7 @@ import com.olam.digital.ofis.multifarm.MultiFarmStakeHolderDTO;
 import com.olam.digital.ofis.multifarm.MultiFarmUtils;
 import com.olam.digital.ofis.multifarm.SubmittedInfo;
 import com.olam.digital.ofis.multifarm.UpdateMultiFarmActivity;
+import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.DiagnosticModuleActivity;
 import com.olam.digital.ofis.recordpolygon.LocationBeanList;
 import com.olam.digital.ofis.recordpolygon.PlotsList;
 import com.olam.digital.ofis.recordpolygon.RecordPolygonActivity;
@@ -995,6 +996,36 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                         "", "", "",
                         "",
                         "farmpolygon"
+                });
+
+                //ticket-OFISDM-39 add new record diagnostic module task
+
+                mc.addRow(new String[]{
+                        "0",
+                        res.getString(R.string.dm_diognostic_module),
+                        res.getString(R.string.dm_diognostic_module),
+                        res.getString(R.string.dm_diognostic_module),
+                        res.getString(R.string.dm_diognostic_module),
+                        res.getString(R.string.dm_diognostic_module),
+                        res.getString(R.string.dm_diognostic_module),
+                        res.getString(R.string.dm_diognostic_module),
+                        res.getString(R.string.dm_diognostic_module),
+                        res.getString(R.string.dm_diognostic_module),
+                        "0",
+                        "",
+                        "",
+                        "",
+                        res.getString(R.string.dm_diognostic_module_subtitle),
+                        res.getString(R.string.dm_diognostic_module_subtitle),
+                        res.getString(R.string.dm_diognostic_module_subtitle),
+                        res.getString(R.string.dm_diognostic_module_subtitle),
+                        res.getString(R.string.dm_diognostic_module_subtitle),
+                        res.getString(R.string.dm_diognostic_module_subtitle),
+                        res.getString(R.string.dm_diognostic_module_subtitle),
+                        res.getString(R.string.dm_diognostic_module_subtitle),
+                        res.getString(R.string.dm_diognostic_module_subtitle),
+                        "", "", "", "", "", "", "", "", "",
+                        "diagnostic"
                 });
 
                 boolean isHHAvailable = Utilities.getBoolFromSharedPrefs(context, Utilities.HOUSEHOLD_ENUMERATOR, false);
@@ -2218,6 +2249,12 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                         MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_FARM_POLYGON, ScreenNameConstants.BUTTON_CLICKED);
                         polygon = true;
                         enableFarmPolygon(v);
+
+                        //Ticket-OFISDM-39 newly added
+                    }else if(recordedLng != null && recordedLng.getText().equals("diagnostic")){
+                        MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_REGISTER_CHILD, ScreenNameConstants.BUTTON_CLICKED);
+                        Intent in = new Intent(this, DiagnosticModuleActivity.class);
+                        startActivity(in);
                     } else if (recordedLng != null && recordedLng.getText().equals(ChildLabourUtils.REG_CHILD)) {
                         MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_REGISTER_CHILD, ScreenNameConstants.BUTTON_CLICKED);
                         Intent in = new Intent(this, RegisterChildActivity.class);

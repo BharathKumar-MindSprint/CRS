@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/ofis_page_background"
+    tools:context=".mvvmmodule.view.diagnosticmodule.fragment.ActionPlanProofFragment">
+
+    <RelativeLayout
+        android:id="@+id/rl_actionplan_proof"
+        android:layout_below="@+id/ll_tab_layoutmain"
+        android:layout_marginTop="@dimen/margin_10"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:id="@+id/ll_currency_layout"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_10"
+            android:background="@drawable/layout_white_radius_bg">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/dm_select_currency_txt"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                android:layout_margin="@dimen/margin_10"
+                android:textSize="@dimen/ofis_med_text"/>
+
+
+            <Spinner
+                android:id="@+id/spinner_farmerGroup"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_margin="@dimen/margin_10"
+                android:layout_weight="1"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:nextFocusDown="@+id/spinner_section"
+                android:nextFocusForward="@+id/spinner_section" />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/ll_complaint_layout"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_10"
+            android:background="@color/white">
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/table_width60"
+            android:orientation="horizontal"
+            android:background="@color/white"
+            android:layout_alignParentBottom="true"
+            android:weightSum="2">
+            <LinearLayout
+                android:id="@+id/ll_servey_back_actionplan"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/dm_back_background"
+                android:layout_margin="@dimen/margin_10"
+                android:onClick="goLastTab"
+                android:layout_weight="1">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="@string/back"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:layout_weight="1"
+                    android:textColor="@color/black"/>
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/ll_servey_next_actionplan"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="@dimen/margin_10"
+                android:onClick="goNextTab"
+                android:background="@drawable/dm_next_background"
+                android:layout_weight="1">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="@string/ModuleNextButton"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:layout_weight="1"
+                    android:textColor="@color/white"/>
+            </LinearLayout>
+
+        </LinearLayout>
+    </RelativeLayout>
+
+</FrameLayout>
