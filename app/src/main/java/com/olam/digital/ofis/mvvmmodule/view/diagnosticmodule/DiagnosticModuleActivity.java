@@ -3,11 +3,9 @@ package com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
-import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -15,19 +13,9 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.olam.digital.ofis.BaseActivity;
 import com.olam.digital.ofis.R;
-import com.olam.digital.ofis.RetrofitServices.ManageRecords;
-import com.olam.digital.ofis.RetrofitServices.RetrofitClient;
-import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.DiagnosticModel;
-import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.Response;
-import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.ResponseItem;
 import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.adapter.PagerAdapter;
 import com.olam.digital.ofis.mvvmmodule.viewmodel.diagnosticmodule.DiagnosticModuleRepository;
 import com.olam.digital.ofis.mvvmmodule.viewmodel.diagnosticmodule.DiagnosticViewModel;
-
-import java.util.List;
-
-import retrofit2.Call;
-import retrofit2.Callback;
 
 
 public class DiagnosticModuleActivity extends BaseActivity {
@@ -90,7 +78,7 @@ public class DiagnosticModuleActivity extends BaseActivity {
         diagnosticModuleRepository=new DiagnosticModuleRepository(getApplication());
 
         diagnosticViewModel= ViewModelProviders.of(this).get(DiagnosticViewModel.class);
-        getAllDiagnosticModule();
+        GetAllDiagnosticModule();
 
     }
 
@@ -114,12 +102,13 @@ public class DiagnosticModuleActivity extends BaseActivity {
     }
 
 
-    private void getAllDiagnosticModule() {
+    private void GetAllDiagnosticModule() {
         Toast.makeText(this, "ResponseMethod", Toast.LENGTH_SHORT).show();
 
         diagnosticViewModel.responseLiveData().observe(this, responseLiveData -> {
             if (responseLiveData != null) {
                 Toast.makeText(this, "ResponseMethodINN", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Successful", Toast.LENGTH_SHORT).show();
                 progressDialog.hide();
 
             }

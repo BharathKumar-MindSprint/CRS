@@ -6,7 +6,6 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
-import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.Response;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.ResponseModel;
 
 public class DiagnosticViewModel extends AndroidViewModel {
