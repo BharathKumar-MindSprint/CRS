@@ -1,57 +1,64 @@
 package com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule;
 
 
-import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
-import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.olam.digital.ofis.BaseActivity;
-import com.olam.digital.ofis.FindFarmerActivity;
-import com.olam.digital.ofis.HomeActivity;
 import com.olam.digital.ofis.R;
+import com.olam.digital.ofis.RetrofitServices.ManageRecords;
+import com.olam.digital.ofis.RetrofitServices.RetrofitClient;
+import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.DiagnosticModel;
+import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.Response;
+import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.ResponseItem;
 import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.adapter.PagerAdapter;
+import com.olam.digital.ofis.mvvmmodule.viewmodel.diagnosticmodule.DiagnosticModuleRepository;
+import com.olam.digital.ofis.mvvmmodule.viewmodel.diagnosticmodule.DiagnosticViewModel;
+
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+
 
 public class DiagnosticModuleActivity extends BaseActivity {
-   /* LinearLayout ll_survey_tab,ll_actionplan_proof_tab,ll_survey_results_tab;
-    LinearLayout ll_servey_next,ll_servey_back,ll_servey_back_actionplan,ll_servey_next_actionplan,ll_servey_back_servey_results,ll_servey_next_servey_results;
-    TextView tv_survey,tv_actionplan_proof,tv_survey_results;
-    RelativeLayout rl_survey,rl_actionplan_proof,rl_survey_results;*/
+    private DiagnosticModuleRepository diagnosticModuleRepository;
+    private DiagnosticViewModel diagnosticViewModel;
 
     public TabLayout tabLayout;
     ViewPager2 viewPager;
-    private String[] titles = new String[] {"Survey" , "Action plan and proof","Survey Results"};
+    private ProgressDialog progressDialog;
+    private String[] titles = new String[]{"Survey", "Action plan and proof", "Survey Results"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_diagnostic_module);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setTitle(getString(R.string.PleaseWait));
+        progressDialog.setMessage(getString(R.string.Loading));
+        progressDialog.show();
+        tabLayout = findViewById(R.id.tabLayout);
+        viewPager = findViewById(R.id.viewPager);
 
-        tabLayout=findViewById(R.id.tabLayout);
-        viewPager=findViewById(R.id.viewPager);
-
-       /* tabLayout.addTab(tabLayout.newTab().setText("Survey"));
-        tabLayout.addTab(tabLayout.newTab().setText("Action plan and proof"));
-        tabLayout.addTab(tabLayout.newTab().setText("Survey Results"));
-        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);*/
-
-        //FragmentActivity fm = getFragmentManager();
         PagerAdapter sa = new PagerAdapter(this);
         viewPager.setAdapter(sa);
-        new TabLayoutMediator(tabLayout,viewPager,((tab, position) ->{
+        new TabLayoutMediator(tabLayout, viewPager, ((tab, position) -> {
             tab.setText(titles[position]);
             //tab.view.setClickable(false);
 
-        } )).attach();
+        })).attach();
 
-
-       //viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -79,69 +86,18 @@ public class DiagnosticModuleActivity extends BaseActivity {
             }
         });
 
-       /* ll_survey_tab = findViewById(R.id.ll_survey_tab);
-        ll_actionplan_proof_tab = findViewById(R.id.ll_actionplan_proof_tab);
-        ll_survey_results_tab = findViewById(R.id.ll_survey_results_tab);
+       //
+        diagnosticModuleRepository=new DiagnosticModuleRepository(getApplication());
 
-        ll_servey_next = findViewById(R.id.ll_servey_next);
-        ll_servey_back = findViewById(R.id.ll_servey_back);
-
-
-        ll_servey_back_actionplan = findViewById(R.id.ll_servey_back_actionplan);
-        ll_servey_next_actionplan = findViewById(R.id.ll_servey_next_actionplan);
-
-
-        ll_servey_back_servey_results = findViewById(R.id.ll_servey_back_servey_results);
-        ll_servey_next_servey_results = findViewById(R.id.ll_servey_next_servey_results);
-
-        rl_survey = findViewById(R.id.rl_survey);
-        rl_actionplan_proof = findViewById(R.id.rl_actionplan_proof);
-        rl_survey_results = findViewById(R.id.rl_survey_results);
-
-
-        tv_survey = findViewById(R.id.tv_survey);
-        tv_actionplan_proof = findViewById(R.id.tv_actionplan_proof);
-        tv_survey_results = findViewById(R.id.tv_survey_results);
-
-        ll_servey_next.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ll_actionplan_proof_tab.setBackgroundColor(getResources().getColor(R.color.ofis_farmer_screen_actions_background));
-                rl_actionplan_proof.setVisibility(View.VISIBLE);
-                rl_survey.setVisibility(View.GONE);
-                ll_survey_tab.setBackgroundColor(getResources().getColor(R.color.dull_white));
-                tv_survey.setTextColor(getResources().getColor(R.color.colorPrimary));
-                tv_actionplan_proof.setTextColor(getResources().getColor(R.color.white));
-            }
-        });
-
-        ll_servey_next_actionplan.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ll_survey_results_tab.setBackgroundColor(getResources().getColor(R.color.ofis_farmer_screen_actions_background));
-                rl_survey_results.setVisibility(View.VISIBLE);
-                rl_actionplan_proof.setVisibility(View.GONE);
-                rl_survey.setVisibility(View.GONE);
-                ll_survey_tab.setBackgroundColor(getResources().getColor(R.color.dull_white));
-                ll_actionplan_proof_tab.setBackgroundColor(getResources().getColor(R.color.dull_white));
-                tv_survey.setTextColor(getResources().getColor(R.color.colorPrimary));
-                tv_actionplan_proof.setTextColor(getResources().getColor(R.color.colorPrimary));
-                tv_survey_results.setTextColor(getResources().getColor(R.color.white));
-
-            }
-        });*/
-
+        diagnosticViewModel= ViewModelProviders.of(this).get(DiagnosticViewModel.class);
+        getAllDiagnosticModule();
 
     }
-   /* public void navigateFragment(int position){
-        viewPager.setCurrentItem(position, true);
-
-    }*/
 
     public void goLastTab(View view) {
         int currentTab = viewPager.getCurrentItem();
-        int nextTab = currentTab -1;
-        if (nextTab >= viewPager.getAdapter().getItemCount()){
+        int nextTab = currentTab - 1;
+        if (nextTab >= viewPager.getAdapter().getItemCount()) {
             nextTab = 0;
         }
         viewPager.setCurrentItem(nextTab);
@@ -150,11 +106,25 @@ public class DiagnosticModuleActivity extends BaseActivity {
 
     public void goNextTab(View view) {
         int currentTab = viewPager.getCurrentItem();
-        int nextTab = currentTab +1;
-        if (nextTab >= viewPager.getAdapter().getItemCount()){
+        int nextTab = currentTab + 1;
+        if (nextTab >= viewPager.getAdapter().getItemCount()) {
             nextTab = 0;
         }
         viewPager.setCurrentItem(nextTab);
+    }
+
+
+    private void getAllDiagnosticModule() {
+        Toast.makeText(this, "ResponseMethod", Toast.LENGTH_SHORT).show();
+
+        diagnosticViewModel.responseLiveData().observe(this, responseLiveData -> {
+            if (responseLiveData != null) {
+                Toast.makeText(this, "ResponseMethodINN", Toast.LENGTH_SHORT).show();
+                progressDialog.hide();
+
+            }
+        });
+
     }
 
 }

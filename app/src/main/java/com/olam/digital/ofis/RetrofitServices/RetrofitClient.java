@@ -1,4 +1,4 @@
-package com.olam.digital.ofis.ManageTrainingRecords.Services;
+package com.olam.digital.ofis.RetrofitServices;
 
 import com.olam.digital.ofis.BuildConfig;
 import okhttp3.Interceptor;
@@ -9,7 +9,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class RetrofitClient {
     private static final String BASE_URL = BuildConfig.HOST;
     public static Retrofit getRetrofit(){
-        Interceptor interceptor=new com.olam.digital.ofis.ManageTrainingRecords.Services.Interceptor();
+        Interceptor interceptor=new com.olam.digital.ofis.RetrofitServices.Interceptor();
          OkHttpClient okHttpClient=new OkHttpClient.Builder()
                  .addInterceptor(interceptor)
                  .build();

@@ -1,4 +1,4 @@
-package com.olam.digital.ofis.ManageTrainingRecords.Services;
+package com.olam.digital.ofis.RetrofitServices;
 
 import android.annotation.SuppressLint;
 import android.app.Service;

@@ -1,4 +1,4 @@
-package com.olam.digital.ofis.ManageTrainingRecords.Services;
+package com.olam.digital.ofis.RetrofitServices;
 
 import com.olam.digital.ofis.ManageTrainingRecords.model.Assets;
 import com.olam.digital.ofis.ManageTrainingRecords.model.Course;
@@ -10,6 +10,11 @@ import com.olam.digital.ofis.farmplandownload.model.AccessTokenReqBody;
 import com.olam.digital.ofis.farmplandownload.model.AccessTokenResp;
 import com.olam.digital.ofis.farmplandownload.model.DownloadFormList;
 import com.olam.digital.ofis.farmplandownload.model.DownloadUrlRequestBody;
+import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.DiagnosticModel;
+import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.Response;
+import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.ResponseModel;
+
+import org.json.JSONObject;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -57,5 +62,9 @@ public interface ManageRecords {
 //@Streaming
     @POST("storageconnect/api/v1/common")
     Call<ResponseBody> getDownloadUrl(@Body DownloadUrlRequestBody downloadUrlRequestBody);
+
+    //Diagnostic Module
+    @GET("ofissurvey/survey/diagnostic/getAllDiagnosticModuleData/{enumerator}")
+    Call<ResponseModel> getAllDiagnosticModuleData(@Path("enumerator") Integer enumeratorId);
 
 }

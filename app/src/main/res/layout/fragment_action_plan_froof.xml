@@ -1,34 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/ofis_page_background"
     tools:context=".mvvmmodule.view.diagnosticmodule.fragment.ActionPlanProofFragment">
 
     <RelativeLayout
         android:id="@+id/rl_actionplan_proof"
-        android:layout_below="@+id/ll_tab_layoutmain"
-        android:layout_marginTop="@dimen/margin_10"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <LinearLayout
+        android:layout_height="match_parent"
+        android:layout_below="@+id/ll_tab_layoutmain"
+        android:layout_marginTop="@dimen/margin_10">
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <LinearLayout
             android:id="@+id/ll_currency_layout"
-            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/margin_10"
-            android:background="@drawable/layout_white_radius_bg">
+            android:layout_marginStart="@dimen/margin_10"
+            android:layout_marginTop="@dimen/margin_10"
+            android:layout_marginEnd="@dimen/margin_10"
+            android:layout_marginBottom="@dimen/margin_10"
+            android:background="@drawable/layout_white_radius_bg"
+            android:orientation="vertical">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin_10"
                 android:text="@string/dm_select_currency_txt"
                 android:textColor="@color/black"
-                android:textStyle="bold"
-                android:layout_margin="@dimen/margin_10"
-                android:textSize="@dimen/ofis_med_text"/>
+                android:textSize="@dimen/ofis_med_text"
+                android:textStyle="bold" />
 
 
             <Spinner
@@ -42,57 +52,422 @@
                 android:nextFocusDown="@+id/spinner_section"
                 android:nextFocusForward="@+id/spinner_section" />
         </LinearLayout>
-        <LinearLayout
+
+                <LinearLayout
             android:id="@+id/ll_complaint_layout"
-            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/ll_currency_layout"
             android:layout_margin="@dimen/margin_10"
-            android:background="@color/white">
+            android:background="@color/white"
+            android:orientation="vertical">
+
+            <View
+                android:layout_width="4dp"
+                android:layout_height="wrap_content"
+                android:background="@color/background_multifarm"
+                android:visibility="gone" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/text_button_width_height"
+                android:layout_margin="@dimen/margin_10">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:text="Complaint"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/ofis_med_text"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:id="@+id/iv_complaint_dropdown"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="@dimen/margin_10"
+                    android:src="@drawable/ic_dropdown_new" />
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_complaint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/margin_10"
+                    android:text="1. Does the farmer have bank account?"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/ofis_med_text"
+                    android:textStyle="bold" />
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_margin="@dimen/margin_10"
+                    android:layout_marginBottom="10dp"
+                    android:background="@drawable/farm_code_selected_edittext"
+                    android:focusable="false"
+                    android:hint="Textbox answer"
+                    android:padding="@dimen/margin_10"
+                    android:textColor="@color/btn_secondary_background"
+                    android:textColorHint="@color/icon_grey_palette_2"
+                    android:textSize="@dimen/ofis_input_field_text" />
+
+                <RelativeLayout
+                    android:id="@+id/rl_complaint_captureproof_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/table_width60"
+                    android:layout_margin="@dimen/margin_10"
+                    android:background="@drawable/dm_captureproof_bg"
+                    android:gravity="center">
+
+                    <TextView
+                        android:id="@+id/tv_cpature_txt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:text="Capture Proof"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="@dimen/ofis_med_text"
+                        android:textStyle="bold" />
+
+                    <ImageView
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="@dimen/margin_10"
+                        android:layout_toRightOf="@+id/tv_cpature_txt"
+                        android:backgroundTint="@color/colorPrimary"
+                        android:src="@drawable/ic_survey" />
+
+                </RelativeLayout>
+
+
+                    <LinearLayout
+                        android:id="@+id/image_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                    </LinearLayout>
+
+
+
+                <Spinner
+                    android:id="@+id/spinner_complaint_actionplan"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_margin="@dimen/margin_10"
+                    android:layout_weight="1"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:nextFocusDown="@+id/spinner_section"
+                    android:nextFocusForward="@+id/spinner_section" />
+            </LinearLayout>
 
 
         </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/ll_noncomplaint_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/ll_currency_layout"
+                    android:layout_margin="@dimen/margin_10"
+                    android:background="@color/white"
+                    android:orientation="vertical">
+
+                    <View
+                        android:layout_width="4dp"
+                        android:layout_height="wrap_content"
+                        android:background="@color/background_multifarm"
+                        android:visibility="gone" />
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/text_button_width_height"
+                        android:layout_margin="@dimen/margin_10">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:gravity="center_vertical"
+                            android:text="Non Complaint"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/ofis_med_text"
+                            android:textStyle="bold" />
+
+                        <ImageView
+                            android:id="@+id/iv_noncomplaint_dropdown"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            android:layout_marginEnd="@dimen/margin_10"
+                            android:src="@drawable/ic_dropdown_new" />
+
+                    </RelativeLayout>
+
+                    <LinearLayout
+                        android:id="@+id/ll_noncomplaint"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="@dimen/margin_10"
+                            android:text="1. Does the farmer have bank account?"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/ofis_med_text"
+                            android:textStyle="bold" />
+
+                        <EditText
+                            android:layout_width="match_parent"
+                            android:layout_height="40dp"
+                            android:layout_margin="@dimen/margin_10"
+                            android:layout_marginBottom="10dp"
+                            android:background="@drawable/farm_code_selected_edittext"
+                            android:focusable="false"
+                            android:hint="Textbox answer"
+                            android:padding="@dimen/margin_10"
+                            android:textColor="@color/btn_secondary_background"
+                            android:textColorHint="@color/icon_grey_palette_2"
+                            android:textSize="@dimen/ofis_input_field_text" />
+
+                        <RelativeLayout
+                            android:id="@+id/rl_noncomplaint_captureproof_layout"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/table_width60"
+                            android:layout_margin="@dimen/margin_10"
+                            android:background="@drawable/dm_captureproof_bg"
+                            android:gravity="center">
+
+                            <TextView
+                                android:id="@+id/tv_cpature_txt"
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:gravity="center_vertical"
+                                android:text="Capture Proof"
+                                android:textColor="@color/colorPrimary"
+                                android:textSize="@dimen/ofis_med_text"
+                                android:textStyle="bold" />
+
+                            <ImageView
+                                android:layout_width="30dp"
+                                android:layout_height="30dp"
+                                android:layout_centerVertical="true"
+                                android:layout_marginLeft="@dimen/margin_10"
+                                android:layout_toRightOf="@+id/tv_cpature_txt"
+                                android:backgroundTint="@color/colorPrimary"
+                                android:src="@drawable/ic_survey" />
+
+                        </RelativeLayout>
+
+
+                        <LinearLayout
+                            android:id="@+id/ll_image_noncomplaint_layout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                        </LinearLayout>
+
+
+                        <Spinner
+                            android:id="@+id/spinner_noncomplaint_actionplan"
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_margin="@dimen/margin_10"
+                            android:layout_weight="1"
+                            android:focusable="true"
+                            android:focusableInTouchMode="true"
+                            android:nextFocusDown="@+id/spinner_section"
+                            android:nextFocusForward="@+id/spinner_section"/>
+                    </LinearLayout>
+
+
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/ll_satisfactory_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/ll_currency_layout"
+                    android:layout_margin="@dimen/margin_10"
+                    android:background="@color/white"
+                    android:orientation="vertical">
+
+                    <View
+                        android:layout_width="4dp"
+                        android:layout_height="wrap_content"
+                        android:background="@color/background_multifarm"
+                        android:visibility="gone" />
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/text_button_width_height"
+                        android:layout_margin="@dimen/margin_10">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:gravity="center_vertical"
+                            android:text="Satisfactory"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/ofis_med_text"
+                            android:textStyle="bold" />
+
+                        <ImageView
+                            android:id="@+id/iv_satisfactory_dropdown"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            android:layout_marginEnd="@dimen/margin_10"
+                            android:src="@drawable/ic_dropdown_new" />
+
+                    </RelativeLayout>
+
+                    <LinearLayout
+                        android:id="@+id/ll_satisfactory"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="@dimen/margin_10"
+                            android:text="1. Does the farmer have bank account?"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/ofis_med_text"
+                            android:textStyle="bold" />
+
+                        <EditText
+                            android:layout_width="match_parent"
+                            android:layout_height="40dp"
+                            android:layout_margin="@dimen/margin_10"
+                            android:layout_marginBottom="10dp"
+                            android:background="@drawable/farm_code_selected_edittext"
+                            android:focusable="false"
+                            android:hint="Textbox answer"
+                            android:padding="@dimen/margin_10"
+                            android:textColor="@color/btn_secondary_background"
+                            android:textColorHint="@color/icon_grey_palette_2"
+                            android:textSize="@dimen/ofis_input_field_text" />
+
+                        <RelativeLayout
+                            android:id="@+id/rl_satisfactory_captureproof_layout"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/table_width60"
+                            android:layout_margin="@dimen/margin_10"
+                            android:background="@drawable/dm_captureproof_bg"
+                            android:gravity="center">
+
+                            <TextView
+                                android:id="@+id/tv_cpature_txt"
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:gravity="center_vertical"
+                                android:text="Capture Proof"
+                                android:textColor="@color/colorPrimary"
+                                android:textSize="@dimen/ofis_med_text"
+                                android:textStyle="bold" />
+
+                            <ImageView
+                                android:layout_width="30dp"
+                                android:layout_height="30dp"
+                                android:layout_centerVertical="true"
+                                android:layout_marginLeft="@dimen/margin_10"
+                                android:layout_toRightOf="@+id/tv_cpature_txt"
+                                android:backgroundTint="@color/colorPrimary"
+                                android:src="@drawable/ic_survey" />
+
+                        </RelativeLayout>
+
+
+                        <LinearLayout
+                            android:id="@+id/ll_image_satisfactory_layout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                        </LinearLayout>
+
+
+                        <Spinner
+                            android:id="@+id/spinner_satisfactory_actionplan"
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_margin="@dimen/margin_10"
+                            android:layout_weight="1"
+                            android:focusable="true"
+                            android:focusableInTouchMode="true"
+                            android:nextFocusDown="@+id/spinner_section"
+                            android:nextFocusForward="@+id/spinner_section"/>
+                    </LinearLayout>
+
+
+                </LinearLayout>
+
+            </LinearLayout>
+        </ScrollView>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="@dimen/table_width60"
-            android:orientation="horizontal"
-            android:background="@color/white"
             android:layout_alignParentBottom="true"
+            android:background="@color/white"
+            android:orientation="horizontal"
             android:weightSum="2">
+
             <LinearLayout
                 android:id="@+id/ll_servey_back_actionplan"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@drawable/dm_back_background"
                 android:layout_margin="@dimen/margin_10"
-                android:onClick="goLastTab"
-                android:layout_weight="1">
+                android:layout_weight="1"
+                android:background="@drawable/dm_back_background"
+                android:onClick="goLastTab">
+
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:text="@string/back"
-                    android:textStyle="bold"
-                    android:gravity="center"
                     android:layout_weight="1"
-                    android:textColor="@color/black"/>
+                    android:gravity="center"
+                    android:text="@string/back"
+                    android:textColor="@color/black"
+                    android:textStyle="bold" />
             </LinearLayout>
+
             <LinearLayout
                 android:id="@+id/ll_servey_next_actionplan"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_margin="@dimen/margin_10"
-                android:onClick="goNextTab"
+                android:layout_weight="1"
                 android:background="@drawable/dm_next_background"
-                android:layout_weight="1">
+                android:onClick="goNextTab">
+
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:text="@string/ModuleNextButton"
-                    android:textStyle="bold"
-                    android:gravity="center"
                     android:layout_weight="1"
-                    android:textColor="@color/white"/>
+                    android:gravity="center"
+                    android:text="@string/ModuleNextButton"
+                    android:textColor="@color/white"
+                    android:textStyle="bold" />
             </LinearLayout>
 
         </LinearLayout>
