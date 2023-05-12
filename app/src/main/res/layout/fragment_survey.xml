@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/ofis_page_background"
+    tools:context=".mvvmmodule.view.diagnosticmodule.fragment.SurveyFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+
+
+            <RelativeLayout
+                android:id="@+id/rl_survey"
+                android:layout_below="@+id/view"
+                android:layout_marginTop="@dimen/margin_10"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <ScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/scrollView"
+                    tools:ignore="UselessParent">
+                   <!-- <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Survey"
+                        android:textStyle="bold"
+                        android:layout_gravity="center_vertical"
+                        android:visibility="gone"
+                        android:textSize="20dp"
+                        android:textColor="@color/colorPrimary"
+                        android:gravity="center"/>-->
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/dm_questionsSection"/>
+
+                </ScrollView>
+
+             <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/table_width60"
+            android:orientation="horizontal"
+            android:layout_alignParentBottom="true"
+            android:background="@color/white"
+            android:weightSum="2">
+            <LinearLayout
+                android:id="@+id/ll_servey_back"
+                android:layout_width="match_parent"
+                android:onClick="goLastTab"
+                android:background="@drawable/dm_back_background"
+                android:layout_margin="@dimen/margin_10"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="@string/back"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:layout_weight="1"
+                    android:textColor="@color/black"/>
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/ll_servey_next"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:onClick="goNextTab"
+                android:background="@drawable/dm_next_background"
+                android:layout_margin="@dimen/margin_10"
+                android:layout_weight="1">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="@string/ModuleNextButton"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:layout_weight="1"
+                    android:textColor="@color/white"/>
+            </LinearLayout>
+
+        </LinearLayout>
+
+            </RelativeLayout>
+
+
+
+
+</FrameLayout>

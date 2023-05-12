@@ -1,8 +1,6 @@
 package com.olam.digital.ofis.farmplandownload;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DownloadManager;
 import android.app.ProgressDialog;
@@ -15,27 +13,22 @@ import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
 import com.olam.digital.ofis.BaseActivity;
 import com.olam.digital.ofis.BuildConfig;
-import com.olam.digital.ofis.ManageTrainingRecords.Services.ManageRecords;
-import com.olam.digital.ofis.ManageTrainingRecords.Services.RetrofitClient;
+import com.olam.digital.ofis.RetrofitServices.ManageRecords;
+import com.olam.digital.ofis.RetrofitServices.RetrofitClient;
 import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.Utilities;
 import com.olam.digital.ofis.farmplandownload.model.AccessTokenReqBody;
@@ -44,18 +37,12 @@ import com.olam.digital.ofis.farmplandownload.model.DownloadFormList;
 import com.olam.digital.ofis.farmplandownload.model.DownloadUrlRequestBody;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.lang.reflect.Type;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.StringTokenizer;
 
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
@@ -127,8 +114,6 @@ public class DownloadFarmPlanActivity extends BaseActivity implements ItemClickL
             String isoCode = Utilities.getdatafromSharedPrefs(context,"CountryUserID");
             Log.d("COUNTRY_CODENEWPREFFF", isoCode);
             counrtyCodeNew =isoCode+"_OFIS_DO_INTERFACE";
-
-
 
         } catch (ActivityNotFoundException e) {
 
@@ -228,7 +213,7 @@ public class DownloadFarmPlanActivity extends BaseActivity implements ItemClickL
                     progressDialog.hide();
                     showAlert("Internal Server Error, Please Contact Admin!!-"+response.message().toString());
                 }else{
-                    showAlert("Server Issue!!"+response.message().toString());
+                    //showAlert("Server Issue!!"+response.message().toString());
                 }
             }
             @Override
@@ -242,7 +227,7 @@ public class DownloadFarmPlanActivity extends BaseActivity implements ItemClickL
 
     private void getDownloadUrl(){
 
-        Interceptor interceptor=new com.olam.digital.ofis.ManageTrainingRecords.Services.Interceptor();
+        Interceptor interceptor=new com.olam.digital.ofis.RetrofitServices.Interceptor();
         OkHttpClient okHttpClient=new OkHttpClient.Builder()
                 .addInterceptor(interceptor)
                 .build();
@@ -333,7 +318,7 @@ public class DownloadFarmPlanActivity extends BaseActivity implements ItemClickL
                     progressDialog.hide();
                     showAlert("Internal Server Error, Please Contact Admin!!-"+response.message().toString());
                 } else{
-                    showAlert("Something Went wrong!!"+response.message().toString());
+                    //showAlert("Something Went wrong!!"+response.message().toString());
                 }
 
 

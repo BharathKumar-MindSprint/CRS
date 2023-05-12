@@ -21,16 +21,15 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
-import androidx.viewpager.widget.ViewPager;
+
 import com.google.android.material.tabs.TabLayout;
 import com.olam.digital.ofis.BaseActivity;
-import com.olam.digital.ofis.ManageTrainingRecords.Services.MyService;
-import com.olam.digital.ofis.ManageTrainingRecords.Listener.ItemClickListener;
-import com.olam.digital.ofis.ManageTrainingRecords.Services.ManageRecords;
+import com.olam.digital.ofis.RetrofitServices.MyService;
+import com.olam.digital.ofis.RetrofitServices.ManageRecords;
 import com.olam.digital.ofis.ManageTrainingRecords.adapter.CustomViewPager;
 import com.olam.digital.ofis.ManageTrainingRecords.adapter.ViewpageAdapter;
 import com.olam.digital.ofis.R;
-import com.olam.digital.ofis.ManageTrainingRecords.Services.RetrofitClient;
+import com.olam.digital.ofis.RetrofitServices.RetrofitClient;
 import com.olam.digital.ofis.ManageTrainingRecords.model.Assets;
 import com.olam.digital.ofis.ManageTrainingRecords.model.Course;
 import com.olam.digital.ofis.ManageTrainingRecords.model.DocumentList;
@@ -40,7 +39,6 @@ import com.olam.digital.ofis.authentication.AuthenticationHelper;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import retrofit2.Call;
 import retrofit2.Callback;

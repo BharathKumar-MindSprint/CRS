@@ -185,6 +185,12 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                     textView.setText(res.getString(R.string.update_phone_numbers_hint));
                 }
                 //}
+                //Ticket-OFISDM-39 newly added
+            }else if(cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals("diagnostic")){
+                imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_childsurvey));
+                enabledItem.setText("true");
+
+                textView.setText(res.getString(R.string.dm_diognostic_module_subtitle));
             } else if (cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals(ChildLabourUtils.REG_CHILD)) {
 
                 imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_child));

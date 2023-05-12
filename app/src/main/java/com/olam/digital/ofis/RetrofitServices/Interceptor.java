@@ -1,4 +1,4 @@
-package com.olam.digital.ofis.ManageTrainingRecords.Services;
+package com.olam.digital.ofis.RetrofitServices;
 
 import static com.olam.digital.ofis.EnableMultiDex.context;
 import android.os.SystemClock;
