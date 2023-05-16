@@ -742,7 +742,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         if (enumeratorID.getText().length() > 0 && passcode.getText().length() >0) {
             Utilities.saveLongToSharedPrefs(context, "VERSION_NUM", BuildConfig.VERSION_CODE);
             Utilities.saveToSharedPrefs(context, "ENUMERATOR_ID", enumeratorID.getText().toString(), null);
-            Utilities.saveToSharedPrefs(context, "PASSCODE", passcode.getText().toString(), null);
+            Utilities.saveToSharedPrefs(context, "PASSCODE", passcode.getText().toString().trim(), null);
             if(!existingUser) {
                 nl.syncData();
             }else {
@@ -1341,7 +1341,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             authenticationDTO.setWillExpireAt((System.currentTimeMillis() / 1000) + authenticationDTO.getExpiresIn() / 1000);
             new AuthenticationHelper(this).setAuthenticationDTO(authenticationDTO);
             new AuthenticationHelper(this).setUserName(enumeratorID.getText().toString());
-            new AuthenticationHelper(this).setPassode(passcode.getText().toString());
+            new AuthenticationHelper(this).setPassode(passcode.getText().toString().trim());
 
 
 //            Dynatrace.identifyUser(enumeratorID.getText().toString());
