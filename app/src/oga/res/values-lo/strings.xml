@@ -729,7 +729,6 @@
     <string name="fill_farmergroup_name">ກະລຸນາຕື່ມຊື່ກຸ່ມຊາວກະສິກອນ</string>
     <string name="fill_section">ກະລຸນາຕື່ມຂໍ້ມູນໃສ່ພາກສ່ວນ</string>
     <string name="fill_GPS_position">ກະລຸນາຕື່ມຕໍາແຫນ່ງ GPS</string>
-    <string name="updating_face_templates">ກຳລັງອັບເດດຂໍ້ມູນຊີວະມິຕິ</string>
     <string name="updating_faceda_templates">ການປັບປຸງສະຖານະພາບໃບອະນຸຍາດ ຊີວະພາບ</string>
     <string name="please_fill_the_place">ກະລຸນາເລືອກສະຖານທີ່</string>
     <string name="download_nationalid_enumerator">ດາວໂຫຼດລາຍລະອຽດບັດປະຈຳຕົວ</string>
