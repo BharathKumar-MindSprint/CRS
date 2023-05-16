@@ -411,7 +411,7 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                 textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
 
         }
-        if (cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals(context.getResources().getString(R.string.consent_statement))) {
+        if (cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals(Utilities.CONSENTSTATEMENT)) {
                 Log.d("CustomListAdapter", "isConsentavailable? :" + isConsentAvailable);
                 if (isConsentTrue) {
                     imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_consentstmts));
