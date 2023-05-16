@@ -1099,5 +1099,6 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="dm_diognostic_module">Diagnostic Module</string>
     <string name="dm_diognostic_module_subtitle">Follow up generated</string>
     <string name="dm_select_currency_txt">Select the currency for the action plan</string>
+    <string name="dm_select_currency_txt1">Select the currency for the action plan</string>
 
 </resources>

@@ -33,6 +33,8 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AlertDialog;
 import androidx.cardview.widget.CardView;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.ViewModelProviders;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -59,13 +61,12 @@ import com.google.android.gms.security.ProviderInstaller;
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.gson.Gson;
 import com.olam.digital.ofis.ManageTrainingRecords.Records;
-import com.olam.digital.ofis.ManageTrainingRecords.Services.ManageRecords;
-import com.olam.digital.ofis.ManageTrainingRecords.Services.RetrofitClient;
+import com.olam.digital.ofis.RetrofitServices.ManageRecords;
+import com.olam.digital.ofis.RetrofitServices.RetrofitClient;
 import com.olam.digital.ofis.authentication.AccessTokenTask;
 import com.olam.digital.ofis.authentication.AuthenticationClient;
 import com.olam.digital.ofis.authentication.AuthenticationHelper;
 import com.olam.digital.ofis.authentication.AuthenticationInterface;
-import com.olam.digital.ofis.authentication.DeviceIDxctractor;
 import com.olam.digital.ofis.authentication.KeyCloakInfo;
 import com.olam.digital.ofis.authentication.OnAccessTokenInterface;
 import com.olam.digital.ofis.authentication.model.AuthRequestDTO;
@@ -79,7 +80,6 @@ import com.olam.digital.ofis.downloadsurvey.ListDownSurveys;
 import com.olam.digital.ofis.downloadsurvey.dto.ModuleDTO;
 import com.olam.digital.ofis.dynatrace.DynatraceHelper;
 import com.olam.digital.ofis.farmplandownload.DownloadFarmPlanActivity;
-import com.olam.digital.ofis.farmplandownload.DownloadFarmPlanAdapter;
 import com.olam.digital.ofis.farmplandownload.model.AccessTokenReqBody;
 import com.olam.digital.ofis.farmplandownload.model.AccessTokenResp;
 import com.olam.digital.ofis.farmplandownload.model.DownloadFormList;
@@ -94,19 +94,15 @@ import com.olam.digital.ofis.matoma.MatomoHelper;
 import com.olam.digital.ofis.matoma.ScreenNameConstants;
 import com.olam.digital.ofis.multifarm.MultiFarmUtils;
 import com.olam.digital.ofis.multifarm.UpdateMultiFarmActivity;
+import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.DiagnosticModuleActivity;
+import com.olam.digital.ofis.mvvmmodule.viewmodel.diagnosticmodule.DiagnosticViewModel;
 import com.olam.digital.ofis.recordpolygon.RecordPolygonActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
@@ -206,6 +202,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     static String odAccessToken;
 
     static boolean isdownloadfarmplan;
+    private static DiagnosticViewModel diagnosticViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -234,9 +231,10 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         captureMyLocationWrapper = (CardView) findViewById(R.id.captureLocationWrapper);
         recordTrainingWrapper = (CardView) findViewById(R.id.recordTrainingWrapper);
 
+
         enumeratorID = (EditText) findViewById(R.id.enumeratorID);
         //
-
+        diagnosticViewModel= ViewModelProviders.of(this).get(DiagnosticViewModel.class);
         progressDialog = new ProgressDialog(this);
         progressDialog.setTitle(getString(R.string.PleaseWait));
         progressDialog.setMessage(getString(R.string.Loading));
@@ -423,6 +421,8 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         try {
             MultiFarmUtils.isMultiFarmEnumerator = Utilities.getMultifarmPref(context, MultiFarmUtils.IS_MULTI_FARM_ENUMERATOR);
         }catch (Exception e){}
+
+        GetAllDiagnosticModuleHome();
     }
     private void setKeycloakCredentials(String environment) {
         String clientId = null;
@@ -550,8 +550,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         authRequestDTO.setScope(scope);
 
         AuthenticationInterface authenticationInterface = AuthenticationClient.createService(AuthenticationInterface.class, HomeActivity.this);
-        Call<AuthenticationDTO> authCall = authenticationInterface.getKeyCloakAuthToken(clientId,
-                                                            userEnumerator,passcode,grantType,clientSecret,scope);
+        Call<AuthenticationDTO> authCall = authenticationInterface.getKeyCloakAuthToken(clientId, userEnumerator,passcode,grantType,clientSecret,scope);
         authCall.enqueue(HomeActivity.this);
     }
 
@@ -1194,9 +1193,11 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 @Override
                 public void onClick(View v) {
                     MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_ADD_NEW_FARMER,  ScreenNameConstants.BUTTON_CLICKED);
-                    Intent intent = new Intent(context, AddFarmerActivity.class);
+                   /* Intent intent = new Intent(context, AddFarmerActivity.class);
                     intent.putExtra(EDIT_FARMER_ID, (long) 0);
                     intent.putExtra(EDIT_MODE, false);
+                    context.startActivity(intent);*/
+                    Intent intent = new Intent(context, DiagnosticModuleActivity.class);
                     context.startActivity(intent);
                 }
             });
@@ -1684,6 +1685,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             }
 
             GetAccessToken("home");
+            GetAllDiagnosticModuleHome();
 
         }
     }
@@ -1834,5 +1836,21 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         }else{
             return false;
         }
+    }
+
+    private static void GetAllDiagnosticModuleHome() {
+        Toast.makeText(staticContext, "ResponseMethodHome", Toast.LENGTH_SHORT).show();
+
+        diagnosticViewModel.responseLiveData().observe((LifecycleOwner) staticContext, responseLiveData -> {
+            if (responseLiveData != null) {
+                Toast.makeText(staticContext, "ResponseMethodINNHome", Toast.LENGTH_SHORT).show();
+                Toast.makeText(staticContext, "SuccessfulHome", Toast.LENGTH_SHORT).show();
+                Log.d(TAG, "diagnostic total resultHome:: " + responseLiveData.getDiagnosticModules().toString());
+                Log.d(TAG, "diagnostic valuesHome:: " + responseLiveData.getDiagnosticModules().get(0).getAnswerTypes());
+                progressDialog.hide();
+
+            }
+        });
+
     }
 }
