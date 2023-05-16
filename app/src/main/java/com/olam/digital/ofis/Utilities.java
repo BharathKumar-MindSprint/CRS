@@ -94,6 +94,7 @@ public class Utilities {
     public static String MODULE = "module";
     public static String PASSWORD = "password";
     public static String SCOPE = "offline_access";
+    public static String CONSENTSTATEMENT = "ConsentStatement";
 
 public  static String base64ConversionForImage(String filepath)  {
     String encoded="";
