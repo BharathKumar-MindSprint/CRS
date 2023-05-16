@@ -3,7 +3,7 @@ package com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule;
 import java.util.List;
 import com.google.gson.annotations.SerializedName;
 
-public class ResponseItem{
+public class DiagnosticModulesList {
 
 	@SerializedName("followUpDuration")
 	private int followUpDuration;
