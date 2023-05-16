@@ -671,7 +671,7 @@
     <string name="consent_statement">Pernyataan Persetujuan</string>
     <string name="update_farmer_subdistrict">Perbarui Kecamatan Petani</string>
     <string name="update">Memperbarui</string>
-    <string name="label_subdistrict">Kecamatan</string>
+    <string name="label_subdistrict">Desa/Kelurahan</string>
     <string name="subdistrict_note">Kecamatan Petani Tertangkap</string>
     <string name="valid_until">Berlaku hingga</string>
     <string name="privacy_cache_offline">Anda sedang offline. Silakan aktifkan jaringan Anda untuk melihat pernyataan privasi terbaru</string>
