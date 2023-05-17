@@ -202,7 +202,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     static String odAccessToken;
 
     static boolean isdownloadfarmplan;
-    private static DiagnosticViewModel diagnosticViewModel;
+//    private static DiagnosticViewModel diagnosticViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -234,7 +234,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
         enumeratorID = (EditText) findViewById(R.id.enumeratorID);
         //
-        diagnosticViewModel= ViewModelProviders.of(this).get(DiagnosticViewModel.class);
+//        diagnosticViewModel= ViewModelProviders.of(this).get(DiagnosticViewModel.class);
         progressDialog = new ProgressDialog(this);
         progressDialog.setTitle(getString(R.string.PleaseWait));
         progressDialog.setMessage(getString(R.string.Loading));
@@ -422,7 +422,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             MultiFarmUtils.isMultiFarmEnumerator = Utilities.getMultifarmPref(context, MultiFarmUtils.IS_MULTI_FARM_ENUMERATOR);
         }catch (Exception e){}
 
-        GetAllDiagnosticModuleHome();
+//        GetAllDiagnosticModuleHome();
     }
     private void setKeycloakCredentials(String environment) {
         String clientId = null;
@@ -1685,7 +1685,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             }
 
             GetAccessToken("home");
-            GetAllDiagnosticModuleHome();
+//            GetAllDiagnosticModuleHome();
 
         }
     }
@@ -1838,19 +1838,19 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         }
     }
 
-    private static void GetAllDiagnosticModuleHome() {
-        Toast.makeText(staticContext, "ResponseMethodHome", Toast.LENGTH_SHORT).show();
-
-        diagnosticViewModel.responseLiveData().observe((LifecycleOwner) staticContext, responseLiveData -> {
-            if (responseLiveData != null) {
-                Toast.makeText(staticContext, "ResponseMethodINNHome", Toast.LENGTH_SHORT).show();
-                Toast.makeText(staticContext, "SuccessfulHome", Toast.LENGTH_SHORT).show();
-                Log.d(TAG, "diagnostic total resultHome:: " + responseLiveData.getDiagnosticModules().toString());
-                Log.d(TAG, "diagnostic valuesHome:: " + responseLiveData.getDiagnosticModules().get(0).getAnswerTypes());
-                progressDialog.hide();
-
-            }
-        });
-
-    }
+//    private static void GetAllDiagnosticModuleHome() {
+//        Toast.makeText(staticContext, "ResponseMethodHome", Toast.LENGTH_SHORT).show();
+//        ManageRecords AllFarmFormList= RetrofitClient.getRetrofit().create(ManageRecords.class);
+//        diagnosticViewModel.responseLiveData().observe((LifecycleOwner) staticContext, responseLiveData -> {
+//            if (responseLiveData != null) {
+//                Toast.makeText(staticContext, "ResponseMethodINNHome", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(staticContext, "SuccessfulHome", Toast.LENGTH_SHORT).show();
+//                Log.d(TAG, "diagnostic total resultHome:: " + responseLiveData.getDiagnosticModules().toString());
+//                Log.d(TAG, "diagnostic valuesHome:: " + responseLiveData.getDiagnosticModules().get(0).getAnswerTypes());
+//                progressDialog.hide();
+//
+//            }
+//        });
+//
+//    }
 }
