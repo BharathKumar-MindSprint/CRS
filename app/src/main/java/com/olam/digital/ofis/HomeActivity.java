@@ -33,8 +33,6 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AlertDialog;
 import androidx.cardview.widget.CardView;
-import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.ViewModelProviders;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -94,8 +92,7 @@ import com.olam.digital.ofis.matoma.MatomoHelper;
 import com.olam.digital.ofis.matoma.ScreenNameConstants;
 import com.olam.digital.ofis.multifarm.MultiFarmUtils;
 import com.olam.digital.ofis.multifarm.UpdateMultiFarmActivity;
-import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.DiagnosticModuleActivity;
-import com.olam.digital.ofis.mvvmmodule.viewmodel.diagnosticmodule.DiagnosticViewModel;
+import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.ResponseModel;
 import com.olam.digital.ofis.recordpolygon.RecordPolygonActivity;
 
 import org.json.JSONException;
@@ -202,7 +199,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     static String odAccessToken;
 
     static boolean isdownloadfarmplan;
-//    private static DiagnosticViewModel diagnosticViewModel;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -234,7 +231,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
         enumeratorID = (EditText) findViewById(R.id.enumeratorID);
         //
-//        diagnosticViewModel= ViewModelProviders.of(this).get(DiagnosticViewModel.class);
+
         progressDialog = new ProgressDialog(this);
         progressDialog.setTitle(getString(R.string.PleaseWait));
         progressDialog.setMessage(getString(R.string.Loading));
@@ -422,7 +419,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             MultiFarmUtils.isMultiFarmEnumerator = Utilities.getMultifarmPref(context, MultiFarmUtils.IS_MULTI_FARM_ENUMERATOR);
         }catch (Exception e){}
 
-//        GetAllDiagnosticModuleHome();
+
     }
     private void setKeycloakCredentials(String environment) {
         String clientId = null;
@@ -1193,12 +1190,11 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 @Override
                 public void onClick(View v) {
                     MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_ADD_NEW_FARMER,  ScreenNameConstants.BUTTON_CLICKED);
-                   /* Intent intent = new Intent(context, AddFarmerActivity.class);
+                    Intent intent = new Intent(context, AddFarmerActivity.class);
                     intent.putExtra(EDIT_FARMER_ID, (long) 0);
                     intent.putExtra(EDIT_MODE, false);
-                    context.startActivity(intent);*/
-                    Intent intent = new Intent(context, DiagnosticModuleActivity.class);
                     context.startActivity(intent);
+
                 }
             });
 
@@ -1685,7 +1681,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             }
 
             GetAccessToken("home");
-//            GetAllDiagnosticModuleHome();
 
         }
     }
@@ -1805,11 +1800,13 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 }else{
                    // showAlert("Server Issue!!"+response.message().toString());
                 }
+                GetAllDiagnosticModuleHome();
             }
             @Override
             public void onFailure(Call<DownloadFormList> call, Throwable t) {
                 //progressDialog.hide();
                 //Toast.makeText(staticContext, t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                GetAllDiagnosticModuleHome();
             }
         });
 
@@ -1838,19 +1835,43 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         }
     }
 
-//    private static void GetAllDiagnosticModuleHome() {
-//        Toast.makeText(staticContext, "ResponseMethodHome", Toast.LENGTH_SHORT).show();
-//        ManageRecords AllFarmFormList= RetrofitClient.getRetrofit().create(ManageRecords.class);
-//        diagnosticViewModel.responseLiveData().observe((LifecycleOwner) staticContext, responseLiveData -> {
-//            if (responseLiveData != null) {
-//                Toast.makeText(staticContext, "ResponseMethodINNHome", Toast.LENGTH_SHORT).show();
-//                Toast.makeText(staticContext, "SuccessfulHome", Toast.LENGTH_SHORT).show();
-//                Log.d(TAG, "diagnostic total resultHome:: " + responseLiveData.getDiagnosticModules().toString());
-//                Log.d(TAG, "diagnostic valuesHome:: " + responseLiveData.getDiagnosticModules().get(0).getAnswerTypes());
-//                progressDialog.hide();
-//
-//            }
-//        });
-//
-//    }
+
+    public static void GetAllDiagnosticModuleHome() {
+
+        ManageRecords AllDiagnosticModuleData= RetrofitClient.getRetrofit().create(ManageRecords.class);
+        Call<ResponseModel> call=AllDiagnosticModuleData.getAllDiagnosticModuleData(1);
+        call.enqueue(new Callback<ResponseModel>() {
+
+            @Override
+            public void onResponse(Call<ResponseModel> call, Response<ResponseModel> response) {
+
+
+                if(response.code()==200){
+                    //Toast.makeText(DownloadFarmPlanActivity.this, "Farm Plan is available to download", Toast.LENGTH_SHORT).show();
+                    // progressDialog.hide();
+                    Toast.makeText(staticContext, "ResponseMethodINNHome", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(staticContext, "SuccessfulHome", Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "diagnostic total resultHome:: " + response.body().getDiagnosticModules().toString());
+                    Log.d(TAG, "diagnostic valuesHome:: " +  response.body().getDiagnosticModules().get(0).getAnswerTypes());
+
+                }else if(response.code()==400){
+
+                    Log.d("BadRequest-",response.message());
+                }else if(response.code()==500){
+
+                }else{
+                    // showAlert("Server Issue!!"+response.message().toString());
+                }
+
+            }
+            @Override
+            public void onFailure(Call<ResponseModel> call, Throwable t) {
+                //progressDialog.hide();
+                //Toast.makeText(staticContext, t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+
+            }
+        });
+
+    }
+
 }
