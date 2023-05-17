@@ -143,7 +143,7 @@
     <string name="spinner_country_default">Pilih negara</string>
     <string name="spinner_region_default">Pilih Provinsi</string>
     <string name="spinner_district_default">Pilih Kabupaten/Kota</string>
-    <string name="spinner_place_default">Pilih Kecamatan</string>
+    <string name="spinner_place_default">Desa/Kelurahan</string>
     <string name="spinner_farmergroup_default">Pilih Kelompok Tani</string>
     <string name="spinner_section_default">Pilih Bagian</string>
     <string name="spinner_product_default">Pilih produk</string>
@@ -730,4 +730,6 @@
     <string name="update_signature_hint">Ketuk untuk memperbarui</string>
     <string name="are_you_at_the_farmers_hh">Apakah Anda di rumah petani?</string>
     <string name="ofis_request_help">Minta bantuan</string>
+
+    <string name="spinner_subdistrict_default">Kecamatan</string>
 </resources>
