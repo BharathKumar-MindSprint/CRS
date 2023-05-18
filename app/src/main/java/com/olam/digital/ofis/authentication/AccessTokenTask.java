@@ -50,7 +50,7 @@ public class AccessTokenTask extends AsyncTask<Object, Object, String> {
             //getting new access token for first time
             String clientId=Utilities.getKeyCloakClientDetails(mContext,KeyCloakInfo.Client_Id);
             String clientSecret=Utilities.getKeyCloakClientDetails(mContext,KeyCloakInfo.Client_Secret);
-            String grantType=mContext.getResources().getString(R.string.refresh_token);
+            String grantType=Utilities.SCOPE;
             String refreshToken=authenticationDTO.getRefreshToken();
 
             // Auth Call
@@ -74,7 +74,7 @@ public class AccessTokenTask extends AsyncTask<Object, Object, String> {
             //    if (authResponse.code() == 401 || authResponse.code() == 400) {
                     // Keycloak parameters - Using Access Token
                     String grantType1 = Utilities.PASSWORD;
-                    String scope = mContext.getResources().getString(R.string.offline_access);
+                    String scope = Utilities.SCOPE;
                     Call<AuthenticationDTO> authCall1 = authenticationInterface.getKeyCloakAuthToken(clientId,
                             authRequestDTO.getUsername(), authRequestDTO.getPasscode(), grantType1, clientSecret, scope);
 
