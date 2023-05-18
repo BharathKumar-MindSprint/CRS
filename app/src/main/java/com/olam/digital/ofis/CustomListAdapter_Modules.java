@@ -1,11 +1,16 @@
 package com.olam.digital.ofis;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.res.Resources;
 import android.database.Cursor;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -23,6 +28,7 @@ import com.olam.digital.ofis.childlabour.ChildLabourUtils;
 import com.olam.digital.ofis.multifarm.MultiFarmLongPressListener;
 import com.olam.digital.ofis.multifarm.MultiFarmUtils;
 import com.olam.digital.ofis.multifarm.SubmittedInfo;
+import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.FollowUp.FollowUpRecyclerAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -30,6 +36,7 @@ import org.json.JSONObject;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -191,6 +198,7 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                 enabledItem.setText("true");
 
                 textView.setText(res.getString(R.string.dm_diognostic_module_subtitle));
+
             } else if (cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals(ChildLabourUtils.REG_CHILD)) {
 
                 imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_child));
@@ -855,4 +863,6 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
             return true;
         });
     }
+
+
 }

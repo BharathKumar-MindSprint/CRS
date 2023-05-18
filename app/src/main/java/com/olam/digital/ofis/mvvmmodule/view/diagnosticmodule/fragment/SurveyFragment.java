@@ -41,7 +41,7 @@ public class SurveyFragment extends Fragment {
         View view= inflater.inflate(R.layout.fragment_survey, container, false);
 
         ll_servey_next = view.findViewById(R.id.ll_servey_next);
-        ll_servey_back = view.findViewById(R.id.ll_servey_back);
+//        ll_servey_back = view.findViewById(R.id.ll_servey_back);
 
 
 
