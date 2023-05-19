@@ -92,7 +92,10 @@ import com.olam.digital.ofis.matoma.MatomoHelper;
 import com.olam.digital.ofis.matoma.ScreenNameConstants;
 import com.olam.digital.ofis.multifarm.MultiFarmUtils;
 import com.olam.digital.ofis.multifarm.UpdateMultiFarmActivity;
+import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.DiagnosticModulesList;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.ResponseModel;
+import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
+import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmMainModule;
 import com.olam.digital.ofis.recordpolygon.RecordPolygonActivity;
 
 import org.json.JSONException;
@@ -1809,7 +1812,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 GetAllDiagnosticModuleHome();
             }
         });
-
+        GetAllDiagnosticModuleHome();
     }
 
     private static void showAlert(String msg) {
@@ -1845,14 +1848,28 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             @Override
             public void onResponse(Call<ResponseModel> call, Response<ResponseModel> response) {
 
+                OFISRoomDB db = OFISRoomDB.getDbInstance(staticContext);
 
                 if(response.code()==200){
-                    //Toast.makeText(DownloadFarmPlanActivity.this, "Farm Plan is available to download", Toast.LENGTH_SHORT).show();
-                    // progressDialog.hide();
-                    Toast.makeText(staticContext, "ResponseMethodINNHome", Toast.LENGTH_SHORT).show();
-                    Toast.makeText(staticContext, "SuccessfulHome", Toast.LENGTH_SHORT).show();
-                    Log.d(TAG, "diagnostic total resultHome:: " + response.body().getDiagnosticModules().toString());
-                    Log.d(TAG, "diagnostic valuesHome:: " +  response.body().getDiagnosticModules().get(0).getAnswerTypes());
+
+                    if(response.body().getDiagnosticModules()!= null){
+                        ArrayList<DiagnosticModulesList> mainResponseList = response.body().getDiagnosticModules();
+
+                        for (int i = 0; i < mainResponseList.size(); i++) {
+                            int followUpDuration = mainResponseList.get(i).getFollowUpDuration();
+                            String assessmentType = mainResponseList.get(i).getAssessmentType();
+                            int surveyType = mainResponseList.get(i).getSurveyType();
+                            int followUpAttempts = mainResponseList.get(i).getFollowUpAttempts();
+                            String name = mainResponseList.get(i).getName();
+
+                            DmMainModule user = new DmMainModule();
+                            user.name = name;
+                            user.surveyType = surveyType;
+                            db.dmMainModuleDao().insert(user);
+
+                        }
+                    }
+                    Log.d("DbData-",db.dmMainModuleDao().getDMmodule().get(0).name);
 
                 }else if(response.code()==400){
 
@@ -1860,17 +1877,16 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 }else if(response.code()==500){
 
                 }else{
-                    // showAlert("Server Issue!!"+response.message().toString());
+
                 }
 
             }
             @Override
             public void onFailure(Call<ResponseModel> call, Throwable t) {
-                //progressDialog.hide();
-                //Toast.makeText(staticContext, t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
 
             }
         });
+
 
     }
 
