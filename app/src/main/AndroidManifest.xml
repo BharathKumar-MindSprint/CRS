@@ -40,6 +40,7 @@
         android:theme="@style/AppCompactTheme"
         tools:ignore="GoogleAppIndexingWarning,UnusedAttribute"
         tools:replace="android:supportsRtl,android:allowBackup,android:theme">
+
         <activity
             android:name=".ManageTrainingRecords.Records"
             android:exported="false"
@@ -505,13 +506,26 @@
         <activity
             android:name=".mvvmmodule.view.diagnosticmodule.DiagnosticModuleActivity"
             android:label="Farmer Details"
-            android:parentActivityName="com.olam.digital.ofis.HomeActivity"
+            android:parentActivityName=".HomeActivity"
             android:screenOrientation="portrait"
             tools:ignore="UnusedAttribute">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.olam.digital.ofis.HomeActivity" />
         </activity>
+
+        <activity
+            android:name=".mvvmmodule.view.diagnosticmodule.DiagnosticModuleFollowUp"
+            android:label="Follow Up Farmer Details"
+            android:parentActivityName=".HomeActivity"
+            android:screenOrientation="portrait"
+            tools:ignore="UnusedAttribute">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.olam.digital.ofis.HomeActivity" />
+        </activity>
+
+
     </application>
 
 </manifest>

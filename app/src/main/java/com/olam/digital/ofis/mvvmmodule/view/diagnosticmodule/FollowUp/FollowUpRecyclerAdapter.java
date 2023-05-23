@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.DiagnosticModel;
 import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.DiagnosticModuleActivity;
+import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.DiagnosticModuleFollowUp;
 
 import java.util.ArrayList;
 
@@ -66,25 +67,30 @@ public class FollowUpRecyclerAdapter extends RecyclerView.Adapter<FollowUpRecycl
 
             if (position == selectedPosition) {
                 tickImageView.setVisibility(View.VISIBLE);
-                Intent intent = new Intent(context , DiagnosticModuleActivity.class);
-                context.startActivity(intent);
 
             } else {
                 tickImageView.setVisibility(View.GONE);
             }
 
-            /*if (position == selectedPosition) {
-                Intent intent = new Intent(context , DiagnosticModuleActivity.class);
-                context.startActivity(intent);
-            }*/
+
         }
 
         @Override
         public void onClick(View v) {
             int previousPosition = selectedPosition;
             selectedPosition = getAdapterPosition();
+//            Toast.makeText(context, "Click"+selectedPosition, Toast.LENGTH_SHORT).show();
             notifyItemChanged(previousPosition);
             notifyItemChanged(selectedPosition);
+
+            if (selectedPosition== 0) {
+                Intent intent = new Intent(context, DiagnosticModuleActivity.class);
+                context.startActivity(intent);
+            }
+            if (selectedPosition == 1){
+                Intent intent = new Intent(context, DiagnosticModuleFollowUp.class);
+                context.startActivity(intent);
+            }
         }
     }
 }

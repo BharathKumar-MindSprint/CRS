@@ -101,5 +101,5 @@
 
     <color name="child_selected_text_color">#860063</color>
     <color name="gender_selected_textcolor">#ffffff</color>
-    <color name="background_multifarm">#F2B277</color>
+    <color name="background_multifarm">#f78c2a</color>
 </resources>

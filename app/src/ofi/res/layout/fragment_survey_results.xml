@@ -258,33 +258,6 @@
 
 
 
-<!--        <androidx.constraintlayout.widget.ConstraintLayout-->
-
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content">-->
-<!--            &lt;!&ndash;<TextView-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="match_parent"-->
-<!--                android:text="Survey Results"-->
-<!--                android:textStyle="bold"-->
-<!--                android:textSize="20dp"-->
-<!--                android:textColor="@color/colorPrimary"-->
-<!--                android:gravity="center"/>&ndash;&gt;-->
-
-
-
-
-
-
-
-
-
-
-
-<!--        </androidx.constraintlayout.widget.ConstraintLayout>-->
-
-
-
 
 
 
