@@ -5,25 +5,25 @@ import com.google.gson.annotations.SerializedName;
 public class ComplianceIndicatorItem{
 
 	@SerializedName("moduleDraftId")
-	private Object moduleDraftId;
+	private int moduleDraftId;
 
 	@SerializedName("labelTh")
-	private Object labelTh;
+	private String labelTh;
 
 	@SerializedName("labelPt")
-	private Object labelPt;
+	private String labelPt;
 
 	@SerializedName("compliance")
 	private String compliance;
 
 	@SerializedName("labelIdn")
-	private Object labelIdn;
+	private String labelIdn;
 
 	@SerializedName("labelEs")
-	private Object labelEs;
+	private String labelEs;
 
 	@SerializedName("labelTr")
-	private Object labelTr;
+	private String labelTr;
 
 	@SerializedName("id")
 	private int id;
@@ -32,126 +32,124 @@ public class ComplianceIndicatorItem{
 	private String label;
 
 	@SerializedName("labelFr")
-	private Object labelFr;
+	private String labelFr;
 
 	@SerializedName("labelLo")
-	private Object labelLo;
+	private String labelLo;
 
 	@SerializedName("labelVi")
-	private Object labelVi;
+	private String labelVi;
 
-	public void setModuleDraftId(Object moduleDraftId){
-		this.moduleDraftId = moduleDraftId;
-	}
-
-	public Object getModuleDraftId(){
+	public int getModuleDraftId() {
 		return moduleDraftId;
 	}
 
-	public void setLabelTh(Object labelTh){
-		this.labelTh = labelTh;
+	public void setModuleDraftId(int moduleDraftId) {
+		this.moduleDraftId = moduleDraftId;
 	}
 
-	public Object getLabelTh(){
+	public String getLabelTh() {
 		return labelTh;
 	}
 
-	public void setLabelPt(Object labelPt){
-		this.labelPt = labelPt;
+	public void setLabelTh(String labelTh) {
+		this.labelTh = labelTh;
 	}
 
-	public Object getLabelPt(){
+	public String getLabelPt() {
 		return labelPt;
 	}
 
-	public void setCompliance(String compliance){
-		this.compliance = compliance;
+	public void setLabelPt(String labelPt) {
+		this.labelPt = labelPt;
 	}
 
-	public String getCompliance(){
+	public String getCompliance() {
 		return compliance;
 	}
 
-	public void setLabelIdn(Object labelIdn){
-		this.labelIdn = labelIdn;
+	public void setCompliance(String compliance) {
+		this.compliance = compliance;
 	}
 
-	public Object getLabelIdn(){
+	public String getLabelIdn() {
 		return labelIdn;
 	}
 
-	public void setLabelEs(Object labelEs){
-		this.labelEs = labelEs;
+	public void setLabelIdn(String labelIdn) {
+		this.labelIdn = labelIdn;
 	}
 
-	public Object getLabelEs(){
+	public String getLabelEs() {
 		return labelEs;
 	}
 
-	public void setLabelTr(Object labelTr){
-		this.labelTr = labelTr;
+	public void setLabelEs(String labelEs) {
+		this.labelEs = labelEs;
 	}
 
-	public Object getLabelTr(){
+	public String getLabelTr() {
 		return labelTr;
 	}
 
-	public void setId(int id){
-		this.id = id;
+	public void setLabelTr(String labelTr) {
+		this.labelTr = labelTr;
 	}
 
-	public int getId(){
+	public int getId() {
 		return id;
 	}
 
-	public void setLabel(String label){
-		this.label = label;
+	public void setId(int id) {
+		this.id = id;
 	}
 
-	public String getLabel(){
+	public String getLabel() {
 		return label;
 	}
 
-	public void setLabelFr(Object labelFr){
-		this.labelFr = labelFr;
+	public void setLabel(String label) {
+		this.label = label;
 	}
 
-	public Object getLabelFr(){
+	public String getLabelFr() {
 		return labelFr;
 	}
 
-	public void setLabelLo(Object labelLo){
-		this.labelLo = labelLo;
+	public void setLabelFr(String labelFr) {
+		this.labelFr = labelFr;
 	}
 
-	public Object getLabelLo(){
+	public String getLabelLo() {
 		return labelLo;
 	}
 
-	public void setLabelVi(Object labelVi){
-		this.labelVi = labelVi;
+	public void setLabelLo(String labelLo) {
+		this.labelLo = labelLo;
 	}
 
-	public Object getLabelVi(){
+	public String getLabelVi() {
 		return labelVi;
 	}
 
-	@Override
- 	public String toString(){
-		return 
-			"ComplianceIndicatorItem{" + 
-			"moduleDraftId = '" + moduleDraftId + '\'' + 
-			",labelTh = '" + labelTh + '\'' + 
-			",labelPt = '" + labelPt + '\'' + 
-			",compliance = '" + compliance + '\'' + 
-			",labelIdn = '" + labelIdn + '\'' + 
-			",labelEs = '" + labelEs + '\'' + 
-			",labelTr = '" + labelTr + '\'' + 
-			",id = '" + id + '\'' + 
-			",label = '" + label + '\'' + 
-			",labelFr = '" + labelFr + '\'' + 
-			",labelLo = '" + labelLo + '\'' + 
-			",labelVi = '" + labelVi + '\'' + 
-			"}";
-		}
+	public void setLabelVi(String labelVi) {
+		this.labelVi = labelVi;
+	}
+
+	public ComplianceIndicatorItem(int moduleDraftId, String labelTh, String labelPt, String compliance, String labelIdn, String labelEs, String labelTr, int id, String label, String labelFr, String labelLo, String labelVi) {
+		this.moduleDraftId = moduleDraftId;
+		this.labelTh = labelTh;
+		this.labelPt = labelPt;
+		this.compliance = compliance;
+		this.labelIdn = labelIdn;
+		this.labelEs = labelEs;
+		this.labelTr = labelTr;
+		this.id = id;
+		this.label = label;
+		this.labelFr = labelFr;
+		this.labelLo = labelLo;
+		this.labelVi = labelVi;
+	}
+
+
 }
