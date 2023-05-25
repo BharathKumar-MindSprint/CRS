@@ -17,13 +17,14 @@ import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmMainModule;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmQuestionTypes;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmQuestionsModule;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmQuestionsSubModule;
+import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmRecurrence;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmSectionsItem;
 
 
 @Database(entities ={DmMainModule.class, ComplianceIndicator.class, DmCurrency.class, DmAnswerTypes.class,
         DmQuestionTypes.class, DmCurrenciesItem.class, DmQuestionsModule.class, DmLookupValuesItem.class,
         DmActionPlansItem.class, DmSectionsItem.class, DmQuestionsSubModule.class, DmLookupValuesISubmodule.class,
-        DmActionPlansItemSubmodule.class}, version = 1)
+        DmActionPlansItemSubmodule.class, DmRecurrence.class}, version = 1)
 public abstract class OFISRoomDB extends RoomDatabase {
     private static final String DATABASE_NAME = "ofismobileroom";
     public abstract DmMainModuleDao dmMainModuleDao();
@@ -39,6 +40,7 @@ public abstract class OFISRoomDB extends RoomDatabase {
     public abstract DmQuestionsSubModuleDao dmQuestionsSubModuleDao();
     public abstract DmLookupValuesISubmoduleDao dmLookupValuesISubmoduleDao();
     public abstract DmActionPlansItemSubmoduleDao dmActionPlansItemSubmoduleDao();
+    public abstract DmRecurrenceDao dmRecurrenceDao();
 
     public static volatile OFISRoomDB INSTANCE = null;
 

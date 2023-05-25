@@ -2,6 +2,7 @@ package com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule;
 
 import com.google.gson.annotations.SerializedName;
 
+
 public class Recurrence{
 
 	@SerializedName("recurrenceFrequency")
@@ -12,6 +13,12 @@ public class Recurrence{
 
 	@SerializedName("recurrenceType")
 	private String recurrenceType;
+
+	public Recurrence(int recurrenceFrequency, boolean isCustomRecurrence, String recurrenceType) {
+		this.recurrenceFrequency = recurrenceFrequency;
+		this.isCustomRecurrence = isCustomRecurrence;
+		this.recurrenceType = recurrenceType;
+	}
 
 	public void setRecurrenceFrequency(int recurrenceFrequency){
 		this.recurrenceFrequency = recurrenceFrequency;
@@ -37,13 +44,5 @@ public class Recurrence{
 		return recurrenceType;
 	}
 
-	@Override
- 	public String toString(){
-		return 
-			"Recurrence{" + 
-			"recurrenceFrequency = '" + recurrenceFrequency + '\'' + 
-			",isCustomRecurrence = '" + isCustomRecurrence + '\'' + 
-			",recurrenceType = '" + recurrenceType + '\'' + 
-			"}";
-		}
+
 }

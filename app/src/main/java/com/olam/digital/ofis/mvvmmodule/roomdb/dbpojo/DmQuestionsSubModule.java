@@ -45,6 +45,9 @@ public class DmQuestionsSubModule {
     @ColumnInfo(name = "questionTypeId")
     public int questionTypeId;
 
+    @ColumnInfo(name = "sectionId")
+    public int sectionId;
+
     @ColumnInfo(name = "datatypeId")
     public int datatypeId;
 

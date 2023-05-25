@@ -102,6 +102,7 @@ import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.LookupValuesItem;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.QuestionTypesItem;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.QuestionsItem;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.QuestionsSectionItemSubmodule;
+import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.Recurrence;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.ResponseModel;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.SectionActionPlansItemSubmodule;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.SectionLookupValuesItemSubmodule;
@@ -119,6 +120,7 @@ import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmMainModule;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmQuestionTypes;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmQuestionsModule;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmQuestionsSubModule;
+import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmRecurrence;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmSectionsItem;
 import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.DiagnosticModuleActivity;
 import com.olam.digital.ofis.recordpolygon.RecordPolygonActivity;
@@ -1914,6 +1916,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                             List<CurrencyItem> currencyItemList = mainResponseList.get(i).getCurrency();
                             List<QuestionsItem> questionsItemList = mainResponseList.get(i).getQuestions();
                             List<SectionsItem> sectionsItemList = mainResponseList.get(i).getSections();
+                            Recurrence recurrences = mainResponseList.get(i).getRecurrence();
 
                             DmMainModule user = new DmMainModule();
                             user.id = id;
@@ -2270,6 +2273,16 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
                             }
 
+                            int recurrenceFrequency = recurrences.getRecurrenceFrequency();
+                            boolean isCustomRecurrence = recurrences.isIsCustomRecurrence();
+                            String recurrenceType = recurrences.getRecurrenceType();
+
+                            DmRecurrence dmRecurrence = new DmRecurrence();
+                            dmRecurrence.recurrenceFrequency = recurrenceFrequency;
+                            dmRecurrence.isCustomRecurrence = isCustomRecurrence;
+                            dmRecurrence.recurrenceType = recurrenceType;
+                            db.dmRecurrenceDao().insert(dmRecurrence);
+
                         }
 
 
@@ -2346,7 +2359,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                     Log.d("DbSubModuleQuestions-", db.dmQuestionsSubModuleDao().getDmQuestionsSubModule().get(0).displayType);
                     Log.d("DbSubModuleLookup-", db.dmLookupValuesISubmoduleDao().getDmLookupValuesISubmodule().get(0).proofFormat);
                     Log.d("DbSubModuleActionPlan-", db.dmActionPlansItemSubmoduleDao().getDmActionPlansItemSubmodule().get(0).actionPlan);
-
+                    Log.d("DbRecurranceData-", db.dmRecurrenceDao().getDmRecurrence().recurrenceType);
                 } else if (response.code() == 400) {
 
                     Log.d("BadRequest-",response.message());

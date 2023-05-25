@@ -12,10 +12,10 @@ public class DiagnosticModulesList {
 	private String assessmentType;
 
 	@SerializedName("descriptionPt")
-	private Object descriptionPt;
+	private String descriptionPt;
 
 	@SerializedName("nameFr")
-	private Object nameFr;
+	private String nameFr;
 
 	@SerializedName("questions")
 	private List<QuestionsItem> questions;
@@ -24,28 +24,22 @@ public class DiagnosticModulesList {
 	private String description;
 
 	@SerializedName("nameIdn")
-	private Object nameIdn;
+	private String nameIdn;
 
 	@SerializedName("descriptionFr")
-	private Object descriptionFr;
+	private String descriptionFr;
 
 	@SerializedName("complianceIndicator")
 	private List<ComplianceIndicatorItem> complianceIndicator;
 
-	@SerializedName("answerTypes")
-	private List<AnswerTypesItem> answerTypes;
-
-	@SerializedName("questionTypes")
-	private List<QuestionTypesItem> questionTypes;
-
 	@SerializedName("namePt")
-	private Object namePt;
+	private String namePt;
 
 	@SerializedName("nameLo")
-	private Object nameLo;
+	private String nameLo;
 
 	@SerializedName("nameTr")
-	private Object nameTr;
+	private String nameTr;
 
 	@SerializedName("currency")
 	private List<CurrencyItem> currency;
@@ -57,22 +51,22 @@ public class DiagnosticModulesList {
 	private int surveyType;
 
 	@SerializedName("nameTh")
-	private Object nameTh;
+	private String nameTh;
 
 	@SerializedName("nameVi")
-	private Object nameVi;
+	private String nameVi;
 
 	@SerializedName("followUpAttempts")
 	private int followUpAttempts;
 
 	@SerializedName("nameEs")
-	private Object nameEs;
+	private String nameEs;
 
 	@SerializedName("descriptionVi")
-	private Object descriptionVi;
+	private String descriptionVi;
 
 	@SerializedName("descriptionEs")
-	private Object descriptionEs;
+	private String descriptionEs;
 
 	@SerializedName("sections")
 	private List<SectionsItem> sections;
@@ -81,306 +75,279 @@ public class DiagnosticModulesList {
 	private Recurrence recurrence;
 
 	@SerializedName("descriptionTh")
-	private Object descriptionTh;
+	private String descriptionTh;
 
 	@SerializedName("name")
 	private String name;
 
 	@SerializedName("descriptionLo")
-	private Object descriptionLo;
+	private String descriptionLo;
 
 	@SerializedName("descriptionIdn")
-	private Object descriptionIdn;
+	private String descriptionIdn;
 
 	@SerializedName("descriptionTr")
-	private Object descriptionTr;
+	private String descriptionTr;
 
-	@SerializedName("currencies")
-	private List<CurrenciesItem> currencies;
 
-	public void setFollowUpDuration(int followUpDuration){
-		this.followUpDuration = followUpDuration;
-	}
-
-	public int getFollowUpDuration(){
+	public int getFollowUpDuration() {
 		return followUpDuration;
 	}
 
-	public void setAssessmentType(String assessmentType){
-		this.assessmentType = assessmentType;
+	public void setFollowUpDuration(int followUpDuration) {
+		this.followUpDuration = followUpDuration;
 	}
 
-	public String getAssessmentType(){
+	public String getAssessmentType() {
 		return assessmentType;
 	}
 
-	public void setDescriptionPt(Object descriptionPt){
-		this.descriptionPt = descriptionPt;
+	public void setAssessmentType(String assessmentType) {
+		this.assessmentType = assessmentType;
 	}
 
-	public Object getDescriptionPt(){
+	public String getDescriptionPt() {
 		return descriptionPt;
 	}
 
-	public void setNameFr(Object nameFr){
-		this.nameFr = nameFr;
+	public void setDescriptionPt(String descriptionPt) {
+		this.descriptionPt = descriptionPt;
 	}
 
-	public Object getNameFr(){
+	public String getNameFr() {
 		return nameFr;
 	}
 
-	public void setQuestions(List<QuestionsItem> questions){
-		this.questions = questions;
+	public void setNameFr(String nameFr) {
+		this.nameFr = nameFr;
 	}
 
-	public List<QuestionsItem> getQuestions(){
+	public List<QuestionsItem> getQuestions() {
 		return questions;
 	}
 
-	public void setDescription(String description){
-		this.description = description;
+	public void setQuestions(List<QuestionsItem> questions) {
+		this.questions = questions;
 	}
 
-	public String getDescription(){
+	public String getDescription() {
 		return description;
 	}
 
-	public void setNameIdn(Object nameIdn){
-		this.nameIdn = nameIdn;
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
-	public Object getNameIdn(){
+	public String getNameIdn() {
 		return nameIdn;
 	}
 
-	public void setDescriptionFr(Object descriptionFr){
-		this.descriptionFr = descriptionFr;
+	public void setNameIdn(String nameIdn) {
+		this.nameIdn = nameIdn;
 	}
 
-	public Object getDescriptionFr(){
+	public String getDescriptionFr() {
 		return descriptionFr;
 	}
 
-	public void setComplianceIndicator(List<ComplianceIndicatorItem> complianceIndicator){
-		this.complianceIndicator = complianceIndicator;
+	public void setDescriptionFr(String descriptionFr) {
+		this.descriptionFr = descriptionFr;
 	}
 
-	public List<ComplianceIndicatorItem> getComplianceIndicator(){
+	public List<ComplianceIndicatorItem> getComplianceIndicator() {
 		return complianceIndicator;
 	}
 
-	public void setAnswerTypes(List<AnswerTypesItem> answerTypes){
-		this.answerTypes = answerTypes;
+	public void setComplianceIndicator(List<ComplianceIndicatorItem> complianceIndicator) {
+		this.complianceIndicator = complianceIndicator;
 	}
 
-	public List<AnswerTypesItem> getAnswerTypes(){
-		return answerTypes;
-	}
-
-	public void setQuestionTypes(List<QuestionTypesItem> questionTypes){
-		this.questionTypes = questionTypes;
-	}
-
-	public List<QuestionTypesItem> getQuestionTypes(){
-		return questionTypes;
-	}
-
-	public void setNamePt(Object namePt){
-		this.namePt = namePt;
-	}
-
-	public Object getNamePt(){
+	public String getNamePt() {
 		return namePt;
 	}
 
-	public void setNameLo(Object nameLo){
-		this.nameLo = nameLo;
+	public void setNamePt(String namePt) {
+		this.namePt = namePt;
 	}
 
-	public Object getNameLo(){
+	public String getNameLo() {
 		return nameLo;
 	}
 
-	public void setNameTr(Object nameTr){
-		this.nameTr = nameTr;
+	public void setNameLo(String nameLo) {
+		this.nameLo = nameLo;
 	}
 
-	public Object getNameTr(){
+	public String getNameTr() {
 		return nameTr;
 	}
 
-	public void setCurrency(List<CurrencyItem> currency){
-		this.currency = currency;
+	public void setNameTr(String nameTr) {
+		this.nameTr = nameTr;
 	}
 
-	public List<CurrencyItem> getCurrency(){
+	public List<CurrencyItem> getCurrency() {
 		return currency;
 	}
 
-	public void setId(int id){
-		this.id = id;
+	public void setCurrency(List<CurrencyItem> currency) {
+		this.currency = currency;
 	}
 
-	public int getId(){
+	public int getId() {
 		return id;
 	}
 
-	public void setSurveyType(int surveyType){
-		this.surveyType = surveyType;
+	public void setId(int id) {
+		this.id = id;
 	}
 
-	public int getSurveyType(){
+	public int getSurveyType() {
 		return surveyType;
 	}
 
-	public void setNameTh(Object nameTh){
-		this.nameTh = nameTh;
+	public void setSurveyType(int surveyType) {
+		this.surveyType = surveyType;
 	}
 
-	public Object getNameTh(){
+	public String getNameTh() {
 		return nameTh;
 	}
 
-	public void setNameVi(Object nameVi){
-		this.nameVi = nameVi;
+	public void setNameTh(String nameTh) {
+		this.nameTh = nameTh;
 	}
 
-	public Object getNameVi(){
+	public String getNameVi() {
 		return nameVi;
 	}
 
-	public void setFollowUpAttempts(int followUpAttempts){
-		this.followUpAttempts = followUpAttempts;
+	public void setNameVi(String nameVi) {
+		this.nameVi = nameVi;
 	}
 
-	public int getFollowUpAttempts(){
+	public int getFollowUpAttempts() {
 		return followUpAttempts;
 	}
 
-	public void setNameEs(Object nameEs){
-		this.nameEs = nameEs;
+	public void setFollowUpAttempts(int followUpAttempts) {
+		this.followUpAttempts = followUpAttempts;
 	}
 
-	public Object getNameEs(){
+	public String getNameEs() {
 		return nameEs;
 	}
 
-	public void setDescriptionVi(Object descriptionVi){
-		this.descriptionVi = descriptionVi;
+	public void setNameEs(String nameEs) {
+		this.nameEs = nameEs;
 	}
 
-	public Object getDescriptionVi(){
+	public String getDescriptionVi() {
 		return descriptionVi;
 	}
 
-	public void setDescriptionEs(Object descriptionEs){
-		this.descriptionEs = descriptionEs;
+	public void setDescriptionVi(String descriptionVi) {
+		this.descriptionVi = descriptionVi;
 	}
 
-	public Object getDescriptionEs(){
+	public String getDescriptionEs() {
 		return descriptionEs;
 	}
 
-	public void setSections(List<SectionsItem> sections){
-		this.sections = sections;
+	public void setDescriptionEs(String descriptionEs) {
+		this.descriptionEs = descriptionEs;
 	}
 
-	public List<SectionsItem> getSections(){
+	public List<SectionsItem> getSections() {
 		return sections;
 	}
 
-	public void setRecurrence(Recurrence recurrence){
-		this.recurrence = recurrence;
+	public void setSections(List<SectionsItem> sections) {
+		this.sections = sections;
 	}
 
-	public Recurrence getRecurrence(){
+	public Recurrence getRecurrence() {
 		return recurrence;
 	}
 
-	public void setDescriptionTh(Object descriptionTh){
-		this.descriptionTh = descriptionTh;
+	public void setRecurrence(Recurrence recurrence) {
+		this.recurrence = recurrence;
 	}
 
-	public Object getDescriptionTh(){
+	public String getDescriptionTh() {
 		return descriptionTh;
 	}
 
-	public void setName(String name){
-		this.name = name;
+	public void setDescriptionTh(String descriptionTh) {
+		this.descriptionTh = descriptionTh;
 	}
 
-	public String getName(){
+	public String getName() {
 		return name;
 	}
 
-	public void setDescriptionLo(Object descriptionLo){
-		this.descriptionLo = descriptionLo;
+	public void setName(String name) {
+		this.name = name;
 	}
 
-	public Object getDescriptionLo(){
+	public String getDescriptionLo() {
 		return descriptionLo;
 	}
 
-	public void setDescriptionIdn(Object descriptionIdn){
-		this.descriptionIdn = descriptionIdn;
+	public void setDescriptionLo(String descriptionLo) {
+		this.descriptionLo = descriptionLo;
 	}
 
-	public Object getDescriptionIdn(){
+	public String getDescriptionIdn() {
 		return descriptionIdn;
 	}
 
-	public void setDescriptionTr(Object descriptionTr){
-		this.descriptionTr = descriptionTr;
+	public void setDescriptionIdn(String descriptionIdn) {
+		this.descriptionIdn = descriptionIdn;
 	}
 
-	public Object getDescriptionTr(){
+	public String getDescriptionTr() {
 		return descriptionTr;
 	}
 
-	public void setCurrencies(List<CurrenciesItem> currencies){
-		this.currencies = currencies;
+	public void setDescriptionTr(String descriptionTr) {
+		this.descriptionTr = descriptionTr;
 	}
 
-	public List<CurrenciesItem> getCurrencies(){
-		return currencies;
+
+
+	public DiagnosticModulesList(int followUpDuration, String assessmentType, String descriptionPt, String nameFr, List<QuestionsItem> questions, String description, String nameIdn, String descriptionFr, List<ComplianceIndicatorItem> complianceIndicator, String namePt, String nameLo, String nameTr, List<CurrencyItem> currency, int id, int surveyType, String nameTh, String nameVi, int followUpAttempts, String nameEs, String descriptionVi, String descriptionEs, List<SectionsItem> sections, Recurrence recurrence, String descriptionTh, String name, String descriptionLo, String descriptionIdn, String descriptionTr) {
+		this.followUpDuration = followUpDuration;
+		this.assessmentType = assessmentType;
+		this.descriptionPt = descriptionPt;
+		this.nameFr = nameFr;
+		this.questions = questions;
+		this.description = description;
+		this.nameIdn = nameIdn;
+		this.descriptionFr = descriptionFr;
+		this.complianceIndicator = complianceIndicator;
+		this.namePt = namePt;
+		this.nameLo = nameLo;
+		this.nameTr = nameTr;
+		this.currency = currency;
+		this.id = id;
+		this.surveyType = surveyType;
+		this.nameTh = nameTh;
+		this.nameVi = nameVi;
+		this.followUpAttempts = followUpAttempts;
+		this.nameEs = nameEs;
+		this.descriptionVi = descriptionVi;
+		this.descriptionEs = descriptionEs;
+		this.sections = sections;
+		this.recurrence = recurrence;
+		this.descriptionTh = descriptionTh;
+		this.name = name;
+		this.descriptionLo = descriptionLo;
+		this.descriptionIdn = descriptionIdn;
+		this.descriptionTr = descriptionTr;
 	}
 
-	@Override
- 	public String toString(){
-		return 
-			"ResponseItem{" + 
-			"followUpDuration = '" + followUpDuration + '\'' + 
-			",assessmentType = '" + assessmentType + '\'' + 
-			",descriptionPt = '" + descriptionPt + '\'' + 
-			",nameFr = '" + nameFr + '\'' + 
-			",questions = '" + questions + '\'' + 
-			",description = '" + description + '\'' + 
-			",nameIdn = '" + nameIdn + '\'' + 
-			",descriptionFr = '" + descriptionFr + '\'' + 
-			",complianceIndicator = '" + complianceIndicator + '\'' + 
-			",answerTypes = '" + answerTypes + '\'' + 
-			",questionTypes = '" + questionTypes + '\'' + 
-			",namePt = '" + namePt + '\'' + 
-			",nameLo = '" + nameLo + '\'' + 
-			",nameTr = '" + nameTr + '\'' + 
-			",currency = '" + currency + '\'' + 
-			",id = '" + id + '\'' + 
-			",surveyType = '" + surveyType + '\'' + 
-			",nameTh = '" + nameTh + '\'' + 
-			",nameVi = '" + nameVi + '\'' + 
-			",followUpAttempts = '" + followUpAttempts + '\'' + 
-			",nameEs = '" + nameEs + '\'' + 
-			",descriptionVi = '" + descriptionVi + '\'' + 
-			",descriptionEs = '" + descriptionEs + '\'' + 
-			",sections = '" + sections + '\'' + 
-			",recurrence = '" + recurrence + '\'' + 
-			",descriptionTh = '" + descriptionTh + '\'' + 
-			",name = '" + name + '\'' + 
-			",descriptionLo = '" + descriptionLo + '\'' + 
-			",descriptionIdn = '" + descriptionIdn + '\'' + 
-			",descriptionTr = '" + descriptionTr + '\'' + 
-			",currencies = '" + currencies + '\'' + 
-			"}";
-		}
+
+
+
 }

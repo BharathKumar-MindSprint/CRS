@@ -21,21 +21,18 @@
                     android:layout_height="match_parent"
                     android:id="@+id/scrollView"
                     tools:ignore="UselessParent">
-                   <!-- <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Survey"
-                        android:textStyle="bold"
-                        android:layout_gravity="center_vertical"
-                        android:visibility="gone"
-                        android:textSize="20dp"
-                        android:textColor="@color/colorPrimary"
-                        android:gravity="center"/>-->
+
                     <LinearLayout
                         android:orientation="vertical"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:id="@+id/dm_questionsSection"/>
+                        android:id="@+id/dm_questionsSection"
+                        android:paddingLeft="@dimen/ofis_large_pad"
+                        android:paddingRight="@dimen/ofis_large_pad"
+                        android:paddingBottom="@dimen/ofis_large_pad"
+                        android:paddingTop="@dimen/ofis_large_pad"
+                        android:background="@drawable/border_white_background"
+                        android:layout_marginBottom="@dimen/ofis_large_pad"/>
 
                 </ScrollView>
 
