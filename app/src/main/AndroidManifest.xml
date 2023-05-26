@@ -502,16 +502,18 @@
                 android:value="com.olam.digital.ofis.HomeActivity" />
         </activity>
 
+
         <activity
             android:name=".mvvmmodule.view.diagnosticmodule.DiagnosticModuleActivity"
             android:label="Farmer Details"
-            android:parentActivityName="com.olam.digital.ofis.HomeActivity"
+            android:parentActivityName="com.olam.digital.ofis.ViewFarmerActivity"
             android:screenOrientation="portrait"
             tools:ignore="UnusedAttribute">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.olam.digital.ofis.HomeActivity" />
+                android:value="com.olam.digital.ofis.ViewFarmerActivity"/>
         </activity>
+
     </application>
 
 </manifest>

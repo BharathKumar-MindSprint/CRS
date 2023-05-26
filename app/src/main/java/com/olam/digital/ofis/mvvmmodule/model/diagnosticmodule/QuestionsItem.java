@@ -10,46 +10,46 @@ public class QuestionsItem{
 	private boolean mandate;
 
 	@SerializedName("textBox")
-	private Object textBox;
+	private String textBox;
 
 	@SerializedName("question")
 	private String question;
 
 	@SerializedName("questionTr")
-	private Object questionTr;
+	private String questionTr;
 
 	@SerializedName("lookupValues")
 	private List<LookupValuesItem> lookupValues;
 
 	@SerializedName("questionPt")
-	private Object questionPt;
+	private String questionPt;
 
 	@SerializedName("questionLo")
-	private Object questionLo;
+	private String questionLo;
 
 	@SerializedName("questionTypeId")
 	private int questionTypeId;
 
 	@SerializedName("datatypeId")
-	private Object datatypeId;
+	private int datatypeId;
 
 	@SerializedName("isCriticalQuest")
 	private boolean isCriticalQuest;
 
 	@SerializedName("questionFr")
-	private Object questionFr;
+	private String questionFr;
 
 	@SerializedName("displayType")
 	private String displayType;
 
 	@SerializedName("questionIdn")
-	private Object questionIdn;
+	private String questionIdn;
 
 	@SerializedName("questionEs")
-	private Object questionEs;
+	private String questionEs;
 
 	@SerializedName("questionTh")
-	private Object questionTh;
+	private String questionTh;
 
 	@SerializedName("id")
 	private int id;
@@ -58,7 +58,7 @@ public class QuestionsItem{
 	private int position;
 
 	@SerializedName("questionVi")
-	private Object questionVi;
+	private String questionVi;
 
 	@SerializedName("moduleId")
 	private int moduleId;
@@ -66,190 +66,190 @@ public class QuestionsItem{
 	@SerializedName("submoduleId")
 	private int submoduleId;
 
-	public void setMandate(boolean mandate){
+	public QuestionsItem(boolean mandate, String textBox, String question, String questionTr, List<LookupValuesItem> lookupValues, String questionPt, String questionLo, int questionTypeId, int datatypeId, boolean isCriticalQuest, String questionFr, String displayType, String questionIdn, String questionEs, String questionTh, int id, int position, String questionVi, int moduleId, int submoduleId) {
 		this.mandate = mandate;
-	}
-
-	public boolean isMandate(){
-		return mandate;
-	}
-
-	public void setTextBox(Object textBox){
 		this.textBox = textBox;
-	}
-
-	public Object getTextBox(){
-		return textBox;
-	}
-
-	public void setQuestion(String question){
 		this.question = question;
-	}
-
-	public String getQuestion(){
-		return question;
-	}
-
-	public void setQuestionTr(Object questionTr){
 		this.questionTr = questionTr;
-	}
-
-	public Object getQuestionTr(){
-		return questionTr;
-	}
-
-	public void setLookupValues(List<LookupValuesItem> lookupValues){
 		this.lookupValues = lookupValues;
-	}
-
-	public List<LookupValuesItem> getLookupValues(){
-		return lookupValues;
-	}
-
-	public void setQuestionPt(Object questionPt){
 		this.questionPt = questionPt;
-	}
-
-	public Object getQuestionPt(){
-		return questionPt;
-	}
-
-	public void setQuestionLo(Object questionLo){
 		this.questionLo = questionLo;
-	}
-
-	public Object getQuestionLo(){
-		return questionLo;
-	}
-
-	public void setQuestionTypeId(int questionTypeId){
 		this.questionTypeId = questionTypeId;
-	}
-
-	public int getQuestionTypeId(){
-		return questionTypeId;
-	}
-
-	public void setDatatypeId(Object datatypeId){
 		this.datatypeId = datatypeId;
-	}
-
-	public Object getDatatypeId(){
-		return datatypeId;
-	}
-
-	public void setIsCriticalQuest(boolean isCriticalQuest){
 		this.isCriticalQuest = isCriticalQuest;
-	}
-
-	public boolean isIsCriticalQuest(){
-		return isCriticalQuest;
-	}
-
-	public void setQuestionFr(Object questionFr){
 		this.questionFr = questionFr;
-	}
-
-	public Object getQuestionFr(){
-		return questionFr;
-	}
-
-	public void setDisplayType(String displayType){
 		this.displayType = displayType;
-	}
-
-	public String getDisplayType(){
-		return displayType;
-	}
-
-	public void setQuestionIdn(Object questionIdn){
 		this.questionIdn = questionIdn;
-	}
-
-	public Object getQuestionIdn(){
-		return questionIdn;
-	}
-
-	public void setQuestionEs(Object questionEs){
 		this.questionEs = questionEs;
-	}
-
-	public Object getQuestionEs(){
-		return questionEs;
-	}
-
-	public void setQuestionTh(Object questionTh){
 		this.questionTh = questionTh;
-	}
-
-	public Object getQuestionTh(){
-		return questionTh;
-	}
-
-	public void setId(int id){
 		this.id = id;
-	}
-
-	public int getId(){
-		return id;
-	}
-
-	public void setPosition(int position){
 		this.position = position;
-	}
-
-	public int getPosition(){
-		return position;
-	}
-
-	public void setQuestionVi(Object questionVi){
 		this.questionVi = questionVi;
-	}
-
-	public Object getQuestionVi(){
-		return questionVi;
-	}
-
-	public void setModuleId(int moduleId){
 		this.moduleId = moduleId;
-	}
-
-	public int getModuleId(){
-		return moduleId;
-	}
-
-	public void setSubmoduleId(int submoduleId){
 		this.submoduleId = submoduleId;
 	}
 
-	public int getSubmoduleId(){
+
+	public boolean isMandate() {
+		return mandate;
+	}
+
+	public void setMandate(boolean mandate) {
+		this.mandate = mandate;
+	}
+
+	public String getTextBox() {
+		return textBox;
+	}
+
+	public void setTextBox(String textBox) {
+		this.textBox = textBox;
+	}
+
+	public String getQuestion() {
+		return question;
+	}
+
+	public void setQuestion(String question) {
+		this.question = question;
+	}
+
+	public String getQuestionTr() {
+		return questionTr;
+	}
+
+	public void setQuestionTr(String questionTr) {
+		this.questionTr = questionTr;
+	}
+
+	public List<LookupValuesItem> getLookupValues() {
+		return lookupValues;
+	}
+
+	public void setLookupValues(List<LookupValuesItem> lookupValues) {
+		this.lookupValues = lookupValues;
+	}
+
+	public String getQuestionPt() {
+		return questionPt;
+	}
+
+	public void setQuestionPt(String questionPt) {
+		this.questionPt = questionPt;
+	}
+
+	public String getQuestionLo() {
+		return questionLo;
+	}
+
+	public void setQuestionLo(String questionLo) {
+		this.questionLo = questionLo;
+	}
+
+	public int getQuestionTypeId() {
+		return questionTypeId;
+	}
+
+	public void setQuestionTypeId(int questionTypeId) {
+		this.questionTypeId = questionTypeId;
+	}
+
+	public int getDatatypeId() {
+		return datatypeId;
+	}
+
+	public void setDatatypeId(int datatypeId) {
+		this.datatypeId = datatypeId;
+	}
+
+	public boolean isCriticalQuest() {
+		return isCriticalQuest;
+	}
+
+	public void setCriticalQuest(boolean criticalQuest) {
+		isCriticalQuest = criticalQuest;
+	}
+
+	public String getQuestionFr() {
+		return questionFr;
+	}
+
+	public void setQuestionFr(String questionFr) {
+		this.questionFr = questionFr;
+	}
+
+	public String getDisplayType() {
+		return displayType;
+	}
+
+	public void setDisplayType(String displayType) {
+		this.displayType = displayType;
+	}
+
+	public String getQuestionIdn() {
+		return questionIdn;
+	}
+
+	public void setQuestionIdn(String questionIdn) {
+		this.questionIdn = questionIdn;
+	}
+
+	public String getQuestionEs() {
+		return questionEs;
+	}
+
+	public void setQuestionEs(String questionEs) {
+		this.questionEs = questionEs;
+	}
+
+	public String getQuestionTh() {
+		return questionTh;
+	}
+
+	public void setQuestionTh(String questionTh) {
+		this.questionTh = questionTh;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public int getPosition() {
+		return position;
+	}
+
+	public void setPosition(int position) {
+		this.position = position;
+	}
+
+	public String getQuestionVi() {
+		return questionVi;
+	}
+
+	public void setQuestionVi(String questionVi) {
+		this.questionVi = questionVi;
+	}
+
+	public int getModuleId() {
+		return moduleId;
+	}
+
+	public void setModuleId(int moduleId) {
+		this.moduleId = moduleId;
+	}
+
+	public int getSubmoduleId() {
 		return submoduleId;
 	}
 
-	@Override
- 	public String toString(){
-		return 
-			"QuestionsItem{" + 
-			"mandate = '" + mandate + '\'' + 
-			",textBox = '" + textBox + '\'' + 
-			",question = '" + question + '\'' + 
-			",questionTr = '" + questionTr + '\'' + 
-			",lookupValues = '" + lookupValues + '\'' + 
-			",questionPt = '" + questionPt + '\'' + 
-			",questionLo = '" + questionLo + '\'' + 
-			",questionTypeId = '" + questionTypeId + '\'' + 
-			",datatypeId = '" + datatypeId + '\'' + 
-			",isCriticalQuest = '" + isCriticalQuest + '\'' + 
-			",questionFr = '" + questionFr + '\'' + 
-			",displayType = '" + displayType + '\'' + 
-			",questionIdn = '" + questionIdn + '\'' + 
-			",questionEs = '" + questionEs + '\'' + 
-			",questionTh = '" + questionTh + '\'' + 
-			",id = '" + id + '\'' + 
-			",position = '" + position + '\'' + 
-			",questionVi = '" + questionVi + '\'' + 
-			",moduleId = '" + moduleId + '\'' + 
-			",submoduleId = '" + submoduleId + '\'' + 
-			"}";
-		}
+	public void setSubmoduleId(int submoduleId) {
+		this.submoduleId = submoduleId;
+	}
+
+
+
 }
