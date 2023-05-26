@@ -37,13 +37,11 @@ public class ActionPlansItem{
 		return id;
 	}
 
-	@Override
- 	public String toString(){
-		return 
-			"ActionPlansItem{" + 
-			"actionPlan = '" + actionPlan + '\'' + 
-			",isDefault = '" + isDefault + '\'' + 
-			",id = '" + id + '\'' + 
-			"}";
-		}
+	public ActionPlansItem(String actionPlan, boolean isDefault, int id) {
+		this.actionPlan = actionPlan;
+		this.isDefault = isDefault;
+		this.id = id;
+	}
+
+
 }

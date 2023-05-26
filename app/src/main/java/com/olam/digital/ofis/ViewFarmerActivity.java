@@ -109,6 +109,9 @@ import com.olam.digital.ofis.multifarm.MultiFarmStakeHolderDTO;
 import com.olam.digital.ofis.multifarm.MultiFarmUtils;
 import com.olam.digital.ofis.multifarm.SubmittedInfo;
 import com.olam.digital.ofis.multifarm.UpdateMultiFarmActivity;
+import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
+import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmMainModule;
+import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmQuestionsModule;
 import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.DiagnosticModuleActivity;
 import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.FollowUp.FollowUpRecyclerAdapter;
 import com.olam.digital.ofis.recordpolygon.LocationBeanList;
@@ -246,6 +249,11 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
     String multiFarmId=null;
     public static boolean farmSurvey;
 
+    //Room Database
+    OFISRoomDB db;
+    String dmSurveyName;
+    String  dmSubTitle;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -261,6 +269,9 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         res = getResources();
         dl = new DataLayer(res, context);
         pd = new ProgressDialog(context);
+
+        //Room Database Initialization
+        roomDbInitialization();
 
         //farmerId = SharedPreferenceUtils.getInstance(getApplicationContext()).getFarmerID();
         initiaizeInfoWidget();
@@ -303,6 +314,17 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 consentStatusInfoLayout.setVisibility(View.GONE);
             }
         });
+    }
+
+    private void roomDbInitialization(){
+        db = OFISRoomDB.getDbInstance(ViewFarmerActivity.this);
+        List<DmMainModule> dmQuestionsModuleList = db.dmMainModuleDao().getDMmodule();
+
+        for (int i = 0; i < dmQuestionsModuleList.size(); i++){
+             dmSurveyName = dmQuestionsModuleList.get(i).name;
+             dmSubTitle = dmQuestionsModuleList.get(i).assessmentType;
+
+        }
     }
 
     private void initiaizeInfoWidget() {
@@ -1004,17 +1026,18 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
 
                 //ticket-OFISDM-39 add new record diagnostic module task
 
+
                 mc.addRow(new String[]{
                         "0",
-                        res.getString(R.string.dm_diognostic_module),
-                        res.getString(R.string.dm_diognostic_module),
-                        res.getString(R.string.dm_diognostic_module),
-                        res.getString(R.string.dm_diognostic_module),
-                        res.getString(R.string.dm_diognostic_module),
-                        res.getString(R.string.dm_diognostic_module),
-                        res.getString(R.string.dm_diognostic_module),
-                        res.getString(R.string.dm_diognostic_module),
-                        res.getString(R.string.dm_diognostic_module),
+                        dmSurveyName,
+                        dmSurveyName,
+                        dmSurveyName,
+                        dmSurveyName,
+                        dmSurveyName,
+                        dmSurveyName,
+                        dmSurveyName,
+                        dmSurveyName,
+                        dmSurveyName,
                         "0",
                         "",
                         "",
@@ -2257,6 +2280,11 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                         //Ticket-OFISDM-39 newly added
                     }else if(recordedLng != null && recordedLng.getText().equals("diagnostic")){
                         MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_REGISTER_CHILD, ScreenNameConstants.BUTTON_CLICKED);
+
+                        Intent in = new Intent(this, DiagnosticModuleActivity.class);
+                        in.putExtra("SUB_TITLE",dmSubTitle);
+                        startActivity(in);
+=======
                         /*if(true){
                             showPopupDialog();
                         }else{

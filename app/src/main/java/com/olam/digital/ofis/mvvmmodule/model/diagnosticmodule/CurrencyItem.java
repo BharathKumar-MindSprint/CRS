@@ -7,8 +7,15 @@ public class CurrencyItem{
 	@SerializedName("isDefault")
 	private boolean isDefault;
 
+	public CurrencyItem(boolean isDefault, int moduleDraftId, int currencyDraftId, int currencyId) {
+		this.isDefault = isDefault;
+		this.moduleDraftId = moduleDraftId;
+		this.currencyDraftId = currencyDraftId;
+		this.currencyId = currencyId;
+	}
+
 	@SerializedName("moduleDraftId")
-	private Object moduleDraftId;
+	private int moduleDraftId;
 
 	@SerializedName("currencyDraftId")
 	private int currencyDraftId;
@@ -24,11 +31,11 @@ public class CurrencyItem{
 		return isDefault;
 	}
 
-	public void setModuleDraftId(Object moduleDraftId){
+	public void setModuleDraftId(int moduleDraftId){
 		this.moduleDraftId = moduleDraftId;
 	}
 
-	public Object getModuleDraftId(){
+	public int getModuleDraftId(){
 		return moduleDraftId;
 	}
 
@@ -48,14 +55,5 @@ public class CurrencyItem{
 		return currencyId;
 	}
 
-	@Override
- 	public String toString(){
-		return 
-			"CurrencyItem{" + 
-			"isDefault = '" + isDefault + '\'' + 
-			",moduleDraftId = '" + moduleDraftId + '\'' + 
-			",currencyDraftId = '" + currencyDraftId + '\'' + 
-			",currencyId = '" + currencyId + '\'' + 
-			"}";
-		}
+
 }

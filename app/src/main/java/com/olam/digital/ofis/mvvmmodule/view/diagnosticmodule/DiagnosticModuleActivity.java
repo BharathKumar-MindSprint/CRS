@@ -1,10 +1,14 @@
 package com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule;
 
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.os.Bundle;
+
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.lifecycle.ViewModelProviders;
@@ -25,10 +29,14 @@ public class DiagnosticModuleActivity extends BaseActivity {
 
     public TabLayout tabLayout;
     ViewPager2 viewPager;
+
+    TextView tv_subtitle;
+
     private boolean swipeEnabled = true;
     private ProgressDialog progressDialog;
     private String[] titles = new String[]{"Survey", "Action plan and proof", "Survey Results"};
 
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,6 +48,13 @@ public class DiagnosticModuleActivity extends BaseActivity {
         progressDialog.show();
         tabLayout = findViewById(R.id.tabLayout);
         viewPager = findViewById(R.id.viewPager);
+        tv_subtitle = findViewById(R.id.tv_subtitle);
+
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            String value = extras.getString("SUB_TITLE");
+            tv_subtitle.setText(value);
+        }
 
         PagerAdapter sa = new PagerAdapter(this);
         viewPager.setAdapter(sa);
