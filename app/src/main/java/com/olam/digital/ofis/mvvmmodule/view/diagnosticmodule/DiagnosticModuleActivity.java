@@ -4,7 +4,9 @@ package com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.os.Bundle;
+
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,7 +29,10 @@ public class DiagnosticModuleActivity extends BaseActivity {
 
     public TabLayout tabLayout;
     ViewPager2 viewPager;
+
     TextView tv_subtitle;
+
+    private boolean swipeEnabled = true;
     private ProgressDialog progressDialog;
     private String[] titles = new String[]{"Survey", "Action plan and proof", "Survey Results"};
 
@@ -55,15 +60,21 @@ public class DiagnosticModuleActivity extends BaseActivity {
         viewPager.setAdapter(sa);
         new TabLayoutMediator(tabLayout, viewPager, ((tab, position) -> {
             tab.setText(titles[position]);
-            //tab.view.setClickable(false);
+//            tab.view.setClickable(false);
 
         })).attach();
 
+
+
+        // swipe disable
+        swipeEnabled = !swipeEnabled;
+        viewPager.setUserInputEnabled(swipeEnabled);
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 viewPager.setCurrentItem(tab.getPosition());
+
 
             }
 
@@ -127,5 +138,6 @@ public class DiagnosticModuleActivity extends BaseActivity {
         });
 
     }
+
 
 }

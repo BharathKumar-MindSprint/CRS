@@ -37,6 +37,9 @@ import androidx.core.app.NavUtils;
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.FileProvider;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.telephony.PhoneNumberUtils;
 import android.text.Editable;
@@ -110,6 +113,7 @@ import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmMainModule;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmQuestionsModule;
 import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.DiagnosticModuleActivity;
+import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.FollowUp.FollowUpRecyclerAdapter;
 import com.olam.digital.ofis.recordpolygon.LocationBeanList;
 import com.olam.digital.ofis.recordpolygon.PlotsList;
 import com.olam.digital.ofis.recordpolygon.RecordPolygonActivity;
@@ -2276,9 +2280,19 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                         //Ticket-OFISDM-39 newly added
                     }else if(recordedLng != null && recordedLng.getText().equals("diagnostic")){
                         MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_REGISTER_CHILD, ScreenNameConstants.BUTTON_CLICKED);
+
                         Intent in = new Intent(this, DiagnosticModuleActivity.class);
                         in.putExtra("SUB_TITLE",dmSubTitle);
                         startActivity(in);
+=======
+                        /*if(true){
+                            showPopupDialog();
+                        }else{
+                            Intent in = new Intent(this, DiagnosticModuleActivity.class);
+                            startActivity(in);
+                        }*/
+                        showPopupDialog();
+
                     } else if (recordedLng != null && recordedLng.getText().equals(ChildLabourUtils.REG_CHILD)) {
                         MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_REGISTER_CHILD, ScreenNameConstants.BUTTON_CLICKED);
                         Intent in = new Intent(this, RegisterChildActivity.class);
@@ -2726,5 +2740,33 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         } catch (Exception e) {
         }
 
+    }
+
+    private void showPopupDialog() {
+        Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.followup_diagnostic_popup);
+//        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.setCancelable(false);
+
+        ArrayList<String>items = new ArrayList<>();
+        items.add("Existing Module");
+        items.add("Follow up 1");
+
+        RecyclerView recyclerView = dialog.findViewById(R.id.recyclerView);
+        FollowUpRecyclerAdapter adapter = new FollowUpRecyclerAdapter(items,getApplicationContext());
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
+        recyclerView.setAdapter(adapter);
+
+        ImageView closeButton = dialog.findViewById(R.id.imageView);
+        closeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
     }
 }
