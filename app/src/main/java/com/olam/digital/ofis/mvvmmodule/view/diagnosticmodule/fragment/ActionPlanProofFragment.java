@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.Resources;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -27,6 +28,7 @@ import androidx.fragment.app.Fragment;
 
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.provider.OpenableColumns;
 import android.speech.RecognizerIntent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -97,7 +99,9 @@ public class ActionPlanProofFragment extends Fragment {
     private Bitmap resizedBitmapNew;
     LinearLayout image_layout;
     ArrayList<String> image_array = new ArrayList<>();
-    private static final String[] ACCEPTED_MIME_TYPES = {"image/jpeg", "image/png", "application/pdf"};
+    private static final String[] ACCEPTED_MIME_TYPES = {"image/jpeg", "image/png", "application/pdf" ,
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "application/vnd.ms-excel" ,
+            "text/plain" , "application/msword" ,"application/vnd.openxmlformats-officedocument.wordprocessingml.document"};
 
     public ActionPlanProofFragment() {
         // Required empty public constructor
@@ -377,11 +381,14 @@ public class ActionPlanProofFragment extends Fragment {
             Toast.makeText(getActivity(), "" + mime, Toast.LENGTH_SHORT).show();
             //setImage(iv_profile, imageUri);
 
-            if (mime.equalsIgnoreCase("application/pdf")) {
-                String filename=uri.getPath().substring(uri.getPath().lastIndexOf("/")+1);
+            if (mime.equalsIgnoreCase("application/pdf") || mime.equalsIgnoreCase("application/vnd.ms-excel")
+                    || mime.equalsIgnoreCase("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+                    ||mime.equalsIgnoreCase("application/msword")||mime.equalsIgnoreCase("text/plain")
+                    || mime.equalsIgnoreCase("application/vnd.openxmlformats-officedocument.wordprocessingml.document")) {
+//                String filename=uri.getPath().substring(uri.getPath().lastIndexOf("/")+1);
+                String filename = getFileName(uri);
                 uploadFile(uri,filename);
-            }
-            else {
+            }else {
                 final BitmapFactory.Options options = new BitmapFactory.Options();
                 options.inJustDecodeBounds = true;
                 options.inSampleSize = 2;
@@ -417,6 +424,25 @@ public class ActionPlanProofFragment extends Fragment {
 
         }
 
+    }
+
+    // To get name of the selected file
+    private String getFileName(Uri uri) {
+        String fileName = null;
+        if (uri.getScheme().equals("content")) {
+            try (Cursor cursor = getActivity().getContentResolver().query(uri, null, null, null, null)) {
+                if (cursor != null && cursor.moveToFirst()) {
+                    int nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+                    if (nameIndex != -1) {
+                        fileName = cursor.getString(nameIndex);
+                    }
+                }
+            }
+        }
+        if (fileName == null) {
+            fileName = uri.getLastPathSegment();
+        }
+        return fileName;
     }
 
     private void uploadFileImage(String filename,byte[] filePath, final Bitmap image) {

@@ -1,0 +1,423 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#f1f1f1"
+    tools:context=".mvvmmodule.view.diagnosticmodule.fragment.FollowUpSurvey">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="@dimen/margin_10">
+
+            <LinearLayout
+                android:id="@+id/ll_complaint_layout_follow_up_survey"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin_10"
+                android:background="@color/white"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <View
+                    android:layout_width="3dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/background_multifarm"
+                    android:visibility="visible" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/text_button_width_height"
+                        android:layout_margin="@dimen/margin_10">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:gravity="center_vertical"
+                            android:text="Complaint"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/ofis_med_text"
+                            android:textStyle="bold" />
+
+                        <ImageView
+                            android:id="@+id/iv_complaint_dropdown_follow_up_survey"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            android:layout_marginEnd="@dimen/margin_10"
+                            android:src="@drawable/ic_dropdown_new" />
+
+                    </RelativeLayout>
+
+
+                    <LinearLayout
+                        android:id="@+id/ll_complaint_follow_up_survey"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="@dimen/margin_10"
+                            android:text="1. Does the farmer have bank account?"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/ofis_med_text"
+                            android:textStyle="bold" />
+
+                        <EditText
+                            android:layout_width="match_parent"
+                            android:layout_height="90dp"
+                            android:layout_margin="@dimen/margin_10"
+                            android:layout_marginBottom="10dp"
+                            android:background="@drawable/farm_code_selected_edittext"
+                            android:focusable="false"
+                            android:hint="Action Plan Details"
+                            android:inputType="textMultiLine"
+                            android:padding="@dimen/margin_10"
+                            android:textColor="@color/btn_secondary_background"
+                            android:textColorHint="@color/icon_grey_palette_2"
+                            android:textSize="@dimen/ofis_input_field_text" />
+
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/table_width60"
+                            android:background="@color/white"
+                            android:orientation="horizontal"
+                            android:weightSum="2">
+
+                            <LinearLayout
+                                android:id="@+id/complaint_not_resolved_follow_up_survey"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_margin="@dimen/margin_10"
+                                android:layout_weight="1"
+                                android:background="@drawable/dm_back_background">
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1"
+                                    android:gravity="center"
+                                    android:text="Not yet resolved"
+                                    android:textColor="@color/black"
+                                    android:textStyle="bold" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:id="@+id/complaint_resolved_follow_up_survey"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_margin="@dimen/margin_10"
+                                android:layout_weight="1"
+                                android:background="@drawable/dm_next_background"
+                                android:onClick="goNextTab">
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1"
+                                    android:gravity="center"
+                                    android:text="Resolved"
+                                    android:textColor="@color/white"
+                                    android:textStyle="bold" />
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+
+                    </LinearLayout>
+
+
+
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/ll_non_complaint_layout_follow_up_survey"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin_10"
+                android:layout_marginTop="10dp"
+                android:background="@color/white"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/ll_complaint_layout_follow_up_survey">
+
+                <View
+                    android:layout_width="3dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/background_multifarm" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/text_button_width_height"
+                        android:layout_margin="@dimen/margin_10">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:gravity="center_vertical"
+                            android:text="Non Complaint"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/ofis_med_text"
+                            android:textStyle="bold" />
+
+                        <ImageView
+                            android:id="@+id/iv_non_complaint_dropdown_follow_up_survey"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            android:layout_marginEnd="@dimen/margin_10"
+                            android:src="@drawable/ic_dropdown_new" />
+
+                    </RelativeLayout>
+
+                    <LinearLayout
+                        android:id="@+id/ll_non_complaint_follow_up_survey"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="@dimen/margin_10"
+                            android:text="1. Does the farmer have bank account?"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/ofis_med_text"
+                            android:textStyle="bold" />
+
+                        <EditText
+                            android:layout_width="match_parent"
+                            android:layout_height="90dp"
+                            android:layout_margin="@dimen/margin_10"
+                            android:layout_marginBottom="10dp"
+                            android:background="@drawable/farm_code_selected_edittext"
+                            android:focusable="false"
+                            android:hint="Action Plan Details"
+                            android:inputType="textMultiLine"
+                            android:padding="@dimen/margin_10"
+                            android:textColor="@color/btn_secondary_background"
+                            android:textColorHint="@color/icon_grey_palette_2"
+                            android:textSize="@dimen/ofis_input_field_text" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/table_width60"
+                            android:background="@color/white"
+                            android:orientation="horizontal"
+                            android:weightSum="2">
+
+                            <LinearLayout
+                                android:id="@+id/non_complaint_not_resolved_follow_up_survey"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_margin="@dimen/margin_10"
+                                android:layout_weight="1"
+                                android:background="@drawable/dm_back_background">
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1"
+                                    android:gravity="center"
+                                    android:text="Not yet resolved"
+                                    android:textColor="@color/black"
+                                    android:textStyle="bold" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:id="@+id/non_complaint_resolved_follow_up_survey"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_margin="@dimen/margin_10"
+                                android:layout_weight="1"
+                                android:background="@drawable/dm_next_background"
+                                android:onClick="goNextTab">
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1"
+                                    android:gravity="center"
+                                    android:text="Resolved"
+                                    android:textColor="@color/white"
+                                    android:textStyle="bold" />
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_satisfactory_layout_follow_up_survey"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin_10"
+                android:layout_marginTop="10dp"
+                android:background="@color/white"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/ll_non_complaint_layout_follow_up_survey">
+
+                <View
+                    android:layout_width="3dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/background_multifarm" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/text_button_width_height"
+                        android:layout_margin="@dimen/margin_10">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:gravity="center_vertical"
+                            android:text="Satisfactory"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/ofis_med_text"
+                            android:textStyle="bold" />
+
+                        <ImageView
+                            android:id="@+id/iv_satisfactory_dropdown_follow_up_survey"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            android:layout_marginEnd="@dimen/margin_10"
+                            android:src="@drawable/ic_dropdown_new" />
+
+                    </RelativeLayout>
+
+                    <LinearLayout
+                        android:id="@+id/ll_satisfactory_follow_up_survey"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="@dimen/margin_10"
+                            android:text="1. Does the farmer have bank account?"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/ofis_med_text"
+                            android:textStyle="bold" />
+
+                        <EditText
+                            android:layout_width="match_parent"
+                            android:layout_height="90dp"
+                            android:layout_margin="@dimen/margin_10"
+                            android:layout_marginBottom="10dp"
+                            android:background="@drawable/farm_code_selected_edittext"
+                            android:focusable="false"
+                            android:hint="Action Plan Details"
+                            android:inputType="textMultiLine"
+                            android:padding="@dimen/margin_10"
+                            android:textColor="@color/btn_secondary_background"
+                            android:textColorHint="@color/icon_grey_palette_2"
+                            android:textSize="@dimen/ofis_input_field_text" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/table_width60"
+                            android:background="@color/white"
+                            android:orientation="horizontal"
+                            android:weightSum="2">
+
+                            <LinearLayout
+                                android:id="@+id/satisfactory_not_resolved_follow_up_survey"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_margin="@dimen/margin_10"
+                                android:layout_weight="1"
+                                android:background="@drawable/dm_back_background">
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1"
+                                    android:gravity="center"
+                                    android:text="Not yet resolved"
+                                    android:textColor="@color/black"
+                                    android:textStyle="bold" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:id="@+id/satisfactory_resolved_follow_up_survey"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_margin="@dimen/margin_10"
+                                android:layout_weight="1"
+                                android:background="@drawable/dm_next_background"
+                                android:onClick="goNextTab">
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1"
+                                    android:gravity="center"
+                                    android:text="Resolved"
+                                    android:textColor="@color/white"
+                                    android:textStyle="bold" />
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+
+</FrameLayout>

@@ -11,13 +11,15 @@ import androidx.lifecycle.Lifecycle;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.fragment.ActionPlanProofFragment;
+import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.fragment.FollowUpActionPlan;
+import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.fragment.FollowUpSurvey;
 import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.fragment.SurveyFragment;
 import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.fragment.SurveyResultsFragment;
 
 public class PagerAdapter extends FragmentStateAdapter {
     private Context myContext;
    // int totalTabs;
-    private String[] titles = new String[] {"Survey" , "Action plan and proof","Survey Results"};
+    private String[] titles = new String[] {"Survey" , "Action plan and proof","Survey Results" };
 
     public PagerAdapter( @NonNull FragmentActivity fm){
         super(fm);
