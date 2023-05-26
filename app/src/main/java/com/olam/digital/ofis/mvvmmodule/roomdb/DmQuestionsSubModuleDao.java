@@ -14,9 +14,18 @@ public interface DmQuestionsSubModuleDao {
     @Query("SELECT * FROM DmQuestionsSubModule")
     List<DmQuestionsSubModule> getDmQuestionsSubModule();
 
+    @Query("SELECT * FROM DmQuestionsSubModule WHERE sectionId =:id")
+    List<DmQuestionsSubModule> getDmQuestionsSubModulebySectionId(int id);
+
     @Insert
     void insert(DmQuestionsSubModule... dmQuestionsSubModules);
 
     @Delete
     void delete(DmQuestionsSubModule dmQuestionsSubModules);
+
+    @Query("DELETE FROM DmQuestionsSubModule")
+    void deleteAll();
+
+    @Query("DELETE FROM DmQuestionsSubModule WHERE sectionId =:id")
+    void deletebySectionId(int id);
 }

@@ -16,9 +16,17 @@ public interface DmSectionsItemDao {
     @Query("SELECT * FROM DmSectionsItem")
     List<DmSectionsItem> getDmSectionsItem();
 
+    @Query("SELECT name FROM DmSectionsItem WHERE id =:id")
+    String loadSingle(int id);
+
     @Insert
     void insert(DmSectionsItem... dmSectionsItem);
 
     @Delete
     void delete(DmSectionsItem dmSectionsItem);
+
+    @Query("DELETE FROM DmSectionsItem")
+    void deleteAll();
+
+
 }

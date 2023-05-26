@@ -1882,7 +1882,8 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
                     Log.d("DiagnosticActivity", "diagnostic total result:: " + response.body());
                     // Log.d("DiagnosticActivity", "diagnostic valuesHome:: " +  response.body().getDiagnosticModules().get(0).getAnswerTypes());
-
+                    db.dmSectionsItemDao().deleteAll();
+                    db.dmQuestionsSubModuleDao().deleteAll();
 
                     if (response.body().getDiagnosticModules()!= null) {
                         ArrayList<DiagnosticModulesList> mainResponseList = response.body().getDiagnosticModules();
