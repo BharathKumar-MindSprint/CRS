@@ -42,6 +42,9 @@ public class DmLookupValuesISubmodule {
     @ColumnInfo(name = "id")
     public int id;
 
+    @ColumnInfo(name = "idQuestionSubModule")
+    public int idQuestionSubModule;
+
     @ColumnInfo(name = "allowCustomActionPlan")
     public boolean allowCustomActionPlan;
 
