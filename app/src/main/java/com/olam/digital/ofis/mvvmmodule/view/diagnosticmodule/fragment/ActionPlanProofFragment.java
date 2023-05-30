@@ -9,7 +9,7 @@ import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
+import android.content.res.AssetFileDescriptor;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -22,43 +22,48 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
-import android.speech.RecognizerIntent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-import com.google.firebase.crash.FirebaseCrash;
-import com.olam.digital.ofis.AddFarmerActivity;
+//import com.itextpdf.io.codec.Base64;
+//import com.itextpdf.kernel.pdf.PdfDocument;
+//import com.itextpdf.kernel.pdf.PdfReader;
+//import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Image;
+import com.itextpdf.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.PdfStamper;
+import com.itextpdf.text.pdf.PdfWriter;
 import com.olam.digital.ofis.R;
-import com.olam.digital.ofis.matoma.MatomoHelper;
-import com.olam.digital.ofis.matoma.ScreenNameConstants;
 import com.olam.digital.ofis.mvvmmodule.ImageOrientation;
 import com.olam.digital.ofis.mvvmmodule.PathUtil;
-import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.DiagnosticModuleActivity;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URISyntaxException;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 
 public class ActionPlanProofFragment extends Fragment {
@@ -101,7 +106,7 @@ public class ActionPlanProofFragment extends Fragment {
     ArrayList<String> image_array = new ArrayList<>();
     private static final String[] ACCEPTED_MIME_TYPES = {"image/jpeg", "image/png", "application/pdf" ,
             "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "application/vnd.ms-excel" ,
-            "text/plain" , "application/msword" ,"application/vnd.openxmlformats-officedocument.wordprocessingml.document"};
+            "text/plain" , "application/msword" ,"application/vnd.openxmlformats-officedocument.wordprocessingml.document","text/csv"};
 
     public ActionPlanProofFragment() {
         // Required empty public constructor
@@ -368,7 +373,6 @@ public class ActionPlanProofFragment extends Fragment {
 
             uploadFileImage(filename,imageBytes, resizedBitmapNew);
 
-
         }
 
 
@@ -381,14 +385,45 @@ public class ActionPlanProofFragment extends Fragment {
             Toast.makeText(getActivity(), "" + mime, Toast.LENGTH_SHORT).show();
             //setImage(iv_profile, imageUri);
 
-            if (mime.equalsIgnoreCase("application/pdf") || mime.equalsIgnoreCase("application/vnd.ms-excel")
+            if (mime.equalsIgnoreCase("application/vnd.ms-excel")
                     || mime.equalsIgnoreCase("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
                     ||mime.equalsIgnoreCase("application/msword")||mime.equalsIgnoreCase("text/plain")
-                    || mime.equalsIgnoreCase("application/vnd.openxmlformats-officedocument.wordprocessingml.document")) {
-//                String filename=uri.getPath().substring(uri.getPath().lastIndexOf("/")+1);
+                    || mime.equalsIgnoreCase("application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+            || mime.equalsIgnoreCase("text/csv")) {
                 String filename = getFileName(uri);
                 uploadFile(uri,filename);
-            }else {
+
+            } else if (mime.equalsIgnoreCase("application/pdf")) {
+                String filename = getFileName(uri);
+
+                // Get the compressed file size
+                AssetFileDescriptor fileDescriptor = null;
+                try {
+                    fileDescriptor = getContext().getContentResolver().openAssetFileDescriptor(uri , "r");
+                } catch (FileNotFoundException e) {
+                    throw new RuntimeException(e);
+                }
+                long compressedSize = fileDescriptor.getLength();
+
+                    // Display the file size
+                    String fileSize = getFormattedFileSize(compressedSize);
+                    String message = "PDF Size: " + fileSize;
+                    Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+
+
+
+                    if((1024f * 1024f) < compressedSize){
+                        Toast.makeText(getContext(), "Sizer is greater than 10 MB", Toast.LENGTH_SHORT).show();
+                        Uri uri1 = Uri.fromFile(compressPdf(uri));
+                        uploadFile(uri1,filename);
+                    }
+                    else {
+                        Uri uri1 = Uri.fromFile(compressPdf(uri));
+                        uploadFile(uri1,filename);
+//                        uploadFile(uri,filename);
+                    }
+
+            } else {
                 final BitmapFactory.Options options = new BitmapFactory.Options();
                 options.inJustDecodeBounds = true;
                 options.inSampleSize = 2;
@@ -419,12 +454,71 @@ public class ActionPlanProofFragment extends Fragment {
                 byte[] imageBytes = baos.toByteArray();
                 //profile_pic = Base64.encodeToString(imageBytes, Base64.DEFAULT);
 
+//                Toast.makeText(getContext(),imageBytes.length, Toast.LENGTH_SHORT).show();
                 uploadFileImage(filename,imageBytes, resizedBitmapNew);
             }
 
         }
 
     }
+
+
+
+    private File compressPdf(Uri uri) {
+        try {
+
+            InputStream inputStream = getActivity().getContentResolver().openInputStream(uri);
+            File outputFile = new File(getActivity().getCacheDir(), getFileName(uri));
+            OutputStream outputStream = new FileOutputStream(outputFile);
+
+            // Create a reader and writer
+            PdfReader reader = new PdfReader(inputStream);
+            PdfStamper stamper = new PdfStamper(reader, outputStream);
+            stamper.getWriter().setCompressionLevel(9);
+            int total = reader.getNumberOfPages() + 1;
+            for ( int i=1; i<total; i++) {
+                reader.setPageContent(i + 1, reader.getPageContent(i + 1));
+            }
+            stamper.setFullCompression();
+            stamper.close();
+            reader.close();
+
+            outputStream.flush();
+            outputStream.close();
+            inputStream.close();
+
+            // Get the compressed file size
+            long compressedSize = outputFile.length();
+
+            // Display a success message with the compressed file size
+            String fileSize = getFormattedFileSize(compressedSize);
+            String message = "PDF compressed successfully. Size: " + fileSize;
+            Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+
+            return outputFile;
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            // Handle any errors that occur during compression
+            Toast.makeText(getContext(), "Error compressing PDF", Toast.LENGTH_SHORT).show();
+            return null;
+        } catch (DocumentException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private String getFormattedFileSize(long fileSize) {
+        DecimalFormat decimalFormat = new DecimalFormat("0.00");
+
+        if (fileSize < 1024) {
+            return fileSize + " B";
+        } else if (fileSize < 1024 * 1024) {
+            return decimalFormat.format(fileSize / 1024f) + " KB";
+        } else {
+            return decimalFormat.format(fileSize/(1024f * 1024f)) +" MB";
+        }
+    }
+
 
     // To get name of the selected file
     private String getFileName(Uri uri) {
