@@ -11,6 +11,7 @@ import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -21,6 +22,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -49,7 +51,7 @@ import java.util.List;
 
 
 public class SurveyFragment extends Fragment {
-    LinearLayout ll_servey_next, ll_servey_back, dm_questionsModule, dm_Section,dm_questionsSubModule;
+    LinearLayout ll_servey_next, ll_servey_back, dm_questionsModule, dm_Section,dm_questionsSubModule , dm_questionsSubModuleTextBox, dm_questionsModuleTextBox;
     OFISRoomDB db;
     public LayoutInflater inflater;
     Resources resources;
@@ -70,6 +72,9 @@ public class SurveyFragment extends Fragment {
         dm_questionsModule = view.findViewById(R.id.dm_questionsModule);
         dm_Section = view.findViewById(R.id.dm_Section);
         dm_questionsSubModule = view.findViewById(R.id.dm_questionsSubModule);
+        dm_questionsModuleTextBox = view.findViewById(R.id.dm_questionsModuleTextBox);
+        dm_questionsSubModuleTextBox = view.findViewById(R.id.dm_questionsSubModuleTextBox);
+
 
 //        ll_servey_back = view.findViewById(R.id.ll_servey_back);
 
@@ -83,6 +88,7 @@ public class SurveyFragment extends Fragment {
         displayQuestionsModuleItems(dmQuestionsModuleList);
 
 
+
         return view;
     }
 
@@ -94,9 +100,15 @@ public class SurveyFragment extends Fragment {
             TextView textView = new TextView(getActivity());
             textView.setText(section + "." + (j + 1) + "." + dmQuestionsSubModule.question);
             textView.setTextColor(getResources().getColor(R.color.black));
-            textView.setTextSize(15);
+            textView.setTextSize(14);
             textView.setTypeface(null, Typeface.BOLD);
-            dm_questionsSubModule.addView(textView);
+            if(j==0){
+                dm_questionsSubModule.addView(textView);
+
+            }else {
+                dm_questionsSubModuleTextBox.addView(textView);
+            }
+//            dm_questionsSubModule.addView(textView);
 
             if (dmQuestionsSubModule.displayType.equalsIgnoreCase("dropdown")) {
                 List<DmLookupValuesISubmodule> dmLookupValuesISubmoduleList = db.dmLookupValuesISubmoduleDao().getDmAnswersSubModuleByQuestionId(dmQuestionsSubModule.id);
@@ -117,7 +129,7 @@ public class SurveyFragment extends Fragment {
             TextView textView = new TextView(getActivity());
             textView.setText(dmSectionsItem.name);
             textView.setTextColor(getResources().getColor(R.color.black));
-            textView.setTextSize(15);
+            textView.setTextSize(14);
             //textView.setPadding(0, res.getDimensionPixelSize(R.dimen.ofis_large_pad), 0, 0);
             textView.setTypeface(null, Typeface.BOLD);
             dm_Section.addView(textView);
@@ -133,10 +145,15 @@ public class SurveyFragment extends Fragment {
             TextView textView = new TextView(getActivity());
             textView.setText((m + 1)+ "." +dmQuestionsModule.question);
             textView.setTextColor(getResources().getColor(R.color.black));
-            textView.setTextSize(15);
+            textView.setTextSize(14);
             textView.setPadding(0, 15, 0, 0);
             textView.setTypeface(null, Typeface.BOLD);
-            dm_questionsModule.addView(textView);
+            if(m==0) {
+                dm_questionsModule.addView(textView);
+            }else {
+                dm_questionsModuleTextBox.addView(textView);
+            }
+//            dm_questionsModule.addView(textView);
 
             if (dmQuestionsModule.displayType.equalsIgnoreCase("dropdown")) {
                 List<DmLookupValuesItem> dmLookupValuesItemList = db.dmLookupValuesItemDao().getDmAnswersModuleByQuestionId(dmQuestionsModule.id);
@@ -165,9 +182,7 @@ public class SurveyFragment extends Fragment {
 
         final Spinner spinner = new Spinner(getActivity());
         spinner.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-       /* if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            spinner.setBackground(getActivity().getDrawable(R.drawable.farm_code_selected_edittext));
-        }*/
+        spinner.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.spinner_bg_light));
 
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(getActivity(), R.layout.spinner_item, list);
         spinnerAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
@@ -198,20 +213,22 @@ public class SurveyFragment extends Fragment {
         EditText editText = new EditText(getActivity());
         editText.setHint("Answer");
         editText.setPadding(0,20,0,20);
-        //editText.getLayoutParams().width=40;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            editText.setBackground(getActivity().getDrawable(R.drawable.farm_code_selected_edittext));
-        }
+        editText.setTextSize(14);
 
+        //editText.getLayoutParams().width=40;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            editText.setBackground(getActivity().getDrawable(R.drawable.answer_text_survey));
+        }
         // Add Spinner to LinearLayout
         if (dm_questionsSubModule != null) {
-            dm_questionsSubModule.addView(editText);
+            dm_questionsSubModuleTextBox.addView(editText);
         }
 
 
     }
 
-    public void renderDropDownQuestionModule(List<DmLookupValuesItem> dmLookupValuesItemList) {
+    public void renderDropDownQuestionModule(List<DmLookupValuesItem> dmLookupValuesItemList ) {
 
 
         final List<String> list = new ArrayList<String>();
@@ -223,10 +240,12 @@ public class SurveyFragment extends Fragment {
 
 
         final Spinner spinner = new Spinner(getActivity());
+
+
+//        final Spinner spinner = (Spinner) inflater.inflate(R.layout.module_spinner,relativeLayout,false);
         spinner.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-       /* if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            spinner.setBackground(getActivity().getDrawable(R.drawable.farm_code_selected_edittext));
-        }*/
+        spinner.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.spinner_bg_light));
+
 
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(getActivity(), R.layout.spinner_item, list);
         spinnerAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
@@ -256,19 +275,22 @@ public class SurveyFragment extends Fragment {
 
         EditText editText = new EditText(getActivity());
         editText.setHint("Answer");
+        editText.setTextSize(14);
         editText.setPadding(0,20,0,20);
         //editText.getLayoutParams().width=40;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            editText.setBackground(getActivity().getDrawable(R.drawable.farm_code_selected_edittext));
+            editText.setBackground(getActivity().getDrawable(R.drawable.answer_text_survey));
         }
 
         // Add Spinner to LinearLayout
         if (dm_questionsModule != null) {
-            dm_questionsModule.addView(editText);
+            dm_questionsModuleTextBox.addView(editText);
         }
 
 
     }
+
+
 
 
 

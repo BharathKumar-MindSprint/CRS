@@ -2284,7 +2284,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                         Intent in = new Intent(this, DiagnosticModuleActivity.class);
                         in.putExtra("SUB_TITLE",dmSubTitle);
                         startActivity(in);
-=======
+
                         /*if(true){
                             showPopupDialog();
                         }else{

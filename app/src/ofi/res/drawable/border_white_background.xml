@@ -4,4 +4,5 @@
     <stroke
         android:width="1dip"
         android:color="@color/ofis_input_field_separator" />
+    <corners android:radius="3dp"/>
 </shape>
