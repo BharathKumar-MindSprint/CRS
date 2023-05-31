@@ -18,4 +18,7 @@ public interface DmActionPlansItemDao {
 
     @Delete
     void delete(DmActionPlansItem dmActionPlansItem);
+
+    @Query("DELETE FROM DmActionPlansItem")
+    void deleteAll();
 }

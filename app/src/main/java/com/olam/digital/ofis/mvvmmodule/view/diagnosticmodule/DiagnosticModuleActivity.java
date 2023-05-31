@@ -316,6 +316,7 @@ public class DiagnosticModuleActivity extends BaseActivity {
 
                             db.dmQuestionsModuleDao().deleteAll();
                             db.dmLookupValuesItemDao().deleteAll();
+                            db.dmActionPlansItemDao().deleteAll();
 
                             for (int l = 0; l < questionsItemList.size(); l++) {
 
@@ -643,6 +644,8 @@ public class DiagnosticModuleActivity extends BaseActivity {
                         }
 
                     }
+
+                    db.dmCurrenciesItemDao().deleteAll();
 
                     if (response.body().getCurrencies() != null) {
                         ArrayList<CurrenciesItem> currenciesItemArrayList = response.body().getCurrencies();

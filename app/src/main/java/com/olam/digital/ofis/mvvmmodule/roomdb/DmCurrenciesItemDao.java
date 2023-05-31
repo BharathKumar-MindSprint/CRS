@@ -20,4 +20,7 @@ public interface DmCurrenciesItemDao {
 
     @Delete
     void delete(DmCurrenciesItem dmCurrenciesItems);
+
+    @Query("DELETE FROM DmCurrenciesItem")
+    void deleteAll();
 }
