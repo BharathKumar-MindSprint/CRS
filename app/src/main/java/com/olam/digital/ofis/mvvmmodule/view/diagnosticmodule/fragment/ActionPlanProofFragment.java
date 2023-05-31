@@ -31,9 +31,12 @@ import android.provider.OpenableColumns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -50,6 +53,9 @@ import com.itextpdf.text.pdf.PdfWriter;
 import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.mvvmmodule.ImageOrientation;
 import com.olam.digital.ofis.mvvmmodule.PathUtil;
+import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
+import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmActionPlansItem;
+import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmCurrenciesItem;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -74,6 +80,7 @@ public class ActionPlanProofFragment extends Fragment {
     ImageView iv_complaint_dropdown, iv_complaint_delete_file;
     TextView tv_complaint_filename;
     RelativeLayout rl_complaint_captureproof_layout, rl_complaint_fileupload_layout;
+    Spinner spinner_complaint_actionplan;
 
     //Non-Complaint
     ImageView iv_noncomplaint_dropdown;
@@ -108,6 +115,10 @@ public class ActionPlanProofFragment extends Fragment {
             "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "application/vnd.ms-excel" ,
             "text/plain" , "application/msword" ,"application/vnd.openxmlformats-officedocument.wordprocessingml.document","text/csv"};
 
+    //Room DB
+    OFISRoomDB db;
+    Spinner spinner_dmCurrencies;
+
     public ActionPlanProofFragment() {
         // Required empty public constructor
     }
@@ -131,7 +142,17 @@ public class ActionPlanProofFragment extends Fragment {
         iv_complaint_delete_file = view.findViewById(R.id.iv_complaint_delete_file);
         rl_complaint_fileupload_layout = view.findViewById(R.id.rl_complaint_fileupload_layout);
         image_layout = view.findViewById(R.id.image_layout);
+        spinner_dmCurrencies = view.findViewById(R.id.spinner_dmCurrencies);
+        spinner_complaint_actionplan = view.findViewById(R.id.spinner_complaint_actionplan);
         iv_complaint_dropdown.setTag("0");
+
+        //Room DB
+        db = OFISRoomDB.getDbInstance(getActivity());
+        List<DmCurrenciesItem> dmSectionsItemList = db.dmCurrenciesItemDao().getDmCurrenciesItem();
+        showCurrencyDropDown(dmSectionsItemList);
+
+        List<DmActionPlansItem> dmActionPlansItemList = db.dmActionPlansItemDao().getDmActionPlansItem();
+        showActionplanDropDown(dmActionPlansItemList);
         iv_complaint_dropdown.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -198,6 +219,65 @@ public class ActionPlanProofFragment extends Fragment {
         });
 
         return view;
+    }
+
+
+    public void showCurrencyDropDown(List<DmCurrenciesItem> dmCurrenciesItemList) {
+
+
+        final List<String> list = new ArrayList<String>();
+        list.clear();
+
+        for (int c = 0; c < dmCurrenciesItemList.size(); c++) {
+            list.add(dmCurrenciesItemList.get(c).code);
+        }
+
+
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(getActivity(), R.layout.spinner_item, list);
+        spinnerAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+        spinner_dmCurrencies.setAdapter(spinnerAdapter);
+
+        spinner_dmCurrencies.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Toast.makeText(getActivity(), "Selected Item " + list.get(position), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+
+
+    }
+
+    public void showActionplanDropDown(List<DmActionPlansItem> dmActionPlansItemList) {
+
+
+        final List<String> list = new ArrayList<String>();
+        list.clear();
+
+        for (int c = 0; c < dmActionPlansItemList.size(); c++) {
+            list.add(dmActionPlansItemList.get(c).actionPlan);
+        }
+
+
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(getActivity(), R.layout.spinner_item, list);
+        spinnerAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+        spinner_complaint_actionplan.setAdapter(spinnerAdapter);
+
+        spinner_complaint_actionplan.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Toast.makeText(getActivity(), "Selected Item " + list.get(position), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+
+
     }
 
     private void selectImage() {
@@ -461,8 +541,6 @@ public class ActionPlanProofFragment extends Fragment {
         }
 
     }
-
-
 
     private File compressPdf(Uri uri) {
         try {
