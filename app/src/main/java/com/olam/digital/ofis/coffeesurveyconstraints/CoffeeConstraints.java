@@ -76,14 +76,15 @@ public class CoffeeConstraints {
                 String displayConfig = allQuestionCursor.getString(allQuestionCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION));
                 try {
                     JSONObject displayConfigObj = new JSONObject(displayConfig);
-                    String calculationNode = displayConfigObj.optString(CoffeeConstants.CALCULATION);
-                    JSONObject calculationObj = new JSONObject(calculationNode);
-                    JSONArray questionsInOrder = (JSONArray) calculationObj.get(CoffeeConstants.QUESTIONS_IN_ORDER);
-                    // Always need to check the sceond value
-                       if(questionsInOrder.getInt(1) == questionId){
-                           dependentQuestions.add(Integer.parseInt(questionsString));
-                       }
-
+                    if(displayConfigObj.has(CoffeeConstants.CALCULATION)) {
+                        String calculationNode = displayConfigObj.optString(CoffeeConstants.CALCULATION);
+                        JSONObject calculationObj = new JSONObject(calculationNode);
+                        JSONArray questionsInOrder = (JSONArray) calculationObj.get(CoffeeConstants.QUESTIONS_IN_ORDER);
+                        // Always need to check the sceond value
+                        if (questionsInOrder.getInt(1) == questionId) {
+                            dependentQuestions.add(Integer.parseInt(questionsString));
+                        }
+                    }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
