@@ -35,7 +35,7 @@ public class DiagnosticModuleRepository {
                             data.setValue(response.body());
 
                             Log.d(TAG, "diagnostic total result:: " + response.body().getDiagnosticModules().toString());
-                            Log.d(TAG, "diagnostic values:: " + response.body().getDiagnosticModules().get(0).getAnswerTypes());
+//                            Log.d(TAG, "diagnostic values:: " + response.body().getDiagnosticModules().get(0).getAnswerTypes());
 
                         }
 

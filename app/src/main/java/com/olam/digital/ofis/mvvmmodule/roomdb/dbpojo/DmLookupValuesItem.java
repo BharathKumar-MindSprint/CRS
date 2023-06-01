@@ -42,6 +42,9 @@ public class DmLookupValuesItem {
     @ColumnInfo(name = "id")
     public int id;
 
+    @ColumnInfo(name = "idQuestionsMudule")
+    public int idQuestionsMudule;
+
     @ColumnInfo(name = "allowCustomActionPlan")
     public boolean allowCustomActionPlan;
 

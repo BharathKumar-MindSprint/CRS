@@ -489,7 +489,12 @@ dependencies {
     implementation 'androidx.room:room-runtime:2.2.5'
     annotationProcessor 'androidx.room:room-compiler:2.2.5'
 
-    }
+    // pdf compressor
+    implementation 'com.itextpdf:itextg:5.5.10'
+
+
+
+}
 
     apply plugin: 'com.google.gms.google-services'
     apply plugin: 'com.google.firebase.crashlytics'

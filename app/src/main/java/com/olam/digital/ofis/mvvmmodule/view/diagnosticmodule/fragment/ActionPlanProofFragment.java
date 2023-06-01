@@ -9,7 +9,7 @@ import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
+import android.content.res.AssetFileDescriptor;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -22,43 +22,54 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
-import android.speech.RecognizerIntent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-import com.google.firebase.crash.FirebaseCrash;
-import com.olam.digital.ofis.AddFarmerActivity;
+//import com.itextpdf.io.codec.Base64;
+//import com.itextpdf.kernel.pdf.PdfDocument;
+//import com.itextpdf.kernel.pdf.PdfReader;
+//import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Image;
+import com.itextpdf.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.PdfStamper;
+import com.itextpdf.text.pdf.PdfWriter;
 import com.olam.digital.ofis.R;
-import com.olam.digital.ofis.matoma.MatomoHelper;
-import com.olam.digital.ofis.matoma.ScreenNameConstants;
 import com.olam.digital.ofis.mvvmmodule.ImageOrientation;
 import com.olam.digital.ofis.mvvmmodule.PathUtil;
-import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.DiagnosticModuleActivity;
+import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
+import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmActionPlansItem;
+import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmCurrenciesItem;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URISyntaxException;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 
 public class ActionPlanProofFragment extends Fragment {
@@ -69,6 +80,7 @@ public class ActionPlanProofFragment extends Fragment {
     ImageView iv_complaint_dropdown, iv_complaint_delete_file;
     TextView tv_complaint_filename;
     RelativeLayout rl_complaint_captureproof_layout, rl_complaint_fileupload_layout;
+    Spinner spinner_complaint_actionplan;
 
     //Non-Complaint
     ImageView iv_noncomplaint_dropdown;
@@ -101,7 +113,11 @@ public class ActionPlanProofFragment extends Fragment {
     ArrayList<String> image_array = new ArrayList<>();
     private static final String[] ACCEPTED_MIME_TYPES = {"image/jpeg", "image/png", "application/pdf" ,
             "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "application/vnd.ms-excel" ,
-            "text/plain" , "application/msword" ,"application/vnd.openxmlformats-officedocument.wordprocessingml.document"};
+            "text/plain" , "application/msword" ,"application/vnd.openxmlformats-officedocument.wordprocessingml.document","text/csv"};
+
+    //Room DB
+    OFISRoomDB db;
+    Spinner spinner_dmCurrencies;
 
     public ActionPlanProofFragment() {
         // Required empty public constructor
@@ -126,7 +142,17 @@ public class ActionPlanProofFragment extends Fragment {
         iv_complaint_delete_file = view.findViewById(R.id.iv_complaint_delete_file);
         rl_complaint_fileupload_layout = view.findViewById(R.id.rl_complaint_fileupload_layout);
         image_layout = view.findViewById(R.id.image_layout);
+        spinner_dmCurrencies = view.findViewById(R.id.spinner_dmCurrencies);
+        spinner_complaint_actionplan = view.findViewById(R.id.spinner_complaint_actionplan);
         iv_complaint_dropdown.setTag("0");
+
+        //Room DB
+        db = OFISRoomDB.getDbInstance(getActivity());
+        List<DmCurrenciesItem> dmSectionsItemList = db.dmCurrenciesItemDao().getDmCurrenciesItem();
+        showCurrencyDropDown(dmSectionsItemList);
+
+        List<DmActionPlansItem> dmActionPlansItemList = db.dmActionPlansItemDao().getDmActionPlansItem();
+        showActionplanDropDown(dmActionPlansItemList);
         iv_complaint_dropdown.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -193,6 +219,65 @@ public class ActionPlanProofFragment extends Fragment {
         });
 
         return view;
+    }
+
+
+    public void showCurrencyDropDown(List<DmCurrenciesItem> dmCurrenciesItemList) {
+
+
+        final List<String> list = new ArrayList<String>();
+        list.clear();
+
+        for (int c = 0; c < dmCurrenciesItemList.size(); c++) {
+            list.add(dmCurrenciesItemList.get(c).code);
+        }
+
+
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(getActivity(), R.layout.spinner_item, list);
+        spinnerAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+        spinner_dmCurrencies.setAdapter(spinnerAdapter);
+
+        spinner_dmCurrencies.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Toast.makeText(getActivity(), "Selected Item " + list.get(position), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+
+
+    }
+
+    public void showActionplanDropDown(List<DmActionPlansItem> dmActionPlansItemList) {
+
+
+        final List<String> list = new ArrayList<String>();
+        list.clear();
+
+        for (int c = 0; c < dmActionPlansItemList.size(); c++) {
+            list.add(dmActionPlansItemList.get(c).actionPlan);
+        }
+
+
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(getActivity(), R.layout.spinner_item, list);
+        spinnerAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+        spinner_complaint_actionplan.setAdapter(spinnerAdapter);
+
+        spinner_complaint_actionplan.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Toast.makeText(getActivity(), "Selected Item " + list.get(position), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+
+
     }
 
     private void selectImage() {
@@ -368,7 +453,6 @@ public class ActionPlanProofFragment extends Fragment {
 
             uploadFileImage(filename,imageBytes, resizedBitmapNew);
 
-
         }
 
 
@@ -381,14 +465,45 @@ public class ActionPlanProofFragment extends Fragment {
             Toast.makeText(getActivity(), "" + mime, Toast.LENGTH_SHORT).show();
             //setImage(iv_profile, imageUri);
 
-            if (mime.equalsIgnoreCase("application/pdf") || mime.equalsIgnoreCase("application/vnd.ms-excel")
+            if (mime.equalsIgnoreCase("application/vnd.ms-excel")
                     || mime.equalsIgnoreCase("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
                     ||mime.equalsIgnoreCase("application/msword")||mime.equalsIgnoreCase("text/plain")
-                    || mime.equalsIgnoreCase("application/vnd.openxmlformats-officedocument.wordprocessingml.document")) {
-//                String filename=uri.getPath().substring(uri.getPath().lastIndexOf("/")+1);
+                    || mime.equalsIgnoreCase("application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+            || mime.equalsIgnoreCase("text/csv")) {
                 String filename = getFileName(uri);
                 uploadFile(uri,filename);
-            }else {
+
+            } else if (mime.equalsIgnoreCase("application/pdf")) {
+                String filename = getFileName(uri);
+
+                // Get the compressed file size
+                AssetFileDescriptor fileDescriptor = null;
+                try {
+                    fileDescriptor = getContext().getContentResolver().openAssetFileDescriptor(uri , "r");
+                } catch (FileNotFoundException e) {
+                    throw new RuntimeException(e);
+                }
+                long compressedSize = fileDescriptor.getLength();
+
+                    // Display the file size
+                    String fileSize = getFormattedFileSize(compressedSize);
+                    String message = "PDF Size: " + fileSize;
+                    Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+
+
+
+                    if((1024f * 1024f) < compressedSize){
+                        Toast.makeText(getContext(), "Sizer is greater than 10 MB", Toast.LENGTH_SHORT).show();
+                        Uri uri1 = Uri.fromFile(compressPdf(uri));
+                        uploadFile(uri1,filename);
+                    }
+                    else {
+                        Uri uri1 = Uri.fromFile(compressPdf(uri));
+                        uploadFile(uri1,filename);
+//                        uploadFile(uri,filename);
+                    }
+
+            } else {
                 final BitmapFactory.Options options = new BitmapFactory.Options();
                 options.inJustDecodeBounds = true;
                 options.inSampleSize = 2;
@@ -419,12 +534,69 @@ public class ActionPlanProofFragment extends Fragment {
                 byte[] imageBytes = baos.toByteArray();
                 //profile_pic = Base64.encodeToString(imageBytes, Base64.DEFAULT);
 
+//                Toast.makeText(getContext(),imageBytes.length, Toast.LENGTH_SHORT).show();
                 uploadFileImage(filename,imageBytes, resizedBitmapNew);
             }
 
         }
 
     }
+
+    private File compressPdf(Uri uri) {
+        try {
+
+            InputStream inputStream = getActivity().getContentResolver().openInputStream(uri);
+            File outputFile = new File(getActivity().getCacheDir(), getFileName(uri));
+            OutputStream outputStream = new FileOutputStream(outputFile);
+
+            // Create a reader and writer
+            PdfReader reader = new PdfReader(inputStream);
+            PdfStamper stamper = new PdfStamper(reader, outputStream);
+            stamper.getWriter().setCompressionLevel(9);
+            int total = reader.getNumberOfPages() + 1;
+            for ( int i=1; i<total; i++) {
+                reader.setPageContent(i + 1, reader.getPageContent(i + 1));
+            }
+            stamper.setFullCompression();
+            stamper.close();
+            reader.close();
+
+            outputStream.flush();
+            outputStream.close();
+            inputStream.close();
+
+            // Get the compressed file size
+            long compressedSize = outputFile.length();
+
+            // Display a success message with the compressed file size
+            String fileSize = getFormattedFileSize(compressedSize);
+            String message = "PDF compressed successfully. Size: " + fileSize;
+            Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+
+            return outputFile;
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            // Handle any errors that occur during compression
+            Toast.makeText(getContext(), "Error compressing PDF", Toast.LENGTH_SHORT).show();
+            return null;
+        } catch (DocumentException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private String getFormattedFileSize(long fileSize) {
+        DecimalFormat decimalFormat = new DecimalFormat("0.00");
+
+        if (fileSize < 1024) {
+            return fileSize + " B";
+        } else if (fileSize < 1024 * 1024) {
+            return decimalFormat.format(fileSize / 1024f) + " KB";
+        } else {
+            return decimalFormat.format(fileSize/(1024f * 1024f)) +" MB";
+        }
+    }
+
 
     // To get name of the selected file
     private String getFileName(Uri uri) {
