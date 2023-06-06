@@ -39,8 +39,8 @@ android {
 
 
 
-        versionCode 62
-        versionName "10.5.6"
+        versionCode 63
+        versionName "10.5.7"
 
 
     }
