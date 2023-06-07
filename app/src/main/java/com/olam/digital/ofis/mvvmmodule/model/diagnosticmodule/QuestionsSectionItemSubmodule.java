@@ -27,8 +27,9 @@ public class QuestionsSectionItemSubmodule {
     @SerializedName("questionLo")
     private String questionLo;
 
-    @SerializedName("questionTypeId")
-    private int questionTypeId;
+
+    @SerializedName("displaytypeId")
+    private int displaytypeId;
 
     @SerializedName("datatypeId")
     private int datatypeId;
@@ -66,7 +67,7 @@ public class QuestionsSectionItemSubmodule {
     @SerializedName("submoduleId")
     private int submoduleId;
 
-    public QuestionsSectionItemSubmodule(boolean mandate, String textBox, String question, String questionTr, List<SectionLookupValuesItemSubmodule> lookupValues, String questionPt, String questionLo, int questionTypeId, int datatypeId, boolean isCriticalQuest, String questionFr, String displayType, String questionIdn, String questionEs, String questionTh, int id, int position, String questionVi, int moduleId, int submoduleId) {
+    public QuestionsSectionItemSubmodule(boolean mandate, String textBox, String question, String questionTr, List<SectionLookupValuesItemSubmodule> lookupValues, String questionPt, String questionLo, int displaytypeId, int datatypeId, boolean isCriticalQuest, String questionFr, String displayType, String questionIdn, String questionEs, String questionTh, int id, int position, String questionVi, int moduleId, int submoduleId) {
         this.mandate = mandate;
         this.textBox = textBox;
         this.question = question;
@@ -74,7 +75,7 @@ public class QuestionsSectionItemSubmodule {
         this.lookupValues = lookupValues;
         this.questionPt = questionPt;
         this.questionLo = questionLo;
-        this.questionTypeId = questionTypeId;
+        this.displaytypeId = displaytypeId;
         this.datatypeId = datatypeId;
         this.isCriticalQuest = isCriticalQuest;
         this.questionFr = questionFr;
@@ -146,12 +147,12 @@ public class QuestionsSectionItemSubmodule {
         this.questionLo = questionLo;
     }
 
-    public int getQuestionTypeId() {
-        return questionTypeId;
+    public int getDisplaytypeId() {
+        return displaytypeId;
     }
 
-    public void setQuestionTypeId(int questionTypeId) {
-        this.questionTypeId = questionTypeId;
+    public void setDisplaytypeId(int displaytypeId) {
+        this.displaytypeId = displaytypeId;
     }
 
     public int getDatatypeId() {

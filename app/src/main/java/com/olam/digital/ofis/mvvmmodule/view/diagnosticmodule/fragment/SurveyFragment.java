@@ -25,6 +25,7 @@ import android.widget.Toast;
 
 import com.olam.digital.ofis.FindFarmerActivity;
 import com.olam.digital.ofis.R;
+import com.olam.digital.ofis.mvvmmodule.Constants;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmLookupValuesISubmodule;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmLookupValuesItem;
@@ -38,7 +39,7 @@ import java.util.List;
 
 
 public class SurveyFragment extends Fragment {
-    LinearLayout ll_servey_next, ll_servey_back, dm_questionsModule, dm_Section, dm_questionsSubModule, dm_questionsSubModuleTextBox, dm_questionsModuleTextBox;
+    LinearLayout ll_servey_next, ll_servey_back, dm_questionsModule, dm_Section, dm_questionsSubModule, dm_questionsSubModuleTextBox, dm_questionsModuleTextBox, dm_Question;
     OFISRoomDB db;
     public LayoutInflater inflater;
     Resources resources;
@@ -60,6 +61,8 @@ public class SurveyFragment extends Fragment {
         ll_servey_back = view.findViewById(R.id.ll_servey_back);
         dm_questionsModule = view.findViewById(R.id.dm_questionsModule);
         dm_Section = view.findViewById(R.id.dm_Section);
+        dm_Question = view.findViewById(R.id.dm_Question);
+
         dm_questionsSubModule = view.findViewById(R.id.dm_questionsSubModule);
         dm_questionsModuleTextBox = view.findViewById(R.id.dm_questionsModuleTextBox);
         dm_questionsSubModuleTextBox = view.findViewById(R.id.dm_questionsSubModuleTextBox);
@@ -71,7 +74,7 @@ public class SurveyFragment extends Fragment {
         List<DmSectionsItem> dmSectionsItemList = db.dmSectionsItemDao().getDmSectionsItem();
         displaySectionItems(dmSectionsItemList);
 
-        List<DmQuestionsModule> dmQuestionsModuleList = db.dmQuestionsModuleDao().getDmQuestionsModule();
+        List<DmQuestionsModule> dmQuestionsModuleList = db.dmQuestionsModuleDao().getDmQuestionsModulebyModuleId(Integer.parseInt(Constants.MODULE_ID));
         displayQuestionsModuleItems(dmQuestionsModuleList);
 
         ll_servey_back.setOnClickListener(new View.OnClickListener() {
@@ -81,7 +84,6 @@ public class SurveyFragment extends Fragment {
                 startActivity(intent);
             }
         });
-
 
         return view;
     }
@@ -95,17 +97,13 @@ public class SurveyFragment extends Fragment {
             textView.setText(section + "." + (j + 1) + "." + dmQuestionsSubModule.question);
             textView.setTextColor(getResources().getColor(R.color.black));
             textView.setTextSize(14);
-            textView.setTypeface(null, Typeface.BOLD);
-            if (j == 0) {
-                dm_questionsSubModule.addView(textView);
-
-            } else {
-                dm_questionsSubModuleTextBox.addView(textView);
-            }
-//            dm_questionsSubModule.addView(textView);
+            //textView.setTypeface(null, Typeface.BOLD);
+            dm_Section.addView(textView);
 
             if (dmQuestionsSubModule.displayType.equalsIgnoreCase("dropdown")) {
-                List<DmLookupValuesISubmodule> dmLookupValuesISubmoduleList = db.dmLookupValuesISubmoduleDao().getDmAnswersSubModuleByQuestionId(dmQuestionsSubModule.id);
+                List<DmLookupValuesISubmodule> dmLookupValuesISubmoduleList = new ArrayList<>();
+                dmLookupValuesISubmoduleList.clear();
+                dmLookupValuesISubmoduleList = db.dmLookupValuesISubmoduleDao().getDmAnswersSubModuleByQuestionId(dmQuestionsSubModule.id);
                 renderDropDownQuestionSections(String.valueOf(dmQuestionsSubModule.id), dmLookupValuesISubmoduleList);
             } else if (dmQuestionsSubModule.displayType.equalsIgnoreCase("text box")) {
                 renderTextboxQuestionSections(String.valueOf(dmQuestionsSubModule.id));
@@ -123,9 +121,11 @@ public class SurveyFragment extends Fragment {
             textView.setTextColor(getResources().getColor(R.color.black));
             textView.setTextSize(14);
             //textView.setPadding(0, res.getDimensionPixelSize(R.dimen.ofis_large_pad), 0, 0);
-            textView.setTypeface(null, Typeface.BOLD);
+            //textView.setTypeface(null, Typeface.BOLD);
             dm_Section.addView(textView);
-            List<DmQuestionsSubModule> dmQuestionsSubModuleList = db.dmQuestionsSubModuleDao().getDmQuestionsSubModulebySectionId(dmSectionsItem.id);
+            List<DmQuestionsSubModule> dmQuestionsSubModuleList = new ArrayList<>();
+            dmQuestionsSubModuleList.clear();
+            dmQuestionsSubModuleList = db.dmQuestionsSubModuleDao().getDmQuestionsSubModulebySectionId(dmSectionsItem.id);
             displaySectionQuestionItems(i + 1, dmQuestionsSubModuleList);
 
         }
@@ -139,16 +139,13 @@ public class SurveyFragment extends Fragment {
             textView.setTextColor(getResources().getColor(R.color.black));
             textView.setTextSize(14);
             textView.setPadding(0, 15, 0, 0);
-            textView.setTypeface(null, Typeface.BOLD);
-            if (m == 0) {
-                dm_questionsModule.addView(textView);
-            } else {
-                dm_questionsModuleTextBox.addView(textView);
-            }
-//            dm_questionsModule.addView(textView);
+            //textView.setTypeface(null, Typeface.BOLD);
+            dm_Question.addView(textView);
 
             if (dmQuestionsModule.displayType.equalsIgnoreCase("dropdown")) {
-                List<DmLookupValuesItem> dmLookupValuesItemList = db.dmLookupValuesItemDao().getDmAnswersModuleByQuestionId(dmQuestionsModule.id);
+                List<DmLookupValuesItem> dmLookupValuesItemList = new ArrayList<>();
+                dmLookupValuesItemList.clear();
+                dmLookupValuesItemList = db.dmLookupValuesItemDao().getDmAnswersModuleByQuestionId(dmQuestionsModule.id);
                 renderDropDownQuestionModule(String.valueOf(dmQuestionsModule.id), dmLookupValuesItemList);
             } else if (dmQuestionsModule.displayType.equalsIgnoreCase("text box")) {
                 renderTextboxQuestionModule(String.valueOf(dmQuestionsModule.id));
@@ -221,8 +218,8 @@ public class SurveyFragment extends Fragment {
         });
 
         // Add Spinner to LinearLayout
-        if (dm_questionsSubModule != null) {
-            dm_questionsSubModule.addView(spinner);
+        if (dm_Section != null) {
+            dm_Section.addView(spinner);
         }
 
 
@@ -232,7 +229,7 @@ public class SurveyFragment extends Fragment {
 
         EditText editText = new EditText(getActivity());
         editText.setHint("Answer");
-        editText.setPadding(0, 20, 0, 20);
+        //editText.setPadding(0, 20, 0, 20);
         editText.setTextSize(14);
 
         List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByQuestionId(questionId);
@@ -268,8 +265,8 @@ public class SurveyFragment extends Fragment {
             editText.setBackground(getActivity().getDrawable(R.drawable.answer_text_survey));
         }
         // Add Spinner to LinearLayout
-        if (dm_questionsSubModule != null) {
-            dm_questionsSubModuleTextBox.addView(editText);
+        if (dm_Section != null) {
+            dm_Section.addView(editText);
         }
 
 
@@ -343,8 +340,8 @@ public class SurveyFragment extends Fragment {
         });
 
         // Add Spinner to LinearLayout
-        if (dm_questionsModule != null) {
-            dm_questionsModule.addView(spinner);
+        if (dm_Question != null) {
+            dm_Question.addView(spinner);
         }
 
 
@@ -355,7 +352,7 @@ public class SurveyFragment extends Fragment {
         EditText editText = new EditText(getActivity());
         editText.setHint("Answer");
         editText.setTextSize(14);
-        editText.setPadding(0, 20, 0, 20);
+        //editText.setPadding(0, 20, 0, 20);
 
         List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByQuestionId(questionId);
         if (dmSurveyAnswerTableList.size() != 0) {
@@ -390,8 +387,8 @@ public class SurveyFragment extends Fragment {
         }
 
         // Add Spinner to LinearLayout
-        if (dm_questionsModule != null) {
-            dm_questionsModuleTextBox.addView(editText);
+        if (dm_Question != null) {
+            dm_Question.addView(editText);
         }
 
     }

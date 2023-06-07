@@ -109,6 +109,7 @@ import com.olam.digital.ofis.multifarm.MultiFarmStakeHolderDTO;
 import com.olam.digital.ofis.multifarm.MultiFarmUtils;
 import com.olam.digital.ofis.multifarm.SubmittedInfo;
 import com.olam.digital.ofis.multifarm.UpdateMultiFarmActivity;
+import com.olam.digital.ofis.mvvmmodule.Constants;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmMainModule;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmQuestionsModule;
@@ -253,6 +254,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
     OFISRoomDB db;
     String dmSurveyName;
     String  dmSubTitle;
+    String moduleID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -270,8 +272,6 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         dl = new DataLayer(res, context);
         pd = new ProgressDialog(context);
 
-        //Room Database Initialization
-        roomDbInitialization();
 
         //farmerId = SharedPreferenceUtils.getInstance(getApplicationContext()).getFarmerID();
         initiaizeInfoWidget();
@@ -316,16 +316,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         });
     }
 
-    private void roomDbInitialization(){
-        db = OFISRoomDB.getDbInstance(ViewFarmerActivity.this);
-        List<DmMainModule> dmQuestionsModuleList = db.dmMainModuleDao().getDMmodule();
 
-        for (int i = 0; i < dmQuestionsModuleList.size(); i++){
-             dmSurveyName = dmQuestionsModuleList.get(i).name;
-             dmSubTitle = dmQuestionsModuleList.get(i).assessmentType;
-
-        }
-    }
 
     private void initiaizeInfoWidget() {
         infoCloseImageView = findViewById(R.id.info_close_btn);
@@ -924,7 +915,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                         "name",
                         "name_fr",
                         "name_es",
-                       "name_id",
+                        "name_id",
                         "name_pt",
                         "name_tr",
                         "name_lo",
@@ -1026,34 +1017,43 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
 
                 //ticket-OFISDM-39 add new record diagnostic module task
 
+                db = OFISRoomDB.getDbInstance(ViewFarmerActivity.this);
+                List<DmMainModule> dmQuestionsModuleList = db.dmMainModuleDao().getDMmodule();
 
-                mc.addRow(new String[]{
-                        "0",
-                        dmSurveyName,
-                        dmSurveyName,
-                        dmSurveyName,
-                        dmSurveyName,
-                        dmSurveyName,
-                        dmSurveyName,
-                        dmSurveyName,
-                        dmSurveyName,
-                        dmSurveyName,
-                        "0",
-                        "",
-                        "",
-                        "",
-                        res.getString(R.string.dm_diognostic_module_subtitle),
-                        res.getString(R.string.dm_diognostic_module_subtitle),
-                        res.getString(R.string.dm_diognostic_module_subtitle),
-                        res.getString(R.string.dm_diognostic_module_subtitle),
-                        res.getString(R.string.dm_diognostic_module_subtitle),
-                        res.getString(R.string.dm_diognostic_module_subtitle),
-                        res.getString(R.string.dm_diognostic_module_subtitle),
-                        res.getString(R.string.dm_diognostic_module_subtitle),
-                        res.getString(R.string.dm_diognostic_module_subtitle),
-                        "", "", "", "", "", "", "", "", "",
-                        "diagnostic"
-                });
+                for (int i = 0; i < dmQuestionsModuleList.size(); i++){
+                    dmSurveyName = dmQuestionsModuleList.get(i).name;
+                    dmSubTitle = dmQuestionsModuleList.get(i).assessmentType;
+                    moduleID = String.valueOf(dmQuestionsModuleList.get(i).id);
+
+                    mc.addRow(new String[]{
+                            "0",
+                            dmSurveyName,
+                            dmSurveyName,
+                            dmSurveyName,
+                            dmSurveyName,
+                            dmSurveyName,
+                            dmSurveyName,
+                            dmSurveyName,
+                            dmSurveyName,
+                            dmSurveyName,
+                            "0",
+                            "",
+                            "",
+                            "",
+                            res.getString(R.string.dm_diognostic_module_subtitle),
+                            res.getString(R.string.dm_diognostic_module_subtitle),
+                            res.getString(R.string.dm_diognostic_module_subtitle),
+                            res.getString(R.string.dm_diognostic_module_subtitle),
+                            res.getString(R.string.dm_diognostic_module_subtitle),
+                            res.getString(R.string.dm_diognostic_module_subtitle),
+                            res.getString(R.string.dm_diognostic_module_subtitle),
+                            res.getString(R.string.dm_diognostic_module_subtitle),
+                            res.getString(R.string.dm_diognostic_module_subtitle),
+                            "", "", "", "", "", "", "",moduleID , "",
+                            "diagnostic"
+                    });
+
+                }
 
                 boolean isHHAvailable = Utilities.getBoolFromSharedPrefs(context, Utilities.HOUSEHOLD_ENUMERATOR, false);
                 if (isHHAvailable) {
@@ -2260,10 +2260,12 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
 
 //                showSurvey(v, id);
 
-            } else {
+            }
+            else {
                 if (id == 0) {
                     // record farm location if necessary
                     TextView recordedLng = (TextView) v.findViewById(R.id.moduleListRecordedLng);
+                    TextView subModuleTv = (TextView) v.findViewById(R.id.moduleListCurrentSubModuleId);
                     if (recordedLng != null && recordedLng.getText().equals("Phone")) {
                         MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_UPDATE_PHONE_NUMBER, ScreenNameConstants.BUTTON_CLICKED);
                         if (phoneNumbersListItem == null) {
@@ -2280,9 +2282,12 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                         //Ticket-OFISDM-39 newly added
                     }else if(recordedLng != null && recordedLng.getText().equals("diagnostic")){
                         MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_REGISTER_CHILD, ScreenNameConstants.BUTTON_CLICKED);
+                        Toast.makeText(context, "Ok"+subModuleTv.getText().toString(), Toast.LENGTH_SHORT).show();
+                        Constants.MODULE_ID = subModuleTv.getText().toString();
 
                         Intent in = new Intent(this, DiagnosticModuleActivity.class);
                         in.putExtra("SUB_TITLE",dmSubTitle);
+                        in.putExtra("DM_MODULE_ID",moduleID);
                         startActivity(in);
 
                         /*if(true){
@@ -2366,7 +2371,8 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                         household = false;
                         recordFarmLocation(v, res.getString(R.string.are_you_at_the_farm));
                     }
-                } else if (id < 0) {
+                }
+                else if (id < 0) {
                     // go to fmp review page
                     TextView startYearTv = (TextView) v.findViewById(R.id.moduleListCurrentSubModuleId);
                     TextView statusStartedTv = (TextView) v.findViewById(R.id.moduleListStatusStarted);

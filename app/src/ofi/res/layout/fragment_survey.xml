@@ -48,6 +48,16 @@
                                 android:orientation="vertical"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                android:id="@+id/dm_Question"
+                                android:paddingLeft="@dimen/ofis_large_pad"
+                                android:paddingRight="@dimen/ofis_large_pad"
+                                android:layout_marginTop="@dimen/margin_10"
+                                android:paddingBottom="@dimen/ofis_large_pad"
+                                android:paddingTop="@dimen/ofis_large_pad"/>
+                            <LinearLayout
+                                android:orientation="vertical"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
                                 android:id="@+id/dm_questionsSubModule"
                                 android:paddingLeft="@dimen/ofis_large_pad"
                                 android:paddingRight="@dimen/ofis_large_pad"
@@ -56,7 +66,8 @@
                                 android:background="@drawable/border_white_background"
                                 android:layout_marginLeft="@dimen/ofis_large_pad"
                                 android:layout_marginRight="@dimen/ofis_large_pad"
-                                android:layout_marginTop="7dp"/>
+                                android:layout_marginTop="7dp"
+                                android:visibility="gone"/>
 
                             <LinearLayout
                                 android:orientation="vertical"
@@ -70,7 +81,8 @@
                                 android:background="@drawable/border_white_background"
                                 android:layout_marginLeft="@dimen/ofis_large_pad"
                                 android:layout_marginRight="@dimen/ofis_large_pad"
-                                android:layout_marginTop="@dimen/ofis_large_pad"/>
+                                android:layout_marginTop="@dimen/ofis_large_pad"
+                                android:visibility="gone"/>
 
                             <LinearLayout
                                 android:orientation="vertical"
@@ -84,7 +96,8 @@
                                 android:background="@drawable/border_white_background"
                                 android:layout_marginLeft="@dimen/ofis_large_pad"
                                 android:layout_marginRight="@dimen/ofis_large_pad"
-                                android:layout_marginTop="@dimen/ofis_large_pad"/>
+                                android:layout_marginTop="@dimen/ofis_large_pad"
+                                android:visibility="gone"/>
 
                             <LinearLayout
                                 android:orientation="vertical"
@@ -98,7 +111,8 @@
                                 android:background="@drawable/border_white_background"
                                 android:layout_marginLeft="@dimen/ofis_large_pad"
                                 android:layout_marginRight="@dimen/ofis_large_pad"
-                                android:layout_marginTop="@dimen/ofis_large_pad"/>
+                                android:layout_marginTop="@dimen/ofis_large_pad"
+                                android:visibility="gone"/>
 
                         </LinearLayout>
 
@@ -164,15 +178,8 @@
 
                     </LinearLayout>
 
-
-
                 </ScrollView>
 
-
-
             </RelativeLayout>
-
-
-
 
 </FrameLayout>

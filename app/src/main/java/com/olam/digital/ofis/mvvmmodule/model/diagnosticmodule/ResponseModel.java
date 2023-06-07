@@ -25,6 +25,18 @@ public class ResponseModel {
     @Expose
     private ArrayList<CurrenciesItem> currencies;
 
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
+    }
+
+    @SerializedName("errorMessage")
+    @Expose
+    private String errorMessage;
+
     public ArrayList<AnswerTypesItem> getAnswerTypes() {
         return answerTypes;
     }

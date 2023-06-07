@@ -10,7 +10,7 @@ public class QuestionsItem{
 	private boolean mandate;
 
 	@SerializedName("textBox")
-	private String textBox;
+	private TextBoxModuleQuestions textBoxModuleQuestions;
 
 	@SerializedName("question")
 	private String question;
@@ -21,14 +21,15 @@ public class QuestionsItem{
 	@SerializedName("lookupValues")
 	private List<LookupValuesItem> lookupValues;
 
+
 	@SerializedName("questionPt")
 	private String questionPt;
 
 	@SerializedName("questionLo")
 	private String questionLo;
 
-	@SerializedName("questionTypeId")
-	private int questionTypeId;
+	@SerializedName("displaytypeId")
+	private int displaytypeId;
 
 	@SerializedName("datatypeId")
 	private int datatypeId;
@@ -66,15 +67,15 @@ public class QuestionsItem{
 	@SerializedName("submoduleId")
 	private int submoduleId;
 
-	public QuestionsItem(boolean mandate, String textBox, String question, String questionTr, List<LookupValuesItem> lookupValues, String questionPt, String questionLo, int questionTypeId, int datatypeId, boolean isCriticalQuest, String questionFr, String displayType, String questionIdn, String questionEs, String questionTh, int id, int position, String questionVi, int moduleId, int submoduleId) {
+	public QuestionsItem(boolean mandate, TextBoxModuleQuestions textBoxModuleQuestions, String question, String questionTr, List<LookupValuesItem> lookupValues, String questionPt, String questionLo, int displaytypeId, int datatypeId, boolean isCriticalQuest, String questionFr, String displayType, String questionIdn, String questionEs, String questionTh, int id, int position, String questionVi, int moduleId, int submoduleId) {
 		this.mandate = mandate;
-		this.textBox = textBox;
+		this.textBoxModuleQuestions = textBoxModuleQuestions;
 		this.question = question;
 		this.questionTr = questionTr;
 		this.lookupValues = lookupValues;
 		this.questionPt = questionPt;
 		this.questionLo = questionLo;
-		this.questionTypeId = questionTypeId;
+		this.displaytypeId = displaytypeId;
 		this.datatypeId = datatypeId;
 		this.isCriticalQuest = isCriticalQuest;
 		this.questionFr = questionFr;
@@ -98,13 +99,6 @@ public class QuestionsItem{
 		this.mandate = mandate;
 	}
 
-	public String getTextBox() {
-		return textBox;
-	}
-
-	public void setTextBox(String textBox) {
-		this.textBox = textBox;
-	}
 
 	public String getQuestion() {
 		return question;
@@ -120,6 +114,14 @@ public class QuestionsItem{
 
 	public void setQuestionTr(String questionTr) {
 		this.questionTr = questionTr;
+	}
+
+	public TextBoxModuleQuestions getTextBoxModuleQuestions() {
+		return textBoxModuleQuestions;
+	}
+
+	public void setTextBoxModuleQuestions(TextBoxModuleQuestions textBoxModuleQuestions) {
+		this.textBoxModuleQuestions = textBoxModuleQuestions;
 	}
 
 	public List<LookupValuesItem> getLookupValues() {
@@ -146,12 +148,12 @@ public class QuestionsItem{
 		this.questionLo = questionLo;
 	}
 
-	public int getQuestionTypeId() {
-		return questionTypeId;
+	public int getDisplaytypeId() {
+		return displaytypeId;
 	}
 
-	public void setQuestionTypeId(int questionTypeId) {
-		this.questionTypeId = questionTypeId;
+	public void setDisplaytypeId(int displaytypeId) {
+		this.displaytypeId = displaytypeId;
 	}
 
 	public int getDatatypeId() {
@@ -249,7 +251,5 @@ public class QuestionsItem{
 	public void setSubmoduleId(int submoduleId) {
 		this.submoduleId = submoduleId;
 	}
-
-
 
 }
