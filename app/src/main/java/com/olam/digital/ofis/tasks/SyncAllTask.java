@@ -675,6 +675,7 @@ public class SyncAllTask extends SyncTask {
                                 boolean isODOrigin = item.getBoolean("isODOrigin");
                                 boolean isEnableAgroLearn = item.getBoolean("isEnableAgrolearn");
                                 Utilities.saveToSharedPrefs(context, Utilities.AGROLEARN_ENUMERATOR,null, isEnableAgroLearn);
+                                Utilities.saveToSharedPrefs(context, Utilities.DM_ENUMERATOR,null, item.getBoolean("isEnableDiagnosticModule"));
                                 if(isODOrigin){
                                     String code = item.getString("countryIsoCode").substring(0,2);
                                     isoCodes.add(code);

@@ -731,5 +731,5 @@
     <string name="are_you_at_the_farmers_hh">Apakah Anda di rumah petani?</string>
     <string name="ofis_request_help">Minta bantuan</string>
 
-    <string name="spinner_subdistrict_default">Kecamatan</string>
+    <string name="spinner_subdistrict_default">Desa/Kelurahan</string>
 </resources>
