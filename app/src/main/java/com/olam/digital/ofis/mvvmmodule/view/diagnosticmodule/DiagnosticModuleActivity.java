@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -18,6 +19,7 @@ import com.olam.digital.ofis.BaseActivity;
 import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.RetrofitServices.ManageRecords;
 import com.olam.digital.ofis.RetrofitServices.RetrofitClient;
+import com.olam.digital.ofis.Utilities;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.ActionPlansItem;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.AnswerTypesItem;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.ComplianceIndicatorItem;
@@ -73,9 +75,9 @@ public class DiagnosticModuleActivity extends BaseActivity {
     ViewPager2 viewPager;
     TextView tv_subtitle;
     private ProgressDialog progressDialog;
-    private String[] titles = new String[]{"Survey", "Action plan and proof", "Survey Results"};
     OFISRoomDB db;
     List<DiagnosticModulesList> dMmoduleList;
+    String enumerator_id;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -91,6 +93,10 @@ public class DiagnosticModuleActivity extends BaseActivity {
         viewPager = findViewById(R.id.viewPager);
         tv_subtitle = findViewById(R.id.tv_subtitle);
 
+        enumerator_id = Utilities.getFromSharedPrefs(context);
+
+        Log.d("ENUMERATOR_IDDD",enumerator_id);
+
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             String value = extras.getString("SUB_TITLE");
@@ -100,30 +106,51 @@ public class DiagnosticModuleActivity extends BaseActivity {
         PagerAdapter sa = new PagerAdapter(this);
         viewPager.setAdapter(sa);
         new TabLayoutMediator(tabLayout, viewPager, ((tab, position) -> {
-            tab.setText(titles[position]);
-            //tab.view.setClickable(false);
+            //tab.setText(titles[position]);
+            tab.view.setClickable(false);
 
         })).attach();
 
+        for (int i = 0; i < tabLayout.getTabCount(); i++) {
+            TabLayout.Tab tab = tabLayout.getTabAt(i);
+            if (tab != null) {
+                tab.setCustomView(R.layout.tab_item);
+                TextView tabTitle = tab.getCustomView().findViewById(R.id.tabTitle);
+                tabTitle.setText(getTabTitle(i));
 
-        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                viewPager.setCurrentItem(tab.getPosition());
+                // Set default colors for unselected tabs
+                tabTitle.setTextColor(ContextCompat.getColor(this, R.color.colorPrimary));
 
+                if (i == 0) {
+                    // Set the first tab as selected (white) by default
+                    tabTitle.setTextColor(ContextCompat.getColor(this, R.color.white));
+                }
+
+                // Add a listener to handle color changes when a tab is selected
+                tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+                    @Override
+                    public void onTabSelected(TabLayout.Tab tab) {
+                        TextView selectedTabTitle = tab.getCustomView().findViewById(R.id.tabTitle);
+                        selectedTabTitle.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.white));
+                    }
+
+                    @Override
+                    public void onTabUnselected(TabLayout.Tab tab) {
+                        TextView unselectedTabTitle = tab.getCustomView().findViewById(R.id.tabTitle);
+                        unselectedTabTitle.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary));
+                    }
+
+                    @Override
+                    public void onTabReselected(TabLayout.Tab tab) {
+                        // Do nothing
+                    }
+                });
             }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
+        }
 
 
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-
-            }
-        });
+// to make the tab swipe disable
+        viewPager.setUserInputEnabled(false);
 
         viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
@@ -183,7 +210,7 @@ public class DiagnosticModuleActivity extends BaseActivity {
     public void GetAllDiagnosticModuleNew() {
 
         ManageRecords AllDiagnosticModuleData = RetrofitClient.getRetrofit().create(ManageRecords.class);
-        Call<ResponseModel> call = AllDiagnosticModuleData.getAllDiagnosticModuleData(88888);
+        Call<ResponseModel> call = AllDiagnosticModuleData.getAllDiagnosticModuleData(Integer.valueOf(enumerator_id));
         call.enqueue(new Callback<ResponseModel>() {
             @Override
             public void onResponse(Call<ResponseModel> call, Response<ResponseModel> response) {
@@ -469,6 +496,7 @@ public class DiagnosticModuleActivity extends BaseActivity {
                                         dmTextBoxModuleQuestions.isAllowDecimal = isAllowDecimal;
                                         dmTextBoxModuleQuestions.minimumRange = minimumRange;
                                         dmTextBoxModuleQuestions.maximumRange = maximumRange;
+                                        dmTextBoxModuleQuestions.questionId = id_questionModule;
                                         db.dmTextBoxModuleQuestionsDao().insert(dmTextBoxModuleQuestions);
 
                                         List <DmRangeTextBoxModuleQuestions> dmRangeTextBoxModuleQuestionsList = new  ArrayList<>();
@@ -493,6 +521,7 @@ public class DiagnosticModuleActivity extends BaseActivity {
                                                     dmRangeTextBoxModuleQuestionsTable.allowCustomActionPlan = allowCustomActionPlan;
                                                     dmRangeTextBoxModuleQuestionsTable.isCaptureProof = isCaptureProof;
                                                     dmRangeTextBoxModuleQuestionsTable.proofFormat = proofFormat;
+                                                    dmRangeTextBoxModuleQuestionsTable.questionId = id_questionModule;
                                                     db.dmRangeTextBoxModuleQuestionsTableDao().insert(dmRangeTextBoxModuleQuestionsTable);
 
                                                 }
@@ -794,6 +823,21 @@ public class DiagnosticModuleActivity extends BaseActivity {
             }
         });
 
+    }
+
+
+    //
+    private String getTabTitle(int position) {
+        switch (position) {
+            case 0:
+                return "SURVEY";
+            case 1:
+                return "ACTION PLAN AND PROOF";
+            case 2:
+                return "SURVEY RESULTS";
+            default:
+                return "";
+        }
     }
 
 }

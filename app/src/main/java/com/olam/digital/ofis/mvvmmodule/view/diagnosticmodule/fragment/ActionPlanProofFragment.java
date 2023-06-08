@@ -21,6 +21,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
@@ -28,11 +29,15 @@ import androidx.fragment.app.Fragment;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
+import android.text.Editable;
+import android.text.InputFilter;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -51,17 +56,24 @@ import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfStamper;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.olam.digital.ofis.R;
+import com.olam.digital.ofis.mvvmmodule.Constants;
 import com.olam.digital.ofis.mvvmmodule.FileUtils;
 import com.olam.digital.ofis.mvvmmodule.ImageOrientation;
+import com.olam.digital.ofis.mvvmmodule.InputFilterMinMax;
 import com.olam.digital.ofis.mvvmmodule.PDFUtils;
 import com.olam.digital.ofis.mvvmmodule.PathUtil;
+import com.olam.digital.ofis.mvvmmodule.roomdb.DmActionPlanCurrenciesTableDao;
+import com.olam.digital.ofis.mvvmmodule.roomdb.DmSurveyAnswerTableDao;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
+import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmActionPlanCurrenciesTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmActionPlansItem;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmComplaintFileTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmCurrenciesItem;
+import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmLookupValuesItem;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmNonComplaintFileTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmQuestionsModule;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmSatisfactoryFileTable;
+import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmSurveyAnswerTable;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -88,17 +100,30 @@ public class ActionPlanProofFragment extends Fragment {
     TextView tv_complaint_filename;
     RelativeLayout rl_complaint_captureproof_layout, rl_complaint_fileupload_layout;
     Spinner spinner_complaint_actionplan;
+    ConstraintLayout complaint_custom_actionplanlayout;
+    ImageView iv_delete_custom_complaint, iv_save_custom_complaint;
+    EditText complaiant_custom_text;
 
     //Non-Complaint
     ImageView iv_noncomplaint_dropdown;
     LinearLayout ll_noncomplaint, ll_image_noncomplaint_layout;
     RelativeLayout rl_noncomplaint_captureproof_layout;
+    ConstraintLayout noncomplaint_custom_actionplanlayout;
+    ImageView iv_delete_custom_noncomplaint, iv_save_custom_noncomplaint;
+    EditText noncomplaiant_custom_text;
+
 
     //Satisfactory
 
     ImageView iv_satisfactory_dropdown;
     LinearLayout ll_satisfactory, ll_image_satisfactory_layout;
     RelativeLayout rl_satisfactory_captureproof_layout;
+
+    ConstraintLayout satisfactory_custom_actionplanlayout;
+
+    ImageView iv_delete_custom_satisfactory, iv_save_custom_satisfactory;
+
+    EditText satisfactory_custom_text;
 
 
     public Resources res;
@@ -128,6 +153,10 @@ public class ActionPlanProofFragment extends Fragment {
 
     ArrayList<String> satisfactory_image_array = new ArrayList<>();
     ArrayList<Long> satisfactory_file_array_ids = new ArrayList<>();
+
+    int complaint_id, noncomplaint_id, satisfactory_id;
+
+    LinearLayout dm_question_complaint, dm_question_noncomplaint, getDm_question_satisfactory;
     private static final String[] ACCEPTED_MIME_TYPES = {"image/jpeg", "image/png", "application/pdf",
             "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "application/vnd.ms-excel",
             "text/plain", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "text/csv"};
@@ -151,6 +180,9 @@ public class ActionPlanProofFragment extends Fragment {
 
         //Complaint
         ll_servey_back_actionplan = view.findViewById(R.id.ll_servey_back_actionplan);
+        dm_question_complaint = view.findViewById(R.id.dm_question_complaint);
+        dm_question_noncomplaint = view.findViewById(R.id.dm_question_noncomplaint);
+        getDm_question_satisfactory = view.findViewById(R.id.getDm_question_satisfactory);
         ll_servey_next_actionplan = view.findViewById(R.id.ll_servey_next_actionplan);
         iv_complaint_dropdown = view.findViewById(R.id.iv_complaint_dropdown);
         ll_complaint = view.findViewById(R.id.ll_complaint);
@@ -163,6 +195,13 @@ public class ActionPlanProofFragment extends Fragment {
         ll_image_satisfactory_layout = view.findViewById(R.id.ll_image_satisfactory_layout);
         spinner_dmCurrencies = view.findViewById(R.id.spinner_dmCurrencies);
         spinner_complaint_actionplan = view.findViewById(R.id.spinner_complaint_actionplan);
+
+        //Custom Action Plan
+        complaint_custom_actionplanlayout = view.findViewById(R.id.complaint_custom_actionplanlayout);
+        iv_delete_custom_complaint = view.findViewById(R.id.iv_delete_custom_complaint);
+        iv_save_custom_complaint = view.findViewById(R.id.iv_save_custom_complaint);
+        complaiant_custom_text = view.findViewById(R.id.complaiant_custom_text);
+
         iv_complaint_dropdown.setTag("0");
 
         //Room DB
@@ -199,6 +238,15 @@ public class ActionPlanProofFragment extends Fragment {
         iv_noncomplaint_dropdown = view.findViewById(R.id.iv_noncomplaint_dropdown);
         ll_noncomplaint = view.findViewById(R.id.ll_noncomplaint);
         rl_noncomplaint_captureproof_layout = view.findViewById(R.id.rl_noncomplaint_captureproof_layout);
+        noncomplaint_custom_actionplanlayout = view.findViewById(R.id.noncomplaint_custom_actionplanlayout);
+
+
+        //Custom Action Plan
+        noncomplaint_custom_actionplanlayout = view.findViewById(R.id.noncomplaint_custom_actionplanlayout);
+        iv_delete_custom_noncomplaint = view.findViewById(R.id.iv_delete_custom_noncomplaint);
+        iv_save_custom_noncomplaint = view.findViewById(R.id.iv_save_custom_noncomplaint);
+        noncomplaiant_custom_text = view.findViewById(R.id.noncomplaiant_custom_text);
+
 
         iv_noncomplaint_dropdown.setTag("0");
         iv_noncomplaint_dropdown.setOnClickListener(new View.OnClickListener() {
@@ -228,6 +276,12 @@ public class ActionPlanProofFragment extends Fragment {
         iv_satisfactory_dropdown = view.findViewById(R.id.iv_satisfactory_dropdown);
         ll_satisfactory = view.findViewById(R.id.ll_satisfactory);
         rl_satisfactory_captureproof_layout = view.findViewById(R.id.rl_satisfactory_captureproof_layout);
+
+        //Custom Action Plan
+        satisfactory_custom_actionplanlayout = view.findViewById(R.id.satisfactory_custom_actionplanlayout);
+        iv_delete_custom_satisfactory = view.findViewById(R.id.iv_delete_custom_satisfactory);
+        iv_save_custom_satisfactory = view.findViewById(R.id.iv_save_custom_satisfactory);
+        satisfactory_custom_text = view.findViewById(R.id.satisfactory_custom_text);
 
         iv_satisfactory_dropdown.setTag("0");
         iv_satisfactory_dropdown.setOnClickListener(new View.OnClickListener() {
@@ -285,7 +339,171 @@ public class ActionPlanProofFragment extends Fragment {
             showImagesSatisfactory();
         }
 
+
+        if (db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size() != 0) {
+            for (int i = 0; i < db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size(); i++) {
+                if (db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).get(i).compliance.equalsIgnoreCase("Compliant")) {
+                    complaint_id = db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).get(i).id;
+                    displayQuestionsModuleComplaint(String.valueOf(complaint_id));
+                } else if (db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).get(i).compliance.equalsIgnoreCase("Satisfactory")) {
+                    satisfactory_id = db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).get(i).id;
+                    displayQuestionsModuleNonComplaint(String.valueOf(satisfactory_id));
+                } else if (db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).get(i).compliance.equalsIgnoreCase("Non Compliant")) {
+                    noncomplaint_id = db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).get(i).id;
+                    displayQuestionsModuleSatisfactory(String.valueOf(noncomplaint_id));
+                }
+            }
+
+        }
+
+
         return view;
+    }
+
+
+    private void displayQuestionsModuleComplaint(String complaint_id) {
+
+        List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByComplianceId(complaint_id);
+        if (dmSurveyAnswerTableList.size() != 0) {
+            String answerIdDb = dmSurveyAnswerTableList.get(0).answerID;
+
+            for (int m = 0; m < dmSurveyAnswerTableList.size(); m++) {
+                DmSurveyAnswerTable dmQuestionsModule = dmSurveyAnswerTableList.get(m);
+                TextView textView = new TextView(getActivity());
+                textView.setText((m + 1) + "." + dmQuestionsModule.question);
+                textView.setTextColor(getResources().getColor(R.color.black));
+                textView.setTextSize(14);
+                textView.setPadding(0, 15, 0, 0);
+                //textView.setTypeface(null, Typeface.BOLD);
+                dm_question_complaint.addView(textView);
+
+                renderTextboxQuestionModuleComplaint(String.valueOf(complaint_id));
+
+            }
+        }
+
+
+
+    }
+
+    private void displayQuestionsModuleNonComplaint(String noncomplaint_id) {
+
+        List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByComplianceId(noncomplaint_id);
+        if (dmSurveyAnswerTableList.size() != 0) {
+            String answerIdDb = dmSurveyAnswerTableList.get(0).answerID;
+
+            for (int m = 0; m < dmSurveyAnswerTableList.size(); m++) {
+                DmSurveyAnswerTable dmQuestionsModule = dmSurveyAnswerTableList.get(m);
+                TextView textView = new TextView(getActivity());
+                textView.setText((m + 1) + "." + dmQuestionsModule.question);
+                textView.setTextColor(getResources().getColor(R.color.black));
+                textView.setTextSize(14);
+                textView.setPadding(0, 15, 0, 0);
+                //textView.setTypeface(null, Typeface.BOLD);
+                dm_question_noncomplaint.addView(textView);
+
+                renderTextboxQuestionModuleNonComplaint(String.valueOf(complaint_id));
+
+            }
+        }
+
+    }
+
+    private void displayQuestionsModuleSatisfactory(String satisfactory_id) {
+        List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByComplianceId(satisfactory_id);
+        if (dmSurveyAnswerTableList.size() != 0) {
+            String answerIdDb = dmSurveyAnswerTableList.get(0).answerID;
+
+            for (int m = 0; m < dmSurveyAnswerTableList.size(); m++) {
+                DmSurveyAnswerTable dmQuestionsModule = dmSurveyAnswerTableList.get(m);
+                TextView textView = new TextView(getActivity());
+                textView.setText((m + 1) + "." + dmQuestionsModule.question);
+                textView.setTextColor(getResources().getColor(R.color.black));
+                textView.setTextSize(14);
+                textView.setPadding(0, 15, 0, 0);
+                //textView.setTypeface(null, Typeface.BOLD);
+                dm_question_noncomplaint.addView(textView);
+
+                renderTextboxQuestionModuleSatisfactory(String.valueOf(complaint_id));
+
+            }
+        }
+
+    }
+
+    public void renderTextboxQuestionModuleComplaint(String id) {
+
+        EditText editText = new EditText(getActivity());
+        editText.setHint("Answer");
+        editText.setTextSize(14);
+        editText.setEnabled(false);
+
+        List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByQuestionId(id);
+        if (dmSurveyAnswerTableList.size() != 0) {
+            String answerIdDb = dmSurveyAnswerTableList.get(0).answerID;
+            editText.setText(answerIdDb);
+        }
+
+        //editText.getLayoutParams().width=40;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            editText.setBackground(getActivity().getDrawable(R.drawable.answer_text_survey));
+        }
+
+        // Add Spinner to LinearLayout
+        if (dm_question_complaint != null) {
+            dm_question_complaint.addView(editText);
+        }
+
+    }
+
+    public void renderTextboxQuestionModuleNonComplaint(String id) {
+
+        EditText editText = new EditText(getActivity());
+        editText.setHint("Answer");
+        editText.setTextSize(14);
+        editText.setEnabled(false);
+
+        List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByComplianceId(id);
+        if (dmSurveyAnswerTableList.size() != 0) {
+            String answerIdDb = dmSurveyAnswerTableList.get(0).answerID;
+            editText.setText(answerIdDb);
+        }
+
+        //editText.getLayoutParams().width=40;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            editText.setBackground(getActivity().getDrawable(R.drawable.answer_text_survey));
+        }
+
+        // Add Spinner to LinearLayout
+        if (dm_question_noncomplaint != null) {
+            dm_question_noncomplaint.addView(editText);
+        }
+
+    }
+
+    public void renderTextboxQuestionModuleSatisfactory(String id) {
+
+        EditText editText = new EditText(getActivity());
+        editText.setHint("Answer");
+        editText.setTextSize(14);
+        editText.setEnabled(false);
+
+        List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByQuestionId(id);
+        if (dmSurveyAnswerTableList.size() != 0) {
+            String answerIdDb = dmSurveyAnswerTableList.get(0).answerID;
+            editText.setText(answerIdDb);
+        }
+
+        //editText.getLayoutParams().width=40;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            editText.setBackground(getActivity().getDrawable(R.drawable.answer_text_survey));
+        }
+
+        // Add Spinner to LinearLayout
+        if (getDm_question_satisfactory != null) {
+            getDm_question_satisfactory.addView(editText);
+        }
+
     }
 
 
@@ -295,8 +513,12 @@ public class ActionPlanProofFragment extends Fragment {
         final List<String> list = new ArrayList<String>();
         list.clear();
 
+        final List<String> ids = new ArrayList<String>();
+        ids.clear();
+
         for (int c = 0; c < dmCurrenciesItemList.size(); c++) {
             list.add(dmCurrenciesItemList.get(c).code);
+            ids.add(String.valueOf(dmCurrenciesItemList.get(c).currencyId));
         }
 
 
@@ -304,10 +526,40 @@ public class ActionPlanProofFragment extends Fragment {
         spinnerAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         spinner_dmCurrencies.setAdapter(spinnerAdapter);
 
+        String currencyIdDb = "0";
+
+        List<DmActionPlanCurrenciesTable> dmActionPlanCurrenciesTables = db.dmActionPlanCurrenciesTableDao().getDataByModuleId(Constants.MODULE_ID);
+        if (dmActionPlanCurrenciesTables.size() != 0) {
+            currencyIdDb = String.valueOf(dmActionPlanCurrenciesTables.get(0).currencyId);
+        }
+
+        int selectedPosition = 0;
+
+        for (int i = 0; i < ids.size(); i++) {
+            if (currencyIdDb.equalsIgnoreCase(ids.get(i))) {
+                selectedPosition = i;
+            }
+
+        }
+
+        spinner_dmCurrencies.setSelection(selectedPosition);
+
         spinner_dmCurrencies.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 Toast.makeText(getActivity(), "Selected Item " + list.get(position), Toast.LENGTH_SHORT).show();
+
+                String answerId = ids.get(position);
+
+                db.dmActionPlanCurrenciesTableDao().deleteByModuleId(Constants.MODULE_ID);
+
+                DmActionPlanCurrenciesTable dmActionPlanCurrenciesTable = new DmActionPlanCurrenciesTable();
+                dmActionPlanCurrenciesTable.moduleId = Integer.parseInt(Constants.MODULE_ID);
+                dmActionPlanCurrenciesTable.currencyId = Integer.parseInt(ids.get(position));
+                dmActionPlanCurrenciesTable.code = list.get(position);
+                db.dmActionPlanCurrenciesTableDao().insert(dmActionPlanCurrenciesTable);
+
+
             }
 
             @Override
@@ -662,8 +914,7 @@ public class ActionPlanProofFragment extends Fragment {
 
             uploadFileImage(filename, imageBytes, resizedBitmapNew);
 
-        }
-        else if (requestCode == CAMERA_REQUEST_NONCOMPLAINT && resultCode == RESULT_OK) {
+        } else if (requestCode == CAMERA_REQUEST_NONCOMPLAINT && resultCode == RESULT_OK) {
             final BitmapFactory.Options options = new BitmapFactory.Options();
             options.inJustDecodeBounds = true;
             options.inSampleSize = 2;
@@ -694,8 +945,7 @@ public class ActionPlanProofFragment extends Fragment {
             // profile_pic = Base64.encodeToString(imageBytes, Base64.DEFAULT);
 
             uploadFileImageNonComplaint(filename, imageBytes, resizedBitmapNew);
-        }
-        else if (requestCode == CAMERA_REQUEST_SATISFACTORY && resultCode == RESULT_OK) {
+        } else if (requestCode == CAMERA_REQUEST_SATISFACTORY && resultCode == RESULT_OK) {
             final BitmapFactory.Options options = new BitmapFactory.Options();
             options.inJustDecodeBounds = true;
             options.inSampleSize = 2;

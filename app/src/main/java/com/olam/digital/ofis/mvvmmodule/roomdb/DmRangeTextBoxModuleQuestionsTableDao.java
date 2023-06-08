@@ -6,6 +6,7 @@ import androidx.room.Insert;
 import androidx.room.Query;
 
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmRangeTextBoxModuleQuestionsTable;
+import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmTextBoxModuleQuestions;
 
 import java.util.List;
 
@@ -21,6 +22,9 @@ public interface DmRangeTextBoxModuleQuestionsTableDao {
 
     @Delete
     void delete(DmRangeTextBoxModuleQuestionsTable dmRangeTextBoxModuleQuestionsTables);
+
+    @Query("SELECT * FROM DmRangeTextBoxModuleQuestionsTable WHERE questionId=:id")
+    List<DmRangeTextBoxModuleQuestionsTable> getDmTextBoxByQuestionId(int id);
 
     @Query("DELETE FROM DmRangeTextBoxModuleQuestionsTable")
     void deleteAll();

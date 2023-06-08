@@ -9,8 +9,10 @@ import android.os.Bundle;
 
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.viewpager2.widget.ViewPager2;
 
 import android.text.Editable;
+import android.text.InputFilter;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +28,7 @@ import android.widget.Toast;
 import com.olam.digital.ofis.FindFarmerActivity;
 import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.mvvmmodule.Constants;
+import com.olam.digital.ofis.mvvmmodule.InputFilterMinMax;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmLookupValuesISubmodule;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmLookupValuesItem;
@@ -39,7 +42,7 @@ import java.util.List;
 
 
 public class SurveyFragment extends Fragment {
-    LinearLayout ll_servey_next, ll_servey_back, dm_questionsModule, dm_Section, dm_questionsSubModule, dm_questionsSubModuleTextBox, dm_questionsModuleTextBox, dm_Question;
+    LinearLayout ll_servey_next, ll_servey_back, dm_Section, dm_Question;
     OFISRoomDB db;
     public LayoutInflater inflater;
     Resources resources;
@@ -57,15 +60,9 @@ public class SurveyFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_survey, container, false);
 
         ll_servey_next = view.findViewById(R.id.ll_servey_next);
-
         ll_servey_back = view.findViewById(R.id.ll_servey_back);
-        dm_questionsModule = view.findViewById(R.id.dm_questionsModule);
         dm_Section = view.findViewById(R.id.dm_Section);
         dm_Question = view.findViewById(R.id.dm_Question);
-
-        dm_questionsSubModule = view.findViewById(R.id.dm_questionsSubModule);
-        dm_questionsModuleTextBox = view.findViewById(R.id.dm_questionsModuleTextBox);
-        dm_questionsSubModuleTextBox = view.findViewById(R.id.dm_questionsSubModuleTextBox);
 
 
         db = OFISRoomDB.getDbInstance(getActivity());
@@ -74,7 +71,8 @@ public class SurveyFragment extends Fragment {
         List<DmSectionsItem> dmSectionsItemList = db.dmSectionsItemDao().getDmSectionsItem();
         displaySectionItems(dmSectionsItemList);
 
-        List<DmQuestionsModule> dmQuestionsModuleList = db.dmQuestionsModuleDao().getDmQuestionsModulebyModuleId(Integer.parseInt(Constants.MODULE_ID));
+       List<DmQuestionsModule> dmQuestionsModuleList = db.dmQuestionsModuleDao().getDmQuestionsModulebyModuleId(Integer.parseInt(Constants.MODULE_ID));
+       // List<DmQuestionsModule> dmQuestionsModuleList = db.dmQuestionsModuleDao().getDmQuestionsModulebyModuleId(262);
         displayQuestionsModuleItems(dmQuestionsModuleList);
 
         ll_servey_back.setOnClickListener(new View.OnClickListener() {
@@ -82,6 +80,14 @@ public class SurveyFragment extends Fragment {
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(), FindFarmerActivity.class);
                 startActivity(intent);
+            }
+        });
+
+        ll_servey_next.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ViewPager2 viewPager = getActivity().findViewById(R.id.viewPager);
+                viewPager.setCurrentItem(1);
             }
         });
 
@@ -104,9 +110,9 @@ public class SurveyFragment extends Fragment {
                 List<DmLookupValuesISubmodule> dmLookupValuesISubmoduleList = new ArrayList<>();
                 dmLookupValuesISubmoduleList.clear();
                 dmLookupValuesISubmoduleList = db.dmLookupValuesISubmoduleDao().getDmAnswersSubModuleByQuestionId(dmQuestionsSubModule.id);
-                renderDropDownQuestionSections(String.valueOf(dmQuestionsSubModule.id), dmLookupValuesISubmoduleList);
+                renderDropDownQuestionSections(String.valueOf(dmQuestionsSubModule.id), dmLookupValuesISubmoduleList, dmQuestionsSubModule.question);
             } else if (dmQuestionsSubModule.displayType.equalsIgnoreCase("text box")) {
-                renderTextboxQuestionSections(String.valueOf(dmQuestionsSubModule.id));
+                renderTextboxQuestionSections(String.valueOf(dmQuestionsSubModule.id), dmQuestionsSubModule.question);
             }
 
         }
@@ -146,16 +152,16 @@ public class SurveyFragment extends Fragment {
                 List<DmLookupValuesItem> dmLookupValuesItemList = new ArrayList<>();
                 dmLookupValuesItemList.clear();
                 dmLookupValuesItemList = db.dmLookupValuesItemDao().getDmAnswersModuleByQuestionId(dmQuestionsModule.id);
-                renderDropDownQuestionModule(String.valueOf(dmQuestionsModule.id), dmLookupValuesItemList);
+                renderDropDownQuestionModule(String.valueOf(dmQuestionsModule.id), dmLookupValuesItemList, dmQuestionsModule.question);
             } else if (dmQuestionsModule.displayType.equalsIgnoreCase("text box")) {
-                renderTextboxQuestionModule(String.valueOf(dmQuestionsModule.id));
+                renderTextboxQuestionModule(String.valueOf(dmQuestionsModule.id), dmQuestionsModule.question);
             }
 
         }
 
     }
 
-    public void renderDropDownQuestionSections(String questionId, List<DmLookupValuesISubmodule> dmLookupValuesISubmoduleList) {
+    public void renderDropDownQuestionSections(String questionId, List<DmLookupValuesISubmodule> dmLookupValuesISubmoduleList, String question) {
 
 
         final List<String> list = new ArrayList<String>();
@@ -164,9 +170,14 @@ public class SurveyFragment extends Fragment {
         final List<String> ids = new ArrayList<String>();
         ids.clear();
 
+        final List<String> complianceIds = new ArrayList<String>();
+        complianceIds.clear();
+
+
         for (int k = 0; k < dmLookupValuesISubmoduleList.size(); k++) {
             list.add(dmLookupValuesISubmoduleList.get(k).value);
             ids.add(String.valueOf(dmLookupValuesISubmoduleList.get(k).id));
+            complianceIds.add(String.valueOf(dmLookupValuesISubmoduleList.get(k).complianceId));
         }
 
 
@@ -207,7 +218,11 @@ public class SurveyFragment extends Fragment {
 
                 DmSurveyAnswerTable dmSurveyAnswerTable1 = new DmSurveyAnswerTable();
                 dmSurveyAnswerTable1.questionID = questionId;
-                dmSurveyAnswerTable1.answerID = answerId;
+                dmSurveyAnswerTable1.answer = list.get(position);
+                dmSurveyAnswerTable1.answerID = ids.get(position);
+                dmSurveyAnswerTable1.moduleId = Constants.MODULE_ID;
+                dmSurveyAnswerTable1.question = question;
+                dmSurveyAnswerTable1.complinceTypeId = complianceIds.get(position);
                 db.dmSurveyAnswerTableDao().insert(dmSurveyAnswerTable1);
 
             }
@@ -225,12 +240,14 @@ public class SurveyFragment extends Fragment {
 
     }
 
-    public void renderTextboxQuestionSections(String questionId) {
+    public void renderTextboxQuestionSections(String questionId, String question) {
 
         EditText editText = new EditText(getActivity());
         editText.setHint("Answer");
         //editText.setPadding(0, 20, 0, 20);
         editText.setTextSize(14);
+
+        //editText.setFilters(new InputFilter[]{new InputFilterMinMax(String.valueOf(db.dmTextBoxModuleQuestionsDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(0).minimumRange), String.valueOf(db.dmTextBoxModuleQuestionsDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(0).maximumRange))});
 
         List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByQuestionId(questionId);
         if (dmSurveyAnswerTableList.size() != 0) {
@@ -247,9 +264,25 @@ public class SurveyFragment extends Fragment {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 db.dmSurveyAnswerTableDao().deleteByQuestionId(questionId);
+
+
                 DmSurveyAnswerTable dmSurveyAnswerTable1 = new DmSurveyAnswerTable();
                 dmSurveyAnswerTable1.questionID = questionId;
-                dmSurveyAnswerTable1.answerID = charSequence.toString();
+                dmSurveyAnswerTable1.answer = charSequence.toString();
+                dmSurveyAnswerTable1.moduleId = Constants.MODULE_ID;
+                dmSurveyAnswerTable1.question = question;
+                int complianceId = 0;
+                if (db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).size() != 0) {
+                    if (editText.getText().toString() != null) {
+                        String value = editText.getText().toString().trim();
+                        for (int j = 0; j < db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).size(); j++)
+                            if (Double.parseDouble(value) < db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).maximumRange) {
+                                complianceId = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).complianceId;
+                            }
+                    }
+                }
+
+                dmSurveyAnswerTable1.complinceTypeId = String.valueOf(complianceId);
                 db.dmSurveyAnswerTableDao().insert(dmSurveyAnswerTable1);
             }
 
@@ -272,7 +305,7 @@ public class SurveyFragment extends Fragment {
 
     }
 
-    public void renderDropDownQuestionModule(String questionId, List<DmLookupValuesItem> dmLookupValuesItemList) {
+    public void renderDropDownQuestionModule(String questionId, List<DmLookupValuesItem> dmLookupValuesItemList, String question) {
 
 
         final List<String> list = new ArrayList<String>();
@@ -282,9 +315,14 @@ public class SurveyFragment extends Fragment {
         final List<String> ids = new ArrayList<String>();
         ids.clear();
 
+
+        final List<String> complianceIds = new ArrayList<String>();
+        complianceIds.clear();
+
         for (int k = 0; k < dmLookupValuesItemList.size(); k++) {
             list.add(dmLookupValuesItemList.get(k).value);
             ids.add(String.valueOf(dmLookupValuesItemList.get(k).id));
+            complianceIds.add(String.valueOf(dmLookupValuesItemList.get(k).complianceId));
         }
 
 
@@ -329,7 +367,11 @@ public class SurveyFragment extends Fragment {
 
                 DmSurveyAnswerTable dmSurveyAnswerTable1 = new DmSurveyAnswerTable();
                 dmSurveyAnswerTable1.questionID = questionId;
-                dmSurveyAnswerTable1.answerID = answerId;
+                dmSurveyAnswerTable1.answerID = ids.get(position);
+                dmSurveyAnswerTable1.answer = list.get(position);
+                dmSurveyAnswerTable1.moduleId = Constants.MODULE_ID;
+                dmSurveyAnswerTable1.question = question;
+                dmSurveyAnswerTable1.complinceTypeId = complianceIds.get(position);
                 db.dmSurveyAnswerTableDao().insert(dmSurveyAnswerTable1);
 
             }
@@ -347,11 +389,12 @@ public class SurveyFragment extends Fragment {
 
     }
 
-    public void renderTextboxQuestionModule(String questionId) {
+    public void renderTextboxQuestionModule(String questionId, String question) {
 
         EditText editText = new EditText(getActivity());
         editText.setHint("Answer");
         editText.setTextSize(14);
+        //editText.setFilters(new InputFilter[]{new InputFilterMinMax(String.valueOf(db.dmTextBoxModuleQuestionsDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(0).minimumRange), String.valueOf(db.dmTextBoxModuleQuestionsDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(0).maximumRange))});
         //editText.setPadding(0, 20, 0, 20);
 
         List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByQuestionId(questionId);
@@ -369,10 +412,29 @@ public class SurveyFragment extends Fragment {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 db.dmSurveyAnswerTableDao().deleteByQuestionId(questionId);
+
+
                 DmSurveyAnswerTable dmSurveyAnswerTable1 = new DmSurveyAnswerTable();
                 dmSurveyAnswerTable1.questionID = questionId;
-                dmSurveyAnswerTable1.answerID = charSequence.toString();
+                dmSurveyAnswerTable1.answer = charSequence.toString();
+                dmSurveyAnswerTable1.moduleId = Constants.MODULE_ID;
+                dmSurveyAnswerTable1.question = question;
+                int complianceId = 0;
+                if (db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).size() != 0) {
+                    if (editText.getText().toString() != null) {
+                        String value = editText.getText().toString().trim();
+                        for (int j = 0; j < db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).size(); j++)
+                            if (Double.parseDouble(value) < db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).maximumRange) {
+                                complianceId = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).complianceId;
+                            }
+                    }
+                }
+
+
+                dmSurveyAnswerTable1.complinceTypeId = String.valueOf(complianceId);
                 db.dmSurveyAnswerTableDao().insert(dmSurveyAnswerTable1);
+
+
             }
 
             @Override

@@ -28,13 +28,16 @@
                 android:background="#ebeddb"
                 android:paddingBottom="10dp">
 
-                <View
+                <LinearLayout
+                    android:id="@+id/survey_result_indicator"
                     android:layout_width="3dp"
                     android:layout_height="0dp"
-                    android:background="#a0c800"
+
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:orientation="horizontal" />
+                <!--                android:background="#a0c800"-->
 
 
                 <TextView
@@ -55,10 +58,24 @@
                     android:layout_marginTop="16dp"
                     android:text="55 Marks"
                     android:textStyle="bold"
+                    android:visibility="gone"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.934"
                     app:layout_constraintStart_toEndOf="@+id/textView3"
                     app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:id="@+id/traffic_indicator"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:src="@drawable/traffic_indicator_green"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.934"
+                    app:layout_constraintStart_toEndOf="@+id/textView3"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+
 
                 <EditText
                     android:id="@+id/editTextTextMultiLine"
@@ -249,18 +266,8 @@
             </LinearLayout>
 
 
-
-
-
         </androidx.appcompat.widget.LinearLayoutCompat>
 
     </ScrollView>
 
-
-
-
-
-
-
 </FrameLayout>
-

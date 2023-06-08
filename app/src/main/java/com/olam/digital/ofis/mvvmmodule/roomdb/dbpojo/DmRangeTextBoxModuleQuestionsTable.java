@@ -30,4 +30,8 @@ public class DmRangeTextBoxModuleQuestionsTable {
 
     @ColumnInfo(name = "proofFormat")
     public String proofFormat;
+
+
+    @ColumnInfo(name = "questionId")
+    public int questionId;
 }
