@@ -51,11 +51,17 @@ import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfStamper;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.olam.digital.ofis.R;
+import com.olam.digital.ofis.mvvmmodule.FileUtils;
 import com.olam.digital.ofis.mvvmmodule.ImageOrientation;
+import com.olam.digital.ofis.mvvmmodule.PDFUtils;
 import com.olam.digital.ofis.mvvmmodule.PathUtil;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmActionPlansItem;
+import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmComplaintFileTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmCurrenciesItem;
+import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmNonComplaintFileTable;
+import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmQuestionsModule;
+import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmSatisfactoryFileTable;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -68,6 +74,7 @@ import java.net.URISyntaxException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -90,9 +97,8 @@ public class ActionPlanProofFragment extends Fragment {
     //Satisfactory
 
     ImageView iv_satisfactory_dropdown;
-    LinearLayout ll_satisfactory,ll_image_satisfactory_layout;
+    LinearLayout ll_satisfactory, ll_image_satisfactory_layout;
     RelativeLayout rl_satisfactory_captureproof_layout;
-
 
 
     public Resources res;
@@ -104,16 +110,27 @@ public class ActionPlanProofFragment extends Fragment {
     private static final int MY_GALLERYPERMISSION_CODE = 100;
     private static final int MY_CAMERA_PERMISSION_CODE = 500;
     private static final int CAMERA_REQUEST = 1;
-    private static final int GALLERY_PICK = 3;
+    private static final int CAMERA_REQUEST_NONCOMPLAINT = 2;
+    private static final int CAMERA_REQUEST_SATISFACTORY = 3;
+    private static final int GALLERY_PICK = 4;
+    private static final int GALLERY_PICK_NONCOMPLAINT = 5;
+    private static final int GALLERY_PICK_SATISFACTORY = 6;
     private static final int REQUEST_CAMERA_PERMISSIONS = 931;
     private String mCurrentPhotoPath;
 
     private Bitmap resizedBitmapNew;
     LinearLayout image_layout;
     ArrayList<String> image_array = new ArrayList<>();
-    private static final String[] ACCEPTED_MIME_TYPES = {"image/jpeg", "image/png", "application/pdf" ,
-            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "application/vnd.ms-excel" ,
-            "text/plain" , "application/msword" ,"application/vnd.openxmlformats-officedocument.wordprocessingml.document","text/csv"};
+    ArrayList<Long> file_array_ids = new ArrayList<>();
+
+    ArrayList<String> nonComplaint_image_array = new ArrayList<>();
+    ArrayList<Long> nonComplaint_file_array_ids = new ArrayList<>();
+
+    ArrayList<String> satisfactory_image_array = new ArrayList<>();
+    ArrayList<Long> satisfactory_file_array_ids = new ArrayList<>();
+    private static final String[] ACCEPTED_MIME_TYPES = {"image/jpeg", "image/png", "application/pdf",
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "application/vnd.ms-excel",
+            "text/plain", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "text/csv"};
 
     //Room DB
     OFISRoomDB db;
@@ -142,6 +159,8 @@ public class ActionPlanProofFragment extends Fragment {
         iv_complaint_delete_file = view.findViewById(R.id.iv_complaint_delete_file);
         rl_complaint_fileupload_layout = view.findViewById(R.id.rl_complaint_fileupload_layout);
         image_layout = view.findViewById(R.id.image_layout);
+        ll_image_noncomplaint_layout = view.findViewById(R.id.ll_image_noncomplaint_layout);
+        ll_image_satisfactory_layout = view.findViewById(R.id.ll_image_satisfactory_layout);
         spinner_dmCurrencies = view.findViewById(R.id.spinner_dmCurrencies);
         spinner_complaint_actionplan = view.findViewById(R.id.spinner_complaint_actionplan);
         iv_complaint_dropdown.setTag("0");
@@ -197,6 +216,14 @@ public class ActionPlanProofFragment extends Fragment {
             }
         });
 
+        rl_noncomplaint_captureproof_layout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                selectImageNonComplaint();
+
+            }
+        });
+
         //Satisfactory
         iv_satisfactory_dropdown = view.findViewById(R.id.iv_satisfactory_dropdown);
         ll_satisfactory = view.findViewById(R.id.ll_satisfactory);
@@ -217,6 +244,46 @@ public class ActionPlanProofFragment extends Fragment {
                 }
             }
         });
+
+        rl_satisfactory_captureproof_layout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                selectImageSatisfactory();
+
+            }
+        });
+
+        //
+
+        List<DmComplaintFileTable> dmComplaintFileTableList = db.dmComplaintFileTableDao().getDmComplaintFileTable();
+        if (dmComplaintFileTableList.size() != 0) {
+            for (int i = 0; i < dmComplaintFileTableList.size(); i++) {
+                image_array.add(dmComplaintFileTableList.get(i).getFile_name());
+                file_array_ids.add(dmComplaintFileTableList.get(i).getUid());
+            }
+
+            showImages();
+        }
+
+        List<DmNonComplaintFileTable> dmNonComplaintFileTableList = db.dmNonComplaintFileTableDao().getDmNonComplaintFileTable();
+        if (dmNonComplaintFileTableList.size() != 0) {
+            for (int i = 0; i < dmNonComplaintFileTableList.size(); i++) {
+                nonComplaint_image_array.add(dmNonComplaintFileTableList.get(i).getFile_name());
+                nonComplaint_file_array_ids.add(dmNonComplaintFileTableList.get(i).getUid());
+            }
+
+            showImagesNonComplaint();
+        }
+
+        List<DmSatisfactoryFileTable> dmSatisfactoryFileTableList = db.dmSatisfactoryFileTableDao().getDmSatisfactoryFileTable();
+        if (dmSatisfactoryFileTableList.size() != 0) {
+            for (int i = 0; i < dmSatisfactoryFileTableList.size(); i++) {
+                satisfactory_image_array.add(dmSatisfactoryFileTableList.get(i).getFile_name());
+                satisfactory_file_array_ids.add(dmSatisfactoryFileTableList.get(i).getUid());
+            }
+
+            showImagesSatisfactory();
+        }
 
         return view;
     }
@@ -315,6 +382,76 @@ public class ActionPlanProofFragment extends Fragment {
         builder.show();
     }
 
+    private void selectImageNonComplaint() {
+        final CharSequence[] options = {"Take Photo", "Choose from Gallery", "Cancel"};
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("Add Photo!");
+        builder.setItems(options, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int item) {
+                if (options[item].equals("Take Photo")) {
+                    if (isStoragePermissionCameraGranted()) {
+                        if (nonComplaint_image_array.size() > 5) {
+                            Toast.makeText(getActivity(), "Maximum 5 files can be uploaded.", Toast.LENGTH_SHORT).show();
+                        } else {
+                            openCameraNonComplaint();
+                        }
+
+                    }
+
+                } else if (options[item].equals("Choose from Gallery")) {
+
+                    if (isStoragePermissionGalleryGranted()) {
+                        if (nonComplaint_image_array.size() > 5) {
+                            Toast.makeText(getActivity(), "Maximum 5 files can be uploaded.", Toast.LENGTH_SHORT).show();
+                        } else {
+                            openGalleryNoncomplaint();
+                        }
+
+                    }
+                } else if (options[item].equals("Cancel")) {
+                    dialog.dismiss();
+                }
+            }
+        });
+        builder.show();
+    }
+
+    private void selectImageSatisfactory() {
+        final CharSequence[] options = {"Take Photo", "Choose from Gallery", "Cancel"};
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("Add Photo!");
+        builder.setItems(options, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int item) {
+                if (options[item].equals("Take Photo")) {
+                    if (isStoragePermissionCameraGranted()) {
+                        if (satisfactory_image_array.size() > 5) {
+                            Toast.makeText(getActivity(), "Maximum 5 files can be uploaded.", Toast.LENGTH_SHORT).show();
+                        } else {
+                            openCameraSatisfactory();
+                        }
+
+                    }
+
+                } else if (options[item].equals("Choose from Gallery")) {
+
+                    if (isStoragePermissionGalleryGranted()) {
+                        if (satisfactory_image_array.size() > 5) {
+                            Toast.makeText(getActivity(), "Maximum 5 files can be uploaded.", Toast.LENGTH_SHORT).show();
+                        } else {
+                            openGallerySatisfactory();
+                        }
+
+                    }
+                } else if (options[item].equals("Cancel")) {
+                    dialog.dismiss();
+                }
+            }
+        });
+        builder.show();
+    }
+
     private void openCamera() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // Ensure that there's a camera activity to handle the intent
@@ -333,6 +470,50 @@ public class ActionPlanProofFragment extends Fragment {
                         FileProvider.getUriForFile(getActivity(), getActivity().getPackageName() + ".fileprovider",
                                 new File(mCurrentPhotoPath)));
                 startActivityForResult(takePictureIntent, CAMERA_REQUEST);
+            }
+        }
+    }
+
+    private void openCameraNonComplaint() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        // Ensure that there's a camera activity to handle the intent
+        if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+            // Create the File where the photo should go
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+                // Error occurred while creating the File
+
+            }
+            // Continue only if the File was successfully created
+            if (photoFile != null) {
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
+                        FileProvider.getUriForFile(getActivity(), getActivity().getPackageName() + ".fileprovider",
+                                new File(mCurrentPhotoPath)));
+                startActivityForResult(takePictureIntent, CAMERA_REQUEST_NONCOMPLAINT);
+            }
+        }
+    }
+
+    private void openCameraSatisfactory() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        // Ensure that there's a camera activity to handle the intent
+        if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+            // Create the File where the photo should go
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+                // Error occurred while creating the File
+
+            }
+            // Continue only if the File was successfully created
+            if (photoFile != null) {
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
+                        FileProvider.getUriForFile(getActivity(), getActivity().getPackageName() + ".fileprovider",
+                                new File(mCurrentPhotoPath)));
+                startActivityForResult(takePictureIntent, CAMERA_REQUEST_SATISFACTORY);
             }
         }
     }
@@ -398,6 +579,26 @@ public class ActionPlanProofFragment extends Fragment {
         startActivityForResult(Intent.createChooser(galleryIntent, "Choose gallery"), GALLERY_PICK);
     }
 
+    private void openGalleryNoncomplaint() {
+        Intent galleryIntent = new Intent();
+        galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
+        //galleryIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+        //galleryIntent.addCategory(Intent.CATEGORY_OPENABLE);
+        galleryIntent.putExtra(Intent.EXTRA_MIME_TYPES, ACCEPTED_MIME_TYPES);
+        galleryIntent.setType("*/*");
+        startActivityForResult(Intent.createChooser(galleryIntent, "Choose gallery"), GALLERY_PICK_NONCOMPLAINT);
+    }
+
+    private void openGallerySatisfactory() {
+        Intent galleryIntent = new Intent();
+        galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
+        //galleryIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+        //galleryIntent.addCategory(Intent.CATEGORY_OPENABLE);
+        galleryIntent.putExtra(Intent.EXTRA_MIME_TYPES, ACCEPTED_MIME_TYPES);
+        galleryIntent.setType("*/*");
+        startActivityForResult(Intent.createChooser(galleryIntent, "Choose gallery"), GALLERY_PICK_SATISFACTORY);
+    }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -440,7 +641,7 @@ public class ActionPlanProofFragment extends Fragment {
             Bitmap resizedBitmap = Bitmap.createScaledBitmap(bmp, 960, 730, false);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             Uri uriImage = Uri.fromFile(new File(mCurrentPhotoPath));
-            String filename=mCurrentPhotoPath.substring(mCurrentPhotoPath.lastIndexOf("/")+1);
+            String filename = mCurrentPhotoPath.substring(mCurrentPhotoPath.lastIndexOf("/") + 1);
             try {
                 resizedBitmapNew = ImageOrientation.modifyOrientation(getActivity(), resizedBitmap, uriImage);
             } catch (IOException e) {
@@ -449,10 +650,82 @@ public class ActionPlanProofFragment extends Fragment {
             resizedBitmapNew.compress(Bitmap.CompressFormat.JPEG, 100, baos);
             byte[] imageBytes = baos.toByteArray();
 
+            DmComplaintFileTable dmComplaintFileTable = new DmComplaintFileTable();
+            dmComplaintFileTable.setFile_name(filename);
+            dmComplaintFileTable.setFileData(imageBytes);
+            db.dmComplaintFileTableDao().insert(dmComplaintFileTable);
+
+            long id = db.dmComplaintFileTableDao().getLastInsertedId();
+
+            file_array_ids.add(id);
             // profile_pic = Base64.encodeToString(imageBytes, Base64.DEFAULT);
 
-            uploadFileImage(filename,imageBytes, resizedBitmapNew);
+            uploadFileImage(filename, imageBytes, resizedBitmapNew);
 
+        }
+        else if (requestCode == CAMERA_REQUEST_NONCOMPLAINT && resultCode == RESULT_OK) {
+            final BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            options.inSampleSize = 2;
+            options.inJustDecodeBounds = false;
+            options.inTempStorage = new byte[16 * 1024];
+
+            Bitmap bmp = BitmapFactory.decodeFile(mCurrentPhotoPath, options);
+            Bitmap resizedBitmap = Bitmap.createScaledBitmap(bmp, 960, 730, false);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            Uri uriImage = Uri.fromFile(new File(mCurrentPhotoPath));
+            String filename = mCurrentPhotoPath.substring(mCurrentPhotoPath.lastIndexOf("/") + 1);
+            try {
+                resizedBitmapNew = ImageOrientation.modifyOrientation(getActivity(), resizedBitmap, uriImage);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            resizedBitmapNew.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            byte[] imageBytes = baos.toByteArray();
+
+            DmNonComplaintFileTable dmNonComplaintFileTable = new DmNonComplaintFileTable();
+            dmNonComplaintFileTable.setFile_name(filename);
+            dmNonComplaintFileTable.setFileData(imageBytes);
+            db.dmNonComplaintFileTableDao().insert(dmNonComplaintFileTable);
+
+            long id = db.dmNonComplaintFileTableDao().getLastInsertedId();
+
+            nonComplaint_file_array_ids.add(id);
+            // profile_pic = Base64.encodeToString(imageBytes, Base64.DEFAULT);
+
+            uploadFileImageNonComplaint(filename, imageBytes, resizedBitmapNew);
+        }
+        else if (requestCode == CAMERA_REQUEST_SATISFACTORY && resultCode == RESULT_OK) {
+            final BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            options.inSampleSize = 2;
+            options.inJustDecodeBounds = false;
+            options.inTempStorage = new byte[16 * 1024];
+
+            Bitmap bmp = BitmapFactory.decodeFile(mCurrentPhotoPath, options);
+            Bitmap resizedBitmap = Bitmap.createScaledBitmap(bmp, 960, 730, false);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            Uri uriImage = Uri.fromFile(new File(mCurrentPhotoPath));
+            String filename = mCurrentPhotoPath.substring(mCurrentPhotoPath.lastIndexOf("/") + 1);
+            try {
+                resizedBitmapNew = ImageOrientation.modifyOrientation(getActivity(), resizedBitmap, uriImage);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            resizedBitmapNew.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            byte[] imageBytes = baos.toByteArray();
+
+            DmSatisfactoryFileTable dmSatisfactoryFileTable = new DmSatisfactoryFileTable();
+            dmSatisfactoryFileTable.setFile_name(filename);
+            dmSatisfactoryFileTable.setFileData(imageBytes);
+            db.dmSatisfactoryFileTableDao().insert(dmSatisfactoryFileTable);
+
+            long id = db.dmSatisfactoryFileTableDao().getLastInsertedId();
+
+            satisfactory_file_array_ids.add(id);
+            // profile_pic = Base64.encodeToString(imageBytes, Base64.DEFAULT);
+
+            uploadFileImageSatisfactory(filename, imageBytes, resizedBitmapNew);
         }
 
 
@@ -467,41 +740,91 @@ public class ActionPlanProofFragment extends Fragment {
 
             if (mime.equalsIgnoreCase("application/vnd.ms-excel")
                     || mime.equalsIgnoreCase("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-                    ||mime.equalsIgnoreCase("application/msword")||mime.equalsIgnoreCase("text/plain")
+                    || mime.equalsIgnoreCase("application/msword") || mime.equalsIgnoreCase("text/plain")
                     || mime.equalsIgnoreCase("application/vnd.openxmlformats-officedocument.wordprocessingml.document")
-            || mime.equalsIgnoreCase("text/csv")) {
+                    || mime.equalsIgnoreCase("text/csv")) {
                 String filename = getFileName(uri);
-                uploadFile(uri,filename);
+
+                //Toast.makeText(getActivity(), "" + filename + "....." + uri + "..." + uri.getPath(), Toast.LENGTH_LONG).show();
+
+                byte[] fileByteArray;
+                try {
+                    fileByteArray = FileUtils.convertFileToByteArray(getActivity(), uri);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+
+
+                DmComplaintFileTable dmComplaintFileTable = new DmComplaintFileTable();
+                dmComplaintFileTable.setFile_name(filename);
+                dmComplaintFileTable.setFileData(fileByteArray);
+                db.dmComplaintFileTableDao().insert(dmComplaintFileTable);
+
+                long id = db.dmComplaintFileTableDao().getLastInsertedId();
+
+                file_array_ids.add(id);
+
+                uploadFile(uri, filename, fileByteArray);
 
             } else if (mime.equalsIgnoreCase("application/pdf")) {
                 String filename = getFileName(uri);
 
+                // Toast.makeText(getActivity(), "" + filename + "...." + uri, Toast.LENGTH_SHORT).show();
+
                 // Get the compressed file size
                 AssetFileDescriptor fileDescriptor = null;
                 try {
-                    fileDescriptor = getContext().getContentResolver().openAssetFileDescriptor(uri , "r");
+                    fileDescriptor = getContext().getContentResolver().openAssetFileDescriptor(uri, "r");
                 } catch (FileNotFoundException e) {
                     throw new RuntimeException(e);
                 }
                 long compressedSize = fileDescriptor.getLength();
 
-                    // Display the file size
-                    String fileSize = getFormattedFileSize(compressedSize);
-                    String message = "PDF Size: " + fileSize;
-                    Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+                // Display the file size
+                String fileSize = getFormattedFileSize(compressedSize);
+                String message = "PDF Size: " + fileSize;
+                Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
 
 
-
-                    if((1024f * 1024f) < compressedSize){
-                        Toast.makeText(getContext(), "Sizer is greater than 10 MB", Toast.LENGTH_SHORT).show();
-                        Uri uri1 = Uri.fromFile(compressPdf(uri));
-                        uploadFile(uri1,filename);
+                if ((1024f * 1024f) < compressedSize) {
+                    Toast.makeText(getContext(), "Sizer is greater than 10 MB", Toast.LENGTH_SHORT).show();
+                    Uri uri1 = Uri.fromFile(compressPdf(uri));
+                    byte[] pdfByteArray1;
+                    try {
+                        pdfByteArray1 = PDFUtils.convertPDFToByteArray(uri1.getPath());
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
                     }
-                    else {
-                        Uri uri1 = Uri.fromFile(compressPdf(uri));
-                        uploadFile(uri1,filename);
-//                        uploadFile(uri,filename);
+                    DmComplaintFileTable dmComplaintFileTable = new DmComplaintFileTable();
+                    dmComplaintFileTable.setFile_name(filename);
+                    dmComplaintFileTable.setFileData(pdfByteArray1);
+                    db.dmComplaintFileTableDao().insert(dmComplaintFileTable);
+
+                    long id = db.dmComplaintFileTableDao().getLastInsertedId();
+
+                    file_array_ids.add(id);
+                    uploadFile(uri1, filename, pdfByteArray1);
+                } else {
+                    Uri uri1 = Uri.fromFile(compressPdf(uri));
+
+                    byte[] pdfByteArray2;
+                    try {
+                        pdfByteArray2 = PDFUtils.convertPDFToByteArray(uri1.getPath());
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
                     }
+
+                    DmComplaintFileTable dmComplaintFileTable = new DmComplaintFileTable();
+                    dmComplaintFileTable.setFile_name(filename);
+                    dmComplaintFileTable.setFileData(pdfByteArray2);
+                    db.dmComplaintFileTableDao().insert(dmComplaintFileTable);
+
+                    long id = db.dmComplaintFileTableDao().getLastInsertedId();
+
+                    file_array_ids.add(id);
+
+                    uploadFile(uri1, filename, pdfByteArray2);
+                }
 
             } else {
                 final BitmapFactory.Options options = new BitmapFactory.Options();
@@ -511,6 +834,9 @@ public class ActionPlanProofFragment extends Fragment {
                 options.inTempStorage = new byte[16 * 1024];
 
                 String filePathimage = null;
+
+                //Toast.makeText(getActivity(), ""+filePathimage+"..."+uri+"....."+uri.getAuthority(), Toast.LENGTH_LONG).show();
+
                 try {
                     filePathimage = PathUtil.getPath(getActivity(), uri);
                 } catch (URISyntaxException e) {
@@ -521,7 +847,7 @@ public class ActionPlanProofFragment extends Fragment {
                 Bitmap bmp = BitmapFactory.decodeFile(filePathimage, options);
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-                String filename=filePathimage.substring(filePathimage.lastIndexOf("/")+1);
+                String filename = filePathimage.substring(filePathimage.lastIndexOf("/") + 1);
 
                 Bitmap resizedBitmap = Bitmap.createScaledBitmap(bmp, bmp.getWidth(), bmp.getHeight(), false);
 
@@ -535,7 +861,308 @@ public class ActionPlanProofFragment extends Fragment {
                 //profile_pic = Base64.encodeToString(imageBytes, Base64.DEFAULT);
 
 //                Toast.makeText(getContext(),imageBytes.length, Toast.LENGTH_SHORT).show();
-                uploadFileImage(filename,imageBytes, resizedBitmapNew);
+
+                DmComplaintFileTable dmComplaintFileTable = new DmComplaintFileTable();
+                dmComplaintFileTable.setFile_name(filename);
+                dmComplaintFileTable.setFileData(imageBytes);
+                db.dmComplaintFileTableDao().insert(dmComplaintFileTable);
+
+                long id = db.dmComplaintFileTableDao().getLastInsertedId();
+
+                file_array_ids.add(id);
+
+
+                uploadFileImage(filename, imageBytes, resizedBitmapNew);
+            }
+
+        }
+
+        if ((requestCode == GALLERY_PICK_NONCOMPLAINT && resultCode == RESULT_OK) && data != null) {
+
+            Uri uri = data.getData();
+            ContentResolver cr = getActivity().getContentResolver();
+            String mime = cr.getType(uri);
+            Toast.makeText(getActivity(), "" + mime, Toast.LENGTH_SHORT).show();
+            //setImage(iv_profile, imageUri);
+
+            if (mime.equalsIgnoreCase("application/vnd.ms-excel")
+                    || mime.equalsIgnoreCase("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+                    || mime.equalsIgnoreCase("application/msword") || mime.equalsIgnoreCase("text/plain")
+                    || mime.equalsIgnoreCase("application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+                    || mime.equalsIgnoreCase("text/csv")) {
+                String filename = getFileName(uri);
+
+                //Toast.makeText(getActivity(), "" + filename + "....." + uri + "..." + uri.getPath(), Toast.LENGTH_LONG).show();
+
+                byte[] fileByteArray;
+                try {
+                    fileByteArray = FileUtils.convertFileToByteArray(getActivity(), uri);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+
+
+                DmNonComplaintFileTable dmNonComplaintFileTable = new DmNonComplaintFileTable();
+                dmNonComplaintFileTable.setFile_name(filename);
+                dmNonComplaintFileTable.setFileData(fileByteArray);
+                db.dmNonComplaintFileTableDao().insert(dmNonComplaintFileTable);
+
+                long id = db.dmNonComplaintFileTableDao().getLastInsertedId();
+
+                nonComplaint_file_array_ids.add(id);
+
+                uploadFileNonComplaint(uri, filename, fileByteArray);
+
+            } else if (mime.equalsIgnoreCase("application/pdf")) {
+                String filename = getFileName(uri);
+
+                // Toast.makeText(getActivity(), "" + filename + "...." + uri, Toast.LENGTH_SHORT).show();
+
+                // Get the compressed file size
+                AssetFileDescriptor fileDescriptor = null;
+                try {
+                    fileDescriptor = getContext().getContentResolver().openAssetFileDescriptor(uri, "r");
+                } catch (FileNotFoundException e) {
+                    throw new RuntimeException(e);
+                }
+                long compressedSize = fileDescriptor.getLength();
+
+                // Display the file size
+                String fileSize = getFormattedFileSize(compressedSize);
+                String message = "PDF Size: " + fileSize;
+                Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+
+
+                if ((1024f * 1024f) < compressedSize) {
+                    Toast.makeText(getContext(), "Sizer is greater than 10 MB", Toast.LENGTH_SHORT).show();
+                    Uri uri1 = Uri.fromFile(compressPdf(uri));
+                    byte[] pdfByteArray1;
+                    try {
+                        pdfByteArray1 = PDFUtils.convertPDFToByteArray(uri1.getPath());
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    DmNonComplaintFileTable dmNonComplaintFileTable = new DmNonComplaintFileTable();
+                    dmNonComplaintFileTable.setFile_name(filename);
+                    dmNonComplaintFileTable.setFileData(pdfByteArray1);
+                    db.dmNonComplaintFileTableDao().insert(dmNonComplaintFileTable);
+
+                    long id = db.dmNonComplaintFileTableDao().getLastInsertedId();
+
+                    nonComplaint_file_array_ids.add(id);
+                    uploadFileNonComplaint(uri1, filename, pdfByteArray1);
+                } else {
+                    Uri uri1 = Uri.fromFile(compressPdf(uri));
+
+                    byte[] pdfByteArray2;
+                    try {
+                        pdfByteArray2 = PDFUtils.convertPDFToByteArray(uri1.getPath());
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                    DmNonComplaintFileTable dmNonComplaintFileTable = new DmNonComplaintFileTable();
+                    dmNonComplaintFileTable.setFile_name(filename);
+                    dmNonComplaintFileTable.setFileData(pdfByteArray2);
+                    db.dmNonComplaintFileTableDao().insert(dmNonComplaintFileTable);
+
+                    long id = db.dmNonComplaintFileTableDao().getLastInsertedId();
+
+                    nonComplaint_file_array_ids.add(id);
+                    uploadFileNonComplaint(uri1, filename, pdfByteArray2);
+                }
+
+            } else {
+                final BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inJustDecodeBounds = true;
+                options.inSampleSize = 2;
+                options.inJustDecodeBounds = false;
+                options.inTempStorage = new byte[16 * 1024];
+
+                String filePathimage = null;
+
+                //Toast.makeText(getActivity(), ""+filePathimage+"..."+uri+"....."+uri.getAuthority(), Toast.LENGTH_LONG).show();
+
+                try {
+                    filePathimage = PathUtil.getPath(getActivity(), uri);
+                } catch (URISyntaxException e) {
+                    e.printStackTrace();
+                }
+
+
+                Bitmap bmp = BitmapFactory.decodeFile(filePathimage, options);
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+                String filename = filePathimage.substring(filePathimage.lastIndexOf("/") + 1);
+
+                Bitmap resizedBitmap = Bitmap.createScaledBitmap(bmp, bmp.getWidth(), bmp.getHeight(), false);
+
+                try {
+                    resizedBitmapNew = ImageOrientation.modifyOrientation(getActivity(), resizedBitmap, uri);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                resizedBitmapNew.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                byte[] imageBytes = baos.toByteArray();
+                //profile_pic = Base64.encodeToString(imageBytes, Base64.DEFAULT);
+
+//                Toast.makeText(getContext(),imageBytes.length, Toast.LENGTH_SHORT).show();
+
+                uploadFileImage(filename, imageBytes, resizedBitmapNew);
+
+                DmNonComplaintFileTable dmNonComplaintFileTable = new DmNonComplaintFileTable();
+                dmNonComplaintFileTable.setFile_name(filename);
+                dmNonComplaintFileTable.setFileData(imageBytes);
+                db.dmNonComplaintFileTableDao().insert(dmNonComplaintFileTable);
+
+                long id = db.dmNonComplaintFileTableDao().getLastInsertedId();
+
+                nonComplaint_file_array_ids.add(id);
+                uploadFileImageNonComplaint(filename, imageBytes, resizedBitmapNew);
+            }
+
+        }
+
+        if ((requestCode == GALLERY_PICK_SATISFACTORY && resultCode == RESULT_OK) && data != null) {
+
+            Uri uri = data.getData();
+            ContentResolver cr = getActivity().getContentResolver();
+            String mime = cr.getType(uri);
+            Toast.makeText(getActivity(), "" + mime, Toast.LENGTH_SHORT).show();
+            //setImage(iv_profile, imageUri);
+
+            if (mime.equalsIgnoreCase("application/vnd.ms-excel")
+                    || mime.equalsIgnoreCase("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+                    || mime.equalsIgnoreCase("application/msword") || mime.equalsIgnoreCase("text/plain")
+                    || mime.equalsIgnoreCase("application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+                    || mime.equalsIgnoreCase("text/csv")) {
+                String filename = getFileName(uri);
+
+                //Toast.makeText(getActivity(), "" + filename + "....." + uri + "..." + uri.getPath(), Toast.LENGTH_LONG).show();
+
+                byte[] fileByteArray;
+                try {
+                    fileByteArray = FileUtils.convertFileToByteArray(getActivity(), uri);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+
+
+                DmSatisfactoryFileTable dmSatisfactoryFileTable = new DmSatisfactoryFileTable();
+                dmSatisfactoryFileTable.setFile_name(filename);
+                dmSatisfactoryFileTable.setFileData(fileByteArray);
+                db.dmSatisfactoryFileTableDao().insert(dmSatisfactoryFileTable);
+
+                long id = db.dmSatisfactoryFileTableDao().getLastInsertedId();
+
+                satisfactory_file_array_ids.add(id);
+
+                uploadFileSatisfactory(uri, filename, fileByteArray);
+
+            } else if (mime.equalsIgnoreCase("application/pdf")) {
+                String filename = getFileName(uri);
+
+                // Toast.makeText(getActivity(), "" + filename + "...." + uri, Toast.LENGTH_SHORT).show();
+
+                // Get the compressed file size
+                AssetFileDescriptor fileDescriptor = null;
+                try {
+                    fileDescriptor = getContext().getContentResolver().openAssetFileDescriptor(uri, "r");
+                } catch (FileNotFoundException e) {
+                    throw new RuntimeException(e);
+                }
+                long compressedSize = fileDescriptor.getLength();
+
+                // Display the file size
+                String fileSize = getFormattedFileSize(compressedSize);
+                String message = "PDF Size: " + fileSize;
+                Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+
+
+                if ((1024f * 1024f) < compressedSize) {
+                    Toast.makeText(getContext(), "Sizer is greater than 10 MB", Toast.LENGTH_SHORT).show();
+                    Uri uri1 = Uri.fromFile(compressPdf(uri));
+                    byte[] pdfByteArray1;
+                    try {
+                        pdfByteArray1 = PDFUtils.convertPDFToByteArray(uri1.getPath());
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    DmSatisfactoryFileTable dmSatisfactoryFileTable = new DmSatisfactoryFileTable();
+                    dmSatisfactoryFileTable.setFile_name(filename);
+                    dmSatisfactoryFileTable.setFileData(pdfByteArray1);
+                    db.dmSatisfactoryFileTableDao().insert(dmSatisfactoryFileTable);
+                    long id = db.dmSatisfactoryFileTableDao().getLastInsertedId();
+
+                    satisfactory_file_array_ids.add(id);
+                    uploadFileSatisfactory(uri1, filename, pdfByteArray1);
+                } else {
+                    Uri uri1 = Uri.fromFile(compressPdf(uri));
+
+                    byte[] pdfByteArray2;
+                    try {
+                        pdfByteArray2 = PDFUtils.convertPDFToByteArray(uri1.getPath());
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                    DmSatisfactoryFileTable dmSatisfactoryFileTable = new DmSatisfactoryFileTable();
+                    dmSatisfactoryFileTable.setFile_name(filename);
+                    dmSatisfactoryFileTable.setFileData(pdfByteArray2);
+                    db.dmSatisfactoryFileTableDao().insert(dmSatisfactoryFileTable);
+                    long id = db.dmSatisfactoryFileTableDao().getLastInsertedId();
+
+                    satisfactory_file_array_ids.add(id);
+
+                    uploadFileSatisfactory(uri1, filename, pdfByteArray2);
+                }
+
+            } else {
+                final BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inJustDecodeBounds = true;
+                options.inSampleSize = 2;
+                options.inJustDecodeBounds = false;
+                options.inTempStorage = new byte[16 * 1024];
+
+                String filePathimage = null;
+
+                //Toast.makeText(getActivity(), ""+filePathimage+"..."+uri+"....."+uri.getAuthority(), Toast.LENGTH_LONG).show();
+
+                try {
+                    filePathimage = PathUtil.getPath(getActivity(), uri);
+                } catch (URISyntaxException e) {
+                    e.printStackTrace();
+                }
+
+
+                Bitmap bmp = BitmapFactory.decodeFile(filePathimage, options);
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+                String filename = filePathimage.substring(filePathimage.lastIndexOf("/") + 1);
+
+                Bitmap resizedBitmap = Bitmap.createScaledBitmap(bmp, bmp.getWidth(), bmp.getHeight(), false);
+
+                try {
+                    resizedBitmapNew = ImageOrientation.modifyOrientation(getActivity(), resizedBitmap, uri);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                resizedBitmapNew.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                byte[] imageBytes = baos.toByteArray();
+                //profile_pic = Base64.encodeToString(imageBytes, Base64.DEFAULT);
+
+//                Toast.makeText(getContext(),imageBytes.length, Toast.LENGTH_SHORT).show();
+
+                DmSatisfactoryFileTable dmSatisfactoryFileTable = new DmSatisfactoryFileTable();
+                dmSatisfactoryFileTable.setFile_name(filename);
+                dmSatisfactoryFileTable.setFileData(imageBytes);
+                db.dmSatisfactoryFileTableDao().insert(dmSatisfactoryFileTable);
+                long id = db.dmSatisfactoryFileTableDao().getLastInsertedId();
+
+                satisfactory_file_array_ids.add(id);
+
+
+                uploadFileImageSatisfactory(filename, imageBytes, resizedBitmapNew);
             }
 
         }
@@ -554,7 +1181,7 @@ public class ActionPlanProofFragment extends Fragment {
             PdfStamper stamper = new PdfStamper(reader, outputStream);
             stamper.getWriter().setCompressionLevel(9);
             int total = reader.getNumberOfPages() + 1;
-            for ( int i=1; i<total; i++) {
+            for (int i = 1; i < total; i++) {
                 reader.setPageContent(i + 1, reader.getPageContent(i + 1));
             }
             stamper.setFullCompression();
@@ -593,7 +1220,7 @@ public class ActionPlanProofFragment extends Fragment {
         } else if (fileSize < 1024 * 1024) {
             return decimalFormat.format(fileSize / 1024f) + " KB";
         } else {
-            return decimalFormat.format(fileSize/(1024f * 1024f)) +" MB";
+            return decimalFormat.format(fileSize / (1024f * 1024f)) + " MB";
         }
     }
 
@@ -617,7 +1244,7 @@ public class ActionPlanProofFragment extends Fragment {
         return fileName;
     }
 
-    private void uploadFileImage(String filename,byte[] filePath, final Bitmap image) {
+    private void uploadFileImage(String filename, byte[] filePath, final Bitmap image) {
         //checking if file is available
         ProgressDialog progressDialog;
         try {
@@ -626,6 +1253,8 @@ public class ActionPlanProofFragment extends Fragment {
 //            progressDialog.setTitle("Please Wait...");
 //            progressDialog.show();
             image_array.add(filename);
+
+
             showImages();
 
         } catch (Exception e) {
@@ -633,9 +1262,67 @@ public class ActionPlanProofFragment extends Fragment {
         }
     }
 
-    private void uploadFile(Uri uri,String fileName) {
-        image_array.add(fileName);
-        showImages();
+    private void uploadFileImageNonComplaint(String filename, byte[] filePath, final Bitmap image) {
+        //checking if file is available
+        ProgressDialog progressDialog;
+        try {
+//            progressDialog = new ProgressDialog(getActivity());
+//            progressDialog.setCancelable(false);
+//            progressDialog.setTitle("Please Wait...");
+//            progressDialog.show();
+            nonComplaint_image_array.add(filename);
+
+            showImagesNonComplaint();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void uploadFileImageSatisfactory(String filename, byte[] filePath, final Bitmap image) {
+        //checking if file is available
+        ProgressDialog progressDialog;
+        try {
+//            progressDialog = new ProgressDialog(getActivity());
+//            progressDialog.setCancelable(false);
+//            progressDialog.setTitle("Please Wait...");
+//            progressDialog.show();
+            satisfactory_image_array.add(filename);
+
+            showImagesSatisfactory();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void uploadFile(Uri uri, String fileName, byte[] filedata) {
+        try {
+            image_array.add(fileName);
+            showImages();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void uploadFileNonComplaint(Uri uri, String fileName, byte[] filedata) {
+        try {
+            nonComplaint_image_array.add(fileName);
+            showImagesNonComplaint();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void uploadFileSatisfactory(Uri uri, String fileName, byte[] filedata) {
+        try {
+            satisfactory_image_array.add(fileName);
+            showImagesSatisfactory();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -683,13 +1370,70 @@ public class ActionPlanProofFragment extends Fragment {
             image_layout.addView(convertView);
             convertView.setTag(i);
             remove.setTag(i);
-
             selected_imgName.setText(image_array.get(i));
+
 
             remove.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     showDeleteDialog(v.getTag().toString());
+
+                }
+            });
+
+
+        }
+    }
+
+    public void showImagesNonComplaint() {
+        ll_image_noncomplaint_layout.removeAllViews();
+
+        for (int i = 0; i < nonComplaint_image_array.size(); i++) {
+
+            LayoutInflater inflater = LayoutInflater.from(getActivity());
+            final View convertView = inflater.inflate(R.layout.image_complaint_dynamic, null, false);
+            final TextView selected_imgName = convertView.findViewById(R.id.tv_complaint_filename);
+            final ImageView remove = convertView.findViewById(R.id.iv_complaint_delete_file);
+
+            ll_image_noncomplaint_layout.addView(convertView);
+            convertView.setTag(i);
+            remove.setTag(i);
+            selected_imgName.setText(nonComplaint_image_array.get(i));
+
+
+            remove.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    showDeleteDialogNonComplaint(v.getTag().toString());
+
+                }
+            });
+
+
+        }
+    }
+
+    public void showImagesSatisfactory() {
+        ll_image_satisfactory_layout.removeAllViews();
+
+        for (int i = 0; i < satisfactory_image_array.size(); i++) {
+
+            LayoutInflater inflater = LayoutInflater.from(getActivity());
+            final View convertView = inflater.inflate(R.layout.image_complaint_dynamic, null, false);
+            final TextView selected_imgName = convertView.findViewById(R.id.tv_complaint_filename);
+            final ImageView remove = convertView.findViewById(R.id.iv_complaint_delete_file);
+
+            ll_image_satisfactory_layout.addView(convertView);
+            convertView.setTag(i);
+            remove.setTag(i);
+            selected_imgName.setText(satisfactory_image_array.get(i));
+
+
+            remove.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    showDeleteDialogSatisfactory(v.getTag().toString());
+
                 }
             });
 
@@ -700,7 +1444,7 @@ public class ActionPlanProofFragment extends Fragment {
     private void showDeleteDialog(String pos) {
 
         AlertDialog.Builder builder1 = new AlertDialog.Builder(getActivity());
-        builder1.setMessage("Do you want ro remove this report");
+        builder1.setMessage("Do you want to remove this report");
         builder1.setTitle("Alert");
         builder1.setCancelable(false);
         builder1.setPositiveButton(
@@ -708,8 +1452,107 @@ public class ActionPlanProofFragment extends Fragment {
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         dialog.cancel();
-                        image_array.remove(image_array.get(Integer.valueOf(pos)));
+
+                        Toast.makeText(getActivity(), "" + pos, Toast.LENGTH_SHORT).show();
+
+                        db.dmComplaintFileTableDao().deleteById(file_array_ids.get(Integer.valueOf(pos)));
+
+                        image_array.clear();
+                        file_array_ids.clear();
+
+                        List<DmComplaintFileTable> dmComplaintFileTableList = db.dmComplaintFileTableDao().getDmComplaintFileTable();
+                        if (dmComplaintFileTableList.size() != 0) {
+                            for (int i = 0; i < dmComplaintFileTableList.size(); i++) {
+                                image_array.add(dmComplaintFileTableList.get(i).getFile_name());
+                                file_array_ids.add(dmComplaintFileTableList.get(i).getUid());
+                            }
+                        }
                         showImages();
+
+                    }
+                });
+        builder1.setNegativeButton(
+                "NO",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+
+        AlertDialog alert11 = builder1.create();
+        alert11.show();
+    }
+
+    private void showDeleteDialogNonComplaint(String pos) {
+
+        AlertDialog.Builder builder1 = new AlertDialog.Builder(getActivity());
+        builder1.setMessage("Do you want to remove this report");
+        builder1.setTitle("Alert");
+        builder1.setCancelable(false);
+        builder1.setPositiveButton(
+                "YES",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+
+                        Toast.makeText(getActivity(), "" + pos, Toast.LENGTH_SHORT).show();
+
+                        db.dmNonComplaintFileTableDao().deleteById(nonComplaint_file_array_ids.get(Integer.valueOf(pos)));
+
+                        nonComplaint_image_array.clear();
+                        nonComplaint_file_array_ids.clear();
+
+                        List<DmNonComplaintFileTable> dmNonComplaintFileTables = db.dmNonComplaintFileTableDao().getDmNonComplaintFileTable();
+                        if (dmNonComplaintFileTables.size() != 0) {
+                            for (int i = 0; i < dmNonComplaintFileTables.size(); i++) {
+                                nonComplaint_image_array.add(dmNonComplaintFileTables.get(i).getFile_name());
+                                nonComplaint_file_array_ids.add(dmNonComplaintFileTables.get(i).getUid());
+                            }
+                        }
+                        showImagesNonComplaint();
+
+                    }
+                });
+        builder1.setNegativeButton(
+                "NO",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+
+        AlertDialog alert11 = builder1.create();
+        alert11.show();
+    }
+
+    private void showDeleteDialogSatisfactory(String pos) {
+
+        AlertDialog.Builder builder1 = new AlertDialog.Builder(getActivity());
+        builder1.setMessage("Do you want to remove this report");
+        builder1.setTitle("Alert");
+        builder1.setCancelable(false);
+        builder1.setPositiveButton(
+                "YES",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+
+                        Toast.makeText(getActivity(), "" + pos, Toast.LENGTH_SHORT).show();
+
+                        db.dmSatisfactoryFileTableDao().deleteById(satisfactory_file_array_ids.get(Integer.valueOf(pos)));
+
+                        satisfactory_image_array.clear();
+                        satisfactory_file_array_ids.clear();
+
+                        List<DmSatisfactoryFileTable> dmSatisfactoryFileTableList = db.dmSatisfactoryFileTableDao().getDmSatisfactoryFileTable();
+                        if (dmSatisfactoryFileTableList.size() != 0) {
+                            for (int i = 0; i < dmSatisfactoryFileTableList.size(); i++) {
+                                satisfactory_image_array.add(dmSatisfactoryFileTableList.get(i).getFile_name());
+                                satisfactory_file_array_ids.add(dmSatisfactoryFileTableList.get(i).getUid());
+                            }
+                        }
+                        showImagesSatisfactory();
+
                     }
                 });
         builder1.setNegativeButton(

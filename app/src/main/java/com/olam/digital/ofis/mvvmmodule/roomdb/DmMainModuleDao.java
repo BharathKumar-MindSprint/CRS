@@ -20,4 +20,7 @@ public interface DmMainModuleDao {
 
     @Delete
     void delete(DmMainModule dmModule);
+
+    @Query("DELETE FROM DmMainModule")
+    void deleteAll();
 }

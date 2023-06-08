@@ -20,4 +20,6 @@ public interface DmActionPlansItemSubmoduleDao {
 
     @Delete
     void delete(DmActionPlansItemSubmodule dmActionPlansItemSubmodules);
+    @Query("DELETE FROM DmActionPlansItemSubmodule")
+    void deleteAll();
 }

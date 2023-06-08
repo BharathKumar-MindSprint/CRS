@@ -14,7 +14,7 @@ import java.util.List;
 @Dao
 public interface DmSurveyAnswerTableDao {
     @Query("SELECT * FROM DmSurveyAnswerTable")
-    DmSurveyAnswerTable getDmSurveyAnswerTable();
+    List<DmSurveyAnswerTable> getDmSurveyAnswerTable();
 
     @Insert
     void insert(DmSurveyAnswerTable... dmSurveyAnswerTables);

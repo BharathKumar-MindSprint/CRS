@@ -21,4 +21,7 @@ public interface DmAnswerTypesDao {
     @Delete
     void delete(DmAnswerTypes dmAnswerTypes);
 
+    @Query("DELETE FROM DmAnswerTypes")
+    void deleteAll();
+
 }

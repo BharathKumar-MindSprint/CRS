@@ -42,8 +42,8 @@ public class DmQuestionsModule {
     @ColumnInfo(name = "questionVi")
     public String questionVi;
 
-    @ColumnInfo(name = "questionTypeId")
-    public int questionTypeId;
+    @ColumnInfo(name = "displaytypeId")
+    public int displaytypeId;
 
     @ColumnInfo(name = "datatypeId")
     public int datatypeId;

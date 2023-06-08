@@ -12,6 +12,9 @@ public class DmActionPlansItem {
     @ColumnInfo(name = "id")
     public int id;
 
+    @ColumnInfo(name = "id_lookupValue")
+    public int id_lookupValue;
+
     @ColumnInfo(name = "isDefault")
     public boolean isDefault;
 
