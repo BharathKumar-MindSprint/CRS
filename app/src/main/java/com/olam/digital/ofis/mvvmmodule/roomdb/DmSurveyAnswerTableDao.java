@@ -25,6 +25,9 @@ public interface DmSurveyAnswerTableDao {
     @Query("DELETE FROM DmSurveyAnswerTable WHERE questionID =:id")
     void deleteByQuestionId(String id);
 
+    @Query("SELECT * FROM DmSurveyAnswerTable WHERE complinceTypeId =:id")
+    List<DmSurveyAnswerTable> getDataByComplianceId(String id);
+
     @Query("SELECT * FROM DmSurveyAnswerTable WHERE questionID =:id")
     List<DmSurveyAnswerTable> getDataByQuestionId(String id);
 

@@ -24,4 +24,7 @@ public class DmTextBoxModuleQuestions {
 
     @ColumnInfo(name = "maximumRange")
     public double maximumRange;
+
+    @ColumnInfo(name = "questionId")
+    public int questionId;
 }

@@ -84,4 +84,8 @@
     <color name="text_label_attendee">#535353</color>
     <color name="signature_pad">#F8F8F8</color>
     <color name="header_color">#2E2D2C</color>
+
+    <color name="orange_view_survey">#f78c2a</color>
+    <color name="green_view_survey">#a0c800</color>
+    <color name="red_view_survey">#ae1515</color>
 </resources>

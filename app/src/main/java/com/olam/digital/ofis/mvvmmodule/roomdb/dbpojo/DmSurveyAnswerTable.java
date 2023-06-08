@@ -14,4 +14,17 @@ public class DmSurveyAnswerTable {
 
     @ColumnInfo(name = "answerID")
     public String answerID;
+
+    @ColumnInfo(name = "answer")
+    public String answer;
+
+    @ColumnInfo(name = "question")
+    public String question;
+
+
+    @ColumnInfo(name = "moduleId")
+    public String moduleId;
+
+    @ColumnInfo(name = "complinceTypeId")
+    public String complinceTypeId ;
 }

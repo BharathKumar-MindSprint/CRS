@@ -7,6 +7,7 @@ import androidx.room.Query;
 
 
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.ComplianceIndicator;
+import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmSurveyAnswerTable;
 
 import java.util.List;
 
@@ -21,5 +22,8 @@ public interface ComplianceIndicatorDao {
 
     @Delete
     void delete(ComplianceIndicator complianceIndicators);
+
+    @Query("SELECT * FROM ComplianceIndicator WHERE moduleDraftId =:id")
+    List<ComplianceIndicator> getComplianceByModuleId(String id);
 
 }
