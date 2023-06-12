@@ -28,7 +28,13 @@ public interface DmSurveyAnswerTableDao {
     @Query("SELECT * FROM DmSurveyAnswerTable WHERE complinceTypeId =:id")
     List<DmSurveyAnswerTable> getDataByComplianceId(String id);
 
+    @Query("SELECT * FROM DmSurveyAnswerTable WHERE moduleId =:id")
+    List<DmSurveyAnswerTable> getDataByModuleId(String id);
+
     @Query("SELECT * FROM DmSurveyAnswerTable WHERE questionID =:id")
     List<DmSurveyAnswerTable> getDataByQuestionId(String id);
+
+    @Query("DELETE FROM DmSurveyAnswerTable")
+    void deleteAll();
 
 }

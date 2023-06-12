@@ -13,6 +13,9 @@ public class DmComplaintFileTable {
     @ColumnInfo(name = "file_name")
     private String file_name;
 
+    @ColumnInfo(name = "questionId")
+    private String questionId;
+
     @ColumnInfo(typeAffinity = ColumnInfo.BLOB)
     private byte[] fileData;
 
@@ -40,6 +43,15 @@ public class DmComplaintFileTable {
         this.fileData = fileData;
     }
 
+    public void setUid(long uid) {
+        this.uid = uid;
+    }
 
+    public String getQuestionId() {
+        return questionId;
+    }
 
+    public void setQuestionId(String questionId) {
+        this.questionId = questionId;
+    }
 }
