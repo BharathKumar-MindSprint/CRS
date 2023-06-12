@@ -20,10 +20,14 @@ public interface ComplianceIndicatorDao {
     @Insert
     void insert(ComplianceIndicator... complianceIndicators);
 
-    @Delete
-    void delete(ComplianceIndicator complianceIndicators);
 
     @Query("SELECT * FROM ComplianceIndicator WHERE moduleDraftId =:id")
     List<ComplianceIndicator> getComplianceByModuleId(String id);
+
+    @Query("SELECT * FROM ComplianceIndicator WHERE id =:id")
+    List<ComplianceIndicator> getComplianceNameById(String id);
+
+    @Query("DELETE FROM ComplianceIndicator")
+    void deleteAll();
 
 }

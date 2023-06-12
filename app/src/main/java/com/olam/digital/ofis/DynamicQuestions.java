@@ -122,7 +122,6 @@ public class DynamicQuestions {
     public  Set<Integer> surveySet= new HashSet<>();
     public Set<Integer> constraintsSet=new HashSet<>();
     public  Set<Integer> editQuestionSet=new HashSet<>();
-
     private static DynamicQuestions instance = null;
 
     DynamicQuestions(Context context, String questionColumnSuffix, DataLayer dl) {
@@ -133,7 +132,6 @@ public class DynamicQuestions {
         this.updatingHundredPercent = false;
         this.questionColumnSuffix = questionColumnSuffix;
     }
-
 
     public static DynamicQuestions getInstance(Context context, String questionColumnSuffix, DataLayer dl) {
         if (instance == null) {
@@ -148,7 +146,6 @@ public class DynamicQuestions {
         }
         return instance;
     }
-
 
    public static void clearInstance() {
 
@@ -240,7 +237,6 @@ public class DynamicQuestions {
         return completedQuestionIds.containsAll(requiredQuestionIds);
     }
 
-
     public boolean requiredFieldsMinMaxAnswered(int farmerModuleId, int moduleId) {
         boolean status = true;
 
@@ -313,7 +309,6 @@ public class DynamicQuestions {
         }
         return ans;
     }
-
 
     public boolean requiredFieldsAnsweredChild(int farmerModuleId, int moduleId) {
         Cursor completedAnswers = dl.getAllAnswersByFarmerChildModuleId(farmerModuleId);
@@ -668,7 +663,6 @@ public class DynamicQuestions {
         }
         return  match;
     }
-
 
     private String getAnswerMinMaxvalidation(int questionId, int answerId) {
         String ans = "noval";

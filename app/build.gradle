@@ -41,6 +41,13 @@ android {
         versionName "11.5.2"
 
 
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments += ["room.schemaLocation": "$projectDir/schemas".toString()]
+            }
+        }
+
+
     }
     buildTypes {
         debug {

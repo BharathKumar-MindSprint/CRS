@@ -66,7 +66,7 @@ public class Interceptor implements okhttp3.Interceptor {
                     Toast.makeText(context, t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
-            SystemClock.sleep(2000);
+            SystemClock.sleep(4000);
             return new_response;
         }
         return response;

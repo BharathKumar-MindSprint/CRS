@@ -19,6 +19,9 @@ public interface DmQuestionsModuleDao {
     @Query("SELECT * FROM DmQuestionsModule WHERE moduleId=:id")
     List<DmQuestionsModule> getDmQuestionsModulebyModuleId(int id);
 
+    @Query("SELECT * FROM DmQuestionsModule WHERE id=:id")
+    List<DmQuestionsModule> getDmQuestionType(int id);
+
     @Insert
     void insert(DmQuestionsModule... dmQuestionsModules);
 

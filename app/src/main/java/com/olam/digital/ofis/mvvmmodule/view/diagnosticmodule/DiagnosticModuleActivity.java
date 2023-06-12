@@ -95,7 +95,7 @@ public class DiagnosticModuleActivity extends BaseActivity {
 
         enumerator_id = Utilities.getFromSharedPrefs(context);
 
-        Log.d("ENUMERATOR_IDDD",enumerator_id);
+        Log.d("ENUMERATOR_IDDD", enumerator_id);
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
@@ -241,6 +241,7 @@ public class DiagnosticModuleActivity extends BaseActivity {
                         db.dmRangeTextBoxModuleQuestionsTableDao().deleteAll();
                         db.dmTextBoxModuleQuestionsDao().deleteAll();
                         db.dmRangeTextBoxModuleQuestionsTableDao().deleteAll();
+                        db.complianceIndicatorDao().deleteAll();
 
 
                         if (response.body().getDiagnosticModules() != null) {
@@ -284,7 +285,7 @@ public class DiagnosticModuleActivity extends BaseActivity {
                                 questionsItemList.clear();
                                 questionsItemList = mainResponseList.get(i).getQuestions();
 
-                               List<SectionsItem> sectionsItemList = mainResponseList.get(i).getSections();
+                                List<SectionsItem> sectionsItemList = mainResponseList.get(i).getSections();
                                 Recurrence recurrences = mainResponseList.get(i).getRecurrence();
 
                                 DmMainModule user = new DmMainModule();
@@ -414,7 +415,7 @@ public class DiagnosticModuleActivity extends BaseActivity {
                                     lookupValuesItemList.clear();
                                     lookupValuesItemList = questionsItemList.get(l).getLookupValues();
 
-                                    TextBoxModuleQuestions textBoxModuleQuestions =  questionsItemList.get(l).getTextBoxModuleQuestions();
+                                    TextBoxModuleQuestions textBoxModuleQuestions = questionsItemList.get(l).getTextBoxModuleQuestions();
 
 
                                     if (lookupValuesItemList != null) {
@@ -483,7 +484,7 @@ public class DiagnosticModuleActivity extends BaseActivity {
                                         }
                                     }
 
-                                    if(textBoxModuleQuestions != null){
+                                    if (textBoxModuleQuestions != null) {
                                         int answerType = textBoxModuleQuestions.getAnswerType();
                                         boolean isAllowNegative = textBoxModuleQuestions.isAllowNegative();
                                         boolean isAllowDecimal = textBoxModuleQuestions.isAllowDecimal();
@@ -499,214 +500,213 @@ public class DiagnosticModuleActivity extends BaseActivity {
                                         dmTextBoxModuleQuestions.questionId = id_questionModule;
                                         db.dmTextBoxModuleQuestionsDao().insert(dmTextBoxModuleQuestions);
 
-                                        List <DmRangeTextBoxModuleQuestions> dmRangeTextBoxModuleQuestionsList = new  ArrayList<>();
+                                        List<DmRangeTextBoxModuleQuestions> dmRangeTextBoxModuleQuestionsList = new ArrayList<>();
                                         dmRangeTextBoxModuleQuestionsList.clear();
                                         dmRangeTextBoxModuleQuestionsList = textBoxModuleQuestions.getDmRangeQuestionsList();
 
-                                            if(dmRangeTextBoxModuleQuestionsList !=null){
-                                                for (int r = 0; r < dmRangeTextBoxModuleQuestionsList.size(); r++) {
-                                                    double minimumRange_range = dmRangeTextBoxModuleQuestionsList.get(r).getMinimumRange();
-                                                    double maximumRange_range = dmRangeTextBoxModuleQuestionsList.get(r).getMaximumRange();
-                                                    String compliance = dmRangeTextBoxModuleQuestionsList.get(r).getCompliance();
-                                                    int complianceId = dmRangeTextBoxModuleQuestionsList.get(r).getComplianceId();
-                                                    boolean allowCustomActionPlan = dmRangeTextBoxModuleQuestionsList.get(r).isAllowCustomActionPlan();
-                                                    boolean isCaptureProof = dmRangeTextBoxModuleQuestionsList.get(r).isCaptureProof();
-                                                    String proofFormat = dmRangeTextBoxModuleQuestionsList.get(r).getProofFormat();
+                                        if (dmRangeTextBoxModuleQuestionsList != null) {
+                                            for (int r = 0; r < dmRangeTextBoxModuleQuestionsList.size(); r++) {
+                                                double minimumRange_range = dmRangeTextBoxModuleQuestionsList.get(r).getMinimumRange();
+                                                double maximumRange_range = dmRangeTextBoxModuleQuestionsList.get(r).getMaximumRange();
+                                                String compliance = dmRangeTextBoxModuleQuestionsList.get(r).getCompliance();
+                                                int complianceId = dmRangeTextBoxModuleQuestionsList.get(r).getComplianceId();
+                                                boolean allowCustomActionPlan = dmRangeTextBoxModuleQuestionsList.get(r).isAllowCustomActionPlan();
+                                                boolean isCaptureProof = dmRangeTextBoxModuleQuestionsList.get(r).isCaptureProof();
+                                                String proofFormat = dmRangeTextBoxModuleQuestionsList.get(r).getProofFormat();
 
-                                                    DmRangeTextBoxModuleQuestionsTable dmRangeTextBoxModuleQuestionsTable = new DmRangeTextBoxModuleQuestionsTable();
-                                                    dmRangeTextBoxModuleQuestionsTable.minimumRange = minimumRange_range;
-                                                    dmRangeTextBoxModuleQuestionsTable.maximumRange = maximumRange_range;
-                                                    dmRangeTextBoxModuleQuestionsTable.compliance = compliance;
-                                                    dmRangeTextBoxModuleQuestionsTable.complianceId = complianceId;
-                                                    dmRangeTextBoxModuleQuestionsTable.allowCustomActionPlan = allowCustomActionPlan;
-                                                    dmRangeTextBoxModuleQuestionsTable.isCaptureProof = isCaptureProof;
-                                                    dmRangeTextBoxModuleQuestionsTable.proofFormat = proofFormat;
-                                                    dmRangeTextBoxModuleQuestionsTable.questionId = id_questionModule;
-                                                    db.dmRangeTextBoxModuleQuestionsTableDao().insert(dmRangeTextBoxModuleQuestionsTable);
-
-                                                }
+                                                DmRangeTextBoxModuleQuestionsTable dmRangeTextBoxModuleQuestionsTable = new DmRangeTextBoxModuleQuestionsTable();
+                                                dmRangeTextBoxModuleQuestionsTable.minimumRange = minimumRange_range;
+                                                dmRangeTextBoxModuleQuestionsTable.maximumRange = maximumRange_range;
+                                                dmRangeTextBoxModuleQuestionsTable.compliance = compliance;
+                                                dmRangeTextBoxModuleQuestionsTable.complianceId = complianceId;
+                                                dmRangeTextBoxModuleQuestionsTable.allowCustomActionPlan = allowCustomActionPlan;
+                                                dmRangeTextBoxModuleQuestionsTable.isCaptureProof = isCaptureProof;
+                                                dmRangeTextBoxModuleQuestionsTable.proofFormat = proofFormat;
+                                                dmRangeTextBoxModuleQuestionsTable.questionId = id_questionModule;
+                                                db.dmRangeTextBoxModuleQuestionsTableDao().insert(dmRangeTextBoxModuleQuestionsTable);
 
                                             }
+
+                                        }
 
 
                                     }
 
 
-
                                 }
 
-                               for (int s = 0; s < sectionsItemList.size(); s++) {
-                                   String nameTh_Sec = sectionsItemList.get(s).getNameTh();
-                                   String nameVi_Sec = sectionsItemList.get(s).getNameVi();
-                                   String namePt_Sec = sectionsItemList.get(s).getNamePt();
-                                   String nameLo_Sec = sectionsItemList.get(s).getNameLo();
-                                   String nameEs_Sec = sectionsItemList.get(s).getNameEs();
-                                   String nameFr_Sec = sectionsItemList.get(s).getNameFr();
-                                   String nameTr_Sec = sectionsItemList.get(s).getNameTr();
-                                   String name_Sec = sectionsItemList.get(s).getName();
-                                   String nameId_Sec = sectionsItemList.get(s).getNameId();
-                                   String description_Sec = sectionsItemList.get(s).getDescription();
-                                   String descriptionPt_Sec = sectionsItemList.get(s).getDescriptionPt();
-                                   String descriptionVi_Sec = sectionsItemList.get(s).getDescriptionVi();
-                                   String descriptionFr_Sec = sectionsItemList.get(s).getDescriptionFr();
-                                   String descriptionEs_Sec = sectionsItemList.get(s).getDescriptionEs();
-                                   String descriptionTh_Sec = sectionsItemList.get(s).getDescriptionTh();
-                                   String descriptionLo_Sec = sectionsItemList.get(s).getDescriptionLo();
-                                   String descriptionIdn_Sec = sectionsItemList.get(s).getDescriptionIdn();
-                                   String descriptionTr_Sec = sectionsItemList.get(s).getDescriptionTr();
-                                   boolean isDefault_Sec = sectionsItemList.get(s).isDefault();
-                                   boolean showDescription_Sec = sectionsItemList.get(s).isShowDescription();
-                                   int id_Sec = sectionsItemList.get(s).getId();
-                                   int position_Sec = sectionsItemList.get(s).getPosition();
-                                   int moduleId_Sec = sectionsItemList.get(s).getModuleId();
+                                for (int s = 0; s < sectionsItemList.size(); s++) {
+                                    String nameTh_Sec = sectionsItemList.get(s).getNameTh();
+                                    String nameVi_Sec = sectionsItemList.get(s).getNameVi();
+                                    String namePt_Sec = sectionsItemList.get(s).getNamePt();
+                                    String nameLo_Sec = sectionsItemList.get(s).getNameLo();
+                                    String nameEs_Sec = sectionsItemList.get(s).getNameEs();
+                                    String nameFr_Sec = sectionsItemList.get(s).getNameFr();
+                                    String nameTr_Sec = sectionsItemList.get(s).getNameTr();
+                                    String name_Sec = sectionsItemList.get(s).getName();
+                                    String nameId_Sec = sectionsItemList.get(s).getNameId();
+                                    String description_Sec = sectionsItemList.get(s).getDescription();
+                                    String descriptionPt_Sec = sectionsItemList.get(s).getDescriptionPt();
+                                    String descriptionVi_Sec = sectionsItemList.get(s).getDescriptionVi();
+                                    String descriptionFr_Sec = sectionsItemList.get(s).getDescriptionFr();
+                                    String descriptionEs_Sec = sectionsItemList.get(s).getDescriptionEs();
+                                    String descriptionTh_Sec = sectionsItemList.get(s).getDescriptionTh();
+                                    String descriptionLo_Sec = sectionsItemList.get(s).getDescriptionLo();
+                                    String descriptionIdn_Sec = sectionsItemList.get(s).getDescriptionIdn();
+                                    String descriptionTr_Sec = sectionsItemList.get(s).getDescriptionTr();
+                                    boolean isDefault_Sec = sectionsItemList.get(s).isDefault();
+                                    boolean showDescription_Sec = sectionsItemList.get(s).isShowDescription();
+                                    int id_Sec = sectionsItemList.get(s).getId();
+                                    int position_Sec = sectionsItemList.get(s).getPosition();
+                                    int moduleId_Sec = sectionsItemList.get(s).getModuleId();
 
-                                   DmSectionsItem dmSectionsItem = new DmSectionsItem();
-                                   dmSectionsItem.nameTh = nameTh_Sec;
-                                   dmSectionsItem.nameVi = nameVi_Sec;
-                                   dmSectionsItem.namePt = namePt_Sec;
-                                   dmSectionsItem.nameLo = nameLo_Sec;
-                                   dmSectionsItem.nameEs = nameEs_Sec;
-                                   dmSectionsItem.nameFr = nameFr_Sec;
-                                   dmSectionsItem.nameTr = nameTr_Sec;
-                                   dmSectionsItem.name = name_Sec;
-                                   dmSectionsItem.nameId = nameId_Sec;
-                                   dmSectionsItem.description = description_Sec;
-                                   dmSectionsItem.descriptionPt = descriptionPt_Sec;
-                                   dmSectionsItem.descriptionVi = descriptionVi_Sec;
-                                   dmSectionsItem.descriptionFr = descriptionFr_Sec;
-                                   dmSectionsItem.descriptionEs = descriptionEs_Sec;
-                                   dmSectionsItem.descriptionTh = descriptionTh_Sec;
-                                   dmSectionsItem.descriptionLo = descriptionLo_Sec;
-                                   dmSectionsItem.descriptionIdn = descriptionIdn_Sec;
-                                   dmSectionsItem.descriptionTr = descriptionTr_Sec;
-                                   dmSectionsItem.isDefault = isDefault_Sec;
-                                   dmSectionsItem.showDescription = showDescription_Sec;
-                                   dmSectionsItem.id = id_Sec;
-                                   dmSectionsItem.position = position_Sec;
-                                   dmSectionsItem.moduleId = moduleId_Sec;
-                                   db.dmSectionsItemDao().insert(dmSectionsItem);
+                                    DmSectionsItem dmSectionsItem = new DmSectionsItem();
+                                    dmSectionsItem.nameTh = nameTh_Sec;
+                                    dmSectionsItem.nameVi = nameVi_Sec;
+                                    dmSectionsItem.namePt = namePt_Sec;
+                                    dmSectionsItem.nameLo = nameLo_Sec;
+                                    dmSectionsItem.nameEs = nameEs_Sec;
+                                    dmSectionsItem.nameFr = nameFr_Sec;
+                                    dmSectionsItem.nameTr = nameTr_Sec;
+                                    dmSectionsItem.name = name_Sec;
+                                    dmSectionsItem.nameId = nameId_Sec;
+                                    dmSectionsItem.description = description_Sec;
+                                    dmSectionsItem.descriptionPt = descriptionPt_Sec;
+                                    dmSectionsItem.descriptionVi = descriptionVi_Sec;
+                                    dmSectionsItem.descriptionFr = descriptionFr_Sec;
+                                    dmSectionsItem.descriptionEs = descriptionEs_Sec;
+                                    dmSectionsItem.descriptionTh = descriptionTh_Sec;
+                                    dmSectionsItem.descriptionLo = descriptionLo_Sec;
+                                    dmSectionsItem.descriptionIdn = descriptionIdn_Sec;
+                                    dmSectionsItem.descriptionTr = descriptionTr_Sec;
+                                    dmSectionsItem.isDefault = isDefault_Sec;
+                                    dmSectionsItem.showDescription = showDescription_Sec;
+                                    dmSectionsItem.id = id_Sec;
+                                    dmSectionsItem.position = position_Sec;
+                                    dmSectionsItem.moduleId = moduleId_Sec;
+                                    db.dmSectionsItemDao().insert(dmSectionsItem);
 
-                                   List<QuestionsSectionItemSubmodule> questionsSectionItemSubmoduleList = new ArrayList<>();
-                                   questionsSectionItemSubmoduleList.clear();
-                                   questionsSectionItemSubmoduleList = sectionsItemList.get(s).getQuestions();
+                                    List<QuestionsSectionItemSubmodule> questionsSectionItemSubmoduleList = new ArrayList<>();
+                                    questionsSectionItemSubmoduleList.clear();
+                                    questionsSectionItemSubmoduleList = sectionsItemList.get(s).getQuestions();
 
-                                   Log.d("secquestiionnsss",".."+questionsSectionItemSubmoduleList.size());
+                                    Log.d("secquestiionnsss", ".." + questionsSectionItemSubmoduleList.size());
 
-                                   for (int t = 0; t < questionsSectionItemSubmoduleList.size(); t++) {
+                                    for (int t = 0; t < questionsSectionItemSubmoduleList.size(); t++) {
 
-                                       boolean mandate = questionsSectionItemSubmoduleList.get(t).isMandate();
-                                       String textBox = questionsSectionItemSubmoduleList.get(t).getTextBox();
-                                       String question = questionsSectionItemSubmoduleList.get(t).getQuestion();
-                                       String questionTr = questionsSectionItemSubmoduleList.get(t).getQuestionTr();
-                                       String questionPt = questionsSectionItemSubmoduleList.get(t).getQuestionPt();
-                                       String questionLo = questionsSectionItemSubmoduleList.get(t).getQuestionLo();
-                                       String questionFr = questionsSectionItemSubmoduleList.get(t).getQuestionFr();
-                                       String questionIdn = questionsSectionItemSubmoduleList.get(t).getQuestionIdn();
-                                       String questionEs = questionsSectionItemSubmoduleList.get(t).getQuestionEs();
-                                       String questionTh = questionsSectionItemSubmoduleList.get(t).getQuestionTh();
-                                       String questionVi = questionsSectionItemSubmoduleList.get(t).getQuestionVi();
-                                       int displaytypeId = questionsSectionItemSubmoduleList.get(t).getDisplaytypeId();
-                                       int datatypeId = questionsSectionItemSubmoduleList.get(t).getDatatypeId();
-                                       boolean isCriticalQuest = questionsSectionItemSubmoduleList.get(t).isCriticalQuest();
-                                       String displayType = questionsSectionItemSubmoduleList.get(t).getDisplayType();
-                                       int id_questionSubModule = questionsSectionItemSubmoduleList.get(t).getId();
-                                       int position = questionsSectionItemSubmoduleList.get(t).getPosition();
-                                       int moduleId = questionsSectionItemSubmoduleList.get(t).getModuleId();
-                                       int submoduleId = questionsSectionItemSubmoduleList.get(t).getSubmoduleId();
+                                        boolean mandate = questionsSectionItemSubmoduleList.get(t).isMandate();
+                                        String textBox = questionsSectionItemSubmoduleList.get(t).getTextBox();
+                                        String question = questionsSectionItemSubmoduleList.get(t).getQuestion();
+                                        String questionTr = questionsSectionItemSubmoduleList.get(t).getQuestionTr();
+                                        String questionPt = questionsSectionItemSubmoduleList.get(t).getQuestionPt();
+                                        String questionLo = questionsSectionItemSubmoduleList.get(t).getQuestionLo();
+                                        String questionFr = questionsSectionItemSubmoduleList.get(t).getQuestionFr();
+                                        String questionIdn = questionsSectionItemSubmoduleList.get(t).getQuestionIdn();
+                                        String questionEs = questionsSectionItemSubmoduleList.get(t).getQuestionEs();
+                                        String questionTh = questionsSectionItemSubmoduleList.get(t).getQuestionTh();
+                                        String questionVi = questionsSectionItemSubmoduleList.get(t).getQuestionVi();
+                                        int displaytypeId = questionsSectionItemSubmoduleList.get(t).getDisplaytypeId();
+                                        int datatypeId = questionsSectionItemSubmoduleList.get(t).getDatatypeId();
+                                        boolean isCriticalQuest = questionsSectionItemSubmoduleList.get(t).isCriticalQuest();
+                                        String displayType = questionsSectionItemSubmoduleList.get(t).getDisplayType();
+                                        int id_questionSubModule = questionsSectionItemSubmoduleList.get(t).getId();
+                                        int position = questionsSectionItemSubmoduleList.get(t).getPosition();
+                                        int moduleId = questionsSectionItemSubmoduleList.get(t).getModuleId();
+                                        int submoduleId = questionsSectionItemSubmoduleList.get(t).getSubmoduleId();
 
-                                       DmQuestionsSubModule dmQuestionsSubModule = new DmQuestionsSubModule();
-                                       dmQuestionsSubModule.mandate = mandate;
-                                       dmQuestionsSubModule.textBox = textBox;
-                                       dmQuestionsSubModule.question = question;
-                                       dmQuestionsSubModule.questionTr = questionTr;
-                                       dmQuestionsSubModule.questionPt = questionPt;
-                                       dmQuestionsSubModule.questionLo = questionLo;
-                                       dmQuestionsSubModule.questionFr = questionFr;
-                                       dmQuestionsSubModule.sectionId = id_Sec;
-                                       dmQuestionsSubModule.questionIdn = questionIdn;
-                                       dmQuestionsSubModule.questionEs = questionEs;
-                                       dmQuestionsSubModule.questionTh = questionTh;
-                                       dmQuestionsSubModule.questionVi = questionVi;
-                                       dmQuestionsSubModule.displaytypeId = displaytypeId;
-                                       dmQuestionsSubModule.datatypeId = datatypeId;
-                                       dmQuestionsSubModule.isCriticalQuest = isCriticalQuest;
-                                       dmQuestionsSubModule.displayType = displayType;
-                                       dmQuestionsSubModule.id = id_questionSubModule;
-                                       dmQuestionsSubModule.position = position;
-                                       dmQuestionsSubModule.moduleId = moduleId;
-                                       dmQuestionsSubModule.submoduleId = submoduleId;
-                                       db.dmQuestionsSubModuleDao().insert(dmQuestionsSubModule);
+                                        DmQuestionsSubModule dmQuestionsSubModule = new DmQuestionsSubModule();
+                                        dmQuestionsSubModule.mandate = mandate;
+                                        dmQuestionsSubModule.textBox = textBox;
+                                        dmQuestionsSubModule.question = question;
+                                        dmQuestionsSubModule.questionTr = questionTr;
+                                        dmQuestionsSubModule.questionPt = questionPt;
+                                        dmQuestionsSubModule.questionLo = questionLo;
+                                        dmQuestionsSubModule.questionFr = questionFr;
+                                        dmQuestionsSubModule.sectionId = id_Sec;
+                                        dmQuestionsSubModule.questionIdn = questionIdn;
+                                        dmQuestionsSubModule.questionEs = questionEs;
+                                        dmQuestionsSubModule.questionTh = questionTh;
+                                        dmQuestionsSubModule.questionVi = questionVi;
+                                        dmQuestionsSubModule.displaytypeId = displaytypeId;
+                                        dmQuestionsSubModule.datatypeId = datatypeId;
+                                        dmQuestionsSubModule.isCriticalQuest = isCriticalQuest;
+                                        dmQuestionsSubModule.displayType = displayType;
+                                        dmQuestionsSubModule.id = id_questionSubModule;
+                                        dmQuestionsSubModule.position = position;
+                                        dmQuestionsSubModule.moduleId = moduleId;
+                                        dmQuestionsSubModule.submoduleId = submoduleId;
+                                        db.dmQuestionsSubModuleDao().insert(dmQuestionsSubModule);
 
-                                       List<SectionLookupValuesItemSubmodule> sectionLookupValuesItemSubmoduleList = new ArrayList<>();
-                                       sectionLookupValuesItemSubmoduleList.clear();
-                                       sectionLookupValuesItemSubmoduleList = questionsSectionItemSubmoduleList.get(t).getLookupValues();
+                                        List<SectionLookupValuesItemSubmodule> sectionLookupValuesItemSubmoduleList = new ArrayList<>();
+                                        sectionLookupValuesItemSubmoduleList.clear();
+                                        sectionLookupValuesItemSubmoduleList = questionsSectionItemSubmoduleList.get(t).getLookupValues();
 
-                                       if (sectionLookupValuesItemSubmoduleList != null) {
-                                           for (int u = 0; u < sectionLookupValuesItemSubmoduleList.size(); u++) {
+                                        if (sectionLookupValuesItemSubmoduleList != null) {
+                                            for (int u = 0; u < sectionLookupValuesItemSubmoduleList.size(); u++) {
 
-                                               int valueId = sectionLookupValuesItemSubmoduleList.get(u).getValueId();
-                                               String valueTr = sectionLookupValuesItemSubmoduleList.get(u).getValueTr();
-                                               String valueVi = sectionLookupValuesItemSubmoduleList.get(u).getValueVi();
-                                               String valueTh = sectionLookupValuesItemSubmoduleList.get(u).getValueTh();
-                                               String valueEs = sectionLookupValuesItemSubmoduleList.get(u).getValueEs();
-                                               String valueFr = sectionLookupValuesItemSubmoduleList.get(u).getValueFr();
-                                               String valueLo = sectionLookupValuesItemSubmoduleList.get(u).getValueLo();
-                                               String valuePt = sectionLookupValuesItemSubmoduleList.get(u).getValuePt();
-                                               String value = sectionLookupValuesItemSubmoduleList.get(u).getValue();
-                                               int position_lookupValues = sectionLookupValuesItemSubmoduleList.get(u).getPosition();
-                                               int id_lookupValues = sectionLookupValuesItemSubmoduleList.get(u).getId();
-                                               boolean allowCustomActionPlan = sectionLookupValuesItemSubmoduleList.get(u).isAllowCustomActionPlan();
-                                               String compliance = sectionLookupValuesItemSubmoduleList.get(u).getCompliance();
-                                               int complianceId = sectionLookupValuesItemSubmoduleList.get(u).getComplianceId();
-                                               boolean isCaptureProof = sectionLookupValuesItemSubmoduleList.get(u).isCaptureProof();
-                                               String proofFormat = sectionLookupValuesItemSubmoduleList.get(u).getProofFormat();
+                                                int valueId = sectionLookupValuesItemSubmoduleList.get(u).getValueId();
+                                                String valueTr = sectionLookupValuesItemSubmoduleList.get(u).getValueTr();
+                                                String valueVi = sectionLookupValuesItemSubmoduleList.get(u).getValueVi();
+                                                String valueTh = sectionLookupValuesItemSubmoduleList.get(u).getValueTh();
+                                                String valueEs = sectionLookupValuesItemSubmoduleList.get(u).getValueEs();
+                                                String valueFr = sectionLookupValuesItemSubmoduleList.get(u).getValueFr();
+                                                String valueLo = sectionLookupValuesItemSubmoduleList.get(u).getValueLo();
+                                                String valuePt = sectionLookupValuesItemSubmoduleList.get(u).getValuePt();
+                                                String value = sectionLookupValuesItemSubmoduleList.get(u).getValue();
+                                                int position_lookupValues = sectionLookupValuesItemSubmoduleList.get(u).getPosition();
+                                                int id_lookupValues = sectionLookupValuesItemSubmoduleList.get(u).getId();
+                                                boolean allowCustomActionPlan = sectionLookupValuesItemSubmoduleList.get(u).isAllowCustomActionPlan();
+                                                String compliance = sectionLookupValuesItemSubmoduleList.get(u).getCompliance();
+                                                int complianceId = sectionLookupValuesItemSubmoduleList.get(u).getComplianceId();
+                                                boolean isCaptureProof = sectionLookupValuesItemSubmoduleList.get(u).isCaptureProof();
+                                                String proofFormat = sectionLookupValuesItemSubmoduleList.get(u).getProofFormat();
 
-                                               DmLookupValuesISubmodule dmLookupValuesISubmodule = new DmLookupValuesISubmodule();
-                                               dmLookupValuesISubmodule.valueId = valueId;
-                                               dmLookupValuesISubmodule.valueTr = valueTr;
-                                               dmLookupValuesISubmodule.valueVi = valueVi;
-                                               dmLookupValuesISubmodule.valueTh = valueTh;
-                                               dmLookupValuesISubmodule.valueEs = valueEs;
-                                               dmLookupValuesISubmodule.valueFr = valueFr;
-                                               dmLookupValuesISubmodule.valueLo = valueLo;
-                                               dmLookupValuesISubmodule.valuePt = valuePt;
-                                               dmLookupValuesISubmodule.value = value;
-                                               dmLookupValuesISubmodule.position = position_lookupValues;
-                                               dmLookupValuesISubmodule.id = id_lookupValues;
-                                               dmLookupValuesISubmodule.idQuestionSubModule = id_questionSubModule;
-                                               dmLookupValuesISubmodule.allowCustomActionPlan = allowCustomActionPlan;
-                                               dmLookupValuesISubmodule.compliance = compliance;
-                                               dmLookupValuesISubmodule.complianceId = complianceId;
-                                               dmLookupValuesISubmodule.isCaptureProof = isCaptureProof;
-                                               dmLookupValuesISubmodule.proofFormat = proofFormat;
+                                                DmLookupValuesISubmodule dmLookupValuesISubmodule = new DmLookupValuesISubmodule();
+                                                dmLookupValuesISubmodule.valueId = valueId;
+                                                dmLookupValuesISubmodule.valueTr = valueTr;
+                                                dmLookupValuesISubmodule.valueVi = valueVi;
+                                                dmLookupValuesISubmodule.valueTh = valueTh;
+                                                dmLookupValuesISubmodule.valueEs = valueEs;
+                                                dmLookupValuesISubmodule.valueFr = valueFr;
+                                                dmLookupValuesISubmodule.valueLo = valueLo;
+                                                dmLookupValuesISubmodule.valuePt = valuePt;
+                                                dmLookupValuesISubmodule.value = value;
+                                                dmLookupValuesISubmodule.position = position_lookupValues;
+                                                dmLookupValuesISubmodule.id = id_lookupValues;
+                                                dmLookupValuesISubmodule.idQuestionSubModule = id_questionSubModule;
+                                                dmLookupValuesISubmodule.allowCustomActionPlan = allowCustomActionPlan;
+                                                dmLookupValuesISubmodule.compliance = compliance;
+                                                dmLookupValuesISubmodule.complianceId = complianceId;
+                                                dmLookupValuesISubmodule.isCaptureProof = isCaptureProof;
+                                                dmLookupValuesISubmodule.proofFormat = proofFormat;
 
-                                               db.dmLookupValuesISubmoduleDao().insert(dmLookupValuesISubmodule);
+                                                db.dmLookupValuesISubmoduleDao().insert(dmLookupValuesISubmodule);
 
 
-                                               List<SectionActionPlansItemSubmodule> sectionActionPlansItemSubmoduleList = new ArrayList<>();
-                                               sectionActionPlansItemSubmoduleList.clear();
-                                               sectionActionPlansItemSubmoduleList = sectionLookupValuesItemSubmoduleList.get(u).getActionPlans();
+                                                List<SectionActionPlansItemSubmodule> sectionActionPlansItemSubmoduleList = new ArrayList<>();
+                                                sectionActionPlansItemSubmoduleList.clear();
+                                                sectionActionPlansItemSubmoduleList = sectionLookupValuesItemSubmoduleList.get(u).getActionPlans();
 
-                                               if (sectionActionPlansItemSubmoduleList != null) {
-                                                   for (int v = 0; v < sectionActionPlansItemSubmoduleList.size(); v++) {
-                                                       int id_actionPlan = sectionActionPlansItemSubmoduleList.get(v).getId();
-                                                       boolean isDefault = sectionActionPlansItemSubmoduleList.get(v).isIsDefault();
-                                                       String actionPlan = sectionActionPlansItemSubmoduleList.get(v).getActionPlan();
+                                                if (sectionActionPlansItemSubmoduleList != null) {
+                                                    for (int v = 0; v < sectionActionPlansItemSubmoduleList.size(); v++) {
+                                                        int id_actionPlan = sectionActionPlansItemSubmoduleList.get(v).getId();
+                                                        boolean isDefault = sectionActionPlansItemSubmoduleList.get(v).isIsDefault();
+                                                        String actionPlan = sectionActionPlansItemSubmoduleList.get(v).getActionPlan();
 
-                                                       DmActionPlansItemSubmodule dmActionPlansItemSubmodule = new DmActionPlansItemSubmodule();
-                                                       dmActionPlansItemSubmodule.id = id_actionPlan;
-                                                       dmActionPlansItemSubmodule.isDefault = isDefault;
-                                                       dmActionPlansItemSubmodule.actionPlan = actionPlan;
+                                                        DmActionPlansItemSubmodule dmActionPlansItemSubmodule = new DmActionPlansItemSubmodule();
+                                                        dmActionPlansItemSubmodule.id = id_actionPlan;
+                                                        dmActionPlansItemSubmodule.isDefault = isDefault;
+                                                        dmActionPlansItemSubmodule.actionPlan = actionPlan;
 
-                                                       db.dmActionPlansItemSubmoduleDao().insert(dmActionPlansItemSubmodule);
-                                                   }
-                                               }
+                                                        db.dmActionPlansItemSubmoduleDao().insert(dmActionPlansItemSubmodule);
+                                                    }
+                                                }
 
-                                           }
-                                       }
-                                   }
+                                            }
+                                        }
+                                    }
 
-                               }
+                                }
 
                                 if (recurrences != null) {
                                     int recurrenceFrequency = recurrences.getRecurrenceFrequency();
