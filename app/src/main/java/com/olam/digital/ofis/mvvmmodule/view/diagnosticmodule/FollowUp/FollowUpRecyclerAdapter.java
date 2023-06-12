@@ -14,7 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.olam.digital.ofis.R;
-import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.DiagnosticModel;
+//import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.DiagnosticModel;
 import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.DiagnosticModuleActivity;
 import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.DiagnosticModuleFollowUp;
 

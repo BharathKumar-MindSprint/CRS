@@ -126,7 +126,6 @@ import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmRangeTextBoxModuleQuesti
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmRecurrence;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmSectionsItem;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmTextBoxModuleQuestions;
-import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.DiagnosticModuleActivity;
 import com.olam.digital.ofis.recordpolygon.RecordPolygonActivity;
 
 import org.json.JSONException;
@@ -1251,6 +1250,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                     AddInfrastructureActivity.infrastructureID = 0;
                     Intent intent = new Intent(context, AddInfrastructureActivity.class);
                     context.startActivity(intent);
+//                    GetAllDiagnosticModule();
                 }
             });
 
@@ -1835,7 +1835,10 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 }else{
                    // showAlert("Server Issue!!"+response.message().toString());
                 }
-               // GetAllDiagnosticModuleHome();
+                boolean isEnableDM = Utilities.getBoolFromSharedPrefs(staticContext, Utilities.DM_ENUMERATOR,false);
+                if(isEnableDM) {
+                    GetAllDiagnosticModule();
+                }
             }
             @Override
             public void onFailure(Call<DownloadFormList> call, Throwable t) {
@@ -1844,7 +1847,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                // GetAllDiagnosticModuleHome();
             }
         });
-       // GetAllDiagnosticModuleHome();
+
     }
 
     private static void showAlert(String msg) {
@@ -1871,15 +1874,15 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     }
 
 
-    public void GetAllDiagnosticModuleNew() {
+    public static void GetAllDiagnosticModule() {
 
         ManageRecords AllDiagnosticModuleData = RetrofitClient.getRetrofit().create(ManageRecords.class);
-        Call<ResponseModel> call = AllDiagnosticModuleData.getAllDiagnosticModuleData(Integer.valueOf(enumeratorID.getText().toString()));
+        Call<ResponseModel> call = AllDiagnosticModuleData.getAllDiagnosticModuleData(Integer.valueOf(Utilities.getFromSharedPrefs(staticContext)));
         call.enqueue(new Callback<ResponseModel>() {
             @Override
             public void onResponse(Call<ResponseModel> call, Response<ResponseModel> response) {
 
-                OFISRoomDB db = OFISRoomDB.getDbInstance(HomeActivity.this);
+                OFISRoomDB db = OFISRoomDB.getDbInstance(staticContext);
 
                 try {
                     if (response.code() == 200) {
