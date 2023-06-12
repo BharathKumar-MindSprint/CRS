@@ -6,6 +6,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -35,7 +36,9 @@ import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 import android.text.Editable;
 import android.text.InputFilter;
+import android.text.InputType;
 import android.text.TextWatcher;
+import android.text.method.DigitsKeyListener;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -487,7 +490,7 @@ public class ActionPlanProofFragment extends Fragment {
 
         final Spinner spinner = new Spinner(getActivity());
 
-        spinner.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        spinner.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT , 1));
         spinner.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.spinner_bg_light));
 
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(getActivity(), R.layout.spinner_item, list);
@@ -505,6 +508,26 @@ public class ActionPlanProofFragment extends Fragment {
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
+
+
+        // data for currency sign and textBox START \/
+        LinearLayout.LayoutParams monetaryMainLayoutParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                dpToPx(getContext(), 45));
+        // setting margin for the layout which contain spinner and currency indicator and editText
+        monetaryMainLayoutParams.setMargins(0, dpToPx(getContext(), 5), 0, dpToPx(getContext(), 5));
+
+        LinearLayout monetaryMainLayout = new LinearLayout(getContext());
+        monetaryMainLayout.setLayoutParams(monetaryMainLayoutParams);
+        monetaryMainLayout.setOrientation(LinearLayout.HORIZONTAL);
+
+
+        // this contain currency indicator and editText
+        LinearLayout dollarSignLayout = createDollarSignLayout();
+
+        monetaryMainLayout.addView(spinner);
+        monetaryMainLayout.addView(dollarSignLayout);
+        // data for currency sign and textBox END /\
 
         EditText actionPlan = new EditText(getActivity());
         actionPlan.setHint("Edit action plan details");
@@ -567,7 +590,8 @@ public class ActionPlanProofFragment extends Fragment {
         if (linearLayoutAll != null) {
             linearLayoutAll.addView(editText);
             linearLayoutAll.addView(textView);
-            linearLayoutAll.addView(spinner);
+//            linearLayoutAll.addView(spinner);
+            linearLayoutAll.addView(monetaryMainLayout);
             linearLayoutAll.addView(linearLayoutImage);
         }
         dm_question_complaint.addView(linearLayoutAll);
@@ -1497,5 +1521,59 @@ public class ActionPlanProofFragment extends Fragment {
         return null;
     }
 
+
+    private LinearLayout createDollarSignLayout() {
+        LinearLayout.LayoutParams dollarSignLayoutParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.MATCH_PARENT);
+        dollarSignLayoutParams.setMargins(dpToPx(getContext(), 7), 0, 0, 0);
+        dollarSignLayoutParams.gravity = Gravity.CENTER_VERTICAL | Gravity.START;
+
+        LinearLayout dollarSignLayout = new LinearLayout(getContext());
+        dollarSignLayout.setLayoutParams(dollarSignLayoutParams);
+        dollarSignLayout.setOrientation(LinearLayout.HORIZONTAL);
+
+        TextView dollarSignTextView = createDollarSignTextView();
+
+        EditText dollarEditText = createDollarEditText();
+
+        dollarSignLayout.addView(dollarSignTextView);
+        dollarSignLayout.addView(dollarEditText);
+        return dollarSignLayout;
+    }
+
+    private TextView createDollarSignTextView() {
+        LinearLayout.LayoutParams dollarSignTextLayoutParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.MATCH_PARENT);
+
+        TextView dollarSignTextView = new TextView(getContext());
+        dollarSignTextView.setLayoutParams(dollarSignTextLayoutParams);
+        dollarSignTextView.setText("$");
+        dollarSignTextView.setTextSize(10);
+        dollarSignTextView.setBackground(getActivity().getResources().getDrawable(R.drawable.answer_text_survey));
+        return dollarSignTextView;
+    }
+
+    private EditText createDollarEditText() {
+        LinearLayout.LayoutParams dollarEditTextLayoutParams = new LinearLayout.LayoutParams(
+                dpToPx(getContext(), 70),
+                LinearLayout.LayoutParams.MATCH_PARENT);
+
+        EditText dollarEditText = new EditText(getContext());
+        dollarEditText.setLayoutParams(dollarEditTextLayoutParams);
+        dollarEditText.setBackground(getActivity().getResources().getDrawable(R.drawable.answer_text_survey));
+        dollarEditText.setInputType(InputType.TYPE_CLASS_NUMBER);
+        dollarEditText.setHint("Amount");
+        dollarEditText.setTextSize(10);
+        dollarEditText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+        dollarEditText.setId(View.generateViewId());
+        return dollarEditText;
+    }
+
+    private int dpToPx(Context context, int dp) {
+        float density = context.getResources().getDisplayMetrics().density;
+        return Math.round(dp * density);
+    }
 
 }
