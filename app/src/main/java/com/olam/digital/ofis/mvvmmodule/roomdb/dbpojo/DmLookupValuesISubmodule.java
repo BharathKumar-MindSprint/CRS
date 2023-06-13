@@ -10,7 +10,7 @@ public class DmLookupValuesISubmodule {
     public int uid;
 
     @ColumnInfo(name = "valueId")
-    public int valueId;
+    public String valueId;
 
     @ColumnInfo(name = "valueTr")
     public String valueTr;

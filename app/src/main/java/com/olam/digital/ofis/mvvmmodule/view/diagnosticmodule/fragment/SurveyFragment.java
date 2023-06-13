@@ -71,7 +71,7 @@ public class SurveyFragment extends Fragment {
         db = OFISRoomDB.getDbInstance(getActivity());
         //db.dmSurveyAnswerTableDao().deleteAll();
 
-        List<DmSectionsItem> dmSectionsItemList = db.dmSectionsItemDao().getDmSectionsItem();
+        List<DmSectionsItem> dmSectionsItemList = db.dmSectionsItemDao().getDmSectionsByModuleId(Integer.parseInt(Constants.MODULE_ID));
         displaySectionItems(dmSectionsItemList);
 
         List<DmQuestionsModule> dmQuestionsModuleList = db.dmQuestionsModuleDao().getDmQuestionsModulebyModuleId(Integer.parseInt(Constants.MODULE_ID));
@@ -94,14 +94,25 @@ public class SurveyFragment extends Fragment {
 
                 ArrayList<String> qId = Constants.questionIds;
 
-                if (db.dmSurveyAnswerTableDao().getDataByModuleId(Constants.MODULE_ID).size() == Constants.questionIds.size()) {
+                ArrayList<String> qIdSections = Constants.questionIdsSection;
+
+                if (db.dmSurveyAnswerTableDao().getDataByModuleId(Constants.MODULE_ID).size() == Constants.questionIds.size()+Constants.questionIdsSection.size()) {
                     ViewPager2 viewPager = getActivity().findViewById(R.id.viewPager);
                     viewPager.setCurrentItem(1);
+                    Toast.makeText(getActivity(), "Ok Should go", Toast.LENGTH_SHORT).show();
                     for (int i = 0; i < Constants.questionIds.size(); i++) {
                         View desiredView = dm_Question.findViewWithTag(qId.get(i));
                         TextView textView = (TextView) desiredView;
                         textView.setVisibility(View.GONE);
                     }
+
+                    for (int j = 0; j < Constants.questionIdsSection.size(); j++) {
+                        View desiredView = dm_Section.findViewWithTag(qIdSections.get(j));
+                        TextView textView = (TextView) desiredView;
+                        textView.setVisibility(View.GONE);
+                    }
+
+
                 } else {
                     for (int i = 0; i < Constants.questionIds.size(); i++) {
 
@@ -121,11 +132,47 @@ public class SurveyFragment extends Fragment {
                                 // View not found
                             }
 
-                        } else if (type.equalsIgnoreCase("dropdown")) {
+                        }
+                        else if (type.equalsIgnoreCase("dropdown")) {
                             View desiredView = dm_Question.findViewWithTag(qId.get(i));
                             if (desiredView != null) {
                                 TextView textView = (TextView) desiredView;
                                 if (db.dmSurveyAnswerTableDao().getDataByQuestionId(qId.get(i)).size() == 0) {
+                                    textView.setVisibility(View.VISIBLE);
+                                } else {
+                                    textView.setVisibility(View.GONE);
+                                }
+                            } else {
+                                // View not found
+                            }
+
+                        }
+
+                    }
+
+                    for (int j = 0; j < Constants.questionIdsSection.size(); j++) {
+
+                        String type = db.dmQuestionsSubModuleDao().getDmQuestionType(Integer.parseInt(qIdSections.get(j))).get(0).displayType;
+
+                        if (type.equalsIgnoreCase("text box")) {
+
+                            View desiredView = dm_Section.findViewWithTag(qIdSections.get(j));
+                            if (desiredView != null) {
+                                TextView textView = (TextView) desiredView;
+                                if (db.dmSurveyAnswerTableDao().getDataByQuestionId(qIdSections.get(j)).size() == 0) {
+                                    textView.setVisibility(View.VISIBLE);
+                                } else {
+                                    textView.setVisibility(View.GONE);
+                                }
+                            } else {
+                                // View not found
+                            }
+
+                        } else if (type.equalsIgnoreCase("dropdown")) {
+                            View desiredView = dm_Section.findViewWithTag(qIdSections.get(j));
+                            if (desiredView != null) {
+                                TextView textView = (TextView) desiredView;
+                                if (db.dmSurveyAnswerTableDao().getDataByQuestionId(qIdSections.get(j)).size() == 0) {
                                     textView.setVisibility(View.VISIBLE);
                                 } else {
                                     textView.setVisibility(View.GONE);
@@ -147,7 +194,7 @@ public class SurveyFragment extends Fragment {
     }
 
     private void displaySectionQuestionItems(int section, List<DmQuestionsSubModule> dmQuestionsSubModuleList) {
-
+        Constants.questionIdsSection.clear();
         for (int j = 0; j < dmQuestionsSubModuleList.size(); j++) {
 
             DmQuestionsSubModule dmQuestionsSubModule = dmQuestionsSubModuleList.get(j);
@@ -158,6 +205,7 @@ public class SurveyFragment extends Fragment {
             //textView.setTypeface(null, Typeface.BOLD);
             dm_Section.addView(textView);
 
+            Constants.questionIdsSection.add(String.valueOf(dmQuestionsSubModule.id));
 
             if (dmQuestionsSubModule.displayType.equalsIgnoreCase("dropdown")) {
                 List<DmLookupValuesISubmodule> dmLookupValuesISubmoduleList = new ArrayList<>();
@@ -222,12 +270,17 @@ public class SurveyFragment extends Fragment {
         final List<String> list = new ArrayList<String>();
         list.clear();
 
+
         final List<String> ids = new ArrayList<String>();
         ids.clear();
+
 
         final List<String> complianceIds = new ArrayList<String>();
         complianceIds.clear();
 
+        list.add("Answer");
+        ids.add("0");
+        complianceIds.add("0");
 
         for (int k = 0; k < dmLookupValuesISubmoduleList.size(); k++) {
             list.add(dmLookupValuesISubmoduleList.get(k).value);
@@ -237,13 +290,24 @@ public class SurveyFragment extends Fragment {
 
 
         final Spinner spinner = new Spinner(getActivity());
+
+
+//        final Spinner spinner = (Spinner) inflater.inflate(R.layout.module_spinner,relativeLayout,false);
         spinner.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         spinner.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.spinner_bg_light));
 
-        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(getActivity(), R.layout.spinner_item, list);
 
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(getActivity(), R.layout.spinner_item, list);
         spinnerAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         spinner.setAdapter(spinnerAdapter);
+
+        TextView textView = new TextView(getActivity());
+        textView.setText("Please enter any drop down value");
+        textView.setTextColor(getResources().getColor(R.color.red_view_survey));
+        textView.setTextSize(12);
+        textView.setPadding(0, 15, 0, 0);
+        textView.setVisibility(View.GONE);
+        textView.setTag(questionId);
 
         String answerIdDb = "0";
 
@@ -266,19 +330,25 @@ public class SurveyFragment extends Fragment {
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                // Toast.makeText(getActivity(), "Selected Item " + list.get(position), Toast.LENGTH_SHORT).show();
-                String answerId = ids.get(position);
+                //Toast.makeText(getActivity(), "Selected Item " + list.get(position), Toast.LENGTH_SHORT).show();
 
-                db.dmSurveyAnswerTableDao().deleteByQuestionId(questionId);
+                if (position == 0) {
+                    db.dmSurveyAnswerTableDao().deleteByQuestionId(questionId);
+                } else {
+                    String answerId = ids.get(position);
 
-                DmSurveyAnswerTable dmSurveyAnswerTable1 = new DmSurveyAnswerTable();
-                dmSurveyAnswerTable1.questionID = questionId;
-                dmSurveyAnswerTable1.answer = list.get(position);
-                dmSurveyAnswerTable1.answerID = ids.get(position);
-                dmSurveyAnswerTable1.moduleId = Constants.MODULE_ID;
-                dmSurveyAnswerTable1.question = question;
-                dmSurveyAnswerTable1.complinceTypeId = complianceIds.get(position);
-                db.dmSurveyAnswerTableDao().insert(dmSurveyAnswerTable1);
+                    db.dmSurveyAnswerTableDao().deleteByQuestionId(questionId);
+
+                    DmSurveyAnswerTable dmSurveyAnswerTable1 = new DmSurveyAnswerTable();
+                    dmSurveyAnswerTable1.questionID = questionId;
+                    dmSurveyAnswerTable1.answerID = ids.get(position);
+                    dmSurveyAnswerTable1.answer = list.get(position);
+                    dmSurveyAnswerTable1.moduleId = Constants.MODULE_ID;
+                    dmSurveyAnswerTable1.question = question;
+                    dmSurveyAnswerTable1.complinceTypeId = complianceIds.get(position);
+                    db.dmSurveyAnswerTableDao().insert(dmSurveyAnswerTable1);
+                }
+
 
             }
 
@@ -290,6 +360,7 @@ public class SurveyFragment extends Fragment {
         // Add Spinner to LinearLayout
         if (dm_Section != null) {
             dm_Section.addView(spinner);
+            dm_Section.addView(textView);
         }
 
 
@@ -299,11 +370,16 @@ public class SurveyFragment extends Fragment {
 
         EditText editText = new EditText(getActivity());
         editText.setHint("Answer");
-        //editText.setPadding(0, 20, 0, 20);
         editText.setTextSize(14);
+        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
 
-
-        //editText.setFilters(new InputFilter[]{new InputFilterMinMax(String.valueOf(db.dmTextBoxModuleQuestionsDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(0).minimumRange), String.valueOf(db.dmTextBoxModuleQuestionsDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(0).maximumRange))});
+        TextView textView = new TextView(getActivity());
+        textView.setText("Please enter any value!");
+        textView.setTextColor(getResources().getColor(R.color.red_view_survey));
+        textView.setTextSize(12);
+        textView.setPadding(0, 15, 0, 0);
+        textView.setVisibility(View.GONE);
+        textView.setTag(questionId);
 
         List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByQuestionId(questionId);
         if (dmSurveyAnswerTableList.size() != 0) {
@@ -319,27 +395,33 @@ public class SurveyFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                db.dmSurveyAnswerTableDao().deleteByQuestionId(questionId);
-
-
-                DmSurveyAnswerTable dmSurveyAnswerTable1 = new DmSurveyAnswerTable();
-                dmSurveyAnswerTable1.questionID = questionId;
-                dmSurveyAnswerTable1.answer = charSequence.toString();
-                dmSurveyAnswerTable1.moduleId = Constants.MODULE_ID;
-                dmSurveyAnswerTable1.question = question;
-                int complianceId = 0;
-                if (db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).size() != 0) {
-                    if (editText.getText().toString() != null) {
-                        String value = editText.getText().toString().trim();
-                        for (int j = 0; j < db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).size(); j++)
-                            if (Double.parseDouble(value) < db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).maximumRange) {
-                                complianceId = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).complianceId;
-                            }
+                if (charSequence.length() == 0) {
+                    db.dmSurveyAnswerTableDao().deleteByQuestionId(questionId);
+                } else {
+                    db.dmSurveyAnswerTableDao().deleteByQuestionId(questionId);
+                    DmSurveyAnswerTable dmSurveyAnswerTable1 = new DmSurveyAnswerTable();
+                    dmSurveyAnswerTable1.questionID = questionId;
+                    dmSurveyAnswerTable1.answer = charSequence.toString();
+                    dmSurveyAnswerTable1.answerID = charSequence.toString();
+                    dmSurveyAnswerTable1.moduleId = Constants.MODULE_ID;
+                    dmSurveyAnswerTable1.question = question;
+                    int complianceId = 0;
+                    if (db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).size() != 0) {
+                        if (editText.getText().toString() != null) {
+                            String value = editText.getText().toString().trim();
+                            for (int j = 0; j < db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).size(); j++)
+                                if (Double.parseDouble(value) < db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).maximumRange) {
+                                    complianceId = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).complianceId;
+                                }
+                        }
                     }
+
+
+                    dmSurveyAnswerTable1.complinceTypeId = String.valueOf(complianceId);
+                    db.dmSurveyAnswerTableDao().insert(dmSurveyAnswerTable1);
                 }
 
-                dmSurveyAnswerTable1.complinceTypeId = String.valueOf(complianceId);
-                db.dmSurveyAnswerTableDao().insert(dmSurveyAnswerTable1);
+
             }
 
             @Override
@@ -349,17 +431,18 @@ public class SurveyFragment extends Fragment {
         });
 
         //editText.getLayoutParams().width=40;
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             editText.setBackground(getActivity().getDrawable(R.drawable.answer_text_survey));
         }
+
         // Add Spinner to LinearLayout
         if (dm_Section != null) {
             dm_Section.addView(editText);
+            dm_Section.addView(textView);
         }
 
-
     }
+
 
     public void renderDropDownQuestionModule(String questionId, List<DmLookupValuesItem> dmLookupValuesItemList, String question) {
 

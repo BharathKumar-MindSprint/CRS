@@ -26,6 +26,7 @@ import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.ComplianceIndicat
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.CurrenciesItem;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.CurrencyItem;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.DiagnosticModulesList;
+import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.DmRangeTextBoxActionPlans;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.DmRangeTextBoxModuleQuestions;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.LookupValuesItem;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.QuestionTypesItem;
@@ -504,6 +505,7 @@ public class DiagnosticModuleActivity extends BaseActivity {
                                         dmRangeTextBoxModuleQuestionsList.clear();
                                         dmRangeTextBoxModuleQuestionsList = textBoxModuleQuestions.getDmRangeQuestionsList();
 
+
                                         if (dmRangeTextBoxModuleQuestionsList != null) {
                                             for (int r = 0; r < dmRangeTextBoxModuleQuestionsList.size(); r++) {
                                                 double minimumRange_range = dmRangeTextBoxModuleQuestionsList.get(r).getMinimumRange();
@@ -524,6 +526,8 @@ public class DiagnosticModuleActivity extends BaseActivity {
                                                 dmRangeTextBoxModuleQuestionsTable.proofFormat = proofFormat;
                                                 dmRangeTextBoxModuleQuestionsTable.questionId = id_questionModule;
                                                 db.dmRangeTextBoxModuleQuestionsTableDao().insert(dmRangeTextBoxModuleQuestionsTable);
+
+
 
                                             }
 
@@ -644,7 +648,7 @@ public class DiagnosticModuleActivity extends BaseActivity {
                                         if (sectionLookupValuesItemSubmoduleList != null) {
                                             for (int u = 0; u < sectionLookupValuesItemSubmoduleList.size(); u++) {
 
-                                                int valueId = sectionLookupValuesItemSubmoduleList.get(u).getValueId();
+                                                String valueId = sectionLookupValuesItemSubmoduleList.get(u).getValueId();
                                                 String valueTr = sectionLookupValuesItemSubmoduleList.get(u).getValueTr();
                                                 String valueVi = sectionLookupValuesItemSubmoduleList.get(u).getValueVi();
                                                 String valueTh = sectionLookupValuesItemSubmoduleList.get(u).getValueTh();

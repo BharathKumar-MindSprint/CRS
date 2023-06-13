@@ -14,6 +14,7 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
@@ -105,21 +106,12 @@ public class ActionPlanProofFragment extends Fragment {
     private static final int REQ_CODE = 300;
     private final String MATOMOTAG = this.getClass().getSimpleName();
     LinearLayout ll_servey_back_actionplan, ll_servey_next_actionplan;
-    ImageView iv_complaint_delete_file;
-    TextView tv_complaint_filename;
-    RelativeLayout rl_complaint_captureproof_layout, rl_complaint_fileupload_layout;
-    ConstraintLayout complaint_custom_actionplanlayout;
-    ImageView iv_delete_custom_complaint, iv_save_custom_complaint;
-    EditText complaiant_custom_text;
+
 
     //Satisfactory
 
 
     public Resources res;
-    private Uri mCapturedImageURI = null, mCapturedSignatureImageURI = null;
-    private final static int MY_PROFILE_PIC_PERMISSIONS_REQUEST = 9998;
-    private final static int REQUEST_IMAGE_CAPTURE = 1;
-    private final static int REQUEST_IMAGE_GALLERY = 2;
 
     private static final int MY_GALLERYPERMISSION_CODE = 100;
     private static final int MY_CAMERA_PERMISSION_CODE = 500;
@@ -129,9 +121,10 @@ public class ActionPlanProofFragment extends Fragment {
     private String mCurrentPhotoPath;
 
     private Bitmap resizedBitmapNew;
-    LinearLayout image_layout;
 
     LinearLayout dm_question_complaint;
+
+    LinearLayout linearLayoutAll;
 
     HashMap<String, ArrayList<String>> dynamicArrays = new HashMap<>();
 
@@ -151,7 +144,6 @@ public class ActionPlanProofFragment extends Fragment {
     //Room DB
     OFISRoomDB db;
     Spinner spinner_dmCurrencies;
-    LinearLayout linearLayoutAll;
 
     public ActionPlanProofFragment() {
         // Required empty public constructor
@@ -166,17 +158,10 @@ public class ActionPlanProofFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_action_plan_froof, container, false);
         res = getResources();
 
-        //Complaint
         ll_servey_back_actionplan = view.findViewById(R.id.ll_servey_back_actionplan);
-        dm_question_complaint = view.findViewById(R.id.dm_question_complaint);
         ll_servey_next_actionplan = view.findViewById(R.id.ll_servey_next_actionplan);
-        rl_complaint_captureproof_layout = view.findViewById(R.id.rl_complaint_captureproof_layout);
-        tv_complaint_filename = view.findViewById(R.id.tv_complaint_filename);
-        iv_complaint_delete_file = view.findViewById(R.id.iv_complaint_delete_file);
-        rl_complaint_fileupload_layout = view.findViewById(R.id.rl_complaint_fileupload_layout);
         spinner_dmCurrencies = view.findViewById(R.id.spinner_dmCurrencies);
-        //
-        linearLayoutAll = new LinearLayout(getActivity());
+        dm_question_complaint = view.findViewById(R.id.dm_question_complaint);
 
         db = OFISRoomDB.getDbInstance(getActivity());
         List<DmCurrenciesItem> dmSectionsItemList = db.dmCurrenciesItemDao().getDmCurrenciesItem();
@@ -193,12 +178,12 @@ public class ActionPlanProofFragment extends Fragment {
     }
 
 
+    @SuppressLint("ResourceAsColor")
     private void displayQuestionsModuleComplaint(String complaint_id) {
 
         List<ComplianceIndicator> dmComplaintList = new ArrayList<>();
         dmComplaintList.clear();
         dmComplaintList = db.complianceIndicatorDao().getComplianceNameById(complaint_id);
-
 
         if (dmComplaintList.size() != 0) {
             List<DmSurveyAnswerTable> dmSurveyAnswerTableList = new ArrayList<>();
@@ -207,17 +192,32 @@ public class ActionPlanProofFragment extends Fragment {
 
             String complianceName = dmComplaintList.get(0).compliance;
 
+            if(complianceName.equalsIgnoreCase("Satisfactory"))
+            {
+                Constants.satisfactorySize = String.valueOf(dmSurveyAnswerTableList.size());
+            }
+
+            else if(complianceName.equalsIgnoreCase("Compliant"))
+            {
+                Constants.complaintSize = String.valueOf(dmSurveyAnswerTableList.size());
+            }
+            else if(complianceName.equalsIgnoreCase("Non Compliant"))
+            {
+                Constants.noncomplaintSize = String.valueOf(dmSurveyAnswerTableList.size());
+            }
+
             LayoutInflater inflater = LayoutInflater.from(getActivity());
             final View convertView = inflater.inflate(R.layout.complaint_layout, null, false);
             final TextView selected_imgName = convertView.findViewById(R.id.tv_complaint);
             final ImageView complaint_dropdown = convertView.findViewById(R.id.iv_complaint_dropdown);
 
-            linearLayoutAll.addView(convertView);
+            dm_question_complaint.addView(convertView);
             convertView.setTag(complaint_id);
             complaint_dropdown.setTag("0" + complaint_id);
             selected_imgName.setText(complianceName);
 
 
+            List<DmSurveyAnswerTable> finalDmSurveyAnswerTableList = dmSurveyAnswerTableList;
             complaint_dropdown.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -228,19 +228,43 @@ public class ActionPlanProofFragment extends Fragment {
                     if (tagFirst == 0) {
                         //Toast.makeText(getActivity(), "Expand" + tag, Toast.LENGTH_SHORT).show();
                         complaint_dropdown.setTag("1" + complaint_id);
-                       // linearLayoutAll.setVisibility(View.VISIBLE);
+                        if (finalDmSurveyAnswerTableList.size() != 0) {
+                            View desiredView = dm_question_complaint.findViewWithTag("item" + complaint_id);
+                            LinearLayout linearLayout = (LinearLayout) desiredView;
+                            linearLayout.setVisibility(View.VISIBLE);
+
+                        }
+
 
                     } else {
                         //Toast.makeText(getActivity(), "Collapse" + tag, Toast.LENGTH_SHORT).show();
                         complaint_dropdown.setTag("0" + complaint_id);
-                       // linearLayoutAll.setVisibility(View.GONE);
+                        if (finalDmSurveyAnswerTableList.size() != 0) {
+                            View desiredView = dm_question_complaint.findViewWithTag("item" + complaint_id);
+                            LinearLayout linearLayout = (LinearLayout) desiredView;
+                            linearLayout.setVisibility(View.GONE);
+
+                        }
 
                     }
                 }
             });
 
+            LinearLayout linearLayoutItems = new LinearLayout(getActivity());
+            LinearLayout.LayoutParams layoutParamLastHp = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT);
+            linearLayoutItems.setLayoutParams(layoutParamLastHp);
+            linearLayoutItems.setPadding(25,10,10,10);
+            linearLayoutItems.setTag("item" + complaint_id);
+            linearLayoutItems.setOrientation(LinearLayout.VERTICAL);
 
-           // Constants.complaintSize = String.valueOf(dmSurveyAnswerTableList.size());
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                linearLayoutItems.setBackground(getActivity().getDrawable(R.drawable.dm_actionplan_module_bg));
+            }
+
+
+            // Constants.complaintSize = String.valueOf(dmSurveyAnswerTableList.size());
             if (dmSurveyAnswerTableList.size() != 0) {
                 String answerIdDb = dmSurveyAnswerTableList.get(0).answerID;
                 for (int m = 0; m < dmSurveyAnswerTableList.size(); m++) {
@@ -251,9 +275,10 @@ public class ActionPlanProofFragment extends Fragment {
                     textView.setTextSize(14);
                     textView.setPadding(0, 15, 0, 0);
                     textView.setTypeface(null, Typeface.BOLD);
-                    linearLayoutAll.addView(textView);
+                    linearLayoutItems.addView(textView);
 
-                    renderTextboxQuestionModuleComplaint(String.valueOf(dmQuestionsModule.questionID));
+
+                    renderTextboxQuestionModuleComplaint(String.valueOf(dmQuestionsModule.questionID), complaint_id, linearLayoutItems);
 
                 }
             }
@@ -261,14 +286,7 @@ public class ActionPlanProofFragment extends Fragment {
     }
 
 
-    public void renderTextboxQuestionModuleComplaint(String id) {
-        dm_question_complaint.removeAllViews();
-
-        linearLayoutAll.setLayoutParams(new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-        ));
-        linearLayoutAll.setOrientation(LinearLayout.VERTICAL);
+    public void renderTextboxQuestionModuleComplaint(String id, String complaint_id, LinearLayout linearLayoutItems) {
 
 
         LinearLayout.LayoutParams layoutParamsQes = new LinearLayout.LayoutParams(
@@ -281,14 +299,16 @@ public class ActionPlanProofFragment extends Fragment {
         editText.setTextSize(14);
         editText.setEnabled(false);
         editText.setTextColor(getResources().getColor(R.color.black));
-        editText.setPadding(0, 10, 0, 10);
+        editText.setPadding(10, 10, 0, 10);
         layoutParamsQes.setMargins(0, 10, 0, 10);
         editText.setLayoutParams(layoutParamsQes);
+        editText.setTag("et" + complaint_id);
 
-        //LinearLayout complaintCaptureFiles = new LinearLayout(getActivity());
 
         TextView textView = new TextView(getActivity());
         textView.setText("Capture Proof");
+
+        //Important Do not Change the Tag
         textView.setTag(id);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             textView.setTextColor(getActivity().getColor(R.color.colorPrimary));
@@ -298,8 +318,6 @@ public class ActionPlanProofFragment extends Fragment {
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 getResources().getDimensionPixelSize(R.dimen.capture_box)
         );
-        //complaintCaptureFiles.setOrientation(LinearLayout.HORIZONTAL);
-        //complaintCaptureFiles.setLayoutParams(layoutParams);
         layoutParams.setMargins(0, 10, 0, 10);
 
         textView.setLayoutParams(layoutParams);
@@ -313,8 +331,8 @@ public class ActionPlanProofFragment extends Fragment {
         LinearLayout linearLayoutImage = new LinearLayout(getActivity());
         linearLayoutImage.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-        ));
+                LinearLayout.LayoutParams.WRAP_CONTENT));
+
         linearLayoutImage.setTag("1234" + id);
         linearLayoutImage.setOrientation(LinearLayout.VERTICAL);
 
@@ -473,7 +491,6 @@ public class ActionPlanProofFragment extends Fragment {
             }
         });
 
-
         List<DmActionPlansItem> dmActionPlansItemList = new ArrayList<>();
         dmActionPlansItemList.clear();
         dmActionPlansItemList = db.dmActionPlansItemDao().getDmActionPlansItem();
@@ -485,14 +502,31 @@ public class ActionPlanProofFragment extends Fragment {
             list.add(dmActionPlansItemList.get(c).actionPlan);
         }
 
+        LinearLayout linearLayoutSpin = new LinearLayout(getActivity());
+        linearLayoutSpin.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT));
+        linearLayoutSpin.setOrientation(LinearLayout.HORIZONTAL);
+        linearLayoutSpin.setWeightSum(10);
+
+        LinearLayout.LayoutParams layoutParamsSpin = new LinearLayout.LayoutParams(
+                getResources().getDimensionPixelSize(R.dimen.forWeight),
+                getResources().getDimensionPixelSize(R.dimen.capture_box),
+                5
+        );
+
         final Spinner spinner = new Spinner(getActivity());
 
-        spinner.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        spinner.setLayoutParams(layoutParamsSpin);
         spinner.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.spinner_bg_light));
 
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(getActivity(), R.layout.spinner_item, list);
         spinnerAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         spinner.setAdapter(spinnerAdapter);
+
+        spinner.setTag("spinner" + complaint_id);
+
+        layoutParamsSpin.setMargins(0, 10, 10, 10);
 
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -506,9 +540,62 @@ public class ActionPlanProofFragment extends Fragment {
             }
         });
 
+        LinearLayout.LayoutParams layoutParamsetCur = new LinearLayout.LayoutParams(
+                getResources().getDimensionPixelSize(R.dimen.forWeight),
+                getResources().getDimensionPixelSize(R.dimen.capture_box),
+                2
+        );
+
+        EditText editTextCurrency = new EditText(getActivity());
+        editTextCurrency.setText("$");
+        editTextCurrency.setTextSize(14);
+        editTextCurrency.setEnabled(false);
+        editTextCurrency.setTextColor(getResources().getColor(R.color.black));
+        editTextCurrency.setPadding(0, 10, 0, 10);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            editTextCurrency.setBackground(getActivity().getDrawable(R.drawable.answer_text_survey));
+        }
+
+        layoutParamsetCur.setMargins(0, 10, 0, 10);
+        editTextCurrency.setLayoutParams(layoutParamsetCur);
+
+
+        LinearLayout.LayoutParams layoutParamsetCurEt = new LinearLayout.LayoutParams(
+                getResources().getDimensionPixelSize(R.dimen.forWeight),
+                getResources().getDimensionPixelSize(R.dimen.capture_box),
+                3
+        );
+
+        EditText editTextCurrencyInput = new EditText(getActivity());
+        editTextCurrencyInput.setText("10");
+        editTextCurrencyInput.setTextSize(14);
+        editTextCurrencyInput.setTextColor(getResources().getColor(R.color.black));
+        editTextCurrencyInput.setPadding(0, 10, 0, 10);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            editTextCurrencyInput.setBackground(getActivity().getDrawable(R.drawable.answer_text_survey));
+        }
+        layoutParamsetCurEt.setMargins(0, 10, 0, 10);
+        editTextCurrencyInput.setLayoutParams(layoutParamsetCurEt);
+
+
+        linearLayoutSpin.addView(spinner);
+        linearLayoutSpin.addView(editTextCurrency);
+        linearLayoutSpin.addView(editTextCurrencyInput);
+
+        LinearLayout linearLayoutActionPlanMain = new LinearLayout(getActivity());
+        linearLayoutActionPlanMain.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT));
+        linearLayoutActionPlanMain.setOrientation(LinearLayout.VERTICAL);
+
+        LinearLayout linearLayoutActionPlan = new LinearLayout(getActivity());
+
         EditText actionPlan = new EditText(getActivity());
         actionPlan.setHint("Edit action plan details");
         actionPlan.setTextSize(14);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            actionPlan.setBackground(getActivity().getDrawable(R.drawable.answer_text_survey));
+        }
 
         LinearLayout.LayoutParams layoutParams1 = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
@@ -516,26 +603,16 @@ public class ActionPlanProofFragment extends Fragment {
         );
         actionPlan.setLayoutParams(layoutParams1);
 
-        LinearLayout linearLayout = new LinearLayout(getActivity());
 
-        LinearLayout.LayoutParams layoutParams2 = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                getResources().getDimensionPixelSize(R.dimen.actionplanbox) // Replace with your desired height in dp
-        );
-
-
-        linearLayout.setLayoutParams(layoutParams2);
-
-        linearLayout.setGravity(Gravity.END);
-        linearLayout.setOrientation(LinearLayout.HORIZONTAL);
+        linearLayoutActionPlan.setGravity(Gravity.END);
+        linearLayoutActionPlan.setOrientation(LinearLayout.HORIZONTAL);
 
         ImageView imageView1 = new ImageView(getActivity());
         imageView1.setImageResource(R.drawable.green_tick);
 
         LinearLayout.LayoutParams layoutParams3 = new LinearLayout.LayoutParams(
                 getResources().getDimensionPixelSize(R.dimen.small_button_width_height),
-                getResources().getDimensionPixelSize(R.dimen.small_button_width_height) // Replace with your desired height in dp
-        );
+                getResources().getDimensionPixelSize(R.dimen.small_button_width_height));
 
         imageView1.setLayoutParams(layoutParams3);
 
@@ -544,8 +621,11 @@ public class ActionPlanProofFragment extends Fragment {
 
         imageView2.setLayoutParams(layoutParams3);
 
-        linearLayout.addView(imageView1);
-        linearLayout.addView(imageView2);
+        linearLayoutActionPlan.addView(imageView1);
+        linearLayoutActionPlan.addView(imageView2);
+
+        linearLayoutActionPlanMain.addView(actionPlan);
+        linearLayoutActionPlanMain.addView(linearLayoutActionPlan);
 
 
         List<DmSurveyAnswerTable> dmSurveyAnswerTableList = new ArrayList<>();
@@ -563,14 +643,23 @@ public class ActionPlanProofFragment extends Fragment {
             editText.setBackground(getActivity().getDrawable(R.drawable.answer_text_survey));
         }
 
-        // Add Spinner to LinearLayout
-        if (linearLayoutAll != null) {
-            linearLayoutAll.addView(editText);
-            linearLayoutAll.addView(textView);
-            linearLayoutAll.addView(spinner);
-            linearLayoutAll.addView(linearLayoutImage);
+        if (linearLayoutItems != null) {
+            linearLayoutItems.addView(editText);
+            linearLayoutItems.addView(textView);
+            linearLayoutItems.addView(linearLayoutImage);
+            linearLayoutItems.addView(linearLayoutSpin);
+            //linearLayoutItems.addView(linearLayoutActionPlanMain);
+
         }
-        dm_question_complaint.addView(linearLayoutAll);
+
+        linearLayoutItems.setVisibility(View.GONE);
+
+        dm_question_complaint.removeView(linearLayoutItems);
+        if (dm_question_complaint != null) {
+            dm_question_complaint.addView(linearLayoutItems);
+
+        }
+
     }
 
     @Override
@@ -598,7 +687,7 @@ public class ActionPlanProofFragment extends Fragment {
             resizedBitmapNew.compress(Bitmap.CompressFormat.JPEG, 100, baos);
             byte[] imageBytes = baos.toByteArray();
 
-            db.dmComplaintFileTableDao().deleteAll();
+            //db.dmComplaintFileTableDao().deleteAll();
             DmComplaintFileTable dmComplaintFileTable = new DmComplaintFileTable();
             dmComplaintFileTable.setFile_name(filename);
             dmComplaintFileTable.setFileData(imageBytes);
@@ -937,7 +1026,7 @@ public class ActionPlanProofFragment extends Fragment {
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
-                    db.dmComplaintFileTableDao().deleteAll();
+                    //db.dmComplaintFileTableDao().deleteAll();
 
                     DmComplaintFileTable dmComplaintFileTable = new DmComplaintFileTable();
                     dmComplaintFileTable.setFile_name(filename);
@@ -948,7 +1037,6 @@ public class ActionPlanProofFragment extends Fragment {
                     long id = db.dmComplaintFileTableDao().getLastInsertedId();
 
                     dynamicArrayName = "imageArray" + questionId;
-
                     dynamicArrayNameFile = "fileArray" + questionId;
 
                     dynamicArrayFile.clear();
@@ -958,7 +1046,6 @@ public class ActionPlanProofFragment extends Fragment {
                     retrievedArray.clear();
 
                     ArrayList<Long> retrievedArrayFile = new ArrayList<>();
-
                     retrievedArrayFile.clear();
 
                     dynamicArrays.clear();
@@ -1104,7 +1191,7 @@ public class ActionPlanProofFragment extends Fragment {
                 resizedBitmapNew.compress(Bitmap.CompressFormat.JPEG, 100, baos);
                 byte[] imageBytes = baos.toByteArray();
 
-                db.dmComplaintFileTableDao().deleteAll();
+                //db.dmComplaintFileTableDao().deleteAll();
                 DmComplaintFileTable dmComplaintFileTable = new DmComplaintFileTable();
                 dmComplaintFileTable.setFile_name(filename);
                 dmComplaintFileTable.setFileData(imageBytes);
@@ -1134,6 +1221,7 @@ public class ActionPlanProofFragment extends Fragment {
                 View desiredView = dm_question_complaint.findViewWithTag("1234" + String.valueOf(questionId));
                 LinearLayout linearLayoutImage = (LinearLayout) desiredView;
 
+                Toast.makeText(getActivity(), "" + linearLayoutImage.getTag(), Toast.LENGTH_SHORT).show();
 
                 List<DmComplaintFileTable> dmComplaintFileTableList = new ArrayList<>();
                 dmComplaintFileTableList.clear();
