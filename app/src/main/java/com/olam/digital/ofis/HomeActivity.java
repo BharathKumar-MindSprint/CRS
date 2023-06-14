@@ -126,6 +126,7 @@ import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmRangeTextBoxModuleQuesti
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmRecurrence;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmSectionsItem;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmTextBoxModuleQuestions;
+import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.DiagnosticModuleActivity;
 import com.olam.digital.ofis.recordpolygon.RecordPolygonActivity;
 
 import org.json.JSONException;
@@ -1229,6 +1230,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                     intent.putExtra(EDIT_MODE, false);
                     context.startActivity(intent);
 
+
                 }
             });
 
@@ -1886,7 +1888,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
                 try {
                     if (response.code() == 200) {
-                        progressDialog.hide();
 
                         db.dmSectionsItemDao().deleteAll();
                         db.dmQuestionsSubModuleDao().deleteAll();
@@ -1903,6 +1904,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                         db.dmRangeTextBoxModuleQuestionsTableDao().deleteAll();
                         db.dmTextBoxModuleQuestionsDao().deleteAll();
                         db.dmRangeTextBoxModuleQuestionsTableDao().deleteAll();
+                        db.complianceIndicatorDao().deleteAll();
 
 
                         if (response.body().getDiagnosticModules() != null) {
@@ -2076,7 +2078,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                     lookupValuesItemList.clear();
                                     lookupValuesItemList = questionsItemList.get(l).getLookupValues();
 
-                                    TextBoxModuleQuestions textBoxModuleQuestions =  questionsItemList.get(l).getTextBoxModuleQuestions();
+                                    TextBoxModuleQuestions textBoxModuleQuestions = questionsItemList.get(l).getTextBoxModuleQuestions();
 
 
                                     if (lookupValuesItemList != null) {
@@ -2145,7 +2147,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                         }
                                     }
 
-                                    if(textBoxModuleQuestions != null){
+                                    if (textBoxModuleQuestions != null) {
                                         int answerType = textBoxModuleQuestions.getAnswerType();
                                         boolean isAllowNegative = textBoxModuleQuestions.isAllowNegative();
                                         boolean isAllowDecimal = textBoxModuleQuestions.isAllowDecimal();
@@ -2161,11 +2163,12 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                         dmTextBoxModuleQuestions.questionId = id_questionModule;
                                         db.dmTextBoxModuleQuestionsDao().insert(dmTextBoxModuleQuestions);
 
-                                        List <DmRangeTextBoxModuleQuestions> dmRangeTextBoxModuleQuestionsList = new  ArrayList<>();
+                                        List<DmRangeTextBoxModuleQuestions> dmRangeTextBoxModuleQuestionsList = new ArrayList<>();
                                         dmRangeTextBoxModuleQuestionsList.clear();
                                         dmRangeTextBoxModuleQuestionsList = textBoxModuleQuestions.getDmRangeQuestionsList();
 
-                                        if(dmRangeTextBoxModuleQuestionsList !=null){
+
+                                        if (dmRangeTextBoxModuleQuestionsList != null) {
                                             for (int r = 0; r < dmRangeTextBoxModuleQuestionsList.size(); r++) {
                                                 double minimumRange_range = dmRangeTextBoxModuleQuestionsList.get(r).getMinimumRange();
                                                 double maximumRange_range = dmRangeTextBoxModuleQuestionsList.get(r).getMaximumRange();
@@ -2186,13 +2189,14 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                                 dmRangeTextBoxModuleQuestionsTable.questionId = id_questionModule;
                                                 db.dmRangeTextBoxModuleQuestionsTableDao().insert(dmRangeTextBoxModuleQuestionsTable);
 
+
+
                                             }
 
                                         }
 
 
                                     }
-
 
 
                                 }
@@ -2252,7 +2256,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                     questionsSectionItemSubmoduleList.clear();
                                     questionsSectionItemSubmoduleList = sectionsItemList.get(s).getQuestions();
 
-                                    Log.d("secquestiionnsss",".."+questionsSectionItemSubmoduleList.size());
+                                    Log.d("secquestiionnsss", ".." + questionsSectionItemSubmoduleList.size());
 
                                     for (int t = 0; t < questionsSectionItemSubmoduleList.size(); t++) {
 
@@ -2306,7 +2310,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                         if (sectionLookupValuesItemSubmoduleList != null) {
                                             for (int u = 0; u < sectionLookupValuesItemSubmoduleList.size(); u++) {
 
-                                                int valueId = sectionLookupValuesItemSubmoduleList.get(u).getValueId();
+                                                String valueId = sectionLookupValuesItemSubmoduleList.get(u).getValueId();
                                                 String valueTr = sectionLookupValuesItemSubmoduleList.get(u).getValueTr();
                                                 String valueVi = sectionLookupValuesItemSubmoduleList.get(u).getValueVi();
                                                 String valueTh = sectionLookupValuesItemSubmoduleList.get(u).getValueTh();
@@ -2445,6 +2449,22 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
                         }
 
+
+//                       Log.d("DbData-", db.dmMainModuleDao().getDMmodule().get(0).name);
+//                       Log.d("DbDataCompliance-", db.complianceIndicatorDao().getComplianceIndicator().get(0).compliance);
+//                       Log.d("DbDataCurrency-", String.valueOf(db.dmCurrencyDao().getDMCurrency().get(0).currencyId));
+//                       Log.d("DbAnswerTypes-", db.dmAnswerTypesDao().getDmAnswerTypes().get(0).value);
+//                       Log.d("DbQuestionsType-", db.dmQuestionTypesDao().getDmQuestionTypes().get(0).value);
+//                       Log.d("DbCurrenciesItem-", db.dmCurrenciesItemDao().getDmCurrenciesItem().get(0).notation);
+//                       Log.d("DbModuleQuestionsItem-", db.dmQuestionsModuleDao().getDmQuestionsModule().get(0).question);
+//                       Log.d("DbModuleLookupValues-", db.dmLookupValuesItemDao().getDmLookupValuesItem().get(0).value);
+//                       Log.d("DbModuleActionPlan-", db.dmActionPlansItemDao().getDmActionPlansItem().get(1).actionPlan);
+//                       Log.d("DbSectionValues-", db.dmSectionsItemDao().getDmSectionsItem().get(0).description);
+//                       Log.d("DbSubModuleQuestions-", db.dmQuestionsSubModuleDao().getDmQuestionsSubModule().get(0).displayType);
+//                       Log.d("DbSubModuleLookup-", db.dmLookupValuesISubmoduleDao().getDmLookupValuesISubmodule().get(0).proofFormat);
+//                       Log.d("DbSubModuleActionPlan-", db.dmActionPlansItemSubmoduleDao().getDmActionPlansItemSubmodule().get(0).actionPlan);
+//                       Log.d("DbRecurranceData-", db.dmRecurrenceDao().getDmRecurrence().recurrenceType);
+
                     } else if (response.code() == 400) {
 
                         Log.d("BadRequest-", response.message());
@@ -2463,7 +2483,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
             @Override
             public void onFailure(Call<ResponseModel> call, Throwable t) {
-                //progressDialog.hide();
 
             }
         });

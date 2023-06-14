@@ -52,6 +52,8 @@
     <dimen name="transactee_name_narrow">120dp</dimen>
     <dimen name="transaction_balance_width">160dp</dimen>
 
-
+    //Diagnostic Module
+    <dimen name="capture_box">45dp</dimen>
+    <dimen name="actionplanbox">100dp</dimen>
 
 </resources>

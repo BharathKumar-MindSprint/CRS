@@ -6,6 +6,7 @@ import androidx.room.Insert;
 import androidx.room.Query;
 
 
+import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmQuestionsModule;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmSectionsItem;
 
 import java.util.List;
@@ -18,6 +19,10 @@ public interface DmSectionsItemDao {
 
     @Query("SELECT name FROM DmSectionsItem WHERE id =:id")
     String loadSingle(int id);
+
+
+    @Query("SELECT * FROM DmSectionsItem WHERE moduleId=:id")
+    List<DmSectionsItem> getDmSectionsByModuleId(int id);
 
     @Insert
     void insert(DmSectionsItem... dmSectionsItem);

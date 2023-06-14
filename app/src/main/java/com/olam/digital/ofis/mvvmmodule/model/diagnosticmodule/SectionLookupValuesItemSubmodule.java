@@ -9,8 +9,16 @@ public class SectionLookupValuesItemSubmodule {
     @SerializedName("valueTr")
     private String valueTr;
 
+    public String getValueId() {
+        return valueId;
+    }
+
+    public void setValueId(String valueId) {
+        this.valueId = valueId;
+    }
+
     @SerializedName("valueId")
-    private int valueId;
+    private String valueId;
 
     @SerializedName("valueVi")
     private String valueVi;
@@ -58,7 +66,7 @@ public class SectionLookupValuesItemSubmodule {
     @SerializedName("value")
     private String value;
 
-    public SectionLookupValuesItemSubmodule(String valueTr, int valueId, String valueVi, String proofFormat, String valueTh, boolean isCaptureProof, String valueEs, String valueFr, int complianceId, String compliance, boolean allowCustomActionPlan, String valueLo, List<SectionActionPlansItemSubmodule> actionPlans, int id, int position, String valuePt, String value) {
+    public SectionLookupValuesItemSubmodule(String valueTr, String valueId, String valueVi, String proofFormat, String valueTh, boolean isCaptureProof, String valueEs, String valueFr, int complianceId, String compliance, boolean allowCustomActionPlan, String valueLo, List<SectionActionPlansItemSubmodule> actionPlans, int id, int position, String valuePt, String value) {
         this.valueTr = valueTr;
         this.valueId = valueId;
         this.valueVi = valueVi;
@@ -84,14 +92,6 @@ public class SectionLookupValuesItemSubmodule {
 
     public void setValueTr(String valueTr) {
         this.valueTr = valueTr;
-    }
-
-    public int getValueId() {
-        return valueId;
-    }
-
-    public void setValueId(int valueId) {
-        this.valueId = valueId;
     }
 
     public String getValueVi() {

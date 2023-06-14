@@ -29,7 +29,7 @@ public class SurveyResultsFragment extends Fragment {
 
     int total = 50;
     OFISRoomDB db;
-    EditText editTextText, editTextText3, editTextText4;
+    EditText editTextText, editTextText3, editTextText4, editTextText5,editTextText6;
 
     public SurveyResultsFragment() {
         // Required empty public constructor
@@ -46,6 +46,8 @@ public class SurveyResultsFragment extends Fragment {
         editTextText = view.findViewById(R.id.editTextText);
         editTextText3 = view.findViewById(R.id.editTextText3);
         editTextText4 = view.findViewById(R.id.editTextText4);
+        editTextText5 = view.findViewById(R.id.editTextText5);
+        editTextText6 = view.findViewById(R.id.editTextText6);
 
         ll_servey_next_servey_results.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -77,6 +79,8 @@ public class SurveyResultsFragment extends Fragment {
         editTextText.setText(Constants.complaintSize);
         editTextText3.setText(Constants.noncomplaintSize);
         editTextText4.setText(Constants.satisfactorySize);
+
+        editTextText5.setText(String.valueOf(Integer.parseInt(Constants.complaintSize) + Integer.parseInt(Constants.satisfactorySize) + Integer.parseInt(Constants.noncomplaintSize)));
 
 
         return view;
