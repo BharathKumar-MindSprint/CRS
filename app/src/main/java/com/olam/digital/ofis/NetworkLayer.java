@@ -2791,14 +2791,15 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                             msg.arg2 = progress;
                                             msg.obj = statusMessage;
                                             handler.dispatchMessage(msg);
+                                            dl.deleteNetworkQueueItem(networkQueueItemId);
+                                            syncNetworkQueue(originalSyncRequestItemId, handler);
+
                                             new Handler(Looper.getMainLooper()).post(new Runnable() {
                                                 @Override
                                                 public void run() {
-                                                    try {
-                                                        showAlertMessage(originalSyncRequestItemId, handler, networkQueueItemId);
-                                                    }catch (Exception e){
-                                                        e.printStackTrace();
-                                                    }
+
+                                                        showAlertMessage();
+
                                                 }
                                             });
 
@@ -2856,14 +2857,13 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         }
     }
 
-    private void showAlertMessage(int originalSyncRequestItemId, Handler handler, int queueItemId) {
+    private void showAlertMessage() {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setMessage(context.getResources().getString(R.string.consent_duplicate_alert))
                 .setCancelable(false)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        dl.deleteNetworkQueueItem(queueItemId);
-                        syncNetworkQueue(originalSyncRequestItemId, handler);
+
                     }
                 });
         AlertDialog alert = builder.create();
