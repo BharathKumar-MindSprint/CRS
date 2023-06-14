@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -17,15 +18,19 @@ import android.widget.Toast;
 import com.olam.digital.ofis.AddFarmerActivity;
 import com.olam.digital.ofis.FindFarmerActivity;
 import com.olam.digital.ofis.R;
+import com.olam.digital.ofis.coffeesurveyconstraints.Constraint;
 import com.olam.digital.ofis.mvvmmodule.Constants;
+import com.olam.digital.ofis.mvvmmodule.roomdb.DmQuestionsModuleDao;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
+import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmQuestionsModule;
 
 
 public class SurveyResultsFragment extends Fragment {
     LinearLayout ll_servey_next_servey_results, ll_servey_back_servey_results;
+    ConstraintLayout survey_result_main;
 
     LinearLayout newView;
-    ImageView traffic_indicator;
+    ImageView traffic_indicator_green, traffic_indicator_orange, traffic_indicator_red;
 
     int total = 50;
     OFISRoomDB db;
@@ -43,6 +48,7 @@ public class SurveyResultsFragment extends Fragment {
 
         ll_servey_next_servey_results = view.findViewById(R.id.ll_servey_next_servey_results);
         ll_servey_back_servey_results = view.findViewById(R.id.ll_servey_back_servey_results);
+        survey_result_main = view.findViewById(R.id.survey_result_main);
         editTextText = view.findViewById(R.id.editTextText);
         editTextText3 = view.findViewById(R.id.editTextText3);
         editTextText4 = view.findViewById(R.id.editTextText4);
@@ -58,29 +64,68 @@ public class SurveyResultsFragment extends Fragment {
         });
 
         newView = view.findViewById(R.id.survey_result_indicator);
-        traffic_indicator = view.findViewById(R.id.traffic_indicator);
+        traffic_indicator_green = view.findViewById(R.id.indicator_green);
+        traffic_indicator_orange = view.findViewById(R.id.indicator_orange);
+        traffic_indicator_red = view.findViewById(R.id.indicator_red);
 
         db = OFISRoomDB.getDbInstance(getActivity());
 
-        if (total < 40) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                newView.setBackground(getActivity().getDrawable(R.color.orange_view_survey));
-                traffic_indicator.setVisibility(View.GONE);
 
-            }
-
-        } else {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                newView.setBackground(getActivity().getDrawable(R.color.green_view_survey));
-                traffic_indicator.setVisibility(View.VISIBLE);
-            }
-        }
 
         editTextText.setText(Constants.complaintSize);
         editTextText3.setText(Constants.noncomplaintSize);
         editTextText4.setText(Constants.satisfactorySize);
 
         editTextText5.setText(String.valueOf(Integer.parseInt(Constants.complaintSize) + Integer.parseInt(Constants.satisfactorySize) + Integer.parseInt(Constants.noncomplaintSize)));
+
+        int complaint = Integer.parseInt(Constants.complaintSize);
+        int nonComplaint = Integer.parseInt(Constants.noncomplaintSize);
+        int satisfactory = Integer.parseInt(Constants.satisfactorySize);
+
+        DmQuestionsModule isCritical = new DmQuestionsModule();
+        Boolean val = isCritical.isCriticalQuest;
+
+
+        if (val && nonComplaint >= 1 && satisfactory >= 1) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                newView.setBackground(getActivity().getDrawable(R.color.red_view_survey));
+                survey_result_main.setBackground(getActivity().getDrawable(R.color.red_survey_result));
+                traffic_indicator_green.setVisibility(View.GONE);
+                traffic_indicator_orange.setVisibility(View.GONE);
+                traffic_indicator_red.setVisibility(View.VISIBLE);
+            }
+        }else{
+
+            if (nonComplaint>complaint && nonComplaint>satisfactory){
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    newView.setBackground(getActivity().getDrawable(R.color.red_view_survey));
+                    survey_result_main.setBackground(getActivity().getDrawable(R.color.red_survey_result));
+                    traffic_indicator_green.setVisibility(View.GONE);
+                    traffic_indicator_orange.setVisibility(View.GONE);
+                    traffic_indicator_red.setVisibility(View.VISIBLE);
+                }
+            } else if (satisfactory>complaint && satisfactory>nonComplaint){
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    newView.setBackground(getActivity().getDrawable(R.color.orange_view_survey));
+                    survey_result_main.setBackground(getActivity().getDrawable(R.color.ambur_survey_result));
+                    traffic_indicator_green.setVisibility(View.GONE);
+                    traffic_indicator_orange.setVisibility(View.VISIBLE);
+                    traffic_indicator_red.setVisibility(View.GONE);
+                }
+            }else {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    newView.setBackground(getActivity().getDrawable(R.color.green_view_survey));
+                    survey_result_main.setBackground(getActivity().getDrawable(R.color.green_survey_result));
+                    traffic_indicator_green.setVisibility(View.VISIBLE);
+                    traffic_indicator_orange.setVisibility(View.GONE);
+                    traffic_indicator_red.setVisibility(View.GONE);
+                }
+            }
+
+        }
+
+
+
 
 
         return view;

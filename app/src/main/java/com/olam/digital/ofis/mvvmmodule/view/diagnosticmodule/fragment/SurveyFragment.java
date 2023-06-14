@@ -63,7 +63,7 @@ public class SurveyFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_survey, container, false);
 
         ll_servey_next = view.findViewById(R.id.ll_servey_next);
-        ll_servey_back = view.findViewById(R.id.ll_servey_back);
+//        ll_servey_back = view.findViewById(R.id.ll_servey_back);
         dm_Section = view.findViewById(R.id.dm_Section);
         dm_Question = view.findViewById(R.id.dm_Question);
 
@@ -80,13 +80,13 @@ public class SurveyFragment extends Fragment {
 
 
 
-        ll_servey_back.setOnClickListener(new View.OnClickListener() {
+        /*ll_servey_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(), FindFarmerActivity.class);
                 startActivity(intent);
             }
-        });
+        });*/
 
         ll_servey_next.setOnClickListener(new View.OnClickListener() {
             @Override

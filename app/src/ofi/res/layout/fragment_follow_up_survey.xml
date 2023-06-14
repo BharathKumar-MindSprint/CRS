@@ -9,9 +9,7 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        >
-
+        android:layout_height="match_parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -417,7 +415,124 @@
 
             </LinearLayout>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/table_width60"
+                android:layout_marginTop="10dp"
+                android:background="@color/white"
+                android:orientation="horizontal"
+                android:weightSum="2"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/ll_satisfactory_layout_follow_up_survey">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <!--<LinearLayout
+                        android:id="@+id/ll_servey_back_followup_survey"
+                        android:layout_width="160dp"
+                        android:layout_height="match_parent"
+                        android:layout_margin="@dimen/margin_10"
+                        android:background="@drawable/dm_back_background"
+                        android:onClick="goLastTabFollowUp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/ll_servey_next_followup_survey"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="@string/back"
+                            android:textColor="@color/black"
+                            android:textStyle="bold" />
+                    </LinearLayout>-->
+
+                    <LinearLayout
+                        android:id="@+id/ll_servey_next_followup_survey"
+                        android:layout_width="160dp"
+                        android:layout_height="match_parent"
+                        android:layout_margin="@dimen/margin_10"
+                        android:background="@drawable/dm_next_background"
+                        android:onClick="goNextTabFollowUp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.95"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="@string/ModuleNextButton"
+                            android:textColor="@color/white"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+            </LinearLayout>
+
+            <!--<LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/table_width60"
+                android:layout_marginTop="10dp"
+                android:background="@color/white"
+                android:orientation="horizontal"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/ll_satisfactory_layout_follow_up_survey">
+
+                &lt;!&ndash;<LinearLayout
+                    android:id="@+id/ll_servey_back_followup_survey"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="@dimen/margin_10"
+                    android:layout_weight="1"
+                    android:background="@drawable/dm_back_background"
+                    android:onClick="goLastTabFollowUp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="@string/back"
+                        android:textColor="@color/black"
+                        android:textStyle="bold" />
+                </LinearLayout>&ndash;&gt;
+
+                <LinearLayout
+                    android:id="@+id/ll_servey_next_followup_survey"
+                    android:layout_width="150dp"
+                    android:layout_height="match_parent"
+                    android:gravity="right"
+                    android:layout_gravity="right|center"
+                    android:layout_margin="@dimen/margin_10"
+                    android:background="@drawable/dm_next_background"
+                    android:onClick="goNextTabFollowUp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="@string/ModuleNextButton"
+                        android:textColor="@color/white"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+            </LinearLayout>-->
+
         </androidx.constraintlayout.widget.ConstraintLayout>
+
     </ScrollView>
 
 </FrameLayout>

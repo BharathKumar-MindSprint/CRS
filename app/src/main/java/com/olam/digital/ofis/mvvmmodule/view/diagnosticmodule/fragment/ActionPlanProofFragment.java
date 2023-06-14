@@ -228,17 +228,18 @@ public class ActionPlanProofFragment extends Fragment {
                     if (tagFirst == 0) {
                         //Toast.makeText(getActivity(), "Expand" + tag, Toast.LENGTH_SHORT).show();
                         complaint_dropdown.setTag("1" + complaint_id);
+                        complaint_dropdown.setRotation(180);
                         if (finalDmSurveyAnswerTableList.size() != 0) {
                             View desiredView = dm_question_complaint.findViewWithTag("item" + complaint_id);
                             LinearLayout linearLayout = (LinearLayout) desiredView;
                             linearLayout.setVisibility(View.VISIBLE);
-
                         }
 
 
                     } else {
                         //Toast.makeText(getActivity(), "Collapse" + tag, Toast.LENGTH_SHORT).show();
                         complaint_dropdown.setTag("0" + complaint_id);
+                        complaint_dropdown.setRotation(0);
                         if (finalDmSurveyAnswerTableList.size() != 0) {
                             View desiredView = dm_question_complaint.findViewWithTag("item" + complaint_id);
                             LinearLayout linearLayout = (LinearLayout) desiredView;

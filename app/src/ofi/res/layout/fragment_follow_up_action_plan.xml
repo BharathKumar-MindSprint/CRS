@@ -373,6 +373,7 @@
             </LinearLayout>
 
 <!--            Satisfactory-->
+
             <LinearLayout
                 android:id="@+id/ll_satisfactory_layout_follow_up_action"
                 android:layout_width="match_parent"
@@ -524,7 +525,59 @@
             </LinearLayout>
 
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/table_width60"
+                android:layout_marginTop="10dp"
+                android:background="@color/white"
+                android:orientation="horizontal"
+                android:weightSum="2"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/ll_satisfactory_layout_follow_up_action">
+
+                <LinearLayout
+                    android:id="@+id/ll_servey_back_followup_actionplan"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="@dimen/margin_10"
+                    android:layout_weight="1"
+                    android:background="@drawable/dm_back_background"
+                    android:onClick="goLastTabFollowUp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="@string/back"
+                        android:textColor="@color/black"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/ll_servey_next_followup_actionplan"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="@dimen/margin_10"
+                    android:layout_weight="1"
+                    android:background="@drawable/dm_next_background"
+                    android:onClick="goNextTabFollowUp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="@string/ModuleSaveButton"
+                        android:textColor="@color/white"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+            </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
+
 
 
 
