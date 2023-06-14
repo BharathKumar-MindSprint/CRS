@@ -22,10 +22,10 @@
             android:layout_marginTop="@dimen/margin_10">
 
             <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/survey_result_main"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
-                android:background="#ebeddb"
                 android:paddingBottom="10dp">
 
                 <LinearLayout
@@ -55,21 +55,46 @@
                     android:id="@+id/textView5"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginTop="14dp"
+                    android:layout_marginRight="25dp"
                     android:text="55 Marks"
                     android:textStyle="bold"
-                    android:visibility="gone"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.934"
                     app:layout_constraintStart_toEndOf="@+id/textView3"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <ImageView
-                    android:id="@+id/traffic_indicator"
+                    android:id="@+id/indicator_green"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:src="@drawable/traffic_indicator_green"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:visibility="gone"
+                    app:layout_constraintHorizontal_bias="0.934"
+                    app:layout_constraintStart_toEndOf="@+id/textView3"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:id="@+id/indicator_orange"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:visibility="gone"
+                    android:src="@drawable/traffic_indicator_orange"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.934"
+                    app:layout_constraintStart_toEndOf="@+id/textView3"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:id="@+id/indicator_red"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:visibility="gone"
+                    android:src="@drawable/traffic_indicator_red"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.934"
                     app:layout_constraintStart_toEndOf="@+id/textView3"
@@ -202,6 +227,7 @@
                     android:background="#ffffff"
                     android:padding="@dimen/margin_10"
                     android:ems="10"
+                    android:textSize="10sp"
                     android:enabled="false"
                     android:inputType="number"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -216,6 +242,7 @@
                     android:layout_marginTop="24dp"
                     android:background="#ffffff"
                     android:ems="10"
+                    android:textSize="10sp"
                     android:padding="@dimen/margin_10"
                     android:text="30"
                     android:enabled="false"

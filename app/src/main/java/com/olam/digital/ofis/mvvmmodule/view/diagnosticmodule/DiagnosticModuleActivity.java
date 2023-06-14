@@ -150,7 +150,7 @@ public class DiagnosticModuleActivity extends BaseActivity {
         }
 
 
-// to make the tab swipe disable
+        // to make the tab swipe disable
         viewPager.setUserInputEnabled(false);
 
         viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
