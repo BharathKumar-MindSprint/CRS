@@ -234,7 +234,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     static String odAccessToken;
 
     static boolean isdownloadfarmplan;
-
+    static boolean isEnableDM = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -1725,6 +1725,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
     //
     public static void GetAccessToken(String value) {
+        isEnableDM = Utilities.getBoolFromSharedPrefs(staticContext, Utilities.DM_ENUMERATOR,false);
         String isoCode = Utilities.getdatafromSharedPrefs(staticContext,"CountryUserID");
         Log.d("COUNTRY_CODENEWPREFFF", isoCode);
         counrtyCodeNew =isoCode+"_OFIS_DO_INTERFACE";
@@ -1752,6 +1753,9 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                     Utilities.saveToSharedPrefs(staticContext, "DISPLAY_CROPPLAN", "", false);
                     if(value.equalsIgnoreCase("home")){
                         cardview_downloadFarmplan.setVisibility(View.GONE);
+                        if(isEnableDM) {
+                            GetAllDiagnosticModule();
+                        }
                     }
                    // showAlert("Unable to fetch country name for the ISOCode"+response.message());
                 }else if (response.code()==500){
@@ -1759,6 +1763,9 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                     Utilities.saveToSharedPrefs(staticContext, "DISPLAY_CROPPLAN", "", false);
                     if(value.equalsIgnoreCase("home")){
                         cardview_downloadFarmplan.setVisibility(View.GONE);
+                        if(isEnableDM) {
+                            GetAllDiagnosticModule();
+                        }
                     }
                    // showAlert("Internal Server Error, Please Contact Admin!!"+response.message());
                 }else{
@@ -1837,8 +1844,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 }else{
                    // showAlert("Server Issue!!"+response.message().toString());
                 }
-                boolean isEnableDM = Utilities.getBoolFromSharedPrefs(staticContext, Utilities.DM_ENUMERATOR,false);
-                if(isEnableDM) {
+               if(isEnableDM) {
                     GetAllDiagnosticModule();
                 }
             }
