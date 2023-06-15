@@ -1,9 +1,7 @@
 package com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.fragment;
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
 import android.content.res.Resources;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
@@ -13,7 +11,6 @@ import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.text.Editable;
-import android.text.InputFilter;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -27,16 +24,12 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.material.textfield.TextInputEditText;
-import com.olam.digital.ofis.FindFarmerActivity;
 import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.mvvmmodule.Constants;
-import com.olam.digital.ofis.mvvmmodule.InputFilterMinMax;
+import com.olam.digital.ofis.mvvmmodule.DataRefreshListener;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmLookupValuesISubmodule;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmLookupValuesItem;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmQuestionsModule;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmQuestionsSubModule;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmSectionsItem;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmSurveyAnswerTable;
 
@@ -44,13 +37,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class SurveyFragment extends Fragment {
-    LinearLayout ll_servey_next, ll_servey_back, dm_Section, dm_Question;
+public class SurveyFragment extends Fragment{
+    LinearLayout ll_servey_next, dm_Section, dm_Question;
     OFISRoomDB db;
     public LayoutInflater inflater;
     Resources resources;
 
-    //PSW-n4ROZ
+    private DataRefreshListener dataRefreshListener;
 
     public SurveyFragment() {
         // Required empty public constructor
@@ -66,126 +59,6 @@ public class SurveyFragment extends Fragment {
 //        ll_servey_back = view.findViewById(R.id.ll_servey_back);
         dm_Section = view.findViewById(R.id.dm_Section);
         dm_Question = view.findViewById(R.id.dm_Question);
-
-
-        db = OFISRoomDB.getDbInstance(getActivity());
-        //db.dmSurveyAnswerTableDao().deleteAll();
-
-        List<DmSectionsItem> dmSectionsItemList = db.dmSectionsItemDao().getDmSectionsByModuleId(Integer.parseInt(Constants.MODULE_ID));
-        displaySectionItems(dmSectionsItemList);
-
-        List<DmQuestionsModule> dmQuestionsModuleList = db.dmQuestionsModuleDao().getDmQuestionsModulebyModuleId(Integer.parseInt(Constants.MODULE_ID));
-        // List<DmQuestionsModule> dmQuestionsModuleList = db.dmQuestionsModuleDao().getDmQuestionsModulebyModuleId(262);
-        displayQuestionsModuleItems(dmQuestionsModuleList);
-
-
-
-        /*ll_servey_back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), FindFarmerActivity.class);
-                startActivity(intent);
-            }
-        });*/
-
-        ll_servey_next.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                ArrayList<String> qId = Constants.questionIds;
-
-                ArrayList<String> qIdSections = Constants.questionIdsSection;
-
-                if (db.dmSurveyAnswerTableDao().getDataByModuleId(Constants.MODULE_ID).size() == Constants.questionIds.size() + Constants.questionIdsSection.size()) {
-                    ViewPager2 viewPager = getActivity().findViewById(R.id.viewPager);
-                    viewPager.setCurrentItem(1);
-                    for (int i = 0; i < Constants.questionIds.size(); i++) {
-                        View desiredView = dm_Question.findViewWithTag(qId.get(i));
-                        TextView textView = (TextView) desiredView;
-                        textView.setVisibility(View.GONE);
-                    }
-
-                    for (int j = 0; j < Constants.questionIdsSection.size(); j++) {
-                        View desiredView = dm_Section.findViewWithTag(qIdSections.get(j));
-                        TextView textView = (TextView) desiredView;
-                        textView.setVisibility(View.GONE);
-                    }
-
-
-                } else {
-                    for (int i = 0; i < Constants.questionIds.size(); i++) {
-
-                        String type = db.dmQuestionsModuleDao().getDmQuestionType(Integer.parseInt(qId.get(i))).get(0).displayType;
-
-                        if (type.equalsIgnoreCase("text box")) {
-
-                            View desiredView = dm_Question.findViewWithTag(qId.get(i));
-                            if (desiredView != null) {
-                                TextView textView = (TextView) desiredView;
-                                if (db.dmSurveyAnswerTableDao().getDataByQuestionId(qId.get(i)).size() == 0) {
-                                    textView.setVisibility(View.VISIBLE);
-                                } else {
-                                    textView.setVisibility(View.GONE);
-                                }
-                            } else {
-                                // View not found
-                            }
-
-                        } else if (type.equalsIgnoreCase("dropdown")) {
-                            View desiredView = dm_Question.findViewWithTag(qId.get(i));
-                            if (desiredView != null) {
-                                TextView textView = (TextView) desiredView;
-                                if (db.dmSurveyAnswerTableDao().getDataByQuestionId(qId.get(i)).size() == 0) {
-                                    textView.setVisibility(View.VISIBLE);
-                                } else {
-                                    textView.setVisibility(View.GONE);
-                                }
-                            } else {
-                                // View not found
-                            }
-
-                        }
-
-                    }
-
-                    for (int j = 0; j < Constants.questionIdsSection.size(); j++) {
-
-                        String type = db.dmQuestionsSubModuleDao().getDmQuestionType(Integer.parseInt(qIdSections.get(j))).get(0).displayType;
-
-                        if (type.equalsIgnoreCase("text box")) {
-
-                            View desiredView = dm_Section.findViewWithTag(qIdSections.get(j));
-                            if (desiredView != null) {
-                                TextView textView = (TextView) desiredView;
-                                if (db.dmSurveyAnswerTableDao().getDataByQuestionId(qIdSections.get(j)).size() == 0) {
-                                    textView.setVisibility(View.VISIBLE);
-                                } else {
-                                    textView.setVisibility(View.GONE);
-                                }
-                            } else {
-                                // View not found
-                            }
-
-                        } else if (type.equalsIgnoreCase("dropdown")) {
-                            View desiredView = dm_Section.findViewWithTag(qIdSections.get(j));
-                            if (desiredView != null) {
-                                TextView textView = (TextView) desiredView;
-                                if (db.dmSurveyAnswerTableDao().getDataByQuestionId(qIdSections.get(j)).size() == 0) {
-                                    textView.setVisibility(View.VISIBLE);
-                                } else {
-                                    textView.setVisibility(View.GONE);
-                                }
-                            } else {
-                                // View not found
-                            }
-
-                        }
-
-                    }
-                }
-
-            }
-        });
 
 
         return view;
@@ -658,6 +531,124 @@ public class SurveyFragment extends Fragment {
     }
 
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        db = OFISRoomDB.getDbInstance(getActivity());
+
+        dm_Section.removeAllViews();
+        dm_Question.removeAllViews();
+
+        List<DmSectionsItem> dmSectionsItemList = new ArrayList<>();
+        dmSectionsItemList.clear();
+        dmSectionsItemList = db.dmSectionsItemDao().getDmSectionsByModuleId(Integer.parseInt(Constants.MODULE_ID));
+        displaySectionItems(dmSectionsItemList);
+
+        List<DmQuestionsModule> dmQuestionsModuleList = new ArrayList<>();
+        dmQuestionsModuleList.clear();
+        dmQuestionsModuleList = db.dmQuestionsModuleDao().getDmQuestionsModulebyModuleId(Integer.parseInt(Constants.MODULE_ID));
+        // List<DmQuestionsModule> dmQuestionsModuleList = db.dmQuestionsModuleDao().getDmQuestionsModulebyModuleId(262);
+        displayQuestionsModuleItems(dmQuestionsModuleList);
+
+        ll_servey_next.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                ArrayList<String> qId = Constants.questionIds;
+
+                ArrayList<String> qIdSections = Constants.questionIdsSection;
+
+                if (db.dmSurveyAnswerTableDao().getDataByModuleId(Constants.MODULE_ID).size() == Constants.questionIds.size() + Constants.questionIdsSection.size()) {
+                    ViewPager2 viewPager = getActivity().findViewById(R.id.viewPager);
+                    viewPager.setCurrentItem(1);
+                    for (int i = 0; i < Constants.questionIds.size(); i++) {
+                        View desiredView = dm_Question.findViewWithTag(qId.get(i));
+                        TextView textView = (TextView) desiredView;
+                        textView.setVisibility(View.GONE);
+                    }
+
+                    for (int j = 0; j < Constants.questionIdsSection.size(); j++) {
+                        View desiredView = dm_Section.findViewWithTag(qIdSections.get(j));
+                        TextView textView = (TextView) desiredView;
+                        textView.setVisibility(View.GONE);
+                    }
+
+
+                } else {
+                    for (int i = 0; i < Constants.questionIds.size(); i++) {
+
+                        String type = db.dmQuestionsModuleDao().getDmQuestionType(Integer.parseInt(qId.get(i))).get(0).displayType;
+
+                        if (type.equalsIgnoreCase("text box")) {
+
+                            View desiredView = dm_Question.findViewWithTag(qId.get(i));
+                            if (desiredView != null) {
+                                TextView textView = (TextView) desiredView;
+                                if (db.dmSurveyAnswerTableDao().getDataByQuestionId(qId.get(i)).size() == 0) {
+                                    textView.setVisibility(View.VISIBLE);
+                                } else {
+                                    textView.setVisibility(View.GONE);
+                                }
+                            } else {
+                                // View not found
+                            }
+
+                        } else if (type.equalsIgnoreCase("dropdown")) {
+                            View desiredView = dm_Question.findViewWithTag(qId.get(i));
+                            if (desiredView != null) {
+                                TextView textView = (TextView) desiredView;
+                                if (db.dmSurveyAnswerTableDao().getDataByQuestionId(qId.get(i)).size() == 0) {
+                                    textView.setVisibility(View.VISIBLE);
+                                } else {
+                                    textView.setVisibility(View.GONE);
+                                }
+                            } else {
+                                // View not found
+                            }
+
+                        }
+
+                    }
+
+                    for (int j = 0; j < Constants.questionIdsSection.size(); j++) {
+
+                        String type = db.dmQuestionsSubModuleDao().getDmQuestionType(Integer.parseInt(qIdSections.get(j))).get(0).displayType;
+
+                        if (type.equalsIgnoreCase("text box")) {
+
+                            View desiredView = dm_Section.findViewWithTag(qIdSections.get(j));
+                            if (desiredView != null) {
+                                TextView textView = (TextView) desiredView;
+                                if (db.dmSurveyAnswerTableDao().getDataByQuestionId(qIdSections.get(j)).size() == 0) {
+                                    textView.setVisibility(View.VISIBLE);
+                                } else {
+                                    textView.setVisibility(View.GONE);
+                                }
+                            } else {
+                                // View not found
+                            }
+
+                        } else if (type.equalsIgnoreCase("dropdown")) {
+                            View desiredView = dm_Section.findViewWithTag(qIdSections.get(j));
+                            if (desiredView != null) {
+                                TextView textView = (TextView) desiredView;
+                                if (db.dmSurveyAnswerTableDao().getDataByQuestionId(qIdSections.get(j)).size() == 0) {
+                                    textView.setVisibility(View.VISIBLE);
+                                } else {
+                                    textView.setVisibility(View.GONE);
+                                }
+                            } else {
+                                // View not found
+                            }
+
+                        }
+
+                    }
+                }
+
+            }
+        });
+    }
 }
 
 

@@ -6,6 +6,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -36,6 +37,7 @@ import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 import android.text.Editable;
 import android.text.InputFilter;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
@@ -65,6 +67,7 @@ import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.parser.Line;
 import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.mvvmmodule.Constants;
+import com.olam.digital.ofis.mvvmmodule.DataRefreshListener;
 import com.olam.digital.ofis.mvvmmodule.FileUtils;
 import com.olam.digital.ofis.mvvmmodule.ImageOrientation;
 import com.olam.digital.ofis.mvvmmodule.InputFilterMinMax;
@@ -102,7 +105,7 @@ import java.util.HashMap;
 import java.util.List;
 
 
-public class ActionPlanProofFragment extends Fragment {
+public class ActionPlanProofFragment extends Fragment{
 
     private static final int REQ_CODE = 300;
     private final String MATOMOTAG = this.getClass().getSimpleName();
@@ -147,6 +150,7 @@ public class ActionPlanProofFragment extends Fragment {
     //Room DB
     OFISRoomDB db;
     Spinner spinner_dmCurrencies;
+    String budgetAmount;
 
     public ActionPlanProofFragment() {
         // Required empty public constructor
@@ -166,17 +170,6 @@ public class ActionPlanProofFragment extends Fragment {
         spinner_dmCurrencies = view.findViewById(R.id.spinner_dmCurrencies);
         dm_question_complaint = view.findViewById(R.id.dm_question_complaint);
 
-        db = OFISRoomDB.getDbInstance(getActivity());
-        List<DmCurrenciesItem> dmSectionsItemList = db.dmCurrenciesItemDao().getDmCurrenciesItem();
-        showCurrencyDropDown(dmSectionsItemList);
-
-//        if (db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size() != 0) {
-//            for (int i = 0; i < db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size(); i++) {
-//                displayQuestionsModuleComplaint(String.valueOf(db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).get(i).id));
-//            }
-//        }
-
-
         return view;
     }
 
@@ -194,6 +187,12 @@ public class ActionPlanProofFragment extends Fragment {
             dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByComplianceId(complaint_id);
 
             String complianceName = dmComplaintList.get(0).compliance;
+
+            for (int amt = 0; amt < dmSurveyAnswerTableList.size(); amt++) {
+
+                 budgetAmount = String.valueOf(dmSurveyAnswerTableList.get(amt).amount);
+
+            }
 
             if (complianceName.equalsIgnoreCase("Satisfactory")) {
                 Constants.satisfactorySize = String.valueOf(dmSurveyAnswerTableList.size());
@@ -426,9 +425,6 @@ public class ActionPlanProofFragment extends Fragment {
             @Override
             public void onClick(View view) {
 
-                Toast.makeText(getActivity(), "" + textView.getTag(), Toast.LENGTH_SHORT).show();
-                Toast.makeText(getActivity(), "dyn====" + linearLayoutImage.getTag(), Toast.LENGTH_SHORT).show();
-
                 final CharSequence[] options = {"Take Photo", "Choose from Gallery", "Cancel"};
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 builder.setTitle("Add Photo!");
@@ -569,6 +565,8 @@ public class ActionPlanProofFragment extends Fragment {
         editTextCurrency.setEnabled(false);
         editTextCurrency.setTextColor(getResources().getColor(R.color.black));
         editTextCurrency.setPadding(0, 10, 0, 10);
+
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             editTextCurrency.setBackground(getActivity().getDrawable(R.drawable.answer_text_survey));
         }
@@ -588,6 +586,8 @@ public class ActionPlanProofFragment extends Fragment {
         editTextCurrencyInput.setTextSize(14);
         editTextCurrencyInput.setTextColor(getResources().getColor(R.color.black));
         editTextCurrencyInput.setPadding(0, 10, 0, 10);
+        editTextCurrencyInput.setText(budgetAmount);
+        editTextCurrencyInput.setInputType(InputType.TYPE_CLASS_NUMBER);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             editTextCurrencyInput.setBackground(getActivity().getDrawable(R.drawable.answer_text_survey));
         }
@@ -1619,7 +1619,6 @@ public class ActionPlanProofFragment extends Fragment {
         return fileName;
     }
 
-
     @Override
     public void onStart() {
         super.onStart();
@@ -1627,7 +1626,6 @@ public class ActionPlanProofFragment extends Fragment {
             checkPermission();
         }
     }
-
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     public void checkPermission() {
@@ -1660,4 +1658,11 @@ public class ActionPlanProofFragment extends Fragment {
     }
 
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        db = OFISRoomDB.getDbInstance(getActivity());
+        List<DmCurrenciesItem> dmSectionsItemList = db.dmCurrenciesItemDao().getDmCurrenciesItem();
+        showCurrencyDropDown(dmSectionsItemList);
+    }
 }
