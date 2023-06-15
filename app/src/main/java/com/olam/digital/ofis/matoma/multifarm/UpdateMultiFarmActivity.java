@@ -1,10 +1,9 @@
-package com.olam.digital.ofis.multifarm;
+package com.olam.digital.ofis.matoma.multifarm;
 
 import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;

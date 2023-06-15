@@ -67,6 +67,6 @@ public interface ManageRecords {
 
     @POST("ofissurvey/survey/diagnosticmodule/submitSurvey")
     Call<DMSurveyResponseModel> postAllDiagnosticModuleSurveyData(@Header("App-Id") int AppId,
-                                                                  @Body JSONArray diagnosticModuleSurveyRequestBody);
+                                                                  @Body String diagnosticModuleSurveyRequestBody);
 
 }
