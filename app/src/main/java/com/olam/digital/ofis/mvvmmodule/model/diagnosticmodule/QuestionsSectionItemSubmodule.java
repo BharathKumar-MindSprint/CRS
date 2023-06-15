@@ -9,8 +9,17 @@ public class QuestionsSectionItemSubmodule {
     @SerializedName("mandate")
     private boolean mandate;
 
+
+    public TextBoxModuleQuestions getTextBoxSectionQuestions() {
+        return textBoxSectionQuestions;
+    }
+
+    public void setTextBoxSectionQuestions(TextBoxModuleQuestions textBoxSectionQuestions) {
+        this.textBoxSectionQuestions = textBoxSectionQuestions;
+    }
+
     @SerializedName("textBox")
-    private String textBox;
+    private TextBoxModuleQuestions textBoxSectionQuestions;
 
     @SerializedName("question")
     private String question;
@@ -67,9 +76,9 @@ public class QuestionsSectionItemSubmodule {
     @SerializedName("submoduleId")
     private int submoduleId;
 
-    public QuestionsSectionItemSubmodule(boolean mandate, String textBox, String question, String questionTr, List<SectionLookupValuesItemSubmodule> lookupValues, String questionPt, String questionLo, int displaytypeId, int datatypeId, boolean isCriticalQuest, String questionFr, String displayType, String questionIdn, String questionEs, String questionTh, int id, int position, String questionVi, int moduleId, int submoduleId) {
+    public QuestionsSectionItemSubmodule(boolean mandate, TextBoxModuleQuestions textBoxSectionQuestions, String question, String questionTr, List<SectionLookupValuesItemSubmodule> lookupValues, String questionPt, String questionLo, int displaytypeId, int datatypeId, boolean isCriticalQuest, String questionFr, String displayType, String questionIdn, String questionEs, String questionTh, int id, int position, String questionVi, int moduleId, int submoduleId) {
         this.mandate = mandate;
-        this.textBox = textBox;
+        this.textBoxSectionQuestions = textBoxSectionQuestions;
         this.question = question;
         this.questionTr = questionTr;
         this.lookupValues = lookupValues;
@@ -97,14 +106,6 @@ public class QuestionsSectionItemSubmodule {
 
     public void setMandate(boolean mandate) {
         this.mandate = mandate;
-    }
-
-    public String getTextBox() {
-        return textBox;
-    }
-
-    public void setTextBox(String textBox) {
-        this.textBox = textBox;
     }
 
     public String getQuestion() {

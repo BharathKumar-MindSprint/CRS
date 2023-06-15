@@ -6,6 +6,8 @@ import androidx.room.Insert;
 import androidx.room.Query;
 
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmActionPlansItem;
+import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmCurrenciesItem;
+
 import java.util.List;
 
 @Dao
@@ -15,6 +17,9 @@ public interface DmActionPlansItemDao {
 
     @Insert
     void insert(DmActionPlansItem... dmActionPlansItems);
+
+    @Query("SELECT * FROM DmActionPlansItem WHERE questionId = :id")
+    List<DmActionPlansItem> getActionPlanItemById(int id);
 
     @Delete
     void delete(DmActionPlansItem dmActionPlansItem);

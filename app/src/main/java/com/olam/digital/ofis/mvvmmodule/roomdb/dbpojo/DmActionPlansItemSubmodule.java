@@ -17,4 +17,10 @@ public class DmActionPlansItemSubmodule {
 
     @ColumnInfo(name = "actionPlan")
     public String actionPlan;
+
+    @ColumnInfo(name = "id_lookupValue")
+    public int id_lookupValue;
+
+    @ColumnInfo(name = "questionId")
+    public int questionId;
 }

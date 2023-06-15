@@ -5,6 +5,7 @@ import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
 
+import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmComplaintFileTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmCurrenciesItem;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmQuestionTypes;
 
@@ -17,6 +18,8 @@ public interface DmCurrenciesItemDao {
 
     @Insert
     void insert(DmCurrenciesItem... dmCurrenciesItems);
+    @Query("SELECT * FROM DmCurrenciesItem WHERE currencyId = :id")
+    List<DmCurrenciesItem> getCurrencyItemById(int id);
 
     @Delete
     void delete(DmCurrenciesItem dmCurrenciesItems);

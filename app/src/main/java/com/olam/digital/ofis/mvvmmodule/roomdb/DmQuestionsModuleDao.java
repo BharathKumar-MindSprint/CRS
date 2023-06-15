@@ -7,6 +7,7 @@ import androidx.room.Query;
 
 
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmQuestionsModule;
+import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmQuestionsSubModule;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmTextBoxModuleQuestions;
 
 import java.util.List;
@@ -16,8 +17,11 @@ public interface DmQuestionsModuleDao {
     @Query("SELECT * FROM DmQuestionsModule")
     List<DmQuestionsModule> getDmQuestionsModule();
 
-    @Query("SELECT * FROM DmQuestionsModule WHERE moduleId=:id")
+    @Query("SELECT * FROM DmQuestionsModule WHERE moduleId=:id AND sectionId=0")
     List<DmQuestionsModule> getDmQuestionsModulebyModuleId(int id);
+
+    @Query("SELECT * FROM DmQuestionsModule WHERE sectionId =:id")
+    List<DmQuestionsModule> getDmQuestionsSubModulebySectionId(int id);
 
     @Query("SELECT * FROM DmQuestionsModule WHERE id=:id")
     List<DmQuestionsModule> getDmQuestionType(int id);

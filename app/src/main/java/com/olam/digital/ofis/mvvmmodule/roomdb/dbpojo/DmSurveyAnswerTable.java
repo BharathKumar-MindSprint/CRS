@@ -27,4 +27,16 @@ public class DmSurveyAnswerTable {
 
     @ColumnInfo(name = "complinceTypeId")
     public String complinceTypeId ;
+
+    @ColumnInfo(name = "actionplanId")
+    public String actionplanId ;
+
+    @ColumnInfo(name = "actionPlanText")
+    public String actionPlanText ;
+
+    @ColumnInfo(name = "allowCustomActionPlan")
+    public Boolean allowCustomActionPlan ;
+
+    @ColumnInfo(name = "amount")
+    public int amount ;
 }

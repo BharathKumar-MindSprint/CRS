@@ -6453,7 +6453,26 @@ public class DataLayer {
         return count;
     }
 
+    public boolean isAvailableInNqTable(long farmerId){
+        boolean available = false;
+        try {
+            // Check in Add Farmer registration Table
+            String[] columnsReg = new String[]{"*"};
+            String whereClauseReg = OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID + " = ? AND " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE + " = ?";
+            String[] whereArgsReg = new String[]{String.valueOf(farmerId), "farmer"};
+            Cursor cursorReg = db.query(OFISDBContract.NetworkQueueEntry.TABLE_NAME, columnsReg, whereClauseReg, whereArgsReg, null, null, null);
 
+            if (cursorReg != null) {
+                if (cursorReg.getCount() > 0) {
+                    available = true;
+                }
+            }
+            cursorReg.close();
+        } catch (Exception e) {
+        }
+
+        return available;
+    }
     public boolean isAvailableInNetworkTable(String farmerId, String update_biomatric) {
         boolean available = false;
 
@@ -9296,6 +9315,16 @@ public class DataLayer {
         String whereClause = OFISDBContract.NotificationAssignments.COLUMN_FARMER_ID + " = ? ";
         ContentValues values = new ContentValues();
         values.put(OFISDBContract.NotificationAssignments.COLUMN_STATUS, Utilities.READ);
+        db.update(table,values, whereClause, whereArgs);
+    }
+
+    public void testFarmerChangingValue(int farmerId) {
+        String table = OFISDBContract.FarmerEntry.TABLE_NAME;
+        String[] whereArgs = new String[]{ String.valueOf(farmerId) };
+        String whereClause = OFISDBContract.FarmerEntry.COLUMN_NAME_ID + " = ? ";
+        ContentValues values = new ContentValues();
+        values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_SYNCED, "0");
+        values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID, "1686748460659");
         db.update(table,values, whereClause, whereArgs);
     }
 }

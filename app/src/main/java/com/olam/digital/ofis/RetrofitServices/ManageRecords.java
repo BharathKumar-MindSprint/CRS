@@ -10,7 +10,10 @@ import com.olam.digital.ofis.farmplandownload.model.AccessTokenReqBody;
 import com.olam.digital.ofis.farmplandownload.model.AccessTokenResp;
 import com.olam.digital.ofis.farmplandownload.model.DownloadFormList;
 import com.olam.digital.ofis.farmplandownload.model.DownloadUrlRequestBody;
+import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.DMSurveyResponseModel;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.ResponseModel;
+
+import org.json.JSONArray;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -35,7 +38,7 @@ public interface ManageRecords {
 
     @GET("ofistraining/ofis/mobile/course/module/assettype/language/files")
     Call<DocumentList> getAllDocuments(@Query("coursesAssetTypeId") int coursesAssetTypeId
-                                       ,@Query("coursesLanguageId") int coursesLanguageId);
+            , @Query("coursesLanguageId") int coursesLanguageId);
 
     @GET("ofistraining/ofis/mobile/course/master/assetType")
     Call<Assets> getAllAsset(@Query("courseLanguageId") int courseLanguageId);
@@ -55,12 +58,15 @@ public interface ManageRecords {
 
 
     @Headers({"Content-Type: application/json"})
-//@Streaming
     @POST("storageconnect/api/v1/common")
     Call<ResponseBody> getDownloadUrl(@Body DownloadUrlRequestBody downloadUrlRequestBody);
 
     //Diagnostic Module
     @GET("ofissurvey/survey/diagnostic/getAllDiagnosticModuleData/{enumerator}")
     Call<ResponseModel> getAllDiagnosticModuleData(@Path("enumerator") Integer enumeratorId);
+
+    @POST("ofissurvey/survey/diagnosticmodule/submitSurvey")
+    Call<DMSurveyResponseModel> postAllDiagnosticModuleSurveyData(@Header("App-Id") int AppId,
+                                                                  @Body String diagnosticModuleSurveyRequestBody);
 
 }
