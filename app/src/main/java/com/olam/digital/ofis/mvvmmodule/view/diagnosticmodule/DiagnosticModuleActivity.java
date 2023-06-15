@@ -9,6 +9,8 @@ import android.view.View;
 import android.widget.TextView;
 
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.tabs.TabLayout;
@@ -17,19 +19,22 @@ import com.olam.digital.ofis.BaseActivity;
 import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.Utilities;
 import com.olam.digital.ofis.mvvmmodule.Constants;
+import com.olam.digital.ofis.mvvmmodule.DataRefreshListener;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.DiagnosticModulesList;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.adapter.PagerAdapter;
+import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.fragment.ActionPlanProofFragment;
+import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.fragment.SurveyFragment;
 
 import java.util.List;
 
 
-public class DiagnosticModuleActivity extends BaseActivity {
+public class DiagnosticModuleActivity extends BaseActivity  {
 
     public TabLayout tabLayout;
     ViewPager2 viewPager;
     TextView tv_subtitle;
-    private ProgressDialog progressDialog;
+
     OFISRoomDB db;
     List<DiagnosticModulesList> dMmoduleList;
     String enumerator_id;
@@ -40,10 +45,7 @@ public class DiagnosticModuleActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_diagnostic_module);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setTitle(getString(R.string.PleaseWait));
-        progressDialog.setMessage(getString(R.string.Loading));
-        progressDialog.show();
+
         tabLayout = findViewById(R.id.tabLayout);
         viewPager = findViewById(R.id.viewPager);
         tv_subtitle = findViewById(R.id.tv_subtitle);
@@ -146,5 +148,6 @@ public class DiagnosticModuleActivity extends BaseActivity {
                 return "";
         }
     }
+
 
 }
