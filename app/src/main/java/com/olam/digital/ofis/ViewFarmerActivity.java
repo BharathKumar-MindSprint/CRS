@@ -96,9 +96,9 @@ import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.gps.utils.GPSUtils;
 import com.olam.digital.ofis.matoma.MatomoHelper;
 import com.olam.digital.ofis.matoma.ScreenNameConstants;
-import com.olam.digital.ofis.matoma.multifarm.MultiFarmDTO;
-import com.olam.digital.ofis.matoma.multifarm.MultiFarmUtils;
-import com.olam.digital.ofis.matoma.multifarm.UpdateMultiFarmActivity;
+import com.olam.digital.ofis.multifarm.MultiFarmDTO;
+import com.olam.digital.ofis.multifarm.MultiFarmUtils;
+import com.olam.digital.ofis.multifarm.UpdateMultiFarmActivity;
 import com.olam.digital.ofis.mvvmmodule.Constants;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmMainModule;
@@ -2265,12 +2265,9 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                         //Ticket-OFISDM-39 newly added
                     }else if(recordedLng != null && recordedLng.getText().equals("diagnostic")){
                         MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_REGISTER_CHILD, ScreenNameConstants.BUTTON_CLICKED);
-                        Toast.makeText(context, "Ok"+subModuleTv.getText().toString(), Toast.LENGTH_SHORT).show();
                         Constants.MODULE_ID = subModuleTv.getText().toString();
-
                         Constants.FARMER_ID = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID));
                         String farmerID = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID));
-
                         long farmerGroupId = dl.getFarmerGroupById(farmerId);
                         Constants.FARMER_GROUP_ID = String.valueOf(dl.getFarmerGroupById(farmerId));;
 
@@ -2281,12 +2278,6 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                         in.putExtra("DM_FARMER_GROUP_ID",String.valueOf(farmerGroupId));
                         startActivity(in);
 
-                        /*if(true){
-                            showPopupDialog();
-                        }else{
-                            Intent in = new Intent(this, DiagnosticModuleActivity.class);
-                            startActivity(in);
-                        }*/
                         showPopupDialog();
 
                     } else if (recordedLng != null && recordedLng.getText().equals(ChildLabourUtils.REG_CHILD)) {
