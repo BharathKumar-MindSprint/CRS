@@ -20,6 +20,7 @@ import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmNonComplaintFileTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmQuestionTypes;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmQuestionsModule;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmQuestionsSubModule;
+import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmRangeActionPlansItems;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmRangeTextBoxModuleQuestionsTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmRecurrence;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmSatisfactoryFileTable;
@@ -33,7 +34,7 @@ import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmTextBoxModuleQuestions;
         DmActionPlansItem.class, DmSectionsItem.class, DmQuestionsSubModule.class, DmLookupValuesISubmodule.class,
         DmActionPlansItemSubmodule.class, DmRecurrence.class, DmComplaintFileTable.class,
         DmSurveyAnswerTable.class, DmTextBoxModuleQuestions.class, DmRangeTextBoxModuleQuestionsTable.class, DmNonComplaintFileTable.class,
-        DmSatisfactoryFileTable.class, DmActionPlanCurrenciesTable.class }, version = 1)
+        DmSatisfactoryFileTable.class, DmActionPlanCurrenciesTable.class, DmRangeActionPlansItems.class}, version = 1)
 public abstract class OFISRoomDB extends RoomDatabase {
     private static final String DATABASE_NAME = "ofismobileroom";
     public abstract DmMainModuleDao dmMainModuleDao();
@@ -57,6 +58,7 @@ public abstract class OFISRoomDB extends RoomDatabase {
     public abstract DmNonComplaintFileTableDao dmNonComplaintFileTableDao();
     public abstract DmSatisfactoryFileTableDao dmSatisfactoryFileTableDao();
     public abstract DmActionPlanCurrenciesTableDao dmActionPlanCurrenciesTableDao();
+    public abstract DmRangeActionPlansItemsDao dmRangeActionPlansItemsDao();
 
 
     public static volatile OFISRoomDB INSTANCE = null;

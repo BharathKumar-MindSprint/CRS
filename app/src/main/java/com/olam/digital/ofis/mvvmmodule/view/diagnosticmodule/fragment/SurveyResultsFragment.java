@@ -1,12 +1,12 @@
 package com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.fragment;
 
-import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,14 +15,28 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.olam.digital.ofis.AddFarmerActivity;
-import com.olam.digital.ofis.FindFarmerActivity;
 import com.olam.digital.ofis.R;
-import com.olam.digital.ofis.coffeesurveyconstraints.Constraint;
+import com.olam.digital.ofis.RetrofitServices.ManageRecords;
+import com.olam.digital.ofis.RetrofitServices.RetrofitClient;
 import com.olam.digital.ofis.mvvmmodule.Constants;
-import com.olam.digital.ofis.mvvmmodule.roomdb.DmQuestionsModuleDao;
+import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.DMSurveyResponseModel;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
+import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmActionPlanCurrenciesTable;
+import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmComplaintFileTable;
+import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmCurrenciesItem;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmQuestionsModule;
+import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmSurveyAnswerTable;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 public class SurveyResultsFragment extends Fragment {
@@ -34,7 +48,7 @@ public class SurveyResultsFragment extends Fragment {
 
     int total = 50;
     OFISRoomDB db;
-    EditText editTextText, editTextText3, editTextText4, editTextText5,editTextText6;
+    EditText editTextText, editTextText3, editTextText4, editTextText5, editTextText6;
 
     public SurveyResultsFragment() {
         // Required empty public constructor
@@ -55,11 +69,105 @@ public class SurveyResultsFragment extends Fragment {
         editTextText5 = view.findViewById(R.id.editTextText5);
         editTextText6 = view.findViewById(R.id.editTextText6);
 
+        db = OFISRoomDB.getDbInstance(getActivity());
+
+
         ll_servey_next_servey_results.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), FindFarmerActivity.class);
-                startActivity(intent);
+//                Intent intent = new Intent(getActivity(), FindFarmerActivity.class);
+//                startActivity(intent);
+
+                //Call API
+
+                List<DmActionPlanCurrenciesTable> actionPlanCurrenciesTables = db.dmActionPlanCurrenciesTableDao().getDataByModuleId(Constants.MODULE_ID);
+
+                String currencyId = "0";
+
+                if (actionPlanCurrenciesTables.size() != 0) {
+                    currencyId = String.valueOf(actionPlanCurrenciesTables.get(0).currencyId);
+                }
+
+                HashMap hashMap = new HashMap<>();
+                hashMap.put("farmerId", Constants.FARMER_ID);
+                hashMap.put("moduleId", Constants.MODULE_ID);
+                hashMap.put("farmerGroupId", Constants.FARMER_GROUP_ID);
+                hashMap.put("enumeratorId", Constants.ENUMERATOR_ID);
+                hashMap.put("currencyId", currencyId);
+                hashMap.put("submissionDate", "2023-06-15T15:15:09.983");
+                hashMap.put("isMobile", true);
+
+                HashMap answers = new HashMap();
+
+                List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByModuleId(Constants.MODULE_ID);
+
+                String totalAmount = "0";
+
+                if (dmSurveyAnswerTableList.size() != 0) {
+                    for (int i = 0; i < dmSurveyAnswerTableList.size(); i++) {
+                        answers.put("questionId", dmSurveyAnswerTableList.get(i).questionID);
+                        answers.put("answerId", dmSurveyAnswerTableList.get(i).answerID);
+                        answers.put("answervalue", dmSurveyAnswerTableList.get(i).answer);
+                        answers.put("complianceStatusId", dmSurveyAnswerTableList.get(i).complinceTypeId);
+                        answers.put("actionplanId", dmSurveyAnswerTableList.get(i).actionplanId);
+                        answers.put("actionPlanText", dmSurveyAnswerTableList.get(i).actionPlanText);
+
+                        if (dmSurveyAnswerTableList.get(i).amount != 0) {
+                            totalAmount = String.valueOf(Integer.parseInt(totalAmount) + dmSurveyAnswerTableList.get(i).amount);
+                        }
+
+                        HashMap hashMapFiles = new HashMap();
+
+                        List<DmComplaintFileTable> complaintFileTableList = new ArrayList<>();
+
+                        complaintFileTableList.clear();
+
+                        complaintFileTableList = db.dmComplaintFileTableDao().getFilesById(Integer.parseInt(dmSurveyAnswerTableList.get(i).questionID));
+
+                        List<String> files = new ArrayList<>();
+                        files.clear();
+
+                        for (int j = 0; j < complaintFileTableList.size(); j++) {
+                            files.add(complaintFileTableList.get(j).getFile_name());
+                        }
+
+                        answers.put("captureProof", files);
+
+
+                    }
+                }
+
+
+                List<DmCurrenciesItem> currenciesItems = new ArrayList<>();
+                currenciesItems.clear();
+                currenciesItems = db.dmCurrenciesItemDao().getCurrencyItemById(Integer.parseInt(currencyId));
+
+                String currency = "$";
+
+                if (currenciesItems.size() != 0) {
+                    currency = currenciesItems.get(0).notation;
+                }
+
+                HashMap result = new HashMap();
+                result.put("totalComplaint", Constants.complaintSize);
+                result.put("totalSatisfactory", Constants.satisfactorySize);
+                result.put("totalNonComplaint", Constants.noncomplaintSize);
+                result.put("totalActionPlan", String.valueOf(Integer.parseInt(Constants.complaintSize) + Integer.parseInt(Constants.satisfactorySize) + Integer.parseInt(Constants.noncomplaintSize)));
+                result.put("totalBudget", totalAmount + " " + currency);
+                result.put("resultType", "TrafficLight");
+                result.put("resultValue", "Green");
+                result.put("resultRemarks", "Average");
+
+
+                hashMap.put("result", result);
+
+                JSONObject jsonObject = new JSONObject(hashMap);
+
+                JSONArray jsonArray = new JSONArray();
+                jsonArray.put(jsonObject);
+
+                SubmitResult(jsonArray);
+
             }
         });
 
@@ -67,9 +175,6 @@ public class SurveyResultsFragment extends Fragment {
         traffic_indicator_green = view.findViewById(R.id.indicator_green);
         traffic_indicator_orange = view.findViewById(R.id.indicator_orange);
         traffic_indicator_red = view.findViewById(R.id.indicator_red);
-
-        db = OFISRoomDB.getDbInstance(getActivity());
-
 
 
         editTextText.setText(Constants.complaintSize);
@@ -94,9 +199,9 @@ public class SurveyResultsFragment extends Fragment {
                 traffic_indicator_orange.setVisibility(View.GONE);
                 traffic_indicator_red.setVisibility(View.VISIBLE);
             }
-        }else{
+        } else {
 
-            if (nonComplaint>complaint && nonComplaint>satisfactory){
+            if (nonComplaint > complaint && nonComplaint > satisfactory) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     newView.setBackground(getActivity().getDrawable(R.color.red_view_survey));
                     survey_result_main.setBackground(getActivity().getDrawable(R.color.red_survey_result));
@@ -104,7 +209,7 @@ public class SurveyResultsFragment extends Fragment {
                     traffic_indicator_orange.setVisibility(View.GONE);
                     traffic_indicator_red.setVisibility(View.VISIBLE);
                 }
-            } else if (satisfactory>complaint && satisfactory>nonComplaint){
+            } else if (satisfactory > complaint && satisfactory > nonComplaint) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     newView.setBackground(getActivity().getDrawable(R.color.orange_view_survey));
                     survey_result_main.setBackground(getActivity().getDrawable(R.color.ambur_survey_result));
@@ -112,7 +217,7 @@ public class SurveyResultsFragment extends Fragment {
                     traffic_indicator_orange.setVisibility(View.VISIBLE);
                     traffic_indicator_red.setVisibility(View.GONE);
                 }
-            }else {
+            } else {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     newView.setBackground(getActivity().getDrawable(R.color.green_view_survey));
                     survey_result_main.setBackground(getActivity().getDrawable(R.color.green_survey_result));
@@ -124,10 +229,48 @@ public class SurveyResultsFragment extends Fragment {
 
         }
 
-
-
-
-
         return view;
+    }
+
+    private void SubmitResult( JSONArray jsonArray){
+        //final DiagnosticModuleSurveyRequestBody surveyRequestBody = new DiagnosticModuleSurveyRequestBody();
+
+        ManageRecords postAllDMSurveyData= RetrofitClient.getRetrofit().create(ManageRecords.class);
+        Call<DMSurveyResponseModel> call=postAllDMSurveyData.postAllDiagnosticModuleSurveyData(1,jsonArray);
+        call.enqueue(new Callback<DMSurveyResponseModel>() {
+
+            @Override
+            public void onResponse(Call<DMSurveyResponseModel> call, Response<DMSurveyResponseModel> response) {
+                Toast.makeText(getActivity(), "Inside Submit Servey", Toast.LENGTH_SHORT).show();
+
+                try {
+                if(response.code()==200){
+                    Toast.makeText(getActivity(), "Inside Submit Servey Success", Toast.LENGTH_SHORT).show();
+                    Log.d("ResultFragment", "total result:: " + response.body());
+
+                }else if(response.code()==400){
+                    Log.d("Error400", "Inside 400");
+
+                }else if (response.code()==500){
+                    Log.d("Error500", "Inside 500");
+                    Toast.makeText(getActivity(), "Server Issue", Toast.LENGTH_SHORT).show();
+
+                }else{
+
+                }
+                } catch (Exception e) {
+                    Log.d("SrvySubmitEx", e.toString());
+                    throw new RuntimeException(e);
+
+                }
+            }
+            @Override
+            public void onFailure(Call<DMSurveyResponseModel> call, Throwable t) {
+                Toast.makeText(getActivity(), "Failed", Toast.LENGTH_SHORT).show();
+
+            }
+        });
+
+
     }
 }

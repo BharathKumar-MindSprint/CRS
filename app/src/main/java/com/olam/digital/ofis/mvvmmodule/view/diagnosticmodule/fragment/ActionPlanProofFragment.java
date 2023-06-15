@@ -70,6 +70,7 @@ import com.olam.digital.ofis.mvvmmodule.ImageOrientation;
 import com.olam.digital.ofis.mvvmmodule.InputFilterMinMax;
 import com.olam.digital.ofis.mvvmmodule.PDFUtils;
 import com.olam.digital.ofis.mvvmmodule.PathUtil;
+import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.CurrenciesItem;
 import com.olam.digital.ofis.mvvmmodule.roomdb.DmActionPlanCurrenciesTableDao;
 import com.olam.digital.ofis.mvvmmodule.roomdb.DmSurveyAnswerTableDao;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
@@ -137,6 +138,8 @@ public class ActionPlanProofFragment extends Fragment {
     String dynamicArrayNameFile;
     ArrayList<Long> dynamicArrayFile = new ArrayList<>();
 
+    String currency_id = "0";
+
     private static final String[] ACCEPTED_MIME_TYPES = {"image/jpeg", "image/png", "application/pdf",
             "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "application/vnd.ms-excel",
             "text/plain", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "text/csv"};
@@ -167,11 +170,11 @@ public class ActionPlanProofFragment extends Fragment {
         List<DmCurrenciesItem> dmSectionsItemList = db.dmCurrenciesItemDao().getDmCurrenciesItem();
         showCurrencyDropDown(dmSectionsItemList);
 
-        if (db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size() != 0) {
-            for (int i = 0; i < db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size(); i++) {
-                displayQuestionsModuleComplaint(String.valueOf(db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).get(i).id));
-            }
-        }
+//        if (db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size() != 0) {
+//            for (int i = 0; i < db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size(); i++) {
+//                displayQuestionsModuleComplaint(String.valueOf(db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).get(i).id));
+//            }
+//        }
 
 
         return view;
@@ -192,17 +195,11 @@ public class ActionPlanProofFragment extends Fragment {
 
             String complianceName = dmComplaintList.get(0).compliance;
 
-            if(complianceName.equalsIgnoreCase("Satisfactory"))
-            {
+            if (complianceName.equalsIgnoreCase("Satisfactory")) {
                 Constants.satisfactorySize = String.valueOf(dmSurveyAnswerTableList.size());
-            }
-
-            else if(complianceName.equalsIgnoreCase("Compliant"))
-            {
+            } else if (complianceName.equalsIgnoreCase("Compliant")) {
                 Constants.complaintSize = String.valueOf(dmSurveyAnswerTableList.size());
-            }
-            else if(complianceName.equalsIgnoreCase("Non Compliant"))
-            {
+            } else if (complianceName.equalsIgnoreCase("Non Compliant")) {
                 Constants.noncomplaintSize = String.valueOf(dmSurveyAnswerTableList.size());
             }
 
@@ -256,7 +253,7 @@ public class ActionPlanProofFragment extends Fragment {
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT);
             linearLayoutItems.setLayoutParams(layoutParamLastHp);
-            linearLayoutItems.setPadding(25,10,10,10);
+            linearLayoutItems.setPadding(25, 10, 10, 10);
             linearLayoutItems.setTag("item" + complaint_id);
             linearLayoutItems.setOrientation(LinearLayout.VERTICAL);
 
@@ -347,7 +344,7 @@ public class ActionPlanProofFragment extends Fragment {
         dmComplaintFileTableList.clear();
         dmComplaintFileTableList = db.dmComplaintFileTableDao().getFilesById(Integer.parseInt(id));
 
-        Log.d("akshdkjashdk", "" + dmComplaintFileTableList.size());
+        // Log.d("akshdkjashdk", "" + dmComplaintFileTableList.size());
 
         if (dmComplaintFileTableList.size() != 0) {
             for (int l = 0; l < dmComplaintFileTableList.size(); l++) {
@@ -494,13 +491,17 @@ public class ActionPlanProofFragment extends Fragment {
 
         List<DmActionPlansItem> dmActionPlansItemList = new ArrayList<>();
         dmActionPlansItemList.clear();
-        dmActionPlansItemList = db.dmActionPlansItemDao().getDmActionPlansItem();
+        dmActionPlansItemList = db.dmActionPlansItemDao().getActionPlanItemById(Integer.parseInt(id));
 
         final List<String> list = new ArrayList<String>();
         list.clear();
 
+        final List<String> ids = new ArrayList<String>();
+        ids.clear();
+
         for (int c = 0; c < dmActionPlansItemList.size(); c++) {
             list.add(dmActionPlansItemList.get(c).actionPlan);
+            ids.add(String.valueOf(dmActionPlansItemList.get(c).id));
         }
 
         LinearLayout linearLayoutSpin = new LinearLayout(getActivity());
@@ -532,7 +533,12 @@ public class ActionPlanProofFragment extends Fragment {
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long idS) {
+
+                String Id = ids.get(position);
+
+                db.dmSurveyAnswerTableDao().updateActionPlanId(Id, id);
+
                 // Toast.makeText(getActivity(), "Selected Item " + list.get(position), Toast.LENGTH_SHORT).show();
             }
 
@@ -547,8 +553,18 @@ public class ActionPlanProofFragment extends Fragment {
                 2
         );
 
+        List<DmCurrenciesItem> currenciesItems = new ArrayList<>();
+        currenciesItems.clear();
+        currenciesItems = db.dmCurrenciesItemDao().getCurrencyItemById(Integer.parseInt(currency_id));
+
+        String currency = "$";
+
+        if (currenciesItems.size() != 0) {
+            currency = currenciesItems.get(0).notation;
+        }
+
         EditText editTextCurrency = new EditText(getActivity());
-        editTextCurrency.setText("$");
+        editTextCurrency.setText(currency);
         editTextCurrency.setTextSize(14);
         editTextCurrency.setEnabled(false);
         editTextCurrency.setTextColor(getResources().getColor(R.color.black));
@@ -568,7 +584,7 @@ public class ActionPlanProofFragment extends Fragment {
         );
 
         EditText editTextCurrencyInput = new EditText(getActivity());
-        editTextCurrencyInput.setText("10");
+        editTextCurrencyInput.setHint("Amount");
         editTextCurrencyInput.setTextSize(14);
         editTextCurrencyInput.setTextColor(getResources().getColor(R.color.black));
         editTextCurrencyInput.setPadding(0, 10, 0, 10);
@@ -577,6 +593,28 @@ public class ActionPlanProofFragment extends Fragment {
         }
         layoutParamsetCurEt.setMargins(0, 10, 0, 10);
         editTextCurrencyInput.setLayoutParams(layoutParamsetCurEt);
+
+        editTextCurrencyInput.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (charSequence.length() == 0) {
+
+                } else {
+                    db.dmSurveyAnswerTableDao().updateAmount(charSequence.toString(), id);
+                }
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
 
 
         linearLayoutSpin.addView(spinner);
@@ -603,6 +641,27 @@ public class ActionPlanProofFragment extends Fragment {
                 getResources().getDimensionPixelSize(R.dimen.actionplanbox) // Replace with your desired height in dp
         );
         actionPlan.setLayoutParams(layoutParams1);
+
+        actionPlan.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (charSequence.length() == 0) {
+                    db.dmSurveyAnswerTableDao().updateActionPlanText("", id);
+                } else {
+                    db.dmSurveyAnswerTableDao().updateActionPlanText(charSequence.toString(), id);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
 
 
         linearLayoutActionPlan.setGravity(Gravity.END);
@@ -649,7 +708,10 @@ public class ActionPlanProofFragment extends Fragment {
             linearLayoutItems.addView(textView);
             linearLayoutItems.addView(linearLayoutImage);
             linearLayoutItems.addView(linearLayoutSpin);
-            //linearLayoutItems.addView(linearLayoutActionPlanMain);
+
+            if (db.dmSurveyAnswerTableDao().getDataByQuestionId(id).get(0).allowCustomActionPlan) {
+                linearLayoutItems.addView(linearLayoutActionPlanMain);
+            }
 
         }
 
@@ -1355,6 +1417,7 @@ public class ActionPlanProofFragment extends Fragment {
         List<DmActionPlanCurrenciesTable> dmActionPlanCurrenciesTables = db.dmActionPlanCurrenciesTableDao().getDataByModuleId(Constants.MODULE_ID);
         if (dmActionPlanCurrenciesTables.size() != 0) {
             currencyIdDb = String.valueOf(dmActionPlanCurrenciesTables.get(0).currencyId);
+            currency_id = currencyIdDb;
         }
 
         int selectedPosition = 0;
@@ -1375,6 +1438,8 @@ public class ActionPlanProofFragment extends Fragment {
 
                 String answerId = ids.get(position);
 
+                currency_id = ids.get(position);
+
                 db.dmActionPlanCurrenciesTableDao().deleteByModuleId(Constants.MODULE_ID);
 
                 DmActionPlanCurrenciesTable dmActionPlanCurrenciesTable = new DmActionPlanCurrenciesTable();
@@ -1382,6 +1447,14 @@ public class ActionPlanProofFragment extends Fragment {
                 dmActionPlanCurrenciesTable.currencyId = Integer.parseInt(ids.get(position));
                 dmActionPlanCurrenciesTable.code = list.get(position);
                 db.dmActionPlanCurrenciesTableDao().insert(dmActionPlanCurrenciesTable);
+
+                dm_question_complaint.removeAllViews();
+
+                if (db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size() != 0) {
+                    for (int i = 0; i < db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size(); i++) {
+                        displayQuestionsModuleComplaint(String.valueOf(db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).get(i).id));
+                    }
+                }
 
 
             }

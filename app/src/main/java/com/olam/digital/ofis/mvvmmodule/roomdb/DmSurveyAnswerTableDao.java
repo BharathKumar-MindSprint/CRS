@@ -34,6 +34,15 @@ public interface DmSurveyAnswerTableDao {
     @Query("SELECT * FROM DmSurveyAnswerTable WHERE questionID =:id")
     List<DmSurveyAnswerTable> getDataByQuestionId(String id);
 
+    @Query("UPDATE DmSurveyAnswerTable SET actionplanId=:actionplanId WHERE questionID = :questionId")
+    void updateActionPlanId(String actionplanId, String questionId);
+
+    @Query("UPDATE DmSurveyAnswerTable SET actionPlanText=:actionPlanText WHERE questionID = :questionId")
+    void updateActionPlanText(String actionPlanText, String questionId);
+
+    @Query("UPDATE DmSurveyAnswerTable SET amount=:amount WHERE questionID = :questionId")
+    void updateAmount(String amount, String questionId);
+
     @Query("DELETE FROM DmSurveyAnswerTable")
     void deleteAll();
 
