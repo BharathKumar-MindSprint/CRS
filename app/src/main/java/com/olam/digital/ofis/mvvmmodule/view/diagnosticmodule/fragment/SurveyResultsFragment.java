@@ -103,6 +103,8 @@ public class SurveyResultsFragment extends Fragment {
 
                 String totalAmount = "0";
 
+                ArrayList<JSONObject> answerArrayList = new ArrayList<>();
+
                 if (dmSurveyAnswerTableList.size() != 0) {
                     for (int i = 0; i < dmSurveyAnswerTableList.size(); i++) {
                         answers.put("questionId", dmSurveyAnswerTableList.get(i).questionID);
@@ -134,6 +136,9 @@ public class SurveyResultsFragment extends Fragment {
                         answers.put("captureProof", files);
 
 
+                        answerArrayList.add(new JSONObject(answers));
+
+
                     }
                 }
 
@@ -159,14 +164,18 @@ public class SurveyResultsFragment extends Fragment {
                 result.put("resultRemarks", "Average");
 
 
+                hashMap.put("answers", answerArrayList);
+
                 hashMap.put("result", result);
 
-                JSONObject jsonObject = new JSONObject(hashMap);
+                ArrayList<JSONObject> arrayList = new ArrayList<>();
 
-                JSONArray jsonArray = new JSONArray();
-                jsonArray.put(jsonObject);
+                arrayList.add(new JSONObject(hashMap));
 
-                SubmitResult(jsonArray);
+                Log.d("resulllttt", arrayList.toString());
+
+                SubmitResult(arrayList.toString());
+
 
             }
         });
@@ -232,11 +241,10 @@ public class SurveyResultsFragment extends Fragment {
         return view;
     }
 
-    private void SubmitResult( JSONArray jsonArray){
-        //final DiagnosticModuleSurveyRequestBody surveyRequestBody = new DiagnosticModuleSurveyRequestBody();
+    private void SubmitResult(String strRequest) {
 
-        ManageRecords postAllDMSurveyData= RetrofitClient.getRetrofit().create(ManageRecords.class);
-        Call<DMSurveyResponseModel> call=postAllDMSurveyData.postAllDiagnosticModuleSurveyData(1,jsonArray);
+        ManageRecords postAllDMSurveyData = RetrofitClient.getRetrofit().create(ManageRecords.class);
+        Call<DMSurveyResponseModel> call = postAllDMSurveyData.postAllDiagnosticModuleSurveyData(1, strRequest);
         call.enqueue(new Callback<DMSurveyResponseModel>() {
 
             @Override
@@ -244,26 +252,27 @@ public class SurveyResultsFragment extends Fragment {
                 Toast.makeText(getActivity(), "Inside Submit Servey", Toast.LENGTH_SHORT).show();
 
                 try {
-                if(response.code()==200){
-                    Toast.makeText(getActivity(), "Inside Submit Servey Success", Toast.LENGTH_SHORT).show();
-                    Log.d("ResultFragment", "total result:: " + response.body());
+                    if (response.code() == 200) {
+                        Toast.makeText(getActivity(), "Inside Submit Servey Success", Toast.LENGTH_SHORT).show();
+                        Log.d("ResultFragment", "total result:: " + response.body());
 
-                }else if(response.code()==400){
-                    Log.d("Error400", "Inside 400");
+                    } else if (response.code() == 400) {
+                        Log.d("Error400", "Inside 400");
 
-                }else if (response.code()==500){
-                    Log.d("Error500", "Inside 500");
-                    Toast.makeText(getActivity(), "Server Issue", Toast.LENGTH_SHORT).show();
+                    } else if (response.code() == 500) {
+                        Log.d("Error500", "Inside 500");
+                        Toast.makeText(getActivity(), "Server Issue", Toast.LENGTH_SHORT).show();
 
-                }else{
+                    } else {
 
-                }
+                    }
                 } catch (Exception e) {
                     Log.d("SrvySubmitEx", e.toString());
                     throw new RuntimeException(e);
 
                 }
             }
+
             @Override
             public void onFailure(Call<DMSurveyResponseModel> call, Throwable t) {
                 Toast.makeText(getActivity(), "Failed", Toast.LENGTH_SHORT).show();
