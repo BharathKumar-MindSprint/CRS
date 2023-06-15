@@ -66,4 +66,7 @@ public class DmQuestionsModule {
     @ColumnInfo(name = "submoduleId")
     public int submoduleId;
 
+    @ColumnInfo(name = "sectionId")
+    public int sectionId;
+
 }

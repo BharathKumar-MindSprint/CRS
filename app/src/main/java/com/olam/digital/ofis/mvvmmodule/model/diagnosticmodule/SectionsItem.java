@@ -33,7 +33,7 @@ public class SectionsItem{
 	private String nameId;
 
 	@SerializedName("questions")
-	private List<QuestionsSectionItemSubmodule> questions;
+	private List<QuestionsItem> questions;
 
 	@SerializedName("description")
 	private String description;
@@ -149,11 +149,11 @@ public class SectionsItem{
 		this.nameId = nameId;
 	}
 
-	public List<QuestionsSectionItemSubmodule> getQuestions() {
+	public List<QuestionsItem> getQuestions() {
 		return questions;
 	}
 
-	public void setQuestions(List<QuestionsSectionItemSubmodule> questions) {
+	public void setQuestions(List<QuestionsItem> questions) {
 		this.questions = questions;
 	}
 
@@ -269,7 +269,7 @@ public class SectionsItem{
 		this.moduleId = moduleId;
 	}
 
-	public SectionsItem(String nameTh, String nameVi, String namePt, String nameLo, String nameEs, String nameFr, String nameTr, String name, String nameId, List<QuestionsSectionItemSubmodule> questions, String description, String descriptionPt, String descriptionVi, String descriptionFr, String descriptionEs, String descriptionTh, String descriptionLo, String descriptionIdn, String descriptionTr, boolean isDefault, boolean showDescription, int id, int position, int moduleId) {
+	public SectionsItem(String nameTh, String nameVi, String namePt, String nameLo, String nameEs, String nameFr, String nameTr, String name, String nameId, List<QuestionsItem> questions, String description, String descriptionPt, String descriptionVi, String descriptionFr, String descriptionEs, String descriptionTh, String descriptionLo, String descriptionIdn, String descriptionTr, boolean isDefault, boolean showDescription, int id, int position, int moduleId) {
 		this.nameTh = nameTh;
 		this.nameVi = nameVi;
 		this.namePt = namePt;
