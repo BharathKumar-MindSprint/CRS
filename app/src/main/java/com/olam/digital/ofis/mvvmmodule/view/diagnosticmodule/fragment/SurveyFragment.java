@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.text.Editable;
+import android.text.InputFilter;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -44,7 +45,7 @@ public class SurveyFragment extends Fragment{
     public LayoutInflater inflater;
     Resources resources;
 
-    private DataRefreshListener dataRefreshListener;
+//    private DataRefreshListener dataRefreshListener;
 
     public SurveyFragment() {
         // Required empty public constructor
@@ -530,7 +531,7 @@ public class SurveyFragment extends Fragment{
                                         complianceId = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).complianceId;
 
                                     }
-                                    else if (minValue <= Double.parseDouble(value) && Double.parseDouble(value) <= maxValue) {
+                                    else if (Double.parseDouble(value) <= maxValue) {
 
                                         complianceId = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).complianceId;
                                     }

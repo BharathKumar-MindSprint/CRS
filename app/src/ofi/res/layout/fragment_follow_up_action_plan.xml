@@ -557,7 +557,7 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/ll_servey_next_followup_actionplan"
+                    android:id="@+id/ll_servey_next_followup_actionplan_save"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_margin="@dimen/margin_10"

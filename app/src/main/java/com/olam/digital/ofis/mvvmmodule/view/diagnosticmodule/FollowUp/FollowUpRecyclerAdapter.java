@@ -15,15 +15,19 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.olam.digital.ofis.R;
 //import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.DiagnosticModel;
+import com.olam.digital.ofis.ViewFarmerActivity;
 import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.DiagnosticModuleActivity;
 import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.DiagnosticModuleFollowUp;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class FollowUpRecyclerAdapter extends RecyclerView.Adapter<FollowUpRecyclerAdapter.ViewHolder> {
     private ArrayList<String> items;
     private Context context;
     private int selectedPosition = RecyclerView.NO_POSITION;
+
+    private boolean isDiagnosticModuleEnabled;
 
     public FollowUpRecyclerAdapter(ArrayList<String> items , Context context) {
         this.items = items;
@@ -77,8 +81,19 @@ public class FollowUpRecyclerAdapter extends RecyclerView.Adapter<FollowUpRecycl
 
         @Override
         public void onClick(View v) {
+
+           /* int position = getAdapterPosition();
+            String itemName = items.get(position);
+            if (itemName.equals("Diagnostic Module") && isDiagnosticModuleEnabled) {
+                ((ViewFarmerActivity) context).openDiagnosticModule();
+            }else if (itemName.startsWith("Follow-up Module")) {
+                // Handle the click event for follow-up module items
+                Toast.makeText(v.getContext(), "Clicked: " + itemName, Toast.LENGTH_SHORT).show();
+            }
+*/
             int previousPosition = selectedPosition;
             selectedPosition = getAdapterPosition();
+            String itemName = items.get(selectedPosition);
 //            Toast.makeText(context, "Click"+selectedPosition, Toast.LENGTH_SHORT).show();
             notifyItemChanged(previousPosition);
             notifyItemChanged(selectedPosition);
@@ -87,7 +102,11 @@ public class FollowUpRecyclerAdapter extends RecyclerView.Adapter<FollowUpRecycl
                 Intent intent = new Intent(context, DiagnosticModuleActivity.class);
                 context.startActivity(intent);
             }
-            if (selectedPosition == 1){
+            /*if (selectedPosition == 1){
+                Intent intent = new Intent(context, DiagnosticModuleFollowUp.class);
+                context.startActivity(intent);
+            }*/
+            if (Objects.equals(itemName, "Follow Up 1")){
                 Intent intent = new Intent(context, DiagnosticModuleFollowUp.class);
                 context.startActivity(intent);
             }

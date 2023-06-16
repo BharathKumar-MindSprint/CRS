@@ -98,7 +98,7 @@ import com.olam.digital.ofis.matoma.MatomoHelper;
 import com.olam.digital.ofis.matoma.ScreenNameConstants;
 import com.olam.digital.ofis.multifarm.MultiFarmDTO;
 import com.olam.digital.ofis.multifarm.MultiFarmUtils;
-import com.olam.digital.ofis.multifarm.UpdateMultiFarmActivity;
+import com.olam.digital.ofis.matoma.multifarm.UpdateMultiFarmActivity;
 import com.olam.digital.ofis.mvvmmodule.Constants;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmMainModule;
@@ -132,6 +132,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
     public static long farmerId;
     private Cursor farmer;
     private Context context;
+    private static Context staticContext;
     private Resources res;
     private DataLayer dl;
 
@@ -239,6 +240,9 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
     String  dmSubTitle;
     String moduleID;
 
+
+    public static ArrayList<String> recyclerViewData = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -248,12 +252,18 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         mResolvingError = savedInstanceState != null && savedInstanceState.getBoolean(STATE_RESOLVING_ERROR, false);
         context = this;
+        staticContext=this;
         ChildLabourUtils.isChildEnumerator = Utilities.getChildLabourPref(context, ChildLabourUtils.IS_CHILD_ENUMERATOR);
         MultiFarmUtils.isMultiFarmEnumerator = Utilities.getMultifarmPref(context, MultiFarmUtils.IS_MULTI_FARM_ENUMERATOR);
 
         res = getResources();
         dl = new DataLayer(res, context);
         pd = new ProgressDialog(context);
+
+        if (!recyclerViewData.contains("Existing Module")) {
+            recyclerViewData.add("Existing Module");
+        }
+
 
 
         //farmerId = SharedPreferenceUtils.getInstance(getApplicationContext()).getFarmerID();
@@ -2278,6 +2288,12 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                         in.putExtra("DM_FARMER_GROUP_ID",String.valueOf(farmerGroupId));
                         startActivity(in);
 
+//                        OFISRoomDB db = OFISRoomDB.getDbInstance(staticContext);
+//                        DmMainModule user = new DmMainModule();
+//
+//                        int followUpCount = user.followUpAttempts;
+//                        Toast.makeText(context,followUpCount,Toast.LENGTH_SHORT).show();
+
                         showPopupDialog();
 
                     } else if (recordedLng != null && recordedLng.getText().equals(ChildLabourUtils.REG_CHILD)) {
@@ -2730,6 +2746,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
 
     }
 
+
     private void showPopupDialog() {
         Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.followup_diagnostic_popup);
@@ -2737,12 +2754,12 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         dialog.setCancelable(false);
 
-        ArrayList<String>items = new ArrayList<>();
-        items.add("Existing Module");
-        items.add("Follow up 1");
+
+//        recyclerViewData.add("Existing Module");
+//        items.add("Follow up 1");
 
         RecyclerView recyclerView = dialog.findViewById(R.id.recyclerView);
-        FollowUpRecyclerAdapter adapter = new FollowUpRecyclerAdapter(items,getApplicationContext());
+        FollowUpRecyclerAdapter adapter = new FollowUpRecyclerAdapter(recyclerViewData,getApplicationContext());
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
         recyclerView.setAdapter(adapter);
@@ -2757,4 +2774,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
 
         dialog.show();
     }
+
+
+
 }
