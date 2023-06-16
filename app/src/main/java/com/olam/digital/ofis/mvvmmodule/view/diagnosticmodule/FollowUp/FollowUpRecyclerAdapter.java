@@ -25,13 +25,19 @@ import java.util.Objects;
 public class FollowUpRecyclerAdapter extends RecyclerView.Adapter<FollowUpRecyclerAdapter.ViewHolder> {
     private ArrayList<String> items;
     private Context context;
+
+    int newFollowCount;
     private int selectedPosition = RecyclerView.NO_POSITION;
 
     private boolean isDiagnosticModuleEnabled;
+    Intent in;
 
-    public FollowUpRecyclerAdapter(ArrayList<String> items , Context context) {
+    public FollowUpRecyclerAdapter(ArrayList<String> items , Context context,int newFollowUpCount,Intent in) {
         this.items = items;
         this.context = context;
+        this.newFollowCount = newFollowUpCount;
+        this.in = in;
+
     }
 
     @NonNull
@@ -99,8 +105,8 @@ public class FollowUpRecyclerAdapter extends RecyclerView.Adapter<FollowUpRecycl
             notifyItemChanged(selectedPosition);
 
             if (selectedPosition== 0) {
-                Intent intent = new Intent(context, DiagnosticModuleActivity.class);
-                context.startActivity(intent);
+//                Intent intent = new Intent(context, DiagnosticModuleActivity.class);
+                context.startActivity(in);
             }
             /*if (selectedPosition == 1){
                 Intent intent = new Intent(context, DiagnosticModuleFollowUp.class);
