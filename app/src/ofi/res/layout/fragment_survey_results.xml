@@ -58,6 +58,7 @@
                     android:layout_marginTop="14dp"
                     android:layout_marginRight="25dp"
                     android:text="55 Marks"
+                    android:visibility="gone"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.934"
