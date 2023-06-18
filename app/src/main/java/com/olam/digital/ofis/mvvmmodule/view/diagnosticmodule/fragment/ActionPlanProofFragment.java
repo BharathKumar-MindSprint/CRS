@@ -1071,7 +1071,7 @@ public class ActionPlanProofFragment extends Fragment{
 
 
                 if ((1024f * 1024f) < compressedSize) {
-                    Toast.makeText(getContext(), "Sizer is greater than 10 MB", Toast.LENGTH_SHORT).show();
+                   // Toast.makeText(getContext(), "Sizer is greater than 10 MB", Toast.LENGTH_SHORT).show();
                     Uri uri1 = Uri.fromFile(compressPdf(uri));
                     byte[] pdfByteArray1;
                     try {
@@ -1169,8 +1169,6 @@ public class ActionPlanProofFragment extends Fragment{
                                         new DialogInterface.OnClickListener() {
                                             public void onClick(DialogInterface dialog, int id) {
                                                 dialog.cancel();
-
-                                                //Toast.makeText(getActivity(), "" + pos, Toast.LENGTH_SHORT).show();
 
                                                 linearLayoutImage.removeAllViews();
 
@@ -1284,7 +1282,6 @@ public class ActionPlanProofFragment extends Fragment{
                 View desiredView = dm_question_complaint.findViewWithTag("1234" + String.valueOf(questionId));
                 LinearLayout linearLayoutImage = (LinearLayout) desiredView;
 
-//                Toast.makeText(getActivity(), "" + linearLayoutImage.getTag(), Toast.LENGTH_SHORT).show();
 
                 List<DmComplaintFileTable> dmComplaintFileTableList = new ArrayList<>();
                 dmComplaintFileTableList.clear();
@@ -1302,8 +1299,6 @@ public class ActionPlanProofFragment extends Fragment{
                 dynamicArrays.put(dynamicArrayName, dynamicArray);
 
                 dynamicArraysFile.put(dynamicArrayNameFile, dynamicArrayFile);
-
-                //Toast.makeText(getActivity(), "onactivity result === " + linearLayoutImage.getTag() + retrievedArray.size(), Toast.LENGTH_SHORT).show();
 
                 linearLayoutImage.removeAllViews();
 
@@ -1574,7 +1569,7 @@ public class ActionPlanProofFragment extends Fragment{
             // Display a success message with the compressed file size
             String fileSize = getFormattedFileSize(compressedSize);
             String message = "PDF compressed successfully. Size: " + fileSize;
-            Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
 
             return outputFile;
 

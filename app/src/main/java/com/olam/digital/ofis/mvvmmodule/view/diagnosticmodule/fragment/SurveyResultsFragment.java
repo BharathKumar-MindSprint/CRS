@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.olam.digital.ofis.FindFarmerActivity;
 import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.RetrofitServices.ManageRecords;
 import com.olam.digital.ofis.RetrofitServices.RetrofitClient;
@@ -166,8 +167,6 @@ public class SurveyResultsFragment extends Fragment {
         ll_servey_next_servey_results.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                Intent intent = new Intent(getActivity(), FindFarmerActivity.class);
-//                startActivity(intent);
 
                 //Call API
 
@@ -265,7 +264,7 @@ public class SurveyResultsFragment extends Fragment {
 
                 Log.d("resulllttt", arrayList.toString());
 
-                SubmitResult(arrayList.toString());
+               // SubmitResult(arrayList.toString());
 
                 if (!ViewFarmerActivity.recyclerViewData.contains("Follow Up 1")) {
                     ViewFarmerActivity.recyclerViewData.add("Follow Up 1");

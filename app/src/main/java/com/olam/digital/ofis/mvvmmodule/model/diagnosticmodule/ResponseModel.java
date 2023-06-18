@@ -62,9 +62,6 @@ public class ResponseModel {
     }
 
 
-
-
-
     public ResponseModel(ArrayList<DiagnosticModulesList> diagnosticModules) {
         this.diagnosticModules = diagnosticModules;
     }
