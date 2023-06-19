@@ -27,6 +27,10 @@ import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmSatisfactoryFileTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmSectionsItem;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmSurveyAnswerTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmTextBoxModuleQuestions;
+import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.CapturedProofFollowupTable;
+import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.FollowUpItemMainTable;
+import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.daos.CapturedProofFollowupTableDao;
+import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.daos.FollowUpItemMainTableDao;
 
 
 @Database(entities ={DmMainModule.class, ComplianceIndicator.class, DmCurrency.class, DmAnswerTypes.class,
@@ -34,7 +38,8 @@ import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmTextBoxModuleQuestions;
         DmActionPlansItem.class, DmSectionsItem.class, DmQuestionsSubModule.class, DmLookupValuesISubmodule.class,
         DmActionPlansItemSubmodule.class, DmRecurrence.class, DmComplaintFileTable.class,
         DmSurveyAnswerTable.class, DmTextBoxModuleQuestions.class, DmRangeTextBoxModuleQuestionsTable.class, DmNonComplaintFileTable.class,
-        DmSatisfactoryFileTable.class, DmActionPlanCurrenciesTable.class, DmRangeActionPlansItems.class}, version = 1)
+        DmSatisfactoryFileTable.class, DmActionPlanCurrenciesTable.class, DmRangeActionPlansItems.class, FollowUpItemMainTable.class,
+        CapturedProofFollowupTable.class}, version = 1)
 public abstract class OFISRoomDB extends RoomDatabase {
     private static final String DATABASE_NAME = "ofismobileroom";
     public abstract DmMainModuleDao dmMainModuleDao();
@@ -59,6 +64,8 @@ public abstract class OFISRoomDB extends RoomDatabase {
     public abstract DmSatisfactoryFileTableDao dmSatisfactoryFileTableDao();
     public abstract DmActionPlanCurrenciesTableDao dmActionPlanCurrenciesTableDao();
     public abstract DmRangeActionPlansItemsDao dmRangeActionPlansItemsDao();
+    public abstract FollowUpItemMainTableDao followUpItemMainTableDao();
+    public abstract CapturedProofFollowupTableDao capturedProofFollowupTableDao();
 
 
     public static volatile OFISRoomDB INSTANCE = null;

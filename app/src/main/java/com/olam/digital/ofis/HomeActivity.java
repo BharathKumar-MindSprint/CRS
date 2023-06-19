@@ -90,8 +90,8 @@ import com.olam.digital.ofis.gps.utils.GPSUtils;
 import com.olam.digital.ofis.logging.FabricLogsWriter;
 import com.olam.digital.ofis.matoma.MatomoHelper;
 import com.olam.digital.ofis.matoma.ScreenNameConstants;
-import com.olam.digital.ofis.multifarm.MultiFarmUtils;
-import com.olam.digital.ofis.multifarm.UpdateMultiFarmActivity;
+import com.olam.digital.ofis.matoma.multifarm.MultiFarmUtils;
+import com.olam.digital.ofis.matoma.multifarm.UpdateMultiFarmActivity;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.ActionPlansItem;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.AnswerTypesItem;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.ComplianceIndicatorItem;
@@ -107,6 +107,9 @@ import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.Recurrence;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.ResponseModel;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.SectionsItem;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.TextBoxModuleQuestions;
+import com.olam.digital.ofis.mvvmmodule.model.followup.FollowUpItem;
+import com.olam.digital.ofis.mvvmmodule.model.followup.FollowUpResponseItem;
+import com.olam.digital.ofis.mvvmmodule.model.followup.FollowUpResponseModel;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.ComplianceIndicator;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmActionPlansItem;
@@ -122,7 +125,7 @@ import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmRangeTextBoxModuleQuesti
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmRecurrence;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmSectionsItem;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmTextBoxModuleQuestions;
-import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.DiagnosticModuleActivity;
+import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.FollowUpItemMainTable;
 import com.olam.digital.ofis.recordpolygon.RecordPolygonActivity;
 
 import org.json.JSONException;
@@ -1760,6 +1763,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                         cardview_downloadFarmplan.setVisibility(View.GONE);
                         if(isEnableDM) {
                             GetAllDiagnosticModule();
+
                         }
                     }
                    // showAlert("Internal Server Error, Please Contact Admin!!"+response.message());
@@ -1889,6 +1893,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
                 try {
                     if (response.code() == 200) {
+                        Log.d("DMRespon-", "Diagnostic data here");
 
                         db.dmSectionsItemDao().deleteAll();
                         db.dmQuestionsSubModuleDao().deleteAll();
@@ -2033,198 +2038,200 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                     db.dmCurrencyDao().insert(dmCurrency);
 
                                 }
+                               if(questionsItemList!=null){
+                                   for (int l = 0; l < questionsItemList.size(); l++) {
 
-                                for (int l = 0; l < questionsItemList.size(); l++) {
+                                       boolean mandate = questionsItemList.get(l).isMandate();
+                                       String question = questionsItemList.get(l).getQuestion();
+                                       String questionTr = questionsItemList.get(l).getQuestionTr();
+                                       String questionPt = questionsItemList.get(l).getQuestionPt();
+                                       String questionLo = questionsItemList.get(l).getQuestionLo();
+                                       String questionFr = questionsItemList.get(l).getQuestionFr();
+                                       String questionIdn = questionsItemList.get(l).getQuestionIdn();
+                                       String questionEs = questionsItemList.get(l).getQuestionEs();
+                                       String questionTh = questionsItemList.get(l).getQuestionTh();
+                                       String questionVi = questionsItemList.get(l).getQuestionVi();
+                                       int displaytypeId = questionsItemList.get(l).getDisplaytypeId();
+                                       int datatypeId = questionsItemList.get(l).getDatatypeId();
+                                       boolean isCriticalQuest = questionsItemList.get(l).isCriticalQuest();
+                                       String displayType = questionsItemList.get(l).getDisplayType();
+                                       int id_questionModule = questionsItemList.get(l).getId();
+                                       int position = questionsItemList.get(l).getPosition();
+                                       int moduleId = questionsItemList.get(l).getModuleId();
+                                       int submoduleId = questionsItemList.get(l).getSubmoduleId();
 
-                                    boolean mandate = questionsItemList.get(l).isMandate();
-                                    String question = questionsItemList.get(l).getQuestion();
-                                    String questionTr = questionsItemList.get(l).getQuestionTr();
-                                    String questionPt = questionsItemList.get(l).getQuestionPt();
-                                    String questionLo = questionsItemList.get(l).getQuestionLo();
-                                    String questionFr = questionsItemList.get(l).getQuestionFr();
-                                    String questionIdn = questionsItemList.get(l).getQuestionIdn();
-                                    String questionEs = questionsItemList.get(l).getQuestionEs();
-                                    String questionTh = questionsItemList.get(l).getQuestionTh();
-                                    String questionVi = questionsItemList.get(l).getQuestionVi();
-                                    int displaytypeId = questionsItemList.get(l).getDisplaytypeId();
-                                    int datatypeId = questionsItemList.get(l).getDatatypeId();
-                                    boolean isCriticalQuest = questionsItemList.get(l).isCriticalQuest();
-                                    String displayType = questionsItemList.get(l).getDisplayType();
-                                    int id_questionModule = questionsItemList.get(l).getId();
-                                    int position = questionsItemList.get(l).getPosition();
-                                    int moduleId = questionsItemList.get(l).getModuleId();
-                                    int submoduleId = questionsItemList.get(l).getSubmoduleId();
+                                       DmQuestionsModule dmQuestionsModule = new DmQuestionsModule();
+                                       dmQuestionsModule.mandate = mandate;
+                                       dmQuestionsModule.question = question;
+                                       dmQuestionsModule.questionTr = questionTr;
+                                       dmQuestionsModule.questionPt = questionPt;
+                                       dmQuestionsModule.questionLo = questionLo;
+                                       dmQuestionsModule.questionFr = questionFr;
+                                       dmQuestionsModule.questionIdn = questionIdn;
+                                       dmQuestionsModule.questionEs = questionEs;
+                                       dmQuestionsModule.questionTh = questionTh;
+                                       dmQuestionsModule.questionVi = questionVi;
+                                       dmQuestionsModule.displaytypeId = displaytypeId;
+                                       dmQuestionsModule.datatypeId = datatypeId;
+                                       dmQuestionsModule.isCriticalQuest = isCriticalQuest;
+                                       dmQuestionsModule.displayType = displayType;
+                                       dmQuestionsModule.id = id_questionModule;
+                                       dmQuestionsModule.position = position;
+                                       dmQuestionsModule.moduleId = moduleId;
+                                       dmQuestionsModule.submoduleId = submoduleId;
+                                       dmQuestionsModule.sectionId = 0;
+                                       db.dmQuestionsModuleDao().insert(dmQuestionsModule);
 
-                                    DmQuestionsModule dmQuestionsModule = new DmQuestionsModule();
-                                    dmQuestionsModule.mandate = mandate;
-                                    dmQuestionsModule.question = question;
-                                    dmQuestionsModule.questionTr = questionTr;
-                                    dmQuestionsModule.questionPt = questionPt;
-                                    dmQuestionsModule.questionLo = questionLo;
-                                    dmQuestionsModule.questionFr = questionFr;
-                                    dmQuestionsModule.questionIdn = questionIdn;
-                                    dmQuestionsModule.questionEs = questionEs;
-                                    dmQuestionsModule.questionTh = questionTh;
-                                    dmQuestionsModule.questionVi = questionVi;
-                                    dmQuestionsModule.displaytypeId = displaytypeId;
-                                    dmQuestionsModule.datatypeId = datatypeId;
-                                    dmQuestionsModule.isCriticalQuest = isCriticalQuest;
-                                    dmQuestionsModule.displayType = displayType;
-                                    dmQuestionsModule.id = id_questionModule;
-                                    dmQuestionsModule.position = position;
-                                    dmQuestionsModule.moduleId = moduleId;
-                                    dmQuestionsModule.submoduleId = submoduleId;
-                                    dmQuestionsModule.sectionId = 0;
-                                    db.dmQuestionsModuleDao().insert(dmQuestionsModule);
+                                       List<LookupValuesItem> lookupValuesItemList = new ArrayList<>();
+                                       lookupValuesItemList.clear();
+                                       lookupValuesItemList = questionsItemList.get(l).getLookupValues();
 
-                                    List<LookupValuesItem> lookupValuesItemList = new ArrayList<>();
-                                    lookupValuesItemList.clear();
-                                    lookupValuesItemList = questionsItemList.get(l).getLookupValues();
-
-                                    TextBoxModuleQuestions textBoxModuleQuestions = questionsItemList.get(l).getTextBoxModuleQuestions();
-
-
-                                    if (lookupValuesItemList != null) {
-                                        for (int m = 0; m < lookupValuesItemList.size(); m++) {
-
-                                            String valueId = lookupValuesItemList.get(m).getValueId();
-                                            String valueTr = lookupValuesItemList.get(m).getValueTr();
-                                            String valueVi = lookupValuesItemList.get(m).getValueVi();
-                                            String valueTh = lookupValuesItemList.get(m).getValueTh();
-                                            String valueEs = lookupValuesItemList.get(m).getValueEs();
-                                            String valueFr = lookupValuesItemList.get(m).getValueFr();
-                                            String valueLo = lookupValuesItemList.get(m).getValueLo();
-                                            String valuePt = lookupValuesItemList.get(m).getValuePt();
-                                            String value = lookupValuesItemList.get(m).getValue();
-                                            int position_lookupValues = lookupValuesItemList.get(m).getPosition();
-                                            int id_lookupValues = lookupValuesItemList.get(m).getId();
-                                            boolean allowCustomActionPlan = lookupValuesItemList.get(m).isAllowCustomActionPlan();
-                                            String compliance = lookupValuesItemList.get(m).getCompliance();
-                                            int complianceId = lookupValuesItemList.get(m).getComplianceId();
-                                            boolean isCaptureProof = lookupValuesItemList.get(m).isCaptureProof();
-                                            String proofFormat = lookupValuesItemList.get(m).getProofFormat();
-
-                                            DmLookupValuesItem dmLookupValuesItem = new DmLookupValuesItem();
-                                            dmLookupValuesItem.valueId = valueId;
-                                            dmLookupValuesItem.valueTr = valueTr;
-                                            dmLookupValuesItem.valueVi = valueVi;
-                                            dmLookupValuesItem.valueTh = valueTh;
-                                            dmLookupValuesItem.valueEs = valueEs;
-                                            dmLookupValuesItem.valueFr = valueFr;
-                                            dmLookupValuesItem.valueLo = valueLo;
-                                            dmLookupValuesItem.valuePt = valuePt;
-                                            dmLookupValuesItem.value = value;
-                                            dmLookupValuesItem.position = position_lookupValues;
-                                            dmLookupValuesItem.id = id_lookupValues;
-                                            dmLookupValuesItem.idQuestionsMudule = id_questionModule;
-                                            dmLookupValuesItem.allowCustomActionPlan = allowCustomActionPlan;
-                                            dmLookupValuesItem.compliance = compliance;
-                                            dmLookupValuesItem.complianceId = complianceId;
-                                            dmLookupValuesItem.isCaptureProof = isCaptureProof;
-                                            dmLookupValuesItem.proofFormat = proofFormat;
-
-                                            db.dmLookupValuesItemDao().insert(dmLookupValuesItem);
+                                       TextBoxModuleQuestions textBoxModuleQuestions = questionsItemList.get(l).getTextBoxModuleQuestions();
 
 
-                                            List<ActionPlansItem> actionPlansItemList = new ArrayList<>();
-                                            actionPlansItemList.clear();
-                                            actionPlansItemList = lookupValuesItemList.get(m).getActionPlans();
+                                       if (lookupValuesItemList != null) {
+                                           for (int m = 0; m < lookupValuesItemList.size(); m++) {
 
-                                            if (actionPlansItemList != null) {
-                                                for (int n = 0; n < actionPlansItemList.size(); n++) {
-                                                    int id_actionPlan = actionPlansItemList.get(n).getId();
-                                                    boolean isDefault = actionPlansItemList.get(n).isIsDefault();
-                                                    String actionPlan = actionPlansItemList.get(n).getActionPlan();
+                                               String valueId = lookupValuesItemList.get(m).getValueId();
+                                               String valueTr = lookupValuesItemList.get(m).getValueTr();
+                                               String valueVi = lookupValuesItemList.get(m).getValueVi();
+                                               String valueTh = lookupValuesItemList.get(m).getValueTh();
+                                               String valueEs = lookupValuesItemList.get(m).getValueEs();
+                                               String valueFr = lookupValuesItemList.get(m).getValueFr();
+                                               String valueLo = lookupValuesItemList.get(m).getValueLo();
+                                               String valuePt = lookupValuesItemList.get(m).getValuePt();
+                                               String value = lookupValuesItemList.get(m).getValue();
+                                               int position_lookupValues = lookupValuesItemList.get(m).getPosition();
+                                               int id_lookupValues = lookupValuesItemList.get(m).getId();
+                                               boolean allowCustomActionPlan = lookupValuesItemList.get(m).isAllowCustomActionPlan();
+                                               String compliance = lookupValuesItemList.get(m).getCompliance();
+                                               int complianceId = lookupValuesItemList.get(m).getComplianceId();
+                                               boolean isCaptureProof = lookupValuesItemList.get(m).isCaptureProof();
+                                               String proofFormat = lookupValuesItemList.get(m).getProofFormat();
 
-                                                    DmActionPlansItem dmActionPlansItem = new DmActionPlansItem();
-                                                    dmActionPlansItem.id = id_actionPlan;
-                                                    dmActionPlansItem.id_lookupValue = id_lookupValues;
-                                                    dmActionPlansItem.questionId = id_questionModule;
-                                                    dmActionPlansItem.isDefault = isDefault;
-                                                    dmActionPlansItem.actionPlan = actionPlan;
+                                               DmLookupValuesItem dmLookupValuesItem = new DmLookupValuesItem();
+                                               dmLookupValuesItem.valueId = valueId;
+                                               dmLookupValuesItem.valueTr = valueTr;
+                                               dmLookupValuesItem.valueVi = valueVi;
+                                               dmLookupValuesItem.valueTh = valueTh;
+                                               dmLookupValuesItem.valueEs = valueEs;
+                                               dmLookupValuesItem.valueFr = valueFr;
+                                               dmLookupValuesItem.valueLo = valueLo;
+                                               dmLookupValuesItem.valuePt = valuePt;
+                                               dmLookupValuesItem.value = value;
+                                               dmLookupValuesItem.position = position_lookupValues;
+                                               dmLookupValuesItem.id = id_lookupValues;
+                                               dmLookupValuesItem.idQuestionsMudule = id_questionModule;
+                                               dmLookupValuesItem.allowCustomActionPlan = allowCustomActionPlan;
+                                               dmLookupValuesItem.compliance = compliance;
+                                               dmLookupValuesItem.complianceId = complianceId;
+                                               dmLookupValuesItem.isCaptureProof = isCaptureProof;
+                                               dmLookupValuesItem.proofFormat = proofFormat;
 
-                                                    db.dmActionPlansItemDao().insert(dmActionPlansItem);
-                                                }
-                                            }
-
-
-                                        }
-                                    }
-
-                                    if (textBoxModuleQuestions != null) {
-                                        int answerType = textBoxModuleQuestions.getAnswerType();
-                                        boolean isAllowNegative = textBoxModuleQuestions.isAllowNegative();
-                                        boolean isAllowDecimal = textBoxModuleQuestions.isAllowDecimal();
-                                        double minimumRange = textBoxModuleQuestions.getMinimumRange();
-                                        double maximumRange = textBoxModuleQuestions.getMaximumRange();
-
-                                        DmTextBoxModuleQuestions dmTextBoxModuleQuestions = new DmTextBoxModuleQuestions();
-                                        dmTextBoxModuleQuestions.answerType = answerType;
-                                        dmTextBoxModuleQuestions.isAllowNegative = isAllowNegative;
-                                        dmTextBoxModuleQuestions.isAllowDecimal = isAllowDecimal;
-                                        dmTextBoxModuleQuestions.minimumRange = minimumRange;
-                                        dmTextBoxModuleQuestions.maximumRange = maximumRange;
-                                        dmTextBoxModuleQuestions.questionId = id_questionModule;
-                                        db.dmTextBoxModuleQuestionsDao().insert(dmTextBoxModuleQuestions);
-
-                                        List<DmRangeTextBoxModuleQuestions> dmRangeTextBoxModuleQuestionsList = new ArrayList<>();
-                                        dmRangeTextBoxModuleQuestionsList.clear();
-                                        dmRangeTextBoxModuleQuestionsList = textBoxModuleQuestions.getDmRangeQuestionsList();
+                                               db.dmLookupValuesItemDao().insert(dmLookupValuesItem);
 
 
-                                        if (dmRangeTextBoxModuleQuestionsList != null) {
-                                            for (int r = 0; r < dmRangeTextBoxModuleQuestionsList.size(); r++) {
-                                                double minimumRange_range = dmRangeTextBoxModuleQuestionsList.get(r).getMinimumRange();
-                                                double maximumRange_range = dmRangeTextBoxModuleQuestionsList.get(r).getMaximumRange();
-                                                String compliance = dmRangeTextBoxModuleQuestionsList.get(r).getCompliance();
-                                                int complianceId = dmRangeTextBoxModuleQuestionsList.get(r).getComplianceId();
-                                                boolean allowCustomActionPlan = dmRangeTextBoxModuleQuestionsList.get(r).isAllowCustomActionPlan();
-                                                boolean isCaptureProof = dmRangeTextBoxModuleQuestionsList.get(r).isCaptureProof();
-                                                String proofFormat = dmRangeTextBoxModuleQuestionsList.get(r).getProofFormat();
+                                               List<ActionPlansItem> actionPlansItemList = new ArrayList<>();
+                                               actionPlansItemList.clear();
+                                               actionPlansItemList = lookupValuesItemList.get(m).getActionPlans();
 
-                                                DmRangeTextBoxModuleQuestionsTable dmRangeTextBoxModuleQuestionsTable = new DmRangeTextBoxModuleQuestionsTable();
-                                                dmRangeTextBoxModuleQuestionsTable.minimumRange = minimumRange_range;
-                                                dmRangeTextBoxModuleQuestionsTable.maximumRange = maximumRange_range;
-                                                dmRangeTextBoxModuleQuestionsTable.compliance = compliance;
-                                                dmRangeTextBoxModuleQuestionsTable.complianceId = complianceId;
-                                                dmRangeTextBoxModuleQuestionsTable.allowCustomActionPlan = allowCustomActionPlan;
-                                                dmRangeTextBoxModuleQuestionsTable.isCaptureProof = isCaptureProof;
-                                                dmRangeTextBoxModuleQuestionsTable.proofFormat = proofFormat;
-                                                dmRangeTextBoxModuleQuestionsTable.questionId = id_questionModule;
-                                                db.dmRangeTextBoxModuleQuestionsTableDao().insert(dmRangeTextBoxModuleQuestionsTable);
+                                               if (actionPlansItemList != null) {
+                                                   for (int n = 0; n < actionPlansItemList.size(); n++) {
+                                                       int id_actionPlan = actionPlansItemList.get(n).getId();
+                                                       boolean isDefault = actionPlansItemList.get(n).isIsDefault();
+                                                       String actionPlan = actionPlansItemList.get(n).getActionPlan();
 
-                                                List<DmRangeTextBoxActionPlans> dmRangeTextBoxActionPlansList = new ArrayList<>();
-                                                dmRangeTextBoxActionPlansList.clear();
-                                                dmRangeTextBoxActionPlansList = dmRangeTextBoxModuleQuestionsList.get(r).getDmRangeTextBoxActionPlansList();
+                                                       DmActionPlansItem dmActionPlansItem = new DmActionPlansItem();
+                                                       dmActionPlansItem.id = id_actionPlan;
+                                                       dmActionPlansItem.id_lookupValue = id_lookupValues;
+                                                       dmActionPlansItem.questionId = id_questionModule;
+                                                       dmActionPlansItem.isDefault = isDefault;
+                                                       dmActionPlansItem.actionPlan = actionPlan;
+
+                                                       db.dmActionPlansItemDao().insert(dmActionPlansItem);
+                                                   }
+                                               }
 
 
-                                                if (dmRangeTextBoxActionPlansList != null) {
-                                                    for (int ra = 0; ra < dmRangeTextBoxActionPlansList.size(); ra++) {
-                                                        int id_actionPlan = dmRangeTextBoxActionPlansList.get(ra).getId();
-                                                        boolean isDefault = dmRangeTextBoxActionPlansList.get(ra).isDefault();
-                                                        String actionPlan = dmRangeTextBoxActionPlansList.get(ra).getActionPlan();
+                                           }
+                                       }
 
-                                                        DmRangeActionPlansItems dmRangeActionPlansItems = new DmRangeActionPlansItems();
-                                                        dmRangeActionPlansItems.id = id_actionPlan;
-                                                        dmRangeActionPlansItems.isDefault = isDefault;
-                                                        dmRangeActionPlansItems.actionPlan = actionPlan;
-                                                        dmRangeActionPlansItems.questionId = id_questionModule;
-                                                        dmRangeActionPlansItems.complainceId = complianceId;
+                                       if (textBoxModuleQuestions != null) {
+                                           int answerType = textBoxModuleQuestions.getAnswerType();
+                                           boolean isAllowNegative = textBoxModuleQuestions.isAllowNegative();
+                                           boolean isAllowDecimal = textBoxModuleQuestions.isAllowDecimal();
+                                           double minimumRange = textBoxModuleQuestions.getMinimumRange();
+                                           double maximumRange = textBoxModuleQuestions.getMaximumRange();
 
-                                                        db.dmRangeActionPlansItemsDao().insert(dmRangeActionPlansItems);
+                                           DmTextBoxModuleQuestions dmTextBoxModuleQuestions = new DmTextBoxModuleQuestions();
+                                           dmTextBoxModuleQuestions.answerType = answerType;
+                                           dmTextBoxModuleQuestions.isAllowNegative = isAllowNegative;
+                                           dmTextBoxModuleQuestions.isAllowDecimal = isAllowDecimal;
+                                           dmTextBoxModuleQuestions.minimumRange = minimumRange;
+                                           dmTextBoxModuleQuestions.maximumRange = maximumRange;
+                                           dmTextBoxModuleQuestions.questionId = id_questionModule;
+                                           db.dmTextBoxModuleQuestionsDao().insert(dmTextBoxModuleQuestions);
 
-
-                                                    }
-                                                }
-                                            }
-
-                                        }
-
-
-                                    }
+                                           List<DmRangeTextBoxModuleQuestions> dmRangeTextBoxModuleQuestionsList = new ArrayList<>();
+                                           dmRangeTextBoxModuleQuestionsList.clear();
+                                           dmRangeTextBoxModuleQuestionsList = textBoxModuleQuestions.getDmRangeQuestionsList();
 
 
-                                }
+                                           if (dmRangeTextBoxModuleQuestionsList != null) {
+                                               for (int r = 0; r < dmRangeTextBoxModuleQuestionsList.size(); r++) {
+                                                   double minimumRange_range = dmRangeTextBoxModuleQuestionsList.get(r).getMinimumRange();
+                                                   double maximumRange_range = dmRangeTextBoxModuleQuestionsList.get(r).getMaximumRange();
+                                                   String compliance = dmRangeTextBoxModuleQuestionsList.get(r).getCompliance();
+                                                   int complianceId = dmRangeTextBoxModuleQuestionsList.get(r).getComplianceId();
+                                                   boolean allowCustomActionPlan = dmRangeTextBoxModuleQuestionsList.get(r).isAllowCustomActionPlan();
+                                                   boolean isCaptureProof = dmRangeTextBoxModuleQuestionsList.get(r).isCaptureProof();
+                                                   String proofFormat = dmRangeTextBoxModuleQuestionsList.get(r).getProofFormat();
+
+                                                   DmRangeTextBoxModuleQuestionsTable dmRangeTextBoxModuleQuestionsTable = new DmRangeTextBoxModuleQuestionsTable();
+                                                   dmRangeTextBoxModuleQuestionsTable.minimumRange = minimumRange_range;
+                                                   dmRangeTextBoxModuleQuestionsTable.maximumRange = maximumRange_range;
+                                                   dmRangeTextBoxModuleQuestionsTable.compliance = compliance;
+                                                   dmRangeTextBoxModuleQuestionsTable.complianceId = complianceId;
+                                                   dmRangeTextBoxModuleQuestionsTable.allowCustomActionPlan = allowCustomActionPlan;
+                                                   dmRangeTextBoxModuleQuestionsTable.isCaptureProof = isCaptureProof;
+                                                   dmRangeTextBoxModuleQuestionsTable.proofFormat = proofFormat;
+                                                   dmRangeTextBoxModuleQuestionsTable.questionId = id_questionModule;
+                                                   db.dmRangeTextBoxModuleQuestionsTableDao().insert(dmRangeTextBoxModuleQuestionsTable);
+
+                                                   List<DmRangeTextBoxActionPlans> dmRangeTextBoxActionPlansList = new ArrayList<>();
+                                                   dmRangeTextBoxActionPlansList.clear();
+                                                   dmRangeTextBoxActionPlansList = dmRangeTextBoxModuleQuestionsList.get(r).getDmRangeTextBoxActionPlansList();
+
+
+                                                   if (dmRangeTextBoxActionPlansList != null) {
+                                                       for (int ra = 0; ra < dmRangeTextBoxActionPlansList.size(); ra++) {
+                                                           int id_actionPlan = dmRangeTextBoxActionPlansList.get(ra).getId();
+                                                           boolean isDefault = dmRangeTextBoxActionPlansList.get(ra).isDefault();
+                                                           String actionPlan = dmRangeTextBoxActionPlansList.get(ra).getActionPlan();
+
+                                                           DmRangeActionPlansItems dmRangeActionPlansItems = new DmRangeActionPlansItems();
+                                                           dmRangeActionPlansItems.id = id_actionPlan;
+                                                           dmRangeActionPlansItems.isDefault = isDefault;
+                                                           dmRangeActionPlansItems.actionPlan = actionPlan;
+                                                           dmRangeActionPlansItems.questionId = id_questionModule;
+                                                           dmRangeActionPlansItems.complainceId = complianceId;
+
+                                                           db.dmRangeActionPlansItemsDao().insert(dmRangeActionPlansItems);
+
+
+                                                       }
+                                                   }
+                                               }
+
+                                           }
+
+
+                                       }
+
+
+                                   }
+                               }
+
 
                                 for (int s = 0; s < sectionsItemList.size(); s++) {
                                     String nameTh_Sec = sectionsItemList.get(s).getNameTh();
@@ -2548,14 +2555,17 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
 
                         }
+                        GetAllFollowUpDMData();
 
                     } else if (response.code() == 400) {
-
+                        GetAllFollowUpDMData();
                         Log.d("BadRequest-", response.message());
                     } else if (response.code() == 500) {
+                        GetAllFollowUpDMData();
 
                     } else {
                         // showAlert("Server Issue!!"+response.message().toString());
+                        GetAllFollowUpDMData();
                     }
                 } catch (Exception e) {
                     Log.d("hdjhashdksa", e.toString());
@@ -2568,6 +2578,95 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             @Override
             public void onFailure(Call<ResponseModel> call, Throwable t) {
 
+
+            }
+        });
+
+    }
+
+    public static void GetAllFollowUpDMData() {
+
+        ManageRecords GetAllFollowUpDMData = RetrofitClient.getRetrofit().create(ManageRecords.class);
+        Call<FollowUpResponseModel> call = GetAllFollowUpDMData.getAllFollowUpDMData(Integer.valueOf(Utilities.getFromSharedPrefs(staticContext)));
+        call.enqueue(new Callback<FollowUpResponseModel>() {
+            @Override
+            public void onResponse(Call<FollowUpResponseModel> call, Response<FollowUpResponseModel> response) {
+
+                OFISRoomDB db = OFISRoomDB.getDbInstance(staticContext);
+
+                try {
+                    if (response.code() == 200) {
+
+                        if (response.body().getFollowUpResponseItemList() != null) {
+
+
+                            for (int i = 0; i < response.body().getFollowUpResponseItemList().size(); i++) {
+
+                                ArrayList<FollowUpItem> followUpItemArrayList = new ArrayList<>();
+                                followUpItemArrayList.clear();
+                                followUpItemArrayList = response.body().getFollowUpResponseItemList().get(i).getFollowUpItemArrayList();
+
+                                for (int j = 0; j <followUpItemArrayList.size(); j++) {
+                                    int questionId = followUpItemArrayList.get(j).getQuestionId();
+                                    int id = followUpItemArrayList.get(j).getId();
+                                    int complianceId = followUpItemArrayList.get(j).getComplianceId();
+                                    int moduleId = followUpItemArrayList.get(j).getModuleId();
+                                    int actionPlanId = followUpItemArrayList.get(j).getActionPlanId();
+                                    int dmSubModId = followUpItemArrayList.get(j).getDmSubModId();
+                                    int attempt = followUpItemArrayList.get(j).getAttempt();
+                                    String actionPlanText = followUpItemArrayList.get(j).getActionPlanText();
+                                    String createdAt = followUpItemArrayList.get(j).getCreatedAt();
+                                    String createdBy = followUpItemArrayList.get(j).getCreatedBy();
+                                    String dmCapturedProof = String.valueOf(followUpItemArrayList.get(j).getDmCapturedProof());
+                                    String status = followUpItemArrayList.get(j).getStatus();
+                                    String updatedAt = followUpItemArrayList.get(j).getUpdatedAt();
+                                    String updatedBy = followUpItemArrayList.get(j).getUpdatedBy();
+                                    boolean isPortal = followUpItemArrayList.get(j).isPortal();
+
+                                    FollowUpItemMainTable followUpItemMainTable = new FollowUpItemMainTable();
+                                    followUpItemMainTable.actionPlanId = actionPlanId;
+                                    followUpItemMainTable.questionId = questionId;
+                                    followUpItemMainTable.id = id;
+                                    followUpItemMainTable.complianceId = complianceId;
+                                    followUpItemMainTable.moduleId = moduleId;
+                                    followUpItemMainTable.dmSubModId = dmSubModId;
+                                    followUpItemMainTable.attempt = attempt;
+                                    followUpItemMainTable.actionPlanText = actionPlanText;
+                                    followUpItemMainTable.createdAt = createdAt;
+                                    followUpItemMainTable.createdBy = createdBy;
+                                    followUpItemMainTable.status = status;
+                                    followUpItemMainTable.updatedAt = updatedAt;
+                                    followUpItemMainTable.updatedBy = updatedBy;
+                                    followUpItemMainTable.isPortal = isPortal;
+
+                                    db.followUpItemMainTableDao().insert(followUpItemMainTable);
+
+                                }
+
+                            }
+
+                        }
+
+                        Toast.makeText(staticContext, "FollowUp Available", Toast.LENGTH_SHORT).show();
+                        Log.d("FollowUPRespon-", "Followup data here");
+
+                    } else if (response.code() == 400) {
+
+                        Log.d("BadRequest-", response.message());
+                    } else if (response.code() == 500) {
+
+                    } else {
+                        // showAlert("Server Issue!!"+response.message().toString());
+                    }
+                } catch (Exception e) {
+                    Log.d("followUp", e.toString());
+                    throw new RuntimeException(e);
+
+                }
+
+            }
+            @Override
+            public void onFailure(Call<FollowUpResponseModel> call, Throwable t) {
 
             }
         });

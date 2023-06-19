@@ -12,6 +12,7 @@ import com.olam.digital.ofis.farmplandownload.model.DownloadFormList;
 import com.olam.digital.ofis.farmplandownload.model.DownloadUrlRequestBody;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.DMSurveyResponseModel;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.ResponseModel;
+import com.olam.digital.ofis.mvvmmodule.model.followup.FollowUpResponseModel;
 
 import org.json.JSONArray;
 
@@ -68,5 +69,8 @@ public interface ManageRecords {
     @POST("ofissurvey/survey/diagnosticmodule/submitSurvey")
     Call<DMSurveyResponseModel> postAllDiagnosticModuleSurveyData(@Header("App-Id") int AppId,
                                                                   @Body String diagnosticModuleSurveyRequestBody);
+
+    @GET("ofissurvey/survey/diagnosticmodule/getAllDiagnosticModuleData/{enum_id}")
+    Call<FollowUpResponseModel> getAllFollowUpDMData(@Path("enum_id") Integer enumeratorId);
 
 }
