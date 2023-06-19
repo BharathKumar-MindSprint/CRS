@@ -264,6 +264,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
 
         if (!recyclerViewData.contains("Existing Module")) {
             recyclerViewData.add("Existing Module");
+            recyclerViewData.add("Follow Up 1");
         }
 
 
@@ -2760,7 +2761,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
 
 
 //        recyclerViewData.add("Existing Module");
-//        items.add("Follow up 1");
+//        recyclerViewData.add("Follow up 1");
 
         RecyclerView recyclerView = dialog.findViewById(R.id.recyclerView);
         FollowUpRecyclerAdapter adapter = new FollowUpRecyclerAdapter(recyclerViewData,getApplicationContext(),newFollowUpCount , in);
