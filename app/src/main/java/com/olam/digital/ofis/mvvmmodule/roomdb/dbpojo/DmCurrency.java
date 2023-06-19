@@ -20,4 +20,5 @@ public class DmCurrency {
 
     @ColumnInfo(name = "isDefault")
     public boolean isDefault;
+
 }

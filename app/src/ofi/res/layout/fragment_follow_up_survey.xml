@@ -16,7 +16,7 @@
             android:layout_height="wrap_content"
             android:paddingBottom="@dimen/margin_10">
 
-            <LinearLayout
+            <!--<LinearLayout
                 android:id="@+id/ll_complaint_layout_follow_up_survey"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -413,19 +413,36 @@
                 </LinearLayout>
 
 
-            </LinearLayout>
+            </LinearLayout>-->
+
+            <LinearLayout
+                android:id="@+id/dm_question_complaint_followup_survey"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="9dp"
+                android:background="#ffffff"
+                android:orientation="vertical"
+                android:paddingLeft="@dimen/ofis_large_pad"
+                android:paddingTop="@dimen/ofis_large_pad"
+                android:paddingRight="@dimen/ofis_large_pad"
+                android:paddingBottom="@dimen/ofis_large_pad"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/table_width60"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="20dp"
                 android:background="@color/white"
                 android:orientation="horizontal"
                 android:weightSum="2"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/ll_satisfactory_layout_follow_up_survey">
+                app:layout_constraintTop_toBottomOf="@+id/dm_question_complaint_followup_survey">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"

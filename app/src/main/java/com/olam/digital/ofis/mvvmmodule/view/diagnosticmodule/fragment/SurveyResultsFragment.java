@@ -1,5 +1,6 @@
 package com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.fragment;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -15,9 +16,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.olam.digital.ofis.FindFarmerActivity;
 import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.RetrofitServices.ManageRecords;
 import com.olam.digital.ofis.RetrofitServices.RetrofitClient;
+import com.olam.digital.ofis.ViewFarmerActivity;
 import com.olam.digital.ofis.mvvmmodule.Constants;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.DMSurveyResponseModel;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
@@ -77,8 +80,6 @@ public class SurveyResultsFragment extends Fragment {
         ll_servey_next_servey_results.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                Intent intent = new Intent(getActivity(), FindFarmerActivity.class);
-//                startActivity(intent);
 
                 //Call API
 
@@ -185,7 +186,16 @@ public class SurveyResultsFragment extends Fragment {
 
                 Log.d("resulllttt", arrayList.toString());
 
-                SubmitResult(arrayList.toString());
+               // SubmitResult(arrayList.toString());
+
+                if (!ViewFarmerActivity.recyclerViewData.contains("Follow Up 1")) {
+                    ViewFarmerActivity.recyclerViewData.add("Follow Up 1");
+                }else {
+//                    Toast.makeText(getContext(), "Can't add more followup", Toast.LENGTH_SHORT).show();
+                }
+
+                Intent intent = new Intent(getContext(),ViewFarmerActivity.class);
+                getContext().startActivity(intent);
 
 
             }

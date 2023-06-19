@@ -90,8 +90,8 @@ import com.olam.digital.ofis.gps.utils.GPSUtils;
 import com.olam.digital.ofis.logging.FabricLogsWriter;
 import com.olam.digital.ofis.matoma.MatomoHelper;
 import com.olam.digital.ofis.matoma.ScreenNameConstants;
-import com.olam.digital.ofis.matoma.multifarm.UpdateMultiFarmActivity;
 import com.olam.digital.ofis.multifarm.MultiFarmUtils;
+import com.olam.digital.ofis.matoma.multifarm.UpdateMultiFarmActivity;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.ActionPlansItem;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.AnswerTypesItem;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.ComplianceIndicatorItem;
@@ -107,6 +107,9 @@ import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.Recurrence;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.ResponseModel;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.SectionsItem;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.TextBoxModuleQuestions;
+import com.olam.digital.ofis.mvvmmodule.model.followup.FollowUpItem;
+import com.olam.digital.ofis.mvvmmodule.model.followup.FollowUpResponseItem;
+import com.olam.digital.ofis.mvvmmodule.model.followup.FollowUpResponseModel;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.ComplianceIndicator;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmActionPlansItem;
@@ -122,7 +125,7 @@ import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmRangeTextBoxModuleQuesti
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmRecurrence;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmSectionsItem;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmTextBoxModuleQuestions;
-import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.DiagnosticModuleActivity;
+import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.FollowUpItemMainTable;
 import com.olam.digital.ofis.recordpolygon.RecordPolygonActivity;
 
 import org.json.JSONException;
@@ -1242,13 +1245,12 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             addSocialInfra.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    /*MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_ADD_NEW_SIP,  ScreenNameConstants.BUTTON_CLICKED);
+                    MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_ADD_NEW_SIP,  ScreenNameConstants.BUTTON_CLICKED);
                     AddInfrastructureActivity.editMode = false;
                     AddInfrastructureActivity.infrastructureID = 0;
                     Intent intent = new Intent(context, AddInfrastructureActivity.class);
-                    context.startActivity(intent);*/
+                    context.startActivity(intent);
 //                   // GetAllDiagnosticModule();
-                    GetAccessToken("home");
                 }
             });
 
@@ -2582,14 +2584,17 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
 
                         }
+                        GetAllFollowUpDMData();
 
                     } else if (response.code() == 400) {
-
+                        GetAllFollowUpDMData();
                         Log.d("BadRequest-", response.message());
                     } else if (response.code() == 500) {
+                        GetAllFollowUpDMData();
 
                     } else {
                         // showAlert("Server Issue!!"+response.message().toString());
+                        GetAllFollowUpDMData();
                     }
                 } catch (Exception e) {
                     Log.d("hdjhashdksa", e.toString());
@@ -2602,6 +2607,95 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             @Override
             public void onFailure(Call<ResponseModel> call, Throwable t) {
 
+
+            }
+        });
+
+    }
+
+    public static void GetAllFollowUpDMData() {
+
+        ManageRecords GetAllFollowUpDMData = RetrofitClient.getRetrofit().create(ManageRecords.class);
+        Call<FollowUpResponseModel> call = GetAllFollowUpDMData.getAllFollowUpDMData(Integer.valueOf(Utilities.getFromSharedPrefs(staticContext)));
+        call.enqueue(new Callback<FollowUpResponseModel>() {
+            @Override
+            public void onResponse(Call<FollowUpResponseModel> call, Response<FollowUpResponseModel> response) {
+
+                OFISRoomDB db = OFISRoomDB.getDbInstance(staticContext);
+
+                try {
+                    if (response.code() == 200) {
+
+                        if (response.body().getFollowUpResponseItemList() != null) {
+
+
+                            for (int i = 0; i < response.body().getFollowUpResponseItemList().size(); i++) {
+
+                                ArrayList<FollowUpItem> followUpItemArrayList = new ArrayList<>();
+                                followUpItemArrayList.clear();
+                                followUpItemArrayList = response.body().getFollowUpResponseItemList().get(i).getFollowUpItemArrayList();
+
+                                for (int j = 0; j <followUpItemArrayList.size(); j++) {
+                                    int questionId = followUpItemArrayList.get(j).getQuestionId();
+                                    int id = followUpItemArrayList.get(j).getId();
+                                    int complianceId = followUpItemArrayList.get(j).getComplianceId();
+                                    int moduleId = followUpItemArrayList.get(j).getModuleId();
+                                    int actionPlanId = followUpItemArrayList.get(j).getActionPlanId();
+                                    int dmSubModId = followUpItemArrayList.get(j).getDmSubModId();
+                                    int attempt = followUpItemArrayList.get(j).getAttempt();
+                                    String actionPlanText = followUpItemArrayList.get(j).getActionPlanText();
+                                    String createdAt = followUpItemArrayList.get(j).getCreatedAt();
+                                    String createdBy = followUpItemArrayList.get(j).getCreatedBy();
+                                    String dmCapturedProof = String.valueOf(followUpItemArrayList.get(j).getDmCapturedProof());
+                                    String status = followUpItemArrayList.get(j).getStatus();
+                                    String updatedAt = followUpItemArrayList.get(j).getUpdatedAt();
+                                    String updatedBy = followUpItemArrayList.get(j).getUpdatedBy();
+                                    boolean isPortal = followUpItemArrayList.get(j).isPortal();
+
+                                    FollowUpItemMainTable followUpItemMainTable = new FollowUpItemMainTable();
+                                    followUpItemMainTable.actionPlanId = actionPlanId;
+                                    followUpItemMainTable.questionId = questionId;
+                                    followUpItemMainTable.id = id;
+                                    followUpItemMainTable.complianceId = complianceId;
+                                    followUpItemMainTable.moduleId = moduleId;
+                                    followUpItemMainTable.dmSubModId = dmSubModId;
+                                    followUpItemMainTable.attempt = attempt;
+                                    followUpItemMainTable.actionPlanText = actionPlanText;
+                                    followUpItemMainTable.createdAt = createdAt;
+                                    followUpItemMainTable.createdBy = createdBy;
+                                    followUpItemMainTable.status = status;
+                                    followUpItemMainTable.updatedAt = updatedAt;
+                                    followUpItemMainTable.updatedBy = updatedBy;
+                                    followUpItemMainTable.isPortal = isPortal;
+
+                                    db.followUpItemMainTableDao().insert(followUpItemMainTable);
+
+                                }
+
+                            }
+
+                        }
+
+                        Toast.makeText(staticContext, "FollowUp Available", Toast.LENGTH_SHORT).show();
+                        Log.d("FollowUPRespon-", "Followup data here");
+
+                    } else if (response.code() == 400) {
+
+                        Log.d("BadRequest-", response.message());
+                    } else if (response.code() == 500) {
+
+                    } else {
+                        // showAlert("Server Issue!!"+response.message().toString());
+                    }
+                } catch (Exception e) {
+                    Log.d("followUp", e.toString());
+                    throw new RuntimeException(e);
+
+                }
+
+            }
+            @Override
+            public void onFailure(Call<FollowUpResponseModel> call, Throwable t) {
 
             }
         });
