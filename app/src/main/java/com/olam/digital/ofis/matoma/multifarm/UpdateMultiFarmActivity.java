@@ -46,6 +46,14 @@ import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.Utilities;
 import com.olam.digital.ofis.gps.GPSListener;
 import com.olam.digital.ofis.gps.GPSTracker;
+import com.olam.digital.ofis.multifarm.DistanceCalculation;
+import com.olam.digital.ofis.multifarm.FindMultiFarmFarmAdapter;
+import com.olam.digital.ofis.multifarm.FindMultiFarmFarmerAdapter;
+import com.olam.digital.ofis.multifarm.MultiFarmDTO;
+import com.olam.digital.ofis.multifarm.MultiFarmRoleDTO;
+import com.olam.digital.ofis.multifarm.MultifarmFarmerDTO;
+import com.olam.digital.ofis.multifarm.OnItemMultiFarmFarmListener;
+import com.olam.digital.ofis.multifarm.OnItemMultifarmFarmerListener;
 import com.xw.repo.BubbleSeekBar;
 
 import org.json.JSONArray;

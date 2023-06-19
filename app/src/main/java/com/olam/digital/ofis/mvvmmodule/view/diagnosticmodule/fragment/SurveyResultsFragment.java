@@ -21,6 +21,8 @@ import com.olam.digital.ofis.RetrofitServices.RetrofitClient;
 import com.olam.digital.ofis.mvvmmodule.Constants;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.DMSurveyResponseModel;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
+//import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DMSurveyReport;
+import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DMSurveyReport;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmActionPlanCurrenciesTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmComplaintFileTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmCurrenciesItem;
@@ -69,98 +71,9 @@ public class SurveyResultsFragment extends Fragment {
         editTextText5 = view.findViewById(R.id.editTextText5);
         editTextText6 = view.findViewById(R.id.editTextText6);
 
-
-        newView = view.findViewById(R.id.survey_result_indicator);
-        traffic_indicator_green = view.findViewById(R.id.indicator_green);
-        traffic_indicator_orange = view.findViewById(R.id.indicator_orange);
-        traffic_indicator_red = view.findViewById(R.id.indicator_red);
-
-
-        return view;
-    }
-
-    private void SubmitResult(String strRequest) {
-
-        ManageRecords postAllDMSurveyData = RetrofitClient.getRetrofit().create(ManageRecords.class);
-        Call<DMSurveyResponseModel> call = postAllDMSurveyData.postAllDiagnosticModuleSurveyData(1, strRequest);
-        call.enqueue(new Callback<DMSurveyResponseModel>() {
-
-            @Override
-            public void onResponse(Call<DMSurveyResponseModel> call, Response<DMSurveyResponseModel> response) {
-                Toast.makeText(getActivity(), "Inside Submit Servey", Toast.LENGTH_SHORT).show();
-
-                try {
-                    if (response.code() == 200) {
-                        Toast.makeText(getActivity(), "Inside Submit Servey Success", Toast.LENGTH_SHORT).show();
-                        Log.d("ResultFragment", "total result:: " + response.body());
-
-                    } else if (response.code() == 400) {
-                        Log.d("Error400", "Inside 400");
-
-                    } else if (response.code() == 500) {
-                        Log.d("Error500", "Inside 500");
-                        Toast.makeText(getActivity(), "Server Issue", Toast.LENGTH_SHORT).show();
-
-                    } else {
-
-                    }
-                } catch (Exception e) {
-                    Log.d("SrvySubmitEx", e.toString());
-                    throw new RuntimeException(e);
-
-                }
-            }
-
-            @Override
-            public void onFailure(Call<DMSurveyResponseModel> call, Throwable t) {
-                Toast.makeText(getActivity(), "Failed", Toast.LENGTH_SHORT).show();
-
-            }
-        });
-
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
         db = OFISRoomDB.getDbInstance(getActivity());
 
-        List<DmActionPlanCurrenciesTable> actionPlanCurrenciesTables1 = new ArrayList<>();
-        actionPlanCurrenciesTables1.clear();
-        actionPlanCurrenciesTables1 = db.dmActionPlanCurrenciesTableDao().getDataByModuleId(Constants.MODULE_ID);
 
-        String currencyId = "0";
-
-        if (actionPlanCurrenciesTables1.size() != 0) {
-            currencyId = String.valueOf(actionPlanCurrenciesTables1.get(0).currencyId);
-        }
-
-        List<DmSurveyAnswerTable> dmSurveyAnswerTableList1 = new ArrayList<>();
-        dmSurveyAnswerTableList1.clear();
-        dmSurveyAnswerTableList1 = db.dmSurveyAnswerTableDao().getDataByModuleId(Constants.MODULE_ID);
-
-        String totalAmount = "0";
-
-        if (dmSurveyAnswerTableList1.size() != 0) {
-            for (int k = 0; k < dmSurveyAnswerTableList1.size(); k++) {
-                if (dmSurveyAnswerTableList1.get(k).amount != 0) {
-                    totalAmount = String.valueOf(Integer.parseInt(totalAmount) + dmSurveyAnswerTableList1.get(k).amount);
-                }
-            }
-        }
-
-        List<DmCurrenciesItem> currenciesItems1 = new ArrayList<>();
-        currenciesItems1.clear();
-        currenciesItems1 = db.dmCurrenciesItemDao().getCurrencyItemById(Integer.parseInt(currencyId));
-
-        String currency = "$";
-
-        if (currenciesItems1.size() != 0) {
-            currency = currenciesItems1.get(0).notation;
-        }
-
-
-        editTextText6.setText(totalAmount + " " + currency);
         ll_servey_next_servey_results.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -251,7 +164,16 @@ public class SurveyResultsFragment extends Fragment {
                 result.put("resultType", "TrafficLight");
                 result.put("resultValue", "Green");
                 result.put("resultRemarks", "Average");
-
+                DMSurveyReport dmSurveyReport = new DMSurveyReport(Integer.parseInt(Constants.complaintSize),
+                        Integer.parseInt(Constants.satisfactorySize),
+                        Integer.parseInt(Constants.noncomplaintSize),
+                        (Integer.parseInt(Constants.complaintSize) + Integer.parseInt(Constants.satisfactorySize) + Integer.parseInt(Constants.noncomplaintSize)),
+                        Double.parseDouble(totalAmount),
+                        "TrafficLight",
+                        1,
+                        "Average",
+                        Integer.parseInt(Constants.FARMER_ID));
+                db.dmSurveyReportDao().insert(dmSurveyReport);
 
                 hashMap.put("answers", answerArrayList);
 
@@ -268,6 +190,12 @@ public class SurveyResultsFragment extends Fragment {
 
             }
         });
+
+        newView = view.findViewById(R.id.survey_result_indicator);
+        traffic_indicator_green = view.findViewById(R.id.indicator_green);
+        traffic_indicator_orange = view.findViewById(R.id.indicator_orange);
+        traffic_indicator_red = view.findViewById(R.id.indicator_red);
+
 
         editTextText.setText(Constants.complaintSize);
         editTextText3.setText(Constants.noncomplaintSize);
@@ -320,5 +248,49 @@ public class SurveyResultsFragment extends Fragment {
             }
 
         }
+
+        return view;
+    }
+
+    private void SubmitResult(String strRequest) {
+
+        ManageRecords postAllDMSurveyData = RetrofitClient.getRetrofit().create(ManageRecords.class);
+        Call<DMSurveyResponseModel> call = postAllDMSurveyData.postAllDiagnosticModuleSurveyData(1, strRequest);
+        call.enqueue(new Callback<DMSurveyResponseModel>() {
+
+            @Override
+            public void onResponse(Call<DMSurveyResponseModel> call, Response<DMSurveyResponseModel> response) {
+                Toast.makeText(getActivity(), "Inside Submit Servey", Toast.LENGTH_SHORT).show();
+
+                try {
+                    if (response.code() == 200) {
+                        Toast.makeText(getActivity(), "Inside Submit Servey Success", Toast.LENGTH_SHORT).show();
+                        Log.d("ResultFragment", "total result:: " + response.body());
+
+                    } else if (response.code() == 400) {
+                        Log.d("Error400", "Inside 400");
+
+                    } else if (response.code() == 500) {
+                        Log.d("Error500", "Inside 500");
+                        Toast.makeText(getActivity(), "Server Issue", Toast.LENGTH_SHORT).show();
+
+                    } else {
+
+                    }
+                } catch (Exception e) {
+                    Log.d("SrvySubmitEx", e.toString());
+                    throw new RuntimeException(e);
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<DMSurveyResponseModel> call, Throwable t) {
+                Toast.makeText(getActivity(), "Failed", Toast.LENGTH_SHORT).show();
+
+            }
+        });
+
+
     }
 }

@@ -96,9 +96,9 @@ import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.gps.utils.GPSUtils;
 import com.olam.digital.ofis.matoma.MatomoHelper;
 import com.olam.digital.ofis.matoma.ScreenNameConstants;
+import com.olam.digital.ofis.matoma.multifarm.UpdateMultiFarmActivity;
 import com.olam.digital.ofis.multifarm.MultiFarmDTO;
 import com.olam.digital.ofis.multifarm.MultiFarmUtils;
-import com.olam.digital.ofis.multifarm.UpdateMultiFarmActivity;
 import com.olam.digital.ofis.mvvmmodule.Constants;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmMainModule;
@@ -2278,7 +2278,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                         in.putExtra("DM_FARMER_GROUP_ID",String.valueOf(farmerGroupId));
                         startActivity(in);
 
-                        showPopupDialog();
+//                        showPopupDialog();
 
                     } else if (recordedLng != null && recordedLng.getText().equals(ChildLabourUtils.REG_CHILD)) {
                         MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_REGISTER_CHILD, ScreenNameConstants.BUTTON_CLICKED);

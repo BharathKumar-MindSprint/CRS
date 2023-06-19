@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -24,10 +23,12 @@ public class FollowUpRecyclerAdapter extends RecyclerView.Adapter<FollowUpRecycl
     private ArrayList<String> items;
     private Context context;
     private int selectedPosition = RecyclerView.NO_POSITION;
-
+    String dmSubTitle,moduleID;
     public FollowUpRecyclerAdapter(ArrayList<String> items , Context context) {
         this.items = items;
         this.context = context;
+        this.dmSubTitle = dmSubTitle;
+        this.moduleID = moduleID;
     }
 
     @NonNull
@@ -85,10 +86,14 @@ public class FollowUpRecyclerAdapter extends RecyclerView.Adapter<FollowUpRecycl
 
             if (selectedPosition== 0) {
                 Intent intent = new Intent(context, DiagnosticModuleActivity.class);
+//                intent.putExtra("SUB_TITLE",dmSubTitle);
+//                intent.putExtra("DM_MODULE_ID",moduleID);
                 context.startActivity(intent);
             }
             if (selectedPosition == 1){
                 Intent intent = new Intent(context, DiagnosticModuleFollowUp.class);
+//                intent.putExtra("SUB_TITLE",dmSubTitle);
+//                intent.putExtra("DM_MODULE_ID",moduleID);
                 context.startActivity(intent);
             }
         }

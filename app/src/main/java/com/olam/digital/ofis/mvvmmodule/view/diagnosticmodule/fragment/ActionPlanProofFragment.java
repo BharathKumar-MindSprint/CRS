@@ -67,7 +67,6 @@ import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.parser.Line;
 import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.mvvmmodule.Constants;
-import com.olam.digital.ofis.mvvmmodule.DataRefreshListener;
 import com.olam.digital.ofis.mvvmmodule.FileUtils;
 import com.olam.digital.ofis.mvvmmodule.ImageOrientation;
 import com.olam.digital.ofis.mvvmmodule.InputFilterMinMax;

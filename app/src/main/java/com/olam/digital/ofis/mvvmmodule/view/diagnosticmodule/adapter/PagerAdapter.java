@@ -33,14 +33,10 @@ public class PagerAdapter extends FragmentStateAdapter {
         switch (position) {
 
            case 0:
-//                SurveyFragment surveyFragment = new SurveyFragment();
                 return new SurveyFragment();
-
             case 1:
-//                ActionPlanProofFragment actionPlanProofFragment = new ActionPlanProofFragment();
                 return new ActionPlanProofFragment();
             case 2:
-//                SurveyResultsFragment surveyResultsFragment = new SurveyResultsFragment();
                 return new SurveyResultsFragment();
 
             default:

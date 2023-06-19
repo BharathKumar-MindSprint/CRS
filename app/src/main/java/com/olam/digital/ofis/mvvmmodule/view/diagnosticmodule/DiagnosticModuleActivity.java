@@ -19,7 +19,6 @@ import com.olam.digital.ofis.BaseActivity;
 import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.Utilities;
 import com.olam.digital.ofis.mvvmmodule.Constants;
-import com.olam.digital.ofis.mvvmmodule.DataRefreshListener;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.DiagnosticModulesList;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.adapter.PagerAdapter;

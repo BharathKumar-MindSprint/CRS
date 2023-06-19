@@ -50,6 +50,12 @@ import com.olam.digital.ofis.logging.FabricLogsWriter;
 import com.olam.digital.ofis.model.GeoDTO;
 import com.olam.digital.ofis.multifarm.MultiFarmDTO;
 import com.olam.digital.ofis.multifarm.MultiFarmUtils;
+import com.olam.digital.ofis.mvvmmodule.Constants;
+import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
+import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmActionPlanCurrenciesTable;
+import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmComplaintFileTable;
+import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmCurrenciesItem;
+import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmSurveyAnswerTable;
 import com.olam.digital.ofis.recordpolygon.SharedPreferenceUtils;
 import com.olam.digital.ofis.tasks.SyncAllTask;
 import com.olam.digital.ofis.tasks.SyncTaskOperationType;
@@ -75,6 +81,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
@@ -854,6 +861,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             postSubdistrictData(networkQueueItemId, handler, msg, total, progress, itemId);
         }else if(itemType.equalsIgnoreCase("Multifarm Update")){
             postMultiFarmUpdate(networkQueueItemId, handler, msg, total, progress, itemId);
+        }else if(itemType.equalsIgnoreCase("DMSurvey")){
+            postDMSurvey(networkQueueItemId, handler, msg, total, progress, itemId);
         }
 
     }
@@ -5472,6 +5481,140 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         return;
     }
 
+    private void postDMSurvey(final int networkQueueItemId, final Handler handler, final Message msg, final int total, final int progress, final Integer originalSyncRequestItemId) {
+        OFISRoomDB db = OFISRoomDB.getDbInstance(context);
+        final String endpoint = "ofissurvey/survey/diagnosticmodule/submitSurvey";
+        if (!dl.isFarmerSynced(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)))) {
+            msg.what = 3;
+            msg.arg1 = total;
+            msg.arg2 = HomeActivity.progressItem = progress + 1;
+            msg.obj = String.valueOf(res.getString(R.string.farmer_not_synced));
+            handler.dispatchMessage(msg);
+        } else {
+
+
+            if (endpoint.length() > 0) {
+
+                List<DmActionPlanCurrenciesTable> actionPlanCurrenciesTables = db.dmActionPlanCurrenciesTableDao().getDataByModuleId(Constants.MODULE_ID);
+
+                String currencyId = "0";
+
+                if (actionPlanCurrenciesTables.size() != 0) {
+                    currencyId = String.valueOf(actionPlanCurrenciesTables.get(0).currencyId);
+                }
+
+                HashMap hashMap = new HashMap<>();
+                hashMap.put("farmerId", Constants.FARMER_ID);
+                hashMap.put("moduleId", Constants.MODULE_ID);
+                hashMap.put("farmerGroupId", Constants.FARMER_GROUP_ID);
+                hashMap.put("enumeratorId", Constants.ENUMERATOR_ID);
+                hashMap.put("currencyId", currencyId);
+                hashMap.put("submissionDate", "2023-06-15T15:15:09.983");
+                hashMap.put("isMobile", true);
+
+                HashMap answers = new HashMap();
+
+                List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByModuleId(Constants.MODULE_ID);
+
+                String totalAmount = "0";
+
+                ArrayList<JSONObject> answerArrayList = new ArrayList<>();
+
+                if (dmSurveyAnswerTableList.size() != 0) {
+                    for (int i = 0; i < dmSurveyAnswerTableList.size(); i++) {
+                        answers.put("questionId", dmSurveyAnswerTableList.get(i).questionID);
+                        answers.put("answerId", dmSurveyAnswerTableList.get(i).answerID);
+                        answers.put("answervalue", dmSurveyAnswerTableList.get(i).answer);
+                        answers.put("complianceStatusId", dmSurveyAnswerTableList.get(i).complinceTypeId);
+                        answers.put("actionplanId", dmSurveyAnswerTableList.get(i).actionplanId);
+                        answers.put("actionPlanText", dmSurveyAnswerTableList.get(i).actionPlanText);
+
+                        if (dmSurveyAnswerTableList.get(i).amount != 0) {
+                            totalAmount = String.valueOf(Integer.parseInt(totalAmount) + dmSurveyAnswerTableList.get(i).amount);
+                        }
+
+                        HashMap hashMapFiles = new HashMap();
+
+                        List<DmComplaintFileTable> complaintFileTableList = new ArrayList<>();
+
+                        complaintFileTableList.clear();
+
+                        complaintFileTableList = db.dmComplaintFileTableDao().getFilesById(Integer.parseInt(dmSurveyAnswerTableList.get(i).questionID));
+
+                        List<String> files = new ArrayList<>();
+                        files.clear();
+
+                        for (int j = 0; j < complaintFileTableList.size(); j++) {
+                            files.add(complaintFileTableList.get(j).getFile_name());
+                        }
+
+                        answers.put("captureProof", files);
+
+
+                        answerArrayList.add(new JSONObject(answers));
+
+
+                    }
+                }
+
+
+                List<DmCurrenciesItem> currenciesItems = new ArrayList<>();
+                currenciesItems.clear();
+                currenciesItems = db.dmCurrenciesItemDao().getCurrencyItemById(Integer.parseInt(currencyId));
+
+                String currency = "$";
+
+                if (currenciesItems.size() != 0) {
+                    currency = currenciesItems.get(0).notation;
+                }
+
+                HashMap result = new HashMap();
+                result.put("totalComplaint", Constants.complaintSize);
+                result.put("totalSatisfactory", Constants.satisfactorySize);
+                result.put("totalNonComplaint", Constants.noncomplaintSize);
+                result.put("totalActionPlan", String.valueOf(Integer.parseInt(Constants.complaintSize) + Integer.parseInt(Constants.satisfactorySize) + Integer.parseInt(Constants.noncomplaintSize)));
+                result.put("totalBudget", totalAmount + " " + currency);
+                result.put("resultType", "TrafficLight");
+                result.put("resultValue", "Green");
+                result.put("resultRemarks", "Average");
+
+
+                hashMap.put("answers", answerArrayList);
+
+                hashMap.put("result", result);
+
+                ArrayList<JSONObject> arrayList = new ArrayList<>();
+
+                arrayList.add(new JSONObject(hashMap));
+                final JSONArray jsonArray=new JSONArray();
+                okHttpArrayPost(context, endpoint,  jsonArray, new Callback() {
+                    @Override
+                    public void onResponse(Call call, Response postResponse) {
+
+                    }
+
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                        try {
+                            recordFailedUpload(0, 0, networkQueueItemId);
+
+                            String failureMessage = res.getString(R.string.networking_error);
+                            if (e != null) {
+                                failureMessage += (e.getMessage() != null) ? e.getMessage() : "";
+                            }
+                            postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting survey module");
+                        } catch (Exception onfailEx) {
+                            String failureMessage = res.getString(R.string.networking_error);
+                            postFailureMessage(handler, null, msg, 2, total, progress, failureMessage, "submitting survey module");
+                            FirebaseCrashlytics.getInstance().log(failureMessage + e.getMessage());
+                            onfailEx.printStackTrace();
+                        }
+                    }
+
+                });
+            }
+        }
+    }
 
 
 }

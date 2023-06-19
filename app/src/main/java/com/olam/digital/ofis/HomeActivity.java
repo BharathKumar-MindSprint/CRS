@@ -90,8 +90,8 @@ import com.olam.digital.ofis.gps.utils.GPSUtils;
 import com.olam.digital.ofis.logging.FabricLogsWriter;
 import com.olam.digital.ofis.matoma.MatomoHelper;
 import com.olam.digital.ofis.matoma.ScreenNameConstants;
+import com.olam.digital.ofis.matoma.multifarm.UpdateMultiFarmActivity;
 import com.olam.digital.ofis.multifarm.MultiFarmUtils;
-import com.olam.digital.ofis.multifarm.UpdateMultiFarmActivity;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.ActionPlansItem;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.AnswerTypesItem;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.ComplianceIndicatorItem;
@@ -1242,12 +1242,13 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             addSocialInfra.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_ADD_NEW_SIP,  ScreenNameConstants.BUTTON_CLICKED);
+                    /*MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_ADD_NEW_SIP,  ScreenNameConstants.BUTTON_CLICKED);
                     AddInfrastructureActivity.editMode = false;
                     AddInfrastructureActivity.infrastructureID = 0;
                     Intent intent = new Intent(context, AddInfrastructureActivity.class);
-                    context.startActivity(intent);
+                    context.startActivity(intent);*/
 //                   // GetAllDiagnosticModule();
+                    GetAccessToken("home");
                 }
             });
 
@@ -1720,14 +1721,14 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
     //
     public static void GetAccessToken(String value) {
-        isEnableDM = Utilities.getBoolFromSharedPrefs(staticContext, Utilities.DM_ENUMERATOR,false);
+
         String isoCode = Utilities.getdatafromSharedPrefs(staticContext,"CountryUserID");
         Log.d("COUNTRY_CODENEWPREFFF", isoCode);
         counrtyCodeNew =isoCode+"_OFIS_DO_INTERFACE";
 
         progressDialog.show();
         final AccessTokenReqBody accessTokenReqBody = new AccessTokenReqBody(counrtyCodeNew,password,system);
-
+        isEnableDM = Utilities.getBoolFromSharedPrefs(staticContext, Utilities.DM_ENUMERATOR,false);
         ManageRecords GetAccessToken= RetrofitClient.getRetrofit().create(ManageRecords.class);
         Call<AccessTokenResp> call=GetAccessToken.getAccessToken(accessTokenReqBody);
         call.enqueue(new Callback<AccessTokenResp>() {
@@ -1748,9 +1749,9 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                     Utilities.saveToSharedPrefs(staticContext, "DISPLAY_CROPPLAN", "", false);
                     if(value.equalsIgnoreCase("home")){
                         cardview_downloadFarmplan.setVisibility(View.GONE);
-                        if(isEnableDM) {
-                            GetAllDiagnosticModule();
-                        }
+                    }
+                    if(isEnableDM) {
+                        GetAllDiagnosticModule();
                     }
                    // showAlert("Unable to fetch country name for the ISOCode"+response.message());
                 }else if (response.code()==500){
@@ -1758,19 +1759,27 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                     Utilities.saveToSharedPrefs(staticContext, "DISPLAY_CROPPLAN", "", false);
                     if(value.equalsIgnoreCase("home")){
                         cardview_downloadFarmplan.setVisibility(View.GONE);
-                        if(isEnableDM) {
-                            GetAllDiagnosticModule();
-                        }
+                    }
+                    if(isEnableDM) {
+                        GetAllDiagnosticModule();
                     }
                    // showAlert("Internal Server Error, Please Contact Admin!!"+response.message());
                 }else{
-
+                    if(isEnableDM) {
+                        GetAllDiagnosticModule();
+                    }
+                }
+                if(isEnableDM) {
+                    GetAllDiagnosticModule();
                 }
             }
             @Override
             public void onFailure(Call<AccessTokenResp> call, Throwable t) {
                 progressDialog.hide();
                 Toast.makeText(staticContext, t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                if(isEnableDM) {
+                    GetAllDiagnosticModule();
+                }
             }
         });
 
@@ -1848,6 +1857,9 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 //progressDialog.hide();
                 //Toast.makeText(staticContext, t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
                // GetAllDiagnosticModuleHome();
+                if(isEnableDM) {
+                    GetAllDiagnosticModule();
+                }
             }
         });
 
@@ -1913,7 +1925,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                             mainResponseList.clear();
                             mainResponseList = response.body().getDiagnosticModules();
 
-
+                            try{
                             for (int i = 0; i < mainResponseList.size(); i++) {
                                 int id = mainResponseList.get(i).getId();
                                 int followUpDuration = mainResponseList.get(i).getFollowUpDuration();
@@ -1982,58 +1994,66 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
                                 db.dmMainModuleDao().insert(user);
 
-                                for (int j = 0; j < complianceIndicatorItemList.size(); j++) {
+                                try {
+
+                                    for (int j = 0; j < complianceIndicatorItemList.size(); j++) {
 
 
-                                    int moduleDraftId = complianceIndicatorItemList.get(j).getModuleDraftId();
-                                    int id_Compliance = complianceIndicatorItemList.get(j).getId();
-                                    String compliance = complianceIndicatorItemList.get(j).getCompliance();
-                                    String label = complianceIndicatorItemList.get(j).getLabel();
-                                    String labelTh = complianceIndicatorItemList.get(j).getLabelTh();
-                                    String labelPt = complianceIndicatorItemList.get(j).getLabelPt();
-                                    String labelIdn = complianceIndicatorItemList.get(j).getLabelIdn();
-                                    String labelEs = complianceIndicatorItemList.get(j).getLabelEs();
-                                    String labelTr = complianceIndicatorItemList.get(j).getLabelTr();
-                                    String labelFr = complianceIndicatorItemList.get(j).getLabelFr();
-                                    String labelLo = complianceIndicatorItemList.get(j).getLabelLo();
-                                    String labelVi = complianceIndicatorItemList.get(j).getLabelVi();
+                                        int moduleDraftId = complianceIndicatorItemList.get(j).getModuleDraftId();
+                                        int id_Compliance = complianceIndicatorItemList.get(j).getId();
+                                        String compliance = complianceIndicatorItemList.get(j).getCompliance();
+                                        String label = complianceIndicatorItemList.get(j).getLabel();
+                                        String labelTh = complianceIndicatorItemList.get(j).getLabelTh();
+                                        String labelPt = complianceIndicatorItemList.get(j).getLabelPt();
+                                        String labelIdn = complianceIndicatorItemList.get(j).getLabelIdn();
+                                        String labelEs = complianceIndicatorItemList.get(j).getLabelEs();
+                                        String labelTr = complianceIndicatorItemList.get(j).getLabelTr();
+                                        String labelFr = complianceIndicatorItemList.get(j).getLabelFr();
+                                        String labelLo = complianceIndicatorItemList.get(j).getLabelLo();
+                                        String labelVi = complianceIndicatorItemList.get(j).getLabelVi();
 
 
-                                    ComplianceIndicator complianceIndicator = new ComplianceIndicator();
-                                    complianceIndicator.moduleDraftId = moduleDraftId;
-                                    complianceIndicator.id = id_Compliance;
-                                    complianceIndicator.compliance = compliance;
-                                    complianceIndicator.label = label;
-                                    complianceIndicator.labelTh = labelTh;
-                                    complianceIndicator.labelPt = labelPt;
-                                    complianceIndicator.labelIdn = labelIdn;
-                                    complianceIndicator.labelEs = labelEs;
-                                    complianceIndicator.labelTr = labelTr;
-                                    complianceIndicator.labelFr = labelFr;
-                                    complianceIndicator.labelLo = labelLo;
-                                    complianceIndicator.labelVi = labelVi;
+                                        ComplianceIndicator complianceIndicator = new ComplianceIndicator();
+                                        complianceIndicator.moduleDraftId = moduleDraftId;
+                                        complianceIndicator.id = id_Compliance;
+                                        complianceIndicator.compliance = compliance;
+                                        complianceIndicator.label = label;
+                                        complianceIndicator.labelTh = labelTh;
+                                        complianceIndicator.labelPt = labelPt;
+                                        complianceIndicator.labelIdn = labelIdn;
+                                        complianceIndicator.labelEs = labelEs;
+                                        complianceIndicator.labelTr = labelTr;
+                                        complianceIndicator.labelFr = labelFr;
+                                        complianceIndicator.labelLo = labelLo;
+                                        complianceIndicator.labelVi = labelVi;
 
-                                    db.complianceIndicatorDao().insert(complianceIndicator);
+                                        db.complianceIndicatorDao().insert(complianceIndicator);
+                                    }
+                                }catch (Exception e){
+                                    e.printStackTrace();
                                 }
 
+                                try {
+                                    for (int k = 0; k < currencyItemList.size(); k++) {
 
-                                for (int k = 0; k < currencyItemList.size(); k++) {
+                                        int moduleDraftId = currencyItemList.get(k).getModuleDraftId();
+                                        int currencyDraftId = currencyItemList.get(k).getCurrencyDraftId();
+                                        int currencyId = currencyItemList.get(k).getCurrencyId();
+                                        boolean isDefault = currencyItemList.get(k).isIsDefault();
 
-                                    int moduleDraftId = currencyItemList.get(k).getModuleDraftId();
-                                    int currencyDraftId = currencyItemList.get(k).getCurrencyDraftId();
-                                    int currencyId = currencyItemList.get(k).getCurrencyId();
-                                    boolean isDefault = currencyItemList.get(k).isIsDefault();
+                                        DmCurrency dmCurrency = new DmCurrency();
+                                        dmCurrency.moduleDraftId = moduleDraftId;
+                                        dmCurrency.currencyDraftId = currencyDraftId;
+                                        dmCurrency.currencyId = currencyId;
+                                        dmCurrency.isDefault = isDefault;
 
-                                    DmCurrency dmCurrency = new DmCurrency();
-                                    dmCurrency.moduleDraftId = moduleDraftId;
-                                    dmCurrency.currencyDraftId = currencyDraftId;
-                                    dmCurrency.currencyId = currencyId;
-                                    dmCurrency.isDefault = isDefault;
+                                        db.dmCurrencyDao().insert(dmCurrency);
 
-                                    db.dmCurrencyDao().insert(dmCurrency);
-
+                                    }
+                                }catch (Exception e){
+                                    e.printStackTrace();
                                 }
-
+                                try{
                                 for (int l = 0; l < questionsItemList.size(); l++) {
 
                                     boolean mandate = questionsItemList.get(l).isMandate();
@@ -2225,7 +2245,10 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
 
                                 }
-
+                                }catch (Exception e){
+                                    e.printStackTrace();
+                                }
+                                try{
                                 for (int s = 0; s < sectionsItemList.size(); s++) {
                                     String nameTh_Sec = sectionsItemList.get(s).getNameTh();
                                     String nameVi_Sec = sectionsItemList.get(s).getNameVi();
@@ -2473,7 +2496,10 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
 
                                 }
-
+                                }catch (Exception e){
+                                    e.printStackTrace();
+                                }
+                                try{
                                 if (recurrences != null) {
                                     int recurrenceFrequency = recurrences.getRecurrenceFrequency();
                                     boolean isCustomRecurrence = recurrences.isIsCustomRecurrence();
@@ -2485,14 +2511,20 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                     dmRecurrence.recurrenceType = recurrenceType;
                                     db.dmRecurrenceDao().insert(dmRecurrence);
                                 }
-
+                                }catch (Exception e){
+                                    e.printStackTrace();
+                                }
 
                             }
+                            }catch (Exception e){
+                                e.printStackTrace();
+                            }
+
                         }
 
                         if (response.body().getAnswerTypes() != null) {
                             ArrayList<AnswerTypesItem> answerTypesItemArrayList = response.body().getAnswerTypes();
-
+                        try {
                             for (int p = 0; p < answerTypesItemArrayList.size(); p++) {
 
                                 int id = answerTypesItemArrayList.get(p).getId();
@@ -2504,7 +2536,9 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                 db.dmAnswerTypesDao().insert(dmAnswerTypes);
 
                             }
-
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
                         }
 
                         if (response.body().getQuestionTypes() != null) {
