@@ -245,7 +245,6 @@
                     android:ems="10"
                     android:textSize="10sp"
                     android:padding="@dimen/margin_10"
-                    android:text="0"
                     android:enabled="false"
                     android:inputType="number"
                     app:layout_constraintEnd_toEndOf="parent"
