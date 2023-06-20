@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.bumptech.glide.load.engine.Resource;
 import com.olam.digital.ofis.DataLayer;
 import com.olam.digital.ofis.FindFarmerActivity;
 import com.olam.digital.ofis.R;
@@ -54,6 +55,7 @@ public class SurveyResultsFragment extends Fragment {
     ImageView traffic_indicator_green, traffic_indicator_orange, traffic_indicator_red;
     OFISRoomDB db;
     EditText editTextText, editTextText3, editTextText4, editTextText5, editTextText6, overAllResult;
+
     public SurveyResultsFragment() {
         // Required empty public constructor
     }
@@ -64,6 +66,7 @@ public class SurveyResultsFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_survey_results, container, false);
+
 
         ll_servey_next_servey_results = view.findViewById(R.id.ll_servey_next_servey_results);
         ll_servey_back_servey_results = view.findViewById(R.id.ll_servey_back_servey_results);
@@ -213,7 +216,7 @@ public class SurveyResultsFragment extends Fragment {
         traffic_indicator_orange = view.findViewById(R.id.indicator_orange);
         traffic_indicator_red = view.findViewById(R.id.indicator_red);
 
-        int complaint = 0, nonComplaint = 0, satisfactory = 0;
+        /*int complaint = 0, nonComplaint = 0, satisfactory = 0;
                List<DmSurveyAnswerTable> dmSurveyAnswerTableList1 = new ArrayList<>();
                 dmSurveyAnswerTableList1.clear();
                 dmSurveyAnswerTableList1 = db.dmSurveyAnswerTableDao().getDataByModuleId(Constants.MODULE_ID, Constants.FARMER_ID);
@@ -288,9 +291,92 @@ public class SurveyResultsFragment extends Fragment {
                 }
             }
 
-        }
+        }*/
 
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        int complaint = 0, nonComplaint = 0, satisfactory = 0;
+        List<DmSurveyAnswerTable> dmSurveyAnswerTableList1 = new ArrayList<>();
+        dmSurveyAnswerTableList1.clear();
+        dmSurveyAnswerTableList1 = db.dmSurveyAnswerTableDao().getDataByModuleId(Constants.MODULE_ID, Constants.FARMER_ID);
+        for (int j = 0; j < dmSurveyAnswerTableList1.size(); j++) {
+
+            int compliantTypeId = Integer.parseInt(dmSurveyAnswerTableList1.get(j).complinceTypeId);
+            int value = dmSurveyAnswerTableList1.get(j).amount;
+            amount = amount +value;
+            String complianceName = db.complianceIndicatorDao().getComplianceNameBycomplianceId(String.valueOf(compliantTypeId));
+            if (complianceName.equalsIgnoreCase("Satisfactory")) {
+                satisfactory = satisfactory + 1;
+            } else if (complianceName.equalsIgnoreCase("Compliant")) {
+                complaint = complaint + 1;
+            } else if (complianceName.equalsIgnoreCase("Non Compliant")) {
+                nonComplaint = nonComplaint + 1;
+            }
+
+
+        }
+
+        editTextText.setText(""+complaint);
+        editTextText3.setText(""+nonComplaint);
+        editTextText4.setText(""+satisfactory);
+
+        editTextText5.setText(String.valueOf(complaint + nonComplaint + satisfactory));
+        editTextText6.setText(""+ amount);
+//        int complaint = Integer.parseInt(complaint);
+//        int nonComplaint = Integer.parseInt(Constants.noncomplaintSize);
+//        int satisfactory = Integer.parseInt(Constants.satisfactorySize);
+
+        DmQuestionsModule isCritical = new DmQuestionsModule();
+        Boolean val = isCritical.isCriticalQuest;
+
+
+        if (val && nonComplaint >= 1 && satisfactory >= 1) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                newView.setBackground(getActivity().getDrawable(R.color.red_view_survey));
+                survey_result_main.setBackground(getActivity().getDrawable(R.color.red_survey_result));
+                traffic_indicator_green.setVisibility(View.GONE);
+                traffic_indicator_orange.setVisibility(View.GONE);
+                traffic_indicator_red.setVisibility(View.VISIBLE);
+                resultValue = Constants.RED;
+            }
+        } else {
+
+            if (nonComplaint > complaint && nonComplaint > satisfactory) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    newView.setBackground(getActivity().getDrawable(R.color.red_view_survey));
+                    survey_result_main.setBackground(getActivity().getDrawable(R.color.red_survey_result));
+                    traffic_indicator_green.setVisibility(View.GONE);
+                    traffic_indicator_orange.setVisibility(View.GONE);
+                    traffic_indicator_red.setVisibility(View.VISIBLE);
+                    resultValue = Constants.RED;
+                }
+            } else if (satisfactory > complaint && satisfactory > nonComplaint) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    newView.setBackground(getActivity().getDrawable(R.color.orange_view_survey));
+                    survey_result_main.setBackground(getActivity().getDrawable(R.color.ambur_survey_result));
+                    traffic_indicator_green.setVisibility(View.GONE);
+                    traffic_indicator_orange.setVisibility(View.VISIBLE);
+                    traffic_indicator_red.setVisibility(View.GONE);
+                    resultValue = Constants.ORANGE;
+                }
+            } else {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    newView.setBackground(getActivity().getDrawable(R.color.green_view_survey));
+                    survey_result_main.setBackground(getActivity().getDrawable(R.color.green_survey_result));
+                    traffic_indicator_green.setVisibility(View.VISIBLE);
+                    traffic_indicator_orange.setVisibility(View.GONE);
+                    traffic_indicator_red.setVisibility(View.GONE);
+                    resultValue = Constants.GREEN;
+                }
+            }
+
+        }
+
     }
 
     private void SubmitResult(String strRequest) {
