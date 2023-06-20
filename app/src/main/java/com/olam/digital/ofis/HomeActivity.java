@@ -1920,7 +1920,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                         db.dmTextBoxModuleQuestionsDao().deleteAll();
                         db.dmRangeTextBoxModuleQuestionsTableDao().deleteAll();
                         db.complianceIndicatorDao().deleteAll();
-
+                        db.dmCurrencyDao().deleteAll();
 
                         if (response.body().getDiagnosticModules() != null) {
                             ArrayList<DiagnosticModulesList> mainResponseList = new ArrayList<>();
@@ -2036,6 +2036,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                 }
 
                                 try {
+
                                     for (int k = 0; k < currencyItemList.size(); k++) {
 
                                         int moduleDraftId = currencyItemList.get(k).getModuleDraftId();

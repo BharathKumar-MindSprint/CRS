@@ -21,9 +21,9 @@ public interface DmActionPlanCurrenciesTableDao {
     @Delete
     void delete(DmActionPlanCurrenciesTable dmActionPlanCurrenciesTable);
 
-    @Query("DELETE FROM DmActionPlanCurrenciesTable WHERE moduleId =:id")
-    void deleteByModuleId(String id);
+    @Query("DELETE FROM DmActionPlanCurrenciesTable WHERE moduleId =:id AND farmerId =:farmerId")
+    void deleteByModuleId(String id, String farmerId);
 
-    @Query("SELECT * FROM DmActionPlanCurrenciesTable WHERE moduleId =:id")
-    List<DmActionPlanCurrenciesTable> getDataByModuleId(String id);
+    @Query("SELECT * FROM DmActionPlanCurrenciesTable WHERE moduleId =:id AND farmerId =:farmerId")
+    List<DmActionPlanCurrenciesTable> getDataByModuleId(String id, String farmerId);
 }

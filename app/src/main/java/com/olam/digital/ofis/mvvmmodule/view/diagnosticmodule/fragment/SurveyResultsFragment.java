@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.olam.digital.ofis.DataLayer;
 import com.olam.digital.ofis.FindFarmerActivity;
 import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.RetrofitServices.ManageRecords;
@@ -49,18 +50,15 @@ import retrofit2.Response;
 public class SurveyResultsFragment extends Fragment {
     LinearLayout ll_servey_next_servey_results, ll_servey_back_servey_results;
     ConstraintLayout survey_result_main;
-
     LinearLayout newView;
     ImageView traffic_indicator_green, traffic_indicator_orange, traffic_indicator_red;
-
-    int total = 50;
     OFISRoomDB db;
-    EditText editTextText, editTextText3, editTextText4, editTextText5, editTextText6;
-
+    EditText editTextText, editTextText3, editTextText4, editTextText5, editTextText6, overAllResult;
     public SurveyResultsFragment() {
         // Required empty public constructor
     }
-
+    String resultValue;
+    int amount = 0;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -75,6 +73,7 @@ public class SurveyResultsFragment extends Fragment {
         editTextText4 = view.findViewById(R.id.editTextText4);
         editTextText5 = view.findViewById(R.id.editTextText5);
         editTextText6 = view.findViewById(R.id.editTextText6);
+        overAllResult = view.findViewById(R.id.editTextTextMultiLine);
 
         db = OFISRoomDB.getDbInstance(getActivity());
 
@@ -85,7 +84,7 @@ public class SurveyResultsFragment extends Fragment {
 
                 //Call API
 
-                List<DmActionPlanCurrenciesTable> actionPlanCurrenciesTables = db.dmActionPlanCurrenciesTableDao().getDataByModuleId(Constants.MODULE_ID);
+                List<DmActionPlanCurrenciesTable> actionPlanCurrenciesTables = db.dmActionPlanCurrenciesTableDao().getDataByModuleId(Constants.MODULE_ID, Constants.FARMER_ID);
 
                 String currencyId = "0";
 
@@ -138,7 +137,7 @@ public class SurveyResultsFragment extends Fragment {
                         files.clear();
 
                         for (int j = 0; j < complaintFileTableList.size(); j++) {
-                            files.add(complaintFileTableList.get(j).getFile_name());
+                            files.add(complaintFileTableList.get(j).getOfisFileName());
                         }
 
                         answers.put("captureProof", files);
@@ -166,19 +165,21 @@ public class SurveyResultsFragment extends Fragment {
                 result.put("totalSatisfactory", Constants.satisfactorySize);
                 result.put("totalNonComplaint", Constants.noncomplaintSize);
                 result.put("totalActionPlan", String.valueOf(Integer.parseInt(Constants.complaintSize) + Integer.parseInt(Constants.satisfactorySize) + Integer.parseInt(Constants.noncomplaintSize)));
-                result.put("totalBudget", totalAmount + " " + currency);
+                result.put("totalBudget", amount + " " + currency);
                 result.put("resultType", "TrafficLight");
-                result.put("resultValue", "Green");
-                result.put("resultRemarks", "Average");
+                result.put("resultValue", resultValue);
+                result.put("resultRemarks", overAllResult.getText().toString());
                 DMSurveyReport dmSurveyReport = new DMSurveyReport(Integer.parseInt(Constants.complaintSize),
                         Integer.parseInt(Constants.satisfactorySize),
                         Integer.parseInt(Constants.noncomplaintSize),
                         (Integer.parseInt(Constants.complaintSize) + Integer.parseInt(Constants.satisfactorySize) + Integer.parseInt(Constants.noncomplaintSize)),
-                        Double.parseDouble(totalAmount),
+                        Double.parseDouble(String.valueOf(amount)),
                         "TrafficLight",
-                        1,
-                        "Average",
-                        Integer.parseInt(Constants.FARMER_ID));
+                        resultValue,
+                        overAllResult.getText().toString(),
+                        Long.parseLong(Constants.FARMER_ID),Integer.parseInt(Constants.MODULE_ID),
+                        Integer.parseInt(Constants.FARMER_GROUP_ID),
+                        Integer.parseInt(currencyId),submittedDate);
                 db.dmSurveyReportDao().insert(dmSurveyReport);
 
                 hashMap.put("answers", answerArrayList);
@@ -198,7 +199,8 @@ public class SurveyResultsFragment extends Fragment {
                 }else {
 //                    Toast.makeText(getContext(), "Can't add more followup", Toast.LENGTH_SHORT).show();
                 }
-
+                DataLayer dl = new DataLayer(getResources(), getContext());
+                dl.updateNqForDMSurvey(Constants.FARMER_ID, Constants.MODULE_ID);
                 Intent intent = new Intent(getContext(),ViewFarmerActivity.class);
                 getContext().startActivity(intent);
 
@@ -218,6 +220,8 @@ public class SurveyResultsFragment extends Fragment {
                 for (int j = 0; j < dmSurveyAnswerTableList1.size(); j++) {
 
                     int compliantTypeId = Integer.parseInt(dmSurveyAnswerTableList1.get(j).complinceTypeId);
+                    int value = dmSurveyAnswerTableList1.get(j).amount;
+                    amount = amount +value;
                     String complianceName = db.complianceIndicatorDao().getComplianceNameBycomplianceId(String.valueOf(compliantTypeId));
                     if (complianceName.equalsIgnoreCase("Satisfactory")) {
                         satisfactory = satisfactory + 1;
@@ -235,7 +239,7 @@ public class SurveyResultsFragment extends Fragment {
         editTextText4.setText(""+satisfactory);
 
         editTextText5.setText(String.valueOf(complaint + nonComplaint + satisfactory));
-
+        editTextText6.setText(""+ amount);
 //        int complaint = Integer.parseInt(complaint);
 //        int nonComplaint = Integer.parseInt(Constants.noncomplaintSize);
 //        int satisfactory = Integer.parseInt(Constants.satisfactorySize);
@@ -251,6 +255,7 @@ public class SurveyResultsFragment extends Fragment {
                 traffic_indicator_green.setVisibility(View.GONE);
                 traffic_indicator_orange.setVisibility(View.GONE);
                 traffic_indicator_red.setVisibility(View.VISIBLE);
+                resultValue = Constants.RED;
             }
         } else {
 
@@ -261,6 +266,7 @@ public class SurveyResultsFragment extends Fragment {
                     traffic_indicator_green.setVisibility(View.GONE);
                     traffic_indicator_orange.setVisibility(View.GONE);
                     traffic_indicator_red.setVisibility(View.VISIBLE);
+                    resultValue = Constants.RED;
                 }
             } else if (satisfactory > complaint && satisfactory > nonComplaint) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -269,6 +275,7 @@ public class SurveyResultsFragment extends Fragment {
                     traffic_indicator_green.setVisibility(View.GONE);
                     traffic_indicator_orange.setVisibility(View.VISIBLE);
                     traffic_indicator_red.setVisibility(View.GONE);
+                    resultValue = Constants.ORANGE;
                 }
             } else {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -277,6 +284,7 @@ public class SurveyResultsFragment extends Fragment {
                     traffic_indicator_green.setVisibility(View.VISIBLE);
                     traffic_indicator_orange.setVisibility(View.GONE);
                     traffic_indicator_red.setVisibility(View.GONE);
+                    resultValue = Constants.GREEN;
                 }
             }
 
@@ -293,11 +301,11 @@ public class SurveyResultsFragment extends Fragment {
 
             @Override
             public void onResponse(Call<DMSurveyResponseModel> call, Response<DMSurveyResponseModel> response) {
-                Toast.makeText(getActivity(), "Inside Submit Servey", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getActivity(), "Inside Submit Servey", Toast.LENGTH_SHORT).show();
 
                 try {
                     if (response.code() == 200) {
-                        Toast.makeText(getActivity(), "Inside Submit Servey Success", Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(getActivity(), "Inside Submit Servey Success", Toast.LENGTH_SHORT).show();
                         Log.d("ResultFragment", "total result:: " + response.body());
 
                     } else if (response.code() == 400) {

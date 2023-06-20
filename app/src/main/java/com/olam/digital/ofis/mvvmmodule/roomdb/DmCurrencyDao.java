@@ -21,4 +21,7 @@ public interface DmCurrencyDao {
 
     @Delete
     void delete(DmCurrency dmCurrency);
+
+    @Query("DELETE FROM DmCurrency")
+    void deleteAll();
 }

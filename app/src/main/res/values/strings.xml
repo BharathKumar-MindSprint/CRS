@@ -1098,6 +1098,7 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <!--Diagnostic Module-->
     <string name="dm_header_txt">Diagnostic Module Action plan and proof</string>
     <string name="dm_survey">Survey</string>
+    <string name="diagnostic_survey">Diagnostic Module Survey</string>
     <string name="dm_actionplan_proof">Action plan and proof</string>
     <string name="dm_survey_results">Survey Results</string>
     <string name="dm_diognostic_module">Diagnostic Module</string>

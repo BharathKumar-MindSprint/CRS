@@ -19,4 +19,7 @@ public class DmActionPlanCurrenciesTable {
     @ColumnInfo(name = "code")
     public String code;
 
+    @ColumnInfo(name = "farmerId")
+    public String farmerId;
+
 }

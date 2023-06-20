@@ -29,18 +29,63 @@ public class DMSurveyReport {
     private String resultType;
 
     @ColumnInfo(name = "resultValue")
-    private double resultValue;
+    private String resultValue;
 
     @ColumnInfo(name = "resultRemarks")
     private String resultRemarks;
 
+    @ColumnInfo(name = "submissionDate")
+    private String submissionDate;
+
+    public String getSubmissionDate() {
+        return submissionDate;
+    }
+
+    public void setSubmissionDate(String submissionDate) {
+        this.submissionDate = submissionDate;
+    }
+
     @ColumnInfo(name = "farmerId")
-    private int farmerId;
+    private long farmerId;
+
+    @ColumnInfo(name = "moduleId")
+    private int moduleId;
+
+    @ColumnInfo(name = "farmerGroupId")
+    private int farmerGroupId;
+
+    @ColumnInfo(name = "currencyId")
+    private int currencyId;
 
     // Constructors, getters, and setters
 
+    public int getModuleId() {
+        return moduleId;
+    }
+
+    public void setModuleId(int moduleId) {
+        this.moduleId = moduleId;
+    }
+
+    public int getFarmerGroupId() {
+        return farmerGroupId;
+    }
+
+    public void setFarmerGroupId(int farmerGroupId) {
+        this.farmerGroupId = farmerGroupId;
+    }
+
+    public int getCurrencyId() {
+        return currencyId;
+    }
+
+    public void setCurrencyId(int currencyId) {
+        this.currencyId = currencyId;
+    }
+
     public DMSurveyReport(int totalComplaint, int totalSatisfactory, int totalNonComplaint, int totalActionPlan,
-                          double totalBudget, String resultType, double resultValue, String resultRemarks, int farmerId) {
+                          double totalBudget, String resultType, String resultValue, String resultRemarks ,long farmerId,
+                          int moduleId,int farmerGroupId,int currencyId,String submissionDate) {
         this.totalComplaint = totalComplaint;
         this.totalSatisfactory = totalSatisfactory;
         this.totalNonComplaint = totalNonComplaint;
@@ -50,6 +95,10 @@ public class DMSurveyReport {
         this.resultValue = resultValue;
         this.resultRemarks = resultRemarks;
         this.farmerId = farmerId;
+        this.moduleId = moduleId;
+        this.farmerGroupId = farmerGroupId;
+        this.currencyId = currencyId;
+        this.submissionDate = submissionDate;
     }
 
     // Getters and setters for the properties
@@ -111,11 +160,11 @@ public class DMSurveyReport {
         this.resultType = resultType;
     }
 
-    public double getResultValue() {
+    public String getResultValue() {
         return resultValue;
     }
 
-    public void setResultValue(double resultValue) {
+    public void setResultValue(String resultValue) {
         this.resultValue = resultValue;
     }
 
@@ -127,11 +176,11 @@ public class DMSurveyReport {
         this.resultRemarks = resultRemarks;
     }
 
-    public int getFarmerId() {
+    public long getFarmerId() {
         return farmerId;
     }
 
-    public void setFarmerId(int farmerId) {
+    public void setFarmerId(long farmerId) {
         this.farmerId = farmerId;
     }
 }

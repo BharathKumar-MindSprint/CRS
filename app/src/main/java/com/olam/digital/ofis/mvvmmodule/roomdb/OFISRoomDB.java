@@ -40,7 +40,7 @@ import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.daos.FollowUpItemMa
         DmActionPlansItemSubmodule.class, DmRecurrence.class, DmComplaintFileTable.class,
         DmSurveyAnswerTable.class, DmTextBoxModuleQuestions.class, DmRangeTextBoxModuleQuestionsTable.class, DmNonComplaintFileTable.class,
         DmSatisfactoryFileTable.class, DmActionPlanCurrenciesTable.class, DmRangeActionPlansItems.class, DMSurveyReport.class,  FollowUpItemMainTable.class,CapturedProofFollowupTable.class},
-        version = 8)
+        version = 3)
 public abstract class OFISRoomDB extends RoomDatabase {
     private static final String DATABASE_NAME = "ofismobileroom";
     public abstract DmMainModuleDao dmMainModuleDao();

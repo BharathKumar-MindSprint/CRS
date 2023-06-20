@@ -13,10 +13,12 @@ public interface DMSurveyReportDao {
     @Insert
     void insert(DMSurveyReport surveyReport);
 
-   /* @Query("SELECT * FROM DMSurveyReport")
-    List<DMSurveyReport> getAllSurveyReports();
+    @Query("SELECT * FROM DMSurveyReport WHERE farmerId = :farmerId AND moduleId = :moduleId")
+    DMSurveyReport getFinalDMSurveyReports(long farmerId, int moduleId);
 
-    @Query("SELECT * FROM DMSurveyReport WHERE id = :reportId")
+
+
+    /*@Query("SELECT * FROM DMSurveyReport WHERE id = :reportId")
     DMSurveyReport getSurveyReportById(int reportId);*/
 
 

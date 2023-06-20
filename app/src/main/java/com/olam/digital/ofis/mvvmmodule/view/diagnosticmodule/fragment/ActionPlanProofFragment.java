@@ -1423,7 +1423,6 @@ public class ActionPlanProofFragment extends Fragment{
 
         final List<String> ids = new ArrayList<String>();
         ids.clear();
-
         for (int c = 0; c < dmCurrenciesItemList.size(); c++) {
             int currencyId = dmCurrenciesItemList.get(c).currencyId;
 
@@ -1438,7 +1437,7 @@ public class ActionPlanProofFragment extends Fragment{
 
         String currencyIdDb = "0";
 
-        List<DmActionPlanCurrenciesTable> dmActionPlanCurrenciesTables = db.dmActionPlanCurrenciesTableDao().getDataByModuleId(Constants.MODULE_ID);
+        List<DmActionPlanCurrenciesTable> dmActionPlanCurrenciesTables = db.dmActionPlanCurrenciesTableDao().getDataByModuleId(Constants.MODULE_ID, Constants.FARMER_ID);
         if (dmActionPlanCurrenciesTables.size() != 0) {
             currencyIdDb = String.valueOf(dmActionPlanCurrenciesTables.get(0).currencyId);
             currency_id = currencyIdDb;
@@ -1464,12 +1463,13 @@ public class ActionPlanProofFragment extends Fragment{
 
                 currency_id = ids.get(position);
 
-                db.dmActionPlanCurrenciesTableDao().deleteByModuleId(Constants.MODULE_ID);
+                db.dmActionPlanCurrenciesTableDao().deleteByModuleId(Constants.MODULE_ID, Constants.FARMER_ID);
 
                 DmActionPlanCurrenciesTable dmActionPlanCurrenciesTable = new DmActionPlanCurrenciesTable();
                 dmActionPlanCurrenciesTable.moduleId = Integer.parseInt(Constants.MODULE_ID);
                 dmActionPlanCurrenciesTable.currencyId = Integer.parseInt(ids.get(position));
                 dmActionPlanCurrenciesTable.code = list.get(position);
+                dmActionPlanCurrenciesTable.farmerId = Constants.FARMER_ID;
                 db.dmActionPlanCurrenciesTableDao().insert(dmActionPlanCurrenciesTable);
 
                 dm_question_complaint.removeAllViews();

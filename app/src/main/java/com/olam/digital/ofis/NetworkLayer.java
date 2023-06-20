@@ -52,6 +52,7 @@ import com.olam.digital.ofis.multifarm.MultiFarmDTO;
 import com.olam.digital.ofis.multifarm.MultiFarmUtils;
 import com.olam.digital.ofis.mvvmmodule.Constants;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
+import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DMSurveyReport;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmActionPlanCurrenciesTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmComplaintFileTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmCurrenciesItem;
@@ -2472,7 +2473,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         endpoint = "ofisfarmerhousehold/farmerhousehold/farmerHouseHold";
 
         final JSONObject params = new JSONObject();
-        dl.testFarmerChangingValue( networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
+//        dl.testFarmerChangingValue( networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
         if (!dl.isFarmerSynced(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)))) {
 
             if(dl.isAvailableInNqTable(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)))) {
@@ -5495,102 +5496,124 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
             if (endpoint.length() > 0) {
 
-                List<DmActionPlanCurrenciesTable> actionPlanCurrenciesTables = db.dmActionPlanCurrenciesTableDao().getDataByModuleId(Constants.MODULE_ID);
+                try {
+                    long farmerId = networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
+                    int moduleId = networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_MODULE_ID));
+                    DMSurveyReport dmSurveyReport = db.dmSurveyReportDao().getFinalDMSurveyReports(farmerId, moduleId);
 
-                String currencyId = "0";
+                    JSONObject hashMap = new JSONObject();
+                    hashMap.put("farmerId", dmSurveyReport.getFarmerId());
+                    hashMap.put("moduleId", dmSurveyReport.getModuleId());
+                    hashMap.put("farmerGroupId", dmSurveyReport.getFarmerGroupId());
+                    hashMap.put("enumeratorId", Utilities.getFromSharedPrefs(context));
+                    hashMap.put("currencyId", dmSurveyReport.getCurrencyId());
+                    hashMap.put("submissionDate", dmSurveyReport.getSubmissionDate());
+                    hashMap.put("isMobile", true);
 
-                if (actionPlanCurrenciesTables.size() != 0) {
-                    currencyId = String.valueOf(actionPlanCurrenciesTables.get(0).currencyId);
-                }
+                    JSONArray answers = new JSONArray();
 
-                HashMap hashMap = new HashMap<>();
-                hashMap.put("farmerId", Constants.FARMER_ID);
-                hashMap.put("moduleId", Constants.MODULE_ID);
-                hashMap.put("farmerGroupId", Constants.FARMER_GROUP_ID);
-                hashMap.put("enumeratorId", Constants.ENUMERATOR_ID);
-                hashMap.put("currencyId", currencyId);
-                hashMap.put("submissionDate", "2023-06-15T15:15:09.983");
-                hashMap.put("isMobile", true);
+                    List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByModuleId(String.valueOf(moduleId), String.valueOf(farmerId));
 
-                HashMap answers = new HashMap();
+                    String totalAmount = "0";
 
-                List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByModuleId(Constants.MODULE_ID, Constants.FARMER_ID);
+                    ArrayList<JSONObject> answerArrayList = new ArrayList<>();
 
-                String totalAmount = "0";
+                    if (dmSurveyAnswerTableList.size() != 0) {
+                        for (int i = 0; i < dmSurveyAnswerTableList.size(); i++) {
+                            JSONObject ans = new JSONObject();
+                            ans.put("questionId", dmSurveyAnswerTableList.get(i).questionID);
+                            ans.put("answerId", dmSurveyAnswerTableList.get(i).answerID);
+                            ans.put("answervalue", dmSurveyAnswerTableList.get(i).answer);
+                            ans.put("complianceStatusId", dmSurveyAnswerTableList.get(i).complinceTypeId);
+                            ans.put("actionplanId", dmSurveyAnswerTableList.get(i).actionplanId);
+                            ans.put("actionPlanText", dmSurveyAnswerTableList.get(i).actionPlanText);
 
-                ArrayList<JSONObject> answerArrayList = new ArrayList<>();
+                            List<DmComplaintFileTable> complaintFileTableList = new ArrayList<>();
 
-                if (dmSurveyAnswerTableList.size() != 0) {
-                    for (int i = 0; i < dmSurveyAnswerTableList.size(); i++) {
-                        answers.put("questionId", dmSurveyAnswerTableList.get(i).questionID);
-                        answers.put("answerId", dmSurveyAnswerTableList.get(i).answerID);
-                        answers.put("answervalue", dmSurveyAnswerTableList.get(i).answer);
-                        answers.put("complianceStatusId", dmSurveyAnswerTableList.get(i).complinceTypeId);
-                        answers.put("actionplanId", dmSurveyAnswerTableList.get(i).actionplanId);
-                        answers.put("actionPlanText", dmSurveyAnswerTableList.get(i).actionPlanText);
+                            complaintFileTableList.clear();
 
-                        if (dmSurveyAnswerTableList.get(i).amount != 0) {
-                            totalAmount = String.valueOf(Integer.parseInt(totalAmount) + dmSurveyAnswerTableList.get(i).amount);
+                            complaintFileTableList = db.dmComplaintFileTableDao().getFilesById(Integer.parseInt(dmSurveyAnswerTableList.get(i).questionID), String.valueOf(farmerId));
+
+//                            List<String> files = new ArrayList<>();
+//                            files.clear();
+                            JSONArray jsonArray = new JSONArray();
+                            for (int j = 0; j < complaintFileTableList.size(); j++) {
+//                                files.add(complaintFileTableList.get(j).getFile_name());
+                                jsonArray.put(complaintFileTableList.get(j).getFile_name());
+                            }
+
+                            ans.put("captureProof", jsonArray);
+                            answers.put(ans);
+                            hashMap.put("answers", answers);
+
                         }
-
-                        HashMap hashMapFiles = new HashMap();
-
-                        List<DmComplaintFileTable> complaintFileTableList = new ArrayList<>();
-
-                        complaintFileTableList.clear();
-
-                        complaintFileTableList = db.dmComplaintFileTableDao().getFilesById(Integer.parseInt(dmSurveyAnswerTableList.get(i).questionID),Constants.FARMER_ID);
-
-                        List<String> files = new ArrayList<>();
-                        files.clear();
-
-                        for (int j = 0; j < complaintFileTableList.size(); j++) {
-                            files.add(complaintFileTableList.get(j).getFile_name());
-                        }
-
-                        answers.put("captureProof", files);
-
-
-                        answerArrayList.add(new JSONObject(answers));
-
-
                     }
-                }
 
 
-                List<DmCurrenciesItem> currenciesItems = new ArrayList<>();
-                currenciesItems.clear();
-                currenciesItems = db.dmCurrenciesItemDao().getCurrencyItemById(Integer.parseInt(currencyId));
+                    List<DmCurrenciesItem> currenciesItems = new ArrayList<>();
+                    currenciesItems.clear();
+                    currenciesItems = db.dmCurrenciesItemDao().getCurrencyItemById(dmSurveyReport.getCurrencyId());
 
-                String currency = "$";
+                    String currency = "$";
 
-                if (currenciesItems.size() != 0) {
-                    currency = currenciesItems.get(0).notation;
-                }
+                    if (currenciesItems.size() != 0) {
+                        currency = currenciesItems.get(0).notation;
+                    }
 
-                HashMap result = new HashMap();
-                result.put("totalComplaint", Constants.complaintSize);
-                result.put("totalSatisfactory", Constants.satisfactorySize);
-                result.put("totalNonComplaint", Constants.noncomplaintSize);
-                result.put("totalActionPlan", String.valueOf(Integer.parseInt(Constants.complaintSize) + Integer.parseInt(Constants.satisfactorySize) + Integer.parseInt(Constants.noncomplaintSize)));
-                result.put("totalBudget", totalAmount + " " + currency);
-                result.put("resultType", "TrafficLight");
-                result.put("resultValue", "Green");
-                result.put("resultRemarks", "Average");
-
-
-                hashMap.put("answers", answerArrayList);
-
-                hashMap.put("result", result);
-
-                ArrayList<JSONObject> arrayList = new ArrayList<>();
-
-                arrayList.add(new JSONObject(hashMap));
-                final JSONArray jsonArray=new JSONArray();
+                    JSONObject result = new JSONObject();
+                    result.put("totalComplaint", dmSurveyReport.getTotalComplaint());
+                    result.put("totalSatisfactory", dmSurveyReport.getTotalSatisfactory());
+                    result.put("totalNonComplaint", dmSurveyReport.getTotalNonComplaint());
+                    result.put("totalActionPlan", dmSurveyReport.getTotalActionPlan());
+                    result.put("totalBudget", dmSurveyReport.getTotalBudget() + " " + currency);
+                    result.put("resultType", dmSurveyReport.getResultType());
+                    result.put("resultValue", dmSurveyReport.getResultValue());
+                    result.put("resultRemarks", dmSurveyReport.getResultRemarks());
+                    hashMap.put("result", result);
+                    JSONArray jsonArray = new JSONArray();
+                    jsonArray.put(hashMap);
+                    Log.d("DMSURVEY", jsonArray.toString());
                 okHttpArrayPost(context, endpoint,  jsonArray, new Callback() {
                     @Override
                     public void onResponse(Call call, Response postResponse) {
+                        String statusMessage;
+                        if (postResponse.isSuccessful()) {
+                            dl.deleteNetworkQueueItem(networkQueueItemId);
+                            statusMessage = res.getString(R.string.item_synced);
+                            msg.what = 1;
+                            msg.arg1 = total;
+                            msg.arg2 = progress;
+                            msg.obj = statusMessage;
+                            handler.dispatchMessage(msg);
+                            syncNetworkQueue(originalSyncRequestItemId, handler);
+                        } else {
+                            try {
+                                FabricLogsWriter.printCrashLog(TAG, endpoint,postResponse.code()," Response "+postResponse.networkResponse().toString(),context);
+                            }catch (Exception e){ FirebaseCrashlytics.getInstance().log(e.getMessage());
+                            }
+                            try {
+                                if(postResponse.code() == 401 && postResponse.headers().toString().contains("invalid_token")){
+                                    FailureGetRefreshToken(handler,originalSyncRequestItemId, msg, 2, total, progress, null, "submitting farm location");
+                                }else {
+                                    JSONObject response = new JSONObject(postResponse.body().string());
+                                    long server_item_id = 0, fully_synced = 0;
+                                    if (response.optJSONObject("farm") != null) {
+                                        JSONObject farm = response.getJSONObject("farm");
+                                        server_item_id = farm.getLong("id");
+                                        fully_synced = farm.getLong(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FULLY_SYNCED);
+                                    }
+                                    recordFailedUpload(server_item_id, fully_synced, networkQueueItemId);
+                                    postFailureMessage(handler, response, msg, 2, total, progress, null, "submitting household location");
+                                    FirebaseCrash.report(new Exception(response.optString("errors", res.getString(R.string.item_sync_error)) + " : submitting household location"));
+                                }
+                            } catch (JSONException | IOException e) {
+                                recordFailedUpload(0, 0, networkQueueItemId);
+                                postFailureMessage(handler, null, msg, 2, total, progress, null, "submitting household location");
+                                FirebaseCrashlytics.getInstance().log("NetworkLayer: Error getting household location failure response"+e.getMessage());
 
+                            }
+                        }
+                        postResponse.close();
                     }
 
                     @Override
@@ -5612,7 +5635,15 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     }
 
                 });
+
+                }catch (JSONException e){
+                    e.printStackTrace();
+                }
             }
+
+
+
+
         }
     }
 

@@ -27,9 +27,7 @@ import android.widget.TextView;
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
-import com.olam.digital.ofis.childlabour.ChildLabourUtils;
 import com.olam.digital.ofis.childlabour.dto.ChildModuleDto;
-import com.olam.digital.ofis.childlabour.dto.ChildrenDTO;
 import com.olam.digital.ofis.coffeesurveyconstraints.CoffeeConstants;
 import com.olam.digital.ofis.downloadsurvey.dto.AnswerRequestDTO;
 import com.olam.digital.ofis.downloadsurvey.dto.FarmerDTO;
@@ -46,7 +44,6 @@ import com.olam.digital.ofis.multifarm.MultiFarmRoleDTO;
 import com.olam.digital.ofis.multifarm.MultiFarmUtils;
 import com.olam.digital.ofis.multifarm.MultifarmFarmerDTO;
 import com.olam.digital.ofis.multifarm.SubmittedInfo;
-import com.olam.digital.ofis.recordpolygon.RecordPolygonActivity;
 import com.olam.digital.ofis.smartnotification.dto.NotificationDTO;
 
 import org.json.JSONArray;
@@ -9326,6 +9323,19 @@ public class DataLayer {
         values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_SYNCED, "0");
         values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID, "1686748460659");
         db.update(table,values, whereClause, whereArgs);
+    }
+
+    public void updateNqForDMSurvey(String farmerId, String moduleId){
+        ContentValues networkQueueValues = new ContentValues();
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "DMSurvey");
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, getFarmerNamefromDb(Long.valueOf(farmerId)));
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, res.getString(R.string.diagnostic_survey));
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID, farmerId);
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT, timestamp.toString());
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPDATED_AT, timestamp.toString());
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_MODULE_ID, moduleId);
+        insertNetworkQueueEntry(networkQueueValues);
     }
 }
 
