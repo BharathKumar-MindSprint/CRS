@@ -41,12 +41,12 @@ public class NumberInputFilter implements InputFilter {
 //            }
 //        }
 
-        int number;
+        double number;
 
         try {
-            number = Integer.parseInt(input);
+            number = Double.parseDouble(input);
         } catch (NumberFormatException e) {
-            return ""; // Reject the input if it is not a valid integer
+            return ""; // Reject the input if it is not a valid number
         }
 
         if (number >= minValue && number <= maxValue) {
@@ -56,8 +56,9 @@ public class NumberInputFilter implements InputFilter {
         }
     }
 
+
     private boolean isNumeric(String str) {
-        return str.matches("-?\\d+"); // Checks if the string contains only digits (with an optional negative sign)
+        return str.matches("-?\\d+(\\.\\d+)?"); // Checks if the string contains only digits (with an optional negative sign) and an optional decimal part
     }
 
     private boolean containsAlphabets(String str) {

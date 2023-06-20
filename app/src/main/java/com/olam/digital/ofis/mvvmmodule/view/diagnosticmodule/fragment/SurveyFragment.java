@@ -39,6 +39,7 @@ import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmQuestionsModule;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmQuestionsSubModule;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmSectionsItem;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmSurveyAnswerTable;
+import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.DecimalFilter;
 import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.NumberInputFilter;
 
 import java.util.ArrayList;
@@ -607,23 +608,24 @@ public class SurveyFragment extends Fragment {
 //        double maxValue = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).maximumRange;
 
 
-
-
-        if(db.dmTextBoxModuleQuestionsDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(0).isAllowNegative){
-            editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED);
+        if (db.dmTextBoxModuleQuestionsDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(0).isAllowDecimal){
+            editText.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_CLASS_NUMBER);
+            DecimalFilter decimalFilter = new DecimalFilter(minValue, maxValue);
+            editText.setHint("Range from " + minValue + " to " + maxValue);
+            editText.setFilters(new InputFilter[] { decimalFilter });
+        }else if(db.dmTextBoxModuleQuestionsDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(0).isAllowNegative){
+            editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_CLASS_NUMBER);
             editText.setHint("Range from " + minValue + " to " + maxValue);
             NumberInputFilter numberFilter = new NumberInputFilter(minValue, maxValue);
             editText.setFilters(new InputFilter[] { numberFilter });
-        }else{
+        }else {
             editText.setInputType(InputType.TYPE_CLASS_NUMBER);
             editText.setHint("Range from " + minValue + " to " + maxValue);
             NumberInputFilter numberFilter = new NumberInputFilter(minValue, maxValue);
             editText.setFilters(new InputFilter[] { numberFilter });
         }
 
-        if (db.dmTextBoxModuleQuestionsDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(0).isAllowDecimal){
-            editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-        }
+
 
 
         TextView textView = new TextView(getActivity());
@@ -667,7 +669,10 @@ public class SurveyFragment extends Fragment {
 
 
                             for (int j = 0; j < db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).size(); j++) {
-                                try {
+                                allowCustomActionPlan = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).allowCustomActionPlan;
+                                isCaptureProof = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).isCaptureProof;
+                                complianceId = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).complianceId;
+                                /*try {
                                     if (Objects.equals(value, "-")) {
                                         complianceId = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).complianceId;
                                         allowCustomActionPlan = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).allowCustomActionPlan;
@@ -683,7 +688,7 @@ public class SurveyFragment extends Fragment {
                                         isCaptureProof = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).isCaptureProof;
                                         complianceId = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).complianceId;
                                     }
-                                }catch (Exception e){e.printStackTrace();}
+                                }catch (Exception e){e.printStackTrace();}*/
                             }
 
                         }
@@ -705,6 +710,7 @@ public class SurveyFragment extends Fragment {
 
             @Override
             public void afterTextChanged(Editable editable) {
+
 
             }
         });
