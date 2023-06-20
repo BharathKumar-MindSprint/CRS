@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.olam.digital.ofis.R;
 //import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.DiagnosticModel;
 import com.olam.digital.ofis.ViewFarmerActivity;
+import com.olam.digital.ofis.mvvmmodule.listener.OnItemSurveyClickListener;
 import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.DiagnosticModuleActivity;
 import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.DiagnosticModuleFollowUp;
 
@@ -32,12 +33,18 @@ public class FollowUpRecyclerAdapter extends RecyclerView.Adapter<FollowUpRecycl
     private boolean isDiagnosticModuleEnabled;
     Intent in;
 
+    private OnItemSurveyClickListener onItemSurveyClickListener;
+
     public FollowUpRecyclerAdapter(ArrayList<String> items , Context context,int newFollowUpCount,Intent in) {
         this.items = items;
         this.context = context;
         this.newFollowCount = newFollowUpCount;
         this.in = in;
 
+    }
+
+    public void setOnItemSurveyClickListener(OnItemSurveyClickListener clickListener) {
+        this.onItemSurveyClickListener = clickListener;
     }
 
     @NonNull
@@ -85,6 +92,8 @@ public class FollowUpRecyclerAdapter extends RecyclerView.Adapter<FollowUpRecycl
 
         }
 
+
+
         @Override
         public void onClick(View v) {
 
@@ -103,9 +112,10 @@ public class FollowUpRecyclerAdapter extends RecyclerView.Adapter<FollowUpRecycl
 //            Toast.makeText(context, "Click"+selectedPosition, Toast.LENGTH_SHORT).show();
             notifyItemChanged(previousPosition);
             notifyItemChanged(selectedPosition);
-
+//            onItemSurveyClickListener.onItemClick(v,pos);
             if (selectedPosition== 0) {
 //                Intent intent = new Intent(context, DiagnosticModuleActivity.class);
+                in.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(in);
             }
             /*if (selectedPosition == 1){
@@ -114,6 +124,7 @@ public class FollowUpRecyclerAdapter extends RecyclerView.Adapter<FollowUpRecycl
             }*/
             if (Objects.equals(itemName, "Follow Up 1")){
                 Intent intent = new Intent(context, DiagnosticModuleFollowUp.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(intent);
             }
         }

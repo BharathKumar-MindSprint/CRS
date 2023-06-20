@@ -13,6 +13,9 @@ public interface DmCurrencyDao {
     @Query("SELECT * FROM DmCurrency")
     List<DmCurrency> getDMCurrency();
 
+    @Query("SELECT * FROM DmCurrency WHERE moduleDraftId =:id")
+    List<DmCurrency> getDMCurrencyByModuleId(String id);
+
     @Insert
     void insert(DmCurrency... dmCurrency);
 

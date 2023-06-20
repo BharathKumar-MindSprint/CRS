@@ -1250,7 +1250,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                     AddInfrastructureActivity.infrastructureID = 0;
                     Intent intent = new Intent(context, AddInfrastructureActivity.class);
                     context.startActivity(intent);
-//                   // GetAllDiagnosticModule();
+//                    GetAccessToken("home");
                 }
             });
 
@@ -1778,7 +1778,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             @Override
             public void onFailure(Call<AccessTokenResp> call, Throwable t) {
                 progressDialog.hide();
-                Toast.makeText(staticContext, t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+//                Toast.makeText(staticContext, t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
                 if(isEnableDM) {
                     GetAllDiagnosticModule();
                 }
@@ -2523,10 +2523,10 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                             }
 
                         }
-
+                        try {
                         if (response.body().getAnswerTypes() != null) {
                             ArrayList<AnswerTypesItem> answerTypesItemArrayList = response.body().getAnswerTypes();
-                        try {
+
                             for (int p = 0; p < answerTypesItemArrayList.size(); p++) {
 
                                 int id = answerTypesItemArrayList.get(p).getId();
@@ -2538,51 +2538,58 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                 db.dmAnswerTypesDao().insert(dmAnswerTypes);
 
                             }
+                        }
                         }catch (Exception e){
                             e.printStackTrace();
                         }
-                        }
 
-                        if (response.body().getQuestionTypes() != null) {
-                            ArrayList<QuestionTypesItem> questionTypesItemArrayList = response.body().getQuestionTypes();
+                        try {
+                            if (response.body().getQuestionTypes() != null) {
+                                ArrayList<QuestionTypesItem> questionTypesItemArrayList = response.body().getQuestionTypes();
 
-                            for (int q = 0; q < questionTypesItemArrayList.size(); q++) {
+                                for (int q = 0; q < questionTypesItemArrayList.size(); q++) {
 
-                                int id = questionTypesItemArrayList.get(q).getId();
-                                String value = questionTypesItemArrayList.get(q).getValue();
+                                    int id = questionTypesItemArrayList.get(q).getId();
+                                    String value = questionTypesItemArrayList.get(q).getValue();
 
-                                DmQuestionTypes dmQuestionTypes = new DmQuestionTypes();
-                                dmQuestionTypes.id = id;
-                                dmQuestionTypes.value = value;
-                                db.dmQuestionTypesDao().insert(dmQuestionTypes);
+                                    DmQuestionTypes dmQuestionTypes = new DmQuestionTypes();
+                                    dmQuestionTypes.id = id;
+                                    dmQuestionTypes.value = value;
+                                    db.dmQuestionTypesDao().insert(dmQuestionTypes);
 
+
+                                }
 
                             }
-
+                        }catch (Exception e){
+                            e.printStackTrace();
                         }
 
                         db.dmCurrenciesItemDao().deleteAll();
+                        try {
+                            if (response.body().getCurrencies() != null) {
+                                ArrayList<CurrenciesItem> currenciesItemArrayList = response.body().getCurrencies();
 
-                        if (response.body().getCurrencies() != null) {
-                            ArrayList<CurrenciesItem> currenciesItemArrayList = response.body().getCurrencies();
+                                for (int r = 0; r < currenciesItemArrayList.size(); r++) {
 
-                            for (int r = 0; r < currenciesItemArrayList.size(); r++) {
+                                    int currencyId = currenciesItemArrayList.get(r).getCurrencyId();
+                                    String notation = currenciesItemArrayList.get(r).getNotation();
+                                    String code = currenciesItemArrayList.get(r).getCode();
+                                    String name = currenciesItemArrayList.get(r).getName();
 
-                                int currencyId = currenciesItemArrayList.get(r).getCurrencyId();
-                                String notation = currenciesItemArrayList.get(r).getNotation();
-                                String code = currenciesItemArrayList.get(r).getCode();
-                                String name = currenciesItemArrayList.get(r).getName();
+                                    DmCurrenciesItem dmCurrenciesItem = new DmCurrenciesItem();
+                                    dmCurrenciesItem.currencyId = currencyId;
+                                    dmCurrenciesItem.code = code;
+                                    dmCurrenciesItem.notation = notation;
+                                    dmCurrenciesItem.name = name;
+                                    db.dmCurrenciesItemDao().insert(dmCurrenciesItem);
 
-                                DmCurrenciesItem dmCurrenciesItem = new DmCurrenciesItem();
-                                dmCurrenciesItem.currencyId = currencyId;
-                                dmCurrenciesItem.code = code;
-                                dmCurrenciesItem.notation = notation;
-                                dmCurrenciesItem.name = name;
-                                db.dmCurrenciesItemDao().insert(dmCurrenciesItem);
+                                }
+
 
                             }
-
-
+                        }catch (Exception e){
+                            e.printStackTrace();
                         }
                         GetAllFollowUpDMData();
 
@@ -2676,7 +2683,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
                         }
 
-                        Toast.makeText(staticContext, "FollowUp Available", Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(staticContext, "FollowUp Available", Toast.LENGTH_SHORT).show();
                         Log.d("FollowUPRespon-", "Followup data here");
 
                     } else if (response.code() == 400) {

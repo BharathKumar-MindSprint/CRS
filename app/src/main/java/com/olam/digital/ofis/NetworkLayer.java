@@ -5514,7 +5514,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                 HashMap answers = new HashMap();
 
-                List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByModuleId(Constants.MODULE_ID);
+                List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByModuleId(Constants.MODULE_ID, Constants.FARMER_ID);
 
                 String totalAmount = "0";
 
@@ -5539,7 +5539,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                         complaintFileTableList.clear();
 
-                        complaintFileTableList = db.dmComplaintFileTableDao().getFilesById(Integer.parseInt(dmSurveyAnswerTableList.get(i).questionID));
+                        complaintFileTableList = db.dmComplaintFileTableDao().getFilesById(Integer.parseInt(dmSurveyAnswerTableList.get(i).questionID),Constants.FARMER_ID);
 
                         List<String> files = new ArrayList<>();
                         files.clear();

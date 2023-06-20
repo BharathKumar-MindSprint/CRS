@@ -23,26 +23,29 @@ public interface DmSurveyAnswerTableDao {
     @Delete
     void delete(DmSurveyAnswerTable dmSurveyAnswerTables);
 
-    @Query("DELETE FROM DmSurveyAnswerTable WHERE questionID =:id")
-    void deleteByQuestionId(String id);
+    @Query("DELETE FROM DmSurveyAnswerTable WHERE questionID =:id AND farmerId =:farmerId")
+    void deleteByQuestionId(String id, String farmerId);
 
-    @Query("SELECT * FROM DmSurveyAnswerTable WHERE complinceTypeId =:id")
-    List<DmSurveyAnswerTable> getDataByComplianceId(String id);
+    @Query("SELECT * FROM DmSurveyAnswerTable WHERE complinceTypeId =:id AND farmerId =:farmerId")
+    List<DmSurveyAnswerTable> getDataByComplianceId(String id, String farmerId);
 
-    @Query("SELECT * FROM DmSurveyAnswerTable WHERE moduleId =:id")
-    List<DmSurveyAnswerTable> getDataByModuleId(String id);
+    @Query("SELECT * FROM DmSurveyAnswerTable WHERE complinceTypeId =:id AND farmerId =:farmerId AND isCaptureProof = :isCaptureProof")
+    List<DmSurveyAnswerTable> getDataByComplianceId(String id, String farmerId, boolean isCaptureProof);
 
-    @Query("SELECT * FROM DmSurveyAnswerTable WHERE questionID =:id")
-    List<DmSurveyAnswerTable> getDataByQuestionId(String id);
+    @Query("SELECT * FROM DmSurveyAnswerTable WHERE moduleId =:id AND farmerId =:farmerId")
+    List<DmSurveyAnswerTable>  getDataByModuleId(String id, String farmerId);
 
-    @Query("UPDATE DmSurveyAnswerTable SET actionplanId=:actionplanId WHERE questionID = :questionId")
-    void updateActionPlanId(String actionplanId, String questionId);
+    @Query("SELECT * FROM DmSurveyAnswerTable WHERE questionID =:id AND farmerId =:farmerId")
+    List<DmSurveyAnswerTable> getDataByQuestionId(String id, String farmerId);
 
-    @Query("UPDATE DmSurveyAnswerTable SET actionPlanText=:actionPlanText WHERE questionID = :questionId")
-    void updateActionPlanText(String actionPlanText, String questionId);
+    @Query("UPDATE DmSurveyAnswerTable SET actionplanId=:actionplanId WHERE questionID = :questionId AND farmerId =:farmerId")
+    void updateActionPlanId(String actionplanId, String questionId, String farmerId);
 
-    @Query("UPDATE DmSurveyAnswerTable SET amount=:amount WHERE questionID = :questionId")
-    void updateAmount(String amount, String questionId);
+    @Query("UPDATE DmSurveyAnswerTable SET actionPlanText=:actionPlanText WHERE questionID = :questionId AND farmerId =:farmerId")
+    void updateActionPlanText(String actionPlanText, String questionId, String farmerId);
+
+    @Query("UPDATE DmSurveyAnswerTable SET amount=:amount WHERE questionID = :questionId AND farmerId =:farmerId")
+    void updateAmount(String amount, String questionId, String farmerId);
 
     @Query("DELETE FROM DmSurveyAnswerTable")
     void deleteAll();

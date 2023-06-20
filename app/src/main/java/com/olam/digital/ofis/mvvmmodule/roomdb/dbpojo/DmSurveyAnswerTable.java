@@ -37,6 +37,12 @@ public class DmSurveyAnswerTable {
     @ColumnInfo(name = "allowCustomActionPlan")
     public Boolean allowCustomActionPlan ;
 
+    @ColumnInfo(name = "isCaptureProof")
+    public Boolean isCaptureProof ;
+
     @ColumnInfo(name = "amount")
     public int amount ;
+
+    @ColumnInfo(name = "farmerId")
+    public String farmerId ;
 }

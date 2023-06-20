@@ -1012,46 +1012,6 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                         "farmpolygon"
                 });
 
-                //ticket-OFISDM-39 add new record diagnostic module task
-
-                db = OFISRoomDB.getDbInstance(ViewFarmerActivity.this);
-                List<DmMainModule> dmQuestionsModuleList = db.dmMainModuleDao().getDMmodule();
-
-                for (int i = 0; i < dmQuestionsModuleList.size(); i++){
-                    dmSurveyName = dmQuestionsModuleList.get(i).name;
-                    dmSubTitle = dmQuestionsModuleList.get(i).assessmentType;
-                    moduleID = String.valueOf(dmQuestionsModuleList.get(i).id);
-                    followUpCount = String.valueOf(dmQuestionsModuleList.get(i).followUpAttempts);
-
-                    mc.addRow(new String[]{
-                            "0",
-                            dmSurveyName,
-                            dmSurveyName,
-                            dmSurveyName,
-                            dmSurveyName,
-                            dmSurveyName,
-                            dmSurveyName,
-                            dmSurveyName,
-                            dmSurveyName,
-                            dmSurveyName,
-                            "0",
-                            "",
-                            "",
-                            "",
-                            res.getString(R.string.dm_diognostic_module_subtitle),
-                            res.getString(R.string.dm_diognostic_module_subtitle),
-                            res.getString(R.string.dm_diognostic_module_subtitle),
-                            res.getString(R.string.dm_diognostic_module_subtitle),
-                            res.getString(R.string.dm_diognostic_module_subtitle),
-                            res.getString(R.string.dm_diognostic_module_subtitle),
-                            res.getString(R.string.dm_diognostic_module_subtitle),
-                            res.getString(R.string.dm_diognostic_module_subtitle),
-                            res.getString(R.string.dm_diognostic_module_subtitle),
-                            "", "", "", "", "", "", "",moduleID , "",
-                            "diagnostic"
-                    });
-
-                }
 
                 boolean isHHAvailable = Utilities.getBoolFromSharedPrefs(context, Utilities.HOUSEHOLD_ENUMERATOR, false);
                 if (isHHAvailable) {
@@ -1166,6 +1126,50 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                /* int pendingSync = dl.fetchPlotCountByFarmerID(String.valueOf(farmerId));
                 int totalCount = dl.fetchPlotTotalCount(String.valueOf(farmerId));
                 */
+
+                //ticket-OFISDM-39 add new record diagnostic module task
+
+                db = OFISRoomDB.getDbInstance(ViewFarmerActivity.this);
+                List<DmMainModule> dmQuestionsModuleList = db.dmMainModuleDao().getDMmodule();
+
+                for (int i = 0; i < dmQuestionsModuleList.size(); i++){
+                    dmSurveyName = dmQuestionsModuleList.get(i).name;
+                    dmSubTitle = dmQuestionsModuleList.get(i).assessmentType;
+                    moduleID = String.valueOf(dmQuestionsModuleList.get(i).id);
+                    followUpCount = String.valueOf(dmQuestionsModuleList.get(i).followUpAttempts);
+
+                    mc.addRow(new String[]{
+                            "0",
+                            dmSurveyName,
+                            dmSurveyName,
+                            dmSurveyName,
+                            dmSurveyName,
+                            dmSurveyName,
+                            dmSurveyName,
+                            dmSurveyName,
+                            dmSurveyName,
+                            dmSurveyName,
+                            "0",
+                            "",
+                            "",
+                            "",
+                            res.getString(R.string.dm_diognostic_module_subtitle),
+                            res.getString(R.string.dm_diognostic_module_subtitle),
+                            res.getString(R.string.dm_diognostic_module_subtitle),
+                            res.getString(R.string.dm_diognostic_module_subtitle),
+                            res.getString(R.string.dm_diognostic_module_subtitle),
+                            res.getString(R.string.dm_diognostic_module_subtitle),
+                            res.getString(R.string.dm_diognostic_module_subtitle),
+                            res.getString(R.string.dm_diognostic_module_subtitle),
+                            res.getString(R.string.dm_diognostic_module_subtitle),
+                            "", "", "", "", "", "", "",moduleID , "",
+                            "diagnostic"
+                    });
+
+                }
+
+
+
                 int farmPlotCount = dl.fetchSyncedPlotCountByFarmerID(String.valueOf(farmerId));
                 Cursor moduleAssignments = dl.getFarmerModules(farmerId,farmSurvey);
                 if (farmPlotCount > 0 && moduleAssignments.getCount() > 0) {

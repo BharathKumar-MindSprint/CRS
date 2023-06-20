@@ -21,6 +21,9 @@ public interface DmCurrenciesItemDao {
     @Query("SELECT * FROM DmCurrenciesItem WHERE currencyId = :id")
     List<DmCurrenciesItem> getCurrencyItemById(int id);
 
+    @Query("SELECT code FROM DmCurrenciesItem WHERE currencyId = :id")
+    String getCurrencyCodeItemById(int id);
+
     @Delete
     void delete(DmCurrenciesItem dmCurrenciesItems);
 

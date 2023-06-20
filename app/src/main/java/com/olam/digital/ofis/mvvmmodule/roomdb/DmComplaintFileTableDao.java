@@ -17,8 +17,8 @@ public interface DmComplaintFileTableDao {
     @Query("SELECT * FROM DmComplaintFileTable")
     List<DmComplaintFileTable> getDmComplaintFileTable();
 
-    @Query("SELECT * FROM DmComplaintFileTable WHERE questionId = :id")
-    List<DmComplaintFileTable> getFilesById(int id);
+    @Query("SELECT * FROM DmComplaintFileTable WHERE questionId = :id AND farmerId = :farmerId")
+    List<DmComplaintFileTable> getFilesById(int id, String farmerId);
 
    /* @Insert
     void insertAll(List<DmComplaintFileTable> dmComplaintFileTablesAll);*/
@@ -35,8 +35,8 @@ public interface DmComplaintFileTableDao {
     @Query("DELETE FROM DmComplaintFileTable WHERE file_name =:filename")
     void deleteByFileName(String filename);
 
-    @Query("DELETE FROM DmComplaintFileTable WHERE uid =:id")
-    void deleteById(long id);
+    @Query("DELETE FROM DmComplaintFileTable WHERE uid =:id AND farmerId = :farmerId")
+    void deleteById(long id, String farmerId);
 
     @Query("DELETE FROM DmComplaintFileTable")
     void deleteAll();

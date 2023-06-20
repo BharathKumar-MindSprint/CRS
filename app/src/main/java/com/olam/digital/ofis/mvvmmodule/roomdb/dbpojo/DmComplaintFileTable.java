@@ -16,6 +16,12 @@ public class DmComplaintFileTable {
     @ColumnInfo(name = "questionId")
     private String questionId;
 
+    @ColumnInfo(name = "farmerId")
+    private String farmerId;
+
+    @ColumnInfo(name = "ofisFileName")
+    private String ofisFileName;
+
     @ColumnInfo(typeAffinity = ColumnInfo.BLOB)
     private byte[] fileData;
 
@@ -35,6 +41,14 @@ public class DmComplaintFileTable {
         this.file_name = file_name;
     }
 
+    public String getOfisFileName() {
+        return ofisFileName;
+    }
+
+    public void setOfisFileName(String ofisFileName) {
+        this.ofisFileName = ofisFileName;
+    }
+
     public byte[] getFileData() {
         return fileData;
     }
@@ -49,6 +63,14 @@ public class DmComplaintFileTable {
 
     public String getQuestionId() {
         return questionId;
+    }
+
+    public String getFarmerId() {
+        return farmerId;
+    }
+
+    public void setFarmerId(String farmerId) {
+        this.farmerId = farmerId;
     }
 
     public void setQuestionId(String questionId) {

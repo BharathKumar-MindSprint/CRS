@@ -27,6 +27,9 @@ public interface ComplianceIndicatorDao {
     @Query("SELECT * FROM ComplianceIndicator WHERE id =:id")
     List<ComplianceIndicator> getComplianceNameById(String id);
 
+    @Query("SELECT compliance FROM ComplianceIndicator WHERE id =:id")
+    String getComplianceNameBycomplianceId(String id);
+
     @Query("DELETE FROM ComplianceIndicator")
     void deleteAll();
 

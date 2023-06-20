@@ -35,7 +35,9 @@ import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmSurveyAnswerTable;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -90,6 +92,9 @@ public class SurveyResultsFragment extends Fragment {
                 if (actionPlanCurrenciesTables.size() != 0) {
                     currencyId = String.valueOf(actionPlanCurrenciesTables.get(0).currencyId);
                 }
+                Date today = new Date();
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+                String submittedDate = format.format(today);
 
                 HashMap hashMap = new HashMap<>();
                 hashMap.put("farmerId", Constants.FARMER_ID);
@@ -97,12 +102,12 @@ public class SurveyResultsFragment extends Fragment {
                 hashMap.put("farmerGroupId", Constants.FARMER_GROUP_ID);
                 hashMap.put("enumeratorId", Constants.ENUMERATOR_ID);
                 hashMap.put("currencyId", currencyId);
-                hashMap.put("submissionDate", "2023-06-15T15:15:09.983");
+                hashMap.put("submissionDate", submittedDate);
                 hashMap.put("isMobile", true);
 
                 HashMap answers = new HashMap();
 
-                List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByModuleId(Constants.MODULE_ID);
+                List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByModuleId(Constants.MODULE_ID, Constants.FARMER_ID);
 
                 String totalAmount = "0";
 
@@ -127,7 +132,7 @@ public class SurveyResultsFragment extends Fragment {
 
                         complaintFileTableList.clear();
 
-                        complaintFileTableList = db.dmComplaintFileTableDao().getFilesById(Integer.parseInt(dmSurveyAnswerTableList.get(i).questionID));
+                        complaintFileTableList = db.dmComplaintFileTableDao().getFilesById(Integer.parseInt(dmSurveyAnswerTableList.get(i).questionID),Constants.FARMER_ID);
 
                         List<String> files = new ArrayList<>();
                         files.clear();
@@ -206,16 +211,34 @@ public class SurveyResultsFragment extends Fragment {
         traffic_indicator_orange = view.findViewById(R.id.indicator_orange);
         traffic_indicator_red = view.findViewById(R.id.indicator_red);
 
+        int complaint = 0, nonComplaint = 0, satisfactory = 0;
+               List<DmSurveyAnswerTable> dmSurveyAnswerTableList1 = new ArrayList<>();
+                dmSurveyAnswerTableList1.clear();
+                dmSurveyAnswerTableList1 = db.dmSurveyAnswerTableDao().getDataByModuleId(Constants.MODULE_ID, Constants.FARMER_ID);
+                for (int j = 0; j < dmSurveyAnswerTableList1.size(); j++) {
 
-        editTextText.setText(Constants.complaintSize);
-        editTextText3.setText(Constants.noncomplaintSize);
-        editTextText4.setText(Constants.satisfactorySize);
+                    int compliantTypeId = Integer.parseInt(dmSurveyAnswerTableList1.get(j).complinceTypeId);
+                    String complianceName = db.complianceIndicatorDao().getComplianceNameBycomplianceId(String.valueOf(compliantTypeId));
+                    if (complianceName.equalsIgnoreCase("Satisfactory")) {
+                        satisfactory = satisfactory + 1;
+                    } else if (complianceName.equalsIgnoreCase("Compliant")) {
+                        complaint = complaint + 1;
+                    } else if (complianceName.equalsIgnoreCase("Non Compliant")) {
+                        nonComplaint = nonComplaint + 1;
+                    }
 
-        editTextText5.setText(String.valueOf(Integer.parseInt(Constants.complaintSize) + Integer.parseInt(Constants.satisfactorySize) + Integer.parseInt(Constants.noncomplaintSize)));
 
-        int complaint = Integer.parseInt(Constants.complaintSize);
-        int nonComplaint = Integer.parseInt(Constants.noncomplaintSize);
-        int satisfactory = Integer.parseInt(Constants.satisfactorySize);
+        }
+
+        editTextText.setText(""+complaint);
+        editTextText3.setText(""+nonComplaint);
+        editTextText4.setText(""+satisfactory);
+
+        editTextText5.setText(String.valueOf(complaint + nonComplaint + satisfactory));
+
+//        int complaint = Integer.parseInt(complaint);
+//        int nonComplaint = Integer.parseInt(Constants.noncomplaintSize);
+//        int satisfactory = Integer.parseInt(Constants.satisfactorySize);
 
         DmQuestionsModule isCritical = new DmQuestionsModule();
         Boolean val = isCritical.isCriticalQuest;
