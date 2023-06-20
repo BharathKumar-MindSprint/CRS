@@ -217,6 +217,7 @@ public class ActionPlanProofFragment extends Fragment{
 
 
             List<DmSurveyAnswerTable> finalDmSurveyAnswerTableList = dmSurveyAnswerTableList;
+
             complaint_dropdown.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -234,7 +235,6 @@ public class ActionPlanProofFragment extends Fragment{
                             linearLayout.setVisibility(View.VISIBLE);
                         }
 
-
                     } else {
                         //Toast.makeText(getActivity(), "Collapse" + tag, Toast.LENGTH_SHORT).show();
                         complaint_dropdown.setTag("0" + complaint_id);
@@ -247,8 +247,10 @@ public class ActionPlanProofFragment extends Fragment{
                         }
 
                     }
+
                 }
             });
+
 
             LinearLayout linearLayoutItems = new LinearLayout(getActivity());
             LinearLayout.LayoutParams layoutParamLastHp = new LinearLayout.LayoutParams(
@@ -384,27 +386,12 @@ public class ActionPlanProofFragment extends Fragment{
 
                                         db.dmComplaintFileTableDao().deleteById(finalRetrievedArrayFile.get(finalI),Constants.FARMER_ID);
 
-                                        finalRetrievedArray.clear();
-                                        finalRetrievedArrayFile.clear();
+                                        dm_question_complaint.removeAllViews();
 
-                                        List<DmComplaintFileTable> dmComplaintFileTableList = db.dmComplaintFileTableDao().getFilesById(CAMERA_REQUEST,Constants.FARMER_ID);
-                                        if (dmComplaintFileTableList.size() != 0) {
-                                            for (int k = 0; k < dmComplaintFileTableList.size(); k++) {
-                                                finalRetrievedArray.add(dmComplaintFileTableList.get(k).getFile_name());
-                                                finalRetrievedArrayFile.add(dmComplaintFileTableList.get(k).getUid());
+                                        if (db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size() != 0) {
+                                            for (int i = 0; i < db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size(); i++) {
+                                                displayQuestionsModuleComplaint(String.valueOf(db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).get(i).id));
                                             }
-                                        }
-
-                                        for (int j = 0; j < finalRetrievedArray.size(); j++) {
-                                            LayoutInflater inflater = LayoutInflater.from(getActivity());
-                                            final View convertView = inflater.inflate(R.layout.image_complaint_dynamic, null, false);
-                                            final TextView selected_imgName = convertView.findViewById(R.id.tv_complaint_filename);
-                                            final ImageView remove = convertView.findViewById(R.id.iv_complaint_delete_file);
-
-                                            linearLayoutImage.addView(convertView);
-                                            convertView.setTag(j);
-                                            remove.setTag(j);
-                                            selected_imgName.setText(finalRetrievedArray.get(j));
                                         }
 
                                     }
@@ -718,7 +705,7 @@ public class ActionPlanProofFragment extends Fragment{
 
         }
 
-        linearLayoutItems.setVisibility(View.GONE);
+        //linearLayoutItems.setVisibility(View.GONE);
 
         dm_question_complaint.removeView(linearLayoutItems);
         if (dm_question_complaint != null) {
@@ -847,29 +834,12 @@ public class ActionPlanProofFragment extends Fragment{
 
                                         db.dmComplaintFileTableDao().deleteById(finalRetrievedArrayFile.get(finalI),Constants.FARMER_ID);
 
-                                        finalRetrievedArray.clear();
-                                        finalRetrievedArrayFile.clear();
+                                        dm_question_complaint.removeAllViews();
 
-                                        List<DmComplaintFileTable> dmComplaintFileTableList1 = new ArrayList<>();
-                                        dmComplaintFileTableList1.clear();
-                                        dmComplaintFileTableList1 = db.dmComplaintFileTableDao().getFilesById(CAMERA_REQUEST,Constants.FARMER_ID);
-                                        if (dmComplaintFileTableList1.size() != 0) {
-                                            for (int k = 0; k < dmComplaintFileTableList1.size(); k++) {
-                                                finalRetrievedArray.add(dmComplaintFileTableList1.get(k).getFile_name());
-                                                finalRetrievedArrayFile.add(dmComplaintFileTableList1.get(k).getUid());
+                                        if (db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size() != 0) {
+                                            for (int i = 0; i < db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size(); i++) {
+                                                displayQuestionsModuleComplaint(String.valueOf(db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).get(i).id));
                                             }
-                                        }
-
-                                        for (int j = 0; j < finalRetrievedArray.size(); j++) {
-                                            LayoutInflater inflater = LayoutInflater.from(getActivity());
-                                            final View convertView = inflater.inflate(R.layout.image_complaint_dynamic, null, false);
-                                            final TextView selected_imgName = convertView.findViewById(R.id.tv_complaint_filename);
-                                            final ImageView remove = convertView.findViewById(R.id.iv_complaint_delete_file);
-
-                                            linearLayoutImage.addView(convertView);
-                                            convertView.setTag(j);
-                                            remove.setTag(j);
-                                            selected_imgName.setText(finalRetrievedArray.get(j));
                                         }
 
                                     }
@@ -1020,29 +990,12 @@ public class ActionPlanProofFragment extends Fragment{
 
                                             db.dmComplaintFileTableDao().deleteById(finalRetrievedArrayFile.get(finalI),Constants.FARMER_ID);
 
-                                            finalRetrievedArray.clear();
-                                            finalRetrievedArrayFile.clear();
+                                            dm_question_complaint.removeAllViews();
 
-                                            List<DmComplaintFileTable> dmComplaintFileTableList1 = new ArrayList<>();
-                                            dmComplaintFileTableList1.clear();
-                                            dmComplaintFileTableList1 = db.dmComplaintFileTableDao().getFilesById(questionId,Constants.FARMER_ID);
-                                            if (dmComplaintFileTableList1.size() != 0) {
-                                                for (int k = 0; k < dmComplaintFileTableList1.size(); k++) {
-                                                    finalRetrievedArray.add(dmComplaintFileTableList1.get(k).getFile_name());
-                                                    finalRetrievedArrayFile.add(dmComplaintFileTableList1.get(k).getUid());
+                                            if (db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size() != 0) {
+                                                for (int i = 0; i < db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size(); i++) {
+                                                    displayQuestionsModuleComplaint(String.valueOf(db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).get(i).id));
                                                 }
-                                            }
-
-                                            for (int j = 0; j < finalRetrievedArray.size(); j++) {
-                                                LayoutInflater inflater = LayoutInflater.from(getActivity());
-                                                final View convertView = inflater.inflate(R.layout.image_complaint_dynamic, null, false);
-                                                final TextView selected_imgName = convertView.findViewById(R.id.tv_complaint_filename);
-                                                final ImageView remove = convertView.findViewById(R.id.iv_complaint_delete_file);
-
-                                                linearLayoutImage.addView(convertView);
-                                                convertView.setTag(j);
-                                                remove.setTag(j);
-                                                selected_imgName.setText(finalRetrievedArray.get(j));
                                             }
 
                                         }
@@ -1195,31 +1148,13 @@ public class ActionPlanProofFragment extends Fragment{
 
                                                 db.dmComplaintFileTableDao().deleteById(finalRetrievedArrayFile.get(finalI),Constants.FARMER_ID);
 
-                                                finalRetrievedArray.clear();
-                                                finalRetrievedArrayFile.clear();
+                                                dm_question_complaint.removeAllViews();
 
-                                                List<DmComplaintFileTable> dmComplaintFileTableList1 = new ArrayList<>();
-                                                dmComplaintFileTableList1.clear();
-                                                dmComplaintFileTableList1 = db.dmComplaintFileTableDao().getFilesById(questionId,Constants.FARMER_ID);
-                                                if (dmComplaintFileTableList1.size() != 0) {
-                                                    for (int k = 0; k < dmComplaintFileTableList1.size(); k++) {
-                                                        finalRetrievedArray.add(dmComplaintFileTableList1.get(k).getFile_name());
-                                                        finalRetrievedArrayFile.add(dmComplaintFileTableList1.get(k).getUid());
+                                                if (db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size() != 0) {
+                                                    for (int i = 0; i < db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size(); i++) {
+                                                        displayQuestionsModuleComplaint(String.valueOf(db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).get(i).id));
                                                     }
                                                 }
-
-                                                for (int j = 0; j < finalRetrievedArray.size(); j++) {
-                                                    LayoutInflater inflater = LayoutInflater.from(getActivity());
-                                                    final View convertView = inflater.inflate(R.layout.image_complaint_dynamic, null, false);
-                                                    final TextView selected_imgName = convertView.findViewById(R.id.tv_complaint_filename);
-                                                    final ImageView remove = convertView.findViewById(R.id.iv_complaint_delete_file);
-
-                                                    linearLayoutImage.addView(convertView);
-                                                    convertView.setTag(j);
-                                                    remove.setTag(j);
-                                                    selected_imgName.setText(finalRetrievedArray.get(j));
-                                                }
-
                                             }
                                         });
                                 builder1.setNegativeButton(
@@ -1365,29 +1300,12 @@ public class ActionPlanProofFragment extends Fragment{
 
                                             db.dmComplaintFileTableDao().deleteById(finalRetrievedArrayFile.get(finalI),Constants.FARMER_ID);
 
-                                            finalRetrievedArray.clear();
-                                            finalRetrievedArrayFile.clear();
+                                            dm_question_complaint.removeAllViews();
 
-                                            List<DmComplaintFileTable> dmComplaintFileTableList1 = new ArrayList<>();
-                                            dmComplaintFileTableList1.clear();
-                                            dmComplaintFileTableList1 = db.dmComplaintFileTableDao().getFilesById(questionId,Constants.FARMER_ID);
-                                            if (dmComplaintFileTableList1.size() != 0) {
-                                                for (int k = 0; k < dmComplaintFileTableList1.size(); k++) {
-                                                    finalRetrievedArray.add(dmComplaintFileTableList1.get(k).getFile_name());
-                                                    finalRetrievedArrayFile.add(dmComplaintFileTableList1.get(k).getUid());
+                                            if (db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size() != 0) {
+                                                for (int i = 0; i < db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size(); i++) {
+                                                    displayQuestionsModuleComplaint(String.valueOf(db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).get(i).id));
                                                 }
-                                            }
-
-                                            for (int j = 0; j < finalRetrievedArray.size(); j++) {
-                                                LayoutInflater inflater = LayoutInflater.from(getActivity());
-                                                final View convertView = inflater.inflate(R.layout.image_complaint_dynamic, null, false);
-                                                final TextView selected_imgName = convertView.findViewById(R.id.tv_complaint_filename);
-                                                final ImageView remove = convertView.findViewById(R.id.iv_complaint_delete_file);
-
-                                                linearLayoutImage.addView(convertView);
-                                                convertView.setTag(j);
-                                                remove.setTag(j);
-                                                selected_imgName.setText(finalRetrievedArray.get(j));
                                             }
 
                                         }
