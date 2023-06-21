@@ -31,6 +31,7 @@ import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.room.Query;
+import androidx.viewpager2.widget.ViewPager2;
 
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -169,6 +170,18 @@ public class ActionPlanProofFragment extends Fragment{
         ll_servey_next_actionplan = view.findViewById(R.id.ll_servey_next_actionplan);
         spinner_dmCurrencies = view.findViewById(R.id.spinner_dmCurrencies);
         dm_question_complaint = view.findViewById(R.id.dm_question_complaint);
+
+        ll_servey_next_actionplan.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                ViewPager2 viewPager = getActivity().findViewById(R.id.viewPager);
+                viewPager.setCurrentItem(2);
+
+                HashMap<String, String> hashMap = new HashMap<>();
+                hashMap.put("keyCurrencies", currency_id);
+            }
+        });
 
         return view;
     }
