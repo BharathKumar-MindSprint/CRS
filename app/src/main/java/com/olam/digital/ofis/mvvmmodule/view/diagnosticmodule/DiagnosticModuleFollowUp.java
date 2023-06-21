@@ -87,9 +87,9 @@ public class DiagnosticModuleFollowUp extends BaseActivity {
     private String getTabTitle(int position) {
         switch (position) {
             case 0:
-                return "FOLLOW UP SURVEY";
+                return "SURVEY";
             case 1:
-                return "FOLLOW UP ACTION";
+                return "Action plan and proof";
             default:
                 return "";
         }
