@@ -436,7 +436,7 @@ public class ActionPlanProofFragment extends Fragment{
                     public void onClick(DialogInterface dialog, int item) {
                         if (options[item].equals("Take Photo")) {
                             if (isStoragePermissionCameraGranted()) {
-                                if (dynamicArray.size() > 5) {
+                                if (dynamicArray.size() >= 5) {
                                     Toast.makeText(getActivity(), "Maximum 5 files can be uploaded.", Toast.LENGTH_SHORT).show();
                                 } else {
                                     CAMERA_REQUEST = Integer.parseInt(textView.getTag().toString());
@@ -466,7 +466,7 @@ public class ActionPlanProofFragment extends Fragment{
                         } else if (options[item].equals("Choose from Gallery")) {
 
                             if (isStoragePermissionGalleryGranted()) {
-                                if (dynamicArray.size() > 5) {
+                                if (dynamicArray.size() >= 5) {
                                     Toast.makeText(getActivity(), "Maximum 5 files can be uploaded.", Toast.LENGTH_SHORT).show();
                                 } else {
                                     GALLERY_PICK = Integer.parseInt(textView.getTag().toString() + "0");
