@@ -25,6 +25,8 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -66,6 +68,7 @@ public class FollowUpSurvey extends Fragment {
         View view =  inflater.inflate(R.layout.fragment_follow_up_survey, container, false);
 
         dm_question_complaint_followup_survey = view.findViewById(R.id.dm_question_complaint_followup_survey);
+
         ll_servey_back_followup_survey = view.findViewById(R.id.ll_servey_back_followup_survey);
         ll_servey_back_followup_survey.setOnClickListener(new View.OnClickListener() {
 
@@ -137,6 +140,7 @@ public class FollowUpSurvey extends Fragment {
             }
         });*/
 
+
         dm_question_complaint_followup_survey.removeAllViews();
 
         db = OFISRoomDB.getDbInstance(getActivity());
@@ -146,7 +150,6 @@ public class FollowUpSurvey extends Fragment {
                 displayQuestionsModuleComplaint(String.valueOf(db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).get(i).id));
             }
         }
-
 
         return view;
     }
@@ -251,7 +254,6 @@ public class FollowUpSurvey extends Fragment {
                     textView.setTypeface(null, Typeface.BOLD);
                     linearLayoutItems.addView(textView);
 
-
                     renderTextboxQuestionModuleComplaint(String.valueOf(dmQuestionsModule.questionID), complaint_id, linearLayoutItems);
 
                 }
@@ -260,8 +262,8 @@ public class FollowUpSurvey extends Fragment {
     }
 
 
-    public void renderTextboxQuestionModuleComplaint(String id, String complaint_id, LinearLayout linearLayoutItems) {
 
+    public void renderTextboxQuestionModuleComplaint(String id, String complaint_id, LinearLayout linearLayoutItems) {
 
         LinearLayout.LayoutParams layoutParamsQes = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
@@ -278,395 +280,6 @@ public class FollowUpSurvey extends Fragment {
         editText.setLayoutParams(layoutParamsQes);
         editText.setTag("et" + complaint_id);
 
-//
-//        TextView textView = new TextView(getActivity());
-//        textView.setText("Capture Proof");
-//
-//        //Important Do not Change the Tag
-//        textView.setTag(id);
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//            textView.setTextColor(getActivity().getColor(R.color.colorPrimary));
-//        }
-//
-//        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-//                LinearLayout.LayoutParams.MATCH_PARENT,
-//                getResources().getDimensionPixelSize(R.dimen.capture_box)
-//        );
-//        layoutParams.setMargins(0, 10, 0, 10);
-//
-//        textView.setLayoutParams(layoutParams);
-//        textView.setGravity(Gravity.CENTER);
-//        textView.setPadding(0, 15, 0, 15);
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//            textView.setBackground(getActivity().getDrawable(R.drawable.dm_captureproof_bg));
-//        }
-
-
-//        LinearLayout linearLayoutImage = new LinearLayout(getActivity());
-//        linearLayoutImage.setLayoutParams(new LinearLayout.LayoutParams(
-//                LinearLayout.LayoutParams.MATCH_PARENT,
-//                LinearLayout.LayoutParams.WRAP_CONTENT));
-//
-//        linearLayoutImage.setTag("1234" + id);
-//        linearLayoutImage.setOrientation(LinearLayout.VERTICAL);
-//
-//        ArrayList<String> retrievedArray = new ArrayList<>();
-//        retrievedArray.clear();
-//
-//        ArrayList<Long> retrievedArrayFile = new ArrayList<>();
-//        retrievedArrayFile.clear();
-//
-//        List<DmComplaintFileTable> dmComplaintFileTableList = new ArrayList<>();
-//        dmComplaintFileTableList.clear();
-//        dmComplaintFileTableList = db.dmComplaintFileTableDao().getFilesById(Integer.parseInt(id));
-//
-//        // Log.d("akshdkjashdk", "" + dmComplaintFileTableList.size());
-//
-//        if (dmComplaintFileTableList.size() != 0) {
-//            for (int l = 0; l < dmComplaintFileTableList.size(); l++) {
-//                retrievedArray.add(dmComplaintFileTableList.get(l).getFile_name());
-//                retrievedArrayFile.add(dmComplaintFileTableList.get(l).getUid());
-//
-//                LayoutInflater inflater = LayoutInflater.from(getActivity());
-//                final View convertView = inflater.inflate(R.layout.image_complaint_dynamic, null, false);
-//                final TextView selected_imgName = convertView.findViewById(R.id.tv_complaint_filename);
-//                final ImageView remove = convertView.findViewById(R.id.iv_complaint_delete_file);
-//
-//                linearLayoutImage.addView(convertView);
-//                convertView.setTag(l);
-//                remove.setTag(l);
-//                selected_imgName.setText(dmComplaintFileTableList.get(l).getFile_name());
-//
-//                int finalI = l;
-//                ArrayList<Long> finalRetrievedArrayFile = retrievedArrayFile;
-//                ArrayList<String> finalRetrievedArray = retrievedArray;
-//               /* remove.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//
-//                        AlertDialog.Builder builder1 = new AlertDialog.Builder(getActivity());
-//                        builder1.setMessage("Do you want to remove this report");
-//                        builder1.setTitle("Alert");
-//                        builder1.setCancelable(false);
-//                        builder1.setPositiveButton(
-//                                "YES",
-//                                new DialogInterface.OnClickListener() {
-//                                    public void onClick(DialogInterface dialog, int id) {
-//                                        dialog.cancel();
-//
-//                                        //Toast.makeText(getActivity(), "" + pos, Toast.LENGTH_SHORT).show();
-//
-//                                        db.dmComplaintFileTableDao().deleteById(finalRetrievedArrayFile.get(finalI));
-//
-//                                        finalRetrievedArray.clear();
-//                                        finalRetrievedArrayFile.clear();
-//
-//                                        List<DmComplaintFileTable> dmComplaintFileTableList = db.dmComplaintFileTableDao().getFilesById(CAMERA_REQUEST);
-//                                        if (dmComplaintFileTableList.size() != 0) {
-//                                            for (int k = 0; k < dmComplaintFileTableList.size(); k++) {
-//                                                finalRetrievedArray.add(dmComplaintFileTableList.get(k).getFile_name());
-//                                                finalRetrievedArrayFile.add(dmComplaintFileTableList.get(k).getUid());
-//                                            }
-//                                        }
-//
-//                                        for (int j = 0; j < finalRetrievedArray.size(); j++) {
-//                                            LayoutInflater inflater = LayoutInflater.from(getActivity());
-//                                            final View convertView = inflater.inflate(R.layout.image_complaint_dynamic, null, false);
-//                                            final TextView selected_imgName = convertView.findViewById(R.id.tv_complaint_filename);
-//                                            final ImageView remove = convertView.findViewById(R.id.iv_complaint_delete_file);
-//
-//                                            linearLayoutImage.addView(convertView);
-//                                            convertView.setTag(j);
-//                                            remove.setTag(j);
-//                                            selected_imgName.setText(finalRetrievedArray.get(j));
-//                                        }
-//
-//                                    }
-//                                });
-//                        builder1.setNegativeButton(
-//                                "NO",
-//                                new DialogInterface.OnClickListener() {
-//                                    public void onClick(DialogInterface dialog, int id) {
-//                                        dialog.cancel();
-//                                    }
-//                                });
-//
-//                        AlertDialog alert11 = builder1.create();
-//                        alert11.show();
-//
-//                    }
-//                });*/
-//            }
-//        }
-//
-//        textView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//                final CharSequence[] options = {"Take Photo", "Choose from Gallery", "Cancel"};
-//                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-//                builder.setTitle("Add Photo!");
-//                builder.setItems(options, new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int item) {
-//                        if (options[item].equals("Take Photo")) {
-//                            if (isStoragePermissionCameraGranted()) {
-//                                if (dynamicArray.size() > 5) {
-//                                    Toast.makeText(getActivity(), "Maximum 5 files can be uploaded.", Toast.LENGTH_SHORT).show();
-//                                } else {
-//                                    CAMERA_REQUEST = Integer.parseInt(textView.getTag().toString());
-//                                    Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//                                    // Ensure that there's a camera activity to handle the intent
-//                                    if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
-//                                        // Create the File where the photo should go
-//                                        File photoFile = null;
-//                                        try {
-//                                            photoFile = createImageFile();
-//                                        } catch (IOException ex) {
-//                                            // Error occurred while creating the File
-//
-//                                        }
-//                                        // Continue only if the File was successfully created
-//                                        if (photoFile != null) {
-//                                            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
-//                                                    FileProvider.getUriForFile(getActivity(), getActivity().getPackageName() + ".fileprovider",
-//                                                            new File(mCurrentPhotoPath)));
-//                                            startActivityForResult(takePictureIntent, CAMERA_REQUEST);
-//                                        }
-//                                    }
-//                                }
-//
-//                            }
-//
-//                        } else if (options[item].equals("Choose from Gallery")) {
-//
-//                            if (isStoragePermissionGalleryGranted()) {
-//                                if (dynamicArray.size() > 5) {
-//                                    Toast.makeText(getActivity(), "Maximum 5 files can be uploaded.", Toast.LENGTH_SHORT).show();
-//                                } else {
-//                                    GALLERY_PICK = Integer.parseInt(textView.getTag().toString() + "0");
-//                                    Intent galleryIntent = new Intent();
-//                                    galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
-//                                    galleryIntent.putExtra(Intent.EXTRA_MIME_TYPES, ACCEPTED_MIME_TYPES);
-//                                    galleryIntent.setType("*/*");
-//                                    startActivityForResult(Intent.createChooser(galleryIntent, "Choose gallery"), GALLERY_PICK);
-//                                }
-//
-//                            }
-//                        } else if (options[item].equals("Cancel")) {
-//                            dialog.dismiss();
-//                        }
-//                    }
-//                });
-//                builder.show();
-//
-//            }
-//        });
-//
-
-//        List<DmActionPlansItem> dmActionPlansItemList = new ArrayList<>();
-//        dmActionPlansItemList.clear();
-//        dmActionPlansItemList = db.dmActionPlansItemDao().getActionPlanItemById(Integer.parseInt(id));
-//
-//        final List<String> list = new ArrayList<String>();
-//        list.clear();
-//
-//        final List<String> ids = new ArrayList<String>();
-//        ids.clear();
-//
-//        for (int c = 0; c < dmActionPlansItemList.size(); c++) {
-//            list.add(dmActionPlansItemList.get(c).actionPlan);
-//            ids.add(String.valueOf(dmActionPlansItemList.get(c).id));
-//        }
-//
-//        LinearLayout linearLayoutSpin = new LinearLayout(getActivity());
-//        linearLayoutSpin.setLayoutParams(new LinearLayout.LayoutParams(
-//                LinearLayout.LayoutParams.MATCH_PARENT,
-//                LinearLayout.LayoutParams.WRAP_CONTENT));
-//        linearLayoutSpin.setOrientation(LinearLayout.HORIZONTAL);
-//        linearLayoutSpin.setWeightSum(10);
-//
-//        LinearLayout.LayoutParams layoutParamsSpin = new LinearLayout.LayoutParams(
-//                getResources().getDimensionPixelSize(R.dimen.forWeight),
-//                getResources().getDimensionPixelSize(R.dimen.capture_box),
-//                5
-//        );
-//
-//        final Spinner spinner = new Spinner(getActivity());
-//
-//        spinner.setLayoutParams(layoutParamsSpin);
-//        spinner.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.spinner_bg_light));
-//
-//        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(getActivity(), R.layout.spinner_item, list);
-//        spinnerAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
-//        spinner.setAdapter(spinnerAdapter);
-//
-//        spinner.setTag("spinner" + complaint_id);
-//
-//        layoutParamsSpin.setMargins(0, 10, 10, 10);
-//
-//
-//        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-//            @Override
-//            public void onItemSelected(AdapterView<?> parent, View view, int position, long idS) {
-//
-//                String Id = ids.get(position);
-//
-//                db.dmSurveyAnswerTableDao().updateActionPlanId(Id, id);
-//
-//                // Toast.makeText(getActivity(), "Selected Item " + list.get(position), Toast.LENGTH_SHORT).show();
-//            }
-//
-//            @Override
-//            public void onNothingSelected(AdapterView<?> parent) {
-//            }
-//        });
-//
-//        LinearLayout.LayoutParams layoutParamsetCur = new LinearLayout.LayoutParams(
-//                getResources().getDimensionPixelSize(R.dimen.forWeight),
-//                getResources().getDimensionPixelSize(R.dimen.capture_box),
-//                2
-//        );
-//
-////        List<DmCurrenciesItem> currenciesItems = new ArrayList<>();
-////        currenciesItems.clear();
-////        currenciesItems = db.dmCurrenciesItemDao().getCurrencyItemById(Integer.parseInt(currency_id));
-////
-////        String currency = "$";
-////
-////        if (currenciesItems.size() != 0) {
-////            currency = currenciesItems.get(0).notation;
-////        }
-//
-//        EditText editTextCurrency = new EditText(getActivity());
-////        editTextCurrency.setText(currency);
-//        editTextCurrency.setTextSize(14);
-//        editTextCurrency.setEnabled(false);
-//        editTextCurrency.setTextColor(getResources().getColor(R.color.black));
-//        editTextCurrency.setPadding(0, 10, 0, 10);
-//
-//
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//            editTextCurrency.setBackground(getActivity().getDrawable(R.drawable.answer_text_survey));
-//        }
-//
-//        layoutParamsetCur.setMargins(0, 10, 0, 10);
-//        editTextCurrency.setLayoutParams(layoutParamsetCur);
-//
-//
-//        LinearLayout.LayoutParams layoutParamsetCurEt = new LinearLayout.LayoutParams(
-//                getResources().getDimensionPixelSize(R.dimen.forWeight),
-//                getResources().getDimensionPixelSize(R.dimen.capture_box),
-//                3
-//        );
-//
-//        EditText editTextCurrencyInput = new EditText(getActivity());
-//        editTextCurrencyInput.setHint("Amount");
-//        editTextCurrencyInput.setTextSize(14);
-//        editTextCurrencyInput.setTextColor(getResources().getColor(R.color.black));
-//        editTextCurrencyInput.setPadding(0, 10, 0, 10);
-////        editTextCurrencyInput.setText(budgetAmount);
-//        editTextCurrencyInput.setInputType(InputType.TYPE_CLASS_NUMBER);
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//            editTextCurrencyInput.setBackground(getActivity().getDrawable(R.drawable.answer_text_survey));
-//        }
-//        layoutParamsetCurEt.setMargins(0, 10, 0, 10);
-//        editTextCurrencyInput.setLayoutParams(layoutParamsetCurEt);
-//
-//        editTextCurrencyInput.addTextChangedListener(new TextWatcher() {
-//            @Override
-//            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-//
-//            }
-//
-//            @Override
-//            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-//                if (charSequence.length() == 0) {
-//
-//                } else {
-//                    db.dmSurveyAnswerTableDao().updateAmount(charSequence.toString(), id);
-//                }
-//
-//            }
-//
-//            @Override
-//            public void afterTextChanged(Editable editable) {
-//
-//            }
-//        });
-
-//
-//        linearLayoutSpin.addView(spinner);
-//        linearLayoutSpin.addView(editTextCurrency);
-//        linearLayoutSpin.addView(editTextCurrencyInput);
-
-//        LinearLayout linearLayoutActionPlanMain = new LinearLayout(getActivity());
-//        linearLayoutActionPlanMain.setLayoutParams(new LinearLayout.LayoutParams(
-//                LinearLayout.LayoutParams.MATCH_PARENT,
-//                LinearLayout.LayoutParams.WRAP_CONTENT));
-//        linearLayoutActionPlanMain.setOrientation(LinearLayout.VERTICAL);
-//
-//        LinearLayout linearLayoutActionPlan = new LinearLayout(getActivity());
-//
-//        EditText actionPlan = new EditText(getActivity());
-//        actionPlan.setHint("Edit action plan details");
-//        actionPlan.setTextSize(14);
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//            actionPlan.setBackground(getActivity().getDrawable(R.drawable.answer_text_survey));
-//        }
-//
-//        LinearLayout.LayoutParams layoutParams1 = new LinearLayout.LayoutParams(
-//                LinearLayout.LayoutParams.MATCH_PARENT,
-//                getResources().getDimensionPixelSize(R.dimen.actionplanbox) // Replace with your desired height in dp
-//        );
-//        actionPlan.setLayoutParams(layoutParams1);
-//
-//        actionPlan.addTextChangedListener(new TextWatcher() {
-//            @Override
-//            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-//
-//            }
-//
-//            @Override
-//            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-//                if (charSequence.length() == 0) {
-//                    db.dmSurveyAnswerTableDao().updateActionPlanText("", id);
-//                } else {
-//                    db.dmSurveyAnswerTableDao().updateActionPlanText(charSequence.toString(), id);
-//                }
-//            }
-//
-//            @Override
-//            public void afterTextChanged(Editable editable) {
-//
-//            }
-//        });
-
-//
-//        linearLayoutActionPlan.setGravity(Gravity.END);
-//        linearLayoutActionPlan.setOrientation(LinearLayout.HORIZONTAL);
-//
-//        ImageView imageView1 = new ImageView(getActivity());
-//        imageView1.setImageResource(R.drawable.green_tick);
-//
-//        LinearLayout.LayoutParams layoutParams3 = new LinearLayout.LayoutParams(
-//                getResources().getDimensionPixelSize(R.dimen.small_button_width_height),
-//                getResources().getDimensionPixelSize(R.dimen.small_button_width_height));
-//
-//        imageView1.setLayoutParams(layoutParams3);
-//
-//        ImageView imageView2 = new ImageView(getActivity());
-//        imageView2.setImageResource(R.drawable.red_cross);
-//
-//        imageView2.setLayoutParams(layoutParams3);
-//
-//        linearLayoutActionPlan.addView(imageView1);
-//        linearLayoutActionPlan.addView(imageView2);
-//
-//        linearLayoutActionPlanMain.addView(actionPlan);
-//        linearLayoutActionPlanMain.addView(linearLayoutActionPlan);
-//
-
         List<DmSurveyAnswerTable> dmSurveyAnswerTableList = new ArrayList<>();
         dmSurveyAnswerTableList.clear();
 
@@ -679,38 +292,26 @@ public class FollowUpSurvey extends Fragment {
             String answerIdDb = dmSurveyAnswerTableList.get(0).answer;
             editText.setText(answerIdDb);
 
-            // Create TextViews
-            TextView notResolveText = new TextView(getContext());
-            notResolveText.setText("Not Resolved");
-            notResolveText.setTextColor(getResources().getColor(R.color.gray));
-            notResolveText.setPadding(70, 25, 70, 25);
-            notResolveText.setTextSize(14);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                notResolveText.setBackground(getActivity().getDrawable(R.drawable.dm_captureproof_bg));
-            }
-            TextView resolveText = new TextView(getContext());
-            resolveText.setText("Resolved");
-            resolveText.setTextColor(getResources().getColor(R.color.white));
-            resolveText.setPadding(110, 25, 110, 25);
-            resolveText.setTextSize(14);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                resolveText.setBackground(getActivity().getDrawable(R.drawable.dm_next_background));
-            }
+            RadioGroup radioGroup = new RadioGroup(getActivity());
+            radioGroup.setOrientation(LinearLayout.HORIZONTAL);
+            RadioButton radioButton1 = new RadioButton(getActivity());
+            radioButton1.setText("Not Resolved");
+            radioButton1.setId(View.generateViewId()); // Set a unique ID for the radio
+            RadioButton radioButton2 = new RadioButton(getActivity());
+            radioButton2.setText("Resolved");
+            radioButton2.setId(View.generateViewId());
+            radioGroup.addView(radioButton1);
+            radioGroup.addView(radioButton2);
 
-// Create layout parameters for TextViews
+            // Create layout parameters for TextViews
 
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.MATCH_PARENT
             );
             layoutParams.setMargins(10, 20, 10, 20);
-
-// Add TextViews to LinearLayout
-            linearLayout1.addView(notResolveText, layoutParams);
-            linearLayout1.addView(resolveText, layoutParams);
-
-
-
+            linearLayout1.addView(radioGroup, layoutParams);
+            //linearLayout1.addView(resolveText, layoutParams);
 
         }
 
@@ -722,17 +323,10 @@ public class FollowUpSurvey extends Fragment {
         if (linearLayoutItems != null) {
             linearLayoutItems.addView(editText);
             linearLayoutItems.addView(linearLayout1);
-//            linearLayoutItems.addView(textView);
-//            linearLayoutItems.addView(linearLayoutImage);
-//            linearLayoutItems.addView(linearLayoutSpin);
-
-//            if (db.dmSurveyAnswerTableDao().getDataByQuestionId(id).get(0).allowCustomActionPlan) {
-//                linearLayoutItems.addView(linearLayoutActionPlanMain);
-//            }
 
         }
 
-        linearLayoutItems.setVisibility(View.GONE);
+        linearLayoutItems.setVisibility(View.VISIBLE);
 
         dm_question_complaint_followup_survey.removeView(linearLayoutItems);
         if (dm_question_complaint_followup_survey != null) {
@@ -741,5 +335,6 @@ public class FollowUpSurvey extends Fragment {
         }
 
     }
+
 
 }

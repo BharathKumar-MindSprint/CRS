@@ -535,6 +535,7 @@ public class ActionPlanProofFragment extends Fragment{
             public void onItemSelected(AdapterView<?> parent, View view, int position, long idS) {
 
                 String Id = ids.get(position);
+                Constants.ACTION_PlAN_ID = Id;
 
                 db.dmSurveyAnswerTableDao().updateActionPlanId(Id, id, Constants.FARMER_ID);
 

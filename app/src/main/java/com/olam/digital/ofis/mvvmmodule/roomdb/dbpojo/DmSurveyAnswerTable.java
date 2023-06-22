@@ -6,6 +6,7 @@ import androidx.room.PrimaryKey;
 
 @Entity(tableName = "DmSurveyAnswerTable")
 public class DmSurveyAnswerTable {
+
     @PrimaryKey(autoGenerate = true)
     public int uid;
 
@@ -45,4 +46,11 @@ public class DmSurveyAnswerTable {
 
     @ColumnInfo(name = "farmerId")
     public String farmerId ;
+
+    @ColumnInfo(name = "resolved" ,defaultValue = "0")
+    public String resolved ;
+
+    @ColumnInfo(name = "isSynced" ,defaultValue = "0")
+    public String isSynced ;
+
 }
