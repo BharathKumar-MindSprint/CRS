@@ -22,6 +22,7 @@ public class NumberInputFilter implements InputFilter {
             return null; // Allow empty input
         }
 
+
         if (input.equals("-") && minValue < 0) {
             return null; // Reject the input if minValue is negative
         }
@@ -30,16 +31,11 @@ public class NumberInputFilter implements InputFilter {
             return ""; // Reject the input if it contains non-numeric characters
         }
 
+
         if (containsAlphabets(input)) {
             return null; // Reject the input if it contains alphabetic characters
         }
 
-//        for (int i = input.length() - 1; i >= 0; i--) {
-//            char c = input.charAt(i);
-//            if (!Character.isDigit(c)) {
-//                return ""; // Reject the input if it contains alphabetic characters
-//            }
-//        }
 
         double number;
 
@@ -64,4 +60,6 @@ public class NumberInputFilter implements InputFilter {
     private boolean containsAlphabets(String str) {
         return str.matches(".*[a-zA-Z]+.*"); // Checks if the string contains any alphabetic characters
     }
+
+
 }

@@ -21,11 +21,22 @@ public class DecimalFilter implements InputFilter {
             // Parse the resulting string to a double value
             double input = Double.parseDouble(resultingText);
 
+
             // Check if the input is within the valid range
             if (input >= minValue && input <= maxValue) {
                 // Input is valid, allow it
                 return null;
             }
+
+
+            // Check if the input reaches the minimum value
+            if (resultingText.length() > 0) {
+                int inputValue = Integer.parseInt(resultingText);
+                if (inputValue < minValue) {
+                    return null; // Allow the input but prevent further input until minimum value is reached
+                }
+            }
+
         } catch (NumberFormatException ignored) {
             // Ignore the exception and let the input through
         }
