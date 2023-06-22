@@ -1,6 +1,7 @@
 package com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.fragment;
 
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -322,12 +323,37 @@ public class SurveyResultsFragment extends Fragment {
 
         }
 
+
+
         editTextText.setText(""+complaint);
         editTextText3.setText(""+nonComplaint);
         editTextText4.setText(""+satisfactory);
 
         editTextText5.setText(String.valueOf(complaint + nonComplaint + satisfactory));
-        editTextText6.setText(""+ amount);
+
+
+        String currencyIdDb = "0";
+
+        HashMap<String, String> hashMap = new HashMap<>();
+        String currency_id = hashMap.get("keyCurrencies");
+        List<DmActionPlanCurrenciesTable> dmActionPlanCurrenciesTables = db.dmActionPlanCurrenciesTableDao().getDataByModuleId(Constants.MODULE_ID, Constants.FARMER_ID);
+        if (dmActionPlanCurrenciesTables.size() != 0) {
+            currencyIdDb = String.valueOf(dmActionPlanCurrenciesTables.get(0).currencyId);
+            currency_id = currencyIdDb;
+        }
+
+        List<DmCurrenciesItem> currenciesItems = new ArrayList<>();
+        currenciesItems.clear();
+        currenciesItems = db.dmCurrenciesItemDao().getCurrencyItemById(Integer.parseInt(currency_id));
+
+        String currency = "";
+
+        if (currenciesItems.size() != 0) {
+            currency = currenciesItems.get(0).notation;
+        }
+
+
+        editTextText6.setText(""+ amount + "   " + currency);
 //        int complaint = Integer.parseInt(complaint);
 //        int nonComplaint = Integer.parseInt(Constants.noncomplaintSize);
 //        int satisfactory = Integer.parseInt(Constants.satisfactorySize);

@@ -448,7 +448,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
-                    <!--<LinearLayout
+                    <LinearLayout
                         android:id="@+id/ll_servey_back_followup_survey"
                         android:layout_width="160dp"
                         android:layout_height="match_parent"
@@ -467,7 +467,7 @@
                             android:text="@string/back"
                             android:textColor="@color/black"
                             android:textStyle="bold" />
-                    </LinearLayout>-->
+                    </LinearLayout>
 
                     <LinearLayout
                         android:id="@+id/ll_servey_next_followup_survey"
