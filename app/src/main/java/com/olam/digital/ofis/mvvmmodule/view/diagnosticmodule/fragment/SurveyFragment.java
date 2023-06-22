@@ -12,6 +12,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 
+import android.text.BoringLayout;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.InputType;
@@ -40,6 +41,7 @@ import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmQuestionsSubModule;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmSectionsItem;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmSurveyAnswerTable;
 import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.DecimalFilter;
+import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.NegativeDecimalFilter;
 import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.NumberInputFilter;
 
 import java.util.ArrayList;
@@ -66,7 +68,7 @@ public class SurveyFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_survey, container, false);
 
         ll_servey_next = view.findViewById(R.id.ll_servey_next);
-//        ll_servey_back = view.findViewById(R.id.ll_servey_back);
+        ll_servey_back = view.findViewById(R.id.ll_servey_back);
         dm_Section = view.findViewById(R.id.dm_Section);
         dm_Question = view.findViewById(R.id.dm_Question);
 
@@ -83,13 +85,13 @@ public class SurveyFragment extends Fragment {
 
 
 
-        /*ll_servey_back.setOnClickListener(new View.OnClickListener() {
+        ll_servey_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(), FindFarmerActivity.class);
                 startActivity(intent);
             }
-        });*/
+        });
 
         ll_servey_next.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -613,11 +615,16 @@ public class SurveyFragment extends Fragment {
             DecimalFilter decimalFilter = new DecimalFilter(minValue, maxValue);
             editText.setHint("Range from " + minValue + " to " + maxValue);
             editText.setFilters(new InputFilter[] { decimalFilter });
-        }else if(db.dmTextBoxModuleQuestionsDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(0).isAllowNegative){
+        }else if (db.dmTextBoxModuleQuestionsDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(0).isAllowNegative){
             editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_CLASS_NUMBER);
             editText.setHint("Range from " + minValue + " to " + maxValue);
             NumberInputFilter numberFilter = new NumberInputFilter(minValue, maxValue);
             editText.setFilters(new InputFilter[] { numberFilter });
+        }else if (db.dmTextBoxModuleQuestionsDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(0).isAllowNegative && db.dmTextBoxModuleQuestionsDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(0).isAllowDecimal) {
+            editText.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_CLASS_NUMBER);
+            NegativeDecimalFilter negativeDecimalFilter = new NegativeDecimalFilter(minValue, maxValue);
+            editText.setHint("Range from " + minValue + " to " + maxValue);
+            editText.setFilters(new InputFilter[] { negativeDecimalFilter });
         }else {
             editText.setInputType(InputType.TYPE_CLASS_NUMBER);
             editText.setHint("Range from " + minValue + " to " + maxValue);
@@ -756,6 +763,18 @@ public class SurveyFragment extends Fragment {
 
                 ArrayList<String> qIdSections = Constants.questionIdsSection;
 
+                /*for (int m = 0; m < qId.size(); m++){
+                    Boolean isMandate = db.dmQuestionsSubModuleDao().getDmQuestionType(Integer.parseInt(qId.get(m))).get(0).mandate;
+                    if (isMandate){
+
+                    }
+                }
+
+                for (int n = 0; n < qIdSections.size(); n++) {
+                    Boolean isMandate = db.dmQuestionsSubModuleDao().getDmQuestionType(Integer.parseInt(qIdSections.get(n))).get(0).mandate;
+                }*/
+
+
                 if (db.dmSurveyAnswerTableDao().getDataByModuleId(Constants.MODULE_ID, Constants.FARMER_ID).size() == Constants.questionIds.size() + Constants.questionIdsSection.size()) {
                     ViewPager2 viewPager = getActivity().findViewById(R.id.viewPager);
                     viewPager.setCurrentItem(1);
@@ -775,7 +794,10 @@ public class SurveyFragment extends Fragment {
                 } else {
                     for (int i = 0; i < Constants.questionIds.size(); i++) {
 
+
                         String type = db.dmQuestionsModuleDao().getDmQuestionType(Integer.parseInt(qId.get(i))).get(0).displayType;
+//                        Boolean isMandate = db.dmQuestionsModuleDao().getDmQuestionType(Integer.parseInt(qId.get(i))).get(0).mandate;
+
 
                         if (type.equalsIgnoreCase("text box")) {
 
@@ -811,7 +833,7 @@ public class SurveyFragment extends Fragment {
                     for (int j = 0; j < Constants.questionIdsSection.size(); j++) {
 
                         String type = db.dmQuestionsSubModuleDao().getDmQuestionType(Integer.parseInt(qIdSections.get(j))).get(0).displayType;
-
+//                        Boolean isMandate = db.dmQuestionsSubModuleDao().getDmQuestionType(Integer.parseInt(qIdSections.get(j))).get(0).mandate;
                         if (type.equalsIgnoreCase("text box")) {
 
                             View desiredView = dm_Section.findViewWithTag(qIdSections.get(j));
