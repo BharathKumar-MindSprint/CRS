@@ -31,6 +31,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.olam.digital.ofis.FindFarmerActivity;
 import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.mvvmmodule.Constants;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
@@ -50,7 +51,7 @@ public class FollowUpSurvey extends Fragment {
 
     ImageView iv_complaint_dropdown_follow_up_survey , iv_non_complaint_dropdown_follow_up_survey , iv_satisfactory_dropdown_follow_up_survey;
     LinearLayout ll_complaint_follow_up_survey , ll_non_complaint_follow_up_survey, ll_satisfactory_follow_up_survey;
-    LinearLayout dm_question_complaint_followup_survey;
+    LinearLayout dm_question_complaint_followup_survey , ll_servey_back_followup_survey;
 
     OFISRoomDB db;
 
@@ -67,6 +68,79 @@ public class FollowUpSurvey extends Fragment {
         View view =  inflater.inflate(R.layout.fragment_follow_up_survey, container, false);
 
         dm_question_complaint_followup_survey = view.findViewById(R.id.dm_question_complaint_followup_survey);
+
+        ll_servey_back_followup_survey = view.findViewById(R.id.ll_servey_back_followup_survey);
+        ll_servey_back_followup_survey.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), FindFarmerActivity.class);
+                startActivity(intent);
+            }
+        });
+
+
+/*
+//        iv_complaint_dropdown_follow_up_survey = view.findViewById(R.id.iv_complaint_dropdown_follow_up_survey);
+//        iv_non_complaint_dropdown_follow_up_survey = view.findViewById(R.id.iv_non_complaint_dropdown_follow_up_survey);
+//        iv_satisfactory_dropdown_follow_up_survey = view.findViewById(R.id.iv_satisfactory_dropdown_follow_up_survey);
+//        ll_complaint_follow_up_survey = view.findViewById(R.id.ll_complaint_follow_up_survey);
+//        ll_non_complaint_follow_up_survey = view.findViewById(R.id.ll_non_complaint_follow_up_survey);
+//        ll_satisfactory_follow_up_survey = view.findViewById(R.id.ll_satisfactory_follow_up_survey);
+
+
+        iv_complaint_dropdown_follow_up_survey.setTag("0");
+        iv_complaint_dropdown_follow_up_survey.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                if (iv_complaint_dropdown_follow_up_survey.getTag().equals("0")) {
+                    iv_complaint_dropdown_follow_up_survey.setTag("1");
+                    iv_complaint_dropdown_follow_up_survey.setRotation(180);
+                    ll_complaint_follow_up_survey.setVisibility(View.VISIBLE);
+                } else {
+                    iv_complaint_dropdown_follow_up_survey.setTag("0");
+                    iv_complaint_dropdown_follow_up_survey.setRotation(0);
+                    ll_complaint_follow_up_survey.setVisibility(View.GONE);
+                }
+            }
+        });
+
+        iv_non_complaint_dropdown_follow_up_survey.setTag("0");
+        iv_non_complaint_dropdown_follow_up_survey.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                if (iv_non_complaint_dropdown_follow_up_survey.getTag().equals("0")) {
+                    iv_non_complaint_dropdown_follow_up_survey.setTag("1");
+                    iv_non_complaint_dropdown_follow_up_survey.setRotation(180);
+                    ll_non_complaint_follow_up_survey.setVisibility(View.VISIBLE);
+                } else {
+                    iv_non_complaint_dropdown_follow_up_survey.setTag("0");
+                    iv_non_complaint_dropdown_follow_up_survey.setRotation(0);
+                    ll_non_complaint_follow_up_survey.setVisibility(View.GONE);
+                }
+            }
+        });
+
+        iv_satisfactory_dropdown_follow_up_survey.setTag("0");
+        iv_satisfactory_dropdown_follow_up_survey.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                if (iv_satisfactory_dropdown_follow_up_survey.getTag().equals("0")) {
+                    iv_satisfactory_dropdown_follow_up_survey.setTag("1");
+                    iv_satisfactory_dropdown_follow_up_survey.setRotation(180);
+                    ll_satisfactory_follow_up_survey.setVisibility(View.VISIBLE);
+                } else {
+                    iv_satisfactory_dropdown_follow_up_survey.setTag("0");
+                    iv_satisfactory_dropdown_follow_up_survey.setRotation(0);
+                    ll_satisfactory_follow_up_survey.setVisibility(View.GONE);
+                }
+            }
+        });*/
+
+
         dm_question_complaint_followup_survey.removeAllViews();
 
         db = OFISRoomDB.getDbInstance(getActivity());
