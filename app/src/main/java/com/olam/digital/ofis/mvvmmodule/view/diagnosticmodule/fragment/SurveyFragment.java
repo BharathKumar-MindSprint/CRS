@@ -3,6 +3,7 @@ package com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.fragment;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
@@ -14,7 +15,10 @@ import androidx.viewpager2.widget.ViewPager2;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.InputType;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.text.TextWatcher;
+import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -241,7 +245,25 @@ public class SurveyFragment extends Fragment {
         for (int m = 0; m < dmQuestionsModuleList.size(); m++) {
             DmQuestionsModule dmQuestionsModule = dmQuestionsModuleList.get(m);
             TextView textView = new TextView(getActivity());
-            textView.setText((m + 1) + "." + dmQuestionsModule.question);
+
+            String star = "*";
+            SpannableStringBuilder builder = new SpannableStringBuilder();
+
+            // Append the first string (s1)
+            builder.append((m + 1) + "." + dmQuestionsModule.question);
+
+            // Append the second string (s2) with red color
+            int start = builder.length();
+            builder.append(" " + star);  // Add space for separation
+
+            ForegroundColorSpan colorSpan = new ForegroundColorSpan(Color.RED);
+            builder.setSpan(colorSpan, start, builder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+            if (dmQuestionsModule.isCriticalQuest || dmQuestionsModule.mandate){
+                textView.setText(builder);
+            }else{
+                textView.setText((m + 1) + "." + dmQuestionsModule.question);
+            }
             textView.setTextColor(getResources().getColor(R.color.black));
             textView.setTextSize(14);
             textView.setPadding(0, 15, 0, 0);
