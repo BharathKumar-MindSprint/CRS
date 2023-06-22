@@ -27,30 +27,28 @@ public class DmSurveyAnswerTable {
     public String moduleId;
 
     @ColumnInfo(name = "complinceTypeId")
-    public String complinceTypeId ;
+    public String complinceTypeId;
 
-    @ColumnInfo(name = "actionplanId")
-    public String actionplanId ;
+    @ColumnInfo(name = "actionplanId", defaultValue = "0",index = true)
+    public String actionplanId;
 
     @ColumnInfo(name = "actionPlanText")
-    public String actionPlanText ;
+    public String actionPlanText;
 
     @ColumnInfo(name = "allowCustomActionPlan")
-    public Boolean allowCustomActionPlan ;
+    public Boolean allowCustomActionPlan;
 
     @ColumnInfo(name = "isCaptureProof")
-    public Boolean isCaptureProof ;
+    public Boolean isCaptureProof;
 
     @ColumnInfo(name = "amount")
-    public int amount ;
+    public int amount;
 
     @ColumnInfo(name = "farmerId")
-    public String farmerId ;
+    public String farmerId;
 
-    @ColumnInfo(name = "resolved" ,defaultValue = "0")
-    public String resolved ;
+    @ColumnInfo(name = "resolved", defaultValue = "0", index = true)
+    public String resolved;
 
-    @ColumnInfo(name = "isSynced" ,defaultValue = "0")
-    public String isSynced ;
 
 }

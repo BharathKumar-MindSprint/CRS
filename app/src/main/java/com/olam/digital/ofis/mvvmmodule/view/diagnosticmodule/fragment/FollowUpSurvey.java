@@ -22,6 +22,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -48,8 +49,8 @@ import java.util.List;
 
 public class FollowUpSurvey extends Fragment {
 
-    ImageView iv_complaint_dropdown_follow_up_survey , iv_non_complaint_dropdown_follow_up_survey , iv_satisfactory_dropdown_follow_up_survey;
-    LinearLayout ll_complaint_follow_up_survey , ll_non_complaint_follow_up_survey, ll_satisfactory_follow_up_survey;
+    ImageView iv_complaint_dropdown_follow_up_survey, iv_non_complaint_dropdown_follow_up_survey, iv_satisfactory_dropdown_follow_up_survey;
+    LinearLayout ll_complaint_follow_up_survey, ll_non_complaint_follow_up_survey, ll_satisfactory_follow_up_survey;
     LinearLayout dm_question_complaint_followup_survey;
 
     OFISRoomDB db;
@@ -59,23 +60,13 @@ public class FollowUpSurvey extends Fragment {
     }
 
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view =  inflater.inflate(R.layout.fragment_follow_up_survey, container, false);
+        View view = inflater.inflate(R.layout.fragment_follow_up_survey, container, false);
 
         dm_question_complaint_followup_survey = view.findViewById(R.id.dm_question_complaint_followup_survey);
-        dm_question_complaint_followup_survey.removeAllViews();
-
-        db = OFISRoomDB.getDbInstance(getActivity());
-
-        if (db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size() != 0) {
-            for (int i = 0; i < db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size(); i++) {
-                displayQuestionsModuleComplaint(String.valueOf(db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).get(i).id));
-            }
-        }
 
         return view;
     }
@@ -90,15 +81,10 @@ public class FollowUpSurvey extends Fragment {
         if (dmComplaintList.size() != 0) {
             List<DmSurveyAnswerTable> dmSurveyAnswerTableList = new ArrayList<>();
             dmSurveyAnswerTableList.clear();
-            dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByComplianceId(complaint_id,Constants.FARMER_ID);
+            dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByComplianceIdFilterByActionPlan(complaint_id, Constants.FARMER_ID);
 
             String complianceName = dmComplaintList.get(0).compliance;
 
-//            for (int amt = 0; amt < dmSurveyAnswerTableList.size(); amt++) {
-//
-//                budgetAmount = String.valueOf(dmSurveyAnswerTableList.get(amt).amount);
-//
-//            }
 
             if (complianceName.equalsIgnoreCase("Satisfactory")) {
                 Constants.satisfactorySize = String.valueOf(dmSurveyAnswerTableList.size());
@@ -170,6 +156,7 @@ public class FollowUpSurvey extends Fragment {
             // Constants.complaintSize = String.valueOf(dmSurveyAnswerTableList.size());
             if (dmSurveyAnswerTableList.size() != 0) {
                 String answerIdDb = dmSurveyAnswerTableList.get(0).answerID;
+
                 for (int m = 0; m < dmSurveyAnswerTableList.size(); m++) {
                     DmSurveyAnswerTable dmQuestionsModule = dmSurveyAnswerTableList.get(m);
                     TextView textView = new TextView(getActivity());
@@ -186,7 +173,6 @@ public class FollowUpSurvey extends Fragment {
             }
         }
     }
-
 
 
     public void renderTextboxQuestionModuleComplaint(String id, String complaint_id, LinearLayout linearLayoutItems) {
@@ -210,24 +196,30 @@ public class FollowUpSurvey extends Fragment {
         dmSurveyAnswerTableList.clear();
 
         dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByQuestionId(id, Constants.FARMER_ID);
+        //dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByQuestionIdActionPlan(id, Constants.FARMER_ID, Constants.ACTIONPlAN_ID);
 
         LinearLayout linearLayout1 = new LinearLayout(getContext());
         linearLayout1.setGravity(Gravity.CENTER);
         linearLayout1.setOrientation(LinearLayout.HORIZONTAL);
         if (dmSurveyAnswerTableList.size() != 0) {
             String answerIdDb = dmSurveyAnswerTableList.get(0).answer;
+            String questionIdDb = dmSurveyAnswerTableList.get(0).questionID;
             editText.setText(answerIdDb);
 
             RadioGroup radioGroup = new RadioGroup(getActivity());
             radioGroup.setOrientation(LinearLayout.HORIZONTAL);
             RadioButton radioButton1 = new RadioButton(getActivity());
             radioButton1.setText("Not Resolved");
-            radioButton1.setId(View.generateViewId()); // Set a unique ID for the radio
+            radioButton1.setTag("rb1" + questionIdDb); // Set a unique ID for the radio
+
             RadioButton radioButton2 = new RadioButton(getActivity());
             radioButton2.setText("Resolved");
-            radioButton2.setId(View.generateViewId());
+            radioButton2.setTag("rb2" + questionIdDb);
             radioGroup.addView(radioButton1);
             radioGroup.addView(radioButton2);
+            DmSurveyAnswerTable dmSurveyAnswerTableFollowUp = new DmSurveyAnswerTable();
+            //dmSurveyAnswerTableFollowUp.resolved = ;
+
 
             // Create layout parameters for TextViews
 
@@ -238,6 +230,28 @@ public class FollowUpSurvey extends Fragment {
             layoutParams.setMargins(10, 20, 10, 20);
             linearLayout1.addView(radioGroup, layoutParams);
             //linearLayout1.addView(resolveText, layoutParams);
+
+            radioButton1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if (isChecked) {
+                        String selectedValue = radioButton1.getText().toString();
+                        db.dmSurveyAnswerTableDao().updateResolvedStatus("2", id, Constants.FARMER_ID);
+                        // Do something with the selected value
+                    }
+                }
+            });
+
+            radioButton2.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if (isChecked) {
+                        String selectedValue = radioButton2.getText().toString();
+                        db.dmSurveyAnswerTableDao().updateResolvedStatus("1", id, Constants.FARMER_ID);
+                        // Do something with the selected value
+                    }
+                }
+            });
 
         }
 
@@ -263,4 +277,18 @@ public class FollowUpSurvey extends Fragment {
     }
 
 
+    @Override
+    public void onResume() {
+        dm_question_complaint_followup_survey.removeAllViews();
+
+        db = OFISRoomDB.getDbInstance(getActivity());
+
+        if (db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size() != 0) {
+            for (int i = 0; i < db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size(); i++) {
+                displayQuestionsModuleComplaint(String.valueOf(db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).get(i).id));
+            }
+        }
+
+        super.onResume();
+    }
 }

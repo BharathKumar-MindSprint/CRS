@@ -29,6 +29,9 @@ public interface DmSurveyAnswerTableDao {
     @Query("SELECT * FROM DmSurveyAnswerTable WHERE complinceTypeId =:id AND farmerId =:farmerId")
     List<DmSurveyAnswerTable> getDataByComplianceId(String id, String farmerId);
 
+    @Query("SELECT * FROM DmSurveyAnswerTable WHERE complinceTypeId =:id AND farmerId =:farmerId AND actionplanId !=0")
+    List<DmSurveyAnswerTable> getDataByComplianceIdFilterByActionPlan(String id, String farmerId);
+
     @Query("SELECT * FROM DmSurveyAnswerTable WHERE complinceTypeId =:id AND farmerId =:farmerId AND actionplanId")
     List<DmSurveyAnswerTable> getDataByComplianceIdFilterResolved(String id, String farmerId);
 
@@ -41,8 +44,12 @@ public interface DmSurveyAnswerTableDao {
     @Query("SELECT * FROM DmSurveyAnswerTable WHERE questionID =:id AND farmerId =:farmerId")
     List<DmSurveyAnswerTable> getDataByQuestionId(String id, String farmerId);
 
-    @Query("SELECT * FROM DmSurveyAnswerTable WHERE questionID =:id AND farmerId =:farmerId AND actionplanId = :actionplanId !=null ")
+    @Query("SELECT * FROM DmSurveyAnswerTable WHERE questionID =:id AND farmerId =:farmerId AND actionplanId = :actionplanId")
     List<DmSurveyAnswerTable> getDataByQuestionIdActionPlan(String id, String farmerId, String actionplanId);
+
+    @Query("UPDATE DmSurveyAnswerTable SET resolved=:resolved WHERE questionID = :id AND farmerId =:farmerId")
+    void updateResolvedStatus(String resolved, String id, String farmerId);
+
 
     @Query("UPDATE DmSurveyAnswerTable SET actionplanId=:actionplanId WHERE questionID = :questionId AND farmerId =:farmerId")
     void updateActionPlanId(String actionplanId, String questionId, String farmerId);

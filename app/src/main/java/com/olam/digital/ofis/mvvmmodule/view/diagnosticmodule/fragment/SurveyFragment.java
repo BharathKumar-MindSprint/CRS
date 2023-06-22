@@ -346,11 +346,11 @@ public class SurveyFragment extends Fragment {
                 //Toast.makeText(getActivity(), "Selected Item " + list.get(position), Toast.LENGTH_SHORT).show();
 
                 if (position == 0) {
-                    db.dmSurveyAnswerTableDao().deleteByQuestionId(questionId,Constants.FARMER_ID);
+                    db.dmSurveyAnswerTableDao().deleteByQuestionId(questionId, Constants.FARMER_ID);
                 } else {
                     String answerId = ids.get(position);
 
-                    db.dmSurveyAnswerTableDao().deleteByQuestionId(questionId,Constants.FARMER_ID);
+                    db.dmSurveyAnswerTableDao().deleteByQuestionId(questionId, Constants.FARMER_ID);
 
                     DmSurveyAnswerTable dmSurveyAnswerTable1 = new DmSurveyAnswerTable();
                     dmSurveyAnswerTable1.questionID = questionId;
@@ -359,8 +359,9 @@ public class SurveyFragment extends Fragment {
                     dmSurveyAnswerTable1.moduleId = Constants.MODULE_ID;
                     dmSurveyAnswerTable1.question = question;
                     dmSurveyAnswerTable1.complinceTypeId = complianceIds.get(position);
-                    dmSurveyAnswerTable1.actionplanId = "";
                     dmSurveyAnswerTable1.actionPlanText = "";
+                    dmSurveyAnswerTable1.actionplanId = "0";
+                    dmSurveyAnswerTable1.resolved = "0";
                     dmSurveyAnswerTable1.amount = 0;
                     dmSurveyAnswerTable1.farmerId = Constants.FARMER_ID;
                     dmSurveyAnswerTable1.allowCustomActionPlan = allowCustomActionPlan.get(position);
@@ -419,9 +420,9 @@ public class SurveyFragment extends Fragment {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 if (charSequence.length() == 0) {
-                    db.dmSurveyAnswerTableDao().deleteByQuestionId(questionId,Constants.FARMER_ID);
+                    db.dmSurveyAnswerTableDao().deleteByQuestionId(questionId, Constants.FARMER_ID);
                 } else {
-                    db.dmSurveyAnswerTableDao().deleteByQuestionId(questionId,Constants.FARMER_ID);
+                    db.dmSurveyAnswerTableDao().deleteByQuestionId(questionId, Constants.FARMER_ID);
                     DmSurveyAnswerTable dmSurveyAnswerTable1 = new DmSurveyAnswerTable();
                     dmSurveyAnswerTable1.questionID = questionId;
                     dmSurveyAnswerTable1.answer = charSequence.toString();
@@ -447,8 +448,9 @@ public class SurveyFragment extends Fragment {
                     dmSurveyAnswerTable1.complinceTypeId = String.valueOf(complianceId);
                     dmSurveyAnswerTable1.allowCustomActionPlan = allowCustomActionPlan;
                     dmSurveyAnswerTable1.actionPlanText = "";
-                    dmSurveyAnswerTable1.actionplanId = "";
                     dmSurveyAnswerTable1.amount = 0;
+                    dmSurveyAnswerTable1.actionplanId = "0";
+                    dmSurveyAnswerTable1.resolved = "0";
                     dmSurveyAnswerTable1.isCaptureProof = isCaptureProof;
                     dmSurveyAnswerTable1.farmerId = Constants.FARMER_ID;
                     db.dmSurveyAnswerTableDao().insert(dmSurveyAnswerTable1);
@@ -556,12 +558,12 @@ public class SurveyFragment extends Fragment {
                 //Toast.makeText(getActivity(), "Selected Item " + list.get(position), Toast.LENGTH_SHORT).show();
 
                 if (position == 0) {
-                    db.dmSurveyAnswerTableDao().deleteByQuestionId(questionId,Constants.FARMER_ID);
+                    db.dmSurveyAnswerTableDao().deleteByQuestionId(questionId, Constants.FARMER_ID);
                 } else {
                     String answerId = ids.get(position);
 
 
-                    db.dmSurveyAnswerTableDao().deleteByQuestionId(questionId,Constants.FARMER_ID);
+                    db.dmSurveyAnswerTableDao().deleteByQuestionId(questionId, Constants.FARMER_ID);
 
                     DmSurveyAnswerTable dmSurveyAnswerTable1 = new DmSurveyAnswerTable();
                     dmSurveyAnswerTable1.questionID = questionId;
@@ -570,9 +572,10 @@ public class SurveyFragment extends Fragment {
                     dmSurveyAnswerTable1.moduleId = Constants.MODULE_ID;
                     dmSurveyAnswerTable1.question = question;
                     dmSurveyAnswerTable1.complinceTypeId = complianceIds.get(position);
-                    dmSurveyAnswerTable1.actionplanId = "";
                     dmSurveyAnswerTable1.actionPlanText = "";
                     dmSurveyAnswerTable1.amount = 0;
+                    dmSurveyAnswerTable1.actionplanId = "0";
+                    dmSurveyAnswerTable1.resolved = "0";
                     dmSurveyAnswerTable1.farmerId = Constants.FARMER_ID;
                     dmSurveyAnswerTable1.allowCustomActionPlan = allowCustomActionPlan.get(position);
                     dmSurveyAnswerTable1.isCaptureProof = isCaptureProof.get(position);
@@ -608,24 +611,22 @@ public class SurveyFragment extends Fragment {
 //        double maxValue = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).maximumRange;
 
 
-        if (db.dmTextBoxModuleQuestionsDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(0).isAllowDecimal){
+        if (db.dmTextBoxModuleQuestionsDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(0).isAllowDecimal) {
             editText.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_CLASS_NUMBER);
             DecimalFilter decimalFilter = new DecimalFilter(minValue, maxValue);
             editText.setHint("Range from " + minValue + " to " + maxValue);
-            editText.setFilters(new InputFilter[] { decimalFilter });
-        }else if(db.dmTextBoxModuleQuestionsDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(0).isAllowNegative){
+            editText.setFilters(new InputFilter[]{decimalFilter});
+        } else if (db.dmTextBoxModuleQuestionsDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(0).isAllowNegative) {
             editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_CLASS_NUMBER);
             editText.setHint("Range from " + minValue + " to " + maxValue);
             NumberInputFilter numberFilter = new NumberInputFilter(minValue, maxValue);
-            editText.setFilters(new InputFilter[] { numberFilter });
-        }else {
+            editText.setFilters(new InputFilter[]{numberFilter});
+        } else {
             editText.setInputType(InputType.TYPE_CLASS_NUMBER);
             editText.setHint("Range from " + minValue + " to " + maxValue);
             NumberInputFilter numberFilter = new NumberInputFilter(minValue, maxValue);
-            editText.setFilters(new InputFilter[] { numberFilter });
+            editText.setFilters(new InputFilter[]{numberFilter});
         }
-
-
 
 
         TextView textView = new TextView(getActivity());
@@ -651,9 +652,9 @@ public class SurveyFragment extends Fragment {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 if (charSequence.length() == 0) {
-                    db.dmSurveyAnswerTableDao().deleteByQuestionId(questionId,Constants.FARMER_ID);
+                    db.dmSurveyAnswerTableDao().deleteByQuestionId(questionId, Constants.FARMER_ID);
                 } else {
-                    db.dmSurveyAnswerTableDao().deleteByQuestionId(questionId,Constants.FARMER_ID);
+                    db.dmSurveyAnswerTableDao().deleteByQuestionId(questionId, Constants.FARMER_ID);
                     DmSurveyAnswerTable dmSurveyAnswerTable1 = new DmSurveyAnswerTable();
                     dmSurveyAnswerTable1.questionID = questionId;
                     dmSurveyAnswerTable1.answer = charSequence.toString();
@@ -699,8 +700,9 @@ public class SurveyFragment extends Fragment {
                     dmSurveyAnswerTable1.allowCustomActionPlan = allowCustomActionPlan;
                     dmSurveyAnswerTable1.isCaptureProof = isCaptureProof;
                     dmSurveyAnswerTable1.actionPlanText = "";
-                    dmSurveyAnswerTable1.actionplanId = "";
                     dmSurveyAnswerTable1.amount = 0;
+                    dmSurveyAnswerTable1.actionplanId = "0";
+                    dmSurveyAnswerTable1.resolved = "0";
                     dmSurveyAnswerTable1.farmerId = Constants.FARMER_ID;
                     db.dmSurveyAnswerTableDao().insert(dmSurveyAnswerTable1);
                 }

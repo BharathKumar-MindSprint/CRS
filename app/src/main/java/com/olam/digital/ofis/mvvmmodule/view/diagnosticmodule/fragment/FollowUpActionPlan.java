@@ -148,9 +148,9 @@ public class FollowUpActionPlan extends Fragment {
                 if (!ViewFarmerActivity.recyclerViewData.contains("Follow Up 1")) {
                     ViewFarmerActivity.recyclerViewData.add("Follow Up 1");
 
-                    Intent intent = new Intent(getContext(),ViewFarmerActivity.class);
+                    Intent intent = new Intent(getContext(), ViewFarmerActivity.class);
                     getContext().startActivity(intent);
-                }else {
+                } else {
                 }
             }
         });
@@ -179,7 +179,7 @@ public class FollowUpActionPlan extends Fragment {
             }
             List<DmSurveyAnswerTable> dmSurveyAnswerTableList1 = new ArrayList<>();
             dmSurveyAnswerTableList1.clear();
-            dmSurveyAnswerTableList1 = db.dmSurveyAnswerTableDao().getDataByComplianceId(complaint_id,Constants.FARMER_ID);
+            dmSurveyAnswerTableList1 = db.dmSurveyAnswerTableDao().getDataByComplianceId(complaint_id, Constants.FARMER_ID);
 
             if (complianceName.equalsIgnoreCase("Satisfactory")) {
                 Constants.satisfactorySize = String.valueOf(dmSurveyAnswerTableList1.size());
@@ -282,19 +282,26 @@ public class FollowUpActionPlan extends Fragment {
         linearLayoutQes.setOrientation(LinearLayout.VERTICAL);
         linearLayoutQes.setLayoutParams(layoutParamsQes);
 
+        List<DmSurveyAnswerTable> dmSurveyAnswerTableList1 = new ArrayList<>();
+        dmSurveyAnswerTableList1.clear();
+
+        dmSurveyAnswerTableList1 = db.dmSurveyAnswerTableDao().getDataByQuestionId(id, Constants.FARMER_ID);
+
+
         TextView notResolveText = new TextView(getContext());
 
        /* ViewGroup.LayoutParams layoutParamsTxt = notResolveText.getLayoutParams();
         layoutParamsTxt.width = ViewGroup.LayoutParams.WRAP_CONTENT;
         notResolveText.setLayoutParams(layoutParamsTxt);*/
-        notResolveText.setText("Not Resolved");
+
+
         notResolveText.setTextColor(getResources().getColor(R.color.gray));
         notResolveText.setPadding(10, 25, 10, 25);
         layoutParamsQes.setMargins(0, 15, 0, 0);
         notResolveText.setTextSize(14);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+      /*  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             notResolveText.setBackground(getActivity().getDrawable(R.drawable.dm_captureproof_bg));
-        }
+        }*/
 
         EditText editText = new EditText(getActivity());
         editText.setHint("Answer");
@@ -346,7 +353,7 @@ public class FollowUpActionPlan extends Fragment {
 
         List<DmComplaintFileTable> dmComplaintFileTableList = new ArrayList<>();
         dmComplaintFileTableList.clear();
-        dmComplaintFileTableList = db.dmComplaintFileTableDao().getFilesById(Integer.parseInt(id),Constants.FARMER_ID);
+        dmComplaintFileTableList = db.dmComplaintFileTableDao().getFilesById(Integer.parseInt(id), Constants.FARMER_ID);
 
         // Log.d("akshdkjashdk", "" + dmComplaintFileTableList.size());
 
@@ -384,7 +391,7 @@ public class FollowUpActionPlan extends Fragment {
 
                                         //Toast.makeText(getActivity(), "" + pos, Toast.LENGTH_SHORT).show();
 
-                                        db.dmComplaintFileTableDao().deleteById(finalRetrievedArrayFile.get(finalI),Constants.FARMER_ID);
+                                        db.dmComplaintFileTableDao().deleteById(finalRetrievedArrayFile.get(finalI), Constants.FARMER_ID);
 
                                         dm_question_followup_complaint.removeAllViews();
 
@@ -635,7 +642,6 @@ public class FollowUpActionPlan extends Fragment {
         actionPlan.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
             }
 
             @Override
@@ -681,28 +687,61 @@ public class FollowUpActionPlan extends Fragment {
         List<DmSurveyAnswerTable> dmSurveyAnswerTableList = new ArrayList<>();
         dmSurveyAnswerTableList.clear();
 
-        dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByQuestionId(id , Constants.FARMER_ID);
+        dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByQuestionId(id, Constants.FARMER_ID);
 
         if (dmSurveyAnswerTableList.size() != 0) {
             String answerIdDb = dmSurveyAnswerTableList.get(0).answer;
             editText.setText(answerIdDb);
         }
 
+
         //editText.getLayoutParams().width=40;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             editText.setBackground(getActivity().getDrawable(R.drawable.answer_text_survey));
         }
 
+
         if (linearLayoutItems != null) {
             linearLayoutItems.addView(notResolveText);
             linearLayoutItems.addView(editText);
-            linearLayoutItems.addView(textView);
-            linearLayoutItems.addView(linearLayoutImage);
-            linearLayoutItems.addView(linearLayoutSpin);
+            if (dmSurveyAnswerTableList1.size() != 0) {
+                String resolved = dmSurveyAnswerTableList1.get(0).resolved;
+                boolean captureProof = dmSurveyAnswerTableList1.get(0).isCaptureProof;
+                if (resolved.equalsIgnoreCase("1")) {
+                    notResolveText.setText("Resolved");
+                    if (captureProof) {
+                        linearLayoutItems.addView(textView);
+                        linearLayoutItems.addView(linearLayoutImage);
 
-            if (db.dmSurveyAnswerTableDao().getDataByQuestionId(id, Constants.FARMER_ID).get(0).allowCustomActionPlan) {
-                //linearLayoutItems.addView(linearLayoutActionPlanMain);
+                    }
+
+                } else if (resolved.equalsIgnoreCase("2")) {
+                    notResolveText.setText("Not Resolved");
+                    if (captureProof) {
+                        linearLayoutItems.addView(textView);
+                        linearLayoutItems.addView(linearLayoutImage);
+                        linearLayoutItems.addView(linearLayoutSpin);
+                        if (db.dmSurveyAnswerTableDao().getDataByQuestionId(id, Constants.FARMER_ID).get(0).allowCustomActionPlan) {
+                            linearLayoutItems.addView(linearLayoutActionPlanMain);
+                        }
+                    }
+                    else
+                    {
+                        linearLayoutItems.addView(linearLayoutSpin);
+                        if (db.dmSurveyAnswerTableDao().getDataByQuestionId(id, Constants.FARMER_ID).get(0).allowCustomActionPlan) {
+                            linearLayoutItems.addView(linearLayoutActionPlanMain);
+                        }
+                    }
+                }
+
             }
+
+
+
+
+
+
+
 
         }
 
@@ -747,7 +786,7 @@ public class FollowUpActionPlan extends Fragment {
             Date today = new Date();
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
             String currentTime = format.format(today);
-            String OFISFileName = "Proof_"+Constants.MODULE_ID+"_"+Constants.FARMER_ID+"_"+currentTime+"."+Bitmap.CompressFormat.JPEG;
+            String OFISFileName = "Proof_" + Constants.MODULE_ID + "_" + Constants.FARMER_ID + "_" + currentTime + "." + Bitmap.CompressFormat.JPEG;
             dmComplaintFileTable.setOfisFileName(OFISFileName);
             dmComplaintFileTable.setFileData(imageBytes);
             dmComplaintFileTable.setFarmerId(Constants.FARMER_ID);
@@ -780,7 +819,7 @@ public class FollowUpActionPlan extends Fragment {
 
             List<DmComplaintFileTable> dmComplaintFileTableList = new ArrayList<>();
             dmComplaintFileTableList.clear();
-            dmComplaintFileTableList = db.dmComplaintFileTableDao().getFilesById(CAMERA_REQUEST,Constants.FARMER_ID);
+            dmComplaintFileTableList = db.dmComplaintFileTableDao().getFilesById(CAMERA_REQUEST, Constants.FARMER_ID);
             if (dmComplaintFileTableList.size() != 0) {
                 for (int l = 0; l < dmComplaintFileTableList.size(); l++) {
                     retrievedArray.add(dmComplaintFileTableList.get(l).getFile_name());
@@ -833,7 +872,7 @@ public class FollowUpActionPlan extends Fragment {
 
                                         linearLayoutImage.removeAllViews();
 
-                                        db.dmComplaintFileTableDao().deleteById(finalRetrievedArrayFile.get(finalI),Constants.FARMER_ID);
+                                        db.dmComplaintFileTableDao().deleteById(finalRetrievedArrayFile.get(finalI), Constants.FARMER_ID);
 
                                         dm_question_followup_complaint.removeAllViews();
 
@@ -904,7 +943,7 @@ public class FollowUpActionPlan extends Fragment {
                 Date today = new Date();
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
                 String currentTime = format.format(today);
-                String OFISFileName = "Proof_"+Constants.MODULE_ID+"_"+Constants.FARMER_ID+"_"+currentTime+".csv";
+                String OFISFileName = "Proof_" + Constants.MODULE_ID + "_" + Constants.FARMER_ID + "_" + currentTime + ".csv";
                 dmComplaintFileTable.setOfisFileName(OFISFileName);
                 dmComplaintFileTable.setFarmerId(Constants.FARMER_ID);
                 dmComplaintFileTable.setQuestionId(String.valueOf(questionId));
@@ -936,7 +975,7 @@ public class FollowUpActionPlan extends Fragment {
 
                 List<DmComplaintFileTable> dmComplaintFileTableList = new ArrayList<>();
                 dmComplaintFileTableList.clear();
-                dmComplaintFileTableList = db.dmComplaintFileTableDao().getFilesById(questionId,Constants.FARMER_ID);
+                dmComplaintFileTableList = db.dmComplaintFileTableDao().getFilesById(questionId, Constants.FARMER_ID);
                 if (dmComplaintFileTableList.size() != 0) {
                     for (int l = 0; l < dmComplaintFileTableList.size(); l++) {
                         retrievedArray.add(dmComplaintFileTableList.get(l).getFile_name());
@@ -989,7 +1028,7 @@ public class FollowUpActionPlan extends Fragment {
 
                                             linearLayoutImage.removeAllViews();
 
-                                            db.dmComplaintFileTableDao().deleteById(finalRetrievedArrayFile.get(finalI),Constants.FARMER_ID);
+                                            db.dmComplaintFileTableDao().deleteById(finalRetrievedArrayFile.get(finalI), Constants.FARMER_ID);
 
                                             dm_question_followup_complaint.removeAllViews();
 
@@ -1066,7 +1105,7 @@ public class FollowUpActionPlan extends Fragment {
                     Date today = new Date();
                     SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
                     String currentTime = format.format(today);
-                    String OFISFileName = "Proof_"+Constants.MODULE_ID+"_"+Constants.FARMER_ID+"_"+currentTime+".pdf";
+                    String OFISFileName = "Proof_" + Constants.MODULE_ID + "_" + Constants.FARMER_ID + "_" + currentTime + ".pdf";
                     dmComplaintFileTable.setOfisFileName(OFISFileName);
                     dmComplaintFileTable.setFarmerId(Constants.FARMER_ID);
                     dmComplaintFileTable.setQuestionId(String.valueOf(questionId));
@@ -1096,7 +1135,7 @@ public class FollowUpActionPlan extends Fragment {
 
                     List<DmComplaintFileTable> dmComplaintFileTableList = new ArrayList<>();
                     dmComplaintFileTableList.clear();
-                    dmComplaintFileTableList = db.dmComplaintFileTableDao().getFilesById(questionId,Constants.FARMER_ID);
+                    dmComplaintFileTableList = db.dmComplaintFileTableDao().getFilesById(questionId, Constants.FARMER_ID);
                     if (dmComplaintFileTableList.size() != 0) {
                         for (int l = 0; l < dmComplaintFileTableList.size(); l++) {
                             retrievedArray.add(dmComplaintFileTableList.get(l).getFile_name());
@@ -1147,7 +1186,7 @@ public class FollowUpActionPlan extends Fragment {
 
                                                 linearLayoutImage.removeAllViews();
 
-                                                db.dmComplaintFileTableDao().deleteById(finalRetrievedArrayFile.get(finalI),Constants.FARMER_ID);
+                                                db.dmComplaintFileTableDao().deleteById(finalRetrievedArrayFile.get(finalI), Constants.FARMER_ID);
 
                                                 dm_question_followup_complaint.removeAllViews();
 
@@ -1216,7 +1255,7 @@ public class FollowUpActionPlan extends Fragment {
                 Date today = new Date();
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
                 String currentTime = format.format(today);
-                String OFISFileName = "Proof_"+Constants.MODULE_ID+"_"+Constants.FARMER_ID+"_"+currentTime+"."+Bitmap.CompressFormat.JPEG;
+                String OFISFileName = "Proof_" + Constants.MODULE_ID + "_" + Constants.FARMER_ID + "_" + currentTime + "." + Bitmap.CompressFormat.JPEG;
                 dmComplaintFileTable.setOfisFileName(OFISFileName);
                 dmComplaintFileTable.setFarmerId(Constants.FARMER_ID);
                 dmComplaintFileTable.setQuestionId(String.valueOf(questionId));
@@ -1248,7 +1287,7 @@ public class FollowUpActionPlan extends Fragment {
 
                 List<DmComplaintFileTable> dmComplaintFileTableList = new ArrayList<>();
                 dmComplaintFileTableList.clear();
-                dmComplaintFileTableList = db.dmComplaintFileTableDao().getFilesById(questionId,Constants.FARMER_ID);
+                dmComplaintFileTableList = db.dmComplaintFileTableDao().getFilesById(questionId, Constants.FARMER_ID);
                 if (dmComplaintFileTableList.size() != 0) {
                     for (int l = 0; l < dmComplaintFileTableList.size(); l++) {
                         retrievedArray.add(dmComplaintFileTableList.get(l).getFile_name());
@@ -1299,7 +1338,7 @@ public class FollowUpActionPlan extends Fragment {
 
                                             linearLayoutImage.removeAllViews();
 
-                                            db.dmComplaintFileTableDao().deleteById(finalRetrievedArrayFile.get(finalI),Constants.FARMER_ID);
+                                            db.dmComplaintFileTableDao().deleteById(finalRetrievedArrayFile.get(finalI), Constants.FARMER_ID);
 
                                             dm_question_followup_complaint.removeAllViews();
 
@@ -1356,7 +1395,7 @@ public class FollowUpActionPlan extends Fragment {
 
         String currencyIdDb = "0";
 
-        List<DmActionPlanCurrenciesTable> dmActionPlanCurrenciesTables = db.dmActionPlanCurrenciesTableDao().getDataByModuleId(Constants.MODULE_ID,Constants.FARMER_ID);
+        List<DmActionPlanCurrenciesTable> dmActionPlanCurrenciesTables = db.dmActionPlanCurrenciesTableDao().getDataByModuleId(Constants.MODULE_ID, Constants.FARMER_ID);
         if (dmActionPlanCurrenciesTables.size() != 0) {
             currencyIdDb = String.valueOf(dmActionPlanCurrenciesTables.get(0).currencyId);
             currency_id = currencyIdDb;
