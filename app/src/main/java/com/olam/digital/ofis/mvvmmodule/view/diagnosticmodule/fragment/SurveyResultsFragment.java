@@ -186,6 +186,7 @@ public class SurveyResultsFragment extends Fragment {
                         Integer.parseInt(currencyId),submittedDate);
                 db.dmSurveyReportDao().insert(dmSurveyReport);
 
+
                 hashMap.put("answers", answerArrayList);
 
                 hashMap.put("result", result);

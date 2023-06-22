@@ -29,17 +29,26 @@ import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmSectionsItem;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmSurveyAnswerTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmTextBoxModuleQuestions;
 import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.CapturedProofFollowupTable;
+import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.ExistingModuleItemFollowupTable;
+import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.FollowUpAnswerTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.FollowUpItemMainTable;
+import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.FollowUpResultTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.daos.CapturedProofFollowupTableDao;
+import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.daos.ExistingModuleItemFollowupTableDao;
+import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.daos.FollowUpAnswerTableDao;
 import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.daos.FollowUpItemMainTableDao;
+import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.daos.FollowUpResultTableDao;
 
 
 @Database(entities ={DmMainModule.class, ComplianceIndicator.class, DmCurrency.class, DmAnswerTypes.class,
         DmQuestionTypes.class, DmCurrenciesItem.class, DmQuestionsModule.class, DmLookupValuesItem.class,
         DmActionPlansItem.class, DmSectionsItem.class, DmQuestionsSubModule.class, DmLookupValuesISubmodule.class,
         DmActionPlansItemSubmodule.class, DmRecurrence.class, DmComplaintFileTable.class,
-        DmSurveyAnswerTable.class, DmTextBoxModuleQuestions.class, DmRangeTextBoxModuleQuestionsTable.class, DmNonComplaintFileTable.class,
-        DmSatisfactoryFileTable.class, DmActionPlanCurrenciesTable.class, DmRangeActionPlansItems.class, DMSurveyReport.class,  FollowUpItemMainTable.class,CapturedProofFollowupTable.class},
+        DmSurveyAnswerTable.class, DmTextBoxModuleQuestions.class, DmRangeTextBoxModuleQuestionsTable.class,
+        DmNonComplaintFileTable.class, DmSatisfactoryFileTable.class, DmActionPlanCurrenciesTable.class,
+        DmRangeActionPlansItems.class, DMSurveyReport.class,  FollowUpItemMainTable.class,
+        CapturedProofFollowupTable.class, ExistingModuleItemFollowupTable.class, FollowUpAnswerTable.class,
+        FollowUpResultTable.class},
         version = 3)
 public abstract class OFISRoomDB extends RoomDatabase {
     private static final String DATABASE_NAME = "ofismobileroom";
@@ -68,6 +77,9 @@ public abstract class OFISRoomDB extends RoomDatabase {
     public abstract DMSurveyReportDao dmSurveyReportDao();
     public abstract FollowUpItemMainTableDao followUpItemMainTableDao();
     public abstract CapturedProofFollowupTableDao capturedProofFollowupTableDao();
+    public abstract ExistingModuleItemFollowupTableDao existingModuleItemFollowupTableDao();
+    public abstract FollowUpAnswerTableDao followUpAnswerTableDao();
+    public abstract FollowUpResultTableDao followUpResultTableDao();
 
     public static volatile OFISRoomDB INSTANCE = null;
 

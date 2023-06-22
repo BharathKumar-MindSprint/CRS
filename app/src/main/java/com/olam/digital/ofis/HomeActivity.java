@@ -90,7 +90,7 @@ import com.olam.digital.ofis.gps.utils.GPSUtils;
 import com.olam.digital.ofis.logging.FabricLogsWriter;
 import com.olam.digital.ofis.matoma.MatomoHelper;
 import com.olam.digital.ofis.matoma.ScreenNameConstants;
-import com.olam.digital.ofis.multifarm.MultiFarmUtils;
+import com.olam.digital.ofis.matoma.multifarm.MultiFarmUtils;
 import com.olam.digital.ofis.matoma.multifarm.UpdateMultiFarmActivity;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.ActionPlansItem;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.AnswerTypesItem;
@@ -107,9 +107,12 @@ import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.Recurrence;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.ResponseModel;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.SectionsItem;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.TextBoxModuleQuestions;
+import com.olam.digital.ofis.mvvmmodule.model.followup.AnswersItem;
+import com.olam.digital.ofis.mvvmmodule.model.followup.ExistingModuleItem;
 import com.olam.digital.ofis.mvvmmodule.model.followup.FollowUpItem;
 import com.olam.digital.ofis.mvvmmodule.model.followup.FollowUpResponseItem;
 import com.olam.digital.ofis.mvvmmodule.model.followup.FollowUpResponseModel;
+import com.olam.digital.ofis.mvvmmodule.model.followup.Result;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.ComplianceIndicator;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmActionPlansItem;
@@ -125,7 +128,10 @@ import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmRangeTextBoxModuleQuesti
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmRecurrence;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmSectionsItem;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmTextBoxModuleQuestions;
+import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.ExistingModuleItemFollowupTable;
+import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.FollowUpAnswerTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.FollowUpItemMainTable;
+import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.FollowUpResultTable;
 import com.olam.digital.ofis.recordpolygon.RecordPolygonActivity;
 
 import org.json.JSONException;
@@ -2643,6 +2649,10 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                 followUpItemArrayList.clear();
                                 followUpItemArrayList = response.body().getFollowUpResponseItemList().get(i).getFollowUpItemArrayList();
 
+                                ArrayList<ExistingModuleItem> existingModuleItemArrayList = new ArrayList<>();
+                                followUpItemArrayList.clear();
+                                existingModuleItemArrayList = response.body().getFollowUpResponseItemList().get(i).getExistingModuleItemArrayList();
+
                                 for (int j = 0; j <followUpItemArrayList.size(); j++) {
                                     int questionId = followUpItemArrayList.get(j).getQuestionId();
                                     int id = followUpItemArrayList.get(j).getId();
@@ -2678,6 +2688,79 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
                                     db.followUpItemMainTableDao().insert(followUpItemMainTable);
 
+                                }
+
+                                for (int k = 0; k <existingModuleItemArrayList.size(); k++) {
+                                    int farmerId = existingModuleItemArrayList.get(k).getFarmerId();
+                                    String enumeratorId = existingModuleItemArrayList.get(k).getEnumeratorId();
+                                    String submissionDate = existingModuleItemArrayList.get(k).getSubmissionDate();
+                                    int id = existingModuleItemArrayList.get(k).getId();
+                                    int farmerGroupId = existingModuleItemArrayList.get(k).getFarmerGroupId();
+                                    boolean isMobile = existingModuleItemArrayList.get(k).isMobile();
+                                    int moduleId = existingModuleItemArrayList.get(k).getModuleId();
+                                    int currencyId = existingModuleItemArrayList.get(k).getCurrencyId();
+
+                                    ExistingModuleItemFollowupTable existingModuleItemFollowupTable = new ExistingModuleItemFollowupTable();
+                                    existingModuleItemFollowupTable.moduleId = moduleId;
+                                    existingModuleItemFollowupTable.farmerId = farmerId;
+                                    existingModuleItemFollowupTable.enumeratorId =enumeratorId;
+                                    existingModuleItemFollowupTable.submissionDate =submissionDate;
+                                    existingModuleItemFollowupTable.id =id;
+                                    existingModuleItemFollowupTable.farmerGroupId =farmerGroupId;
+                                    existingModuleItemFollowupTable.isMobile =isMobile;
+                                    existingModuleItemFollowupTable.currencyId =currencyId;
+                                    db.existingModuleItemFollowupTableDao().insert(existingModuleItemFollowupTable);
+
+                                    ArrayList<AnswersItem> answersItemArrayList = new ArrayList<>();
+                                    answersItemArrayList.clear();
+                                    answersItemArrayList = existingModuleItemArrayList.get(k).getAnswers();
+                                    Result result = existingModuleItemArrayList.get(k).getResult();
+
+
+                                    for (int l = 0; l <answersItemArrayList.size(); l++) {
+                                        int answerId = answersItemArrayList.get(l).getAnswerId();
+                                        int complianceStatusId = answersItemArrayList.get(l).getComplianceStatusId();
+                                        int questionId = answersItemArrayList.get(l).getQuestionId();
+                                        String answerValue = answersItemArrayList.get(l).getAnswerValue();
+                                        String captureProofs = answersItemArrayList.get(l).getCaptureProofs();
+                                        int actionPlanId = answersItemArrayList.get(l).getActionPlanId();
+                                        String actionPlanText = answersItemArrayList.get(l).getActionPlanText();
+
+                                        FollowUpAnswerTable followUpAnswerTable = new FollowUpAnswerTable();
+                                        followUpAnswerTable.answerId = answerId;
+                                        followUpAnswerTable.complianceStatusId = complianceStatusId;
+                                        followUpAnswerTable.questionId = questionId;
+                                        followUpAnswerTable.answerValue = answerValue;
+                                        followUpAnswerTable.captureProofs = captureProofs;
+                                        followUpAnswerTable.actionPlanId = actionPlanId;
+                                        followUpAnswerTable.actionPlanText = actionPlanText;
+                                        db.followUpAnswerTableDao().insert(followUpAnswerTable);
+                                    }
+
+                                    if(result!=null){
+                                        int totalSatisfactory = result.getTotalSatisfactory();
+                                        String resultValue = result.getResultValue();
+                                        int totalActionPlan = result.getTotalActionPlan();
+                                        String totalBudget = result.getTotalBudget();
+                                        int totalComplaint = result.getTotalComplaint();
+                                        String resultColour = result.getResultColour();
+                                        String resultType = result.getResultType();
+                                        int totalNonComplaint = result.getTotalNonComplaint();
+                                        String resultRemarks = result.getResultRemarks();
+
+                                        FollowUpResultTable followUpResultTable = new FollowUpResultTable();
+                                        followUpResultTable.totalSatisfactory = totalSatisfactory;
+                                        followUpResultTable.resultValue = resultValue;
+                                        followUpResultTable.totalActionPlan = totalActionPlan;
+                                        followUpResultTable.totalBudget = totalBudget;
+                                        followUpResultTable.totalComplaint = totalComplaint;
+                                        followUpResultTable.resultColour = resultColour;
+                                        followUpResultTable.resultType = resultType;
+                                        followUpResultTable.totalNonComplaint = totalNonComplaint;
+                                        followUpResultTable.resultRemarks = resultRemarks;
+                                        db.followUpResultTableDao().insert(followUpResultTable);
+
+                                    }
                                 }
 
                             }
