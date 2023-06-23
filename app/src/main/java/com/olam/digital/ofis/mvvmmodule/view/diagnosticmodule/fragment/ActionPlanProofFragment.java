@@ -197,7 +197,8 @@ public class ActionPlanProofFragment extends Fragment{
         if (dmComplaintList.size() != 0) {
             List<DmSurveyAnswerTable> dmSurveyAnswerTableList = new ArrayList<>();
             dmSurveyAnswerTableList.clear();
-            dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByComplianceId(complaint_id,Constants.FARMER_ID, true);
+            //dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByComplianceId(complaint_id,Constants.FARMER_ID, true);
+            dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByComplianceId(complaint_id,Constants.FARMER_ID);
 
             String complianceName = dmComplaintList.get(0).compliance;
 
@@ -212,6 +213,7 @@ public class ActionPlanProofFragment extends Fragment{
 
             if (complianceName.equalsIgnoreCase("Satisfactory")) {
                 Constants.satisfactorySize = String.valueOf(dmSurveyAnswerTableList1.size());
+
             } else if (complianceName.equalsIgnoreCase("Compliant")) {
                 Constants.complaintSize = String.valueOf(dmSurveyAnswerTableList1.size());
             } else if (complianceName.equalsIgnoreCase("Non Compliant")) {
