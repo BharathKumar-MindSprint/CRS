@@ -1392,13 +1392,15 @@ public class ActionPlanProofFragment extends Fragment{
 //            }
 //        }
 
+//        db.dmActionPlanCurrenciesTableDao().getCurrencyByModuleId(Constants.MODULE_ID, Constants.FARMER_ID);
+
         try {
             int currencyDefault = db.dmCurrencyDao().isCurrencyDefault(dmActionPlanCurrenciesTables.get(0).moduleId , 1);
             for (int i = 0; i < ids.size(); i++) {
                 if (String.valueOf(currencyDefault).equalsIgnoreCase(ids.get(i)) || currencyIdDb.equalsIgnoreCase(ids.get(i)) ) {
                     selectedPosition = i;
 //                    currencyIdDb = String.valueOf(currencyDefault);
-//                    currency_id = currencyIdDb;
+//                    currency_id = String.valueOf(currencyDefault);
                 }
 
             }
