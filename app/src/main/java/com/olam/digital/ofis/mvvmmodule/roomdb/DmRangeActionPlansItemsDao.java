@@ -23,4 +23,7 @@ public interface DmRangeActionPlansItemsDao {
 
     @Query("DELETE FROM DmRangeActionPlansItems")
     void deleteAll();
+
+    @Query("SELECT * FROM DmRangeActionPlansItems WHERE questionId = :id AND complainceId=:complianceId")
+    List<DmRangeActionPlansItems> getActionPlanItemById(int id, int complianceId);
 }

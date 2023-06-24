@@ -149,11 +149,12 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 
-public class HomeActivity extends BaseListActivity implements Callback<AuthenticationDTO>,OnAccessTokenInterface, AdapterView.OnItemClickListener{
+public class HomeActivity extends BaseListActivity implements Callback<AuthenticationDTO>, OnAccessTokenInterface, AdapterView.OnItemClickListener {
 
     // update
     public static final String TAG = "HomeActivity";
-    private final String MATOMOTAG =this.getClass().getSimpleName();;
+    private final String MATOMOTAG = this.getClass().getSimpleName();
+    ;
     private Context context;
     private static Context staticContext;
     private static Resources staticRes;
@@ -162,11 +163,11 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     private static DataLayer dl;
     private NetworkLayer nl;
     private ProgressDialog m_ProgressDialog = null;
-    private ProgressDialog mDialogLoading=null;
+    private ProgressDialog mDialogLoading = null;
     int checkvalue = 0;
     private boolean farmerSynced = true, autotimeEnabled = false;
     private boolean multifarmSynced = true;
-    private boolean farmerMultifarmSynced=true;
+    private boolean farmerMultifarmSynced = true;
     private Cursor networkQueue;
     private CustomListAdapter_NetworkQueue customListAdapter_networkQueue;
     private static LinearLayout topSection;
@@ -201,7 +202,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     private static final long SYNC_INTERVAL = SYNC_INTERVAL_IN_MINUTES * SECONDS_PER_MINUTE;
 
     private EditText enumeratorID;
-//    Passcode added - Penetration test
+    //    Passcode added - Penetration test
     private EditText passcode;
     private Button saveUpdateButton;
 
@@ -219,19 +220,19 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     public static int progressItem;
     private long lastClickTime = 0;
     private long lastitemClickTime = 0;
-    private boolean isChildSynced=true;
+    private boolean isChildSynced = true;
     ListView listView;
     private Boolean existingUser = false;
-    private Location mCurrentLocation=null;
-    GPSListener gpsListener=null;
-    private GPSTracker gpsTracker=null;
+    private Location mCurrentLocation = null;
+    GPSListener gpsListener = null;
+    private GPSTracker gpsTracker = null;
     private Boolean newGps;
     private boolean islocationenabled = false;
-    static String ipAddress,date;
+    static String ipAddress, date;
     ImageButton syncAll;
     static CardView downloadSurveyWrapper;
     private static CardView cardview_downloadFarmplan;
-   static String counrtyCodeNew;
+    static String counrtyCodeNew;
 
     static String password = "Olam123+";
     static String system = "od";
@@ -245,7 +246,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-        listView=findViewById(R.id.list);
+        listView = findViewById(R.id.list);
         listView.setOnItemClickListener(this);
         checkTls();
         staticContext = this;
@@ -278,8 +279,8 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
 
         downloadSurveyWrap();
-        String enumeratorId=Utilities.getFromSharedPrefs(context);
-        if(!enumeratorId.equalsIgnoreCase("")) {
+        String enumeratorId = Utilities.getFromSharedPrefs(context);
+        if (!enumeratorId.equalsIgnoreCase("")) {
             if (DynatraceHelper.isAppClosed) {
 //                Dynatrace.identifyUser(enumeratorId);
 //                DynatraceHelper.isAppClosed=false;
@@ -296,16 +297,16 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         StrictMode.setThreadPolicy(policy);
         // checkTime();
         bindNetworkQueue(true);
-      //  if (Utilities.getKeyCloakClientDetails(context, KeyCloakInfo.Client_Id).equalsIgnoreCase("")){
+        //  if (Utilities.getKeyCloakClientDetails(context, KeyCloakInfo.Client_Id).equalsIgnoreCase("")){
         // Removed the check migrate existing enumerator while update Manna version
-            String environment=BuildConfig.FLAVOR;
-            setKeycloakCredentials(environment);
-            setOperatingUnit(environment);
-            setCommodity();
-      //  }
-        if (sharedPreferences.getBoolean("FIRST_RUN",true)) {
+        String environment = BuildConfig.FLAVOR;
+        setKeycloakCredentials(environment);
+        setOperatingUnit(environment);
+        setCommodity();
+        //  }
+        if (sharedPreferences.getBoolean("FIRST_RUN", true)) {
             firstRunSection.setVisibility(View.VISIBLE);
-            if(!enumeratorId.equalsIgnoreCase("")) {
+            if (!enumeratorId.equalsIgnoreCase("")) {
                 existingUser = true;
                 enumeratorID.setText(enumeratorId);
                 enumeratorID.setFocusable(false);
@@ -315,20 +316,20 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             }
         }
 
-            Account mAccount = CreateSyncAcount();
+        Account mAccount = CreateSyncAcount();
 
-            ContentResolver.setSyncAutomatically(
-                    mAccount,
-                    AUTHORITY,
-                    true
-            );
+        ContentResolver.setSyncAutomatically(
+                mAccount,
+                AUTHORITY,
+                true
+        );
 
-            ContentResolver.addPeriodicSync(
-                    mAccount,
-                    AUTHORITY,
-                    Bundle.EMPTY,
-                    SYNC_INTERVAL
-            );
+        ContentResolver.addPeriodicSync(
+                mAccount,
+                AUTHORITY,
+                Bundle.EMPTY,
+                SYNC_INTERVAL
+        );
 
         // Request Permission only for Android Version Marshmallow and above
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -340,8 +341,8 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                     != PackageManager.PERMISSION_GRANTED) {
 
                 ActivityCompat.requestPermissions(HomeActivity.this,
-                        new String[]{android.Manifest.permission.CAMERA,android.Manifest.permission.READ_EXTERNAL_STORAGE,android.Manifest.permission.READ_PHONE_STATE,
-                                android.Manifest.permission.WRITE_EXTERNAL_STORAGE,android.Manifest.permission.ACCESS_COARSE_LOCATION, android.Manifest.permission.RECORD_AUDIO,
+                        new String[]{android.Manifest.permission.CAMERA, android.Manifest.permission.READ_EXTERNAL_STORAGE, android.Manifest.permission.READ_PHONE_STATE,
+                                android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.ACCESS_COARSE_LOCATION, android.Manifest.permission.RECORD_AUDIO,
                                 android.Manifest.permission.ACCESS_FINE_LOCATION},
                         MY_SIGNATURE_PIC_PERMISSIONS_REQUEST);
 
@@ -354,11 +355,11 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             }
         }
 
-        cardview_downloadFarmplan =findViewById(R.id.cardview_downloadFarmplan);
-       boolean isCropAvailable =  Utilities.getBoolFromSharedPrefs(staticContext, "DISPLAY_CROPPLAN", false);
-        if(isCropAvailable){
+        cardview_downloadFarmplan = findViewById(R.id.cardview_downloadFarmplan);
+        boolean isCropAvailable = Utilities.getBoolFromSharedPrefs(staticContext, "DISPLAY_CROPPLAN", false);
+        if (isCropAvailable) {
             cardview_downloadFarmplan.setVisibility(View.VISIBLE);
-        }else{
+        } else {
             cardview_downloadFarmplan.setVisibility(View.GONE);
         }
 
@@ -366,7 +367,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         downloadFarmplan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_ADD_NEW_FARMER,  ScreenNameConstants.BUTTON_CLICKED);
+                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_ADD_NEW_FARMER, ScreenNameConstants.BUTTON_CLICKED);
                 Intent intent = new Intent(context, DownloadFarmPlanActivity.class);
                 context.startActivity(intent);
 
@@ -385,7 +386,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                     android.Manifest.permission.ACCESS_COARSE_LOCATION}, PERMISSIONS_ACCESS_LOCATION);
 
                     return;
-                }else {
+                } else {
                     doingAuthRequest();
                 }
             }
@@ -432,42 +433,44 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 //            }
 //        }
 
-        gpsListener=new GPSListener() {
+        gpsListener = new GPSListener() {
             @Override
             public void onGPSClick(Location location) {
-                if (location!=null){
-                    mCurrentLocation=location;
-                    TrackDetailsDTO trackDetailsDTO=new TrackDetailsDTO();
+                if (location != null) {
+                    mCurrentLocation = location;
+                    TrackDetailsDTO trackDetailsDTO = new TrackDetailsDTO();
                     trackDetailsDTO.setModule(GPSConstants.MODULE_CAPTURE_CAPTURE_MY_LOCATION);
                     trackDetailsDTO.setLatitude(String.valueOf(mCurrentLocation.getLatitude()));
                     trackDetailsDTO.setLongitude(String.valueOf(mCurrentLocation.getLongitude()));
                     trackDetailsDTO.setAccuracy(String.valueOf(mCurrentLocation.getAccuracy()));
                     trackDetailsDTO.setRecordDate(new Timestamp(System.currentTimeMillis()).toString());
-                    ContentValues geoContentValues=new GPSUtils().getGeoContentValues(trackDetailsDTO);
+                    ContentValues geoContentValues = new GPSUtils().getGeoContentValues(trackDetailsDTO);
                     if (newGps) {
                         long newGpsQueueId = new GpsTrackerLogic().insertGPSDetailsToQueue(context, geoContentValues);
                         if (newGpsQueueId != -1) {
-                           enableSync();
+                            enableSync();
                         }
-                        newGps=false;
+                        newGps = false;
                     }
                 }
             }
         };
-        gpsTracker=new GPSTracker(this,gpsListener,true);
+        gpsTracker = new GPSTracker(this, gpsListener, true);
         try {
             MultiFarmUtils.isMultiFarmEnumerator = Utilities.getMultifarmPref(context, MultiFarmUtils.IS_MULTI_FARM_ENUMERATOR);
-        }catch (Exception e){}
+        } catch (Exception e) {
+        }
 
 
     }
+
     private void setKeycloakCredentials(String environment) {
         String clientId = null;
-        String clientSecret=null;
-        switch (environment){
+        String clientSecret = null;
+        switch (environment) {
             case "dev":
-                clientId=KeyCloakInfo.dev_client_Id;
-                clientSecret=KeyCloakInfo.dev_Client_Secret;
+                clientId = KeyCloakInfo.dev_client_Id;
+                clientSecret = KeyCloakInfo.dev_Client_Secret;
 
                 // fake
 //                clientId=KeyCloakInfo.dev_ofi_client_Id;
@@ -475,107 +478,106 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
                 break;
             case "devofi":
-                clientId=KeyCloakInfo.dev_ofi_client_Id;
-                clientSecret=KeyCloakInfo.dev_ofi_Client_Secret;
+                clientId = KeyCloakInfo.dev_ofi_client_Id;
+                clientSecret = KeyCloakInfo.dev_ofi_Client_Secret;
                 break;
             case "sitofi":
-                clientId=KeyCloakInfo.sit_ofi_client_Id;
-                clientSecret=KeyCloakInfo.sit_ofi_Client_Secret;
+                clientId = KeyCloakInfo.sit_ofi_client_Id;
+                clientSecret = KeyCloakInfo.sit_ofi_Client_Secret;
                 break;
             case "sit":
-                clientId=KeyCloakInfo.sit_non_ofi_client_Id;
-                clientSecret=KeyCloakInfo.sit_non_ofi_Client_Secret;
+                clientId = KeyCloakInfo.sit_non_ofi_client_Id;
+                clientSecret = KeyCloakInfo.sit_non_ofi_Client_Secret;
                 break;
             case "uat":
-                clientId=KeyCloakInfo.uat_non_ofi_client_Id;
-                clientSecret=KeyCloakInfo.uat_non_ofi_Client_Secret;
+                clientId = KeyCloakInfo.uat_non_ofi_client_Id;
+                clientSecret = KeyCloakInfo.uat_non_ofi_Client_Secret;
                 break;
             case "uatofi":
-                clientId=KeyCloakInfo.uat_ofi_client_Id;
-                clientSecret=KeyCloakInfo.uat_ofi_Client_Secret;
+                clientId = KeyCloakInfo.uat_ofi_client_Id;
+                clientSecret = KeyCloakInfo.uat_ofi_Client_Secret;
                 break;
             case "prod":
-                clientId=KeyCloakInfo.prod_client_Id;
-                clientSecret=KeyCloakInfo.prod_Client_Secret;
+                clientId = KeyCloakInfo.prod_client_Id;
+                clientSecret = KeyCloakInfo.prod_Client_Secret;
                 break;
 
             case "prodofi":
-                clientId=KeyCloakInfo.prod_ofi_client_Id;
-                clientSecret=KeyCloakInfo.prod_ofi_Client_Secret;
+                clientId = KeyCloakInfo.prod_ofi_client_Id;
+                clientSecret = KeyCloakInfo.prod_ofi_Client_Secret;
                 break;
 
-                // OGA
+            // OGA
             case "devoga":
-                clientId=KeyCloakInfo.dev_oga_client_Id;
-                clientSecret=KeyCloakInfo.dev_oga_Client_Secret;
+                clientId = KeyCloakInfo.dev_oga_client_Id;
+                clientSecret = KeyCloakInfo.dev_oga_Client_Secret;
                 break;
             case "sitoga":
-                clientId=KeyCloakInfo.sit_oga_client_Id;
-                clientSecret=KeyCloakInfo.sit_oga_Client_Secret;
+                clientId = KeyCloakInfo.sit_oga_client_Id;
+                clientSecret = KeyCloakInfo.sit_oga_Client_Secret;
                 break;
             case "uatoga":
-                clientId=KeyCloakInfo.uat_oga_client_Id;
-                clientSecret=KeyCloakInfo.uat_oga_Client_Secret;
+                clientId = KeyCloakInfo.uat_oga_client_Id;
+                clientSecret = KeyCloakInfo.uat_oga_Client_Secret;
                 break;
             case "prodoga":
-                clientId=KeyCloakInfo.prod_oga_client_Id;
-                clientSecret=KeyCloakInfo.prod_oga_Client_Secret;
+                clientId = KeyCloakInfo.prod_oga_client_Id;
+                clientSecret = KeyCloakInfo.prod_oga_Client_Secret;
                 break;
 
         }
-        Utilities.setKeycloakClientDetails(context,KeyCloakInfo.Client_Id,clientId);
-        Utilities.setKeycloakClientDetails(context,KeyCloakInfo.Client_Secret,clientSecret);
+        Utilities.setKeycloakClientDetails(context, KeyCloakInfo.Client_Id, clientId);
+        Utilities.setKeycloakClientDetails(context, KeyCloakInfo.Client_Secret, clientSecret);
     }
 
-    private void setOperatingUnit(String environment){
-        String OpUnit="nil";
+    private void setOperatingUnit(String environment) {
+        String OpUnit = "nil";
         if (environment.equalsIgnoreCase("dev") || environment.equalsIgnoreCase("sit") ||
-        environment.equalsIgnoreCase("uat") || environment.equalsIgnoreCase("prod")){
-            OpUnit="NON OFI";
-        }else if (environment.equalsIgnoreCase("devofi") || environment.equalsIgnoreCase("sitofi") ||
-                environment.equalsIgnoreCase("uatofi") || environment.equalsIgnoreCase("prodofi")){
-            OpUnit="OFI";
-        }else if (environment.equalsIgnoreCase("devoga") || environment.equalsIgnoreCase("sitoga") ||
-                environment.equalsIgnoreCase("uatoga") || environment.equalsIgnoreCase("prodoga")){
-            OpUnit="OGA";
-        }else{
-             OpUnit="nil";
+                environment.equalsIgnoreCase("uat") || environment.equalsIgnoreCase("prod")) {
+            OpUnit = "NON OFI";
+        } else if (environment.equalsIgnoreCase("devofi") || environment.equalsIgnoreCase("sitofi") ||
+                environment.equalsIgnoreCase("uatofi") || environment.equalsIgnoreCase("prodofi")) {
+            OpUnit = "OFI";
+        } else if (environment.equalsIgnoreCase("devoga") || environment.equalsIgnoreCase("sitoga") ||
+                environment.equalsIgnoreCase("uatoga") || environment.equalsIgnoreCase("prodoga")) {
+            OpUnit = "OGA";
+        } else {
+            OpUnit = "nil";
         }
-        Utilities.setOperatingUnitSharedPrefs(context,OpUnit);
+        Utilities.setOperatingUnitSharedPrefs(context, OpUnit);
     }
 
-    private void setCommodity(){
-        String commodity=dl.getProductInfo();
-        Utilities.setCommoditySharedPrefs(context,commodity);
+    private void setCommodity() {
+        String commodity = dl.getProductInfo();
+        Utilities.setCommoditySharedPrefs(context, commodity);
     }
-
 
 
     private void doingAuthRequest() {
         String userEnumerator = enumeratorID.getText().toString().trim();
 //        Passcode validation - Penetration testing
         String userpasscode = passcode.getText().toString().trim();
-        if (userEnumerator!=null && !userEnumerator.equalsIgnoreCase("") &&
-                userpasscode!=null && !userpasscode.equalsIgnoreCase("")){
-                showProgress(true);
-                // Current OFIS Authentication
-                // doAuthentication(userEnumerator,userpasscode);
+        if (userEnumerator != null && !userEnumerator.equalsIgnoreCase("") &&
+                userpasscode != null && !userpasscode.equalsIgnoreCase("")) {
+            showProgress(true);
+            // Current OFIS Authentication
+            // doAuthentication(userEnumerator,userpasscode);
 
-                // KeyCloak Authentication
-                 doKeyCloakAuthentication(userEnumerator,passcode.getText().toString().trim());
+            // KeyCloak Authentication
+            doKeyCloakAuthentication(userEnumerator, passcode.getText().toString().trim());
 
-        }else{
-            Toast.makeText(HomeActivity.this,getString(R.string.enumerator_empty),Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(HomeActivity.this, getString(R.string.enumerator_empty), Toast.LENGTH_LONG).show();
         }
 
     }
 
     private void doKeyCloakAuthentication(String userEnumerator, String passcode) {
 
-        String clientId=Utilities.getKeyCloakClientDetails(context,KeyCloakInfo.Client_Id);
-        String clientSecret=Utilities.getKeyCloakClientDetails(context,KeyCloakInfo.Client_Secret);
-        String grantType=Utilities.PASSWORD;
-        String scope=Utilities.SCOPE;
+        String clientId = Utilities.getKeyCloakClientDetails(context, KeyCloakInfo.Client_Id);
+        String clientSecret = Utilities.getKeyCloakClientDetails(context, KeyCloakInfo.Client_Secret);
+        String grantType = Utilities.PASSWORD;
+        String scope = Utilities.SCOPE;
 
         // Check the need of DTO
         AuthRequestDTO authRequestDTO = new AuthRequestDTO();
@@ -587,7 +589,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         authRequestDTO.setScope(scope);
 
         AuthenticationInterface authenticationInterface = AuthenticationClient.createService(AuthenticationInterface.class, HomeActivity.this);
-        Call<AuthenticationDTO> authCall = authenticationInterface.getKeyCloakAuthToken(clientId, userEnumerator,passcode,grantType,clientSecret,scope);
+        Call<AuthenticationDTO> authCall = authenticationInterface.getKeyCloakAuthToken(clientId, userEnumerator, passcode, grantType, clientSecret, scope);
         authCall.enqueue(HomeActivity.this);
     }
 
@@ -616,16 +618,15 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 //                    public void onProviderInstallFailed(int i, Intent intent) {
 //                    }
 //                });
-              SSLContext  sslContext = SSLContext.getInstance("TLSv1.2");
-              sslContext.init(null, null, null);
-               SSLEngine engine = sslContext.createSSLEngine();
-               engine.setEnabledProtocols(new String[]{"TLSv1.2"});
+                SSLContext sslContext = SSLContext.getInstance("TLSv1.2");
+                sslContext.init(null, null, null);
+                SSLEngine engine = sslContext.createSSLEngine();
+                engine.setEnabledProtocols(new String[]{"TLSv1.2"});
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
-
 
 
     @Override
@@ -736,13 +737,13 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                 builder.setMessage(response.optString(columnname, res.getString(R.string.app_updated_upload_first_message)))
                                         .setPositiveButton(res.getString(R.string.app_update_ok), new DialogInterface.OnClickListener() {
                                             public void onClick(DialogInterface dialog, int id) {
-                                                if (SystemClock.elapsedRealtime() - lastClickTime < 3000){
+                                                if (SystemClock.elapsedRealtime() - lastClickTime < 3000) {
                                                     return;
-                                                }else {
+                                                } else {
                                                     syncOptionAll = true;
                                                     checkAuthenticate();
                                                 }
-                                                lastClickTime=SystemClock.elapsedRealtime();
+                                                lastClickTime = SystemClock.elapsedRealtime();
                                             }
                                         })
                                         .setNegativeButton(R.string.app_update_cancel, new DialogInterface.OnClickListener() {
@@ -752,7 +753,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                                     String reminder = res.getQuantityString(R.plurals.days_left_to_update, (int) daysLeftToUpdate, (int) daysLeftToUpdate);
                                                     Toast.makeText(context, reminder, Toast.LENGTH_LONG).show();
                                                 }*/
-                                               dialog.cancel();
+                                                dialog.cancel();
                                             }
                                         });
 
@@ -775,13 +776,13 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
     private void firstTimeSetup() {
 
-        if (enumeratorID.getText().length() > 0 && passcode.getText().length() >0) {
+        if (enumeratorID.getText().length() > 0 && passcode.getText().length() > 0) {
             Utilities.saveLongToSharedPrefs(context, "VERSION_NUM", BuildConfig.VERSION_CODE);
             Utilities.saveToSharedPrefs(context, "ENUMERATOR_ID", enumeratorID.getText().toString(), null);
             Utilities.saveToSharedPrefs(context, "PASSCODE", passcode.getText().toString().trim(), null);
-            if(!existingUser) {
+            if (!existingUser) {
                 nl.syncData();
-            }else {
+            } else {
                 completeFirstSetup();
             }
             //nl.postFirebaseToken(FirebaseInstanceId.getInstance().getToken());
@@ -836,7 +837,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     }
 
 
-
     private void bindNetworkQueue(boolean isClickable) {
         TextView nomodulestosubmittext = (TextView) findViewById(R.id.nomodulestosubmittext);
         networkQueue = dl.getNetworkQueue();
@@ -850,7 +850,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             nomodulestosubmittext.setVisibility(View.GONE);
             String[] adapterCols = new String[]{"_id", OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID};
             int[] adapterRowViews = new int[]{R.id.networkQueueId, R.id.networkQueueName, R.id.networkQueuePoiType, R.id.networkQueueOlamFarmerId};
-            customListAdapter_networkQueue = new CustomListAdapter_NetworkQueue(context, networkQueue, adapterCols, adapterRowViews, me , isClickable);
+            customListAdapter_networkQueue = new CustomListAdapter_NetworkQueue(context, networkQueue, adapterCols, adapterRowViews, me, isClickable);
             listView.setAdapter(customListAdapter_networkQueue);
             //setListAdapter(customListAdapter_networkQueue);
 
@@ -884,28 +884,28 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
     }
 
-    private void checkAuthenticate(){
+    private void checkAuthenticate() {
 
         if (nl.isPhoneOnline()) {
             AccessTokenTask accessTokenTask = new AccessTokenTask(context, getAuthRequestDTO(), HomeActivity.this);
             accessTokenTask.execute();
-        }else{
+        } else {
             Toast.makeText(context, res.getString(R.string.Internet_not_available), Toast.LENGTH_LONG).show();
         }
     }
 
-    private AuthRequestDTO getAuthRequestDTO(){
+    private AuthRequestDTO getAuthRequestDTO() {
         AuthRequestDTO authRequestDTO = new AuthRequestDTO();
         authRequestDTO.setUsername(Utilities.getFromSharedPrefs(HomeActivity.this));
         authRequestDTO.setPasscode(Utilities.getPasscodeFromSharedPrefs(HomeActivity.this));
         return authRequestDTO;
     }
 
-    public void enableSync(){
-        try{
+    public void enableSync() {
+        try {
             setupSyncAllBtn(true);
             bindNetworkQueue(true);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -924,21 +924,20 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                         m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, 0, 0, res.getString(R.string.farmer_not_synced));
                         Utilities.closeProgressDialog(m_ProgressDialog, 3000);
                         enableSync();
-                    }else if(!isChildSynced){
+                    } else if (!isChildSynced) {
                         m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, 0, 0, res.getString(R.string.child_not_synced));
                         Utilities.closeProgressDialog(m_ProgressDialog, 3000);
                         enableSync();
-                    }else if(!multifarmSynced){
+                    } else if (!multifarmSynced) {
                         m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, 0, 0, res.getString(R.string.multifarm_not_synced));
                         Utilities.closeProgressDialog(m_ProgressDialog, 3000);
                         enableSync();
-                    }else if(!farmerMultifarmSynced){
+                    } else if (!farmerMultifarmSynced) {
                         m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, 0, 0, res.getString(R.string.sync_farmer_and_multifarm_stakeholders));
                         Utilities.closeProgressDialog(m_ProgressDialog, 3000);
                         enableSync();
-                    }
-                    else{
-                        if(totalItems == 0)
+                    } else {
+                        if (totalItems == 0)
                             totalItems = networkQueue.getCount();
 
                         m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, totalItems, 0, message);
@@ -953,32 +952,32 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                     if (msg.what == 1) {
                         if (m_ProgressDialog != null && m_ProgressDialog.isShowing()) {
                             String pdUpdate = msg.obj.toString();
-                            int storedCount=Utilities.minProgressCount;
-                            int min = storedCount+1;
+                            int storedCount = Utilities.minProgressCount;
+                            int min = storedCount + 1;
                             int max = networkQueue.getCount();
-                            Log.d("HomeActivity", "min : " + min  + ",  max : " + max);
+                            Log.d("HomeActivity", "min : " + min + ",  max : " + max);
                             m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, max, min, pdUpdate);
-                          //  m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, msg.arg1, msg.arg2, pdUpdate);
+                            //  m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, msg.arg1, msg.arg2, pdUpdate);
                         }
                     } else if (msg.what == 2) {
                         finishItemSync(msg);
                     } else if (msg.what == 3) {
                         farmerSynced = false;
-                    }else if (msg.what == 5){
-                        isChildSynced=false;
-                    } else if (msg.what == 7){
-                        multifarmSynced=false;
-                    }else if (msg.what == 8){
-                        farmerMultifarmSynced=false;
-                    }else if(msg.what ==9) {
+                    } else if (msg.what == 5) {
+                        isChildSynced = false;
+                    } else if (msg.what == 7) {
+                        multifarmSynced = false;
+                    } else if (msg.what == 8) {
+                        farmerMultifarmSynced = false;
+                    } else if (msg.what == 9) {
                         closePopup(msg);
                     }
                 }
             };
             farmerSynced = true;
-            isChildSynced=true;
-            multifarmSynced=true;
-            farmerMultifarmSynced=true;
+            isChildSynced = true;
+            multifarmSynced = true;
+            farmerMultifarmSynced = true;
             nl.getNetworkQueue(null);
             nl.syncNetworkQueue(null, syncHandler);
         } else {
@@ -986,17 +985,17 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         }
     }
 
-    public void setupSyncAllBtn(boolean isClickable){
-        if(isClickable){
+    public void setupSyncAllBtn(boolean isClickable) {
+        if (isClickable) {
             syncAll.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_sync_all_white));
             syncAll.setEnabled(true);
-        }else{
+        } else {
             syncAll.setEnabled(false);
             syncAll.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_upload_gray));
         }
     }
 
-    public void startItemSyncAuth(int itemId){
+    public void startItemSyncAuth(int itemId) {
 
        /* if (SystemClock.elapsedRealtime() - lastitemClickTime < 3000){
             return;
@@ -1032,16 +1031,15 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                         m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, 0, 0, res.getString(R.string.farmer_not_synced));
                         Utilities.closeProgressDialog(m_ProgressDialog, 3000);
                         enableSync();
-                    }else if (!isChildSynced){
+                    } else if (!isChildSynced) {
                         m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, 0, 0, res.getString(R.string.child_not_synced));
                         Utilities.closeProgressDialog(m_ProgressDialog, 3000);
                         enableSync();
-                    }
-                    else if (!multifarmSynced){
+                    } else if (!multifarmSynced) {
                         m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, 0, 0, res.getString(R.string.multifarm_not_synced));
                         Utilities.closeProgressDialog(m_ProgressDialog, 3000);
                         enableSync();
-                    }else if (!farmerMultifarmSynced){
+                    } else if (!farmerMultifarmSynced) {
                         m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, 0, 0, res.getString(R.string.sync_farmer_and_multifarm_stakeholders));
                         Utilities.closeProgressDialog(m_ProgressDialog, 3000);
                         enableSync();
@@ -1068,24 +1066,23 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                         finishItemSync(msg);
                     } else if (msg.what == 3) {
                         farmerSynced = false;
-                    } else if (msg.what ==5){
-                        isChildSynced=false;
-                    }else if (msg.what ==7){
-                        multifarmSynced=false;
-                    }else if (msg.what ==8){
-                        farmerMultifarmSynced=false;
-                    }else if(msg.what ==9) {
+                    } else if (msg.what == 5) {
+                        isChildSynced = false;
+                    } else if (msg.what == 7) {
+                        multifarmSynced = false;
+                    } else if (msg.what == 8) {
+                        farmerMultifarmSynced = false;
+                    } else if (msg.what == 9) {
                         closePopup(msg);
-                    }
-                    else {
+                    } else {
                         finishItemSync(msg);
                     }
                 }
             };
             farmerSynced = true;
-            isChildSynced=true;
-            multifarmSynced=true;
-            farmerMultifarmSynced=true;
+            isChildSynced = true;
+            multifarmSynced = true;
+            farmerMultifarmSynced = true;
             nl.getNetworkQueue(itemId);
             nl.syncNetworkQueueFromHome(itemId, syncHandler);
         } else {
@@ -1096,18 +1093,18 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     @Override
     protected void onRestart() {
         super.onRestart();
-       enableSync();
+        enableSync();
     }
 
     private void finishItemSync(final Message msg) {
         mainHandler.post(new Runnable() {
             @Override
             public void run() {
-                if (m_ProgressDialog!=null && m_ProgressDialog.isShowing())
-                { String pdUpdate = msg.obj.toString();
-                 m_ProgressDialog.setMessage(pdUpdate);
-                  //  String pdUpdate = msg.obj.toString();
-                //    m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, totalItems/*msg.arg1*/, /*progressItem*/msg.arg2, pdUpdate);
+                if (m_ProgressDialog != null && m_ProgressDialog.isShowing()) {
+                    String pdUpdate = msg.obj.toString();
+                    m_ProgressDialog.setMessage(pdUpdate);
+                    //  String pdUpdate = msg.obj.toString();
+                    //    m_ProgressDialog = Utilities.updateProgressDialog(m_ProgressDialog, totalItems/*msg.arg1*/, /*progressItem*/msg.arg2, pdUpdate);
                     Utilities.closeProgressDialog(m_ProgressDialog, 3000);
                 }
                 networkQueue.close();
@@ -1129,8 +1126,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         mainHandler.post(new Runnable() {
             @Override
             public void run() {
-                if (m_ProgressDialog!=null && m_ProgressDialog.isShowing())
-                {
+                if (m_ProgressDialog != null && m_ProgressDialog.isShowing()) {
                     Utilities.closeProgressDialog(m_ProgressDialog, 200);
                 }
                 networkQueue.close();
@@ -1148,21 +1144,21 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         });
     }
 
-    private void downloadSurveyWrap(){
-       try {
+    private void downloadSurveyWrap() {
+        try {
             ArrayList<ModuleDTO> duplicateList = dl.viewModuleList();
             ArrayList<ModuleDTO> moduleList = dl.removeDuplicateModule(duplicateList);
             if (moduleList == null || moduleList.size() == 0) {
                 downloadSurveyWrapper.setVisibility(View.GONE);
-            }else{
+            } else {
                 downloadSurveyWrapper.setVisibility(View.VISIBLE);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private static void downloadSurvey(){
+    private static void downloadSurvey() {
 
         try {
             DataLayer dl = new DataLayer(staticContext.getResources(), staticContext);
@@ -1170,10 +1166,10 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             ArrayList<ModuleDTO> moduleList = dl.removeDuplicateModule(duplicateList);
             if (moduleList == null || moduleList.size() == 0) {
                 downloadSurveyWrapper.setVisibility(View.GONE);
-            }else{
+            } else {
                 downloadSurveyWrapper.setVisibility(View.VISIBLE);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -1202,18 +1198,18 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 syncAll.setEnabled(false);
                 syncAll.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_upload_gray));
 //                final Handler handler = new Handler(Looper.getMainLooper());
-                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_SYNC_ALL_ITEM,  ScreenNameConstants.BUTTON_CLICKED);
-                if (SystemClock.elapsedRealtime() - lastClickTime < 3000){
+                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_SYNC_ALL_ITEM, ScreenNameConstants.BUTTON_CLICKED);
+                if (SystemClock.elapsedRealtime() - lastClickTime < 3000) {
                     return;
-                }else{
+                } else {
                     if (networkQueue.getCount() > 0) {
-                        syncOptionAll=true;
+                        syncOptionAll = true;
                         setupSyncAllBtn(false);
                         bindNetworkQueue(false);
                         checkAuthenticate();
                     }
                 }
-                lastClickTime=SystemClock.elapsedRealtime();
+                lastClickTime = SystemClock.elapsedRealtime();
                /* handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -1229,7 +1225,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             addNewFarmer.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_ADD_NEW_FARMER,  ScreenNameConstants.BUTTON_CLICKED);
+                    MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_ADD_NEW_FARMER, ScreenNameConstants.BUTTON_CLICKED);
                     Intent intent = new Intent(context, AddFarmerActivity.class);
                     intent.putExtra(EDIT_FARMER_ID, (long) 0);
                     intent.putExtra(EDIT_MODE, false);
@@ -1241,7 +1237,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             completeModule.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_COMPLETE_QUESTIONNAIRE_MODULE,  ScreenNameConstants.BUTTON_CLICKED);
+                    MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_COMPLETE_QUESTIONNAIRE_MODULE, ScreenNameConstants.BUTTON_CLICKED);
                     Intent intent = new Intent(context, FindFarmerActivity.class);
                     context.startActivity(intent);
                 }
@@ -1251,7 +1247,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             addSocialInfra.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_ADD_NEW_SIP,  ScreenNameConstants.BUTTON_CLICKED);
+                    MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_ADD_NEW_SIP, ScreenNameConstants.BUTTON_CLICKED);
                     AddInfrastructureActivity.editMode = false;
                     AddInfrastructureActivity.infrastructureID = 0;
                     Intent intent = new Intent(context, AddInfrastructureActivity.class);
@@ -1278,22 +1274,22 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             captureLocation.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                   // nl.syncGPSData();
-                    MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_CAPTURE_MY_LOCATION,  ScreenNameConstants.BUTTON_CLICKED);
-                    if (SystemClock.elapsedRealtime() - lastClickTime < 3000){
+                    // nl.syncGPSData();
+                    MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_CAPTURE_MY_LOCATION, ScreenNameConstants.BUTTON_CLICKED);
+                    if (SystemClock.elapsedRealtime() - lastClickTime < 3000) {
                         return;
-                    }else {
-                        newGps=true;
+                    } else {
+                        newGps = true;
                         gpsTracker.getDeviceLocation();
                     }
-                    lastClickTime=SystemClock.elapsedRealtime();
+                    lastClickTime = SystemClock.elapsedRealtime();
                 }
             });
 
             recordTraining.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_RECORD_TRAINING,  ScreenNameConstants.BUTTON_CLICKED);
+                    MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_RECORD_TRAINING, ScreenNameConstants.BUTTON_CLICKED);
                     Intent intent = new Intent(context, Records.class);
                     context.startActivity(intent);
                 }
@@ -1344,7 +1340,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         if (!networkQueue.isClosed()) {
             networkQueue.close();
         }
-        if (m_ProgressDialog!=null && m_ProgressDialog.isShowing()) {
+        if (m_ProgressDialog != null && m_ProgressDialog.isShowing()) {
             m_ProgressDialog.dismiss();
         }
         super.onDestroy();
@@ -1383,19 +1379,19 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
 
 //            Dynatrace.identifyUser(enumeratorID.getText().toString());
-            DynatraceHelper.isAppClosed=false;
+            DynatraceHelper.isAppClosed = false;
             DynatraceHelper.findNetworkSpeed(this);
             doInitialCheck();
-        }else if(response.code() == 423){
+        } else if (response.code() == 423) {
             enableSync();
-            Toast.makeText(HomeActivity.this,getString(R.string.authentication_attempt),Toast.LENGTH_LONG).show();
-        }
-        else {
+            Toast.makeText(HomeActivity.this, getString(R.string.authentication_attempt), Toast.LENGTH_LONG).show();
+        } else {
             try {
-                FabricLogsWriter.printCrashLog(TAG,"oauth/authenticate",response.code(),"Request : :  "+new Gson().toJson(getAuthRequestDTO()).toString() +"   Response :  "+response.raw().networkResponse().toString() + "user Id :" +enumeratorID.getText().toString().trim(),context);
-            }catch (Exception e){}
+                FabricLogsWriter.printCrashLog(TAG, "oauth/authenticate", response.code(), "Request : :  " + new Gson().toJson(getAuthRequestDTO()).toString() + "   Response :  " + response.raw().networkResponse().toString() + "user Id :" + enumeratorID.getText().toString().trim(), context);
+            } catch (Exception e) {
+            }
             enableSync();
-            Toast.makeText(HomeActivity.this,getString(R.string.authentication_failed),Toast.LENGTH_LONG).show();
+            Toast.makeText(HomeActivity.this, getString(R.string.authentication_failed), Toast.LENGTH_LONG).show();
 //            Answers.getInstance().logLogin(new LoginEvent()
 //                    .putMethod("first")
 //                    .putCustomAttribute("reason", "wrong credentials")
@@ -1406,7 +1402,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     @Override
     public void onFailure(Call<AuthenticationDTO> call, Throwable t) {
         showProgress(false);
-        Toast.makeText(HomeActivity.this,getString(R.string.authentication_failed),Toast.LENGTH_LONG).show();
+        Toast.makeText(HomeActivity.this, getString(R.string.authentication_failed), Toast.LENGTH_LONG).show();
 //        Answers.getInstance().logLogin(new LoginEvent()
 //                .putMethod("first")
 //                .putCustomAttribute("reason", "network error")
@@ -1447,7 +1443,9 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 Utilities.saveLongToSharedPrefs(context, "VERSION_NUM", BuildConfig.VERSION_CODE);
                 nl.syncData();
 
-            }else{Utilities.isAppAlive=true;}
+            } else {
+                Utilities.isAppAlive = true;
+            }
         }
 
     }
@@ -1475,14 +1473,14 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                             // Permission Denied
                             Toast.makeText(this, R.string.gps_permission_denial_msg, Toast.LENGTH_LONG).show();
                             String userEnumerator = enumeratorID.getText().toString().trim();
-                            if (userEnumerator!=null && !userEnumerator.equalsIgnoreCase("")){
+                            if (userEnumerator != null && !userEnumerator.equalsIgnoreCase("")) {
                                 doingAuthRequest();
                             }
 
                         } else {
                             if (ActivityCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED) {
                                 // Permission Allowed
-                                if(checkvalue == 0) {
+                                if (checkvalue == 0) {
                                     checkvalue++;
                                     doingAuthRequest();
                                 }
@@ -1493,16 +1491,16 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                         }
                     }
                     break;
-            }catch (Exception e ){}
+                } catch (Exception e) {
+                }
 
             }
 
             case MY_PROFILE_PIC_PERMISSIONS_REQUEST: {
-                try{
+                try {
                     if (grantResults.length > 0
                             && grantResults[0] == PackageManager.PERMISSION_GRANTED
                             && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-
 
 
                     } else if (Build.VERSION.SDK_INT >= 23
@@ -1514,7 +1512,8 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                         Toast.makeText(this, R.string.camera_and_gallery_permission_denial_msg, Toast.LENGTH_LONG).show();
                     }
                     break;
-                }catch (Exception e){}
+                } catch (Exception e) {
+                }
 
             }
             case MY_SIGNATURE_PIC_PERMISSIONS_REQUEST: {
@@ -1525,7 +1524,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                             && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
 
 
-
                     } else if (Build.VERSION.SDK_INT >= 23
                             && (!shouldShowRequestPermissionRationale(permissions[0])
                             || !shouldShowRequestPermissionRationale(permissions[1]))) {
@@ -1536,9 +1534,9 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                     }
                     break;
 
-                }catch (Exception e){}
+                } catch (Exception e) {
+                }
             }
-
 
 
         }
@@ -1547,16 +1545,16 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     @Override
     public void onTokenCompleted(String status) {
         enableSync();
-        if(!status.equalsIgnoreCase("false")){
-            Utilities.minProgressCount=0;
+        if (!status.equalsIgnoreCase("false")) {
+            Utilities.minProgressCount = 0;
             DynatraceHelper.findNetworkSpeed(this);
-               if(syncOptionAll){
-                  startAllItemSync();
-              }else{
-                   startItemSync(itemId);
-              }
-        }else{
-            Toast.makeText(HomeActivity.this,getString(R.string.authentication_failed),Toast.LENGTH_LONG).show();
+            if (syncOptionAll) {
+                startAllItemSync();
+            } else {
+                startItemSync(itemId);
+            }
+        } else {
+            Toast.makeText(HomeActivity.this, getString(R.string.authentication_failed), Toast.LENGTH_LONG).show();
         }
 
     }
@@ -1682,23 +1680,25 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 bundle.putString("farmerId", String.valueOf(networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID))));
                 bundle.putString("farmId", String.valueOf(networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID))));
                 bundle.putBoolean("editMode", true);
-                bundle.putBoolean("isSurveyEnabled",false);
+                bundle.putBoolean("isSurveyEnabled", false);
                 Intent intent = new Intent(this, UpdateMultiFarmActivity.class);
                 intent.putExtras(bundle);
                 startActivity(intent);
 
             }
-        }catch (CursorIndexOutOfBoundsException e){}
+        } catch (CursorIndexOutOfBoundsException e) {
+        }
     }
 
     @Override
     public void onBackPressed() {
         //super.onBackPressed();
-      //  Toast.makeText(this,"Disable the back press",Toast.LENGTH_LONG).show();
+        //  Toast.makeText(this,"Disable the back press",Toast.LENGTH_LONG).show();
     }
 
     private static class viewSurveyWrapper extends AsyncTask<Object, Boolean, Boolean> {
         ArrayList<ModuleDTO> moduleList = new ArrayList<>();
+
         @Override
         protected Boolean doInBackground(Object... objects) {
             try {
@@ -1706,7 +1706,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 ArrayList<ModuleDTO> duplicateList = dl.viewModuleList();
                 moduleList = dl.removeDuplicateModule(duplicateList);
 
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             return null;
@@ -1717,7 +1717,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             super.onPostExecute(aBoolean);
             if (moduleList == null || moduleList.size() == 0) {
                 downloadSurveyWrapper.setVisibility(View.GONE);
-            }else{
+            } else {
                 downloadSurveyWrapper.setVisibility(View.VISIBLE);
             }
 
@@ -1730,62 +1730,63 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     //
     public static void GetAccessToken(String value) {
 
-        String isoCode = Utilities.getdatafromSharedPrefs(staticContext,"CountryUserID");
+        String isoCode = Utilities.getdatafromSharedPrefs(staticContext, "CountryUserID");
         Log.d("COUNTRY_CODENEWPREFFF", isoCode);
-        counrtyCodeNew =isoCode+"_OFIS_DO_INTERFACE";
+        counrtyCodeNew = isoCode + "_OFIS_DO_INTERFACE";
 
         progressDialog.show();
-        final AccessTokenReqBody accessTokenReqBody = new AccessTokenReqBody(counrtyCodeNew,password,system);
-        isEnableDM = Utilities.getBoolFromSharedPrefs(staticContext, Utilities.DM_ENUMERATOR,false);
-        ManageRecords GetAccessToken= RetrofitClient.getRetrofit().create(ManageRecords.class);
-        Call<AccessTokenResp> call=GetAccessToken.getAccessToken(accessTokenReqBody);
+        final AccessTokenReqBody accessTokenReqBody = new AccessTokenReqBody(counrtyCodeNew, password, system);
+        isEnableDM = Utilities.getBoolFromSharedPrefs(staticContext, Utilities.DM_ENUMERATOR, false);
+        ManageRecords GetAccessToken = RetrofitClient.getRetrofit().create(ManageRecords.class);
+        Call<AccessTokenResp> call = GetAccessToken.getAccessToken(accessTokenReqBody);
         call.enqueue(new Callback<AccessTokenResp>() {
             @Override
             public void onResponse(Call<AccessTokenResp> call, Response<AccessTokenResp> response) {
-                if(response.code()==200){
+                if (response.code() == 200) {
                     progressDialog.hide();
 
                     odAccessToken = response.body().getAccessToken();
 
                     //Toast.makeText(DownloadFarmPlanActivity.this,odAccessToken, Toast.LENGTH_SHORT).show();
-                    Log.e("OD_AccessTOKEN",odAccessToken);
+                    Log.e("OD_AccessTOKEN", odAccessToken);
 
-                        DownloadFormList("home");
+                    DownloadFormList("home");
 
-                }else if(response.code()==400){
+                } else if (response.code() == 400) {
                     progressDialog.hide();
                     Utilities.saveToSharedPrefs(staticContext, "DISPLAY_CROPPLAN", "", false);
-                    if(value.equalsIgnoreCase("home")){
+                    if (value.equalsIgnoreCase("home")) {
                         cardview_downloadFarmplan.setVisibility(View.GONE);
                     }
-                    if(isEnableDM) {
+                    if (isEnableDM) {
                         GetAllDiagnosticModule();
                     }
-                   // showAlert("Unable to fetch country name for the ISOCode"+response.message());
-                }else if (response.code()==500){
+                    // showAlert("Unable to fetch country name for the ISOCode"+response.message());
+                } else if (response.code() == 500) {
                     progressDialog.hide();
                     Utilities.saveToSharedPrefs(staticContext, "DISPLAY_CROPPLAN", "", false);
-                    if(value.equalsIgnoreCase("home")){
+                    if (value.equalsIgnoreCase("home")) {
                         cardview_downloadFarmplan.setVisibility(View.GONE);
                     }
-                    if(isEnableDM) {
+                    if (isEnableDM) {
                         GetAllDiagnosticModule();
                     }
-                   // showAlert("Internal Server Error, Please Contact Admin!!"+response.message());
-                }else{
-                    if(isEnableDM) {
+                    // showAlert("Internal Server Error, Please Contact Admin!!"+response.message());
+                } else {
+                    if (isEnableDM) {
                         GetAllDiagnosticModule();
                     }
                 }
-                if(isEnableDM) {
+                if (isEnableDM) {
                     GetAllDiagnosticModule();
                 }
             }
+
             @Override
             public void onFailure(Call<AccessTokenResp> call, Throwable t) {
                 progressDialog.hide();
 //                Toast.makeText(staticContext, t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
-                if(isEnableDM) {
+                if (isEnableDM) {
                     GetAllDiagnosticModule();
                 }
             }
@@ -1796,76 +1797,78 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     /*Get DownLoad Farm Form List*/
     public static void DownloadFormList(String value) {
         //progressDialog.show();
-       // String userEnumeratorID = enumeratorID.getText().toString().trim();
-        ManageRecords AllFarmFormList= RetrofitClient.getRetrofit().create(ManageRecords.class);
-        Call<DownloadFormList> call=AllFarmFormList.getAllFarmFormList(1,counrtyCodeNew, Integer.valueOf(Utilities.getFromSharedPrefs(staticContext)),odAccessToken);
+        // String userEnumeratorID = enumeratorID.getText().toString().trim();
+        ManageRecords AllFarmFormList = RetrofitClient.getRetrofit().create(ManageRecords.class);
+        Call<DownloadFormList> call = AllFarmFormList.getAllFarmFormList(1, counrtyCodeNew, Integer.valueOf(Utilities.getFromSharedPrefs(staticContext)), odAccessToken);
         call.enqueue(new Callback<DownloadFormList>() {
 
             @Override
             public void onResponse(Call<DownloadFormList> call, Response<DownloadFormList> response) {
-                Log.e("ListOnResponse",response.message());
-                Log.e("ListOnRequest",call.toString());
+                Log.e("ListOnResponse", response.message());
+                Log.e("ListOnRequest", call.toString());
 
-                if(response.code()==200){
+                if (response.code() == 200) {
 
                     //Toast.makeText(DownloadFarmPlanActivity.this, "Farm Plan is available to download", Toast.LENGTH_SHORT).show();
-                   // progressDialog.hide();
-                    if(response.body()!=null && response.body().getStatusCode()==200){
-                        if(response.body().getData()!=null){
+                    // progressDialog.hide();
+                    if (response.body() != null && response.body().getStatusCode() == 200) {
+                        if (response.body().getData() != null) {
                             //data1 =response.body().getData();
 
-                            ArrayList < DownloadFormList.data > dataArrayList = response.body().getData();;
-                           // dataArrayList = response.body().getData();
+                            ArrayList<DownloadFormList.data> dataArrayList = response.body().getData();
+                            ;
+                            // dataArrayList = response.body().getData();
                             //String[] names = new String[dataArrayList.size()];
                             for (int i = 0; i < dataArrayList.size(); i++) {
-                                 isdownloadfarmplan = dataArrayList.get(i).isIsdownloadfarmplan();
-                                 Log.d("FARMPLAN_Status", String.valueOf(isdownloadfarmplan));
+                                isdownloadfarmplan = dataArrayList.get(i).isIsdownloadfarmplan();
+                                Log.d("FARMPLAN_Status", String.valueOf(isdownloadfarmplan));
 
-                                 if(isdownloadfarmplan && dataArrayList.size()>0){
-                                     Utilities.saveToSharedPrefs(staticContext, "DISPLAY_CROPPLAN", "", true);
-                                     if(value.equalsIgnoreCase("home")){
-                                         cardview_downloadFarmplan.setVisibility(View.VISIBLE);
-                                     }
+                                if (isdownloadfarmplan && dataArrayList.size() > 0) {
+                                    Utilities.saveToSharedPrefs(staticContext, "DISPLAY_CROPPLAN", "", true);
+                                    if (value.equalsIgnoreCase("home")) {
+                                        cardview_downloadFarmplan.setVisibility(View.VISIBLE);
+                                    }
 
-                                }else{
-                                     Utilities.saveToSharedPrefs(staticContext, "DISPLAY_CROPPLAN", "", false);
-                                     if(value.equalsIgnoreCase("home")){
-                                         cardview_downloadFarmplan.setVisibility(View.GONE);
-                                     }
-                                 }
+                                } else {
+                                    Utilities.saveToSharedPrefs(staticContext, "DISPLAY_CROPPLAN", "", false);
+                                    if (value.equalsIgnoreCase("home")) {
+                                        cardview_downloadFarmplan.setVisibility(View.GONE);
+                                    }
+                                }
                             }
-                            Log.e("ListRespValue",response.body().getStatusMessage());
+                            Log.e("ListRespValue", response.body().getStatusMessage());
 
-                        }else{
+                        } else {
                             //Toast.makeText(DownloadFarmPlanActivity.this,response.body().getStatusMessage(), Toast.LENGTH_SHORT).show();
                             //Toast.makeText(DownloadFarmPlanActivity.this, R.string.error, Toast.LENGTH_SHORT).show();
                             //showAlert(response.body().getStatusMessage());
                         }
-                    }else{
-                       // showAlert(response.body().getStatusMessage());
+                    } else {
+                        // showAlert(response.body().getStatusMessage());
                         // Toast.makeText(DownloadFarmPlanActivity.this, R.string.no_data_found, Toast.LENGTH_SHORT).show();
                     }
-                }else if(response.code()==400){
-                   // progressDialog.hide();
+                } else if (response.code() == 400) {
+                    // progressDialog.hide();
                     //showAlert(response.message().toString());
                     //Toast.makeText(staticContext,"Bad Request", Toast.LENGTH_SHORT).show();
-                    Log.d("BadRequest-",response.message());
-                }else if(response.code()==500){
+                    Log.d("BadRequest-", response.message());
+                } else if (response.code() == 500) {
                     //progressDialog.hide();
                     //showAlert("Internal Server Error, Please Contact Admin!!-"+response.message().toString());
-                }else{
-                   // showAlert("Server Issue!!"+response.message().toString());
+                } else {
+                    // showAlert("Server Issue!!"+response.message().toString());
                 }
-               if(isEnableDM) {
+                if (isEnableDM) {
                     GetAllDiagnosticModule();
                 }
             }
+
             @Override
             public void onFailure(Call<DownloadFormList> call, Throwable t) {
                 //progressDialog.hide();
                 //Toast.makeText(staticContext, t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
-               // GetAllDiagnosticModuleHome();
-                if(isEnableDM) {
+                // GetAllDiagnosticModuleHome();
+                if (isEnableDM) {
                     GetAllDiagnosticModule();
                 }
             }
@@ -1886,12 +1889,12 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
     }
 
-    public boolean isOnline(Context c){
-        ConnectivityManager cm=(ConnectivityManager)c.getSystemService(Context.CONNECTIVITY_SERVICE);
-        @SuppressLint("MissingPermission") NetworkInfo ni=cm.getActiveNetworkInfo();
-        if(ni !=null && ni.isConnectedOrConnecting()){
+    public boolean isOnline(Context c) {
+        ConnectivityManager cm = (ConnectivityManager) c.getSystemService(Context.CONNECTIVITY_SERVICE);
+        @SuppressLint("MissingPermission") NetworkInfo ni = cm.getActiveNetworkInfo();
+        if (ni != null && ni.isConnectedOrConnecting()) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
@@ -1927,626 +1930,633 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                         db.dmRangeTextBoxModuleQuestionsTableDao().deleteAll();
                         db.complianceIndicatorDao().deleteAll();
                         db.dmCurrencyDao().deleteAll();
+                        db.dmRangeActionPlansItemsDao().deleteAll();
 
                         if (response.body().getDiagnosticModules() != null) {
                             ArrayList<DiagnosticModulesList> mainResponseList = new ArrayList<>();
                             mainResponseList.clear();
                             mainResponseList = response.body().getDiagnosticModules();
 
-                            try{
-                            for (int i = 0; i < mainResponseList.size(); i++) {
-                                int id = mainResponseList.get(i).getId();
-                                int followUpDuration = mainResponseList.get(i).getFollowUpDuration();
-                                String assessmentType = mainResponseList.get(i).getAssessmentType();
-                                int surveyType = mainResponseList.get(i).getSurveyType();
-                                int followUpAttempts = mainResponseList.get(i).getFollowUpAttempts();
-                                String name = mainResponseList.get(i).getName();
-                                String nameFr = mainResponseList.get(i).getNameFr();
-                                String nameIdn = mainResponseList.get(i).getNameIdn();
-                                String namePt = mainResponseList.get(i).getNamePt();
-                                String nameLo = mainResponseList.get(i).getNameLo();
-                                String nameTr = mainResponseList.get(i).getNameTr();
-                                String nameTh = mainResponseList.get(i).getNameTh();
-                                String nameVi = mainResponseList.get(i).getNameVi();
-                                String nameEs = mainResponseList.get(i).getNameEs();
-                                String descriptionPt = mainResponseList.get(i).getDescriptionPt();
-                                String description = mainResponseList.get(i).getDescription();
-                                String descriptionVi = mainResponseList.get(i).getDescriptionVi();
-                                String descriptionEs = mainResponseList.get(i).getDescriptionEs();
-                                String descriptionTh = mainResponseList.get(i).getDescriptionTh();
-                                String descriptionLo = mainResponseList.get(i).getDescriptionLo();
-                                String descriptionIdn = mainResponseList.get(i).getDescriptionIdn();
-                                String descriptionTr = mainResponseList.get(i).getDescriptionTr();
-                                String descriptionFr = mainResponseList.get(i).getDescriptionFr();
+                            try {
+                                for (int i = 0; i < mainResponseList.size(); i++) {
+                                    int id = mainResponseList.get(i).getId();
+                                    int followUpDuration = mainResponseList.get(i).getFollowUpDuration();
+                                    String assessmentType = mainResponseList.get(i).getAssessmentType();
+                                    int surveyType = mainResponseList.get(i).getSurveyType();
+                                    int followUpAttempts = mainResponseList.get(i).getFollowUpAttempts();
+                                    String name = mainResponseList.get(i).getName();
+                                    String nameFr = mainResponseList.get(i).getNameFr();
+                                    String nameIdn = mainResponseList.get(i).getNameIdn();
+                                    String namePt = mainResponseList.get(i).getNamePt();
+                                    String nameLo = mainResponseList.get(i).getNameLo();
+                                    String nameTr = mainResponseList.get(i).getNameTr();
+                                    String nameTh = mainResponseList.get(i).getNameTh();
+                                    String nameVi = mainResponseList.get(i).getNameVi();
+                                    String nameEs = mainResponseList.get(i).getNameEs();
+                                    String descriptionPt = mainResponseList.get(i).getDescriptionPt();
+                                    String description = mainResponseList.get(i).getDescription();
+                                    String descriptionVi = mainResponseList.get(i).getDescriptionVi();
+                                    String descriptionEs = mainResponseList.get(i).getDescriptionEs();
+                                    String descriptionTh = mainResponseList.get(i).getDescriptionTh();
+                                    String descriptionLo = mainResponseList.get(i).getDescriptionLo();
+                                    String descriptionIdn = mainResponseList.get(i).getDescriptionIdn();
+                                    String descriptionTr = mainResponseList.get(i).getDescriptionTr();
+                                    String descriptionFr = mainResponseList.get(i).getDescriptionFr();
 
-                                List<ComplianceIndicatorItem> complianceIndicatorItemList = new ArrayList<>();
-                                complianceIndicatorItemList.clear();
-                                complianceIndicatorItemList = mainResponseList.get(i).getComplianceIndicator();
-                                List<CurrencyItem> currencyItemList = new ArrayList<>();
-                                currencyItemList.clear();
-                                currencyItemList = mainResponseList.get(i).getCurrency();
-                                List<QuestionsItem> questionsItemList = new ArrayList<>();
-                                questionsItemList.clear();
-                                questionsItemList = mainResponseList.get(i).getQuestions();
+                                    List<ComplianceIndicatorItem> complianceIndicatorItemList = new ArrayList<>();
+                                    complianceIndicatorItemList.clear();
+                                    complianceIndicatorItemList = mainResponseList.get(i).getComplianceIndicator();
+                                    List<CurrencyItem> currencyItemList = new ArrayList<>();
+                                    currencyItemList.clear();
+                                    currencyItemList = mainResponseList.get(i).getCurrency();
+                                    List<QuestionsItem> questionsItemList = new ArrayList<>();
+                                    questionsItemList.clear();
+                                    questionsItemList = mainResponseList.get(i).getQuestions();
 
-                                List<SectionsItem> sectionsItemList = new ArrayList<>();
-                                sectionsItemList.clear();
-                                sectionsItemList = mainResponseList.get(i).getSections();
-                                Recurrence recurrences = mainResponseList.get(i).getRecurrence();
+                                    List<SectionsItem> sectionsItemList = new ArrayList<>();
+                                    sectionsItemList.clear();
+                                    sectionsItemList = mainResponseList.get(i).getSections();
+                                    Recurrence recurrences = mainResponseList.get(i).getRecurrence();
 
-                                DmMainModule user = new DmMainModule();
-                                user.id = id;
-                                user.name = name;
-                                user.nameFr = nameFr;
-                                user.nameIdn = nameIdn;
-                                user.namePt = namePt;
-                                user.nameLo = nameLo;
-                                user.nameTr = nameTr;
-                                user.nameTh = nameTh;
-                                user.nameVi = nameVi;
-                                user.nameEs = nameEs;
-                                user.descriptionPt = descriptionPt;
-                                user.description = description;
-                                user.descriptionVi = descriptionVi;
-                                user.descriptionEs = descriptionEs;
-                                user.descriptionTh = descriptionTh;
-                                user.descriptionLo = descriptionLo;
-                                user.descriptionIdn = descriptionIdn;
-                                user.descriptionTr = descriptionTr;
-                                user.descriptionFr = descriptionFr;
+                                    DmMainModule user = new DmMainModule();
+                                    user.id = id;
+                                    user.name = name;
+                                    user.nameFr = nameFr;
+                                    user.nameIdn = nameIdn;
+                                    user.namePt = namePt;
+                                    user.nameLo = nameLo;
+                                    user.nameTr = nameTr;
+                                    user.nameTh = nameTh;
+                                    user.nameVi = nameVi;
+                                    user.nameEs = nameEs;
+                                    user.descriptionPt = descriptionPt;
+                                    user.description = description;
+                                    user.descriptionVi = descriptionVi;
+                                    user.descriptionEs = descriptionEs;
+                                    user.descriptionTh = descriptionTh;
+                                    user.descriptionLo = descriptionLo;
+                                    user.descriptionIdn = descriptionIdn;
+                                    user.descriptionTr = descriptionTr;
+                                    user.descriptionFr = descriptionFr;
 
-                                user.surveyType = surveyType;
-                                user.followUpDuration = followUpDuration;
-                                user.assessmentType = assessmentType;
-                                user.followUpAttempts = followUpAttempts;
+                                    user.surveyType = surveyType;
+                                    user.followUpDuration = followUpDuration;
+                                    user.assessmentType = assessmentType;
+                                    user.followUpAttempts = followUpAttempts;
 
-                                db.dmMainModuleDao().insert(user);
+                                    db.dmMainModuleDao().insert(user);
 
-                                try {
+                                    try {
 
-                                    for (int j = 0; j < complianceIndicatorItemList.size(); j++) {
-
-
-                                        int moduleDraftId = complianceIndicatorItemList.get(j).getModuleDraftId();
-                                        int id_Compliance = complianceIndicatorItemList.get(j).getId();
-                                        String compliance = complianceIndicatorItemList.get(j).getCompliance();
-                                        String label = complianceIndicatorItemList.get(j).getLabel();
-                                        String labelTh = complianceIndicatorItemList.get(j).getLabelTh();
-                                        String labelPt = complianceIndicatorItemList.get(j).getLabelPt();
-                                        String labelIdn = complianceIndicatorItemList.get(j).getLabelIdn();
-                                        String labelEs = complianceIndicatorItemList.get(j).getLabelEs();
-                                        String labelTr = complianceIndicatorItemList.get(j).getLabelTr();
-                                        String labelFr = complianceIndicatorItemList.get(j).getLabelFr();
-                                        String labelLo = complianceIndicatorItemList.get(j).getLabelLo();
-                                        String labelVi = complianceIndicatorItemList.get(j).getLabelVi();
+                                        for (int j = 0; j < complianceIndicatorItemList.size(); j++) {
 
 
-                                        ComplianceIndicator complianceIndicator = new ComplianceIndicator();
-                                        complianceIndicator.moduleDraftId = moduleDraftId;
-                                        complianceIndicator.id = id_Compliance;
-                                        complianceIndicator.compliance = compliance;
-                                        complianceIndicator.label = label;
-                                        complianceIndicator.labelTh = labelTh;
-                                        complianceIndicator.labelPt = labelPt;
-                                        complianceIndicator.labelIdn = labelIdn;
-                                        complianceIndicator.labelEs = labelEs;
-                                        complianceIndicator.labelTr = labelTr;
-                                        complianceIndicator.labelFr = labelFr;
-                                        complianceIndicator.labelLo = labelLo;
-                                        complianceIndicator.labelVi = labelVi;
+                                            int moduleDraftId = complianceIndicatorItemList.get(j).getModuleDraftId();
+                                            int id_Compliance = complianceIndicatorItemList.get(j).getId();
+                                            String compliance = complianceIndicatorItemList.get(j).getCompliance();
+                                            String label = complianceIndicatorItemList.get(j).getLabel();
+                                            String labelTh = complianceIndicatorItemList.get(j).getLabelTh();
+                                            String labelPt = complianceIndicatorItemList.get(j).getLabelPt();
+                                            String labelIdn = complianceIndicatorItemList.get(j).getLabelIdn();
+                                            String labelEs = complianceIndicatorItemList.get(j).getLabelEs();
+                                            String labelTr = complianceIndicatorItemList.get(j).getLabelTr();
+                                            String labelFr = complianceIndicatorItemList.get(j).getLabelFr();
+                                            String labelLo = complianceIndicatorItemList.get(j).getLabelLo();
+                                            String labelVi = complianceIndicatorItemList.get(j).getLabelVi();
 
-                                        db.complianceIndicatorDao().insert(complianceIndicator);
+
+                                            ComplianceIndicator complianceIndicator = new ComplianceIndicator();
+                                            complianceIndicator.moduleDraftId = moduleDraftId;
+                                            complianceIndicator.id = id_Compliance;
+                                            complianceIndicator.compliance = compliance;
+                                            complianceIndicator.label = label;
+                                            complianceIndicator.labelTh = labelTh;
+                                            complianceIndicator.labelPt = labelPt;
+                                            complianceIndicator.labelIdn = labelIdn;
+                                            complianceIndicator.labelEs = labelEs;
+                                            complianceIndicator.labelTr = labelTr;
+                                            complianceIndicator.labelFr = labelFr;
+                                            complianceIndicator.labelLo = labelLo;
+                                            complianceIndicator.labelVi = labelVi;
+
+                                            db.complianceIndicatorDao().insert(complianceIndicator);
+                                        }
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
                                     }
-                                }catch (Exception e){
-                                    e.printStackTrace();
-                                }
 
-                                try {
+                                    try {
 
-                                    for (int k = 0; k < currencyItemList.size(); k++) {
+                                        for (int k = 0; k < currencyItemList.size(); k++) {
 
-                                        int moduleDraftId = currencyItemList.get(k).getModuleDraftId();
-                                        int currencyDraftId = currencyItemList.get(k).getCurrencyDraftId();
-                                        int currencyId = currencyItemList.get(k).getCurrencyId();
-                                        boolean isDefault = currencyItemList.get(k).isIsDefault();
+                                            int moduleDraftId = currencyItemList.get(k).getModuleDraftId();
+                                            int currencyDraftId = currencyItemList.get(k).getCurrencyDraftId();
+                                            int currencyId = currencyItemList.get(k).getCurrencyId();
+                                            boolean isDefault = currencyItemList.get(k).isIsDefault();
 
-                                        DmCurrency dmCurrency = new DmCurrency();
-                                        dmCurrency.moduleDraftId = moduleDraftId;
-                                        dmCurrency.currencyDraftId = currencyDraftId;
-                                        dmCurrency.currencyId = currencyId;
-                                        dmCurrency.isDefault = isDefault;
+                                            DmCurrency dmCurrency = new DmCurrency();
+                                            dmCurrency.moduleDraftId = moduleDraftId;
+                                            dmCurrency.currencyDraftId = currencyDraftId;
+                                            dmCurrency.currencyId = currencyId;
+                                            dmCurrency.isDefault = isDefault;
 
-                                        db.dmCurrencyDao().insert(dmCurrency);
-
-                                    }
-                                }catch (Exception e){
-                                    e.printStackTrace();
-                                }
-                                try{
-                                for (int l = 0; l < questionsItemList.size(); l++) {
-
-                                    boolean mandate = questionsItemList.get(l).isMandate();
-                                    String question = questionsItemList.get(l).getQuestion();
-                                    String questionTr = questionsItemList.get(l).getQuestionTr();
-                                    String questionPt = questionsItemList.get(l).getQuestionPt();
-                                    String questionLo = questionsItemList.get(l).getQuestionLo();
-                                    String questionFr = questionsItemList.get(l).getQuestionFr();
-                                    String questionIdn = questionsItemList.get(l).getQuestionIdn();
-                                    String questionEs = questionsItemList.get(l).getQuestionEs();
-                                    String questionTh = questionsItemList.get(l).getQuestionTh();
-                                    String questionVi = questionsItemList.get(l).getQuestionVi();
-                                    int displaytypeId = questionsItemList.get(l).getDisplaytypeId();
-                                    int datatypeId = questionsItemList.get(l).getDatatypeId();
-                                    boolean isCriticalQuest = questionsItemList.get(l).isCriticalQuest();
-                                    String displayType = questionsItemList.get(l).getDisplayType();
-                                    int id_questionModule = questionsItemList.get(l).getId();
-                                    int position = questionsItemList.get(l).getPosition();
-                                    int moduleId = questionsItemList.get(l).getModuleId();
-                                    int submoduleId = questionsItemList.get(l).getSubmoduleId();
-
-                                    DmQuestionsModule dmQuestionsModule = new DmQuestionsModule();
-                                    dmQuestionsModule.mandate = mandate;
-                                    dmQuestionsModule.question = question;
-                                    dmQuestionsModule.questionTr = questionTr;
-                                    dmQuestionsModule.questionPt = questionPt;
-                                    dmQuestionsModule.questionLo = questionLo;
-                                    dmQuestionsModule.questionFr = questionFr;
-                                    dmQuestionsModule.questionIdn = questionIdn;
-                                    dmQuestionsModule.questionEs = questionEs;
-                                    dmQuestionsModule.questionTh = questionTh;
-                                    dmQuestionsModule.questionVi = questionVi;
-                                    dmQuestionsModule.displaytypeId = displaytypeId;
-                                    dmQuestionsModule.datatypeId = datatypeId;
-                                    dmQuestionsModule.isCriticalQuest = isCriticalQuest;
-                                    dmQuestionsModule.displayType = displayType;
-                                    dmQuestionsModule.id = id_questionModule;
-                                    dmQuestionsModule.position = position;
-                                    dmQuestionsModule.moduleId = moduleId;
-                                    dmQuestionsModule.submoduleId = submoduleId;
-                                    dmQuestionsModule.sectionId = 0;
-                                    db.dmQuestionsModuleDao().insert(dmQuestionsModule);
-
-                                    List<LookupValuesItem> lookupValuesItemList = new ArrayList<>();
-                                    lookupValuesItemList.clear();
-                                    lookupValuesItemList = questionsItemList.get(l).getLookupValues();
-
-                                    TextBoxModuleQuestions textBoxModuleQuestions = questionsItemList.get(l).getTextBoxModuleQuestions();
-
-
-                                    if (lookupValuesItemList != null) {
-                                        for (int m = 0; m < lookupValuesItemList.size(); m++) {
-
-                                            String valueId = lookupValuesItemList.get(m).getValueId();
-                                            String valueTr = lookupValuesItemList.get(m).getValueTr();
-                                            String valueVi = lookupValuesItemList.get(m).getValueVi();
-                                            String valueTh = lookupValuesItemList.get(m).getValueTh();
-                                            String valueEs = lookupValuesItemList.get(m).getValueEs();
-                                            String valueFr = lookupValuesItemList.get(m).getValueFr();
-                                            String valueLo = lookupValuesItemList.get(m).getValueLo();
-                                            String valuePt = lookupValuesItemList.get(m).getValuePt();
-                                            String value = lookupValuesItemList.get(m).getValue();
-                                            int position_lookupValues = lookupValuesItemList.get(m).getPosition();
-                                            int id_lookupValues = lookupValuesItemList.get(m).getId();
-                                            boolean allowCustomActionPlan = lookupValuesItemList.get(m).isAllowCustomActionPlan();
-                                            String compliance = lookupValuesItemList.get(m).getCompliance();
-                                            int complianceId = lookupValuesItemList.get(m).getComplianceId();
-                                            boolean isCaptureProof = lookupValuesItemList.get(m).isCaptureProof();
-                                            String proofFormat = lookupValuesItemList.get(m).getProofFormat();
-
-                                            DmLookupValuesItem dmLookupValuesItem = new DmLookupValuesItem();
-                                            dmLookupValuesItem.valueId = valueId;
-                                            dmLookupValuesItem.valueTr = valueTr;
-                                            dmLookupValuesItem.valueVi = valueVi;
-                                            dmLookupValuesItem.valueTh = valueTh;
-                                            dmLookupValuesItem.valueEs = valueEs;
-                                            dmLookupValuesItem.valueFr = valueFr;
-                                            dmLookupValuesItem.valueLo = valueLo;
-                                            dmLookupValuesItem.valuePt = valuePt;
-                                            dmLookupValuesItem.value = value;
-                                            dmLookupValuesItem.position = position_lookupValues;
-                                            dmLookupValuesItem.id = id_lookupValues;
-                                            dmLookupValuesItem.idQuestionsMudule = id_questionModule;
-                                            dmLookupValuesItem.allowCustomActionPlan = allowCustomActionPlan;
-                                            dmLookupValuesItem.compliance = compliance;
-                                            dmLookupValuesItem.complianceId = complianceId;
-                                            dmLookupValuesItem.isCaptureProof = isCaptureProof;
-                                            dmLookupValuesItem.proofFormat = proofFormat;
-
-                                            db.dmLookupValuesItemDao().insert(dmLookupValuesItem);
-
-
-                                            List<ActionPlansItem> actionPlansItemList = new ArrayList<>();
-                                            actionPlansItemList.clear();
-                                            actionPlansItemList = lookupValuesItemList.get(m).getActionPlans();
-
-                                            if (actionPlansItemList != null) {
-                                                for (int n = 0; n < actionPlansItemList.size(); n++) {
-                                                    int id_actionPlan = actionPlansItemList.get(n).getId();
-                                                    boolean isDefault = actionPlansItemList.get(n).isIsDefault();
-                                                    String actionPlan = actionPlansItemList.get(n).getActionPlan();
-
-                                                    DmActionPlansItem dmActionPlansItem = new DmActionPlansItem();
-                                                    dmActionPlansItem.id = id_actionPlan;
-                                                    dmActionPlansItem.id_lookupValue = id_lookupValues;
-                                                    dmActionPlansItem.questionId = id_questionModule;
-                                                    dmActionPlansItem.isDefault = isDefault;
-                                                    dmActionPlansItem.actionPlan = actionPlan;
-
-                                                    db.dmActionPlansItemDao().insert(dmActionPlansItem);
-                                                }
-                                            }
-
+                                            db.dmCurrencyDao().insert(dmCurrency);
 
                                         }
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
                                     }
+                                    try {
+                                        for (int l = 0; l < questionsItemList.size(); l++) {
 
-                                    if (textBoxModuleQuestions != null) {
-                                        int answerType = textBoxModuleQuestions.getAnswerType();
-                                        boolean isAllowNegative = textBoxModuleQuestions.isAllowNegative();
-                                        boolean isAllowDecimal = textBoxModuleQuestions.isAllowDecimal();
-                                        double minimumRange = textBoxModuleQuestions.getMinimumRange();
-                                        double maximumRange = textBoxModuleQuestions.getMaximumRange();
+                                            boolean mandate = questionsItemList.get(l).isMandate();
+                                            String question = questionsItemList.get(l).getQuestion();
+                                            String questionTr = questionsItemList.get(l).getQuestionTr();
+                                            String questionPt = questionsItemList.get(l).getQuestionPt();
+                                            String questionLo = questionsItemList.get(l).getQuestionLo();
+                                            String questionFr = questionsItemList.get(l).getQuestionFr();
+                                            String questionIdn = questionsItemList.get(l).getQuestionIdn();
+                                            String questionEs = questionsItemList.get(l).getQuestionEs();
+                                            String questionTh = questionsItemList.get(l).getQuestionTh();
+                                            String questionVi = questionsItemList.get(l).getQuestionVi();
+                                            int displaytypeId = questionsItemList.get(l).getDisplaytypeId();
+                                            int datatypeId = questionsItemList.get(l).getDatatypeId();
+                                            boolean isCriticalQuest = questionsItemList.get(l).isCriticalQuest();
+                                            String displayType = questionsItemList.get(l).getDisplayType();
+                                            int id_questionModule = questionsItemList.get(l).getId();
+                                            int position = questionsItemList.get(l).getPosition();
+                                            int moduleId = questionsItemList.get(l).getModuleId();
+                                            int submoduleId = questionsItemList.get(l).getSubmoduleId();
 
-                                        DmTextBoxModuleQuestions dmTextBoxModuleQuestions = new DmTextBoxModuleQuestions();
-                                        dmTextBoxModuleQuestions.answerType = answerType;
-                                        dmTextBoxModuleQuestions.isAllowNegative = isAllowNegative;
-                                        dmTextBoxModuleQuestions.isAllowDecimal = isAllowDecimal;
-                                        dmTextBoxModuleQuestions.minimumRange = minimumRange;
-                                        dmTextBoxModuleQuestions.maximumRange = maximumRange;
-                                        dmTextBoxModuleQuestions.questionId = id_questionModule;
-                                        db.dmTextBoxModuleQuestionsDao().insert(dmTextBoxModuleQuestions);
+                                            DmQuestionsModule dmQuestionsModule = new DmQuestionsModule();
+                                            dmQuestionsModule.mandate = mandate;
+                                            dmQuestionsModule.question = question;
+                                            dmQuestionsModule.questionTr = questionTr;
+                                            dmQuestionsModule.questionPt = questionPt;
+                                            dmQuestionsModule.questionLo = questionLo;
+                                            dmQuestionsModule.questionFr = questionFr;
+                                            dmQuestionsModule.questionIdn = questionIdn;
+                                            dmQuestionsModule.questionEs = questionEs;
+                                            dmQuestionsModule.questionTh = questionTh;
+                                            dmQuestionsModule.questionVi = questionVi;
+                                            dmQuestionsModule.displaytypeId = displaytypeId;
+                                            dmQuestionsModule.datatypeId = datatypeId;
+                                            dmQuestionsModule.isCriticalQuest = isCriticalQuest;
+                                            dmQuestionsModule.displayType = displayType;
+                                            dmQuestionsModule.id = id_questionModule;
+                                            dmQuestionsModule.position = position;
+                                            dmQuestionsModule.moduleId = moduleId;
+                                            dmQuestionsModule.submoduleId = submoduleId;
+                                            dmQuestionsModule.sectionId = 0;
+                                            db.dmQuestionsModuleDao().insert(dmQuestionsModule);
 
-                                        List<DmRangeTextBoxModuleQuestions> dmRangeTextBoxModuleQuestionsList = new ArrayList<>();
-                                        dmRangeTextBoxModuleQuestionsList.clear();
-                                        dmRangeTextBoxModuleQuestionsList = textBoxModuleQuestions.getDmRangeQuestionsList();
+                                            List<LookupValuesItem> lookupValuesItemList = new ArrayList<>();
+                                            lookupValuesItemList.clear();
+                                            lookupValuesItemList = questionsItemList.get(l).getLookupValues();
 
-
-                                        if (dmRangeTextBoxModuleQuestionsList != null) {
-                                            for (int r = 0; r < dmRangeTextBoxModuleQuestionsList.size(); r++) {
-                                                double minimumRange_range = dmRangeTextBoxModuleQuestionsList.get(r).getMinimumRange();
-                                                double maximumRange_range = dmRangeTextBoxModuleQuestionsList.get(r).getMaximumRange();
-                                                String compliance = dmRangeTextBoxModuleQuestionsList.get(r).getCompliance();
-                                                int complianceId = dmRangeTextBoxModuleQuestionsList.get(r).getComplianceId();
-                                                boolean allowCustomActionPlan = dmRangeTextBoxModuleQuestionsList.get(r).isAllowCustomActionPlan();
-                                                boolean isCaptureProof = dmRangeTextBoxModuleQuestionsList.get(r).isCaptureProof();
-                                                String proofFormat = dmRangeTextBoxModuleQuestionsList.get(r).getProofFormat();
-
-                                                DmRangeTextBoxModuleQuestionsTable dmRangeTextBoxModuleQuestionsTable = new DmRangeTextBoxModuleQuestionsTable();
-                                                dmRangeTextBoxModuleQuestionsTable.minimumRange = minimumRange_range;
-                                                dmRangeTextBoxModuleQuestionsTable.maximumRange = maximumRange_range;
-                                                dmRangeTextBoxModuleQuestionsTable.compliance = compliance;
-                                                dmRangeTextBoxModuleQuestionsTable.complianceId = complianceId;
-                                                dmRangeTextBoxModuleQuestionsTable.allowCustomActionPlan = allowCustomActionPlan;
-                                                dmRangeTextBoxModuleQuestionsTable.isCaptureProof = isCaptureProof;
-                                                dmRangeTextBoxModuleQuestionsTable.proofFormat = proofFormat;
-                                                dmRangeTextBoxModuleQuestionsTable.questionId = id_questionModule;
-                                                db.dmRangeTextBoxModuleQuestionsTableDao().insert(dmRangeTextBoxModuleQuestionsTable);
-
-                                                List<DmRangeTextBoxActionPlans> dmRangeTextBoxActionPlansList = new ArrayList<>();
-                                                dmRangeTextBoxActionPlansList.clear();
-                                                dmRangeTextBoxActionPlansList = dmRangeTextBoxModuleQuestionsList.get(r).getDmRangeTextBoxActionPlansList();
-
-
-                                                if (dmRangeTextBoxActionPlansList != null) {
-                                                    for (int ra = 0; ra < dmRangeTextBoxActionPlansList.size(); ra++) {
-                                                        int id_actionPlan = dmRangeTextBoxActionPlansList.get(ra).getId();
-                                                        boolean isDefault = dmRangeTextBoxActionPlansList.get(ra).isDefault();
-                                                        String actionPlan = dmRangeTextBoxActionPlansList.get(ra).getActionPlan();
-
-                                                        DmRangeActionPlansItems dmRangeActionPlansItems = new DmRangeActionPlansItems();
-                                                        dmRangeActionPlansItems.id = id_actionPlan;
-                                                        dmRangeActionPlansItems.isDefault = isDefault;
-                                                        dmRangeActionPlansItems.actionPlan = actionPlan;
-                                                        dmRangeActionPlansItems.questionId = id_questionModule;
-                                                        dmRangeActionPlansItems.complainceId = complianceId;
-
-                                                        db.dmRangeActionPlansItemsDao().insert(dmRangeActionPlansItems);
+                                            TextBoxModuleQuestions textBoxModuleQuestions = questionsItemList.get(l).getTextBoxModuleQuestions();
 
 
+                                            if (lookupValuesItemList != null) {
+                                                for (int m = 0; m < lookupValuesItemList.size(); m++) {
+
+                                                    String valueId = lookupValuesItemList.get(m).getValueId();
+                                                    String valueTr = lookupValuesItemList.get(m).getValueTr();
+                                                    String valueVi = lookupValuesItemList.get(m).getValueVi();
+                                                    String valueTh = lookupValuesItemList.get(m).getValueTh();
+                                                    String valueEs = lookupValuesItemList.get(m).getValueEs();
+                                                    String valueFr = lookupValuesItemList.get(m).getValueFr();
+                                                    String valueLo = lookupValuesItemList.get(m).getValueLo();
+                                                    String valuePt = lookupValuesItemList.get(m).getValuePt();
+                                                    String value = lookupValuesItemList.get(m).getValue();
+                                                    int position_lookupValues = lookupValuesItemList.get(m).getPosition();
+                                                    int id_lookupValues = lookupValuesItemList.get(m).getId();
+                                                    boolean allowCustomActionPlan = lookupValuesItemList.get(m).isAllowCustomActionPlan();
+                                                    String compliance = lookupValuesItemList.get(m).getCompliance();
+                                                    int complianceId = lookupValuesItemList.get(m).getComplianceId();
+                                                    boolean isCaptureProof = lookupValuesItemList.get(m).isCaptureProof();
+                                                    String proofFormat = lookupValuesItemList.get(m).getProofFormat();
+
+                                                    DmLookupValuesItem dmLookupValuesItem = new DmLookupValuesItem();
+                                                    dmLookupValuesItem.valueId = valueId;
+                                                    dmLookupValuesItem.valueTr = valueTr;
+                                                    dmLookupValuesItem.valueVi = valueVi;
+                                                    dmLookupValuesItem.valueTh = valueTh;
+                                                    dmLookupValuesItem.valueEs = valueEs;
+                                                    dmLookupValuesItem.valueFr = valueFr;
+                                                    dmLookupValuesItem.valueLo = valueLo;
+                                                    dmLookupValuesItem.valuePt = valuePt;
+                                                    dmLookupValuesItem.value = value;
+                                                    dmLookupValuesItem.position = position_lookupValues;
+                                                    dmLookupValuesItem.id = id_lookupValues;
+                                                    dmLookupValuesItem.idQuestionsMudule = id_questionModule;
+                                                    dmLookupValuesItem.allowCustomActionPlan = allowCustomActionPlan;
+                                                    dmLookupValuesItem.compliance = compliance;
+                                                    dmLookupValuesItem.complianceId = complianceId;
+                                                    dmLookupValuesItem.isCaptureProof = isCaptureProof;
+                                                    dmLookupValuesItem.proofFormat = proofFormat;
+
+                                                    db.dmLookupValuesItemDao().insert(dmLookupValuesItem);
+
+
+                                                    List<DmRangeTextBoxActionPlans> dmRangeTextBoxActionPlansList = new ArrayList<>();
+                                                    dmRangeTextBoxActionPlansList.clear();
+                                                    dmRangeTextBoxActionPlansList = lookupValuesItemList.get(m).getActionPlans();
+
+
+                                                    if (dmRangeTextBoxActionPlansList != null) {
+                                                        for (int n = 0; n < dmRangeTextBoxActionPlansList.size(); n++) {
+                                                            int id_actionPlan = dmRangeTextBoxActionPlansList.get(n).getId();
+                                                            boolean isDefault = dmRangeTextBoxActionPlansList.get(n).isDefault();
+                                                            String actionPlan = dmRangeTextBoxActionPlansList.get(n).getActionPlan();
+
+                                                            DmRangeActionPlansItems dmRangeActionPlansItems = new DmRangeActionPlansItems();
+                                                            dmRangeActionPlansItems.id = id_actionPlan;
+                                                            dmRangeActionPlansItems.isDefault = isDefault;
+                                                            dmRangeActionPlansItems.actionPlan = actionPlan;
+                                                            dmRangeActionPlansItems.questionId = id_questionModule;
+                                                            dmRangeActionPlansItems.complainceId = complianceId;
+
+                                                            db.dmRangeActionPlansItemsDao().insert(dmRangeActionPlansItems);
+
+
+                                                        }
                                                     }
+
+
                                                 }
                                             }
 
-                                        }
+                                            if (textBoxModuleQuestions != null) {
+                                                int answerType = textBoxModuleQuestions.getAnswerType();
+                                                boolean isAllowNegative = textBoxModuleQuestions.isAllowNegative();
+                                                boolean isAllowDecimal = textBoxModuleQuestions.isAllowDecimal();
+                                                double minimumRange = textBoxModuleQuestions.getMinimumRange();
+                                                double maximumRange = textBoxModuleQuestions.getMaximumRange();
+
+                                                DmTextBoxModuleQuestions dmTextBoxModuleQuestions = new DmTextBoxModuleQuestions();
+                                                dmTextBoxModuleQuestions.answerType = answerType;
+                                                dmTextBoxModuleQuestions.isAllowNegative = isAllowNegative;
+                                                dmTextBoxModuleQuestions.isAllowDecimal = isAllowDecimal;
+                                                dmTextBoxModuleQuestions.minimumRange = minimumRange;
+                                                dmTextBoxModuleQuestions.maximumRange = maximumRange;
+                                                dmTextBoxModuleQuestions.questionId = id_questionModule;
+                                                db.dmTextBoxModuleQuestionsDao().insert(dmTextBoxModuleQuestions);
+
+                                                List<DmRangeTextBoxModuleQuestions> dmRangeTextBoxModuleQuestionsList = new ArrayList<>();
+                                                dmRangeTextBoxModuleQuestionsList.clear();
+                                                dmRangeTextBoxModuleQuestionsList = textBoxModuleQuestions.getDmRangeQuestionsList();
 
 
-                                    }
+                                                if (dmRangeTextBoxModuleQuestionsList != null) {
+                                                    for (int r = 0; r < dmRangeTextBoxModuleQuestionsList.size(); r++) {
+                                                        double minimumRange_range = dmRangeTextBoxModuleQuestionsList.get(r).getMinimumRange();
+                                                        double maximumRange_range = dmRangeTextBoxModuleQuestionsList.get(r).getMaximumRange();
+                                                        String compliance = dmRangeTextBoxModuleQuestionsList.get(r).getCompliance();
+                                                        int complianceId = dmRangeTextBoxModuleQuestionsList.get(r).getComplianceId();
+                                                        boolean allowCustomActionPlan = dmRangeTextBoxModuleQuestionsList.get(r).isAllowCustomActionPlan();
+                                                        boolean isCaptureProof = dmRangeTextBoxModuleQuestionsList.get(r).isCaptureProof();
+                                                        String proofFormat = dmRangeTextBoxModuleQuestionsList.get(r).getProofFormat();
+
+                                                        DmRangeTextBoxModuleQuestionsTable dmRangeTextBoxModuleQuestionsTable = new DmRangeTextBoxModuleQuestionsTable();
+                                                        dmRangeTextBoxModuleQuestionsTable.minimumRange = minimumRange_range;
+                                                        dmRangeTextBoxModuleQuestionsTable.maximumRange = maximumRange_range;
+                                                        dmRangeTextBoxModuleQuestionsTable.compliance = compliance;
+                                                        dmRangeTextBoxModuleQuestionsTable.complianceId = complianceId;
+                                                        dmRangeTextBoxModuleQuestionsTable.allowCustomActionPlan = allowCustomActionPlan;
+                                                        dmRangeTextBoxModuleQuestionsTable.isCaptureProof = isCaptureProof;
+                                                        dmRangeTextBoxModuleQuestionsTable.proofFormat = proofFormat;
+                                                        dmRangeTextBoxModuleQuestionsTable.questionId = id_questionModule;
+                                                        db.dmRangeTextBoxModuleQuestionsTableDao().insert(dmRangeTextBoxModuleQuestionsTable);
+
+                                                        List<DmRangeTextBoxActionPlans> dmRangeTextBoxActionPlansList = new ArrayList<>();
+                                                        dmRangeTextBoxActionPlansList.clear();
+                                                        dmRangeTextBoxActionPlansList = dmRangeTextBoxModuleQuestionsList.get(r).getDmRangeTextBoxActionPlansList();
 
 
-                                }
-                                }catch (Exception e){
-                                    e.printStackTrace();
-                                }
-                                try{
-                                for (int s = 0; s < sectionsItemList.size(); s++) {
-                                    String nameTh_Sec = sectionsItemList.get(s).getNameTh();
-                                    String nameVi_Sec = sectionsItemList.get(s).getNameVi();
-                                    String namePt_Sec = sectionsItemList.get(s).getNamePt();
-                                    String nameLo_Sec = sectionsItemList.get(s).getNameLo();
-                                    String nameEs_Sec = sectionsItemList.get(s).getNameEs();
-                                    String nameFr_Sec = sectionsItemList.get(s).getNameFr();
-                                    String nameTr_Sec = sectionsItemList.get(s).getNameTr();
-                                    String name_Sec = sectionsItemList.get(s).getName();
-                                    String nameId_Sec = sectionsItemList.get(s).getNameId();
-                                    String description_Sec = sectionsItemList.get(s).getDescription();
-                                    String descriptionPt_Sec = sectionsItemList.get(s).getDescriptionPt();
-                                    String descriptionVi_Sec = sectionsItemList.get(s).getDescriptionVi();
-                                    String descriptionFr_Sec = sectionsItemList.get(s).getDescriptionFr();
-                                    String descriptionEs_Sec = sectionsItemList.get(s).getDescriptionEs();
-                                    String descriptionTh_Sec = sectionsItemList.get(s).getDescriptionTh();
-                                    String descriptionLo_Sec = sectionsItemList.get(s).getDescriptionLo();
-                                    String descriptionIdn_Sec = sectionsItemList.get(s).getDescriptionIdn();
-                                    String descriptionTr_Sec = sectionsItemList.get(s).getDescriptionTr();
-                                    boolean isDefault_Sec = sectionsItemList.get(s).isDefault();
-                                    boolean showDescription_Sec = sectionsItemList.get(s).isShowDescription();
-                                    int id_Sec = sectionsItemList.get(s).getId();
-                                    int position_Sec = sectionsItemList.get(s).getPosition();
-                                    int moduleId_Sec = sectionsItemList.get(s).getModuleId();
+                                                        if (dmRangeTextBoxActionPlansList != null) {
+                                                            for (int ra = 0; ra < dmRangeTextBoxActionPlansList.size(); ra++) {
+                                                                int id_actionPlan = dmRangeTextBoxActionPlansList.get(ra).getId();
+                                                                boolean isDefault = dmRangeTextBoxActionPlansList.get(ra).isDefault();
+                                                                String actionPlan = dmRangeTextBoxActionPlansList.get(ra).getActionPlan();
 
-                                    DmSectionsItem dmSectionsItem = new DmSectionsItem();
-                                    dmSectionsItem.nameTh = nameTh_Sec;
-                                    dmSectionsItem.nameVi = nameVi_Sec;
-                                    dmSectionsItem.namePt = namePt_Sec;
-                                    dmSectionsItem.nameLo = nameLo_Sec;
-                                    dmSectionsItem.nameEs = nameEs_Sec;
-                                    dmSectionsItem.nameFr = nameFr_Sec;
-                                    dmSectionsItem.nameTr = nameTr_Sec;
-                                    dmSectionsItem.name = name_Sec;
-                                    dmSectionsItem.nameId = nameId_Sec;
-                                    dmSectionsItem.description = description_Sec;
-                                    dmSectionsItem.descriptionPt = descriptionPt_Sec;
-                                    dmSectionsItem.descriptionVi = descriptionVi_Sec;
-                                    dmSectionsItem.descriptionFr = descriptionFr_Sec;
-                                    dmSectionsItem.descriptionEs = descriptionEs_Sec;
-                                    dmSectionsItem.descriptionTh = descriptionTh_Sec;
-                                    dmSectionsItem.descriptionLo = descriptionLo_Sec;
-                                    dmSectionsItem.descriptionIdn = descriptionIdn_Sec;
-                                    dmSectionsItem.descriptionTr = descriptionTr_Sec;
-                                    dmSectionsItem.isDefault = isDefault_Sec;
-                                    dmSectionsItem.showDescription = showDescription_Sec;
-                                    dmSectionsItem.id = id_Sec;
-                                    dmSectionsItem.position = position_Sec;
-                                    dmSectionsItem.moduleId = moduleId_Sec;
-                                    db.dmSectionsItemDao().insert(dmSectionsItem);
+                                                                DmRangeActionPlansItems dmRangeActionPlansItems = new DmRangeActionPlansItems();
+                                                                dmRangeActionPlansItems.id = id_actionPlan;
+                                                                dmRangeActionPlansItems.isDefault = isDefault;
+                                                                dmRangeActionPlansItems.actionPlan = actionPlan;
+                                                                dmRangeActionPlansItems.questionId = id_questionModule;
+                                                                dmRangeActionPlansItems.complainceId = complianceId;
+
+                                                                db.dmRangeActionPlansItemsDao().insert(dmRangeActionPlansItems);
 
 
-                                    List<QuestionsItem> questionsItems = new ArrayList<>();
-                                    questionsItems.clear();
-                                    questionsItems = sectionsItemList.get(s).getQuestions();
-
-
-                                    boolean mandate = questionsItems.get(s).isMandate();
-                                    String question = questionsItems.get(s).getQuestion();
-                                    String questionTr = questionsItems.get(s).getQuestionTr();
-                                    String questionPt = questionsItems.get(s).getQuestionPt();
-                                    String questionLo = questionsItems.get(s).getQuestionLo();
-                                    String questionFr = questionsItems.get(s).getQuestionFr();
-                                    String questionIdn = questionsItems.get(s).getQuestionIdn();
-                                    String questionEs = questionsItems.get(s).getQuestionEs();
-                                    String questionTh = questionsItems.get(s).getQuestionTh();
-                                    String questionVi = questionsItems.get(s).getQuestionVi();
-                                    int displaytypeId = questionsItems.get(s).getDisplaytypeId();
-                                    int datatypeId = questionsItems.get(s).getDatatypeId();
-                                    boolean isCriticalQuest = questionsItems.get(s).isCriticalQuest();
-                                    String displayType = questionsItems.get(s).getDisplayType();
-                                    int id_questionModule = questionsItems.get(s).getId();
-                                    int position = questionsItems.get(s).getPosition();
-                                    int moduleId = questionsItems.get(s).getModuleId();
-                                    int submoduleId = questionsItems.get(s).getSubmoduleId();
-
-                                    DmQuestionsModule dmQuestionsModule = new DmQuestionsModule();
-                                    dmQuestionsModule.mandate = mandate;
-                                    dmQuestionsModule.question = question;
-                                    dmQuestionsModule.questionTr = questionTr;
-                                    dmQuestionsModule.questionPt = questionPt;
-                                    dmQuestionsModule.questionLo = questionLo;
-                                    dmQuestionsModule.questionFr = questionFr;
-                                    dmQuestionsModule.questionIdn = questionIdn;
-                                    dmQuestionsModule.questionEs = questionEs;
-                                    dmQuestionsModule.questionTh = questionTh;
-                                    dmQuestionsModule.questionVi = questionVi;
-                                    dmQuestionsModule.displaytypeId = displaytypeId;
-                                    dmQuestionsModule.datatypeId = datatypeId;
-                                    dmQuestionsModule.isCriticalQuest = isCriticalQuest;
-                                    dmQuestionsModule.displayType = displayType;
-                                    dmQuestionsModule.id = id_questionModule;
-                                    dmQuestionsModule.position = position;
-                                    dmQuestionsModule.moduleId = moduleId;
-                                    dmQuestionsModule.submoduleId = submoduleId;
-                                    dmQuestionsModule.sectionId = id_Sec;
-                                    db.dmQuestionsModuleDao().insert(dmQuestionsModule);
-
-
-                                    List<LookupValuesItem> lookupValuesItemList = new ArrayList<>();
-                                    lookupValuesItemList.clear();
-                                    lookupValuesItemList = questionsItems.get(s).getLookupValues();
-
-                                    TextBoxModuleQuestions textBoxModuleQuestions = questionsItems.get(s).getTextBoxModuleQuestions();
-
-
-                                    if (lookupValuesItemList != null) {
-                                        for (int ls = 0; ls < lookupValuesItemList.size(); ls++) {
-
-                                            String valueId = lookupValuesItemList.get(ls).getValueId();
-                                            String valueTr = lookupValuesItemList.get(ls).getValueTr();
-                                            String valueVi = lookupValuesItemList.get(ls).getValueVi();
-                                            String valueTh = lookupValuesItemList.get(ls).getValueTh();
-                                            String valueEs = lookupValuesItemList.get(ls).getValueEs();
-                                            String valueFr = lookupValuesItemList.get(ls).getValueFr();
-                                            String valueLo = lookupValuesItemList.get(ls).getValueLo();
-                                            String valuePt = lookupValuesItemList.get(ls).getValuePt();
-                                            String value = lookupValuesItemList.get(ls).getValue();
-                                            int position_lookupValues = lookupValuesItemList.get(ls).getPosition();
-                                            int id_lookupValues = lookupValuesItemList.get(ls).getId();
-                                            boolean allowCustomActionPlan = lookupValuesItemList.get(ls).isAllowCustomActionPlan();
-                                            String compliance = lookupValuesItemList.get(ls).getCompliance();
-                                            int complianceId = lookupValuesItemList.get(ls).getComplianceId();
-                                            boolean isCaptureProof = lookupValuesItemList.get(ls).isCaptureProof();
-                                            String proofFormat = lookupValuesItemList.get(ls).getProofFormat();
-
-                                            DmLookupValuesItem dmLookupValuesItem = new DmLookupValuesItem();
-                                            dmLookupValuesItem.valueId = valueId;
-                                            dmLookupValuesItem.valueTr = valueTr;
-                                            dmLookupValuesItem.valueVi = valueVi;
-                                            dmLookupValuesItem.valueTh = valueTh;
-                                            dmLookupValuesItem.valueEs = valueEs;
-                                            dmLookupValuesItem.valueFr = valueFr;
-                                            dmLookupValuesItem.valueLo = valueLo;
-                                            dmLookupValuesItem.valuePt = valuePt;
-                                            dmLookupValuesItem.value = value;
-                                            dmLookupValuesItem.position = position_lookupValues;
-                                            dmLookupValuesItem.id = id_lookupValues;
-                                            dmLookupValuesItem.idQuestionsMudule = id_questionModule;
-                                            dmLookupValuesItem.allowCustomActionPlan = allowCustomActionPlan;
-                                            dmLookupValuesItem.compliance = compliance;
-                                            dmLookupValuesItem.complianceId = complianceId;
-                                            dmLookupValuesItem.isCaptureProof = isCaptureProof;
-                                            dmLookupValuesItem.proofFormat = proofFormat;
-
-                                            db.dmLookupValuesItemDao().insert(dmLookupValuesItem);
-
-
-                                            List<ActionPlansItem> actionPlansItemList = new ArrayList<>();
-                                            actionPlansItemList.clear();
-                                            actionPlansItemList = lookupValuesItemList.get(ls).getActionPlans();
-
-                                            if (actionPlansItemList != null) {
-                                                for (int lsa = 0; lsa < actionPlansItemList.size(); lsa++) {
-                                                    int id_actionPlan = actionPlansItemList.get(lsa).getId();
-                                                    boolean isDefault = actionPlansItemList.get(lsa).isIsDefault();
-                                                    String actionPlan = actionPlansItemList.get(lsa).getActionPlan();
-
-                                                    DmActionPlansItem dmActionPlansItem = new DmActionPlansItem();
-                                                    dmActionPlansItem.id = id_actionPlan;
-                                                    dmActionPlansItem.id_lookupValue = id_lookupValues;
-                                                    dmActionPlansItem.questionId = id_questionModule;
-                                                    dmActionPlansItem.isDefault = isDefault;
-                                                    dmActionPlansItem.actionPlan = actionPlan;
-
-                                                    db.dmActionPlansItemDao().insert(dmActionPlansItem);
-                                                }
-                                            }
-
-
-                                        }
-                                    }
-
-                                    if (textBoxModuleQuestions != null) {
-                                        int answerType = textBoxModuleQuestions.getAnswerType();
-                                        boolean isAllowNegative = textBoxModuleQuestions.isAllowNegative();
-                                        boolean isAllowDecimal = textBoxModuleQuestions.isAllowDecimal();
-                                        double minimumRange = textBoxModuleQuestions.getMinimumRange();
-                                        double maximumRange = textBoxModuleQuestions.getMaximumRange();
-
-                                        DmTextBoxModuleQuestions dmTextBoxModuleQuestions = new DmTextBoxModuleQuestions();
-                                        dmTextBoxModuleQuestions.answerType = answerType;
-                                        dmTextBoxModuleQuestions.isAllowNegative = isAllowNegative;
-                                        dmTextBoxModuleQuestions.isAllowDecimal = isAllowDecimal;
-                                        dmTextBoxModuleQuestions.minimumRange = minimumRange;
-                                        dmTextBoxModuleQuestions.maximumRange = maximumRange;
-                                        dmTextBoxModuleQuestions.questionId = id_questionModule;
-                                        db.dmTextBoxModuleQuestionsDao().insert(dmTextBoxModuleQuestions);
-
-                                        List<DmRangeTextBoxModuleQuestions> dmRangeTextBoxModuleQuestionsList = new ArrayList<>();
-                                        dmRangeTextBoxModuleQuestionsList.clear();
-                                        dmRangeTextBoxModuleQuestionsList = textBoxModuleQuestions.getDmRangeQuestionsList();
-
-
-                                        if (dmRangeTextBoxModuleQuestionsList != null) {
-                                            for (int r = 0; r < dmRangeTextBoxModuleQuestionsList.size(); r++) {
-                                                double minimumRange_range = dmRangeTextBoxModuleQuestionsList.get(r).getMinimumRange();
-                                                double maximumRange_range = dmRangeTextBoxModuleQuestionsList.get(r).getMaximumRange();
-                                                String compliance = dmRangeTextBoxModuleQuestionsList.get(r).getCompliance();
-                                                int complianceId = dmRangeTextBoxModuleQuestionsList.get(r).getComplianceId();
-                                                boolean allowCustomActionPlan = dmRangeTextBoxModuleQuestionsList.get(r).isAllowCustomActionPlan();
-                                                boolean isCaptureProof = dmRangeTextBoxModuleQuestionsList.get(r).isCaptureProof();
-                                                String proofFormat = dmRangeTextBoxModuleQuestionsList.get(r).getProofFormat();
-
-                                                DmRangeTextBoxModuleQuestionsTable dmRangeTextBoxModuleQuestionsTable = new DmRangeTextBoxModuleQuestionsTable();
-                                                dmRangeTextBoxModuleQuestionsTable.minimumRange = minimumRange_range;
-                                                dmRangeTextBoxModuleQuestionsTable.maximumRange = maximumRange_range;
-                                                dmRangeTextBoxModuleQuestionsTable.compliance = compliance;
-                                                dmRangeTextBoxModuleQuestionsTable.complianceId = complianceId;
-                                                dmRangeTextBoxModuleQuestionsTable.allowCustomActionPlan = allowCustomActionPlan;
-                                                dmRangeTextBoxModuleQuestionsTable.isCaptureProof = isCaptureProof;
-                                                dmRangeTextBoxModuleQuestionsTable.proofFormat = proofFormat;
-                                                dmRangeTextBoxModuleQuestionsTable.questionId = id_questionModule;
-                                                db.dmRangeTextBoxModuleQuestionsTableDao().insert(dmRangeTextBoxModuleQuestionsTable);
-
-                                                List<DmRangeTextBoxActionPlans> dmRangeTextBoxActionPlansList = new ArrayList<>();
-                                                dmRangeTextBoxActionPlansList.clear();
-                                                dmRangeTextBoxActionPlansList = dmRangeTextBoxModuleQuestionsList.get(r).getDmRangeTextBoxActionPlansList();
-
-
-                                                if (dmRangeTextBoxActionPlansList != null) {
-                                                    for (int ra = 0; ra < dmRangeTextBoxActionPlansList.size(); ra++) {
-                                                        int id_actionPlan = dmRangeTextBoxActionPlansList.get(ra).getId();
-                                                        boolean isDefault = dmRangeTextBoxActionPlansList.get(ra).isDefault();
-                                                        String actionPlan = dmRangeTextBoxActionPlansList.get(ra).getActionPlan();
-
-                                                        DmRangeActionPlansItems dmRangeActionPlansItems = new DmRangeActionPlansItems();
-                                                        dmRangeActionPlansItems.id = id_actionPlan;
-                                                        dmRangeActionPlansItems.isDefault = isDefault;
-                                                        dmRangeActionPlansItems.actionPlan = actionPlan;
-                                                        dmRangeActionPlansItems.questionId = id_questionModule;
-                                                        dmRangeActionPlansItems.complainceId = complianceId;
-
-                                                        db.dmRangeActionPlansItemsDao().insert(dmRangeActionPlansItems);
-
-
+                                                            }
+                                                        }
                                                     }
+
+                                                }
+
+
+                                            }
+
+
+                                        }
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                    try {
+                                        for (int s = 0; s < sectionsItemList.size(); s++) {
+                                            String nameTh_Sec = sectionsItemList.get(s).getNameTh();
+                                            String nameVi_Sec = sectionsItemList.get(s).getNameVi();
+                                            String namePt_Sec = sectionsItemList.get(s).getNamePt();
+                                            String nameLo_Sec = sectionsItemList.get(s).getNameLo();
+                                            String nameEs_Sec = sectionsItemList.get(s).getNameEs();
+                                            String nameFr_Sec = sectionsItemList.get(s).getNameFr();
+                                            String nameTr_Sec = sectionsItemList.get(s).getNameTr();
+                                            String name_Sec = sectionsItemList.get(s).getName();
+                                            String nameId_Sec = sectionsItemList.get(s).getNameId();
+                                            String description_Sec = sectionsItemList.get(s).getDescription();
+                                            String descriptionPt_Sec = sectionsItemList.get(s).getDescriptionPt();
+                                            String descriptionVi_Sec = sectionsItemList.get(s).getDescriptionVi();
+                                            String descriptionFr_Sec = sectionsItemList.get(s).getDescriptionFr();
+                                            String descriptionEs_Sec = sectionsItemList.get(s).getDescriptionEs();
+                                            String descriptionTh_Sec = sectionsItemList.get(s).getDescriptionTh();
+                                            String descriptionLo_Sec = sectionsItemList.get(s).getDescriptionLo();
+                                            String descriptionIdn_Sec = sectionsItemList.get(s).getDescriptionIdn();
+                                            String descriptionTr_Sec = sectionsItemList.get(s).getDescriptionTr();
+                                            boolean isDefault_Sec = sectionsItemList.get(s).isDefault();
+                                            boolean showDescription_Sec = sectionsItemList.get(s).isShowDescription();
+                                            int id_Sec = sectionsItemList.get(s).getId();
+                                            int position_Sec = sectionsItemList.get(s).getPosition();
+                                            int moduleId_Sec = sectionsItemList.get(s).getModuleId();
+
+                                            DmSectionsItem dmSectionsItem = new DmSectionsItem();
+                                            dmSectionsItem.nameTh = nameTh_Sec;
+                                            dmSectionsItem.nameVi = nameVi_Sec;
+                                            dmSectionsItem.namePt = namePt_Sec;
+                                            dmSectionsItem.nameLo = nameLo_Sec;
+                                            dmSectionsItem.nameEs = nameEs_Sec;
+                                            dmSectionsItem.nameFr = nameFr_Sec;
+                                            dmSectionsItem.nameTr = nameTr_Sec;
+                                            dmSectionsItem.name = name_Sec;
+                                            dmSectionsItem.nameId = nameId_Sec;
+                                            dmSectionsItem.description = description_Sec;
+                                            dmSectionsItem.descriptionPt = descriptionPt_Sec;
+                                            dmSectionsItem.descriptionVi = descriptionVi_Sec;
+                                            dmSectionsItem.descriptionFr = descriptionFr_Sec;
+                                            dmSectionsItem.descriptionEs = descriptionEs_Sec;
+                                            dmSectionsItem.descriptionTh = descriptionTh_Sec;
+                                            dmSectionsItem.descriptionLo = descriptionLo_Sec;
+                                            dmSectionsItem.descriptionIdn = descriptionIdn_Sec;
+                                            dmSectionsItem.descriptionTr = descriptionTr_Sec;
+                                            dmSectionsItem.isDefault = isDefault_Sec;
+                                            dmSectionsItem.showDescription = showDescription_Sec;
+                                            dmSectionsItem.id = id_Sec;
+                                            dmSectionsItem.position = position_Sec;
+                                            dmSectionsItem.moduleId = moduleId_Sec;
+                                            db.dmSectionsItemDao().insert(dmSectionsItem);
+
+
+                                            List<QuestionsItem> questionsItems = new ArrayList<>();
+                                            questionsItems.clear();
+                                            questionsItems = sectionsItemList.get(s).getQuestions();
+
+
+                                            boolean mandate = questionsItems.get(s).isMandate();
+                                            String question = questionsItems.get(s).getQuestion();
+                                            String questionTr = questionsItems.get(s).getQuestionTr();
+                                            String questionPt = questionsItems.get(s).getQuestionPt();
+                                            String questionLo = questionsItems.get(s).getQuestionLo();
+                                            String questionFr = questionsItems.get(s).getQuestionFr();
+                                            String questionIdn = questionsItems.get(s).getQuestionIdn();
+                                            String questionEs = questionsItems.get(s).getQuestionEs();
+                                            String questionTh = questionsItems.get(s).getQuestionTh();
+                                            String questionVi = questionsItems.get(s).getQuestionVi();
+                                            int displaytypeId = questionsItems.get(s).getDisplaytypeId();
+                                            int datatypeId = questionsItems.get(s).getDatatypeId();
+                                            boolean isCriticalQuest = questionsItems.get(s).isCriticalQuest();
+                                            String displayType = questionsItems.get(s).getDisplayType();
+                                            int id_questionModule = questionsItems.get(s).getId();
+                                            int position = questionsItems.get(s).getPosition();
+                                            int moduleId = questionsItems.get(s).getModuleId();
+                                            int submoduleId = questionsItems.get(s).getSubmoduleId();
+
+                                            DmQuestionsModule dmQuestionsModule = new DmQuestionsModule();
+                                            dmQuestionsModule.mandate = mandate;
+                                            dmQuestionsModule.question = question;
+                                            dmQuestionsModule.questionTr = questionTr;
+                                            dmQuestionsModule.questionPt = questionPt;
+                                            dmQuestionsModule.questionLo = questionLo;
+                                            dmQuestionsModule.questionFr = questionFr;
+                                            dmQuestionsModule.questionIdn = questionIdn;
+                                            dmQuestionsModule.questionEs = questionEs;
+                                            dmQuestionsModule.questionTh = questionTh;
+                                            dmQuestionsModule.questionVi = questionVi;
+                                            dmQuestionsModule.displaytypeId = displaytypeId;
+                                            dmQuestionsModule.datatypeId = datatypeId;
+                                            dmQuestionsModule.isCriticalQuest = isCriticalQuest;
+                                            dmQuestionsModule.displayType = displayType;
+                                            dmQuestionsModule.id = id_questionModule;
+                                            dmQuestionsModule.position = position;
+                                            dmQuestionsModule.moduleId = moduleId;
+                                            dmQuestionsModule.submoduleId = submoduleId;
+                                            dmQuestionsModule.sectionId = id_Sec;
+                                            db.dmQuestionsModuleDao().insert(dmQuestionsModule);
+
+
+                                            List<LookupValuesItem> lookupValuesItemList = new ArrayList<>();
+                                            lookupValuesItemList.clear();
+                                            lookupValuesItemList = questionsItems.get(s).getLookupValues();
+
+                                            TextBoxModuleQuestions textBoxModuleQuestions = questionsItems.get(s).getTextBoxModuleQuestions();
+
+
+                                            if (lookupValuesItemList != null) {
+                                                for (int ls = 0; ls < lookupValuesItemList.size(); ls++) {
+
+                                                    String valueId = lookupValuesItemList.get(ls).getValueId();
+                                                    String valueTr = lookupValuesItemList.get(ls).getValueTr();
+                                                    String valueVi = lookupValuesItemList.get(ls).getValueVi();
+                                                    String valueTh = lookupValuesItemList.get(ls).getValueTh();
+                                                    String valueEs = lookupValuesItemList.get(ls).getValueEs();
+                                                    String valueFr = lookupValuesItemList.get(ls).getValueFr();
+                                                    String valueLo = lookupValuesItemList.get(ls).getValueLo();
+                                                    String valuePt = lookupValuesItemList.get(ls).getValuePt();
+                                                    String value = lookupValuesItemList.get(ls).getValue();
+                                                    int position_lookupValues = lookupValuesItemList.get(ls).getPosition();
+                                                    int id_lookupValues = lookupValuesItemList.get(ls).getId();
+                                                    boolean allowCustomActionPlan = lookupValuesItemList.get(ls).isAllowCustomActionPlan();
+                                                    String compliance = lookupValuesItemList.get(ls).getCompliance();
+                                                    int complianceId = lookupValuesItemList.get(ls).getComplianceId();
+                                                    boolean isCaptureProof = lookupValuesItemList.get(ls).isCaptureProof();
+                                                    String proofFormat = lookupValuesItemList.get(ls).getProofFormat();
+
+                                                    DmLookupValuesItem dmLookupValuesItem = new DmLookupValuesItem();
+                                                    dmLookupValuesItem.valueId = valueId;
+                                                    dmLookupValuesItem.valueTr = valueTr;
+                                                    dmLookupValuesItem.valueVi = valueVi;
+                                                    dmLookupValuesItem.valueTh = valueTh;
+                                                    dmLookupValuesItem.valueEs = valueEs;
+                                                    dmLookupValuesItem.valueFr = valueFr;
+                                                    dmLookupValuesItem.valueLo = valueLo;
+                                                    dmLookupValuesItem.valuePt = valuePt;
+                                                    dmLookupValuesItem.value = value;
+                                                    dmLookupValuesItem.position = position_lookupValues;
+                                                    dmLookupValuesItem.id = id_lookupValues;
+                                                    dmLookupValuesItem.idQuestionsMudule = id_questionModule;
+                                                    dmLookupValuesItem.allowCustomActionPlan = allowCustomActionPlan;
+                                                    dmLookupValuesItem.compliance = compliance;
+                                                    dmLookupValuesItem.complianceId = complianceId;
+                                                    dmLookupValuesItem.isCaptureProof = isCaptureProof;
+                                                    dmLookupValuesItem.proofFormat = proofFormat;
+
+                                                    db.dmLookupValuesItemDao().insert(dmLookupValuesItem);
+
+
+                                                    List<DmRangeTextBoxActionPlans> dmRangeTextBoxActionPlansList = new ArrayList<>();
+                                                    dmRangeTextBoxActionPlansList.clear();
+                                                    dmRangeTextBoxActionPlansList = lookupValuesItemList.get(ls).getActionPlans();
+
+
+                                                    if (dmRangeTextBoxActionPlansList != null) {
+                                                        for (int lsa = 0; lsa < dmRangeTextBoxActionPlansList.size(); lsa++) {
+                                                            int id_actionPlan = dmRangeTextBoxActionPlansList.get(lsa).getId();
+                                                            boolean isDefault = dmRangeTextBoxActionPlansList.get(lsa).isDefault();
+                                                            String actionPlan = dmRangeTextBoxActionPlansList.get(lsa).getActionPlan();
+
+                                                            DmRangeActionPlansItems dmRangeActionPlansItems = new DmRangeActionPlansItems();
+                                                            dmRangeActionPlansItems.id = id_actionPlan;
+                                                            dmRangeActionPlansItems.isDefault = isDefault;
+                                                            dmRangeActionPlansItems.actionPlan = actionPlan;
+                                                            dmRangeActionPlansItems.questionId = id_questionModule;
+                                                            dmRangeActionPlansItems.complainceId = complianceId;
+
+                                                            db.dmRangeActionPlansItemsDao().insert(dmRangeActionPlansItems);
+
+
+                                                        }
+                                                    }
+
+
                                                 }
                                             }
 
+                                            if (textBoxModuleQuestions != null) {
+                                                int answerType = textBoxModuleQuestions.getAnswerType();
+                                                boolean isAllowNegative = textBoxModuleQuestions.isAllowNegative();
+                                                boolean isAllowDecimal = textBoxModuleQuestions.isAllowDecimal();
+                                                double minimumRange = textBoxModuleQuestions.getMinimumRange();
+                                                double maximumRange = textBoxModuleQuestions.getMaximumRange();
+
+                                                DmTextBoxModuleQuestions dmTextBoxModuleQuestions = new DmTextBoxModuleQuestions();
+                                                dmTextBoxModuleQuestions.answerType = answerType;
+                                                dmTextBoxModuleQuestions.isAllowNegative = isAllowNegative;
+                                                dmTextBoxModuleQuestions.isAllowDecimal = isAllowDecimal;
+                                                dmTextBoxModuleQuestions.minimumRange = minimumRange;
+                                                dmTextBoxModuleQuestions.maximumRange = maximumRange;
+                                                dmTextBoxModuleQuestions.questionId = id_questionModule;
+                                                db.dmTextBoxModuleQuestionsDao().insert(dmTextBoxModuleQuestions);
+
+                                                List<DmRangeTextBoxModuleQuestions> dmRangeTextBoxModuleQuestionsList = new ArrayList<>();
+                                                dmRangeTextBoxModuleQuestionsList.clear();
+                                                dmRangeTextBoxModuleQuestionsList = textBoxModuleQuestions.getDmRangeQuestionsList();
+
+
+                                                if (dmRangeTextBoxModuleQuestionsList != null) {
+                                                    for (int r = 0; r < dmRangeTextBoxModuleQuestionsList.size(); r++) {
+                                                        double minimumRange_range = dmRangeTextBoxModuleQuestionsList.get(r).getMinimumRange();
+                                                        double maximumRange_range = dmRangeTextBoxModuleQuestionsList.get(r).getMaximumRange();
+                                                        String compliance = dmRangeTextBoxModuleQuestionsList.get(r).getCompliance();
+                                                        int complianceId = dmRangeTextBoxModuleQuestionsList.get(r).getComplianceId();
+                                                        boolean allowCustomActionPlan = dmRangeTextBoxModuleQuestionsList.get(r).isAllowCustomActionPlan();
+                                                        boolean isCaptureProof = dmRangeTextBoxModuleQuestionsList.get(r).isCaptureProof();
+                                                        String proofFormat = dmRangeTextBoxModuleQuestionsList.get(r).getProofFormat();
+
+                                                        DmRangeTextBoxModuleQuestionsTable dmRangeTextBoxModuleQuestionsTable = new DmRangeTextBoxModuleQuestionsTable();
+                                                        dmRangeTextBoxModuleQuestionsTable.minimumRange = minimumRange_range;
+                                                        dmRangeTextBoxModuleQuestionsTable.maximumRange = maximumRange_range;
+                                                        dmRangeTextBoxModuleQuestionsTable.compliance = compliance;
+                                                        dmRangeTextBoxModuleQuestionsTable.complianceId = complianceId;
+                                                        dmRangeTextBoxModuleQuestionsTable.allowCustomActionPlan = allowCustomActionPlan;
+                                                        dmRangeTextBoxModuleQuestionsTable.isCaptureProof = isCaptureProof;
+                                                        dmRangeTextBoxModuleQuestionsTable.proofFormat = proofFormat;
+                                                        dmRangeTextBoxModuleQuestionsTable.questionId = id_questionModule;
+                                                        db.dmRangeTextBoxModuleQuestionsTableDao().insert(dmRangeTextBoxModuleQuestionsTable);
+
+                                                        List<DmRangeTextBoxActionPlans> dmRangeTextBoxActionPlansList = new ArrayList<>();
+                                                        dmRangeTextBoxActionPlansList.clear();
+                                                        dmRangeTextBoxActionPlansList = dmRangeTextBoxModuleQuestionsList.get(r).getDmRangeTextBoxActionPlansList();
+
+
+                                                        if (dmRangeTextBoxActionPlansList != null) {
+                                                            for (int ra = 0; ra < dmRangeTextBoxActionPlansList.size(); ra++) {
+                                                                int id_actionPlan = dmRangeTextBoxActionPlansList.get(ra).getId();
+                                                                boolean isDefault = dmRangeTextBoxActionPlansList.get(ra).isDefault();
+                                                                String actionPlan = dmRangeTextBoxActionPlansList.get(ra).getActionPlan();
+
+                                                                DmRangeActionPlansItems dmRangeActionPlansItems = new DmRangeActionPlansItems();
+                                                                dmRangeActionPlansItems.id = id_actionPlan;
+                                                                dmRangeActionPlansItems.isDefault = isDefault;
+                                                                dmRangeActionPlansItems.actionPlan = actionPlan;
+                                                                dmRangeActionPlansItems.questionId = id_questionModule;
+                                                                dmRangeActionPlansItems.complainceId = complianceId;
+
+                                                                db.dmRangeActionPlansItemsDao().insert(dmRangeActionPlansItems);
+
+
+                                                            }
+                                                        }
+                                                    }
+
+                                                }
+
+
+                                            }
+
+
                                         }
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                    try {
+                                        if (recurrences != null) {
+                                            int recurrenceFrequency = recurrences.getRecurrenceFrequency();
+                                            boolean isCustomRecurrence = recurrences.isIsCustomRecurrence();
+                                            String recurrenceType = recurrences.getRecurrenceType();
 
-
+                                            DmRecurrence dmRecurrence = new DmRecurrence();
+                                            dmRecurrence.recurrenceFrequency = recurrenceFrequency;
+                                            dmRecurrence.isCustomRecurrence = isCustomRecurrence;
+                                            dmRecurrence.recurrenceType = recurrenceType;
+                                            db.dmRecurrenceDao().insert(dmRecurrence);
+                                        }
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
                                     }
 
-
                                 }
-                                }catch (Exception e){
-                                    e.printStackTrace();
-                                }
-                                try{
-                                if (recurrences != null) {
-                                    int recurrenceFrequency = recurrences.getRecurrenceFrequency();
-                                    boolean isCustomRecurrence = recurrences.isIsCustomRecurrence();
-                                    String recurrenceType = recurrences.getRecurrenceType();
-
-                                    DmRecurrence dmRecurrence = new DmRecurrence();
-                                    dmRecurrence.recurrenceFrequency = recurrenceFrequency;
-                                    dmRecurrence.isCustomRecurrence = isCustomRecurrence;
-                                    dmRecurrence.recurrenceType = recurrenceType;
-                                    db.dmRecurrenceDao().insert(dmRecurrence);
-                                }
-                                }catch (Exception e){
-                                    e.printStackTrace();
-                                }
-
-                            }
-                            }catch (Exception e){
+                            } catch (Exception e) {
                                 e.printStackTrace();
                             }
 
                         }
                         try {
-                        if (response.body().getAnswerTypes() != null) {
-                            ArrayList<AnswerTypesItem> answerTypesItemArrayList = response.body().getAnswerTypes();
+                            if (response.body().getAnswerTypes() != null) {
+                                ArrayList<AnswerTypesItem> answerTypesItemArrayList = response.body().getAnswerTypes();
 
-                            for (int p = 0; p < answerTypesItemArrayList.size(); p++) {
+                                for (int p = 0; p < answerTypesItemArrayList.size(); p++) {
 
-                                int id = answerTypesItemArrayList.get(p).getId();
-                                String value = answerTypesItemArrayList.get(p).getValue();
+                                    int id = answerTypesItemArrayList.get(p).getId();
+                                    String value = answerTypesItemArrayList.get(p).getValue();
 
-                                DmAnswerTypes dmAnswerTypes = new DmAnswerTypes();
-                                dmAnswerTypes.id = id;
-                                dmAnswerTypes.value = value;
-                                db.dmAnswerTypesDao().insert(dmAnswerTypes);
+                                    DmAnswerTypes dmAnswerTypes = new DmAnswerTypes();
+                                    dmAnswerTypes.id = id;
+                                    dmAnswerTypes.value = value;
+                                    db.dmAnswerTypesDao().insert(dmAnswerTypes);
 
+                                }
                             }
-                        }
-                        }catch (Exception e){
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
 
@@ -2568,7 +2578,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                 }
 
                             }
-                        }catch (Exception e){
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
 
@@ -2595,7 +2605,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
 
                             }
-                        }catch (Exception e){
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
                         GetAllFollowUpDMData();
@@ -2653,7 +2663,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                 followUpItemArrayList.clear();
                                 existingModuleItemArrayList = response.body().getFollowUpResponseItemList().get(i).getExistingModuleItemArrayList();
 
-                                for (int j = 0; j <followUpItemArrayList.size(); j++) {
+                                for (int j = 0; j < followUpItemArrayList.size(); j++) {
                                     int questionId = followUpItemArrayList.get(j).getQuestionId();
                                     int id = followUpItemArrayList.get(j).getId();
                                     int complianceId = followUpItemArrayList.get(j).getComplianceId();
@@ -2690,7 +2700,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
                                 }
 
-                                for (int k = 0; k <existingModuleItemArrayList.size(); k++) {
+                                for (int k = 0; k < existingModuleItemArrayList.size(); k++) {
                                     int farmerId = existingModuleItemArrayList.get(k).getFarmerId();
                                     String enumeratorId = existingModuleItemArrayList.get(k).getEnumeratorId();
                                     String submissionDate = existingModuleItemArrayList.get(k).getSubmissionDate();
@@ -2703,12 +2713,12 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                     ExistingModuleItemFollowupTable existingModuleItemFollowupTable = new ExistingModuleItemFollowupTable();
                                     existingModuleItemFollowupTable.moduleId = moduleId;
                                     existingModuleItemFollowupTable.farmerId = farmerId;
-                                    existingModuleItemFollowupTable.enumeratorId =enumeratorId;
-                                    existingModuleItemFollowupTable.submissionDate =submissionDate;
-                                    existingModuleItemFollowupTable.id =id;
-                                    existingModuleItemFollowupTable.farmerGroupId =farmerGroupId;
-                                    existingModuleItemFollowupTable.isMobile =isMobile;
-                                    existingModuleItemFollowupTable.currencyId =currencyId;
+                                    existingModuleItemFollowupTable.enumeratorId = enumeratorId;
+                                    existingModuleItemFollowupTable.submissionDate = submissionDate;
+                                    existingModuleItemFollowupTable.id = id;
+                                    existingModuleItemFollowupTable.farmerGroupId = farmerGroupId;
+                                    existingModuleItemFollowupTable.isMobile = isMobile;
+                                    existingModuleItemFollowupTable.currencyId = currencyId;
                                     db.existingModuleItemFollowupTableDao().insert(existingModuleItemFollowupTable);
 
                                     ArrayList<AnswersItem> answersItemArrayList = new ArrayList<>();
@@ -2717,7 +2727,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                     Result result = existingModuleItemArrayList.get(k).getResult();
 
 
-                                    for (int l = 0; l <answersItemArrayList.size(); l++) {
+                                    for (int l = 0; l < answersItemArrayList.size(); l++) {
                                         int answerId = answersItemArrayList.get(l).getAnswerId();
                                         int complianceStatusId = answersItemArrayList.get(l).getComplianceStatusId();
                                         int questionId = answersItemArrayList.get(l).getQuestionId();
@@ -2737,7 +2747,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                         db.followUpAnswerTableDao().insert(followUpAnswerTable);
                                     }
 
-                                    if(result!=null){
+                                    if (result != null) {
                                         int totalSatisfactory = result.getTotalSatisfactory();
                                         String resultValue = result.getResultValue();
                                         int totalActionPlan = result.getTotalActionPlan();
@@ -2785,6 +2795,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 }
 
             }
+
             @Override
             public void onFailure(Call<FollowUpResponseModel> call, Throwable t) {
 
