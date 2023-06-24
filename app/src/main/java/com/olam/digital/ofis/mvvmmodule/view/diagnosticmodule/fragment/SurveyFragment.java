@@ -980,8 +980,8 @@ public class SurveyFragment extends Fragment {
                                         dmSurveyAnswerTable1.farmerId = Constants.FARMER_ID;
                                         db.dmSurveyAnswerTableDao().insert(dmSurveyAnswerTable1);
 
-                                        return ;
 
+                                        return ;
                                     }
                                     else if (Objects.equals(value, "-" + value) && db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).minimumRange <= Double.parseDouble(value) && Double.parseDouble(value) <= db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).maximumRange ) {
                                         complianceId = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).complianceId;
@@ -996,9 +996,10 @@ public class SurveyFragment extends Fragment {
                                         dmSurveyAnswerTable1.farmerId = Constants.FARMER_ID;
                                         db.dmSurveyAnswerTableDao().insert(dmSurveyAnswerTable1);
 
+
                                         return ;
                                     }
-                                    else if (Double.parseDouble(value) <= db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).maximumRange) {
+                                    else if (db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).minimumRange <= Double.parseDouble(value) && Double.parseDouble(value) <= db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).maximumRange) {
                                         allowCustomActionPlan = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).allowCustomActionPlan;
                                         isCaptureProof = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).isCaptureProof;
                                         complianceId = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).complianceId;
@@ -1012,7 +1013,11 @@ public class SurveyFragment extends Fragment {
                                         dmSurveyAnswerTable1.farmerId = Constants.FARMER_ID;
                                         db.dmSurveyAnswerTableDao().insert(dmSurveyAnswerTable1);
 
+
                                         return ;
+
+                            
+
                                     }
                                 }catch (Exception e){e.printStackTrace();
 
@@ -1021,6 +1026,7 @@ public class SurveyFragment extends Fragment {
 
                         }
                     }
+
 
 
                 }
