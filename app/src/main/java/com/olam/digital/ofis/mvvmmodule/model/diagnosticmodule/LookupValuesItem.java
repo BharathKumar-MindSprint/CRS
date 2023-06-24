@@ -42,7 +42,7 @@ public class LookupValuesItem{
 	private String valueLo;
 
 	@SerializedName("actionPlans")
-	private List<ActionPlansItem> actionPlans;
+	private List<DmRangeTextBoxActionPlans> actionPlans;
 
 	@SerializedName("id")
 	private int id;
@@ -56,7 +56,7 @@ public class LookupValuesItem{
 	@SerializedName("value")
 	private String value;
 
-	public LookupValuesItem(String valueTr, String valueId, String valueVi, String proofFormat, String valueTh, boolean isCaptureProof, String valueEs, String valueFr, int complianceId, String compliance, boolean allowCustomActionPlan, String valueLo,List<ActionPlansItem> actionPlans, int id, int position, String valuePt, String value) {
+	public LookupValuesItem(String valueTr, String valueId, String valueVi, String proofFormat, String valueTh, boolean isCaptureProof, String valueEs, String valueFr, int complianceId, String compliance, boolean allowCustomActionPlan, String valueLo,List<DmRangeTextBoxActionPlans> actionPlans, int id, int position, String valuePt, String value) {
 		this.valueTr = valueTr;
 		this.valueId = valueId;
 		this.valueVi = valueVi;
@@ -172,11 +172,11 @@ public class LookupValuesItem{
 		this.valueLo = valueLo;
 	}
 
-	public List<ActionPlansItem> getActionPlans() {
+	public List<DmRangeTextBoxActionPlans> getActionPlans() {
 		return actionPlans;
 	}
 
-	public void setActionPlans(List<ActionPlansItem> actionPlans) {
+	public void setActionPlans(List<DmRangeTextBoxActionPlans> actionPlans) {
 		this.actionPlans = actionPlans;
 	}
 
