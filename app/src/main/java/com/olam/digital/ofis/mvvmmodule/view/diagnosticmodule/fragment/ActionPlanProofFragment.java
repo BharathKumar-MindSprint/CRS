@@ -151,6 +151,7 @@ public class ActionPlanProofFragment extends Fragment{
 
     //Room DB
     OFISRoomDB db;
+    private boolean isCreated = false;
     Spinner spinner_dmCurrencies;
     String budgetAmount;
 
@@ -183,6 +184,20 @@ public class ActionPlanProofFragment extends Fragment{
                 hashMap.put("keyCurrencies", currency_id);
             }
         });
+
+        db = OFISRoomDB.getDbInstance(getActivity());
+        List<DmCurrency> dmSectionsItemList = db.dmCurrencyDao().getDMCurrencyByModuleId(Constants.MODULE_ID);
+        showCurrencyDropDown(dmSectionsItemList);
+
+        List<DmActionPlanCurrenciesTable> checkValueDefault = db.dmActionPlanCurrenciesTableDao().getCurrencyByModuleId(Constants.MODULE_ID, Constants.FARMER_ID);
+        if (checkValueDefault.size()==0){
+            isCreated = true;
+        }
+
+
+
+
+
 
         return view;
     }
@@ -429,6 +444,9 @@ public class ActionPlanProofFragment extends Fragment{
         textView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+
+
 
                 final CharSequence[] options = {"Take Photo", "Choose from Gallery", "Cancel"};
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -1383,6 +1401,7 @@ public class ActionPlanProofFragment extends Fragment{
         }
 
 
+
         int selectedPosition = 0;
 
 
@@ -1392,15 +1411,18 @@ public class ActionPlanProofFragment extends Fragment{
 //            }
 //        }
 
-//        db.dmActionPlanCurrenciesTableDao().getCurrencyByModuleId(Constants.MODULE_ID, Constants.FARMER_ID);
 
+//        if ()
         try {
             int currencyDefault = db.dmCurrencyDao().isCurrencyDefault(dmActionPlanCurrenciesTables.get(0).moduleId , 1);
             for (int i = 0; i < ids.size(); i++) {
-                if (String.valueOf(currencyDefault).equalsIgnoreCase(ids.get(i)) || currencyIdDb.equalsIgnoreCase(ids.get(i)) ) {
+                if (String.valueOf(currencyDefault).equalsIgnoreCase(ids.get(i)) && isCreated) {
                     selectedPosition = i;
+                    isCreated = false;
 //                    currencyIdDb = String.valueOf(currencyDefault);
 //                    currency_id = String.valueOf(currencyDefault);
+                } else if (currencyIdDb.equalsIgnoreCase(ids.get(i))) {
+                    selectedPosition = i;
                 }
 
             }
@@ -1642,8 +1664,9 @@ public class ActionPlanProofFragment extends Fragment{
     @Override
     public void onResume() {
         super.onResume();
-        db = OFISRoomDB.getDbInstance(getActivity());
+//        db = OFISRoomDB.getDbInstance(getActivity());
         List<DmCurrency> dmSectionsItemList = db.dmCurrencyDao().getDMCurrencyByModuleId(Constants.MODULE_ID);
         showCurrencyDropDown(dmSectionsItemList);
+        isCreated = false;
     }
 }
