@@ -28,4 +28,7 @@ public interface DmRangeTextBoxModuleQuestionsTableDao {
 
     @Query("DELETE FROM DmRangeTextBoxModuleQuestionsTable")
     void deleteAll();
+
+    @Query("SELECT proofFormat FROM DmRangeTextBoxModuleQuestionsTable WHERE questionId=:id AND complianceId =:complianceId")
+    String getProofFormatByQuestionId (String id , String complianceId);
 }

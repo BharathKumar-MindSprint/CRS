@@ -107,6 +107,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 
 public class ActionPlanProofFragment extends Fragment {
@@ -147,7 +148,13 @@ public class ActionPlanProofFragment extends Fragment {
 
     String currency_id = "0";
 
-    private static final String[] ACCEPTED_MIME_TYPES = {"image/jpeg", "image/png", "application/pdf",
+    private static final String[] ACCEPTED_MIME_TYPES_IMG = {"image/jpeg", "image/png"};
+
+    private static final String[] ACCEPTED_MIME_TYPES_DOC = {"application/pdf",
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "application/vnd.ms-excel",
+            "text/plain", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "text/csv"};
+
+    private static final String[] ACCEPTED_MIME_TYPES_ALL_FORMAT = {"image/jpeg", "image/png","application/pdf",
             "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "application/vnd.ms-excel",
             "text/plain", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "text/csv"};
 
@@ -451,24 +458,50 @@ public class ActionPlanProofFragment extends Fragment {
                 });
             }
         }
+
+
+
+
         textView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
+                if (db.dmComplaintFileTableDao().getFilesById(Integer.parseInt(id),Constants.FARMER_ID).size()>=5){
+                    Toast.makeText(getActivity(), "Maximum 5 files can be uploaded.", Toast.LENGTH_SHORT).show();
+
+                }else {
+
+                    CharSequence[] options = new CharSequence[0];
 
 
+                    try{
+                        String formatValue = db.dmRangeTextBoxModuleQuestionsTableDao().getProofFormatByQuestionId(id,complaint_id);
+                        if (Objects.equals(formatValue, "Both")){
+                            options = new CharSequence[]{"Take Photo", "Choose from Gallery", "Cancel"};
+//                            Toast.makeText(getContext(),formatValue, Toast.LENGTH_LONG).show();
+                        } else if (Objects.equals(formatValue, "Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)")) {
+                            options = new CharSequence[]{"Choose from Gallery", "Cancel"};
+//                            Toast.makeText(getContext(),formatValue, Toast.LENGTH_LONG).show();
+                        } else if (Objects.equals(formatValue, "Image (.png, .jpg, .jpeg)")) {
+                            options = new CharSequence[]{"Take Photo", "Choose from Gallery", "Cancel"};
+//                            Toast.makeText(getContext(),formatValue, Toast.LENGTH_LONG).show();
+                        }
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
 
-                final CharSequence[] options = {"Take Photo", "Choose from Gallery", "Cancel"};
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setTitle("Add Photo!");
-                builder.setItems(options, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int item) {
-                        if (options[item].equals("Take Photo")) {
-                            if (isStoragePermissionCameraGranted()) {
-                                if (dynamicArray.size() >= 5) {
-                                    Toast.makeText(getActivity(), "Maximum 5 files can be uploaded.", Toast.LENGTH_SHORT).show();
-                                } else {
+                    CharSequence[] finalOptions = options;
+
+
+//                final CharSequence[] options = {"Take Photo", "Choose from Gallery", "Cancel"};
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    builder.setTitle("Add Photo!");
+
+                    builder.setItems(options, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int item) {
+                            if (finalOptions[item].equals("Take Photo")) {
+                                if (isStoragePermissionCameraGranted()) {
                                     CAMERA_REQUEST = Integer.parseInt(textView.getTag().toString());
                                     Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                                     // Ensure that there's a camera activity to handle the intent
@@ -489,34 +522,55 @@ public class ActionPlanProofFragment extends Fragment {
                                             startActivityForResult(takePictureIntent, CAMERA_REQUEST);
                                         }
                                     }
+
+
                                 }
 
-                            }
+                            } else if (finalOptions[item].equals("Choose from Gallery")) {
 
-                        } else if (options[item].equals("Choose from Gallery")) {
+                                if (isStoragePermissionGalleryGranted()) {
 
-                            if (isStoragePermissionGalleryGranted()) {
-                                if (dynamicArray.size() >= 5) {
-                                    Toast.makeText(getActivity(), "Maximum 5 files can be uploaded.", Toast.LENGTH_SHORT).show();
-                                } else {
-                                    GALLERY_PICK = Integer.parseInt(textView.getTag().toString() + "0");
-                                    Intent galleryIntent = new Intent();
-                                    galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
-                                    galleryIntent.putExtra(Intent.EXTRA_MIME_TYPES, ACCEPTED_MIME_TYPES);
-                                    galleryIntent.setType("*/*");
-                                    startActivityForResult(Intent.createChooser(galleryIntent, "Choose gallery"), GALLERY_PICK);
+                                    String formatValue = db.dmRangeTextBoxModuleQuestionsTableDao().getProofFormatByQuestionId(id,complaint_id);
+                                    if (Objects.equals(formatValue, "Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)")){
+                                        GALLERY_PICK = Integer.parseInt(textView.getTag().toString() + "0");
+                                        Intent galleryIntent = new Intent();
+                                        galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
+                                        galleryIntent.putExtra(Intent.EXTRA_MIME_TYPES, ACCEPTED_MIME_TYPES_DOC);
+                                        galleryIntent.setType("*/*");
+                                        startActivityForResult(Intent.createChooser(galleryIntent, "Choose gallery"), GALLERY_PICK);
+                                    }else if (Objects.equals(formatValue, "Image (.png, .jpg, .jpeg)")){
+                                        GALLERY_PICK = Integer.parseInt(textView.getTag().toString() + "0");
+                                        Intent galleryIntent = new Intent();
+                                        galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
+                                        galleryIntent.putExtra(Intent.EXTRA_MIME_TYPES, ACCEPTED_MIME_TYPES_IMG);
+                                        galleryIntent.setType("*/*");
+                                        startActivityForResult(Intent.createChooser(galleryIntent, "Choose gallery"), GALLERY_PICK);
+                                    } else if (Objects.equals(formatValue, "Both")) {
+                                        GALLERY_PICK = Integer.parseInt(textView.getTag().toString() + "0");
+                                        Intent galleryIntent = new Intent();
+                                        galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
+                                        galleryIntent.putExtra(Intent.EXTRA_MIME_TYPES, ACCEPTED_MIME_TYPES_ALL_FORMAT);
+                                        galleryIntent.setType("*/*");
+                                        startActivityForResult(Intent.createChooser(galleryIntent, "Choose gallery"), GALLERY_PICK);
+                                    }
+
+
                                 }
-
+                            } else if (finalOptions[item].equals("Cancel")) {
+                                dialog.dismiss();
                             }
-                        } else if (options[item].equals("Cancel")) {
-                            dialog.dismiss();
                         }
-                    }
-                });
-                builder.show();
+                    });
+                    builder.show();
+
+                }
+
+
+
 
             }
         });
+
 
         List<DmRangeActionPlansItems> dmActionPlansItemList = new ArrayList<>();
         dmActionPlansItemList.clear();
@@ -545,7 +599,7 @@ public class ActionPlanProofFragment extends Fragment {
         LinearLayout linearLayoutSpin = new LinearLayout(getActivity());
         linearLayoutSpin.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT));
+                LinearLayout.LayoutParams.MATCH_PARENT));
         linearLayoutSpin.setOrientation(LinearLayout.HORIZONTAL);
         linearLayoutSpin.setWeightSum(10);
 
