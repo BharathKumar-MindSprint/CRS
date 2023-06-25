@@ -475,14 +475,15 @@ public class ActionPlanProofFragment extends Fragment {
 
 
                     try{
-                        String formatValue = db.dmRangeTextBoxModuleQuestionsTableDao().getProofFormatByQuestionId(id,complaint_id);
-                        if (Objects.equals(formatValue, "Both")){
+                        String formatValueTextBox = db.dmRangeTextBoxModuleQuestionsTableDao().getProofFormatByQuestionId(id,complaint_id);
+                        String formatValueDropBox = db.dmLookupValuesItemDao().getProofFormatByQuestionIdDropDown(id,complaint_id);
+                        if (Objects.equals(formatValueTextBox, "Both") || Objects.equals(formatValueDropBox, "Both")){
                             options = new CharSequence[]{"Take Photo", "Choose from Gallery", "Cancel"};
 //                            Toast.makeText(getContext(),formatValue, Toast.LENGTH_LONG).show();
-                        } else if (Objects.equals(formatValue, "Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)")) {
+                        } else if (Objects.equals(formatValueTextBox, "Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)") || Objects.equals(formatValueDropBox, "Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)")) {
                             options = new CharSequence[]{"Choose from Gallery", "Cancel"};
 //                            Toast.makeText(getContext(),formatValue, Toast.LENGTH_LONG).show();
-                        } else if (Objects.equals(formatValue, "Image (.png, .jpg, .jpeg)")) {
+                        } else if (Objects.equals(formatValueTextBox, "Image (.png, .jpg, .jpeg)") || Objects.equals(formatValueDropBox, "Image (.png, .jpg, .jpeg)")) {
                             options = new CharSequence[]{"Take Photo", "Choose from Gallery", "Cancel"};
 //                            Toast.makeText(getContext(),formatValue, Toast.LENGTH_LONG).show();
                         }
@@ -530,22 +531,23 @@ public class ActionPlanProofFragment extends Fragment {
 
                                 if (isStoragePermissionGalleryGranted()) {
 
-                                    String formatValue = db.dmRangeTextBoxModuleQuestionsTableDao().getProofFormatByQuestionId(id,complaint_id);
-                                    if (Objects.equals(formatValue, "Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)")){
+                                    String formatValueTextBox = db.dmRangeTextBoxModuleQuestionsTableDao().getProofFormatByQuestionId(id,complaint_id);
+                                    String formatValueDropBox = db.dmLookupValuesItemDao().getProofFormatByQuestionIdDropDown(id,complaint_id);
+                                    if (Objects.equals(formatValueTextBox, "Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)") || Objects.equals(formatValueDropBox,"Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)")){
                                         GALLERY_PICK = Integer.parseInt(textView.getTag().toString() + "0");
                                         Intent galleryIntent = new Intent();
                                         galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
                                         galleryIntent.putExtra(Intent.EXTRA_MIME_TYPES, ACCEPTED_MIME_TYPES_DOC);
                                         galleryIntent.setType("*/*");
                                         startActivityForResult(Intent.createChooser(galleryIntent, "Choose gallery"), GALLERY_PICK);
-                                    }else if (Objects.equals(formatValue, "Image (.png, .jpg, .jpeg)")){
+                                    }else if (Objects.equals(formatValueTextBox, "Image (.png, .jpg, .jpeg)") || Objects.equals(formatValueDropBox, "Image (.png, .jpg, .jpeg)")){
                                         GALLERY_PICK = Integer.parseInt(textView.getTag().toString() + "0");
                                         Intent galleryIntent = new Intent();
                                         galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
                                         galleryIntent.putExtra(Intent.EXTRA_MIME_TYPES, ACCEPTED_MIME_TYPES_IMG);
                                         galleryIntent.setType("*/*");
                                         startActivityForResult(Intent.createChooser(galleryIntent, "Choose gallery"), GALLERY_PICK);
-                                    } else if (Objects.equals(formatValue, "Both")) {
+                                    } else if (Objects.equals(formatValueTextBox, "Both") || Objects.equals(formatValueDropBox, "Both")) {
                                         GALLERY_PICK = Integer.parseInt(textView.getTag().toString() + "0");
                                         Intent galleryIntent = new Intent();
                                         galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
