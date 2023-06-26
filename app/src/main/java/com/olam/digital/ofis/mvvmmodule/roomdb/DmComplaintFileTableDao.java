@@ -20,6 +20,9 @@ public interface DmComplaintFileTableDao {
     @Query("SELECT * FROM DmComplaintFileTable WHERE questionId = :id AND farmerId = :farmerId")
     List<DmComplaintFileTable> getFilesById(int id, String farmerId);
 
+    @Query("SELECT questionId FROM DmComplaintFileTable WHERE questionId = :id AND farmerId = :farmerId")
+    String getQuestionFilesById(int id, String farmerId);
+
    /* @Insert
     void insertAll(List<DmComplaintFileTable> dmComplaintFileTablesAll);*/
 

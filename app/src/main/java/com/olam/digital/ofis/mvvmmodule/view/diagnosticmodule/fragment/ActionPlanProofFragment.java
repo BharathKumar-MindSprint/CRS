@@ -4,9 +4,7 @@ import static android.app.Activity.RESULT_OK;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.ProgressDialog;
 import android.content.ContentResolver;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -15,9 +13,7 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.graphics.Typeface;
-import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -25,12 +21,10 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
-import androidx.room.Query;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.os.Environment;
@@ -40,7 +34,6 @@ import android.text.Editable;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -50,7 +43,6 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -59,37 +51,23 @@ import android.widget.Toast;
 //import com.itextpdf.kernel.pdf.PdfDocument;
 //import com.itextpdf.kernel.pdf.PdfReader;
 //import com.itextpdf.kernel.pdf.PdfWriter;
-import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Image;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfStamper;
-import com.itextpdf.text.pdf.PdfWriter;
-import com.itextpdf.text.pdf.parser.Line;
 import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.mvvmmodule.Constants;
 import com.olam.digital.ofis.mvvmmodule.FileUtils;
 import com.olam.digital.ofis.mvvmmodule.ImageOrientation;
-import com.olam.digital.ofis.mvvmmodule.InputFilterMinMax;
 import com.olam.digital.ofis.mvvmmodule.PDFUtils;
 import com.olam.digital.ofis.mvvmmodule.PathUtil;
-import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.CurrenciesItem;
-import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.DmRangeTextBoxActionPlans;
-import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.CurrencyItem;
-import com.olam.digital.ofis.mvvmmodule.roomdb.DmActionPlanCurrenciesTableDao;
-import com.olam.digital.ofis.mvvmmodule.roomdb.DmSurveyAnswerTableDao;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.ComplianceIndicator;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmActionPlanCurrenciesTable;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmActionPlansItem;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmComplaintFileTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmCurrenciesItem;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmCurrency;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmLookupValuesItem;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmNonComplaintFileTable;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmQuestionsModule;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmRangeActionPlansItems;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmSatisfactoryFileTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmSurveyAnswerTable;
 
 import java.io.ByteArrayOutputStream;
@@ -103,7 +81,6 @@ import java.net.URISyntaxException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -182,7 +159,64 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
         spinner_dmCurrencies = view.findViewById(R.id.spinner_dmCurrencies);
         dm_question_complaint = view.findViewById(R.id.dm_question_complaint);
 
+
+        ll_servey_next_actionplan.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+
+                ArrayList<String> qId = Constants.questionIds;
+
+                ArrayList<String> qIdSections = Constants.questionIdsSection;
+
+                ArrayList<String> justVal = new ArrayList<String>();
+                
+
+
+                for (int i = 0; i < qId.size(); i++){
+                    String newValue = db.dmComplaintFileTableDao().getQuestionFilesById(Integer.parseInt(qId.get(i)),Constants.FARMER_ID);
+                    int getQuestionProof = db.dmSurveyAnswerTableDao().getIsCaptureProofValue(Integer.parseInt(qId.get(i)),Constants.FARMER_ID);
+
+
+
+
+                    if (!justVal.contains(newValue) && newValue!=null  ){
+                        justVal.add(newValue);
+                        /*if (!justVal.contains(getQuestion)){
+                            justVal.add(getQuestion);
+                        }*/
+
+                    } else if (Objects.equals(String.valueOf(getQuestionProof), "0")){
+                        justVal.add(newValue);
+                    }
+                }
+
+                if (justVal.size()==Constants.questionIds.size()){
+                    ViewPager2 viewPager = getActivity().findViewById(R.id.viewPager);
+                    viewPager.setCurrentItem(2);
+
+                    HashMap<String, String> hashMap = new HashMap<>();
+                    hashMap.put("keyCurrencies", currency_id);
+
+                }else {
+                    Toast.makeText(getContext(),"Capture Proof is missing", Toast.LENGTH_SHORT).show();
+                }
+
+
+
+//                ViewPager2 viewPager = getActivity().findViewById(R.id.viewPager);
+//                viewPager.setCurrentItem(2);
+//
+//                HashMap<String, String> hashMap = new HashMap<>();
+//                hashMap.put("keyCurrencies", currency_id);
+
+
+
+            }
+        });
+      
         ll_servey_next_actionplan.setOnClickListener(this);
+
 
         db = OFISRoomDB.getDbInstance(getActivity());
         List<DmCurrency> dmSectionsItemList = db.dmCurrencyDao().getDMCurrencyByModuleId(Constants.MODULE_ID);
@@ -527,6 +561,8 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                                         Intent galleryIntent = new Intent();
                                         galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
                                         galleryIntent.putExtra(Intent.EXTRA_MIME_TYPES, ACCEPTED_MIME_TYPES_DOC);
+                                        galleryIntent.addCategory(Intent.CATEGORY_OPENABLE);
+                                        galleryIntent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
                                         galleryIntent.setType("*/*");
                                         startActivityForResult(Intent.createChooser(galleryIntent, "Choose gallery"), GALLERY_PICK);
                                     }else if (Objects.equals(formatValueTextBox, "Image (.png, .jpg, .jpeg)") || Objects.equals(formatValueDropBox, "Image (.png, .jpg, .jpeg)")){
@@ -1345,7 +1381,8 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 }
 
 
-            } else {
+            } else /*if (mime.equalsIgnoreCase("image/jpeg")
+                    || mime.equalsIgnoreCase("image/png"))*/{
                 final BitmapFactory.Options options = new BitmapFactory.Options();
                 options.inJustDecodeBounds = true;
                 options.inSampleSize = 2;
@@ -1359,7 +1396,6 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 } catch (URISyntaxException e) {
                     e.printStackTrace();
                 }
-
 
                 Bitmap bmp = BitmapFactory.decodeFile(filePathimage, options);
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -1495,6 +1531,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
                 }
             }
+
 
         }
 
