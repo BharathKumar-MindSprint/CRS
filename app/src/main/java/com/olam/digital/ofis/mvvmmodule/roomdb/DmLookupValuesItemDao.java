@@ -25,4 +25,7 @@ public interface DmLookupValuesItemDao {
 
     @Query("DELETE FROM DmLookupValuesItem")
     void deleteAll();
+
+    @Query("SELECT proofFormat FROM DmLookupValuesItem WHERE idQuestionsMudule=:id AND complianceId =:complianceId")
+    String getProofFormatByQuestionIdDropDown (String id , String complianceId);
 }
