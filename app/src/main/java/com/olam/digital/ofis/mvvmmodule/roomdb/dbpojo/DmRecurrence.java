@@ -17,4 +17,7 @@ public class DmRecurrence {
 
     @ColumnInfo(name = "recurrenceType")
     public String recurrenceType;
+
+    @ColumnInfo(name = "moduleId")
+    public String moduleId;
 }

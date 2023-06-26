@@ -1,5 +1,7 @@
 package com.olam.digital.ofis.mvvmmodule.model.followup;
 
+import androidx.room.ColumnInfo;
+
 import java.util.List;
 import com.google.gson.annotations.SerializedName;
 
@@ -50,6 +52,16 @@ public class FollowUpItem{
 	@SerializedName("updatedAt")
 	private String updatedAt;
 
+	@ColumnInfo(name = "farmerId")
+	public long farmerId;
+
+	public long getFarmerId() {
+		return farmerId;
+	}
+
+	public void setFarmerId(long farmerId) {
+		this.farmerId = farmerId;
+	}
 
 	public int getQuestionId() {
 		return questionId;

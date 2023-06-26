@@ -90,8 +90,9 @@ import com.olam.digital.ofis.gps.utils.GPSUtils;
 import com.olam.digital.ofis.logging.FabricLogsWriter;
 import com.olam.digital.ofis.matoma.MatomoHelper;
 import com.olam.digital.ofis.matoma.ScreenNameConstants;
-import com.olam.digital.ofis.matoma.multifarm.MultiFarmUtils;
+
 import com.olam.digital.ofis.matoma.multifarm.UpdateMultiFarmActivity;
+import com.olam.digital.ofis.multifarm.MultiFarmUtils;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.ActionPlansItem;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.AnswerTypesItem;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.ComplianceIndicatorItem;
@@ -1901,7 +1902,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
 
     public static void GetAllDiagnosticModule() {
-
+        deleteRoomDbValues();
         ManageRecords AllDiagnosticModuleData = RetrofitClient.getRetrofit().create(ManageRecords.class);
         Call<ResponseModel> call = AllDiagnosticModuleData.getAllDiagnosticModuleData(Integer.valueOf(Utilities.getFromSharedPrefs(staticContext)));
         call.enqueue(new Callback<ResponseModel>() {
@@ -1912,25 +1913,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
                 try {
                     if (response.code() == 200) {
-
-                        db.dmSectionsItemDao().deleteAll();
-                        db.dmQuestionsSubModuleDao().deleteAll();
-                        db.dmLookupValuesISubmoduleDao().deleteAll();
-                        db.dmActionPlansItemSubmoduleDao().deleteAll();
-                        db.dmQuestionsModuleDao().deleteAll();
-                        db.dmLookupValuesItemDao().deleteAll();
-                        db.dmActionPlansItemDao().deleteAll();
-                        db.dmMainModuleDao().deleteAll();
-                        db.dmAnswerTypesDao().deleteAll();
-                        db.dmQuestionTypesDao().deleteAll();
-                        db.dmCurrenciesItemDao().deleteAll();
-                        db.dmTextBoxModuleQuestionsDao().deleteAll();
-                        db.dmRangeTextBoxModuleQuestionsTableDao().deleteAll();
-                        db.dmTextBoxModuleQuestionsDao().deleteAll();
-                        db.dmRangeTextBoxModuleQuestionsTableDao().deleteAll();
-                        db.complianceIndicatorDao().deleteAll();
-                        db.dmCurrencyDao().deleteAll();
-                        db.dmRangeActionPlansItemsDao().deleteAll();
+                        deleteRoomDbValues();
 
                         if (response.body().getDiagnosticModules() != null) {
                             ArrayList<DiagnosticModulesList> mainResponseList = new ArrayList<>();
@@ -1962,6 +1945,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                     String descriptionIdn = mainResponseList.get(i).getDescriptionIdn();
                                     String descriptionTr = mainResponseList.get(i).getDescriptionTr();
                                     String descriptionFr = mainResponseList.get(i).getDescriptionFr();
+                                    String startDate = mainResponseList.get(i).getStartDate();
 
                                     List<ComplianceIndicatorItem> complianceIndicatorItemList = new ArrayList<>();
                                     complianceIndicatorItemList.clear();
@@ -1998,6 +1982,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                     user.descriptionIdn = descriptionIdn;
                                     user.descriptionTr = descriptionTr;
                                     user.descriptionFr = descriptionFr;
+                                    user.startDate = startDate;
 
                                     user.surveyType = surveyType;
                                     user.followUpDuration = followUpDuration;
@@ -2637,6 +2622,29 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
     }
 
+    private static void deleteRoomDbValues() {
+        OFISRoomDB db = OFISRoomDB.getDbInstance(staticContext);
+        db.dmSectionsItemDao().deleteAll();
+        db.dmQuestionsSubModuleDao().deleteAll();
+        db.dmLookupValuesISubmoduleDao().deleteAll();
+        db.dmActionPlansItemSubmoduleDao().deleteAll();
+        db.dmQuestionsModuleDao().deleteAll();
+        db.dmLookupValuesItemDao().deleteAll();
+        db.dmActionPlansItemDao().deleteAll();
+        db.dmMainModuleDao().deleteAll();
+        db.dmAnswerTypesDao().deleteAll();
+        db.dmQuestionTypesDao().deleteAll();
+        db.dmCurrenciesItemDao().deleteAll();
+        db.dmTextBoxModuleQuestionsDao().deleteAll();
+        db.dmRangeTextBoxModuleQuestionsTableDao().deleteAll();
+        db.dmTextBoxModuleQuestionsDao().deleteAll();
+        db.dmRangeTextBoxModuleQuestionsTableDao().deleteAll();
+        db.complianceIndicatorDao().deleteAll();
+        db.dmCurrencyDao().deleteAll();
+        db.dmRangeActionPlansItemsDao().deleteAll();
+        db.dmSurveyAnswerTableDao().deleteAll();
+    }
+
     public static void GetAllFollowUpDMData() {
 
         ManageRecords GetAllFollowUpDMData = RetrofitClient.getRetrofit().create(ManageRecords.class);
@@ -2671,11 +2679,13 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                     int actionPlanId = followUpItemArrayList.get(j).getActionPlanId();
                                     int dmSubModId = followUpItemArrayList.get(j).getDmSubModId();
                                     int attempt = followUpItemArrayList.get(j).getAttempt();
+//                                    long farmerId = followUpItemArrayList.get(j).getFarmerId();
+                                    long farmerId = 478520;
                                     String actionPlanText = followUpItemArrayList.get(j).getActionPlanText();
                                     String createdAt = followUpItemArrayList.get(j).getCreatedAt();
                                     String createdBy = followUpItemArrayList.get(j).getCreatedBy();
                                     String dmCapturedProof = String.valueOf(followUpItemArrayList.get(j).getDmCapturedProof());
-                                    String status = followUpItemArrayList.get(j).getStatus();
+                                    String status = followUpItemArrayList.get(j).getStatus().trim();
                                     String updatedAt = followUpItemArrayList.get(j).getUpdatedAt();
                                     String updatedBy = followUpItemArrayList.get(j).getUpdatedBy();
                                     boolean isPortal = followUpItemArrayList.get(j).isPortal();
@@ -2695,6 +2705,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                     followUpItemMainTable.updatedAt = updatedAt;
                                     followUpItemMainTable.updatedBy = updatedBy;
                                     followUpItemMainTable.isPortal = isPortal;
+                                    followUpItemMainTable.farmerId = farmerId;
 
                                     db.followUpItemMainTableDao().insert(followUpItemMainTable);
 

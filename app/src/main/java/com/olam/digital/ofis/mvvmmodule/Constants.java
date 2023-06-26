@@ -16,6 +16,9 @@ public class Constants{
   public static ArrayList<String> questionIds = new ArrayList<>();
   public static ArrayList<String> questionIdsSection = new ArrayList<>();
 
+  public static ArrayList<String> mandatedQuestionIds = new ArrayList<>();
+
+
   public static  String RED ="RED";
   public static  String GREEN ="GREEN";
   public static final String ORANGE = "ORANGE";

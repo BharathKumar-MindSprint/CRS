@@ -47,11 +47,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class FollowUpSurvey extends Fragment {
+public class FollowUpSurvey extends Fragment implements View.OnClickListener{
 
     ImageView iv_complaint_dropdown_follow_up_survey, iv_non_complaint_dropdown_follow_up_survey, iv_satisfactory_dropdown_follow_up_survey;
     LinearLayout ll_complaint_follow_up_survey, ll_non_complaint_follow_up_survey, ll_satisfactory_follow_up_survey;
-    LinearLayout dm_question_complaint_followup_survey;
+    LinearLayout dm_question_complaint_followup_survey,ll_servey_back_followup_survey,ll_servey_next_followup_survey;
 
     OFISRoomDB db;
 
@@ -67,7 +67,10 @@ public class FollowUpSurvey extends Fragment {
         View view = inflater.inflate(R.layout.fragment_follow_up_survey, container, false);
 
         dm_question_complaint_followup_survey = view.findViewById(R.id.dm_question_complaint_followup_survey);
-
+        ll_servey_back_followup_survey = view.findViewById(R.id.ll_servey_back_followup_survey);
+        ll_servey_next_followup_survey = view.findViewById(R.id.ll_servey_next_followup_survey);
+        ll_servey_back_followup_survey.setOnClickListener(this);
+//        ll_servey_next_followup_survey.setOnClickListener(this);
         return view;
     }
 
@@ -290,5 +293,16 @@ public class FollowUpSurvey extends Fragment {
         }
 
         super.onResume();
+    }
+
+    @Override
+    public void onClick(View v) {
+        int id = v.getId();
+
+        if(id == R.id.ll_servey_next_followup_survey){
+
+        }else if (id == R.id.ll_servey_back_followup_survey){
+            requireActivity().onBackPressed();
+        }
     }
 }

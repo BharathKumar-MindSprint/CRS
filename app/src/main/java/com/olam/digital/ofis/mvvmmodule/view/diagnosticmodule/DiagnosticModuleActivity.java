@@ -146,5 +146,8 @@ public class DiagnosticModuleActivity extends BaseActivity  {
         }
     }
 
-
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+    }
 }

@@ -5,6 +5,7 @@ import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
 
+import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.ComplianceIndicator;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmCurrency;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmRecurrence;
 
@@ -21,4 +22,7 @@ public interface DmRecurrenceDao {
     @Delete
     void delete(DmRecurrence dmRecurrences);
 
+
+    @Query("SELECT * FROM DmRecurrence WHERE moduleId =:id")
+    DmRecurrence getRecurrenceByModuleId(String id);
 }

@@ -53,4 +53,7 @@ public class FollowUpItemMainTable {
     @ColumnInfo(name = "updatedAt")
     public String updatedAt;
 
+    @ColumnInfo(name = "farmerId")
+    public long farmerId;
+
 }
