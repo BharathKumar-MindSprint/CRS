@@ -145,13 +145,14 @@ public class FollowUpActionPlan extends Fragment {
 
             @Override
             public void onClick(View view) {
-                if (!ViewFarmerActivity.recyclerViewData.contains("Follow Up 1")) {
+                /*if (!ViewFarmerActivity.recyclerViewData.contains("Follow Up 1")) {
                     ViewFarmerActivity.recyclerViewData.add("Follow Up 1");
 
-                    Intent intent = new Intent(getContext(), ViewFarmerActivity.class);
-                    getContext().startActivity(intent);
+
                 } else {
-                }
+                }*/
+                Intent intent = new Intent(getContext(), ViewFarmerActivity.class);
+                getContext().startActivity(intent);
             }
         });
 

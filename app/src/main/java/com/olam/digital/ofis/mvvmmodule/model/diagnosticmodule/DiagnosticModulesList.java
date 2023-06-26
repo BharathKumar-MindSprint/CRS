@@ -89,6 +89,16 @@ public class DiagnosticModulesList {
 	@SerializedName("descriptionTr")
 	private String descriptionTr;
 
+	@SerializedName("startDate")
+	private String startDate;
+
+	public String getStartDate() {
+		return startDate;
+	}
+
+	public void setStartDate(String startDate) {
+		this.startDate = startDate;
+	}
 
 	public int getFollowUpDuration() {
 		return followUpDuration;

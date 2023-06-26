@@ -97,36 +97,30 @@ public class FollowUpRecyclerAdapter extends RecyclerView.Adapter<FollowUpRecycl
         @Override
         public void onClick(View v) {
 
-           /* int position = getAdapterPosition();
-            String itemName = items.get(position);
-            if (itemName.equals("Diagnostic Module") && isDiagnosticModuleEnabled) {
-                ((ViewFarmerActivity) context).openDiagnosticModule();
-            }else if (itemName.startsWith("Follow-up Module")) {
-                // Handle the click event for follow-up module items
-                Toast.makeText(v.getContext(), "Clicked: " + itemName, Toast.LENGTH_SHORT).show();
-            }
-*/
+
             int previousPosition = selectedPosition;
             selectedPosition = getAdapterPosition();
-            String itemName = items.get(selectedPosition);
-//            Toast.makeText(context, "Click"+selectedPosition, Toast.LENGTH_SHORT).show();
             notifyItemChanged(previousPosition);
             notifyItemChanged(selectedPosition);
-//            onItemSurveyClickListener.onItemClick(v,pos);
-            if (selectedPosition== 0) {
+            if (selectedPosition== 0 ) {
+//            if (selectedPosition== 0 && items.size() == 1) {
 //                Intent intent = new Intent(context, DiagnosticModuleActivity.class);
                 in.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(in);
-            }
-            /*if (selectedPosition == 1){
+//            }else if (selectedPosition != 0 && selectedPosition == items.size()-1){
+            }else {
                 Intent intent = new Intent(context, DiagnosticModuleFollowUp.class);
-                context.startActivity(intent);
-            }*/
-            if (Objects.equals(itemName, "Follow Up 1")){
-                Intent intent = new Intent(context, DiagnosticModuleFollowUp.class);
+                intent.putExtra("FollowUpPosition", selectedPosition);
+                if(selectedPosition == items.size()){
+                    intent.putExtra("Editable", true);
+                }else{
+                    intent.putExtra("Editable", false);
+                }
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(intent);
             }
+
+
         }
     }
 }

@@ -194,6 +194,64 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                 //}
                 //Ticket-OFISDM-39 newly added
             }else if(cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals("diagnostic")){
+
+                /*if (recurrence_frequency > 0 && !disabled_months.contains(String.valueOf(currentDate.get(Calendar.MONTH)))) {
+                    // for recurring
+                    try {
+                        // get last submitted date
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
+                        Calendar lastSubmittedDate = Calendar.getInstance();
+
+                        //O20HS-84 - To enable the annual survey.
+                        calculationDate = (Calendar) currentDate.clone();
+                        //
+
+                        try {
+                            lastSubmittedDate.setTime(sdf.parse(submittedModuleDetails.getString("created_at")));
+                        } catch (ParseException e) {
+                            FirebaseCrash.report(new Exception("CustomListAdapter_Modules: Error setting recurrence date values", e));
+                            e.printStackTrace();
+                        }
+                        if (recurrence_type != null) {
+                            if (recurrence_type.equalsIgnoreCase("years")) {
+                                calculationDate.add(Calendar.YEAR, -recurrence_frequency);
+                                calculationDate.set(Calendar.MONTH, Calendar.DECEMBER);
+                                calculationDate.set(Calendar.DAY_OF_MONTH, 31);
+                            } else if (recurrence_type.equalsIgnoreCase("months")) {
+                                calculationDate.add(Calendar.MONTH, -recurrence_frequency);
+                                calculationDate.set(Calendar.DAY_OF_MONTH, calculationDate.getActualMaximum(Calendar.DAY_OF_MONTH));
+                            } else if (recurrence_type.equalsIgnoreCase("weeks")) {
+                                calculationDate.add(Calendar.WEEK_OF_YEAR, -recurrence_frequency);
+                                calculationDate.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
+                            } else {
+                                // must be days
+                                calculationDate.add(Calendar.DAY_OF_YEAR, -recurrence_frequency);
+                            }
+
+                            // set the time
+                            calculationDate.set(Calendar.HOUR_OF_DAY, 23);
+                            calculationDate.set(Calendar.MINUTE, 59);
+                            calculationDate.set(Calendar.SECOND, 59);
+                            calculationDate.set(Calendar.MILLISECOND, 999);
+
+                            // force the recalculation
+                            calculationDate.get(Calendar.DAY_OF_MONTH);
+
+
+                            if (lastSubmittedDate.after(calculationDate)) {
+                                disable_entry = true;
+                            }
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    // for non-recurring
+                    disable_entry = true;
+                }*/
+
+
+
                 imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_childsurvey));
                 enabledItem.setText("true");
 
