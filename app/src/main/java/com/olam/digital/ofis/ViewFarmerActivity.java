@@ -96,9 +96,9 @@ import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.gps.utils.GPSUtils;
 import com.olam.digital.ofis.matoma.MatomoHelper;
 import com.olam.digital.ofis.matoma.ScreenNameConstants;
+import com.olam.digital.ofis.matoma.multifarm.MultiFarmDTO;
+import com.olam.digital.ofis.matoma.multifarm.MultiFarmUtils;
 import com.olam.digital.ofis.matoma.multifarm.UpdateMultiFarmActivity;
-import com.olam.digital.ofis.multifarm.MultiFarmDTO;
-import com.olam.digital.ofis.multifarm.MultiFarmUtils;
 import com.olam.digital.ofis.matoma.multifarm.UpdateMultiFarmActivity;
 import com.olam.digital.ofis.mvvmmodule.Constants;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
@@ -239,7 +239,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
     //Room Database
     OFISRoomDB db;
     String dmSurveyName;
-    String  dmSubTitle;
+    String  dmSubTitle,dmSubTitleDescription;
     String followUpCount;
     String moduleID;
 
@@ -2268,6 +2268,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                     // record farm location if necessary
                     TextView recordedLng = (TextView) v.findViewById(R.id.moduleListRecordedLng);
                     TextView subModuleTv = (TextView) v.findViewById(R.id.moduleListCurrentSubModuleId);
+                    TextView moduleListModuleName = (TextView) v.findViewById(R.id.moduleListModuleName);
                     if (recordedLng != null && recordedLng.getText().equals("Phone")) {
                         MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_UPDATE_PHONE_NUMBER, ScreenNameConstants.BUTTON_CLICKED);
                         if (phoneNumbersListItem == null) {
@@ -2285,6 +2286,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                     }else if(recordedLng != null && recordedLng.getText().equals("diagnostic")){
                         MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_REGISTER_CHILD, ScreenNameConstants.BUTTON_CLICKED);
                         Constants.MODULE_ID = subModuleTv.getText().toString();
+                        Constants.MODULE_NAME = moduleListModuleName.getText().toString();
                         Constants.FARMER_ID = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID));
                         String farmerID = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID));
                         long farmerGroupId = dl.getFarmerGroupById(farmerId);
@@ -2294,6 +2296,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                         in.putExtra("SUB_TITLE",dmSubTitle);
                         in.putExtra("DM_MODULE_ID",moduleID);
                         in.putExtra("DM_FARMER_ID",farmerID);
+                        in.putExtra("DM_SURVEY_SUBTITLE",dmSurveyName);
                         in.putExtra("DM_FARMER_GROUP_ID",String.valueOf(farmerGroupId));
 //                        startActivity(in);
 

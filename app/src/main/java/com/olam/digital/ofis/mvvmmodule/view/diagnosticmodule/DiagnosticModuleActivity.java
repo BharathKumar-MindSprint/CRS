@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
@@ -50,11 +51,13 @@ public class DiagnosticModuleActivity extends BaseActivity  {
         enumerator_id = Utilities.getFromSharedPrefs(context);
         Constants.ENUMERATOR_ID = Utilities.getFromSharedPrefs(context);
 
-        Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            String value = extras.getString("SUB_TITLE");
-            tv_subtitle.setText(value);
+
+        if(!Constants.MODULE_NAME.equalsIgnoreCase("0"))
+        {
+            tv_subtitle.setText(Constants.MODULE_NAME);
         }
+
+
 
         PagerAdapter sa = new PagerAdapter(this);
         viewPager.setAdapter(sa);

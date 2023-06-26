@@ -691,7 +691,7 @@ public class FollowUpActionPlan extends Fragment {
         dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByQuestionId(id, Constants.FARMER_ID);
 
         if (dmSurveyAnswerTableList.size() != 0) {
-            String answerIdDb = dmSurveyAnswerTableList.get(0).answer;
+            String answerIdDb = dmSurveyAnswerTableList.get(0).actionPlanText;
             editText.setText(answerIdDb);
         }
 
@@ -708,41 +708,33 @@ public class FollowUpActionPlan extends Fragment {
             if (dmSurveyAnswerTableList1.size() != 0) {
                 String resolved = dmSurveyAnswerTableList1.get(0).resolved;
                 boolean captureProof = dmSurveyAnswerTableList1.get(0).isCaptureProof;
-                if (resolved.equalsIgnoreCase("1")) {
-                    notResolveText.setText("Resolved");
-                    if (captureProof) {
-                        linearLayoutItems.addView(textView);
-                        linearLayoutItems.addView(linearLayoutImage);
+                if(resolved!=null) {
+                    if (resolved.equalsIgnoreCase("1")) {
+                        notResolveText.setText("Resolved");
+                        if (captureProof) {
+                            linearLayoutItems.addView(textView);
+                            linearLayoutItems.addView(linearLayoutImage);
 
-                    }
-
-                } else if (resolved.equalsIgnoreCase("2")) {
-                    notResolveText.setText("Not Resolved");
-                    if (captureProof) {
-                        linearLayoutItems.addView(textView);
-                        linearLayoutItems.addView(linearLayoutImage);
-                        linearLayoutItems.addView(linearLayoutSpin);
-                        if (db.dmSurveyAnswerTableDao().getDataByQuestionId(id, Constants.FARMER_ID).get(0).allowCustomActionPlan) {
-                            linearLayoutItems.addView(linearLayoutActionPlanMain);
                         }
-                    }
-                    else
-                    {
-                        linearLayoutItems.addView(linearLayoutSpin);
-                        if (db.dmSurveyAnswerTableDao().getDataByQuestionId(id, Constants.FARMER_ID).get(0).allowCustomActionPlan) {
-                            linearLayoutItems.addView(linearLayoutActionPlanMain);
+
+                    } else if (resolved.equalsIgnoreCase("2")) {
+                        notResolveText.setText("Not Resolved");
+                        if (captureProof) {
+                            linearLayoutItems.addView(textView);
+                            linearLayoutItems.addView(linearLayoutImage);
+                            linearLayoutItems.addView(linearLayoutSpin);
+                            if (db.dmSurveyAnswerTableDao().getDataByQuestionId(id, Constants.FARMER_ID).get(0).allowCustomActionPlan) {
+                                linearLayoutItems.addView(linearLayoutActionPlanMain);
+                            }
+                        } else {
+                            linearLayoutItems.addView(linearLayoutSpin);
+                            if (db.dmSurveyAnswerTableDao().getDataByQuestionId(id, Constants.FARMER_ID).get(0).allowCustomActionPlan) {
+                                linearLayoutItems.addView(linearLayoutActionPlanMain);
+                            }
                         }
                     }
                 }
-
             }
-
-
-
-
-
-
-
 
         }
 

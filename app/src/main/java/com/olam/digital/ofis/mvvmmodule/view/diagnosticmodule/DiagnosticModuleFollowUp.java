@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.viewpager2.widget.ViewPager2;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
@@ -12,6 +13,7 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.olam.digital.ofis.BaseActivity;
 import com.olam.digital.ofis.R;
+import com.olam.digital.ofis.mvvmmodule.Constants;
 import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.FollowUp.FollowUpPagerAdapter;
 import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.adapter.PagerAdapter;
 
@@ -21,9 +23,11 @@ public class DiagnosticModuleFollowUp extends BaseActivity {
     public TabLayout tabLayout;
     ViewPager2 viewPager;
     private boolean swipeEnabled = true;
+    TextView followup_subtitle;
 
 
 
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,6 +36,10 @@ public class DiagnosticModuleFollowUp extends BaseActivity {
 
         tabLayout = findViewById(R.id.tabLayoutFollowUp);
         viewPager = findViewById(R.id.viewPagerFollowUp);
+        followup_subtitle = findViewById(R.id.followup_subtitle);
+        if(!Constants.MODULE_NAME.equalsIgnoreCase("0")) {
+            followup_subtitle.setText(Constants.MODULE_NAME);
+        }
 
         FollowUpPagerAdapter sa = new FollowUpPagerAdapter(this);
         viewPager.setAdapter(sa);
