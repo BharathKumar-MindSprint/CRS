@@ -99,10 +99,11 @@ import com.olam.digital.ofis.matoma.ScreenNameConstants;
 import com.olam.digital.ofis.matoma.multifarm.UpdateMultiFarmActivity;
 import com.olam.digital.ofis.multifarm.MultiFarmDTO;
 import com.olam.digital.ofis.multifarm.MultiFarmUtils;
-import com.olam.digital.ofis.matoma.multifarm.UpdateMultiFarmActivity;
 import com.olam.digital.ofis.mvvmmodule.Constants;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmMainModule;
+import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmRecurrence;
+import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.FollowUpItemMainTable;
 import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.DiagnosticModuleActivity;
 import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.FollowUp.FollowUpRecyclerAdapter;
 import com.olam.digital.ofis.recordpolygon.RecordPolygonActivity;
@@ -244,7 +245,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
     String moduleID;
 
 
-    public static ArrayList<String> recyclerViewData = new ArrayList<>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -263,10 +264,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         dl = new DataLayer(res, context);
         pd = new ProgressDialog(context);
 
-        if (!recyclerViewData.contains("Existing Module")) {
-            recyclerViewData.add("Existing Module");
-            recyclerViewData.add("Follow Up 1");
-        }
+
 
 
 
@@ -1137,6 +1135,8 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                     dmSubTitle = dmQuestionsModuleList.get(i).assessmentType;
                     moduleID = String.valueOf(dmQuestionsModuleList.get(i).id);
                     followUpCount = String.valueOf(dmQuestionsModuleList.get(i).followUpAttempts);
+                    String startDate = String.valueOf(dmQuestionsModuleList.get(i).startDate);
+                    DmRecurrence dmRecurrence = db.dmRecurrenceDao().getRecurrenceByModuleId(moduleID);
 
                     mc.addRow(new String[]{
                             "0",
@@ -1160,8 +1160,11 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                             res.getString(R.string.dm_diognostic_module_subtitle),
                             res.getString(R.string.dm_diognostic_module_subtitle),
                             res.getString(R.string.dm_diognostic_module_subtitle),
+//                            String.valueOf(dmRecurrence.recurrenceFrequency),
+//                            dmRecurrence.recurrenceType,
                             res.getString(R.string.dm_diognostic_module_subtitle),
                             res.getString(R.string.dm_diognostic_module_subtitle),
+//                            "", "", "", "", "", startDate, "",moduleID , "",
                             "", "", "", "", "", "", "",moduleID , "",
                             "diagnostic"
                     });
@@ -2283,7 +2286,6 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
 
                         //Ticket-OFISDM-39 newly added
                     }else if(recordedLng != null && recordedLng.getText().equals("diagnostic")){
-                        MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_REGISTER_CHILD, ScreenNameConstants.BUTTON_CLICKED);
                         Constants.MODULE_ID = subModuleTv.getText().toString();
                         Constants.FARMER_ID = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID));
                         String farmerID = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID));
@@ -2304,7 +2306,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                             newCount=Integer.parseInt(followUpCount);
                         }
 
-                        showPopupDialog(newCount , in);
+                        showPopupDialog(newCount , in, farmerID, moduleID);
 
                     } else if (recordedLng != null && recordedLng.getText().equals(ChildLabourUtils.REG_CHILD)) {
                         MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_REGISTER_CHILD, ScreenNameConstants.BUTTON_CLICKED);
@@ -2757,17 +2759,25 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
     }
 
 
-    private void showPopupDialog(int newFollowUpCount, Intent in) {
+    private void showPopupDialog(int newFollowUpCount, Intent in, String farmerID, String moduleID) {
         Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.followup_diagnostic_popup);
 //        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         dialog.setCancelable(false);
+        ArrayList<String> recyclerViewData = new ArrayList<>();
 
-
-//        recyclerViewData.add("Existing Module");
-//        recyclerViewData.add("Follow up 1");
-
+        recyclerViewData.add("Existing Module");
+        recyclerViewData.add("Follow up " + 1);
+        /*List<FollowUpItemMainTable> followupList = db.followUpItemMainTableDao().getFollowupByFarmerId(Long.parseLong(farmerID), Integer.parseInt(moduleID));
+        if(followupList.size() == 0){
+            recyclerViewData.add("Follow up " + 1);
+        }else {
+            for (int i = 1; i <= followupList.size(); i++) {
+                recyclerViewData.add("Follow up " + i);
+            }
+            recyclerViewData.add("Follow up " + followupList.size() + 1);
+        }*/
         RecyclerView recyclerView = dialog.findViewById(R.id.recyclerView);
         FollowUpRecyclerAdapter adapter = new FollowUpRecyclerAdapter(recyclerViewData,getApplicationContext(),newFollowUpCount , in);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));

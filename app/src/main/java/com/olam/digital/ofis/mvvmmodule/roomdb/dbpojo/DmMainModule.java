@@ -78,4 +78,7 @@ public class DmMainModule {
     @ColumnInfo(name = "assessmentType")
     public String assessmentType;
 
+    @ColumnInfo(name = "startDate")
+    public String startDate;
+
 }

@@ -199,11 +199,11 @@ public class SurveyResultsFragment extends Fragment {
 
                // SubmitResult(arrayList.toString());
 
-                if (!ViewFarmerActivity.recyclerViewData.contains("Follow Up 1")) {
+               /* if (!ViewFarmerActivity.recyclerViewData.contains("Follow Up 1")) {
                     ViewFarmerActivity.recyclerViewData.add("Follow Up 1");
                 }else {
 //                    Toast.makeText(getContext(), "Can't add more followup", Toast.LENGTH_SHORT).show();
-                }
+                }*/
                 DataLayer dl = new DataLayer(getResources(), getContext());
                 dl.updateNqForDMSurvey(Constants.FARMER_ID, Constants.MODULE_ID);
                 Intent intent = new Intent(getContext(),ViewFarmerActivity.class);

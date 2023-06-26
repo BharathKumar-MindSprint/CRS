@@ -109,7 +109,7 @@ import java.util.HashMap;
 import java.util.List;
 
 
-public class ActionPlanProofFragment extends Fragment {
+public class ActionPlanProofFragment extends Fragment implements View.OnClickListener{
 
     private static final int REQ_CODE = 300;
     private final String MATOMOTAG = this.getClass().getSimpleName();
@@ -175,18 +175,7 @@ public class ActionPlanProofFragment extends Fragment {
         spinner_dmCurrencies = view.findViewById(R.id.spinner_dmCurrencies);
         dm_question_complaint = view.findViewById(R.id.dm_question_complaint);
 
-        ll_servey_next_actionplan.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View view) {
-
-                ViewPager2 viewPager = getActivity().findViewById(R.id.viewPager);
-                viewPager.setCurrentItem(2);
-
-                HashMap<String, String> hashMap = new HashMap<>();
-                hashMap.put("keyCurrencies", currency_id);
-            }
-        });
+        ll_servey_next_actionplan.setOnClickListener(this);
 
         db = OFISRoomDB.getDbInstance(getActivity());
         List<DmCurrency> dmSectionsItemList = db.dmCurrencyDao().getDMCurrencyByModuleId(Constants.MODULE_ID);
@@ -564,7 +553,7 @@ public class ActionPlanProofFragment extends Fragment {
 
         spinner.setTag("spinner" + complaint_id);
 
-        layoutParamsSpin.setMargins(0, -10, 10, 0);
+        layoutParamsSpin.setMargins(0, 15, 10, 15);
 
 
         TextView tVActionPlanSelectedTxt = new TextView(getActivity());
@@ -1758,5 +1747,18 @@ public class ActionPlanProofFragment extends Fragment {
         List<DmCurrency> dmSectionsItemList = db.dmCurrencyDao().getDMCurrencyByModuleId(Constants.MODULE_ID);
         showCurrencyDropDown(dmSectionsItemList);
         isCreated = false;
+    }
+
+    @Override
+    public void onClick(View v) {
+        int id = v.getId();
+
+        if(id == R.id.ll_servey_next_actionplan){
+            ViewPager2 viewPager = getActivity().findViewById(R.id.viewPager);
+            viewPager.setCurrentItem(2);
+
+            HashMap<String, String> hashMap = new HashMap<>();
+            hashMap.put("keyCurrencies", currency_id);
+        }
     }
 }
