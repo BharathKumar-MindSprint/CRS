@@ -75,6 +75,7 @@ import com.olam.digital.ofis.mvvmmodule.PDFUtils;
 import com.olam.digital.ofis.mvvmmodule.PathUtil;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.CurrenciesItem;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.DmRangeTextBoxActionPlans;
+import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.CurrencyItem;
 import com.olam.digital.ofis.mvvmmodule.roomdb.DmActionPlanCurrenciesTableDao;
 import com.olam.digital.ofis.mvvmmodule.roomdb.DmSurveyAnswerTableDao;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
@@ -200,8 +201,13 @@ public class ActionPlanProofFragment extends Fragment {
         if (dmComplaintList.size() != 0) {
             List<DmSurveyAnswerTable> dmSurveyAnswerTableList = new ArrayList<>();
             dmSurveyAnswerTableList.clear();
+          
             //dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByComplianceId(complaint_id,Constants.FARMER_ID, true);
             dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByComplianceId(complaint_id, Constants.FARMER_ID);
+
+//            dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByComplianceId(complaint_id,Constants.FARMER_ID, true);
+            dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByComplianceId(complaint_id,Constants.FARMER_ID);
+
 
             String complianceName = dmComplaintList.get(0).compliance;
 
@@ -1440,11 +1446,16 @@ public class ActionPlanProofFragment extends Fragment {
 
         final List<String> ids = new ArrayList<String>();
         ids.clear();
+
+        final List<String> isDefaultCurrency = new ArrayList<String>();
+        isDefaultCurrency.clear();
+
         for (int c = 0; c < dmCurrenciesItemList.size(); c++) {
             int currencyId = dmCurrenciesItemList.get(c).currencyId;
 
             list.add(db.dmCurrenciesItemDao().getCurrencyCodeItemById(currencyId));
             ids.add(String.valueOf(dmCurrenciesItemList.get(c).currencyId));
+
         }
 
 
@@ -1455,18 +1466,37 @@ public class ActionPlanProofFragment extends Fragment {
         String currencyIdDb = "0";
 
         List<DmActionPlanCurrenciesTable> dmActionPlanCurrenciesTables = db.dmActionPlanCurrenciesTableDao().getDataByModuleId(Constants.MODULE_ID, Constants.FARMER_ID);
+
         if (dmActionPlanCurrenciesTables.size() != 0) {
             currencyIdDb = String.valueOf(dmActionPlanCurrenciesTables.get(0).currencyId);
             currency_id = currencyIdDb;
         }
 
+
         int selectedPosition = 0;
 
-        for (int i = 0; i < ids.size(); i++) {
-            if (currencyIdDb.equalsIgnoreCase(ids.get(i))) {
-                selectedPosition = i;
+
+//        for (int i = 0; i < ids.size(); i++) {
+ //            if (currencyIdDb.equalsIgnoreCase(ids.get(i))) {
+//                selectedPosition = i;
+//            }
+//        }
+
+//        db.dmActionPlanCurrenciesTableDao().getCurrencyByModuleId(Constants.MODULE_ID, Constants.FARMER_ID);
+
+        try {
+            int currencyDefault = db.dmCurrencyDao().isCurrencyDefault(dmActionPlanCurrenciesTables.get(0).moduleId , 1);
+            for (int i = 0; i < ids.size(); i++) {
+                if (String.valueOf(currencyDefault).equalsIgnoreCase(ids.get(i)) || currencyIdDb.equalsIgnoreCase(ids.get(i)) ) {
+                    selectedPosition = i;
+//                    currencyIdDb = String.valueOf(currencyDefault);
+//                    currency_id = String.valueOf(currencyDefault);
+                }
+
             }
 
+        }catch (Exception e) {
+            e.printStackTrace();
         }
 
         spinner_dmCurrencies.setSelection(selectedPosition);
