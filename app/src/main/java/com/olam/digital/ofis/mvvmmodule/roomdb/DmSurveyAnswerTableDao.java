@@ -69,4 +69,13 @@ public interface DmSurveyAnswerTableDao {
     @Update
     void updateEntity(DmSurveyAnswerTable entity);
 
+    /*@Query("SELECT idQuestionsMudule FROM DmLookupValuesItem WHERE idQuestionsMudule=:id AND isCaptureProof =:isCaptureProof")
+    String getQuestionIdByProof (int id , int isCaptureProof);
+*/
+    /*@Query("SELECT isCaptureProof FROM DmLookupValuesItem WHERE id=:id AND isCaptureProof =:isCaptureProof")
+    ArrayList<DmLookupValuesItem> getQuestionIdByProofBoolean (String id , int isCaptureProof);*/
+
+    @Query("SELECT isCaptureProof FROM DmSurveyAnswerTable WHERE questionId = :id AND farmerId = :farmerId")
+    int getIsCaptureProofValue(int id, String farmerId);
+
 }

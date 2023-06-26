@@ -91,7 +91,7 @@ public class SurveyFragment extends Fragment {
             }
         });
 
-        ll_servey_next.setOnClickListener(new View.OnClickListener() {
+        /*ll_servey_next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
@@ -189,7 +189,7 @@ public class SurveyFragment extends Fragment {
                 }
 
             }
-        });
+        });*/
 
 
         return view;
@@ -1083,17 +1083,6 @@ public class SurveyFragment extends Fragment {
                 ArrayList<String> qIdSections = Constants.questionIdsSection;
 
 
-
-                /*for (int m = 0; m < qId.size(); m++){
-                    Boolean isMandate = db.dmQuestionsSubModuleDao().getDmQuestionType(Integer.parseInt(qId.get(m))).get(0).mandate;
-                    if (isMandate){
-
-                    }
-                }
-
-                for (int n = 0; n < qIdSections.size(); n++) {
-                    Boolean isMandate = db.dmQuestionsSubModuleDao().getDmQuestionType(Integer.parseInt(qIdSections.get(n))).get(0).mandate;
-                }*/
 
 
                 if (db.dmSurveyAnswerTableDao().getDataByModuleId(Constants.MODULE_ID, Constants.FARMER_ID).size() == Constants.questionIds.size() + Constants.questionIdsSection.size()) {
