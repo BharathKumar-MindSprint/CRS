@@ -199,17 +199,45 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener{
         dmSurveyAnswerTableList.clear();
 
         dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByQuestionId(id, Constants.FARMER_ID);
-        //dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByQuestionIdActionPlan(id, Constants.FARMER_ID, Constants.ACTIONPlAN_ID);
 
         LinearLayout linearLayout1 = new LinearLayout(getContext());
         linearLayout1.setGravity(Gravity.CENTER);
         linearLayout1.setOrientation(LinearLayout.HORIZONTAL);
         if (dmSurveyAnswerTableList.size() != 0) {
-            String answerIdDb = dmSurveyAnswerTableList.get(0).answer;
+            String answerIdDb = dmSurveyAnswerTableList.get(0).actionPlanText;
             String questionIdDb = dmSurveyAnswerTableList.get(0).questionID;
             editText.setText(answerIdDb);
 
-            RadioGroup radioGroup = new RadioGroup(getActivity());
+            TextView notResolveText = new TextView(getContext());
+            notResolveText.setText("Not Resolved");
+            notResolveText.setTextColor(getResources().getColor(R.color.gray));
+            notResolveText.setTag("rb1" + questionIdDb);
+            notResolveText.setPadding(70, 25, 70, 25);
+            notResolveText.setTextSize(14);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                notResolveText.setBackground(getActivity().getDrawable(R.drawable.dm_captureproof_bg));
+            }
+            TextView resolveText = new TextView(getContext());
+            resolveText.setText("Resolved");
+            resolveText.setTag("rb2" + questionIdDb);
+            resolveText.setTextColor(getResources().getColor(R.color.gray));
+            resolveText.setPadding(110, 25, 110, 25);
+            resolveText.setTextSize(14);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                resolveText.setBackground(getActivity().getDrawable(R.drawable.dm_captureproof_bg));
+            }
+
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.MATCH_PARENT
+            );
+            layoutParams.setMargins(10, 20, 10, 20);
+
+
+            linearLayout1.addView(notResolveText, layoutParams);
+            linearLayout1.addView(resolveText, layoutParams);
+
+         /*   RadioGroup radioGroup = new RadioGroup(getActivity());
             radioGroup.setOrientation(LinearLayout.HORIZONTAL);
             RadioButton radioButton1 = new RadioButton(getActivity());
             radioButton1.setText("Not Resolved");
@@ -219,42 +247,82 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener{
             radioButton2.setText("Resolved");
             radioButton2.setTag("rb2" + questionIdDb);
             radioGroup.addView(radioButton1);
-            radioGroup.addView(radioButton2);
-            DmSurveyAnswerTable dmSurveyAnswerTableFollowUp = new DmSurveyAnswerTable();
-            //dmSurveyAnswerTableFollowUp.resolved = ;
-
+            radioGroup.addView(radioButton2);*/
 
             // Create layout parameters for TextViews
 
-            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+          /*  LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
-                    LinearLayout.LayoutParams.MATCH_PARENT
-            );
-            layoutParams.setMargins(10, 20, 10, 20);
-            linearLayout1.addView(radioGroup, layoutParams);
+                    LinearLayout.LayoutParams.MATCH_PARENT);*/
+           // layoutParams.setMargins(10, 20, 10, 20);
+            //linearLayout1.addView(linearLayout1, layoutParams);
             //linearLayout1.addView(resolveText, layoutParams);
 
-            radioButton1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            notResolveText.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    boolean isChecked=true;
+                    if (isChecked) {
+                        String selectedValue = notResolveText.getText().toString();
+                        db.dmSurveyAnswerTableDao().updateResolvedStatus("2", id, Constants.FARMER_ID);
+                        // Do something with the selected value
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            notResolveText.setBackground(getActivity().getDrawable(R.drawable.dm_next_background));
+                        }
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            resolveText.setBackground(getActivity().getDrawable(R.drawable.dm_captureproof_bg));
+                        }
+                        notResolveText.setTextColor(getResources().getColor(R.color.white));
+                        resolveText.setTextColor(getResources().getColor(R.color.gray));
+
+                    }else{
+
+                    }
+
+                }
+            });
+         /*   notResolveText.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     if (isChecked) {
-                        String selectedValue = radioButton1.getText().toString();
+                        String selectedValue = notResolveText.getText().toString();
                         db.dmSurveyAnswerTableDao().updateResolvedStatus("2", id, Constants.FARMER_ID);
                         // Do something with the selected value
                     }
                 }
-            });
+            });*/
 
-            radioButton2.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            resolveText.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    boolean isChecked = true;
+                    if (isChecked) {
+                        String selectedValue = resolveText.getText().toString();
+                        db.dmSurveyAnswerTableDao().updateResolvedStatus("1", id, Constants.FARMER_ID);
+                        // Do something with the selected value
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            resolveText.setBackground(getActivity().getDrawable(R.drawable.dm_next_background));
+                        }
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            notResolveText.setBackground(getActivity().getDrawable(R.drawable.dm_captureproof_bg));
+                        }
+                        notResolveText.setTextColor(getResources().getColor(R.color.gray));
+                        resolveText.setTextColor(getResources().getColor(R.color.white));
+                    } else {
+
+                    }
+                }
+            });
+        /*    resolveText.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     if (isChecked) {
-                        String selectedValue = radioButton2.getText().toString();
+                        String selectedValue = resolveText.getText().toString();
                         db.dmSurveyAnswerTableDao().updateResolvedStatus("1", id, Constants.FARMER_ID);
                         // Do something with the selected value
                     }
                 }
-            });
+            });*/
 
         }
 
