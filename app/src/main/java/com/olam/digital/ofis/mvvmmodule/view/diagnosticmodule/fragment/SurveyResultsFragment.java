@@ -170,7 +170,7 @@ public class SurveyResultsFragment extends Fragment {
                 result.put("totalNonComplaint", Constants.noncomplaintSize);
                 result.put("totalActionPlan", String.valueOf(Integer.parseInt(Constants.complaintSize) + Integer.parseInt(Constants.satisfactorySize) + Integer.parseInt(Constants.noncomplaintSize)));
                 result.put("totalBudget", amount + " " + currency);
-                result.put("resultType", "TrafficLight");
+                result.put("resultType", "TL");
                 result.put("resultValue", resultValue);
                 result.put("resultRemarks", overAllResult.getText().toString());
                 DMSurveyReport dmSurveyReport = new DMSurveyReport(Integer.parseInt(Constants.complaintSize),
@@ -178,7 +178,7 @@ public class SurveyResultsFragment extends Fragment {
                         Integer.parseInt(Constants.noncomplaintSize),
                         (Integer.parseInt(Constants.complaintSize) + Integer.parseInt(Constants.satisfactorySize) + Integer.parseInt(Constants.noncomplaintSize)),
                         Double.parseDouble(String.valueOf(amount)),
-                        "TrafficLight",
+                        "TL",
                         resultValue,
                         overAllResult.getText().toString(),
                         Long.parseLong(Constants.FARMER_ID),Integer.parseInt(Constants.MODULE_ID),
