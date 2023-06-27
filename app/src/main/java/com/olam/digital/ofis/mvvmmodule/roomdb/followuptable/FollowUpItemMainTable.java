@@ -56,4 +56,7 @@ public class FollowUpItemMainTable {
     @ColumnInfo(name = "farmerId")
     public long farmerId;
 
+    @ColumnInfo(name = "isSync")
+    public String isSync;
+
 }

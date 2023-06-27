@@ -947,6 +947,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
             //db.dmComplaintFileTableDao().deleteAll();
             DmComplaintFileTable dmComplaintFileTable = new DmComplaintFileTable();
             dmComplaintFileTable.setFile_name(filename);
+            dmComplaintFileTable.setSurveyType("ParentSurvey");
             Date today = new Date();
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
             String currentTime = format.format(today);
@@ -1103,6 +1104,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
                 DmComplaintFileTable dmComplaintFileTable = new DmComplaintFileTable();
                 dmComplaintFileTable.setFile_name(filename);
+                dmComplaintFileTable.setSurveyType("ParentSurvey");
                 dmComplaintFileTable.setFileData(fileByteArray);
                 Date today = new Date();
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
@@ -1265,6 +1267,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
                     DmComplaintFileTable dmComplaintFileTable = new DmComplaintFileTable();
                     dmComplaintFileTable.setFile_name(filename);
+                    dmComplaintFileTable.setSurveyType("ParentSurvey");
                     dmComplaintFileTable.setFileData(pdfByteArray2);
                     Date today = new Date();
                     SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
@@ -1415,6 +1418,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 //db.dmComplaintFileTableDao().deleteAll();
                 DmComplaintFileTable dmComplaintFileTable = new DmComplaintFileTable();
                 dmComplaintFileTable.setFile_name(filename);
+                dmComplaintFileTable.setSurveyType("ParentSurvey");
                 dmComplaintFileTable.setFileData(imageBytes);
                 Date today = new Date();
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
