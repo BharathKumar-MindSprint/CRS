@@ -16,6 +16,8 @@ public class Constants {
     public static String noncomplaintSize = "0";
     public static String satisfactorySize = "0";
 
+    public static Boolean EDITABLE = false;
+
     public static ArrayList<String> ComplaintQuestionIds = new ArrayList<>();
     public static ArrayList<String> questionIds = new ArrayList<>();
     public static ArrayList<String> questionIdsSection = new ArrayList<>();
