@@ -5526,10 +5526,11 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             JSONObject ans = new JSONObject();
                             ans.put("questionId", dmSurveyAnswerTableList.get(i).questionID);
                             ans.put("answerId", dmSurveyAnswerTableList.get(i).answerID);
-                            ans.put("answervalue", dmSurveyAnswerTableList.get(i).answer);
+                            ans.put("answerValue", dmSurveyAnswerTableList.get(i).answer);
                             ans.put("complianceStatusId", dmSurveyAnswerTableList.get(i).complinceTypeId);
-                            ans.put("actionplanId", dmSurveyAnswerTableList.get(i).actionplanId);
+                            ans.put("actionPlanId", dmSurveyAnswerTableList.get(i).actionplanId);
                             ans.put("actionPlanText", dmSurveyAnswerTableList.get(i).actionPlanText);
+                            ans.put("amount", dmSurveyAnswerTableList.get(i).amount);
 
                             List<DmComplaintFileTable> complaintFileTableList = new ArrayList<>();
 
@@ -5572,7 +5573,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     result.put("resultType", dmSurveyReport.getResultType());
                     result.put("resultValue", dmSurveyReport.getResultValue());
                     result.put("resultRemarks", dmSurveyReport.getResultRemarks());
-                    result.put("resultColor", dmSurveyReport.getResultRemarks());
+                    result.put("resultColour", dmSurveyReport.getResultValue());
 
                     hashMap.put("result", result);
                     JSONArray jsonArray = new JSONArray();

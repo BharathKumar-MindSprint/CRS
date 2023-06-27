@@ -41,6 +41,9 @@ public interface DmSurveyAnswerTableDao {
     @Query("SELECT * FROM DmSurveyAnswerTable WHERE moduleId =:id AND farmerId =:farmerId")
     List<DmSurveyAnswerTable> getDataByModuleId(String id, String farmerId);
 
+    @Query("SELECT * FROM DmSurveyAnswerTable WHERE moduleId =:id AND farmerId =:farmerId AND isSynced = :isSynced")
+    List<DmSurveyAnswerTable> getDataByModuleId(String id, String farmerId, boolean isSynced);
+
     @Query("SELECT * FROM DmSurveyAnswerTable WHERE questionID =:id AND farmerId =:farmerId")
     List<DmSurveyAnswerTable> getDataByQuestionId(String id, String farmerId);
 

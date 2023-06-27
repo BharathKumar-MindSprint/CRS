@@ -34,4 +34,7 @@ public interface DmQuestionsModuleDao {
 
     @Query("DELETE FROM DmQuestionsModule")
     void deleteAll();
+
+    @Query("SELECT * FROM DmQuestionsModule WHERE moduleId=:id AND mandate=1")
+    List<DmQuestionsModule> getDmQuestionsModuleId(int id);
 }

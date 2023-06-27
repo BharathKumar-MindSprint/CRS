@@ -793,14 +793,25 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
         int id = v.getId();
 
         if(id == R.id.ll_servey_next){
-                ArrayList<String> qId = Constants.questionIds;
-                ArrayList<String> qIdSections = Constants.questionIdsSection;
-
-
-            db.dmSurveyAnswerTableDao().getDataByModuleId(Constants.MODULE_ID, Constants.FARMER_ID);
+            ArrayList<String> qId = Constants.questionIds;
+            ArrayList<String> qIdSections = Constants.questionIdsSection;
             boolean valid = true;
+            List<DmQuestionsModule> dmQuestionsMandatedModuleList = db.dmQuestionsModuleDao().getDmQuestionsModuleId(Integer.parseInt(Constants.MODULE_ID));
+            if(dmQuestionsMandatedModuleList.size() > 0) {
+                for (int i = 0; i < dmQuestionsMandatedModuleList.size(); i++) {
+                    int qnId = dmQuestionsMandatedModuleList.get(i).id;
+                    List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByQuestionId(String.valueOf(qnId), Constants.FARMER_ID);
+                    if (dmSurveyAnswerTableList.size() > 0) {
+                        valid = true;
+                    } else {
+                        valid = false;
+                        break;
+                    }
+                }
+            }
 
-                for (int i = 0; i < Constants.mandatedQuestionIds.size(); i++) {
+//            db.dmSurveyAnswerTableDao().getDataByModuleId(Constants.MODULE_ID, Constants.FARMER_ID);
+               /* for (int i = 0; i < Constants.mandatedQuestionIds.size(); i++) {
                     String qnId = Constants.mandatedQuestionIds.get(i);
                     List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByQuestionId(qnId, Constants.FARMER_ID);
                     if (dmSurveyAnswerTableList.size() > 0) {
@@ -809,7 +820,7 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                         valid = false;
                         break;
                     }
-                }
+                }*/
 
 //                if (db.dmSurveyAnswerTableDao().getDataByModuleId(Constants.MODULE_ID, Constants.FARMER_ID).size() == Constants.questionIds.size() + Constants.questionIdsSection.size()) {
                 if (valid) {
