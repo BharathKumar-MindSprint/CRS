@@ -645,7 +645,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
         spinner.setTag("spinner" + complaint_id);
 
-        layoutParamsSpin.setMargins(0, 15, 10, 15);
+        layoutParamsSpin.setMargins(0, -15, 10, 15);
 
 
         TextView tVActionPlanSelectedTxt = new TextView(getActivity());
