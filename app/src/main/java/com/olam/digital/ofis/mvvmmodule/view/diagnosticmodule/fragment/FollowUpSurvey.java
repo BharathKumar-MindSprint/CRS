@@ -11,6 +11,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
+import androidx.viewpager2.widget.ViewPager2;
 
 import android.provider.MediaStore;
 import android.text.Editable;
@@ -47,13 +48,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class FollowUpSurvey extends Fragment implements View.OnClickListener{
+public class FollowUpSurvey extends Fragment implements View.OnClickListener {
 
     ImageView iv_complaint_dropdown_follow_up_survey, iv_non_complaint_dropdown_follow_up_survey, iv_satisfactory_dropdown_follow_up_survey;
     LinearLayout ll_complaint_follow_up_survey, ll_non_complaint_follow_up_survey, ll_satisfactory_follow_up_survey;
-    LinearLayout dm_question_complaint_followup_survey,ll_servey_back_followup_survey,ll_servey_next_followup_survey;
+    LinearLayout dm_question_complaint_followup_survey, ll_servey_back_followup_survey, ll_servey_next_followup_survey;
 
     OFISRoomDB db;
+
+    ArrayList<String> CoQId = new ArrayList<>();
 
     public FollowUpSurvey() {
         // Required empty public constructor
@@ -70,12 +73,14 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener{
         ll_servey_back_followup_survey = view.findViewById(R.id.ll_servey_back_followup_survey);
         ll_servey_next_followup_survey = view.findViewById(R.id.ll_servey_next_followup_survey);
         ll_servey_back_followup_survey.setOnClickListener(this);
-//        ll_servey_next_followup_survey.setOnClickListener(this);
+        ll_servey_next_followup_survey.setOnClickListener(this);
         return view;
     }
 
     @SuppressLint("ResourceAsColor")
     private void displayQuestionsModuleComplaint(String complaint_id) {
+
+        CoQId.clear();
 
         List<ComplianceIndicator> dmComplaintList = new ArrayList<>();
         dmComplaintList.clear();
@@ -237,92 +242,67 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener{
             linearLayout1.addView(notResolveText, layoutParams);
             linearLayout1.addView(resolveText, layoutParams);
 
-         /*   RadioGroup radioGroup = new RadioGroup(getActivity());
-            radioGroup.setOrientation(LinearLayout.HORIZONTAL);
-            RadioButton radioButton1 = new RadioButton(getActivity());
-            radioButton1.setText("Not Resolved");
-            radioButton1.setTag("rb1" + questionIdDb); // Set a unique ID for the radio
+            if(dmSurveyAnswerTableList.get(0).resolved !=null) {
+                if (dmSurveyAnswerTableList.get(0).resolved.equalsIgnoreCase("1")) {
 
-            RadioButton radioButton2 = new RadioButton(getActivity());
-            radioButton2.setText("Resolved");
-            radioButton2.setTag("rb2" + questionIdDb);
-            radioGroup.addView(radioButton1);
-            radioGroup.addView(radioButton2);*/
+                    CoQId.add(dmSurveyAnswerTableList.get(0).questionID);
 
-            // Create layout parameters for TextViews
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        resolveText.setBackground(getActivity().getDrawable(R.drawable.dm_next_background));
+                    }
+                    resolveText.setTextColor(getResources().getColor(R.color.white));
 
-          /*  LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                    LinearLayout.LayoutParams.MATCH_PARENT);*/
-           // layoutParams.setMargins(10, 20, 10, 20);
-            //linearLayout1.addView(linearLayout1, layoutParams);
-            //linearLayout1.addView(resolveText, layoutParams);
-
+                } else if (dmSurveyAnswerTableList.get(0).resolved.equalsIgnoreCase("2")) {
+                    CoQId.add(dmSurveyAnswerTableList.get(0).questionID);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        notResolveText.setBackground(getActivity().getDrawable(R.drawable.dm_next_background));
+                    }
+                    notResolveText.setTextColor(getResources().getColor(R.color.white));
+                }
+            }
             notResolveText.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    boolean isChecked=true;
-                    if (isChecked) {
-                        String selectedValue = notResolveText.getText().toString();
-                        db.dmSurveyAnswerTableDao().updateResolvedStatus("2", id, Constants.FARMER_ID);
-                        // Do something with the selected value
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                            notResolveText.setBackground(getActivity().getDrawable(R.drawable.dm_next_background));
-                        }
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                            resolveText.setBackground(getActivity().getDrawable(R.drawable.dm_captureproof_bg));
-                        }
-                        notResolveText.setTextColor(getResources().getColor(R.color.white));
-                        resolveText.setTextColor(getResources().getColor(R.color.gray));
+                    db.dmSurveyAnswerTableDao().updateResolvedStatus("2", id, Constants.FARMER_ID);
+                    // Do something with the selected value
 
-                    }else{
-
+                    if (!CoQId.contains(id)) {
+                        CoQId.add(id);
                     }
 
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        notResolveText.setBackground(getActivity().getDrawable(R.drawable.dm_next_background));
+                    }
+                    notResolveText.setTextColor(getResources().getColor(R.color.white));
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        resolveText.setBackground(getActivity().getDrawable(R.drawable.dm_captureproof_bg));
+                    }
+
+                    resolveText.setTextColor(getResources().getColor(R.color.gray));
                 }
             });
-         /*   notResolveText.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if (isChecked) {
-                        String selectedValue = notResolveText.getText().toString();
-                        db.dmSurveyAnswerTableDao().updateResolvedStatus("2", id, Constants.FARMER_ID);
-                        // Do something with the selected value
-                    }
-                }
-            });*/
 
             resolveText.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    boolean isChecked = true;
-                    if (isChecked) {
-                        String selectedValue = resolveText.getText().toString();
-                        db.dmSurveyAnswerTableDao().updateResolvedStatus("1", id, Constants.FARMER_ID);
-                        // Do something with the selected value
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                            resolveText.setBackground(getActivity().getDrawable(R.drawable.dm_next_background));
-                        }
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                            notResolveText.setBackground(getActivity().getDrawable(R.drawable.dm_captureproof_bg));
-                        }
-                        notResolveText.setTextColor(getResources().getColor(R.color.gray));
-                        resolveText.setTextColor(getResources().getColor(R.color.white));
-                    } else {
+                    db.dmSurveyAnswerTableDao().updateResolvedStatus("1", id, Constants.FARMER_ID);
+                    // Do something with the selected value
 
+                    if (!CoQId.contains(id)) {
+                        CoQId.add(id);
                     }
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        resolveText.setBackground(getActivity().getDrawable(R.drawable.dm_next_background));
+                    }
+                    resolveText.setTextColor(getResources().getColor(R.color.white));
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        notResolveText.setBackground(getActivity().getDrawable(R.drawable.dm_captureproof_bg));
+                    }
+                    notResolveText.setTextColor(getResources().getColor(R.color.gray));
+
                 }
             });
-        /*    resolveText.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if (isChecked) {
-                        String selectedValue = resolveText.getText().toString();
-                        db.dmSurveyAnswerTableDao().updateResolvedStatus("1", id, Constants.FARMER_ID);
-                        // Do something with the selected value
-                    }
-                }
-            });*/
 
         }
 
@@ -367,9 +347,15 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener{
     public void onClick(View v) {
         int id = v.getId();
 
-        if(id == R.id.ll_servey_next_followup_survey){
-
-        }else if (id == R.id.ll_servey_back_followup_survey){
+        if (id == R.id.ll_servey_next_followup_survey) {
+            if ((Integer.parseInt(Constants.complaintSize) + Integer.parseInt(Constants.noncomplaintSize) + Integer.parseInt(Constants.satisfactorySize)) > CoQId.size()) {
+                Toast.makeText(getActivity(), "Please Select Action Plan Status before proceed.", Toast.LENGTH_SHORT).show();
+            }
+            else {
+                ViewPager2 viewPager = getActivity().findViewById(R.id.viewPagerFollowUp);
+                viewPager.setCurrentItem(1);
+            }
+        } else if (id == R.id.ll_servey_back_followup_survey) {
             requireActivity().onBackPressed();
         }
     }
