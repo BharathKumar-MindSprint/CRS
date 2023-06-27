@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.olam.digital.ofis.R;
 //import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.DiagnosticModel;
 import com.olam.digital.ofis.ViewFarmerActivity;
+import com.olam.digital.ofis.mvvmmodule.Constants;
 import com.olam.digital.ofis.mvvmmodule.listener.OnItemSurveyClickListener;
 import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.DiagnosticModuleActivity;
 import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.DiagnosticModuleFollowUp;
@@ -106,15 +107,20 @@ public class FollowUpRecyclerAdapter extends RecyclerView.Adapter<FollowUpRecycl
 //            if (selectedPosition== 0 && items.size() == 1) {
 //                Intent intent = new Intent(context, DiagnosticModuleActivity.class);
                 in.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                if(items.size() == 1){
+                    Constants.EDITABLE = true;
+                }else{
+                    Constants.EDITABLE = false;
+                }
                 context.startActivity(in);
 //            }else if (selectedPosition != 0 && selectedPosition == items.size()-1){
             }else {
                 Intent intent = new Intent(context, DiagnosticModuleFollowUp.class);
                 intent.putExtra("FollowUpPosition", selectedPosition);
                 if(selectedPosition == items.size()){
-                    intent.putExtra("Editable", true);
+                    Constants.EDITABLE = true;
                 }else{
-                    intent.putExtra("Editable", false);
+                    Constants.EDITABLE = false;
                 }
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(intent);

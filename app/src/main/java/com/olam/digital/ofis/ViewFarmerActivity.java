@@ -106,6 +106,7 @@ import com.olam.digital.ofis.mvvmmodule.Constants;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmMainModule;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmRecurrence;
+import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmSurveyAnswerTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.FollowUpItemMainTable;
 import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.DiagnosticModuleActivity;
 import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.FollowUp.FollowUpRecyclerAdapter;
@@ -2312,7 +2313,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                             newCount=Integer.parseInt(followUpCount);
                         }
 
-                        showPopupDialog(newCount , in, farmerID, moduleID);
+                        showPopupDialog(newCount , in, farmerID, Constants.MODULE_ID);
 
                     } else if (recordedLng != null && recordedLng.getText().equals(ChildLabourUtils.REG_CHILD)) {
                         MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_REGISTER_CHILD, ScreenNameConstants.BUTTON_CLICKED);
@@ -2774,16 +2775,19 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         ArrayList<String> recyclerViewData = new ArrayList<>();
 
         recyclerViewData.add("Existing Module");
-        recyclerViewData.add("Follow up " + 1);
-        /*List<FollowUpItemMainTable> followupList = db.followUpItemMainTableDao().getFollowupByFarmerId(Long.parseLong(farmerID), Integer.parseInt(moduleID));
+//        recyclerViewData.add("Follow up " + 1);
+        List<FollowUpItemMainTable> followupList = db.followUpItemMainTableDao().getFollowupByFarmerId(Long.parseLong(farmerID), Integer.parseInt(moduleID));
         if(followupList.size() == 0){
-            recyclerViewData.add("Follow up " + 1);
+            List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByModuleId(String.valueOf(moduleID), String.valueOf(farmerId));
+            if(dmSurveyAnswerTableList.size() != 0) {
+                recyclerViewData.add("Follow up " + 1);
+            }
         }else {
             for (int i = 1; i <= followupList.size(); i++) {
                 recyclerViewData.add("Follow up " + i);
             }
             recyclerViewData.add("Follow up " + followupList.size() + 1);
-        }*/
+        }
         RecyclerView recyclerView = dialog.findViewById(R.id.recyclerView);
         FollowUpRecyclerAdapter adapter = new FollowUpRecyclerAdapter(recyclerViewData,getApplicationContext(),newFollowUpCount , in);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
