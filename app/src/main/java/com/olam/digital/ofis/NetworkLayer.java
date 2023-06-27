@@ -5572,6 +5572,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     result.put("resultType", dmSurveyReport.getResultType());
                     result.put("resultValue", dmSurveyReport.getResultValue());
                     result.put("resultRemarks", dmSurveyReport.getResultRemarks());
+                    result.put("resultColor", dmSurveyReport.getResultRemarks());
+
                     hashMap.put("result", result);
                     JSONArray jsonArray = new JSONArray();
                     jsonArray.put(hashMap);
@@ -5582,6 +5584,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         String statusMessage;
                         if (postResponse.isSuccessful()) {
                             dl.deleteNetworkQueueItem(networkQueueItemId);
+                            db.dmSurveyAnswerTableDao().updateSyncStatus( String.valueOf(moduleId), String.valueOf(farmerId),true);
                             statusMessage = res.getString(R.string.item_synced);
                             msg.what = 1;
                             msg.arg1 = total;

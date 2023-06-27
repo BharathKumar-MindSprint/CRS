@@ -50,5 +50,6 @@ public class DmSurveyAnswerTable {
     @ColumnInfo(name = "resolved", defaultValue = "0", index = true)
     public String resolved;
 
-
+    @ColumnInfo(name = "isSynced")
+    public Boolean isSynced;
 }

@@ -274,6 +274,7 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                     dmSurveyAnswerTable1.farmerId = Constants.FARMER_ID;
                     dmSurveyAnswerTable1.allowCustomActionPlan = allowCustomActionPlan.get(position);
                     dmSurveyAnswerTable1.isCaptureProof = isCaptureProof.get(position);
+                    dmSurveyAnswerTable1.isSynced = false;
                     db.dmSurveyAnswerTableDao().insert(dmSurveyAnswerTable1);
 
 
@@ -360,6 +361,7 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                     dmSurveyAnswerTable1.amount = 0;
                     dmSurveyAnswerTable1.isCaptureProof = isCaptureProof;
                     dmSurveyAnswerTable1.farmerId = Constants.FARMER_ID;
+                    dmSurveyAnswerTable1.isSynced = false;
                     db.dmSurveyAnswerTableDao().insert(dmSurveyAnswerTable1);
                 }
 
@@ -487,6 +489,7 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                     dmSurveyAnswerTable1.farmerId = Constants.FARMER_ID;
                     dmSurveyAnswerTable1.allowCustomActionPlan = allowCustomActionPlan.get(position);
                     dmSurveyAnswerTable1.isCaptureProof = isCaptureProof.get(position);
+                    dmSurveyAnswerTable1.isSynced = false;
                     db.dmSurveyAnswerTableDao().insert(dmSurveyAnswerTable1);
                 }
 
@@ -684,6 +687,7 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                                         dmSurveyAnswerTable1.actionplanId = "";
                                         dmSurveyAnswerTable1.amount = 0;
                                         dmSurveyAnswerTable1.farmerId = Constants.FARMER_ID;
+                                        dmSurveyAnswerTable1.isSynced = false;
                                         db.dmSurveyAnswerTableDao().insert(dmSurveyAnswerTable1);
 
 
@@ -700,6 +704,7 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                                         dmSurveyAnswerTable1.actionplanId = "";
                                         dmSurveyAnswerTable1.amount = 0;
                                         dmSurveyAnswerTable1.farmerId = Constants.FARMER_ID;
+                                        dmSurveyAnswerTable1.isSynced = false;
                                         db.dmSurveyAnswerTableDao().insert(dmSurveyAnswerTable1);
 
 
@@ -717,6 +722,7 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                                         dmSurveyAnswerTable1.actionplanId = "";
                                         dmSurveyAnswerTable1.amount = 0;
                                         dmSurveyAnswerTable1.farmerId = Constants.FARMER_ID;
+                                        dmSurveyAnswerTable1.isSynced = false;
                                         db.dmSurveyAnswerTableDao().insert(dmSurveyAnswerTable1);
 
 
@@ -814,23 +820,23 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                         View desiredView = dm_Question.findViewWithTag(qId.get(i));
                         TextView textView = (TextView) desiredView;
                         textView.setVisibility(View.GONE);
-                        View desiredView2 = dm_Question.findViewWithTag(qId.get(i) + 1);
+                        /*View desiredView2 = dm_Question.findViewWithTag(qId.get(i) + 1);
                         EditText editText = (EditText) desiredView2;
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                             editText.setBackground(getActivity().getDrawable(R.drawable.answer_text_survey));
 
-                        }
+                        }*/
                     }
                     for (int j = 0; j < Constants.questionIdsSection.size(); j++) {
                         View desiredView = dm_Section.findViewWithTag(qIdSections.get(j));
                         TextView textView = (TextView) desiredView;
                         textView.setVisibility(View.GONE);
-                        View desiredView2 = dm_Question.findViewWithTag(qId.get(j) + 1);
+                        /*View desiredView2 = dm_Question.findViewWithTag(qId.get(j) + 1);
                         EditText editText = (EditText) desiredView2;
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                             editText.setBackground(getActivity().getDrawable(R.drawable.answer_text_survey));
 
-                        }
+                        }*/
                     }
 
                 } else {

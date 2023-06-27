@@ -96,8 +96,6 @@ import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.gps.utils.GPSUtils;
 import com.olam.digital.ofis.matoma.MatomoHelper;
 import com.olam.digital.ofis.matoma.ScreenNameConstants;
-import com.olam.digital.ofis.matoma.multifarm.MultiFarmDTO;
-import com.olam.digital.ofis.matoma.multifarm.MultiFarmUtils;
 import com.olam.digital.ofis.matoma.multifarm.UpdateMultiFarmActivity;
 
 import com.olam.digital.ofis.matoma.multifarm.UpdateMultiFarmActivity;

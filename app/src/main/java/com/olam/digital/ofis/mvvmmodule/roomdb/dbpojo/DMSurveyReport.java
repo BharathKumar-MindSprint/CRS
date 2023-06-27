@@ -34,6 +34,17 @@ public class DMSurveyReport {
     @ColumnInfo(name = "resultRemarks")
     private String resultRemarks;
 
+    @ColumnInfo(name = "resultColour")
+    private String resultColour;
+
+    public String getResultColour() {
+        return resultColour;
+    }
+
+    public void setResultColour(String resultColour) {
+        this.resultColour = resultColour;
+    }
+
     @ColumnInfo(name = "submissionDate")
     private String submissionDate;
 
@@ -85,7 +96,7 @@ public class DMSurveyReport {
 
     public DMSurveyReport(int totalComplaint, int totalSatisfactory, int totalNonComplaint, int totalActionPlan,
                           double totalBudget, String resultType, String resultValue, String resultRemarks ,long farmerId,
-                          int moduleId,int farmerGroupId,int currencyId,String submissionDate) {
+                          int moduleId,int farmerGroupId,int currencyId,String submissionDate, String resultColour) {
         this.totalComplaint = totalComplaint;
         this.totalSatisfactory = totalSatisfactory;
         this.totalNonComplaint = totalNonComplaint;
@@ -99,6 +110,7 @@ public class DMSurveyReport {
         this.farmerGroupId = farmerGroupId;
         this.currencyId = currencyId;
         this.submissionDate = submissionDate;
+        this.resultColour = resultColour;
     }
 
     // Getters and setters for the properties

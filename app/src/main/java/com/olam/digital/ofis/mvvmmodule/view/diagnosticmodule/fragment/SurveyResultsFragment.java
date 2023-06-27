@@ -183,7 +183,7 @@ public class SurveyResultsFragment extends Fragment {
                         overAllResult.getText().toString(),
                         Long.parseLong(Constants.FARMER_ID),Integer.parseInt(Constants.MODULE_ID),
                         Integer.parseInt(Constants.FARMER_GROUP_ID),
-                        Integer.parseInt(currencyId),submittedDate);
+                        Integer.parseInt(currencyId),submittedDate,"RED");
                 db.dmSurveyReportDao().insert(dmSurveyReport);
 
 

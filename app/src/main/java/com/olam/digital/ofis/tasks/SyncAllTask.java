@@ -445,7 +445,7 @@ public class SyncAllTask extends SyncTask {
 
             new UpdateNotificationTask(context).execute(notificationResponse);
             notificationResponse = null;
-
+            HomeActivity.deleteRoomDbValues();
                 if (Utilities.getBoolFromSharedPrefs(context, "FIRST_RUN", true)) {
                     HomeActivity.completeFirstSetup();
                 }else{
