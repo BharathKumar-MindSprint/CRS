@@ -2745,12 +2745,12 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                         dmSurveyAnswerTable.isSynced = true;
                                         db.dmSurveyAnswerTableDao().insert(dmSurveyAnswerTable);
                                     }
-
+                                    String[] totalBudget = result.getTotalBudget().split(" ");
                                     DMSurveyReport dmSurveyReport = new DMSurveyReport(result.getTotalComplaint(),
                                             result.getTotalSatisfactory(),
                                             result.getTotalNonComplaint(),
                                             result.getTotalActionPlan(),
-                                            Double.parseDouble(result.getTotalBudget()),
+                                            Double.parseDouble(totalBudget[0].trim()),
                                             result.getResultType(),
                                             result.getResultValue(),
                                             result.getResultRemarks(),
