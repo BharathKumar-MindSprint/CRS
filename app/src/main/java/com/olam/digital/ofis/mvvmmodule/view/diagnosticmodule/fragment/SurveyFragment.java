@@ -898,12 +898,11 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                     for (int j = 0; j < Constants.questionIdsSection.size(); j++) {
 
 
+                        String type = db.dmQuestionsModuleDao().getDmQuestionType(Integer.parseInt(qId.get(j))).get(0).displayType;
+                        Boolean isMandate = db.dmQuestionsModuleDao().getDmQuestionType(Integer.parseInt(qIdSections.get(j))).get(0).mandate;
 
-                      //  String type = db.dmQuestionsModuleDao().getDmQuestionType(Integer.parseInt(qId.get(j))).get(0).displayType;
-                     //   Boolean isMandate = db.dmQuestionsSubModuleDao().getDmQuestionType(Integer.parseInt(qIdSections.get(j))).get(0).mandate;
-
-                        String type = db.dmQuestionsSubModuleDao().getDmQuestionType(Integer.parseInt(qIdSections.get(j))).get(0).displayType;
-                        Boolean isMandate = db.dmQuestionsSubModuleDao().getDmQuestionType(Integer.parseInt(qIdSections.get(j))).get(0).mandate;
+                        //String type = db.dmQuestionsSubModuleDao().getDmQuestionType(Integer.parseInt(qIdSections.get(j))).get(0).displayType;
+                        //Boolean isMandate = db.dmQuestionsSubModuleDao().getDmQuestionType(Integer.parseInt(qIdSections.get(j))).get(0).mandate;
                         if(isMandate){
                         if (type.equalsIgnoreCase("text box")) {
 
