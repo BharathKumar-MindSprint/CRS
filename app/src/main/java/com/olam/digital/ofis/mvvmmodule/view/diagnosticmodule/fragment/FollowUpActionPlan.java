@@ -25,11 +25,13 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
+import androidx.viewpager2.widget.ViewPager2;
 
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 import android.text.Editable;
+import android.text.InputFilter;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.view.Gravity;
@@ -62,6 +64,7 @@ import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmActionPlansItem;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmComplaintFileTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmCurrenciesItem;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmCurrency;
+import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmRangeActionPlansItems;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmSurveyAnswerTable;
 
 import java.io.ByteArrayOutputStream;
@@ -78,6 +81,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 
 public class FollowUpActionPlan extends Fragment {
@@ -113,14 +117,22 @@ public class FollowUpActionPlan extends Fragment {
 
     String currency_id = "0";
 
-    private static final String[] ACCEPTED_MIME_TYPES = {"image/jpeg", "image/png", "application/pdf",
+    private static final String[] ACCEPTED_MIME_TYPES_IMG = {"image/jpeg", "image/png"};
+
+    private static final String[] ACCEPTED_MIME_TYPES_DOC = {"application/pdf",
             "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "application/vnd.ms-excel",
             "text/plain", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "text/csv"};
+
+    private static final String[] ACCEPTED_MIME_TYPES_ALL_FORMAT = {"image/jpeg", "image/png","application/pdf",
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "application/vnd.ms-excel",
+            "text/plain", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "text/csv"};
+
 
     //Room DB
     OFISRoomDB db;
     Spinner spinner_followup_dmCurrencies;
     String budgetAmount;
+    private boolean isCreated = false;
 
     public FollowUpActionPlan() {
         // Required empty public constructor
@@ -169,8 +181,10 @@ public class FollowUpActionPlan extends Fragment {
         if (dmComplaintList.size() != 0) {
             List<DmSurveyAnswerTable> dmSurveyAnswerTableList = new ArrayList<>();
             dmSurveyAnswerTableList.clear();
-            //dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByComplianceId(complaint_id, Constants.FARMER_ID, true);
-            dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByComplianceId(complaint_id,Constants.FARMER_ID);
+
+
+            dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByComplianceIdFilterByActionPlan(complaint_id,Constants.FARMER_ID);
+
 
             String complianceName = dmComplaintList.get(0).compliance;
 
@@ -185,6 +199,7 @@ public class FollowUpActionPlan extends Fragment {
 
             if (complianceName.equalsIgnoreCase("Satisfactory")) {
                 Constants.satisfactorySize = String.valueOf(dmSurveyAnswerTableList1.size());
+
             } else if (complianceName.equalsIgnoreCase("Compliant")) {
                 Constants.complaintSize = String.valueOf(dmSurveyAnswerTableList1.size());
             } else if (complianceName.equalsIgnoreCase("Non Compliant")) {
@@ -274,7 +289,9 @@ public class FollowUpActionPlan extends Fragment {
     }
 
 
+    @SuppressLint("ResourceAsColor")
     public void renderTextboxQuestionModuleComplaint(String id, String complaint_id, LinearLayout linearLayoutItems) {
+
 
         LinearLayout linearLayoutQes = new LinearLayout(getActivity());
         LinearLayout.LayoutParams layoutParamsQes = new LinearLayout.LayoutParams(
@@ -300,10 +317,6 @@ public class FollowUpActionPlan extends Fragment {
         notResolveText.setTextColor(getResources().getColor(R.color.gray));
         notResolveText.setPadding(10, 25, 10, 25);
         layoutParamsQes.setMargins(0, 15, 0, 0);
-        notResolveText.setTextSize(14);
-      /*  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            notResolveText.setBackground(getActivity().getDrawable(R.drawable.dm_captureproof_bg));
-        }*/
 
         EditText editText = new EditText(getActivity());
         editText.setHint("Answer");
@@ -311,7 +324,7 @@ public class FollowUpActionPlan extends Fragment {
         editText.setEnabled(false);
         editText.setTextColor(getResources().getColor(R.color.black));
         editText.setPadding(10, 10, 0, 10);
-        layoutParamsQes.setMargins(0, 0, 0, 10);
+        layoutParamsQes.setMargins(0, 10, 0, 10);
         editText.setLayoutParams(layoutParamsQes);
         editText.setTag("et" + complaint_id);
 
@@ -361,8 +374,10 @@ public class FollowUpActionPlan extends Fragment {
 
         if (dmComplaintFileTableList.size() != 0) {
             for (int l = 0; l < dmComplaintFileTableList.size(); l++) {
-                retrievedArray.add(dmComplaintFileTableList.get(l).getFile_name());
-                retrievedArrayFile.add(dmComplaintFileTableList.get(l).getUid());
+                if(dmComplaintFileTableList.get(l).getSurveyType().equalsIgnoreCase("FollowUp")){
+                    retrievedArray.add(dmComplaintFileTableList.get(l).getFile_name());
+                    retrievedArrayFile.add(dmComplaintFileTableList.get(l).getUid());
+                }
 
                 LayoutInflater inflater = LayoutInflater.from(getActivity());
                 final View convertView = inflater.inflate(R.layout.image_complaint_dynamic, null, false);
@@ -420,21 +435,51 @@ public class FollowUpActionPlan extends Fragment {
                 });
             }
         }
+
+
+
+
         textView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                final CharSequence[] options = {"Take Photo", "Choose from Gallery", "Cancel"};
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setTitle("Add Photo!");
-                builder.setItems(options, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int item) {
-                        if (options[item].equals("Take Photo")) {
-                            if (isStoragePermissionCameraGranted()) {
-                                if (dynamicArray.size() > 5) {
-                                    Toast.makeText(getActivity(), "Maximum 5 files can be uploaded.", Toast.LENGTH_SHORT).show();
-                                } else {
+                if (db.dmComplaintFileTableDao().getFilesById(Integer.parseInt(id),Constants.FARMER_ID).size()>=5){
+                    Toast.makeText(getActivity(), "Maximum 5 files can be uploaded.", Toast.LENGTH_SHORT).show();
+
+                }else {
+
+                    CharSequence[] options = new CharSequence[0];
+
+
+                    try{
+                        String formatValueTextBox = db.dmRangeTextBoxModuleQuestionsTableDao().getProofFormatByQuestionId(id,complaint_id);
+                        String formatValueDropBox = db.dmLookupValuesItemDao().getProofFormatByQuestionIdDropDown(id,complaint_id);
+                        if (Objects.equals(formatValueTextBox, "Both") || Objects.equals(formatValueDropBox, "Both")){
+                            options = new CharSequence[]{"Take Photo", "Choose from Gallery", "Cancel"};
+//                            Toast.makeText(getContext(),formatValue, Toast.LENGTH_LONG).show();
+                        } else if (Objects.equals(formatValueTextBox, "Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)") || Objects.equals(formatValueDropBox, "Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)")) {
+                            options = new CharSequence[]{"Choose from Gallery", "Cancel"};
+//                            Toast.makeText(getContext(),formatValue, Toast.LENGTH_LONG).show();
+                        } else if (Objects.equals(formatValueTextBox, "Image (.png, .jpg, .jpeg)") || Objects.equals(formatValueDropBox, "Image (.png, .jpg, .jpeg)")) {
+                            options = new CharSequence[]{"Take Photo", "Choose from Gallery", "Cancel"};
+//                            Toast.makeText(getContext(),formatValue, Toast.LENGTH_LONG).show();
+                        }
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+
+                    CharSequence[] finalOptions = options;
+
+
+//                final CharSequence[] options = {"Take Photo", "Choose from Gallery", "Cancel"};
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    builder.setTitle("Add Photo!");
+
+                    builder.setItems(options, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int item) {
+                            if (finalOptions[item].equals("Take Photo")) {
+                                if (isStoragePermissionCameraGranted()) {
                                     CAMERA_REQUEST = Integer.parseInt(textView.getTag().toString());
                                     Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                                     // Ensure that there's a camera activity to handle the intent
@@ -455,44 +500,77 @@ public class FollowUpActionPlan extends Fragment {
                                             startActivityForResult(takePictureIntent, CAMERA_REQUEST);
                                         }
                                     }
+
+
                                 }
 
-                            }
+                            } else if (finalOptions[item].equals("Choose from Gallery")) {
 
-                        } else if (options[item].equals("Choose from Gallery")) {
+                                if (isStoragePermissionGalleryGranted()) {
 
-                            if (isStoragePermissionGalleryGranted()) {
-                                if (dynamicArray.size() > 5) {
-                                    Toast.makeText(getActivity(), "Maximum 5 files can be uploaded.", Toast.LENGTH_SHORT).show();
-                                } else {
-                                    GALLERY_PICK = Integer.parseInt(textView.getTag().toString() + "0");
-                                    Intent galleryIntent = new Intent();
-                                    galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
-                                    galleryIntent.putExtra(Intent.EXTRA_MIME_TYPES, ACCEPTED_MIME_TYPES);
-                                    galleryIntent.setType("*/*");
-                                    startActivityForResult(Intent.createChooser(galleryIntent, "Choose gallery"), GALLERY_PICK);
+                                    String formatValueTextBox = db.dmRangeTextBoxModuleQuestionsTableDao().getProofFormatByQuestionId(id,complaint_id);
+                                    String formatValueDropBox = db.dmLookupValuesItemDao().getProofFormatByQuestionIdDropDown(id,complaint_id);
+                                    if (Objects.equals(formatValueTextBox, "Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)") || Objects.equals(formatValueDropBox,"Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)")){
+                                        GALLERY_PICK = Integer.parseInt(textView.getTag().toString() + "0");
+                                        Intent galleryIntent = new Intent();
+                                        galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
+                                        galleryIntent.putExtra(Intent.EXTRA_MIME_TYPES, ACCEPTED_MIME_TYPES_DOC);
+                                        galleryIntent.addCategory(Intent.CATEGORY_OPENABLE);
+                                        galleryIntent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
+                                        galleryIntent.setType("*/*");
+                                        startActivityForResult(Intent.createChooser(galleryIntent, "Choose gallery"), GALLERY_PICK);
+                                    }else if (Objects.equals(formatValueTextBox, "Image (.png, .jpg, .jpeg)") || Objects.equals(formatValueDropBox, "Image (.png, .jpg, .jpeg)")){
+                                        GALLERY_PICK = Integer.parseInt(textView.getTag().toString() + "0");
+                                        Intent galleryIntent = new Intent();
+                                        galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
+                                        galleryIntent.putExtra(Intent.EXTRA_MIME_TYPES, ACCEPTED_MIME_TYPES_IMG);
+                                        galleryIntent.setType("*/*");
+                                        startActivityForResult(Intent.createChooser(galleryIntent, "Choose gallery"), GALLERY_PICK);
+                                    } else if (Objects.equals(formatValueTextBox, "Both") || Objects.equals(formatValueDropBox, "Both")) {
+                                        GALLERY_PICK = Integer.parseInt(textView.getTag().toString() + "0");
+                                        Intent galleryIntent = new Intent();
+                                        galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
+                                        galleryIntent.putExtra(Intent.EXTRA_MIME_TYPES, ACCEPTED_MIME_TYPES_ALL_FORMAT);
+                                        galleryIntent.setType("*/*");
+                                        startActivityForResult(Intent.createChooser(galleryIntent, "Choose gallery"), GALLERY_PICK);
+                                    }
+
+
                                 }
-
+                            } else if (finalOptions[item].equals("Cancel")) {
+                                dialog.dismiss();
                             }
-                        } else if (options[item].equals("Cancel")) {
-                            dialog.dismiss();
                         }
-                    }
-                });
-                builder.show();
+                    });
+                    builder.show();
+
+                }
+
+
+
 
             }
         });
 
-        List<DmActionPlansItem> dmActionPlansItemList = new ArrayList<>();
+
+        List<DmRangeActionPlansItems> dmActionPlansItemList = new ArrayList<>();
         dmActionPlansItemList.clear();
-        dmActionPlansItemList = db.dmActionPlansItemDao().getActionPlanItemById(Integer.parseInt(id));
+        dmActionPlansItemList = db.dmRangeActionPlansItemsDao().getActionPlanItemById(Integer.parseInt(id), Integer.parseInt(complaint_id));
 
         final List<String> list = new ArrayList<String>();
         list.clear();
 
         final List<String> ids = new ArrayList<String>();
         ids.clear();
+
+
+        list.add("Select ActionPlan");
+        ids.add("0");
+
+        if (db.dmSurveyAnswerTableDao().getDataByQuestionId(id, Constants.FARMER_ID).get(0).allowCustomActionPlan) {
+            list.add("Custom ActionPlan");
+            ids.add("1");
+        }
 
         for (int c = 0; c < dmActionPlansItemList.size(); c++) {
             list.add(dmActionPlansItemList.get(c).actionPlan);
@@ -502,15 +580,13 @@ public class FollowUpActionPlan extends Fragment {
         LinearLayout linearLayoutSpin = new LinearLayout(getActivity());
         linearLayoutSpin.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT));
+                LinearLayout.LayoutParams.MATCH_PARENT));
         linearLayoutSpin.setOrientation(LinearLayout.HORIZONTAL);
         linearLayoutSpin.setWeightSum(10);
 
         LinearLayout.LayoutParams layoutParamsSpin = new LinearLayout.LayoutParams(
                 getResources().getDimensionPixelSize(R.dimen.forWeight),
-                getResources().getDimensionPixelSize(R.dimen.capture_box),
-                5
-        );
+                LinearLayout.LayoutParams.WRAP_CONTENT,5);
 
         final Spinner spinner = new Spinner(getActivity());
 
@@ -523,7 +599,143 @@ public class FollowUpActionPlan extends Fragment {
 
         spinner.setTag("spinner" + complaint_id);
 
-        layoutParamsSpin.setMargins(0, 10, 10, 10);
+        layoutParamsSpin.setMargins(0, -15, 10, 15);
+
+
+        TextView tVActionPlanSelectedTxt = new TextView(getActivity());
+        LinearLayout.LayoutParams layoutParamsActionTxt = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                getResources().getDimensionPixelSize(R.dimen.capture_box)
+        );
+        layoutParams.setMargins(0, 15, 0, 15);
+
+        tVActionPlanSelectedTxt.setLayoutParams(layoutParamsActionTxt);
+        tVActionPlanSelectedTxt.setGravity(Gravity.CENTER);
+        tVActionPlanSelectedTxt.setPadding(0, 15, 0, 15);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            tVActionPlanSelectedTxt.setBackground(getActivity().getDrawable(R.drawable.answer_text_survey));
+        }
+        tVActionPlanSelectedTxt.setVisibility(View.GONE);
+
+
+        LinearLayout linearLayoutActionPlanMain = new LinearLayout(getActivity());
+        linearLayoutActionPlanMain.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT));
+        linearLayoutActionPlanMain.setOrientation(LinearLayout.VERTICAL);
+
+        LinearLayout linearLayoutActionPlan = new LinearLayout(getActivity());
+
+        EditText actionPlan = new EditText(getActivity());
+        actionPlan.setHint("Edit action plan details");
+        actionPlan.setFilters(new InputFilter[] { new InputFilter.LengthFilter(2000) });
+        actionPlan.setTextSize(14);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            actionPlan.setBackground(getActivity().getDrawable(R.drawable.answer_text_survey));
+        }
+
+        LinearLayout.LayoutParams layoutParams1 = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, getResources().getDimensionPixelSize(R.dimen.actionplanbox));
+
+        layoutParams1.setMargins(0, 15, 0, 15);
+        actionPlan.setLayoutParams(layoutParams1);
+
+        actionPlan.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (charSequence.length() > 0) {
+                    db.dmSurveyAnswerTableDao().updateActionPlanText("", id, Constants.FARMER_ID);
+                } else {
+                    db.dmSurveyAnswerTableDao().updateActionPlanText(charSequence.toString(), id, Constants.FARMER_ID);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
+
+        linearLayoutActionPlan.setGravity(Gravity.END);
+        linearLayoutActionPlan.setOrientation(LinearLayout.HORIZONTAL);
+
+        ImageView imageView1 = new ImageView(getActivity());
+        imageView1.setImageResource(R.drawable.green_tick);
+        imageView1.setPadding(10, 10, 10, 10);
+
+        LinearLayout.LayoutParams layoutParams3 = new LinearLayout.LayoutParams(
+                getResources().getDimensionPixelSize(R.dimen.text_button_width_height),
+                getResources().getDimensionPixelSize(R.dimen.text_button_width_height));
+        layoutParams3.setMargins(0, 10, 10, 10);
+
+        imageView1.setLayoutParams(layoutParams3);
+
+        ImageView imageView2 = new ImageView(getActivity());
+        imageView2.setImageResource(R.drawable.red_cross);
+        imageView2.setPadding(10, 10, 10, 10);
+
+        imageView2.setLayoutParams(layoutParams3);
+
+        linearLayoutActionPlan.addView(imageView1);
+        linearLayoutActionPlan.addView(imageView2);
+
+        linearLayoutActionPlanMain.addView(actionPlan);
+        linearLayoutActionPlanMain.addView(linearLayoutActionPlan);
+
+
+        List<DmSurveyAnswerTable> dmSurveyAnswerTableList = new ArrayList<>();
+        dmSurveyAnswerTableList.clear();
+
+        dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByQuestionId(id, Constants.FARMER_ID);
+
+        if (dmSurveyAnswerTableList.size() != 0) {
+            String answerIdDb = dmSurveyAnswerTableList.get(0).actionPlanText;
+            editText.setText(answerIdDb);
+        }
+
+        //editText.getLayoutParams().width=40;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            editText.setBackground(getActivity().getDrawable(R.drawable.answer_text_survey));
+        }
+
+        linearLayoutActionPlanMain.setVisibility(View.GONE);
+
+        imageView2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(!actionPlan.getText().toString().isEmpty()){
+                    actionPlan.setText("");
+                    db.dmSurveyAnswerTableDao().updateActionPlanText("", id, Constants.FARMER_ID);
+                    db.dmSurveyAnswerTableDao().updateActionPlanId("0",id,Constants.FARMER_ID);
+                }
+                actionPlan.setEnabled(true);
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    actionPlan.setBackground(getActivity().getDrawable(R.drawable.answer_text_survey));
+                }
+            }
+        });
+        imageView1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(!actionPlan.getText().toString().isEmpty()) {
+                    db.dmSurveyAnswerTableDao().updateActionPlanText(actionPlan.getText().toString(), id, Constants.FARMER_ID);
+                    db.dmSurveyAnswerTableDao().updateActionPlanId("0",id,Constants.FARMER_ID);
+                }
+                actionPlan.setEnabled(false);
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    actionPlan.setBackground(getActivity().getDrawable(R.drawable.answer_text_survey));
+                }
+
+            }
+        });
 
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -531,10 +743,21 @@ public class FollowUpActionPlan extends Fragment {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long idS) {
 
                 String Id = ids.get(position);
-
-                db.dmSurveyAnswerTableDao().updateActionPlanId(Id, id, Constants.FARMER_ID);
-
-                // Toast.makeText(getActivity(), "Selected Item " + list.get(position), Toast.LENGTH_SHORT).show();
+                if (position == 0) {
+                    tVActionPlanSelectedTxt.setVisibility(View.GONE);
+                    db.dmSurveyAnswerTableDao().updateActionPlanId("0", id, Constants.FARMER_ID);
+                    db.dmSurveyAnswerTableDao().updateActionPlanText("0", id, Constants.FARMER_ID);
+                } else if (list.get(position).equalsIgnoreCase("Custom ActionPlan")) {
+                    db.dmSurveyAnswerTableDao().updateActionPlanId(Id, id, Constants.FARMER_ID);
+                    tVActionPlanSelectedTxt.setVisibility(View.GONE);
+                    linearLayoutActionPlanMain.setVisibility(View.VISIBLE);
+                } else {
+                    tVActionPlanSelectedTxt.setVisibility(View.VISIBLE);
+                    tVActionPlanSelectedTxt.setText(list.get(position));
+                    linearLayoutActionPlanMain.setVisibility(View.GONE);
+                    db.dmSurveyAnswerTableDao().updateActionPlanId(Id, id, Constants.FARMER_ID);
+                    db.dmSurveyAnswerTableDao().updateActionPlanText(list.get(position), id, Constants.FARMER_ID);
+                }
             }
 
             @Override
@@ -544,9 +767,7 @@ public class FollowUpActionPlan extends Fragment {
 
         LinearLayout.LayoutParams layoutParamsetCur = new LinearLayout.LayoutParams(
                 getResources().getDimensionPixelSize(R.dimen.forWeight),
-                getResources().getDimensionPixelSize(R.dimen.capture_box),
-                2
-        );
+                getResources().getDimensionPixelSize(R.dimen.capture_box),2);
 
         List<DmCurrenciesItem> currenciesItems = new ArrayList<>();
         currenciesItems.clear();
@@ -570,7 +791,7 @@ public class FollowUpActionPlan extends Fragment {
             editTextCurrency.setBackground(getActivity().getDrawable(R.drawable.answer_text_survey));
         }
 
-        layoutParamsetCur.setMargins(0, 10, 0, 10);
+        layoutParamsetCur.setMargins(0, 15, 0, 15);
         editTextCurrency.setLayoutParams(layoutParamsetCur);
 
 
@@ -590,7 +811,7 @@ public class FollowUpActionPlan extends Fragment {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             editTextCurrencyInput.setBackground(getActivity().getDrawable(R.drawable.answer_text_survey));
         }
-        layoutParamsetCurEt.setMargins(0, 10, 0, 10);
+        layoutParamsetCurEt.setMargins(0, 15, 0, 15);
         editTextCurrencyInput.setLayoutParams(layoutParamsetCurEt);
 
         editTextCurrencyInput.addTextChangedListener(new TextWatcher() {
@@ -615,93 +836,11 @@ public class FollowUpActionPlan extends Fragment {
             }
         });
 
-
         linearLayoutSpin.addView(spinner);
         linearLayoutSpin.addView(editTextCurrency);
         linearLayoutSpin.addView(editTextCurrencyInput);
 
-        LinearLayout linearLayoutActionPlanMain = new LinearLayout(getActivity());
-        linearLayoutActionPlanMain.setLayoutParams(new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT));
-        linearLayoutActionPlanMain.setOrientation(LinearLayout.VERTICAL);
-
-        LinearLayout linearLayoutActionPlan = new LinearLayout(getActivity());
-
-        EditText actionPlan = new EditText(getActivity());
-        actionPlan.setHint("Edit action plan details");
-        actionPlan.setTextSize(14);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            actionPlan.setBackground(getActivity().getDrawable(R.drawable.answer_text_survey));
-        }
-
-        LinearLayout.LayoutParams layoutParams1 = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                getResources().getDimensionPixelSize(R.dimen.actionplanbox) // Replace with your desired height in dp
-        );
-        actionPlan.setLayoutParams(layoutParams1);
-
-        actionPlan.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if (charSequence.length() > 0) {
-                    db.dmSurveyAnswerTableDao().updateActionPlanText("", id, Constants.FARMER_ID);
-                } else {
-//                    db.dmSurveyAnswerTableDao().updateActionPlanText(charSequence.toString(), id, Constants.FARMER_ID);
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-
-            }
-        });
-
-
-        linearLayoutActionPlan.setGravity(Gravity.END);
-        linearLayoutActionPlan.setOrientation(LinearLayout.HORIZONTAL);
-
-        ImageView imageView1 = new ImageView(getActivity());
-        imageView1.setImageResource(R.drawable.green_tick);
-
-        LinearLayout.LayoutParams layoutParams3 = new LinearLayout.LayoutParams(
-                getResources().getDimensionPixelSize(R.dimen.small_button_width_height),
-                getResources().getDimensionPixelSize(R.dimen.small_button_width_height));
-
-        imageView1.setLayoutParams(layoutParams3);
-
-        ImageView imageView2 = new ImageView(getActivity());
-        imageView2.setImageResource(R.drawable.red_cross);
-
-        imageView2.setLayoutParams(layoutParams3);
-
-        linearLayoutActionPlan.addView(imageView1);
-        linearLayoutActionPlan.addView(imageView2);
-
-        linearLayoutActionPlanMain.addView(actionPlan);
-        linearLayoutActionPlanMain.addView(linearLayoutActionPlan);
-
-
-        List<DmSurveyAnswerTable> dmSurveyAnswerTableList = new ArrayList<>();
-        dmSurveyAnswerTableList.clear();
-
-        dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByQuestionId(id, Constants.FARMER_ID);
-
-        if (dmSurveyAnswerTableList.size() != 0) {
-            String answerIdDb = dmSurveyAnswerTableList.get(0).actionPlanText;
-            editText.setText(answerIdDb);
-        }
-
-
-        //editText.getLayoutParams().width=40;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            editText.setBackground(getActivity().getDrawable(R.drawable.answer_text_survey));
-        }
-
+        //Selected Action Plan Txt
 
         if (linearLayoutItems != null) {
             linearLayoutItems.addView(notResolveText);
@@ -715,7 +854,6 @@ public class FollowUpActionPlan extends Fragment {
                         if (captureProof) {
                             linearLayoutItems.addView(textView);
                             linearLayoutItems.addView(linearLayoutImage);
-
                         }
 
                     } else if (resolved.equalsIgnoreCase("2")) {
@@ -777,6 +915,7 @@ public class FollowUpActionPlan extends Fragment {
             //db.dmComplaintFileTableDao().deleteAll();
             DmComplaintFileTable dmComplaintFileTable = new DmComplaintFileTable();
             dmComplaintFileTable.setFile_name(filename);
+            dmComplaintFileTable.setSurveyType("FollowUp");
             Date today = new Date();
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
             String currentTime = format.format(today);
@@ -816,8 +955,11 @@ public class FollowUpActionPlan extends Fragment {
             dmComplaintFileTableList = db.dmComplaintFileTableDao().getFilesById(CAMERA_REQUEST, Constants.FARMER_ID);
             if (dmComplaintFileTableList.size() != 0) {
                 for (int l = 0; l < dmComplaintFileTableList.size(); l++) {
-                    retrievedArray.add(dmComplaintFileTableList.get(l).getFile_name());
-                    retrievedArrayFile.add(dmComplaintFileTableList.get(l).getUid());
+                    if(dmComplaintFileTableList.get(l).getSurveyType().equalsIgnoreCase("FollowUp")){
+                        retrievedArray.add(dmComplaintFileTableList.get(l).getFile_name());
+                        retrievedArrayFile.add(dmComplaintFileTableList.get(l).getUid());
+                    }
+
 
                     dynamicArray.add(dmComplaintFileTableList.get(l).getFile_name());
                     dynamicArrayFile.add(dmComplaintFileTableList.get(l).getUid());
@@ -933,6 +1075,7 @@ public class FollowUpActionPlan extends Fragment {
 
                 DmComplaintFileTable dmComplaintFileTable = new DmComplaintFileTable();
                 dmComplaintFileTable.setFile_name(filename);
+                dmComplaintFileTable.setSurveyType("FollowUp");
                 dmComplaintFileTable.setFileData(fileByteArray);
                 Date today = new Date();
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
@@ -972,8 +1115,10 @@ public class FollowUpActionPlan extends Fragment {
                 dmComplaintFileTableList = db.dmComplaintFileTableDao().getFilesById(questionId, Constants.FARMER_ID);
                 if (dmComplaintFileTableList.size() != 0) {
                     for (int l = 0; l < dmComplaintFileTableList.size(); l++) {
-                        retrievedArray.add(dmComplaintFileTableList.get(l).getFile_name());
-                        retrievedArrayFile.add(dmComplaintFileTableList.get(l).getUid());
+                        if(dmComplaintFileTableList.get(l).getSurveyType().equalsIgnoreCase("FollowUp")){
+                            retrievedArray.add(dmComplaintFileTableList.get(l).getFile_name());
+                            retrievedArrayFile.add(dmComplaintFileTableList.get(l).getUid());
+                        }
 
                         dynamicArray.add(dmComplaintFileTableList.get(l).getFile_name());
                         dynamicArrayFile.add(dmComplaintFileTableList.get(l).getUid());
@@ -1095,6 +1240,7 @@ public class FollowUpActionPlan extends Fragment {
 
                     DmComplaintFileTable dmComplaintFileTable = new DmComplaintFileTable();
                     dmComplaintFileTable.setFile_name(filename);
+                    dmComplaintFileTable.setSurveyType("FollowUp");
                     dmComplaintFileTable.setFileData(pdfByteArray2);
                     Date today = new Date();
                     SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
@@ -1132,9 +1278,10 @@ public class FollowUpActionPlan extends Fragment {
                     dmComplaintFileTableList = db.dmComplaintFileTableDao().getFilesById(questionId, Constants.FARMER_ID);
                     if (dmComplaintFileTableList.size() != 0) {
                         for (int l = 0; l < dmComplaintFileTableList.size(); l++) {
-                            retrievedArray.add(dmComplaintFileTableList.get(l).getFile_name());
-                            retrievedArrayFile.add(dmComplaintFileTableList.get(l).getUid());
-
+                            if(dmComplaintFileTableList.get(l).getSurveyType().equalsIgnoreCase("FollowUp")){
+                                retrievedArray.add(dmComplaintFileTableList.get(l).getFile_name());
+                                retrievedArrayFile.add(dmComplaintFileTableList.get(l).getUid());
+                            }
                             dynamicArray.add(dmComplaintFileTableList.get(l).getFile_name());
                             dynamicArrayFile.add(dmComplaintFileTableList.get(l).getUid());
                         }
@@ -1211,7 +1358,8 @@ public class FollowUpActionPlan extends Fragment {
                 }
 
 
-            } else {
+            } else /*if (mime.equalsIgnoreCase("image/jpeg")
+                    || mime.equalsIgnoreCase("image/png"))*/{
                 final BitmapFactory.Options options = new BitmapFactory.Options();
                 options.inJustDecodeBounds = true;
                 options.inSampleSize = 2;
@@ -1225,7 +1373,6 @@ public class FollowUpActionPlan extends Fragment {
                 } catch (URISyntaxException e) {
                     e.printStackTrace();
                 }
-
 
                 Bitmap bmp = BitmapFactory.decodeFile(filePathimage, options);
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -1245,6 +1392,7 @@ public class FollowUpActionPlan extends Fragment {
                 //db.dmComplaintFileTableDao().deleteAll();
                 DmComplaintFileTable dmComplaintFileTable = new DmComplaintFileTable();
                 dmComplaintFileTable.setFile_name(filename);
+                dmComplaintFileTable.setSurveyType("FollowUp");
                 dmComplaintFileTable.setFileData(imageBytes);
                 Date today = new Date();
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
@@ -1284,8 +1432,10 @@ public class FollowUpActionPlan extends Fragment {
                 dmComplaintFileTableList = db.dmComplaintFileTableDao().getFilesById(questionId, Constants.FARMER_ID);
                 if (dmComplaintFileTableList.size() != 0) {
                     for (int l = 0; l < dmComplaintFileTableList.size(); l++) {
-                        retrievedArray.add(dmComplaintFileTableList.get(l).getFile_name());
-                        retrievedArrayFile.add(dmComplaintFileTableList.get(l).getUid());
+                        if(dmComplaintFileTableList.get(l).getSurveyType().equalsIgnoreCase("FollowUp")){
+                            retrievedArray.add(dmComplaintFileTableList.get(l).getFile_name());
+                            retrievedArrayFile.add(dmComplaintFileTableList.get(l).getUid());
+                        }
 
                         dynamicArray.add(dmComplaintFileTableList.get(l).getFile_name());
                         dynamicArrayFile.add(dmComplaintFileTableList.get(l).getUid());
@@ -1362,6 +1512,7 @@ public class FollowUpActionPlan extends Fragment {
                 }
             }
 
+
         }
 
 
@@ -1369,17 +1520,22 @@ public class FollowUpActionPlan extends Fragment {
 
     public void showCurrencyDropDown(List<DmCurrency> dmCurrenciesItemList) {
 
+
         final List<String> list = new ArrayList<String>();
         list.clear();
 
         final List<String> ids = new ArrayList<String>();
         ids.clear();
 
+        final List<String> isDefaultCurrency = new ArrayList<String>();
+        isDefaultCurrency.clear();
+
         for (int c = 0; c < dmCurrenciesItemList.size(); c++) {
             int currencyId = dmCurrenciesItemList.get(c).currencyId;
 
             list.add(db.dmCurrenciesItemDao().getCurrencyCodeItemById(currencyId));
             ids.add(String.valueOf(dmCurrenciesItemList.get(c).currencyId));
+
         }
 
 
@@ -1390,18 +1546,41 @@ public class FollowUpActionPlan extends Fragment {
         String currencyIdDb = "0";
 
         List<DmActionPlanCurrenciesTable> dmActionPlanCurrenciesTables = db.dmActionPlanCurrenciesTableDao().getDataByModuleId(Constants.MODULE_ID, Constants.FARMER_ID);
+
         if (dmActionPlanCurrenciesTables.size() != 0) {
             currencyIdDb = String.valueOf(dmActionPlanCurrenciesTables.get(0).currencyId);
             currency_id = currencyIdDb;
         }
 
+
+
         int selectedPosition = 0;
 
-        for (int i = 0; i < ids.size(); i++) {
-            if (currencyIdDb.equalsIgnoreCase(ids.get(i))) {
-                selectedPosition = i;
+
+//        for (int i = 0; i < ids.size(); i++) {
+        //            if (currencyIdDb.equalsIgnoreCase(ids.get(i))) {
+//                selectedPosition = i;
+//            }
+//        }
+
+
+//        if ()
+        try {
+            int currencyDefault = db.dmCurrencyDao().isCurrencyDefault(dmActionPlanCurrenciesTables.get(0).moduleId , 1);
+            for (int i = 0; i < ids.size(); i++) {
+                if (String.valueOf(currencyDefault).equalsIgnoreCase(ids.get(i)) && isCreated) {
+                    selectedPosition = i;
+                    isCreated = false;
+//                    currencyIdDb = String.valueOf(currencyDefault);
+//                    currency_id = String.valueOf(currencyDefault);
+                } else if (currencyIdDb.equalsIgnoreCase(ids.get(i))) {
+                    selectedPosition = i;
+                }
+
             }
 
+        }catch (Exception e) {
+            e.printStackTrace();
         }
 
         spinner_followup_dmCurrencies.setSelection(selectedPosition);
@@ -1421,6 +1600,7 @@ public class FollowUpActionPlan extends Fragment {
                 dmActionPlanCurrenciesTable.moduleId = Integer.parseInt(Constants.MODULE_ID);
                 dmActionPlanCurrenciesTable.currencyId = Integer.parseInt(ids.get(position));
                 dmActionPlanCurrenciesTable.code = list.get(position);
+                dmActionPlanCurrenciesTable.farmerId = Constants.FARMER_ID;
                 db.dmActionPlanCurrenciesTableDao().insert(dmActionPlanCurrenciesTable);
 
                 dm_question_followup_complaint.removeAllViews();
@@ -1518,6 +1698,7 @@ public class FollowUpActionPlan extends Fragment {
         }
 
     }
+
 
     private File compressPdf(Uri uri) {
         try {
@@ -1623,11 +1804,15 @@ public class FollowUpActionPlan extends Fragment {
 
     }
 
+
     @Override
     public void onResume() {
         super.onResume();
         db = OFISRoomDB.getDbInstance(getActivity());
         List<DmCurrency> dmSectionsItemList = db.dmCurrencyDao().getDMCurrencyByModuleId(Constants.MODULE_ID);
         showCurrencyDropDown(dmSectionsItemList);
+        isCreated = false;
     }
+
+
 }

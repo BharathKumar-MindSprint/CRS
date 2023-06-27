@@ -2627,7 +2627,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     public static void deleteRoomDbValues() {
         OFISRoomDB db = OFISRoomDB.getDbInstance(staticContext);
         db.dmSectionsItemDao().deleteAll();
-
         db.dmLookupValuesISubmoduleDao().deleteAll();
         db.dmActionPlansItemSubmoduleDao().deleteAll();
         db.dmQuestionsModuleDao().deleteAll();
@@ -2707,6 +2706,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                     followUpItemMainTable.updatedBy = updatedBy;
                                     followUpItemMainTable.isPortal = isPortal;
                                     followUpItemMainTable.farmerId = farmerId;
+                                    followUpItemMainTable.isSync = "0";
 
                                     db.followUpItemMainTableDao().insert(followUpItemMainTable);
 

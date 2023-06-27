@@ -19,6 +19,17 @@ public class DmComplaintFileTable {
     @ColumnInfo(name = "farmerId")
     private String farmerId;
 
+    public String getSurveyType() {
+        return surveyType;
+    }
+
+    public void setSurveyType(String surveyType) {
+        this.surveyType = surveyType;
+    }
+
+    @ColumnInfo(name = "surveyType")
+    private String surveyType;
+
     @ColumnInfo(name = "ofisFileName")
     private String ofisFileName;
 
