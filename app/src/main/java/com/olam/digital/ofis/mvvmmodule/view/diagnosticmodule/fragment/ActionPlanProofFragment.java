@@ -170,6 +170,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 ArrayList<String> qIdSections = Constants.questionIdsSection;
 
                 ArrayList<String> justVal = new ArrayList<String>();
+                justVal.clear();
                 
 
 
@@ -215,7 +216,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
             }
         });
       
-        ll_servey_next_actionplan.setOnClickListener(this);
+
 
 
         db = OFISRoomDB.getDbInstance(getActivity());
@@ -644,6 +645,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
         spinner.setAdapter(spinnerAdapter);
 
         spinner.setTag("spinner" + complaint_id);
+
 
         layoutParamsSpin.setMargins(0, -15, 10, 15);
 
@@ -1243,18 +1245,24 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 String message = "PDF Size: " + fileSize;
                 // Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
 
+//                5,242,880 - 5MB
+//                10485760  - 10MB
+//                3145728 - 3MB
 
-                if ((1024f * 1024f) < compressedSize) {
-                    // Toast.makeText(getContext(), "Sizer is greater than 10 MB", Toast.LENGTH_SHORT).show();
-                    Uri uri1 = Uri.fromFile(compressPdf(uri));
-                    byte[] pdfByteArray1;
-                    try {
-                        pdfByteArray1 = PDFUtils.convertPDFToByteArray(uri1.getPath());
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
+                if (compressedSize > 3145728) {
+                     Toast.makeText(getContext(), "Sizer is greater than 10 MB", Toast.LENGTH_SHORT).show();
+                     Toast.makeText(getContext(), compressedSize+"", Toast.LENGTH_SHORT).show();
+//                    Uri uri1 = Uri.fromFile(compressPdf(uri));
+//                    byte[] pdfByteArray1;
+//                    try {
+//                        pdfByteArray1 = PDFUtils.convertPDFToByteArray(uri1.getPath());
+//                    } catch (IOException e) {
+//                        throw new RuntimeException(e);
+//                    }
 
-                } else {
+
+                }
+                else {
                     Uri uri1 = Uri.fromFile(compressPdf(uri));
 
                     byte[] pdfByteArray2;
@@ -1384,8 +1392,9 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 }
 
 
-            } else /*if (mime.equalsIgnoreCase("image/jpeg")
-                    || mime.equalsIgnoreCase("image/png"))*/{
+            }
+            else if (mime.equalsIgnoreCase("image/jpeg")
+                    || mime.equalsIgnoreCase("image/png")){
                 final BitmapFactory.Options options = new BitmapFactory.Options();
                 options.inJustDecodeBounds = true;
                 options.inSampleSize = 2;

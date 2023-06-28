@@ -47,4 +47,7 @@ public class ComplianceIndicator {
     @ColumnInfo(name = "labelVi")
     public String labelVi;
 
+    @ColumnInfo(name = "score")
+    public int score;
+
 }
