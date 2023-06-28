@@ -379,7 +379,22 @@ public class SurveyResultsFragment extends Fragment {
 
             }else {
                 weightageMarks.setText(String.valueOf(totalWeightages));
-//                editTextTextMultiLine.setVisibility(View.GONE);
+                editTextTextMultiLine.setVisibility(View.VISIBLE);
+
+                List<AssessmentResultTypeItems> totalRangeAvailable = db.dmAssessmentResultTypeDao().getAllModuleId(Integer.parseInt(Constants.MODULE_ID));
+
+
+                for (int i = 0; i <= totalRangeAvailable.size() ; i++) {
+                    int minRange = totalRangeAvailable.get(i).getMinRange();
+                    int maxRange = totalRangeAvailable.get(i).getMaxRange();
+                    if (totalWeightages >= minRange && totalWeightages <= maxRange){
+                        String remarks = String.valueOf(db.dmAssessmentResultTypeDao().getRemarks(Integer.parseInt(Constants.MODULE_ID) , minRange ,maxRange));
+                        editTextTextMultiLine.setText(remarks);
+                        break;
+                    }
+
+
+                }
             }
 
 
@@ -446,6 +461,20 @@ public class SurveyResultsFragment extends Fragment {
                         traffic_indicator_red.setVisibility(View.GONE);
                         resultValue = Constants.GREEN;
                     }
+
+                }
+            }else {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    newView.setBackground(getActivity().getDrawable(R.color.red_view_survey));
+                    survey_result_main.setBackground(getActivity().getDrawable(R.color.red_survey_result));
+
+                    if (Objects.equals(assessmentType, "TL")){
+                        traffic_indicator_green.setVisibility(View.GONE);
+                        traffic_indicator_orange.setVisibility(View.GONE);
+                        traffic_indicator_red.setVisibility(View.VISIBLE);
+                        resultValue = Constants.RED;
+                    }
+
 
                 }
             }
