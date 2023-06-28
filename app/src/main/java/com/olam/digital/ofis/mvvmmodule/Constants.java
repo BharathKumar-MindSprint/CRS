@@ -2,26 +2,30 @@ package com.olam.digital.ofis.mvvmmodule;
 
 import java.util.ArrayList;
 
-public class Constants{
+public class Constants {
 
-  public static  String MODULE_ID ="0";
+    public static String MODULE_ID = "0";
 
-  public static  String MODULE_NAME ="0";
+    public static String MODULE_NAME = "0";
 
-  public static  String FARMER_ID ="0";
-  public static  String FARMER_GROUP_ID ="0";
-  public static  String ENUMERATOR_ID ="0";
-  public static  String ACTIONPlAN_ID ="0";
-  public static  String complaintSize ="0";
-  public static  String noncomplaintSize ="0";
-  public static  String satisfactorySize ="0";
-  public static ArrayList<String> questionIds = new ArrayList<>();
-  public static ArrayList<String> questionIdsSection = new ArrayList<>();
+    public static String FARMER_ID = "0";
+    public static String FARMER_GROUP_ID = "0";
+    public static String ENUMERATOR_ID = "0";
+    public static String ACTIONPlAN_ID = "0";
+    public static String complaintSize = "0";
+    public static String noncomplaintSize = "0";
+    public static String satisfactorySize = "0";
 
-  public static ArrayList<String> mandatedQuestionIds = new ArrayList<>();
+    public static Boolean EDITABLE = false;
+
+    public static ArrayList<String> ComplaintQuestionIds = new ArrayList<>();
+    public static ArrayList<String> questionIds = new ArrayList<>();
+    public static ArrayList<String> questionIdsSection = new ArrayList<>();
+
+    public static ArrayList<String> mandatedQuestionIds = new ArrayList<>();
 
 
-  public static  String RED ="RED";
-  public static  String GREEN ="GREEN";
-  public static final String ORANGE = "ORANGE";
+    public static String RED = "RED";
+    public static String GREEN = "GREEN";
+    public static final String ORANGE = "ORANGE";
 }

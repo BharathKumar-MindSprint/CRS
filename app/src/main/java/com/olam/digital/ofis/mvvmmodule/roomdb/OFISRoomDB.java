@@ -62,7 +62,6 @@ public abstract class OFISRoomDB extends RoomDatabase {
     public abstract DmLookupValuesItemDao dmLookupValuesItemDao();
     public abstract DmActionPlansItemDao dmActionPlansItemDao();
     public abstract DmSectionsItemDao dmSectionsItemDao();
-    public abstract DmQuestionsSubModuleDao dmQuestionsSubModuleDao();
     public abstract DmLookupValuesISubmoduleDao dmLookupValuesISubmoduleDao();
     public abstract DmActionPlansItemSubmoduleDao dmActionPlansItemSubmoduleDao();
     public abstract DmRecurrenceDao dmRecurrenceDao();

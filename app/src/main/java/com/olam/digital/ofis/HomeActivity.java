@@ -92,8 +92,8 @@ import com.olam.digital.ofis.logging.FabricLogsWriter;
 import com.olam.digital.ofis.matoma.MatomoHelper;
 import com.olam.digital.ofis.matoma.ScreenNameConstants;
 
+import com.olam.digital.ofis.matoma.multifarm.MultiFarmUtils;
 import com.olam.digital.ofis.matoma.multifarm.UpdateMultiFarmActivity;
-import com.olam.digital.ofis.multifarm.MultiFarmUtils;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.ActionPlansItem;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.AnswerTypesItem;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.ComplianceIndicatorItem;
@@ -2636,7 +2636,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     public static void deleteRoomDbValues() {
         OFISRoomDB db = OFISRoomDB.getDbInstance(staticContext);
         db.dmSectionsItemDao().deleteAll();
-        db.dmQuestionsSubModuleDao().deleteAll();
         db.dmLookupValuesISubmoduleDao().deleteAll();
         db.dmActionPlansItemSubmoduleDao().deleteAll();
         db.dmQuestionsModuleDao().deleteAll();
@@ -2716,6 +2715,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                     followUpItemMainTable.updatedBy = updatedBy;
                                     followUpItemMainTable.isPortal = isPortal;
                                     followUpItemMainTable.farmerId = farmerId;
+                                    followUpItemMainTable.isSync = "0";
 
                                     db.followUpItemMainTableDao().insert(followUpItemMainTable);
 
