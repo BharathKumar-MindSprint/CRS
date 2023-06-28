@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 public class Constants {
 
+
     public static String MODULE_ID = "0";
 
     public static String MODULE_NAME = "0";
@@ -15,7 +16,7 @@ public class Constants {
     public static String complaintSize = "0";
     public static String noncomplaintSize = "0";
     public static String satisfactorySize = "0";
-
+    public static int ATTEMPT = 0;
     public static Boolean EDITABLE = false;
 
     public static ArrayList<String> ComplaintQuestionIds = new ArrayList<>();
@@ -28,4 +29,10 @@ public class Constants {
     public static String RED = "RED";
     public static String GREEN = "GREEN";
     public static final String ORANGE = "ORANGE";
+
+    public static String RESOLVED = "Resolved";
+
+    public static String NOTRESOLVED = "NOT Resolved";
+
+
 }

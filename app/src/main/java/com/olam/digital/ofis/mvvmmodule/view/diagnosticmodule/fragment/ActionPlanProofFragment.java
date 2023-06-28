@@ -158,8 +158,6 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
         ll_servey_next_actionplan = view.findViewById(R.id.ll_servey_next_actionplan);
         spinner_dmCurrencies = view.findViewById(R.id.spinner_dmCurrencies);
         dm_question_complaint = view.findViewById(R.id.dm_question_complaint);
-
-
         ll_servey_next_actionplan.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -175,20 +173,13 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
 
                 for (int i = 0; i < qId.size(); i++){
-                    String newValue = db.dmComplaintFileTableDao().getQuestionFilesById(Integer.parseInt(qId.get(i)),Constants.FARMER_ID);
+                    List<DmComplaintFileTable> dmComplaintFileTables = db.dmComplaintFileTableDao().getQuestionFilesById(Integer.parseInt(qId.get(i)),Constants.FARMER_ID, 0);
                     int getQuestionProof = db.dmSurveyAnswerTableDao().getIsCaptureProofValue(Integer.parseInt(qId.get(i)),Constants.FARMER_ID);
 
-
-
-
-                    if (!justVal.contains(newValue) && newValue!=null  ){
-                        justVal.add(newValue);
-                        /*if (!justVal.contains(getQuestion)){
-                            justVal.add(getQuestion);
-                        }*/
-
+                    if (!justVal.contains(qId.get(i)) && dmComplaintFileTables.size() > 0  ){
+                        justVal.add(qId.get(i));
                     } else if (Objects.equals(String.valueOf(getQuestionProof), "0")){
-                        justVal.add(newValue);
+                        justVal.add(qId.get(i));
                     }
                 }
 
@@ -215,23 +206,13 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
             }
         });
-      
-
-
-
         db = OFISRoomDB.getDbInstance(getActivity());
         List<DmCurrency> dmSectionsItemList = db.dmCurrencyDao().getDMCurrencyByModuleId(Constants.MODULE_ID);
         showCurrencyDropDown(dmSectionsItemList);
-
         List<DmActionPlanCurrenciesTable> checkValueDefault = db.dmActionPlanCurrenciesTableDao().getCurrencyByModuleId(Constants.MODULE_ID, Constants.FARMER_ID);
         if (checkValueDefault.size()==0){
             isCreated = true;
         }
-
-
-
-
-
 
         return view;
     }
@@ -417,7 +398,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
         List<DmComplaintFileTable> dmComplaintFileTableList = new ArrayList<>();
         dmComplaintFileTableList.clear();
-        dmComplaintFileTableList = db.dmComplaintFileTableDao().getFilesById(Integer.parseInt(id), Constants.FARMER_ID);
+        dmComplaintFileTableList = db.dmComplaintFileTableDao().getFilesById(Integer.parseInt(id), Constants.FARMER_ID, 0);
 
         // Log.d("akshdkjashdk", "" + dmComplaintFileTableList.size());
 
@@ -455,7 +436,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
                                         //Toast.makeText(getActivity(), "" + pos, Toast.LENGTH_SHORT).show();
 
-                                        db.dmComplaintFileTableDao().deleteById(finalRetrievedArrayFile.get(finalI), Constants.FARMER_ID);
+                                        db.dmComplaintFileTableDao().deleteById(finalRetrievedArrayFile.get(finalI), Constants.FARMER_ID,0);
 
                                         dm_question_complaint.removeAllViews();
 
@@ -490,7 +471,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
             @Override
             public void onClick(View view) {
 
-                if (db.dmComplaintFileTableDao().getFilesById(Integer.parseInt(id),Constants.FARMER_ID).size()>=5){
+                if (db.dmComplaintFileTableDao().getFilesById(Integer.parseInt(id),Constants.FARMER_ID, 0).size()>=5){
                     Toast.makeText(getActivity(), "Maximum 5 files can be uploaded.", Toast.LENGTH_SHORT).show();
 
                 }else {
@@ -958,6 +939,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
             dmComplaintFileTable.setFileData(imageBytes);
             dmComplaintFileTable.setFarmerId(Constants.FARMER_ID);
             dmComplaintFileTable.setQuestionId(String.valueOf(CAMERA_REQUEST));
+            dmComplaintFileTable.setAttempt(0);
             db.dmComplaintFileTableDao().insert(dmComplaintFileTable);
 
             long id = db.dmComplaintFileTableDao().getLastInsertedId();
@@ -986,7 +968,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
             List<DmComplaintFileTable> dmComplaintFileTableList = new ArrayList<>();
             dmComplaintFileTableList.clear();
-            dmComplaintFileTableList = db.dmComplaintFileTableDao().getFilesById(CAMERA_REQUEST, Constants.FARMER_ID);
+            dmComplaintFileTableList = db.dmComplaintFileTableDao().getFilesById(CAMERA_REQUEST, Constants.FARMER_ID, 0);
             if (dmComplaintFileTableList.size() != 0) {
                 for (int l = 0; l < dmComplaintFileTableList.size(); l++) {
                     retrievedArray.add(dmComplaintFileTableList.get(l).getFile_name());
@@ -1039,7 +1021,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
                                         linearLayoutImage.removeAllViews();
 
-                                        db.dmComplaintFileTableDao().deleteById(finalRetrievedArrayFile.get(finalI), Constants.FARMER_ID);
+                                        db.dmComplaintFileTableDao().deleteById(finalRetrievedArrayFile.get(finalI), Constants.FARMER_ID,0);
 
                                         dm_question_complaint.removeAllViews();
 
@@ -1115,6 +1097,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 dmComplaintFileTable.setOfisFileName(OFISFileName);
                 dmComplaintFileTable.setFarmerId(Constants.FARMER_ID);
                 dmComplaintFileTable.setQuestionId(String.valueOf(questionId));
+                dmComplaintFileTable.setAttempt(0);
                 db.dmComplaintFileTableDao().insert(dmComplaintFileTable);
 
                 long id = db.dmComplaintFileTableDao().getLastInsertedId();
@@ -1143,7 +1126,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
                 List<DmComplaintFileTable> dmComplaintFileTableList = new ArrayList<>();
                 dmComplaintFileTableList.clear();
-                dmComplaintFileTableList = db.dmComplaintFileTableDao().getFilesById(questionId, Constants.FARMER_ID);
+                dmComplaintFileTableList = db.dmComplaintFileTableDao().getFilesById(questionId, Constants.FARMER_ID, 0);
                 if (dmComplaintFileTableList.size() != 0) {
                     for (int l = 0; l < dmComplaintFileTableList.size(); l++) {
                         retrievedArray.add(dmComplaintFileTableList.get(l).getFile_name());
@@ -1196,7 +1179,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
                                             linearLayoutImage.removeAllViews();
 
-                                            db.dmComplaintFileTableDao().deleteById(finalRetrievedArrayFile.get(finalI), Constants.FARMER_ID);
+                                            db.dmComplaintFileTableDao().deleteById(finalRetrievedArrayFile.get(finalI), Constants.FARMER_ID,0);
 
                                             dm_question_complaint.removeAllViews();
 
@@ -1284,6 +1267,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                     dmComplaintFileTable.setOfisFileName(OFISFileName);
                     dmComplaintFileTable.setFarmerId(Constants.FARMER_ID);
                     dmComplaintFileTable.setQuestionId(String.valueOf(questionId));
+                    dmComplaintFileTable.setAttempt(0);
                     db.dmComplaintFileTableDao().insert(dmComplaintFileTable);
 
                     long id = db.dmComplaintFileTableDao().getLastInsertedId();
@@ -1310,7 +1294,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
                     List<DmComplaintFileTable> dmComplaintFileTableList = new ArrayList<>();
                     dmComplaintFileTableList.clear();
-                    dmComplaintFileTableList = db.dmComplaintFileTableDao().getFilesById(questionId, Constants.FARMER_ID);
+                    dmComplaintFileTableList = db.dmComplaintFileTableDao().getFilesById(questionId, Constants.FARMER_ID, 0);
                     if (dmComplaintFileTableList.size() != 0) {
                         for (int l = 0; l < dmComplaintFileTableList.size(); l++) {
                             retrievedArray.add(dmComplaintFileTableList.get(l).getFile_name());
@@ -1361,7 +1345,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
                                                 linearLayoutImage.removeAllViews();
 
-                                                db.dmComplaintFileTableDao().deleteById(finalRetrievedArrayFile.get(finalI), Constants.FARMER_ID);
+                                                db.dmComplaintFileTableDao().deleteById(finalRetrievedArrayFile.get(finalI), Constants.FARMER_ID,0);
 
                                                 dm_question_complaint.removeAllViews();
 
@@ -1436,6 +1420,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 dmComplaintFileTable.setOfisFileName(OFISFileName);
                 dmComplaintFileTable.setFarmerId(Constants.FARMER_ID);
                 dmComplaintFileTable.setQuestionId(String.valueOf(questionId));
+                dmComplaintFileTable.setAttempt(0);
                 db.dmComplaintFileTableDao().insert(dmComplaintFileTable);
 
                 long id = db.dmComplaintFileTableDao().getLastInsertedId();
@@ -1464,7 +1449,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
                 List<DmComplaintFileTable> dmComplaintFileTableList = new ArrayList<>();
                 dmComplaintFileTableList.clear();
-                dmComplaintFileTableList = db.dmComplaintFileTableDao().getFilesById(questionId, Constants.FARMER_ID);
+                dmComplaintFileTableList = db.dmComplaintFileTableDao().getFilesById(questionId, Constants.FARMER_ID, 0);
                 if (dmComplaintFileTableList.size() != 0) {
                     for (int l = 0; l < dmComplaintFileTableList.size(); l++) {
                         retrievedArray.add(dmComplaintFileTableList.get(l).getFile_name());
@@ -1515,7 +1500,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
                                             linearLayoutImage.removeAllViews();
 
-                                            db.dmComplaintFileTableDao().deleteById(finalRetrievedArrayFile.get(finalI), Constants.FARMER_ID);
+                                            db.dmComplaintFileTableDao().deleteById(finalRetrievedArrayFile.get(finalI), Constants.FARMER_ID,0);
 
                                             dm_question_complaint.removeAllViews();
 

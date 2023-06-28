@@ -137,13 +137,11 @@ public class SurveyResultsFragment extends Fragment {
                             totalAmount = String.valueOf(Integer.parseInt(totalAmount) + dmSurveyAnswerTableList.get(i).amount);
                         }
 
-                        HashMap hashMapFiles = new HashMap();
-
                         List<DmComplaintFileTable> complaintFileTableList = new ArrayList<>();
 
                         complaintFileTableList.clear();
 
-                        complaintFileTableList = db.dmComplaintFileTableDao().getFilesById(Integer.parseInt(dmSurveyAnswerTableList.get(i).questionID),Constants.FARMER_ID);
+                        complaintFileTableList = db.dmComplaintFileTableDao().getFilesById(Integer.parseInt(dmSurveyAnswerTableList.get(i).questionID),Constants.FARMER_ID, 0);
 
                         List<String> files = new ArrayList<>();
                         files.clear();
@@ -161,57 +159,20 @@ public class SurveyResultsFragment extends Fragment {
                     }
                 }
 
-
-                List<DmCurrenciesItem> currenciesItems = new ArrayList<>();
-                currenciesItems.clear();
-                currenciesItems = db.dmCurrenciesItemDao().getCurrencyItemById(Integer.parseInt(currencyId));
-
-                String currency = "$";
-
-                if (currenciesItems.size() != 0) {
-                    currency = currenciesItems.get(0).notation;
-                }
-
-                HashMap result = new HashMap();
-                result.put("totalComplaint", Constants.complaintSize);
-                result.put("totalSatisfactory", Constants.satisfactorySize);
-                result.put("totalNonComplaint", Constants.noncomplaintSize);
-                result.put("totalActionPlan", String.valueOf(Integer.parseInt(Constants.complaintSize) + Integer.parseInt(Constants.satisfactorySize) + Integer.parseInt(Constants.noncomplaintSize)));
-                result.put("totalBudget", amount + " " + currency);
-                result.put("resultType", "TL");
-                result.put("resultValue", resultValue);
-                result.put("resultRemarks", overAllResult.getText().toString());
                 DMSurveyReport dmSurveyReport = new DMSurveyReport(Integer.parseInt(Constants.complaintSize),
                         Integer.parseInt(Constants.satisfactorySize),
                         Integer.parseInt(Constants.noncomplaintSize),
                         (Integer.parseInt(Constants.complaintSize) + Integer.parseInt(Constants.satisfactorySize) + Integer.parseInt(Constants.noncomplaintSize)),
                         Double.parseDouble(String.valueOf(amount)),
-                        "TL",
+                        db.dmMainModuleDao().getAssessmentType(Integer.parseInt(Constants.MODULE_ID)),
                         resultValue,
                         overAllResult.getText().toString(),
                         Long.parseLong(Constants.FARMER_ID),Integer.parseInt(Constants.MODULE_ID),
                         Integer.parseInt(Constants.FARMER_GROUP_ID),
-                        Integer.parseInt(currencyId),submittedDate,"RED");
+                        Integer.parseInt(currencyId),submittedDate,resultValue);
                 db.dmSurveyReportDao().insert(dmSurveyReport);
 
 
-                hashMap.put("answers", answerArrayList);
-
-                hashMap.put("result", result);
-
-                ArrayList<JSONObject> arrayList = new ArrayList<>();
-
-                arrayList.add(new JSONObject(hashMap));
-
-                Log.d("resulllttt", arrayList.toString());
-
-               // SubmitResult(arrayList.toString());
-
-               /* if (!ViewFarmerActivity.recyclerViewData.contains("Follow Up 1")) {
-                    ViewFarmerActivity.recyclerViewData.add("Follow Up 1");
-                }else {
-//                    Toast.makeText(getContext(), "Can't add more followup", Toast.LENGTH_SHORT).show();
-                }*/
                 DataLayer dl = new DataLayer(getResources(), getContext());
                 dl.updateNqForDMSurvey(Constants.FARMER_ID, Constants.MODULE_ID);
                 Intent intent = new Intent(getContext(),ViewFarmerActivity.class);

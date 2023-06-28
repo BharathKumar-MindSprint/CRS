@@ -122,6 +122,7 @@ public class FollowUpRecyclerAdapter extends RecyclerView.Adapter<FollowUpRecycl
                 }else{
                     Constants.EDITABLE = false;
                 }
+                Constants.ATTEMPT = selectedPosition;
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(intent);
             }

@@ -5536,7 +5536,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                             complaintFileTableList.clear();
 
-                            complaintFileTableList = db.dmComplaintFileTableDao().getFilesById(Integer.parseInt(dmSurveyAnswerTableList.get(i).questionID), String.valueOf(farmerId));
+                            complaintFileTableList = db.dmComplaintFileTableDao().getFilesById(Integer.parseInt(dmSurveyAnswerTableList.get(i).questionID), String.valueOf(farmerId), 0);
 
 //                            List<String> files = new ArrayList<>();
 //                            files.clear();
