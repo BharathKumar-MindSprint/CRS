@@ -92,10 +92,12 @@ import com.olam.digital.ofis.logging.FabricLogsWriter;
 import com.olam.digital.ofis.matoma.MatomoHelper;
 import com.olam.digital.ofis.matoma.ScreenNameConstants;
 
-import com.olam.digital.ofis.matoma.multifarm.MultiFarmUtils;
+//import com.olam.digital.ofis.matoma.multifarm.MultiFarmUtils;
 import com.olam.digital.ofis.matoma.multifarm.UpdateMultiFarmActivity;
+import com.olam.digital.ofis.multifarm.MultiFarmUtils;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.ActionPlansItem;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.AnswerTypesItem;
+import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.AssessmentResultTypeItems;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.ComplianceIndicatorItem;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.CurrenciesItem;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.CurrencyItem;
@@ -120,6 +122,7 @@ import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.ComplianceIndicator;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DMSurveyReport;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmActionPlansItem;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmAnswerTypes;
+import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmAssessmentResultType;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmCurrenciesItem;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmCurrency;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmLookupValuesItem;
@@ -1953,12 +1956,18 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                     int maxScore = mainResponseList.get(i).getMaxScore();
 //                                    String assessmentResultType =String.valueOf(mainResponseList.get(i).getAssessmentResultType());
 
+                                    List<AssessmentResultTypeItems> assessmentResultTypeItemsList = new ArrayList<>();
+                                    assessmentResultTypeItemsList.clear();
+                                    assessmentResultTypeItemsList= mainResponseList.get(i).getAssessmentResultType();
+
                                     List<ComplianceIndicatorItem> complianceIndicatorItemList = new ArrayList<>();
                                     complianceIndicatorItemList.clear();
                                     complianceIndicatorItemList = mainResponseList.get(i).getComplianceIndicator();
+
                                     List<CurrencyItem> currencyItemList = new ArrayList<>();
                                     currencyItemList.clear();
                                     currencyItemList = mainResponseList.get(i).getCurrency();
+
                                     List<QuestionsItem> questionsItemList = new ArrayList<>();
                                     questionsItemList.clear();
                                     questionsItemList = mainResponseList.get(i).getQuestions();
@@ -1999,6 +2008,26 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 //                                    user.assessmentResultType = assessmentResultType;
 
                                     db.dmMainModuleDao().insert(user);
+
+                                    try {
+                                        for (int a = 0;a<assessmentResultTypeItemsList.size();a++){
+                                            int minRange = assessmentResultTypeItemsList.get(a).getMinRange();
+                                            int maxRange = assessmentResultTypeItemsList.get(a).getMaxRange();
+                                            String remarks = assessmentResultTypeItemsList.get(a).getRemarks();
+
+                                            DmAssessmentResultType dmAssessmentResultType = new DmAssessmentResultType();
+                                            dmAssessmentResultType.moduleId = id;
+                                            dmAssessmentResultType.minRange = minRange;
+                                            dmAssessmentResultType.maxRange = maxRange;
+                                            dmAssessmentResultType.remarks = remarks;
+
+
+                                            db.dmAssessmentResultTypeDao().insert(dmAssessmentResultType);
+
+                                        }
+                                    }catch (Exception e){
+                                        e.printStackTrace();
+                                    }
 
                                     try {
 

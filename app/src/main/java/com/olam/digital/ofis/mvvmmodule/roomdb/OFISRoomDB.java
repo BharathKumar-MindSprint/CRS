@@ -11,6 +11,7 @@ import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmActionPlanCurrenciesTabl
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmActionPlansItem;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmActionPlansItemSubmodule;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmAnswerTypes;
+import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmAssessmentResultType;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmComplaintFileTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmCurrenciesItem;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmCurrency;
@@ -48,7 +49,7 @@ import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.daos.FollowUpResult
         DmNonComplaintFileTable.class, DmSatisfactoryFileTable.class, DmActionPlanCurrenciesTable.class,
         DmRangeActionPlansItems.class, DMSurveyReport.class,  FollowUpItemMainTable.class,
         CapturedProofFollowupTable.class, ExistingModuleItemFollowupTable.class, FollowUpAnswerTable.class,
-        FollowUpResultTable.class},
+        FollowUpResultTable.class, DmAssessmentResultType.class},
         version = 4)
 public abstract class OFISRoomDB extends RoomDatabase {
     private static final String DATABASE_NAME = "ofismobileroom";
@@ -79,6 +80,8 @@ public abstract class OFISRoomDB extends RoomDatabase {
     public abstract ExistingModuleItemFollowupTableDao existingModuleItemFollowupTableDao();
     public abstract FollowUpAnswerTableDao followUpAnswerTableDao();
     public abstract FollowUpResultTableDao followUpResultTableDao();
+
+    public abstract DmAssessmentResultTypeDao dmAssessmentResultTypeDao();
 
     public static volatile OFISRoomDB INSTANCE = null;
 
