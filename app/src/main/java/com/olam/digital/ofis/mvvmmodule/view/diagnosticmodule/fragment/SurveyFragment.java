@@ -86,7 +86,28 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
 
             DmQuestionsModule dmQuestionsSubModule = dmQuestionsSubModuleList.get(j);
             TextView textView = new TextView(getActivity());
-            textView.setText(section + "." + (j + 1) + "." + dmQuestionsSubModule.question);
+
+            String star = "*";
+            SpannableStringBuilder builder = new SpannableStringBuilder();
+
+            // Append the first string (s1)
+            builder.append((j + 1) + "." + dmQuestionsSubModule.question);
+
+            // Append the second string (s2) with red color
+            int start = builder.length();
+            builder.append(" " + star);  // Add space for separation
+
+            ForegroundColorSpan colorSpan = new ForegroundColorSpan(Color.RED);
+            builder.setSpan(colorSpan, start, builder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+            if (dmQuestionsSubModule.isCriticalQuest || dmQuestionsSubModule.mandate){
+                textView.setText(builder);
+            }else{
+                textView.setText((j + 1) + "." + dmQuestionsSubModule.question);
+            }
+
+
+//            textView.setText(section + "." + (j + 1) + "." + dmQuestionsSubModule.question);
             textView.setTextColor(getResources().getColor(R.color.black));
             textView.setTextSize(14);
             textView.setTypeface(null, Typeface.BOLD);
