@@ -89,7 +89,7 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
             textView.setText(section + "." + (j + 1) + "." + dmQuestionsSubModule.question);
             textView.setTextColor(getResources().getColor(R.color.black));
             textView.setTextSize(14);
-            //textView.setTypeface(null, Typeface.BOLD);
+            textView.setTypeface(null, Typeface.BOLD);
             dm_Section.addView(textView);
 
             Constants.questionIdsSection.add(String.valueOf(dmQuestionsSubModule.id));
@@ -300,9 +300,122 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
     public void renderTextboxQuestionSections(String questionId, String question) {
 
         EditText editText = new EditText(getActivity());
-        editText.setHint("Answer");
+//        editText.setHint("Answer");
         editText.setTextSize(14);
-        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+//        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+
+        double minValue = db.dmTextBoxModuleQuestionsDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(0).minimumRange;
+        double maxValue = db.dmTextBoxModuleQuestionsDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(0).maximumRange;
+
+        ///////
+        if (db.dmTextBoxModuleQuestionsDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(0).isAllowNegative && db.dmTextBoxModuleQuestionsDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(0).isAllowDecimal) {
+            editText.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_CLASS_NUMBER);
+            NegativeDecimalFilter negativeDecimalFilter = new NegativeDecimalFilter(minValue, maxValue);
+            editText.setHint("Range from " + minValue + " to " + maxValue);
+            editText.setFilters(new InputFilter[] { negativeDecimalFilter });
+
+        }else if (db.dmTextBoxModuleQuestionsDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(0).isAllowNegative) {
+            editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_CLASS_NUMBER);
+            editText.setHint("Range from " + minValue + " to " + maxValue);
+            NumberInputFilter numberFilter = new NumberInputFilter(minValue, maxValue);
+            editText.setFilters(new InputFilter[]{numberFilter});
+
+
+        } else if (db.dmTextBoxModuleQuestionsDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(0).isAllowDecimal) {
+            editText.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_CLASS_NUMBER);
+            DecimalFilter decimalFilter = new DecimalFilter(minValue, maxValue);
+            editText.setHint("Range from " + minValue + " to " + maxValue);
+            editText.setFilters(new InputFilter[]{decimalFilter});
+
+            editText.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                    // Not needed for this implementation
+                }
+
+                @Override
+                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                    // Not needed for this implementation
+                }
+
+                @Override
+                public void afterTextChanged(Editable editable) {
+                    String input = editText.getText().toString();
+                    if (!input.isEmpty()) {
+                        double number = Double.parseDouble(input);
+                        if (number >= minValue) {
+                            // Valid input starting from the minimum value
+                            if (number <= maxValue) {
+                                // Input falls within the specified range
+                                // Perform desired actions here
+                                editText.setError(null); // Clear any previous error
+
+
+                            } else {
+                                // Input is greater than the maximum range
+//                            editTextRange.setError("Please enter a number within the range");
+                            }
+                        } else {
+                            // Input is less than the minimum value
+                            editText.setError("Minimum Range " + minValue);
+                        }
+                    } else {
+                        // Input is empty
+//                    editTextRange.setError("Please enter a number");
+                    }
+                }
+            });
+        } else {
+            editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+            editText.setHint("Range from " + minValue + " to " + maxValue);
+            InputFilter numberFilter = new DecimalFilter(minValue, maxValue);
+            editText.setFilters(new InputFilter[]{numberFilter});
+
+            editText.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                    // Not needed for this implementation
+                }
+
+                @Override
+                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                    // Not needed for this implementation
+                }
+
+                @Override
+                public void afterTextChanged(Editable editable) {
+                    String input = editText.getText().toString();
+                    if (!input.isEmpty()) {
+                        int number = Integer.parseInt(input);
+                        if (number >= minValue) {
+                            // Valid input starting from the minimum value
+                            if (number <= maxValue) {
+                                // Input falls within the specified range
+                                // Perform desired actions here
+                                editText.setError(null); // Clear any previous error
+
+
+                            } else {
+                                // Input is greater than the maximum range
+//                            editTextRange.setError("Please enter a number within the range");
+                            }
+                        } else {
+                            // Input is less than the minimum value
+                            editText.setError("Minimum Range " + minValue);
+                        }
+                    } else {
+                        // Input is empty
+//                    editTextRange.setError("Please enter a number");
+                    }
+                }
+            });
+
+        }
+
+        /////////////
+
+
+
 
 
         TextView textView = new TextView(getActivity());
@@ -345,24 +458,86 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                         if (editText.getText().toString() != null) {
                             String value = editText.getText().toString().trim();
                             for (int j = 0; j < db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).size(); j++)
-                                if (Double.parseDouble(value) < db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).maximumRange) {
-                                    complianceId = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).complianceId;
-                                    allowCustomActionPlan = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).allowCustomActionPlan;
-                                    isCaptureProof = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).isCaptureProof;
+//                                if (Double.parseDouble(value) < db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).maximumRange) {
+//                                    complianceId = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).complianceId;
+//                                    allowCustomActionPlan = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).allowCustomActionPlan;
+//                                    isCaptureProof = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).isCaptureProof;
+//                                }
+                                try {
+                                    if (Objects.equals(value, "-")) {
+                                        complianceId = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).complianceId;
+                                        allowCustomActionPlan = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).allowCustomActionPlan;
+                                        isCaptureProof = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).isCaptureProof;
+
+                                        dmSurveyAnswerTable1.complinceTypeId = String.valueOf(complianceId);
+                                        dmSurveyAnswerTable1.allowCustomActionPlan = allowCustomActionPlan;
+                                        dmSurveyAnswerTable1.isCaptureProof = isCaptureProof;
+                                        dmSurveyAnswerTable1.actionPlanText = "";
+                                        dmSurveyAnswerTable1.actionplanId = "";
+                                        dmSurveyAnswerTable1.amount = 0;
+                                        dmSurveyAnswerTable1.farmerId = Constants.FARMER_ID;
+                                        dmSurveyAnswerTable1.isSynced = false;
+                                        db.dmSurveyAnswerTableDao().insert(dmSurveyAnswerTable1);
+
+
+                                        return ;
+                                    }
+                                    else if (Objects.equals(value, "-" + value) && db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).minimumRange <= Double.parseDouble(value) && Double.parseDouble(value) <= db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).maximumRange ) {
+                                        complianceId = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).complianceId;
+                                        allowCustomActionPlan = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).allowCustomActionPlan;
+                                        isCaptureProof = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).isCaptureProof;
+                                        dmSurveyAnswerTable1.complinceTypeId = String.valueOf(complianceId);
+                                        dmSurveyAnswerTable1.allowCustomActionPlan = allowCustomActionPlan;
+                                        dmSurveyAnswerTable1.isCaptureProof = isCaptureProof;
+                                        dmSurveyAnswerTable1.actionPlanText = "";
+                                        dmSurveyAnswerTable1.actionplanId = "";
+                                        dmSurveyAnswerTable1.amount = 0;
+                                        dmSurveyAnswerTable1.farmerId = Constants.FARMER_ID;
+                                        dmSurveyAnswerTable1.isSynced = false;
+                                        db.dmSurveyAnswerTableDao().insert(dmSurveyAnswerTable1);
+
+
+                                        return ;
+                                    }
+                                    else if (db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).minimumRange <= Double.parseDouble(value) && Double.parseDouble(value) <= db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).maximumRange) {
+                                        allowCustomActionPlan = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).allowCustomActionPlan;
+                                        isCaptureProof = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).isCaptureProof;
+                                        complianceId = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).complianceId;
+
+                                        dmSurveyAnswerTable1.complinceTypeId = String.valueOf(complianceId);
+                                        dmSurveyAnswerTable1.allowCustomActionPlan = allowCustomActionPlan;
+                                        dmSurveyAnswerTable1.isCaptureProof = isCaptureProof;
+                                        dmSurveyAnswerTable1.actionPlanText = "";
+                                        dmSurveyAnswerTable1.actionplanId = "";
+                                        dmSurveyAnswerTable1.amount = 0;
+                                        dmSurveyAnswerTable1.farmerId = Constants.FARMER_ID;
+                                        dmSurveyAnswerTable1.isSynced = false;
+                                        db.dmSurveyAnswerTableDao().insert(dmSurveyAnswerTable1);
+
+
+                                        return ;
+
+
+
+                                    }
+                                }catch (Exception e){e.printStackTrace();
+
                                 }
+
+
                         }
                     }
 
 
-                    dmSurveyAnswerTable1.complinceTypeId = String.valueOf(complianceId);
-                    dmSurveyAnswerTable1.allowCustomActionPlan = allowCustomActionPlan;
-                    dmSurveyAnswerTable1.actionPlanText = "";
-                    dmSurveyAnswerTable1.actionplanId = "";
-                    dmSurveyAnswerTable1.amount = 0;
-                    dmSurveyAnswerTable1.isCaptureProof = isCaptureProof;
-                    dmSurveyAnswerTable1.farmerId = Constants.FARMER_ID;
-                    dmSurveyAnswerTable1.isSynced = false;
-                    db.dmSurveyAnswerTableDao().insert(dmSurveyAnswerTable1);
+//                    dmSurveyAnswerTable1.complinceTypeId = String.valueOf(complianceId);
+//                    dmSurveyAnswerTable1.allowCustomActionPlan = allowCustomActionPlan;
+//                    dmSurveyAnswerTable1.actionPlanText = "";
+//                    dmSurveyAnswerTable1.actionplanId = "";
+//                    dmSurveyAnswerTable1.amount = 0;
+//                    dmSurveyAnswerTable1.isCaptureProof = isCaptureProof;
+//                    dmSurveyAnswerTable1.farmerId = Constants.FARMER_ID;
+//                    dmSurveyAnswerTable1.isSynced = false;
+//                    db.dmSurveyAnswerTableDao().insert(dmSurveyAnswerTable1);
                 }
 
 
@@ -580,10 +755,10 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                 }
             });
             } else {
-                editText.setInputType(InputType.TYPE_CLASS_NUMBER);
-                editText.setHint("Range from " + minValue + " to " + maxValue);
-                InputFilter numberFilter = new DecimalFilter(minValue, maxValue);
-                editText.setFilters(new InputFilter[]{numberFilter});
+            editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+            editText.setHint("Range from " + minValue + " to " + maxValue);
+            InputFilter numberFilter = new DecimalFilter(minValue, maxValue);
+            editText.setFilters(new InputFilter[]{numberFilter});
 
             editText.addTextChangedListener(new TextWatcher() {
                 @Override
@@ -609,8 +784,6 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                                 editText.setError(null); // Clear any previous error
 
 
-
-
                             } else {
                                 // Input is greater than the maximum range
 //                            editTextRange.setError("Please enter a number within the range");
@@ -626,7 +799,7 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                 }
             });
 
-            }
+        }
 
 
 
