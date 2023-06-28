@@ -1,6 +1,8 @@
 package com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule;
 
 import java.util.List;
+
+import com.google.gson.JsonArray;
 import com.google.gson.annotations.SerializedName;
 
 public class DiagnosticModulesList {
@@ -91,6 +93,31 @@ public class DiagnosticModulesList {
 
 	@SerializedName("startDate")
 	private String startDate;
+
+	@SerializedName("displayLogic")
+	private String displayLogic;
+
+
+
+	public int getMaxScore() {
+		return maxScore;
+	}
+
+
+	public void setMaxScore(int maxScore) {
+		this.maxScore = maxScore;
+	}
+
+	@SerializedName("maxScore")
+	private int maxScore;
+
+	public String getDisplayLogic() {
+		return displayLogic;
+	}
+
+	public void setDisplayLogic(String displayLogic) {
+		this.displayLogic = displayLogic;
+	}
 
 	public String getStartDate() {
 		return startDate;

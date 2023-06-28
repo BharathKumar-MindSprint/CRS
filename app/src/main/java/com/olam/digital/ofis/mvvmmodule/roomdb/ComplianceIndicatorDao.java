@@ -33,4 +33,9 @@ public interface ComplianceIndicatorDao {
     @Query("DELETE FROM ComplianceIndicator")
     void deleteAll();
 
+    @Query("SELECT score FROM ComplianceIndicator WHERE id =:id AND compliance=:complianceText")
+    int getComplianceScore(String id , String complianceText);
+
+
+
 }

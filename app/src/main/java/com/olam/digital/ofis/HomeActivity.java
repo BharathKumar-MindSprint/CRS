@@ -58,6 +58,7 @@ import android.widget.Toast;
 import com.google.android.gms.security.ProviderInstaller;
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.olam.digital.ofis.ManageTrainingRecords.Records;
 import com.olam.digital.ofis.RetrofitServices.ManageRecords;
 import com.olam.digital.ofis.RetrofitServices.RetrofitClient;
@@ -1948,6 +1949,9 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                     String descriptionTr = mainResponseList.get(i).getDescriptionTr();
                                     String descriptionFr = mainResponseList.get(i).getDescriptionFr();
                                     String startDate = mainResponseList.get(i).getStartDate();
+                                    String displayLogic = mainResponseList.get(i).getDisplayLogic();
+                                    int maxScore = mainResponseList.get(i).getMaxScore();
+//                                    String assessmentResultType =String.valueOf(mainResponseList.get(i).getAssessmentResultType());
 
                                     List<ComplianceIndicatorItem> complianceIndicatorItemList = new ArrayList<>();
                                     complianceIndicatorItemList.clear();
@@ -1990,6 +1994,9 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                     user.followUpDuration = followUpDuration;
                                     user.assessmentType = assessmentType;
                                     user.followUpAttempts = followUpAttempts;
+                                    user.displayLogic = displayLogic;
+                                    user.maxScore = maxScore;
+//                                    user.assessmentResultType = assessmentResultType;
 
                                     db.dmMainModuleDao().insert(user);
 
@@ -2010,6 +2017,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                             String labelFr = complianceIndicatorItemList.get(j).getLabelFr();
                                             String labelLo = complianceIndicatorItemList.get(j).getLabelLo();
                                             String labelVi = complianceIndicatorItemList.get(j).getLabelVi();
+                                            int score = complianceIndicatorItemList.get(j).getScore();
 
 
                                             ComplianceIndicator complianceIndicator = new ComplianceIndicator();
@@ -2025,6 +2033,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                             complianceIndicator.labelFr = labelFr;
                                             complianceIndicator.labelLo = labelLo;
                                             complianceIndicator.labelVi = labelVi;
+                                            complianceIndicator.score = score;
 
                                             db.complianceIndicatorDao().insert(complianceIndicator);
                                         }

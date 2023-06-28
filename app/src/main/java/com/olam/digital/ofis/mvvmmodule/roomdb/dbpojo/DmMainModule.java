@@ -4,6 +4,10 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+import com.google.gson.JsonArray;
+
+import java.util.ArrayList;
+
 @Entity(tableName = "DmMainModule")
 public class DmMainModule {
     @PrimaryKey(autoGenerate = true)
@@ -80,5 +84,13 @@ public class DmMainModule {
 
     @ColumnInfo(name = "startDate")
     public String startDate;
+
+    @ColumnInfo(name = "displayLogic")
+    public String displayLogic;
+
+    @ColumnInfo(name = "maxScore")
+    public int maxScore;
+
+
 
 }

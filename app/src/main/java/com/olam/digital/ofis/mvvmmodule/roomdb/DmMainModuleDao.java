@@ -23,4 +23,13 @@ public interface DmMainModuleDao {
 
     @Query("DELETE FROM DmMainModule")
     void deleteAll();
+
+    @Query("SELECT assessmentType FROM DmMainModule WHERE id=:moduleId")
+    String getAssessmentType(int moduleId);
+
+    @Query("SELECT displayLogic FROM DmMainModule WHERE id=:moduleId")
+    String getDisplayLogic(int moduleId);
+
+    @Query("SELECT maxScore FROM DmMainModule WHERE id=:moduleId")
+    int getMaxScore(int moduleId);
 }
