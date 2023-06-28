@@ -26,6 +26,7 @@ import com.olam.digital.ofis.RetrofitServices.ManageRecords;
 import com.olam.digital.ofis.RetrofitServices.RetrofitClient;
 import com.olam.digital.ofis.ViewFarmerActivity;
 import com.olam.digital.ofis.mvvmmodule.Constants;
+import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.AssessmentResultTypeItems;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.DMSurveyResponseModel;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 //import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DMSurveyReport;
@@ -392,6 +393,31 @@ public class SurveyResultsFragment extends Fragment {
                 editTextTextMultiLine.setVisibility(View.VISIBLE);
                 finalScore = (totalWeightages * 100 / (maxScore * totalQuestion));
                 weightageMarks.setText(finalScore + " %");
+
+
+                List<AssessmentResultTypeItems> totalRangeAvailable = db.dmAssessmentResultTypeDao().getAllModuleId(Integer.parseInt(Constants.MODULE_ID));
+
+//                int minRange = db.dmAssessmentResultTypeDao().getMinRange(Integer.parseInt(Constants.MODULE_ID));
+//                int maxRange = db.dmAssessmentResultTypeDao().getMaxRange(Integer.parseInt(Constants.MODULE_ID));
+
+                for (int i = 0; i <= totalRangeAvailable.size() ; i++) {
+                    int minRange = totalRangeAvailable.get(i).getMinRange();
+                    int maxRange = totalRangeAvailable.get(i).getMaxRange();
+                    if (finalScore >= minRange && finalScore <= maxRange){
+                        String remarks = String.valueOf(db.dmAssessmentResultTypeDao().getRemarks(Integer.parseInt(Constants.MODULE_ID) , minRange ,maxRange));
+                        editTextTextMultiLine.setText(remarks);
+                        break;
+                    }
+
+
+                }
+
+
+
+
+
+
+
             }else {
                 weightageMarks.setText(String.valueOf(totalWeightages));
 //                editTextTextMultiLine.setVisibility(View.GONE);

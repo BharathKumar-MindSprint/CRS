@@ -31,8 +31,19 @@ public class DiagnosticModulesList {
 	@SerializedName("descriptionFr")
 	private String descriptionFr;
 
+	public List<AssessmentResultTypeItems> getAssessmentResultType() {
+		return assessmentResultType;
+	}
+
+	public void setAssessmentResultType(List<AssessmentResultTypeItems> assessmentResultType) {
+		this.assessmentResultType = assessmentResultType;
+	}
+
 	@SerializedName("complianceIndicator")
 	private List<ComplianceIndicatorItem> complianceIndicator;
+
+	@SerializedName("assessmentResultType")
+	private List<AssessmentResultTypeItems> assessmentResultType;
 
 	@SerializedName("namePt")
 	private String namePt;
@@ -96,6 +107,8 @@ public class DiagnosticModulesList {
 
 	@SerializedName("displayLogic")
 	private String displayLogic;
+
+
 
 
 
