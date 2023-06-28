@@ -89,7 +89,7 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
             textView.setText(section + "." + (j + 1) + "." + dmQuestionsSubModule.question);
             textView.setTextColor(getResources().getColor(R.color.black));
             textView.setTextSize(14);
-            //textView.setTypeface(null, Typeface.BOLD);
+            textView.setTypeface(null, Typeface.BOLD);
             dm_Section.addView(textView);
 
             Constants.questionIdsSection.add(String.valueOf(dmQuestionsSubModule.id));
