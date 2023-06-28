@@ -23,4 +23,15 @@ public interface FollowUpItemMainTableDao {
     @Query("SELECT * FROM FollowUpItemMainTable WHERE farmerId =:farmerId AND moduleId =:moduleId")
     List<FollowUpItemMainTable> getFollowupByFarmerId(long farmerId, int moduleId);
 
+    @Query("SELECT * FROM FollowUpItemMainTable WHERE questionId =:questionId AND farmerId =:farmerId AND attempt = :attempt")
+    List<FollowUpItemMainTable> getFollowupByQuestionId1(String questionId, String farmerId, int attempt);
+
+    @Query("SELECT * FROM FollowUpItemMainTable WHERE questionId =:questionId AND farmerId =:farmerId AND attempt = :attempt")
+    FollowUpItemMainTable getFollowupByQuestionId(String questionId, String farmerId, int attempt);
+
+    @Query("UPDATE FollowUpItemMainTable SET actionPlanText=:actionPlanText WHERE questionID = :questionId AND farmerId =:farmerId AND attempt = :attempt")
+    void updateActionPlanText(String actionPlanText, String questionId, String farmerId, int attempt);
+
+    @Query("UPDATE FollowUpItemMainTable SET actionPlanId=:actionPlanId WHERE questionID = :questionId AND farmerId =:farmerId AND attempt = :attempt")
+    void updateActionPlanId(String actionPlanId, String questionId, String farmerId, int attempt);
 }

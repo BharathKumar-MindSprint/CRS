@@ -31,6 +31,7 @@ import com.olam.digital.ofis.dynatrace.DynatraceHelper;
 import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.logging.FabricLogsWriter;
 import com.olam.digital.ofis.multifarm.MultiFarmUtils;
+import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -445,12 +446,14 @@ public class SyncAllTask extends SyncTask {
 
             new UpdateNotificationTask(context).execute(notificationResponse);
             notificationResponse = null;
-            HomeActivity.deleteRoomDbValues();
-                if (Utilities.getBoolFromSharedPrefs(context, "FIRST_RUN", true)) {
-                    HomeActivity.completeFirstSetup();
-                }else{
-                    SettingsActivity.completeSetup();
-                }
+
+            if(Utilities.getBoolFromSharedPrefs(context, "FIRST_RUN", true)) {
+                deleteRoomDbValues();
+                HomeActivity.completeFirstSetup();
+            }else{
+                deleteRoomDbValues();
+                SettingsActivity.completeSetup();
+            }
 
             /*if (pd != null && pd.isShowing()) {
                 String pdUpdate = res.getString(R.string.update_complete);
@@ -519,6 +522,28 @@ public class SyncAllTask extends SyncTask {
             }
         }
 
+    }
+
+    private void deleteRoomDbValues() {
+        OFISRoomDB db = OFISRoomDB.getDbInstance(context);
+        db.dmSectionsItemDao().deleteAll();
+        db.dmLookupValuesISubmoduleDao().deleteAll();
+        db.dmActionPlansItemSubmoduleDao().deleteAll();
+        db.dmQuestionsModuleDao().deleteAll();
+        db.dmLookupValuesItemDao().deleteAll();
+        db.dmActionPlansItemDao().deleteAll();
+        db.dmMainModuleDao().deleteAll();
+        db.dmAnswerTypesDao().deleteAll();
+        db.dmQuestionTypesDao().deleteAll();
+        db.dmCurrenciesItemDao().deleteAll();
+        db.dmTextBoxModuleQuestionsDao().deleteAll();
+        db.dmRangeTextBoxModuleQuestionsTableDao().deleteAll();
+        db.dmTextBoxModuleQuestionsDao().deleteAll();
+        db.dmRangeTextBoxModuleQuestionsTableDao().deleteAll();
+        db.complianceIndicatorDao().deleteAll();
+        db.dmCurrencyDao().deleteAll();
+        db.dmRangeActionPlansItemsDao().deleteAll();
+        db.dmSurveyAnswerTableDao().deleteAll();
     }
 
     private void postFailureMessage(JSONObject response) {

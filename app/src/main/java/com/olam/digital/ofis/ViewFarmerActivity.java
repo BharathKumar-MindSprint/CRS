@@ -1141,7 +1141,6 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                     followUpCount = String.valueOf(dmQuestionsModuleList.get(i).followUpAttempts);
                     String startDate = String.valueOf(dmQuestionsModuleList.get(i).startDate);
                     DmRecurrence dmRecurrence = db.dmRecurrenceDao().getRecurrenceByModuleId(moduleID);
-
                     mc.addRow(new String[]{
                             "0",
                             dmSurveyName,

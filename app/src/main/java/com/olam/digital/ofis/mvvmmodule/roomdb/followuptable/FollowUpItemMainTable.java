@@ -56,7 +56,10 @@ public class FollowUpItemMainTable {
     @ColumnInfo(name = "farmerId")
     public long farmerId;
 
+    @ColumnInfo(name = "dmCapturedProof")
+    public int dmCapturedProof;
+
     @ColumnInfo(name = "isSync")
-    public String isSync;
+    public Boolean isSync;
 
 }

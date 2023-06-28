@@ -1,35 +1,20 @@
 package com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.fragment;
 
 import android.annotation.SuppressLint;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.core.content.ContextCompat;
-import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 
-import android.provider.MediaStore;
-import android.text.Editable;
-import android.text.InputType;
-import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,14 +22,12 @@ import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.mvvmmodule.Constants;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.ComplianceIndicator;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmActionPlansItem;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmComplaintFileTable;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmCurrenciesItem;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmSurveyAnswerTable;
+import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.FollowUpItemMainTable;
 
-import java.io.File;
-import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -241,9 +224,10 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
 
             linearLayout1.addView(notResolveText, layoutParams);
             linearLayout1.addView(resolveText, layoutParams);
+            List<FollowUpItemMainTable> followupData = db.followUpItemMainTableDao().getFollowupByQuestionId1(questionIdDb, Constants.FARMER_ID, Constants.ATTEMPT);
 
-            if(dmSurveyAnswerTableList.get(0).resolved !=null) {
-                if (dmSurveyAnswerTableList.get(0).resolved.equalsIgnoreCase("1")) {
+            if(followupData.size() > 0) {
+                if (followupData.get(0).status.equalsIgnoreCase(Constants.RESOLVED)) {
 
                     CoQId.add(dmSurveyAnswerTableList.get(0).questionID);
 
@@ -252,7 +236,7 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
                     }
                     resolveText.setTextColor(getResources().getColor(R.color.white));
 
-                } else if (dmSurveyAnswerTableList.get(0).resolved.equalsIgnoreCase("2")) {
+                } else if (followupData.get(0).status.equalsIgnoreCase(Constants.NOTRESOLVED)) {
                     CoQId.add(dmSurveyAnswerTableList.get(0).questionID);
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                         notResolveText.setBackground(getActivity().getDrawable(R.drawable.dm_next_background));
@@ -263,9 +247,9 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
             notResolveText.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    db.dmSurveyAnswerTableDao().updateResolvedStatus("2", id, Constants.FARMER_ID);
+//                    db.dmSurveyAnswerTableDao().updateResolvedStatus("2", id, Constants.FARMER_ID);
                     // Do something with the selected value
-
+                    submitValue(questionIdDb,Constants.NOTRESOLVED, complaint_id);
                     if (!CoQId.contains(id)) {
                         CoQId.add(id);
                     }
@@ -285,9 +269,9 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
             resolveText.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    db.dmSurveyAnswerTableDao().updateResolvedStatus("1", id, Constants.FARMER_ID);
+//                    db.dmSurveyAnswerTableDao().updateResolvedStatus("1", id, Constants.FARMER_ID);
                     // Do something with the selected value
-
+                    submitValue(questionIdDb,Constants.RESOLVED, complaint_id);
                     if (!CoQId.contains(id)) {
                         CoQId.add(id);
                     }
@@ -325,6 +309,31 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
 
         }
 
+    }
+
+    private void submitValue(String questionId, String status, String complianceId) {
+        Date today = new Date();
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        String submittedDate = format.format(today);
+        FollowUpItemMainTable followUpItemMainTable = new FollowUpItemMainTable();
+//        followUpItemMainTable.actionPlanId = actionPlanId;
+        followUpItemMainTable.questionId = Integer.parseInt(questionId);
+//        followUpItemMainTable.id = id;
+        followUpItemMainTable.complianceId = Integer.parseInt(complianceId);
+        followUpItemMainTable.moduleId = Integer.parseInt(Constants.MODULE_ID);
+//        followUpItemMainTable.dmSubModId = Constants.;
+        followUpItemMainTable.attempt = 1;
+//        followUpItemMainTable.actionPlanText = actionPlanText;
+        followUpItemMainTable.createdAt = submittedDate;
+//        followUpItemMainTable.createdBy = createdBy;
+        followUpItemMainTable.status = status;
+        followUpItemMainTable.updatedAt = submittedDate;
+//        followUpItemMainTable.updatedBy = updatedBy;
+//        followUpItemMainTable.isPortal = isPortal;
+        followUpItemMainTable.farmerId = Long.parseLong(Constants.FARMER_ID);
+        followUpItemMainTable.isSync = false;
+
+        db.followUpItemMainTableDao().insert(followUpItemMainTable);
     }
 
 

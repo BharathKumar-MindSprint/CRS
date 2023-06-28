@@ -30,11 +30,22 @@ public class DmComplaintFileTable {
     @ColumnInfo(name = "surveyType")
     private String surveyType;
 
+    @ColumnInfo(name = "attempt")
+    private int attempt;
+
     @ColumnInfo(name = "ofisFileName")
     private String ofisFileName;
 
     @ColumnInfo(typeAffinity = ColumnInfo.BLOB)
     private byte[] fileData;
+
+    public int getAttempt() {
+        return attempt;
+    }
+
+    public void setAttempt(int attempt) {
+        this.attempt = attempt;
+    }
 
     public long getUid() {
         return uid;

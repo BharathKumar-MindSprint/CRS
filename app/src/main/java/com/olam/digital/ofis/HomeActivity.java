@@ -141,6 +141,7 @@ import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.FollowUpItemMainTab
 import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.FollowUpResultTable;
 import com.olam.digital.ofis.recordpolygon.RecordPolygonActivity;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -2722,7 +2723,11 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                     String actionPlanText = followUpItemArrayList.get(j).getActionPlanText();
                                     String createdAt = followUpItemArrayList.get(j).getCreatedAt();
                                     String createdBy = followUpItemArrayList.get(j).getCreatedBy();
-                                    String dmCapturedProof = String.valueOf(followUpItemArrayList.get(j).getDmCapturedProof());
+                                    List<String> captureProofList = followUpItemArrayList.get(j).getDmCapturedProof();
+                                    /*JSONArray captureProof = new JSONArray();
+                                    for (int k = 0; k < captureProofList.size(); k++) {
+                                        captureProof.put(captureProofList.get(k));
+                                    }*/
                                     String status = followUpItemArrayList.get(j).getStatus().trim();
                                     String updatedAt = followUpItemArrayList.get(j).getUpdatedAt();
                                     String updatedBy = followUpItemArrayList.get(j).getUpdatedBy();
@@ -2744,7 +2749,8 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                     followUpItemMainTable.updatedBy = updatedBy;
                                     followUpItemMainTable.isPortal = isPortal;
                                     followUpItemMainTable.farmerId = farmerId;
-                                    followUpItemMainTable.isSync = "0";
+                                    followUpItemMainTable.isSync = true;
+                                    followUpItemMainTable.dmCapturedProof = captureProofList.size();
 
                                     db.followUpItemMainTableDao().insert(followUpItemMainTable);
 
