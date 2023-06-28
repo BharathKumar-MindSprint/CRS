@@ -34,6 +34,18 @@
                             android:orientation="vertical"
                             android:paddingBottom="10dp">
 
+                            <LinearLayout
+                                android:orientation="vertical"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:id="@+id/dm_Section"
+                                android:background="@color/white"
+                                android:layout_marginLeft="@dimen/margin_10"
+                                android:layout_marginRight="@dimen/margin_10"
+                                android:paddingLeft="@dimen/ofis_large_pad"
+                                android:paddingRight="@dimen/ofis_large_pad"
+                                android:paddingBottom="@dimen/ofis_large_pad"
+                                android:paddingTop="@dimen/ofis_large_pad"/>
 
                             <LinearLayout
                                 android:orientation="vertical"
@@ -46,21 +58,9 @@
                                 android:paddingLeft="@dimen/ofis_large_pad"
                                 android:paddingRight="@dimen/ofis_large_pad"
                                 android:paddingBottom="@dimen/ofis_large_pad"
+                                android:layout_marginTop="@dimen/margin_10"
                                 android:paddingTop="@dimen/ofis_large_pad"/>
 
-                            <LinearLayout
-                                android:orientation="vertical"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:id="@+id/dm_Section"
-                                android:background="@color/white"
-                                android:layout_marginLeft="@dimen/margin_10"
-                                android:layout_marginRight="@dimen/margin_10"
-                                android:paddingLeft="@dimen/ofis_large_pad"
-                                android:paddingRight="@dimen/ofis_large_pad"
-                                android:layout_marginTop="@dimen/margin_10"
-                                android:paddingBottom="@dimen/ofis_large_pad"
-                                android:paddingTop="@dimen/ofis_large_pad"/>
 
                         </LinearLayout>
 

@@ -397,8 +397,6 @@ public class SurveyResultsFragment extends Fragment {
 
                 List<AssessmentResultTypeItems> totalRangeAvailable = db.dmAssessmentResultTypeDao().getAllModuleId(Integer.parseInt(Constants.MODULE_ID));
 
-//                int minRange = db.dmAssessmentResultTypeDao().getMinRange(Integer.parseInt(Constants.MODULE_ID));
-//                int maxRange = db.dmAssessmentResultTypeDao().getMaxRange(Integer.parseInt(Constants.MODULE_ID));
 
                 for (int i = 0; i <= totalRangeAvailable.size() ; i++) {
                     int minRange = totalRangeAvailable.get(i).getMinRange();
@@ -476,7 +474,7 @@ public class SurveyResultsFragment extends Fragment {
                     }
 
                 }
-            } else {
+            } else if (satisfactory == 0 && nonComplaint == 0){
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     newView.setBackground(getActivity().getDrawable(R.color.green_view_survey));
                     survey_result_main.setBackground(getActivity().getDrawable(R.color.green_survey_result));
