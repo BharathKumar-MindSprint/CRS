@@ -63,6 +63,8 @@ public class SurveyResultsFragment extends Fragment {
     EditText editTextText, editTextText3, editTextText4, editTextText5, editTextText6, overAllResult , editTextTextMultiLine;
 
 
+    String finalAssessmentValue = "";
+
     public SurveyResultsFragment() {
         // Required empty public constructor
     }
@@ -164,7 +166,7 @@ public class SurveyResultsFragment extends Fragment {
                         Integer.parseInt(Constants.noncomplaintSize),
                         (Integer.parseInt(Constants.complaintSize) + Integer.parseInt(Constants.satisfactorySize) + Integer.parseInt(Constants.noncomplaintSize)),
                         Double.parseDouble(String.valueOf(amount)),
-                        db.dmMainModuleDao().getAssessmentType(Integer.parseInt(Constants.MODULE_ID)),
+                        finalAssessmentValue,
                         resultValue,
                         overAllResult.getText().toString(),
                         Long.parseLong(Constants.FARMER_ID),Integer.parseInt(Constants.MODULE_ID),
@@ -336,7 +338,7 @@ public class SurveyResultsFragment extends Fragment {
 //        int satisfactory = Integer.parseInt(Constants.satisfactorySize);
 
 
-        DmMainModule user = new DmMainModule();
+
 
         String assessmentType = db.dmMainModuleDao().getAssessmentType(Integer.parseInt(Constants.MODULE_ID));
         String displayLogic = db.dmMainModuleDao().getDisplayLogic(Integer.parseInt(Constants.MODULE_ID));
@@ -351,6 +353,7 @@ public class SurveyResultsFragment extends Fragment {
             weightageMarks.setVisibility(View.VISIBLE);
             if (Objects.equals(displayLogic, "In Percentage")){
 
+                finalAssessmentValue = "In Percentage";
                 editTextTextMultiLine.setVisibility(View.VISIBLE);
                 finalScore = (totalWeightages * 100 / (maxScore * totalQuestion));
                 weightageMarks.setText(finalScore + " %");
@@ -371,13 +374,8 @@ public class SurveyResultsFragment extends Fragment {
 
                 }
 
-
-
-
-
-
-
-            }else {
+            }else if (Objects.equals(displayLogic, "As Whole Number")){
+                finalAssessmentValue = "As Whole Number";
                 weightageMarks.setText(String.valueOf(totalWeightages));
                 editTextTextMultiLine.setVisibility(View.VISIBLE);
 
@@ -401,14 +399,16 @@ public class SurveyResultsFragment extends Fragment {
         } else if (Objects.equals(assessmentType, "TL")) {
             weightageMarks.setVisibility(View.GONE);
             editTextTextMultiLine.setVisibility(View.GONE);
+            finalAssessmentValue = "TL";
 
         }
 
-        DmQuestionsModule isCritical = new DmQuestionsModule();
-        Boolean val = isCritical.isCriticalQuest;
+        Boolean val = false;
 
 
-        if (val && nonComplaint >= 1 && satisfactory >= 1) {
+
+
+        if (val) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 newView.setBackground(getActivity().getDrawable(R.color.red_view_survey));
                 survey_result_main.setBackground(getActivity().getDrawable(R.color.red_survey_result));
