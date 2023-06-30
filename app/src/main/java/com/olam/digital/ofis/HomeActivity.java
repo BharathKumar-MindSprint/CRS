@@ -3145,7 +3145,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                             result.getResultRemarks(),
                                             farmerId,moduleId,
                                             farmerGroupId,
-                                            currencyId,submissionDate,result.getResultColour());
+                                            currencyId,submissionDate,result.getResultColour(),result.getOverAllResult());
                                      db.dmSurveyReportDao().insert(dmSurveyReport);
                                 }
 

@@ -31,6 +31,17 @@ public class Result{
 	@SerializedName("resultRemarks")
 	private String resultRemarks;
 
+	public String getOverAllResult() {
+		return overAllResult;
+	}
+
+	public void setOverAllResult(String overAllResult) {
+		this.overAllResult = overAllResult;
+	}
+
+	@SerializedName("overAllResult")
+	private String overAllResult;
+
 	public int getTotalSatisfactory() {
 		return totalSatisfactory;
 	}

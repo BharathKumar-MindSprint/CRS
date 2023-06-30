@@ -68,7 +68,17 @@ public class DMSurveyReport {
     @ColumnInfo(name = "currencyId")
     private int currencyId;
 
-    // Constructors, getters, and setters
+    @ColumnInfo(name = "overAllResult")
+    private String overAllResult;
+
+    public String getOverAllResult() {
+        return overAllResult;
+    }
+
+    public void setOverAllResult(String overAllResult) {
+        this.overAllResult = overAllResult;
+    }
+// Constructors, getters, and setters
 
     public int getModuleId() {
         return moduleId;
@@ -96,7 +106,7 @@ public class DMSurveyReport {
 
     public DMSurveyReport(int totalComplaint, int totalSatisfactory, int totalNonComplaint, int totalActionPlan,
                           double totalBudget, String resultType, String resultValue, String resultRemarks ,long farmerId,
-                          int moduleId,int farmerGroupId,int currencyId,String submissionDate, String resultColour) {
+                          int moduleId,int farmerGroupId,int currencyId,String submissionDate, String resultColour,String overAllResult) {
         this.totalComplaint = totalComplaint;
         this.totalSatisfactory = totalSatisfactory;
         this.totalNonComplaint = totalNonComplaint;
@@ -111,6 +121,7 @@ public class DMSurveyReport {
         this.currencyId = currencyId;
         this.submissionDate = submissionDate;
         this.resultColour = resultColour;
+        this.overAllResult = overAllResult;
     }
 
     // Getters and setters for the properties

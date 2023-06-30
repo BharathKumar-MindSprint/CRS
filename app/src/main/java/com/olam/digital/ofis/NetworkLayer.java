@@ -5575,6 +5575,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     result.put("resultValue", dmSurveyReport.getResultValue());
                     result.put("resultRemarks", dmSurveyReport.getResultRemarks());
                     result.put("resultColour", dmSurveyReport.getResultValue());
+                    result.put("overAllResult",dmSurveyReport.getOverAllResult());
 
                     hashMap.put("result", result);
                     JSONArray jsonArray = new JSONArray();
