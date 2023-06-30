@@ -3101,6 +3101,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
                                 for (int k = 0; k < existingModuleItemArrayList.size(); k++) {
                                     int farmerId = existingModuleItemArrayList.get(k).getFarmerId();
+                                    int submittedModuleId = existingModuleItemArrayList.get(k).getId();
                                     String submissionDate = existingModuleItemArrayList.get(k).getSubmissionDate();
                                     int farmerGroupId = existingModuleItemArrayList.get(k).getFarmerGroupId();
                                     int moduleId = existingModuleItemArrayList.get(k).getModuleId();
@@ -3123,6 +3124,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                         dmSurveyAnswerTable.answerID = String.valueOf(answerId);
                                         dmSurveyAnswerTable.farmerId = String.valueOf(farmerId);
                                         dmSurveyAnswerTable.moduleId = String.valueOf(moduleId);
+                                        dmSurveyAnswerTable.submittedModuleId = submittedModuleId;
                                         dmSurveyAnswerTable.complinceTypeId = String.valueOf(complianceStatusId);
                                         dmSurveyAnswerTable.questionID = String.valueOf(questionId);
                                         dmSurveyAnswerTable.answer = answerValue;

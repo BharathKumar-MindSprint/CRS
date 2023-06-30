@@ -2782,7 +2782,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 recyclerViewData.add("Follow up " + 1);
             }
         }else {
-            List<FollowUpItemMainTable> followupAttempts = db.followUpItemMainTableDao().getFollowupByAttempts(Long.parseLong(farmerID), Integer.parseInt(moduleID));
+            List<Integer> followupAttempts = db.followUpItemMainTableDao().getFollowupByAttempts(Long.parseLong(farmerID), Integer.parseInt(moduleID));
             for (int i = 1; i <= followupAttempts.size(); i++) {
                 recyclerViewData.add("Follow up " + i);
             }

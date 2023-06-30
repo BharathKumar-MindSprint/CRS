@@ -5585,15 +5585,42 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     public void onResponse(Call call, Response postResponse) {
                         String statusMessage;
                         if (postResponse.isSuccessful()) {
-                            dl.deleteNetworkQueueItem(networkQueueItemId);
-                            db.dmSurveyAnswerTableDao().updateSyncStatus( String.valueOf(moduleId), String.valueOf(farmerId),true);
-                            statusMessage = res.getString(R.string.item_synced);
-                            msg.what = 1;
-                            msg.arg1 = total;
-                            msg.arg2 = progress;
-                            msg.obj = statusMessage;
-                            handler.dispatchMessage(msg);
-                            syncNetworkQueue(originalSyncRequestItemId, handler);
+
+                            try {
+                                JSONArray jsonArray = new JSONArray(postResponse.body().string());
+
+                                if (jsonArray.length() > 0) {
+                                    JSONObject jsonObject = jsonArray.getJSONObject(0);
+                                    String errorCode = jsonObject.optString("errorCode");
+                                    String errorItem = jsonObject.optString("error");
+                                    if (errorCode != null) {
+                                        if(errorCode.equalsIgnoreCase("3035")){
+                                            handler.postDelayed(() -> {
+                                                // Your task goes here
+                                                popupMsgInfo(errorItem);
+                                                return;
+                                            },500);
+                                        }
+                                    }
+                                    db.dmSurveyAnswerTableDao().updateSyncStatus( String.valueOf(moduleId), String.valueOf(farmerId),true, jsonObject.optInt("id"));
+                                }
+
+                                dl.deleteNetworkQueueItem(networkQueueItemId);
+
+                                statusMessage = res.getString(R.string.item_synced);
+                                msg.what = 1;
+                                msg.arg1 = total;
+                                msg.arg2 = progress;
+                                msg.obj = statusMessage;
+                                handler.dispatchMessage(msg);
+                                syncNetworkQueue(originalSyncRequestItemId, handler);
+                            } catch (JSONException | IOException e) {
+                                e.printStackTrace();
+                                // Handle JSON parsing error
+                            }
+
+
+
                         } else {
                             try {
                                 FabricLogsWriter.printCrashLog(TAG, endpoint,postResponse.code()," Response "+postResponse.networkResponse().toString(),context);
@@ -5673,21 +5700,26 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     long farmerId = networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
                     int moduleId = networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_MODULE_ID));
                     JSONArray answers = new JSONArray();
+                    JSONObject followUpData = new JSONObject();
+                    followUpData.put("farmerId",farmerId);
+                    followUpData.put("moduleId",moduleId);
+                    List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByModuleId(String.valueOf(moduleId), String.valueOf(farmerId));
+                    followUpData.put("submittedModuleId",dmSurveyAnswerTableList.get(0).submittedModuleId);
                     List<FollowUpItemMainTable> followupList = db.followUpItemMainTableDao().getFollowupByFarmerId(farmerId, moduleId);
                     if (followupList.size() != 0) {
                         for (int i = 0; i < followupList.size(); i++) {
                             JSONObject ans = new JSONObject();
-                            ans.put("id", followupList.get(i).id);
-                            ans.put("moduleId", followupList.get(i).moduleId);
-                            ans.put("dmSubModId", followupList.get(i).dmSubModId);
+//                            ans.put("id", followupList.get(i).id);
+//                            ans.put("moduleId", followupList.get(i).moduleId);
+//                            ans.put("dmSubModId", followupList.get(i).dmSubModId);
                             ans.put("questionId", followupList.get(i).questionId);
                             ans.put("actionPlanId", followupList.get(i).actionPlanId);
                             ans.put("actionPlan", followupList.get(i).actionPlanText);
                             ans.put("attempt", followupList.get(i).attempt);
                             ans.put("status", followupList.get(i).status);
                             ans.put("complianceId", followupList.get(i).complianceId);
-                            ans.put("createdBy", Utilities.getFromSharedPrefs(context));
-                            ans.put("createdAt", followupList.get(i).createdAt);
+//                            ans.put("createdBy", Utilities.getFromSharedPrefs(context));
+//                            ans.put("createdAt", followupList.get(i).createdAt);
 //                            ans.put("updatedBy", followupList.get(i).amount);
 //                            ans.put("updatedAt", followupList.get(i).amount);
 
@@ -5710,23 +5742,50 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                         }
                     }
+                    followUpData.put("followups",answers);
+                    Log.d("FollowUpSurvey", answers.toString());
 
-
-                    okHttpArrayPost(context, endpoint,  answers, new Callback() {
+                    okHttpPost(context, endpoint,  followUpData, new Callback() {
                         @Override
                         public void onResponse(Call call, Response postResponse) {
                             String statusMessage;
                             if (postResponse.isSuccessful()) {
-                                dl.deleteNetworkQueueItem(networkQueueItemId);
-                                db.followUpItemMainTableDao().updateSyncStatus( String.valueOf(moduleId), String.valueOf(farmerId),true);
 
-                                statusMessage = res.getString(R.string.item_synced);
-                                msg.what = 1;
-                                msg.arg1 = total;
-                                msg.arg2 = progress;
-                                msg.obj = statusMessage;
-                                handler.dispatchMessage(msg);
-                                syncNetworkQueue(originalSyncRequestItemId, handler);
+                                try {
+                                    JSONArray jsonArray = new JSONArray(postResponse.body().string());
+
+                                    if (jsonArray.length() > 0) {
+                                        JSONObject jsonObject = jsonArray.getJSONObject(0);
+                                        String errorCode = jsonObject.optString("errorCode");
+                                        String errorItem = jsonObject.optString("error");
+                                        if (errorCode != null) {
+                                            if(errorCode.equalsIgnoreCase("3035")){
+                                                handler.postDelayed(() -> {
+                                                    // Your task goes here
+                                                    popupMsgInfo(errorItem);
+                                                    return;
+                                                },500);
+                                            }
+                                        }
+                                        db.followUpItemMainTableDao().updateSyncStatus( String.valueOf(moduleId), String.valueOf(farmerId),true);
+                                    }
+
+                                    dl.deleteNetworkQueueItem(networkQueueItemId);
+
+
+                                    statusMessage = res.getString(R.string.item_synced);
+                                    msg.what = 1;
+                                    msg.arg1 = total;
+                                    msg.arg2 = progress;
+                                    msg.obj = statusMessage;
+                                    handler.dispatchMessage(msg);
+                                    syncNetworkQueue(originalSyncRequestItemId, handler);
+                                } catch (JSONException | IOException e) {
+                                    e.printStackTrace();
+                                    // Handle JSON parsing error
+                                }
+
+
                             } else {
                                 try {
                                     FabricLogsWriter.printCrashLog(TAG, endpoint,postResponse.code()," Response "+postResponse.networkResponse().toString(),context);

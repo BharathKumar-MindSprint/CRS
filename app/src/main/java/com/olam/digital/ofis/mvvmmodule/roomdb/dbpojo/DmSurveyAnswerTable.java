@@ -52,4 +52,8 @@ public class DmSurveyAnswerTable {
 
     @ColumnInfo(name = "isSynced")
     public Boolean isSynced;
+
+    @ColumnInfo(name = "submittedModuleId")
+    public int submittedModuleId;
+
 }
