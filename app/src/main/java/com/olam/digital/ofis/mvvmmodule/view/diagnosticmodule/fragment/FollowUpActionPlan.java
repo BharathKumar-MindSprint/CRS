@@ -13,6 +13,7 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Build;
@@ -306,14 +307,15 @@ public class FollowUpActionPlan extends Fragment {
         dmSurveyAnswerTableList1 = db.followUpItemMainTableDao().getFollowupByQuestionId1(id, Constants.FARMER_ID, Constants.ATTEMPT);
 
         TextView notResolveText = new TextView(getContext());
-
+        notResolveText.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        notResolveText.setTextSize(12);
        /* ViewGroup.LayoutParams layoutParamsTxt = notResolveText.getLayoutParams();
         layoutParamsTxt.width = ViewGroup.LayoutParams.WRAP_CONTENT;
         notResolveText.setLayoutParams(layoutParamsTxt);*/
 
 
-        notResolveText.setTextColor(getResources().getColor(R.color.gray));
-        notResolveText.setPadding(10, 25, 10, 25);
+//        notResolveText.setTextColor(getResources().getColor(R.color.gray));
+        notResolveText.setPadding(7, 3, 7, 3    );
         layoutParamsQes.setMargins(0, 15, 0, 0);
 
         EditText editText = new EditText(getActivity());
@@ -326,7 +328,20 @@ public class FollowUpActionPlan extends Fragment {
         editText.setLayoutParams(layoutParamsQes);
         editText.setTag("et" + complaint_id);
 
+        List<DmSurveyAnswerTable> dmSurveyAnswerTableList = new ArrayList<>();
+        dmSurveyAnswerTableList.clear();
 
+        dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByQuestionId(id, Constants.FARMER_ID);
+
+        if (dmSurveyAnswerTableList.size() != 0) {
+            String answerIdDb = dmSurveyAnswerTableList.get(0).actionPlanText;
+            editText.setText(answerIdDb);
+        }
+
+        //editText.getLayoutParams().width=40;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            editText.setBackground(getActivity().getDrawable(R.drawable.answer_text_survey));
+        }
         TextView textView = new TextView(getActivity());
         textView.setText("Capture Proof");
 
@@ -691,7 +706,7 @@ public class FollowUpActionPlan extends Fragment {
         linearLayoutActionPlanMain.addView(linearLayoutActionPlan);
 
 
-        List<FollowUpItemMainTable> dmSurveyAnswerTableList = new ArrayList<>();
+        /*List<FollowUpItemMainTable> dmSurveyAnswerTableList = new ArrayList<>();
         dmSurveyAnswerTableList.clear();
 
         dmSurveyAnswerTableList = db.followUpItemMainTableDao().getFollowupByQuestionId1(id, Constants.FARMER_ID, Constants.ATTEMPT);
@@ -699,12 +714,7 @@ public class FollowUpActionPlan extends Fragment {
         if (dmSurveyAnswerTableList.size() != 0) {
             String answerIdDb = dmSurveyAnswerTableList.get(0).actionPlanText;
             editText.setText(answerIdDb);
-        }
-
-        //editText.getLayoutParams().width=40;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            editText.setBackground(getActivity().getDrawable(R.drawable.answer_text_survey));
-        }
+        }*/
 
         linearLayoutActionPlanMain.setVisibility(View.GONE);
 
@@ -786,6 +796,10 @@ public class FollowUpActionPlan extends Fragment {
                 if(resolved!=null) {
                     if (resolved.equalsIgnoreCase(Constants.RESOLVED)) {
                         notResolveText.setText(Constants.RESOLVED);
+                        notResolveText.setTextColor(getResources().getColor(R.color.colorPrimary));
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            notResolveText.setBackground(getActivity().getDrawable(R.drawable.follow_up_resolved));
+                        }
                         if (captureProof > 0) {
                             linearLayoutItems.addView(textView);
                             linearLayoutItems.addView(linearLayoutImage);
@@ -793,6 +807,10 @@ public class FollowUpActionPlan extends Fragment {
 
                     } else if (resolved.equalsIgnoreCase(Constants.NOTRESOLVED)) {
                         notResolveText.setText(Constants.NOTRESOLVED);
+                        notResolveText.setTextColor(getResources().getColor(R.color.notResolved));
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            notResolveText.setBackground(getActivity().getDrawable(R.drawable.follow_up_not_resolved));
+                        }
                         if (captureProof > 0) {
                             linearLayoutItems.addView(textView);
                             linearLayoutItems.addView(linearLayoutImage);
