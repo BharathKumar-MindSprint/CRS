@@ -35,14 +35,9 @@ public interface FollowUpItemMainTableDao {
     @Query("UPDATE FollowUpItemMainTable SET actionPlanId=:actionPlanId WHERE questionID = :questionId AND farmerId =:farmerId AND attempt = :attempt")
     void updateActionPlanId(String actionPlanId, String questionId, String farmerId, int attempt);
 
-    @Query("UPDATE DmSurveyAnswerTable SET isSynced=:status WHERE moduleId = :moduleId AND farmerId =:farmerId")
+    @Query("UPDATE FollowUpItemMainTable SET isSync=:status WHERE moduleId = :moduleId AND farmerId =:farmerId")
     void updateSyncStatus(String moduleId, String farmerId, boolean status);
 
-    @Query("SELECT * FROM FollowUpItemMainTable WHERE (attempt, farmerId, moduleId) IN (\n" +
-            "    SELECT MAX(attempt), farmerId, moduleId\n" +
-            "    FROM FollowUpItemMainTable\n" +
-            "    WHERE farmerId = :farmerId AND moduleId = :moduleId\n" +
-            "    GROUP BY farmerId, moduleId\n" +
-            ")")
-    List<FollowUpItemMainTable> getFollowupByAttempts(long farmerId, int moduleId);
+    @Query("SELECT DISTINCT (attempt) FROM FollowUpItemMainTable where farmerId =:farmerId and moduleId =:moduleId")
+    List<Integer> getFollowupByAttempts(long farmerId, int moduleId);
 }
