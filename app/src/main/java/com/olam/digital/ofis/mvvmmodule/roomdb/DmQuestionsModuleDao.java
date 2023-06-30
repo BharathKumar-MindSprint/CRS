@@ -26,6 +26,8 @@ public interface DmQuestionsModuleDao {
     @Query("SELECT * FROM DmQuestionsModule WHERE id=:id")
     List<DmQuestionsModule> getDmQuestionType(int id);
 
+
+
     @Insert
     void insert(DmQuestionsModule... dmQuestionsModules);
 
@@ -37,4 +39,7 @@ public interface DmQuestionsModuleDao {
 
     @Query("SELECT * FROM DmQuestionsModule WHERE moduleId=:id AND mandate=1")
     List<DmQuestionsModule> getDmQuestionsModuleId(int id);
+
+    @Query("SELECT isCriticalQuest FROM DmQuestionsModule WHERE moduleId=:moduleID AND id=:questionID")
+    int getIsCriticalQuestForColor(String moduleID,int questionID);
 }

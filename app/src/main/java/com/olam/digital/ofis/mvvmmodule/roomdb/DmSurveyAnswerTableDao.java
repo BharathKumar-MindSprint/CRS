@@ -83,4 +83,5 @@ public interface DmSurveyAnswerTableDao {
 
     @Query("UPDATE DmSurveyAnswerTable SET isSynced=:status WHERE moduleId = :moduleId AND farmerId =:farmerId")
     void updateSyncStatus(String moduleId, String farmerId, boolean status);
+
 }
