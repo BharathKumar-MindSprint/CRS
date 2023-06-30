@@ -70,6 +70,7 @@ public class SurveyResultsFragment extends Fragment {
         // Required empty public constructor
     }
     String resultValue;
+    String resultColor;
     int amount = 0;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -171,7 +172,7 @@ public class SurveyResultsFragment extends Fragment {
                         remarks.getText().toString(),
                         Long.parseLong(Constants.FARMER_ID),Integer.parseInt(Constants.MODULE_ID),
                         Integer.parseInt(Constants.FARMER_GROUP_ID),
-                        Integer.parseInt(currencyId),submittedDate,resultValue,
+                        Integer.parseInt(currencyId),submittedDate,resultColor,
                         overAllResultComplianceID);
                 db.dmSurveyReportDao().insert(dmSurveyReport);
 
@@ -372,6 +373,7 @@ public class SurveyResultsFragment extends Fragment {
                 remarks.setVisibility(View.VISIBLE);
                 finalScore = (totalWeightages * 100 / (maxScore * totalQuestion));
                 weightageMarks.setText(finalScore + " %");
+                resultValue = String.valueOf(finalScore);
 
 
                 List<AssessmentResultTypeItems> totalRangeAvailable = db.dmAssessmentResultTypeDao().getAllModuleId(Integer.parseInt(Constants.MODULE_ID));
@@ -393,7 +395,7 @@ public class SurveyResultsFragment extends Fragment {
                 finalAssessmentValue = "As Whole Number";
                 weightageMarks.setText(String.valueOf(totalWeightages));
                 remarks.setVisibility(View.VISIBLE);
-
+                resultValue = String.valueOf(totalWeightages);
                 List<AssessmentResultTypeItems> totalRangeAvailable = db.dmAssessmentResultTypeDao().getAllModuleId(Integer.parseInt(Constants.MODULE_ID));
 
 
@@ -433,10 +435,11 @@ public class SurveyResultsFragment extends Fragment {
                     traffic_indicator_green.setVisibility(View.GONE);
                     traffic_indicator_orange.setVisibility(View.GONE);
                     traffic_indicator_red.setVisibility(View.VISIBLE);
-                    resultValue = Constants.RED;
+//                    resultColor = Constants.RED;
                 }
 
                 overAllResultComplianceID = "Non-Compliant";
+                resultColor = Constants.RED;
             }
         }else if (satisfactory == 0 && nonComplaint == 0){
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -447,9 +450,10 @@ public class SurveyResultsFragment extends Fragment {
                     traffic_indicator_green.setVisibility(View.VISIBLE);
                     traffic_indicator_orange.setVisibility(View.GONE);
                     traffic_indicator_red.setVisibility(View.GONE);
-                    resultValue = Constants.GREEN;
+//                    resultColor = Constants.GREEN;
                 }
                 overAllResultComplianceID = "Compliant";
+                resultColor = Constants.GREEN;
 
             }
         }
@@ -464,10 +468,11 @@ public class SurveyResultsFragment extends Fragment {
                         traffic_indicator_green.setVisibility(View.GONE);
                         traffic_indicator_orange.setVisibility(View.GONE);
                         traffic_indicator_red.setVisibility(View.VISIBLE);
-                        resultValue = Constants.RED;
+//                        resultColor = Constants.RED;
                     }
 
                     overAllResultComplianceID = "Non-Compliant";
+                    resultColor = Constants.RED;
 
                 }
             } else if(satisfactory > nonComplaint) {
@@ -479,11 +484,10 @@ public class SurveyResultsFragment extends Fragment {
                         traffic_indicator_green.setVisibility(View.GONE);
                         traffic_indicator_orange.setVisibility(View.VISIBLE);
                         traffic_indicator_red.setVisibility(View.GONE);
-                        resultValue = Constants.ORANGE;
+//                        resultColor = Constants.ORANGE;
                     }
                     overAllResultComplianceID = "Satisfactory";
-
-
+                    resultColor = Constants.ORANGE;
                 }
             }
 
