@@ -2991,7 +2991,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                         GetAllFollowUpDMData();
                     }
                 } catch (Exception e) {
-                    Log.d("hdjhashdksa", e.toString());
                     throw new RuntimeException(e);
 
                 }

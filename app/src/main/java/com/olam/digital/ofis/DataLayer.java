@@ -44,6 +44,7 @@ import com.olam.digital.ofis.multifarm.MultiFarmRoleDTO;
 import com.olam.digital.ofis.multifarm.MultiFarmUtils;
 import com.olam.digital.ofis.multifarm.MultifarmFarmerDTO;
 import com.olam.digital.ofis.multifarm.SubmittedInfo;
+import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.daos.FollowUpItemMainTableDao;
 import com.olam.digital.ofis.smartnotification.dto.NotificationDTO;
 
 import org.json.JSONArray;
@@ -9325,10 +9326,10 @@ public class DataLayer {
         db.update(table,values, whereClause, whereArgs);
     }
 
-    public void updateNqForDMSurvey(String farmerId, String moduleId){
+    public void updateNqForDMSurvey(String farmerId, String moduleId, String type){
         ContentValues networkQueueValues = new ContentValues();
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "DMSurvey");
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, type);
         networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, getFarmerNamefromDb(Long.valueOf(farmerId)));
         networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, res.getString(R.string.diagnostic_survey));
         networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID, farmerId);

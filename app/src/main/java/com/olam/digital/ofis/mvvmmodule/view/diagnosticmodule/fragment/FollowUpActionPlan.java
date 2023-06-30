@@ -50,6 +50,7 @@ import android.widget.Toast;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfStamper;
+import com.olam.digital.ofis.DataLayer;
 import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.ViewFarmerActivity;
 import com.olam.digital.ofis.mvvmmodule.Constants;
@@ -158,12 +159,9 @@ public class FollowUpActionPlan extends Fragment {
 
             @Override
             public void onClick(View view) {
-                /*if (!ViewFarmerActivity.recyclerViewData.contains("Follow Up 1")) {
-                    ViewFarmerActivity.recyclerViewData.add("Follow Up 1");
 
-
-                } else {
-                }*/
+                DataLayer dl = new DataLayer(getResources(), getContext());
+                dl.updateNqForDMSurvey(Constants.FARMER_ID, Constants.MODULE_ID, "FollowUpSurvey");
                 Intent intent = new Intent(getContext(), ViewFarmerActivity.class);
                 getContext().startActivity(intent);
             }
@@ -587,9 +585,9 @@ public class FollowUpActionPlan extends Fragment {
         linearLayoutSpin.setWeightSum(10);
 
         LinearLayout.LayoutParams layoutParamsSpin = new LinearLayout.LayoutParams(
-                getResources().getDimensionPixelSize(R.dimen.forWeight),
-                LinearLayout.LayoutParams.WRAP_CONTENT,5);
-
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                getResources().getDimensionPixelSize(R.dimen.capture_box)
+        );
         final Spinner spinner = new Spinner(getActivity());
 
         spinner.setLayoutParams(layoutParamsSpin);
@@ -601,7 +599,7 @@ public class FollowUpActionPlan extends Fragment {
 
         spinner.setTag("spinner" + complaint_id);
 
-        layoutParamsSpin.setMargins(0, -15, 10, 15);
+        layoutParamsSpin.setMargins(0, 15, 10, 15);
 
 
         TextView tVActionPlanSelectedTxt = new TextView(getActivity());
@@ -764,7 +762,7 @@ public class FollowUpActionPlan extends Fragment {
                     tVActionPlanSelectedTxt.setText(list.get(position));
                     linearLayoutActionPlanMain.setVisibility(View.GONE);
                     db.followUpItemMainTableDao().updateActionPlanText("", id, Constants.FARMER_ID, Constants.ATTEMPT);
-                    db.followUpItemMainTableDao().updateActionPlanId("0",id,Constants.FARMER_ID, Constants.ATTEMPT);
+                    db.followUpItemMainTableDao().updateActionPlanId(Id,id,Constants.FARMER_ID, Constants.ATTEMPT);
                 }
             }
 

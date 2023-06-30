@@ -57,6 +57,7 @@ import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmActionPlanCurrenciesTabl
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmComplaintFileTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmCurrenciesItem;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmSurveyAnswerTable;
+import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.FollowUpItemMainTable;
 import com.olam.digital.ofis.recordpolygon.SharedPreferenceUtils;
 import com.olam.digital.ofis.tasks.SyncAllTask;
 import com.olam.digital.ofis.tasks.SyncTaskOperationType;
@@ -5669,34 +5670,56 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             if (endpoint.length() > 0) {
 
                 try {
-/*
-                    JSONObject hashMap = new JSONObject();
-                    hashMap.put("submittedModuleId", 1);
-                    hashMap.put("farmerId", 478520);
-                    hashMap.put("moduleId", 390);
-                    hashMap.put("enumeratorId", Utilities.getFromSharedPrefs(context));
-                    hashMap.put("currencyId", dmSurveyReport.getCurrencyId());
-                    hashMap.put("submissionDate", dmSurveyReport.getSubmissionDate());
-                    hashMap.put("isMobile", true);
-
+                    long farmerId = networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
+                    int moduleId = networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_MODULE_ID));
                     JSONArray answers = new JSONArray();
+                    List<FollowUpItemMainTable> followupList = db.followUpItemMainTableDao().getFollowupByFarmerId(farmerId, moduleId);
+                    if (followupList.size() != 0) {
+                        for (int i = 0; i < followupList.size(); i++) {
+                            JSONObject ans = new JSONObject();
+                            ans.put("id", followupList.get(i).id);
+                            ans.put("moduleId", followupList.get(i).moduleId);
+                            ans.put("dmSubModId", followupList.get(i).dmSubModId);
+                            ans.put("questionId", followupList.get(i).questionId);
+                            ans.put("actionPlanId", followupList.get(i).actionPlanId);
+                            ans.put("actionPlan", followupList.get(i).actionPlanText);
+                            ans.put("attempt", followupList.get(i).attempt);
+                            ans.put("status", followupList.get(i).status);
+                            ans.put("complianceId", followupList.get(i).complianceId);
+                            ans.put("createdBy", Utilities.getFromSharedPrefs(context));
+                            ans.put("createdAt", followupList.get(i).createdAt);
+//                            ans.put("updatedBy", followupList.get(i).amount);
+//                            ans.put("updatedAt", followupList.get(i).amount);
 
-                    JSONArray jsonArray = new JSONArray();
-                    for (int j = 0; j < 1; j++) {
+                            List<DmComplaintFileTable> complaintFileTableList = new ArrayList<>();
+
+                            complaintFileTableList.clear();
+
+                            complaintFileTableList = db.dmComplaintFileTableDao().getFilesById(followupList.get(i).questionId, String.valueOf(farmerId), 0);
+
+//                            List<String> files = new ArrayList<>();
+//                            files.clear();
+                            JSONArray jsonArray = new JSONArray();
+                            for (int j = 0; j < complaintFileTableList.size(); j++) {
 //                                files.add(complaintFileTableList.get(j).getFile_name());
-                        jsonArray.put("value.png");
+                                jsonArray.put(complaintFileTableList.get(j).getFile_name());
+                            }
+
+                            ans.put("dmCapturedProof", jsonArray);
+                            answers.put(ans);
+
+                        }
                     }
 
-                    ans.put("captureProof", jsonArray);*/
-                    JSONArray jsonArray = new JSONArray();
-//                    jsonArray.put(hashMap);
-                    Log.d("DMSURVEY", jsonArray.toString());
-                    okHttpArrayPost(context, endpoint,  jsonArray, new Callback() {
+
+                    okHttpArrayPost(context, endpoint,  answers, new Callback() {
                         @Override
                         public void onResponse(Call call, Response postResponse) {
                             String statusMessage;
                             if (postResponse.isSuccessful()) {
                                 dl.deleteNetworkQueueItem(networkQueueItemId);
+                                db.followUpItemMainTableDao().updateSyncStatus( String.valueOf(moduleId), String.valueOf(farmerId),true);
+
                                 statusMessage = res.getString(R.string.item_synced);
                                 msg.what = 1;
                                 msg.arg1 = total;
