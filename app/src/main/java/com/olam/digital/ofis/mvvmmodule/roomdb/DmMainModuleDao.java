@@ -32,4 +32,7 @@ public interface DmMainModuleDao {
 
     @Query("SELECT maxScore FROM DmMainModule WHERE id=:moduleId")
     int getMaxScore(int moduleId);
+
+    @Query("SELECT startDate FROM DmMainModule WHERE id=:moduleId")
+    String getStartData(int moduleId);
 }

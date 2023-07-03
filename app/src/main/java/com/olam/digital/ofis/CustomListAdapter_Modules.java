@@ -28,6 +28,9 @@ import com.olam.digital.ofis.childlabour.ChildLabourUtils;
 import com.olam.digital.ofis.multifarm.MultiFarmLongPressListener;
 import com.olam.digital.ofis.multifarm.MultiFarmUtils;
 import com.olam.digital.ofis.multifarm.SubmittedInfo;
+import com.olam.digital.ofis.mvvmmodule.Constants;
+import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
+import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmRecurrence;
 import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.FollowUp.FollowUpRecyclerAdapter;
 
 import org.json.JSONArray;
@@ -194,68 +197,25 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                 //}
                 //Ticket-OFISDM-39 newly added
             }else if(cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals("diagnostic")){
-
-                /*if (recurrence_frequency > 0 && !disabled_months.contains(String.valueOf(currentDate.get(Calendar.MONTH)))) {
-                    // for recurring
-                    try {
-                        // get last submitted date
-                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
-                        Calendar lastSubmittedDate = Calendar.getInstance();
-
-                        //O20HS-84 - To enable the annual survey.
-                        calculationDate = (Calendar) currentDate.clone();
-                        //
-
-                        try {
-                            lastSubmittedDate.setTime(sdf.parse(submittedModuleDetails.getString("created_at")));
-                        } catch (ParseException e) {
-                            FirebaseCrash.report(new Exception("CustomListAdapter_Modules: Error setting recurrence date values", e));
-                            e.printStackTrace();
-                        }
-                        if (recurrence_type != null) {
-                            if (recurrence_type.equalsIgnoreCase("years")) {
-                                calculationDate.add(Calendar.YEAR, -recurrence_frequency);
-                                calculationDate.set(Calendar.MONTH, Calendar.DECEMBER);
-                                calculationDate.set(Calendar.DAY_OF_MONTH, 31);
-                            } else if (recurrence_type.equalsIgnoreCase("months")) {
-                                calculationDate.add(Calendar.MONTH, -recurrence_frequency);
-                                calculationDate.set(Calendar.DAY_OF_MONTH, calculationDate.getActualMaximum(Calendar.DAY_OF_MONTH));
-                            } else if (recurrence_type.equalsIgnoreCase("weeks")) {
-                                calculationDate.add(Calendar.WEEK_OF_YEAR, -recurrence_frequency);
-                                calculationDate.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
-                            } else {
-                                // must be days
-                                calculationDate.add(Calendar.DAY_OF_YEAR, -recurrence_frequency);
-                            }
-
-                            // set the time
-                            calculationDate.set(Calendar.HOUR_OF_DAY, 23);
-                            calculationDate.set(Calendar.MINUTE, 59);
-                            calculationDate.set(Calendar.SECOND, 59);
-                            calculationDate.set(Calendar.MILLISECOND, 999);
-
-                            // force the recalculation
-                            calculationDate.get(Calendar.DAY_OF_MONTH);
-
-
-                            if (lastSubmittedDate.after(calculationDate)) {
-                                disable_entry = true;
-                            }
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    // for non-recurring
-                    disable_entry = true;
-                }*/
-
-
-
-                imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_childsurvey));
+                int moduleId = cursor.getInt(cursor.getColumnIndex(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_CURRENT_SUBMODULE_ID));
+                OFISRoomDB db = OFISRoomDB.getDbInstance(context);
+                DmRecurrence dmRecurrence = db.dmRecurrenceDao().getRecurrenceByModuleId(String.valueOf(moduleId));
+                String recurrence_type = dmRecurrence.recurrenceType;
+                int recurrence_frequency = dmRecurrence.recurrenceFrequency;
+                boolean disable_entry = false;
+                imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_householdgps));
                 enabledItem.setText("true");
+                linearLayout.setBackgroundResource(R.drawable.list_item);
+                moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
+                textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
+                textView.setText(res.getString(R.string.ModuleStatus));
+                List<Integer> followupAttempts = db.followUpItemMainTableDao().getFollowupByAttempts(farmerId, moduleId);
+                if(followupAttempts.size() > 0){
+                    textView.setText(res.getString(R.string.dm_diognostic_module_subtitle));
+                }else{
+                    textView.setText(res.getString(R.string.ModuleStatus));
+                }
 
-                textView.setText(res.getString(R.string.dm_diognostic_module_subtitle));
 
             } else if (cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals(ChildLabourUtils.REG_CHILD)) {
 

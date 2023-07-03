@@ -2898,6 +2898,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                             dmRecurrence.recurrenceFrequency = recurrenceFrequency;
                                             dmRecurrence.isCustomRecurrence = isCustomRecurrence;
                                             dmRecurrence.recurrenceType = recurrenceType;
+                                            dmRecurrence.moduleId = String.valueOf(id);
                                             db.dmRecurrenceDao().insert(dmRecurrence);
                                         }
                                     } catch (Exception e) {
