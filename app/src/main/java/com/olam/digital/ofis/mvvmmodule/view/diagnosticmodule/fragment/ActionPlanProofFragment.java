@@ -621,7 +621,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
         LinearLayout.LayoutParams layoutParamsSpin = new LinearLayout.LayoutParams(
                 getResources().getDimensionPixelSize(R.dimen.forWeight),
-                LinearLayout.LayoutParams.WRAP_CONTENT,5);
+                getResources().getDimensionPixelSize(R.dimen.capture_box),5);
 
         final Spinner spinner = new Spinner(getActivity());
 
@@ -633,8 +633,6 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
         spinner.setAdapter(spinnerAdapter);
 
         spinner.setTag("spinner" + complaint_id);
-
-
         layoutParamsSpin.setMargins(0, -15, 10, 15);
 
 
@@ -652,7 +650,6 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
             tVActionPlanSelectedTxt.setBackground(getActivity().getDrawable(R.drawable.answer_text_survey));
         }
         tVActionPlanSelectedTxt.setVisibility(View.GONE);
-
 
         LinearLayout linearLayoutActionPlanMain = new LinearLayout(getActivity());
         linearLayoutActionPlanMain.setLayoutParams(new LinearLayout.LayoutParams(
