@@ -44,8 +44,7 @@
                                 android:layout_marginRight="@dimen/margin_10"
                                 android:paddingLeft="@dimen/ofis_large_pad"
                                 android:paddingRight="@dimen/ofis_large_pad"
-                                android:paddingBottom="@dimen/ofis_large_pad"
-                                android:paddingTop="@dimen/ofis_large_pad"/>
+                                android:paddingBottom="@dimen/ofis_large_pad"/>
 
                             <LinearLayout
                                 android:orientation="vertical"
