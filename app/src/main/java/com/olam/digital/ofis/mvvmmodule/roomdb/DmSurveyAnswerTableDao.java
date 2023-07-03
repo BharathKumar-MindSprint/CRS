@@ -81,6 +81,8 @@ public interface DmSurveyAnswerTableDao {
     @Query("SELECT isCaptureProof FROM DmSurveyAnswerTable WHERE questionId = :id AND farmerId = :farmerId")
     int getIsCaptureProofValue(int id, String farmerId);
 
+
     @Query("UPDATE DmSurveyAnswerTable SET isSynced=:status, submittedModuleId =:submittedmoduleId WHERE moduleId = :moduleId AND farmerId =:farmerId")
     void updateSyncStatus(String moduleId, String farmerId, boolean status, int submittedmoduleId);
+
 }

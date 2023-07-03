@@ -138,9 +138,20 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
             textView.setText(dmSectionsItem.name);
             textView.setTextColor(getResources().getColor(R.color.black));
             textView.setTextSize(14);
-            //textView.setPadding(0, res.getDimensionPixelSize(R.dimen.ofis_large_pad), 0, 0);
+            textView.setPadding(0, 10, 0, 0);
             textView.setTypeface(null, Typeface.BOLD);
+
+
+            TextView textViewDesc = new TextView(getActivity());
+            textViewDesc.setText(dmSectionsItem.description);
+            textViewDesc.setTextColor(getResources().getColor(R.color.black));
+            textViewDesc.setTextSize(14);
+            textViewDesc.setTypeface(null, Typeface.ITALIC);
+
+
+
             dm_Section.addView(textView);
+            dm_Section.addView(textViewDesc);
             List<DmQuestionsModule> dmQuestionsSubModuleList = new ArrayList<>();
             dmQuestionsSubModuleList.clear();
             dmQuestionsSubModuleList = db.dmQuestionsModuleDao().getDmQuestionsSubModulebySectionId(dmSectionsItem.id);
@@ -1025,23 +1036,13 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                         View desiredView = dm_Question.findViewWithTag(qId.get(i));
                         TextView textView = (TextView) desiredView;
                         textView.setVisibility(View.GONE);
-                        /*View desiredView2 = dm_Question.findViewWithTag(qId.get(i) + 1);
-                        EditText editText = (EditText) desiredView2;
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                            editText.setBackground(getActivity().getDrawable(R.drawable.answer_text_survey));
 
-                        }*/
                     }
                     for (int j = 0; j < Constants.questionIdsSection.size(); j++) {
                         View desiredView = dm_Section.findViewWithTag(qIdSections.get(j));
                         TextView textView = (TextView) desiredView;
                         textView.setVisibility(View.GONE);
-                        /*View desiredView2 = dm_Question.findViewWithTag(qId.get(j) + 1);
-                        EditText editText = (EditText) desiredView2;
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                            editText.setBackground(getActivity().getDrawable(R.drawable.answer_text_survey));
 
-                        }*/
                     }
 
                 } else {

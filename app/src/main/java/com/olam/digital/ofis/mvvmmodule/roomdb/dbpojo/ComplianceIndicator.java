@@ -50,4 +50,12 @@ public class ComplianceIndicator {
     @ColumnInfo(name = "score")
     public int score;
 
+    @ColumnInfo(name = "isActionPlanRequired")
+    public boolean isActionPlanRequired;
+
+    @ColumnInfo(name = "allowCustomActionPlan")
+    public boolean allowCustomActionPlan;
+
+
+
 }

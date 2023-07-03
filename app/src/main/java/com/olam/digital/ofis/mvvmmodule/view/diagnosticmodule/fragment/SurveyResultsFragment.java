@@ -60,16 +60,19 @@ public class SurveyResultsFragment extends Fragment {
     ImageView traffic_indicator_green, traffic_indicator_orange, traffic_indicator_red;
     TextView weightageMarks;
     OFISRoomDB db;
-    EditText editTextText, editTextText3, editTextText4, editTextText5, editTextText6, overAllResult , editTextTextMultiLine;
+    EditText editTextText, editTextText3, editTextText4, editTextText5, editTextText6 , remarks;
 
-
+    String overAllResultComplianceID = "";
     String finalAssessmentValue = "";
+
 
     public SurveyResultsFragment() {
         // Required empty public constructor
     }
     String resultValue;
+    String resultColor;
     int amount = 0;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -85,9 +88,8 @@ public class SurveyResultsFragment extends Fragment {
         editTextText4 = view.findViewById(R.id.editTextText4);
         editTextText5 = view.findViewById(R.id.editTextText5);
         editTextText6 = view.findViewById(R.id.editTextText6);
-        overAllResult = view.findViewById(R.id.editTextTextMultiLine);
         weightageMarks = view.findViewById(R.id.weightageMarks);
-        editTextTextMultiLine = view.findViewById(R.id.editTextTextMultiLine);
+        remarks = view.findViewById(R.id.editTextTextMultiLine);
 
         db = OFISRoomDB.getDbInstance(getActivity());
 
@@ -168,10 +170,11 @@ public class SurveyResultsFragment extends Fragment {
                         Double.parseDouble(String.valueOf(amount)),
                         finalAssessmentValue,
                         resultValue,
-                        overAllResult.getText().toString(),
+                        remarks.getText().toString(),
                         Long.parseLong(Constants.FARMER_ID),Integer.parseInt(Constants.MODULE_ID),
                         Integer.parseInt(Constants.FARMER_GROUP_ID),
-                        Integer.parseInt(currencyId),submittedDate,resultValue);
+                        Integer.parseInt(currencyId),submittedDate,resultColor,
+                        overAllResultComplianceID);
                 db.dmSurveyReportDao().insert(dmSurveyReport);
 
 
@@ -273,6 +276,8 @@ public class SurveyResultsFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
+        amount = 0;
+        Boolean val = false;
         double totalWeightages = 0;
         double finalScore = 0;
         int complaint = 0, nonComplaint = 0, satisfactory = 0;
@@ -282,19 +287,32 @@ public class SurveyResultsFragment extends Fragment {
         for (int j = 0; j < dmSurveyAnswerTableList1.size(); j++) {
 
             int compliantTypeId = Integer.parseInt(dmSurveyAnswerTableList1.get(j).complinceTypeId);
+            int questionId = Integer.parseInt(dmSurveyAnswerTableList1.get(j).questionID);
             int value = dmSurveyAnswerTableList1.get(j).amount;
             amount = amount +value;
             String complianceName = db.complianceIndicatorDao().getComplianceNameBycomplianceId(String.valueOf(compliantTypeId));
             int newWeightage = db.complianceIndicatorDao().getComplianceScore(String.valueOf(compliantTypeId),complianceName);
+
+            int newColorIsCritical = db.dmQuestionsModuleDao().getIsCriticalQuestForColor(Constants.MODULE_ID ,questionId);
             if (complianceName.equalsIgnoreCase("Satisfactory")) {
                 totalWeightages = totalWeightages + newWeightage;
                 satisfactory = satisfactory + 1;
+                if (Objects.equals(newColorIsCritical, 1)){
+                    val = true;
+                }else {
+                    val = false;
+                }
             } else if (complianceName.equalsIgnoreCase("Compliant")) {
                 complaint = complaint + 1;
                 totalWeightages = totalWeightages + newWeightage;
             } else if (complianceName.equalsIgnoreCase("Non Compliant")) {
                 nonComplaint = nonComplaint + 1;
                 totalWeightages = totalWeightages + newWeightage;
+                if (Objects.equals(newColorIsCritical, 1)){
+                    val = true;
+                }else {
+                    val = false;
+                }
             }
 
 
@@ -306,15 +324,13 @@ public class SurveyResultsFragment extends Fragment {
         editTextText3.setText(""+nonComplaint);
         editTextText4.setText(""+satisfactory);
 
-        int totalQuestion = complaint + nonComplaint + satisfactory;
-
-        editTextText5.setText(String.valueOf(totalQuestion));
-
 
         String currencyIdDb = "0";
 
         HashMap<String, String> hashMap = new HashMap<>();
         String currency_id = hashMap.get("keyCurrencies");
+        String totalActionPlanCount = hashMap.get("totalActionPlanCount");
+
         List<DmActionPlanCurrenciesTable> dmActionPlanCurrenciesTables = db.dmActionPlanCurrenciesTableDao().getDataByModuleId(Constants.MODULE_ID, Constants.FARMER_ID);
         if (dmActionPlanCurrenciesTables.size() != 0) {
             currencyIdDb = String.valueOf(dmActionPlanCurrenciesTables.get(0).currencyId);
@@ -332,6 +348,10 @@ public class SurveyResultsFragment extends Fragment {
         }
 
 
+        int totalQuestion = complaint + nonComplaint + satisfactory;
+
+
+        editTextText5.setText(Constants.TotalActionPlanCount);
         editTextText6.setText(""+ amount + "   " + currency);
 //        int complaint = Integer.parseInt(complaint);
 //        int nonComplaint = Integer.parseInt(Constants.noncomplaintSize);
@@ -354,9 +374,10 @@ public class SurveyResultsFragment extends Fragment {
             if (Objects.equals(displayLogic, "In Percentage")){
 
                 finalAssessmentValue = "In Percentage";
-                editTextTextMultiLine.setVisibility(View.VISIBLE);
+                remarks.setVisibility(View.VISIBLE);
                 finalScore = (totalWeightages * 100 / (maxScore * totalQuestion));
                 weightageMarks.setText(finalScore + " %");
+                resultValue = String.valueOf(finalScore);
 
 
                 List<AssessmentResultTypeItems> totalRangeAvailable = db.dmAssessmentResultTypeDao().getAllModuleId(Integer.parseInt(Constants.MODULE_ID));
@@ -366,8 +387,8 @@ public class SurveyResultsFragment extends Fragment {
                     int minRange = totalRangeAvailable.get(i).getMinRange();
                     int maxRange = totalRangeAvailable.get(i).getMaxRange();
                     if (finalScore >= minRange && finalScore <= maxRange){
-                        String remarks = String.valueOf(db.dmAssessmentResultTypeDao().getRemarks(Integer.parseInt(Constants.MODULE_ID) , minRange ,maxRange));
-                        editTextTextMultiLine.setText(remarks);
+                        String remarkVal = String.valueOf(db.dmAssessmentResultTypeDao().getRemarks(Integer.parseInt(Constants.MODULE_ID) , minRange ,maxRange));
+                        remarks.setText(remarkVal);
                         break;
                     }
 
@@ -377,8 +398,8 @@ public class SurveyResultsFragment extends Fragment {
             }else if (Objects.equals(displayLogic, "As Whole Number")){
                 finalAssessmentValue = "As Whole Number";
                 weightageMarks.setText(String.valueOf(totalWeightages));
-                editTextTextMultiLine.setVisibility(View.VISIBLE);
-
+                remarks.setVisibility(View.VISIBLE);
+                resultValue = String.valueOf(totalWeightages);
                 List<AssessmentResultTypeItems> totalRangeAvailable = db.dmAssessmentResultTypeDao().getAllModuleId(Integer.parseInt(Constants.MODULE_ID));
 
 
@@ -386,8 +407,8 @@ public class SurveyResultsFragment extends Fragment {
                     int minRange = totalRangeAvailable.get(i).getMinRange();
                     int maxRange = totalRangeAvailable.get(i).getMaxRange();
                     if (totalWeightages >= minRange && totalWeightages <= maxRange){
-                        String remarks = String.valueOf(db.dmAssessmentResultTypeDao().getRemarks(Integer.parseInt(Constants.MODULE_ID) , minRange ,maxRange));
-                        editTextTextMultiLine.setText(remarks);
+                        String remarkVal = String.valueOf(db.dmAssessmentResultTypeDao().getRemarks(Integer.parseInt(Constants.MODULE_ID) , minRange ,maxRange));
+                        remarks.setText(remarkVal);
                         break;
                     }
 
@@ -398,12 +419,13 @@ public class SurveyResultsFragment extends Fragment {
 
         } else if (Objects.equals(assessmentType, "TL")) {
             weightageMarks.setVisibility(View.GONE);
-            editTextTextMultiLine.setVisibility(View.GONE);
+            remarks.setVisibility(View.GONE);
             finalAssessmentValue = "TL";
 
         }
 
-        Boolean val = false;
+
+
 
 
 
@@ -417,14 +439,31 @@ public class SurveyResultsFragment extends Fragment {
                     traffic_indicator_green.setVisibility(View.GONE);
                     traffic_indicator_orange.setVisibility(View.GONE);
                     traffic_indicator_red.setVisibility(View.VISIBLE);
-                    resultValue = Constants.RED;
+//                    resultColor = Constants.RED;
                 }
 
+                overAllResultComplianceID = "Non-Compliant";
+                resultColor = Constants.RED;
+            }
+        }else if (satisfactory == 0 && nonComplaint == 0){
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                newView.setBackground(getActivity().getDrawable(R.color.green_view_survey));
+                survey_result_main.setBackground(getActivity().getDrawable(R.color.green_survey_result));
+
+                if (Objects.equals(assessmentType, "TL")){
+                    traffic_indicator_green.setVisibility(View.VISIBLE);
+                    traffic_indicator_orange.setVisibility(View.GONE);
+                    traffic_indicator_red.setVisibility(View.GONE);
+//                    resultColor = Constants.GREEN;
+                }
+                overAllResultComplianceID = "Compliant";
+                resultColor = Constants.GREEN;
 
             }
-        } else {
+        }
+        else {
 
-            if (nonComplaint > complaint && nonComplaint > satisfactory) {
+            if (nonComplaint >= satisfactory) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     newView.setBackground(getActivity().getDrawable(R.color.red_view_survey));
                     survey_result_main.setBackground(getActivity().getDrawable(R.color.red_survey_result));
@@ -433,11 +472,14 @@ public class SurveyResultsFragment extends Fragment {
                         traffic_indicator_green.setVisibility(View.GONE);
                         traffic_indicator_orange.setVisibility(View.GONE);
                         traffic_indicator_red.setVisibility(View.VISIBLE);
-                        resultValue = Constants.RED;
+//                        resultColor = Constants.RED;
                     }
 
+                    overAllResultComplianceID = "Non-Compliant";
+                    resultColor = Constants.RED;
+
                 }
-            } else if (satisfactory > complaint && satisfactory > nonComplaint) {
+            } else if(satisfactory > nonComplaint) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     newView.setBackground(getActivity().getDrawable(R.color.orange_view_survey));
                     survey_result_main.setBackground(getActivity().getDrawable(R.color.ambur_survey_result));
@@ -446,36 +488,10 @@ public class SurveyResultsFragment extends Fragment {
                         traffic_indicator_green.setVisibility(View.GONE);
                         traffic_indicator_orange.setVisibility(View.VISIBLE);
                         traffic_indicator_red.setVisibility(View.GONE);
-                        resultValue = Constants.ORANGE;
+//                        resultColor = Constants.ORANGE;
                     }
-
-                }
-            } else if (satisfactory == 0 && nonComplaint == 0){
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    newView.setBackground(getActivity().getDrawable(R.color.green_view_survey));
-                    survey_result_main.setBackground(getActivity().getDrawable(R.color.green_survey_result));
-
-                    if (Objects.equals(assessmentType, "TL")){
-                        traffic_indicator_green.setVisibility(View.VISIBLE);
-                        traffic_indicator_orange.setVisibility(View.GONE);
-                        traffic_indicator_red.setVisibility(View.GONE);
-                        resultValue = Constants.GREEN;
-                    }
-
-                }
-            }else {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    newView.setBackground(getActivity().getDrawable(R.color.red_view_survey));
-                    survey_result_main.setBackground(getActivity().getDrawable(R.color.red_survey_result));
-
-                    if (Objects.equals(assessmentType, "TL")){
-                        traffic_indicator_green.setVisibility(View.GONE);
-                        traffic_indicator_orange.setVisibility(View.GONE);
-                        traffic_indicator_red.setVisibility(View.VISIBLE);
-                        resultValue = Constants.RED;
-                    }
-
-
+                    overAllResultComplianceID = "Satisfactory";
+                    resultColor = Constants.ORANGE;
                 }
             }
 

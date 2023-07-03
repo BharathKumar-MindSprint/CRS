@@ -124,6 +124,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
     ArrayList<Long> dynamicArrayFile = new ArrayList<>();
 
     String currency_id = "0";
+    int totalActionPlanCount = 0;
 
     private static final String[] ACCEPTED_MIME_TYPES_IMG = {"image/jpeg", "image/png"};
 
@@ -189,6 +190,12 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
                     HashMap<String, String> hashMap = new HashMap<>();
                     hashMap.put("keyCurrencies", currency_id);
+                    hashMap.put("totalActionPlanCount" , String.valueOf(totalActionPlanCount));
+
+                    Constants.TotalActionPlanCount = String.valueOf(totalActionPlanCount);
+
+//                    HashMap<String, Integer> actionPlan = new HashMap<>();
+//                    actionPlan.put("totalActionPlanCount" , totalActionPlanCount);
 
                 }else {
                     Toast.makeText(getContext(),"Capture Proof is missing", Toast.LENGTH_SHORT).show();
@@ -614,7 +621,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
         LinearLayout.LayoutParams layoutParamsSpin = new LinearLayout.LayoutParams(
                 getResources().getDimensionPixelSize(R.dimen.forWeight),
-                LinearLayout.LayoutParams.WRAP_CONTENT,5);
+                getResources().getDimensionPixelSize(R.dimen.capture_box),5);
 
         final Spinner spinner = new Spinner(getActivity());
 
@@ -626,8 +633,6 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
         spinner.setAdapter(spinnerAdapter);
 
         spinner.setTag("spinner" + complaint_id);
-
-
         layoutParamsSpin.setMargins(0, -15, 10, 15);
 
 
@@ -645,7 +650,6 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
             tVActionPlanSelectedTxt.setBackground(getActivity().getDrawable(R.drawable.answer_text_survey));
         }
         tVActionPlanSelectedTxt.setVisibility(View.GONE);
-
 
         LinearLayout linearLayoutActionPlanMain = new LinearLayout(getActivity());
         linearLayoutActionPlanMain.setLayoutParams(new LinearLayout.LayoutParams(
@@ -867,9 +871,15 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
         });
 
 
-        linearLayoutSpin.addView(spinner);
-        linearLayoutSpin.addView(editTextCurrency);
-        linearLayoutSpin.addView(editTextCurrencyInput);
+
+        boolean isActionPlanRequired = db.complianceIndicatorDao().getIsActionPlanRequired(complaint_id);
+        if (isActionPlanRequired){
+            linearLayoutSpin.addView(spinner);
+            linearLayoutSpin.addView(editTextCurrency);
+            linearLayoutSpin.addView(editTextCurrencyInput);
+            totalActionPlanCount = totalActionPlanCount + 1;
+        }
+
 
         //Selected Action Plan Txt
 
@@ -1838,6 +1848,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
         List<DmCurrency> dmSectionsItemList = db.dmCurrencyDao().getDMCurrencyByModuleId(Constants.MODULE_ID);
         showCurrencyDropDown(dmSectionsItemList);
         isCreated = false;
+        totalActionPlanCount = 0;
     }
 
     @Override
@@ -1845,11 +1856,13 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
         int id = v.getId();
 
         if(id == R.id.ll_servey_next_actionplan){
-            ViewPager2 viewPager = getActivity().findViewById(R.id.viewPager);
-            viewPager.setCurrentItem(2);
+
 
             HashMap<String, String> hashMap = new HashMap<>();
             hashMap.put("keyCurrencies", currency_id);
+
+            ViewPager2 viewPager = getActivity().findViewById(R.id.viewPager);
+            viewPager.setCurrentItem(2);
         }
     }
 }
