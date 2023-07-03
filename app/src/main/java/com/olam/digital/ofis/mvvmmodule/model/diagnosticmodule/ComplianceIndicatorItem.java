@@ -43,6 +43,28 @@ public class ComplianceIndicatorItem{
 	@SerializedName("score")
 	private int score;
 
+	@SerializedName("isActionPlanRequired")
+	private boolean isActionPlanRequired;
+
+	@SerializedName("allowCustomActionPlan")
+	private boolean allowCustomActionPlan;
+
+	public boolean isActionPlanRequired() {
+		return isActionPlanRequired;
+	}
+
+	public void setActionPlanRequired(boolean actionPlanRequired) {
+		isActionPlanRequired = actionPlanRequired;
+	}
+
+	public boolean isAllowCustomActionPlan() {
+		return allowCustomActionPlan;
+	}
+
+	public void setAllowCustomActionPlan(boolean allowCustomActionPlan) {
+		this.allowCustomActionPlan = allowCustomActionPlan;
+	}
+
 	public int getScore() {
 		return score;
 	}
@@ -147,7 +169,7 @@ public class ComplianceIndicatorItem{
 		this.labelVi = labelVi;
 	}
 
-	public ComplianceIndicatorItem(int moduleDraftId, String labelTh, String labelPt, String compliance, String labelIdn, String labelEs, String labelTr, int id, String label, String labelFr, String labelLo, String labelVi) {
+	public ComplianceIndicatorItem(int moduleDraftId, String labelTh, String labelPt, String compliance, String labelIdn, String labelEs, String labelTr, int id, String label, String labelFr, String labelLo, String labelVi , boolean isActionPlanRequired , boolean allowCustomActionPlan) {
 		this.moduleDraftId = moduleDraftId;
 		this.labelTh = labelTh;
 		this.labelPt = labelPt;
@@ -160,6 +182,8 @@ public class ComplianceIndicatorItem{
 		this.labelFr = labelFr;
 		this.labelLo = labelLo;
 		this.labelVi = labelVi;
+		this.isActionPlanRequired =isActionPlanRequired;
+		this.allowCustomActionPlan = allowCustomActionPlan;
 	}
 
 

@@ -34,5 +34,7 @@ public class Constants {
 
     public static String NOTRESOLVED = "NOT Resolved";
 
+    public static String TotalActionPlanCount = "0";
+
 
 }
