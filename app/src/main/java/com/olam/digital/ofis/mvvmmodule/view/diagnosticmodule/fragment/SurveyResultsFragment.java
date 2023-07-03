@@ -324,15 +324,13 @@ public class SurveyResultsFragment extends Fragment {
         editTextText3.setText(""+nonComplaint);
         editTextText4.setText(""+satisfactory);
 
-        int totalQuestion = complaint + nonComplaint + satisfactory;
-
-        editTextText5.setText(String.valueOf(totalQuestion));
-
 
         String currencyIdDb = "0";
 
         HashMap<String, String> hashMap = new HashMap<>();
         String currency_id = hashMap.get("keyCurrencies");
+        String totalActionPlanCount = hashMap.get("totalActionPlanCount");
+
         List<DmActionPlanCurrenciesTable> dmActionPlanCurrenciesTables = db.dmActionPlanCurrenciesTableDao().getDataByModuleId(Constants.MODULE_ID, Constants.FARMER_ID);
         if (dmActionPlanCurrenciesTables.size() != 0) {
             currencyIdDb = String.valueOf(dmActionPlanCurrenciesTables.get(0).currencyId);
@@ -350,6 +348,10 @@ public class SurveyResultsFragment extends Fragment {
         }
 
 
+        int totalQuestion = complaint + nonComplaint + satisfactory;
+
+
+        editTextText5.setText(Constants.TotalActionPlanCount);
         editTextText6.setText(""+ amount + "   " + currency);
 //        int complaint = Integer.parseInt(complaint);
 //        int nonComplaint = Integer.parseInt(Constants.noncomplaintSize);

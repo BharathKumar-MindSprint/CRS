@@ -36,6 +36,9 @@ public interface ComplianceIndicatorDao {
     @Query("SELECT score FROM ComplianceIndicator WHERE id =:id AND compliance=:complianceText")
     int getComplianceScore(String id , String complianceText);
 
+    @Query("SELECT isActionPlanRequired FROM ComplianceIndicator WHERE id=:complianceID")
+    boolean getIsActionPlanRequired(String complianceID);
+
 
 
 }
