@@ -72,6 +72,7 @@ public class SurveyResultsFragment extends Fragment {
     String resultValue;
     String resultColor;
     int amount = 0;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -275,6 +276,7 @@ public class SurveyResultsFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
+        amount = 0;
         Boolean val = false;
         double totalWeightages = 0;
         double finalScore = 0;

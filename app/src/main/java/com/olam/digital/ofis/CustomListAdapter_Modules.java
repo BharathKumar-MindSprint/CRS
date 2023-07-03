@@ -25,9 +25,13 @@ import android.widget.Toast;
 import com.google.firebase.crash.FirebaseCrash;
 import com.olam.digital.ofis.childlabour.ChildLabourUtils;
 
-import com.olam.digital.ofis.multifarm.MultiFarmLongPressListener;
-import com.olam.digital.ofis.multifarm.MultiFarmUtils;
-import com.olam.digital.ofis.multifarm.SubmittedInfo;
+import com.olam.digital.ofis.matoma.multifarm.MultiFarmUtils;
+import com.olam.digital.ofis.matoma.multifarm.SubmittedInfo;
+import com.olam.digital.ofis.mvvmmodule.Constants;
+import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
+import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmMainModule;
+import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmSurveyAnswerTable;
+import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.FollowUpItemMainTable;
 import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.FollowUp.FollowUpRecyclerAdapter;
 
 import org.json.JSONArray;
@@ -249,13 +253,19 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                     // for non-recurring
                     disable_entry = true;
                 }*/
+                OFISRoomDB  db = OFISRoomDB.getDbInstance(context.getApplicationContext());
 
-
-
-                imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_childsurvey));
-                enabledItem.setText("true");
-
-                textView.setText(res.getString(R.string.dm_diognostic_module_subtitle));
+                List<FollowUpItemMainTable> followupList = db.followUpItemMainTableDao().getFollowupByFarmerId(Long.parseLong(Constants.FARMER_ID), Integer.parseInt(Constants.MODULE_ID));
+                if(followupList.size() != 0) {
+                       // Log.d("AnswerTableSize", String.valueOf(dmSurveyAnswerTableList.size()));
+                        imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_childsurvey));
+                        enabledItem.setText("true");
+                        textView.setText(res.getString(R.string.dm_diognostic_module_subtitle));
+                    } else {
+                        imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_childsurvey));
+                        enabledItem.setText("true");
+                        textView.setText("New Task");
+                    }
 
             } else if (cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals(ChildLabourUtils.REG_CHILD)) {
 
