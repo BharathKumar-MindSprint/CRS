@@ -322,7 +322,7 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
         followUpItemMainTable.complianceId = Integer.parseInt(complianceId);
         followUpItemMainTable.moduleId = Integer.parseInt(Constants.MODULE_ID);
 //        followUpItemMainTable.dmSubModId = Constants.;
-        followUpItemMainTable.attempt = 1;
+        followUpItemMainTable.attempt = Constants.ATTEMPT;
 //        followUpItemMainTable.actionPlanText = actionPlanText;
         followUpItemMainTable.createdAt = submittedDate;
 //        followUpItemMainTable.createdBy = createdBy;
@@ -333,6 +333,9 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
         followUpItemMainTable.farmerId = Long.parseLong(Constants.FARMER_ID);
         followUpItemMainTable.isSync = false;
 
+        db.followUpItemMainTableDao().deleteByQnAttempt(questionId,
+                Constants.FARMER_ID,
+                followUpItemMainTable.attempt);
         db.followUpItemMainTableDao().insert(followUpItemMainTable);
     }
 

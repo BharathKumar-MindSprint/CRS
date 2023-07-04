@@ -33,15 +33,15 @@ public class FollowUpRecyclerAdapter extends RecyclerView.Adapter<FollowUpRecycl
 
     private boolean isDiagnosticModuleEnabled;
     Intent in;
-
+    boolean isCompleted;
     private OnItemSurveyClickListener onItemSurveyClickListener;
 
-    public FollowUpRecyclerAdapter(ArrayList<String> items , Context context,int newFollowUpCount,Intent in) {
+    public FollowUpRecyclerAdapter(ArrayList<String> items , Context context,int newFollowUpCount,Intent in, boolean isCompleted) {
         this.items = items;
         this.context = context;
         this.newFollowCount = newFollowUpCount;
         this.in = in;
-
+        this.isCompleted = isCompleted;
     }
 
     public void setOnItemSurveyClickListener(OnItemSurveyClickListener clickListener) {
@@ -107,7 +107,7 @@ public class FollowUpRecyclerAdapter extends RecyclerView.Adapter<FollowUpRecycl
 //            if (selectedPosition== 0 && items.size() == 1) {
 //                Intent intent = new Intent(context, DiagnosticModuleActivity.class);
                 in.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                if(items.size() == 1){
+                if(items.size() == 1 && !isCompleted){
                     Constants.EDITABLE = true;
                     context.startActivity(in);
                 }else{
@@ -118,7 +118,7 @@ public class FollowUpRecyclerAdapter extends RecyclerView.Adapter<FollowUpRecycl
             }else {
                 Intent intent = new Intent(context, DiagnosticModuleFollowUp.class);
                 intent.putExtra("FollowUpPosition", selectedPosition);
-                if(selectedPosition == items.size() - 1){
+                if(selectedPosition == items.size() - 1 && !isCompleted){
                     Constants.EDITABLE = true;
                     Constants.ATTEMPT = selectedPosition;
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

@@ -28,9 +28,9 @@ import com.olam.digital.ofis.childlabour.ChildLabourUtils;
 import com.olam.digital.ofis.multifarm.MultiFarmLongPressListener;
 import com.olam.digital.ofis.multifarm.MultiFarmUtils;
 import com.olam.digital.ofis.multifarm.SubmittedInfo;
-import com.olam.digital.ofis.mvvmmodule.Constants;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmRecurrence;
+import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmSurveyAnswerTable;
 import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.FollowUp.FollowUpRecyclerAdapter;
 
 import org.json.JSONArray;
@@ -203,14 +203,20 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                 String recurrence_type = dmRecurrence.recurrenceType;
                 int recurrence_frequency = dmRecurrence.recurrenceFrequency;
                 boolean disable_entry = false;
+
+                // is submitted
+                // get value from main survey and followup status
+
+
+                // to enable survey
                 imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_householdgps));
                 enabledItem.setText("true");
                 linearLayout.setBackgroundResource(R.drawable.list_item);
                 moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
                 textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
                 textView.setText(res.getString(R.string.ModuleStatus));
-                List<Integer> followupAttempts = db.followUpItemMainTableDao().getFollowupByAttempts(farmerId, moduleId);
-                if(followupAttempts.size() > 0){
+                List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByModuleId(String.valueOf(moduleId), String.valueOf(farmerId), true);
+                if(dmSurveyAnswerTableList.size() > 0){
                     textView.setText(res.getString(R.string.dm_diognostic_module_subtitle));
                 }else{
                     textView.setText(res.getString(R.string.ModuleStatus));

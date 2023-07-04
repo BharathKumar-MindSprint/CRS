@@ -162,7 +162,7 @@ public class FollowUpActionPlan extends Fragment {
             public void onClick(View view) {
 
                 DataLayer dl = new DataLayer(getResources(), getContext());
-                dl.updateNqForDMSurvey(Constants.FARMER_ID, Constants.MODULE_ID, "FollowUpSurvey");
+                dl.updateNqForDMSurvey(Constants.FARMER_ID, Constants.MODULE_ID, "FollowUpSurvey", Constants.MODULE_NAME);
                 Intent intent = new Intent(getContext(), ViewFarmerActivity.class);
                 getContext().startActivity(intent);
             }
@@ -449,9 +449,6 @@ public class FollowUpActionPlan extends Fragment {
             }
         }
 
-
-
-
         textView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -705,17 +702,6 @@ public class FollowUpActionPlan extends Fragment {
         linearLayoutActionPlanMain.addView(actionPlan);
         linearLayoutActionPlanMain.addView(linearLayoutActionPlan);
 
-
-        /*List<FollowUpItemMainTable> dmSurveyAnswerTableList = new ArrayList<>();
-        dmSurveyAnswerTableList.clear();
-
-        dmSurveyAnswerTableList = db.followUpItemMainTableDao().getFollowupByQuestionId1(id, Constants.FARMER_ID, Constants.ATTEMPT);
-
-        if (dmSurveyAnswerTableList.size() != 0) {
-            String answerIdDb = dmSurveyAnswerTableList.get(0).actionPlanText;
-            editText.setText(answerIdDb);
-        }*/
-
         linearLayoutActionPlanMain.setVisibility(View.GONE);
 
         imageView2.setOnClickListener(new View.OnClickListener() {
@@ -792,7 +778,6 @@ public class FollowUpActionPlan extends Fragment {
             linearLayoutItems.addView(editText);
             if (dmSurveyAnswerTableList1.size() != 0) {
                 String resolved = dmSurveyAnswerTableList1.get(0).status;
-                int captureProof = dmSurveyAnswerTableList1.get(0).dmCapturedProof;
                 if(resolved!=null) {
                     if (resolved.equalsIgnoreCase(Constants.RESOLVED)) {
                         notResolveText.setText(Constants.RESOLVED);
@@ -800,10 +785,10 @@ public class FollowUpActionPlan extends Fragment {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                             notResolveText.setBackground(getActivity().getDrawable(R.drawable.follow_up_resolved));
                         }
-                        if (captureProof > 0) {
-                            linearLayoutItems.addView(textView);
-                            linearLayoutItems.addView(linearLayoutImage);
-                        }
+//                        if (db.dmSurveyAnswerTableDao().getDataByQuestionId(id, Constants.FARMER_ID).get(0).isCaptureProof) {
+//                            linearLayoutItems.addView(textView);
+//                            linearLayoutItems.addView(linearLayoutImage);
+//                        }
 
                     } else if (resolved.equalsIgnoreCase(Constants.NOTRESOLVED)) {
                         notResolveText.setText(Constants.NOTRESOLVED);
@@ -811,7 +796,7 @@ public class FollowUpActionPlan extends Fragment {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                             notResolveText.setBackground(getActivity().getDrawable(R.drawable.follow_up_not_resolved));
                         }
-                        if (captureProof > 0) {
+                        if (db.dmSurveyAnswerTableDao().getDataByQuestionId(id, Constants.FARMER_ID).get(0).isCaptureProof) {
                             linearLayoutItems.addView(textView);
                             linearLayoutItems.addView(linearLayoutImage);
                             linearLayoutItems.addView(linearLayoutSpin);

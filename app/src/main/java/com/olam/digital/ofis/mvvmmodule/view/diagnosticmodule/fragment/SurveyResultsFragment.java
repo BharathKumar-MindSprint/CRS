@@ -179,7 +179,7 @@ public class SurveyResultsFragment extends Fragment {
 
 
                 DataLayer dl = new DataLayer(getResources(), getContext());
-                dl.updateNqForDMSurvey(Constants.FARMER_ID, Constants.MODULE_ID, "DMSurvey");
+                dl.updateNqForDMSurvey(Constants.FARMER_ID, Constants.MODULE_ID, "DMSurvey",Constants.MODULE_NAME);
                 Intent intent = new Intent(getContext(),ViewFarmerActivity.class);
                 getContext().startActivity(intent);
 

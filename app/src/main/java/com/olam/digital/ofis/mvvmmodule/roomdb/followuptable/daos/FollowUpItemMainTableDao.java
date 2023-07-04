@@ -20,6 +20,9 @@ public interface FollowUpItemMainTableDao {
     @Query("DELETE FROM FollowUpItemMainTable")
     void deleteAll();
 
+    @Query("DELETE FROM FollowUpItemMainTable WHERE questionId =:questionId AND farmerId =:farmerId AND attempt = :attempt")
+    void deleteByQnAttempt(String questionId, String farmerId, int attempt);
+
     @Query("SELECT * FROM FollowUpItemMainTable WHERE farmerId =:farmerId AND moduleId =:moduleId")
     List<FollowUpItemMainTable> getFollowupByFarmerId(long farmerId, int moduleId);
 
@@ -43,4 +46,7 @@ public interface FollowUpItemMainTableDao {
 
     @Query("SELECT * FROM FollowUpItemMainTable WHERE farmerId =:farmerId AND moduleId = :moduleId and isSync = :status")
     List<FollowUpItemMainTable> getFollowupUnSyncedItems(String farmerId, String moduleId, boolean status);
+
+    @Query("SELECT * FROM FollowUpItemMainTable WHERE farmerId =:farmerId AND moduleId = :moduleId AND isSync = :status AND status = :type AND attempt = :attempt")
+    List<FollowUpItemMainTable> getFollowupUnResolvedItems(String farmerId, String moduleId, boolean status, String type, int attempt);
 }

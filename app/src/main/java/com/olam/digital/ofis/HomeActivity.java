@@ -1628,6 +1628,12 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 //long farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
                 //SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(farmerId);
                 startActivity(intent);
+            } else if (itemType.equalsIgnoreCase("FollowUpSurvey") ||
+                    itemType.equalsIgnoreCase("DMSurvey")) {
+                Intent intent = new Intent(this, ViewFarmerActivity.class);
+                CompleteModuleActivity.editMode = true;
+                ViewFarmerActivity.farmerId = networkQueue.getInt(networkQueue.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
+                startActivity(intent);
             } else if (itemType.equalsIgnoreCase("childmodule")) {
                 Intent intent = new Intent(this, ViewChildLabourSurveyActivity.class);
                 ChildLabourCompleteModuleActivity.editMode = true;

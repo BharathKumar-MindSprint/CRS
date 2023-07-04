@@ -74,6 +74,10 @@ public interface DmSurveyAnswerTableDao {
     @Query("DELETE FROM DmSurveyAnswerTable")
     void deleteAll();
 
+    @Query("SELECT actionPlanText FROM DmSurveyAnswerTable WHERE questionID = :questionId AND farmerId =:farmerId")
+    String getActionPlanText(String questionId, String farmerId);
+
+
     @Update
     void updateEntity(DmSurveyAnswerTable entity);
 
