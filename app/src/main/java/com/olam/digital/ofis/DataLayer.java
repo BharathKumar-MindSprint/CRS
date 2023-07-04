@@ -9327,16 +9327,48 @@ public class DataLayer {
     }
 
     public void updateNqForDMSurvey(String farmerId, String moduleId, String type){
-        ContentValues networkQueueValues = new ContentValues();
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, type);
-        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, getFarmerNamefromDb(Long.valueOf(farmerId)));
-        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, res.getString(R.string.diagnostic_survey));
-        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID, farmerId);
-        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT, timestamp.toString());
-        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPDATED_AT, timestamp.toString());
-        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_MODULE_ID, moduleId);
-        insertNetworkQueueEntry(networkQueueValues);
+        boolean updateWaiting = networkEntryTypeExistsByFarmerModuleId(type, Long.parseLong(farmerId), moduleId);
+        if (updateWaiting) {
+            ContentValues nqiValues = new ContentValues();
+            nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT, timestamp.toString());
+            nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPDATED_AT, timestamp.toString());
+            String[] whereArgsFarm = new String[]{farmerId,type};
+            db.update(OFISDBContract.NetworkQueueEntry.TABLE_NAME, nqiValues, OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID + " = ? AND " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE + " = ?", whereArgsFarm);
+        }else {
+            ContentValues networkQueueValues = new ContentValues();
+            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, type);
+            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, getFarmerNamefromDb(Long.valueOf(farmerId)));
+            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, res.getString(R.string.diagnostic_survey));
+            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID, farmerId);
+            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT, timestamp.toString());
+            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPDATED_AT, timestamp.toString());
+            networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_MODULE_ID, moduleId);
+            insertNetworkQueueEntry(networkQueueValues);
+        }
+    }
+
+    boolean networkEntryTypeExistsByFarmerModuleId(String submission_type, long farmerId, String moduleId) {
+        String[] columns = new String[]{"id"};
+        String whereClause = OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE + " = ? AND "
+                + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID + " = ? AND "
+                + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_MODULE_ID + " = ?";
+        String[] whereArgs = new String[]{
+                submission_type,
+                String.valueOf(farmerId),
+                moduleId
+        };
+
+        Cursor nqi = null;
+        int nqicount = 0;
+        try {
+            nqi = db.query(OFISDBContract.NetworkQueueEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+            nqicount = nqi.getCount();
+        } finally {
+            if (nqi != null)
+                nqi.close();
+        }
+        return (nqicount > 0);
     }
 }
 

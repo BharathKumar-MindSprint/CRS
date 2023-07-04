@@ -109,22 +109,24 @@ public class FollowUpRecyclerAdapter extends RecyclerView.Adapter<FollowUpRecycl
                 in.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 if(items.size() == 1){
                     Constants.EDITABLE = true;
+                    context.startActivity(in);
                 }else{
                     Constants.EDITABLE = false;
                 }
-                context.startActivity(in);
+
 //            }else if (selectedPosition != 0 && selectedPosition == items.size()-1){
             }else {
                 Intent intent = new Intent(context, DiagnosticModuleFollowUp.class);
                 intent.putExtra("FollowUpPosition", selectedPosition);
-                if(selectedPosition == items.size()){
+                if(selectedPosition == items.size() - 1){
                     Constants.EDITABLE = true;
+                    Constants.ATTEMPT = selectedPosition;
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    context.startActivity(intent);
                 }else{
                     Constants.EDITABLE = false;
                 }
-                Constants.ATTEMPT = selectedPosition;
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                context.startActivity(intent);
+
             }
 
 

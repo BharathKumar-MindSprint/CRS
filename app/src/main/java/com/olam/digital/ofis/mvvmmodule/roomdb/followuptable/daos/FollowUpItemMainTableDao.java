@@ -40,4 +40,7 @@ public interface FollowUpItemMainTableDao {
 
     @Query("SELECT DISTINCT (attempt) FROM FollowUpItemMainTable where farmerId =:farmerId and moduleId =:moduleId")
     List<Integer> getFollowupByAttempts(long farmerId, int moduleId);
+
+    @Query("SELECT * FROM FollowUpItemMainTable WHERE farmerId =:farmerId AND moduleId = :moduleId and isSync = :status")
+    List<FollowUpItemMainTable> getFollowupUnSyncedItems(String farmerId, String moduleId, boolean status);
 }
