@@ -31,7 +31,7 @@ public interface DmSurveyAnswerTableDao {
 
 
 
-    @Query("SELECT * FROM DmSurveyAnswerTable WHERE complinceTypeId =:id AND farmerId =:farmerId AND actionplanId !=0")
+    @Query("SELECT * FROM DmSurveyAnswerTable WHERE complinceTypeId =:id AND farmerId =:farmerId")
     List<DmSurveyAnswerTable> getDataByComplianceIdFilterByActionPlan(String id, String farmerId);
 
     @Query("SELECT * FROM DmSurveyAnswerTable WHERE complinceTypeId =:id AND farmerId =:farmerId AND actionplanId")

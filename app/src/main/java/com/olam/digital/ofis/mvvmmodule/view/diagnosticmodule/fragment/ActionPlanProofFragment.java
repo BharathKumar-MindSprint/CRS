@@ -228,8 +228,6 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                     hashMap.put("keyCurrencies", currency_id);
                     hashMap.put("totalActionPlanCount" , String.valueOf(totalActionPlanCount));
 
-
-
                     Constants.TotalActionPlanCount = String.valueOf(totalActionPlanCount);
                 }
 
@@ -828,6 +826,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                     db.dmSurveyAnswerTableDao().updateActionPlanText("0", id, Constants.FARMER_ID);
                 } else if (list.get(position).equalsIgnoreCase("Custom ActionPlan")) {
                     db.dmSurveyAnswerTableDao().updateActionPlanId(Id, id, Constants.FARMER_ID);
+                    db.dmSurveyAnswerTableDao().updateActionPlanText(actionPlan.getText().toString(), id, Constants.FARMER_ID);
                     tVActionPlanSelectedTxt.setVisibility(View.GONE);
                     linearLayoutActionPlanMain.setVisibility(View.VISIBLE);
                 } else {

@@ -36,5 +36,7 @@ public class Constants {
 
     public static String TotalActionPlanCount = "0";
 
+    public static int capture_count = 0;
+
 
 }

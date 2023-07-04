@@ -49,4 +49,7 @@ public interface FollowUpItemMainTableDao {
 
     @Query("SELECT * FROM FollowUpItemMainTable WHERE farmerId =:farmerId AND moduleId = :moduleId AND isSync = :status AND status = :type AND attempt = :attempt")
     List<FollowUpItemMainTable> getFollowupUnResolvedItems(String farmerId, String moduleId, boolean status, String type, int attempt);
+
+    @Query("SELECT actionPlanText FROM FollowUpItemMainTable WHERE questionID = :questionId AND farmerId =:farmerId")
+    String getActionPlanTextFollowUp(String questionId, String farmerId);
 }
