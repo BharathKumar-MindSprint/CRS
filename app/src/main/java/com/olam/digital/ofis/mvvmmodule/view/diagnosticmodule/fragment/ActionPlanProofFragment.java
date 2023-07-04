@@ -187,15 +187,6 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 }
 
 
-                if (justVal.size() == Constants.questionIds.size()) {
-                    ViewPager2 viewPager = getActivity().findViewById(R.id.viewPager);
-                    viewPager.setCurrentItem(2);
-
-                    HashMap<String, String> hashMap = new HashMap<>();
-                    hashMap.put("keyCurrencies", currency_id);
-                    hashMap.put("totalActionPlanCount", String.valueOf(totalActionPlanCount));
-
-                    Constants.TotalActionPlanCount = String.valueOf(totalActionPlanCount);
 
                 if (justVal.size()==Constants.questionIds.size()){
 
@@ -207,9 +198,6 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
                 } else {
                     Toast.makeText(getContext(), "Capture Proof is missing", Toast.LENGTH_SHORT).show();
-
-                }else {
-                    Toast.makeText(getContext(),"Capture Proof is missing!", Toast.LENGTH_SHORT).show();
 
                 }
 
