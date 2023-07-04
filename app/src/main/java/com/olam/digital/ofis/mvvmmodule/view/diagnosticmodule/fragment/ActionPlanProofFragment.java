@@ -187,15 +187,6 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 }
 
 
-                if (justVal.size() == Constants.questionIds.size()) {
-                    ViewPager2 viewPager = getActivity().findViewById(R.id.viewPager);
-                    viewPager.setCurrentItem(2);
-
-                    HashMap<String, String> hashMap = new HashMap<>();
-                    hashMap.put("keyCurrencies", currency_id);
-                    hashMap.put("totalActionPlanCount", String.valueOf(totalActionPlanCount));
-
-                    Constants.TotalActionPlanCount = String.valueOf(totalActionPlanCount);
 
                 if (justVal.size()==Constants.questionIds.size()){
 
@@ -207,9 +198,6 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
                 } else {
                     Toast.makeText(getContext(), "Capture Proof is missing", Toast.LENGTH_SHORT).show();
-
-                }else {
-                    Toast.makeText(getContext(),"Capture Proof is missing!", Toast.LENGTH_SHORT).show();
 
                 }
 
@@ -239,8 +227,6 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                     HashMap<String, String> hashMap = new HashMap<>();
                     hashMap.put("keyCurrencies", currency_id);
                     hashMap.put("totalActionPlanCount" , String.valueOf(totalActionPlanCount));
-
-
 
                     Constants.TotalActionPlanCount = String.valueOf(totalActionPlanCount);
                 }
@@ -840,6 +826,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                     db.dmSurveyAnswerTableDao().updateActionPlanText("0", id, Constants.FARMER_ID);
                 } else if (list.get(position).equalsIgnoreCase("Custom ActionPlan")) {
                     db.dmSurveyAnswerTableDao().updateActionPlanId(Id, id, Constants.FARMER_ID);
+                    db.dmSurveyAnswerTableDao().updateActionPlanText(actionPlan.getText().toString(), id, Constants.FARMER_ID);
                     tVActionPlanSelectedTxt.setVisibility(View.GONE);
                     linearLayoutActionPlanMain.setVisibility(View.VISIBLE);
                 } else {
