@@ -291,24 +291,47 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                 } else {
                     String answerId = ids.get(position);
 
-                    db.dmSurveyAnswerTableDao().deleteByQuestionId(questionId,Constants.FARMER_ID);
-
-                    DmSurveyAnswerTable dmSurveyAnswerTable1 = new DmSurveyAnswerTable();
-                    dmSurveyAnswerTable1.questionID = questionId;
-                    dmSurveyAnswerTable1.answerID = ids.get(position);
-                    dmSurveyAnswerTable1.answer = list.get(position);
-                    dmSurveyAnswerTable1.moduleId = Constants.MODULE_ID;
-                    dmSurveyAnswerTable1.question = question;
-                    dmSurveyAnswerTable1.complinceTypeId = complianceIds.get(position);
-                    dmSurveyAnswerTable1.actionplanId = "";
-                    dmSurveyAnswerTable1.actionPlanText = "";
-                    dmSurveyAnswerTable1.amount = 0;
-                    dmSurveyAnswerTable1.farmerId = Constants.FARMER_ID;
-                    dmSurveyAnswerTable1.allowCustomActionPlan = allowCustomActionPlan.get(position);
-                    dmSurveyAnswerTable1.isCaptureProof = isCaptureProof.get(position);
-                    dmSurveyAnswerTable1.isSynced = false;
-                    db.dmSurveyAnswerTableDao().insert(dmSurveyAnswerTable1);
-
+                    if(db.dmSurveyAnswerTableDao().getDataByQuestionId(questionId,Constants.FARMER_ID).size()==0)
+                    {
+                        DmSurveyAnswerTable dmSurveyAnswerTable1 = new DmSurveyAnswerTable();
+                        dmSurveyAnswerTable1.questionID = questionId;
+                        dmSurveyAnswerTable1.answerID = ids.get(position);
+                        dmSurveyAnswerTable1.answer = list.get(position);
+                        dmSurveyAnswerTable1.moduleId = Constants.MODULE_ID;
+                        dmSurveyAnswerTable1.question = question;
+                        dmSurveyAnswerTable1.complinceTypeId = complianceIds.get(position);
+                        dmSurveyAnswerTable1.actionplanId = "";
+                        dmSurveyAnswerTable1.actionPlanText = "";
+                        dmSurveyAnswerTable1.amount = 0;
+                        dmSurveyAnswerTable1.farmerId = Constants.FARMER_ID;
+                        dmSurveyAnswerTable1.allowCustomActionPlan = allowCustomActionPlan.get(position);
+                        dmSurveyAnswerTable1.isCaptureProof = isCaptureProof.get(position);
+                        dmSurveyAnswerTable1.isSynced = false;
+                        db.dmSurveyAnswerTableDao().insert(dmSurveyAnswerTable1);
+                    }
+                    else
+                    {
+                        DmSurveyAnswerTable dmSurveyAnswerTable = db.dmSurveyAnswerTableDao().getDataByQuestionId(questionId,Constants.FARMER_ID).get(0);
+                        String actionPlanId = dmSurveyAnswerTable.actionplanId;
+                        String actionPlanText = dmSurveyAnswerTable.actionPlanText;
+                        int amount = dmSurveyAnswerTable.amount;
+                        db.dmSurveyAnswerTableDao().deleteByQuestionId(questionId,Constants.FARMER_ID);
+                        DmSurveyAnswerTable dmSurveyAnswerTable1 = new DmSurveyAnswerTable();
+                        dmSurveyAnswerTable1.questionID = questionId;
+                        dmSurveyAnswerTable1.answerID = ids.get(position);
+                        dmSurveyAnswerTable1.answer = list.get(position);
+                        dmSurveyAnswerTable1.moduleId = Constants.MODULE_ID;
+                        dmSurveyAnswerTable1.question = question;
+                        dmSurveyAnswerTable1.complinceTypeId = complianceIds.get(position);
+                        dmSurveyAnswerTable1.actionplanId = actionPlanId;
+                        dmSurveyAnswerTable1.actionPlanText = actionPlanText;
+                        dmSurveyAnswerTable1.amount = amount;
+                        dmSurveyAnswerTable1.farmerId = Constants.FARMER_ID;
+                        dmSurveyAnswerTable1.allowCustomActionPlan = allowCustomActionPlan.get(position);
+                        dmSurveyAnswerTable1.isCaptureProof = isCaptureProof.get(position);
+                        dmSurveyAnswerTable1.isSynced = false;
+                        db.dmSurveyAnswerTableDao().insert(dmSurveyAnswerTable1);
+                    }
 
                 }
 
@@ -681,25 +704,51 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                     String answerId = ids.get(position);
 
 
-                    db.dmSurveyAnswerTableDao().deleteByQuestionId(questionId,Constants.FARMER_ID);
+                    if(db.dmSurveyAnswerTableDao().getDataByQuestionId(questionId,Constants.FARMER_ID).size()==0)
+                    {
+                        DmSurveyAnswerTable dmSurveyAnswerTable1 = new DmSurveyAnswerTable();
+                        dmSurveyAnswerTable1.questionID = questionId;
+                        dmSurveyAnswerTable1.answerID = ids.get(position);
+                        dmSurveyAnswerTable1.answer = list.get(position);
+                        dmSurveyAnswerTable1.moduleId = Constants.MODULE_ID;
+                        dmSurveyAnswerTable1.question = question;
+                        dmSurveyAnswerTable1.complinceTypeId = complianceIds.get(position);
+                        dmSurveyAnswerTable1.actionplanId = "";
+                        dmSurveyAnswerTable1.actionPlanText = "";
+                        dmSurveyAnswerTable1.amount = 0;
+                        dmSurveyAnswerTable1.farmerId = Constants.FARMER_ID;
+                        dmSurveyAnswerTable1.allowCustomActionPlan = allowCustomActionPlan.get(position);
+                        dmSurveyAnswerTable1.isCaptureProof = isCaptureProof.get(position);
+                        dmSurveyAnswerTable1.isSynced = false;
+                        db.dmSurveyAnswerTableDao().insert(dmSurveyAnswerTable1);
+                    }
+                    else
+                    {
+                        DmSurveyAnswerTable dmSurveyAnswerTable = db.dmSurveyAnswerTableDao().getDataByQuestionId(questionId,Constants.FARMER_ID).get(0);
+                        String actionPlanId = dmSurveyAnswerTable.actionplanId;
+                        String actionPlanText = dmSurveyAnswerTable.actionPlanText;
+                        int amount = dmSurveyAnswerTable.amount;
+                        db.dmSurveyAnswerTableDao().deleteByQuestionId(questionId,Constants.FARMER_ID);
+                        DmSurveyAnswerTable dmSurveyAnswerTable1 = new DmSurveyAnswerTable();
+                        dmSurveyAnswerTable1.questionID = questionId;
+                        dmSurveyAnswerTable1.answerID = ids.get(position);
+                        dmSurveyAnswerTable1.answer = list.get(position);
+                        dmSurveyAnswerTable1.moduleId = Constants.MODULE_ID;
+                        dmSurveyAnswerTable1.question = question;
+                        dmSurveyAnswerTable1.complinceTypeId = complianceIds.get(position);
+                        dmSurveyAnswerTable1.actionplanId = actionPlanId;
+                        dmSurveyAnswerTable1.actionPlanText = actionPlanText;
+                        dmSurveyAnswerTable1.amount = amount;
+                        dmSurveyAnswerTable1.farmerId = Constants.FARMER_ID;
+                        dmSurveyAnswerTable1.allowCustomActionPlan = allowCustomActionPlan.get(position);
+                        dmSurveyAnswerTable1.isCaptureProof = isCaptureProof.get(position);
+                        dmSurveyAnswerTable1.isSynced = false;
+                        db.dmSurveyAnswerTableDao().insert(dmSurveyAnswerTable1);
 
-                    DmSurveyAnswerTable dmSurveyAnswerTable1 = new DmSurveyAnswerTable();
-                    dmSurveyAnswerTable1.questionID = questionId;
-                    dmSurveyAnswerTable1.answerID = ids.get(position);
-                    dmSurveyAnswerTable1.answer = list.get(position);
-                    dmSurveyAnswerTable1.moduleId = Constants.MODULE_ID;
-                    dmSurveyAnswerTable1.question = question;
-                    dmSurveyAnswerTable1.complinceTypeId = complianceIds.get(position);
-                    dmSurveyAnswerTable1.actionplanId = "";
-                    dmSurveyAnswerTable1.actionPlanText = "";
-                    dmSurveyAnswerTable1.amount = 0;
-                    dmSurveyAnswerTable1.farmerId = Constants.FARMER_ID;
-                    dmSurveyAnswerTable1.allowCustomActionPlan = allowCustomActionPlan.get(position);
-                    dmSurveyAnswerTable1.isCaptureProof = isCaptureProof.get(position);
-                    dmSurveyAnswerTable1.isSynced = false;
-                    db.dmSurveyAnswerTableDao().insert(dmSurveyAnswerTable1);
+                        //Toast.makeText(getActivity(), "Selected Item " + position, Toast.LENGTH_SHORT).show();
+                    }
+
                 }
-
 
             }
 
