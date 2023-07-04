@@ -46,4 +46,7 @@ public interface FollowUpItemMainTableDao {
 
     @Query("SELECT * FROM FollowUpItemMainTable WHERE farmerId =:farmerId AND moduleId = :moduleId and isSync = :status")
     List<FollowUpItemMainTable> getFollowupUnSyncedItems(String farmerId, String moduleId, boolean status);
+
+    @Query("SELECT * FROM FollowUpItemMainTable WHERE farmerId =:farmerId AND moduleId = :moduleId AND isSync = :status AND status = :type AND attempt = :attempt")
+    List<FollowUpItemMainTable> getFollowupUnResolvedItems(String farmerId, String moduleId, boolean status, String type, int attempt);
 }

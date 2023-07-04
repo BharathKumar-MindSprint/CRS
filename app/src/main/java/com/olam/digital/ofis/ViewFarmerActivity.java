@@ -2766,6 +2766,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
 
 
     private void showPopupDialog(int newFollowUpCount, Intent in, String farmerID, String moduleID) {
+        boolean isCompleted = false;
         Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.followup_diagnostic_popup);
 //        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
@@ -2788,12 +2789,18 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
             }
             List<FollowUpItemMainTable> followupUnSyncedItems = db.followUpItemMainTableDao().getFollowupUnSyncedItems(farmerID, moduleID, false);
             if(followupUnSyncedItems.size() == 0) {
-                int val = followupAttempts.size() + 1;
-                recyclerViewData.add("Follow up " + val);
+                List<FollowUpItemMainTable> followupUnResolvedItems = db.followUpItemMainTableDao().getFollowupUnResolvedItems(farmerID, moduleID, false, Constants.NOTRESOLVED, followupAttempts.size());
+                if(followupUnResolvedItems.size() > 0) {
+                    int val = followupAttempts.size() + 1;
+                    recyclerViewData.add("Follow up " + val);
+                    isCompleted = false;
+                }else{
+                    isCompleted = true;
+                }
             }
         }
         RecyclerView recyclerView = dialog.findViewById(R.id.recyclerView);
-        FollowUpRecyclerAdapter adapter = new FollowUpRecyclerAdapter(recyclerViewData,getApplicationContext(),newFollowUpCount , in);
+        FollowUpRecyclerAdapter adapter = new FollowUpRecyclerAdapter(recyclerViewData,getApplicationContext(),newFollowUpCount , in, isCompleted);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
         recyclerView.setAdapter(adapter);
