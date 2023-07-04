@@ -142,6 +142,9 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
     Spinner spinner_dmCurrencies;
     String budgetAmount;
 
+    boolean goNextCaptureProof =false;
+    boolean goNextActionPlan = true;
+
     public ActionPlanProofFragment() {
         // Required empty public constructor
     }
@@ -185,6 +188,27 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 }
 
                 if (justVal.size()==Constants.questionIds.size()){
+
+                    goNextCaptureProof = true;
+//                    HashMap<String, Integer> actionPlan = new HashMap<>();
+//                    actionPlan.put("totalActionPlanCount" , totalActionPlanCount);
+
+                }else {
+                    Toast.makeText(getContext(),"Capture Proof is missing!", Toast.LENGTH_SHORT).show();
+                }
+
+                for (int j=0; j<qId.size(); j++) {
+                    if (Objects.equals(db.dmSurveyAnswerTableDao().getActionPlanText(qId.get(j), Constants.FARMER_ID), "0")){
+                        Toast.makeText(getActivity(), "Action Plan is missing!", Toast.LENGTH_SHORT).show();
+                        goNextActionPlan = false;
+                        break;
+                    }else {
+                        goNextActionPlan = true;
+                    }
+                }
+
+
+                if (goNextCaptureProof && goNextActionPlan){
                     ViewPager2 viewPager = getActivity().findViewById(R.id.viewPager);
                     viewPager.setCurrentItem(2);
 
@@ -193,23 +217,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                     hashMap.put("totalActionPlanCount" , String.valueOf(totalActionPlanCount));
 
                     Constants.TotalActionPlanCount = String.valueOf(totalActionPlanCount);
-
-//                    HashMap<String, Integer> actionPlan = new HashMap<>();
-//                    actionPlan.put("totalActionPlanCount" , totalActionPlanCount);
-
-                }else {
-                    Toast.makeText(getContext(),"Capture Proof is missing", Toast.LENGTH_SHORT).show();
                 }
-
-
-
-//                ViewPager2 viewPager = getActivity().findViewById(R.id.viewPager);
-//                viewPager.setCurrentItem(2);
-//
-//                HashMap<String, String> hashMap = new HashMap<>();
-//                hashMap.put("keyCurrencies", currency_id);
-
-
 
             }
         });
@@ -1849,6 +1857,8 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
         showCurrencyDropDown(dmSectionsItemList);
         isCreated = false;
         totalActionPlanCount = 0;
+        goNextCaptureProof = false;
+        goNextActionPlan = true;
     }
 
     @Override
