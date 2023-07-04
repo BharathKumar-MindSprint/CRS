@@ -162,7 +162,7 @@ public class FollowUpActionPlan extends Fragment {
             public void onClick(View view) {
 
                 DataLayer dl = new DataLayer(getResources(), getContext());
-                dl.updateNqForDMSurvey(Constants.FARMER_ID, Constants.MODULE_ID, "FollowUpSurvey");
+                dl.updateNqForDMSurvey(Constants.FARMER_ID, Constants.MODULE_ID, "FollowUpSurvey", Constants.MODULE_NAME);
                 Intent intent = new Intent(getContext(), ViewFarmerActivity.class);
                 getContext().startActivity(intent);
             }
