@@ -32,7 +32,7 @@ public class DmSurveyAnswerTable {
     @ColumnInfo(name = "actionplanId", defaultValue = "0",index = true)
     public String actionplanId;
 
-    @ColumnInfo(name = "actionPlanText")
+    @ColumnInfo(name = "actionPlanText",defaultValue = "0",index = true)
     public String actionPlanText;
 
     @ColumnInfo(name = "allowCustomActionPlan")

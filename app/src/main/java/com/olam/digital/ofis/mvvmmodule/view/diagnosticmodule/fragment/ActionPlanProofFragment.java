@@ -87,7 +87,7 @@ import java.util.List;
 import java.util.Objects;
 
 
-public class ActionPlanProofFragment extends Fragment implements View.OnClickListener{
+public class ActionPlanProofFragment extends Fragment implements View.OnClickListener {
 
     private static final int REQ_CODE = 300;
     private final String MATOMOTAG = this.getClass().getSimpleName();
@@ -132,7 +132,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
             "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "application/vnd.ms-excel",
             "text/plain", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "text/csv"};
 
-    private static final String[] ACCEPTED_MIME_TYPES_ALL_FORMAT = {"image/jpeg", "image/png","application/pdf",
+    private static final String[] ACCEPTED_MIME_TYPES_ALL_FORMAT = {"image/jpeg", "image/png", "application/pdf",
             "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "application/vnd.ms-excel",
             "text/plain", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "text/csv"};
 
@@ -173,28 +173,44 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
                 ArrayList<String> justVal = new ArrayList<String>();
                 justVal.clear();
-                
 
 
-                for (int i = 0; i < qId.size(); i++){
-                    List<DmComplaintFileTable> dmComplaintFileTables = db.dmComplaintFileTableDao().getQuestionFilesById(Integer.parseInt(qId.get(i)),Constants.FARMER_ID, 0);
-                    int getQuestionProof = db.dmSurveyAnswerTableDao().getIsCaptureProofValue(Integer.parseInt(qId.get(i)),Constants.FARMER_ID);
+                for (int i = 0; i < qId.size(); i++) {
+                    List<DmComplaintFileTable> dmComplaintFileTables = db.dmComplaintFileTableDao().getQuestionFilesById(Integer.parseInt(qId.get(i)), Constants.FARMER_ID, 0);
+                    int getQuestionProof = db.dmSurveyAnswerTableDao().getIsCaptureProofValue(Integer.parseInt(qId.get(i)), Constants.FARMER_ID);
 
-                    if (!justVal.contains(qId.get(i)) && dmComplaintFileTables.size() > 0  ){
+                    if (!justVal.contains(qId.get(i)) && dmComplaintFileTables.size() > 0) {
                         justVal.add(qId.get(i));
-                    } else if (Objects.equals(String.valueOf(getQuestionProof), "0")){
+                    } else if (Objects.equals(String.valueOf(getQuestionProof), "0")) {
                         justVal.add(qId.get(i));
                     }
                 }
 
+
+                if (justVal.size() == Constants.questionIds.size()) {
+                    ViewPager2 viewPager = getActivity().findViewById(R.id.viewPager);
+                    viewPager.setCurrentItem(2);
+
+                    HashMap<String, String> hashMap = new HashMap<>();
+                    hashMap.put("keyCurrencies", currency_id);
+                    hashMap.put("totalActionPlanCount", String.valueOf(totalActionPlanCount));
+
+                    Constants.TotalActionPlanCount = String.valueOf(totalActionPlanCount);
+
                 if (justVal.size()==Constants.questionIds.size()){
+
 
                     goNextCaptureProof = true;
 //                    HashMap<String, Integer> actionPlan = new HashMap<>();
 //                    actionPlan.put("totalActionPlanCount" , totalActionPlanCount);
 
+
+                } else {
+                    Toast.makeText(getContext(), "Capture Proof is missing", Toast.LENGTH_SHORT).show();
+
                 }else {
                     Toast.makeText(getContext(),"Capture Proof is missing!", Toast.LENGTH_SHORT).show();
+
                 }
 
                 for (int j=0; j<qId.size(); j++) {
@@ -208,16 +224,27 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 }
 
 
+//                ViewPager2 viewPager = getActivity().findViewById(R.id.viewPager);
+//                viewPager.setCurrentItem(2);
+//
+//                HashMap<String, String> hashMap = new HashMap<>();
+//                hashMap.put("keyCurrencies", currency_id);
+
+
                 if (goNextCaptureProof && goNextActionPlan){
                     ViewPager2 viewPager = getActivity().findViewById(R.id.viewPager);
                     viewPager.setCurrentItem(2);
+
 
                     HashMap<String, String> hashMap = new HashMap<>();
                     hashMap.put("keyCurrencies", currency_id);
                     hashMap.put("totalActionPlanCount" , String.valueOf(totalActionPlanCount));
 
+
+
                     Constants.TotalActionPlanCount = String.valueOf(totalActionPlanCount);
                 }
+
 
             }
         });
@@ -225,7 +252,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
         List<DmCurrency> dmSectionsItemList = db.dmCurrencyDao().getDMCurrencyByModuleId(Constants.MODULE_ID);
         showCurrencyDropDown(dmSectionsItemList);
         List<DmActionPlanCurrenciesTable> checkValueDefault = db.dmActionPlanCurrenciesTableDao().getCurrencyByModuleId(Constants.MODULE_ID, Constants.FARMER_ID);
-        if (checkValueDefault.size()==0){
+        if (checkValueDefault.size() == 0) {
             isCreated = true;
         }
 
@@ -243,12 +270,12 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
         if (dmComplaintList.size() != 0) {
             List<DmSurveyAnswerTable> dmSurveyAnswerTableList = new ArrayList<>();
             dmSurveyAnswerTableList.clear();
-          
+
             //dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByComplianceId(complaint_id,Constants.FARMER_ID, true);
             dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByComplianceId(complaint_id, Constants.FARMER_ID);
 
 //            dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByComplianceId(complaint_id,Constants.FARMER_ID, true);
-            dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByComplianceId(complaint_id,Constants.FARMER_ID);
+            dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByComplianceId(complaint_id, Constants.FARMER_ID);
 
 
             String complianceName = dmComplaintList.get(0).compliance;
@@ -451,7 +478,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
                                         //Toast.makeText(getActivity(), "" + pos, Toast.LENGTH_SHORT).show();
 
-                                        db.dmComplaintFileTableDao().deleteById(finalRetrievedArrayFile.get(finalI), Constants.FARMER_ID,0);
+                                        db.dmComplaintFileTableDao().deleteById(finalRetrievedArrayFile.get(finalI), Constants.FARMER_ID, 0);
 
                                         dm_question_complaint.removeAllViews();
 
@@ -480,24 +507,22 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
         }
 
 
-
-
         textView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                if (db.dmComplaintFileTableDao().getFilesById(Integer.parseInt(id),Constants.FARMER_ID, 0).size()>=5){
+                if (db.dmComplaintFileTableDao().getFilesById(Integer.parseInt(id), Constants.FARMER_ID, 0).size() >= 5) {
                     Toast.makeText(getActivity(), "Maximum 5 files can be uploaded.", Toast.LENGTH_SHORT).show();
 
-                }else {
+                } else {
 
                     CharSequence[] options = new CharSequence[0];
 
 
-                    try{
-                        String formatValueTextBox = db.dmRangeTextBoxModuleQuestionsTableDao().getProofFormatByQuestionId(id,complaint_id);
-                        String formatValueDropBox = db.dmLookupValuesItemDao().getProofFormatByQuestionIdDropDown(id,complaint_id);
-                        if (Objects.equals(formatValueTextBox, "Both") || Objects.equals(formatValueDropBox, "Both")){
+                    try {
+                        String formatValueTextBox = db.dmRangeTextBoxModuleQuestionsTableDao().getProofFormatByQuestionId(id, complaint_id);
+                        String formatValueDropBox = db.dmLookupValuesItemDao().getProofFormatByQuestionIdDropDown(id, complaint_id);
+                        if (Objects.equals(formatValueTextBox, "Both") || Objects.equals(formatValueDropBox, "Both")) {
                             options = new CharSequence[]{"Take Photo", "Choose from Gallery", "Cancel"};
 //                            Toast.makeText(getContext(),formatValue, Toast.LENGTH_LONG).show();
                         } else if (Objects.equals(formatValueTextBox, "Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)") || Objects.equals(formatValueDropBox, "Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)")) {
@@ -507,7 +532,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                             options = new CharSequence[]{"Take Photo", "Choose from Gallery", "Cancel"};
 //                            Toast.makeText(getContext(),formatValue, Toast.LENGTH_LONG).show();
                         }
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
 
@@ -551,9 +576,9 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
                                 if (isStoragePermissionGalleryGranted()) {
 
-                                    String formatValueTextBox = db.dmRangeTextBoxModuleQuestionsTableDao().getProofFormatByQuestionId(id,complaint_id);
-                                    String formatValueDropBox = db.dmLookupValuesItemDao().getProofFormatByQuestionIdDropDown(id,complaint_id);
-                                    if (Objects.equals(formatValueTextBox, "Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)") || Objects.equals(formatValueDropBox,"Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)")){
+                                    String formatValueTextBox = db.dmRangeTextBoxModuleQuestionsTableDao().getProofFormatByQuestionId(id, complaint_id);
+                                    String formatValueDropBox = db.dmLookupValuesItemDao().getProofFormatByQuestionIdDropDown(id, complaint_id);
+                                    if (Objects.equals(formatValueTextBox, "Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)") || Objects.equals(formatValueDropBox, "Document (.doc, .docx, .xls, .xlsx, .pdf, .csv)")) {
                                         GALLERY_PICK = Integer.parseInt(textView.getTag().toString() + "0");
                                         Intent galleryIntent = new Intent();
                                         galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
@@ -562,7 +587,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                                         galleryIntent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
                                         galleryIntent.setType("*/*");
                                         startActivityForResult(Intent.createChooser(galleryIntent, "Choose gallery"), GALLERY_PICK);
-                                    }else if (Objects.equals(formatValueTextBox, "Image (.png, .jpg, .jpeg)") || Objects.equals(formatValueDropBox, "Image (.png, .jpg, .jpeg)")){
+                                    } else if (Objects.equals(formatValueTextBox, "Image (.png, .jpg, .jpeg)") || Objects.equals(formatValueDropBox, "Image (.png, .jpg, .jpeg)")) {
                                         GALLERY_PICK = Integer.parseInt(textView.getTag().toString() + "0");
                                         Intent galleryIntent = new Intent();
                                         galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
@@ -588,8 +613,6 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                     builder.show();
 
                 }
-
-
 
 
             }
@@ -629,7 +652,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
         LinearLayout.LayoutParams layoutParamsSpin = new LinearLayout.LayoutParams(
                 getResources().getDimensionPixelSize(R.dimen.forWeight),
-                getResources().getDimensionPixelSize(R.dimen.capture_box),5);
+                getResources().getDimensionPixelSize(R.dimen.capture_box), 5);
 
         final Spinner spinner = new Spinner(getActivity());
 
@@ -642,6 +665,28 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
         spinner.setTag("spinner" + complaint_id);
         layoutParamsSpin.setMargins(0, -15, 10, 15);
+
+        String actionPlanT = "0";
+        String amountT = "0";
+
+        List<DmSurveyAnswerTable> dmSurveyAnswerTableList1 = db.dmSurveyAnswerTableDao().getDataByQuestionId(id, Constants.FARMER_ID);
+        if (dmSurveyAnswerTableList1.size() != 0) {
+            actionPlanT = dmSurveyAnswerTableList1.get(0).actionPlanText;
+            amountT = String.valueOf(dmSurveyAnswerTableList1.get(0).amount);
+        }
+
+        int selectedPosition = 0;
+
+        for (int i = 0; i < list.size(); i++) {
+            if (actionPlanT.equalsIgnoreCase(list.get(i))) {
+                selectedPosition = i;
+            }
+
+        }
+
+        spinner.setSelection(selectedPosition);
+
+       // Toast.makeText(getActivity(), "OK"+selectedPosition, Toast.LENGTH_SHORT).show();
 
 
         TextView tVActionPlanSelectedTxt = new TextView(getActivity());
@@ -659,6 +704,10 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
         }
         tVActionPlanSelectedTxt.setVisibility(View.GONE);
 
+        if (!actionPlanT.equalsIgnoreCase("0")) {
+            tVActionPlanSelectedTxt.setText(actionPlanT);
+        }
+
         LinearLayout linearLayoutActionPlanMain = new LinearLayout(getActivity());
         linearLayoutActionPlanMain.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
@@ -669,7 +718,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
         EditText actionPlan = new EditText(getActivity());
         actionPlan.setHint("Edit action plan details");
-        actionPlan.setFilters(new InputFilter[] { new InputFilter.LengthFilter(2000) });
+        actionPlan.setFilters(new InputFilter[]{new InputFilter.LengthFilter(2000)});
         actionPlan.setTextSize(14);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             actionPlan.setBackground(getActivity().getDrawable(R.drawable.answer_text_survey));
@@ -751,12 +800,12 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
         imageView2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!actionPlan.getText().toString().isEmpty()){
+                if (!actionPlan.getText().toString().isEmpty()) {
                     actionPlan.setText("");
                     db.dmSurveyAnswerTableDao().updateActionPlanText("", id, Constants.FARMER_ID);
-                    db.dmSurveyAnswerTableDao().updateActionPlanId("0",id,Constants.FARMER_ID);
+                    db.dmSurveyAnswerTableDao().updateActionPlanId("0", id, Constants.FARMER_ID);
                 }
-                    actionPlan.setEnabled(true);
+                actionPlan.setEnabled(true);
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     actionPlan.setBackground(getActivity().getDrawable(R.drawable.answer_text_survey));
@@ -766,9 +815,9 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
         imageView1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!actionPlan.getText().toString().isEmpty()) {
+                if (!actionPlan.getText().toString().isEmpty()) {
                     db.dmSurveyAnswerTableDao().updateActionPlanText(actionPlan.getText().toString(), id, Constants.FARMER_ID);
-                    db.dmSurveyAnswerTableDao().updateActionPlanId("0",id,Constants.FARMER_ID);
+                    db.dmSurveyAnswerTableDao().updateActionPlanId("0", id, Constants.FARMER_ID);
                 }
                 actionPlan.setEnabled(false);
 
@@ -809,7 +858,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
         LinearLayout.LayoutParams layoutParamsetCur = new LinearLayout.LayoutParams(
                 getResources().getDimensionPixelSize(R.dimen.forWeight),
-                getResources().getDimensionPixelSize(R.dimen.capture_box),2);
+                getResources().getDimensionPixelSize(R.dimen.capture_box), 2);
 
         List<DmCurrenciesItem> currenciesItems = new ArrayList<>();
         currenciesItems.clear();
@@ -846,9 +895,9 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
         EditText editTextCurrencyInput = new EditText(getActivity());
         editTextCurrencyInput.setHint("Amount");
         editTextCurrencyInput.setTextSize(14);
+        editTextCurrencyInput.setText(amountT);
         editTextCurrencyInput.setTextColor(getResources().getColor(R.color.black));
         editTextCurrencyInput.setPadding(0, 10, 0, 10);
-        editTextCurrencyInput.setText(budgetAmount);
         editTextCurrencyInput.setInputType(InputType.TYPE_CLASS_NUMBER);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             editTextCurrencyInput.setBackground(getActivity().getDrawable(R.drawable.answer_text_survey));
@@ -879,9 +928,8 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
         });
 
 
-
         boolean isActionPlanRequired = db.complianceIndicatorDao().getIsActionPlanRequired(complaint_id);
-        if (isActionPlanRequired){
+        if (isActionPlanRequired) {
             linearLayoutSpin.addView(spinner);
             linearLayoutSpin.addView(editTextCurrency);
             linearLayoutSpin.addView(editTextCurrencyInput);
@@ -1039,7 +1087,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
                                         linearLayoutImage.removeAllViews();
 
-                                        db.dmComplaintFileTableDao().deleteById(finalRetrievedArrayFile.get(finalI), Constants.FARMER_ID,0);
+                                        db.dmComplaintFileTableDao().deleteById(finalRetrievedArrayFile.get(finalI), Constants.FARMER_ID, 0);
 
                                         dm_question_complaint.removeAllViews();
 
@@ -1197,7 +1245,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
                                             linearLayoutImage.removeAllViews();
 
-                                            db.dmComplaintFileTableDao().deleteById(finalRetrievedArrayFile.get(finalI), Constants.FARMER_ID,0);
+                                            db.dmComplaintFileTableDao().deleteById(finalRetrievedArrayFile.get(finalI), Constants.FARMER_ID, 0);
 
                                             dm_question_complaint.removeAllViews();
 
@@ -1251,8 +1299,8 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 //                3145728 - 3MB
 
                 if (compressedSize > 3145728) {
-                     Toast.makeText(getContext(), "Sizer is greater than 10 MB", Toast.LENGTH_SHORT).show();
-                     Toast.makeText(getContext(), compressedSize+"", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Sizer is greater than 10 MB", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), compressedSize + "", Toast.LENGTH_SHORT).show();
 //                    Uri uri1 = Uri.fromFile(compressPdf(uri));
 //                    byte[] pdfByteArray1;
 //                    try {
@@ -1262,8 +1310,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 //                    }
 
 
-                }
-                else {
+                } else {
                     Uri uri1 = Uri.fromFile(compressPdf(uri));
 
                     byte[] pdfByteArray2;
@@ -1363,7 +1410,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
                                                 linearLayoutImage.removeAllViews();
 
-                                                db.dmComplaintFileTableDao().deleteById(finalRetrievedArrayFile.get(finalI), Constants.FARMER_ID,0);
+                                                db.dmComplaintFileTableDao().deleteById(finalRetrievedArrayFile.get(finalI), Constants.FARMER_ID, 0);
 
                                                 dm_question_complaint.removeAllViews();
 
@@ -1394,9 +1441,8 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 }
 
 
-            }
-            else if (mime.equalsIgnoreCase("image/jpeg")
-                    || mime.equalsIgnoreCase("image/png")){
+            } else if (mime.equalsIgnoreCase("image/jpeg")
+                    || mime.equalsIgnoreCase("image/png")) {
                 final BitmapFactory.Options options = new BitmapFactory.Options();
                 options.inJustDecodeBounds = true;
                 options.inSampleSize = 2;
@@ -1518,7 +1564,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
                                             linearLayoutImage.removeAllViews();
 
-                                            db.dmComplaintFileTableDao().deleteById(finalRetrievedArrayFile.get(finalI), Constants.FARMER_ID,0);
+                                            db.dmComplaintFileTableDao().deleteById(finalRetrievedArrayFile.get(finalI), Constants.FARMER_ID, 0);
 
                                             dm_question_complaint.removeAllViews();
 
@@ -1589,12 +1635,11 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
         }
 
 
-
         int selectedPosition = 0;
 
 
 //        for (int i = 0; i < ids.size(); i++) {
- //            if (currencyIdDb.equalsIgnoreCase(ids.get(i))) {
+        //            if (currencyIdDb.equalsIgnoreCase(ids.get(i))) {
 //                selectedPosition = i;
 //            }
 //        }
@@ -1602,7 +1647,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
 //        if ()
         try {
-            int currencyDefault = db.dmCurrencyDao().isCurrencyDefault(dmActionPlanCurrenciesTables.get(0).moduleId , 1);
+            int currencyDefault = db.dmCurrencyDao().isCurrencyDefault(dmActionPlanCurrenciesTables.get(0).moduleId, 1);
             for (int i = 0; i < ids.size(); i++) {
                 if (String.valueOf(currencyDefault).equalsIgnoreCase(ids.get(i)) && isCreated) {
                     selectedPosition = i;
@@ -1615,7 +1660,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
             }
 
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -1865,7 +1910,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
     public void onClick(View v) {
         int id = v.getId();
 
-        if(id == R.id.ll_servey_next_actionplan){
+        if (id == R.id.ll_servey_next_actionplan) {
 
 
             HashMap<String, String> hashMap = new HashMap<>();

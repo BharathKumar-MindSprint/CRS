@@ -29,6 +29,8 @@ public interface DmSurveyAnswerTableDao {
     @Query("SELECT * FROM DmSurveyAnswerTable WHERE complinceTypeId =:id AND farmerId =:farmerId")
     List<DmSurveyAnswerTable> getDataByComplianceId(String id, String farmerId);
 
+
+
     @Query("SELECT * FROM DmSurveyAnswerTable WHERE complinceTypeId =:id AND farmerId =:farmerId AND actionplanId !=0")
     List<DmSurveyAnswerTable> getDataByComplianceIdFilterByActionPlan(String id, String farmerId);
 
@@ -56,6 +58,9 @@ public interface DmSurveyAnswerTableDao {
 
     @Query("UPDATE DmSurveyAnswerTable SET actionplanId=:actionplanId WHERE questionID = :questionId AND farmerId =:farmerId")
     void updateActionPlanId(String actionplanId, String questionId, String farmerId);
+
+    @Query("UPDATE DmSurveyAnswerTable SET actionplanId=:actionplanId WHERE questionID = :questionId AND farmerId =:farmerId")
+    void updateQuestionData(String actionplanId, String questionId, String farmerId);
 
     @Query("UPDATE DmSurveyAnswerTable SET actionPlanText=:actionPlanText WHERE questionID = :questionId AND farmerId =:farmerId")
     void updateActionPlanText(String actionPlanText, String questionId, String farmerId);
