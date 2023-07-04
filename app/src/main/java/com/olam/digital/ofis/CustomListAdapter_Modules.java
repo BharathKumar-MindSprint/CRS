@@ -204,6 +204,10 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                 int recurrence_frequency = dmRecurrence.recurrenceFrequency;
                 boolean disable_entry = false;
 
+                // is submitted
+                // get value from main survey and followup status
+
+
                 // to enable survey
                 imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_householdgps));
                 enabledItem.setText("true");

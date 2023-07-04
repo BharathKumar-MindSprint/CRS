@@ -20,6 +20,9 @@ public interface FollowUpItemMainTableDao {
     @Query("DELETE FROM FollowUpItemMainTable")
     void deleteAll();
 
+    @Query("DELETE FROM FollowUpItemMainTable WHERE questionId =:questionId AND farmerId =:farmerId AND attempt = :attempt")
+    void deleteByQnAttempt(String questionId, String farmerId, int attempt);
+
     @Query("SELECT * FROM FollowUpItemMainTable WHERE farmerId =:farmerId AND moduleId =:moduleId")
     List<FollowUpItemMainTable> getFollowupByFarmerId(long farmerId, int moduleId);
 
