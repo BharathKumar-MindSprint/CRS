@@ -653,11 +653,19 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
         layoutParamsSpin.setMargins(0, 0, 10, 0);
 
         String actionPlanT = "0";
+        int actionPlanId = 0;
         String amountT = "0";
 
         List<DmSurveyAnswerTable> dmSurveyAnswerTableList1 = db.dmSurveyAnswerTableDao().getDataByQuestionId(id, Constants.FARMER_ID);
         if (dmSurveyAnswerTableList1.size() != 0) {
             actionPlanT = dmSurveyAnswerTableList1.get(0).actionPlanText;
+            try {
+                actionPlanId = Integer.parseInt(dmSurveyAnswerTableList1.get(0).actionplanId);
+            }catch (NumberFormatException e){
+                e.printStackTrace();
+            }catch (Exception e){
+                e.printStackTrace();
+            }
             amountT = String.valueOf(dmSurveyAnswerTableList1.get(0).amount);
         }
 
@@ -668,6 +676,9 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 selectedPosition = i;
             }
 
+        }
+        if(actionPlanId == 1){
+            selectedPosition = 1;
         }
 
         spinner.setSelection(selectedPosition);
@@ -709,6 +720,9 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             actionPlan.setBackground(getActivity().getDrawable(R.drawable.answer_text_survey));
         }
+        if(actionPlanId == 1){
+            actionPlan.setText(actionPlanT);
+        }
 
         LinearLayout.LayoutParams layoutParams1 = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
@@ -725,11 +739,11 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if (charSequence.length() > 0) {
-                    db.dmSurveyAnswerTableDao().updateActionPlanText("", id, Constants.FARMER_ID);
-                } else {
+//                if (charSequence.length() > 0) {
+//                    db.dmSurveyAnswerTableDao().updateActionPlanText("", id, Constants.FARMER_ID);
+//                } else {
                     db.dmSurveyAnswerTableDao().updateActionPlanText(charSequence.toString(), id, Constants.FARMER_ID);
-                }
+//                }
             }
 
             @Override
@@ -803,7 +817,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
             public void onClick(View view) {
                 if (!actionPlan.getText().toString().isEmpty()) {
                     db.dmSurveyAnswerTableDao().updateActionPlanText(actionPlan.getText().toString(), id, Constants.FARMER_ID);
-                    db.dmSurveyAnswerTableDao().updateActionPlanId("0", id, Constants.FARMER_ID);
+                    db.dmSurveyAnswerTableDao().updateActionPlanId("1", id, Constants.FARMER_ID);
                 }
                 actionPlan.setEnabled(false);
 

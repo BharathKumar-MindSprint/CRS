@@ -13,7 +13,6 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Build;
@@ -26,14 +25,12 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
-import androidx.viewpager2.widget.ViewPager2;
 
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 import android.text.Editable;
 import android.text.InputFilter;
-import android.text.InputType;
 import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -62,10 +59,9 @@ import com.olam.digital.ofis.mvvmmodule.PathUtil;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.ComplianceIndicator;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmActionPlanCurrenciesTable;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmActionPlansItem;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmComplaintFileTable;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmCurrenciesItem;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmCurrency;
+import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmLookupValuesItem;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmRangeActionPlansItems;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmSurveyAnswerTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.FollowUpItemMainTable;
@@ -635,13 +631,14 @@ public class FollowUpActionPlan extends Fragment {
 
         list.add("Select ActionPlan");
         ids.add("0");
-       /* String ans = db.dmSurveyAnswerTableDao().getDataByQuestionId(id, Constants.FARMER_ID).get(0).answer;
+        String ans = db.dmSurveyAnswerTableDao().getDataByQuestionId(id, Constants.FARMER_ID).get(0).answer;
+        String displayType = db.dmQuestionsModuleDao().getDmQuestionType(Integer.parseInt(id)).get(0).displayType;
         int ansId = Integer.parseInt(db.dmSurveyAnswerTableDao().getDataByQuestionId(id, Constants.FARMER_ID).get(0).answerID);
-        boolean allowCustomActionPlan = checkAllowCustomActionPlan(id,ans, ansId);
-        if (db.dmSurveyAnswerTableDao().getDataByQuestionId(id, Constants.FARMER_ID).get(0).allowCustomActionPlan) {
+        boolean allowCustomActionPlan = checkAllowCustomActionPlan(id,ans, ansId,displayType);
+        if (allowCustomActionPlan) {
             list.add("Custom ActionPlan");
             ids.add("1");
-        }*/
+        }
 
         for (int c = 0; c < dmActionPlansItemList.size(); c++) {
             list.add(dmActionPlansItemList.get(c).actionPlan);
@@ -673,9 +670,17 @@ public class FollowUpActionPlan extends Fragment {
         layoutParamsSpin.setMargins(0, 15, 10, 15);
 
         String actionPlanT = "0";
+        int actionPlanId = 0;
 //        List<DmSurveyAnswerTable> dmSurveyAnswerTableList1 = db.dmSurveyAnswerTableDao().getDataByQuestionId(id, Constants.FARMER_ID);
         if (dmSurveyAnswerTableList1.size() != 0) {
             actionPlanT = dmSurveyAnswerTableList1.get(0).actionPlanText;
+            try {
+                actionPlanId = dmSurveyAnswerTableList1.get(0).actionPlanId;
+            }catch (NumberFormatException e){
+                e.printStackTrace();
+            }catch (Exception e){
+                e.printStackTrace();
+            }
         }
 
         int selectedPosition = 0;
@@ -691,7 +696,9 @@ public class FollowUpActionPlan extends Fragment {
 
 
         }
-
+        if(actionPlanId == 1){
+            selectedPosition = 1;
+        }
         spinner.setSelection(selectedPosition);
 
         TextView tVActionPlanSelectedTxt = new TextView(getActivity());
@@ -708,7 +715,9 @@ public class FollowUpActionPlan extends Fragment {
             tVActionPlanSelectedTxt.setBackground(getActivity().getDrawable(R.drawable.answer_text_survey));
         }
         tVActionPlanSelectedTxt.setVisibility(View.GONE);
-
+        if (!actionPlanT.equalsIgnoreCase("0")) {
+            tVActionPlanSelectedTxt.setText(actionPlanT);
+        }
 
         LinearLayout linearLayoutActionPlanMain = new LinearLayout(getActivity());
         linearLayoutActionPlanMain.setLayoutParams(new LinearLayout.LayoutParams(
@@ -725,7 +734,9 @@ public class FollowUpActionPlan extends Fragment {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             actionPlan.setBackground(getActivity().getDrawable(R.drawable.answer_text_survey));
         }
-
+        if(actionPlanId == 1){
+            actionPlan.setText(actionPlanT);
+        }
         LinearLayout.LayoutParams layoutParams1 = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, getResources().getDimensionPixelSize(R.dimen.actionplanbox));
 
@@ -740,13 +751,13 @@ public class FollowUpActionPlan extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if (charSequence.length() > 0) {
-                    db.followUpItemMainTableDao().updateActionPlanText("", id, Constants.FARMER_ID,Constants.ATTEMPT);
+//                if (charSequence.length() > 0) {
+//                    db.followUpItemMainTableDao().updateActionPlanText("", id, Constants.FARMER_ID,Constants.ATTEMPT);
 //                    db.dmSurveyAnswerTableDao().updateActionPlanText("", id, Constants.FARMER_ID);
-                } else {
+//                } else {
 //                    db.dmSurveyAnswerTableDao().updateActionPlanText(charSequence.toString(), id, Constants.FARMER_ID);
                     db.followUpItemMainTableDao().updateActionPlanText(charSequence.toString(), id, Constants.FARMER_ID,Constants.ATTEMPT);
-                }
+//                }
             }
 
             @Override
@@ -807,8 +818,8 @@ public class FollowUpActionPlan extends Fragment {
                 if(!actionPlan.getText().toString().isEmpty()) {
 //                    db.dmSurveyAnswerTableDao().updateActionPlanText(actionPlan.getText().toString(), id, Constants.FARMER_ID);
 //                    db.dmSurveyAnswerTableDao().updateActionPlanId("0",id,Constants.FARMER_ID);
-                    db.followUpItemMainTableDao().updateActionPlanText("", id, Constants.FARMER_ID, Constants.ATTEMPT);
-                    db.followUpItemMainTableDao().updateActionPlanId("0",id,Constants.FARMER_ID, Constants.ATTEMPT);
+                    db.followUpItemMainTableDao().updateActionPlanText(actionPlan.getText().toString(), id, Constants.FARMER_ID, Constants.ATTEMPT);
+                    db.followUpItemMainTableDao().updateActionPlanId("1",id,Constants.FARMER_ID, Constants.ATTEMPT);
                 }
                 actionPlan.setEnabled(false);
 
@@ -831,6 +842,8 @@ public class FollowUpActionPlan extends Fragment {
                     db.followUpItemMainTableDao().updateActionPlanId("0",id,Constants.FARMER_ID, Constants.ATTEMPT);
                 } else if (list.get(position).equalsIgnoreCase("Custom ActionPlan")) {
 //                  db.followUpItemMainTableDao().updateActionPlanId("0",id,Constants.FARMER_ID, Constants.ATTEMPT);
+                    db.followUpItemMainTableDao().updateActionPlanId(Id, id, Constants.FARMER_ID, Constants.ATTEMPT);
+                    db.followUpItemMainTableDao().updateActionPlanText(actionPlan.getText().toString(), id, Constants.FARMER_ID, Constants.ATTEMPT);
                     tVActionPlanSelectedTxt.setVisibility(View.GONE);
                     linearLayoutActionPlanMain.setVisibility(View.VISIBLE);
                 } else {
@@ -901,11 +914,40 @@ public class FollowUpActionPlan extends Fragment {
 
     }
 
-    private boolean checkAllowCustomActionPlan(String questionId, String ans, int ansId) {
-        boolean customActionPlan = false;
+    private boolean checkAllowCustomActionPlan(String questionId, String ans, int ansId, String displayType) {
+        boolean allowCustomActionPlan = false;
+        if(displayType.equalsIgnoreCase("text box")){
+            if (db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).size() != 0) {
+                if (ans != null) {
+                    String value = ans.trim();
 
+                    for (int j = 0; j < db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).size(); j++) {
 
-        return customActionPlan;
+                        try {
+                            if (Objects.equals(value, "-")) {
+                                allowCustomActionPlan = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).allowCustomActionPlan;
+                            }
+                            else if (Objects.equals(value, "-" + value) && db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).minimumRange <= Double.parseDouble(value) && Double.parseDouble(value) <= db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).maximumRange ) {
+                                allowCustomActionPlan = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).allowCustomActionPlan;
+                            }
+                            else if (db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).minimumRange <= Double.parseDouble(value) && Double.parseDouble(value) <= db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).maximumRange) {
+                                allowCustomActionPlan = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).allowCustomActionPlan;
+                            }
+                        }catch (Exception e){e.printStackTrace();}
+                    }
+
+                }
+            }
+        }else{
+            List<DmLookupValuesItem> dmLookupValuesISubmoduleList = db.dmLookupValuesItemDao().getDmAnswersModuleByQuestionId(Integer.parseInt(questionId));
+            for (int k = 0; k < dmLookupValuesISubmoduleList.size(); k++) {
+                if(ans.equalsIgnoreCase(dmLookupValuesISubmoduleList.get(k).value)) {
+                    allowCustomActionPlan = dmLookupValuesISubmoduleList.get(k).allowCustomActionPlan;
+                }
+            }
+        }
+
+        return allowCustomActionPlan;
     }
 
     @Override
