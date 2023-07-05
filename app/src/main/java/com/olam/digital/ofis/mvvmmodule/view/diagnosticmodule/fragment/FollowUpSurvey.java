@@ -66,6 +66,7 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
     private void displayQuestionsModuleComplaint(String complaint_id) {
 
         CoQId.clear();
+        Constants.questionIdsFollowUp.clear();
 
         boolean isActionPlanRequired = db.complianceIndicatorDao().getIsActionPlanRequired(complaint_id);
         List<ComplianceIndicator> dmComplaintList = new ArrayList<>();
@@ -185,6 +186,9 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
 
     public void renderTextboxQuestionModuleComplaint(String id, String complaint_id, LinearLayout linearLayoutItems) {
 
+
+
+
         LinearLayout.LayoutParams layoutParamsQes = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 getResources().getDimensionPixelSize(R.dimen.capture_box)
@@ -250,6 +254,7 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
                     if (followupData.get(0).status.equalsIgnoreCase(Constants.RESOLVED)) {
 
                         CoQId.add(dmSurveyAnswerTableList.get(0).questionID);
+                        Constants.questionIdsFollowUp.add(dmSurveyAnswerTableList.get(0).questionID);
 
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                             resolveText.setBackground(getActivity().getDrawable(R.drawable.dm_next_background));
@@ -258,6 +263,8 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
 
                     } else if (followupData.get(0).status.equalsIgnoreCase(Constants.NOTRESOLVED)) {
                         CoQId.add(dmSurveyAnswerTableList.get(0).questionID);
+                        Constants.questionIdsFollowUp.add(dmSurveyAnswerTableList.get(0).questionID);
+                        capture_count+=1;
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                             notResolveText.setBackground(getActivity().getDrawable(R.drawable.dm_next_background));
                         }
@@ -272,9 +279,10 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
                         submitValue(questionIdDb,Constants.NOTRESOLVED, complaint_id);
                         if (!CoQId.contains(id)) {
                             CoQId.add(id);
-                            capture_count+=1;
                         }
-
+                        if (!Constants.questionIdsFollowUp.contains(id)) {
+                            Constants.questionIdsFollowUp.add(id);
+                        }
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                             notResolveText.setBackground(getActivity().getDrawable(R.drawable.dm_next_background));
                         }
@@ -295,6 +303,10 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
                         submitValue(questionIdDb,Constants.RESOLVED, complaint_id);
                         if (!CoQId.contains(id)) {
                             CoQId.add(id);
+                        }
+
+                        if (!Constants.questionIdsFollowUp.contains(id)) {
+                            Constants.questionIdsFollowUp.add(id);
                         }
 
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -368,7 +380,6 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
         dm_question_complaint_followup_survey.removeAllViews();
         next_survey = 0;
         capture_count = 0;
-
         db = OFISRoomDB.getDbInstance(getActivity());
 
         if (db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size() != 0) {

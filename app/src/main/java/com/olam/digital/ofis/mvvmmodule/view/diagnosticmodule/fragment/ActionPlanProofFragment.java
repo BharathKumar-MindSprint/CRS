@@ -650,7 +650,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
         spinner.setAdapter(spinnerAdapter);
 
         spinner.setTag("spinner" + complaint_id);
-        layoutParamsSpin.setMargins(0, -15, 10, 15);
+        layoutParamsSpin.setMargins(0, 0, 10, 0);
 
         String actionPlanT = "0";
         String amountT = "0";

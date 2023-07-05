@@ -164,7 +164,7 @@ public class FollowUpActionPlan extends Fragment {
             @Override
             public void onClick(View view) {
 
-                ArrayList<String> qId = Constants.questionIds;
+                ArrayList<String> qId = Constants.questionIdsFollowUp;
 
                 ArrayList<String> qIdSections = Constants.questionIdsSection;
 
@@ -184,6 +184,7 @@ public class FollowUpActionPlan extends Fragment {
                 }
 
 
+                int newNum = Constants.capture_count;
                 if (justVal.size()==Constants.capture_count){
 
                     goNextCaptureProof = true;
@@ -195,8 +196,7 @@ public class FollowUpActionPlan extends Fragment {
                 }
 
                 for (int j=0; j<qId.size(); j++) {
-                    if (Objects.equals(db.followUpItemMainTableDao().getActionPlanTextFollowUp(qId.get(j), Constants.FARMER_ID), "0")
-                            || Objects.equals(db.followUpItemMainTableDao().getActionPlanTextFollowUp(qId.get(j), Constants.FARMER_ID), null)){
+                    if (Objects.equals(db.followUpItemMainTableDao().getActionPlanTextFollowUp(qId.get(j), Constants.FARMER_ID ,"NOT Resolved" ), "0")){
                         Toast.makeText(getActivity(), "Action Plan is missing!", Toast.LENGTH_SHORT).show();
                         goNextActionPlan = false;
                         break;
@@ -210,13 +210,10 @@ public class FollowUpActionPlan extends Fragment {
                     dl.updateNqForDMSurvey(Constants.FARMER_ID, Constants.MODULE_ID, "FollowUpSurvey", Constants.MODULE_NAME);
                     Intent intent = new Intent(getContext(), ViewFarmerActivity.class);
                     getContext().startActivity(intent);
+//                    Toast.makeText(getActivity(), "Everything OK!", Toast.LENGTH_SHORT).show();
                 }
 
 
-//                DataLayer dl = new DataLayer(getResources(), getContext());
-//                dl.updateNqForDMSurvey(Constants.FARMER_ID, Constants.MODULE_ID, "FollowUpSurvey", Constants.MODULE_NAME);
-//                Intent intent = new Intent(getContext(), ViewFarmerActivity.class);
-//                getContext().startActivity(intent);
             }
         });
 
@@ -675,6 +672,27 @@ public class FollowUpActionPlan extends Fragment {
 
         layoutParamsSpin.setMargins(0, 15, 10, 15);
 
+        String actionPlanT = "0";
+//        List<DmSurveyAnswerTable> dmSurveyAnswerTableList1 = db.dmSurveyAnswerTableDao().getDataByQuestionId(id, Constants.FARMER_ID);
+        if (dmSurveyAnswerTableList1.size() != 0) {
+            actionPlanT = dmSurveyAnswerTableList1.get(0).actionPlanText;
+        }
+
+        int selectedPosition = 0;
+
+        for (int i = 0; i < list.size(); i++) {
+            try {
+                if (actionPlanT.equalsIgnoreCase(list.get(i))) {
+                    selectedPosition = i;
+                }
+            }catch (Exception e) {
+                e.printStackTrace();
+            }
+
+
+        }
+
+        spinner.setSelection(selectedPosition);
 
         TextView tVActionPlanSelectedTxt = new TextView(getActivity());
         LinearLayout.LayoutParams layoutParamsActionTxt = new LinearLayout.LayoutParams(
@@ -809,7 +827,7 @@ public class FollowUpActionPlan extends Fragment {
                 String Id = ids.get(position);
                 if (position == 0) {
                     tVActionPlanSelectedTxt.setVisibility(View.GONE);
-//                  db.followUpItemMainTableDao().updateActionPlanText("", id, Constants.FARMER_ID, Constants.ATTEMPT);
+                    db.followUpItemMainTableDao().updateActionPlanText("0", id, Constants.FARMER_ID, Constants.ATTEMPT);
                     db.followUpItemMainTableDao().updateActionPlanId("0",id,Constants.FARMER_ID, Constants.ATTEMPT);
                 } else if (list.get(position).equalsIgnoreCase("Custom ActionPlan")) {
 //                  db.followUpItemMainTableDao().updateActionPlanId("0",id,Constants.FARMER_ID, Constants.ATTEMPT);
@@ -1821,6 +1839,7 @@ public class FollowUpActionPlan extends Fragment {
         List<DmCurrency> dmSectionsItemList = db.dmCurrencyDao().getDMCurrencyByModuleId(Constants.MODULE_ID);
         showCurrencyDropDown(dmSectionsItemList);
         isCreated = false;
+
     }
 
 
