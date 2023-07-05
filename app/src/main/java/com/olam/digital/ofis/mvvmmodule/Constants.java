@@ -36,7 +36,11 @@ public class Constants {
 
     public static String TotalActionPlanCount = "0";
 
-    public static int capture_count = 0;
+    public static int capture_count;
+
+    public static ArrayList<String> questionIdsFollowUp = new ArrayList<>();
+
+
 
 
 }
