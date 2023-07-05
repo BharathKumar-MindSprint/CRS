@@ -641,7 +641,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 getResources().getDimensionPixelSize(R.dimen.capture_box), 5);
 
         final Spinner spinner = new Spinner(getActivity());
-
+        layoutParamsSpin.gravity = Gravity.CENTER_VERTICAL;
         spinner.setLayoutParams(layoutParamsSpin);
         spinner.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.spinner_bg_light));
 
