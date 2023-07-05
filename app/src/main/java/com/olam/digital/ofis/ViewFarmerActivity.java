@@ -2789,7 +2789,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
             }
             List<FollowUpItemMainTable> followupUnSyncedItems = db.followUpItemMainTableDao().getFollowupUnSyncedItems(farmerID, moduleID, false);
             if(followupUnSyncedItems.size() == 0) {
-                List<FollowUpItemMainTable> followupUnResolvedItems = db.followUpItemMainTableDao().getFollowupUnResolvedItems(farmerID, moduleID, false, Constants.NOTRESOLVED, followupAttempts.size());
+                List<FollowUpItemMainTable> followupUnResolvedItems = db.followUpItemMainTableDao().getFollowupUnResolvedItems(farmerID, moduleID, true, Constants.NOTRESOLVED, followupAttempts.size());
                 if(followupUnResolvedItems.size() > 0) {
                     int val = followupAttempts.size() + 1;
                     recyclerViewData.add("Follow-up survey " + val);

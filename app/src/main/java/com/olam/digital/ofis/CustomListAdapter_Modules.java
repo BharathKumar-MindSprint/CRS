@@ -206,18 +206,73 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                 int recurrence_frequency = dmRecurrence.recurrenceFrequency;
                 boolean disable_entry = false;
                 boolean isCompleted = false;
+               /* if (recurrence_frequency > 0) {
+                    // for recurring
+                    try {
+                        // get last submitted date
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
+                        Calendar lastSubmittedDate = Calendar.getInstance();
+                        Calendar calculationDate = (Calendar) currentDate.clone();
+                        isCompleted = true;
+                        try {
+                            String startDate = db.dmMainModuleDao().getStartData(moduleId);
+                            lastSubmittedDate.setTime(sdf.parse(startDate));
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                        if (recurrence_type != null) {
+                            if (recurrence_type.equalsIgnoreCase("years")) {
+                                calculationDate.add(Calendar.YEAR, -recurrence_frequency);
+                                calculationDate.set(Calendar.MONTH, Calendar.DECEMBER);
+                                calculationDate.set(Calendar.DAY_OF_MONTH, 31);
+                            } else if (recurrence_type.equalsIgnoreCase("months")) {
+                                calculationDate.add(Calendar.MONTH, -recurrence_frequency);
+                                calculationDate.set(Calendar.DAY_OF_MONTH, calculationDate.getActualMaximum(Calendar.DAY_OF_MONTH));
+                            } else if (recurrence_type.equalsIgnoreCase("weeks")) {
+                                calculationDate.add(Calendar.WEEK_OF_YEAR, -recurrence_frequency);
+                                calculationDate.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
+                            } else {
+                                // must be days
+                                calculationDate.add(Calendar.DAY_OF_YEAR, -recurrence_frequency);
+                            }
+                            // set the time
+                            calculationDate.set(Calendar.HOUR_OF_DAY, 23);
+                            calculationDate.set(Calendar.MINUTE, 59);
+                            calculationDate.set(Calendar.SECOND, 59);
+                            calculationDate.set(Calendar.MILLISECOND, 999);
+                            // force the recalculation
+                            calculationDate.get(Calendar.DAY_OF_MONTH);
+                            if (lastSubmittedDate.after(calculationDate)) {
+                                isCompleted = false;
+                            }
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }*/
 
-                // is submitted
-                // get value from main survey and followup status
-
-                // to enable survey
-                List<Integer> followupAttempts = db.followUpItemMainTableDao().getFollowupByAttempts(farmerId, moduleId);
-                List<FollowUpItemMainTable> followupUnResolvedItems = db.followUpItemMainTableDao().getFollowupUnResolvedItems(String.valueOf(farmerId), String.valueOf(moduleId), false, Constants.NOTRESOLVED, followupAttempts.size());
-                if(followupUnResolvedItems.size() > 0) {
-                    isCompleted = false;
-                }else{
-                    isCompleted = false;
-                }
+                /*List<FollowUpItemMainTable> followupList = db.followUpItemMainTableDao().getFollowupByFarmerId(farmerId, moduleId);
+                if(followupList.size() == 0){
+                    List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByModuleId(String.valueOf(moduleId), String.valueOf(farmerId), true);
+                    for (int i = 0; i < dmSurveyAnswerTableList.size(); i++) {
+                        int actionPlanId = Integer.parseInt(dmSurveyAnswerTableList.get(i).actionplanId);
+                        String actionPlanText = dmSurveyAnswerTableList.get(i).actionPlanText;
+                        if(actionPlanId != 0 || actionPlanText.length() != 0){
+                            isCompleted = true;
+                        }
+                    }
+                }else {
+                    List<Integer> followupAttempts = db.followUpItemMainTableDao().getFollowupByAttempts(farmerId, moduleId);
+                    List<FollowUpItemMainTable> followupUnSyncedItems = db.followUpItemMainTableDao().getFollowupUnSyncedItems(String.valueOf(farmerId), String.valueOf(moduleId), false);
+                    if(followupUnSyncedItems.size() == 0) {
+                        List<FollowUpItemMainTable> followupUnResolvedItems = db.followUpItemMainTableDao().getFollowupUnResolvedItems(String.valueOf(farmerId), String.valueOf(moduleId), false, Constants.NOTRESOLVED, followupAttempts.size());
+                        if(followupUnResolvedItems.size() > 0) {
+                            isCompleted = false;
+                        }else{
+                            isCompleted = true;
+                        }
+                    }
+                }*/
                 if(! isCompleted) {
                     imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_householdgps));
                     enabledItem.setText("true");
