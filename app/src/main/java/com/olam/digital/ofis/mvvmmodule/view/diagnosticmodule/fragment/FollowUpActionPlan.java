@@ -179,8 +179,6 @@ public class FollowUpActionPlan extends Fragment {
                     }
                 }
 
-
-                int newNum = Constants.capture_count;
                 if (justVal.size()==Constants.capture_count){
 
                     goNextCaptureProof = true;
@@ -667,7 +665,7 @@ public class FollowUpActionPlan extends Fragment {
 
         spinner.setTag("spinner" + complaint_id);
 
-        layoutParamsSpin.setMargins(0, 0, 10, 0);
+        layoutParamsSpin.setMargins(0, 0, 0, 0);
 
         String actionPlanT = "0";
         int actionPlanId = 0;
@@ -715,9 +713,14 @@ public class FollowUpActionPlan extends Fragment {
             tVActionPlanSelectedTxt.setBackground(getActivity().getDrawable(R.drawable.answer_text_survey));
         }
         tVActionPlanSelectedTxt.setVisibility(View.GONE);
-        if (!actionPlanT.equalsIgnoreCase("0")) {
-            tVActionPlanSelectedTxt.setText(actionPlanT);
+        try {
+            if (!actionPlanT.equalsIgnoreCase("0")) {
+                tVActionPlanSelectedTxt.setText(actionPlanT);
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
         }
+
 
         LinearLayout linearLayoutActionPlanMain = new LinearLayout(getActivity());
         linearLayoutActionPlanMain.setLayoutParams(new LinearLayout.LayoutParams(
@@ -1280,17 +1283,19 @@ public class FollowUpActionPlan extends Fragment {
                 String fileSize = getFormattedFileSize(compressedSize);
                 String message = "PDF Size: " + fileSize;
                 // Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+//                5,242,880 - 5MB
+//                10485760  - 10MB
+//                3145728 - 3MB
 
-
-                if ((1024f * 1024f) < compressedSize) {
-                    // Toast.makeText(getContext(), "Sizer is greater than 10 MB", Toast.LENGTH_SHORT).show();
-                    Uri uri1 = Uri.fromFile(compressPdf(uri));
-                    byte[] pdfByteArray1;
-                    try {
-                        pdfByteArray1 = PDFUtils.convertPDFToByteArray(uri1.getPath());
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
+                if (compressedSize > 3145728) {
+                     Toast.makeText(getContext(), "Sizer is greater than 10 MB", Toast.LENGTH_SHORT).show();
+//                    Uri uri1 = Uri.fromFile(compressPdf(uri));
+//                    byte[] pdfByteArray1;
+//                    try {
+//                        pdfByteArray1 = PDFUtils.convertPDFToByteArray(uri1.getPath());
+//                    } catch (IOException e) {
+//                        throw new RuntimeException(e);
+//                    }
 
                 } else {
                     Uri uri1 = Uri.fromFile(compressPdf(uri));
