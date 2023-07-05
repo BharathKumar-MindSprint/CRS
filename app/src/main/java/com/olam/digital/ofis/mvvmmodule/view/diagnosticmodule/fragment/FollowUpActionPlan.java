@@ -660,7 +660,7 @@ public class FollowUpActionPlan extends Fragment {
                 getResources().getDimensionPixelSize(R.dimen.capture_box)
         );
         final Spinner spinner = new Spinner(getActivity());
-
+        layoutParamsSpin.gravity = Gravity.CENTER_VERTICAL;
         spinner.setLayoutParams(layoutParamsSpin);
         spinner.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.spinner_bg_light));
 
@@ -670,7 +670,7 @@ public class FollowUpActionPlan extends Fragment {
 
         spinner.setTag("spinner" + complaint_id);
 
-        layoutParamsSpin.setMargins(0, 15, 10, 15);
+        layoutParamsSpin.setMargins(0, 0, 10, 0);
 
         String actionPlanT = "0";
 //        List<DmSurveyAnswerTable> dmSurveyAnswerTableList1 = db.dmSurveyAnswerTableDao().getDataByQuestionId(id, Constants.FARMER_ID);
