@@ -279,7 +279,7 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
                         submitValue(questionIdDb,Constants.NOTRESOLVED, complaint_id);
                         if (!CoQId.contains(id)) {
                             CoQId.add(id);
-                            capture_count+=1;
+//                            capture_count+=1;
                         }
                         if (!Constants.questionIdsFollowUp.contains(id)) {
                             Constants.questionIdsFollowUp.add(id);

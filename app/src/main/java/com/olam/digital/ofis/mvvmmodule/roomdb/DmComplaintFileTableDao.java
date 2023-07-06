@@ -44,4 +44,10 @@ public interface DmComplaintFileTableDao {
     @Query("DELETE FROM DmComplaintFileTable")
     void deleteAll();
 
+    @Query("DELETE FROM DmComplaintFileTable WHERE questionId=:questionID AND farmerId=:farmerID")
+    void deleteRowsByFarmerAndQuestionID(String questionID , String farmerID );
+
+    @Query("SELECT * FROM DmComplaintFileTable WHERE questionId=:questionID AND farmerId=:farmerID")
+    List<DmComplaintFileTable> getCaptureProofSize(String questionID , String farmerID );
+
 }
