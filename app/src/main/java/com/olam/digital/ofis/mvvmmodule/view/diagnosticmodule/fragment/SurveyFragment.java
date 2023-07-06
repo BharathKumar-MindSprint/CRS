@@ -308,6 +308,9 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                         dmSurveyAnswerTable1.isCaptureProof = isCaptureProof.get(position);
                         dmSurveyAnswerTable1.isSynced = false;
                         db.dmSurveyAnswerTableDao().insert(dmSurveyAnswerTable1);
+                        if (db.dmComplaintFileTableDao().getCaptureProofSize(questionId,Constants.FARMER_ID).size() > 0) {
+                            db.dmComplaintFileTableDao().deleteRowsByFarmerAndQuestionID(questionId,Constants.FARMER_ID);
+                        }
                     }
                     else
                     {
@@ -331,6 +334,9 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                         dmSurveyAnswerTable1.isCaptureProof = isCaptureProof.get(position);
                         dmSurveyAnswerTable1.isSynced = false;
                         db.dmSurveyAnswerTableDao().insert(dmSurveyAnswerTable1);
+                        if (db.dmComplaintFileTableDao().getCaptureProofSize(questionId,Constants.FARMER_ID).size() > 0) {
+                            db.dmComplaintFileTableDao().deleteRowsByFarmerAndQuestionID(questionId,Constants.FARMER_ID);
+                        }
                     }
 
                 }
@@ -533,7 +539,9 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                                         dmSurveyAnswerTable1.farmerId = Constants.FARMER_ID;
                                         dmSurveyAnswerTable1.isSynced = false;
                                         db.dmSurveyAnswerTableDao().insert(dmSurveyAnswerTable1);
-
+                                        if (db.dmComplaintFileTableDao().getCaptureProofSize(questionId,Constants.FARMER_ID).size() > 0) {
+                                            db.dmComplaintFileTableDao().deleteRowsByFarmerAndQuestionID(questionId,Constants.FARMER_ID);
+                                        }
 
                                         return ;
                                     }
@@ -550,7 +558,9 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                                         dmSurveyAnswerTable1.farmerId = Constants.FARMER_ID;
                                         dmSurveyAnswerTable1.isSynced = false;
                                         db.dmSurveyAnswerTableDao().insert(dmSurveyAnswerTable1);
-
+                                        if (db.dmComplaintFileTableDao().getCaptureProofSize(questionId,Constants.FARMER_ID).size() > 0) {
+                                            db.dmComplaintFileTableDao().deleteRowsByFarmerAndQuestionID(questionId,Constants.FARMER_ID);
+                                        }
 
                                         return ;
                                     }
@@ -569,10 +579,11 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                                         dmSurveyAnswerTable1.isSynced = false;
                                         db.dmSurveyAnswerTableDao().insert(dmSurveyAnswerTable1);
 
+                                        if (db.dmComplaintFileTableDao().getCaptureProofSize(questionId,Constants.FARMER_ID).size() > 0) {
+                                            db.dmComplaintFileTableDao().deleteRowsByFarmerAndQuestionID(questionId,Constants.FARMER_ID);
+                                        }
 
                                         return ;
-
-
 
                                     }
                                 }catch (Exception e){e.printStackTrace();
@@ -721,6 +732,9 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                         dmSurveyAnswerTable1.isCaptureProof = isCaptureProof.get(position);
                         dmSurveyAnswerTable1.isSynced = false;
                         db.dmSurveyAnswerTableDao().insert(dmSurveyAnswerTable1);
+                        if (db.dmComplaintFileTableDao().getCaptureProofSize(questionId,Constants.FARMER_ID).size() > 0) {
+                            db.dmComplaintFileTableDao().deleteRowsByFarmerAndQuestionID(questionId,Constants.FARMER_ID);
+                        }
                     }
                     else
                     {
@@ -744,6 +758,9 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                         dmSurveyAnswerTable1.isCaptureProof = isCaptureProof.get(position);
                         dmSurveyAnswerTable1.isSynced = false;
                         db.dmSurveyAnswerTableDao().insert(dmSurveyAnswerTable1);
+                        if (db.dmComplaintFileTableDao().getCaptureProofSize(questionId,Constants.FARMER_ID).size() > 0) {
+                            db.dmComplaintFileTableDao().deleteRowsByFarmerAndQuestionID(questionId,Constants.FARMER_ID);
+                        }
 
                         //Toast.makeText(getActivity(), "Selected Item " + position, Toast.LENGTH_SHORT).show();
                     }
@@ -943,7 +960,9 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                                         dmSurveyAnswerTable1.farmerId = Constants.FARMER_ID;
                                         dmSurveyAnswerTable1.isSynced = false;
                                         db.dmSurveyAnswerTableDao().insert(dmSurveyAnswerTable1);
-
+                                        if (db.dmComplaintFileTableDao().getCaptureProofSize(questionId,Constants.FARMER_ID).size() > 0) {
+                                            db.dmComplaintFileTableDao().deleteRowsByFarmerAndQuestionID(questionId,Constants.FARMER_ID);
+                                        }
 
                                         return ;
                                     }
@@ -960,7 +979,9 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                                         dmSurveyAnswerTable1.farmerId = Constants.FARMER_ID;
                                         dmSurveyAnswerTable1.isSynced = false;
                                         db.dmSurveyAnswerTableDao().insert(dmSurveyAnswerTable1);
-
+                                        if (db.dmComplaintFileTableDao().getCaptureProofSize(questionId,Constants.FARMER_ID).size() > 0) {
+                                            db.dmComplaintFileTableDao().deleteRowsByFarmerAndQuestionID(questionId,Constants.FARMER_ID);
+                                        }
 
                                         return ;
                                     }
@@ -978,7 +999,9 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                                         dmSurveyAnswerTable1.farmerId = Constants.FARMER_ID;
                                         dmSurveyAnswerTable1.isSynced = false;
                                         db.dmSurveyAnswerTableDao().insert(dmSurveyAnswerTable1);
-
+                                        if (db.dmComplaintFileTableDao().getCaptureProofSize(questionId,Constants.FARMER_ID).size() > 0) {
+                                            db.dmComplaintFileTableDao().deleteRowsByFarmerAndQuestionID(questionId,Constants.FARMER_ID);
+                                        }
 
                                         return ;
 
