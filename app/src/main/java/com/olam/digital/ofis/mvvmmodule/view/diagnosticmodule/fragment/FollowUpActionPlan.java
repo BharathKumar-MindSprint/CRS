@@ -177,9 +177,7 @@ public class FollowUpActionPlan extends Fragment {
                 }
 
                 if ( justVal.size() == Constants.capture_count){
-
                     goNextCaptureProof = true;
-
 
                 } else {
                     Toast.makeText(getContext(), "Capture Proof is missing", Toast.LENGTH_SHORT).show();

@@ -29,6 +29,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 
 public class FollowUpSurvey extends Fragment implements View.OnClickListener {
@@ -264,7 +265,10 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
                     } else if (followupData.get(0).status.equalsIgnoreCase(Constants.NOTRESOLVED)) {
                         CoQId.add(dmSurveyAnswerTableList.get(0).questionID);
                         Constants.questionIdsFollowUp.add(dmSurveyAnswerTableList.get(0).questionID);
-                        capture_count+=1;
+                        if(!Objects.equals(db.dmSurveyAnswerTableDao().getIsCaptureProofRequired(dmSurveyAnswerTableList.get(0).questionID, Constants.FARMER_ID), 0)){
+                            capture_count+=1;
+                        }
+
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                             notResolveText.setBackground(getActivity().getDrawable(R.drawable.dm_next_background));
                         }
@@ -277,7 +281,9 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
 //                    db.dmSurveyAnswerTableDao().updateResolvedStatus("2", id, Constants.FARMER_ID);
                         // Do something with the selected value
                         submitValue(questionIdDb,Constants.NOTRESOLVED, complaint_id);
-                        capture_count+=1;
+                        if(!Objects.equals(db.dmSurveyAnswerTableDao().getIsCaptureProofRequired(questionIdDb, Constants.FARMER_ID), 0)){
+                            capture_count+=1;
+                        }
                         if (!CoQId.contains(id)) {
                             CoQId.add(id);
                         }
@@ -306,7 +312,9 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
 //                    db.dmSurveyAnswerTableDao().updateResolvedStatus("1", id, Constants.FARMER_ID);
                         // Do something with the selected value
                         submitValue(questionIdDb,Constants.RESOLVED, complaint_id);
-                        capture_count-=1;
+                        if(!Objects.equals(db.dmSurveyAnswerTableDao().getIsCaptureProofRequired(questionIdDb, Constants.FARMER_ID), 0)){
+                            capture_count-=1;
+                        }
                         if (!CoQId.contains(id)) {
                             CoQId.add(id);
 

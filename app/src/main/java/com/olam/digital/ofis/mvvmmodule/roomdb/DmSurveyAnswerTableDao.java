@@ -94,4 +94,7 @@ public interface DmSurveyAnswerTableDao {
     @Query("UPDATE DmSurveyAnswerTable SET isSynced=:status, submittedModuleId =:submittedmoduleId WHERE moduleId = :moduleId AND farmerId =:farmerId")
     void updateSyncStatus(String moduleId, String farmerId, boolean status, int submittedmoduleId);
 
+    @Query("SELECT isCaptureProof FROM DmSurveyAnswerTable WHERE questionId = :id AND farmerId = :farmerId")
+    int getIsCaptureProofRequired(String id, String farmerId );
+
 }
