@@ -996,8 +996,12 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
             //db.dmComplaintFileTableDao().deleteAll();
             DmComplaintFileTable dmComplaintFileTable = new DmComplaintFileTable();
-            dmComplaintFileTable.setFile_name(filename);
+            String fileSaperator = ".", formatNew = "yyyyMMddHHmmss";
+            getFileWithDate(filename,fileSaperator,formatNew);
+            String newFileFormat =  getFileWithDate(filename,fileSaperator,formatNew);
+            dmComplaintFileTable.setFile_name(newFileFormat);
             dmComplaintFileTable.setSurveyType("ParentSurvey");
+            dmComplaintFileTable.setIsFileSynced(0);
             Date today = new Date();
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
             String currentTime = format.format(today);
@@ -1154,8 +1158,12 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
 
                 DmComplaintFileTable dmComplaintFileTable = new DmComplaintFileTable();
-                dmComplaintFileTable.setFile_name(filename);
+                String fileSaperator = ".", formatNew = "yyyyMMddHHmmss";
+                getFileWithDate(filename,fileSaperator,formatNew);
+                String newFileFormat =  getFileWithDate(filename,fileSaperator,formatNew);
+                dmComplaintFileTable.setFile_name(newFileFormat);
                 dmComplaintFileTable.setSurveyType("ParentSurvey");
+                dmComplaintFileTable.setIsFileSynced(0);
                 dmComplaintFileTable.setFileData(fileByteArray);
                 Date today = new Date();
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
@@ -1323,8 +1331,12 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                     //db.dmComplaintFileTableDao().deleteAll();
 
                     DmComplaintFileTable dmComplaintFileTable = new DmComplaintFileTable();
-                    dmComplaintFileTable.setFile_name(filename);
+                    String fileSaperator = ".", formatNew = "yyyyMMddHHmmss";
+                    getFileWithDate(filename,fileSaperator,formatNew);
+                    String newFileFormat =  getFileWithDate(filename,fileSaperator,formatNew);
+                    dmComplaintFileTable.setFile_name(newFileFormat);
                     dmComplaintFileTable.setSurveyType("ParentSurvey");
+                    dmComplaintFileTable.setIsFileSynced(0);
                     dmComplaintFileTable.setFileData(pdfByteArray2);
                     Date today = new Date();
                     SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
@@ -1475,8 +1487,12 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
                 //db.dmComplaintFileTableDao().deleteAll();
                 DmComplaintFileTable dmComplaintFileTable = new DmComplaintFileTable();
-                dmComplaintFileTable.setFile_name(filename);
+                String fileSaperator = ".", formatNew = "yyyyMMddHHmmss";
+                getFileWithDate(filename,fileSaperator,formatNew);
+                String newFileFormat =  getFileWithDate(filename,fileSaperator,formatNew);
+                dmComplaintFileTable.setFile_name(newFileFormat);
                 dmComplaintFileTable.setSurveyType("ParentSurvey");
+                dmComplaintFileTable.setIsFileSynced(0);
                 dmComplaintFileTable.setFileData(imageBytes);
                 Date today = new Date();
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
@@ -1920,5 +1936,15 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
             ViewPager2 viewPager = getActivity().findViewById(R.id.viewPager);
             viewPager.setCurrentItem(2);
         }
+    }
+
+    public static String getFileWithDate(String fileName, String fileSaperator, String dateFormat) {
+        String FileNamePrefix = fileName.substring(0, fileName.lastIndexOf(fileSaperator));
+        String FileNameSuffix = fileName.substring(fileName.lastIndexOf(fileSaperator)+1, fileName.length());
+        //System.out.println("File= Prefix~Suffix:"+FileNamePrefix +"~"+FileNameSuffix);
+
+        String newFileName = new SimpleDateFormat("'"+FileNamePrefix+"_'"+dateFormat+"'"+fileSaperator+FileNameSuffix+"'").format(new Date());
+        System.out.println("New File:"+newFileName);
+        return newFileName;
     }
 }
