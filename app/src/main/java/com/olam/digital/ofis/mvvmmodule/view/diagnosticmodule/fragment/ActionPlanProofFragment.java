@@ -1309,7 +1309,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
                 if (compressedSize > 3145728) {
                     Toast.makeText(getContext(), "Sizer is greater than 10 MB", Toast.LENGTH_SHORT).show();
-                    Toast.makeText(getContext(), compressedSize + "", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getContext(), compressedSize + "", Toast.LENGTH_SHORT).show();
 //                    Uri uri1 = Uri.fromFile(compressPdf(uri));
 //                    byte[] pdfByteArray1;
 //                    try {
