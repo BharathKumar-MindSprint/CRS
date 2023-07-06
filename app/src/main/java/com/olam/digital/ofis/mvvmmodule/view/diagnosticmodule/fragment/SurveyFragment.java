@@ -509,7 +509,7 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                     DmSurveyAnswerTable dmSurveyAnswerTable1 = new DmSurveyAnswerTable();
                     dmSurveyAnswerTable1.questionID = questionId;
                     dmSurveyAnswerTable1.answer = charSequence.toString();
-                    dmSurveyAnswerTable1.answerID = charSequence.toString();
+                    dmSurveyAnswerTable1.answerID = "";
                     dmSurveyAnswerTable1.moduleId = Constants.MODULE_ID;
                     dmSurveyAnswerTable1.question = question;
                     int complianceId = 0;
@@ -929,7 +929,7 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                     DmSurveyAnswerTable dmSurveyAnswerTable1 = new DmSurveyAnswerTable();
                     dmSurveyAnswerTable1.questionID = questionId;
                     dmSurveyAnswerTable1.answer = charSequence.toString();
-                    dmSurveyAnswerTable1.answerID = charSequence.toString();
+                    dmSurveyAnswerTable1.answerID = "";
                     dmSurveyAnswerTable1.moduleId = Constants.MODULE_ID;
                     dmSurveyAnswerTable1.question = question;
                     int complianceId = 0;
