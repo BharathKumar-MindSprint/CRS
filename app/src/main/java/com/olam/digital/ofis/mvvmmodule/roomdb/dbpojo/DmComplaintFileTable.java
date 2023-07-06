@@ -39,6 +39,28 @@ public class DmComplaintFileTable {
     @ColumnInfo(typeAffinity = ColumnInfo.BLOB)
     private byte[] fileData;
 
+    public int getIsFileSynced() {
+        return isFileSynced;
+    }
+
+    public void setIsFileSynced(int isFileSynced) {
+        this.isFileSynced = isFileSynced;
+    }
+
+    @ColumnInfo(name = "isFileSynced")
+    private int isFileSynced;
+
+    public String getFilePath() {
+        return filePath;
+    }
+
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
+    }
+
+    @ColumnInfo(name = "filePath")
+    private String filePath;
+
     public int getAttempt() {
         return attempt;
     }

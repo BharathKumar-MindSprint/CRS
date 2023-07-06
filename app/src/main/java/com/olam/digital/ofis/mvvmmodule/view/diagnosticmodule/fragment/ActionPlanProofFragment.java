@@ -1002,6 +1002,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
             dmComplaintFileTable.setFile_name(newFileFormat);
             dmComplaintFileTable.setSurveyType("ParentSurvey");
             dmComplaintFileTable.setIsFileSynced(0);
+            dmComplaintFileTable.setFilePath(uriImage.getPath());
             Date today = new Date();
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
             String currentTime = format.format(today);
@@ -1164,6 +1165,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 dmComplaintFileTable.setFile_name(newFileFormat);
                 dmComplaintFileTable.setSurveyType("ParentSurvey");
                 dmComplaintFileTable.setIsFileSynced(0);
+                dmComplaintFileTable.setFilePath(uri.getPath());
                 dmComplaintFileTable.setFileData(fileByteArray);
                 Date today = new Date();
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
@@ -1337,6 +1339,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                     dmComplaintFileTable.setFile_name(newFileFormat);
                     dmComplaintFileTable.setSurveyType("ParentSurvey");
                     dmComplaintFileTable.setIsFileSynced(0);
+                    dmComplaintFileTable.setFilePath(uri.getPath());
                     dmComplaintFileTable.setFileData(pdfByteArray2);
                     Date today = new Date();
                     SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
@@ -1493,6 +1496,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 dmComplaintFileTable.setFile_name(newFileFormat);
                 dmComplaintFileTable.setSurveyType("ParentSurvey");
                 dmComplaintFileTable.setIsFileSynced(0);
+                dmComplaintFileTable.setFilePath(filePathimage);
                 dmComplaintFileTable.setFileData(imageBytes);
                 Date today = new Date();
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");

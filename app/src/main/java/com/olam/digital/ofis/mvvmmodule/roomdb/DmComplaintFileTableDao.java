@@ -20,6 +20,9 @@ public interface DmComplaintFileTableDao {
     @Query("SELECT * FROM DmComplaintFileTable WHERE questionId = :id AND farmerId = :farmerId AND attempt = :attempt")
     List<DmComplaintFileTable> getFilesById(int id, String farmerId, int attempt);
 
+    @Query("SELECT * FROM DmComplaintFileTable WHERE  isFileSynced = 0")
+    List<DmComplaintFileTable> getUnSyncedFile();
+
     @Query("SELECT * FROM DmComplaintFileTable WHERE questionId = :id AND farmerId = :farmerId AND attempt = :attempt")
     List<DmComplaintFileTable> getQuestionFilesById(int id, String farmerId, int attempt);
 
@@ -46,6 +49,9 @@ public interface DmComplaintFileTableDao {
 
     @Query("DELETE FROM DmComplaintFileTable WHERE questionId=:questionID AND farmerId=:farmerID")
     void deleteRowsByFarmerAndQuestionID(String questionID , String farmerID );
+
+    @Query("UPDATE DmComplaintFileTable SET isFileSynced= 1 WHERE uid = :uid AND farmerId =:farmerId")
+    void updateSyncData(Long uid, String farmerId);
 
     @Query("SELECT * FROM DmComplaintFileTable WHERE questionId=:questionID AND farmerId=:farmerID")
     List<DmComplaintFileTable> getCaptureProofSize(String questionID , String farmerID );
