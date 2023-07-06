@@ -50,4 +50,8 @@ public interface DmComplaintFileTableDao {
     @Query("SELECT * FROM DmComplaintFileTable WHERE questionId=:questionID AND farmerId=:farmerID")
     List<DmComplaintFileTable> getCaptureProofSize(String questionID , String farmerID );
 
+    @Query("SELECT questionId FROM DmComplaintFileTable WHERE questionId = :id AND farmerId = :farmerId AND attempt = :attempt AND surveyType=:surveyType")
+    String getTotalFollowCount(int id, String farmerId, int attempt , String surveyType);
+
+
 }

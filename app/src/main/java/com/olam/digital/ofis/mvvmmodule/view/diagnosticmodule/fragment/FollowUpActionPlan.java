@@ -170,17 +170,13 @@ public class FollowUpActionPlan extends Fragment {
 
 
                 for (int i = 0; i < qId.size(); i++) {
-                    List<DmComplaintFileTable> dmComplaintFileTables = db.dmComplaintFileTableDao().getQuestionFilesById(Integer.parseInt(qId.get(i)), Constants.FARMER_ID, 1);
-                    int getQuestionProof = db.dmSurveyAnswerTableDao().getIsCaptureProofValue(Integer.parseInt(qId.get(i)), Constants.FARMER_ID);
-
-                    if (!justVal.contains(qId.get(i)) && dmComplaintFileTables.size() > 0) {
-                        justVal.add(qId.get(i));
-                    } else if (Objects.equals(String.valueOf(getQuestionProof), "0")) {
-                        justVal.add(qId.get(i));
+                    String dmComplaintFileTables = db.dmComplaintFileTableDao().getTotalFollowCount(Integer.parseInt(qId.get(i)),Constants.FARMER_ID,1,"FollowUp");
+                    if (!justVal.contains(dmComplaintFileTables) && dmComplaintFileTables!=null) {
+                        justVal.add(dmComplaintFileTables);
                     }
                 }
 
-                if (justVal.size()==Constants.capture_count){
+                if ( justVal.size() == Constants.capture_count){
 
                     goNextCaptureProof = true;
 
@@ -214,6 +210,8 @@ public class FollowUpActionPlan extends Fragment {
 
         return view;
     }
+
+
 
     @SuppressLint("ResourceAsColor")
     private void displayQuestionsModuleComplaint(String complaint_id) {
