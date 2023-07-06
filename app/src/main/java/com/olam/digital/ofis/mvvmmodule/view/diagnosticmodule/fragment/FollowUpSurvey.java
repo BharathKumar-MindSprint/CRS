@@ -277,9 +277,9 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
 //                    db.dmSurveyAnswerTableDao().updateResolvedStatus("2", id, Constants.FARMER_ID);
                         // Do something with the selected value
                         submitValue(questionIdDb,Constants.NOTRESOLVED, complaint_id);
+                        capture_count+=1;
                         if (!CoQId.contains(id)) {
                             CoQId.add(id);
-//                            capture_count+=1;
                         }
                         if (!Constants.questionIdsFollowUp.contains(id)) {
                             Constants.questionIdsFollowUp.add(id);
@@ -292,6 +292,10 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
                             resolveText.setBackground(getActivity().getDrawable(R.drawable.dm_captureproof_bg));
                         }
 
+                        if (db.dmComplaintFileTableDao().getCaptureProofSize(questionIdDb,Constants.FARMER_ID).size() > 0) {
+                            db.dmComplaintFileTableDao().deleteRowsByFarmerAndQuestionID(questionIdDb,Constants.FARMER_ID);
+                        }
+
                         resolveText.setTextColor(getResources().getColor(R.color.gray));
                     }
                 });
@@ -302,8 +306,10 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
 //                    db.dmSurveyAnswerTableDao().updateResolvedStatus("1", id, Constants.FARMER_ID);
                         // Do something with the selected value
                         submitValue(questionIdDb,Constants.RESOLVED, complaint_id);
+                        capture_count-=1;
                         if (!CoQId.contains(id)) {
                             CoQId.add(id);
+
                         }
 
                         if (!Constants.questionIdsFollowUp.contains(id)) {
@@ -318,6 +324,10 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
                             notResolveText.setBackground(getActivity().getDrawable(R.drawable.dm_captureproof_bg));
                         }
                         notResolveText.setTextColor(getResources().getColor(R.color.gray));
+
+                        if (db.dmComplaintFileTableDao().getCaptureProofSize(questionIdDb,Constants.FARMER_ID).size() > 0) {
+                            db.dmComplaintFileTableDao().deleteRowsByFarmerAndQuestionID(questionIdDb,Constants.FARMER_ID);
+                        }
 
                     }
                 });
