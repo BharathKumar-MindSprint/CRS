@@ -900,7 +900,8 @@ public class FollowUpActionPlan extends Fragment {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                             notResolveText.setBackground(getActivity().getDrawable(R.drawable.follow_up_not_resolved));
                         }
-                        if (db.dmSurveyAnswerTableDao().getDataByQuestionId(id, Constants.FARMER_ID).get(0).isCaptureProof) {
+                        boolean allowCaptureProof = checkAllowCaptureProof(id, ans, ansId, displayType);
+                        if (allowCaptureProof) {
                             linearLayoutItems.addView(textView);
                             linearLayoutItems.addView(linearLayoutImage);
                             linearLayoutItems.addView(linearLayoutSpin);
@@ -961,6 +962,41 @@ public class FollowUpActionPlan extends Fragment {
         return allowCustomActionPlan;
     }
 
+    private boolean checkAllowCaptureProof(String questionId, String ans, int ansId, String displayType) {
+        boolean allowCaptureProof = false;
+        if(displayType.equalsIgnoreCase("text box")){
+            if (db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).size() != 0) {
+                if (ans != null) {
+                    String value = ans.trim();
+
+                    for (int j = 0; j < db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).size(); j++) {
+
+                        try {
+                            if (Objects.equals(value, "-")) {
+                                allowCaptureProof = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).isCaptureProof;
+                            }
+                            else if (Objects.equals(value, "-" + value) && db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).minimumRange <= Double.parseDouble(value) && Double.parseDouble(value) <= db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).maximumRange ) {
+                                allowCaptureProof = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).isCaptureProof;
+                            }
+                            else if (db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).minimumRange <= Double.parseDouble(value) && Double.parseDouble(value) <= db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).maximumRange) {
+                                allowCaptureProof = db.dmRangeTextBoxModuleQuestionsTableDao().getDmTextBoxByQuestionId(Integer.parseInt(questionId)).get(j).isCaptureProof;
+                            }
+                        }catch (Exception e){e.printStackTrace();}
+                    }
+
+                }
+            }
+        }else{
+            List<DmLookupValuesItem> dmLookupValuesISubmoduleList = db.dmLookupValuesItemDao().getDmAnswersModuleByQuestionId(Integer.parseInt(questionId));
+            for (int k = 0; k < dmLookupValuesISubmoduleList.size(); k++) {
+                if(ans.equalsIgnoreCase(dmLookupValuesISubmoduleList.get(k).value)) {
+                    allowCaptureProof = dmLookupValuesISubmoduleList.get(k).isCaptureProof;
+                }
+            }
+        }
+
+        return allowCaptureProof;
+    }
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
