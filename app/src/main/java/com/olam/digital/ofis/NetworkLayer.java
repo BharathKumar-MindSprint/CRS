@@ -5855,14 +5855,37 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
     public void syncCapturedFileData() {
         try {
+            final MediaType MEDIA_TYPE_PNG = MediaType.parse("image/png");
             final String endpoint = "ofissurvey/image/upload";
-            final JSONArray jsonArray = new JSONArray();
-            // fetching data here
+            // Get the file paths of the files to upload
+            List<String> filePaths = new ArrayList<>();
+            filePaths.add("/path/to/file1.png");
+            filePaths.add("/path/to/file2.png");
+
+
+
+            // Create a list to hold the request parts
+            List<MultipartBody.Part> parts = new ArrayList<>();
+
+
+
+            // Create a request body part for each file and add it to the parts list
+            for (String filePath : filePaths) {
+                File file = new File(filePath);
+                RequestBody fileBody = RequestBody.create(MEDIA_TYPE_PNG, file);
+                MultipartBody.Part part = MultipartBody.Part.createFormData("files", file.getName(), fileBody);
+                parts.add(part);
+            }
+
+            // Create a request body with the parts
+            RequestBody requestBody = new MultipartBody.Builder()
+                    .setType(MultipartBody.FORM)
+                    .addPart((RequestBody) parts) .build();
 
 
             if (endpoint.length() > 0) {
 
-                okHttpArrayPost(context, endpoint, jsonArray, new Callback() {
+                okHttpMultiPartPost(context, endpoint, requestBody, new Callback() {
                     @Override
                     public void onResponse(Call call, Response postResponse) {
 
