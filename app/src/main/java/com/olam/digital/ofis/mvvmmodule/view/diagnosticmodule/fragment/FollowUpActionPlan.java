@@ -632,7 +632,14 @@ public class FollowUpActionPlan extends Fragment {
         ids.add("0");
         String ans = db.dmSurveyAnswerTableDao().getDataByQuestionId(id, Constants.FARMER_ID).get(0).answer;
         String displayType = db.dmQuestionsModuleDao().getDmQuestionType(Integer.parseInt(id)).get(0).displayType;
-        int ansId = Integer.parseInt(db.dmSurveyAnswerTableDao().getDataByQuestionId(id, Constants.FARMER_ID).get(0).answerID);
+        int ansId = 0;
+        try {
+            ansId = Integer.parseInt(db.dmSurveyAnswerTableDao().getDataByQuestionId(id, Constants.FARMER_ID).get(0).answerID);
+        }catch (NumberFormatException e){
+            e.printStackTrace();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         boolean allowCustomActionPlan = checkAllowCustomActionPlan(id,ans, ansId,displayType);
         if (allowCustomActionPlan) {
             list.add("Custom ActionPlan");
