@@ -877,6 +877,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             try{
                 if (GpsTrackerLogic.getGeoPointCount(context) > 0 ){
                     if (!isGpsSyncProcessing) syncGPSData();
+                }else{
+                    syncCapturedFileData();
                 }
             }catch (Exception e){FirebaseCrashlytics.getInstance().log(e.getMessage());}
         }
@@ -5152,8 +5154,10 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         if (postResponse.isSuccessful()) {
                             new GpsTrackerLogic().deleteGeoDetails(context);
                             isGpsSyncProcessing=false;
+                            syncCapturedFileData();
                         } else {
                             isGpsSyncProcessing=false;
+                            syncCapturedFileData();
                             // Added
                             if (postResponse.code() == 401) {
                                 try {
@@ -5169,6 +5173,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     public void onFailure(Call call, IOException e) {
                         isGpsSyncProcessing=false;
                         gpsSynced=false;
+                        syncCapturedFileData();
                     }
                 });
             }
@@ -5544,7 +5549,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             JSONArray jsonArray = new JSONArray();
                             for (int j = 0; j < complaintFileTableList.size(); j++) {
 //                                files.add(complaintFileTableList.get(j).getFile_name());
-                                jsonArray.put(complaintFileTableList.get(j).getFile_name());
+                                jsonArray.put(complaintFileTableList.get(j).getOfisFileName());
                             }
 
                             ans.put("captureProof", jsonArray);
@@ -5735,7 +5740,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             JSONArray jsonArray = new JSONArray();
                             for (int j = 0; j < complaintFileTableList.size(); j++) {
 //                                files.add(complaintFileTableList.get(j).getFile_name());
-                                jsonArray.put(complaintFileTableList.get(j).getFile_name());
+                                jsonArray.put(complaintFileTableList.get(j).getOfisFileName());
                             }
 
                             ans.put("dmCapturedProof", jsonArray);
@@ -5848,5 +5853,44 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         }
     }
 
+    public void syncCapturedFileData() {
+        try {
+            final String endpoint = "ofissurvey/image/upload";
+            final JSONArray jsonArray = new JSONArray();
+            // fetching data here
+
+
+            if (endpoint.length() > 0) {
+
+                okHttpArrayPost(context, endpoint, jsonArray, new Callback() {
+                    @Override
+                    public void onResponse(Call call, Response postResponse) {
+
+                        if (postResponse.isSuccessful()) {
+                           // update isSynced into 1
+                        } else {
+
+                            // Added
+                            if (postResponse.code() == 401) {
+                                try {
+                                    FailureGetRefreshToken();
+                                }catch (Exception e){FirebaseCrashlytics.getInstance().log(e.getMessage());}
+
+                            } else {
+                            }
+                        }
+                        postResponse.close();
+                    }
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+
+                    }
+                });
+            }
+        }
+        catch (Exception e){
+            FirebaseCrashlytics.getInstance().log(e.getMessage());
+        }
+    }
 
 }
