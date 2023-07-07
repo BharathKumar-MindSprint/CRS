@@ -1022,6 +1022,7 @@ public class FollowUpActionPlan extends Fragment {
             DmComplaintFileTable dmComplaintFileTable = new DmComplaintFileTable();
             dmComplaintFileTable.setFile_name(filename);
             dmComplaintFileTable.setSurveyType("FollowUp");
+            dmComplaintFileTable.setFilePath(uriImage.getPath());
             Date today = new Date();
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
             String currentTime = format.format(today);
@@ -1184,6 +1185,7 @@ public class FollowUpActionPlan extends Fragment {
 
                 DmComplaintFileTable dmComplaintFileTable = new DmComplaintFileTable();
                 dmComplaintFileTable.setFile_name(filename);
+                dmComplaintFileTable.setFilePath(uri.getPath());
                 dmComplaintFileTable.setSurveyType("FollowUp");
                 dmComplaintFileTable.setFileData(fileByteArray);
                 Date today = new Date();
@@ -1352,6 +1354,7 @@ public class FollowUpActionPlan extends Fragment {
 
                     DmComplaintFileTable dmComplaintFileTable = new DmComplaintFileTable();
                     dmComplaintFileTable.setFile_name(filename);
+                    dmComplaintFileTable.setFilePath(uri1.getPath());
                     dmComplaintFileTable.setSurveyType("FollowUp");
                     dmComplaintFileTable.setFileData(pdfByteArray2);
                     Date today = new Date();

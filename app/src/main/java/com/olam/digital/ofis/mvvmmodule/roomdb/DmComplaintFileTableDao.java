@@ -50,8 +50,8 @@ public interface DmComplaintFileTableDao {
     @Query("DELETE FROM DmComplaintFileTable WHERE questionId=:questionID AND farmerId=:farmerID")
     void deleteRowsByFarmerAndQuestionID(String questionID , String farmerID );
 
-    @Query("UPDATE DmComplaintFileTable SET isFileSynced= 1 WHERE uid = :uid AND farmerId =:farmerId")
-    void updateSyncData(Long uid, String farmerId);
+    @Query("UPDATE DmComplaintFileTable SET isFileSynced= 1 WHERE uid = :uid")
+    void updateSyncData(Long uid);
 
     @Query("SELECT * FROM DmComplaintFileTable WHERE questionId=:questionID AND farmerId=:farmerID")
     List<DmComplaintFileTable> getCaptureProofSize(String questionID , String farmerID );

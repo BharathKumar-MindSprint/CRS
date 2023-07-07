@@ -49,9 +49,9 @@ import com.olam.digital.ofis.dynatrace.DynatraceHelper;
 import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
 import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.logging.FabricLogsWriter;
-import com.olam.digital.ofis.matoma.multifarm.MultiFarmDTO;
-import com.olam.digital.ofis.matoma.multifarm.MultiFarmUtils;
 import com.olam.digital.ofis.model.GeoDTO;
+import com.olam.digital.ofis.multifarm.MultiFarmDTO;
+import com.olam.digital.ofis.multifarm.MultiFarmUtils;
 import com.olam.digital.ofis.mvvmmodule.Constants;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DMSurveyReport;
@@ -879,8 +879,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             try {
                 if (GpsTrackerLogic.getGeoPointCount(context) > 0) {
                     if (!isGpsSyncProcessing) syncGPSData();
-                } else {
-                    syncCapturedFileData();
                 }
             } catch (Exception e) {
                 FirebaseCrashlytics.getInstance().log(e.getMessage());
@@ -5189,10 +5187,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         if (postResponse.isSuccessful()) {
                             new GpsTrackerLogic().deleteGeoDetails(context);
                             isGpsSyncProcessing = false;
-                            syncCapturedFileData();
                         } else {
                             isGpsSyncProcessing = false;
-                            syncCapturedFileData();
                             // Added
                             if (postResponse.code() == 401) {
                                 try {
@@ -5211,7 +5207,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     public void onFailure(Call call, IOException e) {
                         isGpsSyncProcessing = false;
                         gpsSynced = false;
-                        syncCapturedFileData();
                     }
                 });
             }
@@ -5590,7 +5585,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             JSONArray jsonArray = new JSONArray();
                             for (int j = 0; j < complaintFileTableList.size(); j++) {
 //                                files.add(complaintFileTableList.get(j).getFile_name());
-                                jsonArray.put(complaintFileTableList.get(j).getOfisFileName());
+                                jsonArray.put(complaintFileTableList.get(j).getFile_name());
                             }
 
                             ans.put("captureProof", jsonArray);
@@ -5665,7 +5660,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                     e.printStackTrace();
                                     // Handle JSON parsing error
                                 }
-
+                                syncCapturedFileData();
 
                             } else {
                                 try {
@@ -5772,14 +5767,14 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                             complaintFileTableList.clear();
 
-                            complaintFileTableList = db.dmComplaintFileTableDao().getFilesById(followupList.get(i).questionId, String.valueOf(farmerId), 0);
+                            complaintFileTableList = db.dmComplaintFileTableDao().getFilesById(followupList.get(i).questionId, String.valueOf(farmerId), followupList.get(i).attempt);
 
 //                            List<String> files = new ArrayList<>();
 //                            files.clear();
                             JSONArray jsonArray = new JSONArray();
                             for (int j = 0; j < complaintFileTableList.size(); j++) {
 //                                files.add(complaintFileTableList.get(j).getFile_name());
-                                jsonArray.put(complaintFileTableList.get(j).getOfisFileName());
+                                jsonArray.put(complaintFileTableList.get(j).getFile_name());
                             }
 
                             ans.put("dmCapturedProof", jsonArray);
@@ -5829,7 +5824,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                     e.printStackTrace();
                                     // Handle JSON parsing error
                                 }
-
+                                syncCapturedFileData();
 
                             } else {
                                 try {
@@ -5860,6 +5855,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 }
                             }
                             postResponse.close();
+
+
                         }
 
                         @Override
@@ -5892,7 +5889,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
     }
 
     public void syncCapturedFileData() {
-        Toast.makeText(context, "File Upload SuccessFul Entry", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(context, "File Upload SuccessFul Entry", Toast.LENGTH_SHORT).show();
         OFISRoomDB db = OFISRoomDB.getDbInstance(context);
         try {
             final MediaType MEDIA_TYPE_PNG = MediaType.parse("/*");
@@ -5907,43 +5904,36 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             if (dmComplaintFileTableList.size() != 0) {
                 for (int l = 0; l < dmComplaintFileTableList.size(); l++) {
                     filePaths.add(dmComplaintFileTableList.get(1).getFilePath());
-                   // ids.add(dmComplaintFileTableList.get(l).getUid());
+                    ids.add(dmComplaintFileTableList.get(l).getUid());
                 }
             }
 
-            // Create a list to hold the request parts
             List<MultipartBody.Part> parts = new ArrayList<>();
             MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
-
-
-            // Create a request body part for each file and add it to the parts list
-            for (String filePath : filePaths) {
+             for (String filePath : filePaths) {
                 File file = new File(filePath);
-                //Log.d("_FILE_Name",file.getName());
-
                 RequestBody fileBody = RequestBody.create(MEDIA_TYPE_PNG, file);
-               // MultipartBody.Part part = MultipartBody.Part.createFormData("files",file.getName(), fileBody);
-                //parts.add(part);
                 builder.addFormDataPart("files", file.getName(), fileBody);
             }
 
             RequestBody requestBody = builder.build();
 
-            Log.d("UPLOAD_RequestBody",requestBody.toString());
+//            Log.d("UPLOAD_RequestBody",requestBody.toString());
             if (endpoint.length() > 0) {
 
                 okHttpMultiPartPost(context, endpoint, requestBody, new Callback() {
                     @Override
                     public void onResponse(Call call, Response postResponse) {
-                        Log.d("UPLOAD_FILEddd","Other Upload");
-                        Toast.makeText(context, "File Upload Inside Response", Toast.LENGTH_SHORT).show();
+                        Log.d("UPLOAD_FILE_SUCCESS","1");
+//                        Toast.makeText(context, "File Upload Inside Response", Toast.LENGTH_SHORT).show();
 
                         if (postResponse.isSuccessful()) {
-                            Toast.makeText(context, "File Upload Inside Success Resp", Toast.LENGTH_SHORT).show();
-                          /*  for(int i=0;i<ids.size();i++) {
-                                db.dmComplaintFileTableDao().updateSyncData(ids.get(i),Constants.FARMER_ID);
-                            }*/
-
+                            Log.d("UPLOAD_FILE_SUCCESS","2");
+//                            Toast.makeText(context, "File Upload Inside Success Resp", Toast.LENGTH_SHORT).show();
+                            for(int i=0;i<ids.size();i++) {
+                                db.dmComplaintFileTableDao().updateSyncData(ids.get(i));
+                            }
+//                            db.dmComplaintFileTableDao().deleteAll();
                         } else {
 
                             // Added
@@ -5953,7 +5943,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                 } catch (Exception e) {
                                     FirebaseCrashlytics.getInstance().log(e.getMessage());
                                 }
-                                Toast.makeText(context, "Inside 401", Toast.LENGTH_SHORT).show();
+                                Log.d("UPLOAD_FILE_FAILURE","1");
+//                                Toast.makeText(context, "Inside 401", Toast.LENGTH_SHORT).show();
                             } else {
                             }
                         }
@@ -5962,7 +5953,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                     @Override
                     public void onFailure(Call call, IOException e) {
-                        Toast.makeText(context, "Inside Failing", Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(context, "Inside Failing", Toast.LENGTH_SHORT).show();
+                        Log.d("UPLOAD_FILE_FAILURE","2");
                     }
                 });
             }
