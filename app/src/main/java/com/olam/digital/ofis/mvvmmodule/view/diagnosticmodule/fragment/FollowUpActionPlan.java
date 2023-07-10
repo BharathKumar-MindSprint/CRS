@@ -168,19 +168,35 @@ public class FollowUpActionPlan extends Fragment {
                 ArrayList<String> justVal = new ArrayList<String>();
                 justVal.clear();
 
-
+                int capturedValue = 0;
+                int requiredValue = 0;
                 for (int i = 0; i < qId.size(); i++) {
-                    String dmComplaintFileTables = db.dmComplaintFileTableDao().getTotalFollowCount(Integer.parseInt(qId.get(i)),Constants.FARMER_ID,1,"FollowUp");
-                    if (!justVal.contains(dmComplaintFileTables) && dmComplaintFileTables!=null) {
-                        justVal.add(dmComplaintFileTables);
+
+                    String ans = db.dmSurveyAnswerTableDao().getDataByQuestionId(qId.get(i), Constants.FARMER_ID).get(0).answer;
+                    String displayType = db.dmQuestionsModuleDao().getDmQuestionType(Integer.parseInt(qId.get(i))).get(0).displayType;
+                    int ansId = 0;
+                    try {
+                        ansId = Integer.parseInt(db.dmSurveyAnswerTableDao().getDataByQuestionId(qId.get(i), Constants.FARMER_ID).get(0).answerID);
+                    }catch (NumberFormatException e){
+                        e.printStackTrace();
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                    boolean allowCaptureProof = checkAllowCaptureProof(qId.get(i), ans, ansId, displayType);
+                    if(allowCaptureProof){
+                        requiredValue ++;
+                        List<DmComplaintFileTable> dmComplaintFiles = db.dmComplaintFileTableDao().getTotalFollowCount(Integer.parseInt(qId.get(i)),Constants.FARMER_ID,Constants.ATTEMPT,"FollowUp");
+                        if(dmComplaintFiles.size() == 0){
+                            Toast.makeText(getContext(), "Capture Proof is missing", Toast.LENGTH_SHORT).show();
+                            break;
+                        }else if (dmComplaintFiles.size() > 0){
+                            capturedValue ++;
+                        }
                     }
                 }
 
-                if ( justVal.size() == Constants.capture_count){
+                if ( capturedValue == requiredValue){
                     goNextCaptureProof = true;
-
-                } else {
-                    Toast.makeText(getContext(), "Capture Proof is missing", Toast.LENGTH_SHORT).show();
 
                 }
 
@@ -1354,7 +1370,7 @@ public class FollowUpActionPlan extends Fragment {
 
                     DmComplaintFileTable dmComplaintFileTable = new DmComplaintFileTable();
                     dmComplaintFileTable.setFile_name(filename);
-                    dmComplaintFileTable.setFilePath(uri1.getPath());
+                    dmComplaintFileTable.setFilePath(uri.getPath());
                     dmComplaintFileTable.setSurveyType("FollowUp");
                     dmComplaintFileTable.setFileData(pdfByteArray2);
                     Date today = new Date();
@@ -1510,6 +1526,7 @@ public class FollowUpActionPlan extends Fragment {
                 dmComplaintFileTable.setFile_name(filename);
                 dmComplaintFileTable.setSurveyType("FollowUp");
                 dmComplaintFileTable.setFileData(imageBytes);
+                dmComplaintFileTable.setFilePath(filePathimage);
                 Date today = new Date();
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
                 String currentTime = format.format(today);
@@ -1671,6 +1688,7 @@ public class FollowUpActionPlan extends Fragment {
                 dmComplaintFileTable.setFile_name(filename);
                 dmComplaintFileTable.setSurveyType("FollowUp");
                 dmComplaintFileTable.setFileData(fileByteArray);
+                dmComplaintFileTable.setFilePath(uri.getPath());
                 Date today = new Date();
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
                 String currentTime = format.format(today);
@@ -1840,6 +1858,7 @@ public class FollowUpActionPlan extends Fragment {
                     dmComplaintFileTable.setFile_name(filename);
                     dmComplaintFileTable.setSurveyType("FollowUp");
                     dmComplaintFileTable.setFileData(pdfByteArray2);
+                    dmComplaintFileTable.setFilePath(uri1.getPath());
                     Date today = new Date();
                     SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
                     String currentTime = format.format(today);

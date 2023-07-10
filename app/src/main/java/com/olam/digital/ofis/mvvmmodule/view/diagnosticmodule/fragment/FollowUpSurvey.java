@@ -299,7 +299,7 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
                         }
 
                         if (db.dmComplaintFileTableDao().getCaptureProofSize(questionIdDb,Constants.FARMER_ID).size() > 0) {
-                            db.dmComplaintFileTableDao().deleteRowsByFarmerAndQuestionID(questionIdDb,Constants.FARMER_ID);
+                            db.dmComplaintFileTableDao().deleteRowsByFarmerAndQuestionID(questionIdDb,Constants.FARMER_ID,Constants.ATTEMPT);
                         }
 
                         resolveText.setTextColor(getResources().getColor(R.color.gray));
@@ -334,7 +334,7 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
                         notResolveText.setTextColor(getResources().getColor(R.color.gray));
 
                         if (db.dmComplaintFileTableDao().getCaptureProofSize(questionIdDb,Constants.FARMER_ID).size() > 0) {
-                            db.dmComplaintFileTableDao().deleteRowsByFarmerAndQuestionID(questionIdDb,Constants.FARMER_ID);
+                            db.dmComplaintFileTableDao().deleteRowsByFarmerAndQuestionID(questionIdDb,Constants.FARMER_ID,Constants.ATTEMPT);
                         }
 
                     }
