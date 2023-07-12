@@ -57,6 +57,4 @@ public interface FollowUpItemMainTableDao {
     @Query("SELECT status FROM FollowUpItemMainTable WHERE questionId =:questionId AND farmerId =:farmerId AND attempt =:attempt")
     String getResolvedOrNOt(String questionId, String farmerId, int attempt);
 
-    @Query("SELECT * FROM FollowUpItemMainTable WHERE questionId = :id AND farmerId = :farmerId AND attempt = :attempt")
-    List<FollowUpItemMainTable> deleteResolvedRowFollowUp(String id, String farmerId, int attempt );
 }
