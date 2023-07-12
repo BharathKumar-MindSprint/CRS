@@ -185,12 +185,17 @@ public class FollowUpActionPlan extends Fragment {
                     boolean allowCaptureProof = checkAllowCaptureProof(qId.get(i), ans, ansId, displayType);
                     if(allowCaptureProof){
                         requiredValue ++;
-                        List<DmComplaintFileTable> dmComplaintFiles = db.dmComplaintFileTableDao().getTotalFollowCount(Integer.parseInt(qId.get(i)),Constants.FARMER_ID,Constants.ATTEMPT,"FollowUp");
-                        if(dmComplaintFiles.size() == 0){
-                            Toast.makeText(getContext(), "Capture Proof is missing", Toast.LENGTH_SHORT).show();
-                            break;
-                        }else if (dmComplaintFiles.size() > 0){
-                            capturedValue ++;
+                        if (Objects.equals( db.followUpItemMainTableDao().getResolvedOrNOt(qId.get(i) , Constants.FARMER_ID, 1),"NOT Resolved")){
+                            List<DmComplaintFileTable> dmComplaintFiles = db.dmComplaintFileTableDao().getTotalFollowCount(Integer.parseInt(qId.get(i)),Constants.FARMER_ID,Constants.ATTEMPT,"FollowUp");
+                            if(dmComplaintFiles.size() == 0){
+                                Toast.makeText(getContext(), "Capture Proof is missing", Toast.LENGTH_SHORT).show();
+                                goNextCaptureProof = false;
+                                break;
+                            }else if (dmComplaintFiles.size() > 0){
+                                capturedValue ++;
+                            }
+                        }else {
+                            goNextCaptureProof = true;
                         }
                     }
                 }

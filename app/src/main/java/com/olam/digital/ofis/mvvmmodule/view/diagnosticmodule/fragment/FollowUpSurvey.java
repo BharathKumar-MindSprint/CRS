@@ -335,6 +335,7 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
 
                         if (db.dmComplaintFileTableDao().getCaptureProofSize(questionIdDb,Constants.FARMER_ID).size() > 0) {
                             db.dmComplaintFileTableDao().deleteRowsByFarmerAndQuestionID(questionIdDb,Constants.FARMER_ID,Constants.ATTEMPT);
+                            db.followUpItemMainTableDao().deleteResolvedRowFollowUp(questionIdDb,Constants.FARMER_ID , 1);
                         }
 
                     }
