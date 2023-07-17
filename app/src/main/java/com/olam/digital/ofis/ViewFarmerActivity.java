@@ -2789,19 +2789,19 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             boolean seventhDayDisable = false;
             String seventhDay = null;
-            Date fakeDate = null;
+//            Date fakeDate = null;
             String fakeCurrentDate = null;
 
             Date endSeventhDate = null;
             if (startDateString != null){
                 seventhDay = RecurrenceUtils.calculateEndDate(startDateString, 7 , "days");
-                fakeCurrentDate = RecurrenceUtils.calculateEndDate(startDateString,8,"days");
+//                fakeCurrentDate = RecurrenceUtils.calculateEndDate(startDateString,8,"days");
             }
 
 
             try {
                 if (seventhDay != null) {
-                    fakeDate = dateFormat.parse(fakeCurrentDate);
+//                    fakeDate = dateFormat.parse(fakeCurrentDate);
                     endSeventhDate = dateFormat.parse(seventhDay);
                 }
             } catch (android.net.ParseException | java.text.ParseException e) {
@@ -2826,24 +2826,32 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                     if(followupUnResolvedItems.size() > 0) {
                         int val = followupAttempts.size() + 1;
 
-                        /*if (endSeventhDate!=null){
-                            if (fakeDate.before(endSeventhDate)){
+                        if (endSeventhDate!=null){
+                            if (currentDate.before(endSeventhDate)){
                                 seventhDayDisable = true;
                             }
-                        }*/
+                        }
 
                         if (val < 8 ){
-                            recyclerViewData.add("Follow-up survey " + val);
-                            isCompleted = false;
-//                            if (seventhDayDisable){
-//                                isCompleted = false;
-//                            }else {
-//
-//                                Toast.makeText(context, "Recurrence Follow-up date crossed", Toast.LENGTH_SHORT).show();
-//                            }
+
+                            if (seventhDayDisable){
+                                recyclerViewData.add("Follow-up survey " + val);
+                                isCompleted = false;
+
+                            }else {
+                                recyclerViewData.add("Follow-up survey " + val);
+                                isCompleted = true;
+                                Toast.makeText(context, "Recurrence Follow-up date crossed", Toast.LENGTH_SHORT).show();
+                            }
 
                         }else {
-                            isCompleted = true;
+                            if (seventhDayDisable){
+                                isCompleted = false;
+
+                            }else {
+                                isCompleted = true;
+                                Toast.makeText(context, "Recurrence Follow-up date crossed", Toast.LENGTH_SHORT).show();
+                            }
                         }
 
                     }else{
