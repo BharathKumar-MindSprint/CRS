@@ -110,6 +110,7 @@ import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmSurveyAnswerTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.FollowUpItemMainTable;
 import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.DiagnosticModuleActivity;
 import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.FollowUp.FollowUpRecyclerAdapter;
+import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.RecurrenceUtils;
 import com.olam.digital.ofis.recordpolygon.RecordPolygonActivity;
 import com.olam.digital.ofis.recordpolygon.SharedPreferenceUtils;
 
@@ -123,8 +124,10 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.sql.Timestamp;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Hashtable;
@@ -2776,31 +2779,88 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
 
         recyclerViewData.add("Existing Module");
 //        recyclerViewData.add("Follow up " + 1);
-        List<FollowUpItemMainTable> followupList = db.followUpItemMainTableDao().getFollowupByFarmerId(Long.parseLong(farmerID), Integer.parseInt(moduleID));
-        if(followupList.size() == 0){
-            List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByModuleId(String.valueOf(moduleID), String.valueOf(farmerId), true);
-            if(dmSurveyAnswerTableList.size() != 0) {
-                recyclerViewData.add("Follow-up survey " + 1);
+
+        if(db.complianceIndicatorDao().hasActionPlan(String.valueOf(moduleID))){
+
+            // getting the seventh day which restricts in generating the followup
+            Calendar calendar = Calendar.getInstance();
+            Date currentDate = calendar.getTime();
+            String startDateString = db.followUpItemMainTableDao().getFollowUpStartDate(String.valueOf(1),farmerID);
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            boolean seventhDayDisable = false;
+            String seventhDay = null;
+            Date fakeDate = null;
+            String fakeCurrentDate = null;
+
+            Date endSeventhDate = null;
+            if (startDateString != null){
+                seventhDay = RecurrenceUtils.calculateEndDate(startDateString, 7 , "days");
+                fakeCurrentDate = RecurrenceUtils.calculateEndDate(startDateString,8,"days");
             }
-        }else {
-            List<Integer> followupAttempts = db.followUpItemMainTableDao().getFollowupByAttempts(Long.parseLong(farmerID), Integer.parseInt(moduleID));
-            for (int i = 1; i <= followupAttempts.size(); i++) {
-                recyclerViewData.add("Follow-up survey " + i);
+
+
+            try {
+                if (seventhDay != null) {
+                    fakeDate = dateFormat.parse(fakeCurrentDate);
+                    endSeventhDate = dateFormat.parse(seventhDay);
+                }
+            } catch (android.net.ParseException | java.text.ParseException e) {
+                e.printStackTrace();
             }
-            List<FollowUpItemMainTable> followupUnSyncedItems = db.followUpItemMainTableDao().getFollowupUnSyncedItems(farmerID, moduleID, false);
-            if(followupUnSyncedItems.size() == 0) {
-                List<FollowUpItemMainTable> followupUnResolvedItems = db.followUpItemMainTableDao().getFollowupUnResolvedItems(farmerID, moduleID, true, Constants.NOTRESOLVED, followupAttempts.size());
-                if(followupUnResolvedItems.size() > 0) {
-                    int val = followupAttempts.size() + 1;
-                    recyclerViewData.add("Follow-up survey " + val);
-                    isCompleted = false;
-                }else{
-                    isCompleted = true;
+
+            // creating the followUp for surveys
+            List<FollowUpItemMainTable> followupList = db.followUpItemMainTableDao().getFollowupByFarmerId(Long.parseLong(farmerID), Integer.parseInt(moduleID));
+            if(followupList.size() == 0){
+                List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByModuleId(String.valueOf(moduleID), String.valueOf(farmerId), true);
+                if(dmSurveyAnswerTableList.size() != 0) {
+                    recyclerViewData.add("Follow-up survey " + 1);
+                }
+            }else {
+                List<Integer> followupAttempts = db.followUpItemMainTableDao().getFollowupByAttempts(Long.parseLong(farmerID), Integer.parseInt(moduleID));
+                for (int i = 1; i <= followupAttempts.size(); i++) {
+                    recyclerViewData.add("Follow-up survey " + i);
+                }
+                List<FollowUpItemMainTable> followupUnSyncedItems = db.followUpItemMainTableDao().getFollowupUnSyncedItems(farmerID, moduleID, false);
+                if(followupUnSyncedItems.size() == 0) {
+                    List<FollowUpItemMainTable> followupUnResolvedItems = db.followUpItemMainTableDao().getFollowupUnResolvedItems(farmerID, moduleID, true, Constants.NOTRESOLVED, followupAttempts.size());
+                    if(followupUnResolvedItems.size() > 0) {
+                        int val = followupAttempts.size() + 1;
+
+                        /*if (endSeventhDate!=null){
+                            if (fakeDate.before(endSeventhDate)){
+                                seventhDayDisable = true;
+                            }
+                        }*/
+
+                        if (val < 8 ){
+                            recyclerViewData.add("Follow-up survey " + val);
+                            isCompleted = false;
+//                            if (seventhDayDisable){
+//                                isCompleted = false;
+//                            }else {
+//
+//                                Toast.makeText(context, "Recurrence Follow-up date crossed", Toast.LENGTH_SHORT).show();
+//                            }
+
+                        }else {
+                            isCompleted = true;
+                        }
+
+                    }else{
+                        isCompleted = true;
+                    }
                 }
             }
+
+        }else if (db.complianceIndicatorDao().hasNoActionPlan(String.valueOf(moduleID))){
+            List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByModuleId(String.valueOf(moduleID), String.valueOf(farmerId), true);
+            if(dmSurveyAnswerTableList.size() != 0) {
+                isCompleted = true;
+            }
         }
+
         RecyclerView recyclerView = dialog.findViewById(R.id.recyclerView);
-        FollowUpRecyclerAdapter adapter = new FollowUpRecyclerAdapter(recyclerViewData,getApplicationContext(),newFollowUpCount , in, isCompleted);
+        FollowUpRecyclerAdapter adapter = new FollowUpRecyclerAdapter(recyclerViewData,getApplicationContext(),newFollowUpCount , in, isCompleted , moduleID);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
         recyclerView.setAdapter(adapter);

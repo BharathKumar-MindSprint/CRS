@@ -39,6 +39,13 @@ public interface ComplianceIndicatorDao {
     @Query("SELECT isActionPlanRequired FROM ComplianceIndicator WHERE id=:complianceID")
     boolean getIsActionPlanRequired(String complianceID);
 
+    @Query("SELECT EXISTS (SELECT 1 FROM ComplianceIndicator WHERE moduleDraftId = :moduleId AND isActionPlanRequired = 1 LIMIT 1)")
+    boolean hasActionPlan(String moduleId);
+
+    @Query("SELECT NOT EXISTS (SELECT 1 FROM ComplianceIndicator WHERE moduleDraftId = :moduleId AND isActionPlanRequired = 1 LIMIT 1)")
+    boolean hasNoActionPlan(String moduleId);
+
+
 
 
 }
