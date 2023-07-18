@@ -185,7 +185,7 @@ public class FollowUpActionPlan extends Fragment {
                     boolean allowCaptureProof = checkAllowCaptureProof(qId.get(i), ans, ansId, displayType);
                     if(allowCaptureProof){
                         requiredValue ++;
-                        if (Objects.equals( db.followUpItemMainTableDao().getResolvedOrNOt(qId.get(i) , Constants.FARMER_ID, 1),"NOT Resolved")){
+                        if (Objects.equals( db.followUpItemMainTableDao().getResolvedOrNOt(qId.get(i) , Constants.FARMER_ID, Constants.ATTEMPT),"NOT Resolved")){
                             List<DmComplaintFileTable> dmComplaintFiles = db.dmComplaintFileTableDao().getTotalFollowCount(Integer.parseInt(qId.get(i)),Constants.FARMER_ID,Constants.ATTEMPT,"FollowUp");
                             if(dmComplaintFiles.size() == 0){
                                 Toast.makeText(getContext(), "Capture Proof is missing", Toast.LENGTH_SHORT).show();
@@ -206,7 +206,7 @@ public class FollowUpActionPlan extends Fragment {
                 }
 
                 for (int j=0; j<qId.size(); j++) {
-                    if (Objects.equals(db.followUpItemMainTableDao().getActionPlanTextFollowUp(qId.get(j), Constants.FARMER_ID ,"NOT Resolved" ), "0")){
+                    if (Objects.equals(db.followUpItemMainTableDao().getActionPlanTextFollowUp(qId.get(j), Constants.FARMER_ID ,Constants.NOTRESOLVED ), "0")){
                         Toast.makeText(getActivity(), "Action Plan is missing!", Toast.LENGTH_SHORT).show();
                         goNextActionPlan = false;
                         break;

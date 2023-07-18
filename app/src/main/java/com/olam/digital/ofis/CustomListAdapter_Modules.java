@@ -34,6 +34,7 @@ import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmRecurrence;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmSurveyAnswerTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.FollowUpItemMainTable;
 import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.FollowUp.FollowUpRecyclerAdapter;
+import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.RecurrenceUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -44,6 +45,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -206,7 +208,33 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                 int recurrence_frequency = dmRecurrence.recurrenceFrequency;
                 boolean disable_entry = false;
                 boolean isCompleted = false;
-               /* if (recurrence_frequency > 0) {
+
+                Calendar calendar = Calendar.getInstance();
+                Date currentDate = calendar.getTime();
+                String startDateString = db.dmMainModuleDao().getStartData(moduleId);
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                Date startDateMain = null;
+                try {
+                    startDateMain = dateFormat.parse(startDateString);
+                } catch (android.net.ParseException | java.text.ParseException e) {
+                    e.printStackTrace();
+                }
+                boolean moduleWithActionPlan = false;
+                boolean moduleWithoutActionPlan = false;
+
+
+                String endDate = RecurrenceUtils.calculateEndDate(String.valueOf(startDateMain), recurrence_frequency, recurrence_type);
+//                Toast.makeText(context, endDate, Toast.LENGTH_SHORT).show();
+
+                if(db.complianceIndicatorDao().hasNoActionPlan(String.valueOf(moduleId))){
+                    moduleWithoutActionPlan = true;
+                }
+
+                if (db.complianceIndicatorDao().hasActionPlan(String.valueOf(moduleId))){
+                    moduleWithActionPlan = true;
+                }
+
+                /*if (recurrence_frequency > 0) {
                     // for recurring
                     try {
                         // get last submitted date
@@ -249,9 +277,9 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                }*/
+                }
 
-                /*List<FollowUpItemMainTable> followupList = db.followUpItemMainTableDao().getFollowupByFarmerId(farmerId, moduleId);
+                List<FollowUpItemMainTable> followupList = db.followUpItemMainTableDao().getFollowupByFarmerId(farmerId, moduleId);
                 if(followupList.size() == 0){
                     List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByModuleId(String.valueOf(moduleId), String.valueOf(farmerId), true);
                     for (int i = 0; i < dmSurveyAnswerTableList.size(); i++) {
@@ -273,14 +301,22 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                         }
                     }
                 }*/
-                if(! isCompleted) {
+
+                if(currentDate.after(startDateMain) && moduleWithActionPlan) {
                     imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_householdgps));
                     enabledItem.setText("true");
                     linearLayout.setBackgroundResource(R.drawable.list_item);
                     moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
                     textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
                     textView.setText(res.getString(R.string.ModuleStatus));
-                }else{
+                } else if (currentDate.after(startDateMain) && moduleWithoutActionPlan) {
+                    imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_householdgps));
+                    enabledItem.setText("true");
+                    linearLayout.setBackgroundResource(R.drawable.list_item);
+                    moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
+                    textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
+                    textView.setText(res.getString(R.string.ModuleStatus));
+                } else{
                     imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_householdgps));
                     enabledItem.setText("false");
                     linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
