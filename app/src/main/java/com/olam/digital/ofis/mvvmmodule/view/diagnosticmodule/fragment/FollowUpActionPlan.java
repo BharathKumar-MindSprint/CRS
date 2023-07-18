@@ -1043,7 +1043,7 @@ public class FollowUpActionPlan extends Fragment {
             DmComplaintFileTable dmComplaintFileTable = new DmComplaintFileTable();
             dmComplaintFileTable.setFile_name(filename);
             dmComplaintFileTable.setSurveyType("FollowUp");
-            dmComplaintFileTable.setFilePath(uriImage.getPath());
+//            dmComplaintFileTable.setFilePath(uriImage.getPath());
             Date today = new Date();
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
             String currentTime = format.format(today);
@@ -1053,6 +1053,21 @@ public class FollowUpActionPlan extends Fragment {
             dmComplaintFileTable.setFarmerId(Constants.FARMER_ID);
             dmComplaintFileTable.setQuestionId(String.valueOf(CAMERA_REQUEST));
             dmComplaintFileTable.setAttempt(Constants.ATTEMPT);
+            File destinationFolder = new File(Environment.getExternalStorageDirectory(), "OFISDM_PROOF");
+            if (!destinationFolder.exists()) {
+                destinationFolder.mkdirs();
+            }
+            File destinationFile = new File(destinationFolder, OFISFileName);
+
+            try {
+                FileOutputStream outputStream = new FileOutputStream(destinationFile);
+                outputStream.write(imageBytes);
+                outputStream.close();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            String destinationFilePath = destinationFile.getAbsolutePath();
+            dmComplaintFileTable.setFilePath(destinationFilePath);
             db.dmComplaintFileTableDao().insert(dmComplaintFileTable);
 
             long id = db.dmComplaintFileTableDao().getLastInsertedId();
@@ -1194,6 +1209,7 @@ public class FollowUpActionPlan extends Fragment {
                     || mime.equalsIgnoreCase("application/vnd.openxmlformats-officedocument.wordprocessingml.document")
                     || mime.equalsIgnoreCase("text/csv")) {
                 String filename = getFileName(uri);
+                String fileExtension = getFileExtension(filename);
 
 
                 byte[] fileByteArray;
@@ -1206,17 +1222,32 @@ public class FollowUpActionPlan extends Fragment {
 
                 DmComplaintFileTable dmComplaintFileTable = new DmComplaintFileTable();
                 dmComplaintFileTable.setFile_name(filename);
-                dmComplaintFileTable.setFilePath(uri.getPath());
+//                dmComplaintFileTable.setFilePath(uri.getPath());
                 dmComplaintFileTable.setSurveyType("FollowUp");
                 dmComplaintFileTable.setFileData(fileByteArray);
                 Date today = new Date();
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
                 String currentTime = format.format(today);
-                String OFISFileName = "Proof_" + Constants.MODULE_ID + "_" + Constants.FARMER_ID + "_" + currentTime + ".csv";
+                String OFISFileName = "Proof_" + Constants.MODULE_ID + "_" + Constants.FARMER_ID + "_" + currentTime + "." + fileExtension;
                 dmComplaintFileTable.setOfisFileName(OFISFileName);
                 dmComplaintFileTable.setFarmerId(Constants.FARMER_ID);
                 dmComplaintFileTable.setQuestionId(String.valueOf(questionId));
                 dmComplaintFileTable.setAttempt(Constants.ATTEMPT);
+                File destinationFolder = new File(Environment.getExternalStorageDirectory(), "OFISDM_PROOF");
+                if (!destinationFolder.exists()) {
+                    destinationFolder.mkdirs();
+                }
+                File destinationFile = new File(destinationFolder, OFISFileName);
+
+                try {
+                    FileOutputStream outputStream = new FileOutputStream(destinationFile);
+                    outputStream.write(fileByteArray);
+                    outputStream.close();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                String destinationFilePath = destinationFile.getAbsolutePath();
+                dmComplaintFileTable.setFilePath(destinationFilePath);
                 db.dmComplaintFileTableDao().insert(dmComplaintFileTable);
 
                 long id = db.dmComplaintFileTableDao().getLastInsertedId();
@@ -1332,6 +1363,7 @@ public class FollowUpActionPlan extends Fragment {
 
             } else if (mime.equalsIgnoreCase("application/pdf")) {
                 String filename = getFileName(uri);
+                String fileExtension = getFileExtension(filename);
 
                 // Toast.makeText(getActivity(), "" + filename + "...." + uri, Toast.LENGTH_SHORT).show();
 
@@ -1375,17 +1407,32 @@ public class FollowUpActionPlan extends Fragment {
 
                     DmComplaintFileTable dmComplaintFileTable = new DmComplaintFileTable();
                     dmComplaintFileTable.setFile_name(filename);
-                    dmComplaintFileTable.setFilePath(uri.getPath());
+//                    dmComplaintFileTable.setFilePath(uri.getPath());
                     dmComplaintFileTable.setSurveyType("FollowUp");
                     dmComplaintFileTable.setFileData(pdfByteArray2);
                     Date today = new Date();
                     SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
                     String currentTime = format.format(today);
-                    String OFISFileName = "Proof_" + Constants.MODULE_ID + "_" + Constants.FARMER_ID + "_" + currentTime + ".pdf";
+                    String OFISFileName = "Proof_" + Constants.MODULE_ID + "_" + Constants.FARMER_ID + "_" + currentTime + "." + fileExtension;
                     dmComplaintFileTable.setOfisFileName(OFISFileName);
                     dmComplaintFileTable.setFarmerId(Constants.FARMER_ID);
                     dmComplaintFileTable.setQuestionId(String.valueOf(questionId));
                     dmComplaintFileTable.setAttempt(Constants.ATTEMPT);
+                    File destinationFolder = new File(Environment.getExternalStorageDirectory(), "OFISDM_PROOF");
+                    if (!destinationFolder.exists()) {
+                        destinationFolder.mkdirs();
+                    }
+                    File destinationFile = new File(destinationFolder, OFISFileName);
+
+                    try {
+                        FileOutputStream outputStream = new FileOutputStream(destinationFile);
+                        outputStream.write(pdfByteArray2);
+                        outputStream.close();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    String destinationFilePath = destinationFile.getAbsolutePath();
+                    dmComplaintFileTable.setFilePath(destinationFilePath);
                     db.dmComplaintFileTableDao().insert(dmComplaintFileTable);
 
                     long id = db.dmComplaintFileTableDao().getLastInsertedId();
@@ -1531,7 +1578,7 @@ public class FollowUpActionPlan extends Fragment {
                 dmComplaintFileTable.setFile_name(filename);
                 dmComplaintFileTable.setSurveyType("FollowUp");
                 dmComplaintFileTable.setFileData(imageBytes);
-                dmComplaintFileTable.setFilePath(filePathimage);
+//                dmComplaintFileTable.setFilePath(filePathimage);
                 Date today = new Date();
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
                 String currentTime = format.format(today);
@@ -1540,6 +1587,21 @@ public class FollowUpActionPlan extends Fragment {
                 dmComplaintFileTable.setFarmerId(Constants.FARMER_ID);
                 dmComplaintFileTable.setQuestionId(String.valueOf(questionId));
                 dmComplaintFileTable.setAttempt(Constants.ATTEMPT);
+                File destinationFolder = new File(Environment.getExternalStorageDirectory(), "OFISDM_PROOF");
+                if (!destinationFolder.exists()) {
+                    destinationFolder.mkdirs();
+                }
+                File destinationFile = new File(destinationFolder, OFISFileName);
+
+                try {
+                    FileOutputStream outputStream = new FileOutputStream(destinationFile);
+                    outputStream.write(imageBytes);
+                    outputStream.close();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                String destinationFilePath = destinationFile.getAbsolutePath();
+                dmComplaintFileTable.setFilePath(destinationFilePath);
                 db.dmComplaintFileTableDao().insert(dmComplaintFileTable);
 
                 long id = db.dmComplaintFileTableDao().getLastInsertedId();
@@ -1679,6 +1741,7 @@ public class FollowUpActionPlan extends Fragment {
                     || mime.equalsIgnoreCase("application/vnd.openxmlformats-officedocument.wordprocessingml.document")
                     || mime.equalsIgnoreCase("text/csv")) {
                 String filename = getFileName(uri);
+                String fileExtension = getFileExtension(filename);
 
 
                 byte[] fileByteArray;
@@ -1693,15 +1756,30 @@ public class FollowUpActionPlan extends Fragment {
                 dmComplaintFileTable.setFile_name(filename);
                 dmComplaintFileTable.setSurveyType("FollowUp");
                 dmComplaintFileTable.setFileData(fileByteArray);
-                dmComplaintFileTable.setFilePath(uri.getPath());
+//                dmComplaintFileTable.setFilePath(uri.getPath());
                 Date today = new Date();
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
                 String currentTime = format.format(today);
-                String OFISFileName = "Proof_" + Constants.MODULE_ID + "_" + Constants.FARMER_ID + "_" + currentTime + ".csv";
+                String OFISFileName = "Proof_" + Constants.MODULE_ID + "_" + Constants.FARMER_ID + "_" + currentTime + "." + fileExtension;
                 dmComplaintFileTable.setOfisFileName(OFISFileName);
                 dmComplaintFileTable.setFarmerId(Constants.FARMER_ID);
                 dmComplaintFileTable.setQuestionId(String.valueOf(questionId));
                 dmComplaintFileTable.setAttempt(Constants.ATTEMPT);
+                File destinationFolder = new File(Environment.getExternalStorageDirectory(), "OFISDM_PROOF");
+                if (!destinationFolder.exists()) {
+                    destinationFolder.mkdirs();
+                }
+                File destinationFile = new File(destinationFolder, OFISFileName);
+
+                try {
+                    FileOutputStream outputStream = new FileOutputStream(destinationFile);
+                    outputStream.write(fileByteArray);
+                    outputStream.close();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                String destinationFilePath = destinationFile.getAbsolutePath();
+                dmComplaintFileTable.setFilePath(destinationFilePath);
                 db.dmComplaintFileTableDao().insert(dmComplaintFileTable);
 
                 long id = db.dmComplaintFileTableDao().getLastInsertedId();
@@ -1818,6 +1896,7 @@ public class FollowUpActionPlan extends Fragment {
             }
             else if (mime.equalsIgnoreCase("application/pdf")) {
                 String filename = getFileName(uri);
+                String fileExtension = getFileExtension(filename);
 
                 // Toast.makeText(getActivity(), "" + filename + "...." + uri, Toast.LENGTH_SHORT).show();
 
@@ -1863,15 +1942,30 @@ public class FollowUpActionPlan extends Fragment {
                     dmComplaintFileTable.setFile_name(filename);
                     dmComplaintFileTable.setSurveyType("FollowUp");
                     dmComplaintFileTable.setFileData(pdfByteArray2);
-                    dmComplaintFileTable.setFilePath(uri1.getPath());
+//                    dmComplaintFileTable.setFilePath(uri1.getPath());
                     Date today = new Date();
                     SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
                     String currentTime = format.format(today);
-                    String OFISFileName = "Proof_" + Constants.MODULE_ID + "_" + Constants.FARMER_ID + "_" + currentTime + ".pdf";
+                    String OFISFileName = "Proof_" + Constants.MODULE_ID + "_" + Constants.FARMER_ID + "_" + currentTime + "." + fileExtension;
                     dmComplaintFileTable.setOfisFileName(OFISFileName);
                     dmComplaintFileTable.setFarmerId(Constants.FARMER_ID);
                     dmComplaintFileTable.setQuestionId(String.valueOf(questionId));
                     dmComplaintFileTable.setAttempt(Constants.ATTEMPT);
+                    File destinationFolder = new File(Environment.getExternalStorageDirectory(), "OFISDM_PROOF");
+                    if (!destinationFolder.exists()) {
+                        destinationFolder.mkdirs();
+                    }
+                    File destinationFile = new File(destinationFolder, OFISFileName);
+
+                    try {
+                        FileOutputStream outputStream = new FileOutputStream(destinationFile);
+                        outputStream.write(pdfByteArray2);
+                        outputStream.close();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    String destinationFilePath = destinationFile.getAbsolutePath();
+                    dmComplaintFileTable.setFilePath(destinationFilePath);
                     db.dmComplaintFileTableDao().insert(dmComplaintFileTable);
 
                     long id = db.dmComplaintFileTableDao().getLastInsertedId();
@@ -2288,6 +2382,15 @@ public class FollowUpActionPlan extends Fragment {
         showCurrencyDropDown(dmSectionsItemList);
         isCreated = false;
 
+    }
+
+    private String getFileExtension(String fileName) {
+        String extension = null;
+        int dotIndex = fileName.lastIndexOf(".");
+        if (dotIndex != -1) {
+            extension = fileName.substring(dotIndex + 1);
+        }
+        return extension;
     }
 
 
