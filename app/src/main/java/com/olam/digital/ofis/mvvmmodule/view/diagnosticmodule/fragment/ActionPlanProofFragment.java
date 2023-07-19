@@ -1011,7 +1011,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
             dmComplaintFileTable.setFarmerId(Constants.FARMER_ID);
             dmComplaintFileTable.setQuestionId(String.valueOf(CAMERA_REQUEST));
             dmComplaintFileTable.setAttempt(0);
-            File destinationFolder = new File(Environment.getExternalStorageDirectory(), "OFISDM_PROOF");
+            File destinationFolder = new File(getActivity().getExternalFilesDir(null), "OFISDM_PROOF");
             if (!destinationFolder.exists()) {
                 destinationFolder.mkdirs();
             }
@@ -1192,7 +1192,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 dmComplaintFileTable.setFarmerId(Constants.FARMER_ID);
                 dmComplaintFileTable.setQuestionId(String.valueOf(questionId));
                 dmComplaintFileTable.setAttempt(0);
-                File destinationFolder = new File(Environment.getExternalStorageDirectory(), "OFISDM_PROOF");
+                File destinationFolder = new File(getActivity().getExternalFilesDir(null), "OFISDM_PROOF");
                 if (!destinationFolder.exists()) {
                     destinationFolder.mkdirs();
                 }
@@ -1383,7 +1383,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                     dmComplaintFileTable.setQuestionId(String.valueOf(questionId));
                     dmComplaintFileTable.setAttempt(0);
 
-                    File destinationFolder = new File(Environment.getExternalStorageDirectory(), "OFISDM_PROOF");
+                    File destinationFolder = new File(getActivity().getExternalFilesDir(null), "OFISDM_PROOF");
                     if (!destinationFolder.exists()) {
                         destinationFolder.mkdirs();
                     }
@@ -1555,7 +1555,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 dmComplaintFileTable.setFarmerId(Constants.FARMER_ID);
                 dmComplaintFileTable.setQuestionId(String.valueOf(questionId));
                 dmComplaintFileTable.setAttempt(0);
-                File destinationFolder = new File(Environment.getExternalStorageDirectory(), "OFISDM_PROOF");
+                File destinationFolder = new File(getActivity().getExternalFilesDir(null), "OFISDM_PROOF");
                 if (!destinationFolder.exists()) {
                     destinationFolder.mkdirs();
                 }
@@ -1732,7 +1732,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 dmComplaintFileTable.setFarmerId(Constants.FARMER_ID);
                 dmComplaintFileTable.setQuestionId(String.valueOf(questionId));
                 dmComplaintFileTable.setAttempt(0);
-                File destinationFolder = new File(Environment.getExternalStorageDirectory(), "OFISDM_PROOF");
+                File destinationFolder = new File(getActivity().getExternalFilesDir(null), "OFISDM_PROOF");
                 if (!destinationFolder.exists()) {
                     destinationFolder.mkdirs();
                 }
@@ -1919,7 +1919,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                     dmComplaintFileTable.setFarmerId(Constants.FARMER_ID);
                     dmComplaintFileTable.setQuestionId(String.valueOf(questionId));
                     dmComplaintFileTable.setAttempt(0);
-                    File destinationFolder = new File(Environment.getExternalStorageDirectory(), "OFISDM_PROOF");
+                    File destinationFolder = new File(getActivity().getExternalFilesDir(null), "OFISDM_PROOF");
                     if (!destinationFolder.exists()) {
                         destinationFolder.mkdirs();
                     }
