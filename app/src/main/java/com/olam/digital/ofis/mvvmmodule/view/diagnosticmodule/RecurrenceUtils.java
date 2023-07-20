@@ -8,7 +8,7 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 public class RecurrenceUtils {
-    private static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US);
+    private static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
 
     public static String calculateEndDate(String startDate, int value, String unit) {
         Calendar calendar = Calendar.getInstance();
