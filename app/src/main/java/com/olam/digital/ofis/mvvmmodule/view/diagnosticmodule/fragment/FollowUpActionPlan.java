@@ -491,7 +491,8 @@ public class FollowUpActionPlan extends Fragment {
                                         dialog.cancel();
 
                                         //Toast.makeText(getActivity(), "" + pos, Toast.LENGTH_SHORT).show();
-
+                                        String deleteData = db.dmComplaintFileTableDao().getFilePathToDelete(finalRetrievedArrayFile.get(finalI), Constants.FARMER_ID, Constants.ATTEMPT);
+                                        deleteFile(deleteData);
                                         db.dmComplaintFileTableDao().deleteById(finalRetrievedArrayFile.get(finalI), Constants.FARMER_ID, Constants.ATTEMPT);
 
                                         dm_question_followup_complaint.removeAllViews();
@@ -1157,7 +1158,8 @@ public class FollowUpActionPlan extends Fragment {
                                         //Toast.makeText(getActivity(), "" + pos, Toast.LENGTH_SHORT).show();
 
                                         linearLayoutImage.removeAllViews();
-
+                                        String deleteData = db.dmComplaintFileTableDao().getFilePathToDelete(finalRetrievedArrayFile.get(finalI), Constants.FARMER_ID, Constants.ATTEMPT);
+                                        deleteFile(deleteData);
                                         db.dmComplaintFileTableDao().deleteById(finalRetrievedArrayFile.get(finalI), Constants.FARMER_ID, Constants.ATTEMPT);
 
                                         dm_question_followup_complaint.removeAllViews();
@@ -1342,7 +1344,8 @@ public class FollowUpActionPlan extends Fragment {
                                             //Toast.makeText(getActivity(), "" + pos, Toast.LENGTH_SHORT).show();
 
                                             linearLayoutImage.removeAllViews();
-
+                                            String deleteData = db.dmComplaintFileTableDao().getFilePathToDelete(finalRetrievedArrayFile.get(finalI), Constants.FARMER_ID, Constants.ATTEMPT);
+                                            deleteFile(deleteData);
                                             db.dmComplaintFileTableDao().deleteById(finalRetrievedArrayFile.get(finalI), Constants.FARMER_ID, Constants.ATTEMPT);
 
                                             dm_question_followup_complaint.removeAllViews();
@@ -1528,7 +1531,8 @@ public class FollowUpActionPlan extends Fragment {
                                                 dialog.cancel();
 
                                                 linearLayoutImage.removeAllViews();
-
+                                                String deleteData = db.dmComplaintFileTableDao().getFilePathToDelete(finalRetrievedArrayFile.get(finalI), Constants.FARMER_ID, Constants.ATTEMPT);
+                                                deleteFile(deleteData);
                                                 db.dmComplaintFileTableDao().deleteById(finalRetrievedArrayFile.get(finalI), Constants.FARMER_ID, Constants.ATTEMPT);
 
                                                 dm_question_followup_complaint.removeAllViews();
@@ -1706,7 +1710,8 @@ public class FollowUpActionPlan extends Fragment {
                                             //Toast.makeText(getActivity(), "" + pos, Toast.LENGTH_SHORT).show();
 
                                             linearLayoutImage.removeAllViews();
-
+                                            String deleteData = db.dmComplaintFileTableDao().getFilePathToDelete(finalRetrievedArrayFile.get(finalI), Constants.FARMER_ID, Constants.ATTEMPT);
+                                            deleteFile(deleteData);
                                             db.dmComplaintFileTableDao().deleteById(finalRetrievedArrayFile.get(finalI), Constants.FARMER_ID, Constants.ATTEMPT);
 
                                             dm_question_followup_complaint.removeAllViews();
@@ -1892,7 +1897,8 @@ public class FollowUpActionPlan extends Fragment {
                                             //Toast.makeText(getActivity(), "" + pos, Toast.LENGTH_SHORT).show();
 
                                             linearLayoutImage.removeAllViews();
-
+                                            String deleteData = db.dmComplaintFileTableDao().getFilePathToDelete(finalRetrievedArrayFile.get(finalI), Constants.FARMER_ID, Constants.ATTEMPT);
+                                            deleteFile(deleteData);
                                             db.dmComplaintFileTableDao().deleteById(finalRetrievedArrayFile.get(finalI), Constants.FARMER_ID, Constants.ATTEMPT);
 
                                             dm_question_followup_complaint.removeAllViews();
@@ -2079,7 +2085,8 @@ public class FollowUpActionPlan extends Fragment {
                                                 dialog.cancel();
 
                                                 linearLayoutImage.removeAllViews();
-
+                                                String deleteData = db.dmComplaintFileTableDao().getFilePathToDelete(finalRetrievedArrayFile.get(finalI), Constants.FARMER_ID, Constants.ATTEMPT);
+                                                deleteFile(deleteData);
                                                 db.dmComplaintFileTableDao().deleteById(finalRetrievedArrayFile.get(finalI), Constants.FARMER_ID, Constants.ATTEMPT);
 
                                                 dm_question_followup_complaint.removeAllViews();
@@ -2427,6 +2434,16 @@ public class FollowUpActionPlan extends Fragment {
             extension = fileName.substring(dotIndex + 1);
         }
         return extension;
+    }
+
+    private void deleteFile(String filePath) {
+        File fileToDelete = new File(filePath);
+
+        if (fileToDelete.exists()) {
+            if (fileToDelete.delete()) {
+                Toast.makeText(getContext(), "File deleted successfully.", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
 

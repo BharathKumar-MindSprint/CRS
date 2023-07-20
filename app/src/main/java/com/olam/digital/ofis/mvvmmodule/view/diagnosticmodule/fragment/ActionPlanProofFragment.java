@@ -464,7 +464,10 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
                                         //Toast.makeText(getActivity(), "" + pos, Toast.LENGTH_SHORT).show();
 
+                                        String deleteData = db.dmComplaintFileTableDao().getFilePathToDelete(finalRetrievedArrayFile.get(finalI), Constants.FARMER_ID, 0);
+                                        deleteFile(deleteData);
                                         db.dmComplaintFileTableDao().deleteById(finalRetrievedArrayFile.get(finalI), Constants.FARMER_ID, 0);
+
 
                                         dm_question_complaint.removeAllViews();
 
@@ -1113,7 +1116,8 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                                         //Toast.makeText(getActivity(), "" + pos, Toast.LENGTH_SHORT).show();
 
                                         linearLayoutImage.removeAllViews();
-
+                                        String deleteData = db.dmComplaintFileTableDao().getFilePathToDelete(finalRetrievedArrayFile.get(finalI), Constants.FARMER_ID, 0);
+                                        deleteFile(deleteData);
                                         db.dmComplaintFileTableDao().deleteById(finalRetrievedArrayFile.get(finalI), Constants.FARMER_ID, 0);
 
                                         dm_question_complaint.removeAllViews();
@@ -1299,7 +1303,8 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                                             //Toast.makeText(getActivity(), "" + pos, Toast.LENGTH_SHORT).show();
 
                                             linearLayoutImage.removeAllViews();
-
+                                            String deleteData = db.dmComplaintFileTableDao().getFilePathToDelete(finalRetrievedArrayFile.get(finalI), Constants.FARMER_ID, 0);
+                                            deleteFile(deleteData);
                                             db.dmComplaintFileTableDao().deleteById(finalRetrievedArrayFile.get(finalI), Constants.FARMER_ID, 0);
 
                                             dm_question_complaint.removeAllViews();
@@ -1490,7 +1495,8 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                                                 dialog.cancel();
 
                                                 linearLayoutImage.removeAllViews();
-
+                                                String deleteData = db.dmComplaintFileTableDao().getFilePathToDelete(finalRetrievedArrayFile.get(finalI), Constants.FARMER_ID, 0);
+                                                deleteFile(deleteData);
                                                 db.dmComplaintFileTableDao().deleteById(finalRetrievedArrayFile.get(finalI), Constants.FARMER_ID, 0);
 
                                                 dm_question_complaint.removeAllViews();
@@ -1669,7 +1675,8 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                                             //Toast.makeText(getActivity(), "" + pos, Toast.LENGTH_SHORT).show();
 
                                             linearLayoutImage.removeAllViews();
-
+                                            String deleteData = db.dmComplaintFileTableDao().getFilePathToDelete(finalRetrievedArrayFile.get(finalI), Constants.FARMER_ID, 0);
+                                            deleteFile(deleteData);
                                             db.dmComplaintFileTableDao().deleteById(finalRetrievedArrayFile.get(finalI), Constants.FARMER_ID, 0);
 
                                             dm_question_complaint.removeAllViews();
@@ -1853,7 +1860,8 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                                             //Toast.makeText(getActivity(), "" + pos, Toast.LENGTH_SHORT).show();
 
                                             linearLayoutImage.removeAllViews();
-
+                                            String deleteData = db.dmComplaintFileTableDao().getFilePathToDelete(finalRetrievedArrayFile.get(finalI), Constants.FARMER_ID, 0);
+                                            deleteFile(deleteData);
                                             db.dmComplaintFileTableDao().deleteById(finalRetrievedArrayFile.get(finalI), Constants.FARMER_ID, 0);
 
                                             dm_question_complaint.removeAllViews();
@@ -2041,7 +2049,8 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                                                 dialog.cancel();
 
                                                 linearLayoutImage.removeAllViews();
-
+                                                String deleteData = db.dmComplaintFileTableDao().getFilePathToDelete(finalRetrievedArrayFile.get(finalI), Constants.FARMER_ID, 0);
+                                                deleteFile(deleteData);
                                                 db.dmComplaintFileTableDao().deleteById(finalRetrievedArrayFile.get(finalI), Constants.FARMER_ID, 0);
 
                                                 dm_question_complaint.removeAllViews();
@@ -2423,6 +2432,16 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
             extension = fileName.substring(dotIndex + 1);
         }
         return extension;
+    }
+
+    private void deleteFile(String filePath) {
+        File fileToDelete = new File(filePath);
+
+        if (fileToDelete.exists()) {
+            if (fileToDelete.delete()) {
+                Toast.makeText(getContext(), "File deleted successfully.", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
 }
