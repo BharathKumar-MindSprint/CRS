@@ -1003,7 +1003,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
             dmComplaintFileTable.setIsFileSynced(0);
 //            dmComplaintFileTable.setFilePath(uriImage.getPath());
             Date today = new Date();
-            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+            SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
             String currentTime = format.format(today);
             String OFISFileName = "Proof_" + Constants.MODULE_ID + "_" + Constants.FARMER_ID + "_" + currentTime + "." + Bitmap.CompressFormat.JPEG;
             dmComplaintFileTable.setOfisFileName(OFISFileName);
@@ -1011,7 +1011,14 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
             dmComplaintFileTable.setFarmerId(Constants.FARMER_ID);
             dmComplaintFileTable.setQuestionId(String.valueOf(CAMERA_REQUEST));
             dmComplaintFileTable.setAttempt(0);
-            File destinationFolder = new File(getActivity().getExternalFilesDir(null), "OFISDM_PROOF");
+
+            // Get an array of app-specific external storage directories
+            File[] externalStorageDirs = getContext().getExternalFilesDirs(null);
+
+            // The first element of the array will be the primary external storage directory
+            File primaryExternalStorageDir = externalStorageDirs[0];
+
+            File destinationFolder = new File(primaryExternalStorageDir, "OFISDM_PROOF");
             if (!destinationFolder.exists()) {
                 destinationFolder.mkdirs();
             }
@@ -1185,14 +1192,19 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 //                dmComplaintFileTable.setFilePath(uri.getPath());
                 dmComplaintFileTable.setFileData(fileByteArray);
                 Date today = new Date();
-                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+                SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
                 String currentTime = format.format(today);
                 String OFISFileName = "Proof_" + Constants.MODULE_ID + "_" + Constants.FARMER_ID + "_" + currentTime + "." + fileExtension;
                 dmComplaintFileTable.setOfisFileName(OFISFileName);
                 dmComplaintFileTable.setFarmerId(Constants.FARMER_ID);
                 dmComplaintFileTable.setQuestionId(String.valueOf(questionId));
                 dmComplaintFileTable.setAttempt(0);
-                File destinationFolder = new File(getActivity().getExternalFilesDir(null), "OFISDM_PROOF");
+                // Get an array of app-specific external storage directories
+                File[] externalStorageDirs = getContext().getExternalFilesDirs(null);
+
+                // The first element of the array will be the primary external storage directory
+                File primaryExternalStorageDir = externalStorageDirs[0];
+                File destinationFolder = new File(primaryExternalStorageDir, "OFISDM_PROOF");
                 if (!destinationFolder.exists()) {
                     destinationFolder.mkdirs();
                 }
@@ -1375,15 +1387,19 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 //                    dmComplaintFileTable.setFilePath(uri.getPath());
                     dmComplaintFileTable.setFileData(pdfByteArray2);
                     Date today = new Date();
-                    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+                    SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
                     String currentTime = format.format(today);
                     String OFISFileName = "Proof_" + Constants.MODULE_ID + "_" + Constants.FARMER_ID + "_" + currentTime + "." + fileExtension;
                     dmComplaintFileTable.setOfisFileName(OFISFileName);
                     dmComplaintFileTable.setFarmerId(Constants.FARMER_ID);
                     dmComplaintFileTable.setQuestionId(String.valueOf(questionId));
                     dmComplaintFileTable.setAttempt(0);
+                    // Get an array of app-specific external storage directories
+                    File[] externalStorageDirs = getContext().getExternalFilesDirs(null);
 
-                    File destinationFolder = new File(getActivity().getExternalFilesDir(null), "OFISDM_PROOF");
+                    // The first element of the array will be the primary external storage directory
+                    File primaryExternalStorageDir = externalStorageDirs[0];
+                    File destinationFolder = new File(primaryExternalStorageDir, "OFISDM_PROOF");
                     if (!destinationFolder.exists()) {
                         destinationFolder.mkdirs();
                     }
@@ -1548,14 +1564,19 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 //                dmComplaintFileTable.setFilePath(filePathimage);
                 dmComplaintFileTable.setFileData(imageBytes);
                 Date today = new Date();
-                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+                SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
                 String currentTime = format.format(today);
                 String OFISFileName = "Proof_" + Constants.MODULE_ID + "_" + Constants.FARMER_ID + "_" + currentTime + "." + Bitmap.CompressFormat.JPEG;
                 dmComplaintFileTable.setOfisFileName(OFISFileName);
                 dmComplaintFileTable.setFarmerId(Constants.FARMER_ID);
                 dmComplaintFileTable.setQuestionId(String.valueOf(questionId));
                 dmComplaintFileTable.setAttempt(0);
-                File destinationFolder = new File(getActivity().getExternalFilesDir(null), "OFISDM_PROOF");
+                // Get an array of app-specific external storage directories
+                File[] externalStorageDirs = getContext().getExternalFilesDirs(null);
+
+                // The first element of the array will be the primary external storage directory
+                File primaryExternalStorageDir = externalStorageDirs[0];
+                File destinationFolder = new File(primaryExternalStorageDir, "OFISDM_PROOF");
                 if (!destinationFolder.exists()) {
                     destinationFolder.mkdirs();
                 }
@@ -1725,14 +1746,19 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 dmComplaintFileTable.setFileData(fileByteArray);
 //                dmComplaintFileTable.setFilePath(uri.getPath());
                 Date today = new Date();
-                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+                SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
                 String currentTime = format.format(today);
                 String OFISFileName = "Proof_" + Constants.MODULE_ID + "_" + Constants.FARMER_ID + "_" + currentTime + "." + fileExtension;
                 dmComplaintFileTable.setOfisFileName(OFISFileName);
                 dmComplaintFileTable.setFarmerId(Constants.FARMER_ID);
                 dmComplaintFileTable.setQuestionId(String.valueOf(questionId));
                 dmComplaintFileTable.setAttempt(0);
-                File destinationFolder = new File(getActivity().getExternalFilesDir(null), "OFISDM_PROOF");
+                // Get an array of app-specific external storage directories
+                File[] externalStorageDirs = getContext().getExternalFilesDirs(null);
+
+                // The first element of the array will be the primary external storage directory
+                File primaryExternalStorageDir = externalStorageDirs[0];
+                File destinationFolder = new File(primaryExternalStorageDir, "OFISDM_PROOF");
                 if (!destinationFolder.exists()) {
                     destinationFolder.mkdirs();
                 }
@@ -1912,14 +1938,19 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                     dmComplaintFileTable.setSurveyType("ParentSurvey");
                     dmComplaintFileTable.setFileData(pdfByteArray2);
                     Date today = new Date();
-                    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+                    SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
                     String currentTime = format.format(today);
                     String OFISFileName = "Proof_" + Constants.MODULE_ID + "_" + Constants.FARMER_ID + "_" + currentTime + "." + fileExtension;
                     dmComplaintFileTable.setOfisFileName(OFISFileName);
                     dmComplaintFileTable.setFarmerId(Constants.FARMER_ID);
                     dmComplaintFileTable.setQuestionId(String.valueOf(questionId));
                     dmComplaintFileTable.setAttempt(0);
-                    File destinationFolder = new File(getActivity().getExternalFilesDir(null), "OFISDM_PROOF");
+                    // Get an array of app-specific external storage directories
+                    File[] externalStorageDirs = getContext().getExternalFilesDirs(null);
+
+                    // The first element of the array will be the primary external storage directory
+                    File primaryExternalStorageDir = externalStorageDirs[0];
+                    File destinationFolder = new File(primaryExternalStorageDir, "OFISDM_PROOF");
                     if (!destinationFolder.exists()) {
                         destinationFolder.mkdirs();
                     }

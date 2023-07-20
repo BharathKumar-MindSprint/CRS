@@ -1045,7 +1045,7 @@ public class FollowUpActionPlan extends Fragment {
             dmComplaintFileTable.setSurveyType("FollowUp");
 //            dmComplaintFileTable.setFilePath(uriImage.getPath());
             Date today = new Date();
-            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+            SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
             String currentTime = format.format(today);
             String OFISFileName = "Proof_" + Constants.MODULE_ID + "_" + Constants.FARMER_ID + "_" + currentTime + "." + Bitmap.CompressFormat.JPEG;
             dmComplaintFileTable.setOfisFileName(OFISFileName);
@@ -1226,7 +1226,7 @@ public class FollowUpActionPlan extends Fragment {
                 dmComplaintFileTable.setSurveyType("FollowUp");
                 dmComplaintFileTable.setFileData(fileByteArray);
                 Date today = new Date();
-                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+                SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
                 String currentTime = format.format(today);
                 String OFISFileName = "Proof_" + Constants.MODULE_ID + "_" + Constants.FARMER_ID + "_" + currentTime + "." + fileExtension;
                 dmComplaintFileTable.setOfisFileName(OFISFileName);
@@ -1411,7 +1411,7 @@ public class FollowUpActionPlan extends Fragment {
                     dmComplaintFileTable.setSurveyType("FollowUp");
                     dmComplaintFileTable.setFileData(pdfByteArray2);
                     Date today = new Date();
-                    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+                    SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
                     String currentTime = format.format(today);
                     String OFISFileName = "Proof_" + Constants.MODULE_ID + "_" + Constants.FARMER_ID + "_" + currentTime + "." + fileExtension;
                     dmComplaintFileTable.setOfisFileName(OFISFileName);
@@ -1580,7 +1580,7 @@ public class FollowUpActionPlan extends Fragment {
                 dmComplaintFileTable.setFileData(imageBytes);
 //                dmComplaintFileTable.setFilePath(filePathimage);
                 Date today = new Date();
-                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+                SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
                 String currentTime = format.format(today);
                 String OFISFileName = "Proof_" + Constants.MODULE_ID + "_" + Constants.FARMER_ID + "_" + currentTime + "." + Bitmap.CompressFormat.JPEG;
                 dmComplaintFileTable.setOfisFileName(OFISFileName);
@@ -1758,7 +1758,7 @@ public class FollowUpActionPlan extends Fragment {
                 dmComplaintFileTable.setFileData(fileByteArray);
 //                dmComplaintFileTable.setFilePath(uri.getPath());
                 Date today = new Date();
-                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+                SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
                 String currentTime = format.format(today);
                 String OFISFileName = "Proof_" + Constants.MODULE_ID + "_" + Constants.FARMER_ID + "_" + currentTime + "." + fileExtension;
                 dmComplaintFileTable.setOfisFileName(OFISFileName);
@@ -1944,7 +1944,7 @@ public class FollowUpActionPlan extends Fragment {
                     dmComplaintFileTable.setFileData(pdfByteArray2);
 //                    dmComplaintFileTable.setFilePath(uri1.getPath());
                     Date today = new Date();
-                    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+                    SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
                     String currentTime = format.format(today);
                     String OFISFileName = "Proof_" + Constants.MODULE_ID + "_" + Constants.FARMER_ID + "_" + currentTime + "." + fileExtension;
                     dmComplaintFileTable.setOfisFileName(OFISFileName);
