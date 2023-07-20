@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Build;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -49,6 +50,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
 
 /**
  * Created by ben on 04/12/14.
@@ -212,18 +214,38 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                 Calendar calendar = Calendar.getInstance();
                 Date currentDate = calendar.getTime();
                 String startDateString = db.dmMainModuleDao().getStartData(moduleId);
-                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                /*SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
                 Date startDateMain = null;
                 try {
                     startDateMain = dateFormat.parse(startDateString);
                 } catch (android.net.ParseException | java.text.ParseException e) {
                     e.printStackTrace();
+                }*/
+                SimpleDateFormat inputDateFormat = null;
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    inputDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
                 }
+                SimpleDateFormat outputDateFormatFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+
+                // Set the input date's timezone to UTC
+                assert inputDateFormat != null;
+                inputDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+                Date startDateMain = null;
+                String outputDateString = null;
+                try {
+                    startDateMain = inputDateFormat.parse(startDateString);
+                    outputDateString = outputDateFormatFormatter.format(startDateMain);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
                 boolean moduleWithActionPlan = false;
                 boolean moduleWithoutActionPlan = false;
 
 
-                String endDate = RecurrenceUtils.calculateEndDate(String.valueOf(startDateMain), recurrence_frequency, recurrence_type);
+                String endDate = RecurrenceUtils.calculateEndDate(outputDateString, recurrence_frequency, recurrence_type);
 //                Toast.makeText(context, endDate, Toast.LENGTH_SHORT).show();
 
                 if(db.complianceIndicatorDao().hasNoActionPlan(String.valueOf(moduleId))){
