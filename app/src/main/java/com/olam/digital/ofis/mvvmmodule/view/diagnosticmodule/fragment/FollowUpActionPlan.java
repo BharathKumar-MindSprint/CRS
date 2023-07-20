@@ -1053,7 +1053,13 @@ public class FollowUpActionPlan extends Fragment {
             dmComplaintFileTable.setFarmerId(Constants.FARMER_ID);
             dmComplaintFileTable.setQuestionId(String.valueOf(CAMERA_REQUEST));
             dmComplaintFileTable.setAttempt(Constants.ATTEMPT);
-            File destinationFolder = new File(getActivity().getExternalFilesDir(null), "OFISDM_PROOF");
+//            File destinationFolder = new File(getActivity().getExternalFilesDir(null), "OFISDM_PROOF");
+            // Get an array of app-specific external storage directories
+            File[] externalStorageDirs = getContext().getExternalFilesDirs(null);
+
+            // The first element of the array will be the primary external storage directory
+            File primaryExternalStorageDir = externalStorageDirs[0];
+            File destinationFolder = new File(primaryExternalStorageDir, "OFISDM_PROOF");
             if (!destinationFolder.exists()) {
                 destinationFolder.mkdirs();
             }
@@ -1233,7 +1239,13 @@ public class FollowUpActionPlan extends Fragment {
                 dmComplaintFileTable.setFarmerId(Constants.FARMER_ID);
                 dmComplaintFileTable.setQuestionId(String.valueOf(questionId));
                 dmComplaintFileTable.setAttempt(Constants.ATTEMPT);
-                File destinationFolder = new File(getActivity().getExternalFilesDir(null), "OFISDM_PROOF");
+//                File destinationFolder = new File(getActivity().getExternalFilesDir(null), "OFISDM_PROOF");
+                // Get an array of app-specific external storage directories
+                File[] externalStorageDirs = getContext().getExternalFilesDirs(null);
+
+                // The first element of the array will be the primary external storage directory
+                File primaryExternalStorageDir = externalStorageDirs[0];
+                File destinationFolder = new File(primaryExternalStorageDir, "OFISDM_PROOF");
                 if (!destinationFolder.exists()) {
                     destinationFolder.mkdirs();
                 }
@@ -1418,7 +1430,13 @@ public class FollowUpActionPlan extends Fragment {
                     dmComplaintFileTable.setFarmerId(Constants.FARMER_ID);
                     dmComplaintFileTable.setQuestionId(String.valueOf(questionId));
                     dmComplaintFileTable.setAttempt(Constants.ATTEMPT);
-                    File destinationFolder = new File(getActivity().getExternalFilesDir(null), "OFISDM_PROOF");
+//                    File destinationFolder = new File(getActivity().getExternalFilesDir(null), "OFISDM_PROOF");
+                    // Get an array of app-specific external storage directories
+                    File[] externalStorageDirs = getContext().getExternalFilesDirs(null);
+
+                    // The first element of the array will be the primary external storage directory
+                    File primaryExternalStorageDir = externalStorageDirs[0];
+                    File destinationFolder = new File(primaryExternalStorageDir, "OFISDM_PROOF");
                     if (!destinationFolder.exists()) {
                         destinationFolder.mkdirs();
                     }
@@ -1587,7 +1605,13 @@ public class FollowUpActionPlan extends Fragment {
                 dmComplaintFileTable.setFarmerId(Constants.FARMER_ID);
                 dmComplaintFileTable.setQuestionId(String.valueOf(questionId));
                 dmComplaintFileTable.setAttempt(Constants.ATTEMPT);
-                File destinationFolder = new File(getActivity().getExternalFilesDir(null), "OFISDM_PROOF");
+//                File destinationFolder = new File(getActivity().getExternalFilesDir(null), "OFISDM_PROOF");
+                // Get an array of app-specific external storage directories
+                File[] externalStorageDirs = getContext().getExternalFilesDirs(null);
+
+                // The first element of the array will be the primary external storage directory
+                File primaryExternalStorageDir = externalStorageDirs[0];
+                File destinationFolder = new File(primaryExternalStorageDir, "OFISDM_PROOF");
                 if (!destinationFolder.exists()) {
                     destinationFolder.mkdirs();
                 }
@@ -1765,7 +1789,13 @@ public class FollowUpActionPlan extends Fragment {
                 dmComplaintFileTable.setFarmerId(Constants.FARMER_ID);
                 dmComplaintFileTable.setQuestionId(String.valueOf(questionId));
                 dmComplaintFileTable.setAttempt(Constants.ATTEMPT);
-                File destinationFolder = new File(getActivity().getExternalFilesDir(null), "OFISDM_PROOF");
+//                File destinationFolder = new File(getActivity().getExternalFilesDir(null), "OFISDM_PROOF");
+                // Get an array of app-specific external storage directories
+                File[] externalStorageDirs = getContext().getExternalFilesDirs(null);
+
+                // The first element of the array will be the primary external storage directory
+                File primaryExternalStorageDir = externalStorageDirs[0];
+                File destinationFolder = new File(primaryExternalStorageDir, "OFISDM_PROOF");
                 if (!destinationFolder.exists()) {
                     destinationFolder.mkdirs();
                 }
@@ -1951,7 +1981,13 @@ public class FollowUpActionPlan extends Fragment {
                     dmComplaintFileTable.setFarmerId(Constants.FARMER_ID);
                     dmComplaintFileTable.setQuestionId(String.valueOf(questionId));
                     dmComplaintFileTable.setAttempt(Constants.ATTEMPT);
-                    File destinationFolder = new File(getActivity().getExternalFilesDir(null), "OFISDM_PROOF");
+//                    File destinationFolder = new File(getActivity().getExternalFilesDir(null), "OFISDM_PROOF");
+                    // Get an array of app-specific external storage directories
+                    File[] externalStorageDirs = getContext().getExternalFilesDirs(null);
+
+                    // The first element of the array will be the primary external storage directory
+                    File primaryExternalStorageDir = externalStorageDirs[0];
+                    File destinationFolder = new File(primaryExternalStorageDir, "OFISDM_PROOF");
                     if (!destinationFolder.exists()) {
                         destinationFolder.mkdirs();
                     }
