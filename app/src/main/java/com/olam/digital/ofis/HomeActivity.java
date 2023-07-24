@@ -2814,6 +2814,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                         dmSurveyAnswerTable.actionplanId = String.valueOf(actionPlanId);
                                         dmSurveyAnswerTable.actionPlanText = actionPlanText;
                                         dmSurveyAnswerTable.isSynced = true;
+                                        dmSurveyAnswerTable.question = db.dmQuestionsModuleDao().getQuestionById(questionId);
                                         db.dmSurveyAnswerTableDao().insert(dmSurveyAnswerTable);
                                     }
                                     String[] totalBudget = result.getTotalBudget().split(" ");
