@@ -2874,7 +2874,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                         recordFailedUpload(server_item_id, fully_synced, networkQueueItemId);
                                         postFailureMessage(handler, response, msg, 2, total, progress, null, "submitting cs location");
                                         FirebaseCrash.report(new Exception(response.optString("errors", res.getString(R.string.item_sync_error)) + " : submitting cs location"));
-                                        if (response.toString().contains(context.getResources().getString(R.string.consent_duplicate_error))) {
+                                        if (response.toString().contains(Utilities.CONSENTERROR)) {
                                             statusMessage = res.getString(R.string.item_synced);
                                             msg.what = 1;
                                             msg.arg1 = total;
@@ -2950,6 +2950,19 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
     private void showAlertMessage() {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setMessage(context.getResources().getString(R.string.consent_duplicate_alert))
+                .setCancelable(false)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+
+                    }
+                });
+        AlertDialog alert = builder.create();
+        alert.show();
+    }
+
+    private void showNationIdAlertMessage() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setMessage(Utilities.NID_ERROR)
                 .setCancelable(false)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
@@ -5162,7 +5175,24 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                             recordFailedUpload(server_item_id, fully_synced, networkQueueItemId);
                                             postFailureMessage(handler, response, msg, 2, total, progress, null, "submitting farmer");
                                             FirebaseCrash.report(new Exception(response.optString("errors", res.getString(R.string.item_sync_error)) + " : submitting submitting farmer"));
+                                            if (response.toString().contains(Utilities.NID_ERROR)) {
+                                                statusMessage = res.getString(R.string.item_synced);
+                                                msg.what = 1;
+                                                msg.arg1 = total;
+                                                msg.arg2 = progress;
+                                                msg.obj = statusMessage;
+                                                handler.dispatchMessage(msg);
+                                                dl.deleteNetworkQueueItem(networkQueueItemId);
+                                                syncNetworkQueue(originalSyncRequestItemId, handler);
 
+                                                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        showNationIdAlertMessage();
+                                                    }
+                                                });
+
+                                            }
                                         }
                                     }
                                     postResponse.close();
