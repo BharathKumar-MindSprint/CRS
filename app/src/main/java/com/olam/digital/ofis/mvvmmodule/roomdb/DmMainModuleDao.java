@@ -35,4 +35,10 @@ public interface DmMainModuleDao {
 
     @Query("SELECT startDate FROM DmMainModule WHERE id=:moduleId")
     String getStartData(int moduleId);
+    @Query("SELECT followUpDuration FROM DmMainModule WHERE id=:moduleId")
+    Integer getFollowUpDuration(String moduleId);
+
+    @Query("SELECT followUpAttempts FROM DmMainModule WHERE id=:moduleId")
+    Integer getFollowUpAttempts(String moduleId);
+
 }
