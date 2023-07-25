@@ -324,12 +324,13 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                 String endDate = RecurrenceUtils.calculateEndDate(outputDateString, recurrence_frequency, recurrence_type);
 //                Toast.makeText(context, endDate, Toast.LENGTH_SHORT).show();
 
-                Date endDateValue = null;
+                /*Date endDateValue = null;
                 try {
+                    assert endDate != null;
                     endDateValue = inputDateFormat.parse(endDate);
                 } catch (ParseException e) {
                     throw new RuntimeException(e);
-                }
+                }*/
 
 
                 // delete from answer table if the current date crossed recurrence value
