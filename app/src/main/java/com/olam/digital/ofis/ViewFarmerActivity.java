@@ -2774,25 +2774,25 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         dialog.setCancelable(false);
         ArrayList<String> recyclerViewData = new ArrayList<>();
 
-        recyclerViewData.add("Existing Module");
+        recyclerViewData.add(Constants.EXISTINGMODULE);
 //        recyclerViewData.add("Follow up " + 1);
         List<FollowUpItemMainTable> followupList = db.followUpItemMainTableDao().getFollowupByFarmerId(Long.parseLong(farmerID), Integer.parseInt(moduleID));
         if(followupList.size() == 0){
             List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByModuleId(String.valueOf(moduleID), String.valueOf(farmerId), true);
             if(dmSurveyAnswerTableList.size() != 0) {
-                recyclerViewData.add("Follow-up survey " + 1);
+                recyclerViewData.add(Constants.FOLLOWUP + 1);
             }
         }else {
             List<Integer> followupAttempts = db.followUpItemMainTableDao().getFollowupByAttempts(Long.parseLong(farmerID), Integer.parseInt(moduleID));
             for (int i = 1; i <= followupAttempts.size(); i++) {
-                recyclerViewData.add("Follow-up survey " + i);
+                recyclerViewData.add(Constants.FOLLOWUP + i);
             }
             List<FollowUpItemMainTable> followupUnSyncedItems = db.followUpItemMainTableDao().getFollowupUnSyncedItems(farmerID, moduleID, false);
             if(followupUnSyncedItems.size() == 0) {
                 List<FollowUpItemMainTable> followupUnResolvedItems = db.followUpItemMainTableDao().getFollowupUnResolvedItems(farmerID, moduleID, true, Constants.NOTRESOLVED, followupAttempts.size());
                 if(followupUnResolvedItems.size() > 0) {
                     int val = followupAttempts.size() + 1;
-                    recyclerViewData.add("Follow-up survey " + val);
+                    recyclerViewData.add(Constants.FOLLOWUP + val);
                     isCompleted = false;
                 }else{
                     isCompleted = true;
