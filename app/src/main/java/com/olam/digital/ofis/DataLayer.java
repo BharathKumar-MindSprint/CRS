@@ -9322,7 +9322,7 @@ public class DataLayer {
         String whereClause = OFISDBContract.FarmerEntry.COLUMN_NAME_ID + " = ? ";
         ContentValues values = new ContentValues();
         values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_SYNCED, "0");
-        values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID, "1686748460659");
+        values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID, "1690288677531");
         db.update(table,values, whereClause, whereArgs);
     }
 
