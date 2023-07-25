@@ -57,4 +57,7 @@ public interface FollowUpItemMainTableDao {
     @Query("SELECT status FROM FollowUpItemMainTable WHERE questionId =:questionId AND farmerId =:farmerId AND attempt =:attempt")
     String getResolvedOrNOt(String questionId, String farmerId, int attempt);
 
+
+    @Query("SELECT createdAt FROM FollowUpItemMainTable WHERE attempt =:attempt AND farmerId =:farmerID ORDER BY uid DESC LIMIT 1")
+    String getFollowUpStartDate(String attempt , String farmerID);
 }

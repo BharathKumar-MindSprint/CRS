@@ -1791,18 +1791,16 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                         GetAllDiagnosticModule();
                     }
                 }
-                if (isEnableDM) {
-                    GetAllDiagnosticModule();
-                }
+
             }
 
             @Override
             public void onFailure(Call<AccessTokenResp> call, Throwable t) {
                 progressDialog.hide();
 //                Toast.makeText(staticContext, t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
-                if (isEnableDM) {
+                /*if (isEnableDM) {
                     GetAllDiagnosticModule();
-                }
+                }*/
             }
         });
 
@@ -1872,9 +1870,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 } else {
                     // showAlert("Server Issue!!"+response.message().toString());
                 }
-                if (isEnableDM) {
-                    GetAllDiagnosticModule();
-                }
+
             }
 
             @Override
@@ -1882,9 +1878,9 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 //progressDialog.hide();
                 //Toast.makeText(staticContext, t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
                 // GetAllDiagnosticModuleHome();
-                if (isEnableDM) {
+                /*if (isEnableDM) {
                     GetAllDiagnosticModule();
-                }
+                }*/
             }
         });
 
@@ -2814,6 +2810,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                         dmSurveyAnswerTable.actionplanId = String.valueOf(actionPlanId);
                                         dmSurveyAnswerTable.actionPlanText = actionPlanText;
                                         dmSurveyAnswerTable.isSynced = true;
+                                        dmSurveyAnswerTable.question = db.dmQuestionsModuleDao().getQuestionById(questionId);
                                         db.dmSurveyAnswerTableDao().insert(dmSurveyAnswerTable);
                                     }
                                     String[] totalBudget = result.getTotalBudget().split(" ");

@@ -18,6 +18,7 @@ import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.ViewFarmerActivity;
 import com.olam.digital.ofis.mvvmmodule.Constants;
 import com.olam.digital.ofis.mvvmmodule.listener.OnItemSurveyClickListener;
+import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.DiagnosticModuleActivity;
 import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.DiagnosticModuleFollowUp;
 
@@ -36,12 +37,15 @@ public class FollowUpRecyclerAdapter extends RecyclerView.Adapter<FollowUpRecycl
     boolean isCompleted;
     private OnItemSurveyClickListener onItemSurveyClickListener;
 
-    public FollowUpRecyclerAdapter(ArrayList<String> items , Context context,int newFollowUpCount,Intent in, boolean isCompleted) {
+    String moduleID;
+
+    public FollowUpRecyclerAdapter(ArrayList<String> items , Context context,int newFollowUpCount,Intent in, boolean isCompleted ,String moduleId) {
         this.items = items;
         this.context = context;
         this.newFollowCount = newFollowUpCount;
         this.in = in;
         this.isCompleted = isCompleted;
+        this.moduleID = moduleId;
     }
 
     public void setOnItemSurveyClickListener(OnItemSurveyClickListener clickListener) {
@@ -98,7 +102,7 @@ public class FollowUpRecyclerAdapter extends RecyclerView.Adapter<FollowUpRecycl
         @Override
         public void onClick(View v) {
 
-
+            OFISRoomDB db = OFISRoomDB.getDbInstance(context);
             int previousPosition = selectedPosition;
             selectedPosition = getAdapterPosition();
             notifyItemChanged(previousPosition);
@@ -110,7 +114,9 @@ public class FollowUpRecyclerAdapter extends RecyclerView.Adapter<FollowUpRecycl
                 if(items.size() == 1 && !isCompleted){
                     Constants.EDITABLE = true;
                     context.startActivity(in);
-                }else{
+                }else if (isCompleted && db.complianceIndicatorDao().hasNoActionPlan(String.valueOf(moduleID))){
+                    Constants.EDITABLE = false;
+                }else if (isCompleted && db.complianceIndicatorDao().hasActionPlan(String.valueOf(moduleID))){
                     Constants.EDITABLE = false;
                 }
 

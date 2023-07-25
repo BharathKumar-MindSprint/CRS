@@ -42,4 +42,7 @@ public interface DmQuestionsModuleDao {
 
     @Query("SELECT isCriticalQuest FROM DmQuestionsModule WHERE moduleId=:moduleID AND id=:questionID")
     int getIsCriticalQuestForColor(String moduleID,int questionID);
+
+    @Query("SELECT question FROM DmQuestionsModule WHERE id=:questionID")
+    String getQuestionById(int questionID);
 }

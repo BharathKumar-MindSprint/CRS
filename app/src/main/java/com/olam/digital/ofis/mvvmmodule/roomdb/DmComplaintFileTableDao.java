@@ -59,5 +59,7 @@ public interface DmComplaintFileTableDao {
     @Query("SELECT * FROM DmComplaintFileTable WHERE questionId = :id AND farmerId = :farmerId AND attempt = :attempt AND surveyType=:surveyType")
     List<DmComplaintFileTable> getTotalFollowCount(int id, String farmerId, int attempt , String surveyType);
 
+    @Query("SELECT filePath FROM DmComplaintFileTable WHERE uid =:id AND farmerId = :farmerId AND attempt = :attempt")
+    String getFilePathToDelete(long id, String farmerId, int attempt);
 
 }
