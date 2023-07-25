@@ -525,25 +525,29 @@ public class SyncAllTask extends SyncTask {
     }
 
     private void deleteRoomDbValues() {
-        OFISRoomDB db = OFISRoomDB.getDbInstance(context);
-        db.dmSectionsItemDao().deleteAll();
-        db.dmLookupValuesISubmoduleDao().deleteAll();
-        db.dmActionPlansItemSubmoduleDao().deleteAll();
-        db.dmQuestionsModuleDao().deleteAll();
-        db.dmLookupValuesItemDao().deleteAll();
-        db.dmActionPlansItemDao().deleteAll();
-        db.dmMainModuleDao().deleteAll();
-        db.dmAnswerTypesDao().deleteAll();
-        db.dmQuestionTypesDao().deleteAll();
-        db.dmCurrenciesItemDao().deleteAll();
-        db.dmTextBoxModuleQuestionsDao().deleteAll();
-        db.dmRangeTextBoxModuleQuestionsTableDao().deleteAll();
-        db.dmTextBoxModuleQuestionsDao().deleteAll();
-        db.dmRangeTextBoxModuleQuestionsTableDao().deleteAll();
-        db.complianceIndicatorDao().deleteAll();
-        db.dmCurrencyDao().deleteAll();
-        db.dmRangeActionPlansItemsDao().deleteAll();
-        db.dmSurveyAnswerTableDao().deleteAll();
+        try {
+            OFISRoomDB db = OFISRoomDB.getDbInstance(context);
+            db.dmSectionsItemDao().deleteAll();
+            db.dmLookupValuesISubmoduleDao().deleteAll();
+            db.dmActionPlansItemSubmoduleDao().deleteAll();
+            db.dmQuestionsModuleDao().deleteAll();
+            db.dmLookupValuesItemDao().deleteAll();
+            db.dmActionPlansItemDao().deleteAll();
+            db.dmMainModuleDao().deleteAll();
+            db.dmAnswerTypesDao().deleteAll();
+            db.dmQuestionTypesDao().deleteAll();
+            db.dmCurrenciesItemDao().deleteAll();
+            db.dmTextBoxModuleQuestionsDao().deleteAll();
+            db.dmRangeTextBoxModuleQuestionsTableDao().deleteAll();
+            db.dmTextBoxModuleQuestionsDao().deleteAll();
+            db.dmRangeTextBoxModuleQuestionsTableDao().deleteAll();
+            db.complianceIndicatorDao().deleteAll();
+            db.dmCurrencyDao().deleteAll();
+            db.dmRangeActionPlansItemsDao().deleteAll();
+            db.dmSurveyAnswerTableDao().deleteAll();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     private void postFailureMessage(JSONObject response) {

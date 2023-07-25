@@ -2778,7 +2778,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         dialog.setCancelable(false);
         ArrayList<String> recyclerViewData = new ArrayList<>();
 
-        recyclerViewData.add("Existing Module");
+        recyclerViewData.add(Constants.EXISTINGMODULE);
 //        recyclerViewData.add("Follow up " + 1);
 
         if(db.complianceIndicatorDao().hasActionPlan(String.valueOf(moduleID))){
