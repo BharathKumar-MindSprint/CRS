@@ -5135,7 +5135,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                     if (postResponse.isSuccessful()) {
                                         //new
                                         JSONObject jsonResponse = new JSONObject(postResponse.body().string());
-
                                         String response = jsonResponse.getString("responce");
                                         if (response.equalsIgnoreCase("200")) {
                                             dl.deleteNetworkQueueItem(networkQueueItemId);
@@ -5152,27 +5151,17 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                             }
                                             syncNetworkQueue(originalSyncRequestItemId, handler);
                                         }
-
                                     } else {
                                         try {
                                             FabricLogsWriter.printCrashLog(TAG, endpoint, postResponse.code(), "Request : " + jsonArray.toString() + " Response  " + postResponse.networkResponse().toString(), context);
                                         } catch (Exception e) {
                                             FirebaseCrashlytics.getInstance().log(e.getMessage());
                                         }
-                                        long server_item_id = 0, fully_synced = 0;
-
-                                        // Added
                                         if (postResponse.code() == 401) {
                                             FailureGetRefreshToken(handler, originalSyncRequestItemId, msg, 2, total, progress, null, "submitting farmer");
                                         } else {
-                                            JSONArray jsonResponse = new JSONArray(postResponse.body().string());
-                                            JSONObject response = jsonResponse.getJSONObject(0);
-
-                                            if (response != null) {
-                                                server_item_id = response.optLong("id", 0);
-                                                fully_synced = response.getLong(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FULLY_SYNCED);
-                                            }
-                                            recordFailedUpload(server_item_id, fully_synced, networkQueueItemId);
+                                            JSONObject response =  new JSONObject(postResponse.body().string());
+                                            recordFailedUpload(0, 0, networkQueueItemId);
                                             postFailureMessage(handler, response, msg, 2, total, progress, null, "submitting farmer");
                                             FirebaseCrash.report(new Exception(response.optString("errors", res.getString(R.string.item_sync_error)) + " : submitting submitting farmer"));
                                             if (response.toString().contains(Utilities.NID_ERROR)) {
