@@ -471,6 +471,17 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_SIPGROUPID = "sipGroupId";
         public static final String COLUMN_NAME_SIPKEY = "sipKey";
 
+        public static final String COLUMN_NAME_QUESTION_INFO = "questionInfo";
+        public static final String COLUMN_NAME_QUESTION_INFO_ES = "questionInfoEs";
+        public static final String COLUMN_NAME_QUESTION_INFO_FR = "questionInfoFr";
+        public static final String COLUMN_NAME_QUESTION_INFO_ID = "questionInfoId";
+        public static final String COLUMN_NAME_QUESTION_INFO_PT = "questionInfoPt";
+        public static final String COLUMN_NAME_QUESTION_INFO_TR = "questionInfoTr";
+        public static final String COLUMN_NAME_QUESTION_INFO_LO = "questionInfoLo";
+        public static final String COLUMN_NAME_QUESTION_INFO_VI = "questionInfoVi";
+        public static final String COLUMN_NAME_QUESTION_INFO_TH = "questionInfoTh";
+
+
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
                     add(COLUMN_NAME_ID);
@@ -498,6 +509,15 @@ public class OFISDBContract {
                     add(COLUMN_NAME_CONDITIONAL_QUESTIONS);
                     add(COLUMN_NAME_SIPGROUPID);
                     add(COLUMN_NAME_SIPKEY);
+                    add(COLUMN_NAME_QUESTION_INFO);
+                    add(COLUMN_NAME_QUESTION_INFO_ES);
+                    add(COLUMN_NAME_QUESTION_INFO_FR);
+                    add(COLUMN_NAME_QUESTION_INFO_ID);
+                    add(COLUMN_NAME_QUESTION_INFO_PT);
+                    add(COLUMN_NAME_QUESTION_INFO_TR);
+                    add(COLUMN_NAME_QUESTION_INFO_LO);
+                    add(COLUMN_NAME_QUESTION_INFO_VI);
+                    add(COLUMN_NAME_QUESTION_INFO_TH);
 
                 }}
         );

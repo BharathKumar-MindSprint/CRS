@@ -15,6 +15,7 @@ import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.net.Uri;
+import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.StrictMode;
 import android.provider.MediaStore;
@@ -31,6 +32,7 @@ import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -709,13 +711,42 @@ public class DynamicQuestions {
     }
 
     public void renderQuestion(Cursor qCursor, boolean isRepeaterItem, LinearLayout parentLayout) {
+        LinearLayout combinedLayout = new LinearLayout(getInstance().context);
+        combinedLayout.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        ));
+        combinedLayout.setOrientation(LinearLayout.VERTICAL);
+//        combinedLayout.setPadding(16, 16, 16, 16);
+
+        LinearLayout textImgLayout = new LinearLayout(getInstance().context);
+        textImgLayout.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        ));
+        textImgLayout.setOrientation(LinearLayout.HORIZONTAL);
+//        combinedLayout.setPadding(16, 16, 16, 16);
+
+
         TextView tv;
         tv = (TextView) inflater.inflate((isRepeaterItem) ? R.layout.module_repeater_item_question : R.layout.module_question, parentLayout, false);
 
+        // for info
+        ImageView imageView = new ImageView(context);
+        imageView.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        ));
+        imageView.setPadding(3,0,0,0);
+        imageView.setImageResource(R.drawable.info_icon);
+
+
         int columnIndex = (qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION + questionColumnSuffix) != -1) ? qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION + questionColumnSuffix) : qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION);
+        int columnInfo = (qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO + questionColumnSuffix) != -1) ? qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO + questionColumnSuffix) : qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO);
         final String datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
         tv.setText(Html.fromHtml(qCursor.getString(columnIndex)));
         String hh = Html.fromHtml(qCursor.getString(columnIndex)) + "";
+        String infoVal = String.valueOf(Html.fromHtml(qCursor.getString(columnInfo)));
 
         // get disp"lay config to see if question is required
         try {
@@ -751,10 +782,70 @@ public class DynamicQuestions {
             FirebaseCrashlytics.getInstance().log("DynamicQuestions: Error getting question display config - question " + questionId);
         }
 
-        parentLayout.addView(tv);
+        textImgLayout.addView(tv);
+
+        combinedLayout.addView(textImgLayout);
+
+        if (infoVal!=null){
+
+            // Create a new LinearLayout
+            LinearLayout infoPopupContainer = new LinearLayout(context);
+//            infoPopupContainer.setId(R.id.infoPopupContainer);
+            infoPopupContainer.setLayoutParams(new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+            ));
+            infoPopupContainer.setOrientation(LinearLayout.VERTICAL);
+            infoPopupContainer.setGravity(Gravity.CENTER);
+            infoPopupContainer.setVisibility(View.GONE);
+            infoPopupContainer.setBackgroundColor(Color.WHITE);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                infoPopupContainer.setElevation(4);
+            }
+
+            // Create a new TextView
+            TextView textView = new TextView(context);
+            textView.setLayoutParams(new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+            ));
+            textView.setText("Hint: " + infoVal);
+            textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
+            textView.setTextColor(Color.RED);
+
+            // Add the TextView to the LinearLayout
+            infoPopupContainer.addView(textView);
+
+            // Set the padding for the LinearLayout
+//            int padding = (int) getResources().getDimension(R.dimen.popup_padding);
+//            infoPopupContainer.setPadding(padding, padding, padding, padding);
+
+//            TextView infoTextView = new TextView(context);
+//            infoTextView.setVisibility(View.GONE);
+//            infoTextView.setTextSize(12);
+//            infoTextView.setTextColor(Color.RED);
+
+            imageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (infoPopupContainer.getVisibility() == View.VISIBLE){
+                        infoPopupContainer.setVisibility(View.GONE);
+//                        tv.setError(null);
+                    }else {
+                        infoPopupContainer.setVisibility(View.VISIBLE);
+//                        infoTextView.setText("Hint: " + infoVal);
+//                        tv.setError("Hint: " + infoVal);
+                    }
+                }
+            });
+
+            textImgLayout.addView(imageView);
+            combinedLayout.addView(infoPopupContainer);
+        }
+
+
+        parentLayout.addView(combinedLayout);
     }
-
-
 
     public boolean CheckMinMaxforQuestion(Cursor qCursor) {
         boolean status = true;
