@@ -1551,7 +1551,7 @@ public class DynamicQuestions {
             et.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
         } else if (datatype.equals("int")) {
             et.setInputType(InputType.TYPE_CLASS_NUMBER);
-            et.setFilters(new InputFilter[]{new InputFilter.LengthFilter(9)});
+            et.setFilters(new InputFilter[]{new InputFilter.LengthFilter(11)});
         }
 
         // add tv to array if this is a 100% group question
