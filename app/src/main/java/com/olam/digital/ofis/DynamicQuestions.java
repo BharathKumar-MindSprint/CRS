@@ -37,6 +37,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -45,6 +46,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TableLayout;
@@ -125,6 +127,9 @@ public class DynamicQuestions {
     public Set<Integer> constraintsSet=new HashSet<>();
     public  Set<Integer> editQuestionSet=new HashSet<>();
     private static DynamicQuestions instance = null;
+
+    private PopupWindow popupWindow;
+    private ImageView imageViewInfo;
 
     DynamicQuestions(Context context, String questionColumnSuffix, DataLayer dl) {
         this.answerSet = new ArrayList<>();
@@ -732,13 +737,13 @@ public class DynamicQuestions {
         tv = (TextView) inflater.inflate((isRepeaterItem) ? R.layout.module_repeater_item_question : R.layout.module_question, parentLayout, false);
 
         // for info
-        ImageView imageView = new ImageView(context);
-        imageView.setLayoutParams(new LinearLayout.LayoutParams(
+        imageViewInfo = new ImageView(context);
+        imageViewInfo.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
         ));
-        imageView.setPadding(3,0,0,0);
-        imageView.setImageResource(R.drawable.info_icon);
+        imageViewInfo.setPadding(3,0,0,0);
+        imageViewInfo.setImageResource(R.drawable.info_icon);
 
 
         int columnIndex = (qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION + questionColumnSuffix) != -1) ? qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION + questionColumnSuffix) : qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION);
@@ -788,7 +793,7 @@ public class DynamicQuestions {
 
         if (infoVal!=null){
 
-            // Create a new LinearLayout
+            /*// Create a new LinearLayout
             LinearLayout infoPopupContainer = new LinearLayout(context);
 //            infoPopupContainer.setId(R.id.infoPopupContainer);
             infoPopupContainer.setLayoutParams(new LinearLayout.LayoutParams(
@@ -818,33 +823,67 @@ public class DynamicQuestions {
 
             // Set the padding for the LinearLayout
 //            int padding = (int) getResources().getDimension(R.dimen.popup_padding);
-//            infoPopupContainer.setPadding(padding, padding, padding, padding);
+//            infoPopupContainer.setPadding(padding, padding, padding, padding);*/
 
-//            TextView infoTextView = new TextView(context);
-//            infoTextView.setVisibility(View.GONE);
-//            infoTextView.setTextSize(12);
-//            infoTextView.setTextColor(Color.RED);
-
-            imageView.setOnClickListener(new View.OnClickListener() {
+            imageViewInfo.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (infoPopupContainer.getVisibility() == View.VISIBLE){
+                    /*if (infoPopupContainer.getVisibility() == View.VISIBLE){
                         infoPopupContainer.setVisibility(View.GONE);
 //                        tv.setError(null);
                     }else {
                         infoPopupContainer.setVisibility(View.VISIBLE);
 //                        infoTextView.setText("Hint: " + infoVal);
 //                        tv.setError("Hint: " + infoVal);
+                    }*/
+
+                    if (popupWindow == null || !popupWindow.isShowing()) {
+                        // Create a new popup window only if it's null or not showing
+                        showPopupWindow(infoVal);
+                    } else {
+                        // Dismiss the popup if it's already showing
+                        dismissPopupWindow();
                     }
+
                 }
             });
 
-            textImgLayout.addView(imageView);
-            combinedLayout.addView(infoPopupContainer);
+            textImgLayout.addView(imageViewInfo);
+//            combinedLayout.addView(infoPopupContainer);
         }
 
 
         parentLayout.addView(combinedLayout);
+    }
+
+    private void showPopupWindow(String infoVal) {
+        // Create a new popup window
+        popupWindow = new PopupWindow(context);
+
+        // Inflate the custom popup content layout
+        View popupView = LayoutInflater.from(context).inflate(R.layout.popup_layout, null);
+
+        // Set the popup content view and dimensions
+        popupWindow.setContentView(popupView);
+        popupWindow.setWidth(ViewGroup.LayoutParams.WRAP_CONTENT);
+        popupWindow.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
+
+        // Find the TextView in the popup layout
+        TextView popupTextView = popupView.findViewById(R.id.popupTextView);
+
+        // Set the text for the TextView
+        String popupText = infoVal;
+        popupTextView.setText(popupText);
+
+        // Show the popup below the infoButton
+//        popupWindow.showAsDropDown(imageViewInfo, 0, 0); // Adjust the offset as needed
+        popupWindow.showAsDropDown(imageViewInfo,0 , 0, Gravity.CENTER);
+    }
+
+    private void dismissPopupWindow() {
+        if (popupWindow != null && popupWindow.isShowing()) {
+            popupWindow.dismiss();
+        }
     }
 
     public boolean CheckMinMaxforQuestion(Cursor qCursor) {
