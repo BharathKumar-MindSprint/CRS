@@ -5172,8 +5172,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                                 msg.obj = statusMessage;
                                                 handler.dispatchMessage(msg);
                                                 dl.deleteNetworkQueueItem(networkQueueItemId);
+                                                dl.updateSyncedStatus(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
                                                 syncNetworkQueue(originalSyncRequestItemId, handler);
-
                                                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                                                     @Override
                                                     public void run() {
