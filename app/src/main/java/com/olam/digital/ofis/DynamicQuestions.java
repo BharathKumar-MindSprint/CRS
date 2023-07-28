@@ -2,7 +2,6 @@ package com.olam.digital.ofis;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -10,17 +9,14 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.net.Uri;
-import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.StrictMode;
 import android.provider.MediaStore;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 
@@ -32,7 +28,6 @@ import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -52,9 +47,7 @@ import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.olam.digital.ofis.coffeesurveyconstraints.CoffeeConstants;
 import com.olam.digital.ofis.coffeesurveyconstraints.CoffeeConstraints;
@@ -87,8 +80,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
-
-import okhttp3.internal.Util;
 
 /**
  * Created by ben on 02/06/2015.
@@ -128,8 +119,8 @@ public class DynamicQuestions {
     public  Set<Integer> editQuestionSet=new HashSet<>();
     private static DynamicQuestions instance = null;
 
-    private PopupWindow popupWindow;
-    private ImageView imageViewInfo;
+
+//    private ImageView imageViewInfo;
 
     DynamicQuestions(Context context, String questionColumnSuffix, DataLayer dl) {
         this.answerSet = new ArrayList<>();
@@ -735,9 +726,9 @@ public class DynamicQuestions {
 
         TextView tv;
         tv = (TextView) inflater.inflate((isRepeaterItem) ? R.layout.module_repeater_item_question : R.layout.module_question, parentLayout, false);
-
+        PopupWindow popupWindow = new PopupWindow(context);;
         // for info
-        imageViewInfo = new ImageView(context);
+        ImageView imageViewInfo = new ImageView(context);
         imageViewInfo.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
@@ -751,7 +742,12 @@ public class DynamicQuestions {
         final String datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
         tv.setText(Html.fromHtml(qCursor.getString(columnIndex)));
         String hh = Html.fromHtml(qCursor.getString(columnIndex)) + "";
-        String infoVal = String.valueOf(Html.fromHtml(qCursor.getString(columnInfo)));
+        String infoVal = null;
+        try {
+            infoVal = String.valueOf(Html.fromHtml(qCursor.getString(columnInfo)));
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
 
         // get disp"lay config to see if question is required
         try {
@@ -791,101 +787,52 @@ public class DynamicQuestions {
 
         combinedLayout.addView(textImgLayout);
 
-        if (infoVal!=null){
-
-            /*// Create a new LinearLayout
-            LinearLayout infoPopupContainer = new LinearLayout(context);
-//            infoPopupContainer.setId(R.id.infoPopupContainer);
-            infoPopupContainer.setLayoutParams(new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT
-            ));
-            infoPopupContainer.setOrientation(LinearLayout.VERTICAL);
-            infoPopupContainer.setGravity(Gravity.CENTER);
-            infoPopupContainer.setVisibility(View.GONE);
-            infoPopupContainer.setBackgroundColor(Color.WHITE);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                infoPopupContainer.setElevation(4);
-            }
-
-            // Create a new TextView
-            TextView textView = new TextView(context);
-            textView.setLayoutParams(new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT
-            ));
-            textView.setText("Hint: " + infoVal);
-            textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
-            textView.setTextColor(Color.RED);
-
-            // Add the TextView to the LinearLayout
-            infoPopupContainer.addView(textView);
-
-            // Set the padding for the LinearLayout
-//            int padding = (int) getResources().getDimension(R.dimen.popup_padding);
-//            infoPopupContainer.setPadding(padding, padding, padding, padding);*/
-
+        if (infoVal!=null && !infoVal.equals("")){
+            String finalInfoVal = infoVal;
             imageViewInfo.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    /*if (infoPopupContainer.getVisibility() == View.VISIBLE){
-                        infoPopupContainer.setVisibility(View.GONE);
-//                        tv.setError(null);
-                    }else {
-                        infoPopupContainer.setVisibility(View.VISIBLE);
-//                        infoTextView.setText("Hint: " + infoVal);
-//                        tv.setError("Hint: " + infoVal);
-                    }*/
 
                     if (popupWindow == null || !popupWindow.isShowing()) {
                         // Create a new popup window only if it's null or not showing
-                        showPopupWindow(infoVal);
+                        // Inflate the custom popup content layout
+                        View popupView = LayoutInflater.from(context).inflate(R.layout.popup_layout, null);
+
+                        // Set the popup content view and dimensions
+                        popupWindow.setContentView(popupView);
+                        popupWindow.setWidth(ViewGroup.LayoutParams.WRAP_CONTENT);
+                        popupWindow.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
+
+                        // Find the TextView in the popup layout
+                        try {
+                            TextView popupTextView = popupView.findViewById(R.id.popupTextView);
+                            // Set the text for the TextView
+                            popupTextView.setText(finalInfoVal);
+
+                            // Show the popup below the infoButton
+                            popupWindow.showAsDropDown(imageViewInfo,0 , 0, Gravity.CENTER);
+                        }catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+
+
                     } else {
                         // Dismiss the popup if it's already showing
-                        dismissPopupWindow();
+                        if (popupWindow != null && popupWindow.isShowing()) {
+                            popupWindow.dismiss();
+                        }
                     }
 
                 }
             });
 
             textImgLayout.addView(imageViewInfo);
-//            combinedLayout.addView(infoPopupContainer);
         }
 
 
         parentLayout.addView(combinedLayout);
     }
-
-    private void showPopupWindow(String infoVal) {
-        // Create a new popup window
-        popupWindow = new PopupWindow(context);
-
-        // Inflate the custom popup content layout
-        View popupView = LayoutInflater.from(context).inflate(R.layout.popup_layout, null);
-
-        // Set the popup content view and dimensions
-        popupWindow.setContentView(popupView);
-        popupWindow.setWidth(ViewGroup.LayoutParams.WRAP_CONTENT);
-        popupWindow.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
-
-        // Find the TextView in the popup layout
-        TextView popupTextView = popupView.findViewById(R.id.popupTextView);
-
-        // Set the text for the TextView
-        String popupText = infoVal;
-        popupTextView.setText(popupText);
-
-        // Show the popup below the infoButton
-//        popupWindow.showAsDropDown(imageViewInfo, 0, 0); // Adjust the offset as needed
-        popupWindow.showAsDropDown(imageViewInfo,0 , 0, Gravity.CENTER);
-    }
-
-    private void dismissPopupWindow() {
-        if (popupWindow != null && popupWindow.isShowing()) {
-            popupWindow.dismiss();
-        }
-    }
-
     public boolean CheckMinMaxforQuestion(Cursor qCursor) {
         boolean status = true;
 
