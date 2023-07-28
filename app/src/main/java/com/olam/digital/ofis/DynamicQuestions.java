@@ -742,7 +742,12 @@ public class DynamicQuestions {
         final String datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
         tv.setText(Html.fromHtml(qCursor.getString(columnIndex)));
         String hh = Html.fromHtml(qCursor.getString(columnIndex)) + "";
-        String infoVal = String.valueOf(Html.fromHtml(qCursor.getString(columnInfo)));
+        String infoVal = null;
+        try {
+            infoVal = String.valueOf(Html.fromHtml(qCursor.getString(columnInfo)));
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
 
         // get disp"lay config to see if question is required
         try {
@@ -783,6 +788,7 @@ public class DynamicQuestions {
         combinedLayout.addView(textImgLayout);
 
         if (infoVal!=null && !infoVal.equals("")){
+            String finalInfoVal = infoVal;
             imageViewInfo.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -798,14 +804,19 @@ public class DynamicQuestions {
                         popupWindow.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
 
                         // Find the TextView in the popup layout
-                        TextView popupTextView = popupView.findViewById(R.id.popupTextView);
+                        try {
+                            TextView popupTextView = popupView.findViewById(R.id.popupTextView);
+                            // Set the text for the TextView
+                            popupTextView.setText(finalInfoVal);
 
-                        // Set the text for the TextView
-                        String popupText = infoVal;
-                        popupTextView.setText(popupText);
+                            // Show the popup below the infoButton
+                            popupWindow.showAsDropDown(imageViewInfo,0 , 0, Gravity.CENTER);
+                        }catch (Exception e) {
+                            e.printStackTrace();
+                        }
 
-                        // Show the popup below the infoButton
-                        popupWindow.showAsDropDown(imageViewInfo,0 , 0, Gravity.CENTER);
+
+
                     } else {
                         // Dismiss the popup if it's already showing
                         if (popupWindow != null && popupWindow.isShowing()) {
