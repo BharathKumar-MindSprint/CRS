@@ -81,6 +81,8 @@ import org.json.JSONException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Locale;
+import java.util.Objects;
 
 public class CompleteModuleActivity extends BaseActivity {
 
@@ -98,7 +100,7 @@ public class CompleteModuleActivity extends BaseActivity {
     private String recordedLng;
     private String farmerName;
     private String viewModuleAns;
-    private Cursor subModules, questions;
+    private Cursor subModules, questions , modules;
     public static Cursor allQuestions;
     private Context context;
     private Resources res;
@@ -461,9 +463,18 @@ public class CompleteModuleActivity extends BaseActivity {
     private void setupTopSection() {
         try {
             TextView moduleNameTv = (TextView) findViewById(R.id.completeModuleModuleTitle);
+            TextView moduleDescriptionTv = (TextView) findViewById(R.id.completeModuleModuleDescription);
             TextView subModuleNameTv = (TextView) findViewById(R.id.completeModuleSubModuleTitle);
 
+            String language = Locale.getDefault().getLanguage();
+            String moduleDescription = dl.getDescriptionByModuleId(Integer.parseInt(String.valueOf(moduleId)) , language);
+
             moduleNameTv.setText(moduleName);
+
+            if (moduleDescription!=null && !moduleDescription.equals("null")) {
+                moduleDescriptionTv.setVisibility(View.VISIBLE);
+                moduleDescriptionTv.setText(moduleDescription);
+            }
 
             moduleNameTv.post(new Runnable() {
                 @Override
@@ -481,6 +492,13 @@ public class CompleteModuleActivity extends BaseActivity {
 
             int columnIndex = (subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME + dynamicQuestions.questionColumnSuffix) != -1) ? subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME + dynamicQuestions.questionColumnSuffix) : subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME);
             subModuleNameTv.setText(subModules.getString(columnIndex));
+            /*int columnSubModulesDescription = (subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_DESCRIPTION + dynamicQuestions.questionColumnSuffix) != -1) ? subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_DESCRIPTION + dynamicQuestions.questionColumnSuffix) : subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_DESCRIPTION);
+            if (!Objects.equals(subModules.getString(columnSubModulesDescription), "") || subModules.getString(columnSubModulesDescription) != null){
+                TextView subModuleDescriptionTv = (TextView) findViewById(R.id.completeModuleSubModuleDescription);
+                subModuleDescriptionTv.setVisibility(View.VISIBLE);
+                subModuleDescriptionTv.setText(subModules.getString(columnSubModulesDescription));
+            }*/
+
 
             subModuleNameTv.post(new Runnable() {
                 @Override

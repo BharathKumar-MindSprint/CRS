@@ -107,7 +107,16 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.ModuleEntry.COLUMN_NAME_NAME_TR + " TEXT, " + OFISDBContract.ModuleEntry.COLUMN_NAME_NAME_LO + " TEXT, "
             + OFISDBContract.ModuleEntry.COLUMN_NAME_NAME_VI + " TEXT, " + OFISDBContract.ModuleEntry.COLUMN_NAME_NAME_TH + " TEXT, "
             + OFISDBContract.ModuleEntry.COLUMN_NAME_MODULE_CODE + " TEXT, "
-            + OFISDBContract.ModuleEntry.COLUMN_NAME_EXPIRES + " TEXT, " + OFISDBContract.ModuleEntry.COLUMN_NAME_ANNUAL_SURVEY + " INTEGER )";
+            + OFISDBContract.ModuleEntry.COLUMN_NAME_EXPIRES + " TEXT, " + OFISDBContract.ModuleEntry.COLUMN_NAME_ANNUAL_SURVEY + " INTEGER, "
+        + OFISDBContract.ModuleEntry.COLUMN_NAME_DESCRIPTION + " TEXT, "
+        + OFISDBContract.ModuleEntry.COLUMN_NAME_DESCRIPTION_ES + " TEXT, "
+        + OFISDBContract.ModuleEntry.COLUMN_NAME_DESCRIPTION_FR + " TEXT, "
+        + OFISDBContract.ModuleEntry.COLUMN_NAME_DESCRIPTION_ID + " TEXT, "
+        + OFISDBContract.ModuleEntry.COLUMN_NAME_DESCRIPTION_LO + " TEXT, "
+        + OFISDBContract.ModuleEntry.COLUMN_NAME_DESCRIPTION_PT + " TEXT, "
+        + OFISDBContract.ModuleEntry.COLUMN_NAME_DESCRIPTION_TH + " TEXT, "
+        + OFISDBContract.ModuleEntry.COLUMN_NAME_DESCRIPTION_TR + " TEXT, "
+        + OFISDBContract.ModuleEntry.COLUMN_NAME_DESCRIPTION_VI + " TEXT)";
     // create SubModules
     private static final String OFIS_SUBMODULES_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.SubmoduleEntry.TABLE_NAME
             + " ( " + OFISDBContract.SubmoduleEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.SubmoduleEntry.COLUMN_NAME_MODULE_ID + " INTEGER, "
@@ -115,7 +124,32 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME_FR + " TEXT, " + OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME_ES + " TEXT, "
             + OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME_ID + " TEXT, " + OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME_PT + " TEXT, "
             + OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME_TR + " TEXT, " + OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME_LO + " TEXT, "
-            + OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME_VI + " TEXT, " + OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME_TH + " TEXT )";
+            + OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME_VI + " TEXT, " + OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME_TH + " TEXT, "
+            + OFISDBContract.SubmoduleEntry.COLUMN_NAME_SHOW_DESCRIPTION + " TEXT, "
+            + OFISDBContract.SubmoduleEntry.COLUMN_NAME_DESCRIPTION + " TEXT, "
+            + OFISDBContract.SubmoduleEntry.COLUMN_NAME_DESCRIPTION_ES + " TEXT, "
+            + OFISDBContract.SubmoduleEntry.COLUMN_NAME_DESCRIPTION_FR + " TEXT, "
+            + OFISDBContract.SubmoduleEntry.COLUMN_NAME_DESCRIPTION_ID + " TEXT, "
+            + OFISDBContract.SubmoduleEntry.COLUMN_NAME_DESCRIPTION_LO + " TEXT, "
+            + OFISDBContract.SubmoduleEntry.COLUMN_NAME_DESCRIPTION_PT + " TEXT, "
+            + OFISDBContract.SubmoduleEntry.COLUMN_NAME_DESCRIPTION_TH + " TEXT, "
+            + OFISDBContract.SubmoduleEntry.COLUMN_NAME_DESCRIPTION_TR + " TEXT, "
+            + OFISDBContract.SubmoduleEntry.COLUMN_NAME_DESCRIPTION_VI + " TEXT)";
+
+    private static final String OFIS_QUESTIONTYPE_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.QuestionType.TABLE_NAME
+            + " ( " + OFISDBContract.QuestionType.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, "
+            + OFISDBContract.QuestionType.COLUMN_NAME_VALUE + " TEXT, "
+            + OFISDBContract.QuestionType.COLUMN_NAME_ACTIVE + " TEXT)";
+
+    private static final String OFIS_ANSWERTYPE_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.AnswerType.TABLE_NAME
+            + " ( " + OFISDBContract.AnswerType.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, "
+            + OFISDBContract.AnswerType.COLUMN_NAME_VALUE + " TEXT, "
+            + OFISDBContract.AnswerType.COLUMN_NAME_ACTIVE + " TEXT)";
+
+    private static final String OFIS_RECURRENCETYPE_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.RecurrenceType.TABLE_NAME
+            + " ( " + OFISDBContract.RecurrenceType.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, "
+            + OFISDBContract.RecurrenceType.COLUMN_NAME_VALUE + " TEXT, "
+            + OFISDBContract.RecurrenceType.COLUMN_NAME_ACTIVE + " TEXT)";
 
     // create NationalidModules
     private static final String OFIS_NATIONALIDS_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.NationalIDEntry.TABLE_NAME
@@ -894,6 +928,11 @@ class OFISDB extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(OFIS_NOTIFICATION_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_NOTIFICATION_MODULELIST_TABLE_CREATE);
 
+        // QWR
+        sqLiteDatabase.execSQL(OFIS_QUESTIONTYPE_TABLE_CREATE);
+        sqLiteDatabase.execSQL(OFIS_ANSWERTYPE_TABLE_CREATE);
+        sqLiteDatabase.execSQL(OFIS_RECURRENCETYPE_TABLE_CREATE);
+
     }
 
     @Override
@@ -965,11 +1004,41 @@ class OFISDB extends SQLiteOpenHelper {
             ex.printStackTrace();
         }
 
+        try {
+            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ModuleEntry.TABLE_NAME + " ADD COLUMN description TEXT default null");
+            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ModuleEntry.TABLE_NAME + " ADD COLUMN descriptionFr TEXT default null");
+            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ModuleEntry.TABLE_NAME + " ADD COLUMN descriptionEs TEXT default null");
+            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ModuleEntry.TABLE_NAME + " ADD COLUMN descriptionId TEXT default null");
+            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ModuleEntry.TABLE_NAME + " ADD COLUMN descriptionPt TEXT default null");
+            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ModuleEntry.TABLE_NAME + " ADD COLUMN descriptionTr TEXT default null");
+            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ModuleEntry.TABLE_NAME + " ADD COLUMN descriptionLo TEXT default null");
+            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ModuleEntry.TABLE_NAME + " ADD COLUMN descriptionVi TEXT default null");
+            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ModuleEntry.TABLE_NAME + " ADD COLUMN descriptionTh TEXT default null");
+        } catch (SQLiteException ex) {
+            ex.printStackTrace();
+        }
+
+        try {
+            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.SubmoduleEntry.TABLE_NAME + " ADD COLUMN showDescription TEXT default null");
+            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.SubmoduleEntry.TABLE_NAME + " ADD COLUMN description TEXT default null");
+            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.SubmoduleEntry.TABLE_NAME + " ADD COLUMN descriptionFr TEXT default null");
+            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.SubmoduleEntry.TABLE_NAME + " ADD COLUMN descriptionEs TEXT default null");
+            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.SubmoduleEntry.TABLE_NAME + " ADD COLUMN descriptionId TEXT default null");
+            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.SubmoduleEntry.TABLE_NAME + " ADD COLUMN descriptionPt TEXT default null");
+            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.SubmoduleEntry.TABLE_NAME + " ADD COLUMN descriptionTr TEXT default null");
+            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.SubmoduleEntry.TABLE_NAME + " ADD COLUMN descriptionLo TEXT default null");
+            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.SubmoduleEntry.TABLE_NAME + " ADD COLUMN descriptionVi TEXT default null");
+            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.SubmoduleEntry.TABLE_NAME + " ADD COLUMN descriptionTh TEXT default null");
+        } catch (SQLiteException ex) {
+            ex.printStackTrace();
+        }
+
         sqLiteDatabase.execSQL(OFIS_DOWNLOADED_SURVEYLIST_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_SAVED_ANSWER_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_PLOT_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_NOTIFICATION_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_NOTIFICATION_MODULELIST_TABLE_CREATE);
+
         onCreate(sqLiteDatabase);
     }
 

@@ -29,6 +29,16 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_ANNUAL_SURVEY = "annual_survey";
         public static final String COLUMN_NAME_MODULE_CODE = "moduleCode";
 
+        public static final String COLUMN_NAME_DESCRIPTION = "description";
+        public static final String COLUMN_NAME_DESCRIPTION_ES = "descriptionEs";
+        public static final String COLUMN_NAME_DESCRIPTION_FR = "descriptionFr";
+        public static final String COLUMN_NAME_DESCRIPTION_ID = "descriptionId";
+        public static final String COLUMN_NAME_DESCRIPTION_LO = "descriptionLo";
+        public static final String COLUMN_NAME_DESCRIPTION_PT = "descriptionPt";
+        public static final String COLUMN_NAME_DESCRIPTION_TH = "descriptionTh";
+        public static final String COLUMN_NAME_DESCRIPTION_TR = "descriptionTr";
+        public static final String COLUMN_NAME_DESCRIPTION_VI = "descriptionVi";
+
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
                     add(COLUMN_NAME_ID);
@@ -44,6 +54,15 @@ public class OFISDBContract {
                     add(COLUMN_NAME_EXPIRES);
                     add(COLUMN_NAME_ANNUAL_SURVEY);
                     add(COLUMN_NAME_MODULE_CODE);
+                    add(COLUMN_NAME_DESCRIPTION);
+                    add(COLUMN_NAME_DESCRIPTION_ES);
+                    add(COLUMN_NAME_DESCRIPTION_FR);
+                    add(COLUMN_NAME_DESCRIPTION_ID);
+                    add(COLUMN_NAME_DESCRIPTION_LO);
+                    add(COLUMN_NAME_DESCRIPTION_PT);
+                    add(COLUMN_NAME_DESCRIPTION_TH);
+                    add(COLUMN_NAME_DESCRIPTION_TR);
+                    add(COLUMN_NAME_DESCRIPTION_VI);
                 }}
         );
     }
@@ -61,6 +80,18 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_NAME_LO = "name_lo";
         public static final String COLUMN_NAME_NAME_VI = "name_vi";
         public static final String COLUMN_NAME_NAME_TH = "name_th";
+
+        public static final String COLUMN_NAME_SHOW_DESCRIPTION = "showDescription";
+        public static final String COLUMN_NAME_DESCRIPTION = "description";
+        public static final String COLUMN_NAME_DESCRIPTION_ES = "descriptionEs";
+        public static final String COLUMN_NAME_DESCRIPTION_FR = "descriptionFr";
+        public static final String COLUMN_NAME_DESCRIPTION_ID = "descriptionId";
+        public static final String COLUMN_NAME_DESCRIPTION_LO = "descriptionLo";
+        public static final String COLUMN_NAME_DESCRIPTION_PT = "descriptionPt";
+        public static final String COLUMN_NAME_DESCRIPTION_TH = "descriptionTh";
+        public static final String COLUMN_NAME_DESCRIPTION_TR = "descriptionTr";
+        public static final String COLUMN_NAME_DESCRIPTION_VI = "descriptionVi";
+
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
                     add(COLUMN_NAME_ID);
@@ -75,8 +106,63 @@ public class OFISDBContract {
                     add(COLUMN_NAME_NAME_LO);
                     add(COLUMN_NAME_NAME_VI);
                     add(COLUMN_NAME_NAME_TH);
+                    add(COLUMN_NAME_SHOW_DESCRIPTION);
+                    add(COLUMN_NAME_DESCRIPTION);
+                    add(COLUMN_NAME_DESCRIPTION_ES);
+                    add(COLUMN_NAME_DESCRIPTION_FR);
+                    add(COLUMN_NAME_DESCRIPTION_ID);
+                    add(COLUMN_NAME_DESCRIPTION_LO);
+                    add(COLUMN_NAME_DESCRIPTION_PT);
+                    add(COLUMN_NAME_DESCRIPTION_TH);
+                    add(COLUMN_NAME_DESCRIPTION_TR);
+                    add(COLUMN_NAME_DESCRIPTION_VI);
                 }}
         );
+    }
+
+    public static abstract class QuestionType implements BaseColumns{
+        public static final String TABLE_NAME = "questionType";
+        public static final String COLUMN_NAME_ID = "id";
+        public static final String COLUMN_NAME_VALUE = "value";
+        public static final String COLUMN_NAME_ACTIVE = "active";
+        public static final List<String> COLUMN_LIST = Collections.unmodifiableList(new ArrayList<String>(){{
+            add(COLUMN_NAME_ID);
+            add(COLUMN_NAME_VALUE);
+            add(COLUMN_NAME_ACTIVE);
+        }
+
+        });
+
+    }
+
+    public static abstract class AnswerType implements BaseColumns{
+        public static final String TABLE_NAME = "answerType";
+        public static final String COLUMN_NAME_ID = "id";
+        public static final String COLUMN_NAME_VALUE = "value";
+        public static final String COLUMN_NAME_ACTIVE = "active";
+        public static final List<String> COLUMN_LIST = Collections.unmodifiableList(new ArrayList<String>(){{
+            add(COLUMN_NAME_ID);
+            add(COLUMN_NAME_VALUE);
+            add(COLUMN_NAME_ACTIVE);
+        }
+
+        });
+
+    }
+
+    public static abstract class RecurrenceType implements BaseColumns{
+        public static final String TABLE_NAME = "recurrenceType";
+        public static final String COLUMN_NAME_ID = "id";
+        public static final String COLUMN_NAME_VALUE = "value";
+        public static final String COLUMN_NAME_ACTIVE = "active";
+        public static final List<String> COLUMN_LIST = Collections.unmodifiableList(new ArrayList<String>(){{
+            add(COLUMN_NAME_ID);
+            add(COLUMN_NAME_VALUE);
+            add(COLUMN_NAME_ACTIVE);
+        }
+
+        });
+
     }
 
     public static abstract class SipGroupEntry implements BaseColumns {

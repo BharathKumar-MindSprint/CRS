@@ -147,6 +147,19 @@
                 android:text="@string/ModuleTitle"
                 android:textColor="@color/ofis_base_font_white"
                 android:textSize="@dimen/ofis_large_text" />
+
+
+            <TextView
+                android:id="@+id/completeModuleModuleDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="5dp"
+                android:paddingRight="0dp"
+                android:visibility="gone"
+                android:text="@string/ModuleTitleDescription"
+                android:textColor="@color/ofis_base_font_white"
+                android:textSize="@dimen/ofis_micro_text" />
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -157,6 +170,19 @@
                 android:paddingRight="0dp"
                 android:paddingLeft="5dp"
                 android:textSize="@dimen/ofis_small_text"
+                tools:ignore="RtlHardcoded" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/ModuleSubTitleDescription"
+                android:id="@+id/completeModuleSubModuleDescription"
+                android:textColor="@color/ofis_base_font_white"
+                android:visibility="gone"
+                android:layout_marginTop="@dimen/mapview_magrin"
+                android:paddingRight="0dp"
+                android:paddingLeft="5dp"
+                android:textSize="@dimen/ofis_micro_text"
                 tools:ignore="RtlHardcoded" />
 
 

@@ -63,6 +63,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
@@ -9267,6 +9268,55 @@ public class DataLayer {
             moduleCursor.close();
         }
         return  message;
+    }
+
+    public String getDescriptionByModuleId(int moduleId ,String lang) {
+        String description = "";
+        Cursor moduleCursor = null;
+        try{
+            String[] columns = null;
+            if (Objects.equals(lang, "en")){
+                columns = new String[]{"description"};
+            } else if (Objects.equals(lang, "in")) {
+                columns = new String[]{"descriptionId"};
+            } else {
+                columns = new String[]{"description"+lang};
+            }
+
+            String whereClause = OFISDBContract.ModuleEntry.COLUMN_NAME_ID + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(moduleId)};
+            moduleCursor = db.query(OFISDBContract.ModuleEntry.TABLE_NAME , columns , whereClause , whereArgs , null , null , null);
+            if (moduleCursor != null){
+                while (moduleCursor.moveToNext()){
+                    if (Objects.equals(lang, "en")){
+                        description = moduleCursor.getString(moduleCursor.getColumnIndex(OFISDBContract.ModuleEntry.COLUMN_NAME_DESCRIPTION));
+                    } else if (Objects.equals(lang , "es")) {
+                        description = moduleCursor.getString(moduleCursor.getColumnIndex(OFISDBContract.ModuleEntry.COLUMN_NAME_DESCRIPTION_ES));
+                    }else if (Objects.equals(lang , "fr")) {
+                        description = moduleCursor.getString(moduleCursor.getColumnIndex(OFISDBContract.ModuleEntry.COLUMN_NAME_DESCRIPTION_FR));
+                    }else if (Objects.equals(lang , "id") || Objects.equals(lang , "in")) {
+                        description = moduleCursor.getString(moduleCursor.getColumnIndex(OFISDBContract.ModuleEntry.COLUMN_NAME_DESCRIPTION_ID));
+                    }else if (Objects.equals(lang , "lo")) {
+                        description = moduleCursor.getString(moduleCursor.getColumnIndex(OFISDBContract.ModuleEntry.COLUMN_NAME_DESCRIPTION_LO));
+                    }else if (Objects.equals(lang , "pt")) {
+                        description = moduleCursor.getString(moduleCursor.getColumnIndex(OFISDBContract.ModuleEntry.COLUMN_NAME_DESCRIPTION_PT));
+                    }else if (Objects.equals(lang , "th")) {
+                        description = moduleCursor.getString(moduleCursor.getColumnIndex(OFISDBContract.ModuleEntry.COLUMN_NAME_DESCRIPTION_TH));
+                    }else if (Objects.equals(lang , "tr")) {
+                        description = moduleCursor.getString(moduleCursor.getColumnIndex(OFISDBContract.ModuleEntry.COLUMN_NAME_DESCRIPTION_TR));
+                    }else if (Objects.equals(lang , "vi")) {
+                        description = moduleCursor.getString(moduleCursor.getColumnIndex(OFISDBContract.ModuleEntry.COLUMN_NAME_DESCRIPTION_VI));
+                    }
+
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            moduleCursor.close();
+        }
+
+        return description;
     }
 
 
