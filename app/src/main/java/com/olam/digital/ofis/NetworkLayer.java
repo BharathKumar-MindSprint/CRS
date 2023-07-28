@@ -5164,7 +5164,11 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                             recordFailedUpload(0, 0, networkQueueItemId);
                                             postFailureMessage(handler, response, msg, 2, total, progress, null, "submitting farmer");
                                             FirebaseCrash.report(new Exception(response.optString("errors", res.getString(R.string.item_sync_error)) + " : submitting submitting farmer"));
-                                            if (response.toString().contains(Utilities.NID_ERROR)) {
+                                            String errorCode = response.getString("errorCode");
+                                            String errorMessage = response.getString("message");
+                                            JSONArray nationIdList = response.getJSONArray("duplicateNationalIDList");
+
+                                            if (errorCode.equalsIgnoreCase("3043") && errorMessage.equalsIgnoreCase(Utilities.NID_ERROR)) {
                                                 statusMessage = res.getString(R.string.item_synced);
                                                 msg.what = 1;
                                                 msg.arg1 = total;
@@ -5173,6 +5177,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                                 handler.dispatchMessage(msg);
                                                 dl.deleteNetworkQueueItem(networkQueueItemId);
                                                 dl.updateSyncedStatus(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
+                                                dl.addFarmerNationalids(nationIdList,networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
                                                 syncNetworkQueue(originalSyncRequestItemId, handler);
                                                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                                                     @Override
