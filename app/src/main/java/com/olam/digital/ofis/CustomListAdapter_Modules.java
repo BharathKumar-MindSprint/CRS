@@ -345,14 +345,14 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                     linearLayout.setBackgroundResource(R.drawable.list_item);
                     moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
                     textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
-                    textView.setText(res.getString(R.string.ModuleStatus));
+                    textView.setText(res.getString(R.string.dm_hint_txt));
                 } else if (currentDate.after(startDateMain) && moduleWithoutActionPlan) {
                     imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_householdgps));
                     enabledItem.setText("true");
                     linearLayout.setBackgroundResource(R.drawable.list_item);
                     moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
                     textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
-                    textView.setText(res.getString(R.string.ModuleStatus));
+                    textView.setText(res.getString(R.string.dm_hint_txt));
                 } else{
                     imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_householdgps));
                     enabledItem.setText("false");
@@ -365,7 +365,7 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                 if(dmSurveyAnswerTableList.size() > 0){
                     textView.setText(res.getString(R.string.dm_diognostic_module_subtitle));
                 }else{
-                    textView.setText(res.getString(R.string.ModuleStatus));
+                    textView.setText(res.getString(R.string.dm_hint_txt));
                 }
 
 
