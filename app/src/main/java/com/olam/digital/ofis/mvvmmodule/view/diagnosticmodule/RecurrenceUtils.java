@@ -31,6 +31,8 @@ public class RecurrenceUtils {
             return DATE_FORMATTER.format(endDate);
         } catch (ParseException e) {
             e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return null;
     }
