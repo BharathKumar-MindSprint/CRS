@@ -492,12 +492,13 @@ public class CompleteModuleActivity extends BaseActivity {
 
             int columnIndex = (subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME + dynamicQuestions.questionColumnSuffix) != -1) ? subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME + dynamicQuestions.questionColumnSuffix) : subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME);
             subModuleNameTv.setText(subModules.getString(columnIndex));
-            /*int columnSubModulesDescription = (subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_DESCRIPTION + dynamicQuestions.questionColumnSuffix) != -1) ? subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_DESCRIPTION + dynamicQuestions.questionColumnSuffix) : subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_DESCRIPTION);
-            if (!Objects.equals(subModules.getString(columnSubModulesDescription), "") || subModules.getString(columnSubModulesDescription) != null){
+            String showDescription = dl.getShowDescriptionModule(Integer.parseInt(String.valueOf(moduleId)),subModuleId);
+            int columnSubModulesDescription = (subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_DESCRIPTION + dynamicQuestions.questionColumnSuffix) != -1) ? subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_DESCRIPTION + dynamicQuestions.questionColumnSuffix) : subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_DESCRIPTION);
+            if (!Objects.equals(showDescription, "false")){
                 TextView subModuleDescriptionTv = (TextView) findViewById(R.id.completeModuleSubModuleDescription);
                 subModuleDescriptionTv.setVisibility(View.VISIBLE);
                 subModuleDescriptionTv.setText(subModules.getString(columnSubModulesDescription));
-            }*/
+            }
 
 
             subModuleNameTv.post(new Runnable() {

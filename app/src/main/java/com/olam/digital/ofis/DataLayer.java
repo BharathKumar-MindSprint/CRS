@@ -9280,6 +9280,25 @@ public class DataLayer {
         return  message;
     }
 
+    public String getShowDescriptionModule(int moduleID , int subModuleID){
+        String showDescription = "";
+        Cursor cursor = null;
+        try {
+            String[] columns = new String[]{"showDescription"};
+            String whereClause = OFISDBContract.SubmoduleEntry.COLUMN_NAME_ID + " = ? AND "+ OFISDBContract.SubmoduleEntry.COLUMN_NAME_MODULE_ID + " =? ";
+            String[] whereArgs = new String[]{String.valueOf(subModuleID), String.valueOf(moduleID)};
+            cursor = db.query(OFISDBContract.SubmoduleEntry.TABLE_NAME , columns , whereClause , whereArgs , null , null , null);
+            if (cursor!=null){
+                while (cursor.moveToNext()){
+                    showDescription = cursor.getString(cursor.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_SHOW_DESCRIPTION));
+                }
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        return showDescription;
+    }
+
     public String getDescriptionByModuleId(int moduleId ,String lang) {
         String description = "";
         Cursor moduleCursor = null;
