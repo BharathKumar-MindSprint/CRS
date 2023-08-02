@@ -5700,7 +5700,10 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             ans.put("answerId", dmSurveyAnswerTableList.get(i).answerID);
                             ans.put("answerValue", dmSurveyAnswerTableList.get(i).answer);
                             ans.put("complianceStatusId", dmSurveyAnswerTableList.get(i).complinceTypeId);
-                            ans.put("actionPlanId", dmSurveyAnswerTableList.get(i).actionplanId);
+                            String id = dmSurveyAnswerTableList.get(i).actionplanId;
+                            if(id != "1") {
+                                ans.put("actionPlanId", dmSurveyAnswerTableList.get(i).actionplanId);
+                            }
                             ans.put("actionPlanText", dmSurveyAnswerTableList.get(i).actionPlanText);
                             ans.put("amount", dmSurveyAnswerTableList.get(i).amount);
 
@@ -5887,7 +5890,10 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 //                            ans.put("moduleId", followupList.get(i).moduleId);
 //                            ans.put("dmSubModId", followupList.get(i).dmSubModId);
                             ans.put("questionId", followupList.get(i).questionId);
-                            ans.put("actionPlanId", followupList.get(i).actionPlanId);
+                            int id = followupList.get(i).actionPlanId;
+                            if(id != 1) {
+                                ans.put("actionPlanId", followupList.get(i).actionPlanId);
+                            }
                             ans.put("actionPlan", followupList.get(i).actionPlanText);
                             ans.put("attempt", followupList.get(i).attempt);
                             ans.put("status", followupList.get(i).status);
