@@ -1234,12 +1234,17 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     while (trainingAttendees.moveToNext()) {
                         long farmerId = trainingAttendees.getLong(trainingAttendees.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_FARMER_ID));
                         if (!dl.isFarmerSynced(farmerId)) {
-                            msg.what = 3;
-                            msg.arg1 = total;
-                            msg.arg2 = HomeActivity.progressItem = progress + 1;
-                            msg.obj = String.valueOf(res.getString(R.string.farmer_not_synced));
-                            handler.dispatchMessage(msg);
-                            return;
+                            if (dl.isAvailableInNqTable(farmerId)) {
+                                msg.what = 3;
+                                msg.arg1 = total;
+                                msg.arg2 = HomeActivity.progressItem = progress + 1;
+                                msg.obj = String.valueOf(res.getString(R.string.farmer_not_synced));
+                                handler.dispatchMessage(msg);
+                                return;
+                            }else {
+                                getFarmerData(networkQueueItemId, handler, msg, total, progress, originalSyncRequestItemId);
+                                return;
+                            }
                         } else {
 
                             try {
@@ -2205,9 +2210,15 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     }
                 }
             } finally {
-                farmerModule.close();
-                extraInfo.close();
-                moduleAnswers.close();
+                if(farmerModule != null  && !farmerModule.isClosed()) {
+                    farmerModule.close();
+                }
+                if(extraInfo != null  && !extraInfo.isClosed()){
+                    extraInfo.close();
+                }
+                if(moduleAnswers != null  && !moduleAnswers.isClosed()) {
+                    moduleAnswers.close();
+                }
             }
         } catch (CursorIndexOutOfBoundsException e) {
         }
@@ -5689,7 +5700,10 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             ans.put("answerId", dmSurveyAnswerTableList.get(i).answerID);
                             ans.put("answerValue", dmSurveyAnswerTableList.get(i).answer);
                             ans.put("complianceStatusId", dmSurveyAnswerTableList.get(i).complinceTypeId);
-                            ans.put("actionPlanId", dmSurveyAnswerTableList.get(i).actionplanId);
+                            String id = dmSurveyAnswerTableList.get(i).actionplanId;
+                            if(id != "1") {
+                                ans.put("actionPlanId", dmSurveyAnswerTableList.get(i).actionplanId);
+                            }
                             ans.put("actionPlanText", dmSurveyAnswerTableList.get(i).actionPlanText);
                             ans.put("amount", dmSurveyAnswerTableList.get(i).amount);
 
@@ -5876,7 +5890,10 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 //                            ans.put("moduleId", followupList.get(i).moduleId);
 //                            ans.put("dmSubModId", followupList.get(i).dmSubModId);
                             ans.put("questionId", followupList.get(i).questionId);
-                            ans.put("actionPlanId", followupList.get(i).actionPlanId);
+                            int id = followupList.get(i).actionPlanId;
+                            if(id != 1) {
+                                ans.put("actionPlanId", followupList.get(i).actionPlanId);
+                            }
                             ans.put("actionPlan", followupList.get(i).actionPlanText);
                             ans.put("attempt", followupList.get(i).attempt);
                             ans.put("status", followupList.get(i).status);
