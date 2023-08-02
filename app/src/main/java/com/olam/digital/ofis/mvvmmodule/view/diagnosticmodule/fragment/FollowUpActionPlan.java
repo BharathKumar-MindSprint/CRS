@@ -848,7 +848,7 @@ public class FollowUpActionPlan extends Fragment {
 //                    db.dmSurveyAnswerTableDao().updateActionPlanText(actionPlan.getText().toString(), id, Constants.FARMER_ID);
 //                    db.dmSurveyAnswerTableDao().updateActionPlanId("0",id,Constants.FARMER_ID);
                     db.followUpItemMainTableDao().updateActionPlanText(actionPlan.getText().toString(), id, Constants.FARMER_ID, Constants.ATTEMPT);
-                    db.followUpItemMainTableDao().updateActionPlanId("1",id,Constants.FARMER_ID, Constants.ATTEMPT);
+                    db.followUpItemMainTableDao().updateActionPlanId(null,id,Constants.FARMER_ID, Constants.ATTEMPT);
                 }
                 actionPlan.setEnabled(false);
 
