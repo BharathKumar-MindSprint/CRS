@@ -91,6 +91,7 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_DESCRIPTION_TH = "descriptionTh";
         public static final String COLUMN_NAME_DESCRIPTION_TR = "descriptionTr";
         public static final String COLUMN_NAME_DESCRIPTION_VI = "descriptionVi";
+        public static final String COLUMN_NAME_IS_DEFAULT = "isDefault";
 
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
@@ -116,6 +117,7 @@ public class OFISDBContract {
                     add(COLUMN_NAME_DESCRIPTION_TH);
                     add(COLUMN_NAME_DESCRIPTION_TR);
                     add(COLUMN_NAME_DESCRIPTION_VI);
+                    add(COLUMN_NAME_IS_DEFAULT);
                 }}
         );
     }
@@ -566,6 +568,8 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_QUESTION_INFO_LO = "questionInfoLo";
         public static final String COLUMN_NAME_QUESTION_INFO_VI = "questionInfoVi";
         public static final String COLUMN_NAME_QUESTION_INFO_TH = "questionInfoTh";
+        public static final String COLUMN_NAME_QUESTION_TYPE_ID = "displaytypeId";
+        public static final String COLUMN_NAME_ANSWER_TYPE = "answerType";
 
 
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
@@ -604,6 +608,8 @@ public class OFISDBContract {
                     add(COLUMN_NAME_QUESTION_INFO_LO);
                     add(COLUMN_NAME_QUESTION_INFO_VI);
                     add(COLUMN_NAME_QUESTION_INFO_TH);
+                    add(COLUMN_NAME_QUESTION_TYPE_ID);
+                    add(COLUMN_NAME_ANSWER_TYPE);
 
                 }}
         );

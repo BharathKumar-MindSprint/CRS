@@ -125,6 +125,7 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME_ID + " TEXT, " + OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME_PT + " TEXT, "
             + OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME_TR + " TEXT, " + OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME_LO + " TEXT, "
             + OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME_VI + " TEXT, " + OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME_TH + " TEXT, "
+            + OFISDBContract.SubmoduleEntry.COLUMN_NAME_IS_DEFAULT + " TEXT, "
             + OFISDBContract.SubmoduleEntry.COLUMN_NAME_SHOW_DESCRIPTION + " TEXT, "
             + OFISDBContract.SubmoduleEntry.COLUMN_NAME_DESCRIPTION + " TEXT, "
             + OFISDBContract.SubmoduleEntry.COLUMN_NAME_DESCRIPTION_ES + " TEXT, "
@@ -308,6 +309,8 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.QuestionEntry.COLUMN_NAME_APP_ID + " TEXT, " + OFISDBContract.QuestionEntry.COLUMN_NAME_IS_SUBSET_QUESTION_REQUIRED + " TEXT, "
             + OFISDBContract.QuestionEntry.COLUMN_NAME_CONDITIONAL_QUESTIONS + " TEXT, " + OFISDBContract.QuestionEntry.COLUMN_NAME_SIPGROUPID + " TEXT, "
             + OFISDBContract.QuestionEntry.COLUMN_NAME_SIPKEY + " TEXT, "
+            + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_TYPE_ID + " TEXT, "
+            + OFISDBContract.QuestionEntry.COLUMN_NAME_ANSWER_TYPE+ " TEXT, "
             + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO + " TEXT, "
             + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO_ES+ " TEXT, "
             + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO_FR+ " TEXT, "
@@ -1014,6 +1017,8 @@ class OFISDB extends SQLiteOpenHelper {
             sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ModuleEntry.TABLE_NAME + " ADD COLUMN descriptionLo TEXT default null");
             sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ModuleEntry.TABLE_NAME + " ADD COLUMN descriptionVi TEXT default null");
             sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ModuleEntry.TABLE_NAME + " ADD COLUMN descriptionTh TEXT default null");
+            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ModuleEntry.TABLE_NAME + " ADD COLUMN displaytypeId TEXT default null");
+            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ModuleEntry.TABLE_NAME + " ADD COLUMN answerType TEXT default null");
         } catch (SQLiteException ex) {
             ex.printStackTrace();
         }
@@ -1029,6 +1034,7 @@ class OFISDB extends SQLiteOpenHelper {
             sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.SubmoduleEntry.TABLE_NAME + " ADD COLUMN descriptionLo TEXT default null");
             sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.SubmoduleEntry.TABLE_NAME + " ADD COLUMN descriptionVi TEXT default null");
             sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.SubmoduleEntry.TABLE_NAME + " ADD COLUMN descriptionTh TEXT default null");
+            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.SubmoduleEntry.TABLE_NAME + " ADD COLUMN isDefault TEXT default null");
         } catch (SQLiteException ex) {
             ex.printStackTrace();
         }
