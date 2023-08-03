@@ -4866,9 +4866,15 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 }
             }
         } finally {
-            farmerModule.close();
-            extraInfo.close();
-            moduleAnswers.close();
+            if(farmerModule != null  && !farmerModule.isClosed()) {
+                farmerModule.close();
+            }
+            if(extraInfo != null  && !extraInfo.isClosed()){
+                extraInfo.close();
+            }
+            if(moduleAnswers != null  && !moduleAnswers.isClosed()) {
+                moduleAnswers.close();
+            }
         }
     }
 

@@ -88,4 +88,9 @@
     <color name="orange_view_survey">#f78c2a</color>
     <color name="green_view_survey">#a0c800</color>
     <color name="red_view_survey">#ae1515</color>
+
+    <color name="notResolved">#f78c2a</color>
+    <color name="ambur_survey_result">#f2dfd3</color>
+    <color name="green_survey_result">#ebeddb</color>
+    <color name="red_survey_result">#fac0c0</color>
 </resources>

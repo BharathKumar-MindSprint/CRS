@@ -1112,13 +1112,12 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
                     }
                     for (int j = 0; j < Constants.questionIdsSection.size(); j++) {
                         try {
-                            View desiredView = dm_Section.findViewWithTag(qIdSections.get(j));
-                            TextView textView = (TextView) desiredView;
-                            textView.setVisibility(View.GONE);
+                             View desiredView = dm_Section.findViewWithTag(qIdSections.get(j));
+                             TextView textView = (TextView) desiredView;
+                             textView.setVisibility(View.GONE);
                         }catch (Exception e){
                             e.printStackTrace();
                         }
-
                     }
 
                 } else {
