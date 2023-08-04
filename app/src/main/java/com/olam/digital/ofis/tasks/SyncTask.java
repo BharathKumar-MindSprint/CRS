@@ -30,6 +30,7 @@ import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
+import okhttp3.logging.HttpLoggingInterceptor;
 
 /**
  * Created by ben on 24/02/16.
@@ -42,6 +43,7 @@ abstract class SyncTask extends AsyncTask<SyncTaskOperationType, Object, String>
     final Context context;
     private static final OkHttpClient okHttpClient = new OkHttpClient.Builder()
             .connectTimeout(180, TimeUnit.SECONDS)
+            .addNetworkInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
             .readTimeout(180, TimeUnit.SECONDS)
             .writeTimeout(180, TimeUnit.SECONDS)
             .sslSocketFactory(getSSLSocketFactory())

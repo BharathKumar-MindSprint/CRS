@@ -103,6 +103,7 @@ import okhttp3.Callback;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
@@ -122,6 +123,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             .connectTimeout(90, TimeUnit.SECONDS)
             .readTimeout(720, TimeUnit.SECONDS)
             .writeTimeout(720, TimeUnit.SECONDS)
+            .addNetworkInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
             .sslSocketFactory(getSSLSocketFactory())
             .retryOnConnectionFailure(false)
             .build();
