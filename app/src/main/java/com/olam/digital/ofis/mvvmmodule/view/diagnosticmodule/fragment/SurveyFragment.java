@@ -1111,10 +1111,13 @@ public class SurveyFragment extends Fragment implements View.OnClickListener{
 
                     }
                     for (int j = 0; j < Constants.questionIdsSection.size(); j++) {
-                        View desiredView = dm_Section.findViewWithTag(qIdSections.get(j));
-                        TextView textView = (TextView) desiredView;
-                        textView.setVisibility(View.GONE);
-
+                        try {
+                             View desiredView = dm_Section.findViewWithTag(qIdSections.get(j));
+                             TextView textView = (TextView) desiredView;
+                             textView.setVisibility(View.GONE);
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
                     }
 
                 } else {
