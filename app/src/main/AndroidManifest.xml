@@ -479,7 +479,7 @@
             android:label="@string/title_privacy_statement"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.olam.digital.ofis.multifarm.UpdateMultiFarmActivity"
+            android:name=".matoma.multifarm.UpdateMultiFarmActivity"
             android:label="Add Farm Information"
             android:screenOrientation="portrait" />
         <activity
