@@ -41,13 +41,17 @@ abstract class SyncTask extends AsyncTask<SyncTaskOperationType, Object, String>
     private static final String BASE_URL = BuildConfig.HOST;
     private static final String ODBASE_URL = BuildConfig.ODHOST;
     final Context context;
+
+    private static HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+
     private static final OkHttpClient okHttpClient = new OkHttpClient.Builder()
             .connectTimeout(180, TimeUnit.SECONDS)
-            .addNetworkInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
             .readTimeout(180, TimeUnit.SECONDS)
             .writeTimeout(180, TimeUnit.SECONDS)
             .sslSocketFactory(getSSLSocketFactory())
             .retryOnConnectionFailure(false)
+            .addInterceptor(interceptor.setLevel(HttpLoggingInterceptor.Level.BODY))
+            .addNetworkInterceptor(interceptor)
             .build();
     private static final MediaType JSONBody = MediaType.parse("application/json; charset=utf-8");
 

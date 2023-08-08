@@ -58,7 +58,7 @@ public class AuthenticationClient {
 //                new TokenInterceptor();
         httpClient.connectTimeout(60, TimeUnit.MINUTES);
         httpClient.readTimeout(60, TimeUnit.MINUTES);
-        httpClient.addNetworkInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
+        httpClient.addNetworkInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY));
         httpClient.sslSocketFactory(getSSLSocketFactory());
         httpClient.retryOnConnectionFailure(false);
         builder.client(httpClient.build());

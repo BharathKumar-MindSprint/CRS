@@ -168,8 +168,6 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     LinearLayout farmerLeadDisplayLayout;
     String farmerleadid, farmerleadidname;
     List<FarmerLeadDTO> flList;
-//    CustomListAdapterFarmerlead adapterFarmerlead;
-//    FarmerLeadDTO selectedFarmerLead;
     ArrayList<String> phoneNumberList;
     ArrayList<String> nationalidList;
     ArrayList<String> selectednationalidList = new ArrayList<String>();
