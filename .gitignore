@@ -10,3 +10,6 @@ local.properties
 /build
 /captures
 .externalNativeBuild
+.idea/gradle.xml
+.idea/misc.xml
+app/schemas/com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB
