@@ -14,3 +14,4 @@ local.properties
 .idea/misc.xml
 7.json
 .idea
+app/schemas/com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB
