@@ -90,6 +90,7 @@ import okhttp3.Callback;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
@@ -105,10 +106,13 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
     private static String AccessToken;
     private static final String BASE_URL = BuildConfig.HOST;
     public static final String TAG = "NetworkLayer";
+    private static HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
     private static final OkHttpClient okHttpClient = new OkHttpClient.Builder()
             .connectTimeout(90, TimeUnit.SECONDS)
             .readTimeout(720, TimeUnit.SECONDS)
             .writeTimeout(720, TimeUnit.SECONDS)
+            .addNetworkInterceptor(interceptor.setLevel(HttpLoggingInterceptor.Level.BODY))
+            .addInterceptor(interceptor)
             .sslSocketFactory(getSSLSocketFactory())
             .retryOnConnectionFailure(false)
             .build();
@@ -5103,10 +5107,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
 
     private void postFarmerNationalids(final int networkQueueItemId, final Handler handler, final Message msg, final int total, final int progress, final Integer originalSyncRequestItemId) {
-        // Cursor farmer = dl.getFarmerById(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
-        //old end point
-        // String endpoint = "farmers/add";
-        // New End point
         final String endpoint = "ofisfarmer/farmer/saveFarmerUniqueId";
         if (!dl.isFarmerSynced(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)))) {
             if (dl.isAvailableInNqTable(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)))) {
@@ -5188,7 +5188,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                                 handler.dispatchMessage(msg);
                                                 dl.deleteNetworkQueueItemByfarmerId(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
                                                 dl.updateSyncedStatus(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)), networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID)));
-                                                dl.addFarmerNationalids(nationIdList,networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
+                                                dl.addFarmerNationalids(nationIdList,networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)), networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID)));
                                                 syncNetworkQueue(originalSyncRequestItemId, handler);
                                                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                                                     @Override
