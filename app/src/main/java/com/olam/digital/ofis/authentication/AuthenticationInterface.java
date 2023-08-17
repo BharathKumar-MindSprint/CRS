@@ -12,12 +12,12 @@ import retrofit2.http.POST;
 import retrofit2.http.Query;
 
 public interface AuthenticationInterface {
-    @POST("oauth/token")
+    @POST("ofisoauth/token")
     Call<AuthenticationDTO> Authenticate(@Query("username") String username,
                                          @Query("password") String password,
                                          @Query("grant_type") String grant_type);
 
-    @POST("oauth/token")
+    @POST("ofisoauth/token")
     Call<AuthenticationDTO> Refresh(@Query("refresh_token") String refreshToken,
                                     @Query("grant_type") String grant_type);
 
