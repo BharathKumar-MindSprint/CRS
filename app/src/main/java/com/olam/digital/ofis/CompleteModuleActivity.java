@@ -603,6 +603,9 @@ public class CompleteModuleActivity extends BaseActivity {
                         }
                     }catch (Exception e){}*/
                 }
+                else if (displayType.replaceAll(" ", "").toLowerCase().equals("radio") || displayType.replaceAll(" ", "").toLowerCase().equals("radio")) {
+                    dynamicQuestions.renderRadioQuestionNew(questions, dynamicQuestions.questionsSection, farmerId, farmerModuleId, false);
+                }
             } while (questions.moveToNext());
         }
 

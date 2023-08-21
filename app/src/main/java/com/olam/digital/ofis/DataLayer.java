@@ -7152,6 +7152,72 @@ public class DataLayer {
         return  childName;
     }
 
+    public String getAnswerTypeValue(int id){
+        String value = "";
+        Cursor cursor = null;
+        try {
+            String[] columns = new String[]{"*"};
+            String whereClause = OFISDBContract.AnswerType.COLUMN_NAME_ID + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(id)};
+            cursor = db.query(OFISDBContract.AnswerType.TABLE_NAME,columns,whereClause,whereArgs,null,null,null,null);
+            if (cursor != null){
+                while(cursor.moveToNext()){
+                    value = cursor.getString(cursor.getColumnIndex(OFISDBContract.AnswerType.COLUMN_NAME_VALUE));
+                }
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            cursor.close();
+        }
+        return value;
+
+    }
+
+    public String getAnswerTypeByQuestionID(int id){
+        String value = "";
+        Cursor cursor = null;
+        try {
+            String[] columns = new String[]{"answerType"};
+            String whereClause = OFISDBContract.QuestionEntry.COLUMN_NAME_ID + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(id)};
+            cursor = db.query(OFISDBContract.QuestionEntry.TABLE_NAME,columns,whereClause,whereArgs,null,null,null,null);
+            if (cursor != null){
+                while(cursor.moveToNext()){
+                    value = cursor.getString(cursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ANSWER_TYPE));
+                }
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            cursor.close();
+        }
+        return value;
+
+    }
+
+    public String getDisplayConfigurationByQuestionID(int id){
+        String value = "";
+        Cursor cursor = null;
+        try {
+            String[] columns = new String[]{"*"};
+            String whereClause = OFISDBContract.QuestionEntry.COLUMN_NAME_ID + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(id)};
+            cursor = db.query(OFISDBContract.QuestionEntry.TABLE_NAME,columns,whereClause,whereArgs,null,null,null,null);
+            if (cursor != null){
+                while(cursor.moveToNext()){
+                    value = cursor.getString(cursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION));
+                }
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            cursor.close();
+        }
+        return value;
+
+    }
+
     public long getFarmerGroupById(Long farmerId) {
         long farmerGroupId=0;
         Cursor farmerCursor=null;
