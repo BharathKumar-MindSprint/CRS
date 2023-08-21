@@ -5918,7 +5918,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         }
                     }
                     followUpData.put("followups", answers);
-                    Log.d("FollowUpSurvey", answers.toString());
+                    Log.d("FollowUpSurvey", followUpData.toString());
 
                     okHttpPost(context, endpoint, followUpData, new Callback() {
                         @Override
