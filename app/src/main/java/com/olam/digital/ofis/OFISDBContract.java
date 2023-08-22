@@ -967,6 +967,9 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_FARMERLEAD = "farmerLead";
         public static final String COLUMN_NAME_FARMERLEADNAME = "farmerLeadName";
         public static final String COLUMN_NAME_ODFARMERID = "odFarmerId";
+        public static final String COLUMN_NAME_PARTNER_ID = "partner_Id";
+        public static final String COLUMN_NAME_PROGRAMME_ID = "programme_Id";
+
         public static final String COLUMN_NAME_PLOT = "plot";
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
@@ -1001,6 +1004,8 @@ public class OFISDBContract {
                     add(COLUMN_NAME_FARMERLEADNAME);
                     add(COLUMN_NAME_ODFARMERID);
                     add(COLUMN_NAME_PLOT);
+                    add(COLUMN_NAME_PARTNER_ID);
+                    add(COLUMN_NAME_PROGRAMME_ID);
                 }}
         );
         public static final List<String> SYNC_COLUMN_LIST = Collections.unmodifiableList(

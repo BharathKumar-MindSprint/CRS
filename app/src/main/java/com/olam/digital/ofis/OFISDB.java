@@ -14,7 +14,7 @@ class OFISDB extends SQLiteOpenHelper {
     private static OFISDB sInstance;
 
 
-    private static final int DATABASE_VERSION = 147;
+    private static final int DATABASE_VERSION = 148;
 
 
     private static final String DATABASE_NAME = "ofismobile";
@@ -368,6 +368,8 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.FarmerEntry.COLUMN_NAME_SUBDISID + " TEXT, "
             + OFISDBContract.FarmerEntry.COLUMN_NAME_ISCONSENTAVAILABLE + " TEXT, "
             + OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID+ " TEXT, "
+            + OFISDBContract.FarmerEntry.COLUMN_NAME_PARTNER_ID+ " TEXT, "
+            + OFISDBContract.FarmerEntry.COLUMN_NAME_PROGRAMME_ID+ " TEXT, "
             + OFISDBContract.FarmerEntry.COLUMN_NAME_ODFARMERID+ " TEXT, "
             + OFISDBContract.FarmerEntry.COLUMN_NAME_DOB + " TEXT, " + OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID + " TEXT, "
             + OFISDBContract.FarmerEntry.COLUMN_NAME_PHOTO + " TEXT, " + OFISDBContract.FarmerEntry.COLUMN_NAME_SIGNATURE + " TEXT, "
@@ -971,6 +973,8 @@ class OFISDB extends SQLiteOpenHelper {
 
         try {
             sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.FarmerEntry.TABLE_NAME + " ADD COLUMN plot TEXT default null");
+            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.FarmerEntry.TABLE_NAME + " ADD COLUMN partner_Id TEXT default null");
+            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.FarmerEntry.TABLE_NAME + " ADD COLUMN Programme_Id TEXT default null");
         } catch (SQLiteException ex) {
             ex.printStackTrace();
         }
