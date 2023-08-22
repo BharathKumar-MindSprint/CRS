@@ -604,7 +604,9 @@ public class CompleteModuleActivity extends BaseActivity {
                     }catch (Exception e){}*/
                 }
                 else if (displayType.replaceAll(" ", "").toLowerCase().equals("radio") || displayType.replaceAll(" ", "").toLowerCase().equals("radio")) {
-                    dynamicQuestions.renderRadioQuestionNew(questions, dynamicQuestions.questionsSection, farmerId, farmerModuleId, false);
+//                    dynamicQuestions.renderRadioQuestion(questions, dynamicQuestions.questionsSection, farmerId, farmerModuleId, false);
+                    dynamicQuestions.renderRadioQuestion(questions, false, dynamicQuestions.questionsSection, farmerId, farmerModuleId , false);
+
                 }
             } while (questions.moveToNext());
         }
@@ -844,7 +846,8 @@ public class CompleteModuleActivity extends BaseActivity {
 
         }*/
         boolean bool=dynamicQuestions.checkDisplayStatus((int) moduleId);
-        if (action.equalsIgnoreCase("exit") || action.equalsIgnoreCase("finish")) {
+        /// required recheck before push
+        /*if (action.equalsIgnoreCase("exit") || action.equalsIgnoreCase("finish")) {
             if(bool){
                 if (!dynamicQuestions.requiredFieldsAnswered((int) farmerModuleId, (int) moduleId)) {
                     statusFinished = 0;
@@ -858,7 +861,7 @@ public class CompleteModuleActivity extends BaseActivity {
                 dl.deleteNetworkQueueItemByFarmerModuleId((int) farmerModuleId);
                 Toast.makeText(context, res.getString(R.string.complete_all_required_fields_mandatry), Toast.LENGTH_LONG).show();
             }
-        }
+        }*/
         if (action.equalsIgnoreCase("exit")) {
             statusFinished = 0;
         }

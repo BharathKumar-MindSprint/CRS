@@ -47,6 +47,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -179,7 +180,7 @@ public class DynamicQuestions {
                             JSONObject display = displayConfig.getJSONObject("display");
                             if (display.optBoolean("requiredfield", false)) {
                                 String type = requiredQuestions.getString(requiredQuestions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE));
-                                if(type.equalsIgnoreCase("DropDown") || type.equalsIgnoreCase("checkbox")){
+                                if(type.equalsIgnoreCase("DropDown") || type.equalsIgnoreCase("checkbox") || type.equalsIgnoreCase("radio")) {
                                     int question_id = requiredQuestions.getInt(requiredQuestions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
                                     if(!dl.getLookupValuesForQuestion(question_id)){
                                         value = false;
@@ -374,29 +375,6 @@ public class DynamicQuestions {
     }
     private void saveMultipleAnswerEntryRadio(int questionId, @SuppressWarnings("SameParameterValue") int parentQuestionId, String dataType, LinearLayout linearLayout) {
 
-        // New
-        Iterator<JSONObject> iterator = answerSet.iterator();
-        while(iterator.hasNext()){
-            JSONObject currentAnswer = iterator.next();
-            if (currentAnswer != null) {
-                int currentQuestionId = currentAnswer.optInt("question_id");
-                if (currentQuestionId == questionId) {
-                    iterator.remove();
-                }
-            }
-        }
-
-        // Old
-//        for (int i = 0; i < answerSet.size(); i++) {
-//            JSONObject currentAnswer = answerSet.get(i);
-//            if (currentAnswer != null) {
-//                int currentQuestionId = currentAnswer.optInt("question_id");
-//                if (currentQuestionId == questionId) {
-//                    answerSet.remove(i);
-//                }
-//            }
-//        }
-
         RadioGroup radioGroup = (RadioGroup) linearLayout.findViewById(R.id.radioGroup);
 
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -412,29 +390,27 @@ public class DynamicQuestions {
                 // Get the value (text) of the checked RadioButton
                 RadioButton checkedRadioButton = group.findViewById(checkedId);
                 String selectedText = checkedRadioButton.getText().toString();
-                // Do something with the selected text
                 int j = checkedRadioButton.getId();
-                Toast.makeText(context, selectedText, Toast.LENGTH_SHORT).show();
-                Toast.makeText(context, j + "", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(context, selectedText, Toast.LENGTH_SHORT).show();
+//                Toast.makeText(context, j + "", Toast.LENGTH_SHORT).show();
+
+                if (answerSet!=null){
+                    for (int i = 0; i < answerSet.size(); i++) {
+                        JSONObject currentAnswer = answerSet.get(i);
+                        if (currentAnswer != null) {
+                            if (currentAnswer.optInt("question_id") == questionId){
+                                answerSet.remove(i);
+                            }
+                        }
+                    }
+                }
+
+
 
                 saveAnswerEntry(questionId, j, parentQuestionId, -1, dataType, selectedText);
             }
         });
 
-        /*RadioButton checkedRadioButton = radioGroup.findViewById(R.id.radioButton);
-        String selectedText = checkedRadioButton.getText().toString();
-        Toast.makeText(context, selectedText, Toast.LENGTH_SHORT).show();*/
-
-        /*int tableRows = questionTable.getChildCount();
-        for (int j = 0; j < tableRows; j++) {
-            TableRow tr = (TableRow) questionTable.getChildAt(j);
-            TextView cbId = (TextView) tr.findViewById(R.id.rbId);
-            RadioButton cb = (RadioButton) tr.findViewById(R.id.rbRadio);
-
-            if (cb.isChecked()) {
-                saveAnswerEntry(questionId, j, parentQuestionId, -1, dataType, String.valueOf(cbId.getText()));
-            }
-        }*/
     }
 
     private void saveMultipleAnswerEntryForSUbQuestionAnswerSave(int questionId, @SuppressWarnings("SameParameterValue") int parentQuestionId, String dataType, TableLayout questionTable) {
@@ -554,6 +530,7 @@ public class DynamicQuestions {
                 removeAnswerEntry(questionId,answerId);
             }
 
+            Log.d("Answer Set", answerSet.toString());
         } catch (JSONException e) {
             e.printStackTrace();
             FirebaseCrashlytics.getInstance().log(e.getMessage());
@@ -808,7 +785,7 @@ public class DynamicQuestions {
 
         int columnIndex = (qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION + questionColumnSuffix) != -1) ? qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION + questionColumnSuffix) : qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION);
         int columnInfo = (qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO + questionColumnSuffix) != -1) ? qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO + questionColumnSuffix) : qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO);
-        final String datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
+        final String datatype = qCursor.getString(qCursor.getColumnIndex("display_type"));
         tv.setText(Html.fromHtml(qCursor.getString(columnIndex)));
         String hh = Html.fromHtml(qCursor.getString(columnIndex)) + "";
         String infoVal = null;
@@ -909,7 +886,7 @@ public class DynamicQuestions {
             if(qCursor != null && qCursor.moveToFirst()) {
                 do {
             JSONObject displayConfig = new JSONObject(qCursor.getString(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION)));
-                    final String datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
+                    final String datatype = qCursor.getString(qCursor.getColumnIndex("display_type"));
                     final int questionId = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
                     int  answerId = qCursor.getInt(qCursor.getColumnIndex("answer_id"));
 
@@ -988,7 +965,7 @@ public class DynamicQuestions {
         LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
         renderQuestion(qCursor, isRepeaterItem, (isRepeaterItem) ? parentLayout : questionWrapper);
 
-        final String datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
+        final String datatype = qCursor.getString(qCursor.getColumnIndex("display_type"));
         final int questionId = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
         int answerIdTemp = 0;
         if (hasAnswers) {
@@ -1110,7 +1087,7 @@ public class DynamicQuestions {
         if (qCursor != null) {
             if (qCursor.moveToFirst()) {
                 do {
-                    datatypeduplicate = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
+                    datatypeduplicate = qCursor.getString(qCursor.getColumnIndex("display_type"));
 
                     questionIddouplicate = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
                 } while (qCursor.moveToNext());
@@ -1314,7 +1291,7 @@ public class DynamicQuestions {
         LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
         renderQuestion(qCursor, isRepeaterItem, (isRepeaterItem) ? parentLayout : questionWrapper);
 
-        final String datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
+        final String datatype = qCursor.getString(qCursor.getColumnIndex("display_type"));
         final int questionId = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
         int answerIdTemp = 0;
         if (hasAnswers) {
@@ -1442,7 +1419,7 @@ public class DynamicQuestions {
         LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
         renderQuestion(qCursor, isRepeaterItem, (isRepeaterItem) ? parentLayout : questionWrapper);
 
-        final String datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
+        final String datatype = qCursor.getString(qCursor.getColumnIndex("display_type"));
         final int questionId = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
         int answerIdTemp = 0;
         if (hasAnswers) {
@@ -1487,7 +1464,7 @@ public class DynamicQuestions {
         if (qCursor != null) {
             if (qCursor.moveToFirst()) {
                 do {
-                    datatypeduplicate = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
+                    datatypeduplicate = qCursor.getString(qCursor.getColumnIndex("display_type"));
 
                     questionIddouplicate = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
                 } while (qCursor.moveToNext());
@@ -1658,7 +1635,9 @@ public class DynamicQuestions {
         LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
         renderQuestion(qCursor, isRepeaterItem, (isRepeaterItem) ? parentLayout : questionWrapper);
 
-        final String datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
+        int columnIndex = (qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION + questionColumnSuffix) != -1) ? qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION + questionColumnSuffix) : qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION);
+
+        final String datatype = qCursor.getString(qCursor.getColumnIndex("display_type"));
         final int questionId = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
         int answerIdTemp = 0;
         if (hasAnswers) {
@@ -1720,25 +1699,118 @@ public class DynamicQuestions {
 
         try {
             if (answerValue.equals("Alphanumeric")){
-                setAlphanumericFilter(et);
+                try{
+                    JSONObject displayConfig = new JSONObject();
+                    displayConfig = new JSONObject(qCursor.getString(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION)));
+                    if (displayConfig.has("display")){
+                        JSONObject display = displayConfig.getJSONObject("display");
+                        int answerLimit = display.getInt("answerLimit");
+                        setAlphanumericFilter(et , answerLimit);
+                        et.setHint("Character Limit : " + answerLimit);
+                    }
+
+                }catch (Exception e) {
+                    e.printStackTrace();
+                }
             }else if (answerValue.equals("Numbers Only")){
                 et.setInputType(InputType.TYPE_CLASS_NUMBER);
-                           }else if (answerValue.equals("Alphabetical")){
-                InputFilter alphabetFilter = new InputFilter() {
-                    @Override
-                    public CharSequence filter(CharSequence source, int start, int end,
-                                               Spanned dest, int dstart, int dend) {
-                        StringBuilder filteredStringBuilder = new StringBuilder();
-                        for (int i = start; i < end; i++) {
-                            char character = source.charAt(i);
-                            if (Character.isLetter(character)) {
-                                filteredStringBuilder.append(character);
+                try{
+                    JSONObject displayConfig = new JSONObject();
+                    displayConfig = new JSONObject(qCursor.getString(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION)));
+                    if (displayConfig.has("display")){
+                        JSONObject display = displayConfig.getJSONObject("display");
+                        String answerLimit = display.get("answerLimit").toString();
+//                        Log.d("debug null" , "Answer value: " +answerLimit1 + " condition: "+String.valueOf(answerLimit ==null));
+                        if (!answerLimit.equals("null")){
+                            et.setHint("Character limit : " + answerLimit);
+                            setIntegerWithCharacterLimit(et , Integer.parseInt(answerLimit));
+
+                        }else{
+
+
+                            JSONArray range = display.getJSONArray("range");
+                            for(int i=0; i<range.length(); i++){
+                                JSONObject rangeArray = range.getJSONObject(i);
+
+                                globally = rangeArray.getString("globally");
+                                assignmentType = rangeArray.getString("assignmentType");
+                                assignmentField = rangeArray.getString("assignmentField");
+
+                                long farmerId = Utilities.farmerId;
+
+                                String assignmentTypeColumn = "";
+
+                                switch (assignmentType){
+                                    case "1" :
+                                        assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID;
+                                        break;
+                                    case "2" :
+                                        assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_REGIONID;
+                                        break;
+                                    case "3" :
+                                        assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_DISTRICTID;
+                                        break;
+                                    case "4" :
+                                        assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID;
+                                        break;
+                                    case "5" :
+                                        assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID;
+                                        break;
+                                    case "6" :
+                                        assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID;
+                                        break;
+                                    case "7" :
+                                        assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID;
+                                        break;
+                                    case "8" :
+                                        assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PARTNER_ID;
+                                        break;
+                                    case "9" :
+                                        assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PROGRAMME_ID;
+                                        break;
+                                }
+
+                                String farmerAssignmentField = dl.getAssignmentByFarmerTypeID(farmerId , assignmentTypeColumn);
+
+                                Log.d("FarmerID Check", farmerAssignmentField);
+                                if (assignmentField.equals(farmerAssignmentField)  && globally.equals("false")) {
+                                    min = rangeArray.getInt("min");
+                                    max = rangeArray.getInt("max");
+                                    et.setHint("Range : " + min + " to " + max);
+                                    setIntegerRangeFilter(et,min ,max );
+                                    break;
+                                }else if (assignmentType.equals("null") && assignmentField.equals("null") && globally.equals("true")){
+                                    min = rangeArray.getInt("min");
+                                    max = rangeArray.getInt("max");
+                                    et.setHint("Range : " + min + " to " + max);
+                                    setIntegerRangeFilter(et,min ,max );
+                                }
                             }
+
                         }
-                        return filteredStringBuilder.toString();
                     }
-                };
-                et.setFilters(new InputFilter[] { alphabetFilter });
+
+                }catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }else if (answerValue.equals("Alphabetical")){
+                try{
+                    JSONObject displayConfig = new JSONObject();
+                    displayConfig = new JSONObject(qCursor.getString(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION)));
+                    if (displayConfig.has("display")){
+                        JSONObject display = displayConfig.getJSONObject("display");
+                        int answerLimit = display.getInt("answerLimit");
+                        if (!String.valueOf(answerLimit).equals(null)){
+                            et.setHint("Character limit : 0 to " + answerLimit);
+                            setAlphabetWithCharacterLimit(et ,answerLimit );
+                        }else{
+
+                        }
+                    }
+
+                }catch (Exception e) {
+                    e.printStackTrace();
+                }
             }else if (answerValue.equals("Percentage")){
                 InputFilter filter = new InputFilter() {
                     public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
@@ -1782,7 +1854,7 @@ public class DynamicQuestions {
                 }
             }
 //            #range_api
-            if (displayConfig.has("display")){
+            /*if (displayConfig.has("display")){
                 JSONObject display = displayConfig.getJSONObject("display");
                 boolean required = display.getBoolean("requiredfield");
                 JSONArray range = display.getJSONArray("range");
@@ -1805,7 +1877,7 @@ public class DynamicQuestions {
                 }
 
 
-            }
+            }*/
         } catch (JSONException e) {
             FirebaseCrashlytics.getInstance().log("DynamicQuestions: Error getting textbox display config :" +e.getMessage());
         }
@@ -1872,7 +1944,7 @@ public class DynamicQuestions {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-                Toast.makeText(context, "Max:" + finalMax + " Min:" + finalMin, Toast.LENGTH_SHORT).show();
+//                Toast.makeText(context, "Max:" + finalMax + " Min:" + finalMin, Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -2022,24 +2094,122 @@ public class DynamicQuestions {
         }
     }
 
-    private void setAlphanumericFilter(EditText editText) {
+    private void setAlphanumericFilter(EditText editText, final int maxCharacters) {
         InputFilter alphaNumericFilter = new InputFilter() {
             @Override
             public CharSequence filter(CharSequence source, int start, int end,
                                        Spanned dest, int dstart, int dend) {
                 StringBuilder filteredStringBuilder = new StringBuilder();
+                int charactersAdded = 0;
+
                 for (int i = start; i < end; i++) {
                     char character = source.charAt(i);
                     if (Character.isLetterOrDigit(character)) {
-                        filteredStringBuilder.append(character);
+                        if (charactersAdded < maxCharacters) {
+                            filteredStringBuilder.append(character);
+                            charactersAdded++;
+                        } else {
+                            // Reached the maximum allowed characters
+                            break;
+                        }
                     }
                 }
+
                 return filteredStringBuilder.toString();
             }
         };
 
         editText.setFilters(new InputFilter[] { alphaNumericFilter });
     }
+
+    private void setIntegerRangeFilter(final EditText editText, final int startLimit, final int endLimit) {
+        InputFilter integerRangeFilter = new InputFilter() {
+            @Override
+            public CharSequence filter(CharSequence source, int start, int end,
+                                       Spanned dest, int dstart, int dend) {
+                try {
+                    // Combine the current text with the new input
+                    String newValue = dest.subSequence(0, dstart) + source.toString() + dest.subSequence(dend, dest.length());
+
+                    int inputNumber = Integer.parseInt(newValue);
+
+                    if (inputNumber > endLimit) {
+                        editText.setError("Number must be less than or equal to " + endLimit);
+                        return "";
+                    } else {
+                        if (inputNumber < startLimit) {
+                            editText.setError("Number is below the valid range " + startLimit);
+                            return source;
+                        } else {
+                            editText.setError(null); // Clear any previous errors
+                            return source;
+                        }
+
+                    }
+
+                } catch (NumberFormatException e) {
+                    // Ignore non-numeric input
+                    return "";
+                }
+            }
+        };
+
+        editText.setFilters(new InputFilter[] { integerRangeFilter });
+    }
+
+
+    private void setIntegerWithCharacterLimit(final EditText editText , final int maxCharacterLimit) {
+
+        InputFilter characterLimitFilter = new InputFilter() {
+            @Override
+            public CharSequence filter(CharSequence source, int start, int end,
+                                       Spanned dest, int dstart, int dend) {
+                String newValue = dest.subSequence(0, dstart) + source.toString() + dest.subSequence(dend, dest.length());
+
+                if (newValue.length() > maxCharacterLimit) {
+                    editText.setError("Character limit exceeded");
+                    return "";
+                }
+
+                editText.setError(null); // Clear any previous errors
+                return null;
+            }
+        };
+
+        editText.setFilters(new InputFilter[] { characterLimitFilter });
+    }
+
+
+    private void setAlphabetWithCharacterLimit(final EditText editText, final int maxCharacterLimit) {
+        InputFilter alphabetFilter = new InputFilter() {
+            @Override
+            public CharSequence filter(CharSequence source, int start, int end,
+                                       Spanned dest, int dstart, int dend) {
+                StringBuilder filteredStringBuilder = new StringBuilder();
+
+                for (int i = start; i < end; i++) {
+                    char character = source.charAt(i);
+                    if (Character.isLetter(character)) {
+                        if (filteredStringBuilder.length() < maxCharacterLimit) {
+                            filteredStringBuilder.append(character);
+                        }
+                    }
+                }
+
+                int remainingCharacters = maxCharacterLimit - dest.length() + dend - dstart;
+                if (remainingCharacters <= 0) {
+                    return ""; // Limit reached, discard the input
+                }
+
+                return filteredStringBuilder.toString();
+            }
+        };
+
+        editText.setFilters(new InputFilter[] { alphabetFilter });
+    }
+
+
+
 
     private float fetchMinMaxValue(JSONObject displayConfig, String rangeMinMax) {
         // get disp"lay config to see if question has display range
@@ -2064,7 +2234,7 @@ public class DynamicQuestions {
         if (qCursor != null) {
             if (qCursor.moveToFirst()) {
                 do {
-                    datatypeduplicate = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
+                    datatypeduplicate = qCursor.getString(qCursor.getColumnIndex("display_type"));
 
                     questionIddouplicate = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
                 } while (qCursor.moveToNext());
@@ -2204,7 +2374,7 @@ public class DynamicQuestions {
         renderQuestion(qCursor, isRepeaterItem, (isRepeaterItem) ? parentLayout : questionWrapper);
 
         resources = res;
-        final String datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
+        final String datatype = qCursor.getString(qCursor.getColumnIndex("display_type"));
         final int questionId = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
 
         int answerIdTemp = 0;
@@ -2406,11 +2576,12 @@ public class DynamicQuestions {
 
     }
 
-    public  void renderRadioQuestionNew(Cursor questions, LinearLayout parentLayout , long farmerId,long farmerModuleId, boolean isSavedAns){
-        LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
+    public  void renderRadioQuestion(Cursor questions, boolean isRepeaterItem, LinearLayout parentLayout , long farmerId,long farmerModuleId, boolean isSavedAns){
+
+            LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
         renderQuestion(questions, false, questionWrapper);
 
-        final String datatype = questions.getString(questions.getColumnIndex("datatype_name"));
+        final String datatype = questions.getString(questions.getColumnIndex("display_type"));
         final int questionId = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
         final boolean singleSelect;
         boolean tempSingleSelect = false;
@@ -2466,23 +2637,7 @@ public class DynamicQuestions {
                 radioButton.setId(rbId);
 
                 radioGroup.addView(radioButton);
-                /*radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(RadioGroup group, int checkedId) {
-                        // This method is called when any RadioButton within the RadioGroup is checked
-                        // Uncheck other RadioButtons in the same RadioGroup
-                        for (int i = 0; i < group.getChildCount(); i++) {
-                            RadioButton radioButton = (RadioButton) group.getChildAt(i);
-                            radioButton.setChecked(radioButton.getId() == checkedId);
-                        }
 
-                        // Get the value (text) of the checked RadioButton
-                        RadioButton checkedRadioButton = group.findViewById(checkedId);
-                        String selectedText = checkedRadioButton.getText().toString();
-                        // Do something with the selected text
-//                        Toast.makeText(context, selectedText, Toast.LENGTH_SHORT).show();
-                    }
-                });*/
 
             }
 
@@ -2493,13 +2648,13 @@ public class DynamicQuestions {
 
     }
 
-
-/*
+    // don't remove
+    /*
     public void renderRadioQuestion(Cursor questions, LinearLayout parentLayout, long farmerId, long farmerModuleId, boolean isSavedAns) {
         LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
         renderQuestion(questions, false, questionWrapper);
 
-        final String datatype = questions.getString(questions.getColumnIndex("datatype_name"));
+        final String datatype = questions.getString(questions.getColumnIndex("display_type"));
         final int questionId = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
         final boolean singleSelect;
         boolean tempSingleSelect = false;
@@ -2583,7 +2738,7 @@ public class DynamicQuestions {
                 // initilaize default look up globally
                 // pre-fill checkboxes that have been previously ticked
                 */
-/*if (cbAnswers.getCount() > 0) {
+    /*if (cbAnswers.getCount() > 0) {
                     // disable while loading the "Not Applicable"
                     if(cbId == defaultLookUpValue){
                         cb.setEnabled(false);
@@ -2610,7 +2765,7 @@ public class DynamicQuestions {
 
 
 */
-/*
+    /*
                 tr.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -2627,7 +2782,7 @@ public class DynamicQuestions {
                 //stick the answer in the question itself
                 int finalDefaultLookUpValue = defaultLookUpValue;
 */
-/*
+    /*
                 cb.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -2705,12 +2860,13 @@ public class DynamicQuestions {
         }
     }
 */
+    ////////////////////////////////
 
     void renderSipDropDownQuestion(Cursor qCursor, boolean isRepeaterItem, LinearLayout parentLayout, final int parentQuestionId, final int repeaterItemPosition, Cursor repeaterAnswers, final Resources res) {
         final LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
         renderQuestion(qCursor, isRepeaterItem, (isRepeaterItem) ? parentLayout : questionWrapper);
         resources = res;
-        final String datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
+        final String datatype = qCursor.getString(qCursor.getColumnIndex("display_type"));
         final int questionId = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionSipEntry.COLUMN_NAME_ID));
 
         int answerIdTemp = 0;
@@ -2836,7 +2992,7 @@ public class DynamicQuestions {
         final LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
         // renderQuestion(qCursor, isRepeaterItem, (isRepeaterItem) ? parentLayout : questionWrapper);
         resources = res;
-       /* final String datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
+       /* final String datatype = qCursor.getString(qCursor.getColumnIndex("display_type"));
         final int questionId = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
 */
 
@@ -2846,7 +3002,7 @@ public class DynamicQuestions {
         if (qCursor != null) {
             if (qCursor.moveToFirst()) {
                 do {
-                    datatypeduplicate = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
+                    datatypeduplicate = qCursor.getString(qCursor.getColumnIndex("display_type"));
 
                     questionIddouplicate = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
                 } while (qCursor.moveToNext());
@@ -3024,7 +3180,7 @@ public class DynamicQuestions {
         LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
         renderQuestion(questions, false, questionWrapper);
 
-        final String datatype = questions.getString(questions.getColumnIndex("datatype_name"));
+        final String datatype = questions.getString(questions.getColumnIndex("display_type"));
         final int questionId = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
         final boolean singleSelect;
         boolean tempSingleSelect = false;
@@ -3206,7 +3362,7 @@ public class DynamicQuestions {
         LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
         renderQuestion(questions, false, questionWrapper);
 
-        final String datatype = questions.getString(questions.getColumnIndex("datatype_name"));
+        final String datatype = questions.getString(questions.getColumnIndex("display_type"));
         final int questionId = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
         final boolean singleSelect;
         boolean tempSingleSelect = false;
@@ -3313,7 +3469,7 @@ public class DynamicQuestions {
             if (questions.moveToFirst()) {
                 do {
 
-                    datatypeduplicate = questions.getString(questions.getColumnIndex("datatype_name"));
+                    datatypeduplicate = questions.getString(questions.getColumnIndex("display_type"));
 
                     questionIddouplicate = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
                 } while (questions.moveToNext());
@@ -3459,7 +3615,7 @@ public class DynamicQuestions {
         if (questions != null) {
             if (questions.moveToFirst()) {
                 do {
-                    datatypeduplicate = questions.getString(questions.getColumnIndex("datatype_name"));
+                    datatypeduplicate = questions.getString(questions.getColumnIndex("display_type"));
 
                     questionIddouplicate = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
                 } while (questions.moveToNext());
@@ -3583,7 +3739,7 @@ public class DynamicQuestions {
         LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, questionsSection, false);
         renderQuestion(questions, false, questionWrapper);
 
-        final String datatype = questions.getString(questions.getColumnIndex("datatype_name"));
+        final String datatype = questions.getString(questions.getColumnIndex("display_type"));
         final int questionId = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
         final boolean singleSelect;
         boolean tempSingleSelect = false;
@@ -3692,7 +3848,7 @@ public class DynamicQuestions {
         LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, questionsSection, false);
         renderQuestion(questions, false, questionWrapper);
         resources = res;
-        final String datatype = questions.getString(questions.getColumnIndex("datatype_name"));
+        final String datatype = questions.getString(questions.getColumnIndex("display_type"));
         final int questionId = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
         final int answerId = (hasAnswers) ? questions.getInt(questions.getColumnIndex("answer_id")) : 0;
         final Spinner spinner = (Spinner) inflater.inflate(R.layout.module_spinner, questionWrapper, false);
@@ -3771,7 +3927,7 @@ public class DynamicQuestions {
         if (questions != null) {
             if (questions.moveToFirst()) {
                 do {
-                    datatypeduplicate = questions.getString(questions.getColumnIndex("datatype_name"));
+                    datatypeduplicate = questions.getString(questions.getColumnIndex("display_type"));
 
                     questionIddouplicate = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
                 } while (questions.moveToNext());
@@ -4100,7 +4256,7 @@ public class DynamicQuestions {
         final LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
         renderQuestion(qCursor, isRepeaterItem, (isRepeaterItem) ? parentLayout : questionWrapper);
         String question1 = "", question2 = "";
-        final String datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
+        final String datatype = qCursor.getString(qCursor.getColumnIndex("display_type"));
         final int questionId = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
         String[] coloumnames = qCursor.getColumnNames();
 
@@ -4407,7 +4563,7 @@ public class DynamicQuestions {
         final LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
         renderQuestion(qCursor, isRepeaterItem, (isRepeaterItem) ? parentLayout : questionWrapper);
         String question1 = "", question2 = "";
-        final String datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
+        final String datatype = qCursor.getString(qCursor.getColumnIndex("display_type"));
         final int questionId = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
         String[] coloumnames = qCursor.getColumnNames();
 
@@ -4720,7 +4876,7 @@ public class DynamicQuestions {
         if (qCursor != null) {
             if (qCursor.moveToFirst()) {
                 do {
-                    datatypeduplicate = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
+                    datatypeduplicate = qCursor.getString(qCursor.getColumnIndex("display_type"));
 
                     questionIddouplicate = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
                 } while (qCursor.moveToNext());
@@ -5000,7 +5156,7 @@ public class DynamicQuestions {
         LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, questionsSection, false);
         renderQuestion(questions, false, questionWrapper);
 
-        final String datatype = questions.getString(questions.getColumnIndex("datatype_name"));
+        final String datatype = questions.getString(questions.getColumnIndex("display_type"));
         String calcAnswerValue = "0";
         densityQuestionId = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
         String columnName = (questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION + questionColumnSuffix) != -1) ? OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix : OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE;
@@ -5121,7 +5277,7 @@ public class DynamicQuestions {
         LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
         renderQuestion(questions, false, questionWrapper);
 
-        final String datatype = questions.getString(questions.getColumnIndex("datatype_name"));
+        final String datatype = questions.getString(questions.getColumnIndex("display_type"));
         final int questionId = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionSipEntry.COLUMN_NAME_ID));
         final boolean singleSelect;
         boolean tempSingleSelect = false;
@@ -5218,7 +5374,7 @@ public class DynamicQuestions {
         LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
         renderQuestion(qCursor, isRepeaterItem, (isRepeaterItem) ? parentLayout : questionWrapper);
 
-        final String datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
+        final String datatype = qCursor.getString(qCursor.getColumnIndex("display_type"));
         final int questionId = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionSipEntry.COLUMN_NAME_ID));
         int answerIdTemp = 0;
         if (hasAnswers) {
@@ -5342,7 +5498,7 @@ public class DynamicQuestions {
         LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, questionsSection, false);
         renderQuestion(questions, false, questionWrapper);
 
-        final String datatype = questions.getString(questions.getColumnIndex("datatype_name"));
+        final String datatype = questions.getString(questions.getColumnIndex("display_type"));
         final int questionId = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
         final boolean singleSelect;
         boolean tempSingleSelect = false;
@@ -5447,7 +5603,7 @@ public class DynamicQuestions {
         LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, questionsSection, false);
         renderQuestion(questions, false, questionWrapper);
 
-        final String datatype = questions.getString(questions.getColumnIndex("datatype_name"));
+        final String datatype = questions.getString(questions.getColumnIndex("display_type"));
         final int questionId = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
         final int answerId = (hasAnswers) ? questions.getInt(questions.getColumnIndex("answer_id")) : 0;
         final Spinner spinner = (Spinner) inflater.inflate(R.layout.module_spinner, questionWrapper, false);
