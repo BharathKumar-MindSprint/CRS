@@ -14,7 +14,7 @@ class OFISDB extends SQLiteOpenHelper {
     private static OFISDB sInstance;
 
 
-    private static final int DATABASE_VERSION = 147;
+    private static final int DATABASE_VERSION = 148;
 
 
     private static final String DATABASE_NAME = "ofismobile";
@@ -897,7 +897,7 @@ class OFISDB extends SQLiteOpenHelper {
     }
 
     @Override
-    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i2) {
+    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
 //        droptables(sqLiteDatabase);
 //        master db if less than142
         sqLiteDatabase.execSQL(OFIS_TRAINING_RELATIONSHIP_ATTENDEE_TABLE_CREATE);
@@ -951,18 +951,8 @@ class OFISDB extends SQLiteOpenHelper {
             ex.printStackTrace();
         }
 
-        try {
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.QuestionEntry.TABLE_NAME + " ADD COLUMN questionInfo TEXT default null");
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.QuestionEntry.TABLE_NAME + " ADD COLUMN questionInfoES TEXT default null");
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.QuestionEntry.TABLE_NAME + " ADD COLUMN questionInfoFr TEXT default null");
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.QuestionEntry.TABLE_NAME + " ADD COLUMN questionInfoId TEXT default null");
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.QuestionEntry.TABLE_NAME + " ADD COLUMN questionInfoPt TEXT default null");
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.QuestionEntry.TABLE_NAME + " ADD COLUMN questionInfoTr TEXT default null");
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.QuestionEntry.TABLE_NAME + " ADD COLUMN questionInfoLo TEXT default null");
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.QuestionEntry.TABLE_NAME + " ADD COLUMN questionInfoVi TEXT default null");
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.QuestionEntry.TABLE_NAME + " ADD COLUMN questionInfoTh TEXT default null");
-        } catch (SQLiteException ex) {
-            ex.printStackTrace();
+        if(oldVersion < 148 ) {
+            migrateFromVersionBelow148(sqLiteDatabase);
         }
 
         sqLiteDatabase.execSQL(OFIS_DOWNLOADED_SURVEYLIST_TABLE_CREATE);
@@ -971,6 +961,11 @@ class OFISDB extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(OFIS_NOTIFICATION_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_NOTIFICATION_MODULELIST_TABLE_CREATE);
         onCreate(sqLiteDatabase);
+    }
+
+    private void migrateFromVersionBelow148(SQLiteDatabase sqLiteDatabase){
+        sqLiteDatabase.execSQL("DROP TABLE " + OFISDBContract.QuestionEntry.TABLE_NAME);
+        sqLiteDatabase.execSQL(OFIS_QUESTION_TABLE_CREATE);
     }
 
     private void droptables(SQLiteDatabase sqLiteDatabase) {
