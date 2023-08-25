@@ -76,7 +76,9 @@ import com.olam.digital.ofis.multifarm.FindMultiFarmFarmerAdapter;
 import com.olam.digital.ofis.multifarm.MultiFarmDTO;
 import com.olam.digital.ofis.multifarm.MultiFarmUtils;
 
+import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -603,10 +605,8 @@ public class CompleteModuleActivity extends BaseActivity {
                         }
                     }catch (Exception e){}*/
                 }
-                else if (displayType.replaceAll(" ", "").toLowerCase().equals("radio") || displayType.replaceAll(" ", "").toLowerCase().equals("radio")) {
-//                    dynamicQuestions.renderRadioQuestion(questions, dynamicQuestions.questionsSection, farmerId, farmerModuleId, false);
+                else if (displayType.replaceAll(" ", "").toLowerCase().equals("radio")) {
                     dynamicQuestions.renderRadioQuestion(questions, false, dynamicQuestions.questionsSection, farmerId, farmerModuleId , false);
-
                 }
             } while (questions.moveToNext());
         }
@@ -883,6 +883,10 @@ public class CompleteModuleActivity extends BaseActivity {
                         gpsTracker.stopLocationUpdates();
                     }
 
+//                    ArrayList<JSONObject> finalSave = dynamicQuestions.answerSet;
+//                    for (int i = 0; i <= dynamicQuestions.answerSet
+
+
                     ViewFarmerActivity.farmerId = farmerId;
                     //SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(farmerId);
                     Intent intent = new Intent(context, ViewFarmerActivity.class);
@@ -1113,6 +1117,8 @@ public class CompleteModuleActivity extends BaseActivity {
                              }
                          }
                      }catch (Exception e){}*/
+                 }else if (displayType.replaceAll(" ", "").toLowerCase().equals("radio")) {
+                     dynamicQuestions.renderRadioQuestion(questions, false, dynamicQuestions.questionsSection, farmerId, farmerModuleId , false);
                  }
              }
             }

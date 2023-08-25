@@ -180,7 +180,7 @@ public class DynamicQuestions {
                             JSONObject display = displayConfig.getJSONObject("display");
                             if (display.optBoolean("requiredfield", false)) {
                                 String type = requiredQuestions.getString(requiredQuestions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE));
-                                if(type.equalsIgnoreCase("DropDown") || type.equalsIgnoreCase("checkbox") || type.equalsIgnoreCase("radio")) {
+                                if(type.equalsIgnoreCase("DropDown") || type.equalsIgnoreCase("checkbox") || type.equalsIgnoreCase("radio") || type.equalsIgnoreCase("datepicker")){
                                     int question_id = requiredQuestions.getInt(requiredQuestions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
                                     if(!dl.getLookupValuesForQuestion(question_id)){
                                         value = false;
@@ -530,7 +530,9 @@ public class DynamicQuestions {
                 removeAnswerEntry(questionId,answerId);
             }
 
-            Log.d("Answer Set", answerSet.toString());
+//            Log.d("Answer Set",  answerSet.toString());
+            long farmerIdLOG = Utilities.farmerId;
+            Log.d("AnswerSet" , "Farmer ID: " +  farmerIdLOG + " / Answer Set: " + answerSet.toString());
         } catch (JSONException e) {
             e.printStackTrace();
             FirebaseCrashlytics.getInstance().log(e.getMessage());
@@ -1720,7 +1722,7 @@ public class DynamicQuestions {
                     if (displayConfig.has("display")){
                         JSONObject display = displayConfig.getJSONObject("display");
                         String answerLimit = display.get("answerLimit").toString();
-//                        Log.d("debug null" , "Answer value: " +answerLimit1 + " condition: "+String.valueOf(answerLimit ==null));
+
                         if (!answerLimit.equals("null")){
                             et.setHint("Character limit : " + answerLimit);
                             setIntegerWithCharacterLimit(et , Integer.parseInt(answerLimit));
@@ -1737,6 +1739,7 @@ public class DynamicQuestions {
                                 assignmentField = rangeArray.getString("assignmentField");
 
                                 long farmerId = Utilities.farmerId;
+                                Log.d("debug null" , "Farmer ID: " +  farmerId);
 
                                 String assignmentTypeColumn = "";
 
@@ -1853,31 +1856,7 @@ public class DynamicQuestions {
                     isHPQTemp = false;
                 }
             }
-//            #range_api
-            /*if (displayConfig.has("display")){
-                JSONObject display = displayConfig.getJSONObject("display");
-                boolean required = display.getBoolean("requiredfield");
-                JSONArray range = display.getJSONArray("range");
-                for(int i=0; i<range.length(); i++){
-                    JSONObject rangeArray = range.getJSONObject(i);
 
-                    globally = rangeArray.getString("globally");
-                    assignmentType = rangeArray.getString("assignmentType");
-                    assignmentField = rangeArray.getString("assignmentField");
-
-                    if (assignmentField == null && assignmentType == null) {
-                        min = rangeArray.getInt("min");
-                        max = rangeArray.getInt("max");
-                        break;
-                    }else {
-                        min = rangeArray.getInt("min");
-                        max = rangeArray.getInt("max");
-                    }
-
-                }
-
-
-            }*/
         } catch (JSONException e) {
             FirebaseCrashlytics.getInstance().log("DynamicQuestions: Error getting textbox display config :" +e.getMessage());
         }
