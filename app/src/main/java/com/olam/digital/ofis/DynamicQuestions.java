@@ -787,7 +787,7 @@ public class DynamicQuestions {
 
         int columnIndex = (qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION + questionColumnSuffix) != -1) ? qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION + questionColumnSuffix) : qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION);
         int columnInfo = (qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO + questionColumnSuffix) != -1) ? qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO + questionColumnSuffix) : qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO);
-        final String datatype = qCursor.getString(qCursor.getColumnIndex("display_type"));
+        final String datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
         tv.setText(Html.fromHtml(qCursor.getString(columnIndex)));
         String hh = Html.fromHtml(qCursor.getString(columnIndex)) + "";
         String infoVal = null;
@@ -888,7 +888,7 @@ public class DynamicQuestions {
             if(qCursor != null && qCursor.moveToFirst()) {
                 do {
             JSONObject displayConfig = new JSONObject(qCursor.getString(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION)));
-                    final String datatype = qCursor.getString(qCursor.getColumnIndex("display_type"));
+                    final String datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
                     final int questionId = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
                     int  answerId = qCursor.getInt(qCursor.getColumnIndex("answer_id"));
 
@@ -967,7 +967,7 @@ public class DynamicQuestions {
         LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
         renderQuestion(qCursor, isRepeaterItem, (isRepeaterItem) ? parentLayout : questionWrapper);
 
-        final String datatype = qCursor.getString(qCursor.getColumnIndex("display_type"));
+        final String datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
         final int questionId = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
         int answerIdTemp = 0;
         if (hasAnswers) {
@@ -1089,7 +1089,7 @@ public class DynamicQuestions {
         if (qCursor != null) {
             if (qCursor.moveToFirst()) {
                 do {
-                    datatypeduplicate = qCursor.getString(qCursor.getColumnIndex("display_type"));
+                    datatypeduplicate = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
 
                     questionIddouplicate = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
                 } while (qCursor.moveToNext());
@@ -1293,7 +1293,7 @@ public class DynamicQuestions {
         LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
         renderQuestion(qCursor, isRepeaterItem, (isRepeaterItem) ? parentLayout : questionWrapper);
 
-        final String datatype = qCursor.getString(qCursor.getColumnIndex("display_type"));
+        final String datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
         final int questionId = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
         int answerIdTemp = 0;
         if (hasAnswers) {
@@ -1421,7 +1421,7 @@ public class DynamicQuestions {
         LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
         renderQuestion(qCursor, isRepeaterItem, (isRepeaterItem) ? parentLayout : questionWrapper);
 
-        final String datatype = qCursor.getString(qCursor.getColumnIndex("display_type"));
+        final String datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
         final int questionId = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
         int answerIdTemp = 0;
         if (hasAnswers) {
@@ -1466,7 +1466,7 @@ public class DynamicQuestions {
         if (qCursor != null) {
             if (qCursor.moveToFirst()) {
                 do {
-                    datatypeduplicate = qCursor.getString(qCursor.getColumnIndex("display_type"));
+                    datatypeduplicate = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
 
                     questionIddouplicate = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
                 } while (qCursor.moveToNext());
@@ -1639,7 +1639,7 @@ public class DynamicQuestions {
 
         int columnIndex = (qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION + questionColumnSuffix) != -1) ? qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION + questionColumnSuffix) : qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION);
 
-        final String datatype = qCursor.getString(qCursor.getColumnIndex("display_type"));
+        final String datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
         final int questionId = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
         int answerIdTemp = 0;
         if (hasAnswers) {
@@ -2213,7 +2213,7 @@ public class DynamicQuestions {
         if (qCursor != null) {
             if (qCursor.moveToFirst()) {
                 do {
-                    datatypeduplicate = qCursor.getString(qCursor.getColumnIndex("display_type"));
+                    datatypeduplicate = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
 
                     questionIddouplicate = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
                 } while (qCursor.moveToNext());
@@ -2353,7 +2353,7 @@ public class DynamicQuestions {
         renderQuestion(qCursor, isRepeaterItem, (isRepeaterItem) ? parentLayout : questionWrapper);
 
         resources = res;
-        final String datatype = qCursor.getString(qCursor.getColumnIndex("display_type"));
+        final String datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
         final int questionId = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
 
         int answerIdTemp = 0;
@@ -2560,7 +2560,7 @@ public class DynamicQuestions {
             LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
         renderQuestion(questions, false, questionWrapper);
 
-        final String datatype = questions.getString(questions.getColumnIndex("display_type"));
+        final String datatype = questions.getString(questions.getColumnIndex("datatype_name"));
         final int questionId = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
         final boolean singleSelect;
         boolean tempSingleSelect = false;
@@ -2633,7 +2633,7 @@ public class DynamicQuestions {
         LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
         renderQuestion(questions, false, questionWrapper);
 
-        final String datatype = questions.getString(questions.getColumnIndex("display_type"));
+        final String datatype = questions.getString(questions.getColumnIndex("datatype_name"));
         final int questionId = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
         final boolean singleSelect;
         boolean tempSingleSelect = false;
@@ -2845,7 +2845,7 @@ public class DynamicQuestions {
         final LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
         renderQuestion(qCursor, isRepeaterItem, (isRepeaterItem) ? parentLayout : questionWrapper);
         resources = res;
-        final String datatype = qCursor.getString(qCursor.getColumnIndex("display_type"));
+        final String datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
         final int questionId = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionSipEntry.COLUMN_NAME_ID));
 
         int answerIdTemp = 0;
@@ -2971,7 +2971,7 @@ public class DynamicQuestions {
         final LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
         // renderQuestion(qCursor, isRepeaterItem, (isRepeaterItem) ? parentLayout : questionWrapper);
         resources = res;
-       /* final String datatype = qCursor.getString(qCursor.getColumnIndex("display_type"));
+       /* final String datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
         final int questionId = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
 */
 
@@ -2981,7 +2981,7 @@ public class DynamicQuestions {
         if (qCursor != null) {
             if (qCursor.moveToFirst()) {
                 do {
-                    datatypeduplicate = qCursor.getString(qCursor.getColumnIndex("display_type"));
+                    datatypeduplicate = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
 
                     questionIddouplicate = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
                 } while (qCursor.moveToNext());
@@ -3159,7 +3159,7 @@ public class DynamicQuestions {
         LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
         renderQuestion(questions, false, questionWrapper);
 
-        final String datatype = questions.getString(questions.getColumnIndex("display_type"));
+        final String datatype = questions.getString(questions.getColumnIndex("datatype_name"));
         final int questionId = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
         final boolean singleSelect;
         boolean tempSingleSelect = false;
@@ -3341,7 +3341,7 @@ public class DynamicQuestions {
         LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
         renderQuestion(questions, false, questionWrapper);
 
-        final String datatype = questions.getString(questions.getColumnIndex("display_type"));
+        final String datatype = questions.getString(questions.getColumnIndex("datatype_name"));
         final int questionId = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
         final boolean singleSelect;
         boolean tempSingleSelect = false;
@@ -3448,7 +3448,7 @@ public class DynamicQuestions {
             if (questions.moveToFirst()) {
                 do {
 
-                    datatypeduplicate = questions.getString(questions.getColumnIndex("display_type"));
+                    datatypeduplicate = questions.getString(questions.getColumnIndex("datatype_name"));
 
                     questionIddouplicate = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
                 } while (questions.moveToNext());
@@ -3594,7 +3594,7 @@ public class DynamicQuestions {
         if (questions != null) {
             if (questions.moveToFirst()) {
                 do {
-                    datatypeduplicate = questions.getString(questions.getColumnIndex("display_type"));
+                    datatypeduplicate = questions.getString(questions.getColumnIndex("datatype_name"));
 
                     questionIddouplicate = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
                 } while (questions.moveToNext());
@@ -3718,7 +3718,7 @@ public class DynamicQuestions {
         LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, questionsSection, false);
         renderQuestion(questions, false, questionWrapper);
 
-        final String datatype = questions.getString(questions.getColumnIndex("display_type"));
+        final String datatype = questions.getString(questions.getColumnIndex("datatype_name"));
         final int questionId = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
         final boolean singleSelect;
         boolean tempSingleSelect = false;
@@ -3827,7 +3827,7 @@ public class DynamicQuestions {
         LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, questionsSection, false);
         renderQuestion(questions, false, questionWrapper);
         resources = res;
-        final String datatype = questions.getString(questions.getColumnIndex("display_type"));
+        final String datatype = questions.getString(questions.getColumnIndex("datatype_name"));
         final int questionId = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
         final int answerId = (hasAnswers) ? questions.getInt(questions.getColumnIndex("answer_id")) : 0;
         final Spinner spinner = (Spinner) inflater.inflate(R.layout.module_spinner, questionWrapper, false);
@@ -3906,7 +3906,7 @@ public class DynamicQuestions {
         if (questions != null) {
             if (questions.moveToFirst()) {
                 do {
-                    datatypeduplicate = questions.getString(questions.getColumnIndex("display_type"));
+                    datatypeduplicate = questions.getString(questions.getColumnIndex("datatype_name"));
 
                     questionIddouplicate = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
                 } while (questions.moveToNext());
@@ -4235,7 +4235,7 @@ public class DynamicQuestions {
         final LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
         renderQuestion(qCursor, isRepeaterItem, (isRepeaterItem) ? parentLayout : questionWrapper);
         String question1 = "", question2 = "";
-        final String datatype = qCursor.getString(qCursor.getColumnIndex("display_type"));
+        final String datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
         final int questionId = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
         String[] coloumnames = qCursor.getColumnNames();
 
@@ -4542,7 +4542,7 @@ public class DynamicQuestions {
         final LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
         renderQuestion(qCursor, isRepeaterItem, (isRepeaterItem) ? parentLayout : questionWrapper);
         String question1 = "", question2 = "";
-        final String datatype = qCursor.getString(qCursor.getColumnIndex("display_type"));
+        final String datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
         final int questionId = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
         String[] coloumnames = qCursor.getColumnNames();
 
@@ -4855,7 +4855,7 @@ public class DynamicQuestions {
         if (qCursor != null) {
             if (qCursor.moveToFirst()) {
                 do {
-                    datatypeduplicate = qCursor.getString(qCursor.getColumnIndex("display_type"));
+                    datatypeduplicate = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
 
                     questionIddouplicate = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
                 } while (qCursor.moveToNext());
@@ -5135,7 +5135,7 @@ public class DynamicQuestions {
         LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, questionsSection, false);
         renderQuestion(questions, false, questionWrapper);
 
-        final String datatype = questions.getString(questions.getColumnIndex("display_type"));
+        final String datatype = questions.getString(questions.getColumnIndex("datatype_name"));
         String calcAnswerValue = "0";
         densityQuestionId = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
         String columnName = (questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION + questionColumnSuffix) != -1) ? OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix : OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE;
@@ -5256,7 +5256,7 @@ public class DynamicQuestions {
         LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
         renderQuestion(questions, false, questionWrapper);
 
-        final String datatype = questions.getString(questions.getColumnIndex("display_type"));
+        final String datatype = questions.getString(questions.getColumnIndex("datatype_name"));
         final int questionId = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionSipEntry.COLUMN_NAME_ID));
         final boolean singleSelect;
         boolean tempSingleSelect = false;
@@ -5353,7 +5353,7 @@ public class DynamicQuestions {
         LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
         renderQuestion(qCursor, isRepeaterItem, (isRepeaterItem) ? parentLayout : questionWrapper);
 
-        final String datatype = qCursor.getString(qCursor.getColumnIndex("display_type"));
+        final String datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
         final int questionId = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionSipEntry.COLUMN_NAME_ID));
         int answerIdTemp = 0;
         if (hasAnswers) {
@@ -5477,7 +5477,7 @@ public class DynamicQuestions {
         LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, questionsSection, false);
         renderQuestion(questions, false, questionWrapper);
 
-        final String datatype = questions.getString(questions.getColumnIndex("display_type"));
+        final String datatype = questions.getString(questions.getColumnIndex("datatype_name"));
         final int questionId = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
         final boolean singleSelect;
         boolean tempSingleSelect = false;
@@ -5582,7 +5582,7 @@ public class DynamicQuestions {
         LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, questionsSection, false);
         renderQuestion(questions, false, questionWrapper);
 
-        final String datatype = questions.getString(questions.getColumnIndex("display_type"));
+        final String datatype = questions.getString(questions.getColumnIndex("datatype_name"));
         final int questionId = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
         final int answerId = (hasAnswers) ? questions.getInt(questions.getColumnIndex("answer_id")) : 0;
         final Spinner spinner = (Spinner) inflater.inflate(R.layout.module_spinner, questionWrapper, false);
