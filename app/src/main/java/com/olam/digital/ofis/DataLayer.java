@@ -4457,7 +4457,12 @@ public class DataLayer {
                     values.put(OFISDBContract.AnswerEntry.COLUMN_NAME_FARMER_ID, farmerId);
                     values.put(OFISDBContract.AnswerEntry.COLUMN_NAME_OLAM_FARMER_ID, olamFarmerId);
                     values.put(OFISDBContract.AnswerEntry.COLUMN_NAME_FARM_ID, farmId);
-                    values.put("answer_" + datatype, answer);
+
+                    if(datatype.equals("text box")){
+                        values.put("answer_text", answer);
+                    }else{
+                        values.put("answer_" + datatype, answer);
+                    }
                     if (sub_answers.length() > 0 && (!datatype.equalsIgnoreCase("text"))) {
                         values.put("answer_text", sub_answers);
                     }

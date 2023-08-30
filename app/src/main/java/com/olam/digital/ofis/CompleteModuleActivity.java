@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.content.res.Resources;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
@@ -24,6 +25,7 @@ import androidx.core.content.ContextCompat;
 
 import android.text.Html;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -883,8 +885,66 @@ public class CompleteModuleActivity extends BaseActivity {
                         gpsTracker.stopLocationUpdates();
                     }
 
-//                    ArrayList<JSONObject> finalSave = dynamicQuestions.answerSet;
-//                    for (int i = 0; i <= dynamicQuestions.answerSet
+                    /*ArrayList<JSONObject> finalSave = dynamicQuestions.answerSet;
+                    try {
+                        JSONArray jsonArray = new JSONArray(finalSave);
+                        SQLiteDatabase db = Utilities.getWriteableDb(context);
+
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONObject jsonObject = jsonArray.getJSONObject(i);
+
+                            int questionId = jsonObject.getInt("question_id");
+                            int answerId = jsonObject.getInt("answer_id");
+                            int parentQuestionId = jsonObject.getInt("parent_question_id");
+                            String datatype = jsonObject.getString("datatype");
+                            String answer = jsonObject.getString("answer");
+                            int reportingYear = jsonObject.getInt("reporting_year");
+
+//                            String insertQuery = "INSERT INTO " + OFISDBContract.AnswerEntry.TABLE_NAME +
+//                                    " (question_id, parent_question_id, olam_farmer_id, reporting_year) " +
+//                                    "VALUES (" +
+//                                    questionId + ", " +
+//                                    parentQuestionId + ", " +
+//                                    farmerId + ", " +
+//                                    reportingYear +
+//                                    ");";
+
+
+                            ContentValues values = new ContentValues();
+                            values.put(OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID, questionId);
+                            values.put(OFISDBContract.AnswerEntry.COLUMN_NAME_PARENT_QUESTION_ID, parentQuestionId);
+                            values.put(OFISDBContract.AnswerEntry.COLUMN_NAME_FARMER_ID, farmerId);
+                            values.put(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_REPORTING_YEAR, reportingYear);
+                            db.insert(OFISDBContract.AnswerEntry.TABLE_NAME, null, values);
+
+                            *//*String insertSubQuestionAnswer = "INSERT INTO " + OFISDBContract.Subquestionanswer.TABLE_NAME +
+                                    "(question_id, farmer_id, module_id," +
+                                    "question_answer_position, question_answer, report_year) " +
+                                    "VALUES (" +
+                                    questionId + ", " +
+                                    farmerId + ", " +
+                                    moduleId + ", " +
+                                    "'" + datatype + "', " +
+                                    "'" + answer + "', " +
+                                    reportingYear +
+                                    ");";*//*
+
+                            ContentValues valuesSub = new ContentValues();
+                            valuesSub.put(OFISDBContract.Subquestionanswer.COLUMN_NAME_QUESTION_ID, questionId);
+                            valuesSub.put(OFISDBContract.Subquestionanswer.COLUMN_NAME_FARMER_ID, farmerId);
+                            valuesSub.put(OFISDBContract.Subquestionanswer.COLUMN_NAME_MODULE_ID, moduleId);
+                            valuesSub.put(OFISDBContract.Subquestionanswer.COLUMN_NAME_POSITION, datatype);
+                            valuesSub.put(OFISDBContract.Subquestionanswer.COLUMN_NAME_QUESTION_ANSWER, answer);
+                            valuesSub.put(OFISDBContract.Subquestionanswer.COLUMN_NAME_REPORT_YEAR, reportingYear);
+                            db.insert(OFISDBContract.Subquestionanswer.TABLE_NAME, null, valuesSub);
+
+
+
+                        }
+                        db.close();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }*/
 
 
                     ViewFarmerActivity.farmerId = farmerId;
