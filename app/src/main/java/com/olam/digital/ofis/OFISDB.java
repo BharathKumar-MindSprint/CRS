@@ -319,8 +319,9 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO_TR+ " TEXT, "
             + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO_LO+ " TEXT, "
             + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO_VI+ " TEXT, "
-            + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO_TH+ " TEXT )";
-
+            + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO_TH+ " TEXT, "
+            + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_TYPE_ID + " TEXT, "
+            + OFISDBContract.QuestionEntry.COLUMN_NAME_ANSWER_TYPE+ " TEXT)";
 
 
     private static final String OFIS_ANSWER_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.AnswerEntry.TABLE_NAME +
@@ -1010,7 +1011,10 @@ class OFISDB extends SQLiteOpenHelper {
         } catch (SQLiteException ex) {
             ex.printStackTrace();
         }
-
+        //TODO Add migration code from 148 - 149 
+        // Questions Table add two new columns on migration (displayTypeId and answerType)
+        //Remove the below alter table part and re-write proper migration Code
+      
         try {
             sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ModuleEntry.TABLE_NAME + " ADD COLUMN description TEXT default null");
             sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ModuleEntry.TABLE_NAME + " ADD COLUMN descriptionFr TEXT default null");
