@@ -899,7 +899,7 @@ public class DataLayer {
             }
 
         } catch (JSONException e) {
-            FirebaseCrash.report(new Exception("DataLayer: Error marking task as synced or delivered", e));
+            FirebaseCrashlytics.getInstance().log(e.getMessage());
             e.printStackTrace();
         }
     }
@@ -1587,7 +1587,7 @@ public class DataLayer {
                 db.insert(OFISDBContract.PhoneNumber.TABLE_NAME, null, values);
             }
         } catch (JSONException e) {
-            FirebaseCrash.report(new Exception("DataLayer: Error setting phone number storage values", e));
+            FirebaseCrashlytics.getInstance().log(e.getMessage());
             e.printStackTrace();
         }
 

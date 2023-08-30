@@ -54,15 +54,9 @@ public class AuthenticationClient {
     private static HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
     public static <S> S createService(
             Class<S> serviceClass, Context context) {
-        setup(context);
-        /*TokenInterceptor interceptor =
-                new TokenInterceptor();*/
-
         httpClient.connectTimeout(60, TimeUnit.MINUTES);
         httpClient.readTimeout(60, TimeUnit.MINUTES);
-//        httpClient.addInterceptor(interceptor);
-        httpClient.addInterceptor(interceptor.setLevel(HttpLoggingInterceptor.Level.BODY));
-        httpClient.addNetworkInterceptor(interceptor);
+        httpClient.addNetworkInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY));
         httpClient.sslSocketFactory(getSSLSocketFactory());
         httpClient.retryOnConnectionFailure(false);
         builder.client(httpClient.build());

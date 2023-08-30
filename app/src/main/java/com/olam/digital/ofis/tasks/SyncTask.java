@@ -41,6 +41,7 @@ abstract class SyncTask extends AsyncTask<SyncTaskOperationType, Object, String>
     private static final String BASE_URL = BuildConfig.HOST;
     private static final String ODBASE_URL = BuildConfig.ODHOST;
     final Context context;
+
     private static HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
 
     private static final OkHttpClient okHttpClient = new OkHttpClient.Builder()

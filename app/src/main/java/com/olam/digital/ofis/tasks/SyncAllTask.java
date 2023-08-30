@@ -1019,10 +1019,6 @@ public class SyncAllTask extends SyncTask {
 
                         publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.downloading_notification));
                         delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_SMART_NOTIFICATION);
-//                        Utilities.setMultiFarmPref(context, MultiFarmUtils.IS_MULTI_FARM_ENUMERATOR, false);
-//                        publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.updating_sip_training));
-//                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_SIP_MODULES);
-
                     } else {
                         try {
                             FabricLogsWriter.printCrashLog(TAG, finalEndPoint, postResponse.code(), postResponse.networkResponse().toString(), context);
