@@ -116,6 +116,8 @@
     <!-- For View Sub Module - questionnaire default values -->
     <string name="ModuleTitle">Título del módulo aquí</string>
     <string name="ModuleSubTitle">Subtítulo del módulo aquí</string>
+    <string name="ModuleTitleDescription">Module Description goes here</string>
+    <string name="ModuleSubTitleDescription">Module sub description goes here</string>
     <string name="ModuleStatus">Nueva tarea</string>
     <string name="module_in_progress">En progreso: </string>
     <string name="module_finished">Completado pero NO Enviado</string>

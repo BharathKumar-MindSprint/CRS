@@ -40,9 +40,10 @@ class UpdateModuleListsTask extends DatabaseTask {
             if (moduleResponse.getInt("resultcount") > 0) {
 
                 JSONObject response = moduleResponse.getJSONObject("outputdata");
+                JSONObject questionnaireData = moduleResponse.getJSONObject("outputdata").getJSONObject("questionnaireData");
 
                 // get the various sub lists
-                JSONArray moduleArray, submoduleArray, moduelassignmentArray, datatypeArray, lookupvalueArray, questionArray, countryLookUpValuesArray;
+                JSONArray moduleArray, submoduleArray, moduelassignmentArray, datatypeArray, lookupvalueArray, questionArray, countryLookUpValuesArray, questionTypeArray , answerTypeArray, recurrenceTypeArray;
                 try {
                     moduleArray = response.getJSONArray(OFISDBContract.ModuleEntry.TABLE_NAME);
 /*
@@ -104,6 +105,31 @@ class UpdateModuleListsTask extends DatabaseTask {
                     FirebaseCrash.report(new Exception("UpdateModuleListsTask: Error filling questions table", e));
                     e.printStackTrace();
                 }
+
+                try {
+                    questionTypeArray = questionnaireData.getJSONArray(OFISDBContract.QuestionType.TABLE_NAME);
+                    fillTable(questionTypeArray, OFISDBContract.QuestionType.TABLE_NAME, OFISDBContract.QuestionType.COLUMN_LIST);
+                } catch (JSONException e) {
+                    FirebaseCrash.report(new Exception("QuestionType: Error filling QuestionType table", e));
+                    e.printStackTrace();
+                }
+
+                try {
+                    answerTypeArray = questionnaireData.getJSONArray(OFISDBContract.AnswerType.TABLE_NAME);
+                    fillTable(answerTypeArray, OFISDBContract.AnswerType.TABLE_NAME, OFISDBContract.AnswerType.COLUMN_LIST);
+                } catch (JSONException e) {
+                    FirebaseCrash.report(new Exception("AnswerType: Error filling AnswerType table", e));
+                    e.printStackTrace();
+                }
+
+                try {
+                    recurrenceTypeArray = questionnaireData.getJSONArray(OFISDBContract.RecurrenceType.TABLE_NAME);
+                    fillTable(recurrenceTypeArray, OFISDBContract.RecurrenceType.TABLE_NAME, OFISDBContract.RecurrenceType.COLUMN_LIST);
+                } catch (JSONException e) {
+                    FirebaseCrash.report(new Exception("RecurrenceType: Error filling RecurrenceType table", e));
+                    e.printStackTrace();
+                }
+
             }
         } catch(JSONException e){
             FirebaseCrash.report(new Exception("UpdateModuleListsTask: Error getting module lists table response", e));

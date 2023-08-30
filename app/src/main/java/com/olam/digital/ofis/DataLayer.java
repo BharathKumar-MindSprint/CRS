@@ -62,6 +62,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
@@ -4456,7 +4457,12 @@ public class DataLayer {
                     values.put(OFISDBContract.AnswerEntry.COLUMN_NAME_FARMER_ID, farmerId);
                     values.put(OFISDBContract.AnswerEntry.COLUMN_NAME_OLAM_FARMER_ID, olamFarmerId);
                     values.put(OFISDBContract.AnswerEntry.COLUMN_NAME_FARM_ID, farmId);
-                    values.put("answer_" + datatype, answer);
+
+                    if(datatype.equals("text box")){
+                        values.put("answer_text", answer);
+                    }else{
+                        values.put("answer_" + datatype, answer);
+                    }
                     if (sub_answers.length() > 0 && (!datatype.equalsIgnoreCase("text"))) {
                         values.put("answer_text", sub_answers);
                     }
@@ -7131,6 +7137,26 @@ public class DataLayer {
         return  farmerName;
     }
 
+    public String getAssignmentByFarmerTypeID(long farmerId , String assignmentTypeColumn ){
+        String assignmentField="";
+        Cursor farmerCursor=null;
+        try {
+            String[] columns = new String[]{"*"};
+            String whereClause = OFISDBContract.FarmerEntry.COLUMN_NAME_ID + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(farmerId)};
+            farmerCursor = db.query(OFISDBContract.FarmerEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+            if (farmerCursor != null) {
+                while (farmerCursor.moveToNext()) {
+                    assignmentField = farmerCursor.getString(farmerCursor.getColumnIndex(assignmentTypeColumn));
+                }
+            }
+        } catch (Exception e) {
+        }finally {
+            farmerCursor.close();
+        }
+        return  assignmentField;
+    }
+
     public String getChildNamefromDb(Long childId) {
         String childName="";
         Cursor cursor=null;
@@ -7149,6 +7175,72 @@ public class DataLayer {
             cursor.close();
         }
         return  childName;
+    }
+
+    public String getAnswerTypeValue(int id){
+        String value = "";
+        Cursor cursor = null;
+        try {
+            String[] columns = new String[]{"*"};
+            String whereClause = OFISDBContract.AnswerType.COLUMN_NAME_ID + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(id)};
+            cursor = db.query(OFISDBContract.AnswerType.TABLE_NAME,columns,whereClause,whereArgs,null,null,null,null);
+            if (cursor != null){
+                while(cursor.moveToNext()){
+                    value = cursor.getString(cursor.getColumnIndex(OFISDBContract.AnswerType.COLUMN_NAME_VALUE));
+                }
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            cursor.close();
+        }
+        return value;
+
+    }
+
+    public String getAnswerTypeByQuestionID(int id){
+        String value = "";
+        Cursor cursor = null;
+        try {
+            String[] columns = new String[]{"answerType"};
+            String whereClause = OFISDBContract.QuestionEntry.COLUMN_NAME_ID + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(id)};
+            cursor = db.query(OFISDBContract.QuestionEntry.TABLE_NAME,columns,whereClause,whereArgs,null,null,null,null);
+            if (cursor != null){
+                while(cursor.moveToNext()){
+                    value = cursor.getString(cursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ANSWER_TYPE));
+                }
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            cursor.close();
+        }
+        return value;
+
+    }
+
+    public String getDisplayConfigurationByQuestionID(int id){
+        String value = "";
+        Cursor cursor = null;
+        try {
+            String[] columns = new String[]{"*"};
+            String whereClause = OFISDBContract.QuestionEntry.COLUMN_NAME_ID + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(id)};
+            cursor = db.query(OFISDBContract.QuestionEntry.TABLE_NAME,columns,whereClause,whereArgs,null,null,null,null);
+            if (cursor != null){
+                while(cursor.moveToNext()){
+                    value = cursor.getString(cursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION));
+                }
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            cursor.close();
+        }
+        return value;
+
     }
 
     public long getFarmerGroupById(Long farmerId) {
@@ -9298,6 +9390,74 @@ public class DataLayer {
             moduleCursor.close();
         }
         return  message;
+    }
+
+    public String getShowDescriptionModule(int moduleID , int subModuleID){
+        String showDescription = "";
+        Cursor cursor = null;
+        try {
+            String[] columns = new String[]{"showDescription"};
+            String whereClause = OFISDBContract.SubmoduleEntry.COLUMN_NAME_ID + " = ? AND "+ OFISDBContract.SubmoduleEntry.COLUMN_NAME_MODULE_ID + " =? ";
+            String[] whereArgs = new String[]{String.valueOf(subModuleID), String.valueOf(moduleID)};
+            cursor = db.query(OFISDBContract.SubmoduleEntry.TABLE_NAME , columns , whereClause , whereArgs , null , null , null);
+            if (cursor!=null){
+                while (cursor.moveToNext()){
+                    showDescription = cursor.getString(cursor.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_SHOW_DESCRIPTION));
+                }
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        return showDescription;
+    }
+
+    public String getDescriptionByModuleId(int moduleId ,String lang) {
+        String description = "";
+        Cursor moduleCursor = null;
+        try{
+            String[] columns = null;
+            if (Objects.equals(lang, "en")){
+                columns = new String[]{"description"};
+            } else if (Objects.equals(lang, "in")) {
+                columns = new String[]{"descriptionId"};
+            } else {
+                columns = new String[]{"description"+lang};
+            }
+
+            String whereClause = OFISDBContract.ModuleEntry.COLUMN_NAME_ID + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(moduleId)};
+            moduleCursor = db.query(OFISDBContract.ModuleEntry.TABLE_NAME , columns , whereClause , whereArgs , null , null , null);
+            if (moduleCursor != null){
+                while (moduleCursor.moveToNext()){
+                    if (Objects.equals(lang, "en")){
+                        description = moduleCursor.getString(moduleCursor.getColumnIndex(OFISDBContract.ModuleEntry.COLUMN_NAME_DESCRIPTION));
+                    } else if (Objects.equals(lang , "es")) {
+                        description = moduleCursor.getString(moduleCursor.getColumnIndex(OFISDBContract.ModuleEntry.COLUMN_NAME_DESCRIPTION_ES));
+                    }else if (Objects.equals(lang , "fr")) {
+                        description = moduleCursor.getString(moduleCursor.getColumnIndex(OFISDBContract.ModuleEntry.COLUMN_NAME_DESCRIPTION_FR));
+                    }else if (Objects.equals(lang , "id") || Objects.equals(lang , "in")) {
+                        description = moduleCursor.getString(moduleCursor.getColumnIndex(OFISDBContract.ModuleEntry.COLUMN_NAME_DESCRIPTION_ID));
+                    }else if (Objects.equals(lang , "lo")) {
+                        description = moduleCursor.getString(moduleCursor.getColumnIndex(OFISDBContract.ModuleEntry.COLUMN_NAME_DESCRIPTION_LO));
+                    }else if (Objects.equals(lang , "pt")) {
+                        description = moduleCursor.getString(moduleCursor.getColumnIndex(OFISDBContract.ModuleEntry.COLUMN_NAME_DESCRIPTION_PT));
+                    }else if (Objects.equals(lang , "th")) {
+                        description = moduleCursor.getString(moduleCursor.getColumnIndex(OFISDBContract.ModuleEntry.COLUMN_NAME_DESCRIPTION_TH));
+                    }else if (Objects.equals(lang , "tr")) {
+                        description = moduleCursor.getString(moduleCursor.getColumnIndex(OFISDBContract.ModuleEntry.COLUMN_NAME_DESCRIPTION_TR));
+                    }else if (Objects.equals(lang , "vi")) {
+                        description = moduleCursor.getString(moduleCursor.getColumnIndex(OFISDBContract.ModuleEntry.COLUMN_NAME_DESCRIPTION_VI));
+                    }
+
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            moduleCursor.close();
+        }
+
+        return description;
     }
 
 

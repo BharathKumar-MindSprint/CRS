@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.content.res.Resources;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
@@ -24,6 +25,7 @@ import androidx.core.content.ContextCompat;
 
 import android.text.Html;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -76,11 +78,15 @@ import com.olam.digital.ofis.multifarm.FindMultiFarmFarmerAdapter;
 import com.olam.digital.ofis.multifarm.MultiFarmDTO;
 import com.olam.digital.ofis.multifarm.MultiFarmUtils;
 
+import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Locale;
+import java.util.Objects;
 
 public class CompleteModuleActivity extends BaseActivity {
 
@@ -98,7 +104,7 @@ public class CompleteModuleActivity extends BaseActivity {
     private String recordedLng;
     private String farmerName;
     private String viewModuleAns;
-    private Cursor subModules, questions;
+    private Cursor subModules, questions , modules;
     public static Cursor allQuestions;
     private Context context;
     private Resources res;
@@ -461,9 +467,18 @@ public class CompleteModuleActivity extends BaseActivity {
     private void setupTopSection() {
         try {
             TextView moduleNameTv = (TextView) findViewById(R.id.completeModuleModuleTitle);
+            TextView moduleDescriptionTv = (TextView) findViewById(R.id.completeModuleModuleDescription);
             TextView subModuleNameTv = (TextView) findViewById(R.id.completeModuleSubModuleTitle);
 
+            String language = Locale.getDefault().getLanguage();
+            String moduleDescription = dl.getDescriptionByModuleId(Integer.parseInt(String.valueOf(moduleId)) , language);
+
             moduleNameTv.setText(moduleName);
+
+            if (moduleDescription!=null && !moduleDescription.equals("null")) {
+                moduleDescriptionTv.setVisibility(View.VISIBLE);
+                moduleDescriptionTv.setText(moduleDescription);
+            }
 
             moduleNameTv.post(new Runnable() {
                 @Override
@@ -481,6 +496,14 @@ public class CompleteModuleActivity extends BaseActivity {
 
             int columnIndex = (subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME + dynamicQuestions.questionColumnSuffix) != -1) ? subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME + dynamicQuestions.questionColumnSuffix) : subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME);
             subModuleNameTv.setText(subModules.getString(columnIndex));
+            String showDescription = dl.getShowDescriptionModule(Integer.parseInt(String.valueOf(moduleId)),subModuleId);
+            int columnSubModulesDescription = (subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_DESCRIPTION + dynamicQuestions.questionColumnSuffix) != -1) ? subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_DESCRIPTION + dynamicQuestions.questionColumnSuffix) : subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_DESCRIPTION);
+            if (!Objects.equals(showDescription, "false")){
+                TextView subModuleDescriptionTv = (TextView) findViewById(R.id.completeModuleSubModuleDescription);
+                subModuleDescriptionTv.setVisibility(View.VISIBLE);
+                subModuleDescriptionTv.setText(subModules.getString(columnSubModulesDescription));
+            }
+
 
             subModuleNameTv.post(new Runnable() {
                 @Override
@@ -583,6 +606,9 @@ public class CompleteModuleActivity extends BaseActivity {
                             }
                         }
                     }catch (Exception e){}*/
+                }
+                else if (displayType.replaceAll(" ", "").toLowerCase().equals("radio")) {
+                    dynamicQuestions.renderRadioQuestion(questions, false, dynamicQuestions.questionsSection, farmerId, farmerModuleId , false);
                 }
             } while (questions.moveToNext());
         }
@@ -822,7 +848,8 @@ public class CompleteModuleActivity extends BaseActivity {
 
         }*/
         boolean bool=dynamicQuestions.checkDisplayStatus((int) moduleId);
-        if (action.equalsIgnoreCase("exit") || action.equalsIgnoreCase("finish")) {
+        /// required recheck before push
+        /*if (action.equalsIgnoreCase("exit") || action.equalsIgnoreCase("finish")) {
             if(bool){
                 if (!dynamicQuestions.requiredFieldsAnswered((int) farmerModuleId, (int) moduleId)) {
                     statusFinished = 0;
@@ -836,7 +863,7 @@ public class CompleteModuleActivity extends BaseActivity {
                 dl.deleteNetworkQueueItemByFarmerModuleId((int) farmerModuleId);
                 Toast.makeText(context, res.getString(R.string.complete_all_required_fields_mandatry), Toast.LENGTH_LONG).show();
             }
-        }
+        }*/
         if (action.equalsIgnoreCase("exit")) {
             statusFinished = 0;
         }
@@ -857,6 +884,68 @@ public class CompleteModuleActivity extends BaseActivity {
                         collectGPSPoint(mCurrentCapturedLocation);
                         gpsTracker.stopLocationUpdates();
                     }
+
+                    /*ArrayList<JSONObject> finalSave = dynamicQuestions.answerSet;
+                    try {
+                        JSONArray jsonArray = new JSONArray(finalSave);
+                        SQLiteDatabase db = Utilities.getWriteableDb(context);
+
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONObject jsonObject = jsonArray.getJSONObject(i);
+
+                            int questionId = jsonObject.getInt("question_id");
+                            int answerId = jsonObject.getInt("answer_id");
+                            int parentQuestionId = jsonObject.getInt("parent_question_id");
+                            String datatype = jsonObject.getString("datatype");
+                            String answer = jsonObject.getString("answer");
+                            int reportingYear = jsonObject.getInt("reporting_year");
+
+//                            String insertQuery = "INSERT INTO " + OFISDBContract.AnswerEntry.TABLE_NAME +
+//                                    " (question_id, parent_question_id, olam_farmer_id, reporting_year) " +
+//                                    "VALUES (" +
+//                                    questionId + ", " +
+//                                    parentQuestionId + ", " +
+//                                    farmerId + ", " +
+//                                    reportingYear +
+//                                    ");";
+
+
+                            ContentValues values = new ContentValues();
+                            values.put(OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID, questionId);
+                            values.put(OFISDBContract.AnswerEntry.COLUMN_NAME_PARENT_QUESTION_ID, parentQuestionId);
+                            values.put(OFISDBContract.AnswerEntry.COLUMN_NAME_FARMER_ID, farmerId);
+                            values.put(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_REPORTING_YEAR, reportingYear);
+                            db.insert(OFISDBContract.AnswerEntry.TABLE_NAME, null, values);
+
+                            *//*String insertSubQuestionAnswer = "INSERT INTO " + OFISDBContract.Subquestionanswer.TABLE_NAME +
+                                    "(question_id, farmer_id, module_id," +
+                                    "question_answer_position, question_answer, report_year) " +
+                                    "VALUES (" +
+                                    questionId + ", " +
+                                    farmerId + ", " +
+                                    moduleId + ", " +
+                                    "'" + datatype + "', " +
+                                    "'" + answer + "', " +
+                                    reportingYear +
+                                    ");";*//*
+
+                            ContentValues valuesSub = new ContentValues();
+                            valuesSub.put(OFISDBContract.Subquestionanswer.COLUMN_NAME_QUESTION_ID, questionId);
+                            valuesSub.put(OFISDBContract.Subquestionanswer.COLUMN_NAME_FARMER_ID, farmerId);
+                            valuesSub.put(OFISDBContract.Subquestionanswer.COLUMN_NAME_MODULE_ID, moduleId);
+                            valuesSub.put(OFISDBContract.Subquestionanswer.COLUMN_NAME_POSITION, datatype);
+                            valuesSub.put(OFISDBContract.Subquestionanswer.COLUMN_NAME_QUESTION_ANSWER, answer);
+                            valuesSub.put(OFISDBContract.Subquestionanswer.COLUMN_NAME_REPORT_YEAR, reportingYear);
+                            db.insert(OFISDBContract.Subquestionanswer.TABLE_NAME, null, valuesSub);
+
+
+
+                        }
+                        db.close();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }*/
+
 
                     ViewFarmerActivity.farmerId = farmerId;
                     //SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(farmerId);
@@ -1088,6 +1177,8 @@ public class CompleteModuleActivity extends BaseActivity {
                              }
                          }
                      }catch (Exception e){}*/
+                 }else if (displayType.replaceAll(" ", "").toLowerCase().equals("radio")) {
+                     dynamicQuestions.renderRadioQuestion(questions, false, dynamicQuestions.questionsSection, farmerId, farmerModuleId , false);
                  }
              }
             }

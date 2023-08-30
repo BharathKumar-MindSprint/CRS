@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RadioButton xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/radioButton"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="start|center_vertical"
+    android:button="@null"
+    style="@style/CheckboxStyle"
+    android:paddingRight="@dimen/ofis_small_pad"
+    android:paddingEnd="32dp"
+    android:textSize="@dimen/ofis_micro_text"/>
