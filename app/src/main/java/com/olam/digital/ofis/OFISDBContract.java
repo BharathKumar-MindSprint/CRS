@@ -560,7 +560,7 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_SIPKEY = "sipKey";
 
         public static final String COLUMN_NAME_QUESTION_INFO = "questionInfo";
-        public static final String COLUMN_NAME_QUESTION_INFO_ES = "questionInfoES";
+        public static final String COLUMN_NAME_QUESTION_INFO_ES = "questionInfoEs";
         public static final String COLUMN_NAME_QUESTION_INFO_FR = "questionInfoFr";
         public static final String COLUMN_NAME_QUESTION_INFO_ID = "questionInfoId";
         public static final String COLUMN_NAME_QUESTION_INFO_PT = "questionInfoPt";

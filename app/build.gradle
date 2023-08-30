@@ -36,8 +36,8 @@ android {
         //noinspection OldTargetApi
         targetSdkVersion 29
         multiDexEnabled true
-        versionCode 66
-        versionName "10.5.10"
+        versionCode 67
+        versionName "10.6.0"
 
 
         javaCompileOptions {
@@ -94,21 +94,22 @@ android {
         }
 
         devofi {
-            // Original
-            applicationId "com.olam.digital.ofisdebug"
+
+            applicationId "com.olam.digital.ofis"
+
             resValue "string", "contentprovider_authorities", applicationId + '.provider'
             resValue "string", "sync_account_type", applicationId
-            buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofisdebug"'
+            buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofis"'
+            // New SIT DNS name
+            // https://otofis-zuul.olamdigital.com/
 
-            resValue "string", "applicationName", "OFI DEV"
-            //  resValue "string", "AUTH_SERVER_URL", 'https://otofis-dev-zuul.olamdigital.com/oauth/api/v1/oauth/'
-            resValue "string", "AUTH_SERVER_URL", 'https://digitalauthdev.olamnet.com/auth/realms/ofis-dse-manna-dev/protocol/openid-connect/'
-            buildConfigField 'String', 'HOST', '"https://otofis-dev-manna-zuul.olamdigital.com/"'
-            buildConfigField 'String', 'ODHOST', '"https://manna-dev-apigateway.olamdirect.com/"'
-            buildConfigField 'String', 'DOWNLOADURL', '"https://ofisdevscs-manna.olamdigital.com/"'
-
+            resValue "string", "applicationName", "OFI Companion"
+            resValue "string", "AUTH_SERVER_URL", 'https://digitalauth.olamnet.com/auth/realms/ofis-dse/protocol/openid-connect/'
+            buildConfigField 'String', 'HOST', '"https://otofis-zuul.olamdigital.com/"'
+            buildConfigField 'String', 'ODHOST', '"https://sit-apigateway.olamdirect.com/"'
+            buildConfigField 'String', 'DOWNLOADURL', '"https://ofisprdscs.olamdigital.com/"'
             buildConfigField "String", "MATOMO_SERVER_URL", '"https://olammatomo.azurewebsites.net/matomo.php"'
-            buildConfigField "int", "MATOMO_SERVER_CODE", '35'
+            buildConfigField "int", "MATOMO_SERVER_CODE", '39'
             buildConfigField "boolean", "MATOMO_ENABLED", 'false'
 
         }
