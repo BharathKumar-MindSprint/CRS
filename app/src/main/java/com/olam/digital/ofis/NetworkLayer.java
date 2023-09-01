@@ -1225,17 +1225,12 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     while (trainingAttendees.moveToNext()) {
                         long farmerId = trainingAttendees.getLong(trainingAttendees.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_FARMER_ID));
                         if (!dl.isFarmerSynced(farmerId)) {
-                            if (dl.isAvailableInNqTable(farmerId)) {
-                                msg.what = 3;
-                                msg.arg1 = total;
-                                msg.arg2 = HomeActivity.progressItem = progress + 1;
-                                msg.obj = String.valueOf(res.getString(R.string.farmer_not_synced));
-                                handler.dispatchMessage(msg);
-                                return;
-                            }else {
-                                getFarmerData(networkQueueItemId, handler, msg, total, progress, originalSyncRequestItemId);
-                                return;
-                            }
+                            msg.what = 3;
+                            msg.arg1 = total;
+                            msg.arg2 = HomeActivity.progressItem = progress + 1;
+                            msg.obj = String.valueOf(res.getString(R.string.farmer_not_synced));
+                            handler.dispatchMessage(msg);
+                            return;
                         } else {
 
                             try {
@@ -2201,15 +2196,9 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     }
                 }
             } finally {
-                if(farmerModule != null  && !farmerModule.isClosed()) {
-                    farmerModule.close();
-                }
-                if(extraInfo != null  && !extraInfo.isClosed()){
-                    extraInfo.close();
-                }
-                if(moduleAnswers != null  && !moduleAnswers.isClosed()) {
-                    moduleAnswers.close();
-                }
+                farmerModule.close();
+                extraInfo.close();
+                moduleAnswers.close();
             }
         } catch (CursorIndexOutOfBoundsException e) {
         }
