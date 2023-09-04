@@ -3,14 +3,10 @@ package com.olam.digital.ofis.authentication;
 import android.content.Context;
 import android.os.AsyncTask;
 
-import com.google.gson.Gson;
-import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.Utilities;
 import com.olam.digital.ofis.authentication.model.AuthRequestDTO;
 import com.olam.digital.ofis.authentication.model.AuthenticationDTO;
-import com.olam.digital.ofis.dynatrace.DynatraceConstants;
-import com.olam.digital.ofis.dynatrace.DynatraceHelper;
-
+import com.olam.digital.ofis.constants.IAPIConstants;
 
 
 import org.json.JSONObject;
@@ -82,7 +78,6 @@ public class AccessTokenTask extends AsyncTask<Object, Object, String> {
                     Response authResponse1 = authCall1.execute();
                     if (authResponse1.isSuccessful()) {
                         AuthenticationDTO authenticationDTO = (AuthenticationDTO) authResponse1.body();
-                        DynatraceHelper.requestPayload(DynatraceConstants.AUTHENTICATION_RESPONSE, new Gson().toJson(authenticationDTO), mContext, false);
                         authenticationDTO.setWillExpireAt((System.currentTimeMillis()/1000) + authenticationDTO.getExpiresIn() /1000);
                         new AuthenticationHelper(mContext).setAuthenticationDTO(authenticationDTO);
                         new AuthenticationHelper(mContext).setUserName(authRequestDTO.getUsername());
@@ -93,8 +88,7 @@ public class AccessTokenTask extends AsyncTask<Object, Object, String> {
                     } else {
                         JSONObject inputArgs = new JSONObject();
 
-                       String endpoint = "ofisoauth/api/v1/oauth/migrateRole?enumeratorId="+Utilities.getFromSharedPrefs(mContext)+"&installId="+DeviceIDxctractor.fetchDeviceID(mContext);
-                       // inputArgs.put("deviceId", DeviceIDxctractor.fetchDeviceID(mContext));
+                       String endpoint = IAPIConstants.MIGRATE_ROLE + "?enumeratorId="+Utilities.getFromSharedPrefs(mContext)+"&installId="+DeviceIDxctractor.fetchDeviceID(mContext);
                         okHttpPostOauth(mContext, endpoint, inputArgs, new Callback() {
                             @Override
                             public void onResponse(okhttp3.Call call, final okhttp3.Response postResponse) throws IOException {

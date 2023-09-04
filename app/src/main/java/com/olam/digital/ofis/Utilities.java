@@ -57,11 +57,6 @@ public class Utilities {
     public static final String AGROLEARN_ENUMERATOR = "isEnableAgrolearn";
     public static final String DM_ENUMERATOR = "isEnableDiagnosticModule";
 
-    public static final String DOWNLOAD_FARMPLAN = "isFarmPlanAvailable";
-    public static int syctask=0;
-
-
-
     public  static  long farmerId;
     public  static String productId;
     public  static String countryId;
@@ -90,7 +85,6 @@ public class Utilities {
     public static String UNREAD = "U";
     public static String DELETED = "D";
     public static String NOTIFICATIONLIST = "notificationDetailsList";
-    public static String MODULELIST = "moduleList";
     public static String FDP = "FDP";
     public static String MODULE = "module";
     public static String PASSWORD = "password";
@@ -146,17 +140,6 @@ public  static String base64ConversionForImage(String filepath)  {
             }
         }
         return returnVal;
-    }
-
-    static String[] since1950() {
-        int currentYear = Calendar.getInstance().get(Calendar.YEAR);
-        int difference = currentYear - 1950;
-        String[] since1950 = new String[difference];
-
-        for (int i = 0; i < difference; i++) {
-            since1950[i] = String.valueOf(currentYear - i);
-        }
-        return since1950;
     }
 
     static String[] since1900() {
@@ -379,12 +362,6 @@ public  static String base64ConversionForImage(String filepath)  {
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
 
         return sharedPreferences.getInt(prefName, 0);
-    }
-
-    public static String getStringFromSharedPrefs(Context context, String prefName) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
-
-        return sharedPreferences.getString(prefName, "");
     }
 
     public static String getIMEI(Context c) {
@@ -642,24 +619,6 @@ public  static String base64ConversionForImage(String filepath)  {
         return calendar.getTimeInMillis();
     }
 
-    public static Long currentDateStringToMilliSeconds(){
-
-        Calendar cal=Calendar.getInstance();
-        Date currentDate=cal.getTime();
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-        Long timeInSeconds=0L;
-        try{
-            String strCurrentDate=formatter.format(currentDate);
-            Date date = formatter.parse(strCurrentDate);
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(date);
-            timeInSeconds= calendar.getTimeInMillis();
-        }catch(ParseException e){
-            e.printStackTrace();
-        }
-        return timeInSeconds;
-    }
-
     public static Long dateStringToMilliSeconds(String dateStr){
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -673,37 +632,6 @@ public  static String base64ConversionForImage(String filepath)  {
             e.printStackTrace();
         }
         return timeInSeconds;
-    }
-
-    public static void setListViewHeightBasedOnChildren(ListView listView)
-    {
-        ListAdapter listAdapter = listView.getAdapter();
-        if (listAdapter == null)
-            return;
-
-        int desiredWidth = View.MeasureSpec.makeMeasureSpec(listView.getWidth(), View.MeasureSpec.UNSPECIFIED);
-        int totalHeight=0;
-        View view = null;
-
-        for (int i = 0; i < listAdapter.getCount(); i++)
-        {
-            view = listAdapter.getView(i, view, listView);
-
-            if (i == 0)
-                view.setLayoutParams(new ViewGroup.LayoutParams(desiredWidth,
-                        WindowManager.LayoutParams.MATCH_PARENT));
-
-            view.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
-            totalHeight += view.getMeasuredHeight();
-
-        }
-
-        ViewGroup.LayoutParams params = listView.getLayoutParams();
-        params.height = totalHeight + ((listView.getDividerHeight()) * (listAdapter.getCount()));
-
-        listView.setLayoutParams(params);
-        listView.requestLayout();
-
     }
 
     public static void setKeycloakClientDetails(Context context, String prefName, String value) {

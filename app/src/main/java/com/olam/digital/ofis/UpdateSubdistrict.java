@@ -2,7 +2,6 @@ package com.olam.digital.ofis;
 
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -12,18 +11,12 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.firebase.crash.FirebaseCrash;
+import androidx.annotation.Nullable;
+import androidx.core.app.NavUtils;
+
 import com.olam.digital.ofis.childlabour.ChildLabourUtils;
 import com.olam.digital.ofis.matoma.MatomoHelper;
 import com.olam.digital.ofis.matoma.ScreenNameConstants;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.Hashtable;
-
-import androidx.annotation.Nullable;
-import androidx.core.app.NavUtils;
 
 public class UpdateSubdistrict extends BaseActivity implements View.OnClickListener{
 

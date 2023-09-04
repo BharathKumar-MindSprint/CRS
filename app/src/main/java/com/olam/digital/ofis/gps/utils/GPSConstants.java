@@ -21,14 +21,11 @@ public class GPSConstants {
     // Phase 2 Information
     public static final String MODULE_UPDATE_SIGNATURE="Signature captured";
     public static final String MODULE_ADD_NATIONAL_ID="National ID captured";
-    public static final String MODULE_ADD_BIOMETRIC_VALIDATION="Biometric verified";
 
 
     public static final String OLAM_ENUMERATOR_ID = "olamEnumeratorId";
     public static final String GPS_TRACK_DETAILS = "gpsTrackDetails";
     public static final String COLUMN_ENUMERATOR_NAME = "enumeratorName";
 
-  //  public static final String SYNC_END_POINT = "ofismaster/master/enumeratorgpstracking";
-    public static final String SYNC_END_POINT = "ofisenumeratorgpstracker/gps-tracking/enumeratorgpstracking";
 
 }
