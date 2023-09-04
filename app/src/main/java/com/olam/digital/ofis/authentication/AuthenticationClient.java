@@ -50,10 +50,10 @@ public class AuthenticationClient {
             retrofit = builder.build();
         }
     }
-
-    private static HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+    
     public static <S> S createService(
             Class<S> serviceClass, Context context) {
+        setup(context);
         httpClient.connectTimeout(60, TimeUnit.MINUTES);
         httpClient.readTimeout(60, TimeUnit.MINUTES);
         httpClient.addNetworkInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY));
