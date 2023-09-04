@@ -14,7 +14,7 @@ class OFISDB extends SQLiteOpenHelper {
     private static OFISDB sInstance;
 
 
-    private static final int DATABASE_VERSION = 148;
+    private static final int DATABASE_VERSION = 149;
 
 
     private static final String DATABASE_NAME = "ofismobile";
@@ -952,7 +952,7 @@ class OFISDB extends SQLiteOpenHelper {
             ex.printStackTrace();
         }
 
-       if(oldVersion < 148 ) {
+       if(oldVersion < 149 ) {
             migrateFromVersionBelow148(sqLiteDatabase);
         }
 
