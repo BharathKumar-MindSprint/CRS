@@ -1631,11 +1631,11 @@ public class DataLayer {
     }
 
 
-    public void addFarmerNationalids(JSONArray storeableNationalids, long farmerid, long nationalId) {
+    public void addFarmerNationalids(JSONArray storeableNationalids, long farmerid) {
 
-        String whereClause = OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID + " = ? AND " +
-                OFISDBContract.FarmerNationalIDs.COLUMN_NID_TYPE + " = ?";
-        String[] whereArgs = new String[]{String.valueOf(farmerid), String.valueOf(nationalId)};
+        String[] columns = new String[]{"*"};
+        String whereClause = OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID + " = ? ";
+        String[] whereArgs = new String[]{String.valueOf(farmerid)};
 
         try {
             db.delete(OFISDBContract.FarmerNationalIDs.TABLE_NAME, whereClause, whereArgs);
@@ -3666,6 +3666,7 @@ public class DataLayer {
         String whereClause = OFISDBContract.FarmerAssignments.COLUMN_COUNTRY_iD + " = ?";
         String[] whereArgs = new String[]{String.valueOf(countryid)};
         String orderBy = OFISDBContract.FarmerAssignments.COLUMN_COUNTRY_iD + " ASC";
+
         return db.query(OFISDBContract.FarmerAssignments.TABLE_NAME, columns, whereClause, whereArgs, null, null, orderBy);
     }
 
