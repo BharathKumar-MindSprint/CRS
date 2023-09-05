@@ -44,6 +44,7 @@ import com.olam.digital.ofis.multifarm.MultiFarmRoleDTO;
 import com.olam.digital.ofis.multifarm.MultiFarmUtils;
 import com.olam.digital.ofis.multifarm.MultifarmFarmerDTO;
 import com.olam.digital.ofis.multifarm.SubmittedInfo;
+import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.daos.FollowUpItemMainTableDao;
 import com.olam.digital.ofis.smartnotification.dto.NotificationDTO;
 
 import org.json.JSONArray;
@@ -1631,32 +1632,21 @@ public class DataLayer {
     }
 
 
-    public void addFarmerNationalids(JSONArray storeableNationalids, long farmerid) {
-
-        String[] columns = new String[]{"*"};
-        String whereClause = OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID + " = ? ";
-        String[] whereArgs = new String[]{String.valueOf(farmerid)};
-
-        try {
-            db.delete(OFISDBContract.FarmerNationalIDs.TABLE_NAME, whereClause, whereArgs);
-        }catch (Exception e){}
-
-        int arrayLength = storeableNationalids.length();
+    /*void addLocalFarmerNationalids(ArrayList<NationalIdDTO> storeableNationalids) {
+        int arrayLength = storeableNationalids.size();
         try {
             for (int i = 0; i < arrayLength; i++) {
                 ContentValues values = new ContentValues();
-                values.put(OFISDBContract.FarmerNationalIDs.COLUMN_NID_NUMBER, storeableNationalids.getJSONObject(i).getString("id_number"));
-                values.put(OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID, storeableNationalids.getJSONObject(i).getString("farmer_id"));
-                values.put(OFISDBContract.FarmerNationalIDs.COLUMN_NID_EXPIRY_DATE, storeableNationalids.getJSONObject(i).getString("expiry_date"));
-                values.put(OFISDBContract.FarmerNationalIDs.COLUMN_NID_TYPE, storeableNationalids.getJSONObject(i).getString("id_type"));
-                values.put(OFISDBContract.FarmerNationalIDs.COLUMN_IS_SYNCED, 1);
-                db.insert(OFISDBContract.FarmerNationalIDs.TABLE_NAME, null, values);
+                values.put(OFISDBContract.LocalFarmerNationalIDs.COLUMN_NID_TYPE, storeableNationalids.get(i).getNationalidtype());
+                values.put(OFISDBContract.LocalFarmerNationalIDs.COLUMN_NID_NUMBER, storeableNationalids.get(i).getNationalidNumber());
+                values.put(OFISDBContract.LocalFarmerNationalIDs.COLUMN_NID_PHOTO, storeableNationalids.get(i).getPhoto());
+                db.insert(OFISDBContract.LocalFarmerNationalIDs.TABLE_NAME, null, values);
 
             }
         }catch (Exception e){}
 
 
-    }
+    }*/
 
     void addnewLocalFarmerNationalids(NationalIdDTO storeableNationalids) {
 //        delete value if exists
