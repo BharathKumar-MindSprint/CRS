@@ -6,16 +6,18 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.provider.Settings;
 import android.util.Base64;
-
 import com.olam.digital.ofis.BuildConfig;
 import com.olam.digital.ofis.Utilities;
+import com.olam.digital.ofis.authentication.AccessTokenTask;
 import com.olam.digital.ofis.authentication.AuthenticationHelper;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SSLContext;
@@ -143,6 +145,26 @@ abstract class SyncTask extends AsyncTask<SyncTaskOperationType, Object, String>
         okHttpClient.newCall(request).enqueue(callback);
     }
 
+    void okHttpODPost(Context context, String url, JSONObject params, Callback callback) {
+        okHttpClient.readTimeoutMillis();
+        String fullUrl = getAbsoluteUrl(url);
+        RequestBody body;
+        Request.Builder requestBuilder = new Request.Builder()
+                .url(fullUrl);
+
+        if (params != null) {
+            body = RequestBody.create(JSONBody, params.toString());
+        } else {
+            body = RequestBody.create(JSONBody, "");
+        }
+
+        requestBuilder.post(body);
+
+        Request request = requestBuilder.build();
+
+        okHttpClient.newCall(request).enqueue(callback);
+    }
+
     void okHttpGet(Context context, String url, JSONObject params, Callback callback) {
         okHttpClient.readTimeoutMillis();
         String enumeratorId = Utilities.getFromSharedPrefs(context);
@@ -184,6 +206,7 @@ abstract class SyncTask extends AsyncTask<SyncTaskOperationType, Object, String>
         okHttpClient.newCall(request).enqueue(callback);
     }
 
+
     void okHttpODGet(Context context, String url, JSONObject params, Callback callback) {
         okHttpClient.readTimeoutMillis();
         String fullUrl = getODAbsoluteUrl(url);
@@ -195,6 +218,105 @@ abstract class SyncTask extends AsyncTask<SyncTaskOperationType, Object, String>
         okHttpClient.newCall(request).enqueue(callback);
     }
 
+    void okHttpGetConditionalLogic(Context context, String url, JSONObject params, Callback callback) {
+        okHttpClient.readTimeoutMillis();
+        String enumeratorId = Utilities.getFromSharedPrefs(context);
+        String imeiNumber = Utilities.getIMEI(context);
+        String uniqueId = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
+        String base64EnumeratorId = Base64.encodeToString(enumeratorId.getBytes(), Base64.NO_WRAP);
+        String base64ImeiNumber = Base64.encodeToString(imeiNumber.getBytes(), Base64.NO_WRAP);
+        String base64UniqueId = Base64.encodeToString(uniqueId.getBytes(), Base64.NO_WRAP);
+        RequestBody body;
+
+        Request.Builder requestBuilder = new Request.Builder()
+                .header("enumerator-id", base64EnumeratorId)
+                .header("imei-number", base64ImeiNumber)
+                .header("unique-id", base64UniqueId)
+                .header("app-version", BuildConfig.VERSION_NAME)
+                .header("App-Id", "1")
+                .header("Authorization", "Bearer " +  new AuthenticationHelper(context).getAuthenticationDTO().getAccessToken())
+                .url(url);
+
+
+//        if (params != null) {
+//            body = RequestBody.create(JSONBody, params.toString());
+//        } else {
+//            body = RequestBody.create(JSONBody, "");
+//        }
+
+        requestBuilder.get();
+
+        Request request = requestBuilder.build();
+
+        okHttpClient.newCall(request).enqueue(callback);
+    }
+
+
+    void okHttpArrayPost(Context context, String url, JSONArray params, Callback callback) {
+        okHttpClient.readTimeoutMillis();
+        String enumeratorId = Utilities.getFromSharedPrefs(context);
+        String imeiNumber = Utilities.getIMEI(context);
+        String uniqueId = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
+        String base64EnumeratorId = Base64.encodeToString(enumeratorId.getBytes(), Base64.NO_WRAP);
+        String base64ImeiNumber = Base64.encodeToString(imeiNumber.getBytes(), Base64.NO_WRAP);
+        String base64UniqueId = Base64.encodeToString(uniqueId.getBytes(), Base64.NO_WRAP);
+        String fullUrl = getAbsoluteUrl(url);
+        RequestBody body;
+
+        Request.Builder requestBuilder = new Request.Builder()
+                .header("enumerator-id", base64EnumeratorId)
+                .header("imei-number", base64ImeiNumber)
+                .header("unique-id", base64UniqueId)
+                .header("app-version", BuildConfig.VERSION_NAME)
+                .header("App-Id","1")
+                .header("Authorization", "Bearer " + new AuthenticationHelper(context).getAuthenticationDTO().getAccessToken())
+                .url(fullUrl);
+
+        if (params != null) {
+            body = RequestBody.create(JSONBody, params.toString());
+        } else {
+            body = RequestBody.create(JSONBody, "");
+        }
+
+        requestBuilder.post(body);
+
+        Request request = requestBuilder.build();
+
+        okHttpClient.newCall(request).enqueue(callback);
+    }
+    void okHttpGetPost(Context context, String url, JSONObject params, Callback callback) {
+        okHttpClient.readTimeoutMillis();
+        String enumeratorId = Utilities.getFromSharedPrefs(context);
+        String imeiNumber = Utilities.getIMEI(context);
+        String uniqueId = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
+        String base64EnumeratorId = Base64.encodeToString(enumeratorId.getBytes(), Base64.NO_WRAP);
+        String base64ImeiNumber = Base64.encodeToString(imeiNumber.getBytes(), Base64.NO_WRAP);
+        String base64UniqueId = Base64.encodeToString(uniqueId.getBytes(), Base64.NO_WRAP);
+//        String fullUrl = getAbsoluteUrl(url);
+        RequestBody body;
+
+        Request.Builder requestBuilder = new Request.Builder()
+                .header("enumerator-id", base64EnumeratorId)
+                .header("imei-number", base64ImeiNumber)
+                .header("unique-id", base64UniqueId)
+                .header("app-version", BuildConfig.VERSION_NAME)
+                .url(url);
+
+
+//        requestBuilder.get();
+        if (params != null) {
+            body = RequestBody.create(JSONBody, params.toString());
+        } else {
+            body = RequestBody.create(JSONBody, "");
+        }
+
+        requestBuilder.post(body);
+
+        Request request = requestBuilder.build();
+
+        okHttpClient.newCall(request).enqueue(callback);
+    }
+
     private static String getAbsoluteUrl(String relativeUrl) {
         return BASE_URL + relativeUrl;
     }
@@ -202,5 +324,88 @@ abstract class SyncTask extends AsyncTask<SyncTaskOperationType, Object, String>
     private static String getODAbsoluteUrl(String relativeUrl) {
         return ODBASE_URL + relativeUrl;
     }
+
+
+    // use sync farmers & sync spinners in PHP Codes
+
+    private static String getAbsoluteUrlPHP(String relativeUrl) {
+        return "https://stageofis.olamgroup.com/api/v1/" + relativeUrl;
+    }
+
+
+    void okHttpPostPHP(Context context, String url, JSONObject params, Callback callback) {
+        okHttpClient.readTimeoutMillis();
+        String enumeratorId = Utilities.getFromSharedPrefs(context);
+        String imeiNumber = Utilities.getIMEI(context);
+        String uniqueId = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
+        String base64EnumeratorId = Base64.encodeToString(enumeratorId.getBytes(), Base64.NO_WRAP);
+        String base64ImeiNumber = Base64.encodeToString(imeiNumber.getBytes(), Base64.NO_WRAP);
+        String base64UniqueId = Base64.encodeToString(uniqueId.getBytes(), Base64.NO_WRAP);
+        String fullUrl = getAbsoluteUrlPHP(url);
+        RequestBody body;
+
+        Request.Builder requestBuilder = new Request.Builder()
+                .header("enumerator-id", base64EnumeratorId)
+                .header("imei-number", base64ImeiNumber)
+                .header("unique-id", base64UniqueId)
+                .header("app-version", BuildConfig.VERSION_NAME)
+                .header("App-Id","1")
+                .header("Authorization", "Bearer " + new AuthenticationHelper(context).getAuthenticationDTO().getAccessToken())
+                .url(fullUrl);
+
+        if (params != null) {
+            body = RequestBody.create(JSONBody, params.toString());
+        } else {
+            body = RequestBody.create(JSONBody, "");
+        }
+
+        requestBuilder.post(body);
+
+        Request request = requestBuilder.build();
+
+        okHttpClient.newCall(request).enqueue(callback);
+    }
+
+    void okHttpGetChild(Context context, String url, JSONObject params, Callback callback) {
+        okHttpClient.readTimeoutMillis();
+        String enumeratorId = Utilities.getFromSharedPrefs(context);
+        String imeiNumber = Utilities.getIMEI(context);
+        String uniqueId = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
+        String base64EnumeratorId = Base64.encodeToString(enumeratorId.getBytes(), Base64.NO_WRAP);
+        String base64ImeiNumber = Base64.encodeToString(imeiNumber.getBytes(), Base64.NO_WRAP);
+        String base64UniqueId = Base64.encodeToString(uniqueId.getBytes(), Base64.NO_WRAP);
+        String fullUrl = getAbsoluteUrl(url);
+        RequestBody body;
+//        String token="";
+//        try {
+//            token=new AccessTokenTask(context, null).execute().get();
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        } catch (ExecutionException e) {
+//            e.printStackTrace();
+//        }
+        Request.Builder requestBuilder = new Request.Builder()
+                .header("enumerator-id", base64EnumeratorId)
+                .header("imei-number", base64ImeiNumber)
+                .header("unique-id", base64UniqueId)
+                .header("app-version", BuildConfig.VERSION_NAME)
+                .header("App-Id", "1")
+                .header("Authorization", "Bearer " + new AuthenticationHelper(context).getAuthenticationDTO().getAccessToken())
+                .url("http://www.mocky.io/v2/5d619ffb32000059008e6134");
+
+
+//        if (params != null) {
+//            body = RequestBody.create(JSONBody, params.toString());
+//        } else {
+//            body = RequestBody.create(JSONBody, "");
+//        }
+
+        requestBuilder.get();
+
+        Request request = requestBuilder.build();
+
+        okHttpClient.newCall(request).enqueue(callback);
+    }
+
 
 }

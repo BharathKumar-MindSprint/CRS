@@ -51,9 +51,14 @@ import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+//import com.crashlytics.android.answers.Answers;
+//import com.crashlytics.android.answers.LoginEvent;
+//import com.dynatrace.android.agent.Dynatrace;
 import com.google.android.gms.security.ProviderInstaller;
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.olam.digital.ofis.ManageTrainingRecords.Records;
 import com.olam.digital.ofis.RetrofitServices.ManageRecords;
 import com.olam.digital.ofis.RetrofitServices.RetrofitClient;
@@ -72,6 +77,7 @@ import com.olam.digital.ofis.childlabour.ChildVisitDetailActivity;
 import com.olam.digital.ofis.childlabour.ViewChildLabourSurveyActivity;
 import com.olam.digital.ofis.downloadsurvey.ListDownSurveys;
 import com.olam.digital.ofis.downloadsurvey.dto.ModuleDTO;
+import com.olam.digital.ofis.dynatrace.DynatraceHelper;
 import com.olam.digital.ofis.farmplandownload.DownloadFarmPlanActivity;
 import com.olam.digital.ofis.farmplandownload.model.AccessTokenReqBody;
 import com.olam.digital.ofis.farmplandownload.model.AccessTokenResp;
@@ -89,6 +95,7 @@ import com.olam.digital.ofis.matoma.ScreenNameConstants;
 //import com.olam.digital.ofis.matoma.multifarm.MultiFarmUtils;
 import com.olam.digital.ofis.matoma.multifarm.UpdateMultiFarmActivity;
 import com.olam.digital.ofis.multifarm.MultiFarmUtils;
+import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.ActionPlansItem;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.AnswerTypesItem;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.AssessmentResultTypeItems;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.ComplianceIndicatorItem;
@@ -107,11 +114,13 @@ import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.TextBoxModuleQues
 import com.olam.digital.ofis.mvvmmodule.model.followup.AnswersItem;
 import com.olam.digital.ofis.mvvmmodule.model.followup.ExistingModuleItem;
 import com.olam.digital.ofis.mvvmmodule.model.followup.FollowUpItem;
+import com.olam.digital.ofis.mvvmmodule.model.followup.FollowUpResponseItem;
 import com.olam.digital.ofis.mvvmmodule.model.followup.FollowUpResponseModel;
 import com.olam.digital.ofis.mvvmmodule.model.followup.Result;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.ComplianceIndicator;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DMSurveyReport;
+import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmActionPlansItem;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmAnswerTypes;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmAssessmentResultType;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmCurrenciesItem;
@@ -126,9 +135,13 @@ import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmRecurrence;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmSectionsItem;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmSurveyAnswerTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmTextBoxModuleQuestions;
+import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.ExistingModuleItemFollowupTable;
+import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.FollowUpAnswerTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.FollowUpItemMainTable;
+import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.FollowUpResultTable;
 import com.olam.digital.ofis.recordpolygon.RecordPolygonActivity;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -275,6 +288,13 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
         downloadSurveyWrap();
         String enumeratorId = Utilities.getFromSharedPrefs(context);
+        if (!enumeratorId.equalsIgnoreCase("")) {
+            if (DynatraceHelper.isAppClosed) {
+//                Dynatrace.identifyUser(enumeratorId);
+//                DynatraceHelper.isAppClosed=false;
+//                DynatraceHelper.findNetworkSpeed(this);
+            }
+        }
 //        Passcode added - Penetration testing
         passcode = (EditText) findViewById(R.id.passcode);
         saveUpdateButton = (Button) findViewById(R.id.buttonSaveUpdate);
@@ -1364,6 +1384,11 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             new AuthenticationHelper(this).setAuthenticationDTO(authenticationDTO);
             new AuthenticationHelper(this).setUserName(enumeratorID.getText().toString());
             new AuthenticationHelper(this).setPassode(passcode.getText().toString().trim());
+
+
+//            Dynatrace.identifyUser(enumeratorID.getText().toString());
+            DynatraceHelper.isAppClosed = false;
+            DynatraceHelper.findNetworkSpeed(this);
             doInitialCheck();
         } else if (response.code() == 423) {
             enableSync();
@@ -1530,6 +1555,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         enableSync();
         if (!status.equalsIgnoreCase("false")) {
             Utilities.minProgressCount = 0;
+            DynatraceHelper.findNetworkSpeed(this);
             if (syncOptionAll) {
                 startAllItemSync();
             } else {

@@ -39,8 +39,12 @@ public class StartRecordPolygonActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_record_polygon);
         res = getResources();
+//        SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmID("41526");
         List<LocationBeanList>  aLocationBeanList = SharedPreferenceUtils.getInstance(getApplicationContext()).getAllLocations();
         String s = getPlotsJsonFromLocationBeanList(aLocationBeanList);
+        Log.v("PLOTS", s);
+        logger.addRecordToLog("Polygon recording started");
+        logger.addRecordToLog("PLOTS: "+ s );
 
         saveToSyncDatabase(s);
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
@@ -86,6 +90,7 @@ public class StartRecordPolygonActivity extends AppCompatActivity {
             plots lposition_data = new plots();
             for (plot bean : aLocationBeanList.get(i).getLocationBean()) {
                 lplotList.add(bean);
+                logger.addRecordToLog("bean: "+ bean );
             }
             lposition_data.setPlot(lplotList);
             lposition_dataList.add(lposition_data);
