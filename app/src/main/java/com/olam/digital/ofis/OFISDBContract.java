@@ -568,7 +568,7 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_QUESTION_INFO_LO = "questionInfoLo";
         public static final String COLUMN_NAME_QUESTION_INFO_VI = "questionInfoVi";
         public static final String COLUMN_NAME_QUESTION_INFO_TH = "questionInfoTh";
-        public static final String COLUMN_NAME_QUESTION_TYPE_ID = "displaytypeId";
+        public static final String COLUMN_NAME_DISPLAY_TYPE_ID = "displaytypeId";
         public static final String COLUMN_NAME_ANSWER_TYPE = "answerType";
 
 
@@ -608,7 +608,7 @@ public class OFISDBContract {
                     add(COLUMN_NAME_QUESTION_INFO_LO);
                     add(COLUMN_NAME_QUESTION_INFO_VI);
                     add(COLUMN_NAME_QUESTION_INFO_TH);
-                    add(COLUMN_NAME_QUESTION_TYPE_ID);
+                    add(COLUMN_NAME_DISPLAY_TYPE_ID);
                     add(COLUMN_NAME_ANSWER_TYPE);
 
                 }}

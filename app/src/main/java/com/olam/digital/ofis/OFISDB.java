@@ -318,7 +318,7 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO_LO+ " TEXT, "
             + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO_VI+ " TEXT, "
             + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO_TH+ " TEXT, "
-            + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_TYPE_ID + " TEXT, "
+            + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE_ID + " TEXT, "
             + OFISDBContract.QuestionEntry.COLUMN_NAME_ANSWER_TYPE+ " TEXT)";
 
 

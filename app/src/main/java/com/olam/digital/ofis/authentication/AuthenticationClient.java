@@ -50,7 +50,7 @@ public class AuthenticationClient {
             retrofit = builder.build();
         }
     }
-    
+
     public static <S> S createService(
             Class<S> serviceClass, Context context) {
         setup(context);

@@ -14,6 +14,7 @@ import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.net.Uri;
 import android.os.CountDownTimer;
+import android.os.Handler;
 import android.os.StrictMode;
 import android.provider.MediaStore;
 
@@ -407,7 +408,7 @@ public class DynamicQuestions {
 
 
 
-                saveAnswerEntry(questionId, j, parentQuestionId, -1, dataType, selectedText);
+                saveAnswerEntry(questionId, j, parentQuestionId, -1, dataType, String.valueOf(checkedId));
             }
         });
 
@@ -530,9 +531,6 @@ public class DynamicQuestions {
                 removeAnswerEntry(questionId,answerId);
             }
 
-//            Log.d("Answer Set",  answerSet.toString());
-            long farmerIdLOG = Utilities.farmerId;
-            Log.d("AnswerSet" , "Farmer ID: " +  farmerIdLOG + " / Answer Set: " + answerSet.toString());
         } catch (JSONException e) {
             e.printStackTrace();
             FirebaseCrashlytics.getInstance().log(e.getMessage());
@@ -967,8 +965,16 @@ public class DynamicQuestions {
         LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
         renderQuestion(qCursor, isRepeaterItem, (isRepeaterItem) ? parentLayout : questionWrapper);
 
-        final String datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
+//        final String datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
         final int questionId = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
+        final String displayTypeID = String.valueOf(dl.getDisplayTypeIdByQuestionID(questionId));
+        final String oldDatatype =  dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
+
+        String datatype = "";
+        if (oldDatatype.equals("Photo Upload")){
+            datatype = "text";
+        }
+
         int answerIdTemp = 0;
         if (hasAnswers) {
             if (isRepeaterItem && repeaterAnswers != null && repeaterAnswers.getCount() > 0) {
@@ -1013,6 +1019,7 @@ public class DynamicQuestions {
 
         Button modulePhotoUploadButton = (Button) rl.findViewById(R.id.modulePhotoUpload);
 
+        String finalDatatype = datatype;
         modulePhotoUploadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -1042,7 +1049,7 @@ public class DynamicQuestions {
                             setCapturedImageURI(photoURI);
                             setCurrentPhotoPath(photoFile.getPath());
                          setCurrentImageView(iv);
-                         setCurrentPhotoMetaData(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype);
+                         setCurrentPhotoMetaData(questionId, answerId, parentQuestionId, repeaterItemPosition, finalDatatype);
                          intent.putExtra(MediaStore.EXTRA_OUTPUT, getCapturedImageURI());
                         }
 
@@ -1293,8 +1300,17 @@ public class DynamicQuestions {
         LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
         renderQuestion(qCursor, isRepeaterItem, (isRepeaterItem) ? parentLayout : questionWrapper);
 
-        final String datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
+//        final String datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
         final int questionId = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
+        final String displayTypeID = String.valueOf(dl.getDisplayTypeIdByQuestionID(questionId));
+        final String oldDatatype =  dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
+
+        String datatype = "";
+        if (oldDatatype.equals("Date Picker")){
+            datatype = "text";
+        }
+
+
         int answerIdTemp = 0;
         if (hasAnswers) {
             if (isRepeaterItem && repeaterAnswers != null && repeaterAnswers.getCount() > 0) {
@@ -1344,10 +1360,11 @@ public class DynamicQuestions {
                         }
                     }
 
+                    String finalDatatype = datatype;
                     spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                         @Override
                         public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
-                            saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, spinner.getSelectedItem().toString() + "-01-01");
+                            saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, finalDatatype, spinner.getSelectedItem().toString() + "-01-01");
                         }
 
                         @Override
@@ -1387,6 +1404,7 @@ public class DynamicQuestions {
                         saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, serverDateFormat.format(cal.getTime()));
                     }
 
+                    String finalDatatype1 = datatype;
                     dp.init(
                             today.get(Calendar.YEAR),
                             today.get(Calendar.MONTH),
@@ -1397,7 +1415,7 @@ public class DynamicQuestions {
                                     // get the date
                                     Calendar cal = Calendar.getInstance();
                                     cal.set(selectedYear, selectedMonth, selectedDay);
-                                    saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, serverDateFormat.format(cal.getTime()));
+                                    saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, finalDatatype1, serverDateFormat.format(cal.getTime()));
                                 }
                             }
                     );
@@ -1637,10 +1655,26 @@ public class DynamicQuestions {
         LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
         renderQuestion(qCursor, isRepeaterItem, (isRepeaterItem) ? parentLayout : questionWrapper);
 
+        final int questionId = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
         int columnIndex = (qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION + questionColumnSuffix) != -1) ? qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION + questionColumnSuffix) : qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION);
 
-        final String datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
-        final int questionId = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
+//        final String datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
+
+        /* // for textbox getting datatype from answerType table
+        final String displayTypeID = String.valueOf(dl.getDisplayTypeIdByQuestionID(questionId));
+        final String datatype =  dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));*/
+
+        final String answerTypeForDatatype = dl.getAnswerTypeByQuestionID(questionId);
+        final String datatypeOld = dl.getAnswerTypeValue(Integer.parseInt(answerTypeForDatatype));
+
+        String datatype = "";
+        if (datatypeOld.equals("Alphanumeric") || datatypeOld.equals("Alphabetical")){
+            datatype = "text";
+        } else if (datatypeOld.equals("Numbers Only") || datatypeOld.equals("Percentage")) {
+            datatype = "int";
+        }
+
+
         int answerIdTemp = 0;
         if (hasAnswers) {
             if (isRepeaterItem && repeaterAnswers != null && repeaterAnswers.getCount() > 0) {
@@ -1673,15 +1707,14 @@ public class DynamicQuestions {
             }
         }
 
-        if (datatype.equals("decimal")) {
+        /*if (datatype.equals("decimal")) {
             et.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
         } else if (datatype.equals("int")) {
             et.setInputType(InputType.TYPE_CLASS_NUMBER);
             et.setFilters(new InputFilter[]{new InputFilter.LengthFilter(11)});
-        }
+        }*/
 
         String answerValue = null;
-        int displayTypeID = 0;
         String answerType = "";
         String display_configuration = "";
         try {
@@ -1715,7 +1748,7 @@ public class DynamicQuestions {
                     e.printStackTrace();
                 }
             }else if (answerValue.equals("Numbers Only")){
-                et.setInputType(InputType.TYPE_CLASS_NUMBER);
+//                et.setInputType(InputType.TYPE_CLASS_NUMBER);
                 try{
                     JSONObject displayConfig = new JSONObject();
                     displayConfig = new JSONObject(qCursor.getString(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION)));
@@ -1738,8 +1771,6 @@ public class DynamicQuestions {
                                 assignmentType = rangeArray.getString("assignmentType");
                                 assignmentField = rangeArray.getString("assignmentField");
 
-                                long farmerId = Utilities.farmerId;
-                                Log.d("debug null" , "Farmer ID: " +  farmerId);
 
                                 String assignmentTypeColumn = "";
 
@@ -1773,20 +1804,28 @@ public class DynamicQuestions {
                                         break;
                                 }
 
+                                long farmerId = Utilities.farmerId;
                                 String farmerAssignmentField = dl.getAssignmentByFarmerTypeID(farmerId , assignmentTypeColumn);
-
-                                Log.d("FarmerID Check", farmerAssignmentField);
                                 if (assignmentField.equals(farmerAssignmentField)  && globally.equals("false")) {
                                     min = rangeArray.getInt("min");
                                     max = rangeArray.getInt("max");
                                     et.setHint("Range : " + min + " to " + max);
-                                    setIntegerRangeFilter(et,min ,max );
+                                    if (min < 0){
+                                        setIntegerNegativeRangeFilter(et,min ,max );
+                                    }else {
+                                        setIntegerPositiveRangeFilter(et,min ,max );
+                                    }
+
                                     break;
                                 }else if (assignmentType.equals("null") && assignmentField.equals("null") && globally.equals("true")){
                                     min = rangeArray.getInt("min");
                                     max = rangeArray.getInt("max");
                                     et.setHint("Range : " + min + " to " + max);
-                                    setIntegerRangeFilter(et,min ,max );
+                                    if (min < 0){
+                                        setIntegerNegativeRangeFilter(et,min ,max );
+                                    }else {
+                                        setIntegerPositiveRangeFilter(et,max ,max );
+                                    }
                                 }
                             }
 
@@ -1915,6 +1954,7 @@ public class DynamicQuestions {
         final String[] initialText = {""};
         int finalMax = max;
         int finalMin = min;
+        String finalDatatype = datatype;
         et.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
@@ -1932,7 +1972,7 @@ public class DynamicQuestions {
                 if ((isHundredPercentQuestion) && (!updatingHundredPercent)) {
                     autofill100Percent(et);
                 }
-                saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, et.getText().toString());
+                saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, finalDatatype, et.getText().toString());
 
 
               //   Check the dependent questions - OFS-44 Check
@@ -1990,7 +2030,7 @@ public class DynamicQuestions {
                         if (!finalDefaultValue.equalsIgnoreCase("")){
                             et.setText(finalDefaultValue);
                             et.setSelection(et.getText().length());
-                            saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, finalDefaultValue);
+                            saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, finalDatatype, finalDefaultValue);
                         }else {
                             removeAnswerEntry(questionId);
                         }
@@ -1999,14 +2039,14 @@ public class DynamicQuestions {
                         if (initialText[0].equalsIgnoreCase("0")){
                                 et.setText(value.replace("0", ""));
                                 et.setSelection(et.getText().length());
-                                saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, et.getText().toString());
+                                saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, finalDatatype, et.getText().toString());
                             }
                         }
                     }
 
                     QuestionInfo questionInfo=new QuestionInfo();
                     questionInfo.setQuestionId(questionId);
-                    questionInfo.setDataType(datatype);
+                    questionInfo.setDataType(finalDatatype);
                     Constraint constraint = null;
                         try {
                             et.setError(null);
@@ -2101,7 +2141,7 @@ public class DynamicQuestions {
         editText.setFilters(new InputFilter[] { alphaNumericFilter });
     }
 
-    private void setIntegerRangeFilter(final EditText editText, final int startLimit, final int endLimit) {
+    private void setIntegerPositiveRangeFilter(final EditText editText, final int startLimit, final int endLimit) {
         InputFilter integerRangeFilter = new InputFilter() {
             @Override
             public CharSequence filter(CharSequence source, int start, int end,
@@ -2114,9 +2154,16 @@ public class DynamicQuestions {
 
                     if (inputNumber > endLimit) {
                         editText.setError("Number must be less than or equal to " + endLimit);
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                editText.setError(null); // Clear the error message after delay
+                            }
+                        }, 3000); // Delay for 3 seconds
                         return "";
+
                     } else {
-                        if (inputNumber < startLimit) {
+                        if(inputNumber < startLimit) {
                             editText.setError("Number is below the valid range " + startLimit);
                             return source;
                         } else {
@@ -2135,6 +2182,46 @@ public class DynamicQuestions {
 
         editText.setFilters(new InputFilter[] { integerRangeFilter });
     }
+
+
+    private void setIntegerNegativeRangeFilter(final EditText editText, final int minLimit, final int maxLimit) {
+        InputFilter negativeIntegerRangeFilter = new InputFilter() {
+            @Override
+            public CharSequence filter(CharSequence source, int start, int end,
+                                       Spanned dest, int dstart, int dend) {
+                try {
+                    // Combine the current text with the new input
+                    String newValue = dest.subSequence(0, dstart) + source.toString() + dest.subSequence(dend, dest.length());
+
+                    if (newValue.equals("-")) {
+                        return source; // Allow negative sign
+                    }
+
+                    int inputNumber = Integer.parseInt(newValue);
+
+                    if (inputNumber >= minLimit && inputNumber <= maxLimit) {
+                        editText.setError(null); // Clear any previous errors
+                        return source;
+                    } else {
+                        editText.setError("Number must be between " + minLimit + " and " + maxLimit);
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                editText.setError(null); // Clear the error message after delay
+                            }
+                        }, 3000); // Delay for 3 seconds
+                        return "";
+                    }
+                } catch (NumberFormatException e) {
+                    // Ignore non-numeric input
+                    return "";
+                }
+            }
+        };
+
+        editText.setFilters(new InputFilter[]{negativeIntegerRangeFilter});
+    }
+
 
 
     private void setIntegerWithCharacterLimit(final EditText editText , final int maxCharacterLimit) {
@@ -2353,8 +2440,15 @@ public class DynamicQuestions {
         renderQuestion(qCursor, isRepeaterItem, (isRepeaterItem) ? parentLayout : questionWrapper);
 
         resources = res;
-        final String datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
+//        final String datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
         final int questionId = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
+        final String displayTypeID = String.valueOf(dl.getDisplayTypeIdByQuestionID(questionId));
+        final String oldDatatype =  dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
+
+        String datatype = "";
+        if (oldDatatype.equals("Dropdown")){
+            datatype = "int";
+        }
 
         int answerIdTemp = 0;
         if (hasAnswers) {
@@ -2437,6 +2531,79 @@ public class DynamicQuestions {
                 }
             }
 
+            // adding validation
+            String assignmentType = "";
+            String assignmentField = "";
+            try{
+                JSONObject displayConfig1 = new JSONObject();
+                displayConfig1 = new JSONObject(qCursor.getString(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION)));
+                if (displayConfig1.has("display")) {
+                    JSONObject display = displayConfig1.getJSONObject("display");
+                    JSONArray range = display.getJSONArray("lookupProperties");
+
+                    for(int i=0; i<range.length(); i++){
+                        JSONObject rangeArray = range.getJSONObject(i);
+                        String lookupID = rangeArray.getString("lookupValueId");
+                        assignmentType = rangeArray.getString("assignmentType");
+                        assignmentField = rangeArray.getString("assignmentField");
+
+                        String assignmentTypeColumn = "";
+
+                        switch (assignmentType){
+                            case "1" :
+                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID;
+                                break;
+                            case "2" :
+                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_REGIONID;
+                                break;
+                            case "3" :
+                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_DISTRICTID;
+                                break;
+                            case "4" :
+                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID;
+                                break;
+                            case "5" :
+                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID;
+                                break;
+                            case "6" :
+                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID;
+                                break;
+                            case "7" :
+                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID;
+                                break;
+                            case "8" :
+                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PARTNER_ID;
+                                break;
+                            case "9" :
+                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PROGRAMME_ID;
+                                break;
+                        }
+
+                        long farmerId = Utilities.farmerId;
+                        String farmerAssignmentField = dl.getAssignmentByFarmerTypeID(farmerId , assignmentTypeColumn);
+
+                        if (assignmentField.equals(farmerAssignmentField)) {
+//                            Toast.makeText(context, "Show", Toast.LENGTH_LONG).show();
+                            // SHOW BAD
+
+                            break;
+                        }
+
+                        else if (assignmentType.equals("null") && assignmentField.equals("null")){
+//                            Toast.makeText(context, "Don't Show", Toast.LENGTH_SHORT).show();
+                            // DON'T SHOW BAD
+
+                        }
+
+                    }
+
+                }
+
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
+
 
             //   Prepopulate Yes/No If not answered
             boolean isChildDefault=false;
@@ -2496,6 +2663,7 @@ public class DynamicQuestions {
 
 
             int finalDefaultLookUpValue = defaultLookUpValue;
+            String finalDatatype = datatype;
             spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
@@ -2506,15 +2674,15 @@ public class DynamicQuestions {
 
                     //renderRepeaterItems(questionId, id, repeaterItemsWrapper, farmerId, olamFarmerId, farmerModuleId, res);
                     if (id > 0) {
-                        if (datatype.equals("int") && (!isDensityQuestion)) {
-                            saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, String.valueOf(id));
+                        if (finalDatatype.equals("int") && (!isDensityQuestion)) {
+                            saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, finalDatatype, String.valueOf(id));
 
                             long h = Long.parseLong("0026");
 
 
                         } else {
                             Cursor selecteditem = (Cursor) spinner.getSelectedItem();
-                            saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, selecteditem.getString(selecteditem.getColumnIndex(columnName)));
+                            saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, finalDatatype, selecteditem.getString(selecteditem.getColumnIndex(columnName)));
                         }
                     } else {
                         removeAnswerEntry(questionId, answerId);
@@ -2555,13 +2723,21 @@ public class DynamicQuestions {
 
     }
 
-    public  void renderRadioQuestion(Cursor questions, boolean isRepeaterItem, LinearLayout parentLayout , long farmerId,long farmerModuleId, boolean isSavedAns){
+    public void renderRadioQuestion(Cursor questions, boolean isRepeaterItem, LinearLayout parentLayout , long farmerId,long farmerModuleId, boolean isSavedAns){
 
             LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
         renderQuestion(questions, false, questionWrapper);
 
-        final String datatype = questions.getString(questions.getColumnIndex("datatype_name"));
+//        final String datatype = questions.getString(questions.getColumnIndex("datatype_name"));
         final int questionId = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
+        final String displayTypeID = String.valueOf(dl.getDisplayTypeIdByQuestionID(questionId));
+        final String oldDatatype =  dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
+
+        String datatype = "";
+        if (oldDatatype.equals("Radio")){
+            datatype = "int";
+        }
+
         final boolean singleSelect;
         boolean tempSingleSelect = false;
 
@@ -2607,6 +2783,70 @@ public class DynamicQuestions {
             RadioGroup radioGroup = (RadioGroup) linearLayout.findViewById(R.id.radioGroup);
 
             while (radio.moveToNext()) {
+
+                String assignmentType = "";
+                String assignmentField = "";
+
+                try {
+                    JSONObject displayConfig = new JSONObject();
+                    displayConfig = new JSONObject(questions.getString(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION)));
+                    if (displayConfig.has("display")) {
+                        JSONObject display = displayConfig.getJSONObject("display");
+                        JSONArray range = display.getJSONArray("lookupProperties");
+
+                        for (int i = 0; i < range.length(); i++) {
+                            JSONObject rangeArray = range.getJSONObject(i);
+                            String lookupID = rangeArray.getString("lookupValueId");
+                            assignmentType = rangeArray.getString("assignmentType");
+                            assignmentField = rangeArray.getString("assignmentField");
+
+                            String assignmentTypeColumn = "";
+
+                            switch (assignmentType) {
+                                case "1":
+                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID;
+                                    break;
+                                case "2":
+                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_REGIONID;
+                                    break;
+                                case "3":
+                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_DISTRICTID;
+                                    break;
+                                case "4":
+                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID;
+                                    break;
+                                case "5":
+                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID;
+                                    break;
+                                case "6":
+                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID;
+                                    break;
+                                case "7":
+                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID;
+                                    break;
+                                case "8":
+                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PARTNER_ID;
+                                    break;
+                                case "9":
+                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PROGRAMME_ID;
+                                    break;
+                            }
+
+                            String farmerAssignmentField = dl.getAssignmentByFarmerTypeID(farmerId, assignmentTypeColumn);
+
+                            if (assignmentField.equals(farmerAssignmentField)) {
+
+                            } else if (assignmentType.equals("null") && assignmentField.equals("null")){
+
+                            }
+
+                        }
+                    }
+                }catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+
                 final int rbId = radio.getInt(radio.getColumnIndex("_id"));
                 int columnIndex = (radio.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) != -1) ? radio.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) : radio.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE);
 
@@ -2614,6 +2854,31 @@ public class DynamicQuestions {
                 RadioButton radioButton = (RadioButton) LayoutInflater.from(context).inflate(R.drawable.custom_radio_button, radioGroup, false);
                 radioButton.setText(radio.getString(columnIndex));
                 radioButton.setId(rbId);
+
+                if (rbAnswers.getCount() > 0) {
+                    // disable while loading the "Not Applicable"
+                    if(rbId == defaultLookUpValue){
+                        radioButton.setEnabled(false);
+                    }
+                    //End
+                    while (rbAnswers.moveToNext()) {
+                        if (rbAnswers.getInt(rbAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_INT)) == rbId) {
+                            radioButton.setChecked(true);
+                            radioButton.setEnabled(true);
+                        }
+                    }
+                    rbAnswers.moveToPosition(-1);
+                }else {
+                    // N/A Question for franklin
+                    if (defaultLookUpValue != 0) {
+                        if (defaultLookUpValue == rbId) {
+                            radioButton.setChecked(true);
+                            radioButton.setEnabled(true);
+                        }
+                    }
+                }
+
+
 
                 radioGroup.addView(radioButton);
 
@@ -2845,8 +3110,15 @@ public class DynamicQuestions {
         final LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
         renderQuestion(qCursor, isRepeaterItem, (isRepeaterItem) ? parentLayout : questionWrapper);
         resources = res;
-        final String datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
+//        final String datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
         final int questionId = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionSipEntry.COLUMN_NAME_ID));
+        final String displayTypeID = String.valueOf(dl.getDisplayTypeIdByQuestionID(questionId));
+        final String oldDatatype =  dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
+
+        String datatype = "";
+        if (oldDatatype.equals("Dropdown")){
+            datatype = "int";
+        }
 
         int answerIdTemp = 0;
         if (hasAnswers) {
@@ -2917,6 +3189,7 @@ public class DynamicQuestions {
             }
 
 
+            String finalDatatype = datatype;
             spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
@@ -2927,15 +3200,15 @@ public class DynamicQuestions {
 
                     //renderRepeaterItems(questionId, id, repeaterItemsWrapper, farmerId, olamFarmerId, farmerModuleId, res);
                     if (id > 0) {
-                        if (datatype.equals("int") && (!isDensityQuestion)) {
-                            saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, String.valueOf(id));
+                        if (finalDatatype.equals("int") && (!isDensityQuestion)) {
+                            saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, finalDatatype, String.valueOf(id));
 
                             long h = Long.parseLong("0026");
 
 
                         } else {
                             Cursor selecteditem = (Cursor) spinner.getSelectedItem();
-                            saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, selecteditem.getString(selecteditem.getColumnIndex(columnName)));
+                            saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, finalDatatype, selecteditem.getString(selecteditem.getColumnIndex(columnName)));
                         }
                     } else {
                         removeAnswerEntry(questionId, answerId);
@@ -3159,8 +3432,16 @@ public class DynamicQuestions {
         LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
         renderQuestion(questions, false, questionWrapper);
 
-        final String datatype = questions.getString(questions.getColumnIndex("datatype_name"));
+//        final String datatype = questions.getString(questions.getColumnIndex("datatype_name"));
         final int questionId = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
+        final String displayTypeID = String.valueOf(dl.getDisplayTypeIdByQuestionID(questionId));
+        final String oldDatatype =  dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
+
+        String datatype = "";
+        if (oldDatatype.equals("Checkbox")){
+            datatype = "int";
+        }
+
         final boolean singleSelect;
         boolean tempSingleSelect = false;
 
@@ -3205,20 +3486,95 @@ public class DynamicQuestions {
             tl.setSaveEnabled(true);
 
             while (checkboxes.moveToNext()) {
+                String assignmentType = "";
+                String assignmentField = "";
+
                 // generate row item
                 TableRow tr = (TableRow) inflater.inflate(R.layout.module_checkbox_table_row, tl, false);
 
                 TextView tvId = (TextView) tr.findViewById(R.id.cbId);
                 TextView tv = (TextView) tr.findViewById(R.id.cbTitle);
+                CheckBox cb = (CheckBox) tr.findViewById(R.id.cbCheckBox);
+
+                // last line
 
                 final int cbId = checkboxes.getInt(checkboxes.getColumnIndex("_id"));
 
-                tvId.setText(String.valueOf(cbId));
-
                 int columnIndex = (checkboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) != -1) ? checkboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) : checkboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE);
-                tv.setText(checkboxes.getString(columnIndex));
 
-                CheckBox cb = (CheckBox) tr.findViewById(R.id.cbCheckBox);
+
+                // adding validation
+                try{
+                    JSONObject displayConfig = new JSONObject();
+                    displayConfig = new JSONObject(questions.getString(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION)));
+                    if (displayConfig.has("display")) {
+                        JSONObject display = displayConfig.getJSONObject("display");
+                        JSONArray range = display.getJSONArray("lookupProperties");
+
+                        for(int i=0; i<range.length(); i++){
+                            JSONObject rangeArray = range.getJSONObject(i);
+                            String lookupID = rangeArray.getString("lookupValueId");
+                            assignmentType = rangeArray.getString("assignmentType");
+                            assignmentField = rangeArray.getString("assignmentField");
+
+                            String assignmentTypeColumn = "";
+
+                            switch (assignmentType){
+                                case "1" :
+                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID;
+                                    break;
+                                case "2" :
+                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_REGIONID;
+                                    break;
+                                case "3" :
+                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_DISTRICTID;
+                                    break;
+                                case "4" :
+                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID;
+                                    break;
+                                case "5" :
+                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID;
+                                    break;
+                                case "6" :
+                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID;
+                                    break;
+                                case "7" :
+                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID;
+                                    break;
+                                case "8" :
+                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PARTNER_ID;
+                                    break;
+                                case "9" :
+                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PROGRAMME_ID;
+                                    break;
+                            }
+
+                            String farmerAssignmentField = dl.getAssignmentByFarmerTypeID(farmerId , assignmentTypeColumn);
+
+                            if (assignmentField.equals(farmerAssignmentField)) {
+//                                Toast.makeText(context, "Show", Toast.LENGTH_LONG).show();
+                                // SHOW BAD
+
+                                break;
+                            }
+
+                            else if (assignmentType.equals("null") && assignmentField.equals("null")){
+//                                Toast.makeText(context, "Don't Show", Toast.LENGTH_SHORT).show();
+                                // DON'T SHOW BAD
+
+                            }
+
+                        }
+
+                    }
+
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+
+
+                tvId.setText(String.valueOf(cbId));
+                tv.setText(checkboxes.getString(columnIndex));
                 tl.addView(tr);
                 // initilaize default look up globally
                 // pre-fill checkboxes that have been previously ticked
@@ -3260,6 +3616,7 @@ public class DynamicQuestions {
 
                 //stick the answer in the question itself
                 int finalDefaultLookUpValue = defaultLookUpValue;
+                String finalDatatype = datatype;
                 cb.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -3321,7 +3678,7 @@ public class DynamicQuestions {
 
                         }
 
-                        saveMultipleAnswerEntry(questionId, 0, datatype, tl);
+                        saveMultipleAnswerEntry(questionId, 0, finalDatatype, tl);
                     }
                 });
 
@@ -3341,8 +3698,16 @@ public class DynamicQuestions {
         LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
         renderQuestion(questions, false, questionWrapper);
 
-        final String datatype = questions.getString(questions.getColumnIndex("datatype_name"));
+//        final String datatype = questions.getString(questions.getColumnIndex("datatype_name"));
         final int questionId = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
+        final String displayTypeID = String.valueOf(dl.getDisplayTypeIdByQuestionID(questionId));
+        final String oldDatatype =  dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
+
+        String datatype = "";
+        if (oldDatatype.equals("Checkbox")){
+            datatype = "int";
+        }
+
         final boolean singleSelect;
         boolean tempSingleSelect = false;
 
@@ -3408,6 +3773,7 @@ public class DynamicQuestions {
                 });
 
                 //stick the answer in the question itself
+                String finalDatatype = datatype;
                 cb.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -3422,7 +3788,7 @@ public class DynamicQuestions {
                             CheckBox clickedCb = (CheckBox) view;
                             clickedCb.setChecked(true);
                         }
-                        saveMultipleAnswerEntry(questionId, 0, datatype, tl);
+                        saveMultipleAnswerEntry(questionId, 0, finalDatatype, tl);
                     }
                 });
 
@@ -3718,8 +4084,16 @@ public class DynamicQuestions {
         LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, questionsSection, false);
         renderQuestion(questions, false, questionWrapper);
 
-        final String datatype = questions.getString(questions.getColumnIndex("datatype_name"));
+//        final String datatype = questions.getString(questions.getColumnIndex("datatype_name"));
         final int questionId = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
+        final String displayTypeID = String.valueOf(dl.getDisplayTypeIdByQuestionID(questionId));
+        final String oldDatatype =  dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
+
+        String datatype = "";
+        if (oldDatatype.equals("Photo Checkbox")){
+            datatype = "text";
+        }
+
         final boolean singleSelect;
         boolean tempSingleSelect = false;
 
@@ -3792,6 +4166,7 @@ public class DynamicQuestions {
                 });
 
                 //stick the answer in the question itself
+                String finalDatatype = datatype;
                 cb.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -3807,7 +4182,7 @@ public class DynamicQuestions {
                             clickedCb.setChecked(true);
                         }
 
-                        saveMultipleAnswerEntry(questionId, 0, datatype, tl);
+                        saveMultipleAnswerEntry(questionId, 0, finalDatatype, tl);
                     }
                 });
 
@@ -3827,8 +4202,16 @@ public class DynamicQuestions {
         LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, questionsSection, false);
         renderQuestion(questions, false, questionWrapper);
         resources = res;
-        final String datatype = questions.getString(questions.getColumnIndex("datatype_name"));
+//        final String datatype = questions.getString(questions.getColumnIndex("datatype_name"));
         final int questionId = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
+        final String displayTypeID = String.valueOf(dl.getDisplayTypeIdByQuestionID(questionId));
+        final String oldDatatype =  dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
+
+        String datatype = "";
+        if (oldDatatype.equals("Repeater")){
+            datatype = "int";
+        }
+
         final int answerId = (hasAnswers) ? questions.getInt(questions.getColumnIndex("answer_id")) : 0;
         final Spinner spinner = (Spinner) inflater.inflate(R.layout.module_spinner, questionWrapper, false);
 
@@ -3859,6 +4242,7 @@ public class DynamicQuestions {
                 questionsSection.addView(questionWrapper);
 
 
+                String finalDatatype = datatype;
                 spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -3870,7 +4254,7 @@ public class DynamicQuestions {
                             }
                             repeaterItemsWrapper.removeAllViews();
                             removeAnswerEntry(questionId, answerId);
-                            saveAnswerEntry(questionId, answerId, 0, -1, datatype, spinner.getSelectedItem().toString());
+                            saveAnswerEntry(questionId, answerId, 0, -1, finalDatatype, spinner.getSelectedItem().toString());
                             renderRepeaterItems(questionId, id, repeaterItemsWrapper, farmerId, olamFarmerId, farmerModuleId, res, isSavedAns);
                             if (id > 0) {
 
@@ -4235,8 +4619,10 @@ public class DynamicQuestions {
         final LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
         renderQuestion(qCursor, isRepeaterItem, (isRepeaterItem) ? parentLayout : questionWrapper);
         String question1 = "", question2 = "";
-        final String datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
+//        final String datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
         final int questionId = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
+        final String displayTypeID = String.valueOf(dl.getDisplayTypeIdByQuestionID(questionId));
+        final String datatype =  dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
         String[] coloumnames = qCursor.getColumnNames();
 
         List<String> nameList = Arrays.asList(coloumnames);
@@ -5135,7 +5521,16 @@ public class DynamicQuestions {
         LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, questionsSection, false);
         renderQuestion(questions, false, questionWrapper);
 
-        final String datatype = questions.getString(questions.getColumnIndex("datatype_name"));
+//        final String datatype = questions.getString(questions.getColumnIndex("datatype_name"));
+        final int questionId = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
+        final String displayTypeID = String.valueOf(dl.getDisplayTypeIdByQuestionID(questionId));
+        final String oldDatatype =  dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
+
+        String datatype = "";
+        if (oldDatatype.equals("Farm Tree Density")){
+            datatype = "text";
+        }
+
         String calcAnswerValue = "0";
         densityQuestionId = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
         String columnName = (questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION + questionColumnSuffix) != -1) ? OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix : OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE;
@@ -5148,7 +5543,7 @@ public class DynamicQuestions {
             calcAnswerValue = questions.getString(questions.getColumnIndex("answer_" + datatype));
 
             String currentAnswerValue;
-            currentAnswerValue = questions.getString(questions.getColumnIndex("answer_text"));
+            currentAnswerValue = questions.getString(questions.getColumnIndex("answer_" + datatype));
 
             if (questions.getColumnIndex("answer_id") != -1) {
                 densityAnswerId = questions.getInt(questions.getColumnIndex("answer_id"));
@@ -5256,8 +5651,16 @@ public class DynamicQuestions {
         LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
         renderQuestion(questions, false, questionWrapper);
 
-        final String datatype = questions.getString(questions.getColumnIndex("datatype_name"));
+//        final String datatype = questions.getString(questions.getColumnIndex("datatype_name"));
         final int questionId = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionSipEntry.COLUMN_NAME_ID));
+        final String displayTypeID = String.valueOf(dl.getDisplayTypeIdByQuestionID(questionId));
+        final String oldDatatype =  dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
+
+        String datatype = "";
+        if (oldDatatype.equals("Checkbox")){
+            datatype = "int";
+        }
+
         final boolean singleSelect;
         boolean tempSingleSelect = false;
 
@@ -5321,6 +5724,7 @@ public class DynamicQuestions {
                 });
 
                 //stick the answer in the question itself
+                String finalDatatype = datatype;
                 cb.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -5335,7 +5739,7 @@ public class DynamicQuestions {
                             CheckBox clickedCb = (CheckBox) view;
                             clickedCb.setChecked(true);
                         }
-                        saveMultipleAnswerEntry(questionId, 0, datatype, tl);
+                        saveMultipleAnswerEntry(questionId, 0, finalDatatype, tl);
                     }
                 });
 
@@ -5353,8 +5757,16 @@ public class DynamicQuestions {
         LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
         renderQuestion(qCursor, isRepeaterItem, (isRepeaterItem) ? parentLayout : questionWrapper);
 
-        final String datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
+//        final String datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
         final int questionId = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionSipEntry.COLUMN_NAME_ID));
+        final String displayTypeID = String.valueOf(dl.getDisplayTypeIdByQuestionID(questionId));
+        final String oldDatatype =  dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
+
+        String datatype = "";
+        if (oldDatatype.equals("Date Picker")){
+            datatype = "answer_text";
+        }
+
         int answerIdTemp = 0;
         if (hasAnswers) {
             if (isRepeaterItem && repeaterAnswers != null && repeaterAnswers.getCount() > 0) {
@@ -5404,10 +5816,11 @@ public class DynamicQuestions {
                         }
                     }
 
+                    String finalDatatype = datatype;
                     spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                         @Override
                         public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
-                            saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, spinner.getSelectedItem().toString() + "-01-01");
+                            saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, finalDatatype, spinner.getSelectedItem().toString() + "-01-01");
                         }
 
                         @Override
@@ -5442,6 +5855,7 @@ public class DynamicQuestions {
                         }
                     }
 
+                    String finalDatatype1 = datatype;
                     dp.init(
                             today.get(Calendar.YEAR),
                             today.get(Calendar.MONTH),
@@ -5452,7 +5866,7 @@ public class DynamicQuestions {
                                     // get the date
                                     Calendar cal = Calendar.getInstance();
                                     cal.set(selectedYear, selectedMonth, selectedDay);
-                                    saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, serverDateFormat.format(cal.getTime()));
+                                    saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, finalDatatype1, serverDateFormat.format(cal.getTime()));
                                 }
                             }
                     );
@@ -5477,8 +5891,15 @@ public class DynamicQuestions {
         LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, questionsSection, false);
         renderQuestion(questions, false, questionWrapper);
 
-        final String datatype = questions.getString(questions.getColumnIndex("datatype_name"));
+//        final String datatype = questions.getString(questions.getColumnIndex("datatype_name"));
         final int questionId = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
+        final String displayTypeID = String.valueOf(dl.getDisplayTypeIdByQuestionID(questionId));
+        final String oldDatatype =  dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
+
+        String datatype = "";
+        if (oldDatatype.equals("Photo Checkbox")){
+            datatype = "answer_text";
+        }
         final boolean singleSelect;
         boolean tempSingleSelect = false;
 
@@ -5548,6 +5969,7 @@ public class DynamicQuestions {
                 });
 
                 //stick the answer in the question itself
+                String finalDatatype = datatype;
                 cb.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -5563,7 +5985,7 @@ public class DynamicQuestions {
                             clickedCb.setChecked(true);
                         }
 
-                        saveMultipleAnswerEntry(questionId, 0, datatype, tl);
+                        saveMultipleAnswerEntry(questionId, 0, finalDatatype, tl);
                     }
                 });
 
@@ -5582,8 +6004,16 @@ public class DynamicQuestions {
         LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, questionsSection, false);
         renderQuestion(questions, false, questionWrapper);
 
-        final String datatype = questions.getString(questions.getColumnIndex("datatype_name"));
+//        final String datatype = questions.getString(questions.getColumnIndex("datatype_name"));
         final int questionId = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
+        final String displayTypeID = String.valueOf(dl.getDisplayTypeIdByQuestionID(questionId));
+        final String oldDatatype =  dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
+
+        String datatype = "";
+        if (oldDatatype.equals("Repeater")){
+            datatype = "int";
+        }
+
         final int answerId = (hasAnswers) ? questions.getInt(questions.getColumnIndex("answer_id")) : 0;
         final Spinner spinner = (Spinner) inflater.inflate(R.layout.module_spinner, questionWrapper, false);
 
@@ -5613,11 +6043,12 @@ public class DynamicQuestions {
                 questionWrapper.addView(repeaterItemsWrapper);
                 questionsSection.addView(questionWrapper);
 
+                String finalDatatype = datatype;
                 spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                         if (id > 0 || zeroAcceptable) {
-                            saveAnswerEntry(questionId, answerId, 0, -1, datatype, spinner.getSelectedItem().toString());
+                            saveAnswerEntry(questionId, answerId, 0, -1, finalDatatype, spinner.getSelectedItem().toString());
                             if (id > 0) {
                                 renderRepeaterItemsForSIP(questionId, id, repeaterItemsWrapper, res);
                             } else {

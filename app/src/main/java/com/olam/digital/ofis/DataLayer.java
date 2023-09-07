@@ -4435,6 +4435,8 @@ public class DataLayer {
             String whereClause = OFISDBContract.AnswerEntry.COLUMN_NAME_SUBMODULE_ID + " = ? AND " + farmerQuery + " AND " + idColumn + " = ? ";
 
             db.delete(answerTable, whereClause, whereArgs);
+            long farmerIdLOG = Utilities.farmerId;
+            Log.d("AnswerSet" , "Farmer ID: " +  farmerIdLOG + " / Answer Set: " + answerSet.toString());
 
             // now add in answers
             for (int i = 0; i < answerSet.size(); i++) {
@@ -4458,11 +4460,25 @@ public class DataLayer {
                     values.put(OFISDBContract.AnswerEntry.COLUMN_NAME_OLAM_FARMER_ID, olamFarmerId);
                     values.put(OFISDBContract.AnswerEntry.COLUMN_NAME_FARM_ID, farmId);
 
-                    if(datatype.equals("text box")){
-                        values.put("answer_text", answer);
-                    }else{
-                        values.put("answer_" + datatype, answer);
+                    values.put("answer_" + datatype, answer);
+
+                    /*if ( datatype.equals("Numbers Only")|| datatype.equals("Percentage") ||
+                            datatype.equals("Decimal") || datatype.equals("Dropdown") || datatype.equals("Photo Checkbox") || datatype.equals("Repeater")){
+                        values.put("answer_int" , answer);
+                    }else if (datatype.equals("text box") || datatype.equals("Alphanumeric") ||
+                            datatype.equals("Alphabetical") || datatype.equals("Photo Upload") || datatype.equals("Date Picker") ||
+                            datatype.equals("Checkbox") || datatype.equals("Radio")){
+                        values.put("answer_text" , answer);
                     }
+                    else if (){
+                        values.put("answer_boolean" , answer);
+                    }else if (){
+                        values.put("answer_decimal" , answer);
+                    }else if (){
+                        values.put("answer_date" , answer);
+                    }*/
+
+
                     if (sub_answers.length() > 0 && (!datatype.equalsIgnoreCase("text"))) {
                         values.put("answer_text", sub_answers);
                     }
@@ -4881,7 +4897,7 @@ public class DataLayer {
         String answerTable = OFISDBContract.AnswerEntry.TABLE_NAME;
         String questionTable = OFISDBContract.QuestionEntry.TABLE_NAME;
         String datatypeTable = OFISDBContract.DatatypesEntry.TABLE_NAME;
-        String sql = "SELECT " + answerTable + ".*," + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE + ", " + datatypeTable + "." + OFISDBContract.DatatypesEntry.COLUMN_NAME_DATATYPE_NAME +
+        String sql = "SELECT " + answerTable + ".*," + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE + ", " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_ANSWER_TYPE + ", " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE_ID + ", " + datatypeTable + "." + OFISDBContract.DatatypesEntry.COLUMN_NAME_DATATYPE_NAME +
                 " FROM " + answerTable + " INNER JOIN " + questionTable + " ON " + answerTable + "." + OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID + " = " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_ID +
                 " INNER JOIN " + datatypeTable + " ON " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID + " = " + datatypeTable + "." + OFISDBContract.DatatypesEntry.COLUMN_NAME_ID +
                 " WHERE " + OFISDBContract.AnswerEntry.COLUMN_NAME_PARENT_QUESTION_ID + " = 0 AND " + OFISDBContract.AnswerEntry.COLUMN_NAME_FARMER_MODULE_ID + " = ? ORDER BY " + OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID + " ASC";
@@ -7203,13 +7219,57 @@ public class DataLayer {
         String value = "";
         Cursor cursor = null;
         try {
-            String[] columns = new String[]{"answerType"};
+            String[] columns = new String[]{"*"};
             String whereClause = OFISDBContract.QuestionEntry.COLUMN_NAME_ID + " = ?";
             String[] whereArgs = new String[]{String.valueOf(id)};
             cursor = db.query(OFISDBContract.QuestionEntry.TABLE_NAME,columns,whereClause,whereArgs,null,null,null,null);
             if (cursor != null){
                 while(cursor.moveToNext()){
                     value = cursor.getString(cursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ANSWER_TYPE));
+                }
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            cursor.close();
+        }
+        return value;
+
+    }
+
+    public String getQuestionTypeValue(int id){
+        String value = "";
+        Cursor cursor = null;
+        try {
+            String[] columns = new String[]{"*"};
+            String whereClause = OFISDBContract.QuestionType.COLUMN_NAME_ID + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(id)};
+            cursor = db.query(OFISDBContract.QuestionType.TABLE_NAME,columns,whereClause,whereArgs,null,null,null,null);
+            if (cursor != null){
+                while(cursor.moveToNext()){
+                    value = cursor.getString(cursor.getColumnIndex(OFISDBContract.QuestionType.COLUMN_NAME_VALUE));
+                }
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            cursor.close();
+        }
+        return value;
+
+    }
+
+    public String getDisplayTypeIdByQuestionID(int id){
+        String value = "" ;
+        Cursor cursor = null;
+        try {
+            String[] columns = new String[]{"displaytypeId"};
+            String whereClause = OFISDBContract.QuestionEntry.COLUMN_NAME_ID + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(id)};
+            cursor = db.query(OFISDBContract.QuestionEntry.TABLE_NAME,columns,whereClause,whereArgs,null,null,null,null);
+            if (cursor != null){
+                while(cursor.moveToNext()){
+                    value = cursor.getString(cursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE_ID));
                 }
             }
         }catch (Exception e) {

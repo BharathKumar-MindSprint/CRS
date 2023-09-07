@@ -1953,7 +1953,32 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                             subset_section.put("sub_questions_included", questions_included_output.substring(1, questions_included_output.length() - 1));
                             subset_section.put("sub_answers", sub_answers);
                             answer.put("subset_section", subset_section);*/
-                                    String datatype = moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.DatatypesEntry.COLUMN_NAME_DATATYPE_NAME));
+                                    String datatypeID = "";
+                                    String dataTypeName = "";
+                                    String datatype = "";
+
+                                    String displayType = moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE));
+                                    if(displayType.replaceAll(" ", "").toLowerCase().equals("textbox")){
+                                        // use answerType
+                                        datatypeID = moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ANSWER_TYPE));
+                                        dataTypeName = dl.getAnswerTypeValue(Integer.parseInt(datatypeID));
+
+                                    }else{
+                                        // use displayType
+                                        datatypeID = moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE_ID));
+                                        dataTypeName = dl.getQuestionTypeValue(Integer.parseInt(datatypeID));
+                                    }
+
+                                    if ( dataTypeName.equals("Numbers Only")|| dataTypeName.equals("Percentage") ||
+                                            dataTypeName.equals("Decimal") || dataTypeName.equals("Dropdown") || dataTypeName.equals("Photo Checkbox")
+                                            || dataTypeName.equals("Repeater") || dataTypeName.equals("Checkbox") || dataTypeName.equals("Radio")){
+                                        datatype = "int";
+                                    }else if (dataTypeName.equals("text box") || dataTypeName.equals("Alphanumeric") ||
+                                            dataTypeName.equals("Alphabetical") || dataTypeName.equals("Photo Upload") || dataTypeName.equals("Date Picker")){
+                                        datatype = "text";
+                                    }
+
+
                                     if (datatype.equalsIgnoreCase("int") || datatype.equalsIgnoreCase("boolean")) {
                                         answer.put("answer", moduleAnswers.getInt(moduleAnswers.getColumnIndex("answer_" + datatype)));
                                     } else if (datatype.equalsIgnoreCase("decimal")) {
