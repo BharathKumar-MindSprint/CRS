@@ -675,7 +675,6 @@
     <string name="photo_not_matching">Photo not matching</string>
 
 
-
     <string name="consent_statement_pageone2">Your  personal  data  including  your  name,  age,  contact  information  (e-mail  address,  phone  number,  mailing  address), photographs, videos or digital recordings, biographical, social and geographical information, financial, farming and output information,  feedback  from  you,  and  where  applicable,  those  of  your  children  or  dependants  (“Farmer  Data”)  will  be collected and stored by us and made accessible to our customers, business partners and in some cases, made public on our  Olam  websites,  social  media,  electronic  or  written  publications.  This  includes  the  Olam  Farmer  Information  System ("OFIS") and/or the AtSource platform (“AtSource”) which are online databases and tools containing farmer related data used by us and our customers and partners. We ask that you hereby acknowledge and provide consent to the collection, use and disclosure of your personal data for this purpose in accordance with this Personal Information Collection Notice. </string>
     <string name="consent_statement_pageone1">It is requested for you to supply Olam International Limited (hereafter referred to as “Olam,” “us,” or “we”) with personal data in support of Olam’s efforts to promote sustainability and traceability in the supply chain and in-turn to promote responsible trade with farmers such as yourself around the globe (the “Purpose”). </string>
 
@@ -754,7 +753,7 @@
     <string name="farmerlead_phonenumber">Phone No: </string>
     <string name="farmerlead_search">Search Farmer Lead</string>
     <string name="select_farmerlead">Please select Farmer Lead</string>
-     <string name="privacy_data">Olam Food Ingredients and our affiliates worldwide (collectively called “ofi,” “we,” “us,” “our”) understand the importance of privacy to you. This policy summarizes what personal information we may collect, how we may use this information, and other important topics relating to your privacy and data protection.\n \n
+    <string name="privacy_data">Olam Food Ingredients and our affiliates worldwide (collectively called “ofi,” “we,” “us,” “our”) understand the importance of privacy to you. This policy summarizes what personal information we may collect, how we may use this information, and other important topics relating to your privacy and data protection.\n \n
 It is ofi policy to comply with all applicable privacy and data protection laws. This commitment reflects the value we place on earning and keeping the trust of our customers, business partners and others who share their personal information with us.\n \n
 This Policy applies to all websites and mobile applications (“apps”) operated by or on behalf of ofi. It also applies to personal information ofi may otherwise collect: (i) through our products and services; (ii) when you interact with us by means other than an ofi website or app, for example, in person, by telephone, or at a trade show or training; and (iii) from our customers, distributors, suppliers, vendors, and other business partners (collectively “Business Partners”).\n\n
 However, different ofi websites, apps, products, and services have different purposes and features. If additional or different disclosures are required for a specific OFI website, app, product, or service, then we provide those disclosures (“Specific Privacy Statements”) separately on, or with, the relevant website, app, product, or service. Each such specific privacy disclosure, policy, or statement supplements and amends this Policy.\n\n
@@ -826,7 +825,6 @@ Note that we can anonymise or aggregate any of the information we collect and us
     <string name="children_data">We do not collect and process the personal data of children under the relevant minimum age under applicable local legal requirements except for specific services and upon the consent of the holder of parental responsibility.</string>
     <string name="links_to_website">Links to Other Websites</string>
     <string name="links_to_website_data">We have links to other apps, plugins, or websites that are not owned or controlled by ofi. We are not responsible for the security or privacy of any information collected by such apps or websites. You should exercise caution and review the privacy statements applicable to the third-party websites and services you use. The use of online tracking mechanism by those third-party websites and services is subject to those third parties own privacy policies, and not this Privacy Statement</string>
-
 
 
     <string name="RandC">Requests &amp; Clarifications</string>
@@ -1094,4 +1092,17 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="download_farm_plan">DDownload Crop Plan</string>
     <string name="downloading_farm_plan">Downloading Farm Plan</string>
     <string name="checking_isfarmplan_available">Checking Download Crop Plan Status</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!--Diagnostic Module-->
+    <string name="dm_header_txt">Diagnostic Module Action plan and proof</string>
+    <string name="dm_hint_txt">Diagnostic Module</string>
+    <string name="dm_survey">Survey</string>
+    <string name="diagnostic_survey">Diagnostic Module Survey</string>
+    <string name="dm_actionplan_proof">Action plan and proof</string>
+    <string name="dm_survey_results">Survey Results</string>
+    <string name="dm_diognostic_module">Diagnostic Module</string>
+    <string name="dm_diognostic_module_subtitle">Follow up generated</string>
+    <string name="dm_select_currency_txt">Select the currency for the action plan</string>
 </resources>

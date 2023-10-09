@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="60dp"
+    android:background="@color/white">
+
+    <RelativeLayout
+        android:id="@+id/rl_complaint"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/margin_10">
+
+        <View
+            android:id="@+id/iv_fileupload"
+            android:layout_width="5dp"
+            android:layout_height="match_parent"
+            android:layout_centerVertical="true"
+            android:background="@color/clmrs_yellow" />
+
+        <TextView
+            android:id="@+id/tv_complaint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="40dp"
+            android:layout_toRightOf="@+id/iv_fileupload"
+            android:gravity="center_vertical"
+            android:padding="2dp"
+            android:layout_centerVertical="true"
+            android:textColor="@color/black"
+            android:textSize="@dimen/ofis_small_text"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/iv_complaint_dropdown"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:padding="10dp"
+            android:src="@drawable/ic_dropdown_new" />
+
+    </RelativeLayout>
+
+</LinearLayout>

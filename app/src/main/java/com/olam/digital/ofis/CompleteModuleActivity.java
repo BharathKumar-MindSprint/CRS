@@ -286,7 +286,7 @@ public class CompleteModuleActivity extends BaseActivity {
         dynamicQuestions.SurveyType="other";
 
 
-}
+    }
 
 
 
@@ -295,8 +295,8 @@ public class CompleteModuleActivity extends BaseActivity {
             int auto_time_enabled = 0;
             int auto_time_zone_enabled = 0;
 
-                auto_time_enabled = Settings.Global.getInt(getContentResolver(), Settings.Global.AUTO_TIME, 0);
-                auto_time_zone_enabled = Settings.Global.getInt(getContentResolver(), Settings.Global.AUTO_TIME_ZONE, 0);
+            auto_time_enabled = Settings.Global.getInt(getContentResolver(), Settings.Global.AUTO_TIME, 0);
+            auto_time_zone_enabled = Settings.Global.getInt(getContentResolver(), Settings.Global.AUTO_TIME_ZONE, 0);
 //
             if (auto_time_enabled == 0 || auto_time_zone_enabled == 0) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -311,7 +311,7 @@ public class CompleteModuleActivity extends BaseActivity {
                 AlertDialog alert = builder.create();
                 alert.show();
             } else {
-               // autotimeEnabled = true;
+                // autotimeEnabled = true;
             }
         } catch (Exception e) {
             FirebaseCrash.report(new Exception("HomeActivity: Error getting phone auto time settings", e));
@@ -449,7 +449,7 @@ public class CompleteModuleActivity extends BaseActivity {
 
 
 
-   
+
     private void moveToCurrentSubModule(int subModuleId) {
         while (subModules.moveToNext()) {
             if (subModuleId == subModules.getInt(subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_ID))) {
@@ -459,48 +459,56 @@ public class CompleteModuleActivity extends BaseActivity {
     }
 
     private void setupTopSection() {
-        TextView moduleNameTv = (TextView) findViewById(R.id.completeModuleModuleTitle);
-        TextView subModuleNameTv = (TextView) findViewById(R.id.completeModuleSubModuleTitle);
+        try {
+            TextView moduleNameTv = (TextView) findViewById(R.id.completeModuleModuleTitle);
+            TextView subModuleNameTv = (TextView) findViewById(R.id.completeModuleSubModuleTitle);
 
-        moduleNameTv.setText(moduleName);
+            moduleNameTv.setText(moduleName);
 
-        moduleNameTv.post(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    if (moduleNameTv.getLineCount()>4){
-                        moduleNameTv.setMaxLines(4);
-                        moduleNameTv.setEllipsize(TextUtils.TruncateAt.END);}
-                }catch (Exception e){}
-            }
-        });
+            moduleNameTv.post(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        if (moduleNameTv.getLineCount() > 4) {
+                            moduleNameTv.setMaxLines(4);
+                            moduleNameTv.setEllipsize(TextUtils.TruncateAt.END);
+                        }
+                    } catch (Exception e) {
+                    }
+                }
+            });
 
 
             int columnIndex = (subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME + dynamicQuestions.questionColumnSuffix) != -1) ? subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME + dynamicQuestions.questionColumnSuffix) : subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME);
             subModuleNameTv.setText(subModules.getString(columnIndex));
 
-        subModuleNameTv.post(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    if (subModuleNameTv.getLineCount()>4){
-                        subModuleNameTv.setMaxLines(4);
-                        subModuleNameTv.setEllipsize(TextUtils.TruncateAt.END);}
-                }catch (Exception e){}
-            }
-        });
-        long farmerGroupId = dl.getFarmerGroupById(farmerId);
-        long sectionId = dl.getSectionByFarmerId(farmerId);
-        boolean value = dl.farmerExistByfarmerGroupSection(farmerGroupId,sectionId,moduleId);
-        if(value){
-            boolean viewExistingdata = dl.isSurveyAnsDownloaded(subModuleId, farmerId);
-            if(viewExistingdata){
-                viewSurveyAnswer.setVisibility(View.VISIBLE);
-            }else{
+            subModuleNameTv.post(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        if (subModuleNameTv.getLineCount() > 4) {
+                            subModuleNameTv.setMaxLines(4);
+                            subModuleNameTv.setEllipsize(TextUtils.TruncateAt.END);
+                        }
+                    } catch (Exception e) {
+                    }
+                }
+            });
+            long farmerGroupId = dl.getFarmerGroupById(farmerId);
+            long sectionId = dl.getSectionByFarmerId(farmerId);
+            boolean value = dl.farmerExistByfarmerGroupSection(farmerGroupId, sectionId, moduleId);
+            if (value) {
+                boolean viewExistingdata = dl.isSurveyAnsDownloaded(subModuleId, farmerId);
+                if (viewExistingdata) {
+                    viewSurveyAnswer.setVisibility(View.VISIBLE);
+                } else {
+                    viewSurveyAnswer.setVisibility(View.GONE);
+                }
+            } else {
                 viewSurveyAnswer.setVisibility(View.GONE);
             }
-        }else{
-            viewSurveyAnswer.setVisibility(View.GONE);
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 
@@ -1036,7 +1044,7 @@ public class CompleteModuleActivity extends BaseActivity {
         Cursor questions = dl.retrieveQuestionsAndAnswersBySubModuleId(subModuleId, farmerId, farmerModuleId);
         try {
             if(questions != null){
-             while (questions.moveToNext()) {
+                while (questions.moveToNext()) {
                  /*LinearLayout questionInclude = (LinearLayout) inflaterQuestions.inflate(R.layout.question_answer_row, questionsSection, false);
                  questionsSection.addView(questionInclude);
                  TextView questionText = (TextView) questionInclude.findViewById(R.id.questionText);
@@ -1045,31 +1053,31 @@ public class CompleteModuleActivity extends BaseActivity {
                  int columnIndex = (questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION + questionColumnSuffix) != -1) ? questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION + questionColumnSuffix) : questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION);
                  questionText.setText(questions.getString(columnIndex));
                  answerText.setText("Answer Here");*/
-                 dynamicQuestions.hasAnswers = true;
-                 dynamicQuestions.viewAnswer = true;
-                 String displayType = questions.getString(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE));
-                 if (displayType.replaceAll(" ", "").toLowerCase().equals("checkbox")) {
-                     dynamicQuestions.renderCheckBoxQuestion(questions, dynamicQuestions.questionsSection, farmerId, farmerModuleId, true);
-                 } else if (displayType.replaceAll(" ", "").toLowerCase().equals("datepicker")) {
-                     dynamicQuestions.renderDatePickerQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null,true);
-                 } else if (displayType.replaceAll(" ", "").toLowerCase().equals("decimal")) {
-                     dynamicQuestions.renderTextBoxQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null);
-                 } else if (displayType.replaceAll(" ", "").toLowerCase().equals("dropdown")) {
-                     dynamicQuestions.renderDropDownQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
-                 } else if (displayType.replaceAll(" ", "").toLowerCase().equals("photocheckbox")) {
-                     dynamicQuestions.renderPhotoCheckboxQuestion(questions, farmerId, farmerModuleId, res, getPackageName(),true);
-                 } else if (displayType.replaceAll(" ", "").toLowerCase().equals("repeater")) {
-                     dynamicQuestions.renderRepeaterQuestion(questions, farmerId, olamFarmerId, farmerModuleId, res, true);
-                 } else if (displayType.replaceAll(" ", "").toLowerCase().equals("textbox")) {
-                     dynamicQuestions.renderTextBoxQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null);
-                 } else if (displayType.replaceAll(" ", "").toLowerCase().equals("yesno") || displayType.replaceAll(" ", "").toLowerCase().equals("yes/no")) {
-                     dynamicQuestions.renderYesNoQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
-                 } else if (displayType.replaceAll(" ", "").toLowerCase().equals("farmtreedensity")) {
-                     dynamicQuestions.renderTreeDensityQuestion(questions, res);
-                 } else if (displayType.replaceAll(" ", "").toLowerCase().equals("photoupload")) {
-                     dynamicQuestions.renderPhotoUploadQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
-                 } else if (displayType.replaceAll(" ", "").toLowerCase().equals("Location")) {
-                     renderCaptureLocationQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1);
+                    dynamicQuestions.hasAnswers = true;
+                    dynamicQuestions.viewAnswer = true;
+                    String displayType = questions.getString(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE));
+                    if (displayType.replaceAll(" ", "").toLowerCase().equals("checkbox")) {
+                        dynamicQuestions.renderCheckBoxQuestion(questions, dynamicQuestions.questionsSection, farmerId, farmerModuleId, true);
+                    } else if (displayType.replaceAll(" ", "").toLowerCase().equals("datepicker")) {
+                        dynamicQuestions.renderDatePickerQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null,true);
+                    } else if (displayType.replaceAll(" ", "").toLowerCase().equals("decimal")) {
+                        dynamicQuestions.renderTextBoxQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null);
+                    } else if (displayType.replaceAll(" ", "").toLowerCase().equals("dropdown")) {
+                        dynamicQuestions.renderDropDownQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
+                    } else if (displayType.replaceAll(" ", "").toLowerCase().equals("photocheckbox")) {
+                        dynamicQuestions.renderPhotoCheckboxQuestion(questions, farmerId, farmerModuleId, res, getPackageName(),true);
+                    } else if (displayType.replaceAll(" ", "").toLowerCase().equals("repeater")) {
+                        dynamicQuestions.renderRepeaterQuestion(questions, farmerId, olamFarmerId, farmerModuleId, res, true);
+                    } else if (displayType.replaceAll(" ", "").toLowerCase().equals("textbox")) {
+                        dynamicQuestions.renderTextBoxQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null);
+                    } else if (displayType.replaceAll(" ", "").toLowerCase().equals("yesno") || displayType.replaceAll(" ", "").toLowerCase().equals("yes/no")) {
+                        dynamicQuestions.renderYesNoQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
+                    } else if (displayType.replaceAll(" ", "").toLowerCase().equals("farmtreedensity")) {
+                        dynamicQuestions.renderTreeDensityQuestion(questions, res);
+                    } else if (displayType.replaceAll(" ", "").toLowerCase().equals("photoupload")) {
+                        dynamicQuestions.renderPhotoUploadQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1, null, res);
+                    } else if (displayType.replaceAll(" ", "").toLowerCase().equals("Location")) {
+                        renderCaptureLocationQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1);
                     /* try{
                          if (mCurrentCapturedLocation!=null){
                              dynamicQuestions.renderCaptureLocationQuestion(questions, false, dynamicQuestions.questionsSection, 0, -1,null,mCurrentCapturedLocation);
@@ -1080,16 +1088,18 @@ public class CompleteModuleActivity extends BaseActivity {
                              }
                          }
                      }catch (Exception e){}*/
-                 }
-             }
+                    }
+                }
             }
 
         }catch (Exception e){
             e.printStackTrace();
         }
         TextView moduleText = (TextView) popupView.findViewById(R.id.completeModuleSubModule);
-        int columnIndex = (subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME + dynamicQuestions.questionColumnSuffix) != -1) ? subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME + dynamicQuestions.questionColumnSuffix) : subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME);
-        moduleText.setText(moduleName + " - " + subModules.getString(columnIndex));
+        try {
+            int columnIndex = (subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME + dynamicQuestions.questionColumnSuffix) != -1) ? subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME + dynamicQuestions.questionColumnSuffix) : subModules.getColumnIndex(OFISDBContract.SubmoduleEntry.COLUMN_NAME_NAME);
+            moduleText.setText(moduleName + " - " + subModules.getString(columnIndex));
+        }catch (Exception e){e.printStackTrace();}
         popupView.findViewById(R.id.cancel_btn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1161,7 +1171,7 @@ public class CompleteModuleActivity extends BaseActivity {
         }
         Context context = popupWindow.getContentView().getContext();
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-       WindowManager.LayoutParams p = (WindowManager.LayoutParams) container.getLayoutParams();
+        WindowManager.LayoutParams p = (WindowManager.LayoutParams) container.getLayoutParams();
         p.flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND;
         p.dimAmount = 0.7f;
         wm.updateViewLayout(container, p);

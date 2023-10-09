@@ -876,18 +876,18 @@ Note that we can anonymise or aggregate any of the information we collect and us
     <string name="gdpr_data_t_ans2"> Legitimate interest, and when a contractual relationship exists, in order to fulfil our contractual obligations to you</string>
     <string name="gdpr_data_t3"> Provide Traceability in the Supply Chain	</string>
     <string name="gdpr_data_t_ans3"> Legitimate interest</string>
-<string name="gdpr_data_t4"> Foster Careers	</string>
-<string name="gdpr_data_t_ans4"> Legitimate interest</string>
-<string name="gdpr_data_t5"> Communicate with you regarding services you are party to	</string>
-<string name="gdpr_data_t_ans5"> Legitimate interest</string>
-<string name="gdpr_data_t6"> Provide and improve our websites, apps, products, and services	</string>
-<string name="gdpr_data_t_ans6"> Legitimate interest</string>
-<string name="gdpr_data_t7"> Address legal issues	</string>
-<string name="gdpr_data_t_ans7"> Legal obligation</string>
-<string name="gdpr_data_t8"> Manage office visitors	</string>
-<string name="gdpr_data_t_ans8"> Legitimate interest</string>
-<string name="gdpr_data_t9"> Marketing communications and analytics	</string>
-<string name="gdpr_data_t_ans9"> Consent</string>
+    <string name="gdpr_data_t4"> Foster Careers	</string>
+    <string name="gdpr_data_t_ans4"> Legitimate interest</string>
+    <string name="gdpr_data_t5"> Communicate with you regarding services you are party to	</string>
+    <string name="gdpr_data_t_ans5"> Legitimate interest</string>
+    <string name="gdpr_data_t6"> Provide and improve our websites, apps, products, and services	</string>
+    <string name="gdpr_data_t_ans6"> Legitimate interest</string>
+    <string name="gdpr_data_t7"> Address legal issues	</string>
+    <string name="gdpr_data_t_ans7"> Legal obligation</string>
+    <string name="gdpr_data_t8"> Manage office visitors	</string>
+    <string name="gdpr_data_t_ans8"> Legitimate interest</string>
+    <string name="gdpr_data_t9"> Marketing communications and analytics	</string>
+    <string name="gdpr_data_t_ans9"> Consent</string>
     <string name="gdpr_data2">\n Your Rights
 \n  \nThe law gives you certain rights in respect of the information we collect from you. Among these rights, you have the right to ask us for a copy of your personal data, to verify, correct, or restrict (stop any active) processing of your personal data.
 \n  \nIn addition, you can object to the processing of your personal data in some circumstances (namely, where we don’t have to process the data to meet a contractual or other legal requirement, or where we are using the data for direct marketing).
@@ -1090,4 +1090,15 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="download_farm_plan">Download Crop Plan</string>
     <string name="downloading_farm_plan">Downloading Farm Plan</string>
     <string name="checking_isfarmplan_available">Checking Download Crop Plan Status</string>
+
+    <!--Diagnostic Module-->
+    <string name="dm_header_txt">Diagnostic Module Action plan and proof</string>
+    <string name="dm_survey">Survey</string>
+    <string name="dm_actionplan_proof">Action plan and proof</string>
+    <string name="dm_survey_results">Survey Results</string>
+    <string name="dm_diognostic_module">Diagnostic Module</string>
+    <string name="dm_diognostic_module_subtitle">Follow up generated</string>
+    <string name="dm_select_currency_txt">Select the currency for the action plan</string>
+    <string name="dm_select_currency_txt1">Select the currency for the action plan</string>
+
 </resources>

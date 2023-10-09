@@ -20,7 +20,6 @@ import android.database.MatrixCursor;
 import android.database.MergeCursor;
 import android.graphics.Bitmap;
 import android.location.Location;
-import android.media.Image;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -30,19 +29,16 @@ import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import androidx.annotation.NonNull;
-import androidx.appcompat.widget.AppCompatButton;
-import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NavUtils;
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.FileProvider;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.telephony.PhoneNumberUtils;
-import android.text.Editable;
-import android.text.InputType;
-import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -82,7 +78,6 @@ import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.crash.FirebaseCrash;
-import com.google.gson.Gson;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionDeniedResponse;
@@ -101,18 +96,23 @@ import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.gps.utils.GPSUtils;
 import com.olam.digital.ofis.matoma.MatomoHelper;
 import com.olam.digital.ofis.matoma.ScreenNameConstants;
+import com.olam.digital.ofis.matoma.multifarm.UpdateMultiFarmActivity;
+
+import com.olam.digital.ofis.matoma.multifarm.UpdateMultiFarmActivity;
 import com.olam.digital.ofis.multifarm.MultiFarmDTO;
-import com.olam.digital.ofis.multifarm.MultiFarmStakeHolderDTO;
 import com.olam.digital.ofis.multifarm.MultiFarmUtils;
-import com.olam.digital.ofis.multifarm.SubmittedInfo;
-import com.olam.digital.ofis.multifarm.UpdateMultiFarmActivity;
-import com.olam.digital.ofis.recordpolygon.LocationBeanList;
-import com.olam.digital.ofis.recordpolygon.PlotsList;
+
+import com.olam.digital.ofis.mvvmmodule.Constants;
+import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
+import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmMainModule;
+import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmRecurrence;
+import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmSurveyAnswerTable;
+import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.FollowUpItemMainTable;
+import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.DiagnosticModuleActivity;
+import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.FollowUp.FollowUpRecyclerAdapter;
+import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.RecurrenceUtils;
 import com.olam.digital.ofis.recordpolygon.RecordPolygonActivity;
 import com.olam.digital.ofis.recordpolygon.SharedPreferenceUtils;
-import com.olam.digital.ofis.recordpolygon.location;
-import com.olam.digital.ofis.recordpolygon.plot;
-import com.olam.digital.ofis.recordpolygon.plots;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -122,16 +122,19 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 
 public class ViewFarmerActivity extends BaseListActivity implements AdapterView.OnItemClickListener,AdapterView.OnItemLongClickListener {
@@ -140,6 +143,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
     public static long farmerId;
     private Cursor farmer;
     private Context context;
+    private static Context staticContext;
     private Resources res;
     private DataLayer dl;
 
@@ -241,6 +245,16 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
     String multiFarmId=null;
     public static boolean farmSurvey;
 
+    //Room Database
+    OFISRoomDB db;
+    String dmSurveyName;
+    String  dmSubTitle,dmSubTitleDescription;
+    String followUpCount;
+    String moduleID;
+
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -250,12 +264,17 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         mResolvingError = savedInstanceState != null && savedInstanceState.getBoolean(STATE_RESOLVING_ERROR, false);
         context = this;
+        staticContext=this;
         ChildLabourUtils.isChildEnumerator = Utilities.getChildLabourPref(context, ChildLabourUtils.IS_CHILD_ENUMERATOR);
         MultiFarmUtils.isMultiFarmEnumerator = Utilities.getMultifarmPref(context, MultiFarmUtils.IS_MULTI_FARM_ENUMERATOR);
 
         res = getResources();
         dl = new DataLayer(res, context);
         pd = new ProgressDialog(context);
+
+
+
+
 
         //farmerId = SharedPreferenceUtils.getInstance(getApplicationContext()).getFarmerID();
         initiaizeInfoWidget();
@@ -300,6 +319,8 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         });
     }
 
+
+
     private void initiaizeInfoWidget() {
         infoCloseImageView = findViewById(R.id.info_close_btn);
         statusInfoLayout = findViewById(R.id.layout_notification);
@@ -313,7 +334,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         boolean isNIDAvailable = Utilities.getBoolFromSharedPrefs(context, "NationalID", false);
         if (isNIDAvailable) {
             boolean available = dl.isValueavailable(farmerId);
-           if (!available) {
+            if (!available) {
                 statusInfoLayout.setVisibility(View.VISIBLE);
             } else {
                 statusInfoLayout.setVisibility(View.GONE);
@@ -536,7 +557,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                     customListAdapter_modulesAdapter =
                             new CustomListAdapter_Modules(context, moduleAssignments, adapterCols, adapterRowViews, res, farmer, submittedModules, roleId, farmerId,multiFarmId, isAtLeastOnePlotSurveyCaptured);
 
-                     // customListAdapter_modulesAdapter.setValues(roleId,ispolygonCaptured,isLocationCaptured,isAvailableInStakeHolderList,farmSubmittedHashMapList);
+                    // customListAdapter_modulesAdapter.setValues(roleId,ispolygonCaptured,isLocationCaptured,isAvailableInStakeHolderList,farmSubmittedHashMapList);
                     listView.setAdapter(customListAdapter_modulesAdapter);
                 }
             } catch (JSONException e) {
@@ -836,7 +857,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 farmer.moveToFirst();
                 String modulesQuery="";
                 if (farmSurvey){
-                     modulesQuery = "SELECT modules.id as _id, modules.name, modules.name_fr, modules.name_es, modules.name_id, modules.name_pt, modules.name_tr, modules.name_lo, modules.name_vi, modules.name_th,modules.annual_survey, " +
+                    modulesQuery = "SELECT modules.id as _id, modules.name, modules.name_fr, modules.name_es, modules.name_id, modules.name_pt, modules.name_tr, modules.name_lo, modules.name_vi, modules.name_th,modules.annual_survey, " +
                             "submodules.name as submodule_name, submodules.name_fr as submodule_name_fr, submodules.name_es as submodule_name_es, submodules.name_id as submodule_name_id, submodules.name_pt as submodule_name_pt, submodules.name_tr as submodule_name_tr, submodules.name_lo as submodule_name_lo, submodules.name_vi as submodule_name_vi, submodules.name_th as submodule_name_th, " +
                             "modules.expires, " + "moduleassignments.recurrence_frequency, moduleassignments.recurrence_type, moduleassignments.disabled_months,moduleassignments.isFarmSurvey,moduleassignments.view_module,moduleassignments.fkFarmerRoleId, " +
                             " farmer_modules.id as farmer_module_id, farmer_modules.status_started, farmer_modules.status_finished, farmer_modules.current_submodule_id, farmer_modules.recorded_lat, farmer_modules.recorded_lng FROM moduleassignments " +
@@ -844,7 +865,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                             " LEFT OUTER JOIN farmer_modules ON modules.id = farmer_modules.module_id AND " +
                             "(farmer_modules.farmer_id = ? OR farmer_modules.olam_farmer_id = ?) " +
                             " LEFT OUTER JOIN " + OFISDBContract.SubmoduleEntry.TABLE_NAME + " ON farmer_modules.current_submodule_id = submodules.id WHERE " +
-                             "moduleassignments.isPlotSurvey != 'true' AND " + "moduleassignments.childLabour != 'true' AND" +
+                            "moduleassignments.isPlotSurvey != 'true' AND " + "moduleassignments.childLabour != 'true' AND" +
                             "((moduleassignment_type = 'Country' AND moduleassignment_id = ?) OR " +
                             "(moduleassignment_type = 'Region' AND moduleassignment_id = ?) OR " +
                             "(moduleassignment_type = 'District' AND moduleassignment_id = ?) OR " +
@@ -855,7 +876,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                             "(moduleassignment_type = 'Product' AND moduleassignment_id = ?) OR " +
                             "(moduleassignment_type = 'Partner' AND moduleassignment_id = ?))";
                 }else {
-                     modulesQuery = "SELECT modules.id as _id, modules.name, modules.name_fr, modules.name_es, modules.name_id, modules.name_pt, modules.name_tr, modules.name_lo, modules.name_vi, modules.name_th,modules.annual_survey, " +
+                    modulesQuery = "SELECT modules.id as _id, modules.name, modules.name_fr, modules.name_es, modules.name_id, modules.name_pt, modules.name_tr, modules.name_lo, modules.name_vi, modules.name_th,modules.annual_survey, " +
                             "submodules.name as submodule_name, submodules.name_fr as submodule_name_fr, submodules.name_es as submodule_name_es, submodules.name_id as submodule_name_id, submodules.name_pt as submodule_name_pt, submodules.name_tr as submodule_name_tr, submodules.name_lo as submodule_name_lo, submodules.name_vi as submodule_name_vi, submodules.name_th as submodule_name_th, " +
                             "modules.expires, " + "moduleassignments.recurrence_frequency, moduleassignments.recurrence_type, moduleassignments.disabled_months,moduleassignments.isFarmSurvey,moduleassignments.view_module,moduleassignments.fkFarmerRoleId, " +
                             " farmer_modules.id as farmer_module_id, farmer_modules.status_started, farmer_modules.status_finished, farmer_modules.current_submodule_id, farmer_modules.recorded_lat, farmer_modules.recorded_lng FROM moduleassignments " +
@@ -864,7 +885,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                             "(farmer_modules.farmer_id = ? OR farmer_modules.olam_farmer_id = ?) " +
                             " LEFT OUTER JOIN " + OFISDBContract.SubmoduleEntry.TABLE_NAME + " ON farmer_modules.current_submodule_id = submodules.id WHERE " +
                             "moduleassignments.childLabour != 'true' AND " +
-                             "moduleassignments.isPlotSurvey != 'true' AND "+
+                            "moduleassignments.isPlotSurvey != 'true' AND "+
                             "moduleassignments.isFarmSurvey == 'false' AND" +
                             "((moduleassignment_type = 'Country' AND moduleassignment_id = ?) OR " +
                             "(moduleassignment_type = 'Region' AND moduleassignment_id = ?) OR " +
@@ -897,7 +918,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                         "name",
                         "name_fr",
                         "name_es",
-                       "name_id",
+                        "name_id",
                         "name_pt",
                         "name_tr",
                         "name_lo",
@@ -996,6 +1017,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                         "",
                         "farmpolygon"
                 });
+
 
                 boolean isHHAvailable = Utilities.getBoolFromSharedPrefs(context, Utilities.HOUSEHOLD_ENUMERATOR, false);
                 if (isHHAvailable) {
@@ -1110,6 +1132,54 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                /* int pendingSync = dl.fetchPlotCountByFarmerID(String.valueOf(farmerId));
                 int totalCount = dl.fetchPlotTotalCount(String.valueOf(farmerId));
                 */
+
+                //ticket-OFISDM-39 add new record diagnostic module task
+
+                db = OFISRoomDB.getDbInstance(ViewFarmerActivity.this);
+                List<DmMainModule> dmQuestionsModuleList = db.dmMainModuleDao().getDMmodule();
+
+                for (int i = 0; i < dmQuestionsModuleList.size(); i++){
+                    dmSurveyName = dmQuestionsModuleList.get(i).name;
+                    dmSubTitle = dmQuestionsModuleList.get(i).assessmentType;
+                    moduleID = String.valueOf(dmQuestionsModuleList.get(i).id);
+                    followUpCount = String.valueOf(dmQuestionsModuleList.get(i).followUpAttempts);
+                    String startDate = String.valueOf(dmQuestionsModuleList.get(i).startDate);
+                    DmRecurrence dmRecurrence = db.dmRecurrenceDao().getRecurrenceByModuleId(moduleID);
+                    mc.addRow(new String[]{
+                            "0",
+                            dmSurveyName,
+                            dmSurveyName,
+                            dmSurveyName,
+                            dmSurveyName,
+                            dmSurveyName,
+                            dmSurveyName,
+                            dmSurveyName,
+                            dmSurveyName,
+                            dmSurveyName,
+                            "0",
+                            "",
+                            "",
+                            "",
+                            res.getString(R.string.dm_diognostic_module_subtitle),
+                            res.getString(R.string.dm_diognostic_module_subtitle),
+                            res.getString(R.string.dm_diognostic_module_subtitle),
+                            res.getString(R.string.dm_diognostic_module_subtitle),
+                            res.getString(R.string.dm_diognostic_module_subtitle),
+                            res.getString(R.string.dm_diognostic_module_subtitle),
+                            res.getString(R.string.dm_diognostic_module_subtitle),
+//                            String.valueOf(dmRecurrence.recurrenceFrequency),
+//                            dmRecurrence.recurrenceType,
+                            res.getString(R.string.dm_diognostic_module_subtitle),
+                            res.getString(R.string.dm_diognostic_module_subtitle),
+//                            "", "", "", "", "", startDate, "",moduleID , "",
+                            "", "", "", "", "", "", "",moduleID , "",
+                            "diagnostic"
+                    });
+
+                }
+
+
+
                 int farmPlotCount = dl.fetchSyncedPlotCountByFarmerID(String.valueOf(farmerId));
                 Cursor moduleAssignments = dl.getFarmerModules(farmerId,farmSurvey);
                 if (farmPlotCount > 0 && moduleAssignments.getCount() > 0) {
@@ -1826,7 +1896,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                         dl.updateFarmerPhoneNumbers(farmerId, storeableNumbers);
                         ContentValues nqiValues = new ContentValues();
                         if (mCurrentCapturedLocation != null) {
-                              collectGPSPoint(GPSConstants.MODULE_UPDATE_PHONE_NUMBER, mCurrentCapturedLocation, farmerId);
+                            collectGPSPoint(GPSConstants.MODULE_UPDATE_PHONE_NUMBER, mCurrentCapturedLocation, farmerId);
                         } else if (mCurrentCapturedLocation == null || !gpsTracker.isGpsEnabled()) {
                             gpsTracker.getDeviceLocation();
                             return;
@@ -2187,7 +2257,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         TextView enabled = (TextView) v.findViewById(R.id.moduleListEnabled);
         if (enabled.getText().toString().equalsIgnoreCase("true")) {
             if (id > 0) {
-               String mfFarmId  = dl.getMultifarmfarmId(farmerId);
+                String mfFarmId  = dl.getMultifarmfarmId(farmerId);
                 if (mfFarmId != null && MultiFarmUtils.isMultiFarmEnumerator) {
                     try {
                         showPopupFarmDetails(v, position, id, mfFarmId);
@@ -2202,10 +2272,13 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
 
 //                showSurvey(v, id);
 
-            } else {
+            }
+            else {
                 if (id == 0) {
                     // record farm location if necessary
                     TextView recordedLng = (TextView) v.findViewById(R.id.moduleListRecordedLng);
+                    TextView subModuleTv = (TextView) v.findViewById(R.id.moduleListCurrentSubModuleId);
+                    TextView moduleListModuleName = (TextView) v.findViewById(R.id.moduleListModuleName);
                     if (recordedLng != null && recordedLng.getText().equals("Phone")) {
                         MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_UPDATE_PHONE_NUMBER, ScreenNameConstants.BUTTON_CLICKED);
                         if (phoneNumbersListItem == null) {
@@ -2218,6 +2291,33 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                         MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_FARM_POLYGON, ScreenNameConstants.BUTTON_CLICKED);
                         polygon = true;
                         enableFarmPolygon(v);
+
+                        //Ticket-OFISDM-39 newly added
+                    }else if(recordedLng != null && recordedLng.getText().equals("diagnostic")){
+                        Constants.MODULE_ID = subModuleTv.getText().toString();
+                        Constants.MODULE_NAME = moduleListModuleName.getText().toString();
+                        Constants.FARMER_ID = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID));
+                        String farmerID = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID));
+                        long farmerGroupId = dl.getFarmerGroupById(farmerId);
+                        Constants.FARMER_GROUP_ID = String.valueOf(dl.getFarmerGroupById(farmerId));;
+
+                        Intent in = new Intent(this, DiagnosticModuleActivity.class);
+                        in.putExtra("SUB_TITLE",dmSubTitle);
+                        in.putExtra("DM_MODULE_ID",moduleID);
+                        in.putExtra("DM_FARMER_ID",farmerID);
+                        in.putExtra("DM_SURVEY_SUBTITLE",dmSurveyName);
+                        in.putExtra("DM_FARMER_GROUP_ID",String.valueOf(farmerGroupId));
+//                        startActivity(in);
+
+                        int newCount;
+                        if (Objects.equals(followUpCount, "0")){
+                            newCount = 0;
+                        }else {
+                            newCount=Integer.parseInt(followUpCount);
+                        }
+
+                        showPopupDialog(newCount , in, farmerID, Constants.MODULE_ID);
+
                     } else if (recordedLng != null && recordedLng.getText().equals(ChildLabourUtils.REG_CHILD)) {
                         MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_REGISTER_CHILD, ScreenNameConstants.BUTTON_CLICKED);
                         Intent in = new Intent(this, RegisterChildActivity.class);
@@ -2291,7 +2391,8 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                         household = false;
                         recordFarmLocation(v, res.getString(R.string.are_you_at_the_farm));
                     }
-                } else if (id < 0) {
+                }
+                else if (id < 0) {
                     // go to fmp review page
                     TextView startYearTv = (TextView) v.findViewById(R.id.moduleListCurrentSubModuleId);
                     TextView statusStartedTv = (TextView) v.findViewById(R.id.moduleListStatusStarted);
@@ -2367,31 +2468,31 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         LinearLayout farmerList = (LinearLayout) farmDetailDialog.findViewById(R.id.farmerList);
 
 //        fetch multifarm details
-            MultiFarmDTO multiFarmDTO = dl.getMultiFarmStakeHolderInfoByFarmId(mfFarmId);
-            JSONArray multiFarmArray=multiFarmDTO.getStakeholdersInfo();
-            if (multiFarmArray != null) {
-                for (int i = 0; i < multiFarmArray.length(); i++) {
-                    JSONObject jsonobject = (JSONObject) multiFarmArray.get(i);
+        MultiFarmDTO multiFarmDTO = dl.getMultiFarmStakeHolderInfoByFarmId(mfFarmId);
+        JSONArray multiFarmArray=multiFarmDTO.getStakeholdersInfo();
+        if (multiFarmArray != null) {
+            for (int i = 0; i < multiFarmArray.length(); i++) {
+                JSONObject jsonobject = (JSONObject) multiFarmArray.get(i);
 //            String farmerName=jsonobject.optString("farmerName");
-                    String role = dl.getFarmerRole(jsonobject.optInt("farmerRoleId"));
-                    String farmerName = dl.getFarmerNamefromDb(jsonobject.optLong("farmerId"));
-                    LinearLayout includeFarmerList = (LinearLayout) inflater.inflate(R.layout.add_farmerroles, farmerList, false);
-                    TextView farmer_name_title = includeFarmerList.findViewById(R.id.farmer_name_title);
-                    TextView farmer_name = includeFarmerList.findViewById(R.id.farmer_name);
-                    TextView farmerRole = includeFarmerList.findViewById(R.id.role);
-                    int farmerCount = i + 1;
-                    farmer_name_title.setText(getResources().getString(R.string.farmer) + " " + farmerCount + ":");
-                    farmer_name.setText(farmerName);
-                    farmerRole.setText(role);
-                    farmerList.addView(includeFarmerList);
-                }
-
-                TextView farmName = (TextView) farmDetailDialog.findViewById(R.id.farm_name);
-                TextView farmCode = (TextView) farmDetailDialog.findViewById(R.id.farm_code);
-                farmName.setText(multiFarmDTO.getFarmName());
-                farmCode.setText(multiFarmDTO.getFarmCode());
-
+                String role = dl.getFarmerRole(jsonobject.optInt("farmerRoleId"));
+                String farmerName = dl.getFarmerNamefromDb(jsonobject.optLong("farmerId"));
+                LinearLayout includeFarmerList = (LinearLayout) inflater.inflate(R.layout.add_farmerroles, farmerList, false);
+                TextView farmer_name_title = includeFarmerList.findViewById(R.id.farmer_name_title);
+                TextView farmer_name = includeFarmerList.findViewById(R.id.farmer_name);
+                TextView farmerRole = includeFarmerList.findViewById(R.id.role);
+                int farmerCount = i + 1;
+                farmer_name_title.setText(getResources().getString(R.string.farmer) + " " + farmerCount + ":");
+                farmer_name.setText(farmerName);
+                farmerRole.setText(role);
+                farmerList.addView(includeFarmerList);
             }
+
+            TextView farmName = (TextView) farmDetailDialog.findViewById(R.id.farm_name);
+            TextView farmCode = (TextView) farmDetailDialog.findViewById(R.id.farm_code);
+            farmName.setText(multiFarmDTO.getFarmName());
+            farmCode.setText(multiFarmDTO.getFarmCode());
+
+        }
 
         farmDetailDialog.findViewById(R.id.btn_ok).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -2443,7 +2544,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         farmDetailDialog.findViewById(R.id.btn_cancel).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                 farmDetailDialog.dismiss();
+                farmDetailDialog.dismiss();
             }
         });
 
@@ -2666,4 +2767,137 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         }
 
     }
+
+
+    private void showPopupDialog(int newFollowUpCount, Intent in, String farmerID, String moduleID) {
+        boolean isCompleted = false;
+        Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.followup_diagnostic_popup);
+//        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.setCancelable(false);
+        ArrayList<String> recyclerViewData = new ArrayList<>();
+
+        recyclerViewData.add(Constants.EXISTINGMODULE);
+//        recyclerViewData.add("Follow up " + 1);
+
+        if(db.complianceIndicatorDao().hasActionPlan(String.valueOf(moduleID))){
+
+            // getting the seventh day which restricts in generating the followup
+            Calendar calendar = Calendar.getInstance();
+            Date currentDate = calendar.getTime();
+            String startDateString = db.followUpItemMainTableDao().getFollowUpStartDate(String.valueOf(1),farmerID);
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            boolean followUpDurationDisable = false;
+            String followUpDuration = null;
+//            Date fakeDate = null;
+//            String fakeCurrentDate = null;
+
+
+            Date endFollowUpDurationDate = null;
+            if (startDateString != null){
+                followUpDuration = RecurrenceUtils.calculateEndDate(startDateString, db.dmMainModuleDao().getFollowUpDuration(moduleID) , "days");
+//                fakeCurrentDate = RecurrenceUtils.calculateEndDate(startDateString,8,"days");
+            }
+
+
+            try {
+                if (followUpDuration != null) {
+//                    fakeDate = dateFormat.parse(fakeCurrentDate);
+                    endFollowUpDurationDate = dateFormat.parse(followUpDuration);
+                }
+            } catch (android.net.ParseException | java.text.ParseException e) {
+                e.printStackTrace();
+            }
+
+            // creating the followUp for surveys
+            List<FollowUpItemMainTable> followupList = db.followUpItemMainTableDao().getFollowupByFarmerId(Long.parseLong(farmerID), Integer.parseInt(moduleID));
+            if(followupList.size() == 0){
+                List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByModuleId(String.valueOf(moduleID), String.valueOf(farmerId), true);
+                if(dmSurveyAnswerTableList.size() != 0) {
+                    recyclerViewData.add("Follow-up survey " + 1);
+                }
+            }else {
+                List<Integer> followupAttempts = db.followUpItemMainTableDao().getFollowupByAttempts(Long.parseLong(farmerID), Integer.parseInt(moduleID));
+                for (int i = 1; i <= followupAttempts.size(); i++) {
+                    recyclerViewData.add("Follow-up survey " + i);
+                }
+                List<FollowUpItemMainTable> followupUnSyncedItems = db.followUpItemMainTableDao().getFollowupUnSyncedItems(farmerID, moduleID, false);
+                if(followupUnSyncedItems.size() == 0) {
+                    List<FollowUpItemMainTable> followupUnResolvedItems = db.followUpItemMainTableDao().getFollowupUnResolvedItems(farmerID, moduleID, true, Constants.NOTRESOLVED, followupAttempts.size());
+                    if(followupUnResolvedItems.size() > 0) {
+                        int val = followupAttempts.size() + 1;
+
+                        if (endFollowUpDurationDate!=null){
+                            if (currentDate.before(endFollowUpDurationDate)){
+                                followUpDurationDisable = true;
+                            }
+                        }
+
+                        if (db.dmMainModuleDao().getFollowUpAttempts(moduleID) != 0){
+                            int count = 0;
+                            count = db.dmMainModuleDao().getFollowUpAttempts(moduleID);
+                            if (val < count + 1 ){
+
+                                if (followUpDurationDisable){
+                                    recyclerViewData.add("Follow-up survey " + val);
+                                    isCompleted = false;
+
+                                }else {
+                                    recyclerViewData.add("Follow-up survey " + val);
+                                    isCompleted = true;
+                                    Toast.makeText(context, "Recurrence Follow-up date crossed", Toast.LENGTH_SHORT).show();
+                                }
+
+                            }else {
+                                if (followUpDurationDisable){
+                                    isCompleted = false;
+
+                                }else {
+                                    isCompleted = true;
+                                    Toast.makeText(context, "Recurrence Follow-up date crossed", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        }else {
+                            recyclerViewData.add("Follow-up survey " + val);
+                            if (!followUpDurationDisable){
+                                isCompleted = true;
+                                Toast.makeText(context, "Recurrence Follow-up date crossed", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+
+
+                    }else{
+                        isCompleted = true;
+                    }
+                }
+            }
+
+        }else if (db.complianceIndicatorDao().hasNoActionPlan(String.valueOf(moduleID))){
+            List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByModuleId(String.valueOf(moduleID), String.valueOf(farmerId), true);
+            if(dmSurveyAnswerTableList.size() != 0) {
+                isCompleted = true;
+            }
+        }
+
+        RecyclerView recyclerView = dialog.findViewById(R.id.recyclerView);
+        FollowUpRecyclerAdapter adapter = new FollowUpRecyclerAdapter(recyclerViewData,getApplicationContext(),newFollowUpCount , in, isCompleted , moduleID);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
+        recyclerView.setAdapter(adapter);
+
+        ImageView closeButton = dialog.findViewById(R.id.imageView);
+        closeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
+    }
+
+
+
 }

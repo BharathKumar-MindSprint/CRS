@@ -31,6 +31,7 @@ import com.olam.digital.ofis.dynatrace.DynatraceHelper;
 import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.logging.FabricLogsWriter;
 import com.olam.digital.ofis.multifarm.MultiFarmUtils;
+import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -126,7 +127,7 @@ public class SyncAllTask extends SyncTask {
         }
 
         else if (op == SyncTaskOperationType.SYNC_BASIC_DEVICE_INFO) {
-          //  syncSpinners();
+            //  syncSpinners();
             syncDeviceInfo();
 
         } else if (op == SyncTaskOperationType.SYNC_SPINNERS) {
@@ -140,7 +141,7 @@ public class SyncAllTask extends SyncTask {
                 e.printStackTrace();
             }
         } else if (op == SyncTaskOperationType.SYNC_ENUM_ASSIGNMENT) {
-           syncEnumAssignmentCheck();
+            syncEnumAssignmentCheck();
 
         } else if (op == SyncTaskOperationType.SYNC_MODULES) {
             try {
@@ -179,7 +180,7 @@ public class SyncAllTask extends SyncTask {
 //            syncSpinners();
         } else if (op == SyncTaskOperationType.MULTIFARM_ENABLED_ENUMERATOR) {
             syncMultiFarmEnumerator();
-         }
+        }
         else if (op == SyncTaskOperationType.SYNC_MULTIFARM_ROLES) {
             syncMultiFarmRoles();
         }
@@ -268,9 +269,9 @@ public class SyncAllTask extends SyncTask {
                         JSONObject response = new JSONObject(postResponse.body().string());
                         postFailureMessage(response);
                     } catch (JSONException e) {
-                       e.printStackTrace();
+                        e.printStackTrace();
                     } catch (IOException e) {
-                       e.printStackTrace();
+                        e.printStackTrace();
                     }
 
 
@@ -301,7 +302,7 @@ public class SyncAllTask extends SyncTask {
         }
 
 //        String url = "http://13.76.131.132:8080/farmerdata/sipquestionnaire/getAllSIPQuestionnaireData";
-        String url = "farmer-data/farmerdata/sipquestionnaire/getAllSIPQuestionnaireData";
+        String url = "ofisfarmer-data/farmerdata/sipquestionnaire/getAllSIPQuestionnaireData";
         final String finalEndpoint = url;
         okHttpPost(context, url, inputArgs, new Callback() {
             @Override
@@ -370,8 +371,8 @@ public class SyncAllTask extends SyncTask {
             int ansCount = 0;
             new UpdateSurveyAnswerTask(context).execute(answerResponse);
             try {
-               JSONArray ansArray = answerResponse.getJSONArray("answers");
-               ansCount = ansArray.length();
+                JSONArray ansArray = answerResponse.getJSONArray("answers");
+                ansCount = ansArray.length();
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -412,24 +413,24 @@ public class SyncAllTask extends SyncTask {
 //            new UpdateFmpTask(context).execute(fmpResponse);
 //            fmpResponse = null;
 
-                // Goes directly to the AsyncTask
-                //new UpdateTransactionListsTask(context).execute(transactionResponse);
-                //transactionResponse = null;
+            // Goes directly to the AsyncTask
+            //new UpdateTransactionListsTask(context).execute(transactionResponse);
+            //transactionResponse = null;
 
-                // Goes directly to the AsyncTask
-                new UpdateTrainingListsTask(context).execute(trainingResponse);
-                trainingResponse = null;
+            // Goes directly to the AsyncTask
+            new UpdateTrainingListsTask(context).execute(trainingResponse);
+            trainingResponse = null;
 
-                // Goes directly to the AsyncTask
-                new UpdateTasksListsTask(context).execute(tasksResponse);
-                tasksResponse = null;
+            // Goes directly to the AsyncTask
+            new UpdateTasksListsTask(context).execute(tasksResponse);
+            tasksResponse = null;
 
             // Goes directly to the AsyncTask
             new UpdateFarmersTask(context).execute(farmerResponse);
             farmerResponse = null;
 
-                new UpdateChildrenTask(context).execute(childResponse);
-                childResponse = null;
+            new UpdateChildrenTask(context).execute(childResponse);
+            childResponse = null;
 
             new UpdateFarmerLeadTask(context).execute(farmerLeadResponse);
             farmerLeadResponse = null;
@@ -446,11 +447,13 @@ public class SyncAllTask extends SyncTask {
             new UpdateNotificationTask(context).execute(notificationResponse);
             notificationResponse = null;
 
-                if (Utilities.getBoolFromSharedPrefs(context, "FIRST_RUN", true)) {
-                    HomeActivity.completeFirstSetup();
-                }else{
-                    SettingsActivity.completeSetup();
-                }
+            if(Utilities.getBoolFromSharedPrefs(context, "FIRST_RUN", true)) {
+                deleteRoomDbValues();
+                HomeActivity.completeFirstSetup();
+            }else{
+                deleteRoomDbValues();
+                SettingsActivity.completeSetup();
+            }
 
             /*if (pd != null && pd.isShowing()) {
                 String pdUpdate = res.getString(R.string.update_complete);
@@ -519,6 +522,32 @@ public class SyncAllTask extends SyncTask {
             }
         }
 
+    }
+
+    private void deleteRoomDbValues() {
+        try {
+            OFISRoomDB db = OFISRoomDB.getDbInstance(context);
+            db.dmSectionsItemDao().deleteAll();
+            db.dmLookupValuesISubmoduleDao().deleteAll();
+            db.dmActionPlansItemSubmoduleDao().deleteAll();
+            db.dmQuestionsModuleDao().deleteAll();
+            db.dmLookupValuesItemDao().deleteAll();
+            db.dmActionPlansItemDao().deleteAll();
+            db.dmMainModuleDao().deleteAll();
+            db.dmAnswerTypesDao().deleteAll();
+            db.dmQuestionTypesDao().deleteAll();
+            db.dmCurrenciesItemDao().deleteAll();
+            db.dmTextBoxModuleQuestionsDao().deleteAll();
+            db.dmRangeTextBoxModuleQuestionsTableDao().deleteAll();
+            db.dmTextBoxModuleQuestionsDao().deleteAll();
+            db.dmRangeTextBoxModuleQuestionsTableDao().deleteAll();
+            db.complianceIndicatorDao().deleteAll();
+            db.dmCurrencyDao().deleteAll();
+            db.dmRangeActionPlansItemsDao().deleteAll();
+            db.dmSurveyAnswerTableDao().deleteAll();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     private void postFailureMessage(JSONObject response) {
@@ -675,6 +704,7 @@ public class SyncAllTask extends SyncTask {
                                 boolean isODOrigin = item.getBoolean("isODOrigin");
                                 boolean isEnableAgroLearn = item.getBoolean("isEnableAgrolearn");
                                 Utilities.saveToSharedPrefs(context, Utilities.AGROLEARN_ENUMERATOR,null, isEnableAgroLearn);
+                                Utilities.saveToSharedPrefs(context, Utilities.DM_ENUMERATOR,null, item.getBoolean("isEnableDiagnosticModule"));
                                 if(isODOrigin){
                                     String code = item.getString("countryIsoCode").substring(0,2);
                                     isoCodes.add(code);
@@ -695,7 +725,7 @@ public class SyncAllTask extends SyncTask {
                             Utilities.saveIntToSharedPrefs(context, "COUNTRY_COUNT", 1);
                             countrycount = 1;
                             publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.checking_isfl_enumerator));
-                         //   publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.updating_farmers));
+                            //   publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.updating_farmers));
                             delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_ISFL);
 
                         }catch (Exception e){e.printStackTrace();}
@@ -801,8 +831,8 @@ public class SyncAllTask extends SyncTask {
         //old end point
         //    endPoint="sync_spinners";
         // new end point
-        // endPoint="farmer-data/farmerdata/getcountryspinners/1127";
-        endPoint = "farmer-data/farmerdata/getcountryspinners/" + Utilities.getFromSharedPrefs(context);
+        // endPoint="ofisfarmer-data/farmerdata/getcountryspinners/1127";
+        endPoint = "ofisfarmer-data/farmerdata/getcountryspinners/" + Utilities.getFromSharedPrefs(context);
         final String finalEndPoint = endPoint;
         okHttpGet(context, endPoint, inputArgs, new Callback() {
             @Override
@@ -929,8 +959,8 @@ public class SyncAllTask extends SyncTask {
                             publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.updating_farmers));
                             delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_FARMERS);
                         }else {*/
-                            JSONObject responsedata = new JSONObject(postResponse.body().string());
-                            postFailureMessage(responsedata);
+                        JSONObject responsedata = new JSONObject(postResponse.body().string());
+                        postFailureMessage(responsedata);
 //                        }
                     }
 
@@ -1626,7 +1656,7 @@ public class SyncAllTask extends SyncTask {
         }
 
         String endpoint = "";
-        endpoint = "farmer-data/farmerdata/getfarmerdetailsbyenumeratorid/" + Utilities.getFromSharedPrefs(context);
+        endpoint = "ofisfarmer-data/farmerdata/getfarmerdetailsbyenumeratorid/" + Utilities.getFromSharedPrefs(context);
         final String finalEndpoint = endpoint;
         okHttpGet(context, endpoint, inputArgs, new Callback() {
             @Override
@@ -1802,11 +1832,11 @@ public class SyncAllTask extends SyncTask {
                     JSONObject response = new JSONObject(postResponse.body().string());
                     if (postResponse.isSuccessful()) {
                         int totalCount = response.getInt(OFISDBContract.NotificationModuleAssignments.COLUMN_TOTALCOUNT);
-                        if(pageNumber == 1) {
+                        if (pageNumber == 1) {
                             repeaterCount = totalCount / Utilities.notificationLimit;
                         }
                         try {
-                            if(totalCount > 0) {
+                            if (totalCount > 0) {
                                 JSONArray currentArray = response.getJSONArray(Utilities.NOTIFICATIONLIST);
                                 if (currentArray.length() > 0) {
                                     for (int i = 0; i < currentArray.length(); i++) {
@@ -1821,16 +1851,16 @@ public class SyncAllTask extends SyncTask {
                                     }
                                 }
                             }
-                        }catch (JSONException e){
+                        } catch (JSONException e) {
                             e.printStackTrace();
                         }
                         publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.downloading_notification));
-                        if(repeaterCount > pageNumber) {
+                        if (repeaterCount > pageNumber) {
                             int nextPage = pageNumber + 1;
                             syncSmartNotification(notificationModuleId, nextPage);
-                        }else{
+                        } else {
                             try {
-                                if(totalCount > 0) {
+                                if (totalCount > 0) {
                                     JSONObject module = new JSONObject();
                                     module.put(OFISDBContract.NotificationModuleAssignments.COLUMN_TOTALCOUNT, response.getString(OFISDBContract.NotificationModuleAssignments.COLUMN_TOTALCOUNT));
                                     module.put(OFISDBContract.NotificationModuleAssignments.COLUMN_NAME_MSG, response.getString(OFISDBContract.NotificationModuleAssignments.COLUMN_NAME_MSG));
@@ -1843,27 +1873,27 @@ public class SyncAllTask extends SyncTask {
                                     }
                                     moduleArray.put(module);
                                 }
-                            }catch (Exception e){
+                            } catch (Exception e) {
                                 e.printStackTrace();
                             }
                             String[] ids = context.getResources().getStringArray(R.array.notification_module_id);
                             String[] withoutClmrsIds = context.getResources().getStringArray(R.array.notifications_noclmrs);
                             boolean isChildEnumerator = Utilities.getChildLabourPref(context, ChildLabourUtils.IS_CHILD_ENUMERATOR);
                             int totalModules;
-                            if(isChildEnumerator){
+                            if (isChildEnumerator) {
                                 totalModules = ids.length;
-                            }else{
+                            } else {
                                 totalModules = withoutClmrsIds.length;
                             }
-                            if(totalModules > notificationModuleId){
+                            if (totalModules > notificationModuleId) {
                                 int nextModule = notificationModuleId + 1;
                                 syncSmartNotification(nextModule, 1);
-                            }else {
+                            } else {
                                 try {
                                     notificationResponse = new JSONObject();
                                     notificationResponse.put("notificationDetailsList", notificationArray);
                                     notificationResponse.put("moduleList", moduleArray);
-                                }catch (Exception e){
+                                } catch (Exception e) {
                                     e.printStackTrace();
                                 }
                                 notificationArray = new JSONArray();
@@ -1878,7 +1908,6 @@ public class SyncAllTask extends SyncTask {
                 } finally {
                     postResponse.close();
                 }
-
             }
 
             @Override

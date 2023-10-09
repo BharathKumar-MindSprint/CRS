@@ -14,7 +14,7 @@ class OFISDB extends SQLiteOpenHelper {
     private static OFISDB sInstance;
 
 
-    private static final int DATABASE_VERSION = 146;
+    private static final int DATABASE_VERSION = 149;
 
 
     private static final String DATABASE_NAME = "ofismobile";
@@ -182,7 +182,7 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_REPORTING_YEAR + " TEXT )";
 
 
-       private static final String OFIS_DATATYPESSIP_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.DatatypesSipEntry.TABLE_NAME
+    private static final String OFIS_DATATYPESSIP_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.DatatypesSipEntry.TABLE_NAME
             + " ( " + OFISDBContract.DatatypesSipEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.DatatypesSipEntry.COLUMN_NAME_DATATYPE_NAME + " TEXT )";
 
     private static final String OFIS_LOOKUPVALUESSIP_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.LookupValuesSipEntry.TABLE_NAME
@@ -273,7 +273,17 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.QuestionEntry.COLUMN_NAME_CREATED_AT + " TEXT, " + OFISDBContract.QuestionEntry.COLUMN_NAME_UPDATED_AT + " TEXT, "
             + OFISDBContract.QuestionEntry.COLUMN_NAME_APP_ID + " TEXT, " + OFISDBContract.QuestionEntry.COLUMN_NAME_IS_SUBSET_QUESTION_REQUIRED + " TEXT, "
             + OFISDBContract.QuestionEntry.COLUMN_NAME_CONDITIONAL_QUESTIONS + " TEXT, " + OFISDBContract.QuestionEntry.COLUMN_NAME_SIPGROUPID + " TEXT, "
-            + OFISDBContract.QuestionEntry.COLUMN_NAME_SIPKEY + " TEXT)";
+            + OFISDBContract.QuestionEntry.COLUMN_NAME_SIPKEY + " TEXT, "
+            + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO + " TEXT, "
+            + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO_ES+ " TEXT, "
+            + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO_FR+ " TEXT, "
+            + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO_ID+ " TEXT, "
+            + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO_PT+ " TEXT, "
+            + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO_TR+ " TEXT, "
+            + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO_LO+ " TEXT, "
+            + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO_VI+ " TEXT, "
+            + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO_TH+ " TEXT )";
+
 
 
 
@@ -413,7 +423,7 @@ class OFISDB extends SQLiteOpenHelper {
             + " ( " + OFISDBContract.DistrictsEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.DistrictsEntry.COLUMN_NAME_REGION_ID + " INTEGER, "
             + OFISDBContract.DistrictsEntry.COLUMN_NAME_DISTRICT_NAME + " TEXT )";
 
-//    adding sub district
+    //    adding sub district
     private static final String OFIS_SUBDISTRICTS_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.SubDistrictsEntry.TABLE_NAME
             + " ( " + OFISDBContract.SubDistrictsEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.SubDistrictsEntry.COLUMN_NAME_DISTRICT_ID + " INTEGER, "
             + OFISDBContract.SubDistrictsEntry.COLUMN_NAME_SUBDISTRICT_NAME + " TEXT )";
@@ -871,7 +881,7 @@ class OFISDB extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(OFIS_FARMERLEADS_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_FARMERASSIGNMENTS_TABLE_CREATE);
 
-     //   sqLiteDatabase.execSQL(OFIS_MULTIFARM_FARM_TABLE_CREATE);
+        //   sqLiteDatabase.execSQL(OFIS_MULTIFARM_FARM_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_MULTIFARM_ROLES_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_MULTIFARM_FARMS_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_MULTIFARM_FARMS_STAKEHOLDER_TABLE_CREATE);
@@ -888,7 +898,7 @@ class OFISDB extends SQLiteOpenHelper {
     }
 
     @Override
-    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i2) {
+    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
 //        droptables(sqLiteDatabase);
 //        master db if less than142
         sqLiteDatabase.execSQL(OFIS_TRAINING_RELATIONSHIP_ATTENDEE_TABLE_CREATE);
@@ -941,12 +951,60 @@ class OFISDB extends SQLiteOpenHelper {
         } catch (SQLiteException ex) {
             ex.printStackTrace();
         }
+
+        if(oldVersion < 149 ) {
+            migrateFromVersionBelow148(sqLiteDatabase);
+        }
+
         sqLiteDatabase.execSQL(OFIS_DOWNLOADED_SURVEYLIST_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_SAVED_ANSWER_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_PLOT_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_NOTIFICATION_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_NOTIFICATION_MODULELIST_TABLE_CREATE);
         onCreate(sqLiteDatabase);
+    }
+
+    private void migrateFromVersionBelow148(SQLiteDatabase sqLiteDatabase){
+
+        sqLiteDatabase.execSQL("CREATE TABLE questions_copy as select " + OFISDBContract.QuestionEntry.COLUMN_NAME_ID
+                +" , "+OFISDBContract.QuestionEntry.COLUMN_NAME_SUBMODULE_ID
+                +" , "+ OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID
+                +" , "+ OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID
+                + " , " + OFISDBContract.QuestionEntry.COLUMN_NAME_POSITION
+                + " , " + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE
+                + " , " + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION
+                + " , " + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_FR
+                + " , " + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_ES
+                + " , " +OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_ID
+                + " , " + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_PT
+                + " , " + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_TR
+                + " , " + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_LO
+                + " , " + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_VI
+                + " , " + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_TH
+                + " , " + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION
+                + " , " + OFISDBContract.QuestionEntry.COLUMN_NAME_STOREGE_MODEL
+                + " , " + OFISDBContract.QuestionEntry.COLUMN_NAME_STOREGE_COLUM
+                + " , " + OFISDBContract.QuestionEntry.COLUMN_NAME_Active
+                + " , " + OFISDBContract.QuestionEntry.COLUMN_NAME_CREATED_AT
+                + " , " + OFISDBContract.QuestionEntry.COLUMN_NAME_UPDATED_AT
+                + " , " + OFISDBContract.QuestionEntry.COLUMN_NAME_APP_ID
+                + " , " + OFISDBContract.QuestionEntry.COLUMN_NAME_IS_SUBSET_QUESTION_REQUIRED
+                + " , " + OFISDBContract.QuestionEntry.COLUMN_NAME_CONDITIONAL_QUESTIONS
+                + " , " + OFISDBContract.QuestionEntry.COLUMN_NAME_SIPGROUPID
+                + " , " + OFISDBContract.QuestionEntry.COLUMN_NAME_SIPKEY
+                +" from questions");
+        sqLiteDatabase.execSQL("DROP TABLE " + OFISDBContract.QuestionEntry.TABLE_NAME);
+        sqLiteDatabase.execSQL("CREATE TABLE " + OFISDBContract.QuestionEntry.TABLE_NAME + " as select * from questions_copy");
+        sqLiteDatabase.execSQL("DROP TABLE questions_copy");
+        sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.QuestionEntry.TABLE_NAME +" ADD COLUMN " + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO +" TEXT default null");
+        sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.QuestionEntry.TABLE_NAME +" ADD COLUMN " + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO_ES +" TEXT default null");
+        sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.QuestionEntry.TABLE_NAME +" ADD COLUMN " + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO_FR+" TEXT default null");
+        sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.QuestionEntry.TABLE_NAME +" ADD COLUMN " + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO_ID +" TEXT default null");
+        sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.QuestionEntry.TABLE_NAME +" ADD COLUMN " + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO_PT +" TEXT default null");
+        sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.QuestionEntry.TABLE_NAME +" ADD COLUMN " + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO_TR +" TEXT default null");
+        sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.QuestionEntry.TABLE_NAME +" ADD COLUMN " + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO_LO +" TEXT default null");
+        sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.QuestionEntry.TABLE_NAME +" ADD COLUMN " + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO_VI +" TEXT default null");
+        sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.QuestionEntry.TABLE_NAME +" ADD COLUMN " + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO_TH +" TEXT default null");
     }
 
     private void droptables(SQLiteDatabase sqLiteDatabase) {

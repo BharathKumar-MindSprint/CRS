@@ -1,0 +1,26 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Top side with color 1 -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/white" />
+        </shape>
+    </item>
+    <!-- Right side with color 2 -->
+    <item android:right="5dp">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/white" />
+        </shape>
+    </item>
+    <!-- Bottom side with color 3 -->
+    <item android:bottom="5dp">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/clmrs_yellow" />
+        </shape>
+    </item>
+    <!-- Left side with color 4 -->
+    <item android:left="5dp">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/white" />
+        </shape>
+    </item>
+</layer-list>

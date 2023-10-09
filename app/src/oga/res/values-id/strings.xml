@@ -621,11 +621,11 @@
     <string name="biometric_licence_deactivation_queue">Penonaktifan Lisensi Biometrik</string>
     <string name="face_recognizion">Pengenalan Wajah</string>
 
-     <string name="restriction_in_submodules">Mohon isi seluruh pertanyaan wajib untuk melanjutkan</string>
+    <string name="restriction_in_submodules">Mohon isi seluruh pertanyaan wajib untuk melanjutkan</string>
     <string name="please_respond_mandatory_question">Mohon isi jawaban dari pertanyaan wajib</string>
     <string name="update_firebase_install_id_info">Updating Informations</string>
-     <string name="attendee_sex">Sex</string>
-     <string name="Date_of_Birth_hint">MMM DD,YYYY</string>
+    <string name="attendee_sex">Sex</string>
+    <string name="Date_of_Birth_hint">MMM DD,YYYY</string>
     <string name="cs_page2_17">2.    Apabila Data Petani Anda dibagikan dengan pihak ketiga seperti pelanggan dan mitra kami sebagai kelanjutan dari Tujuan dan penggunaan khusus yang disetujui di atas, setiap pelanggan dan mitra adalah pengontrol data sesuai hak mereka sendiri dan Anda menyetujui penggunaan data Anda oleh mereka sebagaimana disebutkan dalam Paragraf 1 dan diperinci dalam Pernyataan Privasi. Apabila terdapat pelanggan atau mitra yang memerlukan penggunaan Data Petani di luar Tujuan dan penggunaan khusus yang disebutkan di atas, mereka dapat menghubungi Anda secara langsung untuk meminta persetujuan Anda lebih lanjut</string>
     <string name="cs_page2_18">3.    Anda dapat menarik persetujuan yang telah diberikan, meminta akses dan/atau koreksi Data Petani Anda, dan/atau meminta informasi yang berkaitan dengan kebijakan dan praktik kami kapan pun dengan menghubungi kami di <a href="privacy@olamagri.com">privacy@olamagri.com</a>. Meskipun pengungkapan yang diminta tidak bersifat wajib, ketidakmampuan dalam menyediakan Data Petani dan/atau penarikan persetujuan Anda dapat memengaruhi kemampuan kami untuk memberikan layanan tertentu yang dapat Anda minta dari kami secara terpisah (tergantung kasusnya). Sebagai contoh, alamat Anda mungkin diperlukan tidak hanya untuk membantu penelusuran, tetapi juga bagi kami untuk mengirimkan bahan tertentu kepada Anda seperti perlengkapan pertanian. Dalam kasus di mana Anda mencabut persetujuan, kami dapat menyimpan data tersebut untuk memenuhi kewajiban kontrak kami kepada Anda tetapi tidak akan menggunakan data tersebut untuk tujuan lain apa pun</string>
     <string name="cs_page2_19">4.    Pertanyaan Privasi Data Petani kami tersedia di bawah ini untuk referensi Anda. Penyataan ini menjelaskan cara kami menangani dan melindungi data pribadi. Meskipun Data Petani Anda akan dibagikan dengan orang-orang yang disebutkan di atas, Data Petani Anda yang kami simpan akan dijaga kerahasiaannya dan sesuai dengan undang-undang privasi yang berlaku</string>
@@ -765,7 +765,7 @@
     <string name="attendee_sex1">Jenis kelamin</string>
     <string name="please_check_question">Silakan periksa Pertanyaan</string>
     <string name="please_check_dependent_question">karena pertanyaan dependennya diperbarui</string>
-     <string name="national_id_info">Harap perbarui ID Nasional petani</string>
+    <string name="national_id_info">Harap perbarui ID Nasional petani</string>
     <string name="zero_area_msg">Tidak dapat menyimpan poligon yang direkam dengan 0ha. Silakan coba merekam poligon yang berbeda</string>
     <string name="direct_value_below_error">Silakan masukkan nilai pertanyaan %1 d di bawah %2 d</string>
     <string name="direct_value_above_error">Silakan masukkan nilai pertanyaan %1 d di atas %2 d</string>
@@ -785,12 +785,12 @@
     <string name="enumerator_location_capture">Pengambilan Lokasi Enumerator</string>
     <string name="survey_data">Mengunduh Data Survei</string>
     <string name="update_consent_statement">Perbarui pernyataan persetujuan</string>
-     <string name="capture_my_location_button_text">Tangkap lokasi saya</string>
+    <string name="capture_my_location_button_text">Tangkap lokasi saya</string>
     <string name="record_hh_location">Rekam lokasi rumah tangga</string>
     <string name="update_signature">Perbarui Tanda Tangan</string>
     <string name="update_signature_hint">Ketuk untuk memperbarui</string>
     <string name="are_you_at_the_farmers_hh">Apakah Anda di rumah petani?</string>
     <string name="ofis_request_help">Minta bantuan</string>
 
-    <string name="spinner_subdistrict_default">Kecamatan</string>
+    <string name="spinner_subdistrict_default">Desa/Kelurahan</string>
 </resources>

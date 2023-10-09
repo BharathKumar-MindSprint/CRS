@@ -21,16 +21,15 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
-import androidx.viewpager.widget.ViewPager;
+
 import com.google.android.material.tabs.TabLayout;
 import com.olam.digital.ofis.BaseActivity;
-import com.olam.digital.ofis.ManageTrainingRecords.Services.MyService;
-import com.olam.digital.ofis.ManageTrainingRecords.Listener.ItemClickListener;
-import com.olam.digital.ofis.ManageTrainingRecords.Services.ManageRecords;
+import com.olam.digital.ofis.RetrofitServices.MyService;
+import com.olam.digital.ofis.RetrofitServices.ManageRecords;
 import com.olam.digital.ofis.ManageTrainingRecords.adapter.CustomViewPager;
 import com.olam.digital.ofis.ManageTrainingRecords.adapter.ViewpageAdapter;
 import com.olam.digital.ofis.R;
-import com.olam.digital.ofis.ManageTrainingRecords.Services.RetrofitClient;
+import com.olam.digital.ofis.RetrofitServices.RetrofitClient;
 import com.olam.digital.ofis.ManageTrainingRecords.model.Assets;
 import com.olam.digital.ofis.ManageTrainingRecords.model.Course;
 import com.olam.digital.ofis.ManageTrainingRecords.model.DocumentList;
@@ -40,7 +39,6 @@ import com.olam.digital.ofis.authentication.AuthenticationHelper;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -227,37 +225,37 @@ public class ManagingTrainingActivity extends BaseActivity implements TabLayout.
         call.enqueue(new Callback<DocumentList>() {
             @Override
             public void onResponse(Call<DocumentList> call, Response<DocumentList> response) {
-               if(response.code()==200){
-                   if(response.body()!=null){
-                       if(response.body().getData()!=null){
-                           tab.setVisibility(View.VISIBLE);
-                           data=response.body().getData();
-                           tabLayout.setupWithViewPager(viewpager);
-                           String[] name = {"Document","Media"};
-                           adapter=new ViewpageAdapter(getSupportFragmentManager(),data,name);
-                           viewpager.setAdapter(adapter);
-                           viewpager.setPagingEnabled(false);
-                           tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
-                           tabLayout.setTabTextColors(ColorStateList.valueOf(getResources().getColor(R.color.white)));
-                           tabLayout.setTabTextColors(getResources().getColor(R.color.black),getResources().getColor(R.color.white));
-                           new TabLayout.TabLayoutOnPageChangeListener(tabLayout);
-                           tabLayout.setOnTabSelectedListener(ManagingTrainingActivity.this);
-                           LinearLayout tabStrip = ((LinearLayout)tabLayout.getChildAt(0));
-                           tabStrip.getChildAt(1).setOnTouchListener(new View.OnTouchListener() {
-                               @Override
-                               public boolean onTouch(View v, MotionEvent event) {
-                                   return true;
-                               }
-                           });
-                       }else{
-                           Toast.makeText(ManagingTrainingActivity.this, R.string.error, Toast.LENGTH_SHORT).show();
-                       }
-                   }else{
-                       Toast.makeText(ManagingTrainingActivity.this, R.string.no_data_found, Toast.LENGTH_SHORT).show();
-                   }
-               }else{
-                   showAlert(getString(R.string.Alert_message_to_contact_administrator));
-               }
+                if(response.code()==200){
+                    if(response.body()!=null){
+                        if(response.body().getData()!=null){
+                            tab.setVisibility(View.VISIBLE);
+                            data=response.body().getData();
+                            tabLayout.setupWithViewPager(viewpager);
+                            String[] name = {"Document","Media"};
+                            adapter=new ViewpageAdapter(getSupportFragmentManager(),data,name);
+                            viewpager.setAdapter(adapter);
+                            viewpager.setPagingEnabled(false);
+                            tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+                            tabLayout.setTabTextColors(ColorStateList.valueOf(getResources().getColor(R.color.white)));
+                            tabLayout.setTabTextColors(getResources().getColor(R.color.black),getResources().getColor(R.color.white));
+                            new TabLayout.TabLayoutOnPageChangeListener(tabLayout);
+                            tabLayout.setOnTabSelectedListener(ManagingTrainingActivity.this);
+                            LinearLayout tabStrip = ((LinearLayout)tabLayout.getChildAt(0));
+                            tabStrip.getChildAt(1).setOnTouchListener(new View.OnTouchListener() {
+                                @Override
+                                public boolean onTouch(View v, MotionEvent event) {
+                                    return true;
+                                }
+                            });
+                        }else{
+                            Toast.makeText(ManagingTrainingActivity.this, R.string.error, Toast.LENGTH_SHORT).show();
+                        }
+                    }else{
+                        Toast.makeText(ManagingTrainingActivity.this, R.string.no_data_found, Toast.LENGTH_SHORT).show();
+                    }
+                }else{
+                    showAlert(getString(R.string.Alert_message_to_contact_administrator));
+                }
             }
             @Override
             public void onFailure(Call<DocumentList> call, Throwable t) {
@@ -273,50 +271,50 @@ public class ManagingTrainingActivity extends BaseActivity implements TabLayout.
         call.enqueue(new Callback<Languages>() {
             @Override
             public void onResponse(Call<Languages> call, Response<Languages> response) {
-            if(response.code()==200){
-                if(response.body()!=null){
-                    progressDialog.cancel();
-                    List<Languages.data> LanguageList = response.body().getData();
+                if(response.code()==200){
+                    if(response.body()!=null){
+                        progressDialog.cancel();
+                        List<Languages.data> LanguageList = response.body().getData();
 
-                    if (LanguageList != null && LanguageList.size() > 0) {
-                        String[] Languages = new String[LanguageList.size()];
-                        ArrayList<String> lang_arr =new ArrayList<>();
-                        lang_arr.add(getString(R.string.select_language));
-                        for (int i = 0; i < LanguageList.size(); i++) {
-                            lang_arr.add(LanguageList.get(i).getLanguageName());
-                            Languages[i] = LanguageList.get(i).getLanguageName();
-                        }
-                        languageSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                            @Override
-                            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                                String item = languageSpinner.getSelectedItem().toString();
-                                int CourseLanguageId ;
-                                for (int j = 0; j < LanguageList.size(); j++) {
-                                    Languages[j] = LanguageList.get(j).getLanguageName();
+                        if (LanguageList != null && LanguageList.size() > 0) {
+                            String[] Languages = new String[LanguageList.size()];
+                            ArrayList<String> lang_arr =new ArrayList<>();
+                            lang_arr.add(getString(R.string.select_language));
+                            for (int i = 0; i < LanguageList.size(); i++) {
+                                lang_arr.add(LanguageList.get(i).getLanguageName());
+                                Languages[i] = LanguageList.get(i).getLanguageName();
+                            }
+                            languageSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                                @Override
+                                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                                    String item = languageSpinner.getSelectedItem().toString();
+                                    int CourseLanguageId ;
+                                    for (int j = 0; j < LanguageList.size(); j++) {
+                                        Languages[j] = LanguageList.get(j).getLanguageName();
 
-                                    if (Languages[j].equals(item)) {
-                                        CourseLanguageId = LanguageList.get(j).getCourseLanguageId();
-                                        progressDialog.show();
-                                        AssetsMethod(CourseLanguageId);
+                                        if (Languages[j].equals(item)) {
+                                            CourseLanguageId = LanguageList.get(j).getCourseLanguageId();
+                                            progressDialog.show();
+                                            AssetsMethod(CourseLanguageId);
+                                        }
                                     }
                                 }
-                            }
-                            @Override
-                            public void onNothingSelected(AdapterView<?> adapterView) {
+                                @Override
+                                public void onNothingSelected(AdapterView<?> adapterView) {
 
-                            }
-                        });
+                                }
+                            });
 
-                        Language_Arrayadapter = new ArrayAdapter<String>(ManagingTrainingActivity.this,R.layout.spinner_item, lang_arr);
-                        Language_Arrayadapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
-                        languageSpinner.setAdapter(Language_Arrayadapter);
+                            Language_Arrayadapter = new ArrayAdapter<String>(ManagingTrainingActivity.this,R.layout.spinner_item, lang_arr);
+                            Language_Arrayadapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
+                            languageSpinner.setAdapter(Language_Arrayadapter);
+
+                        }
 
                     }
-
+                }else{
+                    showAlert(getString(R.string.Alert_message_to_contact_administrator));
                 }
-            }else{
-                showAlert(getString(R.string.Alert_message_to_contact_administrator));
-            }
             }
 
             @Override
@@ -372,10 +370,10 @@ public class ManagingTrainingActivity extends BaseActivity implements TabLayout.
                         }
                     }
                 } else {
-                        progressDialog.cancel();
-                         showAlert(getString(R.string.Alert_message_to_contact_administrator));
-                    }
+                    progressDialog.cancel();
+                    showAlert(getString(R.string.Alert_message_to_contact_administrator));
                 }
+            }
             @Override
             public void onFailure(Call<Module> call, Throwable t) {
                 Toast.makeText(ManagingTrainingActivity.this, t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
@@ -390,67 +388,67 @@ public class ManagingTrainingActivity extends BaseActivity implements TabLayout.
         call.enqueue(new Callback<Course>() {
             @Override
             public void onResponse(Call<Course> call, Response<Course> response) {
-             if(response.code()==200){
-                 if(response.body()!=null){
-                     progressDialog.cancel();
-                     CourseList_Flag=true;
-                     List<Course.data> CourseList = response.body().getData();
+                if(response.code()==200){
+                    if(response.body()!=null){
+                        progressDialog.cancel();
+                        CourseList_Flag=true;
+                        List<Course.data> CourseList = response.body().getData();
 
-                     if (CourseList != null && CourseList.size() > 0) {
-                         ArrayList<String> arr =new ArrayList<>();
-                         String[] Course = new String[CourseList.size()];
-                         arr.add(getString(R.string.selecting_course));
-                         for ( int i = 0; i < CourseList.size(); i++) {
-                             arr.add(CourseList.get(i).getCourseName());
-                             Course[i] = CourseList.get(i).getCourseName();
-                         }
-                         courseSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                             @Override
-                             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                                 String item = courseSpinner.getSelectedItem().toString();
-                                 int position=courseSpinner.getSelectedItemPosition();
-                                 int Id;
-                                 if(Language_Arrayadapter!=null&&position!=0){
-                                     Language_Arrayadapter.clear();
-                                     //language hint
-                                     ArrayList<String> language_arr = new ArrayList<>();
-                                     language_arr.add(getString(R.string.select_language));
-                                     ArrayAdapter<String> languageArrayadapter = new ArrayAdapter<String>(ManagingTrainingActivity.this, R.layout.spinner_item, language_arr);
-                                     languageArrayadapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                                     Language_Arrayadapter.notifyDataSetChanged();
-                                     languageSpinner.setAdapter(languageArrayadapter);
-                                     r1.setVisibility(View.INVISIBLE);
-                                     tab.setVisibility(View.INVISIBLE);
-                                 }
-                                 for (int j = 0; j < CourseList.size(); j++) {
-                                     Course[j] = CourseList.get(j).getCourseName();
+                        if (CourseList != null && CourseList.size() > 0) {
+                            ArrayList<String> arr =new ArrayList<>();
+                            String[] Course = new String[CourseList.size()];
+                            arr.add(getString(R.string.selecting_course));
+                            for ( int i = 0; i < CourseList.size(); i++) {
+                                arr.add(CourseList.get(i).getCourseName());
+                                Course[i] = CourseList.get(i).getCourseName();
+                            }
+                            courseSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                                @Override
+                                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                                    String item = courseSpinner.getSelectedItem().toString();
+                                    int position=courseSpinner.getSelectedItemPosition();
+                                    int Id;
+                                    if(Language_Arrayadapter!=null&&position!=0){
+                                        Language_Arrayadapter.clear();
+                                        //language hint
+                                        ArrayList<String> language_arr = new ArrayList<>();
+                                        language_arr.add(getString(R.string.select_language));
+                                        ArrayAdapter<String> languageArrayadapter = new ArrayAdapter<String>(ManagingTrainingActivity.this, R.layout.spinner_item, language_arr);
+                                        languageArrayadapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                                        Language_Arrayadapter.notifyDataSetChanged();
+                                        languageSpinner.setAdapter(languageArrayadapter);
+                                        r1.setVisibility(View.INVISIBLE);
+                                        tab.setVisibility(View.INVISIBLE);
+                                    }
+                                    for (int j = 0; j < CourseList.size(); j++) {
+                                        Course[j] = CourseList.get(j).getCourseName();
 
-                                     if(Course[j].equals(item)){
-                                         Id = CourseList.get(j).getCourseId();
-                                         progressDialog.show();
-                                         moduleSpinnerMethod(Id);
-                                     }
-                                 }
-                             }
+                                        if(Course[j].equals(item)){
+                                            Id = CourseList.get(j).getCourseId();
+                                            progressDialog.show();
+                                            moduleSpinnerMethod(Id);
+                                        }
+                                    }
+                                }
 
-                             @Override
-                             public void onNothingSelected(AdapterView<?> adapterView) {
+                                @Override
+                                public void onNothingSelected(AdapterView<?> adapterView) {
 
-                             }
-                         });
-                         ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(ManagingTrainingActivity.this,R.layout.spinner_item, arr);
-                         spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
-                         courseSpinner.setAdapter(spinnerArrayAdapter);
+                                }
+                            });
+                            ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(ManagingTrainingActivity.this,R.layout.spinner_item, arr);
+                            spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
+                            courseSpinner.setAdapter(spinnerArrayAdapter);
 
-                     }
-                 }else {
-                     CourseList_Flag=false;
-                 }
-             }else{
-                 CourseList_Flag=false;
-                 progressDialog.cancel();
-                 showAlert(getString(R.string.Alert_message_to_contact_administrator));
-             }
+                        }
+                    }else {
+                        CourseList_Flag=false;
+                    }
+                }else{
+                    CourseList_Flag=false;
+                    progressDialog.cancel();
+                    showAlert(getString(R.string.Alert_message_to_contact_administrator));
+                }
             }
             @Override
             public void onFailure(Call<Course> call, Throwable t) {
@@ -496,7 +494,6 @@ public class ManagingTrainingActivity extends BaseActivity implements TabLayout.
 
     }
 }
-
 
 
 

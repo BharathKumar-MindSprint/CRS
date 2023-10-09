@@ -55,6 +55,7 @@ public class Utilities {
     public static final String HOUSEHOLD_ENUMERATOR = "household_enumerator";
     public static final String FARMERLEAD_ENUMERATOR = "farmerlead_enumerator";
     public static final String AGROLEARN_ENUMERATOR = "isEnableAgrolearn";
+    public static final String DM_ENUMERATOR = "isEnableDiagnosticModule";
 
     public static final String DOWNLOAD_FARMPLAN = "isFarmPlanAvailable";
     public static int syctask=0;
@@ -96,21 +97,21 @@ public class Utilities {
     public static String SCOPE = "offline_access";
     public static String CONSENTSTATEMENT = "ConsentStatement";
 
-public  static String base64ConversionForImage(String filepath)  {
-    String encoded="";
-    try {
-        File photo = new File(filepath);
-        Bitmap bitmap = BitmapFactory.decodeFile(photo.getAbsolutePath());
-        Bitmap compressedBitmap=ImageCompressionUtil.imageCompress(bitmap);
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        compressedBitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
-        byte[] byteArray = byteArrayOutputStream.toByteArray();
-        encoded = Base64.encodeToString(byteArray, Base64.NO_WRAP);
-    }catch (Exception e){
+    public  static String base64ConversionForImage(String filepath)  {
+        String encoded="";
+        try {
+            File photo = new File(filepath);
+            Bitmap bitmap = BitmapFactory.decodeFile(photo.getAbsolutePath());
+            Bitmap compressedBitmap=ImageCompressionUtil.imageCompress(bitmap);
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            compressedBitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+            byte[] byteArray = byteArrayOutputStream.toByteArray();
+            encoded = Base64.encodeToString(byteArray, Base64.NO_WRAP);
+        }catch (Exception e){
 
+        }
+        return encoded;
     }
-    return encoded;
-}
 
 
     public static String getLocaleSuffix(Resources res) {
@@ -312,7 +313,7 @@ public  static String base64ConversionForImage(String filepath)  {
 
 
 
-//  getPasscode from sharedPref - Penetration testing
+    //  getPasscode from sharedPref - Penetration testing
     public static String getPasscodeFromSharedPrefs(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
         String s= sharedPreferences.getString("PASSCODE", "");
@@ -336,17 +337,17 @@ public  static String base64ConversionForImage(String filepath)  {
         return sharedPreferences.getString(SHARED_FIREBASE_TOKEN_UPDATED, "");
     }
 
-   public static boolean getChildLabourPref(Context context,String prefName){
-       SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
-       return sharedPreferences.getBoolean(prefName, false);
-   }
+    public static boolean getChildLabourPref(Context context,String prefName){
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
+        return sharedPreferences.getBoolean(prefName, false);
+    }
 
-   public static void setChildLabourPref(Context context,String prefName,boolean prefValue){
-       SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
-       SharedPreferences.Editor editor=sharedPreferences.edit();
-       editor.putBoolean(prefName,prefValue);
-       editor.commit();
-   }
+    public static void setChildLabourPref(Context context,String prefName,boolean prefValue){
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor=sharedPreferences.edit();
+        editor.putBoolean(prefName,prefValue);
+        editor.commit();
+    }
 
     public static boolean getMultifarmPref(Context context,String prefName){
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
@@ -604,10 +605,10 @@ public  static String base64ConversionForImage(String filepath)  {
                 }
             }
 
-            } catch(IOException | OutOfMemoryError e){
-                FirebaseCrash.report(new Exception("Utilities: Error resizing image", e));
-                e.printStackTrace();
-            }
+        } catch(IOException | OutOfMemoryError e){
+            FirebaseCrash.report(new Exception("Utilities: Error resizing image", e));
+            e.printStackTrace();
+        }
 
 
         return finalImagePath;

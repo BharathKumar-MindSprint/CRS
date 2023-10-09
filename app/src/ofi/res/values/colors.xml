@@ -21,6 +21,7 @@
     <color name="light_cream">#EDE5DC</color>
     <color name="ofis_red">#be3a34</color>
     <color name="clmrs_green">#A0C800</color>
+    <color name="notResolved">#f78c2a</color>
 
 
     <color name="green">#698715</color>
@@ -101,5 +102,13 @@
 
     <color name="child_selected_text_color">#860063</color>
     <color name="gender_selected_textcolor">#ffffff</color>
-    <color name="background_multifarm">#F2B277</color>
+    <color name="background_multifarm">#f78c2a</color>
+
+    <color name="orange_view_survey">#f78c2a</color>
+    <color name="green_view_survey">#a0c800</color>
+    <color name="red_view_survey">#ae1515</color>
+
+    <color name="ambur_survey_result">#f2dfd3</color>
+    <color name="green_survey_result">#ebeddb</color>
+    <color name="red_survey_result">#fac0c0</color>
 </resources>

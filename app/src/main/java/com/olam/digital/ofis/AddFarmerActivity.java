@@ -357,16 +357,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         farmerLeadSearch = findViewById(R.id.farmerleadinfo);
         farmerLeadDisplayLayout = findViewById(R.id.farmerLeadDisplayLayout);
         isFLEnumerator = Utilities.getBoolFromSharedPrefs(context, Utilities.FARMERLEAD_ENUMERATOR,false);
-        System.out.println("isflenumerator_data2:" + isFLEnumerator);
-        /*adapterFarmerlead = new CustomListAdapterFarmerlead(this, R.layout.activity_add_farmer, flList);
-        farmerLeadSearch.setAdapter(adapterFarmerlead);
-        farmerLeadSearch.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int pos, long id) {
-                //this is the way to find selected object/item
-                selectedFarmerLead = (FarmerLeadDTO) adapterView.getItemAtPosition(pos);
-            }
-        });*/
+
         bindphonenumbers();
         dl.clearlocalniddbvalue();
         if (isNIDAvailable) {
@@ -445,7 +436,6 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
 
 
         showFarmerLead();
-        System.out.println("isflenumerator_data3:" + isFLEnumerator);
         if(! isFLEnumerator){
             farmerLeadDisplayLayout.setVisibility(View.GONE);
         }else {
@@ -475,7 +465,6 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                     return;
                 }
                 flList = dl.getFarmerLeads(countryId);
-                System.out.println("flList:" + flList.size());
                 showPopupFarmerLead(flList);
             }
         });
@@ -1148,33 +1137,33 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             isSubdistrictCapture = dl.isSubdistrictCapture((int) selectedCountry);
             String message = "";
             if (selectedCountry == 0) {
-                message = "Country";
-            } else if (selectedRegion == 0) {
-
-                message = "Region";
+                message = res.getString(R.string.fill_country);
+            }
+            else if (selectedRegion == 0) {
+                message = res.getString(R.string.fill_region);
 
             } else if (selectedDistrict == 0) {
-                message = "District";
+                message = res.getString(R.string.fill_district);
 
             } else if (selectedPlace == 0) {
 
-                message = "Place";
-
+                message = res.getString(R.string.please_fill_the_place);
             } else if (selectedFarmerGroup == 0) {
 
-                message = "farmer group";
+                message = res.getString(R.string.fill_farmergroup_name);
 
             } else if (selectedSection == 0) {
-                message = "section";
+                message = res.getString(R.string.fill_section);
 
             }
             if(isSubdistrictCapture) {
                 if (selectedSubDistrict == 0) {
-                    message = "SubDistrict";
+                    message = res.getString(R.string.fill_subdistrict);
                 }
             }
 
-            Toast.makeText(context, "Please select the " + message, Toast.LENGTH_LONG).show();
+//            Toast.makeText(context, "Please select the " + message, Toast.LENGTH_LONG).show();
+            Toast.makeText(context, message, Toast.LENGTH_LONG).show();
             return values;
         }
 

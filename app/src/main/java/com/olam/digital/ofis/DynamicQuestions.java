@@ -2,7 +2,6 @@ package com.olam.digital.ofis;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -10,7 +9,6 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
@@ -19,7 +17,6 @@ import android.os.CountDownTimer;
 import android.os.StrictMode;
 import android.provider.MediaStore;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 
@@ -35,6 +32,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -43,14 +41,13 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.olam.digital.ofis.coffeesurveyconstraints.CoffeeConstants;
 import com.olam.digital.ofis.coffeesurveyconstraints.CoffeeConstraints;
@@ -83,8 +80,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
-
-import okhttp3.internal.Util;
 
 /**
  * Created by ben on 02/06/2015.
@@ -122,8 +117,10 @@ public class DynamicQuestions {
     public  Set<Integer> surveySet= new HashSet<>();
     public Set<Integer> constraintsSet=new HashSet<>();
     public  Set<Integer> editQuestionSet=new HashSet<>();
-
     private static DynamicQuestions instance = null;
+
+
+//    private ImageView imageViewInfo;
 
     DynamicQuestions(Context context, String questionColumnSuffix, DataLayer dl) {
         this.answerSet = new ArrayList<>();
@@ -133,7 +130,6 @@ public class DynamicQuestions {
         this.updatingHundredPercent = false;
         this.questionColumnSuffix = questionColumnSuffix;
     }
-
 
     public static DynamicQuestions getInstance(Context context, String questionColumnSuffix, DataLayer dl) {
         if (instance == null) {
@@ -149,8 +145,7 @@ public class DynamicQuestions {
         return instance;
     }
 
-
-   public static void clearInstance() {
+    public static void clearInstance() {
 
         instance = null;
     }
@@ -216,22 +211,22 @@ public class DynamicQuestions {
             while (requiredQuestions.moveToNext()) {
 
                 // START
-                    do {
-                        try {
+                do {
+                    try {
                         JSONObject displayConfig = new JSONObject(requiredQuestions.getString(requiredQuestions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION)));
                         if (displayConfig.has("display")) {
                             JSONObject display = displayConfig.getJSONObject("display");
                             if (display.optBoolean("requiredfield", false)) {
                                 String questionsString = requiredQuestions.getString(requiredQuestions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
                                 String type = requiredQuestions.getString(requiredQuestions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE));
-                             // check the type only for calcualted question.
+                                // check the type only for calcualted question.
                                 if(!type.equalsIgnoreCase("Calculated") && !type.equalsIgnoreCase("Repeater Item") && !type.equalsIgnoreCase("repeateritem")){
                                     requiredQuestionIds.add(Integer.parseInt(questionsString));
                                 }
                             }
                         }
-                        }catch (Exception e){}
-                    } while (requiredQuestions.moveToNext());
+                    }catch (Exception e){}
+                } while (requiredQuestions.moveToNext());
                 //END
             }
         }finally {
@@ -239,7 +234,6 @@ public class DynamicQuestions {
         }
         return completedQuestionIds.containsAll(requiredQuestionIds);
     }
-
 
     public boolean requiredFieldsMinMaxAnswered(int farmerModuleId, int moduleId) {
         boolean status = true;
@@ -257,15 +251,15 @@ public class DynamicQuestions {
 //                    int  answerId = requiredQuestions.getInt(requiredQuestions.getColumnIndex("answer_id"));
 //                    if(displaytype.equalsIgnoreCase("textbox")){
                     if(datatype.equalsIgnoreCase("1") || datatype.equalsIgnoreCase("3")){
-                    if (displayConfig.has("surveyrange")) {
+                        if (displayConfig.has("surveyrange")) {
 
 //                        if (getAnswerMinMaxvalidation(questionId, answerId) != "noval") {
 //                            float answer = Float.parseFloat(getAnswerMinMaxvalidation(questionId,answerId));
 //                            String ans = (getAnswer(completedAnswers, datatype, questionId));
 //                            if (String.valueOf(ans) != "noval") {
-                                String ans = (getAnswer(completedAnswers, datatype, questionId));
-                        if (String.valueOf(ans) != "null") {
-                            float answer = Float.valueOf(ans);
+                            String ans = (getAnswer(completedAnswers, datatype, questionId));
+                            if (String.valueOf(ans) != "null") {
+                                float answer = Float.valueOf(ans);
                                 if (fetchMinMaxValue(displayConfig, AppConstants.RANGE_MAX) != 0 || fetchMinMaxValue(displayConfig, AppConstants.RANGE_MIN) != 0 ? true : false) {
                                     if ((answer > fetchMinMaxValue(displayConfig, AppConstants.RANGE_MAX)) || (answer < fetchMinMaxValue(displayConfig, AppConstants.RANGE_MIN))) {
                                         status = false;
@@ -275,8 +269,8 @@ public class DynamicQuestions {
                                     }
                                 }
 //                            }
+                            }
                         }
-                    }
                     }
 
                 } while (requiredQuestions.moveToNext());
@@ -313,7 +307,6 @@ public class DynamicQuestions {
         }
         return ans;
     }
-
 
     public boolean requiredFieldsAnsweredChild(int farmerModuleId, int moduleId) {
         Cursor completedAnswers = dl.getAllAnswersByFarmerChildModuleId(farmerModuleId);
@@ -556,12 +549,12 @@ public class DynamicQuestions {
         boolean val = true;
         try {
 
-        if (max != 0 || min != 0 ? true : false) {
-            if ((Float.parseFloat(answer) > max) || (Float.parseFloat(answer) < min)) {
-                val = false;
+            if (max != 0 || min != 0 ? true : false) {
+                if ((Float.parseFloat(answer) > max) || (Float.parseFloat(answer) < min)) {
+                    val = false;
 
+                }
             }
-        }
 
         }catch (Exception e){
             FirebaseCrashlytics.getInstance().log(e.getMessage());
@@ -642,13 +635,13 @@ public class DynamicQuestions {
                             for (int i = 0; i < answerSet.size(); i++) {
                                 JSONObject currentAnswer = answerSet.get(i);
                                 if (currentAnswer != null) {
-                                   if(repeaterParentId == currentAnswer.optInt("question_id")){
-                                      answerRepetaerParent=currentAnswer.getString("answer");
-                                      if (answerRepetaerParent.equalsIgnoreCase("0")){
-                                        int index=  questionList.indexOf(Integer.parseInt(questions.getString(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID))));
-                                        questionList.remove(index);
-                                      }
-                                   }
+                                    if(repeaterParentId == currentAnswer.optInt("question_id")){
+                                        answerRepetaerParent=currentAnswer.getString("answer");
+                                        if (answerRepetaerParent.equalsIgnoreCase("0")){
+                                            int index=  questionList.indexOf(Integer.parseInt(questions.getString(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID))));
+                                            questionList.remove(index);
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -668,7 +661,6 @@ public class DynamicQuestions {
         }
         return  match;
     }
-
 
     private String getAnswerMinMaxvalidation(int questionId, int answerId) {
         String ans = "noval";
@@ -715,13 +707,47 @@ public class DynamicQuestions {
     }
 
     public void renderQuestion(Cursor qCursor, boolean isRepeaterItem, LinearLayout parentLayout) {
+        LinearLayout combinedLayout = new LinearLayout(getInstance().context);
+        combinedLayout.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        ));
+        combinedLayout.setOrientation(LinearLayout.VERTICAL);
+//        combinedLayout.setPadding(16, 16, 16, 16);
+
+        LinearLayout textImgLayout = new LinearLayout(getInstance().context);
+        textImgLayout.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        ));
+        textImgLayout.setOrientation(LinearLayout.HORIZONTAL);
+//        combinedLayout.setPadding(16, 16, 16, 16);
+
+
         TextView tv;
         tv = (TextView) inflater.inflate((isRepeaterItem) ? R.layout.module_repeater_item_question : R.layout.module_question, parentLayout, false);
+        PopupWindow popupWindow = new PopupWindow(context);;
+        // for info
+        ImageView imageViewInfo = new ImageView(context);
+        imageViewInfo.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        ));
+        imageViewInfo.setPadding(3,0,0,0);
+        imageViewInfo.setImageResource(R.drawable.info_icon);
+
 
         int columnIndex = (qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION + questionColumnSuffix) != -1) ? qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION + questionColumnSuffix) : qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION);
+        int columnInfo = (qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO + questionColumnSuffix) != -1) ? qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO + questionColumnSuffix) : qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO);
         final String datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
         tv.setText(Html.fromHtml(qCursor.getString(columnIndex)));
         String hh = Html.fromHtml(qCursor.getString(columnIndex)) + "";
+        String infoVal = null;
+        try {
+            infoVal = String.valueOf(Html.fromHtml(qCursor.getString(columnInfo)));
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
 
         // get disp"lay config to see if question is required
         try {
@@ -757,40 +783,85 @@ public class DynamicQuestions {
             FirebaseCrashlytics.getInstance().log("DynamicQuestions: Error getting question display config - question " + questionId);
         }
 
-        parentLayout.addView(tv);
+        textImgLayout.addView(tv);
+
+        combinedLayout.addView(textImgLayout);
+
+        if (infoVal!=null && !infoVal.equals("")){
+            String finalInfoVal = infoVal;
+            imageViewInfo.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    if (popupWindow == null || !popupWindow.isShowing()) {
+                        // Create a new popup window only if it's null or not showing
+                        // Inflate the custom popup content layout
+                        View popupView = LayoutInflater.from(context).inflate(R.layout.popup_layout, null);
+
+                        // Set the popup content view and dimensions
+                        popupWindow.setContentView(popupView);
+                        popupWindow.setWidth(ViewGroup.LayoutParams.WRAP_CONTENT);
+                        popupWindow.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
+
+                        // Find the TextView in the popup layout
+                        try {
+                            TextView popupTextView = popupView.findViewById(R.id.popupTextView);
+                            // Set the text for the TextView
+                            popupTextView.setText(finalInfoVal);
+
+                            // Show the popup below the infoButton
+                            popupWindow.showAsDropDown(imageViewInfo,0 , 0, Gravity.CENTER);
+                        }catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+
+
+                    } else {
+                        // Dismiss the popup if it's already showing
+                        if (popupWindow != null && popupWindow.isShowing()) {
+                            popupWindow.dismiss();
+                        }
+                    }
+
+                }
+            });
+
+            textImgLayout.addView(imageViewInfo);
+        }
+
+
+        parentLayout.addView(combinedLayout);
     }
-
-
-
     public boolean CheckMinMaxforQuestion(Cursor qCursor) {
         boolean status = true;
 
         try {
             if(qCursor != null && qCursor.moveToFirst()) {
                 do {
-            JSONObject displayConfig = new JSONObject(qCursor.getString(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION)));
+                    JSONObject displayConfig = new JSONObject(qCursor.getString(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION)));
                     final String datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
                     final int questionId = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
                     int  answerId = qCursor.getInt(qCursor.getColumnIndex("answer_id"));
 
 
 
-            if (displayConfig.has("surveyrange")) {
+                    if (displayConfig.has("surveyrange")) {
 
-                if(getAnswerMinMaxvalidation(questionId,answerId) != "noval"){
-                    float answer = Float.parseFloat(getAnswerMinMaxvalidation(questionId,answerId));
-                    if (fetchMinMaxValue(displayConfig, AppConstants.RANGE_MAX) != 0
-                            || fetchMinMaxValue(displayConfig, AppConstants.RANGE_MIN) != 0 ? true : false) {
-                        if ((answer > fetchMinMaxValue(displayConfig, AppConstants.RANGE_MAX)) || (answer < fetchMinMaxValue(displayConfig, AppConstants.RANGE_MIN))) {
+                        if(getAnswerMinMaxvalidation(questionId,answerId) != "noval"){
+                            float answer = Float.parseFloat(getAnswerMinMaxvalidation(questionId,answerId));
+                            if (fetchMinMaxValue(displayConfig, AppConstants.RANGE_MAX) != 0
+                                    || fetchMinMaxValue(displayConfig, AppConstants.RANGE_MIN) != 0 ? true : false) {
+                                if ((answer > fetchMinMaxValue(displayConfig, AppConstants.RANGE_MAX)) || (answer < fetchMinMaxValue(displayConfig, AppConstants.RANGE_MIN))) {
 
-                            status = false;
+                                    status = false;
 //                            Toast.makeText(context, R.string.valid_range, Toast.LENGTH_LONG).show();
-                            break;
+                                    break;
+                                }
+                            }
                         }
-                    }
-                    }
 
-            }
+                    }
 
                 } while (qCursor.moveToNext());
             }
@@ -898,7 +969,7 @@ public class DynamicQuestions {
             @Override
             public void onClick(View view) {
 
-               // New
+                // New
                 File photoFile = null;
                 try {
                     photoFile = createImageFile();
@@ -908,24 +979,24 @@ public class DynamicQuestions {
 
                 if (photoFile != null) {
                     Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                     if ((intent.resolveActivity(context.getPackageManager()) != null)) {
-                            //Uri photoURI = FileProvider.getUriForFile(context, context.getApplicationContext().getPackageName() + ".profileimage.fileprovider", photoFile);
-                            Uri photoURI = FileProvider.getUriForFile(context, context.getApplicationContext().getPackageName() + ".fileprovider", photoFile);
+                    if ((intent.resolveActivity(context.getPackageManager()) != null)) {
+                        //Uri photoURI = FileProvider.getUriForFile(context, context.getApplicationContext().getPackageName() + ".profileimage.fileprovider", photoFile);
+                        Uri photoURI = FileProvider.getUriForFile(context, context.getApplicationContext().getPackageName() + ".fileprovider", photoFile);
 
-                            // Samsung Galaxy S3 Fix
-                            List<ResolveInfo> resInfoList = context.getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
-                            for (ResolveInfo resolveInfo : resInfoList) {
-                                String packageName = resolveInfo.activityInfo.packageName;
-                                context.grantUriPermission(packageName, photoURI, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                            }
-
-                            //  tempProfileImageFile=photoFile;
-                            setCapturedImageURI(photoURI);
-                            setCurrentPhotoPath(photoFile.getPath());
-                         setCurrentImageView(iv);
-                         setCurrentPhotoMetaData(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype);
-                         intent.putExtra(MediaStore.EXTRA_OUTPUT, getCapturedImageURI());
+                        // Samsung Galaxy S3 Fix
+                        List<ResolveInfo> resInfoList = context.getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+                        for (ResolveInfo resolveInfo : resInfoList) {
+                            String packageName = resolveInfo.activityInfo.packageName;
+                            context.grantUriPermission(packageName, photoURI, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
                         }
+
+                        //  tempProfileImageFile=photoFile;
+                        setCapturedImageURI(photoURI);
+                        setCurrentPhotoPath(photoFile.getPath());
+                        setCurrentImageView(iv);
+                        setCurrentPhotoMetaData(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype);
+                        intent.putExtra(MediaStore.EXTRA_OUTPUT, getCapturedImageURI());
+                    }
 
                     if (context.getClass().getSimpleName().equalsIgnoreCase("CompleteModuleActivity")) {
                         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
@@ -1318,21 +1389,21 @@ public class DynamicQuestions {
         final int answerId = answerIdTemp;
 
         try {
-             final TextView textView = (TextView) inflater.inflate(R.layout.module_location_upload_question, (isRepeaterItem) ? parentLayout : questionWrapper, false);
-             textView.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
+            final TextView textView = (TextView) inflater.inflate(R.layout.module_location_upload_question, (isRepeaterItem) ? parentLayout : questionWrapper, false);
+            textView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
 //                            String locationValue = mCurrentCapturedLocation.getLatitude() +","+mCurrentCapturedLocation.getLongitude();
-                            saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, "locationValue" );
-                            textView.setText(context.getResources().getString(R.string.record_farm_location_complete));
-                            textView.setBackgroundResource(R.drawable.list_item_disabled);
-                            textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-                            textView.setEnabled(false);
-                        }
-                    });
+                    saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, "locationValue" );
+                    textView.setText(context.getResources().getString(R.string.record_farm_location_complete));
+                    textView.setBackgroundResource(R.drawable.list_item_disabled);
+                    textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                    textView.setEnabled(false);
+                }
+            });
 
-                   questionWrapper.addView(textView);
-                   parentLayout.addView(questionWrapper);
+            questionWrapper.addView(textView);
+            parentLayout.addView(questionWrapper);
 
         } catch (Exception e) {
             FirebaseCrashlytics.getInstance().log("DynamicQuestions: Error creating date picker display :" +e.getMessage());
@@ -1557,7 +1628,7 @@ public class DynamicQuestions {
             et.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
         } else if (datatype.equals("int")) {
             et.setInputType(InputType.TYPE_CLASS_NUMBER);
-            et.setFilters(new InputFilter[]{new InputFilter.LengthFilter(9)});
+            et.setFilters(new InputFilter[]{new InputFilter.LengthFilter(11)});
         }
 
         // add tv to array if this is a 100% group question
@@ -1660,96 +1731,96 @@ public class DynamicQuestions {
                 saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, et.getText().toString());
 
 
-              //   Check the dependent questions - OFS-44 Check
-                    String beforeVal=et.getText().toString().trim();
-                    boolean dotCheck=false;
-                    if (beforeVal.length()>0){
-                        if (beforeVal.substring(beforeVal.length() - 1).equalsIgnoreCase(".")){
-                            dotCheck =true;
-                        }
+                //   Check the dependent questions - OFS-44 Check
+                String beforeVal=et.getText().toString().trim();
+                boolean dotCheck=false;
+                if (beforeVal.length()>0){
+                    if (beforeVal.substring(beforeVal.length() - 1).equalsIgnoreCase(".")){
+                        dotCheck =true;
                     }
-                    if(!dotCheck) {
-                        ArrayList<CommonPojo> commonPojos = new CoffeeConstraints(context, CompleteModuleActivity.allQuestions, answerSet, qCursor, dl).questionDependent(questionId);
-                        for (CommonPojo commonPojo : commonPojos) {
-                            if (commonPojo.getAnswerValue() != -1) {
-                                QuestionInfo questionInfo = new QuestionInfo();
-                                questionInfo.setQuestionId(commonPojo.getQuestionId());
-                                Constraint constraint = new Constraint();
-                                if (commonPojo.getQuestionId() != 0) {
-                                    Cursor questionCur = dl.getQuestionById(commonPojo.getQuestionId());
-                                    String displayConfig1 = null;
-                                    if (questionCur != null && questionCur.moveToFirst()) {
-                                        do {
-                                            displayConfig1 = questionCur.getString(questionCur.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION));
-                                        } while (questionCur.moveToNext());
-                                    }
-                                    try {
-                                        JSONObject finalJsonObj = new JSONObject(displayConfig1);
-                                        constraint = new CoffeeConstraints(context, questionInfo, dl, answerSet, qCursor).constraintType(finalJsonObj, String.valueOf(commonPojo.getAnswerValue()));
-                                    } catch (JSONException e) {
-                                        FirebaseCrashlytics.getInstance().log(e.getMessage());
-                                    }
+                }
+                if(!dotCheck) {
+                    ArrayList<CommonPojo> commonPojos = new CoffeeConstraints(context, CompleteModuleActivity.allQuestions, answerSet, qCursor, dl).questionDependent(questionId);
+                    for (CommonPojo commonPojo : commonPojos) {
+                        if (commonPojo.getAnswerValue() != -1) {
+                            QuestionInfo questionInfo = new QuestionInfo();
+                            questionInfo.setQuestionId(commonPojo.getQuestionId());
+                            Constraint constraint = new Constraint();
+                            if (commonPojo.getQuestionId() != 0) {
+                                Cursor questionCur = dl.getQuestionById(commonPojo.getQuestionId());
+                                String displayConfig1 = null;
+                                if (questionCur != null && questionCur.moveToFirst()) {
+                                    do {
+                                        displayConfig1 = questionCur.getString(questionCur.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION));
+                                    } while (questionCur.moveToNext());
                                 }
+                                try {
+                                    JSONObject finalJsonObj = new JSONObject(displayConfig1);
+                                    constraint = new CoffeeConstraints(context, questionInfo, dl, answerSet, qCursor).constraintType(finalJsonObj, String.valueOf(commonPojo.getAnswerValue()));
+                                } catch (JSONException e) {
+                                    FirebaseCrashlytics.getInstance().log(e.getMessage());
+                                }
+                            }
 
-                                if (constraint != null) {
-                                    if (constraint.getQuestionId() != 0) {
-                                        editQuestionSet.add(constraint.getQuestionId());
-                                    }
+                            if (constraint != null) {
+                                if (constraint.getQuestionId() != 0) {
+                                    editQuestionSet.add(constraint.getQuestionId());
                                 }
+                            }
 
                             //    Toast.makeText(context, " frank solution : " + editQuestionSet, Toast.LENGTH_SHORT).show();
 
-                            } else {
-                                // Toast.makeText(context, "Innum 6th question ans pannala", Toast.LENGTH_SHORT).show();
-                            }
+                        } else {
+                            // Toast.makeText(context, "Innum 6th question ans pannala", Toast.LENGTH_SHORT).show();
                         }
                     }
+                }
 
 
 
 
-                    /* Contstraints Check- Coffee Survey Setup Project franklin*/
-                    String value= et.getText().toString().trim();
-                    if(value.equalsIgnoreCase("")){
-                        // if the default value is available, for empty value is given , insert the default value for that question.
-                        if (!finalDefaultValue.equalsIgnoreCase("")){
-                            et.setText(finalDefaultValue);
-                            et.setSelection(et.getText().length());
-                            saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, finalDefaultValue);
-                        }else {
-                            removeAnswerEntry(questionId);
-                        }
-                    }else{
-                        if (!finalDefaultValue.equalsIgnoreCase("")) {
+                /* Contstraints Check- Coffee Survey Setup Project franklin*/
+                String value= et.getText().toString().trim();
+                if(value.equalsIgnoreCase("")){
+                    // if the default value is available, for empty value is given , insert the default value for that question.
+                    if (!finalDefaultValue.equalsIgnoreCase("")){
+                        et.setText(finalDefaultValue);
+                        et.setSelection(et.getText().length());
+                        saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, finalDefaultValue);
+                    }else {
+                        removeAnswerEntry(questionId);
+                    }
+                }else{
+                    if (!finalDefaultValue.equalsIgnoreCase("")) {
                         if (initialText[0].equalsIgnoreCase("0")){
-                                et.setText(value.replace("0", ""));
-                                et.setSelection(et.getText().length());
-                                saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, et.getText().toString());
-                            }
+                            et.setText(value.replace("0", ""));
+                            et.setSelection(et.getText().length());
+                            saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, et.getText().toString());
                         }
                     }
+                }
 
-                    QuestionInfo questionInfo=new QuestionInfo();
-                    questionInfo.setQuestionId(questionId);
-                    questionInfo.setDataType(datatype);
-                    Constraint constraint = null;
-                        try {
-                            et.setError(null);
-                            constraint = new CoffeeConstraints(context,questionInfo,dl,answerSet,qCursor).constraintType(finalDisplayConfig,value);
-                        } catch (JSONException e) {
-                            FirebaseCrashlytics.getInstance().log(e.getMessage());
+                QuestionInfo questionInfo=new QuestionInfo();
+                questionInfo.setQuestionId(questionId);
+                questionInfo.setDataType(datatype);
+                Constraint constraint = null;
+                try {
+                    et.setError(null);
+                    constraint = new CoffeeConstraints(context,questionInfo,dl,answerSet,qCursor).constraintType(finalDisplayConfig,value);
+                } catch (JSONException e) {
+                    FirebaseCrashlytics.getInstance().log(e.getMessage());
+                }
+                if (constraint !=null){
+                    if (constraint.getErrorMsg()!=null){
+                        et.setError(constraint.getErrorMsg());
+                        et.setBackgroundResource(R.drawable.rounder_red_edittext);
+                        // New
+                        removeAnswerEntry(questionId);
+                        if (constraint.isOverLimit()){
+                            constraintsSet.add(questionId);
                         }
-                    if (constraint !=null){
-                        if (constraint.getErrorMsg()!=null){
-                            et.setError(constraint.getErrorMsg());
-                            et.setBackgroundResource(R.drawable.rounder_red_edittext);
-                            // New
-                            removeAnswerEntry(questionId);
-                            if (constraint.isOverLimit()){
-                                constraintsSet.add(questionId);
-                            }
 
-                            // Old remove Logic
+                        // Old remove Logic
 //                            if (et.getText().toString().trim().equalsIgnoreCase("")){
 //                                // Remove the data from existing Database if data persists
 //                                removeAnswerEntryDatabase((int) Utilities.farmerModuleId,questionId);
@@ -1757,13 +1828,13 @@ public class DynamicQuestions {
 //                                removeAnswerEntry(questionId);
 //                            }
 
-                        }else{
-                            et.setBackground(originalDrawable);
-                            constraintsSet.remove(questionId);
-                            editQuestionSet.remove(questionId);
-                           // et.setError(null);
-                        }
+                    }else{
+                        et.setBackground(originalDrawable);
+                        constraintsSet.remove(questionId);
+                        editQuestionSet.remove(questionId);
+                        // et.setError(null);
                     }
+                }
             }
         });
 
@@ -2087,7 +2158,7 @@ public class DynamicQuestions {
                     if(isChildDefault){
                         cbAnswers = dl.getAnswersForQuestionByChild(questionId,Utilities.farmerId, Utilities.farmerModuleId);
                     }else{
-                         cbAnswers = dl.getAnswersForQuestionByFarmer(questionId,Utilities.farmerId, Utilities.farmerModuleId);
+                        cbAnswers = dl.getAnswersForQuestionByFarmer(questionId,Utilities.farmerId, Utilities.farmerModuleId);
                     }
                     if(cbAnswers!=null) {
                         if (!(cbAnswers.getCount() > 0)) {
@@ -2099,8 +2170,8 @@ public class DynamicQuestions {
                             }
                         }
                     }
-                     //   saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, String.valueOf(defaultLookUpValue));
-                   // }
+                    //   saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, String.valueOf(defaultLookUpValue));
+                    // }
                 }
             }
 
@@ -2491,9 +2562,9 @@ public class DynamicQuestions {
         Cursor checkboxes = dl.getSpinnerData(OFISDBContract.LookupValuesEntry.TABLE_NAME, true, OFISDBContract.LookupValuesEntry.COLUMN_NAME_QUESTION_ID, questionId, true, OFISDBContract.LookupValuesEntry.COLUMN_NAME_POSITION);
         Cursor cbAnswers;
         if(isSavedAns) {
-             cbAnswers = dl.getSavedAnswersForQuestionByFarmer(questionId, farmerId, farmerModuleId);
+            cbAnswers = dl.getSavedAnswersForQuestionByFarmer(questionId, farmerId, farmerModuleId);
         }else{
-             cbAnswers = dl.getAnswersForQuestionByFarmer(questionId, farmerId, farmerModuleId);
+            cbAnswers = dl.getAnswersForQuestionByFarmer(questionId, farmerId, farmerModuleId);
         }
         // is this a question we can only select one answer to?
         // get display config
@@ -3050,9 +3121,9 @@ public class DynamicQuestions {
         Cursor photoCheckboxes = dl.getSpinnerData(OFISDBContract.LookupValuesEntry.TABLE_NAME, true, OFISDBContract.LookupValuesEntry.COLUMN_NAME_QUESTION_ID, questionId, true, OFISDBContract.LookupValuesEntry.COLUMN_NAME_POSITION);
         Cursor photoCbAnswers;
         if(isSavedAns) {
-             photoCbAnswers = dl.getSavedAnswersForQuestionByFarmer(questionId, farmerId, farmerModuleId);
+            photoCbAnswers = dl.getSavedAnswersForQuestionByFarmer(questionId, farmerId, farmerModuleId);
         }else{
-             photoCbAnswers = dl.getAnswersForQuestionByFarmer(questionId, farmerId, farmerModuleId);
+            photoCbAnswers = dl.getAnswersForQuestionByFarmer(questionId, farmerId, farmerModuleId);
         }
         // is this a question we can only select one answer to?
         // get display config
@@ -3187,9 +3258,17 @@ public class DynamicQuestions {
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                         if (id > 0 || zeroAcceptable) {
+                            int existingItemsSize = repeaterItemsWrapper.getChildCount();
+                            removeRepeaterAnswers(questionId);
+                            for (int j = 0; j < existingItemsSize; j++) {
+                                removeRepeaterAnswer(questionId, j);
+                            }
+                            repeaterItemsWrapper.removeAllViews();
+                            removeAnswerEntry(questionId, answerId);
                             saveAnswerEntry(questionId, answerId, 0, -1, datatype, spinner.getSelectedItem().toString());
+                            renderRepeaterItems(questionId, id, repeaterItemsWrapper, farmerId, olamFarmerId, farmerModuleId, res, isSavedAns);
                             if (id > 0) {
-                                renderRepeaterItems(questionId, id, repeaterItemsWrapper, farmerId, olamFarmerId, farmerModuleId, res, isSavedAns);
+
                             } else {
                                 removeRepeaterAnswers(questionId);
                                 repeaterItemsWrapper.removeAllViews();
@@ -3422,8 +3501,6 @@ public class DynamicQuestions {
 
         if (selectCondition) {
             for (String retval : questionId.split(",")) {
-                System.out.println(retval);
-
                 int question_id = Integer.parseInt(retval);
 
                 //logic for yes or no question
@@ -3602,7 +3679,7 @@ public class DynamicQuestions {
         MatrixCursor spinnervalues = new MatrixCursor(columns);
         spinnervalues.addRow(new String[]{res.getString(R.string.ofis_switch_text_yes), "1", "1"});
         spinnervalues.addRow(new String[]{res.getString(R.string.ofis_switch_text_no), "2", "0"});
-      //
+        //
         // spinner explaining
 
         // Error Message for constraints franklin
@@ -3611,9 +3688,9 @@ public class DynamicQuestions {
         int switchId = 0;
         try {
             JSONObject jsonObject= new JSONObject(displayConfig).getJSONObject(CoffeeConstants.CALCULATION);
-             switchId=jsonObject.getInt("switch");
-             constraintType=jsonObject.getString("type");
-             errorMsg= jsonObject.getJSONObject("errorMsg").getString("error"+ CommonUtilities.getLocaleSuffix(context.getResources()));
+            switchId=jsonObject.getInt("switch");
+            constraintType=jsonObject.getString("type");
+            errorMsg= jsonObject.getJSONObject("errorMsg").getString("error"+ CommonUtilities.getLocaleSuffix(context.getResources()));
         } catch (JSONException e) {
             FirebaseCrashlytics.getInstance().log(e.getMessage());
 
@@ -3642,11 +3719,11 @@ public class DynamicQuestions {
             }
 
             if (currentAnswerString != null) {
-                    if(currentAnswerString.equalsIgnoreCase("true")){
-                        currentAnswerString = "1";
-                    }else if(currentAnswerString.equalsIgnoreCase("false")){
-                        currentAnswerString = "0";
-                    }
+                if(currentAnswerString.equalsIgnoreCase("true")){
+                    currentAnswerString = "1";
+                }else if(currentAnswerString.equalsIgnoreCase("false")){
+                    currentAnswerString = "0";
+                }
                 currentAnswer = Integer.parseInt(currentAnswerString);
             }
 
@@ -3686,7 +3763,7 @@ public class DynamicQuestions {
         final String yesQuestion = question1;
         final String noqQuestion = question2;
 
-      //   Prepopulate Yes/No If not answered
+        //   Prepopulate Yes/No If not answered
         String type,option;
         try {
             JSONObject jsonObject= new JSONObject(displayConfig).getJSONObject("prepopulate");
@@ -3704,13 +3781,13 @@ public class DynamicQuestions {
                     productIdList.add(Integer.parseInt(productIDs.getString(i)));
                 }
                 if (countryLdList.contains(farmerGeo.getCountryId()) && productIdList.contains(farmerGeo.getProductId())){
-                if(type.equalsIgnoreCase("Yes/No")){
-                    if (option.equalsIgnoreCase("yes")){
-                        spinner.setSelection(1);
-                    }else{
-                        spinner.setSelection(2);
+                    if(type.equalsIgnoreCase("Yes/No")){
+                        if (option.equalsIgnoreCase("yes")){
+                            spinner.setSelection(1);
+                        }else{
+                            spinner.setSelection(2);
+                        }
                     }
-                }
                 }
             }
 
@@ -3720,7 +3797,7 @@ public class DynamicQuestions {
         }
 
 
-         //End
+        //End
 
 
         int finalSwitchId = switchId;
@@ -3784,15 +3861,15 @@ public class DynamicQuestions {
                         }
                         Cursor selecteditem = (Cursor) spinner.getSelectedItem();
                         saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, selecteditem.getString(selecteditem.getColumnIndex("code")));
-    //                    if (questionId == 4333) {
-  //                      showAlertMsg("We recommend you to complete the General Certification Survey before continuing with this Starbucks certification survey");
+                        //                    if (questionId == 4333) {
+                        //                      showAlertMsg("We recommend you to complete the General Certification Survey before continuing with this Starbucks certification survey");
 //                            TextView errorText = (TextView) spinner.getSelectedView();
 //                            errorText.setError("");
 //                            errorText.setTextColor(Color.RED);//just to highlight that this is an error
 //                            errorText.setText("We recommend you to complete the General Certification Survey before continuing with this Starbucks certification survey");
 //                          //  errorText.setBackground(context.getResources().getDrawable(R.drawable.rounder_red_edittext));
 
- //                       }
+                        //                       }
 
                     } else {
                         removeAnswerEntry(questionId, answerId);

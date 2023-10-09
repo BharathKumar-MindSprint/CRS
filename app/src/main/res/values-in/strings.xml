@@ -575,17 +575,17 @@
     <string name="farmer_signature">Farmer Tanda tangan</string>
     <string name="enum_sign">Staff Tanda tangan</string>
     <string name="enum_name">Enumerator Nama</string>
-     <string name="childs_name">Nama Anak </string>
+    <string name="childs_name">Nama Anak </string>
     <string name="name">Nama:</string>
 
     <string name="allchilds_name">Semua nama anak-anak (sebagaimana berlaku)</string>
-      <string name="restriction_in_submodules">Mohon isi seluruh pertanyaan wajib untuk melanjutkan</string>
+    <string name="restriction_in_submodules">Mohon isi seluruh pertanyaan wajib untuk melanjutkan</string>
     <string name="please_respond_mandatory_question">Mohon isi jawaban dari pertanyaan wajib</string>
-     <string name="please_click_checkbox">Sila klik semua kotak pilihan yang sesuai</string>
+    <string name="please_click_checkbox">Sila klik semua kotak pilihan yang sesuai</string>
     <string name="please_sign_within_the_boundary_box">Please sign within the boundary box</string>
     <string name="txt_farm_name">Farm Name:</string>
     <string name="txt_farm_code">Farm Code:</string>
-     <string name="attendee_sex">Sex</string>
+    <string name="attendee_sex">Sex</string>
 
 
 
@@ -728,5 +728,5 @@
     <string name="are_you_at_the_farmers_hh">Apakah Anda di rumah petani?</string>
     <string name="ofis_request_help">Minta bantuan</string>
 
-    <string name="spinner_subdistrict_default">Kecamatan</string>
+    <string name="spinner_subdistrict_default">Desa/Kelurahan</string>
 </resources>
