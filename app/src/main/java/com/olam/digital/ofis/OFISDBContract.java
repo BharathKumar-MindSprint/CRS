@@ -570,6 +570,8 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_QUESTION_INFO_TH = "questionInfoTh";
         public static final String COLUMN_NAME_DISPLAY_TYPE_ID = "displaytypeId";
         public static final String COLUMN_NAME_ANSWER_TYPE = "answerType";
+        public static final String COLUMN_NAME_OTHER_CHOICE = "otherChoice";
+
 
 
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
@@ -610,6 +612,7 @@ public class OFISDBContract {
                     add(COLUMN_NAME_QUESTION_INFO_TH);
                     add(COLUMN_NAME_DISPLAY_TYPE_ID);
                     add(COLUMN_NAME_ANSWER_TYPE);
+                    add(COLUMN_NAME_OTHER_CHOICE);
 
                 }}
         );

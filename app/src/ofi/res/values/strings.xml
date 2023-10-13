@@ -298,6 +298,7 @@
     <string name="fullreview_farm_management_plan_in_progress">Full Review in Progress</string>
     <string name="fmp_are_you_sure">This will require a new plan to be printed, are you sure you want to proceed?</string>
     <string name="complete_all_required_fields">You must complete all required fields before you can submit this item (i.e. questions displaying a red *)</string>
+    <string name="complete_in_range">Required text feild should be in range.</string>
     <string name="complete_all_required_fields_mandatry">Survey Configuration Error. Please submit an Ask for help.</string>
     <string name="ReadAndAgreeConsent">Read and agree to consent statement</string>
     <string name="consentStatementMain1">It is necessary for you to supply us with personal data in connection with the Olam sustainability programme of which you are part of. This personal data will be collected and stored on the Olam Farmer Information System ("<strong>OFIS</strong>"). You may subsequently withdraw any consent given for our collection, use and disclosure of your personal data. However, failure to supply your personal data and/or subsequent withdrawal of your consent may result in you being unable to participate in the sustainability programme.</string>
@@ -478,6 +479,7 @@
     <string name="untick_task">Untick Task</string>
     <string name="untick_task_msg">Please confirm you would like to mark this task as incomplete?</string>
     <string name="camera_and_gallery_permission_denial_msg">Camera &amp; Gallery Feature will not work without this Permission</string>
+    <string name="permission_denial_msg_android_13_above">Required to accept the permission</string>
     <string name="loggin_In">Logging In</string>
     <string name="updating_master_details">Downloading master details</string>
     <string name="authentication_failed">Authentication failed. Please try again</string>

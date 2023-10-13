@@ -1,5 +1,6 @@
 package com.olam.digital.ofis;
 
+import android.Manifest;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.annotation.SuppressLint;
@@ -250,6 +251,8 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     static boolean isdownloadfarmplan;
     static boolean isEnableDM = false;
 
+    private static final int REQUEST_PERMISSIONS_FOR_TIRAMISU = 2507;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -339,8 +342,31 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 SYNC_INTERVAL
         );
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
+            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_AUDIO) != PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_VIDEO) != PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{
+                                android.Manifest.permission.CAMERA,
+                                android.Manifest.permission.READ_PHONE_STATE,
+                                android.Manifest.permission.READ_MEDIA_AUDIO,
+                                android.Manifest.permission.READ_MEDIA_VIDEO,
+                                android.Manifest.permission.READ_MEDIA_IMAGES,
+                                android.Manifest.permission.ACCESS_COARSE_LOCATION,
+                                android.Manifest.permission.RECORD_AUDIO,
+                                android.Manifest.permission.ACCESS_FINE_LOCATION},
+
+                        REQUEST_PERMISSIONS_FOR_TIRAMISU);
+            }
+        }
         // Request Permission only for Android Version Marshmallow and above
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             // Check Phone Permission
             if (ContextCompat.checkSelfPermission(HomeActivity.this,
                     android.Manifest.permission.READ_EXTERNAL_STORAGE) + ContextCompat
@@ -399,47 +425,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 }
             }
         });
-
-//        if (sharedPreferences.getBoolean("FIRST_RUN",true)) {
-//
-//
-//            saveUpdateButton.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    // Request Permission only for Android Version Marshmallow and above
-//                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//                        // Check Phone Permission
-//                        if (ContextCompat.checkSelfPermission(HomeActivity.this,
-//                                android.Manifest.permission.READ_PHONE_STATE)
-//                                != PackageManager.PERMISSION_GRANTED) {
-//
-//                    //request permission
-//                    ActivityCompat.requestPermissions(HomeActivity.this,
-//                            new String[]{android.Manifest.permission.READ_PHONE_STATE},
-//                            MY_PERMISSIONS_REQUEST);
-//
-//                } else {
-//
-//                    // Permission already granted
-//                    firstTimeSetup();
-//                }
-//            } else {
-//
-//                        // Call methods directly for Android versions lower than Marshmallow
-//                        firstTimeSetup();
-//                    }
-//                }
-//            });
-//        } else {
-//            checkForUpdate();
-//            mainSection.removeView(firstRunSection);
-//            long currentVersionCode = sharedPreferences.getLong("VERSION_NUM", 0);
-//            if (BuildConfig.VERSION_CODE > currentVersionCode) {
-//                Toast.makeText(context, res.getString(R.string.upgrade_message), Toast.LENGTH_LONG).show();
-//                Utilities.saveLongToSharedPrefs(context, "VERSION_NUM", BuildConfig.VERSION_CODE);
-//                nl.syncData();
-//            }
-//        }
 
         gpsListener = new GPSListener() {
             @Override
@@ -1546,6 +1531,38 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                 }
             }
 
+            case REQUEST_PERMISSIONS_FOR_TIRAMISU: {
+                try {
+                    if (grantResults.length > 0 &&
+                            grantResults[0] == PackageManager.PERMISSION_GRANTED &&
+                            grantResults[1] == PackageManager.PERMISSION_GRANTED &&
+                            grantResults[2] == PackageManager.PERMISSION_GRANTED &&
+                            grantResults[3] == PackageManager.PERMISSION_GRANTED &&
+                            grantResults[4] == PackageManager.PERMISSION_GRANTED &&
+                            grantResults[5] == PackageManager.PERMISSION_GRANTED &&
+                            grantResults[6] == PackageManager.PERMISSION_GRANTED &&
+                            grantResults[7] == PackageManager.PERMISSION_GRANTED ) {
+                        // Permissions granted, proceed with your code
+                    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+                            && (!shouldShowRequestPermissionRationale(permissions[0])
+                            || !shouldShowRequestPermissionRationale(permissions[1])
+                            || !shouldShowRequestPermissionRationale(permissions[2])
+                            || !shouldShowRequestPermissionRationale(permissions[3])
+                            || !shouldShowRequestPermissionRationale(permissions[4])
+                            || !shouldShowRequestPermissionRationale(permissions[5])
+                            || !shouldShowRequestPermissionRationale(permissions[6])
+                            || !shouldShowRequestPermissionRationale(permissions[7])
+                    )) {
+                        showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
+
+                    }else {
+                        Toast.makeText(this, R.string.permission_denial_msg_android_13_above, Toast.LENGTH_LONG).show();
+                    }
+                    break;
+                }catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
 
         }
     }

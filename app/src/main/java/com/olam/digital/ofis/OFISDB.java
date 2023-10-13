@@ -319,7 +319,8 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO_VI+ " TEXT, "
             + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO_TH+ " TEXT, "
             + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE_ID + " TEXT, "
-            + OFISDBContract.QuestionEntry.COLUMN_NAME_ANSWER_TYPE+ " TEXT)";
+            + OFISDBContract.QuestionEntry.COLUMN_NAME_ANSWER_TYPE+ " TEXT, "
+            + OFISDBContract.QuestionEntry.COLUMN_NAME_OTHER_CHOICE + " TEXT)";
 
 
     private static final String OFIS_ANSWER_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.AnswerEntry.TABLE_NAME +
@@ -1006,6 +1007,10 @@ class OFISDB extends SQLiteOpenHelper {
             sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.QuestionEntry.TABLE_NAME + " ADD COLUMN questionInfoLo TEXT default null");
             sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.QuestionEntry.TABLE_NAME + " ADD COLUMN questionInfoVi TEXT default null");
             sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.QuestionEntry.TABLE_NAME + " ADD COLUMN questionInfoTh TEXT default null");
+            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.QuestionEntry.TABLE_NAME + " ADD COLUMN displaytypeId TEXT default null");
+            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.QuestionEntry.TABLE_NAME + " ADD COLUMN answerType TEXT default null");
+            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.QuestionEntry.TABLE_NAME + " ADD COLUMN otherChoice TEXT default null");
+
         } catch (SQLiteException ex) {
             ex.printStackTrace();
         }
@@ -1023,8 +1028,6 @@ class OFISDB extends SQLiteOpenHelper {
             sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ModuleEntry.TABLE_NAME + " ADD COLUMN descriptionLo TEXT default null");
             sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ModuleEntry.TABLE_NAME + " ADD COLUMN descriptionVi TEXT default null");
             sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ModuleEntry.TABLE_NAME + " ADD COLUMN descriptionTh TEXT default null");
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ModuleEntry.TABLE_NAME + " ADD COLUMN displaytypeId TEXT default null");
-            sqLiteDatabase.execSQL("ALTER TABLE " + OFISDBContract.ModuleEntry.TABLE_NAME + " ADD COLUMN answerType TEXT default null");
         } catch (SQLiteException ex) {
             ex.printStackTrace();
         }

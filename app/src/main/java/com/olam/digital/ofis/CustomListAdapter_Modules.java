@@ -651,6 +651,8 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                     isConsentAvailable != null && isConsentAvailable.length() > 0 && isConsentAvailable.equalsIgnoreCase("true")) {
                 String disabled_months_string = cursor.getString(cursor.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_DISABLED_MONTHS));
                 List<String> disabled_months = Arrays.asList(disabled_months_string.split("\\s*,\\s*"));
+                String module_ID = cursor.getString(cursor.getColumnIndex("_id"));
+                String start_date_string = cursor.getString(cursor.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_START_DATE));
                 if (hasSubmittedModules) {
                     try {
                         int recurrence_frequency = cursor.getInt(cursor.getColumnIndex(OFISDBContract.ModuleAssignmentsEntry.COLUMN_NAME_RECURRENCE_FREQUENCY));
@@ -777,12 +779,36 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                     } else {
                         imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_new));
                         textView.setText(res.getString(R.string.ModuleStatus));
-                        if (disabled_months.contains(String.valueOf(currentDate.get(Calendar.MONTH)))) {
+                        if (disabled_months.contains(String.valueOf(currentDate.get(Calendar.MONTH) + 1))) {
                             linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
                             moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
                             textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
                             enabledItem.setText("false");
                         }
+
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+                        dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+                        Date startDate = null;
+                        try {
+                            if(start_date_string!=null) {
+                                startDate = dateFormat.parse(start_date_string);
+                            }
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+
+                        Date currentDateNew = new Date();
+
+                        if (startDate!=null){
+                            if(currentDateNew.before(startDate)){
+                                linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
+                                moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                                enabledItem.setText("false");
+                            }
+                        }
+
                     }
                 }
                 if (MultiFarmUtils.isMultiFarmEnumerator) {

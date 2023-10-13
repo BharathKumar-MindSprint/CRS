@@ -1990,24 +1990,36 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                     String displayType = moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE));
                                     if(displayType.replaceAll(" ", "").toLowerCase().equals("textbox")){
                                         // use answerType
-                                        datatypeID = moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ANSWER_TYPE));
-                                        dataTypeName = dl.getAnswerTypeValue(Integer.parseInt(datatypeID));
+                                        try{
+                                            datatypeID = moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ANSWER_TYPE));
+                                            dataTypeName = dl.getAnswerTypeValue(Integer.parseInt(datatypeID));
+                                        }catch (Exception e){
+                                            e.printStackTrace();
+                                        }
+
 
                                     }else{
                                         // use displayType
-                                        datatypeID = moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE_ID));
-                                        dataTypeName = dl.getQuestionTypeValue(Integer.parseInt(datatypeID));
+                                        try{
+                                            datatypeID = moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE_ID));
+                                            dataTypeName = dl.getQuestionTypeValue(Integer.parseInt(datatypeID));
+                                        }catch (Exception e){
+                                            e.printStackTrace();
+                                        }
                                     }
 
-                                    if ( dataTypeName.equals("Numbers Only")|| dataTypeName.equals("Percentage") ||
-                                            dataTypeName.equals("Decimal") || dataTypeName.equals("Dropdown") || dataTypeName.equals("Photo Checkbox")
-                                            || dataTypeName.equals("Repeater") || dataTypeName.equals("Checkbox") || dataTypeName.equals("Radio")){
-                                        datatype = "int";
-                                    }else if (dataTypeName.equals("text box") || dataTypeName.equals("Alphanumeric") ||
-                                            dataTypeName.equals("Alphabetical") || dataTypeName.equals("Photo Upload") || dataTypeName.equals("Date Picker")){
-                                        datatype = "text";
+                                    if (dataTypeName != null){
+                                        if ( dataTypeName.equals("Numbers Only")|| dataTypeName.equals("Percentage") ||
+                                                dataTypeName.equals("Decimal") || dataTypeName.equals("Dropdown") || dataTypeName.equals("Photo Checkbox")
+                                                || dataTypeName.equals("Repeater") || dataTypeName.equals("Checkbox") || dataTypeName.equals("Radio")){
+                                            datatype = "int";
+                                        }else if (dataTypeName.equals("text box") || dataTypeName.equals("Alphanumeric") ||
+                                                dataTypeName.equals("Alphabetical") || dataTypeName.equals("Photo Upload") || dataTypeName.equals("Date Picker") || dataTypeName.equals("Location")){
+                                            datatype = "text";
+                                        }
+                                    }else {
+                                        datatype = moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.DatatypesEntry.COLUMN_NAME_DATATYPE_NAME));
                                     }
-
 
                                     if (datatype.equalsIgnoreCase("int") || datatype.equalsIgnoreCase("boolean")) {
                                         answer.put("answer", moduleAnswers.getInt(moduleAnswers.getColumnIndex("answer_" + datatype)));

@@ -144,7 +144,7 @@
     <string name="permission_permanent_denial_title">Permission was permanently denied</string>
     <string name="permission_permanent_denial_msg">Permission request is permanently denied. Please provide permissions from Application Settings.</string>
     <string name="go_to_settings_msg">Allow permission from application settings.\nGo to settings?</string>
-
+    <string name="permission_denial_msg_android_13_above">Required to accept the permission</string>
     <!-- in XML -->
     <string name="Add_Farmer">Add Farmer</string>
     <string name="Farmer_Name">Farmer Name</string>

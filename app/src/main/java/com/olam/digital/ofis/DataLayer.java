@@ -4151,6 +4151,7 @@ public class DataLayer {
     }
 
     public Cursor getQuestionsAndAnswersBySubModuleId(int submoduleId, long farmerId, long farmerModuleId) {
+        Log.d(TAG, "getQuestionsAndAnswersBySubModuleId");
         String questionTable = OFISDBContract.QuestionEntry.TABLE_NAME;
         String datatypeTable = OFISDBContract.DatatypesEntry.TABLE_NAME;
         String answerTable = OFISDBContract.AnswerEntry.TABLE_NAME;
@@ -4162,6 +4163,8 @@ public class DataLayer {
                 + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_TR + ", " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_LO + ", "
                 + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_VI + ", " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_TH + ", "
                 + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION + ", "
+                + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID + ", "
+                + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_OTHER_CHOICE + ", "
                 + answerTable + "." + OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_INT + ", " + answerTable + "." + OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_BOOL + ", "
                 + answerTable + "." + OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_DECIMAL + ", " + answerTable + "." + OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_DATE + ", "
                 + answerTable + "." + OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_TEXT + ", " + answerTable + "." + OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_REPORTING_YEAR;
@@ -4184,17 +4187,20 @@ public class DataLayer {
     }
 
     public Cursor getChildQuestionsAndAnswersBySubModuleId(int submoduleId, long farmerId, long farmerModuleId) {
+        Log.d(TAG, "getChildQuestionsAndAnswersBySubModuleId");
         String questionTable = OFISDBContract.QuestionEntry.TABLE_NAME;
         String datatypeTable = OFISDBContract.DatatypesEntry.TABLE_NAME;
         String answerTable = OFISDBContract.AnswerChildEntry.TABLE_NAME;
         String columns = questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_CONDITIONAL_QUESTIONS + ", " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_IS_SUBSET_QUESTION_REQUIRED + ", " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_ID + ", " + answerTable + "." + OFISDBContract.AnswerChildEntry.COLUMN_NAME_ID + " as answer_id, "
                 + datatypeTable + "." + OFISDBContract.DatatypesEntry.COLUMN_NAME_DATATYPE_NAME + " as datatype_name, " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_POSITION + ", "
                 + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE + ", " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION + ", "
+                + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID + ", "
                 + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_FR + ", " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_ES + ", "
                 + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_ID + ", " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_PT + ", "
                 + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_TR + ", " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_LO + ", "
                 + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_VI + ", " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_TH + ", "
                 + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION + ", "
+                + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_OTHER_CHOICE + ", "
                 + answerTable + "." + OFISDBContract.AnswerChildEntry.COLUMN_NAME_ANSWER_INT + ", " + answerTable + "." + OFISDBContract.AnswerChildEntry.COLUMN_NAME_ANSWER_BOOL + ", "
                 + answerTable + "." + OFISDBContract.AnswerChildEntry.COLUMN_NAME_ANSWER_DECIMAL + ", " + answerTable + "." + OFISDBContract.AnswerChildEntry.COLUMN_NAME_ANSWER_DATE + ", "
                 + answerTable + "." + OFISDBContract.AnswerChildEntry.COLUMN_NAME_ANSWER_TEXT + ", " + answerTable + "." + OFISDBContract.AnswerChildEntry.COLUMN_NAME_ANSWER_REPORTING_YEAR;
@@ -4344,10 +4350,13 @@ public class DataLayer {
     }
 
     Cursor getRepeaterItemsForQuestion(long id) {
+        Log.d(TAG, "getRepeaterItemsForQuestion");
         String questionTable = OFISDBContract.QuestionEntry.TABLE_NAME;
         String datatypeTable = OFISDBContract.DatatypesEntry.TABLE_NAME;
         String columns = questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_ID + ", " + datatypeTable + "." + OFISDBContract.DatatypesEntry.COLUMN_NAME_DATATYPE_NAME + " as datatype_name, "
                 + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_POSITION + ", " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE + ", "
+                + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID + ", "
+                + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_OTHER_CHOICE + ", "
                 + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION + ", " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_FR + ", "
                 + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_ES + ", " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_ID + ", "
                 + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_PT + ", " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_TR + ", "
@@ -4365,10 +4374,13 @@ public class DataLayer {
 
     // select the sub question and data types
     Cursor getRepeaterItemsForQuestion1(long id) {
+        Log.d(TAG, "getRepeaterItemsForQuestion1");
         String questionTable = OFISDBContract.QuestionEntry.TABLE_NAME;
         String datatypeTable = OFISDBContract.DatatypesEntry.TABLE_NAME;
         String columns = questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_ID + ", " + datatypeTable + "." + OFISDBContract.DatatypesEntry.COLUMN_NAME_DATATYPE_NAME + " as datatype_name, "
                 + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_POSITION + ", " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE + ", "
+                + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID + ", "
+                + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_OTHER_CHOICE + ", "
                 + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION + ", " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_FR + ", "
                 + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_ES + ", " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_ID + ", "
                 + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_PT + ", " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_TR + ", "
@@ -5130,11 +5142,14 @@ public class DataLayer {
     }
 
     Cursor getFmpBaselineQuestions(long farmerId, long fmpId) {
+        Log.d(TAG, "getFmpBaselineQuestions");
         String questionTable = OFISDBContract.QuestionEntry.TABLE_NAME;
         String datatypeTable = OFISDBContract.DatatypesEntry.TABLE_NAME;
         String answerTable = OFISDBContract.AnswerEntry.TABLE_NAME;
         String columns = questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_ID + ", " + answerTable + "." + OFISDBContract.AnswerEntry.COLUMN_NAME_ID + " as answer_id, "
                 + datatypeTable + "." + OFISDBContract.DatatypesEntry.COLUMN_NAME_DATATYPE_NAME + " as datatype_name, " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_POSITION + ", "
+                + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID + ", "
+                + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_OTHER_CHOICE + ", "
                 + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE + ", " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION + ", "
                 + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_FR + ", " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_ES + ", "
                 + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_ID + ", " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_PT + ", "
@@ -7171,6 +7186,27 @@ public class DataLayer {
             farmerCursor.close();
         }
         return  assignmentField;
+    }
+
+    String getValueByLookUpID(String lookupId){
+        String lookupValue = "";
+        Cursor farmerCursor = null;
+        try {
+            String[] columns = new String[]{"*"};
+            String whereClause = OFISDBContract.LookupValuesEntry.COLUMN_NAME_ID + " =?";
+            String[] whereArgs = new String[]{lookupId};
+            farmerCursor = db.query(OFISDBContract.LookupValuesEntry.TABLE_NAME , columns , whereClause , whereArgs , null , null,null);
+            if (farmerCursor != null){
+                while(farmerCursor.moveToNext()){
+                    lookupValue = farmerCursor.getString(farmerCursor.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE));
+                }
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            farmerCursor.close();
+        }
+        return lookupValue;
     }
 
     public String getChildNamefromDb(Long childId) {
@@ -9309,17 +9345,19 @@ public class DataLayer {
     }
 
     public Cursor retrieveQuestionsAndAnswersBySubModuleId(int submoduleId, long farmerId, long farmerModuleId) {
+        Log.d(TAG, "retrieveQuestionsAndAnswersBySubModuleId");
         String questionTable = OFISDBContract.QuestionEntry.TABLE_NAME;
         String datatypeTable = OFISDBContract.DatatypesEntry.TABLE_NAME;
         String answerTable = OFISDBContract.SavedAnswerEntry.TABLE_NAME;
         String columns = questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_CONDITIONAL_QUESTIONS + ", " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_IS_SUBSET_QUESTION_REQUIRED + ", " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_ID + ", " + answerTable + "." + OFISDBContract.SavedAnswerEntry.COLUMN_NAME_ID + " as answer_id, "
                 + datatypeTable + "." + OFISDBContract.DatatypesEntry.COLUMN_NAME_DATATYPE_NAME + " as datatype_name, " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_POSITION + ", "
-                + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE + ", " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION + ", "
+                + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE + ", " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID + ", " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION + ", "
                 + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_FR + ", " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_ES + ", "
                 + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_ID + ", " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_PT + ", "
                 + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_TR + ", " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_LO + ", "
                 + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_VI + ", " + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_TH + ", "
                 + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION + ", "
+                + questionTable + "." + OFISDBContract.QuestionEntry.COLUMN_NAME_OTHER_CHOICE + ", "
                 + answerTable + "." + OFISDBContract.SavedAnswerEntry.COLUMN_NAME_ANSWER_INT + ", " + answerTable + "." + OFISDBContract.SavedAnswerEntry.COLUMN_NAME_ANSWER_BOOL + ", "
                 + answerTable + "." + OFISDBContract.SavedAnswerEntry.COLUMN_NAME_ANSWER_DECIMAL + ", " + answerTable + "." + OFISDBContract.SavedAnswerEntry.COLUMN_NAME_ANSWER_DATE + ", "
                 + answerTable + "." + OFISDBContract.SavedAnswerEntry.COLUMN_NAME_ANSWER_TEXT + ", " + answerTable + "." + OFISDBContract.SavedAnswerEntry.COLUMN_NAME_ANSWER_REPORTING_YEAR;

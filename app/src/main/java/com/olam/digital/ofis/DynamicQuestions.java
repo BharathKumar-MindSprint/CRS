@@ -18,6 +18,7 @@ import android.os.Handler;
 import android.os.StrictMode;
 import android.provider.MediaStore;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 
@@ -526,6 +527,7 @@ public class DynamicQuestions {
                     newAnswer.put("answer", answer);
                     newAnswer.put("reporting_year", reportingYear);
                     answerSet.add(newAnswer);
+                    Log.d("AnswerSetCheck", String.valueOf(answerSet));
                 }
             } else if(answerId > 0){
                 removeAnswerEntry(questionId,answerId);
@@ -694,6 +696,130 @@ public class DynamicQuestions {
 
                     }
                 }
+
+                /*String type = questions.getString(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE));
+
+                if (type.replaceAll(" ", "").toLowerCase().equals("textbox")){
+                    final int questionId = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
+                    final String answerTypeForDatatype = dl.getAnswerTypeByQuestionID(questionId);
+                    final String datatype = dl.getAnswerTypeValue(Integer.parseInt(answerTypeForDatatype));
+
+                    if (datatype.equals("Numbers Only") || datatype.equals("Percentage")) {
+                        try{
+                            JSONObject displayConfigVal = new JSONObject();
+                            displayConfigVal = new JSONObject(questions.getString(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION)));
+                            if (displayConfigVal.has("display")){
+                                JSONObject displayVal = displayConfigVal.getJSONObject("display");
+                                String answerLimit = displayVal.get("answerLimit").toString();
+
+                                if (!answerLimit.equals("null")){
+                                    match = true;
+                                }else{
+
+                                    int min = 0, max =0;
+                                    String globally;
+                                    String assignmentType = "";
+                                    String assignmentField = "";
+
+                                    JSONArray range = displayVal.getJSONArray("range");
+                                    for(int i=0; i<range.length(); i++){
+                                        JSONObject rangeArray = range.getJSONObject(i);
+
+                                        globally = rangeArray.getString("globally");
+                                        assignmentType = rangeArray.getString("assignmentType");
+                                        assignmentField = rangeArray.getString("assignmentField");
+
+
+                                        String assignmentTypeColumn = "";
+
+                                        switch (assignmentType){
+                                            case "1" :
+                                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID;
+                                                break;
+                                            case "2" :
+                                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_REGIONID;
+                                                break;
+                                            case "3" :
+                                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_DISTRICTID;
+                                                break;
+                                            case "4" :
+                                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID;
+                                                break;
+                                            case "5" :
+                                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID;
+                                                break;
+                                            case "6" :
+                                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID;
+                                                break;
+                                            case "7" :
+                                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID;
+                                                break;
+                                            case "8" :
+                                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PARTNER_ID;
+                                                break;
+                                            case "9" :
+                                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PROGRAMME_ID;
+                                                break;
+                                        }
+
+                                        Resources res = null;
+                                        long farmerId = Utilities.farmerId;
+                                        String farmerAssignmentField = dl.getAssignmentByFarmerTypeID(farmerId , assignmentTypeColumn);
+                                        if (assignmentField.equals(farmerAssignmentField)  && globally.equals("false")) {
+                                            min = rangeArray.getInt("min");
+                                            max = rangeArray.getInt("max");
+
+                                            int ans = 0;
+                                            for (int j = 0; j < answerSet.size(); j++) {
+                                                JSONObject currentAnswer = answerSet.get(j);
+                                                if (currentAnswer != null) {
+                                                    int currentQuestionId = currentAnswer.optInt("question_id");
+                                                    if (currentQuestionId == questionId && currentAnswer.getString("datatype") == "int" ){
+                                                        ans  = currentAnswer.getInt("answer");
+                                                    }
+                                                }
+                                            }
+
+                                            if (min <=  ans && ans <= max) {
+                                                match = true;
+                                            }else {
+                                                Toast.makeText(context, res.getString(R.string.complete_in_range), Toast.LENGTH_LONG).show();
+                                                match = false;
+                                            }
+
+
+                                            break;
+                                        }else if (assignmentType.equals("null") && assignmentField.equals("null") && globally.equals("true")){
+                                            min = rangeArray.getInt("min");
+                                            max = rangeArray.getInt("max");
+                                            int ans = 0;
+                                            for (int j = 0; j < answerSet.size(); j++) {
+                                                JSONObject currentAnswer = answerSet.get(j);
+                                                if (currentAnswer != null) {
+                                                    int currentQuestionId = currentAnswer.optInt("question_id");
+                                                    if (currentQuestionId == questionId && currentAnswer.getString("datatype") == "int" ){
+                                                        ans  = currentAnswer.getInt("answer");
+                                                    }
+                                                }
+                                            }
+
+                                            if (min <=  ans && ans <= max) {
+                                                match = true;
+                                            }else {
+                                                Toast.makeText(context, res.getString(R.string.complete_in_range), Toast.LENGTH_LONG).show();
+                                                match = false;
+                                            }
+                                        }
+                                    }
+
+                                }
+                            }
+
+                        }catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }*/
             } while (questions.moveToNext());
         }
 
@@ -968,12 +1094,24 @@ public class DynamicQuestions {
 //        final String datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
         final int questionId = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
         final String displayTypeID = String.valueOf(dl.getDisplayTypeIdByQuestionID(questionId));
-        final String oldDatatype =  dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
+//        final String oldDatatype =  dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
+        final int dataTypeID = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID));
 
-        String datatype = "";
-        if (oldDatatype.equals("Photo Upload")){
-            datatype = "text";
+        String oldDatatype = null;
+
+        String datatype = null;
+        if (dataTypeID == 6){
+            oldDatatype =  dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
+        }else{
+            datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
         }
+
+        if(oldDatatype!=null){
+            if (oldDatatype.equals("Photo Upload")){
+                datatype = "text";
+            }
+        }
+
 
         int answerIdTemp = 0;
         if (hasAnswers) {
@@ -1303,12 +1441,24 @@ public class DynamicQuestions {
 //        final String datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
         final int questionId = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
         final String displayTypeID = String.valueOf(dl.getDisplayTypeIdByQuestionID(questionId));
-        final String oldDatatype =  dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
+//        final String oldDatatype =  dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
+        final int dataTypeID = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID));
 
-        String datatype = "";
-        if (oldDatatype.equals("Date Picker")){
-            datatype = "text";
+        String oldDatatype = null;
+
+        String datatype = null;
+        if (dataTypeID == 6){
+            oldDatatype =  dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
+        }else{
+            datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
         }
+
+        if(oldDatatype!=null){
+            if (oldDatatype.equals("Date Picker")){
+                datatype = "text";
+            }
+        }
+
 
 
         int answerIdTemp = 0;
@@ -1664,15 +1814,25 @@ public class DynamicQuestions {
         final String displayTypeID = String.valueOf(dl.getDisplayTypeIdByQuestionID(questionId));
         final String datatype =  dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));*/
 
-        final String answerTypeForDatatype = dl.getAnswerTypeByQuestionID(questionId);
-        final String datatypeOld = dl.getAnswerTypeValue(Integer.parseInt(answerTypeForDatatype));
+        final String answerTypeForDatatype;
+        String datatypeOld = null;
+        try {
+             answerTypeForDatatype = dl.getAnswerTypeByQuestionID(questionId);
+             datatypeOld = dl.getAnswerTypeValue(Integer.parseInt(answerTypeForDatatype));
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+
 
         String datatype = "";
-        if (datatypeOld.equals("Alphanumeric") || datatypeOld.equals("Alphabetical")){
-            datatype = "text";
-        } else if (datatypeOld.equals("Numbers Only") || datatypeOld.equals("Percentage")) {
-            datatype = "int";
+        if(datatypeOld!=null){
+            if (datatypeOld.equals("Alphanumeric") || datatypeOld.equals("Alphabetical")){
+                datatype = "text";
+            } else if (datatypeOld.equals("Numbers Only") || datatypeOld.equals("Percentage")) {
+                datatype = "int";
+            }
         }
+
 
 
         int answerIdTemp = 0;
@@ -1757,6 +1917,7 @@ public class DynamicQuestions {
                         String answerLimit = display.get("answerLimit").toString();
 
                         if (!answerLimit.equals("null")){
+                            et.setInputType(InputType.TYPE_CLASS_NUMBER);
                             et.setHint("Character limit : " + answerLimit);
                             setIntegerWithCharacterLimit(et , Integer.parseInt(answerLimit));
 
@@ -1824,7 +1985,7 @@ public class DynamicQuestions {
                                     if (min < 0){
                                         setIntegerNegativeRangeFilter(et,min ,max );
                                     }else {
-                                        setIntegerPositiveRangeFilter(et,max ,max );
+                                        setIntegerPositiveRangeFilter(et,min ,max );
                                     }
                                 }
                             }
@@ -2113,7 +2274,7 @@ public class DynamicQuestions {
         }
     }
 
-    private void setAlphanumericFilter(EditText editText, final int maxCharacters) {
+    /*private void setAlphanumericFilter(EditText editText, final int maxCharacters) {
         InputFilter alphaNumericFilter = new InputFilter() {
             @Override
             public CharSequence filter(CharSequence source, int start, int end,
@@ -2139,7 +2300,49 @@ public class DynamicQuestions {
         };
 
         editText.setFilters(new InputFilter[] { alphaNumericFilter });
+    }*/
+
+    private void setAlphanumericFilter(final EditText editText, final int maxCharacterLimit) {
+        InputFilter alphaNumericFilter = new InputFilter() {
+            @Override
+            public CharSequence filter(CharSequence source, int start, int end,
+                                       Spanned dest, int dstart, int dend) {
+                StringBuilder filteredStringBuilder = new StringBuilder();
+
+                for (int i = start; i < end; i++) {
+                    char character = source.charAt(i);
+                    if (Character.isLetterOrDigit(character)) {
+                        if (filteredStringBuilder.length() < maxCharacterLimit) {
+                            filteredStringBuilder.append(character);
+                        }
+                    }
+                }
+
+                int remainingCharacters = maxCharacterLimit - dest.length() + dend - dstart;
+                if (remainingCharacters <= 0) {
+                    editText.setError("Character limit reached");
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            editText.setError(null); // Clear the error message after delay
+                        }
+                    }, 3000); // Delay for 3 seconds
+                    return ""; // Limit reached, discard the input
+                }else{
+                    editText.setError(null);
+                }
+
+                return filteredStringBuilder.toString();
+            }
+        };
+
+        editText.setFilters(new InputFilter[] { alphaNumericFilter });
     }
+
+
+
+
+
 
     private void setIntegerPositiveRangeFilter(final EditText editText, final int startLimit, final int endLimit) {
         InputFilter integerRangeFilter = new InputFilter() {
@@ -2151,6 +2354,37 @@ public class DynamicQuestions {
                     String newValue = dest.subSequence(0, dstart) + source.toString() + dest.subSequence(dend, dest.length());
 
                     int inputNumber = Integer.parseInt(newValue);
+
+                    editText.addTextChangedListener(new TextWatcher() {
+                        @Override
+                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                        }
+
+                        @Override
+                        public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                        }
+
+                        @Override
+                        public void afterTextChanged(Editable s) {
+                            String input = editText.getText().toString();
+                            if (!input.isEmpty()) {
+                                double number = Double.parseDouble(input);
+                                if (number >= startLimit) {
+                                    // Valid input starting from the minimum value
+                                    if (number <= endLimit) {
+                                        editText.setError(null);
+
+
+                                    }
+                                } else {
+                                    // Input is less than the minimum value
+                                    editText.setError("Minimum Range " + startLimit);
+                                }
+                            }
+                        }
+                    });
 
                     if (inputNumber > endLimit) {
                         editText.setError("Number must be less than or equal to " + endLimit);
@@ -2164,10 +2398,8 @@ public class DynamicQuestions {
 
                     } else {
                         if(inputNumber < startLimit) {
-                            editText.setError("Number is below the valid range " + startLimit);
                             return source;
                         } else {
-                            editText.setError(null); // Clear any previous errors
                             return source;
                         }
 
@@ -2234,6 +2466,12 @@ public class DynamicQuestions {
 
                 if (newValue.length() > maxCharacterLimit) {
                     editText.setError("Character limit exceeded");
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            editText.setError(null); // Clear the error message after delay
+                        }
+                    }, 3000); // Delay for 3 seconds
                     return "";
                 }
 
@@ -2245,6 +2483,43 @@ public class DynamicQuestions {
         editText.setFilters(new InputFilter[] { characterLimitFilter });
     }
 
+    /*
+    private void setIntegerWithCharacterLimit(final EditText editText , final int maxCharacterLimit) {
+
+        InputFilter numericFilter = new InputFilter() {
+            @Override
+            public CharSequence filter(CharSequence source, int start, int end,
+                                       Spanned dest, int dstart, int dend) {
+
+                for (int i = start; i < end; i++) {
+                    if (!Character.isDigit(source.charAt(i))) {
+                        return "";
+                    }
+                }
+
+                return null;
+            }
+        };
+
+        InputFilter characterLimitFilter = new InputFilter() {
+            @Override
+            public CharSequence filter(CharSequence source, int start, int end,
+                                       Spanned dest, int dstart, int dend) {
+                String newValue = dest.subSequence(0, dstart) + source.toString() + dest.subSequence(dend, dest.length());
+
+                if (newValue.length() > maxCharacterLimit) {
+                    editText.setError("Character limit exceeded");
+                    return "";
+                }
+
+                editText.setError(null); // Clear any previous errors
+                return null;
+            }
+        };
+
+        editText.setFilters(new InputFilter[] { numericFilter, characterLimitFilter });
+    }
+*/
 
     private void setAlphabetWithCharacterLimit(final EditText editText, final int maxCharacterLimit) {
         InputFilter alphabetFilter = new InputFilter() {
@@ -2443,12 +2718,24 @@ public class DynamicQuestions {
 //        final String datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
         final int questionId = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
         final String displayTypeID = String.valueOf(dl.getDisplayTypeIdByQuestionID(questionId));
-        final String oldDatatype =  dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
+//        final String oldDatatype =  dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
+        final int dataTypeID = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID));
 
-        String datatype = "";
-        if (oldDatatype.equals("Dropdown")){
-            datatype = "int";
+        String oldDatatype = null;
+
+        String datatype = null;
+        if (dataTypeID == 6){
+            oldDatatype =  dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
+        }else{
+            datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
         }
+
+        if(oldDatatype!=null){
+            if (oldDatatype.equals("Dropdown")){
+                datatype = "int";
+            }
+        }
+
 
         int answerIdTemp = 0;
         if (hasAnswers) {
@@ -2488,9 +2775,104 @@ public class DynamicQuestions {
                 spinnervalues = dl.getLookupValuesForQuestion(qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID)), columnName);
             }
 
-            final boolean isDensityQuestion = (displayConfig.has("densityquestionparent") && (displayConfig.getBoolean("densityquestionparent")));
+//            MatrixCursor newSpinnerValue = new MatrixCursor(new String[]{"value"});
 
-            dl.bindDataDrivenSpinner(spinner, spinnervalues, context, R.string.ModuleAnswerHint, columnName, false);
+            String[] columnNames = spinnervalues.getColumnNames();
+            MatrixCursor newCursor = new MatrixCursor(columnNames);
+
+            // adding validation
+                String assignmentType = "";
+                String assignmentField = "";
+                String isDefault = "";
+                String isActive = "";
+
+                try{
+                    JSONObject displayConfig1 = new JSONObject();
+                    displayConfig1 = new JSONObject(qCursor.getString(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION)));
+                    if (displayConfig1.has("display")) {
+                        JSONObject display = displayConfig1.getJSONObject("display");
+                        if (display.has("lookupProperties")){
+                            JSONArray range = display.getJSONArray("lookupProperties");
+                            for(int i=0; i<range.length(); i++){
+                                JSONObject rangeArray = range.getJSONObject(i);
+                                String lookupID = rangeArray.getString("lookupValueId");
+                                assignmentType = rangeArray.getString("assignmentType");
+                                assignmentField = rangeArray.getString("assignmentField");
+                                isDefault = rangeArray.getString("isDefault");
+                                if (rangeArray.has("active")){
+                                    isActive = rangeArray.getString("active");
+                                }
+
+                                String assignmentTypeColumn = "";
+
+                                switch (assignmentType){
+                                    case "1" :
+                                        assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID;
+                                        break;
+                                    case "2" :
+                                        assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_REGIONID;
+                                        break;
+                                    case "3" :
+                                        assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_DISTRICTID;
+                                        break;
+                                    case "4" :
+                                        assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID;
+                                        break;
+                                    case "5" :
+                                        assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID;
+                                        break;
+                                    case "6" :
+                                        assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID;
+                                        break;
+                                    case "7" :
+                                        assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID;
+                                        break;
+                                    case "8" :
+                                        assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PARTNER_ID;
+                                        break;
+                                    case "9" :
+                                        assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PROGRAMME_ID;
+                                        break;
+                                }
+
+                                long farmerId = Utilities.farmerId;
+                                String farmerAssignmentField = dl.getAssignmentByFarmerTypeID(farmerId , assignmentTypeColumn);
+
+                                if (assignmentField.equals(farmerAssignmentField) || assignmentType.equals("null") && assignmentField.equals("null")) {
+
+                                    if (isActive.toLowerCase().equals("true") || isActive.equals("")) {
+                                    String checkBoxVal = dl.getValueByLookUpID(lookupID);
+
+                                    if (spinnervalues.moveToFirst()) {
+                                        do {
+                                            String value = spinnervalues.getString(spinnervalues.getColumnIndex("value"));
+                                            if (value.equals(checkBoxVal)) {
+                                                Object[] rowData = new Object[columnNames.length];
+                                                for (int j = 0; j < columnNames.length; j++) {
+                                                    rowData[j] = spinnervalues.getString(j);
+                                                }
+                                                newCursor.addRow(rowData);
+                                            }
+                                        } while (spinnervalues.moveToNext());
+                                    }
+                                }
+                                }
+
+                            }
+
+                            dl.bindDataDrivenSpinner(spinner, newCursor, context, R.string.ModuleAnswerHint, columnName, false);
+                        } else {
+                            dl.bindDataDrivenSpinner(spinner, spinnervalues, context, R.string.ModuleAnswerHint, columnName, false);
+                        }
+
+                    }
+
+                }
+                catch (Exception e){
+                    e.printStackTrace();
+                }
+
+            final boolean isDensityQuestion = (displayConfig.has("densityquestionparent") && (displayConfig.getBoolean("densityquestionparent")));
 
 
             if (hasAnswers) {
@@ -2530,79 +2912,6 @@ public class DynamicQuestions {
                     }
                 }
             }
-
-            // adding validation
-            String assignmentType = "";
-            String assignmentField = "";
-            try{
-                JSONObject displayConfig1 = new JSONObject();
-                displayConfig1 = new JSONObject(qCursor.getString(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION)));
-                if (displayConfig1.has("display")) {
-                    JSONObject display = displayConfig1.getJSONObject("display");
-                    JSONArray range = display.getJSONArray("lookupProperties");
-
-                    for(int i=0; i<range.length(); i++){
-                        JSONObject rangeArray = range.getJSONObject(i);
-                        String lookupID = rangeArray.getString("lookupValueId");
-                        assignmentType = rangeArray.getString("assignmentType");
-                        assignmentField = rangeArray.getString("assignmentField");
-
-                        String assignmentTypeColumn = "";
-
-                        switch (assignmentType){
-                            case "1" :
-                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID;
-                                break;
-                            case "2" :
-                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_REGIONID;
-                                break;
-                            case "3" :
-                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_DISTRICTID;
-                                break;
-                            case "4" :
-                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID;
-                                break;
-                            case "5" :
-                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID;
-                                break;
-                            case "6" :
-                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID;
-                                break;
-                            case "7" :
-                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID;
-                                break;
-                            case "8" :
-                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PARTNER_ID;
-                                break;
-                            case "9" :
-                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PROGRAMME_ID;
-                                break;
-                        }
-
-                        long farmerId = Utilities.farmerId;
-                        String farmerAssignmentField = dl.getAssignmentByFarmerTypeID(farmerId , assignmentTypeColumn);
-
-                        if (assignmentField.equals(farmerAssignmentField)) {
-//                            Toast.makeText(context, "Show", Toast.LENGTH_LONG).show();
-                            // SHOW BAD
-
-                            break;
-                        }
-
-                        else if (assignmentType.equals("null") && assignmentField.equals("null")){
-//                            Toast.makeText(context, "Don't Show", Toast.LENGTH_SHORT).show();
-                            // DON'T SHOW BAD
-
-                        }
-
-                    }
-
-                }
-
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-
 
 
             //   Prepopulate Yes/No If not answered
@@ -2731,12 +3040,25 @@ public class DynamicQuestions {
 //        final String datatype = questions.getString(questions.getColumnIndex("datatype_name"));
         final int questionId = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
         final String displayTypeID = String.valueOf(dl.getDisplayTypeIdByQuestionID(questionId));
-        final String oldDatatype =  dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
+//        final String oldDatatype =  dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
+        final int dataTypeID = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID));
 
-        String datatype = "";
-        if (oldDatatype.equals("Radio")){
-            datatype = "int";
+        final String otherChoice = questions.getString(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_OTHER_CHOICE));
+        String oldDatatype = null;
+
+        String datatype = null;
+        if (dataTypeID == 6){
+            oldDatatype =  dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
+        }else{
+            datatype = questions.getString(questions.getColumnIndex("datatype_name"));
         }
+
+        if(oldDatatype!=null){
+            if (oldDatatype.equals("Radio")){
+                datatype = "int";
+            }
+        }
+
 
         final boolean singleSelect;
         boolean tempSingleSelect = false;
@@ -2782,329 +3104,229 @@ public class DynamicQuestions {
             LinearLayout linearLayout = (LinearLayout) LayoutInflater.from(context).inflate(R.layout.activity_radio_group, null);
             RadioGroup radioGroup = (RadioGroup) linearLayout.findViewById(R.id.radioGroup);
 
-            while (radio.moveToNext()) {
+            String assignmentType = "";
+            String assignmentField = "";
+            String isDefault = "";
+            String isActive = "";
 
-                String assignmentType = "";
-                String assignmentField = "";
+            try {
+                JSONObject displayConfig = new JSONObject();
+                displayConfig = new JSONObject(questions.getString(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION)));
+                if (displayConfig.has("display")) {
+                    JSONObject display = displayConfig.getJSONObject("display");
+                    JSONArray range = display.getJSONArray("lookupProperties");
 
-                try {
-                    JSONObject displayConfig = new JSONObject();
-                    displayConfig = new JSONObject(questions.getString(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION)));
-                    if (displayConfig.has("display")) {
-                        JSONObject display = displayConfig.getJSONObject("display");
-                        JSONArray range = display.getJSONArray("lookupProperties");
+                    for (int i = 0; i < range.length(); i++) {
+                        JSONObject rangeArray = range.getJSONObject(i);
+                        String lookupID = rangeArray.getString("lookupValueId");
+                        assignmentType = rangeArray.getString("assignmentType");
+                        assignmentField = rangeArray.getString("assignmentField");
+                        isDefault = rangeArray.getString("isDefault");
+                        if (rangeArray.has("active")){
+                            isActive = rangeArray.getString("active");
+                        }
 
-                        for (int i = 0; i < range.length(); i++) {
-                            JSONObject rangeArray = range.getJSONObject(i);
-                            String lookupID = rangeArray.getString("lookupValueId");
-                            assignmentType = rangeArray.getString("assignmentType");
-                            assignmentField = rangeArray.getString("assignmentField");
 
-                            String assignmentTypeColumn = "";
 
-                            switch (assignmentType) {
-                                case "1":
-                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID;
-                                    break;
-                                case "2":
-                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_REGIONID;
-                                    break;
-                                case "3":
-                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_DISTRICTID;
-                                    break;
-                                case "4":
-                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID;
-                                    break;
-                                case "5":
-                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID;
-                                    break;
-                                case "6":
-                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID;
-                                    break;
-                                case "7":
-                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID;
-                                    break;
-                                case "8":
-                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PARTNER_ID;
-                                    break;
-                                case "9":
-                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PROGRAMME_ID;
-                                    break;
+                        String assignmentTypeColumn = "";
+
+                        switch (assignmentType) {
+                            case "1":
+                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID;
+                                break;
+                            case "2":
+                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_REGIONID;
+                                break;
+                            case "3":
+                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_DISTRICTID;
+                                break;
+                            case "4":
+                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID;
+                                break;
+                            case "5":
+                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID;
+                                break;
+                            case "6":
+                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID;
+                                break;
+                            case "7":
+                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID;
+                                break;
+                            case "8":
+                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PARTNER_ID;
+                                break;
+                            case "9":
+                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PROGRAMME_ID;
+                                break;
+                        }
+
+                        String farmerAssignmentField = dl.getAssignmentByFarmerTypeID(farmerId, assignmentTypeColumn);
+
+                        if (assignmentField.equals(farmerAssignmentField) || assignmentType.equals("null") && assignmentField.equals("null")) {
+
+                            if (isActive.toLowerCase().equals("true") || isActive.equals("")) {
+                                //                            final int rbId = radio.getInt(radio.getColumnIndex("_id"));
+//                            int columnIndex = (radio.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) != -1) ? radio.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) : radio.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE);
+
+                                String radioName = dl.getValueByLookUpID(lookupID);
+                                RadioButton radioButton = (RadioButton) LayoutInflater.from(context).inflate(R.drawable.custom_radio_button, radioGroup, false);
+                                radioButton.setText(radioName);
+                                radioButton.setId(Integer.parseInt(lookupID));
+
+                                if (rbAnswers.getCount() == 0){
+                                    if (isDefault.equalsIgnoreCase("true") ){
+                                        radioButton.setChecked(true);
+                                        radioButton.setEnabled(true);
+                                        String finalDatatype = datatype;
+                                        saveAnswerEntry(questionId, Integer.parseInt(lookupID), 0, -1, finalDatatype, lookupID);
+                                    }
+                                }
+
+
+                                if (rbAnswers.getCount() > 0) {
+                                    // disable while loading the "Not Applicable"
+                                    if(Integer.parseInt(lookupID) == defaultLookUpValue){
+                                        radioButton.setEnabled(false);
+                                    }
+                                    //End
+                                    while (rbAnswers.moveToNext()) {
+                                        if (rbAnswers.getInt(rbAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_INT)) == Integer.parseInt(lookupID)) {
+                                            radioButton.setChecked(true);
+                                            radioButton.setEnabled(true);
+                                        }
+                                    }
+                                    rbAnswers.moveToPosition(-1);
+                                }else {
+                                    // N/A Question for franklin
+                                    if (defaultLookUpValue != 0) {
+                                        if (defaultLookUpValue == Integer.parseInt(lookupID)) {
+                                            radioButton.setChecked(true);
+                                            radioButton.setEnabled(true);
+                                        }
+                                    }
+                                }
+
+
+
+                                radioGroup.addView(radioButton);
                             }
-
-                            String farmerAssignmentField = dl.getAssignmentByFarmerTypeID(farmerId, assignmentTypeColumn);
-
-                            if (assignmentField.equals(farmerAssignmentField)) {
-
-                            } else if (assignmentType.equals("null") && assignmentField.equals("null")){
-
-                            }
-
                         }
+
                     }
-                }catch (Exception e) {
-                    e.printStackTrace();
-                }
 
-
-                final int rbId = radio.getInt(radio.getColumnIndex("_id"));
-                int columnIndex = (radio.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) != -1) ? radio.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) : radio.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE);
-
-
-                RadioButton radioButton = (RadioButton) LayoutInflater.from(context).inflate(R.drawable.custom_radio_button, radioGroup, false);
-                radioButton.setText(radio.getString(columnIndex));
-                radioButton.setId(rbId);
-
-                if (rbAnswers.getCount() > 0) {
-                    // disable while loading the "Not Applicable"
-                    if(rbId == defaultLookUpValue){
-                        radioButton.setEnabled(false);
-                    }
-                    //End
-                    while (rbAnswers.moveToNext()) {
-                        if (rbAnswers.getInt(rbAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_INT)) == rbId) {
-                            radioButton.setChecked(true);
-                            radioButton.setEnabled(true);
-                        }
-                    }
-                    rbAnswers.moveToPosition(-1);
-                }else {
-                    // N/A Question for franklin
-                    if (defaultLookUpValue != 0) {
-                        if (defaultLookUpValue == rbId) {
-                            radioButton.setChecked(true);
-                            radioButton.setEnabled(true);
-                        }
+                    if (otherChoice.equals("true")){
+                        RadioButton radioButton = (RadioButton) LayoutInflater.from(context).inflate(R.drawable.custom_radio_button, radioGroup, false);
+                        radioButton.setText("Others");
+                        radioGroup.addView(radioButton);
                     }
                 }
-
-
-
-                radioGroup.addView(radioButton);
-
-
+            }catch (Exception e) {
+                e.printStackTrace();
             }
+
 
             questionWrapper.addView(linearLayout);
             parentLayout.addView(questionWrapper);
+
+            /*if (otherChoice.equals("true")) {
+                final EditText et = (EditText) inflater.inflate(R.layout.module_edit_text, (isRepeaterItem) ? parentLayout : questionWrapper, false);
+                setAlphanumericFilter(et , 10);
+
+                et.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                        if (s.length() == 0){
+                            // delete the input data
+                            if (answerSet!=null){
+                                for (int i = 0; i < answerSet.size(); i++) {
+                                    JSONObject currentAnswer = answerSet.get(i);
+                                    if (currentAnswer != null) {
+                                        if (currentAnswer.optInt("question_id") == questionId){
+                                            answerSet.remove(i);
+                                        }
+                                    }
+                                }
+                            }
+                        }else {
+                            // update the input
+                            String input = et.getText().toString().trim();
+                            if (input != null){
+                                String newDatatype = "text";
+                                radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+                                    @Override
+                                    public void onCheckedChanged(RadioGroup group, int checkedId) {
+                                        // This method is called when any RadioButton within the RadioGroup is checked
+                                        // Uncheck other RadioButtons in the same RadioGroup
+                                        for (int i = 0; i < group.getChildCount(); i++) {
+                                            RadioButton radioButton = (RadioButton) group.getChildAt(i);
+                                            radioButton.setChecked(radioButton.getId() == checkedId);
+                                        }
+
+                                        // Get the value (text) of the checked RadioButton
+                                        RadioButton checkedRadioButton = group.findViewById(checkedId);
+                                        String selectedText = checkedRadioButton.getText().toString();
+                                        int j = checkedRadioButton.getId();
+//                                      Toast.makeText(context, selectedText, Toast.LENGTH_SHORT).show();
+//                                      Toast.makeText(context, j + "", Toast.LENGTH_SHORT).show();
+
+                                        if (answerSet!=null){
+                                            for (int i = 0; i < answerSet.size(); i++) {
+                                                JSONObject currentAnswer = answerSet.get(i);
+                                                if (currentAnswer != null) {
+                                                    if (currentAnswer.optInt("question_id") == questionId){
+                                                        answerSet.remove(i);
+                                                    }
+                                                }
+                                            }
+                                        }
+
+
+
+                                        saveAnswerEntry(questionId, j, 0, -1, newDatatype, String.valueOf(checkedId));
+                                    }
+                                });
+
+//                                saveAnswerEntry(questionId, Integer.parseInt(lookupID), 0, -1, newdatatype, lookupID);
+
+                            }
+                        }
+
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+
+                    }
+                });
+
+                if (isRepeaterItem) {
+                    parentLayout.addView(et);
+                } else {
+                    questionWrapper.addView(et);
+                    parentLayout.addView(questionWrapper);
+                }
+            }else {
+                parentLayout.addView(questionWrapper);
+            }*/
             saveMultipleAnswerEntryRadio(questionId, 0, datatype, linearLayout);
         }
 
     }
 
-    // don't remove
-    /*
-    public void renderRadioQuestion(Cursor questions, LinearLayout parentLayout, long farmerId, long farmerModuleId, boolean isSavedAns) {
+
+
+
+    public void renderNextPage(LinearLayout parentLayout) {
         LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
-        renderQuestion(questions, false, questionWrapper);
-
-        final String datatype = questions.getString(questions.getColumnIndex("datatype_name"));
-        final int questionId = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
-        final boolean singleSelect;
-        boolean tempSingleSelect = false;
-
-        Cursor checkboxes = dl.getSpinnerData(OFISDBContract.LookupValuesEntry.TABLE_NAME, true, OFISDBContract.LookupValuesEntry.COLUMN_NAME_QUESTION_ID, questionId, true, OFISDBContract.LookupValuesEntry.COLUMN_NAME_POSITION);
-        Cursor cbAnswers;
-        if(isSavedAns) {
-            cbAnswers = dl.getSavedAnswersForQuestionByFarmer(questionId, farmerId, farmerModuleId);
-        }else{
-            cbAnswers = dl.getAnswersForQuestionByFarmer(questionId, farmerId, farmerModuleId);
-        }
-        // is this a question we can only select one answer to?
-        // get display config
-        try {
-            JSONObject displayConfig = new JSONObject(questions.getString(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION)));
-            if (displayConfig.has("display")) {
-                JSONObject display = displayConfig.getJSONObject("display");
-                tempSingleSelect = display.optBoolean("single_select", false);
-            }
-        } catch (JSONException e) {
-            FirebaseCrashlytics.getInstance().log("DynamicQuestions: Error getting checkbox display config "+e.getMessage());
-        }
-
-        singleSelect = tempSingleSelect;
-
-        // Parse N/A Question
-        int defaultLookUpValue=0;
-        try {
-            JSONObject displayConfig = new JSONObject(questions.getString(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION)));
-            if (displayConfig.has("calculation")) {
-                String calculationNode = displayConfig.optString(CoffeeConstants.CALCULATION);
-                JSONObject jsonObject = new JSONObject(calculationNode);
-                defaultLookUpValue = jsonObject.optInt("defaultLookUpValue", 0);
-            }
-        } catch (JSONException e) {
-            FirebaseCrashlytics.getInstance().log(e.getMessage());
-        }
-
-
-        if (checkboxes != null && checkboxes.getCount() > 0) {
-            // add the table layout to the screen
-            final TableLayout tl = (TableLayout) inflater.inflate(R.layout.module_checkbox_table, questionWrapper, false);
-            tl.setSaveEnabled(true);
-
-            while (checkboxes.moveToNext()) {
-                // generate row item
-                TableRow tr = (TableRow) inflater.inflate(R.layout.module_radio_table_row, tl, false);
-
-                TextView tvId = (TextView) tr.findViewById(R.id.rbId);
-                TextView tv = (TextView) tr.findViewById(R.id.rbTitle);
-
-                final int cbId = checkboxes.getInt(checkboxes.getColumnIndex("_id"));
-
-                tvId.setText(String.valueOf(cbId));
-
-                int columnIndex = (checkboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) != -1) ? checkboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) : checkboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE);
-                tv.setText(checkboxes.getString(columnIndex));
-
-                RadioGroup radioGroup = (RadioGroup)  tr.findViewById(R.id.radioGroup);
-
-
-                RadioButton cb = (RadioButton) radioGroup.findViewById(R.id.rbRadio);
-
-                // Set OnCheckedChangeListener for the RadioGroup
-                radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(RadioGroup group, int checkedId) {
-                        for (int i = 0; i < group.getChildCount(); i++) {
-                            RadioButton radioButton = (RadioButton) group.getChildAt(i);
-                            radioButton.setChecked(radioButton.getId() == checkedId);
-                        }
-
-                        RadioButton checkedRadioButton = group.findViewById(checkedId);
-                        String selectedText = checkedRadioButton.getText().toString();
-                        Toast.makeText(context, selectedText, Toast.LENGTH_SHORT).show();
-                        // Do something with the selected text
-                    }
-                });
-
-                tl.addView(tr);
-                // initilaize default look up globally
-                // pre-fill checkboxes that have been previously ticked
-                */
-    /*if (cbAnswers.getCount() > 0) {
-                    // disable while loading the "Not Applicable"
-                    if(cbId == defaultLookUpValue){
-                        cb.setEnabled(false);
-                    }
-                    //End
-                    while (cbAnswers.moveToNext()) {
-                        if (cbAnswers.getInt(cbAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_INT)) == cbId) {
-                            cb.setChecked(true);
-                            cb.setEnabled(true);
-                        }
-                    }
-                    cbAnswers.moveToPosition(-1);
-                }else {
-                    // N/A Question for franklin
-                    if (defaultLookUpValue != 0) {
-                        if (defaultLookUpValue == cbId) {
-                            cb.setChecked(true);
-                            cb.setEnabled(true);
-                        }
-                    }
-                }*//*
-
-
-
-
-*/
-    /*
-                tr.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        RadioButton checkbox = (RadioButton) view.findViewById(R.id.rbRadio);
-
-                        checkbox.setChecked(!checkbox.isChecked());
-                        checkbox.callOnClick();
-                    }
-
-                });
-*//*
-
-
-                //stick the answer in the question itself
-                int finalDefaultLookUpValue = defaultLookUpValue;
-*/
-    /*
-                cb.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        if (singleSelect) {
-                            int ssTableRows = tl.getChildCount();
-                            for (int j = 0; j < ssTableRows; j++) {
-                                TableRow ssTr = (TableRow) tl.getChildAt(j);
-                                RadioButton ssTcb = (RadioButton) ssTr.findViewById(R.id.rbRadio);
-
-                                ssTcb.setChecked(false);
-                            }
-                            CheckBox clickedCb = (CheckBox) view;
-                            clickedCb.setChecked(true);
-                        }
-
-                        // Update the Not applicable field if none of the value is selected
-                        if (finalDefaultLookUpValue !=0){
-                            int ssTableRows = tl.getChildCount();
-                            boolean checkboxTicked=false;
-                            int  count = 0;
-                            for (int j = 0; j < ssTableRows; j++) {
-                                TableRow ssTr = (TableRow) tl.getChildAt(j);
-                                TextView cbId = (TextView) ssTr.findViewById(R.id.rbId);
-                                RadioButton ssTcb = (RadioButton) ssTr.findViewById(R.id.rbRadio);
-                                if (ssTcb.isChecked()) {
-                                    checkboxTicked=true;
-                                }
-                                if (Integer.parseInt(cbId.getText().toString()) != finalDefaultLookUpValue){
-                                    if (ssTcb.isChecked()){
-                                        count++;
-                                    }
-                                }
-
-                            }
-                            if (!checkboxTicked){
-                                for (int j = 0; j < ssTableRows; j++) {
-                                    TableRow ssTr = (TableRow) tl.getChildAt(j);
-                                    RadioButton  ssTcb = (RadioButton) ssTr.findViewById(R.id.rbRadio);
-                                    TextView cbId = (TextView) ssTr.findViewById(R.id.rbId);
-                                    if (Integer.parseInt(cbId.getText().toString()) == finalDefaultLookUpValue){
-                                        ssTcb.setChecked(true);
-                                        ssTcb.setEnabled(true);
-                                    }
-                                }
-                            }
-
-                            // Remove the Not applicable when other selected.
-                            if(count>0){
-                                for (int j = 0; j < ssTableRows; j++) {
-                                    TableRow ssTr = (TableRow) tl.getChildAt(j);
-                                    RadioButton ssTcb = (RadioButton) ssTr.findViewById(R.id.rbRadio);
-                                    TextView cbId = (TextView) ssTr.findViewById(R.id.rbId);
-                                    if (Integer.parseInt(cbId.getText().toString()) == finalDefaultLookUpValue){
-                                        ssTcb.setChecked(false);
-                                        ssTcb.setEnabled(false);
-                                    }
-                                }
-                            }
-
-                        }
-
-                        saveMultipleAnswerEntryRadio(questionId, 0, datatype, tl);
-                    }
-                });
-*//*
-
-
-
-            }
-
-            questionWrapper.addView(tl);
-            parentLayout.addView(questionWrapper);
-
-            saveMultipleAnswerEntryRadio(questionId, 0, datatype, tl);
-        }
+        ConstraintLayout linearLayout = (ConstraintLayout) LayoutInflater.from(context).inflate(R.layout.go_next_layout, null);
+        questionWrapper.addView(linearLayout);
+        parentLayout.addView(questionWrapper);
     }
-*/
-    ////////////////////////////////
 
     void renderSipDropDownQuestion(Cursor qCursor, boolean isRepeaterItem, LinearLayout parentLayout, final int parentQuestionId, final int repeaterItemPosition, Cursor repeaterAnswers, final Resources res) {
         final LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
@@ -3113,12 +3335,24 @@ public class DynamicQuestions {
 //        final String datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
         final int questionId = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionSipEntry.COLUMN_NAME_ID));
         final String displayTypeID = String.valueOf(dl.getDisplayTypeIdByQuestionID(questionId));
-        final String oldDatatype =  dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
+//        final String oldDatatype =  dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
+        final int dataTypeID = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID));
 
-        String datatype = "";
-        if (oldDatatype.equals("Dropdown")){
-            datatype = "int";
+
+        String oldDatatype = null;
+
+        String datatype = null;
+        if (dataTypeID == 6){
+            oldDatatype =  dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
+        }else{
+            datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
         }
+        if(oldDatatype!=null){
+            if (oldDatatype.equals("Dropdown")){
+                datatype = "int";
+            }
+        }
+
 
         int answerIdTemp = 0;
         if (hasAnswers) {
@@ -3435,12 +3669,24 @@ public class DynamicQuestions {
 //        final String datatype = questions.getString(questions.getColumnIndex("datatype_name"));
         final int questionId = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
         final String displayTypeID = String.valueOf(dl.getDisplayTypeIdByQuestionID(questionId));
-        final String oldDatatype =  dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
+//        final String oldDatatype =  dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
+        final int dataTypeID = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID));
 
-        String datatype = "";
-        if (oldDatatype.equals("Checkbox")){
-            datatype = "int";
+
+        String oldDatatype = null;
+
+        String datatype = null;
+        if (dataTypeID == 6){
+            oldDatatype =  dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
+        }else{
+            datatype = questions.getString(questions.getColumnIndex("datatype_name"));
         }
+        if(oldDatatype!=null){
+            if (oldDatatype.equals("Checkbox")){
+                datatype = "int";
+            }
+        }
+
 
         final boolean singleSelect;
         boolean tempSingleSelect = false;
@@ -3479,210 +3725,230 @@ public class DynamicQuestions {
             FirebaseCrashlytics.getInstance().log(e.getMessage());
         }
 
+        final int[] checkboxCount = {0};
 
         if (checkboxes != null && checkboxes.getCount() > 0) {
             // add the table layout to the screen
             final TableLayout tl = (TableLayout) inflater.inflate(R.layout.module_checkbox_table, questionWrapper, false);
             tl.setSaveEnabled(true);
 
-            while (checkboxes.moveToNext()) {
-                String assignmentType = "";
-                String assignmentField = "";
+            // adding validation
+            String assignmentType = "";
+            String assignmentField = "";
+            String isDefault = "";
+            String maxSelection = "";
+            String isActive = "";
+            try{
+                JSONObject displayConfig = new JSONObject();
+                displayConfig = new JSONObject(questions.getString(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION)));
+                if (displayConfig.has("display")) {
+                    JSONObject display = displayConfig.getJSONObject("display");
+                    maxSelection = display.getString("maxSelection");
+                    JSONArray range = display.getJSONArray("lookupProperties");
 
-                // generate row item
-                TableRow tr = (TableRow) inflater.inflate(R.layout.module_checkbox_table_row, tl, false);
-
-                TextView tvId = (TextView) tr.findViewById(R.id.cbId);
-                TextView tv = (TextView) tr.findViewById(R.id.cbTitle);
-                CheckBox cb = (CheckBox) tr.findViewById(R.id.cbCheckBox);
-
-                // last line
-
-                final int cbId = checkboxes.getInt(checkboxes.getColumnIndex("_id"));
-
-                int columnIndex = (checkboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) != -1) ? checkboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) : checkboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE);
+                    for(int i=0; i<range.length(); i++){
+                        JSONObject rangeArray = range.getJSONObject(i);
+                        String lookupID = rangeArray.getString("lookupValueId");
+                        assignmentType = rangeArray.getString("assignmentType");
+                        assignmentField = rangeArray.getString("assignmentField");
+                        isDefault = rangeArray.getString("isDefault");
+                        if (rangeArray.has("active")){
+                            isActive = rangeArray.getString("active");
+                        }
 
 
-                // adding validation
-                try{
-                    JSONObject displayConfig = new JSONObject();
-                    displayConfig = new JSONObject(questions.getString(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION)));
-                    if (displayConfig.has("display")) {
-                        JSONObject display = displayConfig.getJSONObject("display");
-                        JSONArray range = display.getJSONArray("lookupProperties");
+                        String assignmentTypeColumn = "";
 
-                        for(int i=0; i<range.length(); i++){
-                            JSONObject rangeArray = range.getJSONObject(i);
-                            String lookupID = rangeArray.getString("lookupValueId");
-                            assignmentType = rangeArray.getString("assignmentType");
-                            assignmentField = rangeArray.getString("assignmentField");
-
-                            String assignmentTypeColumn = "";
-
-                            switch (assignmentType){
-                                case "1" :
-                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID;
-                                    break;
-                                case "2" :
-                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_REGIONID;
-                                    break;
-                                case "3" :
-                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_DISTRICTID;
-                                    break;
-                                case "4" :
-                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID;
-                                    break;
-                                case "5" :
-                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID;
-                                    break;
-                                case "6" :
-                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID;
-                                    break;
-                                case "7" :
-                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID;
-                                    break;
-                                case "8" :
-                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PARTNER_ID;
-                                    break;
-                                case "9" :
-                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PROGRAMME_ID;
-                                    break;
-                            }
-
-                            String farmerAssignmentField = dl.getAssignmentByFarmerTypeID(farmerId , assignmentTypeColumn);
-
-                            if (assignmentField.equals(farmerAssignmentField)) {
-//                                Toast.makeText(context, "Show", Toast.LENGTH_LONG).show();
-                                // SHOW BAD
-
+                        switch (assignmentType){
+                            case "1" :
+                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID;
                                 break;
+                            case "2" :
+                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_REGIONID;
+                                break;
+                            case "3" :
+                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_DISTRICTID;
+                                break;
+                            case "4" :
+                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID;
+                                break;
+                            case "5" :
+                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID;
+                                break;
+                            case "6" :
+                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID;
+                                break;
+                            case "7" :
+                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID;
+                                break;
+                            case "8" :
+                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PARTNER_ID;
+                                break;
+                            case "9" :
+                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PROGRAMME_ID;
+                                break;
+                        }
+
+                        String farmerAssignmentField = dl.getAssignmentByFarmerTypeID(farmerId , assignmentTypeColumn);
+
+                        if (assignmentField.equals(farmerAssignmentField) || assignmentType.equals("null") && assignmentField.equals("null")) {
+
+                            if (isActive.toLowerCase().equals("true") || isActive.equals("")) {
+                                // generate row item
+                                TableRow tr = (TableRow) inflater.inflate(R.layout.module_checkbox_table_row, tl, false);
+
+                                TextView tvId = (TextView) tr.findViewById(R.id.cbId);
+                                TextView tv = (TextView) tr.findViewById(R.id.cbTitle);
+                                CheckBox cb = (CheckBox) tr.findViewById(R.id.cbCheckBox);
+
+                                // last line
+
+//                            final int cbId = checkboxes.getInt(checkboxes.getColumnIndex("_id"));
+
+//                            int columnIndex = (checkboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) != -1) ? checkboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) : checkboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE);
+
+
+                                String checkBoxName = dl.getValueByLookUpID(lookupID);
+                                tvId.setText(lookupID);
+                                tv.setText(checkBoxName);
+                                tl.addView(tr);
+
+                            /*if (cbAnswers.getCount() == 0) {
+                                if (isDefault.equalsIgnoreCase("true")) {
+                                    cb.setChecked(true);
+                                    cb.setEnabled(true);
+                                }
+                            }*/
+
+                                // initilaize default look up globally
+                                // pre-fill checkboxes that have been previously ticked
+                                if (cbAnswers.getCount() > 0) {
+                                    // disable while loading the "Not Applicable"
+                                    if (Integer.parseInt(lookupID) == defaultLookUpValue) {
+                                        cb.setEnabled(false);
+                                    }
+                                    //End
+                                    while (cbAnswers.moveToNext()) {
+                                        if (cbAnswers.getInt(cbAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_INT)) == Integer.parseInt(lookupID)) {
+                                            cb.setChecked(true);
+                                            cb.setEnabled(true);
+                                            checkboxCount[0]++;
+                                        }
+                                    }
+                                    cbAnswers.moveToPosition(-1);
+                                } else {
+                                    // N/A Question for franklin
+                                    if (defaultLookUpValue != 0) {
+                                        if (defaultLookUpValue == Integer.parseInt(lookupID)) {
+                                            cb.setChecked(true);
+                                            cb.setEnabled(true);
+                                        }
+                                    }
+                                }
+                                tr.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        CheckBox checkbox = (CheckBox) view.findViewById(R.id.cbCheckBox);
+
+                                        checkbox.setChecked(!checkbox.isChecked());
+                                        checkbox.callOnClick();
+                                    }
+
+                                });
+
+                                //stick the answer in the question itself
+                                int finalDefaultLookUpValue = defaultLookUpValue;
+                                String finalDatatype = datatype;
+                                String finalMaxSelection = maxSelection;
+                                cb.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        CheckBox checkbox = (CheckBox) view.findViewById(R.id.cbCheckBox);
+                                        if (checkbox.isChecked()) {
+                                            checkboxCount[0]++;
+                                        } else {
+                                            checkboxCount[0]--;
+                                        }
+
+                                        if (singleSelect) {
+                                            int ssTableRows = tl.getChildCount();
+                                            for (int j = 0; j < ssTableRows; j++) {
+                                                TableRow ssTr = (TableRow) tl.getChildAt(j);
+                                                CheckBox ssTcb = (CheckBox) ssTr.findViewById(R.id.cbCheckBox);
+
+                                                ssTcb.setChecked(false);
+                                            }
+                                            CheckBox clickedCb = (CheckBox) view;
+                                            clickedCb.setChecked(true);
+                                        }
+
+                                        // Update the Not applicable field if none of the value is selected
+                                        if (finalDefaultLookUpValue != 0) {
+                                            int ssTableRows = tl.getChildCount();
+                                            boolean checkboxTicked = false;
+                                            int count = 0;
+                                            for (int j = 0; j < ssTableRows; j++) {
+                                                TableRow ssTr = (TableRow) tl.getChildAt(j);
+                                                TextView cbId = (TextView) ssTr.findViewById(R.id.cbId);
+                                                CheckBox ssTcb = (CheckBox) ssTr.findViewById(R.id.cbCheckBox);
+                                                if (ssTcb.isChecked()) {
+                                                    checkboxTicked = true;
+                                                }
+                                                if (Integer.parseInt(cbId.getText().toString()) != finalDefaultLookUpValue) {
+                                                    if (ssTcb.isChecked()) {
+                                                        count++;
+                                                    }
+                                                }
+
+                                            }
+                                            if (!checkboxTicked) {
+                                                for (int j = 0; j < ssTableRows; j++) {
+                                                    TableRow ssTr = (TableRow) tl.getChildAt(j);
+                                                    CheckBox ssTcb = (CheckBox) ssTr.findViewById(R.id.cbCheckBox);
+                                                    TextView cbId = (TextView) ssTr.findViewById(R.id.cbId);
+                                                    if (Integer.parseInt(cbId.getText().toString()) == finalDefaultLookUpValue) {
+                                                        ssTcb.setChecked(true);
+                                                        ssTcb.setEnabled(true);
+                                                    }
+                                                }
+                                            }
+
+                                            // Remove the Not applicable when other selected.
+                                            if (count > 0) {
+                                                for (int j = 0; j < ssTableRows; j++) {
+                                                    TableRow ssTr = (TableRow) tl.getChildAt(j);
+                                                    CheckBox ssTcb = (CheckBox) ssTr.findViewById(R.id.cbCheckBox);
+                                                    TextView cbId = (TextView) ssTr.findViewById(R.id.cbId);
+                                                    if (Integer.parseInt(cbId.getText().toString()) == finalDefaultLookUpValue) {
+                                                        ssTcb.setChecked(false);
+                                                        ssTcb.setEnabled(false);
+                                                    }
+                                                }
+                                            }
+
+                                        }
+                                        if (finalMaxSelection!="null"){
+                                            if (checkboxCount[0] > Integer.parseInt(finalMaxSelection)) {
+                                                cb.setChecked(false);
+                                                checkboxCount[0]--;
+                                                Toast.makeText(context, "You can only select " + finalMaxSelection + " options", Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+
+
+                                        saveMultipleAnswerEntry(questionId, 0, finalDatatype, tl);
+                                    }
+                                });
+
                             }
-
-                            else if (assignmentType.equals("null") && assignmentField.equals("null")){
-//                                Toast.makeText(context, "Don't Show", Toast.LENGTH_SHORT).show();
-                                // DON'T SHOW BAD
-
-                            }
-
                         }
 
                     }
 
-                }catch (Exception e){
-                    e.printStackTrace();
                 }
 
-
-                tvId.setText(String.valueOf(cbId));
-                tv.setText(checkboxes.getString(columnIndex));
-                tl.addView(tr);
-                // initilaize default look up globally
-                // pre-fill checkboxes that have been previously ticked
-                if (cbAnswers.getCount() > 0) {
-                    // disable while loading the "Not Applicable"
-                    if(cbId == defaultLookUpValue){
-                        cb.setEnabled(false);
-                    }
-                    //End
-                    while (cbAnswers.moveToNext()) {
-                        if (cbAnswers.getInt(cbAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_INT)) == cbId) {
-                            cb.setChecked(true);
-                            cb.setEnabled(true);
-                        }
-                    }
-                    cbAnswers.moveToPosition(-1);
-                }else {
-                    // N/A Question for franklin
-                    if (defaultLookUpValue != 0) {
-                        if (defaultLookUpValue == cbId) {
-                            cb.setChecked(true);
-                            cb.setEnabled(true);
-                        }
-                    }
-                }
-
-
-
-                tr.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        CheckBox checkbox = (CheckBox) view.findViewById(R.id.cbCheckBox);
-
-                        checkbox.setChecked(!checkbox.isChecked());
-                        checkbox.callOnClick();
-                    }
-
-                });
-
-                //stick the answer in the question itself
-                int finalDefaultLookUpValue = defaultLookUpValue;
-                String finalDatatype = datatype;
-                cb.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        if (singleSelect) {
-                            int ssTableRows = tl.getChildCount();
-                            for (int j = 0; j < ssTableRows; j++) {
-                                TableRow ssTr = (TableRow) tl.getChildAt(j);
-                                CheckBox ssTcb = (CheckBox) ssTr.findViewById(R.id.cbCheckBox);
-
-                                ssTcb.setChecked(false);
-                            }
-                            CheckBox clickedCb = (CheckBox) view;
-                            clickedCb.setChecked(true);
-                        }
-
-                        // Update the Not applicable field if none of the value is selected
-                        if (finalDefaultLookUpValue !=0){
-                            int ssTableRows = tl.getChildCount();
-                            boolean checkboxTicked=false;
-                            int  count = 0;
-                            for (int j = 0; j < ssTableRows; j++) {
-                                TableRow ssTr = (TableRow) tl.getChildAt(j);
-                                TextView cbId = (TextView) ssTr.findViewById(R.id.cbId);
-                                CheckBox ssTcb = (CheckBox) ssTr.findViewById(R.id.cbCheckBox);
-                                if (ssTcb.isChecked()) {
-                                    checkboxTicked=true;
-                                }
-                                if (Integer.parseInt(cbId.getText().toString()) != finalDefaultLookUpValue){
-                                    if (ssTcb.isChecked()){
-                                        count++;
-                                    }
-                                }
-
-                            }
-                            if (!checkboxTicked){
-                                for (int j = 0; j < ssTableRows; j++) {
-                                    TableRow ssTr = (TableRow) tl.getChildAt(j);
-                                    CheckBox ssTcb = (CheckBox) ssTr.findViewById(R.id.cbCheckBox);
-                                    TextView cbId = (TextView) ssTr.findViewById(R.id.cbId);
-                                    if (Integer.parseInt(cbId.getText().toString()) == finalDefaultLookUpValue){
-                                        ssTcb.setChecked(true);
-                                        ssTcb.setEnabled(true);
-                                    }
-                                }
-                            }
-
-                            // Remove the Not applicable when other selected.
-                            if(count>0){
-                                for (int j = 0; j < ssTableRows; j++) {
-                                    TableRow ssTr = (TableRow) tl.getChildAt(j);
-                                    CheckBox ssTcb = (CheckBox) ssTr.findViewById(R.id.cbCheckBox);
-                                    TextView cbId = (TextView) ssTr.findViewById(R.id.cbId);
-                                    if (Integer.parseInt(cbId.getText().toString()) == finalDefaultLookUpValue){
-                                        ssTcb.setChecked(false);
-                                        ssTcb.setEnabled(false);
-                                    }
-                                }
-                            }
-
-                        }
-
-                        saveMultipleAnswerEntry(questionId, 0, finalDatatype, tl);
-                    }
-                });
-
-
+            }catch (Exception e){
+                e.printStackTrace();
             }
 
             questionWrapper.addView(tl);
@@ -3701,12 +3967,24 @@ public class DynamicQuestions {
 //        final String datatype = questions.getString(questions.getColumnIndex("datatype_name"));
         final int questionId = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
         final String displayTypeID = String.valueOf(dl.getDisplayTypeIdByQuestionID(questionId));
-        final String oldDatatype =  dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
+//        final String oldDatatype =  dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
+        final int dataTypeID = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID));
 
-        String datatype = "";
-        if (oldDatatype.equals("Checkbox")){
-            datatype = "int";
+
+        String oldDatatype = null;
+
+        String datatype = null;
+        if (dataTypeID == 6){
+            oldDatatype =  dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
+        }else{
+            datatype = questions.getString(questions.getColumnIndex("datatype_name"));
         }
+        if(oldDatatype!=null){
+            if (oldDatatype.equals("Checkbox")){
+                datatype = "int";
+            }
+        }
+
 
         final boolean singleSelect;
         boolean tempSingleSelect = false;
@@ -4087,12 +4365,23 @@ public class DynamicQuestions {
 //        final String datatype = questions.getString(questions.getColumnIndex("datatype_name"));
         final int questionId = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
         final String displayTypeID = String.valueOf(dl.getDisplayTypeIdByQuestionID(questionId));
-        final String oldDatatype =  dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
+//        final String oldDatatype =  dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
+        final int dataTypeID = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID));
 
-        String datatype = "";
-        if (oldDatatype.equals("Photo Checkbox")){
-            datatype = "text";
+        String oldDatatype = null;
+
+        String datatype = null;
+        if (dataTypeID == 6){
+            oldDatatype =  dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
+        }else{
+            datatype = questions.getString(questions.getColumnIndex("datatype_name"));
         }
+        if(oldDatatype!=null){
+            if (oldDatatype.equals("Photo Checkbox")){
+                datatype = "int";
+            }
+        }
+
 
         final boolean singleSelect;
         boolean tempSingleSelect = false;
@@ -4118,11 +4407,180 @@ public class DynamicQuestions {
 
         singleSelect = tempSingleSelect;
 
+        final int[] checkboxCount = {0};
+
+
         if (photoCheckboxes.getCount() > 0) {
             // add the table layout to the screen
             final TableLayout tl = (TableLayout) inflater.inflate(R.layout.module_photo_table, questionWrapper, false);
 
-            while (photoCheckboxes.moveToNext()) {
+            // adding validation
+            String assignmentType = "";
+            String assignmentField = "";
+            String isDefault = "";
+            String maxSelection = "";
+            String isActive = "";
+
+            try{
+                JSONObject displayConfig = new JSONObject();
+                displayConfig = new JSONObject(questions.getString(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION)));
+                if (displayConfig.has("display")) {
+                    JSONObject display = displayConfig.getJSONObject("display");
+                    maxSelection = display.getString("maxSelection");
+                    JSONArray range = display.getJSONArray("lookupProperties");
+
+                    for(int i=0; i<range.length(); i++){
+                        JSONObject rangeArray = range.getJSONObject(i);
+                        String lookupID = rangeArray.getString("lookupValueId");
+                        assignmentType = rangeArray.getString("assignmentType");
+                        assignmentField = rangeArray.getString("assignmentField");
+                        isDefault = rangeArray.getString("isDefault");
+                        if (rangeArray.has("active")){
+                            isActive = rangeArray.getString("active");
+                        }
+
+                        String assignmentTypeColumn = "";
+
+                        switch (assignmentType){
+                            case "1" :
+                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID;
+                                break;
+                            case "2" :
+                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_REGIONID;
+                                break;
+                            case "3" :
+                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_DISTRICTID;
+                                break;
+                            case "4" :
+                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID;
+                                break;
+                            case "5" :
+                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID;
+                                break;
+                            case "6" :
+                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID;
+                                break;
+                            case "7" :
+                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID;
+                                break;
+                            case "8" :
+                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PARTNER_ID;
+                                break;
+                            case "9" :
+                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PROGRAMME_ID;
+                                break;
+                        }
+
+                        String farmerAssignmentField = dl.getAssignmentByFarmerTypeID(farmerId , assignmentTypeColumn);
+
+                        if (assignmentField.equals(farmerAssignmentField) || assignmentType.equals("null") && assignmentField.equals("null")) {
+
+                            if (isActive.toLowerCase().equals("true") || isActive.equals("")) {
+                                // generate row item
+                                TableRow tr = (TableRow) inflater.inflate(R.layout.module_photo_row, tl, false);
+
+                                TextView tvId = (TextView) tr.findViewById(R.id.cbId);
+                                TextView tv = (TextView) tr.findViewById(R.id.cbTitle);
+                                ImageView iv = (ImageView) tr.findViewById(R.id.photo);
+
+//                            int cbId = photoCheckboxes.getInt(photoCheckboxes.getColumnIndex("_id"));
+
+//                            tvId.setText(String.valueOf(cbId));
+                                tvId.setText(lookupID);
+
+//                            int columnIndex = (photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) != -1) ? photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) : photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE);
+//                            tv.setText(photoCheckboxes.getString(columnIndex));
+                                String checkBoxName = dl.getValueByLookUpID(lookupID);
+                                tv.setText(checkBoxName);
+
+                                // need to recheck in testing
+                                while (photoCheckboxes.moveToNext()) {
+                                    int imageId = res.getIdentifier("cbimage_" + photoCheckboxes.getString(photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_PHOTO)), "drawable", packageName);
+                                    if (imageId != 0) {
+                                        iv.setImageDrawable(ContextCompat.getDrawable(context, imageId));
+                                    } else {
+                                        iv.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.photo_checkbox_no_image));
+                                    }
+                                }
+
+
+                                tl.addView(tr);
+
+                                final CheckBox cb = (CheckBox) tr.findViewById(R.id.cbCheckBox);
+
+                                // pre-fill checkboxes that have been previously ticked
+                                if (hasAnswers && photoCbAnswers.getCount() > 0) {
+                                    while (photoCbAnswers.moveToNext()) {
+                                        if (photoCbAnswers.getInt(photoCbAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_INT)) == Integer.parseInt(lookupID)) {
+                                            cb.setChecked(true);
+                                            checkboxCount[0]++;
+                                        }
+                                    }
+                                    photoCbAnswers.moveToPosition(-1);
+                                }
+
+                                tr.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        cb.setChecked(!cb.isChecked());
+                                        cb.callOnClick();
+                                    }
+
+                                });
+
+                                //stick the answer in the question itself
+                                String finalDatatype = datatype;
+                                String finalMaxSelection = maxSelection;
+                                cb.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        CheckBox checkbox = (CheckBox) view.findViewById(R.id.cbCheckBox);
+                                        if (checkbox.isChecked()) {
+                                            checkboxCount[0]++;
+                                        } else {
+                                            checkboxCount[0]--;
+                                        }
+
+                                        if (singleSelect) {
+                                            int ssTableRows = tl.getChildCount();
+                                            for (int j = 0; j < ssTableRows; j++) {
+                                                TableRow ssTr = (TableRow) tl.getChildAt(j);
+                                                CheckBox ssTcb = (CheckBox) ssTr.findViewById(R.id.cbCheckBox);
+
+                                                ssTcb.setChecked(false);
+                                            }
+                                            CheckBox clickedCb = (CheckBox) view;
+                                            clickedCb.setChecked(true);
+                                        }
+
+                                        if (finalMaxSelection!="null"){
+                                            if (checkboxCount[0] > Integer.parseInt(finalMaxSelection)) {
+                                                cb.setChecked(false);
+                                                checkboxCount[0]--;
+                                                Toast.makeText(context, "You can only select " + finalMaxSelection + " options", Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+
+                                        saveMultipleAnswerEntry(questionId, 0, finalDatatype, tl);
+                                    }
+                                });
+
+//                            tl.addView(tr);
+
+
+                            }
+
+                        }
+                    }
+
+                }
+
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
+            // need to check for value assigment in old survery's checkbox -- don't delete
+            /*while (photoCheckboxes.moveToNext()) {
                 // generate row item
                 TableRow tr = (TableRow) inflater.inflate(R.layout.module_photo_row, tl, false);
 
@@ -4187,7 +4645,7 @@ public class DynamicQuestions {
                 });
 
                 tl.addView(tr);
-            }
+            }*/
 
             questionWrapper.addView(tl);
             questionsSection.addView(questionWrapper);
@@ -4205,12 +4663,23 @@ public class DynamicQuestions {
 //        final String datatype = questions.getString(questions.getColumnIndex("datatype_name"));
         final int questionId = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
         final String displayTypeID = String.valueOf(dl.getDisplayTypeIdByQuestionID(questionId));
-        final String oldDatatype =  dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
+//        final String oldDatatype =  dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
+        final int dataTypeID = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID));
 
-        String datatype = "";
-        if (oldDatatype.equals("Repeater")){
-            datatype = "int";
+        String oldDatatype = null;
+
+        String datatype = null;
+        if (dataTypeID == 6){
+            oldDatatype =  dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
+        }else{
+            datatype = questions.getString(questions.getColumnIndex("datatype_name"));
         }
+        if(oldDatatype!=null){
+            if (oldDatatype.equals("Repeater")){
+                datatype = "int";
+            }
+        }
+
 
         final int answerId = (hasAnswers) ? questions.getInt(questions.getColumnIndex("answer_id")) : 0;
         final Spinner spinner = (Spinner) inflater.inflate(R.layout.module_spinner, questionWrapper, false);
@@ -4619,317 +5088,16 @@ public class DynamicQuestions {
         final LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
         renderQuestion(qCursor, isRepeaterItem, (isRepeaterItem) ? parentLayout : questionWrapper);
         String question1 = "", question2 = "";
-//        final String datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
-        final int questionId = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
-        final String displayTypeID = String.valueOf(dl.getDisplayTypeIdByQuestionID(questionId));
-        final String datatype =  dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
-        String[] coloumnames = qCursor.getColumnNames();
-
-        List<String> nameList = Arrays.asList(coloumnames);
-
-        String is_subset_questions_requiredduplicate = "";
-        String condition = "";
-        if (nameList.contains("is_subset_questions_required")) {
-
-
-
-            is_subset_questions_requiredduplicate = qCursor.getString(qCursor.getColumnIndex("is_subset_questions_required"));
-
-
-            //final String is_subset_questions_required = "true";
-            condition = qCursor.getString(qCursor.getColumnIndex("conditional_questions"));
-
-            // final String condition = "[{\"question\":\"125,109,162\",\"conditionCheck\":\"==NO\"},{\"question\":\"117,1173,119,67\",\"conditionCheck\":\"==YES\"}]";
-
-        }
-        int answerIdTemp = 0;
-
-        try {
-            if(is_subset_questions_requiredduplicate==null){
-
-                is_subset_questions_requiredduplicate="";
-            }
-        } catch (Exception e) {
-            FirebaseCrashlytics.getInstance().log(e.getMessage());
-
-        }
-        final String is_subset_questions_required = is_subset_questions_requiredduplicate;
-        if (hasAnswers) {
-            if (isRepeaterItem && repeaterAnswers != null && repeaterAnswers.getCount() > 0) {
-                answerIdTemp = repeaterAnswers.getInt(repeaterAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ID));
-            } else {
-                if (qCursor.getColumnIndex("answer_id") != -1) {
-                    answerIdTemp = qCursor.getInt(qCursor.getColumnIndex("answer_id"));
-                }
-            }
-        }
-        final int answerId = answerIdTemp;
-
-        final Spinner spinner = (Spinner) inflater.inflate(R.layout.module_spinner, (isRepeaterItem) ? parentLayout : questionWrapper, false);
-        String[] columns = new String[]{"name", "_id", "code"};
-        MatrixCursor spinnervalues = new MatrixCursor(columns);
-        spinnervalues.addRow(new String[]{res.getString(R.string.ofis_switch_text_yes), "1", "1"});
-        spinnervalues.addRow(new String[]{res.getString(R.string.ofis_switch_text_no), "2", "0"});
-      //
-        // spinner explaining
-
-        // Error Message for constraints franklin
-        final String displayConfig = qCursor.getString(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION));
-        String constraintType = "",errorMsg = "";
-        int switchId = 0;
-        try {
-            JSONObject jsonObject= new JSONObject(displayConfig).getJSONObject(CoffeeConstants.CALCULATION);
-             switchId=jsonObject.getInt("switch");
-             constraintType=jsonObject.getString("type");
-             errorMsg= jsonObject.getJSONObject("errorMsg").getString("error"+ CommonUtilities.getLocaleSuffix(context.getResources()));
-        } catch (JSONException e) {
-            FirebaseCrashlytics.getInstance().log(e.getMessage());
-
-        }
-        TextView yesNoConstraint = null;
-        if (constraintType.equalsIgnoreCase(CoffeeConstants.SURVEY_COMPLETION_CHECK)){
-            yesNoConstraint = new TextView(context);
-            yesNoConstraint.setText(errorMsg);
-            yesNoConstraint.setTextColor(ContextCompat.getColor(context, R.color.ofis_red));
-
-        }
-
-        // End
-
-        dl.bindDataDrivenSpinner(spinner, spinnervalues, context, R.string.ModuleAnswerHint, null, false);
-        Integer currentAnswer = -1;
-        if (hasAnswers) {
-            String currentAnswerString = null;
-
-            if (isRepeaterItem && repeaterAnswers != null && repeaterAnswers.getCount() > 0) {
-                currentAnswerString = repeaterAnswers.getString(repeaterAnswers.getColumnIndex("answer_" + datatype));
-            } else {
-                if (qCursor.getColumnIndex("answer_" + datatype) != -1) {
-                    currentAnswerString = qCursor.getString(qCursor.getColumnIndex("answer_" + datatype));
-                }
-            }
-
-            if (currentAnswerString != null) {
-                    if(currentAnswerString.equalsIgnoreCase("true")){
-                        currentAnswerString = "1";
-                    }else if(currentAnswerString.equalsIgnoreCase("false")){
-                        currentAnswerString = "0";
-                    }
-                currentAnswer = Integer.parseInt(currentAnswerString);
-            }
-
-            if (currentAnswer == 1) {
-                spinner.setSelection(1, false);
-                saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, String.valueOf(currentAnswer));
-            } else if (currentAnswer == 0) {
-                spinner.setSelection(2, false);
-                saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, String.valueOf(currentAnswer));
-            }
-        }
-
-
-        try {
-
-
-            if (is_subset_questions_required.equalsIgnoreCase("true")) {
-                JSONArray json = new JSONArray(condition);
-
-                for (int i = 0; i < json.length(); i++) {
-
-                    JSONObject jsonobject = json.getJSONObject(0);
-                    question1 = jsonobject.getString("question");
-                    String condtion1 = jsonobject.getString("conditionCheck");
-
-                    jsonobject = json.getJSONObject(1);
-                    question2 = jsonobject.getString("question");
-                    String condtion2 = jsonobject.getString("conditionCheck");
-                }
-
-
-            }
-        } catch (Exception e) {
-            FirebaseCrashlytics.getInstance().log(e.getMessage());
-        }
-
-        final String yesQuestion = question1;
-        final String noqQuestion = question2;
-
-      //   Prepopulate Yes/No If not answered
-        String type,option;
-        try {
-            JSONObject jsonObject= new JSONObject(displayConfig).getJSONObject("prepopulate");
-            type=jsonObject.getString("type");
-            option= jsonObject.getString("option").trim();
-            JSONArray countryIDs = (JSONArray) jsonObject.get("countryId");
-            JSONArray productIDs = (JSONArray) jsonObject.get("productId");
-            if (countryIDs.length()>0 && productIDs.length()>0) {
-                ArrayList<Integer> countryLdList = new ArrayList<>();
-                for (int i = 0; i < countryIDs.length(); i++) {
-                    countryLdList.add(Integer.parseInt(countryIDs.getString(i)));
-                }
-                ArrayList<Integer> productIdList = new ArrayList<>();
-                for (int i = 0; i < productIDs.length(); i++) {
-                    productIdList.add(Integer.parseInt(productIDs.getString(i)));
-                }
-                if (countryLdList.contains(farmerGeo.getCountryId()) && productIdList.contains(farmerGeo.getProductId())){
-                if(type.equalsIgnoreCase("Yes/No")){
-                    if (option.equalsIgnoreCase("yes")){
-                        spinner.setSelection(1);
-                    }else{
-                        spinner.setSelection(2);
-                    }
-                }
-                }
-            }
-
-        } catch (JSONException e) {
-            FirebaseCrashlytics.getInstance().log(e.getMessage());
-
-        }
-
-
-         //End
-
-
-        int finalSwitchId = switchId;
-        TextView finalYesNoConstraint = yesNoConstraint;
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                try {
-                    if (id > 0) {
-                        //renderRepeaterItemstest(109, 2,  (isRepeaterItem) ? parentLayout : questionWrapper, 183488, "BR-0710-SM41-0003", 6, res);
-                        // renderRepeaterItemstest(109, 2, questionWrapper, 183488, "BR-0710-SM41-0003", 6, resources);
-
-                        //renderQuestion(qCursor, isRepeaterItem, (isRepeaterItem) ? parentLayout : questionWrapper);
-
-                        // If id =2 , pirachana thaan
-                        if (id == finalSwitchId){
-                            questionWrapper.addView(finalYesNoConstraint);
-                            surveySet.add(questionId);
-                            finalYesNoConstraint.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.RIGHT);
-                        }else {
-                            surveySet.remove(questionId);
-                            questionWrapper.removeView(finalYesNoConstraint);
-                        }
-
-                        if (is_subset_questions_required.equalsIgnoreCase("true")) {
-
-                            try {
-
-
-
-                                if (id == 1) {
-
-                                    //renderRepeaterItemstest(Integer.parseInt(question1), 2, questionWrapper, 183488, "BR-0710-SM41-0003", 6, resources);
-
-                                    //Cursor repeaterQuestions = dl.getConditionallogic(questionId);
-                                    // Cursor repeaterQuestions=    dl.getQuestionsAndAnswersBySubModuleId(16, 186862, 4);
-
-
-                                    // renderRepeaterItemstest(question1, 3, questionWrapper, 183488, "BR-0710-SM41-0003", 6, resources);
-                                    dl.deleteDataYesOrONSelect(questionId, Utilities.subModuleId);
-
-
-                                    renderRepeaterItemstest(yesQuestion, questionId, questionWrapper, Utilities.farmerId, Utilities.olamFarmerId, Utilities.farmerModuleId, resources, true);
-
-                                    //renderYesNoQuestion(repeaterQuestions, false, questionWrapper, 0, -1, null, res);
-
-
-                                } else if (id == 2) {
-
-                                    dl.deleteDataYesOrONSelect(questionId, Utilities.subModuleId);
-
-                                    renderRepeaterItemstest(noqQuestion, questionId, questionWrapper, Utilities.farmerId, Utilities.olamFarmerId, Utilities.farmerModuleId, resources, true);
-
-                                }
-
-
-                            } catch (Exception e) {
-                                FirebaseCrashlytics.getInstance().log(e.getMessage());
-                            }
-
-                        }
-                        Cursor selecteditem = (Cursor) spinner.getSelectedItem();
-                        saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, datatype, selecteditem.getString(selecteditem.getColumnIndex("code")));
-    //                    if (questionId == 4333) {
-  //                      showAlertMsg("We recommend you to complete the General Certification Survey before continuing with this Starbucks certification survey");
-//                            TextView errorText = (TextView) spinner.getSelectedView();
-//                            errorText.setError("");
-//                            errorText.setTextColor(Color.RED);//just to highlight that this is an error
-//                            errorText.setText("We recommend you to complete the General Certification Survey before continuing with this Starbucks certification survey");
-//                          //  errorText.setBackground(context.getResources().getDrawable(R.drawable.rounder_red_edittext));
-
- //                       }
-
-                    } else {
-                        removeAnswerEntry(questionId, answerId);
-                        renderRepeaterItemstest(null, 2, questionWrapper, Utilities.farmerId, Utilities.olamFarmerId, Utilities.farmerModuleId, resources, false);
-
-                    }
-                } catch (Exception e) {
-                    FirebaseCrashlytics.getInstance().log(e.getMessage());
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-
-        if (isRepeaterItem) {
-            parentLayout.addView(spinner);
-        } else {
-            questionWrapper.addView(spinner);
-            parentLayout.addView(questionWrapper);
-        }
-
-
-        try {
-
-
-            if (is_subset_questions_required.equalsIgnoreCase("true")) {
-                JSONArray json = new JSONArray(condition);
-
-                for (int i = 0; i < json.length(); i++) {
-
-                    JSONObject jsonobject = json.getJSONObject(0);
-                    question1 = jsonobject.getString("question");
-                    String condtion1 = jsonobject.getString("conditionCheck");
-
-                    jsonobject = json.getJSONObject(1);
-                    question2 = jsonobject.getString("question");
-                    String condtion2 = jsonobject.getString("conditionCheck");
-                }
-
-
-                Cursor cursor = dl.getParentSubquestionSelect(Utilities.subModuleId, questionId);
-
-                if (cursor.getCount() > 0) {
-                    if (currentAnswer == 1) {
-                        renderRepeaterItemstest(question1, questionId, questionWrapper, Utilities.farmerId, Utilities.olamFarmerId, Utilities.farmerModuleId, resources, true);
-
-                    } else if (currentAnswer == 0) {
-                        renderRepeaterItemstest(question2, questionId, questionWrapper, Utilities.farmerId, Utilities.olamFarmerId, Utilities.farmerModuleId, resources, true);
-
-                    }
-
-                }
-
-
-            }
-        } catch (Exception e) {
-            FirebaseCrashlytics.getInstance().log(e.getMessage());
-        }
-    }
-/*
-    public void renderRadioQuestion(final Cursor qCursor, final boolean isRepeaterItem, final LinearLayout parentLayout, final int parentQuestionId, final int repeaterItemPosition, Cursor repeaterAnswers, final Resources res) {
-        final LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
-        renderQuestion(qCursor, isRepeaterItem, (isRepeaterItem) ? parentLayout : questionWrapper);
-        String question1 = "", question2 = "";
         final String datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
         final int questionId = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
+        final String displayTypeID = String.valueOf(dl.getDisplayTypeIdByQuestionID(questionId));
+        /*final String datatype;
+        if (Integer.parseInt(displayTypeID) == 6){
+            datatype =  dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
+        }else{
+            datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
+        }
+*/
         String[] coloumnames = qCursor.getColumnNames();
 
         List<String> nameList = Arrays.asList(coloumnames);
@@ -4937,6 +5105,7 @@ public class DynamicQuestions {
         String is_subset_questions_requiredduplicate = "";
         String condition = "";
         if (nameList.contains("is_subset_questions_required")) {
+
 
 
             is_subset_questions_requiredduplicate = qCursor.getString(qCursor.getColumnIndex("is_subset_questions_required"));
@@ -5229,8 +5398,6 @@ public class DynamicQuestions {
             FirebaseCrashlytics.getInstance().log(e.getMessage());
         }
     }
-*/
-
     void renderYesNoQuestionSubQuestion(final Cursor qCursor, final boolean isRepeaterItem, final LinearLayout parentLayout, final int repeaterItemPosition, final int parentQuestionId, Cursor repeaterAnswers, Resources res) {
         final LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
         //renderQuestion(qCursor, isRepeaterItem, (isRepeaterItem) ? parentLayout : questionWrapper);
@@ -5524,12 +5691,22 @@ public class DynamicQuestions {
 //        final String datatype = questions.getString(questions.getColumnIndex("datatype_name"));
         final int questionId = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
         final String displayTypeID = String.valueOf(dl.getDisplayTypeIdByQuestionID(questionId));
-        final String oldDatatype =  dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
+        final int dataTypeID = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID));
+        String oldDatatype = null;
 
-        String datatype = "";
-        if (oldDatatype.equals("Farm Tree Density")){
-            datatype = "text";
+        String datatype = null;
+        if (dataTypeID == 6){
+            oldDatatype =  dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
+        }else{
+            datatype = questions.getString(questions.getColumnIndex("datatype_name"));
         }
+
+        if(oldDatatype!=null){
+            if (oldDatatype.equals("Farm Tree Density")){
+                datatype = "text";
+            }
+        }
+
 
         String calcAnswerValue = "0";
         densityQuestionId = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
@@ -5654,12 +5831,23 @@ public class DynamicQuestions {
 //        final String datatype = questions.getString(questions.getColumnIndex("datatype_name"));
         final int questionId = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionSipEntry.COLUMN_NAME_ID));
         final String displayTypeID = String.valueOf(dl.getDisplayTypeIdByQuestionID(questionId));
-        final String oldDatatype =  dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
+//        final String oldDatatype =  dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
+        final int dataTypeID = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID));
+        String oldDatatype = null;
 
-        String datatype = "";
-        if (oldDatatype.equals("Checkbox")){
-            datatype = "int";
+        String datatype = null;
+        if (dataTypeID == 6){
+            oldDatatype =  dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
+        }else{
+            datatype = questions.getString(questions.getColumnIndex("datatype_name"));
         }
+
+        if(oldDatatype!=null){
+            if (oldDatatype.equals("Checkbox")){
+                datatype = "int";
+            }
+        }
+
 
         final boolean singleSelect;
         boolean tempSingleSelect = false;
@@ -5760,12 +5948,23 @@ public class DynamicQuestions {
 //        final String datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
         final int questionId = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionSipEntry.COLUMN_NAME_ID));
         final String displayTypeID = String.valueOf(dl.getDisplayTypeIdByQuestionID(questionId));
-        final String oldDatatype =  dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
+//        final String oldDatatype =  dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
+        final int dataTypeID = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID));
+        String oldDatatype = null;
 
-        String datatype = "";
-        if (oldDatatype.equals("Date Picker")){
-            datatype = "answer_text";
+        String datatype = null;
+        if (dataTypeID == 6){
+            oldDatatype =  dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
+        }else{
+            datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
         }
+
+        if(oldDatatype!=null){
+            if (oldDatatype.equals("Date Picker")){
+                datatype = "answer_text";
+            }
+        }
+
 
         int answerIdTemp = 0;
         if (hasAnswers) {
@@ -5894,12 +6093,24 @@ public class DynamicQuestions {
 //        final String datatype = questions.getString(questions.getColumnIndex("datatype_name"));
         final int questionId = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
         final String displayTypeID = String.valueOf(dl.getDisplayTypeIdByQuestionID(questionId));
-        final String oldDatatype =  dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
+//        final String oldDatatype =  dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
+        final int dataTypeID = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID));
 
-        String datatype = "";
-        if (oldDatatype.equals("Photo Checkbox")){
-            datatype = "answer_text";
+        String oldDatatype = null;
+
+        String datatype = null;
+        if (dataTypeID== 6){
+            oldDatatype =  dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
+        }else{
+            datatype = questions.getString(questions.getColumnIndex("datatype_name"));
         }
+
+        if(oldDatatype!=null){
+            if (oldDatatype.equals("Photo Checkbox")){
+                datatype = "answer_text";
+            }
+        }
+
         final boolean singleSelect;
         boolean tempSingleSelect = false;
 
@@ -6007,12 +6218,24 @@ public class DynamicQuestions {
 //        final String datatype = questions.getString(questions.getColumnIndex("datatype_name"));
         final int questionId = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
         final String displayTypeID = String.valueOf(dl.getDisplayTypeIdByQuestionID(questionId));
-        final String oldDatatype =  dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
+        final int dataTypeID = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DATATYPE_ID));
+//        final String old
 
-        String datatype = "";
-        if (oldDatatype.equals("Repeater")){
-            datatype = "int";
+        String oldDatatype = null;
+
+        String datatype = null;
+        if (dataTypeID == 6){
+            oldDatatype =  dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
+        }else{
+            datatype = questions.getString(questions.getColumnIndex("datatype_name"));
         }
+
+        if(oldDatatype!=null){
+            if (oldDatatype.equals("Repeater")){
+                datatype = "int";
+            }
+        }
+
 
         final int answerId = (hasAnswers) ? questions.getInt(questions.getColumnIndex("answer_id")) : 0;
         final Spinner spinner = (Spinner) inflater.inflate(R.layout.module_spinner, questionWrapper, false);

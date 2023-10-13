@@ -6,6 +6,4 @@
     android:layout_gravity="start|center_vertical"
     android:button="@null"
     style="@style/CheckboxStyle"
-    android:paddingRight="@dimen/ofis_small_pad"
-    android:paddingEnd="32dp"
-    android:textSize="@dimen/ofis_micro_text"/>
+    android:textColor="@color/gray_text"/>

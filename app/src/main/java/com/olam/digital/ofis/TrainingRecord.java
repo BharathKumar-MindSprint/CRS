@@ -160,6 +160,8 @@ public class TrainingRecord extends BaseListActivity{
                             // Permission already granted
                             bindTrainingPhotoButton();
                         }
+
+
                     } else {
                         // Call methods directly for Android versions lower than Marshmallow
                         bindTrainingPhotoButton();
