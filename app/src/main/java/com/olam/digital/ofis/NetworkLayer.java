@@ -2009,13 +2009,17 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                     }
 
                                     if (dataTypeName != null){
-                                        if ( dataTypeName.equals("Numbers Only")|| dataTypeName.equals("Percentage") ||
-                                                dataTypeName.equals("Decimal") || dataTypeName.equals("Dropdown") || dataTypeName.equals("Photo Checkbox")
-                                                || dataTypeName.equals("Repeater") || dataTypeName.equals("Checkbox") || dataTypeName.equals("Radio")){
+
+                                        if ( dataTypeName.replaceAll(" ", "").toLowerCase().equals("numbersonly")|| dataTypeName.replaceAll(" ", "").toLowerCase().equals("percentage") ||
+                                                dataTypeName.replaceAll(" ", "").toLowerCase().equals("decimal") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("dropdown") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("photocheckbox")
+                                                || dataTypeName.replaceAll(" ", "").toLowerCase().equals("repeater") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("checkbox") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("radio")){
                                             datatype = "int";
-                                        }else if (dataTypeName.equals("text box") || dataTypeName.equals("Alphanumeric") ||
-                                                dataTypeName.equals("Alphabetical") || dataTypeName.equals("Photo Upload") || dataTypeName.equals("Date Picker") || dataTypeName.equals("Location")){
+                                        }else if (dataTypeName.replaceAll(" ", "").toLowerCase().equals("textbox") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("alphanumeric") ||
+                                                dataTypeName.replaceAll(" ", "").toLowerCase().equals("alphabetical") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("photoupload") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("datepicker") || dataTypeName.replaceAll(" ", "").toLowerCase().equals("location")){
                                             datatype = "text";
+                                        } else if (dataTypeName.replaceAll(" ", "").toLowerCase().equals("repeateritem")) {
+                                            datatype = moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.DatatypesEntry.COLUMN_NAME_DATATYPE_NAME));
+
                                         }
                                     }else {
                                         datatype = moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.DatatypesEntry.COLUMN_NAME_DATATYPE_NAME));

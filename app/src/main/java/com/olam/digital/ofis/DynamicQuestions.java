@@ -375,7 +375,7 @@ public class DynamicQuestions {
             }
         }
     }
-    private void saveMultipleAnswerEntryRadio(int questionId, @SuppressWarnings("SameParameterValue") int parentQuestionId, String dataType, LinearLayout linearLayout) {
+    private void saveMultipleAnswerEntryRadio(int questionId, int parentQuestionId, String dataType, LinearLayout linearLayout,int repeaterItemPosition) {
 
         RadioGroup radioGroup = (RadioGroup) linearLayout.findViewById(R.id.radioGroup);
 
@@ -409,7 +409,7 @@ public class DynamicQuestions {
 
 
 
-                saveAnswerEntry(questionId, j, parentQuestionId, -1, dataType, String.valueOf(checkedId));
+                saveAnswerEntry(questionId, j, parentQuestionId, repeaterItemPosition, dataType, String.valueOf(checkedId));
             }
         });
 
@@ -3032,10 +3032,10 @@ public class DynamicQuestions {
 
     }
 
-    public void renderRadioQuestion(Cursor questions, boolean isRepeaterItem, LinearLayout parentLayout , long farmerId,long farmerModuleId, boolean isSavedAns){
+    public void renderRadioQuestion(Cursor questions, boolean isRepeaterItem, LinearLayout parentLayout , long farmerId,long farmerModuleId, boolean isSavedAns ,final int repeaterItemPosition, Cursor repeaterAnswers , final int parentQuestionId){
 
             LinearLayout questionWrapper = (LinearLayout) inflater.inflate(R.layout.module_question_wrapper, parentLayout, false);
-        renderQuestion(questions, false, questionWrapper);
+        renderQuestion(questions, isRepeaterItem, (isRepeaterItem) ? parentLayout : questionWrapper);
 
 //        final String datatype = questions.getString(questions.getColumnIndex("datatype_name"));
         final int questionId = questions.getInt(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
@@ -3051,6 +3051,7 @@ public class DynamicQuestions {
             oldDatatype =  dl.getQuestionTypeValue(Integer.parseInt(displayTypeID));
         }else{
             datatype = questions.getString(questions.getColumnIndex("datatype_name"));
+
         }
 
         if(oldDatatype!=null){
@@ -3058,6 +3059,7 @@ public class DynamicQuestions {
                 datatype = "int";
             }
         }
+
 
 
         final boolean singleSelect;
@@ -3129,6 +3131,7 @@ public class DynamicQuestions {
 
 
                         String assignmentTypeColumn = "";
+
 
                         switch (assignmentType) {
                             case "1":
@@ -3313,7 +3316,9 @@ public class DynamicQuestions {
             }else {
                 parentLayout.addView(questionWrapper);
             }*/
-            saveMultipleAnswerEntryRadio(questionId, 0, datatype, linearLayout);
+
+            saveMultipleAnswerEntryRadio(questionId, parentQuestionId, datatype, linearLayout, repeaterItemPosition);
+
         }
 
     }
@@ -4879,6 +4884,7 @@ public class DynamicQuestions {
 
             FirebaseCrashlytics.getInstance().log("DynamicQuestions: Error getting repeater item type display config "+e.getMessage());
 
+
         }
         return displayType;
     }
@@ -4914,18 +4920,22 @@ public class DynamicQuestions {
                                         repeaterAnswers.moveToFirst();
                                     }
 
-                                    if (displayType.toLowerCase().equals("datepicker")) {
+                                    if (displayType.replaceAll(" ", "").toLowerCase().equals("datepicker")) {
                                         renderDatePickerQuestion(repeaterQuestions, true, repeaterItemsInner, questionId, i, repeaterAnswers, true);
-                                    } else if (displayType.toLowerCase().equals("decimal")) {
+                                    } else if (displayType.replaceAll(" ", "").toLowerCase().equals("decimal")) {
                                         renderTextBoxQuestion(repeaterQuestions, true, repeaterItemsInner, questionId, i, repeaterAnswers);
-                                    } else if (displayType.toLowerCase().equals("dropdown")) {
+                                    } else if (displayType.replaceAll(" ", "").toLowerCase().equals("dropdown")) {
                                         renderDropDownQuestion(repeaterQuestions, true, repeaterItemsInner, questionId, i, repeaterAnswers, res);
-                                    } else if (displayType.toLowerCase().equals("textbox")) {
+                                    } else if (displayType.replaceAll(" ", "").toLowerCase().equals("textbox")) {
                                         renderTextBoxQuestion(repeaterQuestions, true, repeaterItemsInner, questionId, i, repeaterAnswers);
-                                    } else if (displayType.toLowerCase().equals("yesno")) {
+                                    } else if (displayType.replaceAll(" ", "").toLowerCase().equals("yesno")) {
                                         renderYesNoQuestion(repeaterQuestions, true, repeaterItemsInner, questionId, i, repeaterAnswers, res);
-                                    } else if (displayType.toLowerCase().equals("photoupload")) {
+                                    } else if (displayType.replaceAll(" ", "").toLowerCase().equals("photoupload")) {
                                         renderPhotoUploadQuestion(repeaterQuestions, true, repeaterItemsInner, questionId, i, repeaterAnswers, res);
+                                    } /*else if (displayType.replaceAll(" ", "").toLowerCase().equals("checkbox")) {
+                                        renderCheckBoxQuestion(repeaterQuestions, repeaterItemsInner    , farmerId, farmerModuleId, false);
+                                    }*/ else if (displayType.replace(" ", "").toLowerCase().equals("radio")) {
+                                        renderRadioQuestion(repeaterQuestions, true, repeaterItemsInner, farmerId, farmerModuleId , false,i , repeaterAnswers , questionId);
                                     }
                                 } finally {
                                     if (repeaterAnswers != null) repeaterAnswers.close();
@@ -4994,30 +5004,30 @@ public class DynamicQuestions {
 */
 
 
-                if (displayType.toLowerCase().equals("datepicker")) {
+                if (displayType.replaceAll(" ", "").toLowerCase().equals("datepicker")) {
                     renderDatePickerQuestiontest(repeaterQuestions, false, repeaterItemsWrapper, parentid, i, null);
-                } else if (displayType.toLowerCase().equals("decimal")) {
+                } else if (displayType.replaceAll(" ", "").toLowerCase().equals("decimal")) {
 
                     renderTextBoxQuestionSubQuestion(repeaterQuestions, false, repeaterItemsWrapper, parentid, -1, null);
-                } else if (displayType.toLowerCase().equals("dropdown")) {
+                } else if (displayType.replaceAll(" ", "").toLowerCase().equals("dropdown")) {
                     repeaterQuestions = dl.getQuestionsAndAnswersBySubModuleId1(Utilities.subModuleId, Utilities.farmerId, Utilities.farmerModuleId, question_id);
 
                     renderDropDownQuestionSubQuestion(repeaterQuestions, true, repeaterItemsWrapper, parentid, 1, null, res);
-                } else if (displayType.toLowerCase().equals("textbox")) {
+                } else if (displayType.replaceAll(" ", "").toLowerCase().equals("textbox")) {
                     renderTextBoxQuestionSubQuestion(repeaterQuestions, false, repeaterItemsWrapper, parentid, -1, null);
-                } else if (displayType.toLowerCase().equals("yesno") || displayType.toLowerCase().equals("Yes/No")) {
+                } else if (displayType.replaceAll(" ", "").toLowerCase().equals("yesno") || displayType.replaceAll(" ", "").toLowerCase().equals("Yes/No")) {
                     repeaterQuestions = dl.getRepeaterItemsForQuestion1(question_id);
                     renderYesNoQuestionSubQuestion(repeaterQuestions, true, repeaterItemsWrapper, Integer.parseInt(retval), parentid, null, res);
-                } else if (displayType.toLowerCase().equals("photoupload")) {
+                } else if (displayType.replaceAll(" ", "").toLowerCase().equals("photoupload")) {
 
                     renderPhotoUploadQuestionSubQuestion(repeaterQuestions, true, repeaterItemsWrapper, parentid, 0, null, res);
-                } else if (displayType.toLowerCase().equals("repeater")) {
+                } else if (displayType.replaceAll(" ", "").toLowerCase().equals("repeater")) {
 
                     renderRepeaterQuestionSubQuestion(repeaterQuestions, Utilities.farmerId, Utilities.olamFarmerId, Utilities.farmerModuleId, res, repeaterItemsWrapper);
-                } else if (displayType.toLowerCase().equals("checkbox")) {
+                } else if (displayType.replaceAll(" ", "").toLowerCase().equals("checkbox")) {
                     renderCheckBoxQuestionSubQuestion(repeaterQuestions, repeaterItemsWrapper, Utilities.farmerId, Utilities.farmerModuleId, parentid);
 
-                } else if (displayType.toLowerCase().equals("photocheckbox")) {
+                } else if (displayType.replaceAll(" ", "").toLowerCase().equals("photocheckbox")) {
                     renderPhotoCheckboxQuestiontest(repeaterQuestions, repeaterItemsWrapper, farmerId, farmerModuleId, resourcesforyesno, Utilities.packagename);
                 }
 
@@ -5081,6 +5091,7 @@ public class DynamicQuestions {
             }
         } else {
         }
+
 
     }
 

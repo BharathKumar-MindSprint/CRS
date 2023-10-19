@@ -622,7 +622,9 @@ public class CompleteModuleActivity extends BaseActivity {
                 }
                 else if (displayType.replaceAll(" ", "").toLowerCase().equals("radio")) {
                     noOtherQuestion = true;
-                    dynamicQuestions.renderRadioQuestion(questions, false, dynamicQuestions.questionsSection, farmerId, farmerModuleId , false);
+
+                    dynamicQuestions.renderRadioQuestion(questions, false, dynamicQuestions.questionsSection, farmerId, farmerModuleId , false, -1 , null,0);
+
                 }/*else {
                     if (displayType.replaceAll(" ", "").toLowerCase().equals("calculated") && !noOtherQuestion){
                         dynamicQuestions.renderNextPage(dynamicQuestions.questionsSection);
@@ -1148,7 +1150,9 @@ public class CompleteModuleActivity extends BaseActivity {
                      }catch (Exception e){}*/
                  }else if (displayType.replaceAll(" ", "").toLowerCase().equals("radio")) {
                      noOtherQuestion = true;
-                     dynamicQuestions.renderRadioQuestion(questions, false, dynamicQuestions.questionsSection, farmerId, farmerModuleId , false);
+
+                     dynamicQuestions.renderRadioQuestion(questions, false, dynamicQuestions.questionsSection, farmerId, farmerModuleId , false , -1 , null,0);
+
                  }/*else {
                      if (displayType.replaceAll(" ", "").toLowerCase().equals("calculated") && !noOtherQuestion){
                          dynamicQuestions.renderNextPage(dynamicQuestions.questionsSection);
