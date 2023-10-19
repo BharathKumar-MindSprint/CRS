@@ -4,10 +4,6 @@ apply plugin: 'org.sonarqube'
 
 
 android {
-    dexOptions {
-        preDexLibraries true
-        javaMaxHeapSize "4G"
-    }
     signingConfigs {
         release {
             keyAlias 'androiddebugkey'
@@ -34,7 +30,7 @@ android {
         targetSdkVersion 33
         multiDexEnabled true
         versionCode 67
-        versionName "10.6.0"
+        versionName "11.6.0"
 
 
         javaCompileOptions {
