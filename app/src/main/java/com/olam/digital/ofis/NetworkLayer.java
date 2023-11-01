@@ -73,6 +73,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
@@ -1997,6 +1998,10 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                             e.printStackTrace();
                                         }
 
+                                        if (Objects.equals(dataTypeName, "")){
+                                            dataTypeName = null;
+                                        }
+
 
                                     }else{
                                         // use displayType
@@ -2005,6 +2010,10 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                             dataTypeName = dl.getQuestionTypeValue(Integer.parseInt(datatypeID));
                                         }catch (Exception e){
                                             e.printStackTrace();
+                                        }
+
+                                        if (Objects.equals(dataTypeName, "")){
+                                            dataTypeName = null;
                                         }
                                     }
 
