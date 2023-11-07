@@ -41,6 +41,7 @@ import com.karumi.dexter.listener.PermissionRequestErrorListener;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.olam.digital.ofis.BuildConfig;
 import com.olam.digital.ofis.R;
+import com.olam.digital.ofis.gps.utils.GPSUtils;
 
 import java.util.List;
 
@@ -106,7 +107,7 @@ public class GPSTracker {
                 super.onLocationResult(locationResult);
                 // location is received
                 mCurrentLocation = locationResult.getLastLocation();
-                if(mCurrentLocation != null){
+                if (mCurrentLocation != null && !GPSUtils.isMockLocation(mCurrentLocation)) {
                     if (gpsListener!=null) {
                         gpsListener.onGPSClick(mCurrentLocation);
                     }
@@ -238,7 +239,7 @@ public class GPSTracker {
                             @Override
                             public void run() {
 
-                                if(mCurrentLocation != null) {
+                                if(mCurrentLocation != null && !GPSUtils.isMockLocation(mCurrentLocation)) {
                                     if (progressDialog!=null && progressDialog.isShowing()){
                                         progressDialog.dismiss();
                                     }
@@ -286,7 +287,7 @@ public class GPSTracker {
                             @Override
                             public void run() {
 
-                                if(mCurrentLocation != null) {
+                                if(mCurrentLocation != null && !GPSUtils.isMockLocation(mCurrentLocation)) {
                                     if (progressDialog!=null && progressDialog.isShowing()){
                                         progressDialog.dismiss();
                                     }

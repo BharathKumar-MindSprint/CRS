@@ -429,7 +429,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         gpsListener = new GPSListener() {
             @Override
             public void onGPSClick(Location location) {
-                if (location != null) {
+                if (location != null && !GPSUtils.isMockLocation(location)) {
                     mCurrentLocation = location;
                     TrackDetailsDTO trackDetailsDTO = new TrackDetailsDTO();
                     trackDetailsDTO.setModule(GPSConstants.MODULE_CAPTURE_CAPTURE_MY_LOCATION);

@@ -46,6 +46,7 @@ import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.Utilities;
 import com.olam.digital.ofis.gps.GPSListener;
 import com.olam.digital.ofis.gps.GPSTracker;
+import com.olam.digital.ofis.gps.utils.GPSUtils;
 import com.olam.digital.ofis.multifarm.DistanceCalculation;
 import com.olam.digital.ofis.multifarm.FindMultiFarmFarmAdapter;
 import com.olam.digital.ofis.multifarm.FindMultiFarmFarmerAdapter;
@@ -753,7 +754,7 @@ public class UpdateMultiFarmActivity extends BaseActivity {
                         gpsTracker.getDeviceLocation();
                         return;
                     }
-                    if (mCurrentLocation!=null) {
+                    if (mCurrentLocation!=null && !GPSUtils.isMockLocation(mCurrentLocation)) {
                         ArrayList<MultiFarmDTO> multiFarmSeekbarDTOList = new DistanceCalculation(UpdateMultiFarmActivity.this, finalExistingFarmList, progressFinal[0]).calculate(mCurrentLocation);
                         finalFindMultiFarmFarmAdapter.filterList(multiFarmSeekbarDTOList);
                     }else{

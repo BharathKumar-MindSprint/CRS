@@ -449,7 +449,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         gpsListener = new GPSListener() {
             @Override
             public void onGPSClick(Location location) {
-                if (location != null) {
+                if (location != null && !GPSUtils.isMockLocation(location)) {
                     mCurrentLocation = location;
                 }
             }
@@ -2075,7 +2075,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                             }
                         } else {
                             // check the current location
-                            if(mCurrentLocation != null){
+                            if(mCurrentLocation != null && !GPSUtils.isMockLocation(mCurrentLocation)){
                                  // check the current location
                             }else {
                                 if (mCurrentLocation == null || !gpsTracker.isGpsEnabled()) {
@@ -2114,7 +2114,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                                 saveButton.setEnabled(false);
                                 Toast.makeText(context, res.getString(R.string.Farmer_Added), Toast.LENGTH_LONG).show();
 
-                                if (mCurrentLocation != null) {
+                                if (mCurrentLocation != null && !GPSUtils.isMockLocation(mCurrentLocation)) {
 //                                    EditText farmerName = findViewById(R.id.farmerName);
 //                                    String farmerNameValue = String.valueOf(farmerName.getText()).trim();
 
@@ -3216,7 +3216,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         Button searchFarmLocationBtn=popupView.findViewById(R.id.searchFarmLocationBtn);
         final int[] progressFinal = {0};
         searchFarmLocationBtn.setOnClickListener(v -> {
-            if (mCurrentLocation!=null) {
+            if (mCurrentLocation!=null && !GPSUtils.isMockLocation(mCurrentLocation)) {
                 ArrayList<MultiFarmDTO> multiFarmSeekbarDTOList = new DistanceCalculation(context, finalExistingFarmList, progressFinal[0]).calculate(mCurrentLocation);
                 finalFindMultiFarmFarmAdapter.filterList(multiFarmSeekbarDTOList);
             }else{

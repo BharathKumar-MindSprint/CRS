@@ -170,7 +170,7 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
         gpsListener = new GPSListener() {
             @Override
             public void onGPSClick(Location location) {
-                if (location != null) {
+                if (location != null && !GPSUtils.isMockLocation(location)) {
                     mCurrentLocation = location;
                 }
             }
@@ -776,7 +776,7 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
             MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_SAVE_NATIONAL_ID,  ScreenNameConstants.BUTTON_CLICKED);
 
             // check the current location
-            if(mCurrentLocation != null){
+            if(mCurrentLocation != null && !GPSUtils.isMockLocation(mCurrentLocation)){
                 // check the current location
             }else {
                 if (mCurrentLocation == null || !gpsTracker.isGpsEnabled()) {

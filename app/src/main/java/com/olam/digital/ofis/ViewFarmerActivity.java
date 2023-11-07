@@ -1452,7 +1452,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                                 if (pd != null && pd.isShowing()) {
                                     pd.dismiss();
                                 }
-                                if (mCurrentLocation != null) {
+                                if (mCurrentLocation != null && !GPSUtils.isMockLocation(mCurrentLocation)) {
                                     if (polygon) {
                                         recordFarmPolygon(v);
                                     } else {

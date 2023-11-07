@@ -203,7 +203,7 @@ public class CompleteModuleActivity extends BaseActivity {
         gpsListener=new GPSListener() {
             @Override
             public void onGPSClick(Location location) {
-                if (location!=null){
+                if (location!=null && !GPSUtils.isMockLocation(location)){
                     mCurrentCapturedLocation=location;
                 }
             }
@@ -359,7 +359,7 @@ public class CompleteModuleActivity extends BaseActivity {
                 super.onLocationResult(locationResult);
                 // location is received
                 mCurrentLocation = locationResult.getLastLocation();
-                if(mCurrentLocation != null)
+                if(mCurrentLocation != null && !GPSUtils.isMockLocation(mCurrentLocation))
                     setPoiGPS(mCurrentLocation);
             }
         };
@@ -709,7 +709,7 @@ public class CompleteModuleActivity extends BaseActivity {
                 if (isLastPage) {
 
                     try{
-                        if (mCurrentCapturedLocation!=null){}else {
+                        if (mCurrentCapturedLocation!=null && !GPSUtils.isMockLocation(mCurrentCapturedLocation)){}else {
                             if (mCurrentCapturedLocation == null || !gpsTracker.isGpsEnabled()) {
                                 gpsTracker.getDeviceLocation();
                                 return;
@@ -781,7 +781,7 @@ public class CompleteModuleActivity extends BaseActivity {
 
         // check location
         if (action.equalsIgnoreCase("finish")) {
-            if (mCurrentCapturedLocation!=null){
+            if (mCurrentCapturedLocation!=null && !GPSUtils.isMockLocation(mCurrentCapturedLocation)){
 
             }else {
                 if (mCurrentCapturedLocation == null || !gpsTracker.isGpsEnabled()) {
@@ -974,7 +974,7 @@ public class CompleteModuleActivity extends BaseActivity {
                             @Override
                             public void run() {
 
-                                if(mCurrentLocation != null) {
+                                if(mCurrentLocation != null && !GPSUtils.isMockLocation(mCurrentLocation)) {
                                     setPoiGPS(mCurrentLocation);
                                 }else{
                                    /* if (pd != null && pd.getWindow().getDecorView().getWindowToken() != null && pd.isShowing()) {
@@ -1211,7 +1211,7 @@ public class CompleteModuleActivity extends BaseActivity {
                 @Override
                 public void onClick(View view) {
                     try{
-                        if (mCurrentCapturedLocation!=null){
+                        if (mCurrentCapturedLocation!=null && !GPSUtils.isMockLocation(mCurrentCapturedLocation)){
 
                         }else {
                             if (mCurrentCapturedLocation == null || !gpsTracker.isGpsEnabled()) {
