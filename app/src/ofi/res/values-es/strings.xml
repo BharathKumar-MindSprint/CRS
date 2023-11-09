@@ -802,6 +802,7 @@
     <string name="ofis_request_help">Pida ayuda</string>
     <string name="alert_review">El valor ingresado está fuera del rango permitido, será enviado para revisión del administrador</string>
     <string name="alert_review_hint">Ingrese el valor dentro del rango %1$d-%2$d</string>
+    <string name="range_hint_A_R">Rango: %1$d-%2$d</string>
 
 </resources>
 

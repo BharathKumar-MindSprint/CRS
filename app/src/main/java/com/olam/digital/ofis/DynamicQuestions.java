@@ -2012,9 +2012,9 @@ public class DynamicQuestions {
                                         min = rangeArray.getInt("min");
                                         max = rangeArray.getInt("max");
                                         if(validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeId()){
-                                            et.setHint(String.format(context.getResources().getString(R.string.alert_review_hint), min, max));
+                                            et.setHint(String.format(context.getString(R.string.range_hint_A_R), min, max));
                                         }else {
-                                            et.setHint("Range : " + min + " to " + max);
+                                            et.setHint(String.format(context.getResources().getString(R.string.alert_review_hint), min, max));
                                         }
                                         if (min < 0) {
                                             setIntegerNegativeRangeFilter(et, min, max, validationOnRange);
@@ -2027,10 +2027,9 @@ public class DynamicQuestions {
                                         min = rangeArray.getInt("min");
                                         max = rangeArray.getInt("max");
                                         if(validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeId()){
-//                                            et.setHint(context.getResources().getString(R.string.alert_review_hint) +" "+min+"-"+max);
-                                            et.setHint(String.format(context.getResources().getString(R.string.alert_review_hint), min, max));
+                                            et.setHint(String.format(context.getString(R.string.range_hint_A_R), min, max));
                                         }else {
-                                            et.setHint("Range : " + min + " to " + max);
+                                            et.setHint(String.format(context.getResources().getString(R.string.alert_review_hint), min, max));
                                         }
                                         if (min < 0) {
                                             setIntegerNegativeRangeFilter(et, min, max, validationOnRange);

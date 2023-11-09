@@ -15,7 +15,7 @@ import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.Utilities;
 import com.olam.digital.ofis.mvvmmodule.model.CBU.ValidationOnRange;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.Certifications;
+
 
 import org.json.JSONArray;
 import org.json.JSONException;
