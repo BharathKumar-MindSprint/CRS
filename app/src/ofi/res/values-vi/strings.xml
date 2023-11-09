@@ -724,4 +724,6 @@
     <string name="survey_can_be_completed_by_other_stakeholders">This survey can be  completed by the another farm stakeholder</string>
     <string name="multifarm_not_synced">Please sync the multifarm details first.</string>
     <string name="fill_farmergroup_name_multifarm">Please select Farmer Group before adding Farm Stakeholders</string>
+    <string name="alert_review">Giá trị đã nhập nằm ngoài phạm vi cho phép, giá trị này sẽ được đẩy lên để quản trị viên xem xét</string>
+    <string name="alert_review_hint">Vui lòng nhập giá trị trong phạm vi %1$d-%2$d</string>
 </resources>

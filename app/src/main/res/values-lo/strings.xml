@@ -890,6 +890,9 @@
     <string name="media">ສື່ມວນຊົນ</string>
     <string name="Alert_txt">ແຈ້ງເຕືອນ</string>
         <string name="Trainee_relationships" tools:ignore="ExtraTranslation">ຄູ່ສົມລົດຂອງຊາວກະສິກອນ</string>
+    <string name="other_certification">Other Certification</string>
+    <string name="alert_review">kha thi ponkhao aemn yunok khobkhed thi anunyad  man chathuk suknyuhai kuadsob phuboengaenynglabob</string>
+    <string name="alert_review_hint">kaluna sai kha phainaikhobkhed %1$d-%2$d</string>
     <!--    <string name="Trainee_relationships">ອື່ນໆ</string>-->
     <!--    <string name="Trainee_relationships">ລູກຊາຍ/ລູກສາວຂອງຊາວກະສິກອນ</string>-->
     <!--    <string name="Trainee_relationships">ຫລານສາວ/ຫລານຊາຍຂອງຊາວກະສິກອນ</string>-->

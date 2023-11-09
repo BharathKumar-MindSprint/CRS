@@ -1,5 +1,6 @@
 package com.olam.digital.ofis;
 
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
@@ -65,6 +66,7 @@ import com.olam.digital.ofis.coffeesurveyconstraints.QuestionInfo;
 import com.olam.digital.ofis.coffeesurveyconstraints.utils.CommonUtilities;
 import com.olam.digital.ofis.coffeesurveyconstraints.utils.DecimalDigitsInputFilter;
 import com.olam.digital.ofis.model.FarmerGeo;
+import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 import com.olam.digital.ofis.recordpolygon.AppConstants;
 
 import org.json.JSONArray;
@@ -126,6 +128,7 @@ public class DynamicQuestions {
     public Set<Integer> constraintsSet=new HashSet<>();
     public  Set<Integer> editQuestionSet=new HashSet<>();
     private static DynamicQuestions instance = null;
+    public OFISRoomDB roomDB = OFISRoomDB.getDbInstance(context);
 
 
 //    private ImageView imageViewInfo;
@@ -1961,6 +1964,8 @@ public class DynamicQuestions {
 
 
                             JSONArray range = display.getJSONArray("range");
+                            int validationOnRange=display.optInt("validationOnRangeId");
+
                             for(int i=0; i<range.length(); i++){
                                 JSONObject rangeArray = range.getJSONObject(i);
 
@@ -2004,25 +2009,34 @@ public class DynamicQuestions {
                                 long farmerId = Utilities.farmerId;
                                 String farmerAssignmentField = dl.getAssignmentByFarmerTypeID(farmerId , assignmentTypeColumn);
                                 if (assignmentField.equals(farmerAssignmentField)  && globally.equals("false")) {
-                                    min = rangeArray.getInt("min");
-                                    max = rangeArray.getInt("max");
-                                    et.setHint("Range : " + min + " to " + max);
-                                    if (min < 0){
-                                        setIntegerNegativeRangeFilter(et,min ,max );
-                                    }else {
-                                        setIntegerPositiveRangeFilter(et,min ,max );
-                                    }
+                                        min = rangeArray.getInt("min");
+                                        max = rangeArray.getInt("max");
+                                        if(validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeId()){
+                                            et.setHint(String.format(context.getResources().getString(R.string.alert_review_hint), min, max));
+                                        }else {
+                                            et.setHint("Range : " + min + " to " + max);
+                                        }
+                                        if (min < 0) {
+                                            setIntegerNegativeRangeFilter(et, min, max, validationOnRange);
+                                        } else {
+                                            setIntegerPositiveRangeFilter(et, min, max, validationOnRange);
+                                        }
 
                                     break;
                                 }else if (assignmentType.equals("null") && assignmentField.equals("null") && globally.equals("true")){
-                                    min = rangeArray.getInt("min");
-                                    max = rangeArray.getInt("max");
-                                    et.setHint("Range : " + min + " to " + max);
-                                    if (min < 0){
-                                        setIntegerNegativeRangeFilter(et,min ,max );
-                                    }else {
-                                        setIntegerPositiveRangeFilter(et,min ,max );
-                                    }
+                                        min = rangeArray.getInt("min");
+                                        max = rangeArray.getInt("max");
+                                        if(validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeId()){
+//                                            et.setHint(context.getResources().getString(R.string.alert_review_hint) +" "+min+"-"+max);
+                                            et.setHint(String.format(context.getResources().getString(R.string.alert_review_hint), min, max));
+                                        }else {
+                                            et.setHint("Range : " + min + " to " + max);
+                                        }
+                                        if (min < 0) {
+                                            setIntegerNegativeRangeFilter(et, min, max, validationOnRange);
+                                        } else {
+                                            setIntegerPositiveRangeFilter(et, min, max, validationOnRange);
+                                        }
                                 }
                             }
 
@@ -2380,7 +2394,7 @@ public class DynamicQuestions {
 
 
 
-    private void setIntegerPositiveRangeFilter(final EditText editText, final int startLimit, final int endLimit) {
+    private void setIntegerPositiveRangeFilter(final EditText editText, final int startLimit, final int endLimit, int validationOnRange) {
         InputFilter integerRangeFilter = new InputFilter() {
             @Override
             public CharSequence filter(CharSequence source, int start, int end,
@@ -2411,26 +2425,36 @@ public class DynamicQuestions {
                                     // Valid input starting from the minimum value
                                     if (number <= endLimit) {
                                         editText.setError(null);
-
-
+                                    }else{
+                                        if(validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeId()){
+                                            editText.setError(context.getString(R.string.alert_review));
+                                        }
                                     }
                                 } else {
-                                    // Input is less than the minimum value
-                                    editText.setError("Minimum Range " + startLimit);
+                                    if (validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeId()) {
+                                        editText.setError(context.getString(R.string.alert_review));
+                                    } else {
+                                        // Input is less than the minimum value
+                                        editText.setError("Minimum Range " + startLimit);
+                                    }
                                 }
                             }
                         }
                     });
 
                     if (inputNumber > endLimit) {
-                        editText.setError("Number must be less than or equal to " + endLimit);
+                        if(validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeId()){
+                            editText.setError(context.getString(R.string.alert_review));
+                        }else {
+                            editText.setError("Number must be less than or equal to " + endLimit);
+                        }
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
                                 editText.setError(null); // Clear the error message after delay
                             }
                         }, 3000); // Delay for 3 seconds
-                        return "";
+                        return (validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeId())? source:"";
 
                     } else {
                         if(inputNumber < startLimit) {
@@ -2452,7 +2476,7 @@ public class DynamicQuestions {
     }
 
 
-    private void setIntegerNegativeRangeFilter(final EditText editText, final int minLimit, final int maxLimit) {
+    private void setIntegerNegativeRangeFilter(final EditText editText, final int minLimit, final int maxLimit, int validationOnRange) {
         InputFilter negativeIntegerRangeFilter = new InputFilter() {
             @Override
             public CharSequence filter(CharSequence source, int start, int end,
@@ -2471,14 +2495,18 @@ public class DynamicQuestions {
                         editText.setError(null); // Clear any previous errors
                         return source;
                     } else {
-                        editText.setError("Number must be between " + minLimit + " and " + maxLimit);
+                        if(validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeId()){
+                            editText.setError(context.getString(R.string.alert_review));
+                        }else {
+                            editText.setError("Number must be between " + minLimit + " and " + maxLimit);
+                        }
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
                                 editText.setError(null); // Clear the error message after delay
                             }
                         }, 3000); // Delay for 3 seconds
-                        return "";
+                        return (validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeId())? source:"";
                     }
                 } catch (NumberFormatException e) {
                     // Ignore non-numeric input
