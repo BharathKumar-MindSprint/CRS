@@ -635,5 +635,9 @@
     <string name="attendee_name1">Attendee Name</string>
     <string name="attendee_relationship1">Relationship</string>
     <string name="attendee_sex1">Gender</string>
+    <string name="other_certification">Other Certification</string>
+    <string name="alert_review">Kh̀āthī̀ p̂xn xyū̀ nxk ch̀wng thī̀ xnuỵāt kh̀ā nận ca t̄hūk s̄̀ng pị h̄ı̂ p̄hū̂ dūlæ rabb trwc s̄xb</string>
+    <string name="alert_review_hint">Lütfen aralığında bir değer girin %1$d-%2$d</string>
+    <string name="range_hint_A_R">Phis̄ạy: %1$d-%2$d</string>
 
 </resources>
