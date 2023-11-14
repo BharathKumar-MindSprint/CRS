@@ -29,8 +29,8 @@ android {
         minSdkVersion 19
         targetSdkVersion 33
         multiDexEnabled true
-        versionCode 67
-        versionName "11.6.0"
+        versionCode 154
+        versionName "11.4.3"
 
         javaCompileOptions {
             annotationProcessorOptions {
