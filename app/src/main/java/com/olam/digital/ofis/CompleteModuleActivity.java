@@ -667,7 +667,7 @@ public class CompleteModuleActivity extends BaseActivity {
             public void onClick(View view) {
 
                 // validate all the submodules question is answered
-                boolean isMandated = false;
+                boolean isMandated = false,isMinVal = false;
                 try {
 //                    if (DynamicQuestions.getInstance().surveySet.size()>0) {
 //                        Toast.makeText(CompleteModuleActivity.this,res.getString(R.string.restriction_in_submodules),Toast.LENGTH_SHORT).show();
@@ -698,11 +698,15 @@ public class CompleteModuleActivity extends BaseActivity {
 
 
                     isMandated = dynamicQuestions.isAllRequiredSubmoduleAnswered(questions);
+                    isMinVal =dynamicQuestions.CheckMinMaxforQuestion(questions);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
                 if(! isMandated){
                     Toast.makeText(CompleteModuleActivity.this,res.getString(R.string.restriction_in_submodules),Toast.LENGTH_SHORT).show();
+                    return;
+                } else if(!isMinVal){
+                    Toast.makeText(CompleteModuleActivity.this,res.getString(R.string.valid_range),Toast.LENGTH_SHORT).show();
                     return;
                 }
                 // End
