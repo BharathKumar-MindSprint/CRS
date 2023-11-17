@@ -37,6 +37,7 @@
     <dimen name="ofis_elevation_height">1dp</dimen>
     <dimen name="home_activity_horizontal_margin">8dp</dimen>
     <dimen name="home_activity_vertical_margin">8dp</dimen>
+    <dimen name="ofis_xlarge_pad">20dp</dimen>
     <dimen name="ofis_large_pad">12dp</dimen>
     <dimen name="ofis_med_pad">8dp</dimen>
     <dimen name="ofis_small_pad">4dp</dimen>

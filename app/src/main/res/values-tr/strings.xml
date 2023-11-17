@@ -636,8 +636,13 @@
     <string name="attendee_name1">Attendee Name</string>
     <string name="attendee_relationship1">Relationship</string>
     <string name="attendee_sex1">Gender</string>
-    <string name="other_certification">Other Certification</string>
+    <string name="other_certification">Diğer Sertifikasyon</string>
     <string name="alert_review">Girilen değer izin verilen aralığın dışında, yönetici incelemesi için gönderilecek</string>
     <string name="alert_review_hint">Lütfen %1$d-%2$d aralığında bir değer girin</string>
     <string name="range_hint_A_R">Menzil: %1$d-%2$d</string>
+    <string name="please_enter_certification_details">Please enter Certification details</string>
+    <string name="update_certification">Update Certification</string>
+    <string name="certification">Certification</string>
+    <string name="certification_name">Sertifika Adı</string>
+    <string name="others">Others</string>
 </resources>

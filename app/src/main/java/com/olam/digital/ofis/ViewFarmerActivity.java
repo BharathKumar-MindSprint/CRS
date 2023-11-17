@@ -240,8 +240,8 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
     CustomListAdapter_Modules customListAdapter_modulesAdapter;
 
 
-    ImageView infoCloseImageView,plotInfoCloseImageView,consentInfoCloseImageView;
-    LinearLayout statusInfoLayout,plotStatusInfoLayout,consentStatusInfoLayout;
+    ImageView infoCloseImageView,plotInfoCloseImageView,consentInfoCloseImageView,cert_info_close_btn;
+    LinearLayout statusInfoLayout,plotStatusInfoLayout,consentStatusInfoLayout,cert_layout_notification;
 
     String multiFarmId=null;
     public static boolean farmSurvey;
@@ -318,6 +318,12 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 consentStatusInfoLayout.setVisibility(View.GONE);
             }
         });
+        cert_info_close_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                cert_layout_notification.setVisibility(View.GONE);
+            }
+        });
     }
 
 
@@ -329,6 +335,9 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         plotStatusInfoLayout = findViewById(R.id.plot_layout_notification);
         consentInfoCloseImageView = findViewById(R.id.consent_info_close_btn);
         consentStatusInfoLayout = findViewById(R.id.consent_layout_notification);
+        cert_info_close_btn = findViewById(R.id.cert_info_close_btn);
+        cert_layout_notification = findViewById(R.id.cert_layout_notification);
+
     }
 
     private void showInfo() {
@@ -340,6 +349,13 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
             } else {
                 statusInfoLayout.setVisibility(View.GONE);
             }
+        }
+
+        boolean isCertification = dl.isCertificationavailable(farmerId);
+        if(isCertification){
+            cert_layout_notification.setVisibility(View.GONE);
+        }else{
+            cert_layout_notification.setVisibility(View.VISIBLE);
         }
     }
 
@@ -1191,6 +1207,10 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
 //         add national id information
                     mc.addRow(new String[]{"0", res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), "0", "", "", "", res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), "","", "", "", "", "", "", "","", "", "National_ID"});
                 }
+                // add certification
+                mc.addRow(new String[]{"0", res.getString(R.string.update_certification), res.getString(R.string.update_certification), res.getString(R.string.update_certification), res.getString(R.string.update_certification),
+                        res.getString(R.string.update_certification), res.getString(R.string.update_certification), res.getString(R.string.update_certification), res.getString(R.string.update_certification), res.getString(R.string.update_certification),
+                        "0", "", "", "", res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), "","", "", "", "", "", "", "","", "", res.getString(R.string.certification)});
                /* int pendingSync = dl.fetchPlotCountByFarmerID(String.valueOf(farmerId));
                 int totalCount = dl.fetchPlotTotalCount(String.valueOf(farmerId));
                 */
@@ -2421,7 +2441,15 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                         }
                         in.putExtras(bundle);
                         startActivity(in);
-                    } else if (recordedLng != null && recordedLng.getText().equals("ConsentStatement")) {
+                    } else if (recordedLng != null && recordedLng.getText().equals(res.getString(R.string.certification))){
+                        MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_CERTIFICATION, ScreenNameConstants.BUTTON_CLICKED);
+                        Intent in = new Intent(this, AddCertificationsActivity.class);
+                        Bundle bundle = new Bundle();
+                        bundle.putLong(ChildLabourUtils.CHILD_FARMER_ID, farmerId);
+                        bundle.putString(FARMER_NAME, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME)));
+                        in.putExtras(bundle);
+                        startActivity(in);
+                    }else if (recordedLng != null && recordedLng.getText().equals("ConsentStatement")) {
                         MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_CHILD_LABOUR_SURVEY, ScreenNameConstants.BUTTON_CLICKED);
                         Intent in = new Intent(this, ConsentStatementActivity.class);
                         Bundle bundle = new Bundle();
