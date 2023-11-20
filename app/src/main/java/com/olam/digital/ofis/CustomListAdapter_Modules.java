@@ -50,6 +50,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.TimeZone;
 
 /**
@@ -155,7 +156,8 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                     textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
                     textView.setText(res.getString(R.string.update_phone_numbers_hint));
                 }
-            } else if (cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals("farmpolygon")) {
+            }
+            else if (cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals("farmpolygon")) {
                 boolean updateWaiting = dl.networkEntryTypeExistsByFarmerId("farmpolygon", currentFarmer.getLong(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)));
 
                 //int farmId = currentFarmer.getInt(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_ID));
@@ -202,7 +204,8 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                 }
                 //}
                 //Ticket-OFISDM-39 newly added
-            }else if(cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals("diagnostic")){
+            }
+            else if(cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals("diagnostic")){
                 int moduleId = cursor.getInt(cursor.getColumnIndex(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_CURRENT_SUBMODULE_ID));
                 OFISRoomDB db = OFISRoomDB.getDbInstance(context);
                 DmRecurrence dmRecurrence = db.dmRecurrenceDao().getRecurrenceByModuleId(String.valueOf(moduleId));
@@ -222,9 +225,11 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                     e.printStackTrace();
                 }*/
                 SimpleDateFormat inputDateFormat = null;
+                SimpleDateFormat inputDateFormatEndDate = null;
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     inputDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+                    inputDateFormatEndDate = new SimpleDateFormat("yyyy-MM-dd");
                 }
                 SimpleDateFormat outputDateFormatFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
@@ -235,8 +240,11 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                 Date startDateMain = null;
                 String outputDateString = null;
                 try {
-                    startDateMain = inputDateFormat.parse(startDateString);
-                    outputDateString = outputDateFormatFormatter.format(startDateMain);
+                    if (startDateString != null){
+                        startDateMain = inputDateFormat.parse(startDateString);
+                        outputDateString = outputDateFormatFormatter.format(startDateMain);
+                    }
+
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
@@ -321,55 +329,79 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                     }
                 }*/
 
-                String endDate = RecurrenceUtils.calculateEndDate(outputDateString, recurrence_frequency, recurrence_type);
-//                Toast.makeText(context, endDate, Toast.LENGTH_SHORT).show();
 
-                /*Date endDateValue = null;
+                String endDate = "";
+
+                if (outputDateString!=null){
+                    endDate = RecurrenceUtils.calculateEndDate(outputDateString, recurrence_frequency, recurrence_type);
+                }
+                Log.d("Module Records" , "Module Id: "+moduleId + " End Date: " + endDate);
+
+                Date endDateValue = null;
                 try {
-                    assert endDate != null;
-                    endDateValue = inputDateFormat.parse(endDate);
+//                    assert endDate != null;
+                    if (!Objects.equals(endDate, "")){
+                        endDateValue = inputDateFormatEndDate.parse(endDate);
+                    }
+
+
                 } catch (ParseException e) {
                     throw new RuntimeException(e);
-                }*/
+                }
 
 
                 // delete from answer table if the current date crossed recurrence value
-                /*if (currentDate.after(endDateValue)){
-                    // clear the answer table based on module
-                    db.dmSurveyAnswerTableDao().deleteAllDataForRecurrence(String.valueOf(moduleId));
-                }*/
+                if (endDateValue!=null){
 
-                if(currentDate.after(startDateMain) && moduleWithActionPlan) {
-                    imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_householdgps));
-                    enabledItem.setText("true");
-                    linearLayout.setBackgroundResource(R.drawable.list_item);
-                    moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
-                    textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
-                    textView.setText(res.getString(R.string.dm_hint_txt));
-                } else if (currentDate.after(startDateMain) && moduleWithoutActionPlan) {
-                    imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_householdgps));
-                    enabledItem.setText("true");
-                    linearLayout.setBackgroundResource(R.drawable.list_item);
-                    moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
-                    textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
-                    textView.setText(res.getString(R.string.dm_hint_txt));
-                } else{
-                    imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_householdgps));
-                    enabledItem.setText("false");
-                    linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
-                    moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-                    textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
-                    textView.setText(res.getString(R.string.dm_diognostic_module_subtitle));
-                }
-                List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByModuleId(String.valueOf(moduleId), String.valueOf(farmerId), true);
-                if(dmSurveyAnswerTableList.size() > 0){
-                    textView.setText(res.getString(R.string.dm_diognostic_module_subtitle));
-                }else{
-                    textView.setText(res.getString(R.string.dm_hint_txt));
+                    // just for reccurence trial
+                    /*if(moduleId == 1588){
+                        try {
+                            endDateValue = inputDateFormatEndDate.parse("2023-10-30");
+                        } catch (ParseException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }*/
+
+                    if (currentDate.after(endDateValue)){
+                        // clear the answer table based on module
+                        db.dmSurveyAnswerTableDao().deleteAllDataForRecurrence(String.valueOf(moduleId) , String.valueOf(farmerId));
+                        db.followUpItemMainTableDao().deleteAllDataForRecurrenceFollowUp(String.valueOf(moduleId) , String.valueOf(farmerId));
+                    }
                 }
 
+                if (startDateMain!=null){
+                    if(currentDate.after(startDateMain) && moduleWithActionPlan) {
+                        imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_householdgps));
+                        enabledItem.setText("true");
+                        linearLayout.setBackgroundResource(R.drawable.list_item);
+                        moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
+                        textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
+                        textView.setText(res.getString(R.string.dm_hint_txt));
+                    } else if (currentDate.after(startDateMain) && moduleWithoutActionPlan) {
+                        imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_householdgps));
+                        enabledItem.setText("true");
+                        linearLayout.setBackgroundResource(R.drawable.list_item);
+                        moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
+                        textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
+                        textView.setText(res.getString(R.string.dm_hint_txt));
+                    } else{
+                        imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_householdgps));
+                        enabledItem.setText("false");
+                        linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
+                        moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                        textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                        textView.setText(res.getString(R.string.dm_diognostic_module_subtitle));
+                    }
+                    List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByModuleId(String.valueOf(moduleId), String.valueOf(farmerId), true);
+                    if(dmSurveyAnswerTableList.size() > 0){
+                        textView.setText(res.getString(R.string.dm_diognostic_module_subtitle));
+                    }else{
+                        textView.setText(res.getString(R.string.dm_hint_txt));
+                    }
+                }
 
-            } else if (cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals(ChildLabourUtils.REG_CHILD)) {
+            }
+            else if (cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals(ChildLabourUtils.REG_CHILD)) {
 
                 imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_child));
                 enabledItem.setText("true");
@@ -379,7 +411,8 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                 textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
                 textView.setText(res.getString(R.string.update_childlabour_hint));
 
-            } else if (cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals(ChildLabourUtils.CHILDLABOUR_SURVEY)) {
+            }
+            else if (cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals(ChildLabourUtils.CHILDLABOUR_SURVEY)) {
 
                 imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_childsurvey));
                 enabledItem.setText("true");
@@ -388,7 +421,8 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                 moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
                 textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
                 textView.setText(res.getString(R.string.ModuleStatus));
-            } else if (cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals("PlotSurvey")) {
+            }
+            else if (cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals("PlotSurvey")) {
 
                 imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_childsurvey));
                 enabledItem.setText("true");
@@ -397,7 +431,8 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                 moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
                 textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
                 textView.setText(res.getString(R.string.ModuleStatus));
-            } else if (cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals("multifarm")) {
+            }
+            else if (cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals("multifarm")) {
                 boolean updateWaiting = dl.networkEntryTypeExistsByFarmerId("Multifarm Update", currentFarmer.getLong(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)));
                 if (updateWaiting || currentFarmer.getInt(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_SYNCED)) == 0) {
 
@@ -432,7 +467,8 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                     textView.setText("Multifarm update");
                 }
 
-            } else if (cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals("Signature")) {
+            }
+            else if (cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals("Signature")) {
                 boolean updateWaiting = dl.networkEntryTypeExistsByFarmerId("signature", currentFarmer.getLong(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)));
                 boolean farmerupdateWaiting = dl.networkEntryTypeExistsByFarmerId("farmer", currentFarmer.getLong(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)));
                 long farmerId = currentFarmer.getLong(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID));
@@ -456,7 +492,8 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                     textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
                     textView.setText(res.getString(R.string.update_signature_hint));
                 }
-            } else if (cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals("National_ID")) {
+            }
+            else if (cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals("National_ID")) {
                 boolean updateWaiting = dl.networkEntryTypeExistsByFarmerId("farmer", currentFarmer.getLong(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)));
                 boolean nidupdateWaiting = dl.networkEntryTypeExistsByFarmerId("National_ID", currentFarmer.getLong(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)));
                 long farmerId = currentFarmer.getLong(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID));
@@ -492,7 +529,8 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                     moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
                     textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
                 }
-            } else if (cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals(context.getResources().getString(R.string.household_farmer))) {
+            }
+            else if (cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals(context.getResources().getString(R.string.household_farmer))) {
                 String currenthhLat = currentFarmer.getString(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_HOUSEHOLD_LAT));
                 String currenthhLng = currentFarmer.getString(currentFarmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_HOUSEHOLD_LNG));
                 if (currenthhLat != null && currenthhLat.length() > 0 && (!currenthhLat.equalsIgnoreCase("null")) && currenthhLng != null && currenthhLng.length() > 0 && (!currenthhLng.equalsIgnoreCase("null"))) {
@@ -510,7 +548,8 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                     textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
                     textView.setText(res.getString(R.string.record_farm_location_hint));
                 }
-            } else {
+            }
+            else {
                 // Multifarm Location
                 if (MultiFarmUtils.isMultiFarmEnumerator) {
                     boolean isLocationCaptured = dl.getLocationInfo1(farmerId);
@@ -611,7 +650,8 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                     textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
                 }
         }
-        } else if (currentId < 0) {
+        }
+        else if (currentId < 0) {
            
             if (isConsentTrue) {
                 if (cursor.getInt(cursor.getColumnIndex(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_STATUS_FINISHED)) == 1) {
