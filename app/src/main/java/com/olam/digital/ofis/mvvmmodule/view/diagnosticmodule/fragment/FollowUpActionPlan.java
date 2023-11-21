@@ -93,10 +93,12 @@ public class FollowUpActionPlan extends Fragment {
     private static final int MY_GALLERYPERMISSION_CODE = 100;
     private static final int MY_GALLERYPERMISSION_CODE_TIRAMISU = 222;
     private static final int MY_CAMERA_PERMISSION_CODE = 500;
+
     private static final int MY_CAMERA_PERMISSION_CODE_TIRAMISU = 333;
     private static int CAMERA_REQUEST = 2277;
     private static int GALLERY_PICK = 2233;
     private static int GALLERY_PICK_DOCX = 4455;
+
     private static int GALLERY_QUESTION_ID = 0;
     private static final int REQUEST_CAMERA_PERMISSIONS = 931;
     private String mCurrentPhotoPath;
@@ -706,7 +708,7 @@ public class FollowUpActionPlan extends Fragment {
         if (dmSurveyAnswerTableList1.size() != 0) {
             actionPlanT = dmSurveyAnswerTableList1.get(0).actionPlanText;
             try {
-                actionPlanId = dmSurveyAnswerTableList1.get(0).actionPlanId;
+                actionPlanId = Integer.parseInt(dmSurveyAnswerTableList1.get(0).actionPlanId);
             }catch (NumberFormatException e){
                 e.printStackTrace();
             }catch (Exception e){

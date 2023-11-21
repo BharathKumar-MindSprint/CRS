@@ -331,11 +331,30 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
 
 
                 String endDate = "";
+                int recurrenceCount = 0;
+                Date newStartDate= null;
+                Date newEndDate = null;
+                Date lastReccurenceEndDate = null;
 
                 if (outputDateString!=null){
                     endDate = RecurrenceUtils.calculateEndDate(outputDateString, recurrence_frequency, recurrence_type);
+                    try {
+                        recurrenceCount = calculateRecurrenceCount(outputDateString, recurrence_type, recurrence_frequency);
+                        // Get the new start and end dates for the current recurrence
+                        newStartDate = getNewStartDate(outputDateString, recurrence_type, recurrence_frequency, recurrenceCount);
+                        newEndDate = getNewEndDate(newStartDate, recurrence_type, recurrence_frequency);
+                        lastReccurenceEndDate = findLastAttendedDate(startDateMain,newEndDate,recurrence_type,recurrence_frequency,recurrenceCount+1);
+                    } catch (ParseException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
                 Log.d("Module Records" , "Module Id: "+moduleId + " End Date: " + endDate);
+                Log.d("RecurrenceCount" , "Module Id: "+moduleId + "  ----Recurrence Count: " + recurrenceCount
+                        + "  ----newStartDate " + newStartDate + " ----newEndDate " + newEndDate +
+                        " ----recurrenceType " + recurrence_type + " ----recurrenceFreq " +recurrence_frequency);
+
+                db.dmMainModuleDao().updateRecurrenceCountStartEndDate(moduleId , String.valueOf(newStartDate) , String.valueOf(newEndDate) , recurrenceCount+1);
+
 
                 Date endDateValue = null;
                 try {
@@ -351,22 +370,51 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
 
 
                 // delete from answer table if the current date crossed recurrence value
-                if (endDateValue!=null){
 
-                    // just for reccurence trial
-                    /*if(moduleId == 1588){
-                        try {
-                            endDateValue = inputDateFormatEndDate.parse("2023-10-30");
-                        } catch (ParseException e) {
-                            throw new RuntimeException(e);
-                        }
-                    }*/
+                if (lastReccurenceEndDate!=null){
 
-                    if (currentDate.after(endDateValue)){
+
+                    if (currentDate.after(lastReccurenceEndDate) && !areDatesEqual(currentDate,startDateMain) ){
+
+
                         // clear the answer table based on module
                         db.dmSurveyAnswerTableDao().deleteAllDataForRecurrence(String.valueOf(moduleId) , String.valueOf(farmerId));
                         db.followUpItemMainTableDao().deleteAllDataForRecurrenceFollowUp(String.valueOf(moduleId) , String.valueOf(farmerId));
                     }
+
+                }
+
+
+                if (startDateMain!=null){
+                    if(currentDate.after(startDateMain) && moduleWithActionPlan) {
+                        imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_householdgps));
+                        enabledItem.setText("true");
+                        linearLayout.setBackgroundResource(R.drawable.list_item);
+                        moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
+                        textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
+                        textView.setText(res.getString(R.string.dm_hint_txt));
+                    } else if (currentDate.after(startDateMain) && moduleWithoutActionPlan) {
+                        imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_householdgps));
+                        enabledItem.setText("true");
+                        linearLayout.setBackgroundResource(R.drawable.list_item);
+                        moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
+                        textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
+                        textView.setText(res.getString(R.string.dm_hint_txt));
+                    } else{
+                        imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_householdgps));
+                        enabledItem.setText("false");
+                        linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
+                        moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                        textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
+                        textView.setText(res.getString(R.string.dm_diognostic_module_subtitle));
+                    }
+                    List<DmSurveyAnswerTable> dmSurveyAnswerTableList = db.dmSurveyAnswerTableDao().getDataByModuleId(String.valueOf(moduleId), String.valueOf(farmerId), true);
+                    if(dmSurveyAnswerTableList.size() > 0){
+                        textView.setText(res.getString(R.string.dm_diognostic_module_subtitle));
+                    }else{
+                        textView.setText(res.getString(R.string.dm_hint_txt));
+                    }
+
                 }
 
                 if (startDateMain!=null){
@@ -1098,6 +1146,140 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
             //  Toast.makeText(linearLayout.getContext(), mContext.getResources().getString(R.string.already_syned_survey_info), Toast.LENGTH_LONG).show();
             return true;
         });
+    }
+
+    private static int calculateRecurrenceCount(String startDateStr, String recurrenceType, int recurrenceFrequency)
+            throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Date startDate = sdf.parse(startDateStr);
+        Date currentDate = new Date();
+
+        Calendar startCalendar = Calendar.getInstance();
+        startCalendar.setTime(startDate);
+        Calendar currentCalendar = Calendar.getInstance();
+        currentCalendar.setTime(currentDate);
+
+        int recurrenceCount = 0;
+
+        switch (recurrenceType.toLowerCase()) {
+            case "days":
+                long daysDiff = (currentDate.getTime() - startDate.getTime()) / (24 * 60 * 60 * 1000);
+                recurrenceCount = (int) (daysDiff / recurrenceFrequency);
+                break;
+            case "weeks":
+                long weeksDiff = (currentCalendar.getTimeInMillis() - startCalendar.getTimeInMillis())
+                        / (7 * 24 * 60 * 60 * 1000);
+                recurrenceCount = (int) (weeksDiff / recurrenceFrequency);
+                break;
+            case "months":
+                int monthsDiff = (currentCalendar.get(Calendar.YEAR) - startCalendar.get(Calendar.YEAR)) * 12
+                        + currentCalendar.get(Calendar.MONTH) - startCalendar.get(Calendar.MONTH);
+                recurrenceCount = monthsDiff / recurrenceFrequency;
+                break;
+            case "years":
+                int yearsDiff = currentCalendar.get(Calendar.YEAR) - startCalendar.get(Calendar.YEAR);
+                recurrenceCount = yearsDiff / recurrenceFrequency;
+                break;
+            default:
+                System.out.println("Unsupported recurrence frequency");
+        }
+
+//        recurrenceCount++;
+        return recurrenceCount;
+    }
+
+    private static Date getNewStartDate(String startDate, String recurrenceType, int recurrenceFrequency,
+                                        int recurrenceCount) throws ParseException {
+//        recurrenceCount--;
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Calendar startCalendar = Calendar.getInstance();
+        startCalendar.setTime(sdf.parse(startDate));
+
+        switch (recurrenceType.toLowerCase()) {
+            case "days":
+                startCalendar.add(Calendar.DAY_OF_MONTH, recurrenceFrequency * recurrenceCount);
+                break;
+            case "weeks":
+                startCalendar.add(Calendar.WEEK_OF_MONTH, recurrenceFrequency * recurrenceCount);
+                break;
+            case "months":
+                startCalendar.add(Calendar.MONTH, recurrenceFrequency * recurrenceCount);
+                break;
+            case "years":
+                startCalendar.add(Calendar.YEAR, recurrenceFrequency * recurrenceCount);
+                break;
+            default:
+                System.out.println("Unsupported recurrence frequency");
+        }
+
+        return startCalendar.getTime();
+    }
+
+    private static Date getNewEndDate(Date newStartDate, String recurrenceType, int recurrenceFrequency) {
+        Calendar endCalendar = Calendar.getInstance();
+        endCalendar.setTime(newStartDate);
+
+        switch (recurrenceType.toLowerCase()) {
+            case "days":
+                endCalendar.add(Calendar.DAY_OF_MONTH, recurrenceFrequency);
+                break;
+            case "weeks":
+                endCalendar.add(Calendar.WEEK_OF_MONTH, recurrenceFrequency);
+                break;
+            case "months":
+                endCalendar.add(Calendar.MONTH, recurrenceFrequency);
+                break;
+            case "years":
+                endCalendar.add(Calendar.YEAR, recurrenceFrequency);
+                break;
+            default:
+                System.out.println("Unsupported recurrence frequency");
+        }
+
+        return endCalendar.getTime();
+    }
+
+    public static Date findLastAttendedDate(Date startDate, Date endDate, String recurrenceType,
+                                            int recurrenceFrequency, int recurrenceCount) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(startDate);
+
+        // Increment based on the recurrence type and frequency
+        for (int i = 0; i < recurrenceCount; i++) {
+            if ("days".equals(recurrenceType)) {
+                calendar.add(Calendar.DAY_OF_MONTH, recurrenceFrequency);
+            } else if ("months".equals(recurrenceType)) {
+                calendar.add(Calendar.MONTH, recurrenceFrequency);
+            } else if ("weeks".equals(recurrenceType)) {
+                calendar.add(Calendar.WEEK_OF_MONTH, recurrenceFrequency);
+            } else if ("years".equals(recurrenceType)) {
+                calendar.add(Calendar.YEAR, recurrenceFrequency);
+            }
+
+            // Check if the current date is after the old recurrence end date
+            if (calendar.getTime().after(endDate)) {
+                // Subtract one recurrence interval to get the last attended date
+                if ("days".equals(recurrenceType)) {
+                    calendar.add(Calendar.DAY_OF_MONTH, -recurrenceFrequency);
+                } else if ("months".equals(recurrenceType)) {
+                    calendar.add(Calendar.MONTH, -recurrenceFrequency);
+                } else if ("weeks".equals(recurrenceType)) {
+                    calendar.add(Calendar.WEEK_OF_MONTH, -recurrenceFrequency);
+                } else if ("years".equals(recurrenceType)) {
+                    calendar.add(Calendar.YEAR, -recurrenceFrequency);
+                }
+
+                return calendar.getTime();
+            }
+        }
+
+        // Return the start date if no recurrence has been attended
+        return startDate;
+    }
+
+    private static boolean areDatesEqual(Date date1, Date date2) {
+        // Check if the dates are equal
+        return date1 != null && date2 != null && !date1.equals(date2);
     }
 
 

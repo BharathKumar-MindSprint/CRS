@@ -220,6 +220,8 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
 
     private final static int MY_PROFILE_PIC_PERMISSIONS_REQUEST = 9998;
     private final static int MY_SIGNATURE_PIC_PERMISSIONS_REQUEST = 9997;
+
+    private static final int REQUEST_PERMISSIONS_FOR_TIRAMISU = 2507;
     private static final int PERMISSIONS_ACCESS_LOCATION = 6575;
     private static final int REQUEST_CHECK_SETTINGS = 100;
 
@@ -366,6 +368,32 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
             }
         }
         // Request Permission only for Android Version Marshmallow and above
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
+            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_AUDIO) != PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_VIDEO) != PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{
+                                android.Manifest.permission.CAMERA,
+                                android.Manifest.permission.READ_PHONE_STATE,
+                                android.Manifest.permission.READ_MEDIA_AUDIO,
+                                android.Manifest.permission.READ_MEDIA_VIDEO,
+                                android.Manifest.permission.READ_MEDIA_IMAGES,
+                                android.Manifest.permission.ACCESS_COARSE_LOCATION,
+                                android.Manifest.permission.RECORD_AUDIO,
+                                android.Manifest.permission.ACCESS_FINE_LOCATION},
+
+                        REQUEST_PERMISSIONS_FOR_TIRAMISU);
+            }
+        }
+        // Request Permission only for Android Version Marshmallow and above
+
         else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             // Check Phone Permission
             if (ContextCompat.checkSelfPermission(HomeActivity.this,
@@ -1950,9 +1978,11 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                 for (int i = 0; i < mainResponseList.size(); i++) {
                                     int id = mainResponseList.get(i).getId();
                                     int followUpDuration = mainResponseList.get(i).getFollowUpDuration();
+                                    String followUpDurationVal = mainResponseList.get(i).getFollowUpDurationVal();
                                     String assessmentType = mainResponseList.get(i).getAssessmentType();
                                     int surveyType = mainResponseList.get(i).getSurveyType();
                                     int followUpAttempts = mainResponseList.get(i).getFollowUpAttempts();
+                                    String followUpAttemptsVal = mainResponseList.get(i).getFollowUpAttemptsVal();
                                     String name = mainResponseList.get(i).getName();
                                     String nameFr = mainResponseList.get(i).getNameFr();
                                     String nameIdn = mainResponseList.get(i).getNameIdn();
@@ -2025,6 +2055,8 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                     user.followUpAttempts = followUpAttempts;
                                     user.displayLogic = displayLogic;
                                     user.maxScore = maxScore;
+                                    user.followUpAttemptsVal = followUpAttemptsVal;
+                                    user.followUpDurationVal = followUpDurationVal;
 //                                    user.assessmentResultType = assessmentResultType;
 
                                     db.dmMainModuleDao().insert(user);
@@ -2746,7 +2778,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                 followUpItemArrayList = response.body().getFollowUpResponseItemList().get(i).getFollowUpItemArrayList();
 
                                 ArrayList<ExistingModuleItem> existingModuleItemArrayList = new ArrayList<>();
-                                followUpItemArrayList.clear();
+                                existingModuleItemArrayList.clear();
                                 existingModuleItemArrayList = response.body().getFollowUpResponseItemList().get(i).getExistingModuleItemArrayList();
 
                                 for (int j = 0; j < followUpItemArrayList.size(); j++) {
@@ -2754,7 +2786,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                     int id = followUpItemArrayList.get(j).getId();
                                     int complianceId = followUpItemArrayList.get(j).getComplianceId();
                                     int moduleId = followUpItemArrayList.get(j).getModuleId();
-                                    int actionPlanId = followUpItemArrayList.get(j).getActionPlanId();
+                                    String actionPlanId = followUpItemArrayList.get(j).getActionPlanId();
                                     int dmSubModId = followUpItemArrayList.get(j).getDmSubModId();
                                     int attempt = followUpItemArrayList.get(j).getAttempt();
                                     long farmerId = followUpItemArrayList.get(j).getFarmerId();
@@ -2788,7 +2820,11 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                     followUpItemMainTable.isPortal = isPortal;
                                     followUpItemMainTable.farmerId = farmerId;
                                     followUpItemMainTable.isSync = true;
-                                    followUpItemMainTable.dmCapturedProof = captureProofList.size();
+                                    if (captureProofList!=null){
+                                        followUpItemMainTable.dmCapturedProof = captureProofList.size();
+                                    }else {
+                                        followUpItemMainTable.dmCapturedProof = 0;
+                                    }
 
                                     db.followUpItemMainTableDao().insert(followUpItemMainTable);
 

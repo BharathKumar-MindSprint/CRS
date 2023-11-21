@@ -100,12 +100,14 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
     public Resources res;
 
     private static final int MY_GALLERYPERMISSION_CODE = 100;
-    private static final int MY_GALLERYPERMISSION_CODE_TIRAMISU = 222;
     private static final int MY_CAMERA_PERMISSION_CODE = 500;
+
+    private static final int MY_GALLERYPERMISSION_CODE_TIRAMISU = 222;
     private static final int MY_CAMERA_PERMISSION_CODE_TIRAMISU = 333;
-    private static final int CAMERA_REQUEST = 2277;
-    private static final int GALLERY_PICK = 2233;
-    private static final int GALLERY_PICK_DOCX = 4455;
+    private static int CAMERA_REQUEST = 0;
+    private static int GALLERY_PICK = 2233;
+    private static int GALLERY_PICK_DOCX = 4455;
+
     private static int GALLERY_QUESTION_ID = 0;
 
     private static final int REQUEST_CAMERA_PERMISSIONS = 931;
@@ -903,7 +905,12 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
         EditText editTextCurrencyInput = new EditText(getActivity());
         editTextCurrencyInput.setHint("Amount");
         editTextCurrencyInput.setTextSize(14);
-        editTextCurrencyInput.setText(amountT);
+        if (amountT.equals("0")){
+            editTextCurrencyInput.setHint(amountT);
+        }else {
+            editTextCurrencyInput.setText(amountT);
+        }
+//        editTextCurrencyInput.setText(amountT);
         editTextCurrencyInput.setTextColor(getResources().getColor(R.color.black));
         editTextCurrencyInput.setPadding(0, 10, 0, 10);
         editTextCurrencyInput.setInputType(InputType.TYPE_CLASS_NUMBER);

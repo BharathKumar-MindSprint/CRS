@@ -78,6 +78,11 @@ public class DmMainModule {
 
     @ColumnInfo(name = "followUpDuration")
     public int followUpDuration;
+    @ColumnInfo(name = "followUpAttemptsVal")
+    public String followUpAttemptsVal;
+
+    @ColumnInfo(name = "followUpDurationVal")
+    public String followUpDurationVal;
 
     @ColumnInfo(name = "assessmentType")
     public String assessmentType;
@@ -91,6 +96,12 @@ public class DmMainModule {
     @ColumnInfo(name = "maxScore")
     public int maxScore;
 
+    @ColumnInfo(name = "recurrenceCount")
+    public String recurrenceCount;
 
+    @ColumnInfo(name = "recurrenceStartDate")
+    public String recurrenceStartDate;
 
+    @ColumnInfo(name = "recurrenceEndDate")
+    public String recurrenceEndDate;
 }

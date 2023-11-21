@@ -508,7 +508,6 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                 checkPermissions();
             }
 
-
         }
         initializeLoggingVariables();
     }
@@ -1009,6 +1008,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             permissions.add(Manifest.permission.ACCESS_FINE_LOCATION);
         }
+
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_AUDIO) == PackageManager.PERMISSION_GRANTED ||
                 ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_VIDEO) == PackageManager.PERMISSION_GRANTED ||

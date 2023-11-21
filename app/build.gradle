@@ -2,6 +2,9 @@
 apply plugin: 'com.android.application'
 apply plugin: 'org.sonarqube'
 
+//apply plugin: 'com.google.firebase.firebase-perf'
+
+
 
 android {
     signingConfigs {
@@ -27,10 +30,16 @@ android {
         resValue "string", "sync_account_type", applicationId
         buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofis"'
         minSdkVersion 19
+
+        //noinspection OldTargetApi
         targetSdkVersion 33
         multiDexEnabled true
-        versionCode 67
-        versionName "11.6.0"
+
+        versionCode 157
+        versionName "11.4.6"
+
+
+
 
         javaCompileOptions {
             annotationProcessorOptions {
@@ -43,8 +52,10 @@ android {
     buildTypes {
         debug {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.config
+            shrinkResources false
+//            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+//            signingConfig signingConfigs.config
+
         }
         release {
             lintOptions {
@@ -53,8 +64,10 @@ android {
                 abortOnError false
             }
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.release
+            shrinkResources false
+//            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+//            signingConfig signingConfigs.release
+
         }
     }
 

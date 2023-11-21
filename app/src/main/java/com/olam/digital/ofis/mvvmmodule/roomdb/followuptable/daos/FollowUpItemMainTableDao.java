@@ -63,4 +63,8 @@ public interface FollowUpItemMainTableDao {
 
     @Query("DELETE FROM FollowUpItemMainTable WHERE moduleId=:id and farmerId=:farmerID")
     void deleteAllDataForRecurrenceFollowUp(String id , String farmerID);
+
+    @Query("SELECT count(*) FROM FOLLOWUPITEMMAINTABLE WHERE moduleId=:id and attempt=:attempt and farmerId=:farmerID")
+    int getCountOfResolvedNotResolved(String id , String attempt , String farmerID );
+
 }
