@@ -104,9 +104,9 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
     private static final int MY_GALLERYPERMISSION_CODE_TIRAMISU = 222;
     private static final int MY_CAMERA_PERMISSION_CODE_TIRAMISU = 333;
-    private static int CAMERA_REQUEST = 0;
-    private static int GALLERY_PICK = 2233;
-    private static int GALLERY_PICK_DOCX = 4455;
+    private static final int CAMERA_REQUEST = 2277;
+    private static final int GALLERY_PICK = 2233;
+    private static final int GALLERY_PICK_DOCX = 4455;
 
     private static int GALLERY_QUESTION_ID = 0;
 
