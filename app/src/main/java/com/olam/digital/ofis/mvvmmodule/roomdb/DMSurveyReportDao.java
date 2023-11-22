@@ -16,6 +16,9 @@ public interface DMSurveyReportDao {
     @Query("SELECT * FROM DMSurveyReport WHERE farmerId = :farmerId AND moduleId = :moduleId")
     DMSurveyReport getFinalDMSurveyReports(long farmerId, int moduleId);
 
+    @Query("DELETE FROM DMSurveyReport WHERE moduleId = :moduleId AND farmerId = :farmerId")
+    void deleteAlreadyStoredData(int moduleId, int farmerId);
+
 
 
     /*@Query("SELECT * FROM DMSurveyReport WHERE id = :reportId")

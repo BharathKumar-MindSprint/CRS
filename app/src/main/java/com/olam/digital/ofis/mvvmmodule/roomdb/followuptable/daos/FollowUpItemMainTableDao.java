@@ -60,4 +60,11 @@ public interface FollowUpItemMainTableDao {
 
     @Query("SELECT createdAt FROM FollowUpItemMainTable WHERE attempt =:attempt AND farmerId =:farmerID ORDER BY uid DESC LIMIT 1")
     String getFollowUpStartDate(String attempt , String farmerID);
+
+    @Query("DELETE FROM FollowUpItemMainTable WHERE moduleId=:id and farmerId=:farmerID")
+    void deleteAllDataForRecurrenceFollowUp(String id , String farmerID);
+
+    @Query("SELECT count(*) FROM FOLLOWUPITEMMAINTABLE WHERE moduleId=:id and attempt=:attempt and farmerId=:farmerID")
+    int getCountOfResolvedNotResolved(String id , String attempt , String farmerID );
+
 }

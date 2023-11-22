@@ -35,10 +35,13 @@ public interface DmMainModuleDao {
 
     @Query("SELECT startDate FROM DmMainModule WHERE id=:moduleId")
     String getStartData(int moduleId);
-    @Query("SELECT followUpDuration FROM DmMainModule WHERE id=:moduleId")
-    Integer getFollowUpDuration(String moduleId);
+    @Query("SELECT followUpDurationVal FROM DmMainModule WHERE id=:moduleId")
+    int getFollowUpDurationVal(String moduleId);
 
-    @Query("SELECT followUpAttempts FROM DmMainModule WHERE id=:moduleId")
-    Integer getFollowUpAttempts(String moduleId);
+    @Query("SELECT followUpAttemptsVal FROM DmMainModule WHERE id=:moduleId")
+    String getFollowUpAttemptsVal(String moduleId);
 
+
+    @Query("UPDATE DmMainModule SET recurrenceCount =:recurrenceCount, recurrenceStartDate = :startDate, recurrenceEndDate =:endDate WHERE id = :moduleId")
+    void updateRecurrenceCountStartEndDate(int moduleId , String startDate , String endDate , int recurrenceCount);
 }
