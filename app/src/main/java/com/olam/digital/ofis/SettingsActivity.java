@@ -1,5 +1,6 @@
 package com.olam.digital.ofis;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -63,6 +64,8 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
     private boolean updateData=false;
     // Runtime Permission Request Code
     private final static int MY_PERMISSIONS_REQUEST = 9999;
+
+    private final static int REQUEST_PERMISSIONS_FOR_TIRAMISU = 7777;
     Button buttonPrivacyConsent, buttonReenterPasscode;
     private long lastClickTime = 0;
     TextView deviceid;
@@ -98,8 +101,25 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
                 }else {
                 // For clear cache functionality
                 // FileUtils.deleteQuietly(context.getCacheDir());
-                // Request Permission only for Android Version Marshmallow and above
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
+                        if (ContextCompat.checkSelfPermission(SettingsActivity.this, android.Manifest.permission.CAMERA) +
+                                ContextCompat.checkSelfPermission(SettingsActivity.this, Manifest.permission.READ_MEDIA_AUDIO) +
+                                ContextCompat.checkSelfPermission(SettingsActivity.this, Manifest.permission.READ_MEDIA_VIDEO) +
+                                ContextCompat.checkSelfPermission(SettingsActivity.this, Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED) {
+                            ActivityCompat.requestPermissions(SettingsActivity.this,
+                                    new String[]{
+                                            android.Manifest.permission.CAMERA,
+                                            android.Manifest.permission.READ_MEDIA_AUDIO,
+                                            android.Manifest.permission.READ_MEDIA_VIDEO,
+                                            android.Manifest.permission.READ_MEDIA_IMAGES},
+
+                                    REQUEST_PERMISSIONS_FOR_TIRAMISU);
+                        }else {
+                            // Permission already granted
+                            bindSaveButton();
+                        }
+                    }else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     // Check Phone Permission
                     if (ContextCompat.checkSelfPermission(SettingsActivity.this,
                             android.Manifest.permission.READ_PHONE_STATE)
@@ -386,6 +406,31 @@ public class SettingsActivity extends AppCompatActivity implements OnAccessToken
                             showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
                         }
                     }
+                }
+            }
+            case REQUEST_PERMISSIONS_FOR_TIRAMISU: {
+                try {
+                    if (grantResults.length > 0 &&
+                            grantResults[0] == PackageManager.PERMISSION_GRANTED &&
+                            grantResults[1] == PackageManager.PERMISSION_GRANTED &&
+                            grantResults[2] == PackageManager.PERMISSION_GRANTED &&
+                            grantResults[3] == PackageManager.PERMISSION_GRANTED ) {
+                        // Permissions granted, proceed with your code
+                        bindSaveButton();
+                    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+                            && (!shouldShowRequestPermissionRationale(permissions[0])
+                            || !shouldShowRequestPermissionRationale(permissions[1])
+                            || !shouldShowRequestPermissionRationale(permissions[2])
+                            || !shouldShowRequestPermissionRationale(permissions[3])
+                    )) {
+                        showSettingsDialog(getResources().getString(R.string.go_to_settings_msg));
+
+                    }else {
+                        Toast.makeText(this, R.string.permission_denial_msg_android_13_above, Toast.LENGTH_LONG).show();
+                    }
+                    break;
+                }catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         }
