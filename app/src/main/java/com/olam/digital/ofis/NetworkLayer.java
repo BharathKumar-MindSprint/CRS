@@ -6002,6 +6002,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
              for (int i=0; i < filePaths.size(); i++) {
                 File file = new File(filePaths.get(i));
                 RequestBody fileBody = RequestBody.create(MEDIA_TYPE_PNG, file);
+                builder.addFormDataPart("type" , "DM");
                 builder.addFormDataPart("files", fileName.get(i), fileBody);
             }
 
@@ -6043,7 +6044,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     @Override
                     public void onFailure(Call call, IOException e) {
 //                        Toast.makeText(context, "Inside Failing", Toast.LENGTH_SHORT).show();
-                        Log.d("UPLOAD_FILE_FAILURE","2");
+                        Log.d("UPLOAD_FILE_FAILURE",e.toString());
                     }
                 });
             }

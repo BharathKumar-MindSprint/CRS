@@ -3832,75 +3832,76 @@ public class DynamicQuestions {
                 displayConfig = new JSONObject(questions.getString(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION)));
                 if (displayConfig.has("display")) {
                     JSONObject display = displayConfig.getJSONObject("display");
-                    maxSelection = display.getString("maxSelection");
-                    JSONArray range = display.getJSONArray("lookupProperties");
+                    if(display.has("lookupProperties")){
+                        maxSelection = display.getString("maxSelection");
+                        JSONArray range = display.getJSONArray("lookupProperties");
 
-                    for(int i=0; i<range.length(); i++){
-                        JSONObject rangeArray = range.getJSONObject(i);
-                        String lookupID = rangeArray.getString("lookupValueId");
-                        assignmentType = rangeArray.getString("assignmentType");
-                        assignmentField = rangeArray.getString("assignmentField");
-                        isDefault = rangeArray.getString("isDefault");
-                        if (rangeArray.has("active")){
-                            isActive = rangeArray.getString("active");
-                        }
+                        for(int i=0; i<range.length(); i++){
+                            JSONObject rangeArray = range.getJSONObject(i);
+                            String lookupID = rangeArray.getString("lookupValueId");
+                            assignmentType = rangeArray.getString("assignmentType");
+                            assignmentField = rangeArray.getString("assignmentField");
+                            isDefault = rangeArray.getString("isDefault");
+                            if (rangeArray.has("active")){
+                                isActive = rangeArray.getString("active");
+                            }
 
 
-                        String assignmentTypeColumn = "";
+                            String assignmentTypeColumn = "";
 
-                        switch (assignmentType){
-                            case "1" :
-                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID;
-                                break;
-                            case "2" :
-                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_REGIONID;
-                                break;
-                            case "3" :
-                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_DISTRICTID;
-                                break;
-                            case "4" :
-                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID;
-                                break;
-                            case "5" :
-                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID;
-                                break;
-                            case "6" :
-                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID;
-                                break;
-                            case "7" :
-                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID;
-                                break;
-                            case "8" :
-                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PARTNER_ID;
-                                break;
-                            case "9" :
-                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PROGRAMME_ID;
-                                break;
-                        }
+                            switch (assignmentType){
+                                case "1" :
+                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID;
+                                    break;
+                                case "2" :
+                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_REGIONID;
+                                    break;
+                                case "3" :
+                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_DISTRICTID;
+                                    break;
+                                case "4" :
+                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID;
+                                    break;
+                                case "5" :
+                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID;
+                                    break;
+                                case "6" :
+                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID;
+                                    break;
+                                case "7" :
+                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID;
+                                    break;
+                                case "8" :
+                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PARTNER_ID;
+                                    break;
+                                case "9" :
+                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PROGRAMME_ID;
+                                    break;
+                            }
 
-                        String farmerAssignmentField = dl.getAssignmentByFarmerTypeID(farmerId , assignmentTypeColumn);
+                            String farmerAssignmentField = dl.getAssignmentByFarmerTypeID(farmerId , assignmentTypeColumn);
 
-                        if (assignmentField.equals(farmerAssignmentField) || assignmentType.equals("null") && assignmentField.equals("null")) {
+                            if (assignmentField.equals(farmerAssignmentField) || assignmentType.equals("null") && assignmentField.equals("null")) {
 
-                            if (isActive.toLowerCase().equals("true") || isActive.equals("")) {
-                                // generate row item
-                                TableRow tr = (TableRow) inflater.inflate(R.layout.module_checkbox_table_row, tl, false);
+                                if (isActive.toLowerCase().equals("true") || isActive.equals("")) {
+                                    // generate row item
+                                    TableRow tr = (TableRow) inflater.inflate(R.layout.module_checkbox_table_row, tl, false);
 
-                                TextView tvId = (TextView) tr.findViewById(R.id.cbId);
-                                TextView tv = (TextView) tr.findViewById(R.id.cbTitle);
-                                CheckBox cb = (CheckBox) tr.findViewById(R.id.cbCheckBox);
+                                    TextView tvId = (TextView) tr.findViewById(R.id.cbId);
+                                    TextView tv = (TextView) tr.findViewById(R.id.cbTitle);
+                                    CheckBox cb = (CheckBox) tr.findViewById(R.id.cbCheckBox);
 
-                                // last line
+                                    // last line
 
 //                            final int cbId = checkboxes.getInt(checkboxes.getColumnIndex("_id"));
 
 //                            int columnIndex = (checkboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) != -1) ? checkboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) : checkboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE);
 
 
-                                String checkBoxName = dl.getValueByLookUpID(lookupID);
-                                tvId.setText(lookupID);
-                                tv.setText(checkBoxName);
-                                tl.addView(tr);
+                                    String checkBoxName = dl.getValueByLookUpID(lookupID);
+                                    tvId.setText(lookupID);
+                                    tv.setText(checkBoxName);
+                                    tl.addView(tr);
 
                             /*if (cbAnswers.getCount() == 0) {
                                 if (isDefault.equalsIgnoreCase("true")) {
@@ -3909,129 +3910,255 @@ public class DynamicQuestions {
                                 }
                             }*/
 
-                                // initilaize default look up globally
-                                // pre-fill checkboxes that have been previously ticked
-                                if (cbAnswers.getCount() > 0) {
-                                    // disable while loading the "Not Applicable"
-                                    if (Integer.parseInt(lookupID) == defaultLookUpValue) {
-                                        cb.setEnabled(false);
-                                    }
-                                    //End
-                                    while (cbAnswers.moveToNext()) {
-                                        if (cbAnswers.getInt(cbAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_INT)) == Integer.parseInt(lookupID)) {
-                                            cb.setChecked(true);
-                                            cb.setEnabled(true);
-                                            checkboxCount[0]++;
+                                    // initilaize default look up globally
+                                    // pre-fill checkboxes that have been previously ticked
+                                    if (cbAnswers.getCount() > 0) {
+                                        // disable while loading the "Not Applicable"
+                                        if (Integer.parseInt(lookupID) == defaultLookUpValue) {
+                                            cb.setEnabled(false);
+                                        }
+                                        //End
+                                        while (cbAnswers.moveToNext()) {
+                                            if (cbAnswers.getInt(cbAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_INT)) == Integer.parseInt(lookupID)) {
+                                                cb.setChecked(true);
+                                                cb.setEnabled(true);
+                                                checkboxCount[0]++;
+                                            }
+                                        }
+                                        cbAnswers.moveToPosition(-1);
+                                    } else {
+                                        // N/A Question for franklin
+                                        if (defaultLookUpValue != 0) {
+                                            if (defaultLookUpValue == Integer.parseInt(lookupID)) {
+                                                cb.setChecked(true);
+                                                cb.setEnabled(true);
+                                            }
                                         }
                                     }
-                                    cbAnswers.moveToPosition(-1);
-                                } else {
-                                    // N/A Question for franklin
-                                    if (defaultLookUpValue != 0) {
-                                        if (defaultLookUpValue == Integer.parseInt(lookupID)) {
-                                            cb.setChecked(true);
-                                            cb.setEnabled(true);
+                                    tr.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            CheckBox checkbox = (CheckBox) view.findViewById(R.id.cbCheckBox);
+
+                                            checkbox.setChecked(!checkbox.isChecked());
+                                            checkbox.callOnClick();
                                         }
+
+                                    });
+
+                                    //stick the answer in the question itself
+                                    int finalDefaultLookUpValue = defaultLookUpValue;
+                                    String finalDatatype = datatype;
+                                    String finalMaxSelection = maxSelection;
+                                    cb.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            CheckBox checkbox = (CheckBox) view.findViewById(R.id.cbCheckBox);
+                                            if (checkbox.isChecked()) {
+                                                checkboxCount[0]++;
+                                            } else {
+                                                checkboxCount[0]--;
+                                            }
+
+                                            if (singleSelect) {
+                                                int ssTableRows = tl.getChildCount();
+                                                for (int j = 0; j < ssTableRows; j++) {
+                                                    TableRow ssTr = (TableRow) tl.getChildAt(j);
+                                                    CheckBox ssTcb = (CheckBox) ssTr.findViewById(R.id.cbCheckBox);
+
+                                                    ssTcb.setChecked(false);
+                                                }
+                                                CheckBox clickedCb = (CheckBox) view;
+                                                clickedCb.setChecked(true);
+                                            }
+
+                                            // Update the Not applicable field if none of the value is selected
+                                            if (finalDefaultLookUpValue != 0) {
+                                                int ssTableRows = tl.getChildCount();
+                                                boolean checkboxTicked = false;
+                                                int count = 0;
+                                                for (int j = 0; j < ssTableRows; j++) {
+                                                    TableRow ssTr = (TableRow) tl.getChildAt(j);
+                                                    TextView cbId = (TextView) ssTr.findViewById(R.id.cbId);
+                                                    CheckBox ssTcb = (CheckBox) ssTr.findViewById(R.id.cbCheckBox);
+                                                    if (ssTcb.isChecked()) {
+                                                        checkboxTicked = true;
+                                                    }
+                                                    if (Integer.parseInt(cbId.getText().toString()) != finalDefaultLookUpValue) {
+                                                        if (ssTcb.isChecked()) {
+                                                            count++;
+                                                        }
+                                                    }
+
+                                                }
+                                                if (!checkboxTicked) {
+                                                    for (int j = 0; j < ssTableRows; j++) {
+                                                        TableRow ssTr = (TableRow) tl.getChildAt(j);
+                                                        CheckBox ssTcb = (CheckBox) ssTr.findViewById(R.id.cbCheckBox);
+                                                        TextView cbId = (TextView) ssTr.findViewById(R.id.cbId);
+                                                        if (Integer.parseInt(cbId.getText().toString()) == finalDefaultLookUpValue) {
+                                                            ssTcb.setChecked(true);
+                                                            ssTcb.setEnabled(true);
+                                                        }
+                                                    }
+                                                }
+
+                                                // Remove the Not applicable when other selected.
+                                                if (count > 0) {
+                                                    for (int j = 0; j < ssTableRows; j++) {
+                                                        TableRow ssTr = (TableRow) tl.getChildAt(j);
+                                                        CheckBox ssTcb = (CheckBox) ssTr.findViewById(R.id.cbCheckBox);
+                                                        TextView cbId = (TextView) ssTr.findViewById(R.id.cbId);
+                                                        if (Integer.parseInt(cbId.getText().toString()) == finalDefaultLookUpValue) {
+                                                            ssTcb.setChecked(false);
+                                                            ssTcb.setEnabled(false);
+                                                        }
+                                                    }
+                                                }
+
+                                            }
+                                            if (finalMaxSelection!="null"){
+                                                if (checkboxCount[0] > Integer.parseInt(finalMaxSelection)) {
+                                                    cb.setChecked(false);
+                                                    checkboxCount[0]--;
+                                                    Toast.makeText(context, "You can only select " + finalMaxSelection + " options", Toast.LENGTH_SHORT).show();
+                                                }
+                                            }
+
+
+                                            saveMultipleAnswerEntry(questionId, 0, finalDatatype, tl);
+                                        }
+                                    });
+
+                                }
+                            }
+
+                        }
+                    }else{
+                        while (checkboxes.moveToNext()) {
+                            // generate row item
+                            TableRow tr = (TableRow) inflater.inflate(R.layout.module_checkbox_table_row, tl, false);
+
+                            TextView tvId = (TextView) tr.findViewById(R.id.cbId);
+                            TextView tv = (TextView) tr.findViewById(R.id.cbTitle);
+
+                            final int cbId = checkboxes.getInt(checkboxes.getColumnIndex("_id"));
+
+                            tvId.setText(String.valueOf(cbId));
+
+                            int columnIndex = (checkboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) != -1) ? checkboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) : checkboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE);
+                            tv.setText(checkboxes.getString(columnIndex));
+
+                            CheckBox cb = (CheckBox) tr.findViewById(R.id.cbCheckBox);
+                            tl.addView(tr);
+                            // initilaize default look up globally
+                            // pre-fill checkboxes that have been previously ticked
+                            if (cbAnswers.getCount() > 0) {
+                                // disable while loading the "Not Applicable"
+                                if(cbId == defaultLookUpValue){
+                                    cb.setEnabled(false);
+                                }
+                                //End
+                                while (cbAnswers.moveToNext()) {
+                                    if (cbAnswers.getInt(cbAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_INT)) == cbId) {
+                                        cb.setChecked(true);
+                                        cb.setEnabled(true);
                                     }
                                 }
-                                tr.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-                                        CheckBox checkbox = (CheckBox) view.findViewById(R.id.cbCheckBox);
-
-                                        checkbox.setChecked(!checkbox.isChecked());
-                                        checkbox.callOnClick();
+                                cbAnswers.moveToPosition(-1);
+                            }else {
+                                // N/A Question for franklin
+                                if (defaultLookUpValue != 0) {
+                                    if (defaultLookUpValue == cbId) {
+                                        cb.setChecked(true);
+                                        cb.setEnabled(true);
                                     }
-
-                                });
-
-                                //stick the answer in the question itself
-                                int finalDefaultLookUpValue = defaultLookUpValue;
-                                String finalDatatype = datatype;
-                                String finalMaxSelection = maxSelection;
-                                cb.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-                                        CheckBox checkbox = (CheckBox) view.findViewById(R.id.cbCheckBox);
-                                        if (checkbox.isChecked()) {
-                                            checkboxCount[0]++;
-                                        } else {
-                                            checkboxCount[0]--;
-                                        }
-
-                                        if (singleSelect) {
-                                            int ssTableRows = tl.getChildCount();
-                                            for (int j = 0; j < ssTableRows; j++) {
-                                                TableRow ssTr = (TableRow) tl.getChildAt(j);
-                                                CheckBox ssTcb = (CheckBox) ssTr.findViewById(R.id.cbCheckBox);
-
-                                                ssTcb.setChecked(false);
-                                            }
-                                            CheckBox clickedCb = (CheckBox) view;
-                                            clickedCb.setChecked(true);
-                                        }
-
-                                        // Update the Not applicable field if none of the value is selected
-                                        if (finalDefaultLookUpValue != 0) {
-                                            int ssTableRows = tl.getChildCount();
-                                            boolean checkboxTicked = false;
-                                            int count = 0;
-                                            for (int j = 0; j < ssTableRows; j++) {
-                                                TableRow ssTr = (TableRow) tl.getChildAt(j);
-                                                TextView cbId = (TextView) ssTr.findViewById(R.id.cbId);
-                                                CheckBox ssTcb = (CheckBox) ssTr.findViewById(R.id.cbCheckBox);
-                                                if (ssTcb.isChecked()) {
-                                                    checkboxTicked = true;
-                                                }
-                                                if (Integer.parseInt(cbId.getText().toString()) != finalDefaultLookUpValue) {
-                                                    if (ssTcb.isChecked()) {
-                                                        count++;
-                                                    }
-                                                }
-
-                                            }
-                                            if (!checkboxTicked) {
-                                                for (int j = 0; j < ssTableRows; j++) {
-                                                    TableRow ssTr = (TableRow) tl.getChildAt(j);
-                                                    CheckBox ssTcb = (CheckBox) ssTr.findViewById(R.id.cbCheckBox);
-                                                    TextView cbId = (TextView) ssTr.findViewById(R.id.cbId);
-                                                    if (Integer.parseInt(cbId.getText().toString()) == finalDefaultLookUpValue) {
-                                                        ssTcb.setChecked(true);
-                                                        ssTcb.setEnabled(true);
-                                                    }
-                                                }
-                                            }
-
-                                            // Remove the Not applicable when other selected.
-                                            if (count > 0) {
-                                                for (int j = 0; j < ssTableRows; j++) {
-                                                    TableRow ssTr = (TableRow) tl.getChildAt(j);
-                                                    CheckBox ssTcb = (CheckBox) ssTr.findViewById(R.id.cbCheckBox);
-                                                    TextView cbId = (TextView) ssTr.findViewById(R.id.cbId);
-                                                    if (Integer.parseInt(cbId.getText().toString()) == finalDefaultLookUpValue) {
-                                                        ssTcb.setChecked(false);
-                                                        ssTcb.setEnabled(false);
-                                                    }
-                                                }
-                                            }
-
-                                        }
-                                        if (finalMaxSelection!="null"){
-                                            if (checkboxCount[0] > Integer.parseInt(finalMaxSelection)) {
-                                                cb.setChecked(false);
-                                                checkboxCount[0]--;
-                                                Toast.makeText(context, "You can only select " + finalMaxSelection + " options", Toast.LENGTH_SHORT).show();
-                                            }
-                                        }
-
-
-                                        saveMultipleAnswerEntry(questionId, 0, finalDatatype, tl);
-                                    }
-                                });
-
+                                }
                             }
-                        }
 
+
+
+                            tr.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    CheckBox checkbox = (CheckBox) view.findViewById(R.id.cbCheckBox);
+
+                                    checkbox.setChecked(!checkbox.isChecked());
+                                    checkbox.callOnClick();
+                                }
+
+                            });
+
+                            //stick the answer in the question itself
+                            int finalDefaultLookUpValue = defaultLookUpValue;
+                            String finalDatatype1 = datatype;
+                            cb.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    if (singleSelect) {
+                                        int ssTableRows = tl.getChildCount();
+                                        for (int j = 0; j < ssTableRows; j++) {
+                                            TableRow ssTr = (TableRow) tl.getChildAt(j);
+                                            CheckBox ssTcb = (CheckBox) ssTr.findViewById(R.id.cbCheckBox);
+
+                                            ssTcb.setChecked(false);
+                                        }
+                                        CheckBox clickedCb = (CheckBox) view;
+                                        clickedCb.setChecked(true);
+                                    }
+
+                                    // Update the Not applicable field if none of the value is selected
+                                    if (finalDefaultLookUpValue !=0){
+                                        int ssTableRows = tl.getChildCount();
+                                        boolean checkboxTicked=false;
+                                        int  count = 0;
+                                        for (int j = 0; j < ssTableRows; j++) {
+                                            TableRow ssTr = (TableRow) tl.getChildAt(j);
+                                            TextView cbId = (TextView) ssTr.findViewById(R.id.cbId);
+                                            CheckBox ssTcb = (CheckBox) ssTr.findViewById(R.id.cbCheckBox);
+                                            if (ssTcb.isChecked()) {
+                                                checkboxTicked=true;
+                                            }
+                                            if (Integer.parseInt(cbId.getText().toString()) != finalDefaultLookUpValue){
+                                                if (ssTcb.isChecked()){
+                                                    count++;
+                                                }
+                                            }
+
+                                        }
+                                        if (!checkboxTicked){
+                                            for (int j = 0; j < ssTableRows; j++) {
+                                                TableRow ssTr = (TableRow) tl.getChildAt(j);
+                                                CheckBox ssTcb = (CheckBox) ssTr.findViewById(R.id.cbCheckBox);
+                                                TextView cbId = (TextView) ssTr.findViewById(R.id.cbId);
+                                                if (Integer.parseInt(cbId.getText().toString()) == finalDefaultLookUpValue){
+                                                    ssTcb.setChecked(true);
+                                                    ssTcb.setEnabled(true);
+                                                }
+                                            }
+                                        }
+
+                                        // Remove the Not applicable when other selected.
+                                        if(count>0){
+                                            for (int j = 0; j < ssTableRows; j++) {
+                                                TableRow ssTr = (TableRow) tl.getChildAt(j);
+                                                CheckBox ssTcb = (CheckBox) ssTr.findViewById(R.id.cbCheckBox);
+                                                TextView cbId = (TextView) ssTr.findViewById(R.id.cbId);
+                                                if (Integer.parseInt(cbId.getText().toString()) == finalDefaultLookUpValue){
+                                                    ssTcb.setChecked(false);
+                                                    ssTcb.setEnabled(false);
+                                                }
+                                            }
+                                        }
+
+                                    }
+
+                                    saveMultipleAnswerEntry(questionId, 0, finalDatatype1, tl);
+                                }
+                            });
+
+
+                        }
                     }
 
                 }else {
@@ -4642,218 +4769,291 @@ public class DynamicQuestions {
                 displayConfig = new JSONObject(questions.getString(questions.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION)));
                 if (displayConfig.has("display")) {
                     JSONObject display = displayConfig.getJSONObject("display");
-                    maxSelection = display.getString("maxSelection");
-                    JSONArray range = display.getJSONArray("lookupProperties");
+                    if(display.has("lookupProperties")){
+                        maxSelection = display.getString("maxSelection");
+                        JSONArray range = display.getJSONArray("lookupProperties");
 
-                    for(int i=0; i<range.length(); i++){
-                        JSONObject rangeArray = range.getJSONObject(i);
-                        String lookupID = rangeArray.getString("lookupValueId");
-                        assignmentType = rangeArray.getString("assignmentType");
-                        assignmentField = rangeArray.getString("assignmentField");
-                        isDefault = rangeArray.getString("isDefault");
-                        if (rangeArray.has("active")){
-                            isActive = rangeArray.getString("active");
-                        }
+                        for(int i=0; i<range.length(); i++){
+                            JSONObject rangeArray = range.getJSONObject(i);
+                            String lookupID = rangeArray.getString("lookupValueId");
+                            assignmentType = rangeArray.getString("assignmentType");
+                            assignmentField = rangeArray.getString("assignmentField");
+                            isDefault = rangeArray.getString("isDefault");
+                            if (rangeArray.has("active")){
+                                isActive = rangeArray.getString("active");
+                            }
 
-                        String assignmentTypeColumn = "";
+                            String assignmentTypeColumn = "";
 
-                        switch (assignmentType){
-                            case "1" :
-                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID;
-                                break;
-                            case "2" :
-                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_REGIONID;
-                                break;
-                            case "3" :
-                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_DISTRICTID;
-                                break;
-                            case "4" :
-                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID;
-                                break;
-                            case "5" :
-                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID;
-                                break;
-                            case "6" :
-                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID;
-                                break;
-                            case "7" :
-                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID;
-                                break;
-                            case "8" :
-                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PARTNER_ID;
-                                break;
-                            case "9" :
-                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PROGRAMME_ID;
-                                break;
-                        }
+                            switch (assignmentType){
+                                case "1" :
+                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID;
+                                    break;
+                                case "2" :
+                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_REGIONID;
+                                    break;
+                                case "3" :
+                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_DISTRICTID;
+                                    break;
+                                case "4" :
+                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID;
+                                    break;
+                                case "5" :
+                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID;
+                                    break;
+                                case "6" :
+                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID;
+                                    break;
+                                case "7" :
+                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID;
+                                    break;
+                                case "8" :
+                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PARTNER_ID;
+                                    break;
+                                case "9" :
+                                    assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PROGRAMME_ID;
+                                    break;
+                            }
 
-                        String farmerAssignmentField = dl.getAssignmentByFarmerTypeID(farmerId , assignmentTypeColumn);
+                            String farmerAssignmentField = dl.getAssignmentByFarmerTypeID(farmerId , assignmentTypeColumn);
 
-                        if (assignmentField.equals(farmerAssignmentField) || assignmentType.equals("null") && assignmentField.equals("null")) {
+                            if (assignmentField.equals(farmerAssignmentField) || assignmentType.equals("null") && assignmentField.equals("null")) {
 
-                            if (isActive.toLowerCase().equals("true") || isActive.equals("")) {
-                                // generate row item
-                                TableRow tr = (TableRow) inflater.inflate(R.layout.module_photo_row, tl, false);
+                                if (isActive.toLowerCase().equals("true") || isActive.equals("")) {
+                                    // generate row item
+                                    TableRow tr = (TableRow) inflater.inflate(R.layout.module_photo_row, tl, false);
 
-                                TextView tvId = (TextView) tr.findViewById(R.id.cbId);
-                                TextView tv = (TextView) tr.findViewById(R.id.cbTitle);
-                                ImageView iv = (ImageView) tr.findViewById(R.id.photo);
+                                    TextView tvId = (TextView) tr.findViewById(R.id.cbId);
+                                    TextView tv = (TextView) tr.findViewById(R.id.cbTitle);
+                                    ImageView iv = (ImageView) tr.findViewById(R.id.photo);
 
 //                            int cbId = photoCheckboxes.getInt(photoCheckboxes.getColumnIndex("_id"));
 
 //                            tvId.setText(String.valueOf(cbId));
-                                tvId.setText(lookupID);
+                                    tvId.setText(lookupID);
 
 //                            int columnIndex = (photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) != -1) ? photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) : photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE);
 //                            tv.setText(photoCheckboxes.getString(columnIndex));
-                                String checkBoxName = dl.getValueByLookUpID(lookupID);
-                                tv.setText(checkBoxName);
+                                    String checkBoxName = dl.getValueByLookUpID(lookupID);
+                                    tv.setText(checkBoxName);
 
-                                // need to recheck in testing
-                                while (photoCheckboxes.moveToNext()) {
-                                    int imageId = res.getIdentifier("cbimage_" + photoCheckboxes.getString(photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_PHOTO)), "drawable", packageName);
-                                    if (imageId != 0) {
-                                        iv.setImageDrawable(ContextCompat.getDrawable(context, imageId));
-                                    } else {
-                                        iv.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.photo_checkbox_no_image));
-                                    }
-                                }
-
-
-                                tl.addView(tr);
-
-                                final CheckBox cb = (CheckBox) tr.findViewById(R.id.cbCheckBox);
-
-                                // pre-fill checkboxes that have been previously ticked
-                                if (hasAnswers && photoCbAnswers.getCount() > 0) {
-                                    while (photoCbAnswers.moveToNext()) {
-                                        if (photoCbAnswers.getInt(photoCbAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_INT)) == Integer.parseInt(lookupID)) {
-                                            cb.setChecked(true);
-                                            checkboxCount[0]++;
-                                        }
-                                    }
-                                    photoCbAnswers.moveToPosition(-1);
-                                }
-
-                                tr.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-                                        cb.setChecked(!cb.isChecked());
-                                        cb.callOnClick();
-                                    }
-
-                                });
-
-                                //stick the answer in the question itself
-                                String finalDatatype = datatype;
-                                String finalMaxSelection = maxSelection;
-                                cb.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-                                        CheckBox checkbox = (CheckBox) view.findViewById(R.id.cbCheckBox);
-                                        if (checkbox.isChecked()) {
-                                            checkboxCount[0]++;
+                                    // need to recheck in testing
+                                    while (photoCheckboxes.moveToNext()) {
+                                        int imageId = res.getIdentifier("cbimage_" + photoCheckboxes.getString(photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_PHOTO)), "drawable", packageName);
+                                        if (imageId != 0) {
+                                            iv.setImageDrawable(ContextCompat.getDrawable(context, imageId));
                                         } else {
-                                            checkboxCount[0]--;
+                                            iv.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.photo_checkbox_no_image));
                                         }
-
-                                        if (singleSelect) {
-                                            int ssTableRows = tl.getChildCount();
-                                            for (int j = 0; j < ssTableRows; j++) {
-                                                TableRow ssTr = (TableRow) tl.getChildAt(j);
-                                                CheckBox ssTcb = (CheckBox) ssTr.findViewById(R.id.cbCheckBox);
-
-                                                ssTcb.setChecked(false);
-                                            }
-                                            CheckBox clickedCb = (CheckBox) view;
-                                            clickedCb.setChecked(true);
-                                        }
-
-                                        if (finalMaxSelection!="null"){
-                                            if (checkboxCount[0] > Integer.parseInt(finalMaxSelection)) {
-                                                cb.setChecked(false);
-                                                checkboxCount[0]--;
-                                                Toast.makeText(context, "You can only select " + finalMaxSelection + " options", Toast.LENGTH_SHORT).show();
-                                            }
-                                        }
-
-                                        saveMultipleAnswerEntry(questionId, 0, finalDatatype, tl);
                                     }
-                                });
+
+
+                                    tl.addView(tr);
+
+                                    final CheckBox cb = (CheckBox) tr.findViewById(R.id.cbCheckBox);
+
+                                    // pre-fill checkboxes that have been previously ticked
+                                    if (hasAnswers && photoCbAnswers.getCount() > 0) {
+                                        while (photoCbAnswers.moveToNext()) {
+                                            if (photoCbAnswers.getInt(photoCbAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_INT)) == Integer.parseInt(lookupID)) {
+                                                cb.setChecked(true);
+                                                checkboxCount[0]++;
+                                            }
+                                        }
+                                        photoCbAnswers.moveToPosition(-1);
+                                    }
+
+                                    tr.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            cb.setChecked(!cb.isChecked());
+                                            cb.callOnClick();
+                                        }
+
+                                    });
+
+                                    //stick the answer in the question itself
+                                    String finalDatatype = datatype;
+                                    String finalMaxSelection = maxSelection;
+                                    cb.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            CheckBox checkbox = (CheckBox) view.findViewById(R.id.cbCheckBox);
+                                            if (checkbox.isChecked()) {
+                                                checkboxCount[0]++;
+                                            } else {
+                                                checkboxCount[0]--;
+                                            }
+
+                                            if (singleSelect) {
+                                                int ssTableRows = tl.getChildCount();
+                                                for (int j = 0; j < ssTableRows; j++) {
+                                                    TableRow ssTr = (TableRow) tl.getChildAt(j);
+                                                    CheckBox ssTcb = (CheckBox) ssTr.findViewById(R.id.cbCheckBox);
+
+                                                    ssTcb.setChecked(false);
+                                                }
+                                                CheckBox clickedCb = (CheckBox) view;
+                                                clickedCb.setChecked(true);
+                                            }
+
+                                            if (finalMaxSelection!="null"){
+                                                if (checkboxCount[0] > Integer.parseInt(finalMaxSelection)) {
+                                                    cb.setChecked(false);
+                                                    checkboxCount[0]--;
+                                                    Toast.makeText(context, "You can only select " + finalMaxSelection + " options", Toast.LENGTH_SHORT).show();
+                                                }
+                                            }
+
+                                            saveMultipleAnswerEntry(questionId, 0, finalDatatype, tl);
+                                        }
+                                    });
 
 //                            tl.addView(tr);
 
 
+                                }
+
+                            }
+                        }
+                    }else{
+                        while (photoCheckboxes.moveToNext()) {
+                            // generate row item
+                            TableRow tr = (TableRow) inflater.inflate(R.layout.module_photo_row, tl, false);
+
+                            TextView tvId = (TextView) tr.findViewById(R.id.cbId);
+                            TextView tv = (TextView) tr.findViewById(R.id.cbTitle);
+                            ImageView iv = (ImageView) tr.findViewById(R.id.photo);
+
+                            int cbId = photoCheckboxes.getInt(photoCheckboxes.getColumnIndex("_id"));
+
+                            tvId.setText(String.valueOf(cbId));
+
+                            int columnIndex = (photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) != -1) ? photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) : photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE);
+                            tv.setText(photoCheckboxes.getString(columnIndex));
+
+                            int imageId = res.getIdentifier("cbimage_" + photoCheckboxes.getString(photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_PHOTO)), "drawable", packageName);
+                            if (imageId != 0) {
+                                iv.setImageDrawable(ContextCompat.getDrawable(context, imageId));
+                            } else {
+                                iv.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.photo_checkbox_no_image));
                             }
 
+                            final CheckBox cb = (CheckBox) tr.findViewById(R.id.cbCheckBox);
+
+                            // pre-fill checkboxes that have been previously ticked
+                            if (hasAnswers && photoCbAnswers.getCount() > 0) {
+                                while (photoCbAnswers.moveToNext()) {
+                                    if (photoCbAnswers.getInt(photoCbAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_INT)) == cbId) {
+                                        cb.setChecked(true);
+                                    }
+                                }
+                                photoCbAnswers.moveToPosition(-1);
+                            }
+
+                            tr.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    cb.setChecked(!cb.isChecked());
+                                    cb.callOnClick();
+                                }
+
+                            });
+
+                            //stick the answer in the question itself
+                            String finalDatatype = datatype;
+                            cb.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    if (singleSelect) {
+                                        int ssTableRows = tl.getChildCount();
+                                        for (int j = 0; j < ssTableRows; j++) {
+                                            TableRow ssTr = (TableRow) tl.getChildAt(j);
+                                            CheckBox ssTcb = (CheckBox) ssTr.findViewById(R.id.cbCheckBox);
+
+                                            ssTcb.setChecked(false);
+                                        }
+                                        CheckBox clickedCb = (CheckBox) view;
+                                        clickedCb.setChecked(true);
+                                    }
+
+                                    saveMultipleAnswerEntry(questionId, 0, finalDatatype, tl);
+                                }
+                            });
+
+                            tl.addView(tr);
                         }
                     }
+
 
                 }else {
-                    // generate row item
-                    TableRow tr = (TableRow) inflater.inflate(R.layout.module_photo_row, tl, false);
+                    while (photoCheckboxes.moveToNext()) {
+                        // generate row item
+                        TableRow tr = (TableRow) inflater.inflate(R.layout.module_photo_row, tl, false);
 
-                    TextView tvId = (TextView) tr.findViewById(R.id.cbId);
-                    TextView tv = (TextView) tr.findViewById(R.id.cbTitle);
-                    ImageView iv = (ImageView) tr.findViewById(R.id.photo);
+                        TextView tvId = (TextView) tr.findViewById(R.id.cbId);
+                        TextView tv = (TextView) tr.findViewById(R.id.cbTitle);
+                        ImageView iv = (ImageView) tr.findViewById(R.id.photo);
 
-                    int cbId = photoCheckboxes.getInt(photoCheckboxes.getColumnIndex("_id"));
+                        int cbId = photoCheckboxes.getInt(photoCheckboxes.getColumnIndex("_id"));
 
-                    tvId.setText(String.valueOf(cbId));
+                        tvId.setText(String.valueOf(cbId));
 
-                    int columnIndex = (photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) != -1) ? photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) : photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE);
-                    tv.setText(photoCheckboxes.getString(columnIndex));
+                        int columnIndex = (photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) != -1) ? photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE + questionColumnSuffix) : photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE);
+                        tv.setText(photoCheckboxes.getString(columnIndex));
 
-                    int imageId = res.getIdentifier("cbimage_" + photoCheckboxes.getString(photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_PHOTO)), "drawable", packageName);
-                    if (imageId != 0) {
-                        iv.setImageDrawable(ContextCompat.getDrawable(context, imageId));
-                    } else {
-                        iv.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.photo_checkbox_no_image));
-                    }
-
-                    final CheckBox cb = (CheckBox) tr.findViewById(R.id.cbCheckBox);
-
-                    // pre-fill checkboxes that have been previously ticked
-                    if (hasAnswers && photoCbAnswers.getCount() > 0) {
-                        while (photoCbAnswers.moveToNext()) {
-                            if (photoCbAnswers.getInt(photoCbAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_INT)) == cbId) {
-                                cb.setChecked(true);
-                            }
-                        }
-                        photoCbAnswers.moveToPosition(-1);
-                    }
-
-                    tr.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            cb.setChecked(!cb.isChecked());
-                            cb.callOnClick();
+                        int imageId = res.getIdentifier("cbimage_" + photoCheckboxes.getString(photoCheckboxes.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_PHOTO)), "drawable", packageName);
+                        if (imageId != 0) {
+                            iv.setImageDrawable(ContextCompat.getDrawable(context, imageId));
+                        } else {
+                            iv.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.photo_checkbox_no_image));
                         }
 
-                    });
+                        final CheckBox cb = (CheckBox) tr.findViewById(R.id.cbCheckBox);
 
-                    //stick the answer in the question itself
-                    String finalDatatype = datatype;
-                    cb.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            if (singleSelect) {
-                                int ssTableRows = tl.getChildCount();
-                                for (int j = 0; j < ssTableRows; j++) {
-                                    TableRow ssTr = (TableRow) tl.getChildAt(j);
-                                    CheckBox ssTcb = (CheckBox) ssTr.findViewById(R.id.cbCheckBox);
-
-                                    ssTcb.setChecked(false);
+                        // pre-fill checkboxes that have been previously ticked
+                        if (hasAnswers && photoCbAnswers.getCount() > 0) {
+                            while (photoCbAnswers.moveToNext()) {
+                                if (photoCbAnswers.getInt(photoCbAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_INT)) == cbId) {
+                                    cb.setChecked(true);
                                 }
-                                CheckBox clickedCb = (CheckBox) view;
-                                clickedCb.setChecked(true);
+                            }
+                            photoCbAnswers.moveToPosition(-1);
+                        }
+
+                        tr.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                cb.setChecked(!cb.isChecked());
+                                cb.callOnClick();
                             }
 
-                            saveMultipleAnswerEntry(questionId, 0, finalDatatype, tl);
-                        }
-                    });
+                        });
 
-                    tl.addView(tr);
+                        //stick the answer in the question itself
+                        String finalDatatype = datatype;
+                        cb.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                if (singleSelect) {
+                                    int ssTableRows = tl.getChildCount();
+                                    for (int j = 0; j < ssTableRows; j++) {
+                                        TableRow ssTr = (TableRow) tl.getChildAt(j);
+                                        CheckBox ssTcb = (CheckBox) ssTr.findViewById(R.id.cbCheckBox);
+
+                                        ssTcb.setChecked(false);
+                                    }
+                                    CheckBox clickedCb = (CheckBox) view;
+                                    clickedCb.setChecked(true);
+                                }
+
+                                saveMultipleAnswerEntry(questionId, 0, finalDatatype, tl);
+                            }
+                        });
+
+                        tl.addView(tr);
+                    }
+
                 }
 
             }catch (Exception e){

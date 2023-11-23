@@ -216,8 +216,6 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     private boolean editIsExistFarm=false;
     private long editFarmId;
 
-    private static final int REQUEST_PERMISSIONS_FOR_TIRAMISU = 2507;
-
     List<MultifarmFarmerDTO> mfFarmerList;
 
     List<MultifarmFarmerDTO> mfFarmerMultifarmList;

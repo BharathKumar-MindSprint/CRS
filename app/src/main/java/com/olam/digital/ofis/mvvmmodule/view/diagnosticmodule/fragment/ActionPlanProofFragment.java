@@ -69,6 +69,7 @@ import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmCurrency;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmLookupValuesItem;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmRangeActionPlansItems;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmSurveyAnswerTable;
+import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.FileUtil;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -78,6 +79,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -104,9 +106,9 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
     private static final int MY_GALLERYPERMISSION_CODE_TIRAMISU = 222;
     private static final int MY_CAMERA_PERMISSION_CODE_TIRAMISU = 333;
-    private static int CAMERA_REQUEST = 0;
-    private static int GALLERY_PICK = 2233;
-    private static int GALLERY_PICK_DOCX = 4455;
+    private static final int CAMERA_REQUEST = 2277;
+    private static final int GALLERY_PICK = 2233;
+    private static final int GALLERY_PICK_DOCX = 4455;
 
     private static int GALLERY_QUESTION_ID = 0;
 
@@ -1016,7 +1018,14 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
             dmComplaintFileTable.setFile_name(newFileFormat);
             dmComplaintFileTable.setSurveyType("ParentSurvey");
             dmComplaintFileTable.setIsFileSynced(0);
-            dmComplaintFileTable.setFilePath(uriImage.getPath());
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                String destinationFolder = "/sdcard/DCIM/OFISDM_PROOF";
+                String movedFilePath = FileUtil.moveFile(uriImage.getPath(), destinationFolder);
+                dmComplaintFileTable.setFilePath(movedFilePath);
+            }else {
+                dmComplaintFileTable.setFilePath(uriImage.getPath());
+            }
+//            dmComplaintFileTable.setFilePath(uriImage.getPath());
             Date today = new Date();
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
             String currentTime = format.format(today);
@@ -1182,7 +1191,14 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 dmComplaintFileTable.setFile_name(newFileFormat);
                 dmComplaintFileTable.setSurveyType("ParentSurvey");
                 dmComplaintFileTable.setIsFileSynced(0);
-                dmComplaintFileTable.setFilePath(uri.getPath());
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    String destinationFolder = "/sdcard/DCIM/OFISDM_PROOF";
+                    String movedFilePath = FileUtil.moveFile(uri.getPath(), destinationFolder);
+                    dmComplaintFileTable.setFilePath(movedFilePath);
+                }else {
+                    dmComplaintFileTable.setFilePath(uri.getPath());
+                }
+//                dmComplaintFileTable.setFilePath(uri.getPath());
                 dmComplaintFileTable.setFileData(fileByteArray);
                 Date today = new Date();
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
@@ -1303,7 +1319,8 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 }
 
 
-            } else if (mime.equalsIgnoreCase("application/pdf")) {
+            }
+            else if (mime.equalsIgnoreCase("application/pdf")) {
                 String filename = getFileName(uri);
 
                 // Toast.makeText(getActivity(), "" + filename + "...." + uri, Toast.LENGTH_SHORT).show();
@@ -1356,7 +1373,14 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                     dmComplaintFileTable.setFile_name(newFileFormat);
                     dmComplaintFileTable.setSurveyType("ParentSurvey");
                     dmComplaintFileTable.setIsFileSynced(0);
-                    dmComplaintFileTable.setFilePath(uri.getPath());
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        String destinationFolder = "/sdcard/DCIM/OFISDM_PROOF";
+                        String movedFilePath = FileUtil.moveFile(uri.getPath(), destinationFolder);
+                        dmComplaintFileTable.setFilePath(movedFilePath);
+                    }else {
+                        dmComplaintFileTable.setFilePath(uri.getPath());
+                    }
+//                    dmComplaintFileTable.setFilePath(uri.getPath());
                     dmComplaintFileTable.setFileData(pdfByteArray2);
                     Date today = new Date();
                     SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
@@ -1474,7 +1498,8 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 }
 
 
-            } else if (mime.equalsIgnoreCase("image/jpeg")
+            }
+            else if (mime.equalsIgnoreCase("image/jpeg")
                     || mime.equalsIgnoreCase("image/png")) {
                 final BitmapFactory.Options options = new BitmapFactory.Options();
                 options.inJustDecodeBounds = true;
@@ -1513,7 +1538,14 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 dmComplaintFileTable.setFile_name(newFileFormat);
                 dmComplaintFileTable.setSurveyType("ParentSurvey");
                 dmComplaintFileTable.setIsFileSynced(0);
-                dmComplaintFileTable.setFilePath(filePathimage);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    String destinationFolder = "/sdcard/DCIM/OFISDM_PROOF";
+                    String movedFilePath = FileUtil.moveFile(filePathimage, destinationFolder);
+                    dmComplaintFileTable.setFilePath(movedFilePath);
+                }else {
+                    dmComplaintFileTable.setFilePath(filePathimage);
+                }
+//                dmComplaintFileTable.setFilePath(filePathimage);
                 dmComplaintFileTable.setFileData(imageBytes);
                 Date today = new Date();
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
@@ -1676,7 +1708,14 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 dmComplaintFileTable.setFile_name(filename);
                 dmComplaintFileTable.setSurveyType("ParentSurvey");
                 dmComplaintFileTable.setFileData(fileByteArray);
-                dmComplaintFileTable.setFilePath(uri.getPath());
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    String destinationFolder = "/sdcard/DCIM/OFISDM_PROOF";
+                    String movedFilePath = FileUtil.moveFile(uri.getPath(), destinationFolder);
+                    dmComplaintFileTable.setFilePath(movedFilePath);
+                }else {
+                    dmComplaintFileTable.setFilePath(uri.getPath());
+                }
+//                dmComplaintFileTable.setFilePath(uri.getPath());
                 Date today = new Date();
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
                 String currentTime = format.format(today);
@@ -1845,7 +1884,14 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
                     DmComplaintFileTable dmComplaintFileTable = new DmComplaintFileTable();
                     dmComplaintFileTable.setFile_name(filename);
-                    dmComplaintFileTable.setFilePath(uri1.getPath());
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        String destinationFolder = "/sdcard/DCIM/OFISDM_PROOF";
+                        String movedFilePath = FileUtil.moveFile(uri1.getPath(), destinationFolder);
+                        dmComplaintFileTable.setFilePath(movedFilePath);
+                    }else {
+                        dmComplaintFileTable.setFilePath(uri1.getPath());
+                    }
+//                    dmComplaintFileTable.setFilePath(uri1.getPath());
                     dmComplaintFileTable.setSurveyType("ParentSurvey");
                     dmComplaintFileTable.setFileData(pdfByteArray2);
                     Date today = new Date();

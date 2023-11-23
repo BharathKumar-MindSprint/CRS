@@ -7157,26 +7157,6 @@ public class DataLayer {
         return  farmerName;
     }
 
-    public String getAssignmentByFarmerTypeID(long farmerId , String assignmentTypeColumn ){
-        String assignmentField="";
-        Cursor farmerCursor=null;
-        try {
-            String[] columns = new String[]{"*"};
-            String whereClause = OFISDBContract.FarmerEntry.COLUMN_NAME_ID + " = ?";
-            String[] whereArgs = new String[]{String.valueOf(farmerId)};
-            farmerCursor = db.query(OFISDBContract.FarmerEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
-            if (farmerCursor != null) {
-                while (farmerCursor.moveToNext()) {
-                    assignmentField = farmerCursor.getString(farmerCursor.getColumnIndex(assignmentTypeColumn));
-                }
-            }
-        } catch (Exception e) {
-        }finally {
-            farmerCursor.close();
-        }
-        return  assignmentField;
-    }
-
     String getValueByLookUpID(String lookupId){
         String lookupValue = "";
         Cursor farmerCursor = null;
