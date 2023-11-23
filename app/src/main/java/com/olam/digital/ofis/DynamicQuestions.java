@@ -2901,6 +2901,8 @@ public class DynamicQuestions {
                             dl.bindDataDrivenSpinner(spinner, spinnervalues, context, R.string.ModuleAnswerHint, columnName, false);
                         }
 
+                    }else {
+                        dl.bindDataDrivenSpinner(spinner, spinnervalues, context, R.string.ModuleAnswerHint, columnName, false);
                     }
 
                 }
@@ -3026,8 +3028,8 @@ public class DynamicQuestions {
 
 
                         } else {
-                            String selecteditem = (String) spinner.getSelectedItem();
-                            saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, finalDatatype, selecteditem);
+                            Cursor selecteditem = (Cursor) spinner.getSelectedItem();
+                            saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, finalDatatype, selecteditem.getString(selecteditem.getColumnIndex(columnName)));
                         }
                     } else {
                         removeAnswerEntry(questionId, answerId);
