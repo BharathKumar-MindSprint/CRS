@@ -3026,8 +3026,8 @@ public class DynamicQuestions {
 
 
                         } else {
-                            Cursor selecteditem = (Cursor) spinner.getSelectedItem();
-                            saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, finalDatatype, selecteditem.getString(selecteditem.getColumnIndex(columnName)));
+                            String selecteditem = (String) spinner.getSelectedItem();
+                            saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, finalDatatype, selecteditem);
                         }
                     } else {
                         removeAnswerEntry(questionId, answerId);
