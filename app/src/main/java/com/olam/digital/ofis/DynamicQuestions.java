@@ -2928,6 +2928,8 @@ public class DynamicQuestions {
                             dl.bindDataDrivenSpinner(spinner, spinnervalues, context, R.string.ModuleAnswerHint, columnName, false);
                         }
 
+                    }else {
+                        dl.bindDataDrivenSpinner(spinner, spinnervalues, context, R.string.ModuleAnswerHint, columnName, false);
                     }
 
                 }
