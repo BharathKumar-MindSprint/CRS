@@ -66,10 +66,8 @@ import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmActionPlanCurrenciesTabl
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmComplaintFileTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmCurrenciesItem;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmCurrency;
-import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmLookupValuesItem;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmRangeActionPlansItems;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmSurveyAnswerTable;
-import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.FileUtil;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -79,7 +77,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URISyntaxException;
-import java.nio.file.Files;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -1018,13 +1015,6 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
             dmComplaintFileTable.setFile_name(newFileFormat);
             dmComplaintFileTable.setSurveyType("ParentSurvey");
             dmComplaintFileTable.setIsFileSynced(0);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                String destinationFolder = "/sdcard/DCIM/OFISDM_PROOF";
-                String movedFilePath = FileUtil.moveFile(uriImage.getPath(), destinationFolder);
-                dmComplaintFileTable.setFilePath(movedFilePath);
-            }else {
-                dmComplaintFileTable.setFilePath(uriImage.getPath());
-            }
 //            dmComplaintFileTable.setFilePath(uriImage.getPath());
             Date today = new Date();
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
@@ -1035,6 +1025,26 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
             dmComplaintFileTable.setFarmerId(Constants.FARMER_ID);
             dmComplaintFileTable.setQuestionId(String.valueOf(questionId));
             dmComplaintFileTable.setAttempt(0);
+            // Get an array of app-specific external storage directories
+            File[] externalStorageDirs = getContext().getExternalFilesDirs(null);
+
+            // The first element of the array will be the primary external storage directory
+            File primaryExternalStorageDir = externalStorageDirs[0];
+            File destinationFolder = new File(primaryExternalStorageDir, "OFISDM_PROOF");
+            if (!destinationFolder.exists()) {
+                destinationFolder.mkdirs();
+            }
+            File destinationFile = new File(destinationFolder, OFISFileName);
+
+            try {
+                FileOutputStream outputStream = new FileOutputStream(destinationFile);
+                outputStream.write(imageBytes);
+                outputStream.close();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            String destinationFilePath = destinationFile.getAbsolutePath();
+            dmComplaintFileTable.setFilePath(destinationFilePath);
             db.dmComplaintFileTableDao().insert(dmComplaintFileTable);
 
             long id = db.dmComplaintFileTableDao().getLastInsertedId();
@@ -1191,13 +1201,6 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 dmComplaintFileTable.setFile_name(newFileFormat);
                 dmComplaintFileTable.setSurveyType("ParentSurvey");
                 dmComplaintFileTable.setIsFileSynced(0);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    String destinationFolder = "/sdcard/DCIM/OFISDM_PROOF";
-                    String movedFilePath = FileUtil.moveFile(uri.getPath(), destinationFolder);
-                    dmComplaintFileTable.setFilePath(movedFilePath);
-                }else {
-                    dmComplaintFileTable.setFilePath(uri.getPath());
-                }
 //                dmComplaintFileTable.setFilePath(uri.getPath());
                 dmComplaintFileTable.setFileData(fileByteArray);
                 Date today = new Date();
@@ -1208,6 +1211,26 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 dmComplaintFileTable.setFarmerId(Constants.FARMER_ID);
                 dmComplaintFileTable.setQuestionId(String.valueOf(questionId));
                 dmComplaintFileTable.setAttempt(0);
+                // Get an array of app-specific external storage directories
+                File[] externalStorageDirs = getContext().getExternalFilesDirs(null);
+
+                // The first element of the array will be the primary external storage directory
+                File primaryExternalStorageDir = externalStorageDirs[0];
+                File destinationFolder = new File(primaryExternalStorageDir, "OFISDM_PROOF");
+                if (!destinationFolder.exists()) {
+                    destinationFolder.mkdirs();
+                }
+                File destinationFile = new File(destinationFolder, OFISFileName);
+
+                try {
+                    FileOutputStream outputStream = new FileOutputStream(destinationFile);
+                    outputStream.write(fileByteArray);
+                    outputStream.close();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                String destinationFilePath = destinationFile.getAbsolutePath();
+                dmComplaintFileTable.setFilePath(destinationFilePath);
                 db.dmComplaintFileTableDao().insert(dmComplaintFileTable);
 
                 long id = db.dmComplaintFileTableDao().getLastInsertedId();
@@ -1373,13 +1396,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                     dmComplaintFileTable.setFile_name(newFileFormat);
                     dmComplaintFileTable.setSurveyType("ParentSurvey");
                     dmComplaintFileTable.setIsFileSynced(0);
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        String destinationFolder = "/sdcard/DCIM/OFISDM_PROOF";
-                        String movedFilePath = FileUtil.moveFile(uri.getPath(), destinationFolder);
-                        dmComplaintFileTable.setFilePath(movedFilePath);
-                    }else {
-                        dmComplaintFileTable.setFilePath(uri.getPath());
-                    }
+
 //                    dmComplaintFileTable.setFilePath(uri.getPath());
                     dmComplaintFileTable.setFileData(pdfByteArray2);
                     Date today = new Date();
@@ -1390,6 +1407,26 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                     dmComplaintFileTable.setFarmerId(Constants.FARMER_ID);
                     dmComplaintFileTable.setQuestionId(String.valueOf(questionId));
                     dmComplaintFileTable.setAttempt(0);
+                    // Get an array of app-specific external storage directories
+                    File[] externalStorageDirs = getContext().getExternalFilesDirs(null);
+
+                    // The first element of the array will be the primary external storage directory
+                    File primaryExternalStorageDir = externalStorageDirs[0];
+                    File destinationFolder = new File(primaryExternalStorageDir, "OFISDM_PROOF");
+                    if (!destinationFolder.exists()) {
+                        destinationFolder.mkdirs();
+                    }
+                    File destinationFile = new File(destinationFolder, OFISFileName);
+
+                    try {
+                        FileOutputStream outputStream = new FileOutputStream(destinationFile);
+                        outputStream.write(pdfByteArray2);
+                        outputStream.close();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    String destinationFilePath = destinationFile.getAbsolutePath();
+                    dmComplaintFileTable.setFilePath(destinationFilePath);
                     db.dmComplaintFileTableDao().insert(dmComplaintFileTable);
 
                     long id = db.dmComplaintFileTableDao().getLastInsertedId();
@@ -1538,13 +1575,7 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 dmComplaintFileTable.setFile_name(newFileFormat);
                 dmComplaintFileTable.setSurveyType("ParentSurvey");
                 dmComplaintFileTable.setIsFileSynced(0);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    String destinationFolder = "/sdcard/DCIM/OFISDM_PROOF";
-                    String movedFilePath = FileUtil.moveFile(filePathimage, destinationFolder);
-                    dmComplaintFileTable.setFilePath(movedFilePath);
-                }else {
-                    dmComplaintFileTable.setFilePath(filePathimage);
-                }
+
 //                dmComplaintFileTable.setFilePath(filePathimage);
                 dmComplaintFileTable.setFileData(imageBytes);
                 Date today = new Date();
@@ -1555,6 +1586,26 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 dmComplaintFileTable.setFarmerId(Constants.FARMER_ID);
                 dmComplaintFileTable.setQuestionId(String.valueOf(questionId));
                 dmComplaintFileTable.setAttempt(0);
+                // Get an array of app-specific external storage directories
+                File[] externalStorageDirs = getContext().getExternalFilesDirs(null);
+
+                // The first element of the array will be the primary external storage directory
+                File primaryExternalStorageDir = externalStorageDirs[0];
+                File destinationFolder = new File(primaryExternalStorageDir, "OFISDM_PROOF");
+                if (!destinationFolder.exists()) {
+                    destinationFolder.mkdirs();
+                }
+                File destinationFile = new File(destinationFolder, OFISFileName);
+
+                try {
+                    FileOutputStream outputStream = new FileOutputStream(destinationFile);
+                    outputStream.write(imageBytes);
+                    outputStream.close();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                String destinationFilePath = destinationFile.getAbsolutePath();
+                dmComplaintFileTable.setFilePath(destinationFilePath);
                 db.dmComplaintFileTableDao().insert(dmComplaintFileTable);
 
                 long id = db.dmComplaintFileTableDao().getLastInsertedId();
@@ -1708,13 +1759,6 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 dmComplaintFileTable.setFile_name(filename);
                 dmComplaintFileTable.setSurveyType("ParentSurvey");
                 dmComplaintFileTable.setFileData(fileByteArray);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    String destinationFolder = "/sdcard/DCIM/OFISDM_PROOF";
-                    String movedFilePath = FileUtil.moveFile(uri.getPath(), destinationFolder);
-                    dmComplaintFileTable.setFilePath(movedFilePath);
-                }else {
-                    dmComplaintFileTable.setFilePath(uri.getPath());
-                }
 //                dmComplaintFileTable.setFilePath(uri.getPath());
                 Date today = new Date();
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
@@ -1724,6 +1768,26 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                 dmComplaintFileTable.setFarmerId(Constants.FARMER_ID);
                 dmComplaintFileTable.setQuestionId(String.valueOf(questionId));
                 dmComplaintFileTable.setAttempt(0);
+                // Get an array of app-specific external storage directories
+                File[] externalStorageDirs = getContext().getExternalFilesDirs(null);
+
+                // The first element of the array will be the primary external storage directory
+                File primaryExternalStorageDir = externalStorageDirs[0];
+                File destinationFolder = new File(primaryExternalStorageDir, "OFISDM_PROOF");
+                if (!destinationFolder.exists()) {
+                    destinationFolder.mkdirs();
+                }
+                File destinationFile = new File(destinationFolder, OFISFileName);
+
+                try {
+                    FileOutputStream outputStream = new FileOutputStream(destinationFile);
+                    outputStream.write(fileByteArray);
+                    outputStream.close();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                String destinationFilePath = destinationFile.getAbsolutePath();
+                dmComplaintFileTable.setFilePath(destinationFilePath);
                 db.dmComplaintFileTableDao().insert(dmComplaintFileTable);
 
                 long id = db.dmComplaintFileTableDao().getLastInsertedId();
@@ -1884,13 +1948,6 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
 
                     DmComplaintFileTable dmComplaintFileTable = new DmComplaintFileTable();
                     dmComplaintFileTable.setFile_name(filename);
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        String destinationFolder = "/sdcard/DCIM/OFISDM_PROOF";
-                        String movedFilePath = FileUtil.moveFile(uri1.getPath(), destinationFolder);
-                        dmComplaintFileTable.setFilePath(movedFilePath);
-                    }else {
-                        dmComplaintFileTable.setFilePath(uri1.getPath());
-                    }
 //                    dmComplaintFileTable.setFilePath(uri1.getPath());
                     dmComplaintFileTable.setSurveyType("ParentSurvey");
                     dmComplaintFileTable.setFileData(pdfByteArray2);
@@ -1902,6 +1959,25 @@ public class ActionPlanProofFragment extends Fragment implements View.OnClickLis
                     dmComplaintFileTable.setFarmerId(Constants.FARMER_ID);
                     dmComplaintFileTable.setQuestionId(String.valueOf(questionId));
                     dmComplaintFileTable.setAttempt(0);
+                    File[] externalStorageDirs = getContext().getExternalFilesDirs(null);
+
+                    // The first element of the array will be the primary external storage directory
+                    File primaryExternalStorageDir = externalStorageDirs[0];
+                    File destinationFolder = new File(primaryExternalStorageDir, "OFISDM_PROOF");
+                    if (!destinationFolder.exists()) {
+                        destinationFolder.mkdirs();
+                    }
+                    File destinationFile = new File(destinationFolder, OFISFileName);
+
+                    try {
+                        FileOutputStream outputStream = new FileOutputStream(destinationFile);
+                        outputStream.write(pdfByteArray2);
+                        outputStream.close();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    String destinationFilePath = destinationFile.getAbsolutePath();
+                    dmComplaintFileTable.setFilePath(destinationFilePath);
                     db.dmComplaintFileTableDao().insert(dmComplaintFileTable);
 
                     long id = db.dmComplaintFileTableDao().getLastInsertedId();
