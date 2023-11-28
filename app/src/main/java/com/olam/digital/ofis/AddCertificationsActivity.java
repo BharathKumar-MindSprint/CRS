@@ -34,7 +34,7 @@ public class AddCertificationsActivity extends BaseActivity implements View.OnCl
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
+//        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
         setContentView(R.layout.activity_add_certifications);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         initComponents();
@@ -96,7 +96,9 @@ public class AddCertificationsActivity extends BaseActivity implements View.OnCl
                         String cIds = nids.getString(nids.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_CERTIFICATION_ID));
                         String ctext = nids.getString(nids.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_CERTIFICATION_TEXT));
                         if (ctext != null && !ctext.isEmpty()) {
+                            ed_other_certification.setVisibility(View.VISIBLE);
                             ed_other_certification.setText(ctext);
+                            listStatus.get(listStatus.size()).setSelected(true);
                         }
                         if (cIds != null) {
                             String[] cIdArr = cIds.split(",");

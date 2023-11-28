@@ -2186,6 +2186,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     }
 
     private void bindCertificationNameSpinner(){
+
         List<Certifications> certificationsList = ofisRoomDB.certificationsDao().getCertifications();
         MultiSpinnerStatus multiSpinnerStatusCn = new MultiSpinnerStatus();
         multiSpinnerStatusCn.setId(0);
@@ -2208,11 +2209,49 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         multiSpinnerStatusothers.setSelected(false);
         multiSpinnerStatusothers.setEnabled(true);
         listStatus.add(multiSpinnerStatusothers);
+        if(editMode && editFarmerId != 0){
+            if (dl.isCertificationavailable(editFarmerId)) {
+                setEditSpinner();
+            }
+        }
         MultiSpinnerAdapter myAdapter = new MultiSpinnerAdapter(AddFarmerActivity.this, 0,
                 listStatus,certificationNameSpinner,certificationEditText);
         certificationNameSpinner.setAdapter(myAdapter);
 
+    }
 
+    private void setEditSpinner() {
+        if (dl.isCertificationavailable(editFarmerId)) {
+            Cursor nids = dl.getCertificationsbyfarmerid(editFarmerId);
+            try {
+                if (nids.getCount() > 0) {
+                    if (nids.moveToFirst()) {
+                        String cIds = nids.getString(nids.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_CERTIFICATION_ID));
+                        String ctext = nids.getString(nids.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_CERTIFICATION_TEXT));
+                        if (ctext != null && !ctext.isEmpty()) {
+                            certificationEditText.setVisibility(View.VISIBLE);
+                            certificationEditText.setText(ctext);
+                            listStatus.get(listStatus.size()).setSelected(true);
+                        }
+                        if (cIds != null) {
+                            String[] cIdArr = cIds.split(",");
+                            for (int i = 0; i < listStatus.size(); i++) {
+                                for (int arr = 0; arr < cIdArr.length; arr++) {
+                                    if (listStatus.get(i).getId() == Integer.parseInt(cIdArr[arr])) {
+                                        listStatus.get(i).setSelected(true);
+                                    }
+                                }
+                            }
+                        }
+
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                nids.close();
+            }
+        }
     }
 
     private void collectGPSPoint(long farmerId,String farmerName) {
