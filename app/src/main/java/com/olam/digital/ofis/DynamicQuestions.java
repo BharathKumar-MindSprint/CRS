@@ -866,7 +866,7 @@ public class DynamicQuestions {
         return  match;
     }
 
-    private String getAnswerMinMaxvalidation(int questionId, int answerId) {
+    private String getAnswerMinMaxvalidation(int questionId) {
         String ans = "noval";
         for (int i = 0; i < answerSet.size(); i++) {
             JSONObject currentAnswer = answerSet.get(i);
@@ -1037,35 +1037,45 @@ public class DynamicQuestions {
 
         parentLayout.addView(combinedLayout);
     }
+
     public boolean CheckMinMaxforQuestion(Cursor qCursor) {
         boolean status = true;
 
         try {
-            if(qCursor != null && qCursor.moveToFirst()) {
+
+            if (qCursor != null && qCursor.moveToFirst()) {
                 do {
-            JSONObject displayConfig = new JSONObject(qCursor.getString(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION)));
-                    final String datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
+                    JSONObject displayConfig = new JSONObject(qCursor.getString(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_CONFIGURATION)));
+//                    final String datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
                     final int questionId = qCursor.getInt(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
-                    int  answerId = qCursor.getInt(qCursor.getColumnIndex("answer_id"));
+//                    int answerId = qCursor.getInt(qCursor.getColumnIndex("answer_id"));
+                    JSONObject display = displayConfig.getJSONObject("display");
+                    int validationOnRange = display.optInt("validationOnRangeId");
 
+                    if (validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeIdRestrict()) {
+                        if (display.has("range")) {
+                            JSONArray range = display.getJSONArray("range");
+                            JSONObject rangeArray = range.getJSONObject(0);
+                            int min = rangeArray.optInt(AppConstants.RANGE_MIN);
+                            int max = rangeArray.optInt(AppConstants.RANGE_MAX);
 
+                            if (getAnswerMinMaxvalidation(questionId) != "noval") {
+                                float answer = Float.parseFloat(getAnswerMinMaxvalidation(questionId));
+//                                if (fetchMinMaxValue(displayConfig, AppConstants.RANGE_MAX) != 0
+//                                        || fetchMinMaxValue(displayConfig, AppConstants.RANGE_MIN) != 0 ? true : false) {
+//                                    if ((answer > fetchMinMaxValue(displayConfig, AppConstants.RANGE_MAX)) || (answer < fetchMinMaxValue(displayConfig, AppConstants.RANGE_MIN))) {
 
-            if (displayConfig.has("surveyrange")) {
-
-                if(getAnswerMinMaxvalidation(questionId,answerId) != "noval"){
-                    float answer = Float.parseFloat(getAnswerMinMaxvalidation(questionId,answerId));
-                    if (fetchMinMaxValue(displayConfig, AppConstants.RANGE_MAX) != 0
-                            || fetchMinMaxValue(displayConfig, AppConstants.RANGE_MIN) != 0 ? true : false) {
-                        if ((answer > fetchMinMaxValue(displayConfig, AppConstants.RANGE_MAX)) || (answer < fetchMinMaxValue(displayConfig, AppConstants.RANGE_MIN))) {
-
-                            status = false;
+                                if (answer < min) {
+                                    status = false;
 //                            Toast.makeText(context, R.string.valid_range, Toast.LENGTH_LONG).show();
-                            break;
+                                    break;
+                                }
+                            }
+//                            }
+
                         }
                     }
-                    }
 
-            }
 
                 } while (qCursor.moveToNext());
             }
@@ -1075,7 +1085,7 @@ public class DynamicQuestions {
                 questionId = qCursor.getString(qCursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_ID));
             }
             FirebaseCrashlytics.getInstance().log("DynamicQuestions: Error getting question display config - question " + questionId);
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
