@@ -11,4 +11,15 @@
     <color name="black_attendee">#262626</color>
     <color name="text_label_attendee">#535353</color>
     <color name="background_attendee">#FAFAFA</color>
+
+    <color name="orange_view_survey">#f78c2a</color>
+    <color name="green_view_survey">#a0c800</color>
+    <color name="red_view_survey">#ae1515</color>
+
+    <color name="ambur_survey_result">#f2dfd3</color>
+    <color name="green_survey_result">#ebeddb</color>
+    <color name="red_survey_result">#fac0c0</color>
+
+    <color name="weightage_bar">#860063</color>
+    <color name="weightage_back">#f1f1f1</color>
 </resources>

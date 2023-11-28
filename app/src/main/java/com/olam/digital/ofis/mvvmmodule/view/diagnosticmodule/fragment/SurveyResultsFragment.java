@@ -163,10 +163,12 @@ public class SurveyResultsFragment extends Fragment {
                     }
                 }
 
+                db.dmSurveyReportDao().deleteAlreadyStoredData(Integer.parseInt(Constants.MODULE_ID ), Integer.parseInt(Constants.FARMER_ID));
+
                 DMSurveyReport dmSurveyReport = new DMSurveyReport(Integer.parseInt(Constants.complaintSize),
                         Integer.parseInt(Constants.satisfactorySize),
                         Integer.parseInt(Constants.noncomplaintSize),
-                        (Integer.parseInt(Constants.complaintSize) + Integer.parseInt(Constants.satisfactorySize) + Integer.parseInt(Constants.noncomplaintSize)),
+                        Integer.parseInt(Constants.TotalActionPlanCount),
                         Double.parseDouble(String.valueOf(amount)),
                         finalAssessmentValue,
                         resultValue,
@@ -368,6 +370,12 @@ public class SurveyResultsFragment extends Fragment {
             traffic_indicator_green.setVisibility(View.GONE);
             traffic_indicator_orange.setVisibility(View.GONE);
             traffic_indicator_red.setVisibility(View.GONE);
+            resultColor = null;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                newView.setBackground(getActivity().getDrawable(R.color.weightage_bar));
+                survey_result_main.setBackground(getActivity().getDrawable(R.color.weightage_back));
+            }
+
 
 
             weightageMarks.setVisibility(View.VISIBLE);
@@ -432,32 +440,37 @@ public class SurveyResultsFragment extends Fragment {
 
         if (val) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                newView.setBackground(getActivity().getDrawable(R.color.red_view_survey));
-                survey_result_main.setBackground(getActivity().getDrawable(R.color.red_survey_result));
+                /*newView.setBackground(getActivity().getDrawable(R.color.red_view_survey));
+                survey_result_main.setBackground(getActivity().getDrawable(R.color.red_survey_result));*/
 
                 if (Objects.equals(assessmentType, "TL")){
                     traffic_indicator_green.setVisibility(View.GONE);
                     traffic_indicator_orange.setVisibility(View.GONE);
                     traffic_indicator_red.setVisibility(View.VISIBLE);
-//                    resultColor = Constants.RED;
+                    newView.setBackground(getActivity().getDrawable(R.color.red_view_survey));
+                    survey_result_main.setBackground(getActivity().getDrawable(R.color.red_survey_result));
+                    resultColor = Constants.RED;
                 }
 
                 overAllResultComplianceID = "Non-Compliant";
-                resultColor = Constants.RED;
+//                resultColor = Constants.RED;
             }
         }else if (satisfactory == 0 && nonComplaint == 0){
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                newView.setBackground(getActivity().getDrawable(R.color.green_view_survey));
-                survey_result_main.setBackground(getActivity().getDrawable(R.color.green_survey_result));
+
+                /*newView.setBackground(getActivity().getDrawable(R.color.green_view_survey));
+                survey_result_main.setBackground(getActivity().getDrawable(R.color.green_survey_result));*/
 
                 if (Objects.equals(assessmentType, "TL")){
                     traffic_indicator_green.setVisibility(View.VISIBLE);
                     traffic_indicator_orange.setVisibility(View.GONE);
                     traffic_indicator_red.setVisibility(View.GONE);
-//                    resultColor = Constants.GREEN;
+                    newView.setBackground(getActivity().getDrawable(R.color.green_view_survey));
+                    survey_result_main.setBackground(getActivity().getDrawable(R.color.green_survey_result));
+                    resultColor = Constants.GREEN;
                 }
                 overAllResultComplianceID = "Compliant";
-                resultColor = Constants.GREEN;
+//                resultColor = Constants.GREEN;
 
             }
         }
@@ -465,33 +478,37 @@ public class SurveyResultsFragment extends Fragment {
 
             if (nonComplaint >= satisfactory) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    newView.setBackground(getActivity().getDrawable(R.color.red_view_survey));
-                    survey_result_main.setBackground(getActivity().getDrawable(R.color.red_survey_result));
+                    /*newView.setBackground(getActivity().getDrawable(R.color.red_view_survey));
+                    survey_result_main.setBackground(getActivity().getDrawable(R.color.red_survey_result));*/
 
                     if (Objects.equals(assessmentType, "TL")){
                         traffic_indicator_green.setVisibility(View.GONE);
                         traffic_indicator_orange.setVisibility(View.GONE);
                         traffic_indicator_red.setVisibility(View.VISIBLE);
-//                        resultColor = Constants.RED;
+                        newView.setBackground(getActivity().getDrawable(R.color.red_view_survey));
+                        survey_result_main.setBackground(getActivity().getDrawable(R.color.red_survey_result));
+                        resultColor = Constants.RED;
                     }
 
                     overAllResultComplianceID = "Non-Compliant";
-                    resultColor = Constants.RED;
+//                    resultColor = Constants.RED;
 
                 }
             } else if(satisfactory > nonComplaint) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    newView.setBackground(getActivity().getDrawable(R.color.orange_view_survey));
-                    survey_result_main.setBackground(getActivity().getDrawable(R.color.ambur_survey_result));
+                    /*newView.setBackground(getActivity().getDrawable(R.color.orange_view_survey));
+                    survey_result_main.setBackground(getActivity().getDrawable(R.color.ambur_survey_result));*/
 
                     if (Objects.equals(assessmentType, "TL")){
                         traffic_indicator_green.setVisibility(View.GONE);
                         traffic_indicator_orange.setVisibility(View.VISIBLE);
                         traffic_indicator_red.setVisibility(View.GONE);
-//                        resultColor = Constants.ORANGE;
+                        newView.setBackground(getActivity().getDrawable(R.color.orange_view_survey));
+                        survey_result_main.setBackground(getActivity().getDrawable(R.color.ambur_survey_result));
+                        resultColor = Constants.ORANGE;
                     }
                     overAllResultComplianceID = "Satisfactory";
-                    resultColor = Constants.ORANGE;
+//                    resultColor = Constants.ORANGE;
                 }
             }
 

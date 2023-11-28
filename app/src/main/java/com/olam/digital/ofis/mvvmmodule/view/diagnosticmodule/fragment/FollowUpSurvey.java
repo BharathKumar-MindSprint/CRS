@@ -41,7 +41,8 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
     OFISRoomDB db;
 
     ArrayList<String> CoQId = new ArrayList<>();
-    int next_survey = 0;
+    int totalQuestion = 0;
+//    int next_survey = 0;
     int capture_count = 0;
 
     public FollowUpSurvey() {
@@ -172,7 +173,7 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
                         textView.setPadding(0, 15, 0, 0);
                         textView.setTypeface(null, Typeface.BOLD);
                         linearLayoutItems.addView(textView);
-                        next_survey +=1;
+//                        next_survey +=1;
 
                         renderTextboxQuestionModuleComplaint(String.valueOf(dmQuestionsModule.questionID), complaint_id, linearLayoutItems);
 
@@ -186,10 +187,7 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
 
 
     public void renderTextboxQuestionModuleComplaint(String id, String complaint_id, LinearLayout linearLayoutItems) {
-
-
-
-
+        totalQuestion++;
         LinearLayout.LayoutParams layoutParamsQes = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 getResources().getDimensionPixelSize(R.dimen.capture_box)
@@ -266,7 +264,7 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
                         CoQId.add(dmSurveyAnswerTableList.get(0).questionID);
                         Constants.questionIdsFollowUp.add(dmSurveyAnswerTableList.get(0).questionID);
                         if(!Objects.equals(db.dmSurveyAnswerTableDao().getIsCaptureProofRequired(dmSurveyAnswerTableList.get(0).questionID, Constants.FARMER_ID), 0)){
-                            capture_count+=1;
+//                            capture_count+=1;
                         }
 
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -282,7 +280,7 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
                         // Do something with the selected value
                         submitValue(questionIdDb,Constants.NOTRESOLVED, complaint_id);
                         if(!Objects.equals(db.dmSurveyAnswerTableDao().getIsCaptureProofRequired(questionIdDb, Constants.FARMER_ID), 0)){
-                            capture_count+=1;
+//                            capture_count+=1;
                         }
                         if (!CoQId.contains(id)) {
                             CoQId.add(id);
@@ -313,7 +311,7 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
                         // Do something with the selected value
                         submitValue(questionIdDb,Constants.RESOLVED, complaint_id);
                         if(!Objects.equals(db.dmSurveyAnswerTableDao().getIsCaptureProofRequired(questionIdDb, Constants.FARMER_ID), 0)){
-                            capture_count-=1;
+//                            capture_count-=1;
                         }
                         if (!CoQId.contains(id)) {
                             CoQId.add(id);
@@ -396,9 +394,10 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
 
     @Override
     public void onResume() {
+        totalQuestion = 0;
         dm_question_complaint_followup_survey.removeAllViews();
-        next_survey = 0;
-        capture_count = 0;
+//        next_survey = 0;
+//        capture_count = 0;
         db = OFISRoomDB.getDbInstance(getActivity());
 
         if (db.complianceIndicatorDao().getComplianceByModuleId(Constants.MODULE_ID).size() != 0) {
@@ -418,13 +417,17 @@ public class FollowUpSurvey extends Fragment implements View.OnClickListener {
             /*if ((Integer.parseInt(Constants.complaintSize) + Integer.parseInt(Constants.noncomplaintSize) + Integer.parseInt(Constants.satisfactorySize)) > CoQId.size()) {
                 Toast.makeText(getActivity(), "Please Select Action Plan Status before proceed.", Toast.LENGTH_SHORT).show();
             }*/
-            if (next_survey > CoQId.size()) {
-                Toast.makeText(getActivity(), "Please Select Action Plan Status before proceed.", Toast.LENGTH_SHORT).show();
-            }
-            else {
+
+            int resolve_count = db.followUpItemMainTableDao().getCountOfResolvedNotResolved( Constants.MODULE_ID, String.valueOf(Constants.ATTEMPT) , Constants.FARMER_ID);
+
+
+            if (resolve_count == totalQuestion) {
                 ViewPager2 viewPager = getActivity().findViewById(R.id.viewPagerFollowUp);
                 viewPager.setCurrentItem(1);
                 Constants.capture_count = capture_count;
+            }
+            else {
+                Toast.makeText(getActivity(), "Please Select Action Plan Status before proceed.", Toast.LENGTH_SHORT).show();
             }
         } else if (id == R.id.ll_servey_back_followup_survey) {
             requireActivity().onBackPressed();

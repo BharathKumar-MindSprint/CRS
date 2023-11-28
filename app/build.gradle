@@ -27,6 +27,8 @@ android {
         resValue "string", "sync_account_type", applicationId
         buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofis"'
         minSdkVersion 19
+
+        //noinspection OldTargetApi
         targetSdkVersion 33
         multiDexEnabled true
         versionCode 373
@@ -43,8 +45,10 @@ android {
     buildTypes {
         debug {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.config
+            shrinkResources false
+//            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+//            signingConfig signingConfigs.config
+
         }
         release {
             lintOptions {
@@ -53,8 +57,10 @@ android {
                 abortOnError false
             }
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.release
+            shrinkResources false
+//            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+//            signingConfig signingConfigs.release
+
         }
     }
 

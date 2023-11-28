@@ -32,7 +32,7 @@ public class FollowUpItem{
 	private String createdBy;
 
 	@SerializedName("actionPlanId")
-	private int actionPlanId;
+	private String actionPlanId;
 
 	@SerializedName("actionPlanText")
 	private String actionPlanText;
@@ -127,11 +127,11 @@ public class FollowUpItem{
 		this.createdBy = createdBy;
 	}
 
-	public int getActionPlanId() {
+	public String getActionPlanId() {
 		return actionPlanId;
 	}
 
-	public void setActionPlanId(int actionPlanId) {
+	public void setActionPlanId(String actionPlanId) {
 		this.actionPlanId = actionPlanId;
 	}
 

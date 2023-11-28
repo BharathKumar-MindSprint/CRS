@@ -2890,7 +2890,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
 
             Date endFollowUpDurationDate = null;
             if (startDateString != null){
-                followUpDuration = RecurrenceUtils.calculateEndDate(startDateString, db.dmMainModuleDao().getFollowUpDuration(moduleID) , "days");
+                followUpDuration = RecurrenceUtils.calculateEndDate(startDateString, db.dmMainModuleDao().getFollowUpDurationVal(moduleID) , "days");
 //                fakeCurrentDate = RecurrenceUtils.calculateEndDate(startDateString,8,"days");
             }
 
@@ -2928,10 +2928,20 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                             }
                         }
 
-                        if (db.dmMainModuleDao().getFollowUpAttempts(moduleID) != 0){
-                            int count = 0;
-                            count = db.dmMainModuleDao().getFollowUpAttempts(moduleID);
-                            if (val < count + 1 ){
+                        String count = db.dmMainModuleDao().getFollowUpAttemptsVal(moduleID);
+                        if (!Objects.equals(count, "0") && !Objects.equals(count, null)){
+//                            count = db.dmMainModuleDao().getFollowUpAttempts(moduleID);
+                            if (count.replaceAll(" ", "").toLowerCase().equals("max")){
+                                if (followUpDurationDisable){
+                                    recyclerViewData.add("Follow-up survey " + val);
+                                    isCompleted = false;
+
+                                }else {
+                                    recyclerViewData.add("Follow-up survey " + val);
+                                    isCompleted = true;
+                                    Toast.makeText(context, "Recurrence Follow-up date crossed", Toast.LENGTH_SHORT).show();
+                                }
+                            }else if (val < Integer.parseInt(count) + 1 ){
 
                                 if (followUpDurationDisable){
                                     recyclerViewData.add("Follow-up survey " + val);

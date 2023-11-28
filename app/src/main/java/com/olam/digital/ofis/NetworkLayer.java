@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
@@ -22,17 +23,24 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.ScrollView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.security.ProviderInstaller;
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
+import com.google.gson.JsonArray;
 import com.olam.digital.ofis.authentication.AuthenticationClient;
 import com.olam.digital.ofis.authentication.AuthenticationHelper;
 import com.olam.digital.ofis.authentication.AuthenticationInterface;
 import com.olam.digital.ofis.authentication.KeyCloakInfo;
+import com.olam.digital.ofis.authentication.model.AuthRequestDTO;
 import com.olam.digital.ofis.authentication.model.AuthenticationDTO;
 import com.olam.digital.ofis.childlabour.ChildLabourUtils;
 import com.olam.digital.ofis.downloadsurvey.dto.AnswerRequestDTO;
@@ -44,8 +52,10 @@ import com.olam.digital.ofis.logging.FabricLogsWriter;
 import com.olam.digital.ofis.model.GeoDTO;
 import com.olam.digital.ofis.multifarm.MultiFarmDTO;
 import com.olam.digital.ofis.multifarm.MultiFarmUtils;
+import com.olam.digital.ofis.mvvmmodule.Constants;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DMSurveyReport;
+import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmActionPlanCurrenciesTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmComplaintFileTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmCurrenciesItem;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmSurveyAnswerTable;
@@ -69,8 +79,11 @@ import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Objects;
@@ -91,7 +104,6 @@ import okhttp3.Callback;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
-import okhttp3.logging.HttpLoggingInterceptor;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
@@ -107,13 +119,10 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
     private static String AccessToken;
     private static final String BASE_URL = BuildConfig.HOST;
     public static final String TAG = "NetworkLayer";
-    private static HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
     private static final OkHttpClient okHttpClient = new OkHttpClient.Builder()
             .connectTimeout(90, TimeUnit.SECONDS)
             .readTimeout(720, TimeUnit.SECONDS)
             .writeTimeout(720, TimeUnit.SECONDS)
-            .addNetworkInterceptor(interceptor.setLevel(HttpLoggingInterceptor.Level.BODY))
-            .addInterceptor(interceptor)
             .sslSocketFactory(getSSLSocketFactory())
             .retryOnConnectionFailure(false)
             .build();
@@ -768,21 +777,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         }
     }
 
-    void syncNetworkQueueDuplicate(Integer itemId, Handler handler) {
-        String message = "Farmer details are updated. Please try to sync again !";
-        if (networkQueueItems.getCount() > 0 && !networkQueueItems.isAfterLast()) {
-            if (networkQueueItems.moveToNext()) {
-                syncNetworkQueueItem(itemId, handler);
-            } else {
-                Message msg = handler.obtainMessage(2, networkQueueItems.getCount(), networkQueueItems.getPosition(), message);
-                handler.dispatchMessage(msg);
-            }
-        } else {
-            Message msg = handler.obtainMessage(2, networkQueueItems.getCount(), networkQueueItems.getPosition(), message);
-            handler.dispatchMessage(msg);
-        }
-    }
-
     void syncNetworkQueueFromHome(Integer itemId, Handler handler) {
         if (networkQueueItems.getCount() > 0 && !networkQueueItems.isAfterLast()) {
             if (networkQueueItems.moveToNext()) {
@@ -1228,17 +1222,12 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     while (trainingAttendees.moveToNext()) {
                         long farmerId = trainingAttendees.getLong(trainingAttendees.getColumnIndex(OFISDBContract.TrainingAttendee.COLUMN_NAME_FARMER_ID));
                         if (!dl.isFarmerSynced(farmerId)) {
-                            if (dl.isAvailableInNqTable(farmerId)) {
-                                msg.what = 3;
-                                msg.arg1 = total;
-                                msg.arg2 = HomeActivity.progressItem = progress + 1;
-                                msg.obj = String.valueOf(res.getString(R.string.farmer_not_synced));
-                                handler.dispatchMessage(msg);
-                                return;
-                            }else {
-                                getFarmerData(networkQueueItemId, handler, msg, total, progress, originalSyncRequestItemId);
-                                return;
-                            }
+                            msg.what = 3;
+                            msg.arg1 = total;
+                            msg.arg2 = HomeActivity.progressItem = progress + 1;
+                            msg.obj = String.valueOf(res.getString(R.string.farmer_not_synced));
+                            handler.dispatchMessage(msg);
+                            return;
                         } else {
 
                             try {
@@ -1827,15 +1816,11 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 farmerModule = dl.getFarmerModuleById(farmerModuleId);
                 if (farmerModule.getCount() > 0) {
                     if (!dl.isFarmerSynced(farmerId)) {
-                        if (dl.isAvailableInNqTable(farmerId)) {
-                            msg.what = 3;
-                            msg.arg1 = total;
-                            msg.arg2 = progress;
-                            msg.obj = String.valueOf(res.getString(R.string.farmer_not_synced));
-                            handler.dispatchMessage(msg);
-                        }else {
-                            getFarmerData(networkQueueItemId, handler, msg, total, progress, originalSyncRequestItemId);
-                        }
+                        msg.what = 3;
+                        msg.arg1 = total;
+                        msg.arg2 = progress;
+                        msg.obj = String.valueOf(res.getString(R.string.farmer_not_synced));
+                        handler.dispatchMessage(msg);
                     } else if (MultiFarmUtils.isMultiFarmEnumerator && isFarmerMultifarmSynced) {
                         msg.what = 8;
                         msg.arg1 = total;
@@ -2253,15 +2238,9 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     }
                 }
             } finally {
-                if(farmerModule != null  && !farmerModule.isClosed()) {
-                    farmerModule.close();
-                }
-                if(extraInfo != null  && !extraInfo.isClosed()){
-                    extraInfo.close();
-                }
-                if(moduleAnswers != null  && !moduleAnswers.isClosed()) {
-                    moduleAnswers.close();
-                }
+                farmerModule.close();
+                extraInfo.close();
+                moduleAnswers.close();
             }
         } catch (CursorIndexOutOfBoundsException e) {
         }
@@ -2283,17 +2262,13 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         } else {
             multifarmDTO.setSynced(1);
         }
-        if (!dl.isFarmerSynced(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)))) {
-            if (dl.isAvailableInNqTable(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)))) {
-                msg.what = 3;
-                msg.arg1 = total;
-                msg.arg2 = HomeActivity.progressItem = progress + 1;
-                msg.obj = String.valueOf(res.getString(R.string.farmer_not_synced));
-                handler.dispatchMessage(msg);
-            } else {
-                getFarmerData(networkQueueItemId, handler, msg, total, progress, originalSyncRequestItemId);
-            }
 
+        if (!dl.isFarmerSynced(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)))) {
+            msg.what = 3;
+            msg.arg1 = total;
+            msg.arg2 = HomeActivity.progressItem = progress + 1;
+            msg.obj = String.valueOf(res.getString(R.string.farmer_not_synced));
+            handler.dispatchMessage(msg);
         } else if (multifarmDTO.getSynced() == 0) {
             msg.what = 7;
             msg.arg1 = total;
@@ -2460,15 +2435,11 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         }
 
         if (!dl.isFarmerSynced(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)))) {
-            if (dl.isAvailableInNqTable(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)))) {
-                msg.what = 3;
-                msg.arg1 = total;
-                msg.arg2 = HomeActivity.progressItem = progress + 1;
-                msg.obj = String.valueOf(res.getString(R.string.farmer_not_synced));
-                handler.dispatchMessage(msg);
-            } else {
-                getFarmerData(networkQueueItemId, handler, msg, total, progress, originalSyncRequestItemId);
-            }
+            msg.what = 3;
+            msg.arg1 = total;
+            msg.arg2 = HomeActivity.progressItem = progress + 1;
+            msg.obj = String.valueOf(res.getString(R.string.farmer_not_synced));
+            handler.dispatchMessage(msg);
         } else if (multifarmDTO.getSynced() == 0) {
             msg.what = 7;
             msg.arg1 = total;
@@ -2698,15 +2669,11 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         final JSONObject params = new JSONObject();
 
         if (!dl.isFarmerSynced(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)))) {
-            if (dl.isAvailableInNqTable(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)))) {
-                msg.what = 3;
-                msg.arg1 = total;
-                msg.arg2 = progress;
-                msg.obj = String.valueOf(res.getString(R.string.farmer_not_synced));
-                handler.dispatchMessage(msg);
-            } else {
-                getFarmerData(networkQueueItemId, handler, msg, total, progress, originalSyncRequestItemId);
-            }
+            msg.what = 3;
+            msg.arg1 = total;
+            msg.arg2 = HomeActivity.progressItem = progress + 1;
+            msg.obj = String.valueOf(res.getString(R.string.farmer_not_synced));
+            handler.dispatchMessage(msg);
         } else {
 
             try {
@@ -2822,17 +2789,12 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
         final JSONObject params = new JSONObject();
 
-
         if (!dl.isFarmerSynced(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)))) {
-                if (dl.isAvailableInNqTable(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)))) {
-                    msg.what = 3;
-                    msg.arg1 = total;
-                    msg.arg2 = HomeActivity.progressItem = progress + 1;
-                    msg.obj = String.valueOf(res.getString(R.string.farmer_not_synced));
-                    handler.dispatchMessage(msg);
-                } else {
-                    getFarmerData(networkQueueItemId, handler, msg, total, progress, originalSyncRequestItemId);
-                }
+            msg.what = 3;
+            msg.arg1 = total;
+            msg.arg2 = HomeActivity.progressItem = progress + 1;
+            msg.obj = String.valueOf(res.getString(R.string.farmer_not_synced));
+            handler.dispatchMessage(msg);
         } else {
 
             try {
@@ -2928,7 +2890,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                         recordFailedUpload(server_item_id, fully_synced, networkQueueItemId);
                                         postFailureMessage(handler, response, msg, 2, total, progress, null, "submitting cs location");
                                         FirebaseCrash.report(new Exception(response.optString("errors", res.getString(R.string.item_sync_error)) + " : submitting cs location"));
-                                        if (response.toString().contains(Utilities.CONSENTERROR)) {
+                                        if (response.toString().contains(context.getResources().getString(R.string.consent_duplicate_error))) {
                                             statusMessage = res.getString(R.string.item_synced);
                                             msg.what = 1;
                                             msg.arg1 = total;
@@ -3014,19 +2976,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         alert.show();
     }
 
-    private void showNationIdAlertMessage() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setMessage(Utilities.NID_ERROR)
-                .setCancelable(false)
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-
-                    }
-                });
-        AlertDialog alert = builder.create();
-        alert.show();
-    }
-
     private void showDuplicateAlertMessage() {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setMessage("Farmer details are updated. Please sync again !")
@@ -3081,13 +3030,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
     }
 
     // get farmer national ids
-    private JSONArray farmernationalids(long farmerId, long nid, String value) {
-        Cursor nids;
-        if(value.equalsIgnoreCase("2")) {
-             nids = dl.getnationalidsbyfarmerid(farmerId,nid);
-        }else{
-             nids = dl.getnationalidsbyfarmerid(farmerId);
-        }
+    private JSONArray farmernationalids(long farmerId) {
+        Cursor nids = dl.getnationalidsbyfarmerid(farmerId);
         JSONArray numbersarray = new JSONArray();
 
         try {
@@ -3199,17 +3143,13 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         JSONArray numberstosend = farmerPhoneNumbers(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
 
 //        List<FarmerRegistrationPhoneNumberDTO> farmerRegistrationPhoneNumberDTOList = farmerPhoneNumbers(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
-        if (!dl.isFarmerSynced(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)))) {
-            if (dl.isAvailableInNqTable(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)))) {
-                msg.what = 3;
-                msg.arg1 = total;
-                msg.arg2 = HomeActivity.progressItem = progress + 1;
-                msg.obj = String.valueOf(res.getString(R.string.farmer_not_synced));
-                handler.dispatchMessage(msg);
-            } else {
-                getFarmerData(networkQueueItemId, handler, msg, total, progress, originalSyncRequestItemId);
-            }
 
+        if (!dl.isFarmerSynced(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)))) {
+            msg.what = 3;
+            msg.arg1 = total;
+            msg.arg2 = HomeActivity.progressItem = progress + 1;
+            msg.obj = String.valueOf(res.getString(R.string.farmer_not_synced));
+            handler.dispatchMessage(msg);
         } else {
 
             try {
@@ -3726,15 +3666,11 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         endpoint = "ofisutility/uploadFarmerFile";
         final JSONObject params = new JSONObject();
         if (!dl.isFarmerSynced(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)))) {
-            if (dl.isAvailableInNqTable(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)))) {
-                msg.what = 3;
-                msg.arg1 = total;
-                msg.arg2 = HomeActivity.progressItem = progress + 1;
-                msg.obj = String.valueOf(res.getString(R.string.farmer_not_synced));
-                handler.dispatchMessage(msg);
-            } else {
-                getFarmerData(networkQueueItemId, handler, msg, total, progress, originalSyncRequestItemId);
-            }
+            msg.what = 3;
+            msg.arg1 = total;
+            msg.arg2 = HomeActivity.progressItem = progress + 1;
+            msg.obj = String.valueOf(res.getString(R.string.farmer_not_synced));
+            handler.dispatchMessage(msg);
         } else {
             try {
                 Cursor farmer = null;
@@ -3856,15 +3792,11 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
 
         if (!dl.isFarmerSynced(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)))) {
-            if (dl.isAvailableInNqTable(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)))) {
-                msg.what = 3;
-                msg.arg1 = total;
-                msg.arg2 = HomeActivity.progressItem = progress + 1;
-                msg.obj = String.valueOf(res.getString(R.string.farmer_not_synced));
-                handler.dispatchMessage(msg);
-            } else {
-                getFarmerData(networkQueueItemId, handler, msg, total, progress, originalSyncRequestItemId);
-            }
+            msg.what = 3;
+            msg.arg1 = total;
+            msg.arg2 = HomeActivity.progressItem = progress + 1;
+            msg.obj = String.valueOf(res.getString(R.string.farmer_not_synced));
+            handler.dispatchMessage(msg);
         } else {
             try {
                 Cursor child = null;
@@ -4195,8 +4127,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 JSONArray numberstosend = farmerPhoneNumbers(networkQueueItems
                         .getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
 
-                JSONArray nidstosend = farmernationalids(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)),
-                        networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID)), "1");
+                JSONArray nidstosend = farmernationalids(networkQueueItems
+                        .getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
                 JSONObject consentStatement = farmerConsentStatment(networkQueueItems
                                 .getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)),
                         farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
@@ -4461,7 +4393,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         int localFarmerId = 0, localPlaceId = 0;
         try {
             farmer = dl.getFarmerById(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
-            final String endpoint = "ofisfarmer/farmer/registerFarmer?retry=true";
+            final String endpoint = "ofisfarmer/farmer/registerFarmer";
             String tempOlamFarmerID = null;
             if (farmer.getCount() > 0) {
                 farmer.moveToFirst();
@@ -4515,7 +4447,12 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                     JSONArray jsonResponse = new JSONArray(postResponse.body().string());
                                     JSONObject jsonObject1 = jsonResponse.getJSONObject(0);
 
+                                    // OFIS -25 -Hiding for UAT
+                                    String multiFarmErrorCode = jsonObject1.getString("errorCode");
+                                    if (multiFarmErrorCode.equalsIgnoreCase("OFIS_3042")) {
 
+                                        postFailureMessage(handler, null, msg, 2, total, progress, res.getString(R.string.item_sync_error), "submitting farmer");
+                                    } else {
                                         boolean isMultiFarm = Utilities.getMultifarmPref(context, MultiFarmUtils.IS_MULTI_FARM_ENUMERATOR);
                                         JSONArray jsonArrayMultiFarm = null;
                                         if (isMultiFarm) {
@@ -4536,7 +4473,10 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                         msg.arg2 = HomeActivity.progressItem = progress + 1;
                                         msg.obj = statusMessage;
                                         handler.dispatchMessage(msg);
-                                        syncNetworkQueueDuplicate(originalSyncRequestItemId, handler);
+
+
+                                    }
+
 
                                 } else {
                                     try {
@@ -4635,15 +4575,11 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
             if (farmerModule.getCount() > 0) {
                 if (!dl.isFarmerSynced(farmerId)) {
-                    if (dl.isAvailableInNqTable(farmerId)) {
                         msg.what = 3;
                         msg.arg1 = total;
                         msg.arg2 = progress;
                         msg.obj = String.valueOf(res.getString(R.string.farmer_not_synced));
                         handler.dispatchMessage(msg);
-                    } else {
-                        getFarmerData(networkQueueItemId, handler, msg, total, progress, originalSyncRequestItemId);
-                    }
                 } else {
                     if (!dl.isChildSynced(childNwId)) {
                         msg.what = 5;
@@ -4938,15 +4874,11 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         final JSONObject params = new JSONObject();
 
         if (!dl.isFarmerSynced(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)))) {
-            if (dl.isAvailableInNqTable(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)))) {
-                msg.what = 3;
-                msg.arg1 = total;
-                msg.arg2 = HomeActivity.progressItem = progress + 1;
-                msg.obj = String.valueOf(res.getString(R.string.farmer_not_synced));
-                handler.dispatchMessage(msg);
-            } else {
-                getFarmerData(networkQueueItemId, handler, msg, total, progress, originalSyncRequestItemId);
-            }
+            msg.what = 3;
+            msg.arg1 = total;
+            msg.arg2 = HomeActivity.progressItem = progress + 1;
+            msg.obj = String.valueOf(res.getString(R.string.farmer_not_synced));
+            handler.dispatchMessage(msg);
         } else {
             try {
                 JSONArray checkavailstatus = new JSONArray();
@@ -5062,15 +4994,11 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         final JSONObject params = new JSONObject();
 
         if (!dl.isFarmerSynced(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)))) {
-            if (dl.isAvailableInNqTable(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)))) {
-                msg.what = 3;
-                msg.arg1 = total;
-                msg.arg2 = HomeActivity.progressItem = progress + 1;
-                msg.obj = String.valueOf(res.getString(R.string.farmer_not_synced));
-                handler.dispatchMessage(msg);
-            } else {
-                getFarmerData(networkQueueItemId, handler, msg, total, progress, originalSyncRequestItemId);
-            }
+            msg.what = 3;
+            msg.arg1 = total;
+            msg.arg2 = HomeActivity.progressItem = progress + 1;
+            msg.obj = String.valueOf(res.getString(R.string.farmer_not_synced));
+            handler.dispatchMessage(msg);
         } else {
             int farmerID = networkQueueItems.getInt(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID));
             String signaturepath = networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SIGNATURE));
@@ -5267,17 +5195,17 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
     }
 
     private void postFarmerNationalids(final int networkQueueItemId, final Handler handler, final Message msg, final int total, final int progress, final Integer originalSyncRequestItemId) {
+        // Cursor farmer = dl.getFarmerById(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
+        //old end point
+        // String endpoint = "farmers/add";
+        // New End point
         final String endpoint = "ofisfarmer/farmer/saveFarmerUniqueId";
         if (!dl.isFarmerSynced(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)))) {
-            if (dl.isAvailableInNqTable(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)))) {
-                msg.what = 3;
-                msg.arg1 = total;
-                msg.arg2 = HomeActivity.progressItem = progress + 1;
-                msg.obj = String.valueOf(res.getString(R.string.farmer_not_synced));
-                handler.dispatchMessage(msg);
-            } else {
-                getFarmerData(networkQueueItemId, handler, msg, total, progress, originalSyncRequestItemId);
-            }
+            msg.what = 3;
+            msg.arg1 = total;
+            msg.arg2 = HomeActivity.progressItem = progress + 1;
+            msg.obj = String.valueOf(res.getString(R.string.farmer_not_synced));
+            handler.dispatchMessage(msg);
         } else {
             Cursor farmer = null;
             try {
@@ -5287,8 +5215,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     farmer.moveToFirst();
                     JSONObject jsonObject = new JSONObject();
 
-                    JSONArray nidstosend = farmernationalids(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)),
-                            networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID)), "2");
+                    JSONArray nidstosend = farmernationalids(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
 
                     final JSONArray jsonArray = new JSONArray();
                     jsonArray.put(jsonObject);
@@ -5305,11 +5232,11 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                     if (postResponse.isSuccessful()) {
                                         //new
                                         JSONObject jsonResponse = new JSONObject(postResponse.body().string());
+
                                         String response = jsonResponse.getString("responce");
                                         if (response.equalsIgnoreCase("200")) {
                                             dl.deleteNetworkQueueItem(networkQueueItemId);
-                                            dl.updateSyncedStatus(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)),
-                                                    networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID)));
+                                            dl.updateSyncedStatus(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
                                             statusMessage = res.getString(R.string.item_synced);
                                             msg.what = 1;
                                             msg.arg1 = total;
@@ -5322,42 +5249,30 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                             }
                                             syncNetworkQueue(originalSyncRequestItemId, handler);
                                         }
+
                                     } else {
                                         try {
                                             FabricLogsWriter.printCrashLog(TAG, endpoint, postResponse.code(), "Request : " + jsonArray.toString() + " Response  " + postResponse.networkResponse().toString(), context);
                                         } catch (Exception e) {
                                             FirebaseCrashlytics.getInstance().log(e.getMessage());
                                         }
+                                        long server_item_id = 0, fully_synced = 0;
+
+                                        // Added
                                         if (postResponse.code() == 401) {
                                             FailureGetRefreshToken(handler, originalSyncRequestItemId, msg, 2, total, progress, null, "submitting farmer");
                                         } else {
-                                            JSONObject response =  new JSONObject(postResponse.body().string());
-                                            recordFailedUpload(0, 0, networkQueueItemId);
+                                            JSONArray jsonResponse = new JSONArray(postResponse.body().string());
+                                            JSONObject response = jsonResponse.getJSONObject(0);
+
+                                            if (response != null) {
+                                                server_item_id = response.optLong("id", 0);
+                                                fully_synced = response.getLong(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FULLY_SYNCED);
+                                            }
+                                            recordFailedUpload(server_item_id, fully_synced, networkQueueItemId);
                                             postFailureMessage(handler, response, msg, 2, total, progress, null, "submitting farmer");
                                             FirebaseCrash.report(new Exception(response.optString("errors", res.getString(R.string.item_sync_error)) + " : submitting submitting farmer"));
-                                            String errorCode = response.getString("errorCode");
-                                            String errorMessage = response.getString("message");
-                                            JSONArray nationIdList = response.getJSONArray("duplicateNationalIDList");
 
-                                            if (errorCode.equalsIgnoreCase("3043") && errorMessage.equalsIgnoreCase(Utilities.NID_ERROR)) {
-                                                statusMessage = res.getString(R.string.item_synced);
-                                                msg.what = 1;
-                                                msg.arg1 = total;
-                                                msg.arg2 = progress;
-                                                msg.obj = statusMessage;
-                                                handler.dispatchMessage(msg);
-                                                dl.deleteNetworkQueueItemByfarmerId(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
-                                                dl.updateSyncedStatus(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)), networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID)));
-                                                dl.addFarmerNationalids(nationIdList,networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)), networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID)));
-                                                syncNetworkQueue(originalSyncRequestItemId, handler);
-                                                new Handler(Looper.getMainLooper()).post(new Runnable() {
-                                                    @Override
-                                                    public void run() {
-                                                        showNationIdAlertMessage();
-                                                    }
-                                                });
-
-                                            }
                                         }
                                     }
                                     postResponse.close();
@@ -5446,7 +5361,6 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
 
                         jsonArray.put(jsonObject);
                     } catch (Exception e) {
-                        e.printStackTrace();
                         FirebaseCrashlytics.getInstance().log(e.getMessage());
                     }
                 }
@@ -5605,15 +5519,11 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         //Cursor farmer = dl.getFarmerById(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
         final String endpoint = "ofisfarmer/multifarm/update";
         if (!dl.isFarmerSynced(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)))) {
-            if (dl.isAvailableInNqTable(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)))) {
-                msg.what = 3;
-                msg.arg1 = total;
-                msg.arg2 = HomeActivity.progressItem = progress + 1;
-                msg.obj = String.valueOf(res.getString(R.string.farmer_not_synced));
-                handler.dispatchMessage(msg);
-            } else {
-                getFarmerData(networkQueueItemId, handler, msg, total, progress, originalSyncRequestItemId);
-            }
+            msg.what = 3;
+            msg.arg1 = total;
+            msg.arg2 = HomeActivity.progressItem = progress + 1;
+            msg.obj = String.valueOf(res.getString(R.string.farmer_not_synced));
+            handler.dispatchMessage(msg);
         } else {
             Cursor farmer = null;
             try {
@@ -5818,15 +5728,11 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         OFISRoomDB db = OFISRoomDB.getDbInstance(context);
         final String endpoint = "ofissurvey/survey/diagnosticmodule/submitSurvey";
         if (!dl.isFarmerSynced(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)))) {
-            if (dl.isAvailableInNqTable(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)))) {
-                msg.what = 3;
-                msg.arg1 = total;
-                msg.arg2 = HomeActivity.progressItem = progress + 1;
-                msg.obj = String.valueOf(res.getString(R.string.farmer_not_synced));
-                handler.dispatchMessage(msg);
-            } else {
-                getFarmerData(networkQueueItemId, handler, msg, total, progress, originalSyncRequestItemId);
-            }
+            msg.what = 3;
+            msg.arg1 = total;
+            msg.arg2 = HomeActivity.progressItem = progress + 1;
+            msg.obj = String.valueOf(res.getString(R.string.farmer_not_synced));
+            handler.dispatchMessage(msg);
         } else {
 
 
@@ -6017,15 +5923,11 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
         OFISRoomDB db = OFISRoomDB.getDbInstance(context);
         final String endpoint = "ofissurvey/survey/diagnosticmodule/saveFollowUpData";
         if (!dl.isFarmerSynced(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)))) {
-            if (dl.isAvailableInNqTable(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)))) {
-                msg.what = 3;
-                msg.arg1 = total;
-                msg.arg2 = HomeActivity.progressItem = progress + 1;
-                msg.obj = String.valueOf(res.getString(R.string.farmer_not_synced));
-                handler.dispatchMessage(msg);
-            } else {
-                getFarmerData(networkQueueItemId, handler, msg, total, progress, originalSyncRequestItemId);
-            }
+            msg.what = 3;
+            msg.arg1 = total;
+            msg.arg2 = HomeActivity.progressItem = progress + 1;
+            msg.obj = String.valueOf(res.getString(R.string.farmer_not_synced));
+            handler.dispatchMessage(msg);
         } else {
 
 
