@@ -5146,15 +5146,20 @@ public class DynamicQuestions {
             if (displayConfig.has("display")) {
                 JSONObject display = displayConfig.getJSONObject("display");
                 int maxrepeats = display.getInt("maxrepeats");
+                final boolean zeroAcceptable = (display.has("zeroacceptable") && (display.getBoolean("zeroacceptable")));
+
                 ArrayList<String> repeatOptions = new ArrayList<>(maxrepeats);
-                for (int i = 0; i < maxrepeats; i++) {
+                for (int i = 1; i <=maxrepeats; i++) {
+                    if (zeroAcceptable){
+                        if (!repeatOptions.contains("0")){
+                            repeatOptions.add("0");
+                        }
+                    }
                     repeatOptions.add(String.valueOf(i));
                 }
                 ArrayAdapter<String> adapter = new ArrayAdapter<>(context, R.layout.spinner_item, repeatOptions);
                 adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
                 spinner.setAdapter(adapter);
-
-                final boolean zeroAcceptable = (display.has("zeroacceptable") && (display.getBoolean("zeroacceptable")));
 
                 if (hasAnswers) {
                     int answer = (!questions.isNull(questions.getColumnIndex("answer_" + datatype))) ? questions.getInt(questions.getColumnIndex("answer_" + datatype)) : 0;
@@ -5171,6 +5176,9 @@ public class DynamicQuestions {
                 spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                        if(!zeroAcceptable){
+                            id=1;
+                        }
                         if (id > 0 || zeroAcceptable) {
                             int existingItemsSize = repeaterItemsWrapper.getChildCount();
                             removeRepeaterAnswers(questionId);
@@ -5383,9 +5391,9 @@ public class DynamicQuestions {
                                         renderYesNoQuestion(repeaterQuestions, true, repeaterItemsInner, questionId, i, repeaterAnswers, res);
                                     } else if (displayType.replaceAll(" ", "").toLowerCase().equals("photoupload")) {
                                         renderPhotoUploadQuestion(repeaterQuestions, true, repeaterItemsInner, questionId, i, repeaterAnswers, res);
-                                    } /*else if (displayType.replaceAll(" ", "").toLowerCase().equals("checkbox")) {
+                                    } else if (displayType.replaceAll(" ", "").toLowerCase().equals("checkbox")) {
                                         renderCheckBoxQuestion(repeaterQuestions, repeaterItemsInner    , farmerId, farmerModuleId, false);
-                                    }*/ else if (displayType.replace(" ", "").toLowerCase().equals("radio")) {
+                                    } else if (displayType.replace(" ", "").toLowerCase().equals("radio")) {
                                         renderRadioQuestion(repeaterQuestions, true, repeaterItemsInner, farmerId, farmerModuleId , false,i , repeaterAnswers , questionId);
                                     }
                                 } finally {
