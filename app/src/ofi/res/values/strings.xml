@@ -1105,4 +1105,7 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="dm_select_currency_txt">Select the currency for the action plan</string>
     <string name="dm_select_currency_txt1">Select the currency for the action plan</string>
 
+    <string name="alert_review">Value entered is outside of the permissible range, it will be pushed for administrator review</string>
+    <string name="alert_review_hint">Please enter the value within the range %1$d-%2$d</string>
+    <string name="range_hint_A_R">Range : %1$d-%2$d</string>
 </resources>
