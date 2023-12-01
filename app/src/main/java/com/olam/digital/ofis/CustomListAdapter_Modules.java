@@ -754,7 +754,7 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
 
                             if (submittedModuleDetails.has("id") && submittedModuleDetails.getInt("id") == currentId) {
 
-                                if (recurrence_frequency > 0 && !disabled_months.contains(String.valueOf(currentDate.get(Calendar.MONTH)))) {
+                                if (recurrence_frequency > 0 && !disabled_months.contains(String.valueOf(currentDate.get(Calendar.MONTH)+1))) {
                                     // for recurring
                                     try {
                                         // get last submitted date
@@ -771,11 +771,63 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                                             FirebaseCrash.report(new Exception("CustomListAdapter_Modules: Error setting recurrence date values", e));
                                             e.printStackTrace();
                                         }
+
+                                        // code for india spices survey
+                                        String assignmentTypeColumn = "";
+                                        String assignmentType = "1";
+
+                                        switch (assignmentType){
+                                            case "1" :
+                                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID;
+                                                break;
+                                            case "2" :
+                                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_REGIONID;
+                                                break;
+                                            case "3" :
+                                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_DISTRICTID;
+                                                break;
+                                            case "4" :
+                                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID;
+                                                break;
+                                            case "5" :
+                                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID;
+                                                break;
+                                            case "6" :
+                                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID;
+                                                break;
+                                            case "7" :
+                                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID;
+                                                break;
+                                            case "8" :
+                                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PARTNER_ID;
+                                                break;
+                                            case "9" :
+                                                assignmentTypeColumn = OFISDBContract.FarmerEntry.COLUMN_NAME_PROGRAMME_ID;
+                                                break;
+                                        }
+
+                                        String farmerAssignmentField = dl.getAssignmentByFarmerTypeID(farmerId , assignmentTypeColumn);
+
                                         if (recurrence_type != null) {
                                             if (recurrence_type.equalsIgnoreCase("years")) {
-                                                calculationDate.add(Calendar.YEAR, -recurrence_frequency);
-                                                calculationDate.set(Calendar.MONTH, Calendar.DECEMBER);
-                                                calculationDate.set(Calendar.DAY_OF_MONTH, 31);
+
+                                                // change the va;
+                                                if (Objects.equals(farmerAssignmentField, "48")){
+
+                                                   // set the date according to start date
+                                                    calculationDate.add(Calendar.YEAR, -recurrence_frequency);
+                                                    calculationDate.set(Calendar.MONTH, Calendar.JULY);
+                                                    calculationDate.set(Calendar.DAY_OF_MONTH, 31);
+//                                                    lastSubmittedDate.setTime(sdf.parse("2022-07-23 07:55:12"));
+
+                                                }else {
+                                                    calculationDate.add(Calendar.YEAR, -recurrence_frequency);
+                                                    calculationDate.set(Calendar.MONTH, Calendar.DECEMBER);
+                                                    calculationDate.set(Calendar.DAY_OF_MONTH, 31);
+                                                }
+//                                                calculationDate.add(Calendar.YEAR, -recurrence_frequency);
+//                                                calculationDate.set(Calendar.MONTH, Calendar.DECEMBER);
+//                                                calculationDate.set(Calendar.DAY_OF_MONTH, 31);
                                             } else if (recurrence_type.equalsIgnoreCase("months")) {
                                                 calculationDate.add(Calendar.MONTH, -recurrence_frequency);
                                                 calculationDate.set(Calendar.DAY_OF_MONTH, calculationDate.getActualMaximum(Calendar.DAY_OF_MONTH));
@@ -865,7 +917,7 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                         textView.setText(res.getString(R.string.module_finished));
                         imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_completed));
                     } else {
-                        imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_new));
+                            imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_new));
                         textView.setText(res.getString(R.string.ModuleStatus));
                         if (disabled_months.contains(String.valueOf(currentDate.get(Calendar.MONTH) + 1))) {
                             linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
