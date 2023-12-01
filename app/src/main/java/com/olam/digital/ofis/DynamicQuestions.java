@@ -2444,7 +2444,7 @@ public class DynamicQuestions {
                                         editText.setError(context.getString(R.string.alert_review));
                                     } else {
                                         // Input is less than the minimum value
-                                        editText.setError("Minimum Range " + startLimit);
+                                        editText.setError(String.format(context.getString(R.string.alert_review_hint),startLimit,endLimit));
                                     }
                                 }
                             }
@@ -2455,7 +2455,7 @@ public class DynamicQuestions {
                         if(validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeId()){
                             editText.setError(context.getString(R.string.alert_review));
                         }else {
-                            editText.setError("Number must be less than or equal to " + endLimit);
+                            editText.setError(String.format(context.getString(R.string.alert_review_hint),startLimit,endLimit));
                         }
                         new Handler().postDelayed(new Runnable() {
                             @Override
@@ -2507,7 +2507,8 @@ public class DynamicQuestions {
                         if(validationOnRange == roomDB.validationOnRangeDao().getValidationOnRangeId()){
                             editText.setError(context.getString(R.string.alert_review));
                         }else {
-                            editText.setError("Number must be between " + minLimit + " and " + maxLimit);
+                            editText.setError(String.format(context.getString(R.string.alert_review_hint),minLimit,maxLimit));
+
                         }
                         new Handler().postDelayed(new Runnable() {
                             @Override
