@@ -97,6 +97,9 @@ public class Utilities {
     public static String SCOPE = "offline_access";
     public static String CONSENTSTATEMENT = "ConsentStatement";
 
+    public static String CONSENTERROR = "Error in saving FarmerConsent";
+    public static String NID_ERROR = "This national ID has already been added to the farmer";
+
 public  static String base64ConversionForImage(String filepath)  {
     String encoded="";
     try {
