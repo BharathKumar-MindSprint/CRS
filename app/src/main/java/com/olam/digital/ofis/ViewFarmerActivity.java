@@ -269,6 +269,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         ChildLabourUtils.isChildEnumerator = Utilities.getChildLabourPref(context, ChildLabourUtils.IS_CHILD_ENUMERATOR);
         MultiFarmUtils.isMultiFarmEnumerator = Utilities.getMultifarmPref(context, MultiFarmUtils.IS_MULTI_FARM_ENUMERATOR);
 
+        db = OFISRoomDB.getDbInstance(context);
         res = getResources();
         dl = new DataLayer(res, context);
         pd = new ProgressDialog(context);
@@ -350,12 +351,15 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 statusInfoLayout.setVisibility(View.GONE);
             }
         }
-
-        boolean isCertification = dl.isCertificationavailable(farmerId);
-        if(isCertification){
-            cert_layout_notification.setVisibility(View.GONE);
+        if(db.certificationsDao().getCertifications().size()>0) {
+            boolean isCertification = dl.isCertificationavailable(farmerId);
+            if(isCertification){
+                cert_layout_notification.setVisibility(View.GONE);
+            }else{
+                cert_layout_notification.setVisibility(View.VISIBLE);
+            }
         }else{
-            cert_layout_notification.setVisibility(View.VISIBLE);
+            cert_layout_notification.setVisibility(View.GONE);
         }
     }
 
@@ -1208,9 +1212,12 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                     mc.addRow(new String[]{"0", res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), res.getString(R.string.add_nationalid), "0", "", "", "", res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), "","", "", "", "", "", "", "","", "", "National_ID"});
                 }
                 // add certification
-                mc.addRow(new String[]{"0", res.getString(R.string.update_certification), res.getString(R.string.update_certification), res.getString(R.string.update_certification), res.getString(R.string.update_certification),
-                        res.getString(R.string.update_certification), res.getString(R.string.update_certification), res.getString(R.string.update_certification), res.getString(R.string.update_certification), res.getString(R.string.update_certification),
-                        "0", "", "", "", res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), "","", "", "", "", "", "", "","", "", res.getString(R.string.certification)});
+                if(db.certificationsDao().getCertifications().size()>0) {
+                    mc.addRow(new String[]{"0", res.getString(R.string.update_certification), res.getString(R.string.update_certification), res.getString(R.string.update_certification), res.getString(R.string.update_certification),
+                            res.getString(R.string.update_certification), res.getString(R.string.update_certification), res.getString(R.string.update_certification), res.getString(R.string.update_certification), res.getString(R.string.update_certification),
+                            "0", "", "", "", res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), res.getString(R.string.update_signature_hint), "","", "", "", "", "", "", "","", "", res.getString(R.string.certification)});
+                }
+
                /* int pendingSync = dl.fetchPlotCountByFarmerID(String.valueOf(farmerId));
                 int totalCount = dl.fetchPlotTotalCount(String.valueOf(farmerId));
                 */

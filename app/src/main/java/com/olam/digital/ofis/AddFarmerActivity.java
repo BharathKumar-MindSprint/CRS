@@ -221,7 +221,6 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     private boolean editIsExistFarm=false;
     private long editFarmId;
 
-    private static final int REQUEST_PERMISSIONS_FOR_TIRAMISU = 2507;
 
     List<MultifarmFarmerDTO> mfFarmerList;
 
@@ -1413,19 +1412,22 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
 
 
         }
-        if(certificationNameSpinner.getTag()==null){
-            Toast.makeText(this, getResources().getString(R.string.please_enter_certification_details), Toast.LENGTH_SHORT).show();
-            return values;
-        }else{
-            List<MultiSpinnerStatus> multiSpinnerStatuses = new ArrayList<>();
-            multiSpinnerStatuses=(List<MultiSpinnerStatus>)certificationNameSpinner.getTag();
-            Boolean isChecked=getIsCertification(multiSpinnerStatuses);
-            if(!isChecked){
+        if(ofisRoomDB.certificationsDao().getCertifications().size()>0) {
+            if(certificationNameSpinner.getTag()==null){
                 Toast.makeText(this, getResources().getString(R.string.please_enter_certification_details), Toast.LENGTH_SHORT).show();
                 return values;
-            }
+            }else{
+                List<MultiSpinnerStatus> multiSpinnerStatuses = new ArrayList<>();
+                multiSpinnerStatuses=(List<MultiSpinnerStatus>)certificationNameSpinner.getTag();
+                Boolean isChecked=getIsCertification(multiSpinnerStatuses);
+                if(!isChecked){
+                    Toast.makeText(this, getResources().getString(R.string.please_enter_certification_details), Toast.LENGTH_SHORT).show();
+                    return values;
+                }
 
+            }
         }
+
         int phonerowscount = phonenumbers.getChildCount();
 
         long countryId = countrySpinner.getSelectedItemId();
@@ -2247,35 +2249,41 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     private void bindCertificationNameSpinner(){
 
         List<Certifications> certificationsList = ofisRoomDB.certificationsDao().getCertifications();
-        MultiSpinnerStatus multiSpinnerStatusCn = new MultiSpinnerStatus();
-        multiSpinnerStatusCn.setId(0);
-        multiSpinnerStatusCn.setTitle(res.getString(R.string.certification_name));
-        multiSpinnerStatusCn.setSelected(false);
-        multiSpinnerStatusCn.setEnabled(true);
-        listStatus.add(multiSpinnerStatusCn);
-        for (int i = 0; i < certificationsList.size(); i++) {
-            MultiSpinnerStatus multiSpinnerStatus = new MultiSpinnerStatus();
-            multiSpinnerStatus.setId(certificationsList.get(i).certificationId);
-            multiSpinnerStatus.setTitle(certificationsList.get(i).certificationName);
-            multiSpinnerStatus.setSelected(false);
-            multiSpinnerStatus.setEnabled(true);
-            listStatus.add(multiSpinnerStatus);
+        if(ofisRoomDB.certificationsDao().getCertifications().size()>0) {
+            MultiSpinnerStatus multiSpinnerStatusCn = new MultiSpinnerStatus();
+            multiSpinnerStatusCn.setId(0);
+            multiSpinnerStatusCn.setTitle(res.getString(R.string.certification_name));
+            multiSpinnerStatusCn.setSelected(false);
+            multiSpinnerStatusCn.setEnabled(true);
+            listStatus.add(multiSpinnerStatusCn);
+            for (int i = 0; i < certificationsList.size(); i++) {
+                MultiSpinnerStatus multiSpinnerStatus = new MultiSpinnerStatus();
+                multiSpinnerStatus.setId(certificationsList.get(i).certificationId);
+                multiSpinnerStatus.setTitle(certificationsList.get(i).certificationName);
+                multiSpinnerStatus.setSelected(false);
+                multiSpinnerStatus.setEnabled(true);
+                listStatus.add(multiSpinnerStatus);
+            }
+
+            MultiSpinnerStatus multiSpinnerStatusothers = new MultiSpinnerStatus();
+            multiSpinnerStatusothers.setId(listStatus.size()+1);
+            multiSpinnerStatusothers.setTitle(res.getString(R.string.others));
+            multiSpinnerStatusothers.setSelected(false);
+            multiSpinnerStatusothers.setEnabled(true);
+            listStatus.add(multiSpinnerStatusothers);
+            if(editMode && editFarmerId != 0){
+                if (dl.isCertificationavailable(editFarmerId)) {
+                    setEditSpinner();
+                }
+            }
+            MultiSpinnerAdapter myAdapter = new MultiSpinnerAdapter(AddFarmerActivity.this, 0,
+                    listStatus,certificationNameSpinner,certificationEditText);
+            certificationNameSpinner.setAdapter(myAdapter);
+
+        }else {
+            certificationNameSpinner.setVisibility(View.GONE);
         }
 
-        MultiSpinnerStatus multiSpinnerStatusothers = new MultiSpinnerStatus();
-        multiSpinnerStatusothers.setId(listStatus.size()+1);
-        multiSpinnerStatusothers.setTitle(res.getString(R.string.others));
-        multiSpinnerStatusothers.setSelected(false);
-        multiSpinnerStatusothers.setEnabled(true);
-        listStatus.add(multiSpinnerStatusothers);
-        if(editMode && editFarmerId != 0){
-            if (dl.isCertificationavailable(editFarmerId)) {
-                setEditSpinner();
-            }
-        }
-        MultiSpinnerAdapter myAdapter = new MultiSpinnerAdapter(AddFarmerActivity.this, 0,
-                listStatus,certificationNameSpinner,certificationEditText);
-        certificationNameSpinner.setAdapter(myAdapter);
 
     }
 
