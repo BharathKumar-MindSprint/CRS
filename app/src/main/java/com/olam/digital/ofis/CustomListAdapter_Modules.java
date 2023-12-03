@@ -754,7 +754,7 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
 
                             if (submittedModuleDetails.has("id") && submittedModuleDetails.getInt("id") == currentId) {
 
-                                if (recurrence_frequency > 0 && !disabled_months.contains(String.valueOf(currentDate.get(Calendar.MONTH)+1))) {
+                                if (recurrence_frequency > 0 && !disabled_months.contains(String.valueOf(currentDate.get(Calendar.MONTH)))) {
                                     // for recurring
                                     try {
                                         // get last submitted date
@@ -919,7 +919,7 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                     } else {
                             imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_new));
                         textView.setText(res.getString(R.string.ModuleStatus));
-                        if (disabled_months.contains(String.valueOf(currentDate.get(Calendar.MONTH) + 1))) {
+                        if (disabled_months.contains(String.valueOf(currentDate.get(Calendar.MONTH)))) {
                             linearLayout.setBackgroundResource(R.drawable.list_item_disabled);
                             moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
                             textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));
