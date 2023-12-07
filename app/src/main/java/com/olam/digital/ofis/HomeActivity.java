@@ -253,7 +253,6 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     static boolean isdownloadfarmplan;
     static boolean isEnableDM = false;
 
-    private static final int REQUEST_PERMISSIONS_FOR_TIRAMISU = 2507;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

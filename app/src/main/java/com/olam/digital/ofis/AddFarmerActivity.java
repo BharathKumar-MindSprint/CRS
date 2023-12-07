@@ -221,7 +221,6 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     private boolean editIsExistFarm=false;
     private long editFarmId;
 
-
     List<MultifarmFarmerDTO> mfFarmerList;
 
     List<MultifarmFarmerDTO> mfFarmerMultifarmList;

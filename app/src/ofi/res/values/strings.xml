@@ -480,7 +480,6 @@
     <string name="untick_task">Untick Task</string>
     <string name="untick_task_msg">Please confirm you would like to mark this task as incomplete?</string>
     <string name="camera_and_gallery_permission_denial_msg">Camera &amp; Gallery Feature will not work without this Permission</string>
-    <string name="permission_denial_msg_android_13_above">Required to accept the permission</string>
     <string name="loggin_In">Logging In</string>
     <string name="updating_master_details">Downloading master details</string>
     <string name="authentication_failed">Authentication failed. Please try again</string>
@@ -1106,7 +1105,7 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="dm_select_currency_txt">Select the currency for the action plan</string>
     <string name="dm_select_currency_txt1">Select the currency for the action plan</string>
 
-    <string name="alert_review">Value entered is outside of the permissible range, it will be pushed for administrator review</string>
+    <string name="alert_review">Value entered will be pushed for administrator review for additional validation</string>
     <string name="alert_review_hint">Please enter the value within the range %1$d-%2$d</string>
     <string name="range_hint_A_R">Range : %1$d-%2$d</string>
 </resources>
