@@ -837,6 +837,17 @@ public class DataLayer {
         return activeTaskCount;
     }
 
+    void deleteNetworkQueueItemByfarmerId(long farmerId , int id_type) {
+        String whereClause = OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID + " = ? AND " +
+                OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE + " = ? AND " +
+                OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID + " = ? ";
+        String[] whereArgs = new String[]{String.valueOf(farmerId),"National_ID", String.valueOf(id_type)};
+        try {
+            db.delete(OFISDBContract.NetworkQueueEntry.TABLE_NAME, whereClause, whereArgs);
+        }catch (Exception e){}
+
+    }
+
     int updateTaskStatus(boolean completed, long taskId) {
         ContentValues values = new ContentValues();
         values.put(OFISDBContract.Task.COLUMN_NAME_COMPLETED, completed);
@@ -1632,6 +1643,33 @@ public class DataLayer {
         return moderationstatus;
     }
 
+    public void addFarmerNationalids(JSONArray storeableNationalids, long farmerid, long nationalId) {
+
+        String whereClause = OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID + " = ? AND " +
+                OFISDBContract.FarmerNationalIDs.COLUMN_NID_TYPE + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(farmerid), String.valueOf(nationalId)};
+
+        try {
+            db.delete(OFISDBContract.FarmerNationalIDs.TABLE_NAME, whereClause, whereArgs);
+        }catch (Exception e){}
+
+        int arrayLength = storeableNationalids.length();
+        try {
+            for (int i = 0; i < arrayLength; i++) {
+                ContentValues values = new ContentValues();
+                values.put(OFISDBContract.FarmerNationalIDs.COLUMN_NID_NUMBER, storeableNationalids.getJSONObject(i).getString("id_number"));
+                values.put(OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID, storeableNationalids.getJSONObject(i).getString("farmer_id"));
+                values.put(OFISDBContract.FarmerNationalIDs.COLUMN_NID_EXPIRY_DATE, storeableNationalids.getJSONObject(i).getString("expiry_date"));
+                values.put(OFISDBContract.FarmerNationalIDs.COLUMN_NID_TYPE, storeableNationalids.getJSONObject(i).getString("id_type"));
+                values.put(OFISDBContract.FarmerNationalIDs.COLUMN_IS_SYNCED, 1);
+                db.insert(OFISDBContract.FarmerNationalIDs.TABLE_NAME, null, values);
+
+            }
+        }catch (Exception e){}
+
+
+    }
+
 
     /*void addLocalFarmerNationalids(ArrayList<NationalIdDTO> storeableNationalids) {
         int arrayLength = storeableNationalids.size();
@@ -1704,6 +1742,38 @@ public class DataLayer {
         boolean modurationstatus = addFarmerNationalids(context, farmerId, storeableNationalids, status, farmername);
         return modurationstatus;
     }
+    void updateCertificationsByFarmerId(long farmerId, String certificationIds, String certificationText, String farmerName) {
+        ContentValues values = new ContentValues();
+        values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_CERTIFICATION_ID, certificationIds);
+        values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_CERTIFICATION_TEXT, certificationText);
+        String whereClause = OFISDBContract.FarmerEntry.COLUMN_NAME_ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(farmerId)};
+        try {
+            db.update(OFISDBContract.FarmerEntry.TABLE_NAME, values, whereClause, whereArgs);
+            updateNetworkQueueCertificationEntry(farmerId,certificationIds,certificationText,farmerName);
+        }catch (Exception e){}
+
+    }
+
+    private long updateNetworkQueueCertificationEntry(long farmerId, String certificationIds, String certificationText, String name) {
+        long newEntry;
+        ContentValues networkQueueValues = new ContentValues();
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "certification");
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, "certification");
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, name.trim());
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID, " ");
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID, farmerId);
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CERTIFICATION_ID, certificationIds);
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CERTIFICATION_TEXT, certificationText);
+
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT, timestamp.toString());
+
+        newEntry = insertNetworkQueueEntry(networkQueueValues);
+
+        return newEntry;
+    }
+
 
     public String getAssignmentByFarmerTypeID(long farmerId , String assignmentTypeColumn ){
         String assignmentField="";
@@ -3566,11 +3636,12 @@ public class DataLayer {
         return db.query(OFISDBContract.NationalIDEntry.TABLE_NAME, columns, null, null, null, null, orderBy);
     }
 
-    public void updateSyncedStatus(long farmerid) {
+    public void updateSyncedStatus(long farmerid, long nIdType) {
         ContentValues values = new ContentValues();
         values.put(OFISDBContract.FarmerNationalIDs.COLUMN_IS_SYNCED, true);
-        String whereClause = OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID + " = ?";
-        String[] whereArgs = new String[]{String.valueOf(farmerid)};
+        String whereClause = OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID + " = ? AND " +
+                OFISDBContract.FarmerNationalIDs.COLUMN_NID_TYPE + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(farmerid),String.valueOf(nIdType)};
         try {
             db.update(OFISDBContract.FarmerNationalIDs.TABLE_NAME, values, whereClause, whereArgs);
         }catch (Exception e){}
@@ -3660,6 +3731,17 @@ public class DataLayer {
         String orderBy = OFISDBContract.FarmerNationalIDs.COLUMN_NAME_ID + " ASC";
         return db.query(OFISDBContract.FarmerNationalIDs.TABLE_NAME, columns, whereClause, whereArgs, null, null, orderBy);
     }
+
+
+    public Cursor getnationalidsbyfarmerid(long farmerid, long nidtype) {
+        String[] columns = new String[]{"*"};
+        String whereClause = OFISDBContract.FarmerNationalIDs.COLUMN_NAME_FARMER_ID + " = ? AND " +
+                OFISDBContract.FarmerNationalIDs.COLUMN_NID_TYPE + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(farmerid),String.valueOf(nidtype)};
+        String orderBy = OFISDBContract.FarmerNationalIDs.COLUMN_NAME_ID + " ASC";
+        return db.query(OFISDBContract.FarmerNationalIDs.TABLE_NAME, columns, whereClause, whereArgs, null, null, orderBy);
+    }
+
 
     public Cursor getassignmentbyCountryId(int countryid) {
         String[] columns = new String[]{"*"};
@@ -3969,6 +4051,29 @@ public class DataLayer {
         try {
             if (nids.getCount() > 0) {
                 status = true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            nids.close();
+        }
+
+        return status;
+    }
+
+    public boolean isCertificationavailable(long farmerId) {
+        boolean status = false;
+        Cursor nids = getCertificationsbyfarmerid(farmerId);
+
+        try {
+            if (nids.getCount() > 0 ) {
+                if(nids.moveToFirst()) {
+                    String id = nids.getString(nids.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_CERTIFICATION_ID));
+                    String text = nids.getString(nids.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_CERTIFICATION_TEXT));
+                    if(id!=null || text!=null){
+                        status = true;
+                    }
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -7157,26 +7262,6 @@ public class DataLayer {
         return  farmerName;
     }
 
-    public String getAssignmentByFarmerTypeID(long farmerId , String assignmentTypeColumn ){
-        String assignmentField="";
-        Cursor farmerCursor=null;
-        try {
-            String[] columns = new String[]{"*"};
-            String whereClause = OFISDBContract.FarmerEntry.COLUMN_NAME_ID + " = ?";
-            String[] whereArgs = new String[]{String.valueOf(farmerId)};
-            farmerCursor = db.query(OFISDBContract.FarmerEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
-            if (farmerCursor != null) {
-                while (farmerCursor.moveToNext()) {
-                    assignmentField = farmerCursor.getString(farmerCursor.getColumnIndex(assignmentTypeColumn));
-                }
-            }
-        } catch (Exception e) {
-        }finally {
-            farmerCursor.close();
-        }
-        return  assignmentField;
-    }
-
     String getValueByLookUpID(String lookupId){
         String lookupValue = "";
         Cursor farmerCursor = null;
@@ -9670,6 +9755,14 @@ public class DataLayer {
                 nqi.close();
         }
         return (nqicount > 0);
+    }
+
+    public Cursor getCertificationsbyfarmerid(long farmerid) {
+        String[] columns = new String[]{OFISDBContract.FarmerEntry.COLUMN_NAME_CERTIFICATION_ID,OFISDBContract.FarmerEntry.COLUMN_NAME_CERTIFICATION_TEXT};
+        String whereClause = OFISDBContract.FarmerEntry.COLUMN_NAME_ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(farmerid)};
+        String orderBy = OFISDBContract.FarmerEntry.COLUMN_NAME_ID + " ASC";
+        return db.query(OFISDBContract.FarmerEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, orderBy);
     }
 }
 

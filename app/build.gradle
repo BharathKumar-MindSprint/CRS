@@ -2,11 +2,12 @@
 apply plugin: 'com.android.application'
 apply plugin: 'org.sonarqube'
 
-//apply plugin: 'com.google.firebase.firebase-perf'
-
-
 
 android {
+    dexOptions {
+        preDexLibraries true
+        javaMaxHeapSize "4G"
+    }
     signingConfigs {
         release {
             keyAlias 'androiddebugkey'
@@ -30,13 +31,10 @@ android {
         resValue "string", "sync_account_type", applicationId
         buildConfigField "String", "ACCOUNT_TYPE", '"com.olam.digital.ofis"'
         minSdkVersion 19
-
-        //noinspection OldTargetApi
         targetSdkVersion 33
         multiDexEnabled true
-
-        versionCode 157
-        versionName "11.4.6"
+        versionCode 163
+        versionName "11.5.2"
 
 
 
@@ -356,9 +354,10 @@ dependencies {
     implementation 'com.google.firebase:firebase-crash:11x.8.0'
     implementation 'com.google.firebase:firebase-perf:17.0.0'
     implementation 'androidx.appcompat:appcompat:1.0.2'
-    implementation 'org.osmdroid:osmdroid-mapsforge:5.5:release@aar'
-    implementation 'org.mapsforge:mapsforge-map-android:0.6.1'
-    implementation 'org.mapsforge:mapsforge-map:0.6.1'
+//    implementation 'org.osmdroid:osmdroid-mapsforge:5.5:release@aar'
+//    implementation 'org.mapsforge:mapsforge-map-android:0.6.1'
+//    implementation 'org.mapsforge:mapsforge-map:0.6.1'
+    implementation 'org.osmdroid:osmdroid-android:6.1.17'
     implementation 'com.google.android.gms:play-services-location:17.0.0'
     implementation 'androidx.multidex:multidex:2.0.0'
     implementation 'com.github.MKergall:osmbonuspack:6.4'

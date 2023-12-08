@@ -974,6 +974,9 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_PROGRAMME_ID = "programme_Id";
 
         public static final String COLUMN_NAME_PLOT = "plot";
+        public static final String COLUMN_NAME_CERTIFICATION_ID = "certificationIds";
+        public static final String COLUMN_NAME_CERTIFICATION_TEXT = "certificationText";
+
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
                     add(COLUMN_NAME_ID);
@@ -1310,6 +1313,30 @@ public class OFISDBContract {
         );
     }
 
+    /*public static abstract class Certifications implements BaseColumns {
+        public static final String TABLE_NAME = "subdistricts";
+        public static final String COLUMN_NAME_CERTIFICATIONS_ID = "certificationId";
+        public static final String COLUMN_NAME_CERTIFICATIONS_NAME = "certificationName";
+        public static final String COLUMN_NAME_CERTIFICATIONS_DESC = "certificationDesc";
+        public static final String COLUMN_NAME_CREATED_AT = "createdAt";
+        public static final String COLUMN_NAME_MODIFIED_AT = "modifiedAt";
+        public static final String COLUMN_NAME_APP_ID = "appId";
+        public static final String COLUMN_NAME_DELETED_FLAG = "deletedFlag";
+        public static final String COLUMN_NAME_ISACTIVE = "isActive";
+        public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
+                new ArrayList<String>() {{
+                    add(COLUMN_NAME_CERTIFICATIONS_ID);
+                    add(COLUMN_NAME_CERTIFICATIONS_NAME);
+                    add(COLUMN_NAME_CERTIFICATIONS_DESC);
+                    add(COLUMN_NAME_CREATED_AT);
+                    add(COLUMN_NAME_MODIFIED_AT);
+                    add(COLUMN_NAME_APP_ID);
+                    add(COLUMN_NAME_DELETED_FLAG);
+                    add(COLUMN_NAME_ISACTIVE);
+                }}
+        );
+    }*/
+
     public static abstract class PlacesEntry implements BaseColumns {
         public static final String TABLE_NAME = "places";
         public static final String COLUMN_NAME_ID = "id";
@@ -1428,6 +1455,8 @@ public class OFISDBContract {
         // Add for accuracu capture
         public static final String COLUMN_NAME_ACCURACY = "accuracy";
         public static final String COLUMN_NAME_PLOT_ID = "plot_id";
+        public static final String COLUMN_NAME_CERTIFICATION_ID = "certificationIds";
+        public static final String COLUMN_NAME_CERTIFICATION_TEXT = "certificationText";
 
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
@@ -1478,6 +1507,8 @@ public class OFISDBContract {
                     add(COLUMN_NAME_SIGNATURE);
                     add(COLUMN_NAME_ACCURACY);
                     add(COLUMN_NAME_PLOT_ID);
+                    add(COLUMN_NAME_CERTIFICATION_ID);
+                    add(COLUMN_NAME_CERTIFICATION_TEXT);
                 }}
         );
 
