@@ -2297,7 +2297,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                         if (ctext != null && !ctext.isEmpty()) {
                             certificationEditText.setVisibility(View.VISIBLE);
                             certificationEditText.setText(ctext);
-                            listStatus.get(listStatus.size()).setSelected(true);
+                            listStatus.get(listStatus.size()-1).setSelected(true);
                         }
                         if (cIds != null) {
                             String[] cIdArr = cIds.split(",");

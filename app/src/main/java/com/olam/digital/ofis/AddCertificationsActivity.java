@@ -98,7 +98,7 @@ public class AddCertificationsActivity extends BaseActivity implements View.OnCl
                         if (ctext != null && !ctext.isEmpty()) {
                             ed_other_certification.setVisibility(View.VISIBLE);
                             ed_other_certification.setText(ctext);
-                            listStatus.get(listStatus.size()).setSelected(true);
+                            listStatus.get(listStatus.size()-1).setSelected(true);
                         }
                         if (cIds != null) {
                             String[] cIdArr = cIds.split(",");
