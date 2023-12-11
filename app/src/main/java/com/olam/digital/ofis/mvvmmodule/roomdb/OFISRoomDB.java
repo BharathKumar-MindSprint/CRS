@@ -6,6 +6,10 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
 import com.olam.digital.ofis.mvvmmodule.model.CBU.ValidationOnRange;
+import com.olam.digital.ofis.mvvmmodule.model.LocalUnit.Dao.GlobalUnitDao;
+import com.olam.digital.ofis.mvvmmodule.model.LocalUnit.Dao.LocalUnitDao;
+import com.olam.digital.ofis.mvvmmodule.model.LocalUnit.GlobalUnit;
+import com.olam.digital.ofis.mvvmmodule.model.LocalUnit.LocalUnit;
 import com.olam.digital.ofis.mvvmmodule.roomdb.Dao.ValidationOnRangeDao;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.ComplianceIndicator;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DMSurveyReport;
@@ -51,8 +55,8 @@ import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.daos.FollowUpResult
         DmNonComplaintFileTable.class, DmSatisfactoryFileTable.class, DmActionPlanCurrenciesTable.class,
         DmRangeActionPlansItems.class, DMSurveyReport.class,  FollowUpItemMainTable.class,
         CapturedProofFollowupTable.class, ExistingModuleItemFollowupTable.class, FollowUpAnswerTable.class,
-        FollowUpResultTable.class, DmAssessmentResultType.class, ValidationOnRange.class},
-        version = 9)
+        FollowUpResultTable.class, DmAssessmentResultType.class, ValidationOnRange.class, GlobalUnit.class, LocalUnit.class},
+        version = 10)
 public abstract class OFISRoomDB extends RoomDatabase {
     private static final String DATABASE_NAME = "ofismobileroom";
     public abstract DmMainModuleDao dmMainModuleDao();
@@ -86,6 +90,10 @@ public abstract class OFISRoomDB extends RoomDatabase {
     public abstract DmAssessmentResultTypeDao dmAssessmentResultTypeDao();
 
     public abstract ValidationOnRangeDao validationOnRangeDao();
+
+    public abstract GlobalUnitDao globalUnitDao();
+
+    public abstract LocalUnitDao localUnitDao();
 
     public static volatile OFISRoomDB INSTANCE = null;
 
