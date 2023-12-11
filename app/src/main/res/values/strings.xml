@@ -133,8 +133,6 @@
     <string name="record_polygon_input_messege">How many different plots does he have?</string>
     <string name="record_polygon_input_title">Plot Level Analysis</string>
     <string name="record_polygon_input_hint">Enter Number of Plots</string>
-    <string name="permission_denial_msg_android_13_above">Required to accept the permission</string>
-
 
     <string name="yes">Yes</string>
     <string name="no">No</string>
