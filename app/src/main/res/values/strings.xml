@@ -133,6 +133,8 @@
     <string name="record_polygon_input_messege">How many different plots does he have?</string>
     <string name="record_polygon_input_title">Plot Level Analysis</string>
     <string name="record_polygon_input_hint">Enter Number of Plots</string>
+    <string name="permission_denial_msg_android_13_above">Required to accept the permission</string>
+
 
     <string name="yes">Yes</string>
     <string name="no">No</string>
@@ -1113,4 +1115,9 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="alert_review">Value entered will be pushed for administrator review for additional validation</string>
     <string name="alert_review_hint">Please enter the value within the range %1$d-%2$d</string>
     <string name="range_hint_A_R">Range : %1$d-%2$d</string>
+    <string name="please_enter_certification_details">Please enter Certification details</string>
+    <string name="update_certification">Update Certification</string>
+    <string name="certification">Certification</string>
+    <string name="certification_name">Certification Name</string>
+    <string name="others">Others</string>
 </resources>

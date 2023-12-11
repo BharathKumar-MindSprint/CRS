@@ -135,6 +135,44 @@
             android:src="@drawable/ic_close_info"
             android:layout_weight="0.1"/>
     </LinearLayout>
+        <!-- Certification update -->
+
+        <LinearLayout
+            android:id="@+id/cert_layout_notification"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:background="@color/color_secondary_3"
+            android:padding="@dimen/home_activity_horizontal_margin"
+            android:visibility="gone"
+            android:layout_below="@+id/topSectionBackground"
+            android:baselineAligned="false">
+            <ImageView
+                android:id="@+id/cert_info_status_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_info_icon"
+                android:layout_weight="0.1"/>
+
+            <TextView
+                android:id="@+id/cert_info_text"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:paddingLeft="@dimen/margin_10"
+                android:paddingRight="@dimen/margin_10"
+                android:layout_marginTop="3dp"
+                android:layout_marginBottom="3dp"
+                android:layout_weight="0.8"
+                android:text="Please update the Certification of farmer"
+                android:textColor="@color/ofis_base_font_white" />
+            <ImageView
+                android:id="@+id/cert_info_close_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_close_info"
+                android:layout_weight="0.1"/>
+        </LinearLayout>
     </LinearLayout>
     <!-- bottom section -->
     <LinearLayout
