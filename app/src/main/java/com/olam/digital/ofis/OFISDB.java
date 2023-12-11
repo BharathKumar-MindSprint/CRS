@@ -336,6 +336,7 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_INT + " INTEGER, " + OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_BOOL + " INTEGER, "
             + OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_DECIMAL + " NUMERIC, " + OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_DATE + " TEXT, "
             + OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_TEXT + " TEXT, " + OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_REPORTING_YEAR + " TEXT, "
+            + OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_METRIC_ID + " TEXT, "
             + OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_METRIC + " TEXT )";
 
     private static final String OFIS_SAVED_ANSWER_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.SavedAnswerEntry.TABLE_NAME +
@@ -1125,6 +1126,7 @@ class OFISDB extends SQLiteOpenHelper {
     private void migrateFromVersionBelow150(SQLiteDatabase sqLiteDatabase){
         try {
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.QuestionEntry.TABLE_NAME +" ADD COLUMN " + OFISDBContract.QuestionEntry.COLUMN_NAME_METRIC +" TEXT default null");
+            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.AnswerEntry.TABLE_NAME +" ADD COLUMN " + OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_METRIC_ID +" TEXT default null");
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.AnswerEntry.TABLE_NAME +" ADD COLUMN " + OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_METRIC +" TEXT default null");
         }catch (Exception e){
             e.printStackTrace();
