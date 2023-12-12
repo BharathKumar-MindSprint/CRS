@@ -216,7 +216,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     private EditText farmCodeEdittext;
     private EditText certificationEditText;
     private LinearLayout farmStakeholderLayout;
-    private LinearLayout existingFarmLayout,newFarmLayout;
+    private LinearLayout existingFarmLayout,newFarmLayout,linear_certifications;
     private TextView existingFarmTV;
     private boolean editIsExistFarm=false;
     private long editFarmId;
@@ -369,6 +369,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         farmerSignatureButton = findViewById(R.id.farmerSignature);
         farmerLeadSearch = findViewById(R.id.farmerleadinfo);
         farmerLeadDisplayLayout = findViewById(R.id.farmerLeadDisplayLayout);
+        linear_certifications = (LinearLayout) findViewById(R.id.linear_certifications);
         certificationNameSpinner = (Spinner) findViewById(R.id.spinner_certificationName);
         certificationEditText = (EditText) findViewById(R.id.ed_other_certification);
         isFLEnumerator = Utilities.getBoolFromSharedPrefs(context, Utilities.FARMERLEAD_ENUMERATOR,false);
@@ -2280,7 +2281,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             certificationNameSpinner.setAdapter(myAdapter);
 
         }else {
-            certificationNameSpinner.setVisibility(View.GONE);
+            linear_certifications.setVisibility(View.GONE);
         }
 
 
