@@ -31,4 +31,13 @@ public interface GlobalUnitDao {
     @Query("SELECT globalAbbreviation FROM GlobalUnit WHERE globalUnitId=:globalUnitId")
     List<String> getGlobalAbbreviation(int globalUnitId);
 
+
+    @Query("SELECT globalUnitId, globalAbbreviation FROM GlobalUnit WHERE globalUnitId = :targetGlobalUnitFk")
+    List<GlobalUnitDao.UnitMapping> getGlobalId(int targetGlobalUnitFk);
+
+    class UnitMapping {
+        public int globalUnitId;
+        public String globalAbbreviation;
+    }
+
 }

@@ -658,7 +658,8 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_ANSWER_DATE = "answer_date";
         public static final String COLUMN_NAME_ANSWER_TEXT = "answer_text";
         public static final String COLUMN_NAME_ANSWER_REPORTING_YEAR = "reporting_year";
-        public static final String COLUMN_NAME_ANSWER_METRIC_ID = "metric_answer_id";
+        public static final String COLUMN_NAME_ANSWER_METRIC_GLOBAL_ID = "metric_global_id";
+        public static final String COLUMN_NAME_ANSWER_METRIC_LOCAL_ID = "metric_local_id";
         public static final String COLUMN_NAME_ANSWER_METRIC = "metric_answer";
 
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
@@ -679,7 +680,8 @@ public class OFISDBContract {
                     add(COLUMN_NAME_ANSWER_DATE);
                     add(COLUMN_NAME_ANSWER_TEXT);
                     add(COLUMN_NAME_ANSWER_REPORTING_YEAR);
-                    add(COLUMN_NAME_ANSWER_METRIC_ID);
+                    add(COLUMN_NAME_ANSWER_METRIC_GLOBAL_ID);
+                    add(COLUMN_NAME_ANSWER_METRIC_LOCAL_ID);
                     add(COLUMN_NAME_ANSWER_METRIC);
                 }}
         );

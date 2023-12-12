@@ -26,11 +26,14 @@ public interface LocalUnitDao {
     @Query("DELETE FROM LocalUnit")
     void deleteAll();
 
+    @Query("SELECT conversionFactor FROM LocalUnit WHERE localUnitId =:localUnitId")
+    double getConversionFactorById(int localUnitId);
+
 //    @Query("SELECT localUnitAbbreviation FROM LocalUnit where globalUnitFk =:globalId")
 //    List<String> getValueByGlobalId(int globalId);
 
-    @Query("SELECT localUnitId, localUnitAbbreviation FROM LocalUnit WHERE globalUnitFk = :targetGlobalUnitFk and countryId =:countryId and productId =:productId")
-    List<UnitMapping> getValueByGlobalId(int targetGlobalUnitFk , int countryId , int productId);
+    @Query("SELECT localUnitId, localUnitAbbreviation FROM LocalUnit WHERE globalUnitFk = :targetGlobalUnitFk ")
+    List<UnitMapping> getValueByGlobalId(int targetGlobalUnitFk);
 
     class UnitMapping {
         public int localUnitId;
