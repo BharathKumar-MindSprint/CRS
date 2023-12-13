@@ -1795,6 +1795,49 @@ public class DataLayer {
         return metricId;
     }
 
+
+    public String getGlobalIdByAnswerID(int answerId){
+        String metricId = "";
+        Cursor cursor = null;
+        try {
+            String[] columns = new String[]{"*"};
+            String whereClause = OFISDBContract.AnswerEntry.COLUMN_NAME_ID + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(answerId)};
+            cursor = db.query(OFISDBContract.AnswerEntry.TABLE_NAME , columns , whereClause , whereArgs , null , null, null);
+            if(cursor != null){
+                while(cursor.moveToNext()){
+                    metricId = cursor.getString(cursor.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_METRIC_GLOBAL_ID));
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            cursor.close();
+        }
+        return metricId;
+    }
+
+    public String getLocalIdByAnswerID(int answerId){
+        String metricId = "";
+        Cursor cursor = null;
+        try {
+            String[] columns = new String[]{"*"};
+            String whereClause = OFISDBContract.AnswerEntry.COLUMN_NAME_ID + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(answerId)};
+            cursor = db.query(OFISDBContract.AnswerEntry.TABLE_NAME , columns , whereClause , whereArgs , null , null, null);
+            if(cursor != null){
+                while(cursor.moveToNext()){
+                    metricId = cursor.getString(cursor.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_METRIC_LOCAL_ID));
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            cursor.close();
+        }
+        return metricId;
+    }
+
     public String getAssignmentByFarmerTypeID(long farmerId , String assignmentTypeColumn ){
         String assignmentField="";
         Cursor farmerCursor=null;

@@ -870,6 +870,7 @@ public class DynamicQuestions {
         if (questionList.size() == 0){
             match =true;
         }else {
+//            boolean newMatch = new HashSet<>(answeredQuestionList).containsAll(new HashSet<>(questionList));
             if (answeredQuestionList.containsAll(questionList)) {
                 match = true;
             }
@@ -1892,7 +1893,20 @@ public class DynamicQuestions {
             datatype = qCursor.getString(qCursor.getColumnIndex("datatype_name"));
         }
 
+        int answerIdTemp = 0;
+        if (hasAnswers) {
+            if (isRepeaterItem && repeaterAnswers != null && repeaterAnswers.getCount() > 0) {
+                answerIdTemp = repeaterAnswers.getInt(repeaterAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ID));
+            } else {
+                if (qCursor.getColumnIndex("answer_id") != -1) {
+                    answerIdTemp = qCursor.getInt(qCursor.getColumnIndex("answer_id"));
+                }
+            }
+        }
+        final int answerId = answerIdTemp;
+
         String metricGlobalId = dl.getGlobalIdByQuestionId(questionId);
+//        String metricGlobalId = "2";
         final int[] selectedLocalID = {0};
         final int[] selectedGlobalID = {0};
         boolean isLocalUnit = false;
@@ -1924,6 +1938,13 @@ public class DynamicQuestions {
                 spinnerAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
                 spinner.setAdapter(spinnerAdapter);
 
+                /*if (hasAnswers){
+                    int localAnswer = Integer.valueOf(dl.getGlobalIdByAnswerID(answerId));
+                    spinner.setSelection(localAnswer);
+                }else {
+//                    spinner.setSelection(Integer.parseInt(metricGlobalId));
+                    spinner.setSelection(getIndexForValue(Integer.parseInt(metricGlobalId), getGlobalUnit.keySet().toArray(new Integer[0])));
+                }*/
                 spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
@@ -1964,6 +1985,18 @@ public class DynamicQuestions {
                 spinnerAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
                 spinner.setAdapter(spinnerAdapter);
 
+                if (hasAnswers){
+                    int localAnswer = Integer.valueOf(dl.getLocalIdByAnswerID(answerId));
+                    if (localAnswer == 0){
+                        spinner.setSelection(getIndexForValue(Integer.parseInt(metricGlobalId), spinnerData.keySet().toArray(new Integer[0])));
+                    }else{
+                        spinner.setSelection(getIndexForValue(localAnswer, spinnerData.keySet().toArray(new Integer[0])));
+                    }
+
+                }else {
+//                    spinner.setSelection(Integer.parseInt(metricGlobalId));
+                    spinner.setSelection(getIndexForValue(Integer.parseInt(metricGlobalId), spinnerData.keySet().toArray(new Integer[0])));
+                }
                 spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
@@ -1975,7 +2008,12 @@ public class DynamicQuestions {
                             if (entry.getValue().equals(selectedAbbreviation)) {
                                 int selectedLocalUnitId = entry.getKey();
 
-                                selectedLocalID[0] = entry.getKey();
+                                if (entry.getKey() == Integer.parseInt(metricGlobalId)){
+                                    selectedGlobalID[0] = entry.getKey();
+                                    selectedLocalID[0] = 0;
+                                }else {
+                                    selectedLocalID[0] = entry.getKey();
+                                }
                                 // Display a Toast with the selected localUnitId
 //                                Toast.makeText(context, "Selected localUnitId: " + selectedLocalUnitId, Toast.LENGTH_SHORT).show();
                                 break;
@@ -1992,18 +2030,6 @@ public class DynamicQuestions {
         }
 
 
-
-        int answerIdTemp = 0;
-        if (hasAnswers) {
-            if (isRepeaterItem && repeaterAnswers != null && repeaterAnswers.getCount() > 0) {
-                answerIdTemp = repeaterAnswers.getInt(repeaterAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ID));
-            } else {
-                if (qCursor.getColumnIndex("answer_id") != -1) {
-                    answerIdTemp = qCursor.getInt(qCursor.getColumnIndex("answer_id"));
-                }
-            }
-        }
-        final int answerId = answerIdTemp;
 
         final EditText et = (EditText) inflater.inflate(R.layout.module_edit_text, (isRepeaterItem) ? parentLayout : questionWrapper, false);
         if (metricGlobalId != null && !metricGlobalId.equals("")){
@@ -2963,6 +2989,7 @@ public class DynamicQuestions {
 
         //Local unit
         String metricGlobalId = dl.getGlobalIdByQuestionId(questionId);
+//        String metricGlobalId = "37";
         final int[] selectedLocalID = {0};
         final int[] selectedGlobalID = {0};
         boolean isLocalUnit = false;
@@ -3009,6 +3036,14 @@ public class DynamicQuestions {
                 spinnerAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
                 spinnerLocal.setAdapter(spinnerAdapter);
 
+
+                /*if (hasAnswers){
+                    int localAnswer = Integer.valueOf(dl.getGlobalIdByAnswerID(answerId));
+                    spinnerLocal.setSelection(localAnswer);
+                }else {
+                    spinnerLocal.setSelection(Integer.parseInt(metricGlobalId));
+                }*/
+
                 spinnerLocal.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
@@ -3048,7 +3083,18 @@ public class DynamicQuestions {
                 ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(context, R.layout.spinner_item, spinnerItemList);
                 spinnerAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
                 spinnerLocal.setAdapter(spinnerAdapter);
+                if (hasAnswers){
+                    int localAnswer = Integer.valueOf(dl.getLocalIdByAnswerID(answerId));
+                    if (localAnswer == 0){
+                        spinnerLocal.setSelection(getIndexForValue(Integer.parseInt(metricGlobalId), spinnerData.keySet().toArray(new Integer[0])));
+                    }else{
+                        spinnerLocal.setSelection(getIndexForValue(localAnswer, spinnerData.keySet().toArray(new Integer[0])));
+                    }
 
+                }else {
+//                    spinner.setSelection(Integer.parseInt(metricGlobalId));
+                    spinnerLocal.setSelection(getIndexForValue(Integer.parseInt(metricGlobalId), spinnerData.keySet().toArray(new Integer[0])));
+                }
                 spinnerLocal.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
@@ -3060,7 +3106,12 @@ public class DynamicQuestions {
                             if (entry.getValue().equals(selectedAbbreviation)) {
                                 int selectedLocalUnitId = entry.getKey();
 
-                                selectedLocalID[0] = entry.getKey();
+                                if (entry.getKey() == Integer.parseInt(metricGlobalId)){
+                                    selectedGlobalID[0] = entry.getKey();
+                                    selectedLocalID[0] = 0;
+                                }else {
+                                    selectedLocalID[0] = entry.getKey();
+                                }
                                 // Display a Toast with the selected localUnitId
 //                                Toast.makeText(context, "Selected localUnitId: " + selectedLocalUnitId, Toast.LENGTH_SHORT).show();
                                 break;
@@ -3472,6 +3523,7 @@ public class DynamicQuestions {
 
         //code start
         String metricGlobalId = dl.getGlobalIdByQuestionId(questionId);
+//        String metricGlobalId = "43";
         final int[] selectedLocalID = {0};
         final int[] selectedGlobalID = {0};
         boolean isLocalUnit = false;
@@ -3514,6 +3566,14 @@ public class DynamicQuestions {
                 spinnerAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
                 spinner.setAdapter(spinnerAdapter);
 
+                /*if (hasAnswers){
+                    int
+
+                    spinner.setSelection(localAnswer);
+                }else {
+                    spinner.setSelection(getGlobalUnit.indexOf(metricGlobalId));
+
+                }*/
                 spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
@@ -3534,12 +3594,13 @@ public class DynamicQuestions {
                 isLocalUnit = true;
                 Map<Integer, String> spinnerData = new HashMap<>();
                 List<GlobalUnitDao.UnitMapping> globalMappings = roomDB.globalUnitDao().getGlobalId(Integer.parseInt(metricGlobalId));
-                for (GlobalUnitDao.UnitMapping unitMapping : globalMappings){
-                    spinnerData.put(unitMapping.globalUnitId, unitMapping.globalAbbreviation);
-                }
 
                 for (LocalUnitDao.UnitMapping unitMapping : unitMappings) {
                     spinnerData.put(unitMapping.localUnitId, unitMapping.localUnitAbbreviation);
+                }
+
+                for (GlobalUnitDao.UnitMapping unitMapping : globalMappings){
+                    spinnerData.put(unitMapping.globalUnitId, unitMapping.globalAbbreviation);
                 }
 
                 List<String> spinnerItemList = new ArrayList<>(spinnerData.values());
@@ -3553,7 +3614,18 @@ public class DynamicQuestions {
                 ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(context, R.layout.spinner_item, spinnerItemList);
                 spinnerAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
                 spinner.setAdapter(spinnerAdapter);
+                if (hasAnswers){
+                    int localAnswer = Integer.valueOf(dl.getLocalIdByAnswerID(answerId));
+                    if (localAnswer == 0){
+                        spinner.setSelection(getIndexForValue(Integer.parseInt(metricGlobalId), spinnerData.keySet().toArray(new Integer[0])));
+                    }else{
+                        spinner.setSelection(getIndexForValue(localAnswer, spinnerData.keySet().toArray(new Integer[0])));
+                    }
 
+                }else {
+//                    spinner.setSelection(Integer.parseInt(metricGlobalId));
+                    spinner.setSelection(getIndexForValue(Integer.parseInt(metricGlobalId), spinnerData.keySet().toArray(new Integer[0])));
+                }
                 spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
@@ -3565,7 +3637,12 @@ public class DynamicQuestions {
                             if (entry.getValue().equals(selectedAbbreviation)) {
                                 int selectedLocalUnitId = entry.getKey();
 
-                                selectedLocalID[0] = entry.getKey();
+                                if (entry.getKey() == Integer.parseInt(metricGlobalId)){
+                                    selectedGlobalID[0] = entry.getKey();
+                                    selectedLocalID[0] = 0;
+                                }else {
+                                    selectedLocalID[0] = entry.getKey();
+                                }
                                 // Display a Toast with the selected localUnitId
 //                                Toast.makeText(context, "Selected localUnitId: " + selectedLocalUnitId, Toast.LENGTH_SHORT).show();
                                 break;
@@ -4192,16 +4269,26 @@ public class DynamicQuestions {
         }
 
 
+        int answerIdTemp = 0;
         final boolean singleSelect;
         boolean tempSingleSelect = false;
+        String metricGlobalId = dl.getGlobalIdByQuestionId(questionId);
 
         Cursor checkboxes = dl.getSpinnerData(OFISDBContract.LookupValuesEntry.TABLE_NAME, true, OFISDBContract.LookupValuesEntry.COLUMN_NAME_QUESTION_ID, questionId, true, OFISDBContract.LookupValuesEntry.COLUMN_NAME_POSITION);
         Cursor cbAnswers;
         if(isSavedAns) {
              cbAnswers = dl.getSavedAnswersForQuestionByFarmer(questionId, farmerId, farmerModuleId);
+            if (metricGlobalId != null && !metricGlobalId.equals("")) {
+                answerIdTemp = questions.getInt(questions.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ID));
+            }
         }else{
              cbAnswers = dl.getAnswersForQuestionByFarmer(questionId, farmerId, farmerModuleId);
+            if (metricGlobalId != null && !metricGlobalId.equals("")) {
+                answerIdTemp = questions.getInt(questions.getColumnIndex("answer_id"));
+            }
         }
+        final int answerId = answerIdTemp;
+
         // is this a question we can only select one answer to?
         // get display config
         try {
@@ -4231,9 +4318,11 @@ public class DynamicQuestions {
 
 
         //code start
-        String metricGlobalId = dl.getGlobalIdByQuestionId(questionId);
+//        String metricGlobalId = dl.getGlobalIdByQuestionId(questionId);
+//        String metricGlobalId = "2";
         final int[] selectedLocalID = {0};
         final int[] selectedGlobalID = {0};
+        final boolean[] unCheckAllBox = {false};
         boolean isLocalUnit = false;
         // Create an inner wrapper
         LinearLayout innerWrapper = new LinearLayout(context);
@@ -4274,6 +4363,12 @@ public class DynamicQuestions {
                 spinnerAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
                 spinner.setAdapter(spinnerAdapter);
 
+                /*if (hasAnswers){
+                    int localAnswer = Integer.valueOf(dl.getGlobalIdByAnswerID(answerId));
+                    spinner.setSelection(localAnswer);
+                }else {
+                    spinner.setSelection(Integer.parseInt(metricGlobalId));
+                }*/
                 spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
@@ -4295,12 +4390,13 @@ public class DynamicQuestions {
                 isLocalUnit = true;
                 Map<Integer, String> spinnerData = new HashMap<>();
                 List<GlobalUnitDao.UnitMapping> globalMappings = roomDB.globalUnitDao().getGlobalId(Integer.parseInt(metricGlobalId));
-                for (GlobalUnitDao.UnitMapping unitMapping : globalMappings){
-                    spinnerData.put(unitMapping.globalUnitId, unitMapping.globalAbbreviation);
-                }
 
                 for (LocalUnitDao.UnitMapping unitMapping : unitMappings) {
                     spinnerData.put(unitMapping.localUnitId, unitMapping.localUnitAbbreviation);
+                }
+
+                for (GlobalUnitDao.UnitMapping unitMapping : globalMappings){
+                    spinnerData.put(unitMapping.globalUnitId, unitMapping.globalAbbreviation);
                 }
 
                 List<String> spinnerItemList = new ArrayList<>(spinnerData.values());
@@ -4314,7 +4410,18 @@ public class DynamicQuestions {
                 ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(context, R.layout.spinner_item, spinnerItemList);
                 spinnerAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
                 spinner.setAdapter(spinnerAdapter);
+                if (answerId != 0){
+                    int localAnswer = Integer.valueOf(dl.getLocalIdByAnswerID(answerId));
+                    if (localAnswer == 0){
+                        spinner.setSelection(getIndexForValue(Integer.parseInt(metricGlobalId), spinnerData.keySet().toArray(new Integer[0])));
+                    }else{
+                        spinner.setSelection(getIndexForValue(localAnswer, spinnerData.keySet().toArray(new Integer[0])));
+                    }
 
+                }else {
+//                    spinner.setSelection(Integer.parseInt(metricGlobalId));
+                    spinner.setSelection(getIndexForValue(Integer.parseInt(metricGlobalId), spinnerData.keySet().toArray(new Integer[0])));
+                }
                 spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
@@ -4326,7 +4433,14 @@ public class DynamicQuestions {
                             if (entry.getValue().equals(selectedAbbreviation)) {
                                 int selectedLocalUnitId = entry.getKey();
 
-                                selectedLocalID[0] = entry.getKey();
+                                if (entry.getKey() == Integer.parseInt(metricGlobalId)){
+                                    selectedGlobalID[0] = entry.getKey();
+                                    selectedLocalID[0] = 0;
+                                }else {
+                                    selectedLocalID[0] = entry.getKey();
+                                }
+
+                                unCheckAllBox[0] = true;
                                 // Display a Toast with the selected localUnitId
 //                                Toast.makeText(context, "Selected localUnitId: " + selectedLocalUnitId, Toast.LENGTH_SHORT).show();
                                 break;
@@ -4553,6 +4667,16 @@ public class DynamicQuestions {
                                                     cb.setChecked(false);
                                                     checkboxCount[0]--;
                                                     Toast.makeText(context, "You can only select " + finalMaxSelection + " options", Toast.LENGTH_SHORT).show();
+                                                }
+                                            }
+
+                                            if (unCheckAllBox[0]){
+                                                while (cbAnswers.moveToNext()) {
+                                                    if (cbAnswers.getInt(cbAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_INT)) == Integer.parseInt(lookupID)) {
+                                                        cb.setChecked(false);
+                                                        cb.setEnabled(false);
+                                                        checkboxCount[0]++;
+                                                    }
                                                 }
                                             }
 
@@ -7420,5 +7544,15 @@ public class DynamicQuestions {
             return null;
         }
     }
+
+    private int getIndexForValue(int value, Integer[] keys) {
+        for (int i = 0; i < keys.length; i++) {
+            if (keys[i] == value) {
+                return i;
+            }
+        }
+        return 0; // Default to the first item if the value is not found
+    }
+
 
 }
