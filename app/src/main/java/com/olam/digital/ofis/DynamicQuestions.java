@@ -4284,7 +4284,14 @@ public class DynamicQuestions {
         }else{
              cbAnswers = dl.getAnswersForQuestionByFarmer(questionId, farmerId, farmerModuleId);
             if (metricGlobalId != null && !metricGlobalId.equals("")) {
-                answerIdTemp = questions.getInt(questions.getColumnIndex("answer_id"));
+                try {
+                    answerIdTemp = questions.getInt(questions.getColumnIndex("answer_id"));
+                }catch (Exception e){
+                    e.printStackTrace();
+                }finally {
+                    answerIdTemp = 0;
+                }
+
             }
         }
         final int answerId = answerIdTemp;
