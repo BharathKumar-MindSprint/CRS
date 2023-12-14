@@ -4288,7 +4288,6 @@ public class DynamicQuestions {
                     answerIdTemp = questions.getInt(questions.getColumnIndex("answer_id"));
                 }catch (Exception e){
                     e.printStackTrace();
-                }finally {
                     answerIdTemp = 0;
                 }
 
