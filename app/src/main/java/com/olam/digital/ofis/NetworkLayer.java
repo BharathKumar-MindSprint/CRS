@@ -54,6 +54,7 @@ import com.olam.digital.ofis.multifarm.MultiFarmDTO;
 import com.olam.digital.ofis.multifarm.MultiFarmUtils;
 import com.olam.digital.ofis.mvvmmodule.Constants;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
+import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.Certifications;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DMSurveyReport;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmActionPlanCurrenciesTable;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.DmComplaintFileTable;
@@ -5134,6 +5135,19 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
             if (certificationIds != null || certificationText != null) {
 
                 try {
+                    if(certificationText!=null) {
+                        OFISRoomDB db = OFISRoomDB.getDbInstance(context);
+//                        String[] intArr = certificationIds.split(",");
+                        List<Certifications> certificationsList = db.certificationsDao().getCertifications();
+                        if(certificationIds.contains(String.valueOf(certificationsList.size()+2))){
+                            String othTxt = String.valueOf(certificationsList.size()+2);
+                            if(certificationIds.contains(","+othTxt)){
+                                certificationIds=certificationIds.replace(","+othTxt,"");
+                            }else {
+                                certificationIds=certificationIds.replace(othTxt,"");
+                            }
+                        }
+                    }
                     params.put("farmerId", farmerID);
                     params.put("certificationIds", certificationIds);
                     params.put("certificationText", certificationText);

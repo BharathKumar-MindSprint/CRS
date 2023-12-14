@@ -134,6 +134,7 @@
     <string name="record_polygon_input_title">Plot Level Analysis</string>
     <string name="record_polygon_input_hint">Enter Number of Plots</string>
 
+
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="searching_for_loc">Searching for location</string>
