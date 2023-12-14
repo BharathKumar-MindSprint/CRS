@@ -15,6 +15,7 @@
     <string name="title_activity_view_farmer">Farmer Details</string>
     <string name="title_activity_record_polygon">Record Plot Polygon</string>
     <string name="title_activity_complete_module">Complete Questionnaire Module</string>
+    <string name="permission_denial_msg_android_13_above">Required to accept the permission</string>
 
     <!-- main stuff -->
     <string name="app_name">Olam Agri Companion Debug</string>

@@ -76,6 +76,8 @@ import android.widget.Toast;
 
 import com.github.gcacace.signaturepad.views.SignaturePad;
 import com.google.firebase.crash.FirebaseCrash;
+import com.olam.digital.ofis.Common.Adapter.MultiSpinnerAdapter;
+import com.olam.digital.ofis.Common.Model.MultiSpinnerStatus;
 import com.olam.digital.ofis.authentication.AuthenticationHelper;
 import com.olam.digital.ofis.childlabour.ChildLabourDetailsActivity;
 import com.olam.digital.ofis.childlabour.ChildLabourUtils;
@@ -94,6 +96,8 @@ import com.olam.digital.ofis.matoma.ScreenNameConstants;
 import com.olam.digital.ofis.model.FarmerLeadDTO;
 import com.olam.digital.ofis.model.NationalIdDTO;
 import com.olam.digital.ofis.model.NationalIdTypeDTO;
+import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
+import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.Certifications;
 import com.olam.digital.ofis.recordpolygon.Utils;
 import com.olam.digital.ofis.multifarm.DistanceCalculation;
 import com.olam.digital.ofis.multifarm.FindMultiFarmFarmAdapter;
@@ -191,7 +195,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     private long editFarmerId;
     private boolean editMode;
     private int selectedCountry = 0, selectedRegion = 0, selectedDistrict = 0,selectedSubDistrict = 0, selectedPlace = 0, selectedFarmerGroup = 0, selectedSection = 0;
-    private Spinner genderspinner, countrySpinner, regionSpinner, districtSpinner, placeSpinner, farmerGroupSpinner, sectionSpinner, subdistrictSpinner;
+    private Spinner genderspinner, countrySpinner, regionSpinner, districtSpinner, placeSpinner, farmerGroupSpinner, sectionSpinner, subdistrictSpinner, certificationNameSpinner;
     // Required for camera operations in order to save the image file on resume.
     private String mCurrentPhotoPath = null, mCurrentSignaturePhotoPath = null;
     private Uri mCapturedImageURI = null, mCapturedSignatureImageURI = null;
@@ -210,8 +214,9 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     private RadioButton existingFarmRadioButton;
     private EditText farmNameEdittext;
     private EditText farmCodeEdittext;
+    private EditText certificationEditText;
     private LinearLayout farmStakeholderLayout;
-    private LinearLayout existingFarmLayout,newFarmLayout;
+    private LinearLayout existingFarmLayout,newFarmLayout,linear_certifications;
     private TextView existingFarmTV;
     private boolean editIsExistFarm=false;
     private long editFarmId;
@@ -219,7 +224,9 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
     List<MultifarmFarmerDTO> mfFarmerList;
 
     List<MultifarmFarmerDTO> mfFarmerMultifarmList;
+    ArrayList<MultiSpinnerStatus> listStatus = new ArrayList<>();
 
+    private OFISRoomDB ofisRoomDB;
 
     /**
      * Generate unique ID from UUID.
@@ -341,6 +348,9 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         editFarmId = intent.getLongExtra("farmId", 0);
         editMode = intent.getBooleanExtra(EDIT_MODE, false);
 
+        //roomdb
+        ofisRoomDB = OFISRoomDB.getDbInstance(context);
+
         String localeSuffix = Utilities.getLocaleSuffix(res);
         csStatus = false;
         genders.put("Male" + localeSuffix, res.getString(R.string.gender_male));
@@ -359,6 +369,9 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         farmerSignatureButton = findViewById(R.id.farmerSignature);
         farmerLeadSearch = findViewById(R.id.farmerleadinfo);
         farmerLeadDisplayLayout = findViewById(R.id.farmerLeadDisplayLayout);
+        linear_certifications = (LinearLayout) findViewById(R.id.linear_certifications);
+        certificationNameSpinner = (Spinner) findViewById(R.id.spinner_certificationName);
+        certificationEditText = (EditText) findViewById(R.id.ed_other_certification);
         isFLEnumerator = Utilities.getBoolFromSharedPrefs(context, Utilities.FARMERLEAD_ENUMERATOR,false);
 
         bindphonenumbers();
@@ -473,6 +486,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         bindDateField();
         bindSaveButton();
         bindConsentButton();
+        bindCertificationNameSpinner();
 
 
         gpsListener = new GPSListener() {
@@ -1398,6 +1412,22 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
 
 
         }
+        if(ofisRoomDB.certificationsDao().getCertifications().size()>0) {
+            if(certificationNameSpinner.getTag()==null){
+                Toast.makeText(this, getResources().getString(R.string.please_enter_certification_details), Toast.LENGTH_SHORT).show();
+                return values;
+            }else{
+                List<MultiSpinnerStatus> multiSpinnerStatuses = new ArrayList<>();
+                multiSpinnerStatuses=(List<MultiSpinnerStatus>)certificationNameSpinner.getTag();
+                Boolean isChecked=getIsCertification(multiSpinnerStatuses);
+                if(!isChecked){
+                    Toast.makeText(this, getResources().getString(R.string.please_enter_certification_details), Toast.LENGTH_SHORT).show();
+                    return values;
+                }
+
+            }
+        }
+
         int phonerowscount = phonenumbers.getChildCount();
 
         long countryId = countrySpinner.getSelectedItemId();
@@ -1467,6 +1497,21 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
             String registereddate = format.format(today);
             values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_REGISTER_DATE, registereddate);
+            if(certificationNameSpinner.getTag()!=null){
+                StringBuilder certificationIds= new StringBuilder();
+                ArrayList<MultiSpinnerStatus> multiSpinnerStatus = (ArrayList<MultiSpinnerStatus>) certificationNameSpinner.getTag();
+                for(int i=0;i<multiSpinnerStatus.size();i++){
+                    if(multiSpinnerStatus.get(i).isSelected()) {
+                        if(certificationIds.toString().isEmpty()){
+                            certificationIds = new StringBuilder(String.valueOf(multiSpinnerStatus.get(i).getId()));
+                        }else {
+                            certificationIds.append(",").append(multiSpinnerStatus.get(i).getId());
+                        }
+                    }
+                }
+                values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_CERTIFICATION_ID,certificationIds.toString());
+                values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_CERTIFICATION_TEXT,certificationEditText.getText().toString().trim());
+            }
             if (!editMode) {
                 boolean isUnique = dl.isFarmerEntryUnique(values);
                 values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_MODERATION_STATUS, isUnique);
@@ -2199,6 +2244,81 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
 
             }
         });
+    }
+
+    private void bindCertificationNameSpinner(){
+
+        List<Certifications> certificationsList = ofisRoomDB.certificationsDao().getCertifications();
+        if(ofisRoomDB.certificationsDao().getCertifications().size()>0) {
+            MultiSpinnerStatus multiSpinnerStatusCn = new MultiSpinnerStatus();
+            multiSpinnerStatusCn.setId(0);
+            multiSpinnerStatusCn.setTitle(res.getString(R.string.certification_name));
+            multiSpinnerStatusCn.setSelected(false);
+            multiSpinnerStatusCn.setEnabled(true);
+            listStatus.add(multiSpinnerStatusCn);
+            for (int i = 0; i < certificationsList.size(); i++) {
+                MultiSpinnerStatus multiSpinnerStatus = new MultiSpinnerStatus();
+                multiSpinnerStatus.setId(certificationsList.get(i).certificationId);
+                multiSpinnerStatus.setTitle(certificationsList.get(i).certificationName);
+                multiSpinnerStatus.setSelected(false);
+                multiSpinnerStatus.setEnabled(true);
+                listStatus.add(multiSpinnerStatus);
+            }
+
+            MultiSpinnerStatus multiSpinnerStatusothers = new MultiSpinnerStatus();
+            multiSpinnerStatusothers.setId(listStatus.size()+1);
+            multiSpinnerStatusothers.setTitle(res.getString(R.string.others));
+            multiSpinnerStatusothers.setSelected(false);
+            multiSpinnerStatusothers.setEnabled(true);
+            listStatus.add(multiSpinnerStatusothers);
+            if(editMode && editFarmerId != 0){
+                if (dl.isCertificationavailable(editFarmerId)) {
+                    setEditSpinner();
+                }
+            }
+            MultiSpinnerAdapter myAdapter = new MultiSpinnerAdapter(AddFarmerActivity.this, 0,
+                    listStatus,certificationNameSpinner,certificationEditText);
+            certificationNameSpinner.setAdapter(myAdapter);
+
+        }else {
+            linear_certifications.setVisibility(View.GONE);
+        }
+
+
+    }
+
+    private void setEditSpinner() {
+        if (dl.isCertificationavailable(editFarmerId)) {
+            Cursor nids = dl.getCertificationsbyfarmerid(editFarmerId);
+            try {
+                if (nids.getCount() > 0) {
+                    if (nids.moveToFirst()) {
+                        String cIds = nids.getString(nids.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_CERTIFICATION_ID));
+                        String ctext = nids.getString(nids.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_CERTIFICATION_TEXT));
+                        if (ctext != null && !ctext.isEmpty()) {
+                            certificationEditText.setVisibility(View.VISIBLE);
+                            certificationEditText.setText(ctext);
+                            listStatus.get(listStatus.size()-1).setSelected(true);
+                        }
+                        if (cIds != null) {
+                            String[] cIdArr = cIds.split(",");
+                            for (int i = 0; i < listStatus.size(); i++) {
+                                for (int arr = 0; arr < cIdArr.length; arr++) {
+                                    if (listStatus.get(i).getId() == Integer.parseInt(cIdArr[arr])) {
+                                        listStatus.get(i).setSelected(true);
+                                    }
+                                }
+                            }
+                        }
+
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                nids.close();
+            }
+        }
     }
 
     private void collectGPSPoint(long farmerId,String farmerName) {
@@ -3634,6 +3754,24 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             valuesArrayList.add(values);
         }
          return valuesArrayList;
+
+    }
+
+    private Boolean getIsCertification(List<MultiSpinnerStatus> multiSpinnerStatuses){
+        Boolean status=false;
+        for(int i=0;i<multiSpinnerStatuses.size();i++){
+            if(multiSpinnerStatuses.get(i).isSelected()){
+                status=true;
+            }
+            if(multiSpinnerStatuses.get(i).getTitle().equals(res.getString(R.string.others))){
+                if(multiSpinnerStatuses.get(i).isSelected()){
+                    if(certificationEditText.getText()==null || certificationEditText.getText().toString().trim().isEmpty()){
+                        return false;
+                    }
+                }
+            }
+        }
+        return status;
 
     }
 
