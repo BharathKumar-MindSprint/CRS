@@ -1224,7 +1224,7 @@ public class CompleteModuleActivity extends BaseActivity {
                             }
                         }
                         String locationValue = mCurrentCapturedLocation.getLatitude() +","+mCurrentCapturedLocation.getLongitude();
-                        dynamicQuestions.saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, finalDatatype, locationValue );
+                        dynamicQuestions.saveAnswerEntry(questionId, answerId, parentQuestionId, repeaterItemPosition, finalDatatype, locationValue,0, 0, 0);
                         textView.setText(context.getResources().getString(R.string.record_farm_location_complete));
                         textView.setBackgroundResource(R.drawable.list_item_disabled);
                         textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_disabled_text));

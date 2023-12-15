@@ -10,6 +10,7 @@ import com.olam.digital.ofis.farmplandownload.model.AccessTokenReqBody;
 import com.olam.digital.ofis.farmplandownload.model.AccessTokenResp;
 import com.olam.digital.ofis.farmplandownload.model.DownloadFormList;
 import com.olam.digital.ofis.farmplandownload.model.DownloadUrlRequestBody;
+import com.olam.digital.ofis.mvvmmodule.model.LocalUnit.APICall.LocalUnitResponseModel;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.DMSurveyResponseModel;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.ResponseModel;
 import com.olam.digital.ofis.mvvmmodule.model.followup.FollowUpResponseModel;
@@ -73,4 +74,7 @@ public interface ManageRecords {
     @GET("ofissurvey/survey/diagnosticmodule/getAllDiagnosticModuleData/{enum_id}")
     Call<FollowUpResponseModel> getAllFollowUpDMData(@Path("enum_id") Integer enumeratorId);
 
+
+    @GET("ofissurvey/survey/getLocalUnitMasterData/{enum_id}")
+    Call<LocalUnitResponseModel> getAllLocalUnitResponseModel(@Path("enum_id") Integer enumeratorId);
 }

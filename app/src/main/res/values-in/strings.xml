@@ -14,6 +14,7 @@
     <string name="title_activity_find_farmer">Temukan Petani</string>
     <string name="title_activity_view_farmer">Detail petani</string>
     <string name="title_activity_complete_module">Selesaikan modul kusioner</string>
+    <string name="updating_local_unit_details">Downloading Local Units details</string>
 
     <!-- main stuff -->
     <string name="app_name">OFIS Debug</string>

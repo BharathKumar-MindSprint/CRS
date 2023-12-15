@@ -170,6 +170,8 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     private Resources res;
     private HomeActivity me;
     private static DataLayer dl;
+
+    private  static OFISRoomDB db;
     private NetworkLayer nl;
     private ProgressDialog m_ProgressDialog = null;
     private ProgressDialog mDialogLoading = null;
@@ -265,6 +267,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         context = me = this;
         staticRes = getResources();
         res = getResources();
+        db = OFISRoomDB.getDbInstance(context);
 //        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_TITLE);
 //        setTitle(R.string.applicationName);
 
