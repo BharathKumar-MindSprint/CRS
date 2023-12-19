@@ -12,6 +12,8 @@ import com.olam.digital.ofis.Utilities;
 import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.Certifications;
+import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.Partners;
+import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.Programme;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -54,7 +56,9 @@ class UpdateSpinnerListsTask extends DatabaseTask {
 
                 // get the various sub lists
                 JSONArray countryArray, regionArray, districtArray, placeArray, farmergroupArray, sectionArray, productArray, subdistrictArray;
-                List<Certifications> certificationsList = new ArrayList<>();
+                List<Certifications> certificationsList;
+                List<Programme> programmeList;
+                List<Partners> partnersList;
 
                 try {
                     countryArray = response.getJSONArray(OFISDBContract.CountriesEntry.TABLE_NAME);
@@ -115,17 +119,39 @@ class UpdateSpinnerListsTask extends DatabaseTask {
                     FirebaseCrash.report(new Exception("UpdateSpinnerListsTask: Error filling products table", e));
                     e.printStackTrace();
                 }
+                OFISRoomDB roomDB = OFISRoomDB.getDbInstance(context);
+
                 try {
                     Gson gson = new Gson();
                     JSONArray certificationsArray = response.getJSONArray("certifications");
                     Type type = new TypeToken<List<Certifications>>() {}.getType();
                     certificationsList = gson.fromJson(String.valueOf(certificationsArray), type);
 //                    certificationsArray = response.getJSONArray(Certifications.class.getSimpleName());
-                    OFISRoomDB roomDB = OFISRoomDB.getDbInstance(context);
                     roomDB.certificationsDao().insertAll(certificationsList);
 //                    fillTable(productArray, OFISDBContract.ProductsEntry.TABLE_NAME, OFISDBContract.ProductsEntry.COLUMN_LIST);
                 } catch (JSONException e) {
                     FirebaseCrash.report(new Exception("UpdateSpinnerListsTask: Error filling Certification table", e));
+                    e.printStackTrace();
+                }
+                try {
+                    Gson gson = new Gson();
+                    JSONArray programmeArray = response.getJSONArray("programme");
+                    Type type = new TypeToken<List<Programme>>() {}.getType();
+                    programmeList = gson.fromJson(String.valueOf(programmeArray), type);
+
+                    roomDB.programmeDao().insertAll(programmeList);
+                } catch (JSONException e) {
+                    FirebaseCrash.report(new Exception("UpdateSpinnerListsTask: Error filling Programme table", e));
+                    e.printStackTrace();
+                }
+                try {
+                    Gson gson = new Gson();
+                    JSONArray partnersArray = response.getJSONArray("partners");
+                    Type type = new TypeToken<List<Partners>>() {}.getType();
+                    partnersList = gson.fromJson(String.valueOf(partnersArray), type);
+                    roomDB.partnersDao().insertAll(partnersList);
+                } catch (JSONException e) {
+                    FirebaseCrash.report(new Exception("UpdateSpinnerListsTask: Error filling Partners table", e));
                     e.printStackTrace();
                 }
             }

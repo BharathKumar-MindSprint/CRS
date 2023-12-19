@@ -746,6 +746,9 @@
     <string name="certification">Certification</string>
     <string name="certification_name">Nombre de certificacion</string>
     <string name="others">Others</string>
+    <string name="advanced_filters">Filtros avanzados</string>
+    <string name="spinner_partner_default">Pareja</string>
+    <string name="spinner_programme_default">programa</string>
 
 </resources>
 

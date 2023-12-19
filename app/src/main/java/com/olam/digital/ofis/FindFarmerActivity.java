@@ -6,30 +6,32 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.os.Bundle;
 import androidx.core.app.NavUtils;
-import androidx.core.content.ContextCompat;
 
-import android.os.Handler;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.InputType;
-import android.text.Spanned;
 import android.text.TextWatcher;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 
+import com.olam.digital.ofis.Common.Adapter.MultiSpinnerAdapter;
+import com.olam.digital.ofis.Common.Model.MultiSpinnerStatus;
 import com.olam.digital.ofis.matoma.MatomoHelper;
 import com.olam.digital.ofis.matoma.ScreenNameConstants;
-import com.olam.digital.ofis.recordpolygon.Utils;
+import com.olam.digital.ofis.model.Information;
+import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
+import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.Certifications;
+import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.Partners;
+import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.Programme;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 
@@ -41,7 +43,10 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
     private DataLayer dl;
     private CustomListAdapter_Farmer customListAdapter_farmerAdapter;
     private EditText ed;
-    private Spinner farmerGroupSpinner, sectionSpinner;
+    private TextView advancedFilter;
+    private Spinner farmerGroupSpinner, sectionSpinner, countrySpinner, productSpinner, regionSpinner, districtSpinner, placeSpinner, partnerSpinner, programSpinner,certificationSpinner;
+
+    private LinearLayout advancedFilterLayout;
     private long selectedFarmerGroup = 0, selectedSection = 0;
     private String searchQuery = "";
 
@@ -56,30 +61,38 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
     private boolean transactionMode = false, backtoFinder = false;
     private long transactionItemId, buyingAgentId;
     private String blockCharacterSet = "~#^|$%&*!'\"";
+    ArrayList<MultiSpinnerStatus> certificationStatus = new ArrayList<>();
+    ArrayList<MultiSpinnerStatus> farmerGroupStatus = new ArrayList<>();
+    ArrayList<MultiSpinnerStatus> sectionStatus = new ArrayList<>();
+    ArrayList<MultiSpinnerStatus> programStatus = new ArrayList<>();
+    ArrayList<MultiSpinnerStatus> partnerStatus = new ArrayList<>();
+    ArrayList<MultiSpinnerStatus> placeStatus = new ArrayList<>();
+    ArrayList<MultiSpinnerStatus> districtStatus = new ArrayList<>();
+
+    ArrayList<MultiSpinnerStatus> regionStatus = new ArrayList<>();
+
+
+    private OFISRoomDB ofisRoomDB;
+
     ListView listView;
-    private InputFilter filter = new InputFilter() {
+    private InputFilter filter = (source, start, end, dest, dstart, dend) -> {
 
-        @Override
-        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
-
-            if (source != null && blockCharacterSet.contains(("" + source))) {
+        if (source != null && blockCharacterSet.contains(("" + source))) {
+            return "";
+        }
+        for (int i = start; i < end; i++) {
+            int type = Character.getType(source.charAt(i));
+            if (type == Character.SURROGATE || type == Character.OTHER_SYMBOL) {
                 return "";
             }
-            for (int i = start; i < end; i++) {
-                int type = Character.getType(source.charAt(i));
-                if (type == Character.SURROGATE || type == Character.OTHER_SYMBOL) {
-                    return "";
-                }
-            }
-            return null;
         }
+        return null;
     };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_find_farmer);
-        //noinspection ConstantConditions
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         listView=findViewById(R.id.list);
         context = this;
@@ -89,6 +102,16 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
 
         farmerGroupSpinner = (Spinner) findViewById(R.id.spinner_farmerGroup);
         sectionSpinner = (Spinner) findViewById(R.id.spinner_section);
+        countrySpinner = (Spinner) findViewById(R.id.spinner_country);
+        productSpinner = (Spinner) findViewById(R.id.spinner_product);
+        regionSpinner = (Spinner) findViewById(R.id.spinner_region);
+        districtSpinner = (Spinner) findViewById(R.id.spinner_district);
+        placeSpinner = (Spinner) findViewById(R.id.spinner_place);
+        partnerSpinner = (Spinner) findViewById(R.id.spinner_partner);
+        programSpinner =(Spinner) findViewById(R.id.spinner_program);
+        certificationSpinner = (Spinner) findViewById(R.id.spinner_certification);
+        advancedFilter = (TextView) findViewById(R.id.advancedFilters);
+        advancedFilterLayout = (LinearLayout) findViewById(R.id.advancedFilterLayout);
         ed = (EditText) findViewById(R.id.findFarmerSearchBox);
         ed.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
         ed.setFilters(new InputFilter[] { filter });
@@ -97,7 +120,7 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
         backtoFinder = intent.getBooleanExtra(BACK_TO_FINDER, false);
         transactionItemId = intent.getLongExtra(EDIT_TRANSACTION_ITEM_ID, 0);
         buyingAgentId = intent.getLongExtra(BUYING_AGENT_CONTEXT, 0);
-
+        ofisRoomDB = OFISRoomDB.getDbInstance(context);
         if (transactionMode) {
             this.setTitle(R.string.title_activity_find_transactee);
             TextView pageTitle = (TextView) findViewById(R.id.pageTitle);
@@ -112,38 +135,18 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
         listView.setOnItemClickListener(this);
     }
 
-//    @Override
-//    protected void onListItemClick (ListView l, View v, int position, long id) {
-//
-//        //we now view this farmer
-//        Intent intent;
-//
-//        if (transactionMode) {
-//            TextView transacteetype = (TextView) v.findViewById(R.id.transacteeType);
-//            intent = new Intent(context, TransactionItem.class);
-//            intent.putExtra(TRANSACTEE_TYPE, transacteetype.getText().toString());
-//            intent.putExtra(TRANSACTEE_ID, id);
-//            intent.putExtra(EDIT_TRANSACTION_ITEM_ID, transactionItemId);
-//            intent.putExtra(BUYING_AGENT_CONTEXT, buyingAgentId);
-//            intent.putExtra(BACK_TO_FINDER, backtoFinder);
-//            if (transactionItemId > 0) {
-//                intent.putExtra(EDIT_MODE, true);
-//            }
-//            intent.putExtra(FARMER_ID, id);
-//        } else {
-//            ViewFarmerActivity.farmerId = id;
-//            //SharedPreferenceUtils.getInstance(getApplicationContext()).setFarmerID(id);
-//            intent = new Intent(context, ViewFarmerActivity.class);
-//        }
-//        context.startActivity(intent);
-//    }
-
     private void bindFarmerList() {
         if (transactionMode) {
             farmerList = dl.getFindFarmerOrBuyingAgentList(buyingAgentId, searchQuery, selectedFarmerGroup, selectedSection);
         } else {
             farmerList = dl.getFindFarmerList(searchQuery, selectedFarmerGroup, selectedSection);
         }
+    }
+
+    public void expandOrCollapse(View view){
+        boolean visibilityresult = advancedFilterLayout.getVisibility() == View.GONE;
+        advancedFilter.setCompoundDrawablesWithIntrinsicBounds(0, 0, visibilityresult ? R.drawable.ic_task_drop_down_expand : R.drawable.ic_drop_down_collapse , 0);
+        advancedFilterLayout.setVisibility(visibilityresult ? View.VISIBLE : View.GONE);
     }
 
     private void showFarmerList() {
@@ -163,14 +166,26 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
 
     private void setUpSearchFunctionality()
     {
-        Cursor farmerGroups = dl.getSpinnerData(OFISDBContract.FarmerGroupsEntry.TABLE_NAME, false, null, null, true, OFISDBContract.FarmerGroupsEntry.COLUMN_NAME_FARMERGROUP_NAME);
-        dl.bindDataDrivenSpinner(farmerGroupSpinner, farmerGroups, context, R.string.spinner_farmergroup_default, OFISDBContract.FarmerGroupsEntry.COLUMN_NAME_FARMERGROUP_NAME, true);
+        //Bind Countries
+        Cursor countries = dl.getSpinnerData(OFISDBContract.CountriesEntry.TABLE_NAME, true, OFISDBContract.CountriesEntry.COLUMN_NAME_ENUMERATOR_COUNTRY, 1, true, OFISDBContract.CountriesEntry.COLUMN_NAME_COUNTRY_NAME);
+        dl.bindDataDrivenSpinner(countrySpinner, countries, context, R.string.spinner_country_default, null, false);
 
-        farmerGroupSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        Cursor products = dl.getSpinnerData(OFISDBContract.ProductsEntry.TABLE_NAME, false, null, null, true, OFISDBContract.ProductsEntry.COLUMN_NAME_PRODUCT_NAME);
+        dl.bindDataDrivenSpinner(productSpinner, products, context, R.string.spinner_product_default, null, false);
+
+        bindRegion();
+        bindDistrict();
+        bindPlace();
+        bindProgram();
+        bindPartner();
+        bindFarmerGroups();
+        bindCertificationNameSpinner();
+        bindSection();
+
+        countrySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Cursor sections = dl.getSpinnerData(OFISDBContract.SectionsEntry.TABLE_NAME, true, OFISDBContract.SectionsEntry.COLUMN_NAME_FARMERGROUP_ID, ((int) id), true, OFISDBContract.SectionsEntry.COLUMN_NAME_SECTION_NAME);
-                dl.bindDataDrivenSpinner(sectionSpinner, sections, context, R.string.spinner_section_default, OFISDBContract.FarmerGroupsEntry.COLUMN_NAME_FARMERGROUP_NAME, true);
+                 //Surround the certification spinner code in product code condition
 
                 selectedFarmerGroup = id;
                 selectedSection = 0;
@@ -183,7 +198,7 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
             }
         });
 
-        sectionSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        productSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 selectedSection = id;
@@ -210,6 +225,281 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
 
     }
 
+    public void bindRegion(){
+        //Bind Farmer Groups
+        Cursor regionCursor =dl.getInfoFromTable(OFISDBContract.RegionsEntry.TABLE_NAME);
+        //dl.getSpinnerData(OFISDBContract.FarmerGroupsEntry.TABLE_NAME, false, null, null, true, OFISDBContract.FarmerGroupsEntry.COLUMN_NAME_FARMERGROUP_NAME);
+        List<Information> regionArrayList
+                = new ArrayList<>();
+        if (regionCursor.moveToFirst()) {
+            do {
+                // on below line we are adding the data from
+                // cursor to our array list.
+                regionArrayList.add(new Information(
+                        regionCursor.getInt(0),
+                        regionCursor.getString(1)));
+            } while (regionCursor.moveToNext());
+            // moving our cursor to next.
+        }
+        // at last closing our cursor
+        // and returning our array list.
+        regionCursor.close();
+        if(regionArrayList.size() > 0){
+            MultiSpinnerStatus multiSpinnerStatusCn = new MultiSpinnerStatus();
+            multiSpinnerStatusCn.setId(0);
+            multiSpinnerStatusCn.setTitle(res.getString(R.string.spinner_region_default));
+            multiSpinnerStatusCn.setSelected(false);
+            multiSpinnerStatusCn.setEnabled(true);
+            regionStatus.add(multiSpinnerStatusCn);
+        }
+        for (int i = 0; i < regionArrayList.size(); i++) {
+            MultiSpinnerStatus multiSpinnerStatus = new MultiSpinnerStatus();
+            multiSpinnerStatus.setId(regionArrayList.get(i).getId());
+            multiSpinnerStatus.setTitle(regionArrayList.get(i).getName());
+            multiSpinnerStatus.setSelected(false);
+            multiSpinnerStatus.setEnabled(true);
+            regionStatus.add(multiSpinnerStatus);
+        }
+
+        MultiSpinnerAdapter myAdapter = new MultiSpinnerAdapter(FindFarmerActivity.this, 0,
+                regionStatus,regionSpinner,null);
+        regionSpinner.setAdapter(myAdapter);
+    }
+
+    public void bindDistrict(){
+        //Bind District
+        Cursor districtCursor =dl.getInfoFromTable(OFISDBContract.DistrictsEntry.TABLE_NAME);
+        List<Information> districtArrayList
+                = new ArrayList<>();
+        if (districtCursor.moveToFirst()) {
+            do {
+                // on below line we are adding the data from
+                // cursor to our array list.
+                districtArrayList.add(new Information(
+                        districtCursor.getInt(0),
+                        districtCursor.getString(1)));
+            } while (districtCursor.moveToNext());
+            // moving our cursor to next.
+        }
+        // at last closing our cursor
+        // and returning our array list.
+        districtCursor.close();
+        if(districtArrayList.size() > 0){
+            MultiSpinnerStatus multiSpinnerStatusCn = new MultiSpinnerStatus();
+            multiSpinnerStatusCn.setId(0);
+            multiSpinnerStatusCn.setTitle(res.getString(R.string.spinner_district_default));
+            multiSpinnerStatusCn.setSelected(false);
+            multiSpinnerStatusCn.setEnabled(true);
+            districtStatus.add(multiSpinnerStatusCn);
+        }
+        for (int i = 0; i < districtArrayList.size(); i++) {
+            MultiSpinnerStatus multiSpinnerStatus = new MultiSpinnerStatus();
+            multiSpinnerStatus.setId(districtArrayList.get(i).getId());
+            multiSpinnerStatus.setTitle(districtArrayList.get(i).getName());
+            multiSpinnerStatus.setSelected(false);
+            multiSpinnerStatus.setEnabled(true);
+            districtStatus.add(multiSpinnerStatus);
+        }
+
+        MultiSpinnerAdapter myAdapter = new MultiSpinnerAdapter(FindFarmerActivity.this, 0,
+                districtStatus,farmerGroupSpinner,null);
+        districtSpinner.setAdapter(myAdapter);
+    }
+
+    public void bindPlace(){
+        //Bind Place
+        Cursor placeCursor =dl.getInfoFromTable(OFISDBContract.PlacesEntry.TABLE_NAME);
+        List<Information> placeArrayList
+                = new ArrayList<>();
+        if (placeCursor.moveToFirst()) {
+            do {
+                // on below line we are adding the data from
+                // cursor to our array list.
+                placeArrayList.add(new Information(
+                        placeCursor.getInt(0),
+                        placeCursor.getString(1)));
+            } while (placeCursor.moveToNext());
+            // moving our cursor to next.
+        }
+        // at last closing our cursor
+        // and returning our array list.
+        placeCursor.close();
+        if(placeArrayList.size() > 0){
+            MultiSpinnerStatus multiSpinnerStatusCn = new MultiSpinnerStatus();
+            multiSpinnerStatusCn.setId(0);
+            multiSpinnerStatusCn.setTitle(res.getString(R.string.spinner_place_default));
+            multiSpinnerStatusCn.setSelected(false);
+            multiSpinnerStatusCn.setEnabled(true);
+            placeStatus.add(multiSpinnerStatusCn);
+        }
+        for (int i = 0; i < placeArrayList.size(); i++) {
+            MultiSpinnerStatus multiSpinnerStatus = new MultiSpinnerStatus();
+            multiSpinnerStatus.setId(placeArrayList.get(i).getId());
+            multiSpinnerStatus.setTitle(placeArrayList.get(i).getName());
+            multiSpinnerStatus.setSelected(false);
+            multiSpinnerStatus.setEnabled(true);
+            placeStatus.add(multiSpinnerStatus);
+        }
+
+        MultiSpinnerAdapter myAdapter = new MultiSpinnerAdapter(FindFarmerActivity.this, 0,
+                placeStatus,placeSpinner,null);
+        placeSpinner.setAdapter(myAdapter);
+    }
+    public void bindPartner(){
+        //Bind Partners
+        List<Partners> partnersList = ofisRoomDB.partnersDao().getPartners();
+        if(ofisRoomDB.partnersDao().getPartners().size()>0) {
+            MultiSpinnerStatus multiSpinnerStatusCn = new MultiSpinnerStatus();
+            multiSpinnerStatusCn.setId(0);
+            multiSpinnerStatusCn.setTitle(res.getString(R.string.spinner_partner_default));
+            multiSpinnerStatusCn.setSelected(false);
+            multiSpinnerStatusCn.setEnabled(true);
+            partnerStatus.add(multiSpinnerStatusCn);
+            for (int i = 0; i < partnersList.size(); i++) {
+                MultiSpinnerStatus multiSpinnerStatus = new MultiSpinnerStatus();
+                multiSpinnerStatus.setId(partnersList.get(i).id);
+                multiSpinnerStatus.setTitle(partnersList.get(i).name);
+                multiSpinnerStatus.setSelected(false);
+                multiSpinnerStatus.setEnabled(true);
+                partnerStatus.add(multiSpinnerStatus);
+            }
+
+            MultiSpinnerAdapter myAdapter = new MultiSpinnerAdapter(FindFarmerActivity.this, 0,
+                    partnerStatus,partnerSpinner,null);
+            partnerSpinner.setAdapter(myAdapter);
+
+        }
+    }
+
+    public void bindProgram(){
+        //Bind Programs
+        List<Programme> programmeList = ofisRoomDB.programmeDao().getProgramme();
+        if(ofisRoomDB.certificationsDao().getCertifications().size()>0) {
+            MultiSpinnerStatus multiSpinnerStatusCn = new MultiSpinnerStatus();
+            multiSpinnerStatusCn.setId(0);
+            multiSpinnerStatusCn.setTitle(res.getString(R.string.spinner_programme_default));
+            multiSpinnerStatusCn.setSelected(false);
+            multiSpinnerStatusCn.setEnabled(true);
+            programStatus.add(multiSpinnerStatusCn);
+            for (int i = 0; i < programmeList.size(); i++) {
+                MultiSpinnerStatus multiSpinnerStatus = new MultiSpinnerStatus();
+                multiSpinnerStatus.setId(programmeList.get(i).id);
+                multiSpinnerStatus.setTitle(programmeList.get(i).name);
+                multiSpinnerStatus.setSelected(false);
+                multiSpinnerStatus.setEnabled(true);
+                programStatus.add(multiSpinnerStatus);
+            }
+
+            MultiSpinnerAdapter myAdapter = new MultiSpinnerAdapter(FindFarmerActivity.this, 0,
+                    programStatus,programSpinner,null);
+            programSpinner.setAdapter(myAdapter);
+
+        }
+    }
+
+    public void bindFarmerGroups(){
+        //Bind Farmer Groups
+        Cursor farmerGroupsCursor =dl.getInfoFromTable(OFISDBContract.FarmerGroupsEntry.TABLE_NAME);
+                //dl.getSpinnerData(OFISDBContract.FarmerGroupsEntry.TABLE_NAME, false, null, null, true, OFISDBContract.FarmerGroupsEntry.COLUMN_NAME_FARMERGROUP_NAME);
+        List<Information> farmerGroupArrayList
+                = new ArrayList<>();
+        if (farmerGroupsCursor.moveToFirst()) {
+            do {
+                // on below line we are adding the data from
+                // cursor to our array list.
+                farmerGroupArrayList.add(new Information(
+                        farmerGroupsCursor.getInt(0),
+                        farmerGroupsCursor.getString(1)));
+            } while (farmerGroupsCursor.moveToNext());
+            // moving our cursor to next.
+        }
+        // at last closing our cursor
+        // and returning our array list.
+        farmerGroupsCursor.close();
+        if(farmerGroupArrayList.size() > 0){
+            MultiSpinnerStatus multiSpinnerStatusCn = new MultiSpinnerStatus();
+            multiSpinnerStatusCn.setId(0);
+            multiSpinnerStatusCn.setTitle(res.getString(R.string.spinner_farmergroup_default));
+            multiSpinnerStatusCn.setSelected(false);
+            multiSpinnerStatusCn.setEnabled(true);
+            farmerGroupStatus.add(multiSpinnerStatusCn);
+        }
+        for (int i = 0; i < farmerGroupArrayList.size(); i++) {
+            MultiSpinnerStatus multiSpinnerStatus = new MultiSpinnerStatus();
+            multiSpinnerStatus.setId(farmerGroupArrayList.get(i).getId());
+            multiSpinnerStatus.setTitle(farmerGroupArrayList.get(i).getName());
+            multiSpinnerStatus.setSelected(false);
+            multiSpinnerStatus.setEnabled(true);
+            farmerGroupStatus.add(multiSpinnerStatus);
+        }
+
+        MultiSpinnerAdapter myAdapter = new MultiSpinnerAdapter(FindFarmerActivity.this, 0,
+                farmerGroupStatus,farmerGroupSpinner,null);
+        farmerGroupSpinner.setAdapter(myAdapter);
+    }
+
+    public void bindSection(){
+        //Bind sections
+        Cursor sectionCursor =dl.getInfoFromTable(OFISDBContract.SectionsEntry.TABLE_NAME);
+        List<Information> sectionArrayList
+                = new ArrayList<>();
+        if (sectionCursor.moveToFirst()) {
+            do {
+                // on below line we are adding the data from
+                // cursor to our array list.
+                sectionArrayList.add(new Information(
+                        sectionCursor.getInt(0),
+                        sectionCursor.getString(1)));
+            } while (sectionCursor.moveToNext());
+            // moving our cursor to next.
+        }
+        // at last closing our cursor
+        sectionCursor.close();
+        if(sectionArrayList.size() > 0){
+            MultiSpinnerStatus multiSpinnerStatusCn = new MultiSpinnerStatus();
+            multiSpinnerStatusCn.setId(0);
+            multiSpinnerStatusCn.setTitle(res.getString(R.string.spinner_section_default));
+            multiSpinnerStatusCn.setSelected(false);
+            multiSpinnerStatusCn.setEnabled(true);
+            sectionStatus.add(multiSpinnerStatusCn);
+        }
+        for (int i = 0; i < sectionArrayList.size(); i++) {
+            MultiSpinnerStatus multiSpinnerStatus = new MultiSpinnerStatus();
+            multiSpinnerStatus.setId(sectionArrayList.get(i).getId());
+            multiSpinnerStatus.setTitle(sectionArrayList.get(i).getName());
+            multiSpinnerStatus.setSelected(false);
+            multiSpinnerStatus.setEnabled(true);
+            sectionStatus.add(multiSpinnerStatus);
+        }
+
+        MultiSpinnerAdapter myAdapter = new MultiSpinnerAdapter(FindFarmerActivity.this, 0,
+                sectionStatus,sectionSpinner,null);
+        sectionSpinner.setAdapter(myAdapter);
+    }
+    public void bindCertificationNameSpinner(){
+        List<Certifications> certificationsList = ofisRoomDB.certificationsDao().getCertifications();
+        if(ofisRoomDB.certificationsDao().getCertifications().size()>0) {
+            MultiSpinnerStatus multiSpinnerStatusCn = new MultiSpinnerStatus();
+            multiSpinnerStatusCn.setId(0);
+            multiSpinnerStatusCn.setTitle(res.getString(R.string.certification_name));
+            multiSpinnerStatusCn.setSelected(false);
+            multiSpinnerStatusCn.setEnabled(true);
+            certificationStatus.add(multiSpinnerStatusCn);
+            for (int i = 0; i < certificationsList.size(); i++) {
+                MultiSpinnerStatus multiSpinnerStatus = new MultiSpinnerStatus();
+                multiSpinnerStatus.setId(certificationsList.get(i).certificationId);
+                multiSpinnerStatus.setTitle(certificationsList.get(i).certificationName);
+                multiSpinnerStatus.setSelected(false);
+                multiSpinnerStatus.setEnabled(true);
+                certificationStatus.add(multiSpinnerStatus);
+            }
+
+            MultiSpinnerAdapter myAdapter = new MultiSpinnerAdapter(FindFarmerActivity.this, 0,
+                    certificationStatus,certificationSpinner,null);
+            certificationSpinner.setAdapter(myAdapter);
+
+        }
+    }
     //searches and populates the list with the appropriate info
     private void doSearch()
     {

@@ -828,10 +828,6 @@ public class SyncAllTask extends SyncTask {
     private void syncSpinners() {
         JSONObject inputArgs = new JSONObject();
         String endPoint = "";
-        //old end point
-        //    endPoint="sync_spinners";
-        // new end point
-        // endPoint="ofisfarmer-data/farmerdata/getcountryspinners/1127";
         endPoint = "ofisfarmer-data/farmerdata/getcountryspinners/" + Utilities.getFromSharedPrefs(context);
         final String finalEndPoint = endPoint;
         okHttpGet(context, endPoint, inputArgs, new Callback() {

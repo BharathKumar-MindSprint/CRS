@@ -1900,6 +1900,8 @@ public class DataLayer {
         return null;
     }
 
+
+
     public Cursor getFGSpinnerData(ArrayList<Integer> fgList) {
         String result = null;
         if (fgList.size() > 0) {
@@ -1922,37 +1924,6 @@ public class DataLayer {
         Cursor cursor=null;
         try {
              cursor = db.rawQuery("SELECT "+ columns +" FROM " + OFISDBContract.FarmerGroupsEntry.TABLE_NAME +
-                    " WHERE " + OFISDBContract.FarmerGroupsEntry.COLUMN_NAME_ID
-                    + " IN (" + result + ")"  ,null);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-
-        return cursor;
-    }
-
-    public Cursor getSectionSpinnerData(int fg,String moduleId) {
-        String result = null;
-        /*if (fgList.size() > 0) {
-            StringBuilder sb = new StringBuilder();
-            for (int s : fgList) {
-                sb.append(s).append(",");
-            }
-            result = sb.deleteCharAt(sb.length() - 1).toString();
-        }*/
-        List<String> columnList = OFISDBContract.ALL_TABLES.get(OFISDBContract.FarmerGroupsEntry.TABLE_NAME);
-        String[] tableColumns = new String[columnList.size()];
-        for (int i = 0; i < columnList.size(); i++) {
-            tableColumns[i] = (columnList.get(i).equals("id")) ? columnList.get(i) + " AS _id" : columnList.get(i);
-        }
-        StringBuilder sb1 = new StringBuilder();
-        for (String s : tableColumns) {
-            sb1.append(s).append(",");
-        }
-        String columns = sb1.deleteCharAt(sb1.length() - 1).toString();
-        Cursor cursor=null;
-        try {
-            cursor = db.rawQuery("SELECT "+ columns +" FROM " + OFISDBContract.FarmerGroupsEntry.TABLE_NAME +
                     " WHERE " + OFISDBContract.FarmerGroupsEntry.COLUMN_NAME_ID
                     + " IN (" + result + ")"  ,null);
         }catch (Exception e){
@@ -3018,17 +2989,6 @@ public class DataLayer {
                 spinner.setSelection(i);
                 break;
             }
-        }
-    }
-
-    void createProductSpinner(AppCompatActivity activity, final Context context, int productSelection) {
-        final Spinner productSpinner = (Spinner) activity.findViewById(R.id.spinner_product);
-
-        Cursor products = getSpinnerData(OFISDBContract.productSipEntry.TABLE_NAME, false, null, null, true, OFISDBContract.productSipEntry.COLUMN_NAME_PRODUCT_NAME);
-        bindDataDrivenSpinner(productSpinner, products, context, R.string.spinner_product_default, null, false);
-
-        if (productSelection != 0) {
-            setSpinnerSelectionById(productSelection, productSpinner);
         }
     }
 
@@ -9701,15 +9661,6 @@ public class DataLayer {
         db.update(table,values, whereClause, whereArgs);
     }
 
-    public void testFarmerChangingValue(int farmerId) {
-        String table = OFISDBContract.FarmerEntry.TABLE_NAME;
-        String[] whereArgs = new String[]{ String.valueOf(farmerId) };
-        String whereClause = OFISDBContract.FarmerEntry.COLUMN_NAME_ID + " = ? ";
-        ContentValues values = new ContentValues();
-        values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_SYNCED, "0");
-        values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID, "1690288677531");
-        db.update(table,values, whereClause, whereArgs);
-    }
 
     public void updateNqForDMSurvey(String farmerId, String moduleId, String type, String moduleName){
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -9763,6 +9714,10 @@ public class DataLayer {
         String[] whereArgs = new String[]{String.valueOf(farmerid)};
         String orderBy = OFISDBContract.FarmerEntry.COLUMN_NAME_ID + " ASC";
         return db.query(OFISDBContract.FarmerEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, orderBy);
+    }
+
+    public Cursor getInfoFromTable(String tableName){
+        return db.rawQuery("SELECT id, name FROM " + tableName, null);
     }
 }
 
