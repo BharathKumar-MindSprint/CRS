@@ -4629,8 +4629,8 @@ public class DataLayer {
                     String answer = currentAnswer.getString("answer");
                     String sub_answers = currentAnswer.optString("sub_answers");
                     int reportingYear = currentAnswer.getInt("reporting_year");
-                    int globalMetricId = currentAnswer.getInt("globalMetricId");
-                    int localMetricId = currentAnswer.getInt("localMetricId");
+                    Integer globalMetricId = currentAnswer.getInt("globalMetricId");
+                    Integer localMetricId = currentAnswer.getInt("localMetricId");
                     double metricAnswer = currentAnswer.getDouble("metricAnswer");
 
                     ContentValues values = new ContentValues();

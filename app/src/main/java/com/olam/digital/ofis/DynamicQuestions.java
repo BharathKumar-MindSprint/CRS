@@ -419,10 +419,10 @@ public class DynamicQuestions {
 
                                     if (entry.getKey() == Integer.parseInt(String.valueOf(globalMetricId))){
                                         radioGlobalMetrics[0] = entry.getKey();
-                                        radioLocalMetrics[0] = null;
+                                        radioLocalMetrics[0] = 0;
                                     }else {
                                         radioLocalMetrics[0] = entry.getKey();
-                                        radioGlobalMetrics[0] = null;
+                                        radioGlobalMetrics[0] = 0;
                                     }
                                     // Display a Toast with the selected localUnitId
 //                                Toast.makeText(context, "Selected localUnitId: " + selectedLocalUnitId, Toast.LENGTH_SHORT).show();
@@ -464,7 +464,7 @@ public class DynamicQuestions {
                                                     if (currentAnswer.has("localMetricId")){
                                                         localMetricIdAnswer = currentAnswer.optInt("localMetricId");
                                                     }
-                                                    if (localMetricIdAnswer != null){
+                                                    if (localMetricIdAnswer != 0){
                                                         previewLayout.setVisibility(View.VISIBLE);
 //                                                    titleTextView.setVisibility(View.VISIBLE);
 //                                                    contentTextView.setVisibility(View.VISIBLE);
@@ -472,7 +472,20 @@ public class DynamicQuestions {
                                                         String localAbb =  roomDB.localUnitDao().getAbbByLocalID(localMetricIdAnswer);
                                                         String localConversion =  roomDB.localUnitDao().getFactorByLocalID(localMetricIdAnswer);
                                                         String answerValue = dl.getAnswerValuebylookUpId(answerJsonVal);
-                                                        contentTextView.setText(answerValue + " " + globalAbb + " = " + String.valueOf(Double.parseDouble(answerValue) * Double.parseDouble(localConversion))  + " " + localAbb);
+//                                                        contentTextView.setText(answerValue + " " + globalAbb + " = " + String.valueOf(Double.parseDouble(answerValue) * Double.parseDouble(localConversion))  + " " + localAbb);
+                                                        if (answerValue != null && globalAbb != null && localConversion != null && localAbb != null) {
+                                                            try {
+                                                                // Perform your calculations and set the text
+                                                                double result = Double.parseDouble(answerValue) * Double.parseDouble(localConversion);
+                                                                contentTextView.setText(answerValue + " " + globalAbb + " = " + String.valueOf(result) + " " + localAbb);
+                                                            } catch (NumberFormatException e) {
+                                                                // Handle the case where parsing fails
+                                                                e.printStackTrace();
+                                                            }
+                                                        } else {
+                                                            // Handle the case where any of the variables is null
+                                                            contentTextView.setText("Some values are null");
+                                                        }
                                                     }else {
                                                         previewLayout.setVisibility(View.GONE);
                                                     }
@@ -561,13 +574,26 @@ public class DynamicQuestions {
                                     if (currentAnswer.has("localMetricId")){
                                         localMetricIdAnswer = currentAnswer.optInt("localMetricId");
                                     }
-                                    if (localMetricIdAnswer != null){
+                                    if (localMetricIdAnswer != 0){
                                         previewLayout.setVisibility(View.VISIBLE);
                                         String globalAbb =  roomDB.globalUnitDao().getAbbByGlobalID(Integer.valueOf(globalMetricIdAnswer));
                                         String localAbb =  roomDB.localUnitDao().getAbbByLocalID(localMetricIdAnswer);
                                         String localConversion =  roomDB.localUnitDao().getFactorByLocalID(localMetricIdAnswer);
                                         String answerValue = dl.getAnswerValuebylookUpId(answerJsonVal);
-                                        contentTextView.setText(answerValue + " " + globalAbb + " = " + String.valueOf(Double.parseDouble(answerValue) * Double.parseDouble(localConversion))  + " " + localAbb);
+//                                        contentTextView.setText(answerValue + " " + globalAbb + " = " + String.valueOf(Double.parseDouble(answerValue) * Double.parseDouble(localConversion))  + " " + localAbb);
+                                        if (answerValue != null && globalAbb != null && localConversion != null && localAbb != null) {
+                                            try {
+                                                // Perform your calculations and set the text
+                                                double result = Double.parseDouble(answerValue) * Double.parseDouble(localConversion);
+                                                contentTextView.setText(answerValue + " " + globalAbb + " = " + String.valueOf(result) + " " + localAbb);
+                                            } catch (NumberFormatException e) {
+                                                // Handle the case where parsing fails
+                                                e.printStackTrace();
+                                            }
+                                        } else {
+                                            // Handle the case where any of the variables is null
+                                            contentTextView.setText("Some values are null");
+                                        }
                                     }else {
                                         previewLayout.setVisibility(View.GONE);
                                     }
@@ -2064,8 +2090,8 @@ public class DynamicQuestions {
 
         String metricGlobalId = dl.getGlobalIdByQuestionId(questionId);
 //        String metricGlobalId = "2";
-        final Integer[] selectedLocalID = {null};
-        final Integer[] selectedGlobalID = {null};
+        final Integer[] selectedLocalID = {0};
+        final Integer[] selectedGlobalID = {0};
         final boolean[] unCheckAllBox = {false};
         boolean isLocalUnit = false;
         // Create an inner wrapper
@@ -2197,10 +2223,10 @@ public class DynamicQuestions {
 
                                 if (entry.getKey() == Integer.parseInt(metricGlobalId)){
                                     selectedGlobalID[0] = entry.getKey();
-                                    selectedLocalID[0] = null;
+                                    selectedLocalID[0] = 0;
                                 }else {
                                     selectedLocalID[0] = entry.getKey();
-                                    selectedGlobalID[0] = null;
+                                    selectedGlobalID[0] = 0;
                                 }
 
                                 unCheckAllBox[0] = true;
@@ -2244,7 +2270,7 @@ public class DynamicQuestions {
                                                 if (currentAnswer.has("localMetricId")){
                                                     localMetricIdAnswer = currentAnswer.optInt("localMetricId");
                                                 }
-                                                if (localMetricIdAnswer != null){
+                                                if (localMetricIdAnswer != 0){
                                                     previewLayout.setVisibility(View.VISIBLE);
 //                                                    titleTextView.setVisibility(View.VISIBLE);
 //                                                    contentTextView.setVisibility(View.VISIBLE);
@@ -2718,7 +2744,7 @@ public class DynamicQuestions {
                                             if (currentAnswer.has("localMetricId")){
                                                 localMetricIdAnswer = currentAnswer.optInt("localMetricId");
                                             }
-                                            if (localMetricIdAnswer != null){
+                                            if (localMetricIdAnswer != 0){
                                                 previewLayout.setVisibility(View.VISIBLE);
 //                                                    titleTextView.setVisibility(View.VISIBLE);
 //                                                    contentTextView.setVisibility(View.VISIBLE);
@@ -3283,8 +3309,8 @@ public class DynamicQuestions {
         //Local unit
         String metricGlobalId = dl.getGlobalIdByQuestionId(questionId);
 //        String metricGlobalId = "37";
-        final Integer[] selectedLocalID = {null};
-        final Integer[] selectedGlobalID = {null};
+        final Integer[] selectedLocalID = {0};
+        final Integer[] selectedGlobalID = {0};
         boolean isLocalUnit = false;
         // Create an inner wrapper
         LinearLayout innerWrapper = new LinearLayout(context);
@@ -3429,10 +3455,10 @@ public class DynamicQuestions {
 
                                 if (entry.getKey() == Integer.parseInt(metricGlobalId)){
                                     selectedGlobalID[0] = entry.getKey();
-                                    selectedLocalID[0] = null;
+                                    selectedLocalID[0] = 0;
                                 }else {
                                     selectedLocalID[0] = entry.getKey();
-                                    selectedGlobalID[0] = null;
+                                    selectedGlobalID[0] = 0;
                                 }
                                 // Display a Toast with the selected localUnitId
 //                                Toast.makeText(context, "Selected localUnitId: " + selectedLocalUnitId, Toast.LENGTH_SHORT).show();
@@ -3473,7 +3499,7 @@ public class DynamicQuestions {
                                                 if (currentAnswer.has("localMetricId")){
                                                     localMetricIdAnswer = currentAnswer.optInt("localMetricId");
                                                 }
-                                                if (localMetricIdAnswer != null){
+                                                if (localMetricIdAnswer != 0){
                                                     previewLayout.setVisibility(View.VISIBLE);
 //                                                    titleTextView.setVisibility(View.VISIBLE);
 //                                                    contentTextView.setVisibility(View.VISIBLE);
@@ -3481,7 +3507,20 @@ public class DynamicQuestions {
                                                     String localAbb =  roomDB.localUnitDao().getAbbByLocalID(localMetricIdAnswer);
                                                     String localConversion =  roomDB.localUnitDao().getFactorByLocalID(localMetricIdAnswer);
                                                     String answerValue = dl.getAnswerValuebylookUpId(answerJsonVal);
-                                                    contentTextView.setText(answerValue + " " + globalAbb + " = " + String.valueOf(Double.parseDouble(answerValue) * Double.parseDouble(localConversion))  + " " + localAbb);
+//                                                    contentTextView.setText(answerValue + " " + globalAbb + " = " + String.valueOf(Double.parseDouble(answerValue) * Double.parseDouble(localConversion))  + " " + localAbb);
+                                                    if (answerValue != null && globalAbb != null && localConversion != null && localAbb != null) {
+                                                        try {
+                                                            // Perform your calculations and set the text
+                                                            double result = Double.parseDouble(answerValue) * Double.parseDouble(localConversion);
+                                                            contentTextView.setText(answerValue + " " + globalAbb + " = " + String.valueOf(result) + " " + localAbb);
+                                                        } catch (NumberFormatException e) {
+                                                            // Handle the case where parsing fails
+                                                            e.printStackTrace();
+                                                        }
+                                                    } else {
+                                                        // Handle the case where any of the variables is null
+                                                        contentTextView.setText("Some values are null");
+                                                    }
                                                 }else {
                                                     previewLayout.setVisibility(View.GONE);
                                                 }
@@ -3801,13 +3840,26 @@ public class DynamicQuestions {
                                         if (currentAnswer.has("localMetricId")){
                                             localMetricIdAnswer = currentAnswer.optInt("localMetricId");
                                         }
-                                        if (localMetricIdAnswer != null){
+                                        if (localMetricIdAnswer != 0){
                                             previewLayout.setVisibility(View.VISIBLE);
                                             String globalAbb =  roomDB.globalUnitDao().getAbbByGlobalID(Integer.valueOf(metricGlobalId));
                                             String localAbb =  roomDB.localUnitDao().getAbbByLocalID(localMetricIdAnswer);
                                             String localConversion =  roomDB.localUnitDao().getFactorByLocalID(localMetricIdAnswer);
                                             String answerValue = dl.getAnswerValuebylookUpId(answerJsonVal);
-                                            contentTextView.setText(answerValue + " " + globalAbb + " = " + String.valueOf(Double.parseDouble(answerValue) * Double.parseDouble(localConversion))  + " " + localAbb);
+//                                            contentTextView.setText(answerValue + " " + globalAbb + " = " + String.valueOf(Double.parseDouble(answerValue) * Double.parseDouble(localConversion))  + " " + localAbb);
+                                            if (answerValue != null && globalAbb != null && localConversion != null && localAbb != null) {
+                                                try {
+                                                    // Perform your calculations and set the text
+                                                    double result = Double.parseDouble(answerValue) * Double.parseDouble(localConversion);
+                                                    contentTextView.setText(answerValue + " " + globalAbb + " = " + String.valueOf(result) + " " + localAbb);
+                                                } catch (NumberFormatException e) {
+                                                    // Handle the case where parsing fails
+                                                    e.printStackTrace();
+                                                }
+                                            } else {
+                                                // Handle the case where any of the variables is null
+                                                contentTextView.setText("Some values are null");
+                                            }
                                         }else {
                                             previewLayout.setVisibility(View.GONE);
                                         }
@@ -3954,8 +4006,8 @@ public class DynamicQuestions {
         ArrayAdapter<String> spinnerAdapter = null;
         Map<Integer, String> spinnerData = null;
 //        String metricGlobalId = "43";
-        final Integer[] selectedLocalID = {null};
-        final Integer[] selectedGlobalID = {null};
+        final Integer[] selectedLocalID = {0};
+        final Integer[] selectedGlobalID = {0};
         boolean isLocalUnit = false;
         // Create an inner wrapper
         LinearLayout innerWrapper = new LinearLayout(context);
@@ -4856,8 +4908,8 @@ public class DynamicQuestions {
         //code start
 //        String metricGlobalId = dl.getGlobalIdByQuestionId(questionId);
 //        String metricGlobalId = "2";
-        final Integer[] selectedLocalID = {null};
-        final Integer[] selectedGlobalID = {null};
+        final Integer[] selectedLocalID = {0};
+        final Integer[] selectedGlobalID = {0};
         final boolean[] unCheckAllBox = {false};
         boolean isLocalUnit = false;
         // Create an inner wrapper
@@ -4904,8 +4956,8 @@ public class DynamicQuestions {
         ));
 
         // Add TextViews to the LinearLayout
-        previewLayout.addView(titleTextView);
-        previewLayout.addView(contentTextView);
+//        previewLayout.addView(titleTextView);
+//        previewLayout.addView(contentTextView);
         previewLayout.setVisibility(View.GONE);
 
 
@@ -5000,10 +5052,10 @@ public class DynamicQuestions {
 
                                 if (entry.getKey() == Integer.parseInt(metricGlobalId)){
                                     selectedGlobalID[0] = entry.getKey();
-                                    selectedLocalID[0] = null;
+                                    selectedLocalID[0] = 0;
                                 }else {
                                     selectedLocalID[0] = entry.getKey();
-                                    selectedGlobalID[0] = null;
+                                    selectedGlobalID[0] = 0;
                                 }
 
 //                                uncheckAllCheckbox(questionWrapper, checkboxes, questions, farmerId,cbAnswers, defaultLookUpValue);
@@ -5047,7 +5099,14 @@ public class DynamicQuestions {
                                                 if (currentAnswer.has("localMetricId")){
                                                     localMetricIdAnswer = currentAnswer.optInt("localMetricId");
                                                 }
-                                                if (localMetricIdAnswer != null){
+                                                if (localMetricIdAnswer != 0){
+                                                    previewLayout.removeAllViews();
+                                                    previewLayout.addView(titleTextView);
+                                                    TextView answerTextView = new TextView(context);
+                                                    answerTextView.setLayoutParams(new LinearLayout.LayoutParams(
+                                                            LinearLayout.LayoutParams.WRAP_CONTENT,
+                                                            LinearLayout.LayoutParams.WRAP_CONTENT
+                                                    ));
                                                     previewLayout.setVisibility(View.VISIBLE);
 //                                                    titleTextView.setVisibility(View.VISIBLE);
 //                                                    contentTextView.setVisibility(View.VISIBLE);
@@ -5055,9 +5114,24 @@ public class DynamicQuestions {
                                                     String localAbb =  roomDB.localUnitDao().getAbbByLocalID(localMetricIdAnswer);
                                                     String localConversion =  roomDB.localUnitDao().getFactorByLocalID(localMetricIdAnswer);
                                                     String answerValue = dl.getAnswerValuebylookUpId(answerJsonVal);
-                                                    contentTextView.setText(answerValue + " " + globalAbb + " = " + String.valueOf(Double.parseDouble(answerValue) * Double.parseDouble(localConversion))  + " " + localAbb);
+//                                                    answerTextView.setText(answerValue + " " + globalAbb + " = " + String.valueOf(Double.parseDouble(answerValue) * Double.parseDouble(localConversion))  + " " + localAbb);
+                                                    if (answerValue != null && globalAbb != null && localConversion != null && localAbb != null) {
+                                                        try {
+                                                            // Perform your calculations and set the text
+                                                            double result = Double.parseDouble(answerValue) * Double.parseDouble(localConversion);
+                                                            answerTextView.setText(answerValue + " " + globalAbb + " = " + String.valueOf(result) + " " + localAbb);
+                                                        } catch (NumberFormatException e) {
+                                                            // Handle the case where parsing fails
+                                                            e.printStackTrace();
+                                                        }
+                                                    } else {
+                                                        // Handle the case where any of the variables is null
+                                                        contentTextView.setText("Some values are null");
+                                                    }
+                                                    previewLayout.addView(answerTextView);
                                                 }else {
                                                     previewLayout.setVisibility(View.GONE);
+                                                    previewLayout.removeAllViews();
                                                 }
 
 
@@ -5311,6 +5385,8 @@ public class DynamicQuestions {
 
                                             if (metricGlobalId != null && !metricGlobalId.equals("")) {
                                                 if (answerSet.size() != 0) {
+                                                    previewLayout.removeAllViews();
+                                                    previewLayout.addView(titleTextView);
                                                     for (int i = 0; i < answerSet.size(); i++) {
                                                         JSONObject currentAnswer = answerSet.get(i);
 
@@ -5327,25 +5403,47 @@ public class DynamicQuestions {
                                                                 if (currentAnswer.has("localMetricId")){
                                                                     localMetricIdAnswer = currentAnswer.optInt("localMetricId");
                                                                 }
-                                                                if (localMetricIdAnswer != null){
+                                                                if (localMetricIdAnswer != 0){
+                                                                    TextView answerTextView = new TextView(context);
+                                                                    answerTextView.setLayoutParams(new LinearLayout.LayoutParams(
+                                                                            LinearLayout.LayoutParams.WRAP_CONTENT,
+                                                                            LinearLayout.LayoutParams.WRAP_CONTENT
+                                                                    ));
                                                                     previewLayout.setVisibility(View.VISIBLE);
                                                                     String globalAbb =  roomDB.globalUnitDao().getAbbByGlobalID(Integer.valueOf(metricGlobalId));
                                                                     String localAbb =  roomDB.localUnitDao().getAbbByLocalID(localMetricIdAnswer);
                                                                     String localConversion =  roomDB.localUnitDao().getFactorByLocalID(localMetricIdAnswer);
                                                                     String answerValue = dl.getAnswerValuebylookUpId(answerJsonVal);
-                                                                    contentTextView.setText(answerValue + " " + globalAbb + " = " + String.valueOf(Double.parseDouble(answerValue) * Double.parseDouble(localConversion))  + " " + localAbb);
+//                                                                    answerTextView.setText(answerValue + " " + globalAbb + " = " + String.valueOf(Double.parseDouble(answerValue) * Double.parseDouble(localConversion))  + " " + localAbb);
+                                                                    if (answerValue != null && globalAbb != null && localConversion != null && localAbb != null) {
+                                                                        try {
+                                                                            // Perform your calculations and set the text
+                                                                            double result = Double.parseDouble(answerValue) * Double.parseDouble(localConversion);
+                                                                            answerTextView.setText(answerValue + " " + globalAbb + " = " + String.valueOf(result) + " " + localAbb);
+                                                                        } catch (NumberFormatException e) {
+                                                                            // Handle the case where parsing fails
+                                                                            e.printStackTrace();
+                                                                        }
+                                                                    } else {
+                                                                        // Handle the case where any of the variables is null
+                                                                        contentTextView.setText("Some values are null");
+                                                                    }
+                                                                    previewLayout.addView(answerTextView);
                                                                 }else {
                                                                     previewLayout.setVisibility(View.GONE);
+                                                                    previewLayout.removeAllViews();
                                                                 }
 
                                                             }else{
                                                                 previewLayout.setVisibility(View.GONE);
+                                                                previewLayout.removeAllViews();
                                                             }
 
                                                         }
                                                     }
                                                 }else{
                                                     previewLayout.setVisibility(View.GONE);
+                                                    previewLayout.removeAllViews();
                                                 }
                                             }
 
