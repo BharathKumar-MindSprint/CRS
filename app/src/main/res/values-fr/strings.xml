@@ -1078,4 +1078,7 @@ Conformément aux Nevada Revised Statutes Chapter 603A et Maine Revised Statutes
     <string name="certification_name">Nom du certificat</string>
     <string name="others">Others</string>
 
+    <string name="advanced_filters">Filtres avancés</string>
+    <string name="spinner_partner_default">Partenaire</string>
+    <string name="spinner_programme_default">Programme</string>
 </resources>

@@ -645,4 +645,8 @@
     <string name="certification">Certification</string>
     <string name="certification_name">Tên chứng nhận</string>
     <string name="others">Others</string>
+
+    <string name="advanced_filters">Bộ lọc nâng cao</string>
+    <string name="spinner_partner_default">Cộng sự</string>
+    <string name="spinner_programme_default">Chương trình</string>
 </resources>

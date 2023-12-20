@@ -645,4 +645,8 @@
     <string name="certification">Certification</string>
     <string name="certification_name">Sertifika Adı</string>
     <string name="others">Others</string>
+
+    <string name="advanced_filters">Gelişmiş filtreler</string>
+    <string name="spinner_partner_default">Ortak</string>
+    <string name="spinner_programme_default">programı</string>
 </resources>

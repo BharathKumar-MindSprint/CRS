@@ -741,4 +741,8 @@
     <string name="certification">Certification</string>
     <string name="certification_name">Nama Sertifikasi</string>
     <string name="others">Others</string>
+
+    <string name="advanced_filters">Filter tingkat lanjut</string>
+    <string name="spinner_partner_default">Mitra</string>
+    <string name="spinner_programme_default">Program</string>
 </resources>

@@ -645,4 +645,8 @@
     <string name="certification_name">Chụ̄̀x rạbrxng</string>
     <string name="others">Others</string>
 
+    <string name="advanced_filters">ตัวกรองขั้นสูง</string>
+    <string name="spinner_partner_default">พันธมิตร</string>
+    <string name="spinner_programme_default">โปรแกรม</string>
+
 </resources>
