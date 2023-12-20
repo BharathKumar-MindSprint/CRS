@@ -572,6 +572,8 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_ANSWER_TYPE = "answerType";
         public static final String COLUMN_NAME_OTHER_CHOICE = "otherChoice";
 
+        public static final String COLUMN_NAME_METRIC = "metric";
+
 
 
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
@@ -613,6 +615,7 @@ public class OFISDBContract {
                     add(COLUMN_NAME_DISPLAY_TYPE_ID);
                     add(COLUMN_NAME_ANSWER_TYPE);
                     add(COLUMN_NAME_OTHER_CHOICE);
+                    add(COLUMN_NAME_METRIC);
 
                 }}
         );
@@ -655,6 +658,10 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_ANSWER_DATE = "answer_date";
         public static final String COLUMN_NAME_ANSWER_TEXT = "answer_text";
         public static final String COLUMN_NAME_ANSWER_REPORTING_YEAR = "reporting_year";
+        public static final String COLUMN_NAME_ANSWER_METRIC_GLOBAL_ID = "metric_global_id";
+        public static final String COLUMN_NAME_ANSWER_METRIC_LOCAL_ID = "metric_local_id";
+        public static final String COLUMN_NAME_ANSWER_METRIC = "metric_answer";
+
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
                     add(COLUMN_NAME_ID);
@@ -673,6 +680,9 @@ public class OFISDBContract {
                     add(COLUMN_NAME_ANSWER_DATE);
                     add(COLUMN_NAME_ANSWER_TEXT);
                     add(COLUMN_NAME_ANSWER_REPORTING_YEAR);
+                    add(COLUMN_NAME_ANSWER_METRIC_GLOBAL_ID);
+                    add(COLUMN_NAME_ANSWER_METRIC_LOCAL_ID);
+                    add(COLUMN_NAME_ANSWER_METRIC);
                 }}
         );
     }
