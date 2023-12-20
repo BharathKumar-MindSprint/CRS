@@ -15,7 +15,7 @@ class OFISDB extends SQLiteOpenHelper {
 
 
 
-    private static final int DATABASE_VERSION = 150;
+    private static final int DATABASE_VERSION = 151;
 
 
 
@@ -1011,12 +1011,24 @@ class OFISDB extends SQLiteOpenHelper {
            migrateFromVersionBelow149(sqLiteDatabase);
        }
 
+        if (oldVersion < 151){
+            migrateFromVersionBelow150(sqLiteDatabase);
+        }
+
         sqLiteDatabase.execSQL(OFIS_DOWNLOADED_SURVEYLIST_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_SAVED_ANSWER_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_PLOT_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_NOTIFICATION_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_NOTIFICATION_MODULELIST_TABLE_CREATE);
         onCreate(sqLiteDatabase);
+    }
+
+    private void migrateFromVersionBelow150(SQLiteDatabase sqLiteDatabase){
+
+        sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.FarmerEntry.TABLE_NAME +" ADD COLUMN " + OFISDBContract.FarmerEntry.COLUMN_NAME_CERTIFICATION_ID +" TEXT default null");
+        sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.FarmerEntry.TABLE_NAME +" ADD COLUMN " + OFISDBContract.FarmerEntry.COLUMN_NAME_CERTIFICATION_TEXT +" TEXT default null");
+        sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.NetworkQueueEntry.TABLE_NAME +" ADD COLUMN " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CERTIFICATION_TEXT +" TEXT default null");
+        sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.NetworkQueueEntry.TABLE_NAME +" ADD COLUMN " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CERTIFICATION_TEXT +" TEXT default null");
     }
 
     private void migrateFromVersionBelow148(SQLiteDatabase sqLiteDatabase){

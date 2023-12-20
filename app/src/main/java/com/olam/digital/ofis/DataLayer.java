@@ -4071,7 +4071,9 @@ public class DataLayer {
                     String id = nids.getString(nids.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_CERTIFICATION_ID));
                     String text = nids.getString(nids.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_CERTIFICATION_TEXT));
                     if(id!=null || text!=null){
-                        status = true;
+                        if(!id.equals("null") || !text.equals("null")){
+                            status = true;
+                        }
                     }
                 }
             }

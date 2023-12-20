@@ -62,7 +62,7 @@ public class AddCertificationsActivity extends BaseActivity implements View.OnCl
         List<Certifications> certificationsList = ofisRoomDB.certificationsDao().getCertifications();
         MultiSpinnerStatus multiSpinnerStatusCn = new MultiSpinnerStatus();
         multiSpinnerStatusCn.setId(0);
-        multiSpinnerStatusCn.setTitle(res.getString(R.string.certification_name));
+        multiSpinnerStatusCn.setTitle(res.getString(R.string.select_certification));
         multiSpinnerStatusCn.setSelected(false);
         multiSpinnerStatusCn.setEnabled(true);
         listStatus.add(multiSpinnerStatusCn);
@@ -95,17 +95,22 @@ public class AddCertificationsActivity extends BaseActivity implements View.OnCl
                     if (nids.moveToFirst()) {
                         String cIds = nids.getString(nids.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_CERTIFICATION_ID));
                         String ctext = nids.getString(nids.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_CERTIFICATION_TEXT));
-                        if (ctext != null && !ctext.isEmpty()) {
+                        if (ctext != null && !ctext.isEmpty() && !ctext.equals("null")) {
                             ed_other_certification.setVisibility(View.VISIBLE);
                             ed_other_certification.setText(ctext);
                             listStatus.get(listStatus.size()-1).setSelected(true);
                         }
                         if (cIds != null) {
                             String[] cIdArr = cIds.split(",");
+                            Boolean noneCheck = listStatus.get(Integer.parseInt(cIdArr[0])).getTitle().equals("None");
                             for (int i = 0; i < listStatus.size(); i++) {
+                                if(noneCheck){
+                                    listStatus.get(i).setEnabled(false);
+                                }
                                 for (int arr = 0; arr < cIdArr.length; arr++) {
                                     if (listStatus.get(i).getId() == Integer.parseInt(cIdArr[arr])) {
                                         listStatus.get(i).setSelected(true);
+                                        listStatus.get(i).setEnabled(true);
                                     }
                                 }
                             }

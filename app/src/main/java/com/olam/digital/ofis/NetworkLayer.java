@@ -4031,6 +4031,22 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 farmer.moveToFirst();
                 JSONObject jsonObject = new JSONObject();
                 try {
+                    String certificationIds = networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CERTIFICATION_ID));
+                    String certificationText = networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CERTIFICATION_TEXT));
+
+                    if(certificationText!=null) {
+                        OFISRoomDB db = OFISRoomDB.getDbInstance(context);
+//                        String[] intArr = certificationIds.split(",");
+                        List<Certifications> certificationsList = db.certificationsDao().getCertifications();
+                        if(certificationIds.contains(String.valueOf(certificationsList.size()+2))){
+                            String othTxt = String.valueOf(certificationsList.size()+2);
+                            if(certificationIds.contains(","+othTxt)){
+                                certificationIds=certificationIds.replace(","+othTxt,"");
+                            }else {
+                                certificationIds=certificationIds.replace(othTxt,"");
+                            }
+                        }
+                    }
 
                     tempOlamFarmerID = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID));
                     jsonObject.put("tempFarmerId", tempOlamFarmerID);
@@ -4051,7 +4067,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     jsonObject.put(OFISDBContract.FarmerEntry.COLUMN_NAME_SECTIONID, sectionID);
                     long districtID = Long.valueOf(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_DISTRICTID)));
                     jsonObject.put("districtId", districtID);
-                    jsonObject.put(OFISDBContract.FarmerEntry.COLUMN_NAME_CERTIFICATION_ID,farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_CERTIFICATION_ID)));
+                    jsonObject.put(OFISDBContract.FarmerEntry.COLUMN_NAME_CERTIFICATION_ID,certificationIds);
                     jsonObject.put(OFISDBContract.FarmerEntry.COLUMN_NAME_CERTIFICATION_TEXT,farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_CERTIFICATION_TEXT)));
 
                     try {
