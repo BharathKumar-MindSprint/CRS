@@ -396,92 +396,93 @@ public class DynamicQuestions {
                     // Get the selected item from the adapter
                     String selectedAbbreviation = spinnerAdapter.getItem(position);
 
-                    // Find the corresponding localUnitId in the spinnerData map
-                    for (Map.Entry<Integer, String> entry : spinnerData.entrySet()) {
-                        if (entry.getValue().equals(selectedAbbreviation)) {
-                            int selectedLocalUnitId = entry.getKey();
+                    if (spinnerData != null) {
+                        for (Map.Entry<Integer, String> entry : spinnerData.entrySet()) {
+                            if (entry.getValue().equals(selectedAbbreviation)) {
+                                int selectedLocalUnitId = entry.getKey();
 
-                            if (entry.getKey() == Integer.parseInt(String.valueOf(globalMetricId))){
-                                radioGlobalMetrics[0] = entry.getKey();
-                                radioLocalMetrics[0] = 0;
-                            }else {
-                                radioLocalMetrics[0] = entry.getKey();
-                                radioGlobalMetrics[0] = 0;
-                            }
-                            // Display a Toast with the selected localUnitId
+                                if (entry.getKey() == Integer.parseInt(String.valueOf(globalMetricId))){
+                                    radioGlobalMetrics[0] = entry.getKey();
+                                    radioLocalMetrics[0] = 0;
+                                }else {
+                                    radioLocalMetrics[0] = entry.getKey();
+                                    radioGlobalMetrics[0] = 0;
+                                }
+                                // Display a Toast with the selected localUnitId
 //                                Toast.makeText(context, "Selected localUnitId: " + selectedLocalUnitId, Toast.LENGTH_SHORT).show();
 
-                            if (answerSet != null) {
-                                for (int i = 0; i < answerSet.size(); i++) {
-                                    JSONObject currentAnswer = answerSet.get(i);
+                                if (answerSet != null) {
+                                    for (int i = 0; i < answerSet.size(); i++) {
+                                        JSONObject currentAnswer = answerSet.get(i);
 
-                                    if (currentAnswer != null) {
-                                        int currentQuestionId = currentAnswer.optInt("question_id");
+                                        if (currentAnswer != null) {
+                                            int currentQuestionId = currentAnswer.optInt("question_id");
 
-                                        if (currentQuestionId == questionId) {
-                                            try {
-                                                currentAnswer.put("globalMetricId", radioGlobalMetrics[0]);
-                                                currentAnswer.put("localMetricId", radioLocalMetrics[0]);
-                                            } catch (JSONException e) {
-                                                e.printStackTrace();
+                                            if (currentQuestionId == questionId) {
+                                                try {
+                                                    currentAnswer.put("globalMetricId", radioGlobalMetrics[0]);
+                                                    currentAnswer.put("localMetricId", radioLocalMetrics[0]);
+                                                } catch (JSONException e) {
+                                                    e.printStackTrace();
+                                                }
                                             }
-                                        }
 
+                                        }
                                     }
                                 }
-                            }
 
-                            if (answerSet != null) {
-                                for (int i = 0; i < answerSet.size(); i++) {
-                                    JSONObject currentAnswer = answerSet.get(i);
+                                if (answerSet != null) {
+                                    for (int i = 0; i < answerSet.size(); i++) {
+                                        JSONObject currentAnswer = answerSet.get(i);
 
-                                    if (currentAnswer != null) {
-                                        int currentQuestionId = currentAnswer.optInt("question_id");
-                                        int answerJsonVal = currentAnswer.optInt("answer");
+                                        if (currentAnswer != null) {
+                                            int currentQuestionId = currentAnswer.optInt("question_id");
+                                            int answerJsonVal = currentAnswer.optInt("answer");
 
-                                        if (currentQuestionId == questionId) {
-                                            Integer globalMetricIdAnswer = null;
-                                            Integer localMetricIdAnswer = null;
-                                            if (currentAnswer.has("globalMetricId")){
-                                                globalMetricIdAnswer = currentAnswer.optInt("globalMetricId");
-                                            }
-                                            if (currentAnswer.has("localMetricId")){
-                                                localMetricIdAnswer = currentAnswer.optInt("localMetricId");
-                                            }
-                                            if (localMetricIdAnswer != 0){
-                                                previewLayout.setVisibility(View.VISIBLE);
+                                            if (currentQuestionId == questionId) {
+                                                Integer globalMetricIdAnswer = null;
+                                                Integer localMetricIdAnswer = null;
+                                                if (currentAnswer.has("globalMetricId")){
+                                                    globalMetricIdAnswer = currentAnswer.optInt("globalMetricId");
+                                                }
+                                                if (currentAnswer.has("localMetricId")){
+                                                    localMetricIdAnswer = currentAnswer.optInt("localMetricId");
+                                                }
+                                                if (localMetricIdAnswer != 0){
+                                                    previewLayout.setVisibility(View.VISIBLE);
 //                                                    titleTextView.setVisibility(View.VISIBLE);
 //                                                    contentTextView.setVisibility(View.VISIBLE);
-                                                String globalAbb =  roomDB.globalUnitDao().getAbbByGlobalID(Integer.valueOf(globalMetricId));
-                                                String localAbb =  roomDB.localUnitDao().getAbbByLocalID(localMetricIdAnswer);
-                                                String localConversion =  roomDB.localUnitDao().getFactorByLocalID(localMetricIdAnswer);
-                                                String answerValue = dl.getAnswerValuebylookUpId(answerJsonVal);
+                                                    String globalAbb =  roomDB.globalUnitDao().getAbbByGlobalID(Integer.valueOf(globalMetricId));
+                                                    String localAbb =  roomDB.localUnitDao().getAbbByLocalID(localMetricIdAnswer);
+                                                    String localConversion =  roomDB.localUnitDao().getFactorByLocalID(localMetricIdAnswer);
+                                                    String answerValue = dl.getAnswerValuebylookUpId(answerJsonVal);
 //                                                        contentTextView.setText(answerValue + " " + globalAbb + " = " + String.valueOf(Double.parseDouble(answerValue) * Double.parseDouble(localConversion))  + " " + localAbb);
-                                                if (answerValue != null && globalAbb != null && localConversion != null && localAbb != null) {
-                                                    try {
-                                                        // Perform your calculations and set the text
-                                                        double result = Double.parseDouble(answerValue) * Double.parseDouble(localConversion);
-                                                        contentTextView.setText(answerValue + " " + globalAbb + " = " + String.valueOf(result) + " " + localAbb);
-                                                    } catch (NumberFormatException e) {
-                                                        // Handle the case where parsing fails
-                                                        e.printStackTrace();
+                                                    if (answerValue != null && globalAbb != null && localConversion != null && localAbb != null) {
+                                                        try {
+                                                            // Perform your calculations and set the text
+                                                            double result = Double.parseDouble(answerValue) * Double.parseDouble(localConversion);
+                                                            contentTextView.setText(answerValue + " " + globalAbb + " = " + String.valueOf(result) + " " + localAbb);
+                                                        } catch (NumberFormatException e) {
+                                                            // Handle the case where parsing fails
+                                                            e.printStackTrace();
+                                                        }
+                                                    } else {
+                                                        // Handle the case where any of the variables is null
+                                                        contentTextView.setText("Some values are null");
                                                     }
-                                                } else {
-                                                    // Handle the case where any of the variables is null
-                                                    contentTextView.setText("Some values are null");
+                                                }else {
+                                                    previewLayout.setVisibility(View.GONE);
                                                 }
-                                            }else {
-                                                previewLayout.setVisibility(View.GONE);
                                             }
-                                        }
 
+                                        }
                                     }
                                 }
+
+                                Log.d("AnswerNewSet" , answerSet.toString());
+
+                                break;
                             }
-
-                            Log.d("AnswerNewSet" , answerSet.toString());
-
-                            break;
                         }
                     }
                 }
@@ -5091,8 +5092,6 @@ public class DynamicQuestions {
                                                     localMetricIdAnswer = currentAnswer.optInt("localMetricId");
                                                 }
                                                 if (localMetricIdAnswer != 0){
-                                                    previewLayout.removeAllViews();
-                                                    previewLayout.addView(titleTextView);
                                                     TextView answerTextView = new TextView(context);
                                                     answerTextView.setLayoutParams(new LinearLayout.LayoutParams(
                                                             LinearLayout.LayoutParams.WRAP_CONTENT,
