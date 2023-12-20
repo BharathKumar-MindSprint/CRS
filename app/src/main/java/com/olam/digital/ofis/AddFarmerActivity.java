@@ -2252,7 +2252,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
         if(ofisRoomDB.certificationsDao().getCertifications().size()>0) {
             MultiSpinnerStatus multiSpinnerStatusCn = new MultiSpinnerStatus();
             multiSpinnerStatusCn.setId(0);
-            multiSpinnerStatusCn.setTitle(res.getString(R.string.certification_name));
+            multiSpinnerStatusCn.setTitle(res.getString(R.string.select_certification));
             multiSpinnerStatusCn.setSelected(false);
             multiSpinnerStatusCn.setEnabled(true);
             listStatus.add(multiSpinnerStatusCn);
