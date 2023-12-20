@@ -6176,8 +6176,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
              for (int i=0; i < filePaths.size(); i++) {
                 File file = new File(filePaths.get(i));
                 RequestBody fileBody = RequestBody.create(MEDIA_TYPE_PNG, file);
-                builder.addFormDataPart("type" , "DM");
                 builder.addFormDataPart("files", fileName.get(i), fileBody);
+                builder.addFormDataPart("type" , "DM");
             }
 
             RequestBody requestBody = builder.build();
