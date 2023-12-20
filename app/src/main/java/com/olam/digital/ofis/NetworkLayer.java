@@ -2040,6 +2040,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                     } else {
                                         answer.put("has_photo_upload", false);
                                     }
+                                    answer.put("globalMetricId",moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_METRIC_GLOBAL_ID)));
+                                    answer.put("localMetricId",moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_METRIC_LOCAL_ID)));
 
                                     if (moduleAnswers.getString(moduleAnswers.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE)).equalsIgnoreCase("repeater")) {
                                         Cursor subAnswers = dl.getAnswersByModuleIdAndParentQuestionId(farmerModuleId, moduleAnswers.getInt(moduleAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID)));
@@ -2090,7 +2092,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                                         subAnswer.put("has_photo_upload", false);
                                                     }
                                                 }
-
+                                                subAnswer.put("globalMetricId",subAnswers.getString(subAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_METRIC_GLOBAL_ID)));
+                                                subAnswer.put("localMetricId",subAnswers.getString(subAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_METRIC_LOCAL_ID)));
                                                 subAnswersAnswerArray.put(subAnswer);
 
                                             }
@@ -6160,9 +6163,9 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
              for (int i=0; i < filePaths.size(); i++) {
                 File file = new File(filePaths.get(i));
                 RequestBody fileBody = RequestBody.create(MEDIA_TYPE_PNG, file);
-                builder.addFormDataPart("type" , "DM");
                 builder.addFormDataPart("files", fileName.get(i), fileBody);
             }
+            builder.addFormDataPart("type" , "DM");
 
             RequestBody requestBody = builder.build();
 

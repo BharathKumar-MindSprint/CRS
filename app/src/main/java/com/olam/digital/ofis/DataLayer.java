@@ -1774,6 +1774,69 @@ public class DataLayer {
         return newEntry;
     }
 
+    public String getGlobalIdByQuestionId(int questionId){
+        String metricId = "";
+        Cursor cursor = null;
+        try {
+            String[] columns = new String[]{"*"};
+            String whereClause = OFISDBContract.QuestionEntry.COLUMN_NAME_ID + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(questionId)};
+            cursor = db.query(OFISDBContract.QuestionEntry.TABLE_NAME , columns , whereClause , whereArgs , null , null, null);
+            if(cursor != null){
+                while(cursor.moveToNext()){
+                    metricId = cursor.getString(cursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_METRIC));
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            cursor.close();
+        }
+        return metricId;
+    }
+
+
+    public String getGlobalIdByAnswerID(int answerId){
+        String metricId = "";
+        Cursor cursor = null;
+        try {
+            String[] columns = new String[]{"*"};
+            String whereClause = OFISDBContract.AnswerEntry.COLUMN_NAME_ID + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(answerId)};
+            cursor = db.query(OFISDBContract.AnswerEntry.TABLE_NAME , columns , whereClause , whereArgs , null , null, null);
+            if(cursor != null){
+                while(cursor.moveToNext()){
+                    metricId = cursor.getString(cursor.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_METRIC_GLOBAL_ID));
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            cursor.close();
+        }
+        return metricId;
+    }
+
+    public String getLocalIdByAnswerID(int answerId){
+        String metricId = "";
+        Cursor cursor = null;
+        try {
+            String[] columns = new String[]{"*"};
+            String whereClause = OFISDBContract.AnswerEntry.COLUMN_NAME_ID + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(answerId)};
+            cursor = db.query(OFISDBContract.AnswerEntry.TABLE_NAME , columns , whereClause , whereArgs , null , null, null);
+            if(cursor != null){
+                while(cursor.moveToNext()){
+                    metricId = cursor.getString(cursor.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_METRIC_LOCAL_ID));
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            cursor.close();
+        }
+        return metricId;
+    }
 
     public String getAssignmentByFarmerTypeID(long farmerId , String assignmentTypeColumn ){
         String assignmentField="";
@@ -4526,6 +4589,9 @@ public class DataLayer {
                     String answer = currentAnswer.getString("answer");
                     String sub_answers = currentAnswer.optString("sub_answers");
                     int reportingYear = currentAnswer.getInt("reporting_year");
+                    int globalMetricId = currentAnswer.getInt("globalMetricId");
+                    int localMetricId = currentAnswer.getInt("localMetricId");
+                    double metricAnswer = currentAnswer.getDouble("metricAnswer");
 
                     ContentValues values = new ContentValues();
                     values.put(OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID, currentQuestionId);
@@ -4560,6 +4626,9 @@ public class DataLayer {
                         values.put("answer_text", sub_answers);
                     }
                     values.put(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_REPORTING_YEAR, reportingYear);
+                    values.put(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_METRIC_GLOBAL_ID, globalMetricId);
+                    values.put(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_METRIC_LOCAL_ID, localMetricId);
+                    values.put(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_METRIC, metricAnswer);
 
                     db.insert(OFISDBContract.AnswerEntry.TABLE_NAME, null, values);
 

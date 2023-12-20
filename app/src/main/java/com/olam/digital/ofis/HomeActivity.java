@@ -170,6 +170,8 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
     private Resources res;
     private HomeActivity me;
     private static DataLayer dl;
+
+    private  static OFISRoomDB db;
     private NetworkLayer nl;
     private ProgressDialog m_ProgressDialog = null;
     private ProgressDialog mDialogLoading = null;
@@ -265,6 +267,7 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
         context = me = this;
         staticRes = getResources();
         res = getResources();
+        db = OFISRoomDB.getDbInstance(context);
 //        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_TITLE);
 //        setTitle(R.string.applicationName);
 
@@ -2780,105 +2783,111 @@ public class HomeActivity extends BaseListActivity implements Callback<Authentic
                                 existingModuleItemArrayList.clear();
                                 existingModuleItemArrayList = response.body().getFollowUpResponseItemList().get(i).getExistingModuleItemArrayList();
 
-                                for (int j = 0; j < followUpItemArrayList.size(); j++) {
-                                    int questionId = followUpItemArrayList.get(j).getQuestionId();
-                                    int id = followUpItemArrayList.get(j).getId();
-                                    int complianceId = followUpItemArrayList.get(j).getComplianceId();
-                                    int moduleId = followUpItemArrayList.get(j).getModuleId();
-                                    String actionPlanId = followUpItemArrayList.get(j).getActionPlanId();
-                                    int dmSubModId = followUpItemArrayList.get(j).getDmSubModId();
-                                    int attempt = followUpItemArrayList.get(j).getAttempt();
-                                    long farmerId = followUpItemArrayList.get(j).getFarmerId();
-                                    String actionPlanText = followUpItemArrayList.get(j).getActionPlanText();
-                                    String createdAt = followUpItemArrayList.get(j).getCreatedAt();
-                                    String createdBy = followUpItemArrayList.get(j).getCreatedBy();
-                                    List<String> captureProofList = followUpItemArrayList.get(j).getDmCapturedProof();
+                                if (followUpItemArrayList!=null){
+                                    for (int j = 0; j < followUpItemArrayList.size(); j++) {
+                                        int questionId = followUpItemArrayList.get(j).getQuestionId();
+                                        int id = followUpItemArrayList.get(j).getId();
+                                        int complianceId = followUpItemArrayList.get(j).getComplianceId();
+                                        int moduleId = followUpItemArrayList.get(j).getModuleId();
+                                        String actionPlanId = followUpItemArrayList.get(j).getActionPlanId();
+                                        int dmSubModId = followUpItemArrayList.get(j).getDmSubModId();
+                                        int attempt = followUpItemArrayList.get(j).getAttempt();
+                                        long farmerId = followUpItemArrayList.get(j).getFarmerId();
+                                        String actionPlanText = followUpItemArrayList.get(j).getActionPlanText();
+                                        String createdAt = followUpItemArrayList.get(j).getCreatedAt();
+                                        String createdBy = followUpItemArrayList.get(j).getCreatedBy();
+                                        List<String> captureProofList = followUpItemArrayList.get(j).getDmCapturedProof();
                                     /*JSONArray captureProof = new JSONArray();
                                     for (int k = 0; k < captureProofList.size(); k++) {
                                         captureProof.put(captureProofList.get(k));
                                     }*/
-                                    String status = followUpItemArrayList.get(j).getStatus().trim();
-                                    String updatedAt = followUpItemArrayList.get(j).getUpdatedAt();
-                                    String updatedBy = followUpItemArrayList.get(j).getUpdatedBy();
-                                    boolean isPortal = followUpItemArrayList.get(j).isPortal();
+                                        String status = followUpItemArrayList.get(j).getStatus().trim();
+                                        String updatedAt = followUpItemArrayList.get(j).getUpdatedAt();
+                                        String updatedBy = followUpItemArrayList.get(j).getUpdatedBy();
+                                        boolean isPortal = followUpItemArrayList.get(j).isPortal();
 
-                                    FollowUpItemMainTable followUpItemMainTable = new FollowUpItemMainTable();
-                                    followUpItemMainTable.actionPlanId = actionPlanId;
-                                    followUpItemMainTable.questionId = questionId;
-                                    followUpItemMainTable.id = id;
-                                    followUpItemMainTable.complianceId = complianceId;
-                                    followUpItemMainTable.moduleId = moduleId;
-                                    followUpItemMainTable.dmSubModId = dmSubModId;
-                                    followUpItemMainTable.attempt = attempt;
-                                    followUpItemMainTable.actionPlanText = actionPlanText;
-                                    followUpItemMainTable.createdAt = createdAt;
-                                    followUpItemMainTable.createdBy = createdBy;
-                                    followUpItemMainTable.status = status;
-                                    followUpItemMainTable.updatedAt = updatedAt;
-                                    followUpItemMainTable.updatedBy = updatedBy;
-                                    followUpItemMainTable.isPortal = isPortal;
-                                    followUpItemMainTable.farmerId = farmerId;
-                                    followUpItemMainTable.isSync = true;
-                                    if (captureProofList!=null){
-                                        followUpItemMainTable.dmCapturedProof = captureProofList.size();
-                                    }else {
-                                        followUpItemMainTable.dmCapturedProof = 0;
+                                        FollowUpItemMainTable followUpItemMainTable = new FollowUpItemMainTable();
+                                        followUpItemMainTable.actionPlanId = actionPlanId;
+                                        followUpItemMainTable.questionId = questionId;
+                                        followUpItemMainTable.id = id;
+                                        followUpItemMainTable.complianceId = complianceId;
+                                        followUpItemMainTable.moduleId = moduleId;
+                                        followUpItemMainTable.dmSubModId = dmSubModId;
+                                        followUpItemMainTable.attempt = attempt;
+                                        followUpItemMainTable.actionPlanText = actionPlanText;
+                                        followUpItemMainTable.createdAt = createdAt;
+                                        followUpItemMainTable.createdBy = createdBy;
+                                        followUpItemMainTable.status = status;
+                                        followUpItemMainTable.updatedAt = updatedAt;
+                                        followUpItemMainTable.updatedBy = updatedBy;
+                                        followUpItemMainTable.isPortal = isPortal;
+                                        followUpItemMainTable.farmerId = farmerId;
+                                        followUpItemMainTable.isSync = true;
+                                        if (captureProofList!=null){
+                                            followUpItemMainTable.dmCapturedProof = captureProofList.size();
+                                        }else {
+                                            followUpItemMainTable.dmCapturedProof = 0;
+                                        }
+
+                                        db.followUpItemMainTableDao().insert(followUpItemMainTable);
+
                                     }
-
-                                    db.followUpItemMainTableDao().insert(followUpItemMainTable);
-
                                 }
 
-                                for (int k = 0; k < existingModuleItemArrayList.size(); k++) {
-                                    int farmerId = existingModuleItemArrayList.get(k).getFarmerId();
-                                    int submittedModuleId = existingModuleItemArrayList.get(k).getId();
-                                    String submissionDate = existingModuleItemArrayList.get(k).getSubmissionDate();
-                                    int farmerGroupId = existingModuleItemArrayList.get(k).getFarmerGroupId();
-                                    int moduleId = existingModuleItemArrayList.get(k).getModuleId();
-                                    int currencyId = existingModuleItemArrayList.get(k).getCurrencyId();
-                                    ArrayList<AnswersItem> answersItemArrayList = new ArrayList<>();
-                                    answersItemArrayList.clear();
-                                    answersItemArrayList = existingModuleItemArrayList.get(k).getAnswers();
-                                    Result result = existingModuleItemArrayList.get(k).getResult();
 
-                                    for (int l = 0; l < answersItemArrayList.size(); l++) {
-                                        int answerId = answersItemArrayList.get(l).getAnswerId();
-                                        int complianceStatusId = answersItemArrayList.get(l).getComplianceStatusId();
-                                        int questionId = answersItemArrayList.get(l).getQuestionId();
-                                        String answerValue = answersItemArrayList.get(l).getAnswerValue();
-                                        String captureProofs = answersItemArrayList.get(l).getCaptureProofs();
-                                        int actionPlanId = answersItemArrayList.get(l).getActionPlanId();
-                                        String actionPlanText = answersItemArrayList.get(l).getActionPlanText();
+                                if (existingModuleItemArrayList!= null){
+                                    for (int k = 0; k < existingModuleItemArrayList.size(); k++) {
+                                        int farmerId = existingModuleItemArrayList.get(k).getFarmerId();
+                                        int submittedModuleId = existingModuleItemArrayList.get(k).getId();
+                                        String submissionDate = existingModuleItemArrayList.get(k).getSubmissionDate();
+                                        int farmerGroupId = existingModuleItemArrayList.get(k).getFarmerGroupId();
+                                        int moduleId = existingModuleItemArrayList.get(k).getModuleId();
+                                        int currencyId = existingModuleItemArrayList.get(k).getCurrencyId();
+                                        ArrayList<AnswersItem> answersItemArrayList = new ArrayList<>();
+                                        answersItemArrayList.clear();
+                                        answersItemArrayList = existingModuleItemArrayList.get(k).getAnswers();
+                                        Result result = existingModuleItemArrayList.get(k).getResult();
 
-                                        DmSurveyAnswerTable dmSurveyAnswerTable = new DmSurveyAnswerTable();
-                                        dmSurveyAnswerTable.answerID = String.valueOf(answerId);
-                                        dmSurveyAnswerTable.farmerId = String.valueOf(farmerId);
-                                        dmSurveyAnswerTable.moduleId = String.valueOf(moduleId);
-                                        dmSurveyAnswerTable.submittedModuleId = submittedModuleId;
-                                        dmSurveyAnswerTable.complinceTypeId = String.valueOf(complianceStatusId);
-                                        dmSurveyAnswerTable.questionID = String.valueOf(questionId);
-                                        dmSurveyAnswerTable.answer = answerValue;
+                                        for (int l = 0; l < answersItemArrayList.size(); l++) {
+                                            int answerId = answersItemArrayList.get(l).getAnswerId();
+                                            int complianceStatusId = answersItemArrayList.get(l).getComplianceStatusId();
+                                            int questionId = answersItemArrayList.get(l).getQuestionId();
+                                            String answerValue = answersItemArrayList.get(l).getAnswerValue();
+                                            String captureProofs = answersItemArrayList.get(l).getCaptureProofs();
+                                            int actionPlanId = answersItemArrayList.get(l).getActionPlanId();
+                                            String actionPlanText = answersItemArrayList.get(l).getActionPlanText();
+
+                                            DmSurveyAnswerTable dmSurveyAnswerTable = new DmSurveyAnswerTable();
+                                            dmSurveyAnswerTable.answerID = String.valueOf(answerId);
+                                            dmSurveyAnswerTable.farmerId = String.valueOf(farmerId);
+                                            dmSurveyAnswerTable.moduleId = String.valueOf(moduleId);
+                                            dmSurveyAnswerTable.submittedModuleId = submittedModuleId;
+                                            dmSurveyAnswerTable.complinceTypeId = String.valueOf(complianceStatusId);
+                                            dmSurveyAnswerTable.questionID = String.valueOf(questionId);
+                                            dmSurveyAnswerTable.answer = answerValue;
 //                                        dmSurveyAnswerTable.isCaptureProof = captureProofs;
-                                        dmSurveyAnswerTable.actionplanId = String.valueOf(actionPlanId);
-                                        dmSurveyAnswerTable.actionPlanText = actionPlanText;
-                                        dmSurveyAnswerTable.isSynced = true;
-                                        dmSurveyAnswerTable.question = db.dmQuestionsModuleDao().getQuestionById(questionId);
-                                        db.dmSurveyAnswerTableDao().insert(dmSurveyAnswerTable);
+                                            dmSurveyAnswerTable.actionplanId = String.valueOf(actionPlanId);
+                                            dmSurveyAnswerTable.actionPlanText = actionPlanText;
+                                            dmSurveyAnswerTable.isSynced = true;
+                                            dmSurveyAnswerTable.question = db.dmQuestionsModuleDao().getQuestionById(questionId);
+                                            db.dmSurveyAnswerTableDao().insert(dmSurveyAnswerTable);
+                                        }
+                                        String[] totalBudget = result.getTotalBudget().split(" ");
+                                        DMSurveyReport dmSurveyReport = new DMSurveyReport(result.getTotalComplaint(),
+                                                result.getTotalSatisfactory(),
+                                                result.getTotalNonComplaint(),
+                                                result.getTotalActionPlan(),
+                                                Double.parseDouble(totalBudget[0].trim()),
+                                                result.getResultType(),
+                                                result.getResultValue(),
+                                                result.getResultRemarks(),
+                                                farmerId,moduleId,
+                                                farmerGroupId,
+                                                currencyId,submissionDate,result.getResultColour(),result.getOverAllResult());
+                                        db.dmSurveyReportDao().insert(dmSurveyReport);
                                     }
-                                    String[] totalBudget = result.getTotalBudget().split(" ");
-                                    DMSurveyReport dmSurveyReport = new DMSurveyReport(result.getTotalComplaint(),
-                                            result.getTotalSatisfactory(),
-                                            result.getTotalNonComplaint(),
-                                            result.getTotalActionPlan(),
-                                            Double.parseDouble(totalBudget[0].trim()),
-                                            result.getResultType(),
-                                            result.getResultValue(),
-                                            result.getResultRemarks(),
-                                            farmerId,moduleId,
-                                            farmerGroupId,
-                                            currencyId,submissionDate,result.getResultColour(),result.getOverAllResult());
-                                     db.dmSurveyReportDao().insert(dmSurveyReport);
                                 }
+
 
                             }
 

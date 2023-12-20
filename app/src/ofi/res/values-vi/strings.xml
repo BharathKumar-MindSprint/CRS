@@ -14,6 +14,7 @@
     <string name="title_activity_find_farmer">Tìm kiếm Nông hộ</string>
     <string name="title_activity_view_farmer">Chi tiết Nông hộ</string>
     <string name="title_activity_complete_module">Mục bảng hỏi hoàn tất</string>
+    <string name="updating_local_unit_details">Downloading Local Units details</string>
 
     <!-- main stuff -->
     <string name="app_name">Hiệu chỉnh đồng hành OFI</string>
