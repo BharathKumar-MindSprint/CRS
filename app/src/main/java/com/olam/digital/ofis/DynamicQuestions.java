@@ -5072,6 +5072,8 @@ public class DynamicQuestions {
                                 }
 
                                 if (answerSet != null) {
+                                    previewLayout.removeAllViews();
+                                    previewLayout.addView(titleTextView);
                                     for (int i = 0; i < answerSet.size(); i++) {
                                         JSONObject currentAnswer = answerSet.get(i);
 
@@ -5080,8 +5082,6 @@ public class DynamicQuestions {
                                             int answerJsonVal = currentAnswer.optInt("answer");
 
                                             if (currentQuestionId == questionId) {
-                                                previewLayout.removeAllViews();
-                                                previewLayout.addView(titleTextView);
                                                 Integer globalMetricIdAnswer = null;
                                                 Integer localMetricIdAnswer = null;
                                                 if (currentAnswer.has("globalMetricId")){
@@ -5374,6 +5374,8 @@ public class DynamicQuestions {
 
                                             if (metricGlobalId != null && !metricGlobalId.equals("")) {
                                                 if (answerSet.size() != 0) {;
+                                                    previewLayout.removeAllViews();
+                                                    previewLayout.addView(titleTextView);
                                                     for (int i = 0; i < answerSet.size(); i++) {
                                                         JSONObject currentAnswer = answerSet.get(i);
 
@@ -5382,8 +5384,6 @@ public class DynamicQuestions {
                                                             int answerJsonVal = currentAnswer.optInt("answer");
 
                                                             if (currentQuestionId == questionId) {
-                                                                previewLayout.removeAllViews();
-                                                                previewLayout.addView(titleTextView);
                                                                 Integer globalMetricIdAnswer = null;
                                                                 Integer localMetricIdAnswer = null;
                                                                 if (currentAnswer.has("globalMetricId")){
