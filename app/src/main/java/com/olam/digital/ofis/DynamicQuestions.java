@@ -4298,7 +4298,11 @@ public class DynamicQuestions {
 
                                 String radioName = dl.getValueByLookUpID(lookupID);
                                 RadioButton radioButton = (RadioButton) LayoutInflater.from(context).inflate(R.drawable.custom_radio_button, radioGroup, false);
-                                radioButton.setText(radioName);
+                                if (metricGlobalId != null && !metricGlobalId.equals("")){
+                                    radioButton.setText(radioName + " " + roomDB.globalUnitDao().getAbbByGlobalID(Integer.valueOf(metricGlobalId)));
+                                }else{
+                                    radioButton.setText(radioName);
+                                }
                                 radioButton.setId(Integer.parseInt(lookupID));
 
                                 if (rbAnswers.getCount() == 0){
@@ -4366,8 +4370,8 @@ public class DynamicQuestions {
                 finalGlobalMetrics = Integer.parseInt(metricGlobalId);
                 innerWrapper.addView(text);
                 innerWrapper.addView(spinner);
-                questionWrapper.addView(innerWrapper);
                 questionWrapper.addView(linearLayout);
+                questionWrapper.addView(innerWrapper);
                 questionWrapper.addView(previewLayout);
                 parentLayout.addView(questionWrapper);
 
@@ -5233,7 +5237,11 @@ public class DynamicQuestions {
 
                                     String checkBoxName = dl.getValueByLookUpID(lookupID);
                                     tvId.setText(lookupID);
-                                    tv.setText(checkBoxName);
+                                    if (metricGlobalId != null && !metricGlobalId.equals("")){
+                                        tv.setText(checkBoxName + " " + roomDB.globalUnitDao().getAbbByGlobalID(Integer.valueOf(metricGlobalId)));
+                                    }else{
+                                        tv.setText(checkBoxName);
+                                    }
                                     tl.addView(tr);
 
                             /*if (cbAnswers.getCount() == 0) {
@@ -5725,8 +5733,8 @@ public class DynamicQuestions {
             if (metricGlobalId != null && !metricGlobalId.equals("")){
                 innerWrapper.addView(text);
                 innerWrapper.addView(spinner);
-                questionWrapper.addView(innerWrapper);
                 questionWrapper.addView(tl);
+                questionWrapper.addView(innerWrapper);
                 questionWrapper.addView(previewLayout);
                 parentLayout.addView(questionWrapper);
             }else{
