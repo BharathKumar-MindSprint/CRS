@@ -5129,7 +5129,6 @@ public class DynamicQuestions {
                                                 }
                                             }else {
                                                 previewLayout.setVisibility(View.GONE);
-                                                previewLayout.removeAllViews();
                                             }
 
                                         }
