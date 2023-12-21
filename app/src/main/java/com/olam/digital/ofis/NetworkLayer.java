@@ -4031,8 +4031,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 farmer.moveToFirst();
                 JSONObject jsonObject = new JSONObject();
                 try {
-                    String certificationIds = networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CERTIFICATION_ID));
-                    String certificationText = networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CERTIFICATION_TEXT));
+                    String certificationIds = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_CERTIFICATION_ID));
+                    String certificationText = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_CERTIFICATION_TEXT));
 
                     if(certificationText!=null) {
                         OFISRoomDB db = OFISRoomDB.getDbInstance(context);
@@ -6176,9 +6176,9 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
              for (int i=0; i < filePaths.size(); i++) {
                 File file = new File(filePaths.get(i));
                 RequestBody fileBody = RequestBody.create(MEDIA_TYPE_PNG, file);
-                builder.addFormDataPart("type" , "DM");
                 builder.addFormDataPart("files", fileName.get(i), fileBody);
             }
+            builder.addFormDataPart("type" , "DM");
 
             RequestBody requestBody = builder.build();
 

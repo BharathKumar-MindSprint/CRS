@@ -1511,6 +1511,8 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                 }
                 values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_CERTIFICATION_ID,certificationIds.toString());
                 values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_CERTIFICATION_TEXT,certificationEditText.getText().toString().trim());
+                values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CERTIFICATION_ID,certificationIds.toString());
+                values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CERTIFICATION_TEXT,certificationEditText.getText().toString().trim());
             }
             if (!editMode) {
                 boolean isUnique = dl.isFarmerEntryUnique(values);
@@ -2318,6 +2320,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             } finally {
                 nids.close();
             }
+            certificationNameSpinner.setTag(listStatus);
         }
     }
 
