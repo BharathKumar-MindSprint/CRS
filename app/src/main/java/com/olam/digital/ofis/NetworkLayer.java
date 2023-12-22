@@ -2095,8 +2095,10 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                                                         subAnswer.put("has_photo_upload", false);
                                                     }
                                                 }
-                                                subAnswer.put("globalMetricId",subAnswers.getString(subAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_METRIC_GLOBAL_ID)));
-                                                subAnswer.put("localMetricId",subAnswers.getString(subAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_METRIC_LOCAL_ID)));
+                                                String repeaterAnswerMetricGlobalId = subAnswers.getString(subAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_METRIC_GLOBAL_ID));
+                                                String repeaterAnswerMetricLocalId = subAnswers.getString(subAnswers.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_METRIC_LOCAL_ID));
+                                                subAnswer.put("globalMetricId",(repeaterAnswerMetricGlobalId != null && repeaterAnswerMetricGlobalId.equals("0")) ? null : repeaterAnswerMetricGlobalId);
+                                                subAnswer.put("localMetricId",(repeaterAnswerMetricLocalId != null && repeaterAnswerMetricLocalId.equals("0")) ? null : repeaterAnswerMetricLocalId);
                                                 subAnswersAnswerArray.put(subAnswer);
 
                                             }

@@ -2111,7 +2111,7 @@ public class DynamicQuestions {
 
 
         final Spinner spinner = (Spinner) inflater.inflate(R.layout.metric_spinner, innerWrapper, false);
-        if (metricGlobalId != null && !metricGlobalId.equals("")) {
+        if (metricGlobalId != null && !metricGlobalId.equals("") && !metricGlobalId.equals("0")) {
             List<LocalUnitDao.UnitMapping> unitMappings = roomDB.localUnitDao().getValueByGlobalId(Integer.parseInt(metricGlobalId));
 
             if (unitMappings.isEmpty()) {
@@ -2284,7 +2284,7 @@ public class DynamicQuestions {
             }
         }
 
-        if (metricGlobalId != null && !metricGlobalId.equals("")){
+        if (metricGlobalId != null && !metricGlobalId.equals("") && !metricGlobalId.equals("0")){
             LinearLayout.LayoutParams editTextParams = new LinearLayout.LayoutParams(
                     0, // Width set to 0
                     LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -2704,7 +2704,7 @@ public class DynamicQuestions {
                     }
 
                     if(et.getText().toString()!= null && !TextUtils.isEmpty(et.getText().toString())){
-                        if (metricGlobalId != null && !metricGlobalId.equals("")) {
+                        if (metricGlobalId != null && !metricGlobalId.equals("") && !metricGlobalId.equals("0")) {
                             if (answerSet != null) {
                                 for (int i = 0; i < answerSet.size(); i++) {
                                     JSONObject currentAnswer = answerSet.get(i);
@@ -2770,18 +2770,18 @@ public class DynamicQuestions {
 
 
 
-        if (metricGlobalId != null && !metricGlobalId.equals("")){
+        if (metricGlobalId != null && !metricGlobalId.equals("") && !metricGlobalId.equals("0")){
             if (isRepeaterItem) {
                 innerWrapper.addView(et);
                 innerWrapper.addView(spinner);
-                parentLayout.addView(previewLayout);
+//                parentLayout.addView(previewLayout);
                 parentLayout.addView(innerWrapper);
 
             } else {
                 innerWrapper.addView(et);
                 innerWrapper.addView(spinner);
                 questionWrapper.addView(innerWrapper);
-                questionWrapper.addView(previewLayout);
+//                questionWrapper.addView(previewLayout);
                 parentLayout.addView(questionWrapper);
             }
         }else {
@@ -3343,7 +3343,7 @@ public class DynamicQuestions {
         previewLayout.setVisibility(View.GONE);
 
         final Spinner spinnerLocal = (Spinner) inflater.inflate(R.layout.metric_spinner, innerWrapper, false);
-        if (metricGlobalId != null && !metricGlobalId.equals("")) {
+        if (metricGlobalId != null && !metricGlobalId.equals("") && !metricGlobalId.equals("0")) {
             List<LocalUnitDao.UnitMapping> unitMappings = roomDB.localUnitDao().getValueByGlobalId(Integer.parseInt(metricGlobalId));
 
             if (unitMappings.isEmpty()) {
@@ -3531,7 +3531,7 @@ public class DynamicQuestions {
 
 //        final Spinner spinner = (Spinner) inflater.inflate(R.layout.module_spinner, (isRepeaterItem) ? parentLayout : questionWrapper, false);
         final Spinner spinner = (Spinner) inflater.inflate(R.layout.module_spinner, questionWrapper, false);
-        if (metricGlobalId != null && !metricGlobalId.equals("")){
+        if (metricGlobalId != null && !metricGlobalId.equals("") && !metricGlobalId.equals("0")){
             LinearLayout.LayoutParams spinnerParams = new LinearLayout.LayoutParams(
                     0, // Width set to 0
                     LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -3800,7 +3800,7 @@ public class DynamicQuestions {
                     }
 
 
-                    if (metricGlobalId != null && !metricGlobalId.equals("")) {
+                    if (metricGlobalId != null && !metricGlobalId.equals("") && !metricGlobalId.equals("0")) {
                         if (answerSet.size() != 0) {
                             for (int i = 0; i < answerSet.size(); i++) {
                                 JSONObject currentAnswer = answerSet.get(i);
@@ -3865,7 +3865,7 @@ public class DynamicQuestions {
             });
 
 
-            if (metricGlobalId != null && !metricGlobalId.equals("")){
+            if (metricGlobalId != null && !metricGlobalId.equals("") && !metricGlobalId.equals("0")){
                 if (isRepeaterItem) {
                     innerWrapper.addView(spinner);
                     innerWrapper.addView(spinnerLocal);
@@ -4036,7 +4036,7 @@ public class DynamicQuestions {
         previewLayout.setVisibility(View.GONE);
 
         final Spinner spinner = (Spinner) inflater.inflate(R.layout.metric_spinner, innerWrapper, false);
-        if (metricGlobalId != null && !metricGlobalId.equals("")) {
+        if (metricGlobalId != null && !metricGlobalId.equals("") && !metricGlobalId.equals("0")) {
             List<LocalUnitDao.UnitMapping> unitMappings = roomDB.localUnitDao().getValueByGlobalId(Integer.parseInt(metricGlobalId));
 
             if (unitMappings.isEmpty()) {
@@ -4298,7 +4298,7 @@ public class DynamicQuestions {
 
                                 String radioName = dl.getValueByLookUpID(lookupID);
                                 RadioButton radioButton = (RadioButton) LayoutInflater.from(context).inflate(R.drawable.custom_radio_button, radioGroup, false);
-                                if (metricGlobalId != null && !metricGlobalId.equals("")){
+                                if (metricGlobalId != null && !metricGlobalId.equals("") && !metricGlobalId.equals("0")){
                                     radioButton.setText(radioName + " " + roomDB.globalUnitDao().getAbbByGlobalID(Integer.valueOf(metricGlobalId)));
                                 }else{
                                     radioButton.setText(radioName);
@@ -4366,7 +4366,7 @@ public class DynamicQuestions {
             }
 
             int finalGlobalMetrics = 0;
-            if (metricGlobalId != null && !metricGlobalId.equals("")){
+            if (metricGlobalId != null && !metricGlobalId.equals("") && !metricGlobalId.equals("0")){
                 finalGlobalMetrics = Integer.parseInt(metricGlobalId);
                 innerWrapper.addView(text);
                 innerWrapper.addView(spinner);
@@ -4854,12 +4854,12 @@ public class DynamicQuestions {
         Cursor cbAnswers;
         if(isSavedAns) {
              cbAnswers = dl.getSavedAnswersForQuestionByFarmer(questionId, farmerId, farmerModuleId);
-            if (metricGlobalId != null && !metricGlobalId.equals("")) {
+            if (metricGlobalId != null && !metricGlobalId.equals("") && !metricGlobalId.equals("0")) {
                 answerIdTemp = questions.getInt(questions.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ID));
             }
         }else{
              cbAnswers = dl.getAnswersForQuestionByFarmer(questionId, farmerId, farmerModuleId);
-            if (metricGlobalId != null && !metricGlobalId.equals("")) {
+            if (metricGlobalId != null && !metricGlobalId.equals("") && !metricGlobalId.equals("0")) {
                 try {
                     answerIdTemp = questions.getInt(questions.getColumnIndex("answer_id"));
                 }catch (Exception e){
@@ -4956,7 +4956,7 @@ public class DynamicQuestions {
 
 
         final Spinner spinner = (Spinner) inflater.inflate(R.layout.metric_spinner, innerWrapper, false);
-        if (metricGlobalId != null && !metricGlobalId.equals("")) {
+        if (metricGlobalId != null && !metricGlobalId.equals("") && !metricGlobalId.equals("0")) {
             List<LocalUnitDao.UnitMapping> unitMappings = roomDB.localUnitDao().getValueByGlobalId(Integer.parseInt(metricGlobalId));
 
             if (unitMappings.isEmpty()) {
@@ -5236,7 +5236,7 @@ public class DynamicQuestions {
 
                                     String checkBoxName = dl.getValueByLookUpID(lookupID);
                                     tvId.setText(lookupID);
-                                    if (metricGlobalId != null && !metricGlobalId.equals("")){
+                                    if (metricGlobalId != null && !metricGlobalId.equals("") && !metricGlobalId.equals("0")){
                                         tv.setText(checkBoxName + " " + roomDB.globalUnitDao().getAbbByGlobalID(Integer.valueOf(metricGlobalId)));
                                     }else{
                                         tv.setText(checkBoxName);
@@ -5378,7 +5378,7 @@ public class DynamicQuestions {
 
                                             saveMultipleAnswerEntry(questionId, 0, finalDatatype, tl, selectedGlobalID[0],selectedLocalID[0] , 0);
 
-                                            if (metricGlobalId != null && !metricGlobalId.equals("")) {
+                                            if (metricGlobalId != null && !metricGlobalId.equals("") && !metricGlobalId.equals("0")) {
                                                 if (answerSet.size() != 0) {;
                                                     previewLayout.removeAllViews();
                                                     previewLayout.addView(titleTextView);
@@ -5426,12 +5426,10 @@ public class DynamicQuestions {
                                                                     previewLayout.addView(answerTextView);
                                                                 }else {
                                                                     previewLayout.setVisibility(View.GONE);
-                                                                    previewLayout.removeAllViews();
                                                                 }
 
                                                             }else{
                                                                 previewLayout.setVisibility(View.GONE);
-                                                                previewLayout.removeAllViews();
                                                             }
 
                                                         }
@@ -5709,7 +5707,7 @@ public class DynamicQuestions {
                 e.printStackTrace();
             }
 
-            if (metricGlobalId != null && !metricGlobalId.equals("")) {
+            if (metricGlobalId != null && !metricGlobalId.equals("") && !metricGlobalId.equals("0")) {
                 if (answerSet != null) {
                     for (int i = 0; i < answerSet.size(); i++) {
                         JSONObject currentAnswer = answerSet.get(i);
@@ -5729,7 +5727,7 @@ public class DynamicQuestions {
                 }
             }
 
-            if (metricGlobalId != null && !metricGlobalId.equals("")){
+            if (metricGlobalId != null && !metricGlobalId.equals("") && !metricGlobalId.equals("0")){
                 innerWrapper.addView(text);
                 innerWrapper.addView(spinner);
                 questionWrapper.addView(tl);
