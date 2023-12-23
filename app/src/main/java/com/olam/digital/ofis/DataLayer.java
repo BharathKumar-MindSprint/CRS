@@ -9790,5 +9790,113 @@ public class DataLayer {
     public Cursor getInfoFromTable(String tableName){
         return db.rawQuery("SELECT id, name FROM " + tableName, null);
     }
+
+    public Cursor searchFarmerList(String query, long selectedCountry, long selectedProduct
+//                                   long selectedRegion, long selectedDistrict,
+//                                   long selectedPlace, long selectedPartner,
+//                                   long selectedProgramme, long selectedFarmerGroup,
+//                                   long selectedSection, long Certification
+    ) {
+        String whereClause = "";
+        String farmerTable = OFISDBContract.FarmerEntry.TABLE_NAME;
+        if (query.length() > 0) {
+            whereClause = "WHERE " + farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME + " LIKE '%" + query + "%' OR " +
+                    farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_ODFARMERID + " LIKE '%" + query + "%' OR " +
+                    farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID + " LIKE '%" + query + "'";
+        }
+        if (selectedCountry > 0) {
+            if (whereClause.length() == 0) {
+                whereClause += " WHERE ";
+            } else {
+                whereClause += " AND ";
+            }
+            whereClause += farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID + " = " + selectedCountry;
+        }
+        if (selectedProduct > 0) {
+            if (whereClause.length() == 0) {
+                whereClause += " WHERE ";
+            } else {
+                whereClause += " AND ";
+            }
+            whereClause += farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID + " = " + selectedProduct;
+        }
+//        if (selectedSection > 0) {
+//            if (whereClause.length() == 0) {
+//                whereClause += "WHERE ";
+//            } else {
+//                whereClause += " AND ";
+//            }
+//            whereClause += farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID + " = " + selectedSection;
+//        }
+//        if (selectedSection > 0) {
+//            if (whereClause.length() == 0) {
+//                whereClause += "WHERE ";
+//            } else {
+//                whereClause += " AND ";
+//            }
+//            whereClause += farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID + " = " + selectedSection;
+//        }
+//        if (selectedSection > 0) {
+//            if (whereClause.length() == 0) {
+//                whereClause += "WHERE ";
+//            } else {
+//                whereClause += " AND ";
+//            }
+//            whereClause += farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID + " = " + selectedSection;
+//        }
+//        if (selectedSection > 0) {
+//            if (whereClause.length() == 0) {
+//                whereClause += "WHERE ";
+//            } else {
+//                whereClause += " AND ";
+//            }
+//            whereClause += farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID + " = " + selectedSection;
+//        }
+//        if (selectedSection > 0) {
+//            if (whereClause.length() == 0) {
+//                whereClause += "WHERE ";
+//            } else {
+//                whereClause += " AND ";
+//            }
+//            whereClause += farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID + " = " + selectedSection;
+//        }
+//        if (selectedSection > 0) {
+//            if (whereClause.length() == 0) {
+//                whereClause += "WHERE ";
+//            } else {
+//                whereClause += " AND ";
+//            }
+//            whereClause += farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID + " = " + selectedSection;
+//        }
+//        if (selectedSection > 0) {
+//            if (whereClause.length() == 0) {
+//                whereClause += "WHERE ";
+//            } else {
+//                whereClause += " AND ";
+//            }
+//            whereClause += farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID + " = " + selectedSection;
+//        }
+//        if (selectedSection > 0) {
+//            if (whereClause.length() == 0) {
+//                whereClause += "WHERE ";
+//            } else {
+//                whereClause += " AND ";
+//            }
+//            whereClause += farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID + " = " + selectedSection;
+//        }
+        
+        String sql =  "select distinct(farmers.id) as _id, " +
+                farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME + ", " +
+                farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_PHOTO + ", " +
+                farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID + ", " +
+                farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_CREATED_LOCALLY + ", " +
+                farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID + ", " +
+                farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_ODFARMERID + " from " +
+                farmerTable + whereClause + " order by " + farmerTable + "."
+                + OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME + " ASC";
+
+        return db.rawQuery(sql, null);
+    }
+
 }
 

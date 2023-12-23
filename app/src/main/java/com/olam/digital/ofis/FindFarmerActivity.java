@@ -47,7 +47,7 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
     private Spinner farmerGroupSpinner, sectionSpinner, countrySpinner, productSpinner, regionSpinner, districtSpinner, placeSpinner, partnerSpinner, programSpinner,certificationSpinner;
 
     private LinearLayout advancedFilterLayout;
-    private long selectedFarmerGroup = 0, selectedSection = 0;
+    private long selectedFarmerGroup = 0, selectedSection = 0, selectedCountry=0, selectedProduct = 0;
     private String searchQuery = "";
 
     private final static String BUYING_AGENT_CONTEXT = "BUYING_AGENT_CONTEXT";
@@ -139,7 +139,7 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
         if (transactionMode) {
             farmerList = dl.getFindFarmerOrBuyingAgentList(buyingAgentId, searchQuery, selectedFarmerGroup, selectedSection);
         } else {
-            farmerList = dl.getFindFarmerList(searchQuery, selectedFarmerGroup, selectedSection);
+            farmerList = dl.searchFarmerList(searchQuery, selectedCountry, selectedProduct);
         }
     }
 
@@ -187,8 +187,8 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                  //Surround the certification spinner code in product code condition
 
-                selectedFarmerGroup = id;
-                selectedSection = 0;
+                selectedCountry = id;
+                //selectedProduct = 0;
                 doSearch();
             }
 
@@ -201,7 +201,7 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
         productSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                selectedSection = id;
+                selectedProduct = id;
                 doSearch();
             }
 
