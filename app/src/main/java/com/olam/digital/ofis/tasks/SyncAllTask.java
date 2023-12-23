@@ -401,10 +401,11 @@ public class SyncAllTask extends SyncTask {
                 pd = Utilities.updateProgressDialog(pd, 0, 0, pdUpdate);
             }
 */
-
+            Log.e("UpdateSpinnerListsTask:","before async");
             // Goes directly to the AsyncTask
             new UpdateSpinnerListsTask(context, pd).execute(spinnerResponse);
             spinnerResponse = null;
+            Log.e("UpdateSpinnerListsTask:","afetr async");
 
             // Goes directly to the AsyncTask
             new UpdateModuleListsTask(context).execute(moduleResponse);

@@ -1022,6 +1022,8 @@ public class OFISDBContract {
                     add(COLUMN_NAME_PLOT);
                     add(COLUMN_NAME_PARTNER_ID);
                     add(COLUMN_NAME_PROGRAMME_ID);
+                    add(COLUMN_NAME_CERTIFICATION_ID);
+                    add(COLUMN_NAME_CERTIFICATION_TEXT);
                 }}
         );
         public static final List<String> SYNC_COLUMN_LIST = Collections.unmodifiableList(
@@ -1048,6 +1050,8 @@ public class OFISDBContract {
                     add(COLUMN_NAME_FARM_HOUSEHOLD_LNG);
                     add(COLUMN_NAME_FARM_HOUSEHOLD_ID);
                     add(COLUMN_NAME_ODFARMERID);
+                    add(COLUMN_NAME_CERTIFICATION_ID);
+                    add(COLUMN_NAME_CERTIFICATION_TEXT);
                 }}
         );
         public static final String COLUMN_NAME_OLAM_FARMER_ID_DISPLAY = "displayFarmerId";

@@ -353,10 +353,10 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         }
         if(db.certificationsDao().getCertifications().size()>0) {
             boolean isCertification = dl.isCertificationavailable(farmerId);
-            if(isCertification){
-                cert_layout_notification.setVisibility(View.GONE);
-            }else{
+            if(!isCertification){
                 cert_layout_notification.setVisibility(View.VISIBLE);
+            }else{
+                cert_layout_notification.setVisibility(View.GONE);
             }
         }else{
             cert_layout_notification.setVisibility(View.GONE);
@@ -561,6 +561,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                     consentStatusInfoLayout.setVisibility(View.VISIBLE);
                     plotStatusInfoLayout.setVisibility(View.GONE);
                     statusInfoLayout.setVisibility(View.GONE);
+                    cert_layout_notification.setVisibility(View.GONE);
                 }
                 if (moduleAssignments != null && moduleAssignments.getCount() > 0) {
                     String[] adapterCols = new String[]{

@@ -1118,5 +1118,6 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="update_certification">Update Certification</string>
     <string name="certification">Certification</string>
     <string name="certification_name">Certification Name</string>
+    <string name="select_certification">Select Certifications</string>
     <string name="others">Others</string>
 </resources>
