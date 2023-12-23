@@ -1,5 +1,7 @@
 package com.olam.digital.ofis.tasks;
 
+import static com.olam.digital.ofis.NetworkLayer.TAG;
+
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -16,6 +18,8 @@ import com.olam.digital.ofis.BuildConfig;
 import com.olam.digital.ofis.HomeActivity;
 import com.olam.digital.ofis.OFISDBContract;
 import com.olam.digital.ofis.R;
+import com.olam.digital.ofis.RetrofitServices.ManageRecords;
+import com.olam.digital.ofis.RetrofitServices.RetrofitClient;
 import com.olam.digital.ofis.SettingsActivity;
 import com.olam.digital.ofis.Utilities;
 import com.olam.digital.ofis.authentication.AuthenticationClient;
@@ -31,6 +35,10 @@ import com.olam.digital.ofis.dynatrace.DynatraceHelper;
 import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.logging.FabricLogsWriter;
 import com.olam.digital.ofis.multifarm.MultiFarmUtils;
+import com.olam.digital.ofis.mvvmmodule.model.LocalUnit.APICall.LocalUnitResponseModel;
+import com.olam.digital.ofis.mvvmmodule.model.LocalUnit.GlobalUnit;
+import com.olam.digital.ofis.mvvmmodule.model.LocalUnit.ListItems.OutputData;
+import com.olam.digital.ofis.mvvmmodule.model.LocalUnit.LocalUnit;
 import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 
 import org.json.JSONArray;
@@ -143,6 +151,12 @@ public class SyncAllTask extends SyncTask {
         } else if (op == SyncTaskOperationType.SYNC_ENUM_ASSIGNMENT) {
            syncEnumAssignmentCheck();
 
+        }else if (op == SyncTaskOperationType.SYNC_LOCAL_UNIT) {
+            try {
+                syncLocalUnit();
+            }catch (Exception e){
+                e.printStackTrace();
+            }
         } else if (op == SyncTaskOperationType.SYNC_MODULES) {
             try {
                 syncModules();
@@ -869,8 +883,8 @@ public class SyncAllTask extends SyncTask {
 
                        /* publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.updating_farmers));
                         delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_FARMERS);*/
-                        publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.download_nationalidtype_enumerator));
-                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_NATIONALIDS);
+                        publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.updating_local_unit_details));
+                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_LOCAL_UNIT);
 
                     } else {
                         try {
@@ -986,6 +1000,75 @@ public class SyncAllTask extends SyncTask {
             }
 
         });
+    }
+    private void syncLocalUnit() throws JSONException{
+        ManageRecords getLocalUnitMasterData = RetrofitClient.getRetrofit().create(ManageRecords.class);
+        retrofit2.Call<LocalUnitResponseModel> call = getLocalUnitMasterData.getAllLocalUnitResponseModel(Integer.valueOf(Utilities.getFromSharedPrefs(context)) );
+
+        call.enqueue(new retrofit2.Callback<LocalUnitResponseModel>() {
+            @Override
+            public void onResponse(retrofit2.Call<LocalUnitResponseModel> call, retrofit2.Response<LocalUnitResponseModel> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    OFISRoomDB db = OFISRoomDB.getDbInstance(context);
+                    try {
+
+                        if (response.body() != null && response.body().getOutputData() != null) {
+                            OutputData outputData = response.body().getOutputData();
+                            db.localUnitDao().deleteAll();
+                            db.globalUnitDao().deleteAll();
+                            if (outputData != null) {
+                                ArrayList<GlobalUnit> globalUnits = outputData.getGlobalUnits();
+
+                                for (GlobalUnit globalUnit : globalUnits) {
+                                    // Insert global unit into the database
+                                    db.globalUnitDao().insertAll(globalUnit);
+
+                                    // Fetch the associated local units directly from OutputData
+                                    ArrayList<LocalUnit> localUnits = globalUnit.getLocalUnit();
+                                    if (localUnits != null && !localUnits.isEmpty()) {
+                                        for (LocalUnit localUnit : localUnits) {
+                                            // Set the foreign key
+//                                            localUnit.setGlobalUnitFk(globalUnit.getGlobalUnitId());
+
+                                            // store the data in a loop
+                                            db.localUnitDao().insert(localUnit);
+                                        }
+                                        // store in a single stretch
+//                                        db.localUnitDao().insertAll(localUnits);
+                                    }
+                                }
+
+                            }
+                        }
+
+
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+
+                    publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.download_nationalidtype_enumerator));
+                    delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_NATIONALIDS);
+
+                } else {
+                    // Handle unsuccessful response here
+                    // You might want to check the response code and handle errors
+                }
+            }
+
+            @Override
+            public void onFailure(retrofit2.Call<LocalUnitResponseModel> call, Throwable t) {
+                // Handle the failure here
+                if (t instanceof IOException) {
+                    // Network or conversion error
+                    // You might want to display a message to the user or log the error
+                } else {
+                    // Unexpected error
+                    // Log the error for debugging purposes
+                    t.printStackTrace();
+                }
+            }
+        });
+
     }
 
     private void syncModules() throws JSONException {
