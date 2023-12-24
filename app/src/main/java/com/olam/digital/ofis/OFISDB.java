@@ -1020,15 +1020,21 @@ class OFISDB extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(OFIS_PLOT_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_NOTIFICATION_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_NOTIFICATION_MODULELIST_TABLE_CREATE);
-        onCreate(sqLiteDatabase);
+//        onCreate(sqLiteDatabase);
     }
 
     private void migrateFromVersionBelow150(SQLiteDatabase sqLiteDatabase){
+        try{
+            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.FarmerEntry.TABLE_NAME +" ADD COLUMN " + OFISDBContract.FarmerEntry.COLUMN_NAME_CERTIFICATION_ID +" TEXT default null");
+            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.FarmerEntry.TABLE_NAME +" ADD COLUMN " + OFISDBContract.FarmerEntry.COLUMN_NAME_CERTIFICATION_TEXT +" TEXT default null");
+            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.NetworkQueueEntry.TABLE_NAME +" ADD COLUMN " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CERTIFICATION_ID +" TEXT default null");
+            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.NetworkQueueEntry.TABLE_NAME +" ADD COLUMN " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CERTIFICATION_TEXT +" TEXT default null");
 
-        sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.FarmerEntry.TABLE_NAME +" ADD COLUMN " + OFISDBContract.FarmerEntry.COLUMN_NAME_CERTIFICATION_ID +" TEXT default null");
-        sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.FarmerEntry.TABLE_NAME +" ADD COLUMN " + OFISDBContract.FarmerEntry.COLUMN_NAME_CERTIFICATION_TEXT +" TEXT default null");
-        sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.NetworkQueueEntry.TABLE_NAME +" ADD COLUMN " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CERTIFICATION_TEXT +" TEXT default null");
-        sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.NetworkQueueEntry.TABLE_NAME +" ADD COLUMN " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CERTIFICATION_TEXT +" TEXT default null");
+        }catch (SQLiteException ex){
+            ex.printStackTrace();
+
+        }
+
     }
 
     private void migrateFromVersionBelow148(SQLiteDatabase sqLiteDatabase){
