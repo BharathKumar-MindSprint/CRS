@@ -482,6 +482,7 @@
     <string name="camera_and_gallery_permission_denial_msg">Camera &amp; Gallery Feature will not work without this Permission</string>
     <string name="loggin_In">Logging In</string>
     <string name="updating_master_details">Downloading master details</string>
+    <string name="updating_local_unit_details">Downloading Local Units details</string>
     <string name="authentication_failed">Authentication failed. Please try again</string>
     <string name="authentication_attempt">Please wait for 30 minutes for your login to be enabled and try again with your same enumerator ID and Passcode</string>
     <string name="enumerator_empty">Please enter the valid enumerator Id &amp; Passcode</string>
