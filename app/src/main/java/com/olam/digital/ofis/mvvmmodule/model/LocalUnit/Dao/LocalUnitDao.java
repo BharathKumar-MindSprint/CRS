@@ -32,6 +32,12 @@ public interface LocalUnitDao {
 //    @Query("SELECT localUnitAbbreviation FROM LocalUnit where globalUnitFk =:globalId")
 //    List<String> getValueByGlobalId(int globalId);
 
+    @Query("SELECT localUnitAbbreviation FROM LocalUnit WHERE localUnitId =:localUnitId")
+    String getAbbByLocalID(Integer localUnitId);
+
+    @Query("SELECT conversionFactor FROM LocalUnit WHERE localUnitId =:localUnitId")
+    String getFactorByLocalID(Integer localUnitId);
+
     @Query("SELECT localUnitId, localUnitAbbreviation FROM LocalUnit WHERE globalUnitFk = :targetGlobalUnitFk ")
     List<UnitMapping> getValueByGlobalId(int targetGlobalUnitFk);
 

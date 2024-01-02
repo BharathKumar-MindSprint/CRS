@@ -15,7 +15,6 @@
     <string name="title_activity_view_farmer">Farmer Details</string>
     <string name="title_activity_record_polygon">Record Plot Polygon</string>
     <string name="title_activity_complete_module">Complete Questionnaire Module</string>
-    <string name="updating_local_unit_details">Downloading Local Units details</string>
 
 
     <!-- main stuff -->
@@ -1119,4 +1118,5 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="certification">Certification</string>
     <string name="certification_name">Certification Name</string>
     <string name="others">Others</string>
+    <string name="metrics">Metrics</string>
 </resources>

@@ -4629,8 +4629,8 @@ public class DataLayer {
                     String answer = currentAnswer.getString("answer");
                     String sub_answers = currentAnswer.optString("sub_answers");
                     int reportingYear = currentAnswer.getInt("reporting_year");
-                    int globalMetricId = currentAnswer.getInt("globalMetricId");
-                    int localMetricId = currentAnswer.getInt("localMetricId");
+                    Integer globalMetricId = currentAnswer.getInt("globalMetricId");
+                    Integer localMetricId = currentAnswer.getInt("localMetricId");
                     double metricAnswer = currentAnswer.getDouble("metricAnswer");
 
                     ContentValues values = new ContentValues();
@@ -7383,6 +7383,29 @@ public class DataLayer {
             if (cursor != null){
                 while(cursor.moveToNext()){
                     value = cursor.getString(cursor.getColumnIndex(OFISDBContract.AnswerType.COLUMN_NAME_VALUE));
+                }
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            cursor.close();
+        }
+        return value;
+
+    }
+
+
+    public String getAnswerValuebylookUpId(int id){
+        String value = "";
+        Cursor cursor = null;
+        try {
+            String[] columns = new String[]{"*"};
+            String whereClause = OFISDBContract.LookupValuesEntry.COLUMN_NAME_ID + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(id)};
+            cursor = db.query(OFISDBContract.LookupValuesEntry.TABLE_NAME,columns,whereClause,whereArgs,null,null,null,null);
+            if (cursor != null){
+                while(cursor.moveToNext()){
+                    value = cursor.getString(cursor.getColumnIndex(OFISDBContract.LookupValuesEntry.COLUMN_NAME_VALUE));
                 }
             }
         }catch (Exception e) {
