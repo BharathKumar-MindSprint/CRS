@@ -79,7 +79,7 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
     private final String MATOMOTAG = this.getClass().getSimpleName();
     private final static int MY_NATIONALID_PIC_PERMISSIONS_REQUEST = 9997;
 
-    private final static int REQUEST_PERMISSIONS_FOR_TIRAMISU = 99925;
+    private final static int REQUEST_PERMISSIONS_FOR_TIRAMISU = 9925;
     private final static int REQUEST_IMAGE_CAPTURE_NATIONALID = 4;
     private final static String CAPTURED_PHOTO_PATH_KEY = "mCurrentPhotoPath";
     private final static String CAPTURED_PHOTO_URI_KEY = "mCapturedImageURI";
@@ -903,32 +903,6 @@ public class AddNationalidActivity extends BaseActivity implements View.OnClickL
                 }
                 nidvalue = getNidType(value);
                 currentcapture_position = (int) actionbutton.getTag();
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
-                    if (ContextCompat.checkSelfPermission(AddNationalidActivity.this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
-                            ContextCompat.checkSelfPermission(AddNationalidActivity.this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED ||
-                            ContextCompat.checkSelfPermission(AddNationalidActivity.this, Manifest.permission.READ_MEDIA_AUDIO) != PackageManager.PERMISSION_GRANTED ||
-                            ContextCompat.checkSelfPermission(AddNationalidActivity.this, Manifest.permission.READ_MEDIA_VIDEO) != PackageManager.PERMISSION_GRANTED ||
-                            ContextCompat.checkSelfPermission(AddNationalidActivity.this, Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED ||
-                            ContextCompat.checkSelfPermission(AddNationalidActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
-                            ContextCompat.checkSelfPermission(AddNationalidActivity.this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED ||
-                            ContextCompat.checkSelfPermission(AddNationalidActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                        ActivityCompat.requestPermissions(AddNationalidActivity.this,
-                                new String[]{
-                                        android.Manifest.permission.CAMERA,
-                                        android.Manifest.permission.READ_PHONE_STATE,
-                                        android.Manifest.permission.READ_MEDIA_AUDIO,
-                                        android.Manifest.permission.READ_MEDIA_VIDEO,
-                                        android.Manifest.permission.READ_MEDIA_IMAGES,
-                                        android.Manifest.permission.ACCESS_COARSE_LOCATION,
-                                        android.Manifest.permission.RECORD_AUDIO,
-                                        android.Manifest.permission.ACCESS_FINE_LOCATION},
-
-                                REQUEST_PERMISSIONS_FOR_TIRAMISU);
-                    }else {
-                        bindFarmerNationalIDButton();
-                    }
-                }
-                // Request Permission only for Android Version Marshmallow and above
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
                     if (ContextCompat.checkSelfPermission(AddNationalidActivity.this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
