@@ -3041,13 +3041,13 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
     }
 
     // get farmer national ids
-    private JSONArray farmernationalids(long farmerId, long nid, String value) {
-        Cursor nids;
-        if(value.equalsIgnoreCase("2")) {
+    private JSONArray farmernationalids(long farmerId) {
+        Cursor nids = dl.getnationalidsbyfarmerid(farmerId);;
+        /*if(value.equalsIgnoreCase("2")) {
              nids = dl.getnationalidsbyfarmerid(farmerId,nid);
         }else{
              nids = dl.getnationalidsbyfarmerid(farmerId);
-        }
+        }*/
         JSONArray numbersarray = new JSONArray();
 
         try {
@@ -4141,8 +4141,10 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 JSONArray numberstosend = farmerPhoneNumbers(networkQueueItems
                         .getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
 
-                JSONArray nidstosend = farmernationalids(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)),
-                        networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID)), "1");
+                /*JSONArray nidstosend = farmernationalids(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)),
+                        networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID)), "1");*/
+
+                JSONArray nidstosend = farmernationalids(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
                 JSONObject consentStatement = farmerConsentStatment(networkQueueItems
                                 .getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)),
                         farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
@@ -5119,8 +5121,10 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                     farmer.moveToFirst();
                     JSONObject jsonObject = new JSONObject();
 
-                    JSONArray nidstosend = farmernationalids(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)),
-                            networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID)), "2");
+                    JSONArray nidstosend = farmernationalids(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)));
+
+                    /*JSONArray nidstosend = farmernationalids(networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID)),
+                            networkQueueItems.getLong(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARM_ID)), "2");*/
 
                     final JSONArray jsonArray = new JSONArray();
                     jsonArray.put(jsonObject);
