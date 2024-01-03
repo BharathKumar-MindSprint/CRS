@@ -48,7 +48,7 @@
             android:layout_marginRight="@dimen/margin_10"
             android:background="@drawable/edittext_bg_light"
             android:hint="@string/other_certification"
-            android:maxLength="100"
+            android:maxLength="50"
             android:textSize="@dimen/ofis_input_field_text"
             android:visibility="gone" />
 

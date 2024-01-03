@@ -1511,6 +1511,8 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                 }
                 values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_CERTIFICATION_ID,certificationIds.toString());
                 values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_CERTIFICATION_TEXT,certificationEditText.getText().toString().trim());
+                values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CERTIFICATION_ID,certificationIds.toString());
+                values.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CERTIFICATION_TEXT,certificationEditText.getText().toString().trim());
             }
             if (!editMode) {
                 boolean isUnique = dl.isFarmerEntryUnique(values);
@@ -2302,10 +2304,15 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                         }
                         if (cIds != null) {
                             String[] cIdArr = cIds.split(",");
+                            Boolean noneCheck = listStatus.get(Integer.parseInt(cIdArr[0])).getTitle().equals("None");
                             for (int i = 0; i < listStatus.size(); i++) {
+                                if(noneCheck){
+                                    listStatus.get(i).setEnabled(false);
+                                }
                                 for (int arr = 0; arr < cIdArr.length; arr++) {
                                     if (listStatus.get(i).getId() == Integer.parseInt(cIdArr[arr])) {
                                         listStatus.get(i).setSelected(true);
+                                        listStatus.get(i).setEnabled(true);
                                     }
                                 }
                             }
@@ -2318,6 +2325,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
             } finally {
                 nids.close();
             }
+            certificationNameSpinner.setTag(listStatus);
         }
     }
 

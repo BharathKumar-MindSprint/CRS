@@ -4039,8 +4039,8 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                 farmer.moveToFirst();
                 JSONObject jsonObject = new JSONObject();
                 try {
-                    String certificationIds = networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CERTIFICATION_ID));
-                    String certificationText = networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CERTIFICATION_TEXT));
+                    String certificationIds = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_CERTIFICATION_ID));
+                    String certificationText = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_CERTIFICATION_TEXT));
 
                     if(certificationText!=null) {
                         OFISRoomDB db = OFISRoomDB.getDbInstance(context);
