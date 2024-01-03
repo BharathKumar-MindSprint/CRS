@@ -2391,6 +2391,7 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                     startActivityForResult(intent, REQUEST_IMAGE_GALLERY);
 
                 }
+                dialog.dismiss();
             }
         });
         AlertDialog alert = builder.create();
