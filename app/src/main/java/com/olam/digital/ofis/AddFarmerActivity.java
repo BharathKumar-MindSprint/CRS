@@ -422,34 +422,6 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                     }
                 }
                 // Request Permission only for Android Version Marshmallow and above
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
-                    if (ContextCompat.checkSelfPermission(AddFarmerActivity.this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
-                            ContextCompat.checkSelfPermission(AddFarmerActivity.this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED ||
-                            ContextCompat.checkSelfPermission(AddFarmerActivity.this, Manifest.permission.READ_MEDIA_AUDIO) != PackageManager.PERMISSION_GRANTED ||
-                            ContextCompat.checkSelfPermission(AddFarmerActivity.this, Manifest.permission.READ_MEDIA_VIDEO) != PackageManager.PERMISSION_GRANTED ||
-                            ContextCompat.checkSelfPermission(AddFarmerActivity.this, Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED ||
-                            ContextCompat.checkSelfPermission(AddFarmerActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
-                            ContextCompat.checkSelfPermission(AddFarmerActivity.this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED ||
-                            ContextCompat.checkSelfPermission(AddFarmerActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                        ActivityCompat.requestPermissions(AddFarmerActivity.this,
-                                new String[]{
-                                        android.Manifest.permission.CAMERA,
-                                        android.Manifest.permission.READ_PHONE_STATE,
-                                        android.Manifest.permission.READ_MEDIA_AUDIO,
-                                        android.Manifest.permission.READ_MEDIA_VIDEO,
-                                        android.Manifest.permission.READ_MEDIA_IMAGES,
-                                        android.Manifest.permission.ACCESS_COARSE_LOCATION,
-                                        android.Manifest.permission.RECORD_AUDIO,
-                                        android.Manifest.permission.ACCESS_FINE_LOCATION},
-
-                                REQUEST_PERMISSIONS_FOR_TIRAMISU);
-                    }else {
-                        bindFarmerPhotoButton();
-                    }
-                }
-                // Request Permission only for Android Version Marshmallow and above
-
                 else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     // Check Camera & Storage Permission
                     if (ContextCompat.checkSelfPermission(AddFarmerActivity.this, android.Manifest.permission.READ_EXTERNAL_STORAGE) + ContextCompat.checkSelfPermission(AddFarmerActivity.this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
@@ -1935,34 +1907,6 @@ public class AddFarmerActivity extends BaseActivity implements View.OnClickListe
                     }
                 }
                 // Request Permission only for Android Version Marshmallow and above
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
-                    if (ContextCompat.checkSelfPermission(AddFarmerActivity.this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
-                            ContextCompat.checkSelfPermission(AddFarmerActivity.this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED ||
-                            ContextCompat.checkSelfPermission(AddFarmerActivity.this, Manifest.permission.READ_MEDIA_AUDIO) != PackageManager.PERMISSION_GRANTED ||
-                            ContextCompat.checkSelfPermission(AddFarmerActivity.this, Manifest.permission.READ_MEDIA_VIDEO) != PackageManager.PERMISSION_GRANTED ||
-                            ContextCompat.checkSelfPermission(AddFarmerActivity.this, Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED ||
-                            ContextCompat.checkSelfPermission(AddFarmerActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
-                            ContextCompat.checkSelfPermission(AddFarmerActivity.this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED ||
-                            ContextCompat.checkSelfPermission(AddFarmerActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                        ActivityCompat.requestPermissions(AddFarmerActivity.this,
-                                new String[]{
-                                        android.Manifest.permission.CAMERA,
-                                        android.Manifest.permission.READ_PHONE_STATE,
-                                        android.Manifest.permission.READ_MEDIA_AUDIO,
-                                        android.Manifest.permission.READ_MEDIA_VIDEO,
-                                        android.Manifest.permission.READ_MEDIA_IMAGES,
-                                        android.Manifest.permission.ACCESS_COARSE_LOCATION,
-                                        android.Manifest.permission.RECORD_AUDIO,
-                                        android.Manifest.permission.ACCESS_FINE_LOCATION},
-
-                                MY_NATIONALID_PIC_REQUEST_PERMISSIONS_FOR_TIRAMISU);
-                    }else {
-                        bindFarmerNationalIDButton();
-                    }
-                }
-                // Request Permission only for Android Version Marshmallow and above
-
                 else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     // Check Camera & Storage Permission
                     if (ContextCompat.checkSelfPermission(AddFarmerActivity.this, android.Manifest.permission.READ_EXTERNAL_STORAGE) + ContextCompat.checkSelfPermission(AddFarmerActivity.this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
