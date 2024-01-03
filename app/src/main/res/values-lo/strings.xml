@@ -14,7 +14,6 @@
     <string name="title_activity_find_farmer">ຊອກ​ຫາ​ສວນ</string>
     <string name="title_activity_view_farmer">ລາຍ​ລະ​ອ່ຽດ​ຂອງ​ຊາວ​ສວນ</string>
     <string name="title_activity_complete_module">ພາກ​ສວນ​ຂອງ​ຄຳ​ຖາມ​ທີ່​ສົມ​ບູນ</string>
-    <string name="updating_local_unit_details">Downloading Local Units details</string>
 
     <!-- main stuff -->
     <string name="app_name">ຄູ່​ເຄືອງດັບ​ຟັງ​ຂອງ​ການ OFIS </string>
@@ -906,6 +905,7 @@
     <string name="advanced_filters">ຕົວກອງຂັ້ນສູງ</string>
     <string name="spinner_partner_default">ຄູ່ຮ່ວມງານ</string>
     <string name="spinner_programme_default">ໂຄງການ</string>
+    <string name="metrics">Metrics</string>
 
 </resources>
 
