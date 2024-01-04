@@ -21,7 +21,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 
-import com.olam.digital.ofis.Common.Adapter.MultiSpinnerAdapter;
+import com.olam.digital.ofis.Common.Adapter.MultiSelectionAdapter;
 import com.olam.digital.ofis.Common.Model.MultiSpinnerStatus;
 import com.olam.digital.ofis.matoma.MatomoHelper;
 import com.olam.digital.ofis.matoma.ScreenNameConstants;
@@ -47,7 +47,23 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
     private Spinner farmerGroupSpinner, sectionSpinner, countrySpinner, productSpinner, regionSpinner, districtSpinner, placeSpinner, partnerSpinner, programSpinner,certificationSpinner;
 
     private LinearLayout advancedFilterLayout;
-    private long selectedFarmerGroup = 0, selectedSection = 0, selectedCountry=0, selectedProduct = 0;
+    private long selectedCountry=0, selectedProduct = 0;
+
+    private List<Integer> selectedRegions = new ArrayList<Integer>();
+    private List<Integer> selectedSections = new ArrayList<Integer>();
+
+    private List<Integer> selectedFarmerGroups = new ArrayList<Integer>();
+
+    private List<Integer> selectedDistricts = new ArrayList<Integer>();
+
+    private List<Integer> selectedPlaces = new ArrayList<Integer>();
+
+    private List<Integer> selectedProgrammes = new ArrayList<Integer>();
+
+    private List<Integer> selectedPartners = new ArrayList<Integer>();
+    private List<Integer> selectedCertifications = new ArrayList<Integer>();
+
+
     private String searchQuery = "";
 
     private final static String BUYING_AGENT_CONTEXT = "BUYING_AGENT_CONTEXT";
@@ -137,9 +153,11 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
 
     private void bindFarmerList() {
         if (transactionMode) {
-            farmerList = dl.getFindFarmerOrBuyingAgentList(buyingAgentId, searchQuery, selectedFarmerGroup, selectedSection);
+            farmerList = dl.getFindFarmerOrBuyingAgentList(buyingAgentId, searchQuery, 0, 0);
         } else {
-            farmerList = dl.searchFarmerList(searchQuery, selectedCountry, selectedProduct);
+            farmerList = dl.searchFarmerList(searchQuery, selectedCountry, selectedProduct,
+                    selectedRegions, selectedDistricts, selectedPlaces, selectedPartners,
+                    selectedProgrammes, selectedFarmerGroups, selectedSections, selectedCertifications);
         }
     }
 
@@ -261,9 +279,21 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
             regionStatus.add(multiSpinnerStatus);
         }
 
-        MultiSpinnerAdapter myAdapter = new MultiSpinnerAdapter(FindFarmerActivity.this, 0,
+        MultiSelectionAdapter myAdapter = new MultiSelectionAdapter(FindFarmerActivity.this, 0,
                 regionStatus,regionSpinner,null);
+        myAdapter.setOnItemChangedListener(new MultiSelectionAdapter.OnItemChangedListener() {
+            @Override
+            public void itemChanged(int id, boolean isChecked) {
+                if(isChecked) {
+                    selectedRegions.add(id);
+                }else {
+                    selectedRegions.remove(selectedRegions.indexOf(id));
+                }
+                doSearch();
+            }
+        });
         regionSpinner.setAdapter(myAdapter);
+
     }
 
     public void bindDistrict(){
@@ -301,8 +331,21 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
             districtStatus.add(multiSpinnerStatus);
         }
 
-        MultiSpinnerAdapter myAdapter = new MultiSpinnerAdapter(FindFarmerActivity.this, 0,
+        MultiSelectionAdapter myAdapter = new MultiSelectionAdapter(FindFarmerActivity.this, 0,
                 districtStatus,farmerGroupSpinner,null);
+
+        myAdapter.setOnItemChangedListener(new MultiSelectionAdapter.OnItemChangedListener() {
+            @Override
+            public void itemChanged(int id, boolean isChecked) {
+                if(isChecked) {
+                    selectedDistricts.add(id);
+                }else {
+                    selectedDistricts.remove(selectedDistricts.indexOf(id));
+                }
+                doSearch();
+            }
+        });
+
         districtSpinner.setAdapter(myAdapter);
     }
 
@@ -341,8 +384,19 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
             placeStatus.add(multiSpinnerStatus);
         }
 
-        MultiSpinnerAdapter myAdapter = new MultiSpinnerAdapter(FindFarmerActivity.this, 0,
+        MultiSelectionAdapter myAdapter = new MultiSelectionAdapter(FindFarmerActivity.this, 0,
                 placeStatus,placeSpinner,null);
+        myAdapter.setOnItemChangedListener(new MultiSelectionAdapter.OnItemChangedListener() {
+            @Override
+            public void itemChanged(int id, boolean isChecked) {
+                if(isChecked) {
+                    selectedPlaces.add(id);
+                }else {
+                    selectedPlaces.remove(selectedPlaces.indexOf(id));
+                }
+                doSearch();
+            }
+        });
         placeSpinner.setAdapter(myAdapter);
     }
     public void bindPartner(){
@@ -364,8 +418,19 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
                 partnerStatus.add(multiSpinnerStatus);
             }
 
-            MultiSpinnerAdapter myAdapter = new MultiSpinnerAdapter(FindFarmerActivity.this, 0,
+            MultiSelectionAdapter myAdapter = new MultiSelectionAdapter(FindFarmerActivity.this, 0,
                     partnerStatus,partnerSpinner,null);
+            myAdapter.setOnItemChangedListener(new MultiSelectionAdapter.OnItemChangedListener() {
+                @Override
+                public void itemChanged(int id, boolean isChecked) {
+                    if(isChecked) {
+                        selectedPartners.add(id);
+                    }else {
+                        selectedPartners.remove(selectedPartners.indexOf(id));
+                    }
+                    doSearch();
+                }
+            });
             partnerSpinner.setAdapter(myAdapter);
 
         }
@@ -374,7 +439,7 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
     public void bindProgram(){
         //Bind Programs
         List<Programme> programmeList = ofisRoomDB.programmeDao().getProgramme();
-        if(ofisRoomDB.certificationsDao().getCertifications().size()>0) {
+        if(ofisRoomDB.programmeDao().getProgramme().size()>0) {
             MultiSpinnerStatus multiSpinnerStatusCn = new MultiSpinnerStatus();
             multiSpinnerStatusCn.setId(0);
             multiSpinnerStatusCn.setTitle(res.getString(R.string.spinner_programme_default));
@@ -390,8 +455,19 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
                 programStatus.add(multiSpinnerStatus);
             }
 
-            MultiSpinnerAdapter myAdapter = new MultiSpinnerAdapter(FindFarmerActivity.this, 0,
+            MultiSelectionAdapter myAdapter = new MultiSelectionAdapter(FindFarmerActivity.this, 0,
                     programStatus,programSpinner,null);
+            myAdapter.setOnItemChangedListener(new MultiSelectionAdapter.OnItemChangedListener() {
+                @Override
+                public void itemChanged(int id, boolean isChecked) {
+                    if(isChecked) {
+                        selectedProgrammes.add(id);
+                    }else {
+                        selectedProgrammes.remove(selectedProgrammes.indexOf(id));
+                    }
+                    doSearch();
+                }
+            });
             programSpinner.setAdapter(myAdapter);
 
         }
@@ -433,8 +509,19 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
             farmerGroupStatus.add(multiSpinnerStatus);
         }
 
-        MultiSpinnerAdapter myAdapter = new MultiSpinnerAdapter(FindFarmerActivity.this, 0,
+        MultiSelectionAdapter myAdapter = new MultiSelectionAdapter(FindFarmerActivity.this, 0,
                 farmerGroupStatus,farmerGroupSpinner,null);
+        myAdapter.setOnItemChangedListener(new MultiSelectionAdapter.OnItemChangedListener() {
+            @Override
+            public void itemChanged(int id, boolean isChecked) {
+                if(isChecked) {
+                    selectedFarmerGroups.add(id);
+                }else {
+                    selectedFarmerGroups.remove(selectedFarmerGroups.indexOf(id));
+                }
+                doSearch();
+            }
+        });
         farmerGroupSpinner.setAdapter(myAdapter);
     }
 
@@ -472,13 +559,24 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
             sectionStatus.add(multiSpinnerStatus);
         }
 
-        MultiSpinnerAdapter myAdapter = new MultiSpinnerAdapter(FindFarmerActivity.this, 0,
+        MultiSelectionAdapter myAdapter = new MultiSelectionAdapter(FindFarmerActivity.this, 0,
                 sectionStatus,sectionSpinner,null);
+        myAdapter.setOnItemChangedListener(new MultiSelectionAdapter.OnItemChangedListener() {
+            @Override
+            public void itemChanged(int id, boolean isChecked) {
+                if(isChecked) {
+                    selectedSections.add(id);
+                }else {
+                    selectedSections.remove(selectedSections.indexOf(id));
+                }
+                doSearch();
+            }
+        });
         sectionSpinner.setAdapter(myAdapter);
     }
     public void bindCertificationNameSpinner(){
         List<Certifications> certificationsList = ofisRoomDB.certificationsDao().getCertifications();
-        if(ofisRoomDB.certificationsDao().getCertifications().size()>0) {
+        if(ofisRoomDB.certificationsDao().getCertifications().size() >0) {
             MultiSpinnerStatus multiSpinnerStatusCn = new MultiSpinnerStatus();
             multiSpinnerStatusCn.setId(0);
             multiSpinnerStatusCn.setTitle(res.getString(R.string.certification_name));
@@ -494,10 +592,23 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
                 certificationStatus.add(multiSpinnerStatus);
             }
 
-            MultiSpinnerAdapter myAdapter = new MultiSpinnerAdapter(FindFarmerActivity.this, 0,
+            MultiSelectionAdapter myAdapter = new MultiSelectionAdapter(FindFarmerActivity.this, 0,
                     certificationStatus,certificationSpinner,null);
+            myAdapter.setOnItemChangedListener(new MultiSelectionAdapter.OnItemChangedListener() {
+                @Override
+                public void itemChanged(int id, boolean isChecked) {
+                    if(isChecked) {
+                        selectedCertifications.add(id);
+                    }else {
+                        selectedCertifications.remove(selectedCertifications.indexOf(id));
+                    }
+                    doSearch();
+                }
+            });
             certificationSpinner.setAdapter(myAdapter);
 
+        }else{
+            certificationSpinner.setVisibility(View.INVISIBLE);
         }
     }
     //searches and populates the list with the appropriate info

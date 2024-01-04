@@ -9814,16 +9814,16 @@ public class DataLayer {
         return db.rawQuery("SELECT id, name FROM " + tableName, null);
     }
 
-    public Cursor searchFarmerList(String query, long selectedCountry, long selectedProduct
-//                                   long selectedRegion, long selectedDistrict,
-//                                   long selectedPlace, long selectedPartner,
-//                                   long selectedProgramme, long selectedFarmerGroup,
-//                                   long selectedSection, long Certification
+    public Cursor searchFarmerList(String query, long selectedCountry, long selectedProduct,
+                                   List<Integer> selectedRegions, List<Integer> selectedDistricts,
+                                   List<Integer> selectedPlaces, List<Integer> selectedPartners,
+                                   List<Integer> selectedProgrammes, List<Integer> selectedFarmerGroups,
+                                   List<Integer> selectedSections, List<Integer> selectedCertifications
     ) {
         String whereClause = "";
         String farmerTable = OFISDBContract.FarmerEntry.TABLE_NAME;
         if (query.length() > 0) {
-            whereClause = "WHERE " + farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME + " LIKE '%" + query + "%' OR " +
+            whereClause = " WHERE " + farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME + " LIKE '%" + query + "%' OR " +
                     farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_ODFARMERID + " LIKE '%" + query + "%' OR " +
                     farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID + " LIKE '%" + query + "'";
         }
@@ -9843,70 +9843,92 @@ public class DataLayer {
             }
             whereClause += farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID + " = " + selectedProduct;
         }
-//        if (selectedSection > 0) {
-//            if (whereClause.length() == 0) {
-//                whereClause += "WHERE ";
-//            } else {
-//                whereClause += " AND ";
-//            }
-//            whereClause += farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID + " = " + selectedSection;
-//        }
-//        if (selectedSection > 0) {
-//            if (whereClause.length() == 0) {
-//                whereClause += "WHERE ";
-//            } else {
-//                whereClause += " AND ";
-//            }
-//            whereClause += farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID + " = " + selectedSection;
-//        }
-//        if (selectedSection > 0) {
-//            if (whereClause.length() == 0) {
-//                whereClause += "WHERE ";
-//            } else {
-//                whereClause += " AND ";
-//            }
-//            whereClause += farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID + " = " + selectedSection;
-//        }
-//        if (selectedSection > 0) {
-//            if (whereClause.length() == 0) {
-//                whereClause += "WHERE ";
-//            } else {
-//                whereClause += " AND ";
-//            }
-//            whereClause += farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID + " = " + selectedSection;
-//        }
-//        if (selectedSection > 0) {
-//            if (whereClause.length() == 0) {
-//                whereClause += "WHERE ";
-//            } else {
-//                whereClause += " AND ";
-//            }
-//            whereClause += farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID + " = " + selectedSection;
-//        }
-//        if (selectedSection > 0) {
-//            if (whereClause.length() == 0) {
-//                whereClause += "WHERE ";
-//            } else {
-//                whereClause += " AND ";
-//            }
-//            whereClause += farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID + " = " + selectedSection;
-//        }
-//        if (selectedSection > 0) {
-//            if (whereClause.length() == 0) {
-//                whereClause += "WHERE ";
-//            } else {
-//                whereClause += " AND ";
-//            }
-//            whereClause += farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID + " = " + selectedSection;
-//        }
-//        if (selectedSection > 0) {
-//            if (whereClause.length() == 0) {
-//                whereClause += "WHERE ";
-//            } else {
-//                whereClause += " AND ";
-//            }
-//            whereClause += farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID + " = " + selectedSection;
-//        }
+        if (selectedRegions.size() > 0) {
+            if (whereClause.length() == 0) {
+                whereClause += " WHERE ";
+            } else {
+                whereClause += " AND ";
+            }
+            String regions = selectedRegions.toString().replace("[", "").replace("]", "");
+            whereClause += farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_REGIONID + " IN (" + regions +")";
+        }
+        if (selectedSections.size() > 0) {
+            if (whereClause.length() == 0) {
+                whereClause += " WHERE ";
+            } else {
+                whereClause += " AND ";
+            }
+            String sections = selectedSections.toString().replace("[", "").replace("]", "");
+            whereClause += farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID + " IN( " + sections +")";
+        }
+        if (selectedDistricts.size()> 0) {
+            if (whereClause.length() == 0) {
+                whereClause += " WHERE ";
+            } else {
+                whereClause += " AND ";
+            }
+            String districts = selectedDistricts.toString().replace("[", "").replace("]", "");
+
+            whereClause += farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_DISTRICTID
+                    + " IN( " + districts + ")";
+        }
+        if (selectedPlaces.size() > 0) {
+            if (whereClause.length() == 0) {
+                whereClause += " WHERE ";
+            } else {
+                whereClause += " AND ";
+            }
+        String places = selectedPlaces.toString().replace("[", "").replace("]", "");
+
+            whereClause += farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID
+                    + " IN( " + places + ")";
+        }
+        if (selectedPartners.size() > 0) {
+            if (whereClause.length() == 0) {
+                whereClause += " WHERE ";
+            } else {
+                whereClause += " AND ";
+            }
+            String partners = selectedPartners.toString().replace("[", "")
+                    .replace("]", "");
+
+            whereClause += farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_PARTNER_ID
+                    + " IN( " + partners + ")";
+        }
+        if (selectedProgrammes.size() > 0) {
+            if (whereClause.length() == 0) {
+                whereClause += " WHERE ";
+            } else {
+                whereClause += " AND ";
+            }
+            String programmes = selectedProgrammes.toString().replace("[", "")
+                    .replace("]", "");
+
+            whereClause += farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_PROGRAMME_ID
+                    + " IN( " + programmes + ")";
+        }
+        if (selectedFarmerGroups.size() > 0) {
+            if (whereClause.length() == 0) {
+                whereClause += " WHERE ";
+            } else {
+                whereClause += " AND ";
+            }
+            String farmerGroups = selectedFarmerGroups.toString().replace("[", "")
+                    .replace("]", "");
+            whereClause += farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID
+                    + " IN( " + farmerGroups + ")";
+        }
+        if (selectedCertifications.size() > 0) {
+            if (whereClause.length() == 0) {
+                whereClause += " WHERE ";
+            } else {
+                whereClause += " AND ";
+            }
+            String certifications = selectedCertifications.toString().replace("[", "")
+                    .replace("]", "");
+            whereClause += farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_CERTIFICATION_ID
+                    + " IN( " + certifications + ")";
+        }
         
         String sql =  "select distinct(farmers.id) as _id, " +
                 farmerTable + "." + OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME + ", " +

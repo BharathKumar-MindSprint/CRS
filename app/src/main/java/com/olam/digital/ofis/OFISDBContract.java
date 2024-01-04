@@ -1052,6 +1052,8 @@ public class OFISDBContract {
                     add(COLUMN_NAME_ODFARMERID);
                     add(COLUMN_NAME_CERTIFICATION_ID);
                     add(COLUMN_NAME_CERTIFICATION_TEXT);
+                    add(COLUMN_NAME_PARTNER_ID);
+                    add(COLUMN_NAME_PROGRAMME_ID);
                 }}
         );
         public static final String COLUMN_NAME_OLAM_FARMER_ID_DISPLAY = "displayFarmerId";
