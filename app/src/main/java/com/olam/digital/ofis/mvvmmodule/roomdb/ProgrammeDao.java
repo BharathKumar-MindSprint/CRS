@@ -23,6 +23,8 @@ public interface ProgrammeDao {
     @Query("SELECT * FROM Programme WHERE id = :id")
     List<Programme> getProgrammeById(int id);
 
+    @Query("SELECT name FROM Programme WHERE id = :id")
+    String getProgrammeNameById(int id);
     @Delete
     void delete(Programme programme);
 

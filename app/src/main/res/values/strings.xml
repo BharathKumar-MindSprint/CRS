@@ -1123,4 +1123,5 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="spinner_partner_default">Partner</string>
     <string name="spinner_programme_default">Programme</string>
     <string name="metrics">Metrics</string>
+    <string name="view_farmer_information"><u>View Farmer Information</u></string>
 </resources>

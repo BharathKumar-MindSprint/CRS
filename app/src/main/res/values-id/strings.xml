@@ -745,4 +745,5 @@
     <string name="spinner_partner_default">Mitra</string>
     <string name="spinner_programme_default">Program</string>
     <string name="metrics">Metrik</string>
+    <string name="view_farmer_information"><u>View Farmer Information</u></string>
 </resources>

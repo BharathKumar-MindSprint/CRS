@@ -649,5 +649,6 @@
     <string name="advanced_filters">ตัวกรองขั้นสูง</string>
     <string name="spinner_partner_default">พันธมิตร</string>
     <string name="spinner_programme_default">โปรแกรม</string>
+    <string name="view_farmer_information"><u>View Farmer Information</u></string>
 
 </resources>

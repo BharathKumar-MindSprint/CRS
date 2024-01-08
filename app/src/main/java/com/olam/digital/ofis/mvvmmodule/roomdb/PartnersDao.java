@@ -24,6 +24,8 @@ public interface PartnersDao {
     @Query("SELECT * FROM Partners WHERE id = :id")
     List<Partners> getPartnersById(int id);
 
+    @Query("SELECT name FROM Partners WHERE id = :id")
+    String getPartnerNameById(int id);
     @Delete
     void delete(Partners partners);
 

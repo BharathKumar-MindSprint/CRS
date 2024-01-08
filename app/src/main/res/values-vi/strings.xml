@@ -649,4 +649,5 @@
     <string name="spinner_partner_default">Cộng sự</string>
     <string name="spinner_programme_default">Chương trình</string>
     <string name="metrics">Metrics</string>
+    <string name="view_farmer_information"><u>View Farmer Information</u></string>
 </resources>
