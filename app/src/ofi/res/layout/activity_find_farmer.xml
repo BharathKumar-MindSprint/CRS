@@ -141,7 +141,7 @@
             android:paddingLeft="0dp"
             android:paddingRight="0dp">
 
-            <Spinner
+            <!--<Spinner
                 android:id="@+id/spinner_region"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -152,9 +152,23 @@
                 android:layout_marginLeft="0dp"
                 android:layout_weight="1"
                 android:focusable="true"
-                android:focusableInTouchMode="true"/>
+                android:focusableInTouchMode="true"/>-->
 
-            <Spinner
+            <com.androidbuts.multispinnerfilter.MultiSpinnerSearch
+                android:id="@+id/spinner_region"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="-5dp"
+                android:dropDownWidth="300dp"
+                android:layout_marginStart="0dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginLeft="0dp"
+                android:layout_weight="1"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                app:hintText="@string/spinner_region_default"/>
+
+            <com.androidbuts.multispinnerfilter.MultiSpinnerSearch
                 android:id="@+id/spinner_district"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -165,7 +179,8 @@
                 android:layout_marginLeft="0dp"
                 android:layout_weight="1"
                 android:focusable="true"
-                android:focusableInTouchMode="true"/>
+                android:focusableInTouchMode="true"
+                app:hintText="@string/spinner_district_default"/>
 
         </LinearLayout>
         <LinearLayout
@@ -178,7 +193,7 @@
             android:paddingLeft="0dp"
             android:paddingRight="0dp">
 
-            <Spinner
+            <com.androidbuts.multispinnerfilter.MultiSpinnerSearch
                 android:id="@+id/spinner_place"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -189,9 +204,10 @@
                 android:layout_marginLeft="0dp"
                 android:layout_weight="1"
                 android:focusable="true"
-                android:focusableInTouchMode="true"/>
+                android:focusableInTouchMode="true"
+                app:hintText="@string/spinner_place_default"/>
 
-            <Spinner
+            <com.androidbuts.multispinnerfilter.MultiSpinnerSearch
                 android:id="@+id/spinner_partner"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -202,7 +218,8 @@
                 android:layout_marginLeft="0dp"
                 android:layout_weight="1"
                 android:focusable="true"
-                android:focusableInTouchMode="true"/>
+                android:focusableInTouchMode="true"
+                app:hintText="@string/spinner_partner_default"/>
 
         </LinearLayout>
         <LinearLayout
@@ -215,7 +232,7 @@
             android:paddingLeft="0dp"
             android:paddingRight="0dp">
 
-            <Spinner
+            <com.androidbuts.multispinnerfilter.MultiSpinnerSearch
                 android:id="@+id/spinner_program"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -226,9 +243,10 @@
                 android:layout_marginLeft="0dp"
                 android:layout_weight="1"
                 android:focusable="true"
-                android:focusableInTouchMode="true"/>
+                android:focusableInTouchMode="true"
+                app:hintText="@string/spinner_programme_default"/>
 
-            <Spinner
+            <com.androidbuts.multispinnerfilter.MultiSpinnerSearch
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/spinner_farmerGroup"
@@ -238,7 +256,8 @@
                 android:layout_marginEnd="0dp"
                 android:layout_weight="1"
                 android:focusable="true"
-                android:focusableInTouchMode="true"/>
+                android:focusableInTouchMode="true"
+                app:hintText="@string/spinner_farmergroup_default"/>
 
         </LinearLayout>
         <LinearLayout
@@ -251,7 +270,7 @@
             android:paddingLeft="0dp"
             android:paddingRight="0dp">
 
-            <Spinner
+            <com.androidbuts.multispinnerfilter.MultiSpinnerSearch
                 android:id="@+id/spinner_section"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -262,9 +281,10 @@
                 android:layout_marginLeft="0dp"
                 android:layout_weight="1"
                 android:focusable="true"
-                android:focusableInTouchMode="true"/>
+                android:focusableInTouchMode="true"
+                app:hintText="@string/spinner_section_default"/>
 
-            <Spinner
+            <com.androidbuts.multispinnerfilter.MultiSpinnerSearch
                 android:id="@+id/spinner_certification"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -274,7 +294,8 @@
                 android:layout_marginEnd="0dp"
                 android:layout_weight="1"
                 android:focusable="true"
-                android:focusableInTouchMode="true"/>
+                android:focusableInTouchMode="true"
+                app:hintText="@string/certification_name"/>
 
         </LinearLayout>
     </LinearLayout>
