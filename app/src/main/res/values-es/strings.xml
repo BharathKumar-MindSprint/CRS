@@ -750,5 +750,6 @@
     <string name="spinner_partner_default">Pareja</string>
     <string name="spinner_programme_default">programa</string>
     <string name="metrics">Métricas</string>
+    <string name="view_farmer_information"><u>View Farmer Information</u></string>
 </resources>
 

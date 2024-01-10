@@ -3811,6 +3811,15 @@ public class DataLayer {
         return db.query(OFISDBContract.DistrictsEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, orderBy);
     }
 
+    public Cursor getsubdistrictnameid(long farmerid) {
+        String[] columns = new String[]{"*"};
+        String whereClause = OFISDBContract.SubDistrictsEntry.COLUMN_NAME_ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(farmerid)};
+        String orderBy = OFISDBContract.SubDistrictsEntry.COLUMN_NAME_ID + " ASC";
+
+        return db.query(OFISDBContract.SubDistrictsEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, orderBy);
+    }
+
     public boolean getSyncedStatus(long farmerId) {
         boolean status = false;
         Cursor nids = getnationalidsbyfarmerid(farmerId);
@@ -3996,6 +4005,22 @@ public class DataLayer {
         return name;
     }
 
+    public String getSubDistrictName(int id) {
+        String name = "NA";
+        Cursor nids = getsubdistrictnameid(id);
+        try {
+            while (nids.moveToNext()) {
+                name = nids.getString(nids.getColumnIndex(OFISDBContract.SubDistrictsEntry.COLUMN_NAME_SUBDISTRICT_NAME));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            nids.close();
+        }
+
+        return name;
+    }
+
     public String getPlaceName(int id) {
         String name = "NA";
         Cursor nids = getPlaceById(id);
@@ -4034,7 +4059,7 @@ public class DataLayer {
         Cursor nids = getSectionById(id);
         try {
             while (nids.moveToNext()) {
-                name = nids.getString(nids.getColumnIndex(OFISDBContract.FarmerGroupsEntry.COLUMN_NAME_FARMERGROUP_NAME));
+                name = nids.getString(nids.getColumnIndex(OFISDBContract.SectionsEntry.COLUMN_NAME_SECTION_NAME));
             }
         } catch (Exception e) {
             e.printStackTrace();

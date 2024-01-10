@@ -474,6 +474,22 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         TextView farmerName = (TextView) findViewById(R.id.viewFarmerFarmerName);
         TextView farmerOlamId = (TextView) findViewById(R.id.viewFarmerOlamFarmerID);
         ImageView farmerPhoto = (ImageView) findViewById(R.id.viewFarmerFarmerPhoto);
+//        ImageView infoSectionBackground = (ImageView) findViewById(R.id.infoSectionBackground);
+        //View farmer info
+        TextView viewFarmerInfo = (TextView) findViewById(R.id.viewFarmerInfo);
+        LinearLayout linear_viewInfo = (LinearLayout) findViewById(R.id.linear_viewInfo);
+        TextView genderInfo = (TextView) findViewById(R.id.genderInfo);
+        TextView ageInfo = (TextView) findViewById(R.id.ageInfo);
+        TextView pNumberInfo = (TextView) findViewById(R.id.pNumberInfo);
+        TextView partnerInfo = (TextView) findViewById(R.id.partnerInfo);
+        TextView programInfo = (TextView) findViewById(R.id.programInfo);
+        TextView countryInfo = (TextView) findViewById(R.id.countryInfo);
+        TextView regionInfo = (TextView) findViewById(R.id.regionInfo);
+        TextView districtInfo = (TextView) findViewById(R.id.districtInfo);
+        TextView subDistrictInfo = (TextView) findViewById(R.id.subDistrictInfo);
+        TextView placeInfo = (TextView) findViewById(R.id.placeInfo);
+        TextView fgInfo = (TextView) findViewById(R.id.fgInfo);
+        TextView sectionInfo = (TextView) findViewById(R.id.sectionInfo);
 
         farmer = dl.getFarmerById(farmerId);
 
@@ -501,9 +517,39 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 }
             }
 
+            //setting farmer info
+            Cursor existingNumbers = dl.getFarmerPhoneNumbers(farmerId, false);
+            StringBuilder phonenumberinfo = new StringBuilder();
+            String ptInfo = null , prInfo=null;
+
+            if (existingNumbers.getCount() > 0) {
+                while (existingNumbers.moveToNext()) {
+                    if(!phonenumberinfo.toString().equals("")){
+                        phonenumberinfo.append("\n");
+                    }
+                    phonenumberinfo.append("+").append(existingNumbers.getString(existingNumbers.getColumnIndex(OFISDBContract.PhoneNumber.COLUMN_NAME_COUNTRY_ID))).append(" ").append(existingNumbers.getString(existingNumbers.getColumnIndex(OFISDBContract.PhoneNumber.COLUMN_NAME_NUMBER)));
+                }
+            }
+            genderInfo.setText(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_GENDER)));
+            ageInfo.setText(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_AGE)));
+            pNumberInfo.setText(phonenumberinfo.toString());
+            if(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_PARTNER_ID))!=null) {
+                ptInfo = db.partnersDao().getPartnerNameById(Integer.parseInt(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_PARTNER_ID))));
+            }
+            if(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_PROGRAMME_ID))!=null){
+                prInfo=db.programmeDao().getProgrammeNameById(Integer.parseInt(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_PROGRAMME_ID))));
+            }
+            partnerInfo.setText(ptInfo);
+            programInfo.setText(prInfo);
+            countryInfo.setText(dl.getCountryName(Integer.parseInt(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID)))));
+            regionInfo.setText(dl.getRegionName(Integer.parseInt(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_REGIONID)))));
+            districtInfo.setText(dl.getDistrictName(Integer.parseInt(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_DISTRICTID)))));
+            subDistrictInfo.setText(dl.getSubDistrictName(Integer.parseInt(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_SUBDISTRICTID)))));
+            placeInfo.setText(dl.getPlaceName(Integer.parseInt(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID)))));
+            fgInfo.setText(dl.getFGName(Integer.parseInt(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID)))));
+            sectionInfo.setText(dl.getSectionName(Integer.parseInt(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID)))));
             JSONObject submittedModules;
             try {
-
 
                 // fetching Info for Multifarms
                 int roleId = 0;
@@ -658,6 +704,16 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                     // Call methods directly for Android versions lower than Marshmallow
                     bindFarmerPhotoButton();
                 }
+            }
+        });
+
+        viewFarmerInfo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+//                infoSectionBackground.setVisibility((infoSectionBackground.getVisibility()==View.GONE) ? View.VISIBLE : View.GONE);
+                linear_viewInfo.setVisibility((linear_viewInfo.getVisibility()==View.GONE) ? View.VISIBLE : View.GONE);
+                viewFarmerInfo.setCompoundDrawablesWithIntrinsicBounds(0, 0,(linear_viewInfo.getVisibility()==View.GONE) ? R.drawable.ic_drop_down_collapse : R.drawable.ic_task_drop_down_expand, 0);
             }
         });
 
@@ -2022,6 +2078,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
 
                         phoneNumbersHolder.startAnimation(mSlideBottomDown);
                         phonenumbersSave.setEnabled(false);
+                        setupUI();
                         Toast.makeText(context, res.getString(R.string.Farmer_Updated), Toast.LENGTH_LONG).show();
                     }
                 } else {

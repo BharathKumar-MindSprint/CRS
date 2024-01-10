@@ -739,4 +739,5 @@
     <string name="certification_name">Nama Sertifikasi</string>
     <string name="others">Others</string>
     <string name="metrics">Metrik</string>
+    <string name="view_farmer_information"><u>View Farmer Information</u></string>
 </resources>

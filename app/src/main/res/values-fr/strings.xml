@@ -1082,4 +1082,5 @@ Conformément aux Nevada Revised Statutes Chapter 603A et Maine Revised Statutes
     <string name="advanced_filters">Filtres avancés</string>
     <string name="spinner_partner_default">Partenaire</string>
     <string name="spinner_programme_default">Programme</string>
+    <string name="view_farmer_information"><u>View Farmer Information</u></string>
 </resources>

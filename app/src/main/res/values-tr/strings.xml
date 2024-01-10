@@ -649,4 +649,5 @@
     <string name="spinner_partner_default">Ortak</string>
     <string name="spinner_programme_default">programı</string>
     <string name="metrics">Ölçüm</string>
+    <string name="view_farmer_information"><u>View Farmer Information</u></string>
 </resources>
