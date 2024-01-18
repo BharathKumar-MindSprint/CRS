@@ -743,10 +743,11 @@
     <string name="alert_review_hint">Ingrese el valor dentro del rango %1$d-%2$d</string>
     <string name="range_hint_A_R">Rango: %1$d-%2$d</string>
     <string name="please_enter_certification_details">Please enter Certification details</string>
-    <string name="update_certification">Update Certification</string>
+    <string name="update_certification">Certificación de actualización</string>
     <string name="certification">Certification</string>
     <string name="certification_name">Nombre de certificacion</string>
     <string name="others">Others</string>
+    <string name="please_update_the_certification_of_farmer">Por favor actualice la certificación del agricultor.</string>
 
 </resources>
 
