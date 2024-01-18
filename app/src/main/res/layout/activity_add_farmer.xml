@@ -666,13 +666,12 @@
 
                         <Spinner
                             android:id="@+id/spinner_certificationName"
-                            android:layout_width="160dp"
+                            android:layout_width="165dp"
                             android:layout_height="match_parent"
                             android:focusable="true"
                             android:layout_gravity="start"
                             android:gravity="start"
                             android:dropDownWidth="300dp"
-                            android:paddingLeft="-5dp"
                             android:focusableInTouchMode="true"/>
 
                         <EditText
