@@ -15,7 +15,7 @@ class OFISDB extends SQLiteOpenHelper {
 
 
 
-    private static final int DATABASE_VERSION = 151;
+    private static final int DATABASE_VERSION = 152;
 
 
 
@@ -1020,6 +1020,9 @@ class OFISDB extends SQLiteOpenHelper {
         if (oldVersion < 151){
             migrateFromVersionBelow150(sqLiteDatabase);
         }
+        if (oldVersion < 152){
+            migrateFromVersionBelow151(sqLiteDatabase);
+        }
 
         sqLiteDatabase.execSQL(OFIS_DOWNLOADED_SURVEYLIST_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_SAVED_ANSWER_TABLE_CREATE);
@@ -1029,7 +1032,7 @@ class OFISDB extends SQLiteOpenHelper {
 //        onCreate(sqLiteDatabase);
     }
 
-    private void migrateFromVersionBelow150(SQLiteDatabase sqLiteDatabase){
+    private void migrateFromVersionBelow151(SQLiteDatabase sqLiteDatabase){
         try{
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.FarmerEntry.TABLE_NAME +" ADD COLUMN " + OFISDBContract.FarmerEntry.COLUMN_NAME_CERTIFICATION_ID +" TEXT default null");
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.FarmerEntry.TABLE_NAME +" ADD COLUMN " + OFISDBContract.FarmerEntry.COLUMN_NAME_CERTIFICATION_TEXT +" TEXT default null");
