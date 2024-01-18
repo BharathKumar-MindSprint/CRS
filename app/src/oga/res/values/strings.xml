@@ -15,6 +15,7 @@
     <string name="title_activity_view_farmer">Farmer Details</string>
     <string name="title_activity_record_polygon">Record Plot Polygon</string>
     <string name="title_activity_complete_module">Complete Questionnaire Module</string>
+    <string name="permission_denial_msg_android_13_above">Required to accept the permission</string>
 
     <!-- main stuff -->
     <string name="app_name">Olam Agri Companion Debug</string>
@@ -1096,4 +1097,5 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="alert_review">Value entered will be pushed for administrator review for additional validation</string>
     <string name="alert_review_hint">Please enter the value within the range %1$d-%2$d</string>
     <string name="range_hint_A_R">Range : %1$d-%2$d</string>
+    <string name="metrics">Metrics</string>
 </resources>

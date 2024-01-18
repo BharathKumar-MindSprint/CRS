@@ -15,6 +15,7 @@
     <string name="title_activity_view_farmer">Detalles del agricultor</string>
     <string name="title_activity_complete_module">Completar cuestionario</string>
 
+
     <!-- main stuff -->
     <string name="app_name">OFI - Asistente en Campo Debug</string>
     <string name="cd_topSectionColour">Fondo coloreado de la sección</string>
@@ -803,6 +804,7 @@
     <string name="alert_review">El valor ingresado está fuera del rango permitido, será enviado para revisión del administrador</string>
     <string name="alert_review_hint">Ingrese el valor dentro del rango %1$d-%2$d</string>
     <string name="range_hint_A_R">Rango: %1$d-%2$d</string>
+    <string name="metrics">Métricas</string>
 
 </resources>
 

@@ -1071,5 +1071,5 @@ Conformément aux Nevada Revised Statutes Chapter 603A et Maine Revised Statutes
     <string name="alert_review">La valeur saisie est en dehors de la plage autorisée, elle sera poussée pour examen par l\'administrateur</string>
     <string name="alert_review_hint">Veuillez entrer la valeur dans la plage %1$d-%2$d</string>
     <string name="range_hint_A_R">Gamme: %1$d-%2$d</string>
-
+    <string name="metrics">Métrique</string>
 </resources>
