@@ -14,6 +14,7 @@
     <string name="title_activity_find_farmer">Tìm kiếm Nông hộ</string>
     <string name="title_activity_view_farmer">Chi tiết Nông hộ</string>
     <string name="title_activity_complete_module">Mục bảng hỏi hoàn tất</string>
+    <string name="updating_local_unit_details">Downloading Local Units details</string>
 
     <!-- main stuff -->
     <string name="app_name">Hiệu chỉnh đồng hành OFIS</string>
@@ -641,10 +642,11 @@
     <string name="alert_review_hint">Vui lòng nhập giá trị trong phạm vi %1$d-%2$d</string>
     <string name="range_hint_A_R">Phạm vi: %1$d-%2$d</string>
     <string name="please_enter_certification_details">Please enter Certification details</string>
-    <string name="update_certification">Update Certification</string>
+    <string name="update_certification">Cập nhật chứng nhận</string>
     <string name="certification">Certification</string>
     <string name="certification_name">Tên chứng nhận</string>
     <string name="others">Others</string>
+    <string name="please_update_the_certification_of_farmer">Vui lòng cập nhật chứng nhận của nông dân</string>
     <string name="advanced_filters">Bộ lọc nâng cao</string>
     <string name="spinner_partner_default">Cộng sự</string>
     <string name="spinner_programme_default">Chương trình</string>

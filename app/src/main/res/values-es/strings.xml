@@ -14,6 +14,7 @@
     <string name="title_activity_find_farmer">Encontrar agricultor</string>
     <string name="title_activity_view_farmer">Detalles del agricultor</string>
     <string name="title_activity_complete_module">Completar cuestionario</string>
+    <string name="updating_local_unit_details">Downloading Local Units details</string>
 
     <!-- main stuff -->
     <string name="app_name">OFIS - Asistente en Campo Debug</string>
@@ -742,14 +743,16 @@
     <string name="alert_review_hint">Ingrese el valor dentro del rango %1$d-%2$d</string>
     <string name="range_hint_A_R">Rango: %1$d-%2$d</string>
     <string name="please_enter_certification_details">Please enter Certification details</string>
-    <string name="update_certification">Update Certification</string>
+    <string name="update_certification">Certificación de actualización</string>
     <string name="certification">Certification</string>
     <string name="certification_name">Nombre de certificacion</string>
     <string name="others">Others</string>
+    <string name="please_update_the_certification_of_farmer">Por favor actualice la certificación del agricultor.</string>
     <string name="advanced_filters">Filtros avanzados</string>
     <string name="spinner_partner_default">Pareja</string>
     <string name="spinner_programme_default">programa</string>
     <string name="metrics">Métricas</string>
     <string name="view_farmer_information"><u>View Farmer Information</u></string>
+
 </resources>
 
