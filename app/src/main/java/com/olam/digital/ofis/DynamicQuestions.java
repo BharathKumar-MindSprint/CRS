@@ -133,7 +133,7 @@ public class DynamicQuestions {
     public Set<Integer> constraintsSet=new HashSet<>();
     public  Set<Integer> editQuestionSet=new HashSet<>();
     private static DynamicQuestions instance = null;
-    public OFISRoomDB roomDB = OFISRoomDB.getDbInstance(context);
+    public OFISRoomDB roomDB;
 
 
 //    private ImageView imageViewInfo;
@@ -1212,6 +1212,7 @@ public class DynamicQuestions {
 
     public boolean CheckMinMaxforQuestion(Cursor qCursor) {
         boolean status = true;
+        roomDB = OFISRoomDB.getDbInstance(context);
 
         try {
 
@@ -2412,6 +2413,7 @@ public class DynamicQuestions {
                                 }
 
                                 long farmerId = Utilities.farmerId;
+                                roomDB = OFISRoomDB.getDbInstance(context);
                                 String farmerAssignmentField = dl.getAssignmentByFarmerTypeID(farmerId , assignmentTypeColumn);
                                 if (assignmentField.equals(farmerAssignmentField)  && globally.equals("false")) {
                                         min = rangeArray.getInt("min");
@@ -2870,6 +2872,7 @@ public class DynamicQuestions {
             public CharSequence filter(CharSequence source, int start, int end,
                                        Spanned dest, int dstart, int dend) {
                 try {
+                    roomDB = OFISRoomDB.getDbInstance(context);
                     // Combine the current text with the new input
                     String newValue = dest.subSequence(0, dstart) + source.toString() + dest.subSequence(dend, dest.length());
 
@@ -2952,6 +2955,7 @@ public class DynamicQuestions {
             public CharSequence filter(CharSequence source, int start, int end,
                                        Spanned dest, int dstart, int dend) {
                 try {
+                    roomDB = OFISRoomDB.getDbInstance(context);
                     // Combine the current text with the new input
                     String newValue = dest.subSequence(0, dstart) + source.toString() + dest.subSequence(dend, dest.length());
 
