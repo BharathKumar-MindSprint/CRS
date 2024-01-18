@@ -268,6 +268,14 @@ public class DataLayer {
         return data;
     }
 
+    public Cursor syncedPlotIds(String id) {
+        String[] columns = new String[]{"*"};
+        String whereClause = OFISDBContract.PlotEntry.COLUMN_NAME_FARMER_ID + " = ? AND " + OFISDBContract.PlotEntry.COLUMN_IS_SYNCED + " == ? ";
+        String[] whereArgs = new String[]{String.valueOf(id),"1"};
+        Cursor data = db.query(OFISDBContract.PlotEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+        return data;
+    }
+
     public Cursor fetchPlotId(String id) {
         String[] columns = new String[]{"*"};
         String whereClause = OFISDBContract.PlotEntry.COLUMN_NAME_FARMER_ID + " = ? AND " + OFISDBContract.PlotEntry.COLUMN_IS_SYNCED + " != ? ";

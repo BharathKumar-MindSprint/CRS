@@ -46,6 +46,10 @@ import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.daos.ExistingModule
 import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.daos.FollowUpAnswerTableDao;
 import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.daos.FollowUpItemMainTableDao;
 import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.daos.FollowUpResultTableDao;
+import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.PolygonHistoryData;
+import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.PolygonPlotHistory;
+import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.dao.PolygonHistoryDataDao;
+import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.dao.PolygonPlotHistoryDao;
 
 
 @Database(entities ={DmMainModule.class, ComplianceIndicator.class, DmCurrency.class, DmAnswerTypes.class,
@@ -56,8 +60,8 @@ import com.olam.digital.ofis.mvvmmodule.roomdb.followuptable.daos.FollowUpResult
         DmNonComplaintFileTable.class, DmSatisfactoryFileTable.class, DmActionPlanCurrenciesTable.class,
         DmRangeActionPlansItems.class, DMSurveyReport.class,  FollowUpItemMainTable.class,
         CapturedProofFollowupTable.class, ExistingModuleItemFollowupTable.class, FollowUpAnswerTable.class,
-        FollowUpResultTable.class, DmAssessmentResultType.class, Certifications.class, ValidationOnRange.class, GlobalUnit.class, LocalUnit.class},
-        version = 9)
+        FollowUpResultTable.class, DmAssessmentResultType.class, Certifications.class, ValidationOnRange.class, GlobalUnit.class, LocalUnit.class, PolygonHistoryData.class, PolygonPlotHistory.class},
+        version = 10)
 public abstract class OFISRoomDB extends RoomDatabase {
     private static final String DATABASE_NAME = "ofismobileroom";
     public abstract DmMainModuleDao dmMainModuleDao();
@@ -97,6 +101,10 @@ public abstract class OFISRoomDB extends RoomDatabase {
     public abstract GlobalUnitDao globalUnitDao();
 
     public abstract LocalUnitDao localUnitDao();
+
+    public abstract PolygonHistoryDataDao polygonHistoryDataDao();
+
+    public abstract PolygonPlotHistoryDao polygonPlotHistoryDao();
 
     public static volatile OFISRoomDB INSTANCE = null;
 
