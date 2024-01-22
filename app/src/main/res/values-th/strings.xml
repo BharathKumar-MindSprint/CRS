@@ -641,9 +641,16 @@
     <string name="alert_review_hint">Lütfen aralığında bir değer girin %1$d-%2$d</string>
     <string name="range_hint_A_R">Phis̄ạy: %1$d-%2$d</string>
     <string name="please_enter_certification_details">Please enter Certification details</string>
-    <string name="update_certification">Update Certification</string>
+    <string name="update_certification">Xạphdet bırạbrxng</string>
     <string name="certification">Certification</string>
     <string name="certification_name">Chụ̄̀x rạbrxng</string>
     <string name="others">Others</string>
+    <string name="please_update_the_certification_of_farmer">Pord prạbprung bırạbrxng k̄hxng kes̄ʹtrkr</string>
+    <string name="metrics">วัด</string>
+
+    <string name="advanced_filters">ตัวกรองขั้นสูง</string>
+    <string name="spinner_partner_default">พันธมิตร</string>
+    <string name="spinner_programme_default">โปรแกรม</string>
+    <string name="view_farmer_information"><u>View Farmer Information</u></string>
 
 </resources>

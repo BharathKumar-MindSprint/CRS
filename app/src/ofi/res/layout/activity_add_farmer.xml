@@ -717,7 +717,7 @@
 
                         <Spinner
                             android:id="@+id/spinner_certificationName"
-                            android:layout_width="160dp"
+                            android:layout_width="175dp"
                             android:layout_height="match_parent"
                             android:focusable="true"
                             android:layout_gravity="start"
@@ -728,7 +728,7 @@
 
                         <EditText
                             android:id="@+id/ed_other_certification"
-                            android:layout_width="130dp"
+                            android:layout_width="140dp"
                             android:layout_height="match_parent"
                             android:background="@drawable/edittext_bg_light"
                             android:hint="@string/other_certification"
