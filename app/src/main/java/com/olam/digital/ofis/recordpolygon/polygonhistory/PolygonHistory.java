@@ -10,6 +10,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
@@ -28,6 +29,7 @@ import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,6 +44,7 @@ import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.RetrofitServices.ManageRecords;
 import com.olam.digital.ofis.RetrofitServices.RetrofitClient;
 import com.olam.digital.ofis.Utilities;
+import com.olam.digital.ofis.ViewFarmerActivity;
 import com.olam.digital.ofis.authentication.AuthenticationHelper;
 import com.olam.digital.ofis.dynatrace.DynatraceHelper;
 import com.olam.digital.ofis.mvvmmodule.model.LocalUnit.GlobalUnit;
@@ -173,7 +176,7 @@ public class PolygonHistory extends AppCompatActivity {
             ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_PERMISSIONS_REQUEST_CODE);
         } else {
             // Location permissions are already granted, get the last known location
-            getLastLocation();
+//            getLastLocation();
             try {
                 PolygonHistoryApiCall((int) mFarmerId);
             } catch (Exception e) {
@@ -222,6 +225,13 @@ public class PolygonHistory extends AppCompatActivity {
             }
         });
 
+        ImageButton buttonTrackingMode = (ImageButton) findViewById(R.id.buttonTrackingMode);
+        buttonTrackingMode.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getLastLocation();
+            }
+        });
 
     }
 
@@ -415,6 +425,11 @@ public class PolygonHistory extends AppCompatActivity {
             @Override
             public void onResponse(Call<PolygonHistoryResponseModel> call, Response<PolygonHistoryResponseModel> response) {
                 if (response.isSuccessful() && response.body() != null) {
+                    ProgressDialog pd = new ProgressDialog(PolygonHistory.this);
+                    pd.setCancelable(false);
+                    pd.setIndeterminate(false);
+                    pd.setMessage(getResources().getString(R.string.fetching_data));
+                    pd.show();
                     try {
                         db = OFISRoomDB.getDbInstance(getApplicationContext());
                         if (response.body() != null ) {
@@ -454,7 +469,7 @@ public class PolygonHistory extends AppCompatActivity {
                             }
                         }
 
-
+                        pd.dismiss();
                     }catch (Exception e){
                         e.printStackTrace();
                     }

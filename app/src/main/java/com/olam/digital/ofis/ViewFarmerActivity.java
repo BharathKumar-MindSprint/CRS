@@ -1699,7 +1699,9 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                     TextView plotCount = plotLayout.findViewById(R.id.plotCount);
                     EditText plotName = plotLayout.findViewById(R.id.plotName);
                     LinearLayout plotDelete = plotLayout.findViewById(R.id.deletePlot);
-                    plotCount.setText("Plot " + plotList.getChildCount());
+                    Cursor plotIdsSynced = dl.syncedPlotIds(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)));
+                    int totalPlotCount = plotIdsSynced.getCount() + plotList.getChildCount();
+                    plotCount.setText("Plot " + totalPlotCount);
                     bindPlotDelete(plotDelete);
                 }
             });
@@ -1777,6 +1779,8 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 }
             }
         }*/
+        int totalPlotCount = plotIdsSynced.getCount();
+
         if(plotIds.getCount() > 0){
             int size = plotIds.getCount();
             for (int i = 1; i <= size; i++) {
@@ -1786,7 +1790,8 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 TextView plotCount = plotLayout.findViewById(R.id.plotCount);
                 EditText plotName = plotLayout.findViewById(R.id.plotName);
                 LinearLayout plotDelete = plotLayout.findViewById(R.id.deletePlot);
-                plotCount.setText("Plot " + i);
+                int finalCount = i + totalPlotCount;
+                plotCount.setText("Plot " + finalCount);
                 String name = plotIds.getString(plotIds.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_PLOT_NAME));
                 if(! name.equalsIgnoreCase("null")){
                     plotName.setText(name);
@@ -1807,6 +1812,8 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
             plotList.addView(plotLayout);
             TextView plotCount = plotLayout.findViewById(R.id.plotCount);
             EditText plotName = plotLayout.findViewById(R.id.plotName);
+            int finalCount = 1 + totalPlotCount;
+            plotCount.setText("Plot " + finalCount);
             LinearLayout plotDelete = plotLayout.findViewById(R.id.deletePlot);
             plotDelete.setVisibility(View.GONE);
             bindPlotDelete(plotDelete);
