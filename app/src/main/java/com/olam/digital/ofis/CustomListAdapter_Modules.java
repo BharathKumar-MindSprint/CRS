@@ -598,18 +598,19 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                     textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
                 }
             }else if(cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals(context.getResources().getString(R.string.certification))) {
+                boolean availstatus = dl.isCertificationavailable(farmerId);
 
-                imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_completed));
                 enabledItem.setText("true");
 
                 linearLayout.setBackgroundResource(R.drawable.list_item);
                 moduleTitle.setTextColor(ContextCompat.getColor(context, R.color.ofis_base_font_dark));
                 textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
                 moduleTitle.setText(res.getString(R.string.update_certification));
-                boolean availstatus = dl.isCertificationavailable(farmerId);
                 if (availstatus) {
+                    imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_status_completed));
                     textView.setText(res.getString(R.string.update_tab_hint));
                 }else{
+                    imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_childsurvey));
                     textView.setText(res.getString(R.string.add_tab_hint));
                 }
             }

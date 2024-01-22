@@ -15,7 +15,7 @@ class OFISDB extends SQLiteOpenHelper {
 
 
 
-    private static final int DATABASE_VERSION = 151;
+    private static final int DATABASE_VERSION = 152;
 
 
 
@@ -322,7 +322,7 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.QuestionEntry.COLUMN_NAME_QUESTION_INFO_TH+ " TEXT, "
             + OFISDBContract.QuestionEntry.COLUMN_NAME_DISPLAY_TYPE_ID + " TEXT, "
             + OFISDBContract.QuestionEntry.COLUMN_NAME_ANSWER_TYPE+ " TEXT, "
-            + OFISDBContract.QuestionEntry.COLUMN_NAME_OTHER_CHOICE + " TEXT, "
+            + OFISDBContract.QuestionEntry.COLUMN_NAME_OTHER_CHOICE + " TEXT,"
             + OFISDBContract.QuestionEntry.COLUMN_NAME_METRIC + " TEXT )";
 
 
@@ -393,7 +393,8 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.FarmerEntry.COLUMN_NAME_PLOT + " TEXT, "
             + OFISDBContract.FarmerEntry.COLUMN_NAME_CONSENT_FARMER + " INTEGER DEFAULT 1, " + OFISDBContract.FarmerEntry.COLUMN_NAME_CONSENT_OTHERS + " INTEGER DEFAULT 1, "
             + OFISDBContract.FarmerEntry.COLUMN_NAME_CERTIFICATION_ID + " TEXT, "
-            + OFISDBContract.FarmerEntry.COLUMN_NAME_CERTIFICATION_TEXT + " TEXT)";
+            + OFISDBContract.FarmerEntry.COLUMN_NAME_CERTIFICATION_TEXT + " TEXT,"
+            + OFISDBContract.FarmerEntry.COLUMN_NAME_AGE + " TEXT)";
 
     private static final String OFIS_BACKUP_FARMER_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.FarmerEntry.BACKUP_TABLE_NAME +
             " ( " + OFISDBContract.FarmerEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_ID + " INTEGER, "
@@ -417,7 +418,11 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.FarmerEntry.COLUMN_NAME_MODERATION_STATUS + " TEXT, "
             + OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERLEAD + " TEXT, "
             + OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERLEADNAME + " TEXT, "
-            + OFISDBContract.FarmerEntry.COLUMN_NAME_CONSENT_FARMER + " INTEGER DEFAULT 1, " + OFISDBContract.FarmerEntry.COLUMN_NAME_CONSENT_OTHERS + " INTEGER DEFAULT 1)";
+            + OFISDBContract.FarmerEntry.COLUMN_NAME_CONSENT_FARMER + " INTEGER DEFAULT 1, " + OFISDBContract.FarmerEntry.COLUMN_NAME_CONSENT_OTHERS + " INTEGER DEFAULT 1,"
+            + OFISDBContract.FarmerEntry.COLUMN_NAME_CERTIFICATION_ID + " TEXT, "
+            + OFISDBContract.FarmerEntry.COLUMN_NAME_CERTIFICATION_TEXT + " TEXT,"
+            + OFISDBContract.FarmerEntry.COLUMN_NAME_AGE + " TEXT,"
+            + OFISDBContract.FarmerEntry.COLUMN_NAME_PRODUCT_ID + " TEXT)";
 
     private static final String OFIS_FARMER_INDEX_CREATE = "CREATE INDEX IF NOT EXISTS idx_farmer_locally_created ON " + OFISDBContract.FarmerEntry.TABLE_NAME + "(" + OFISDBContract.FarmerEntry.COLUMN_NAME_CREATED_LOCALLY + ")";
 
@@ -1018,13 +1023,16 @@ class OFISDB extends SQLiteOpenHelper {
         if (oldVersion < 151){
             migrateFromVersionBelow150(sqLiteDatabase);
         }
+        if (oldVersion < 152){
+            migrateFromVersionBelow151(sqLiteDatabase);
+        }
 
         sqLiteDatabase.execSQL(OFIS_DOWNLOADED_SURVEYLIST_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_SAVED_ANSWER_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_PLOT_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_NOTIFICATION_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_NOTIFICATION_MODULELIST_TABLE_CREATE);
-        onCreate(sqLiteDatabase);
+//        onCreate(sqLiteDatabase);
     }
 
     private void migrateFromVersionBelow148(SQLiteDatabase sqLiteDatabase){

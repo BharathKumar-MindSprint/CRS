@@ -106,7 +106,7 @@ public class MultiSpinnerAdapter extends ArrayAdapter<MultiSpinnerStatus> {
                         if (isChecked) {
                             cert_others_ed.setText(null);
                             cert_others_ed.setVisibility(View.GONE);
-                            listState.get(position).setSelected(isChecked);
+                            listState.get(position).setSelected(true);
                         }
                         notifyDataSetChanged();
                     }

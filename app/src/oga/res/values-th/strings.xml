@@ -14,7 +14,6 @@
     <string name="title_activity_find_farmer">ค้นหาเกษตรกร</string>
     <string name="title_activity_view_farmer">รายละเอียดเกษตรกร</string>
     <string name="title_activity_complete_module">แบบสอบถามเสร็จสมบูรณ์</string>
-    <string name="updating_local_unit_details">Downloading Local Units details</string>
 
     <!-- main stuff -->
     <string name="app_name">Olam Agri Companion Debug</string>
@@ -729,5 +728,6 @@
     <string name="alert_review">Kh̀āthī̀ p̂xn xyū̀ nxk ch̀wng thī̀ xnuỵāt kh̀ā nận ca t̄hūk s̄̀ng pị h̄ı̂ p̄hū̂ dūlæ rabb trwc s̄xb</string>
     <string name="alert_review_hint">Lütfen aralığında bir değer girin %1$d-%2$d</string>
     <string name="range_hint_A_R">Phis̄ạy: %1$d-%2$d</string>
+    <string name="metrics">วัด</string>
 
 </resources>

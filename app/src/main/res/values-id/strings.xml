@@ -738,8 +738,14 @@
     <string name="alert_review_hint">Harap masukkan nilai dalam rentang %1$d-%2$d</string>
     <string name="range_hint_A_R">Jangkauan: %1$d-%2$d</string>
     <string name="please_enter_certification_details">Please enter Certification details</string>
-    <string name="update_certification">Update Certification</string>
+    <string name="update_certification">Perbarui Sertifikasi</string>
     <string name="certification">Certification</string>
     <string name="certification_name">Nama Sertifikasi</string>
     <string name="others">Others</string>
+    <string name="please_update_the_certification_of_farmer">Harap perbarui sertifikasi petani</string>
+    <string name="advanced_filters">Filter tingkat lanjut</string>
+    <string name="spinner_partner_default">Mitra</string>
+    <string name="spinner_programme_default">Program</string>
+    <string name="metrics">Metrik</string>
+    <string name="view_farmer_information"><u>View Farmer Information</u></string>
 </resources>
