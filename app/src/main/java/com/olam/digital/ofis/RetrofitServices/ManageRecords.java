@@ -14,6 +14,7 @@ import com.olam.digital.ofis.mvvmmodule.model.LocalUnit.APICall.LocalUnitRespons
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.DMSurveyResponseModel;
 import com.olam.digital.ofis.mvvmmodule.model.diagnosticmodule.ResponseModel;
 import com.olam.digital.ofis.mvvmmodule.model.followup.FollowUpResponseModel;
+import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.APICall.PolygonHistoryResponseModel;
 
 import org.json.JSONArray;
 
@@ -77,4 +78,7 @@ public interface ManageRecords {
 
     @GET("ofissurvey/survey/getLocalUnitMasterData/{enum_id}")
     Call<LocalUnitResponseModel> getAllLocalUnitResponseModel(@Path("enum_id") Integer enumeratorId);
+
+    @GET("ofisfarmer-data/farmerdata/polygondatabyfarmerid/{farmer_id}")
+    Call<PolygonHistoryResponseModel> getAllPolygonHistoryResponse(@Path("farmer_id") Integer farmerId, @Header("App-Id") int appId);
 }

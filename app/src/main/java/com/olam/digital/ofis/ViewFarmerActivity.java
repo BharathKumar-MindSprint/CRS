@@ -98,7 +98,6 @@ import com.olam.digital.ofis.matoma.MatomoHelper;
 import com.olam.digital.ofis.matoma.ScreenNameConstants;
 import com.olam.digital.ofis.matoma.multifarm.UpdateMultiFarmActivity;
 
-import com.olam.digital.ofis.matoma.multifarm.UpdateMultiFarmActivity;
 import com.olam.digital.ofis.multifarm.MultiFarmDTO;
 import com.olam.digital.ofis.multifarm.MultiFarmUtils;
 
@@ -113,6 +112,8 @@ import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.FollowUp.FollowUpR
 import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.RecurrenceUtils;
 import com.olam.digital.ofis.recordpolygon.RecordPolygonActivity;
 import com.olam.digital.ofis.recordpolygon.SharedPreferenceUtils;
+import com.olam.digital.ofis.recordpolygon.polygonhistory.InternetConnectionHelper;
+import com.olam.digital.ofis.recordpolygon.polygonhistory.PolygonHistory;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -122,10 +123,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -189,6 +188,8 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
     private static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = 1000;
 
     private static final int REQUEST_CHECK_SETTINGS = 100;
+
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 7070;
 
 
     // bunch of location related apis
@@ -1155,6 +1156,40 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                         "farmpolygon"
                 });
 
+                // add new polygon history task
+                mc.addRow(new String[]{
+                        "0",
+                        res.getString(R.string.recorded_polygon_history),
+                        res.getString(R.string.recorded_polygon_history),
+                        res.getString(R.string.recorded_polygon_history),
+                        res.getString(R.string.recorded_polygon_history),
+                        res.getString(R.string.recorded_polygon_history),
+                        res.getString(R.string.recorded_polygon_history),
+                        res.getString(R.string.recorded_polygon_history),
+                        res.getString(R.string.recorded_polygon_history),
+                        res.getString(R.string.recorded_polygon_history),
+                        "0",
+                        "",
+                        "",
+                        "",
+                        res.getString(R.string.record_farm_polygon_hint),
+                        res.getString(R.string.record_farm_polygon_hint),
+                        res.getString(R.string.record_farm_polygon_hint),
+                        res.getString(R.string.record_farm_polygon_hint),
+                        res.getString(R.string.record_farm_polygon_hint),
+                        res.getString(R.string.record_farm_polygon_hint),
+                        res.getString(R.string.record_farm_polygon_hint),
+                        res.getString(R.string.record_farm_polygon_hint),
+                        res.getString(R.string.record_farm_polygon_hint),
+                        "",
+                        "",
+                        "",
+                        "",
+                        "","",
+                        "", "", "",
+                        "",
+                        "polygon_history"
+                });
 
                 boolean isHHAvailable = Utilities.getBoolFromSharedPrefs(context, Utilities.HOUSEHOLD_ENUMERATOR, false);
                 if (isHHAvailable) {
@@ -1720,7 +1755,9 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                     TextView plotCount = plotLayout.findViewById(R.id.plotCount);
                     EditText plotName = plotLayout.findViewById(R.id.plotName);
                     LinearLayout plotDelete = plotLayout.findViewById(R.id.deletePlot);
-                    plotCount.setText("Plot " + plotList.getChildCount());
+                    Cursor plotIdsSynced = dl.syncedPlotIds(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)));
+                    int totalPlotCount = plotIdsSynced.getCount() + plotList.getChildCount();
+                    plotCount.setText("Plot " + totalPlotCount);
                     bindPlotDelete(plotDelete);
                 }
             });
@@ -1785,6 +1822,21 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
     private void loadPlotLayout() {
         plotList.removeAllViews();
         Cursor plotIds = dl.fetchPlotids(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)));
+        Cursor plotIdsSynced = dl.syncedPlotIds(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)));
+
+        /*if (plotIdsSynced.getCount() > 0){
+            int size = plotIdsSynced.getCount();
+            for (int i = 1; i <= size; i++) {
+                plotIdsSynced.moveToNext();
+                if(position == i){
+                    name = plotIdsSynced.getString(plotIds.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_PLOT_NAME));
+                    selectedPlotId = plotIdsSynced.getInt(plotIds.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_ID));
+                    txtPlotName.setText(name);
+                }
+            }
+        }*/
+        int totalPlotCount = plotIdsSynced.getCount();
+
         if(plotIds.getCount() > 0){
             int size = plotIds.getCount();
             for (int i = 1; i <= size; i++) {
@@ -1794,7 +1846,8 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 TextView plotCount = plotLayout.findViewById(R.id.plotCount);
                 EditText plotName = plotLayout.findViewById(R.id.plotName);
                 LinearLayout plotDelete = plotLayout.findViewById(R.id.deletePlot);
-                plotCount.setText("Plot " + i);
+                int finalCount = i + totalPlotCount;
+                plotCount.setText("Plot " + finalCount);
                 String name = plotIds.getString(plotIds.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_PLOT_NAME));
                 if(! name.equalsIgnoreCase("null")){
                     plotName.setText(name);
@@ -1815,6 +1868,8 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
             plotList.addView(plotLayout);
             TextView plotCount = plotLayout.findViewById(R.id.plotCount);
             EditText plotName = plotLayout.findViewById(R.id.plotName);
+            int finalCount = 1 + totalPlotCount;
+            plotCount.setText("Plot " + finalCount);
             LinearLayout plotDelete = plotLayout.findViewById(R.id.deletePlot);
             plotDelete.setVisibility(View.GONE);
             bindPlotDelete(plotDelete);
@@ -2442,9 +2497,27 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                         MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_FARM_POLYGON, ScreenNameConstants.BUTTON_CLICKED);
                         polygon = true;
                         enableFarmPolygon(v);
-
-                        //Ticket-OFISDM-39 newly added
-                    }else if(recordedLng != null && recordedLng.getText().equals("diagnostic")){
+                        
+                    } else if (recordedLng != null && recordedLng.getText().equals("polygon_history")) {
+                        // check internet connection
+                        if (InternetConnectionHelper.isInternetAvailable(context)) {
+                            if (hasRequiredPermissions(context)) {
+                                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_POLYGON_HISTORY, ScreenNameConstants.BUTTON_CLICKED);
+                                Intent polygonHistoryIntent = new Intent(this, PolygonHistory.class);
+                                polygonHistoryIntent.putExtra(FARMER_ID, farmerId);
+                                polygonHistoryIntent.putExtra(FARM_ID, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
+                                polygonHistoryIntent.putExtra(OLAM_FARMER_ID, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
+                                polygonHistoryIntent.putExtra(FARMER_NAME, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME)));
+                                startActivity(polygonHistoryIntent);
+                            } else {
+                                showToast(context, " Location Permission not granted");
+                            }
+                        } else {
+                            showToast(context, "No internet connection");
+                        }
+                    }
+                    //Ticket-OFISDM-39 newly added
+                    else if(recordedLng != null && recordedLng.getText().equals("diagnostic")){
                         Constants.MODULE_ID = subModuleTv.getText().toString();
                         Constants.MODULE_NAME = moduleListModuleName.getText().toString();
                         Constants.FARMER_ID = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID));
@@ -3067,6 +3140,45 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         dialog.show();
     }
 
+    private static boolean hasRequiredPermissions(Context context) {
+        // Replace with the actual permission you need to check
+        String permission = "android.permission.ACCESS_FINE_LOCATION";
+//        int result = context.checkCallingOrSelfPermission(permission);
+//        return result == PackageManager.PERMISSION_GRANTED;
+
+        // Check if the location permission is not granted
+        if (ContextCompat.checkSelfPermission(context, permission)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // Request location permission
+            ActivityCompat.requestPermissions((Activity) context,
+                    new String[]{permission},
+                    LOCATION_PERMISSION_REQUEST_CODE);
+
+            // Return false because the permission is not yet granted
+            return false;
+        }
+
+        // Location permission is already granted
+        return true;
+    }
+
+    private static void showToast(Context context, String message) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+    }
+
+    // Call this method in your Activity's onRequestPermissionsResult
+    public static void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                                  @NonNull int[] grantResults, Context context) {
+        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Location permission granted, you can proceed with your logic here
+            } else {
+                // Location permission denied, show a toast or handle the denial gracefully
+                showToast(context, "Location permission denied");
+            }
+        }
+    }
 
 
 }

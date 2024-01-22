@@ -289,12 +289,32 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
             olamFarmerId.setText(mOlamFarmerId);
         }
         loadPlotName(0);
-        spinnerArray = new String[lPlotCount];
+
+        DataLayer dl = new DataLayer(getResources(), RecordPolygonActivity.this);
+        Cursor plotIdsSynced = dl.syncedPlotIds(String.valueOf(mFarmerId));
+        if (plotIdsSynced!=null){
+            int totalPlotCount = plotIdsSynced.getCount();
+            spinnerArray = new String[lPlotCount];
+            for (int i = 0; i < lPlotCount; i++) {
+                spinnerArray[i] = getResources().getString(R.string.plot, (i + 1 + totalPlotCount));
+
+                //SharedPreferenceUtils.getInstance(getApplicationContext()).removePlotUsingKey("Plot " + (i + 1));
+            }
+        }else {
+            spinnerArray = new String[lPlotCount];
+            for (int i = 0; i < lPlotCount; i++) {
+                spinnerArray[i] = getResources().getString(R.string.plot, (i + 1));
+
+                //SharedPreferenceUtils.getInstance(getApplicationContext()).removePlotUsingKey("Plot " + (i + 1));
+            }
+        }
+
+        /*spinnerArray = new String[lPlotCount];
         for (int i = 0; i < lPlotCount; i++) {
             spinnerArray[i] = getResources().getString(R.string.plot, (i + 1));
 
             //SharedPreferenceUtils.getInstance(getApplicationContext()).removePlotUsingKey("Plot " + (i + 1));
-        }
+        }*/
         spinnerPlotList = (Spinner) findViewById(R.id.plot_number);
         recordingStatus = (ImageView) findViewById(R.id.recording_status);
         pause = (Button) findViewById(R.id.pause_recording);
@@ -1834,7 +1854,9 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                     TextView plotCount = plotLayout.findViewById(R.id.plotCount);
                     EditText plotName = plotLayout.findViewById(R.id.plotName);
                     LinearLayout plotDelete = plotLayout.findViewById(R.id.deletePlot);
-                    plotCount.setText("Plot " + plotList.getChildCount());
+                    Cursor plotIdsSynced = dl.syncedPlotIds(String.valueOf(mFarmerId));
+                    int totalPlotCount = plotIdsSynced.getCount() + plotList.getChildCount();
+                    plotCount.setText("Plot " + totalPlotCount);
                     bindPlotDelete(plotDelete);
                 }
             });
@@ -1922,7 +1944,9 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                 TextView plotCount = plotLayout.findViewById(R.id.plotCount);
                 EditText plotName = plotLayout.findViewById(R.id.plotName);
                 LinearLayout plotDelete = plotLayout.findViewById(R.id.deletePlot);
-                plotCount.setText("Plot " + i);
+                Cursor plotIdsSynced = dl.syncedPlotIds(String.valueOf(mFarmerId));
+                int totalPlotCount = plotIdsSynced.getCount() + i;
+                plotCount.setText("Plot " + totalPlotCount);
                 String name = plotIds.getString(plotIds.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_PLOT_NAME));
                 if(! name.equalsIgnoreCase("null")){
                     plotName.setText(name);
