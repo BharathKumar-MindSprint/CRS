@@ -652,5 +652,7 @@
     <string name="spinner_partner_default">พันธมิตร</string>
     <string name="spinner_programme_default">โปรแกรม</string>
     <string name="view_farmer_information"><u>View Farmer Information</u></string>
+    <string name="no_internet_polygon">Please enable your device internet to view the already captured polygon!</string>
+    <string name="edit_already_logged_plot">%1$s already Logged and Saved! Do you want to rerecord the same plot again ?</string>
 
 </resources>
