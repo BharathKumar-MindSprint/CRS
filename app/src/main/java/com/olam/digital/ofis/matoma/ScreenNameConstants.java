@@ -71,7 +71,7 @@ public class ScreenNameConstants {
     public static final String BUTTON_NATIONAL_ID_PHOTO = "National ID Photo Button";
     public static final String BUTTON_CERTIFICATION = "Certification Button";
 
-    public static final String BUTTON_POLYGON_HISTORY = "Polygon History Button";
+//    public static final String BUTTON_POLYGON_HISTORY = "Polygon History Button";
     public static final String BUTTON_SHOW_CONSENT = "Show Consent Button";
     public static final String BUTTON_HIDE_CONSENT = "Hide Consent Button";
     public static final String BUTTON_SAVE_FARMER = "Save Farmer Button";

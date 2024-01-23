@@ -204,7 +204,7 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                 }
                 //}
             }// polygon history
-            else if (cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals("polygon_history")) {
+            /*else if (cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals("polygon_history")) {
                 if (false) {
                     imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_record_polygon));
                     enabledItem.setText("false");
@@ -223,7 +223,7 @@ class CustomListAdapter_Modules extends SimpleCursorAdapter {
                     textView.setTextColor(ContextCompat.getColor(context, R.color.ofis_list_item_subtitle));
                     textView.setText(res.getString(R.string.view_polygon_history));
                 }
-            }
+            }*/
             //Ticket-OFISDM-39 newly added
             else if(cursor.getString(cursor.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_LNG)).equals("diagnostic")){
                 int moduleId = cursor.getInt(cursor.getColumnIndex(OFISDBContract.FarmerModulesEntry.COLUMN_NAME_CURRENT_SUBMODULE_ID));

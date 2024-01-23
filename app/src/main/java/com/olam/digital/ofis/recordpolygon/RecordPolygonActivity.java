@@ -322,7 +322,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
         }
         loadPlotName(0);
 
-        DataLayer dl = new DataLayer(getResources(), RecordPolygonActivity.this);
+        /*DataLayer dl = new DataLayer(getResources(), RecordPolygonActivity.this);
         Cursor plotIdsSynced = dl.syncedPlotIds(String.valueOf(mFarmerId));
         if (plotIdsSynced!=null){
             int totalPlotCount = plotIdsSynced.getCount();
@@ -339,14 +339,14 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
 
                 //SharedPreferenceUtils.getInstance(getApplicationContext()).removePlotUsingKey("Plot " + (i + 1));
             }
-        }
+        }*/
 
-        /*spinnerArray = new String[lPlotCount];
+        spinnerArray = new String[lPlotCount];
         for (int i = 0; i < lPlotCount; i++) {
             spinnerArray[i] = getResources().getString(R.string.plot, (i + 1));
 
             //SharedPreferenceUtils.getInstance(getApplicationContext()).removePlotUsingKey("Plot " + (i + 1));
-        }*/
+        }
         spinnerPlotList = (Spinner) findViewById(R.id.plot_number);
         recordingStatus = (ImageView) findViewById(R.id.recording_status);
         pause = (Button) findViewById(R.id.pause_recording);
@@ -1488,20 +1488,27 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
 
                     ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_PERMISSIONS_REQUEST_CODE);
                 } else {
-                    getLastLocation();
+//                    getLastLocation();
                     try {
-                        PolygonHistoryApiCall((int) mFarmerId);
+                        PolygonHistoryApiCall((int) mFarmerId, position);
+
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
                     getFarmLocation();
                 }
-                int plotId = getPlotId(position);
-                plotGraphInMap(plotId);
             } else {
                 showAlert(getString(R.string.no_internet_polygon));
             }
+            mStartLoggingButton.setVisibility(View.GONE);
+            pause.setVisibility(View.GONE);
+            bttnSave.setVisibility(View.GONE);
+            recordingStatus.setVisibility(View.GONE);
         }else {
+            mStartLoggingButton.setVisibility(View.VISIBLE);
+            pause.setVisibility(View.VISIBLE);
+            bttnSave.setVisibility(View.VISIBLE);
+            recordingStatus.setVisibility(View.VISIBLE);
             if (!checkPlotEntryExistInPreference()) {
                 showToastMessage(getResources().getString(R.string.not_logged_yet, currentTrackname));
                 initializeKMLDocument();
@@ -1511,6 +1518,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                 loadMapWithPolygon(currentTrackname);
             }
         }
+
     }
 
     private void showAlert(String msg) {
@@ -1943,7 +1951,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                     LinearLayout plotDelete = plotLayout.findViewById(R.id.deletePlot);
                     Cursor plotIdsSynced = dl.syncedPlotIds(String.valueOf(mFarmerId));
                     int totalPlotCount = plotIdsSynced.getCount() + plotList.getChildCount();
-                    plotCount.setText("Plot " + totalPlotCount);
+                    plotCount.setText("Plot " + plotList.getChildCount());
                     bindPlotDelete(plotDelete);
                 }
             });
@@ -2071,7 +2079,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                 LinearLayout plotDelete = plotLayout.findViewById(R.id.deletePlot);
                 Cursor plotIdsSynced = dl.syncedPlotIds(String.valueOf(mFarmerId));
                 int totalPlotCount = plotIdsSynced.getCount() + i;
-                plotCount.setText("Plot " + totalPlotCount);
+                plotCount.setText("Plot " + i);
                 String name = plotIds.getString(plotIds.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_PLOT_NAME));
                 String isSynced = plotIds.getString(plotIds.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_IS_SYNCED));
                 if(! name.equalsIgnoreCase("null")){
@@ -2415,7 +2423,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
         });
     }
 
-    private void PolygonHistoryApiCall(Integer farmerId) {
+    private void PolygonHistoryApiCall(Integer farmerId, int position) {
         ManageRecords getPolygonHistoryData = RetrofitClient.getRetrofit().create(ManageRecords.class);
         retrofit2.Call<PolygonHistoryResponseModel> call = getPolygonHistoryData.getAllPolygonHistoryResponse(farmerId , 1);
 
@@ -2455,6 +2463,8 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                                 }
 
                             }
+                            int plotId = getPlotId(position);
+                            plotGraphInMap(plotId);
                         }else {
                             try {
                                 Log.d("FailureMessage", "Error response body: " + response.errorBody().string());
