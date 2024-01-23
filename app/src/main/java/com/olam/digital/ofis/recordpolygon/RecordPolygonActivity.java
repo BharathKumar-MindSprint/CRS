@@ -1612,7 +1612,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
         TextView tvTitle= dialogView.findViewById(R.id.tv_title);
         tvTitle.setVisibility(View.VISIBLE);
         tvTitle.setText(getResources().getString(R.string.save_polygon_alertdialog_title, currentTrackname));
-        tvMsg.setText(getResources().getString(R.string.save_polygon_alertdialog_msg, currentTrackname));
+        tvMsg.setText(getResources().getString(R.string.save_polygon_alertdialog, currentTrackname));
         Button btnNo = (Button)dialogView.findViewById(R.id.btn_no);
         Button btnYes = (Button)dialogView.findViewById(R.id.btn_yes);
         btnNo.setText(R.string.close);
@@ -2549,15 +2549,19 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
         btnYes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                areaInfo.setText("");
+                SharedPreferenceUtils.getInstance(getApplicationContext()).removePlotUsingKey(currentTrackname);
+                if (polygon != null) {
+                    map.getOverlays().remove(polygon);
+                }
+                initiateLogging();
+
                 alert.dismiss();
             }
         });
         btnNo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SharedPreferenceUtils.getInstance(getApplicationContext()).removePlotUsingKey(currentTrackname);
-                initiateLogging();
+
                 alert.dismiss();
             }
         });
