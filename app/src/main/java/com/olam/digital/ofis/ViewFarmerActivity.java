@@ -1156,7 +1156,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                         "farmpolygon"
                 });
 
-                // add new polygon history task
+                /*// add new polygon history task
                 mc.addRow(new String[]{
                         "0",
                         res.getString(R.string.recorded_polygon_history),
@@ -1189,7 +1189,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                         "", "", "",
                         "",
                         "polygon_history"
-                });
+                });*/
 
                 boolean isHHAvailable = Utilities.getBoolFromSharedPrefs(context, Utilities.HOUSEHOLD_ENUMERATOR, false);
                 if (isHHAvailable) {
@@ -1757,7 +1757,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                     LinearLayout plotDelete = plotLayout.findViewById(R.id.deletePlot);
                     Cursor plotIdsSynced = dl.syncedPlotIds(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)));
                     int totalPlotCount = plotIdsSynced.getCount() + plotList.getChildCount();
-                    plotCount.setText("Plot " + totalPlotCount);
+                    plotCount.setText("Plot " + plotList.getChildCount());
                     bindPlotDelete(plotDelete);
                 }
             });
@@ -1782,8 +1782,10 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 public void onClick(View view) {
 //                    String lPlotCountString = edTxtNumberOfPlots.getText().toString();
                     String farmerID = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID));
+
                     ArrayList<String> plotNames = getAllPlotValues();
-                    dl.insertNewPlot(farmerID,plotNames);
+                    dl.insertNewPlot(farmerID, plotNames);
+
                     /*String lPlotCountString = "1";
                     int lPlotCount = 0;
                     if (!TextUtils.isEmpty(lPlotCountString)) {
@@ -1821,7 +1823,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
 
     private void loadPlotLayout() {
         plotList.removeAllViews();
-        Cursor plotIds = dl.fetchPlotids(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)));
+        Cursor plotIds = dl.fetchAllPlotIds(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)));
         Cursor plotIdsSynced = dl.syncedPlotIds(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)));
 
         /*if (plotIdsSynced.getCount() > 0){
@@ -1847,8 +1849,9 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 EditText plotName = plotLayout.findViewById(R.id.plotName);
                 LinearLayout plotDelete = plotLayout.findViewById(R.id.deletePlot);
                 int finalCount = i + totalPlotCount;
-                plotCount.setText("Plot " + finalCount);
+                plotCount.setText("Plot " + i);
                 String name = plotIds.getString(plotIds.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_PLOT_NAME));
+                String isSynced = plotIds.getString(plotIds.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_IS_SYNCED));
                 if(! name.equalsIgnoreCase("null")){
                     plotName.setText(name);
                 }
@@ -1857,6 +1860,9 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                     plotDelete.setVisibility(View.INVISIBLE);
                 }else{
                     plotDelete.setVisibility(View.VISIBLE);
+                }
+                if(isSynced.equalsIgnoreCase("1")){
+                    plotDelete.setVisibility(View.INVISIBLE);
                 }
 
                 plotName.setFocusableInTouchMode(true);
@@ -1869,7 +1875,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
             TextView plotCount = plotLayout.findViewById(R.id.plotCount);
             EditText plotName = plotLayout.findViewById(R.id.plotName);
             int finalCount = 1 + totalPlotCount;
-            plotCount.setText("Plot " + finalCount);
+            plotCount.setText("Plot " + 1);
             LinearLayout plotDelete = plotLayout.findViewById(R.id.deletePlot);
             plotDelete.setVisibility(View.GONE);
             bindPlotDelete(plotDelete);
@@ -2498,7 +2504,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                         polygon = true;
                         enableFarmPolygon(v);
                         
-                    } else if (recordedLng != null && recordedLng.getText().equals("polygon_history")) {
+                    } /*else if (recordedLng != null && recordedLng.getText().equals("polygon_history")) {
                         // check internet connection
                         if (InternetConnectionHelper.isInternetAvailable(context)) {
                             if (hasRequiredPermissions(context)) {
@@ -2515,7 +2521,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                         } else {
                             showToast(context, "No internet connection");
                         }
-                    }
+                    }*/
                     //Ticket-OFISDM-39 newly added
                     else if(recordedLng != null && recordedLng.getText().equals("diagnostic")){
                         Constants.MODULE_ID = subModuleTv.getText().toString();
