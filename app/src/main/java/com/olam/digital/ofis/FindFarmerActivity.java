@@ -23,7 +23,6 @@ import android.widget.TextView;
 
 import com.androidbuts.multispinnerfilter.KeyPairBoolData;
 import com.androidbuts.multispinnerfilter.MultiSpinnerListener;
-import com.androidbuts.multispinnerfilter.MultiSpinnerSearch;
 import com.olam.digital.ofis.Common.Adapter.MultiSelectionAdapter;
 import com.olam.digital.ofis.Common.Model.MultiSpinnerStatus;
 import com.olam.digital.ofis.matoma.MatomoHelper;
@@ -33,6 +32,7 @@ import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.Certifications;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.Partners;
 import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.Programme;
+import com.olam.digital.ofis.MultiSpinnerSearch;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -295,6 +295,7 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
         regionSpinner.setItems(regionStatus, new MultiSpinnerListener() {
             @Override
             public void onItemsSelected(List<KeyPairBoolData> items) {
+                selectedRegions.clear();
                 for (int i = 0; i < items.size(); i++) {
                     if (items.get(i).isSelected()) {
 //                        Log.i(TAG, i + " : " + items.get(i).getName() + " : " + items.get(i).isSelected());
@@ -302,8 +303,9 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
                     }else {
                         selectedRegions.remove(selectedRegions.indexOf(Integer.parseInt(String.valueOf(items.get(i).getId()))));
                     }
-                    doSearch();
+
                 }
+                doSearch();
             }
         });
     }
@@ -338,6 +340,7 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
         districtSpinner.setItems(districtStatus, new MultiSpinnerListener() {
             @Override
             public void onItemsSelected(List<KeyPairBoolData> items) {
+                selectedDistricts.clear();
                 for (int i = 0; i < items.size(); i++) {
                     if (items.get(i).isSelected()) {
 //                        Log.i(TAG, i + " : " + items.get(i).getName() + " : " + items.get(i).isSelected());
@@ -345,8 +348,8 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
                     }else {
                         selectedDistricts.remove(selectedDistricts.indexOf(Integer.parseInt(String.valueOf(items.get(i).getId()))));
                     }
-                    doSearch();
                 }
+                doSearch();
             }
         });
     }
@@ -381,6 +384,7 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
         placeSpinner.setItems(placeStatus, new MultiSpinnerListener() {
             @Override
             public void onItemsSelected(List<KeyPairBoolData> items) {
+                selectedPlaces.clear();
                 for (int i = 0; i < items.size(); i++) {
                     if (items.get(i).isSelected()) {
 //                        Log.i(TAG, i + " : " + items.get(i).getName() + " : " + items.get(i).isSelected());
@@ -388,8 +392,8 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
                     }else {
                         selectedPlaces.remove(selectedPlaces.indexOf(Integer.parseInt(String.valueOf(items.get(i).getId()))));
                     }
-                    doSearch();
                 }
+                doSearch();
             }
         });
     }
@@ -410,6 +414,7 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
             partnerSpinner.setItems(partnerStatus, new MultiSpinnerListener() {
                 @Override
                 public void onItemsSelected(List<KeyPairBoolData> items) {
+                    selectedPartners.clear();
                     for (int i = 0; i < items.size(); i++) {
                         if (items.get(i).isSelected()) {
 //                        Log.i(TAG, i + " : " + items.get(i).getName() + " : " + items.get(i).isSelected());
@@ -417,8 +422,8 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
                         }else {
                             selectedPartners.remove(selectedPartners.indexOf(Integer.parseInt(String.valueOf(items.get(i).getId()))));
                         }
-                        doSearch();
                     }
+                    doSearch();
                 }
             });
         }
@@ -441,6 +446,7 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
             programSpinner.setItems(programStatus, new MultiSpinnerListener() {
                 @Override
                 public void onItemsSelected(List<KeyPairBoolData> items) {
+                    selectedProgrammes.clear();
                     for (int i = 0; i < items.size(); i++) {
                         if (items.get(i).isSelected()) {
 //                        Log.i(TAG, i + " : " + items.get(i).getName() + " : " + items.get(i).isSelected());
@@ -448,8 +454,8 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
                         }else {
                             selectedProgrammes.remove(selectedProgrammes.indexOf(Integer.parseInt(String.valueOf(items.get(i).getId()))));
                         }
-                        doSearch();
                     }
+                    doSearch();
                 }
             });
         }
@@ -486,6 +492,7 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
         farmerGroupSpinner.setItems(farmerGroupStatus, new MultiSpinnerListener() {
             @Override
             public void onItemsSelected(List<KeyPairBoolData> items) {
+                selectedFarmerGroups.clear();
                 for (int i = 0; i < items.size(); i++) {
                     if (items.get(i).isSelected()) {
 //                        Log.i(TAG, i + " : " + items.get(i).getName() + " : " + items.get(i).isSelected());
@@ -493,8 +500,8 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
                     }else {
                         selectedFarmerGroups.remove(selectedFarmerGroups.indexOf(Integer.parseInt(String.valueOf(items.get(i).getId()))));
                     }
-                    doSearch();
                 }
+                doSearch();
             }
         });
     }
@@ -528,6 +535,7 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
         sectionSpinner.setItems(sectionStatus, new MultiSpinnerListener() {
             @Override
             public void onItemsSelected(List<KeyPairBoolData> items) {
+                selectedSections.clear();
                 for (int i = 0; i < items.size(); i++) {
                     if (items.get(i).isSelected()) {
 //                        Log.i(TAG, i + " : " + items.get(i).getName() + " : " + items.get(i).isSelected());
@@ -535,8 +543,8 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
                     }else {
                         selectedSections.remove(selectedSections.indexOf(Integer.parseInt(String.valueOf(items.get(i).getId()))));
                     }
-                    doSearch();
                 }
+                doSearch();
             }
         });
     }
@@ -555,6 +563,7 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
             certificationSpinner.setItems(certificationStatus, new MultiSpinnerListener() {
                 @Override
                 public void onItemsSelected(List<KeyPairBoolData> items) {
+                    selectedCertifications.clear();
                     for (int i = 0; i < items.size(); i++) {
                         if (items.get(i).isSelected()) {
 //                        Log.i(TAG, i + " : " + items.get(i).getName() + " : " + items.get(i).isSelected());
@@ -562,8 +571,8 @@ public class FindFarmerActivity extends BaseListActivity implements AdapterView.
                         }else {
                             selectedCertifications.remove(selectedCertifications.indexOf(Integer.parseInt(String.valueOf(items.get(i).getId()))));
                         }
-                        doSearch();
                     }
+                    doSearch();
                 }
             });
         }else{
