@@ -548,7 +548,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
             subDistrictInfo.setText(dl.getSubDistrictName(Integer.parseInt(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_SUBDISTRICTID)))));
             placeInfo.setText(dl.getPlaceName(Integer.parseInt(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID)))));
             fgInfo.setText(dl.getFGName(Integer.parseInt(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID)))));
-            sectionInfo.setText(dl.getSectionName(Integer.parseInt(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID)))));
+            sectionInfo.setText(dl.getSectionName(Integer.parseInt(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID)))));
             JSONObject submittedModules;
             try {
 
