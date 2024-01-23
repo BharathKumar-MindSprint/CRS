@@ -218,6 +218,9 @@ public class DataLayer {
      * @param plotGeoData plot geo data json
      */
     public void updatePlotGeoData(String farmerId, String plotName, String plotGeoData, String enteredPlotName) {
+        String whereClause = OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_NAME + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(plotName)};
+        db.delete(OFISDBContract.PlotGeoData.TABLE_NAME, whereClause, whereArgs);
 
         ContentValues plotGeoValues = new ContentValues();
         plotGeoValues.put(OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_NAME, plotName);
