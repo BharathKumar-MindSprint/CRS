@@ -1813,8 +1813,9 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
             recordPolygonIntent.putExtra(FARM_ID, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
             recordPolygonIntent.putExtra(OLAM_FARMER_ID, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
             recordPolygonIntent.putExtra(FARMER_NAME, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME)));
-            recordPolygonIntent.putExtra(PLOT_COUNT, count);
-            recordPolygonIntent.setAction(Intent.ACTION_DEFAULT);
+            int totalCount = dl.fetchPlotTotalCount(String.valueOf(farmerId));
+            recordPolygonIntent.putExtra(PLOT_COUNT, totalCount);
+            SharedPreferenceUtils.getInstance(getApplicationContext()).setPlotCount("" + strFarmID, totalCount);
             recordPolygonIntent.setAction(Intent.ACTION_DEFAULT);
             startActivity(recordPolygonIntent);
         }
