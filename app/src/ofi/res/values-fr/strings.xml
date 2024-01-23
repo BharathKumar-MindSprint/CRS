@@ -1075,5 +1075,6 @@ Conformément aux Nevada Revised Statutes Chapter 603A et Maine Revised Statutes
     <string name="metrics">Métrique</string>
     <string name="no_internet_polygon">Please enable your device internet to view the already captured polygon!</string>
     <string name="edit_already_logged_plot">%1$s already Logged and Saved! Do you want to rerecord the same plot again ?</string>
+    <string name="save_polygon_alertdialog">Are you sure to save %1$s now?</string>
 
 </resources>
