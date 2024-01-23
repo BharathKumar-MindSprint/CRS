@@ -38,7 +38,6 @@
     <string name="open_application_settings_msg">Go to App Settings?</string>
     <string name="ready_to_save">%1$s ready to Save!</string>
     <string name="restart_logging">Do you want to Restart Logging?</string>
-    <string name="no_internet_polygon">Please enable your device internet to view the already captured polygon!</string>
     <string name="save_existing_logs">Save existing Logs!</string>
     <string name="already_logged_and_saved">%1$s already Logged and Saved!</string>
     <string name="try_again_later_msg">Please try again after few minutes!</string>
@@ -508,7 +507,6 @@
     <string name="updating_faceda_templates">Updating Biometric License Status</string>
     <string name="are_you_ready_to_polygon_record">Are you ready to record polygon ?</string>
     <string name="fetching_location">Fetching location</string>
-    <string name="fetching_data">Fetching Data</string>
     <string name="please_fill_farmer_name">Please fill the farmer name</string>
     <string name="please_fill_dob">Please fill the farmer date of birth</string>
     <string name="please_fill_the">please select the place</string>
@@ -1115,4 +1113,6 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="alert_review_hint">Please enter the value within the range %1$d-%2$d</string>
     <string name="range_hint_A_R">Range : %1$d-%2$d</string>
     <string name="metrics">Metrics</string>
+    <string name="no_internet_polygon">Please enable your device internet to view the already captured polygon!</string>
+    <string name="edit_already_logged_plot">%1$s already Logged and Saved! Do you want to rerecord the same plot again ?</string>
 </resources>

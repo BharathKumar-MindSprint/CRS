@@ -97,6 +97,7 @@ import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.PolygonH
 import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.PolygonPlotHistory;
 import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.list.PolygonHistoryDataList;
 
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -800,7 +801,8 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                 }
 
             } else {
-                showToastMessage(getResources().getString(R.string.already_logged_and_saved, currentTrackname));
+//                showToastMessage(getResources().getString(R.string.already_logged_and_saved, currentTrackname));
+                editPlotAlertDialog();
             }
 
             /**
@@ -871,10 +873,31 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                     if (mIsGPSLocationAvailable) {
                         dismissProgressDialog();
                         if (!mIsLoggingStarted) {
-                            if (checkPreviousPlotEntryExistInPreference() || (currentTrackname.equals(previousTrackname)))
-                                showPlotLocationConfirmDialog(currentTrackname);
-                            else
-                                showToastMessage(getResources().getString(R.string.previous_plot_not_recorded_msg, getLastLoggedPlotFromPreference()));
+                            DataLayer dl = new DataLayer(getResources(), RecordPolygonActivity.this);
+                            int farmPlotCount = dl.fetchSyncedPlotCountByFarmerID(String.valueOf(mFarmerId));
+                            if(farmPlotCount == 0) {
+                                if (checkPreviousPlotEntryExistInPreference() || (currentTrackname.equals(previousTrackname)))
+                                    showPlotLocationConfirmDialog(currentTrackname);
+                                else
+                                    showToastMessage(getResources().getString(R.string.previous_plot_not_recorded_msg, getLastLoggedPlotFromPreference()));
+                            }else{
+                                int loggedPlotCount = getTotalLoggedPlotCount() ;
+                                int actualPlot = Integer.parseInt(StringUtils.split(currentTrackname)[1]);
+                                if(loggedPlotCount == 0 ){
+                                    if(actualPlot == farmPlotCount + 1){
+                                        showPlotLocationConfirmDialog(currentTrackname);
+                                    }else{
+                                        showToastMessage(getResources().getString(R.string.previous_plot_not_recorded_msg, "Plot " + (farmPlotCount+1)));
+                                    }
+                                }else{
+                                    int i = loggedPlotCount + farmPlotCount;
+                                    if(i+1 == actualPlot){
+                                        showPlotLocationConfirmDialog(currentTrackname);
+                                    }else{
+                                        showToastMessage(getResources().getString(R.string.previous_plot_not_recorded_msg, "Plot " + (i+1)));
+                                    }
+                                }
+                            }
                         } else {
                             if (mLocationBeanList.size() > 0) {
                                 showToastMessage(getResources().getString(R.string.ready_to_save, currentTrackname).trim().toUpperCase());
@@ -1416,7 +1439,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
             else
                 previousTrackname = getResources().getString(R.string.plot, position);
         }else if (farmPlotCount > 0){
-            if (position+1 == farmPlotCount)
+            if (position == farmPlotCount + 1 )
                 previousTrackname = getResources().getString(R.string.plot, (position + 1));
             else
                 previousTrackname = getResources().getString(R.string.plot, position);
@@ -2533,4 +2556,41 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
             mapController.setCenter(plotPoints.get(0));
         }
     }
+
+    private void editPlotAlertDialog(){
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setCancelable(false);
+        LayoutInflater inflater = this.getLayoutInflater();
+        View dialogView= inflater.inflate(R.layout.common_alert_dialog, null);
+        builder.setView(dialogView);
+        TextView tvMsg=(TextView)dialogView.findViewById(R.id.tv_msg);
+        tvMsg.setText(getResources().getString(R.string.edit_already_logged_plot, currentTrackname));
+        Button btnNo = (Button)dialogView.findViewById(R.id.btn_no);
+        btnNo.setText(getResources().getString(R.string.no));
+        Button btnYes = (Button)dialogView.findViewById(R.id.btn_yes);
+        btnYes.setText(getResources().getString(R.string.yes));
+        AlertDialog alert = builder.create();
+
+        btnYes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                areaInfo.setText("");
+                alert.dismiss();
+            }
+        });
+        btnNo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SharedPreferenceUtils.getInstance(getApplicationContext()).removePlotUsingKey(currentTrackname);
+                initiateLogging();
+                alert.dismiss();
+            }
+        });
+        alert.show();
+
+
+
+    }
+
 }
