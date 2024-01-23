@@ -1131,7 +1131,7 @@ class OFISDB extends SQLiteOpenHelper {
 
     }
 
-    private void migrateFromVersionBelow150(SQLiteDatabase sqLiteDatabase){
+  /*  private void migrateFromVersionBelow150(SQLiteDatabase sqLiteDatabase){
         try {
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.QuestionEntry.TABLE_NAME +" ADD COLUMN " + OFISDBContract.QuestionEntry.COLUMN_NAME_METRIC +" TEXT default null");
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.AnswerEntry.TABLE_NAME +" ADD COLUMN " + OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_METRIC_GLOBAL_ID +" TEXT default null");
@@ -1140,7 +1140,7 @@ class OFISDB extends SQLiteOpenHelper {
         }catch (Exception e){
             e.printStackTrace();
         }
-    }
+    }*/
 
     private void droptables(SQLiteDatabase sqLiteDatabase) {
         sqLiteDatabase.execSQL("drop table IF EXISTS modules;");

@@ -268,6 +268,14 @@ public class DataLayer {
         return data;
     }
 
+    public Cursor fetchAllPlotIds(String id) {
+        String[] columns = new String[]{"*"};
+        String whereClause = OFISDBContract.PlotEntry.COLUMN_NAME_FARMER_ID + " = ? ";
+        String[] whereArgs = new String[]{String.valueOf(id)};
+        Cursor data = db.query(OFISDBContract.PlotEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+        return data;
+    }
+
     public Cursor syncedPlotIds(String id) {
         String[] columns = new String[]{"*"};
         String whereClause = OFISDBContract.PlotEntry.COLUMN_NAME_FARMER_ID + " = ? AND " + OFISDBContract.PlotEntry.COLUMN_IS_SYNCED + " == ? ";
@@ -334,6 +342,11 @@ public class DataLayer {
 
     }
     public void insertNewPlot(String farmerId, ArrayList<String> allPlotValues) {
+        Cursor plotIdsSynced = syncedPlotIds(farmerId);
+        int existingPlots = 0;
+        if (plotIdsSynced.getCount() > 0) {
+            existingPlots = plotIdsSynced.getCount();
+        }
         if(allPlotValues.size() > 0){
             String whereClause = OFISDBContract.PlotEntry.COLUMN_NAME_FARMER_ID + " = ? AND "
                                     + OFISDBContract.PlotEntry.COLUMN_IS_SYNCED + " = ? ";
@@ -342,17 +355,19 @@ public class DataLayer {
             db.delete(OFISDBContract.PlotEntry.TABLE_NAME, whereClause, whereArgs);
         }
         for(int i=0; i<allPlotValues.size(); i++) {
-            Long tsLong = System.currentTimeMillis()/1000;
-            int tempval = (int) (tsLong + allPlotValues.size() + i);
-            ContentValues plotValues = new ContentValues();
-            plotValues.put(OFISDBContract.PlotEntry.COLUMN_NAME_FARMER_ID, farmerId);
-            plotValues.put(OFISDBContract.PlotEntry.COLUMN_IS_SYNCED, "0");
-            plotValues.put(OFISDBContract.PlotEntry.COLUMN_NAME_PLOT_NAME, allPlotValues.get(i));
-            plotValues.put(OFISDBContract.PlotEntry.COLUMN_NAME_ID, tempval);
-            long plotGeoDBInsert = db.insert(OFISDBContract.PlotEntry.TABLE_NAME, null, plotValues);
+            if(i >= existingPlots) {
+                Long tsLong = System.currentTimeMillis() / 1000;
+                int tempval = (int) (tsLong + allPlotValues.size() + i);
+                ContentValues plotValues = new ContentValues();
+                plotValues.put(OFISDBContract.PlotEntry.COLUMN_NAME_FARMER_ID, farmerId);
+                plotValues.put(OFISDBContract.PlotEntry.COLUMN_IS_SYNCED, "0");
+                plotValues.put(OFISDBContract.PlotEntry.COLUMN_NAME_PLOT_NAME, allPlotValues.get(i));
+                plotValues.put(OFISDBContract.PlotEntry.COLUMN_NAME_ID, tempval);
+                long plotGeoDBInsert = db.insert(OFISDBContract.PlotEntry.TABLE_NAME, null, plotValues);
 
-            if (plotGeoDBInsert == -1) {
-                Log.e(TAG, "Error to insert data into the PlotEntry DB");
+                if (plotGeoDBInsert == -1) {
+                    Log.e(TAG, "Error to insert data into the PlotEntry DB");
+                }
             }
         }
     }

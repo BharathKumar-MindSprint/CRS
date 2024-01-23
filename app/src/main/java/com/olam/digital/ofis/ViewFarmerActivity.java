@@ -1724,8 +1724,10 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 public void onClick(View view) {
 //                    String lPlotCountString = edTxtNumberOfPlots.getText().toString();
                     String farmerID = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID));
+
                     ArrayList<String> plotNames = getAllPlotValues();
-                    dl.insertNewPlot(farmerID,plotNames);
+                    dl.insertNewPlot(farmerID, plotNames);
+
                     /*String lPlotCountString = "1";
                     int lPlotCount = 0;
                     if (!TextUtils.isEmpty(lPlotCountString)) {
@@ -1763,7 +1765,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
 
     private void loadPlotLayout() {
         plotList.removeAllViews();
-        Cursor plotIds = dl.fetchPlotids(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)));
+        Cursor plotIds = dl.fetchAllPlotIds(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)));
         Cursor plotIdsSynced = dl.syncedPlotIds(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)));
 
         /*if (plotIdsSynced.getCount() > 0){
@@ -1788,6 +1790,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 LinearLayout plotDelete = plotLayout.findViewById(R.id.deletePlot);
                 plotCount.setText("Plot " + i);
                 String name = plotIds.getString(plotIds.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_PLOT_NAME));
+                String isSynced = plotIds.getString(plotIds.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_IS_SYNCED));
                 if(! name.equalsIgnoreCase("null")){
                     plotName.setText(name);
                 }
@@ -1796,6 +1799,9 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                     plotDelete.setVisibility(View.INVISIBLE);
                 }else{
                     plotDelete.setVisibility(View.VISIBLE);
+                }
+                if(isSynced.equalsIgnoreCase("1")){
+                    plotDelete.setVisibility(View.INVISIBLE);
                 }
 
                 plotName.setFocusableInTouchMode(true);
