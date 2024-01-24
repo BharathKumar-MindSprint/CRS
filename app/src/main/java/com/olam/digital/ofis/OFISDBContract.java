@@ -1477,6 +1477,7 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_PLOT_ID = "plot_id";
         public static final String COLUMN_NAME_CERTIFICATION_ID = "certificationIds";
         public static final String COLUMN_NAME_CERTIFICATION_TEXT = "certificationText";
+        public static final String COLUMN_NAME_PLOT_NAME = "plotName";
 
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
@@ -1529,6 +1530,7 @@ public class OFISDBContract {
                     add(COLUMN_NAME_PLOT_ID);
                     add(COLUMN_NAME_CERTIFICATION_ID);
                     add(COLUMN_NAME_CERTIFICATION_TEXT);
+                    add(COLUMN_NAME_PLOT_NAME);
                 }}
         );
 

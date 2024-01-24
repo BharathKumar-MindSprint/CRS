@@ -1671,7 +1671,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                 }catch (Exception e){}
                 try {
                     String plotallLocations = prepareJsonServerSync();
-                    saveToSyncDatabase(plotallLocations);
+                    saveToSyncDatabase(plotallLocations, plotId);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -1783,11 +1783,11 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
     public void onNothingSelected(AdapterView<?> parent) {
     }
 
-    void saveToSyncDatabase(String plotsJson) {
+    void saveToSyncDatabase(String plotsJson , String plotId) {
         DataLayer dl = new DataLayer(getResources(), RecordPolygonActivity.this);
         if (plotsJson != null) {
             plotsJson = Base64.encodeToString(plotsJson.getBytes(), Base64.NO_WRAP);
-            dl.updateFarmPolygon(mFarmerId, plotsJson, mOlamFarmerId, mFarmerName);
+            dl.updateFarmPolygon(mFarmerId, plotsJson, mOlamFarmerId, mFarmerName, plotId);
         }
     }
 
@@ -2436,8 +2436,8 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                     });
 
                     // Zoom the MapView to the current location
-                    map.getController().animateTo(currentLocation);
-                    map.getController().setZoom(20.0);
+//                    map.getController().animateTo(currentLocation);
+//                    map.getController().setZoom(20.0);
                 } else {
                     // No last known location is available
                     Log.d("Location", "No last known location available.");
@@ -2455,6 +2455,11 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
             @Override
             public void onResponse(Call<PolygonHistoryResponseModel> call, Response<PolygonHistoryResponseModel> response) {
                 if (response.isSuccessful() && response.body() != null) {
+                    ProgressDialog pd = new ProgressDialog(RecordPolygonActivity.this);
+                    pd.setCancelable(false);
+                    pd.setIndeterminate(false);
+                    pd.setMessage(getResources().getString(R.string.fetching_data));
+                    pd.show();
                     try {
                         db = OFISRoomDB.getDbInstance(getApplicationContext());
                         if (response.body() != null ) {
@@ -2488,6 +2493,8 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                             }
                             int plotId = getPlotId(position);
                             plotGraphInMap(plotId);
+                            getFarmLocation();
+                            getLastLocation();
                         }else {
                             try {
                                 Log.d("FailureMessage", "Error response body: " + response.errorBody().string());
@@ -2500,6 +2507,13 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                     }catch (Exception e){
                         e.printStackTrace();
                     }
+
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            pd.dismiss();
+                        }
+                    }, 2000);
 
                 }else {
                     try {
@@ -2575,10 +2589,13 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
         btnYes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                String plotName = currentTrackname.toLowerCase().replace(" ", "").toString().concat("_" + mOlamFarmerId);
                 SharedPreferenceUtils.getInstance(getApplicationContext()).removePlotUsingKey(currentTrackname);
                 if (polygon != null) {
                     map.getOverlays().remove(polygon);
                 }
+                DataLayer dl = new DataLayer(getResources(), RecordPolygonActivity.this);
+                dl.deletePlotDataFromNetworkQueue(plotName);
                 initiateLogging();
 
                 alert.dismiss();
