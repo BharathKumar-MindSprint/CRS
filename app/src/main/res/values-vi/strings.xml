@@ -652,8 +652,8 @@
     <string name="spinner_programme_default">Chương trình</string>
     <string name="metrics">Metrics</string>
     <string name="view_farmer_information"><u>View Farmer Information</u></string>
-    <string name="no_internet_polygon">Please enable your device internet to view the already captured polygon!</string>
-    <string name="edit_already_logged_plot">%1$s already Logged and Saved! Do you want to rerecord the same plot again ?</string>
-    <string name="save_polygon_alertdialog">Are you sure to save %1$s now?</string>
+    <string name="no_internet_polygon">Vui lòng kích hoạt internet thiết bị của bạn để xem đa giác đã được chụp!</string>
+    <string name="edit_already_logged_plot">%1$s đã được ghi lại và lưu! Bạn có muốn ghi lại cùng một cốt truyện một lần nữa không?</string>
+    <string name="save_polygon_alertdialog">Bạn có chắc chắn lưu %1$s bây giờ không?</string>
 
 </resources>
