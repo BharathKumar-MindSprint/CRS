@@ -160,7 +160,7 @@ public class DataLayer {
         return db.query(OFISDBContract.SectionsEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
     }
 
-    public int updateFarmPolygon(long farmerId, String plotJson, String olamFarmerId, String farmerName) {
+    public int updateFarmPolygon(long farmerId, String plotJson, String olamFarmerId, String farmerName, String plotId) {
         int updated;
         ContentValues values = new ContentValues();
         values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_FARM_PLOTS, plotJson);
@@ -203,6 +203,7 @@ public class DataLayer {
                 nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_RECORDED_PLOTS, plotJson);
                 nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT, timestamp.toString());
                 nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPDATED_AT, timestamp.toString());
+                nqiValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PLOT_NAME, plotId);
                 insertNetworkQueueEntry(nqiValues);
             }
         }
@@ -218,6 +219,9 @@ public class DataLayer {
      * @param plotGeoData plot geo data json
      */
     public void updatePlotGeoData(String farmerId, String plotName, String plotGeoData, String enteredPlotName) {
+        String whereClause = OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_NAME + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(plotName)};
+        db.delete(OFISDBContract.PlotGeoData.TABLE_NAME, whereClause, whereArgs);
 
         ContentValues plotGeoValues = new ContentValues();
         plotGeoValues.put(OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_NAME, plotName);
@@ -236,6 +240,16 @@ public class DataLayer {
 
         if (plotGeoDBInsert == -1) {
             Log.e(TAG, "Error to insert data into the PlotGeoData DB");
+        }
+    }
+
+    public void deletePlotDataFromNetworkQueue(String plotName){
+        try {
+            String whereClause = OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PLOT_NAME + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(plotName)};
+            db.delete(OFISDBContract.NetworkQueueEntry.TABLE_NAME, whereClause, whereArgs);
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 

@@ -985,5 +985,9 @@
     <!--    <string name="Trainee_relationships">ລູກຊາຍ/ລູກສາວຂອງຊາວກະສິກອນ</string>-->
     <!--    <string name="Trainee_relationships">ຫລານສາວ/ຫລານຊາຍຂອງຊາວກະສິກອນ</string>-->
     <string name="metrics">Metrics</string>
+    <string name="no_internet_polygon">ກະລຸນາເປີດໃຊ້ອິນເຕີເນັດອຸປະກອນຂອງທ່ານເພື່ອເບິ່ງ polygon ທີ່ບັນທຶກໄວ້ແລ້ວ! </string>
+    <string name="edit_already_logged_plot">%1$s ບັນທຶກ ແລະ ບັນທຶກແລ້ວ! ທ່ານຕ້ອງການບັນທຶກບົດເລື່ອງດຽວກັນອີກຄັ້ງບໍ? </string>
+    <string name="save_polygon_alertdialog">ທ່ານແນ່ໃຈບໍ່ວ່າປະຫຍັດ %1$s ດຽວນີ້?</string>
+
 
 </resources>

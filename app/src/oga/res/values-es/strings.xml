@@ -804,5 +804,9 @@
     <string name="alert_review_hint">Ingrese el valor dentro del rango %1$d-%2$d</string>
     <string name="range_hint_A_R">Rango: %1$d-%2$d</string>
     <string name="metrics">Métricas</string>
+    <string name="no_internet_polygon">¡Habilite Internet en su dispositivo para ver el polígono ya capturado!</string>
+    <string name="edit_already_logged_plot">¡%1$s ya han iniciado sesión y guardado! ¿Quieres volver a grabar la misma trama?</string>
+    <string name="save_polygon_alertdialog">¿Estás seguro de ahorrar %1$s ahora?</string>
+
 </resources>
 

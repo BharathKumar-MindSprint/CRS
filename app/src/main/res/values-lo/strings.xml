@@ -16,6 +16,7 @@
     <string name="title_activity_complete_module">ພາກ​ສວນ​ຂອງ​ຄຳ​ຖາມ​ທີ່​ສົມ​ບູນ</string>
     <string name="updating_local_unit_details">Downloading Local Units details</string>
 
+
     <!-- main stuff -->
     <string name="app_name">ຄູ່​ເຄືອງດັບ​ຟັງ​ຂອງ​ການ OFIS </string>
     <string name="cd_topSectionColour">ສີ​ພື້ນ​ສະ​ເພາະ​ກຸ່ມ</string>
@@ -909,5 +910,9 @@
     <string name="spinner_partner_default">ຄູ່ຮ່ວມງານ</string>
     <string name="spinner_programme_default">ໂຄງການ</string>
     <string name="metrics">Metrics</string>
+    <string name="no_internet_polygon">ກະລຸນາເປີດໃຊ້ອິນເຕີເນັດອຸປະກອນຂອງທ່ານເພື່ອເບິ່ງ polygon ທີ່ບັນທຶກໄວ້ແລ້ວ! </string>
+    <string name="edit_already_logged_plot">%1$s ບັນທຶກ ແລະ ບັນທຶກແລ້ວ! ທ່ານຕ້ອງການບັນທຶກບົດເລື່ອງດຽວກັນອີກຄັ້ງບໍ? </string>
+    <string name="save_polygon_alertdialog">ທ່ານແນ່ໃຈບໍ່ວ່າປະຫຍັດ %1$s ດຽວນີ້?</string>
+
 </resources>
 

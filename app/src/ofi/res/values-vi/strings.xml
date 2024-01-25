@@ -728,4 +728,8 @@
     <string name="alert_review_hint">Vui lòng nhập giá trị trong phạm vi %1$d-%2$d</string>
     <string name="range_hint_A_R">Phạm vi: %1$d-%2$d</string>
     <string name="metrics">Metrics</string>
+    <string name="no_internet_polygon">Vui lòng kích hoạt internet thiết bị của bạn để xem đa giác đã được chụp!</string>
+    <string name="edit_already_logged_plot">%1$s đã được ghi lại và lưu! Bạn có muốn ghi lại cùng một cốt truyện một lần nữa không?</string>
+    <string name="save_polygon_alertdialog">Bạn có chắc chắn lưu %1$s bây giờ không?</string>
+
 </resources>
