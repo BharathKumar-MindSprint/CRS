@@ -1024,6 +1024,7 @@ class OFISDB extends SQLiteOpenHelper {
             migrateFromVersionBelow150(sqLiteDatabase);
         }
 
+
         sqLiteDatabase.execSQL(OFIS_DOWNLOADED_SURVEYLIST_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_SAVED_ANSWER_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_PLOT_TABLE_CREATE);
@@ -1155,9 +1156,6 @@ class OFISDB extends SQLiteOpenHelper {
 
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.NetworkQueueEntry.TABLE_NAME +" ADD COLUMN " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PLOT_NAME +" TEXT default null");
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.PlotEntry.TABLE_NAME +" ADD COLUMN " + OFISDBContract.PlotEntry.COLUMN_NAME_CREATED_AT +" TEXT default null");
-
-
-
         }catch (Exception e){
             e.printStackTrace();
         }
