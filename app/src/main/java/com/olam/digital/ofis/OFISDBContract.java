@@ -204,6 +204,7 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_ID = "id";
         public static final String COLUMN_NAME_MODULE_ID = "sipGroupId";
         //        public static final String COLUMN_NAME_POSITION = "position";
+        public static final String COLUMN_NAME_CAPTURE_SIP_POLYGON = "captureSipPolygon";
         public static final String COLUMN_NAME_NAME = "sipName";
         public static final String COLUMN_NAME_NAME_FR = "sipName_fr";
         public static final String COLUMN_NAME_NAME_ES = "sipName_es";
@@ -222,6 +223,7 @@ public class OFISDBContract {
                     add(COLUMN_NAME_ID);
                     add(COLUMN_NAME_MODULE_ID);
 //                    add(COLUMN_NAME_POSITION);
+                    add(COLUMN_NAME_CAPTURE_SIP_POLYGON);
                     add(COLUMN_NAME_NAME);
                     add(COLUMN_NAME_NAME_FR);
                     add(COLUMN_NAME_NAME_ES);

@@ -102,7 +102,7 @@ public class AddInfrastructureActivity extends BaseActivity {
 
     // for GPS location system
     private EditText gpsField;
-    private ImageButton requestLocation;
+    private ImageButton requestLocation, sip_polygon_icon;
     private Location poiLocation;
     private String recorded_lat, recorded_lng;
     private String accuracy;
@@ -223,6 +223,7 @@ public class AddInfrastructureActivity extends BaseActivity {
         villageSpinner.setVisibility(View.GONE);
 
         requestLocation = (ImageButton) findViewById(R.id.requestLocation);
+        sip_polygon_icon = (ImageButton) findViewById(R.id.sip_polygon_icon);
         if(!editMode)
             searchingGPS();
 
@@ -1026,6 +1027,12 @@ public class AddInfrastructureActivity extends BaseActivity {
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
 
                 moduleName=subModuleDTOS.get(position).getSipName().trim().toLowerCase();
+                boolean captureSipPolygon = dl.getSipPolygonById(subModuleDTOS.get(position).getId());
+                if (captureSipPolygon){
+                    sip_polygon_icon.setVisibility(View.VISIBLE);
+                }else{
+                    sip_polygon_icon.setVisibility(View.GONE);
+                }
                 MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.SPINNER_SUB_MODULES,  ScreenNameConstants.SPINNER_CHANGED);
                 if (!editMode) {
 //                    swapPoiType(i);

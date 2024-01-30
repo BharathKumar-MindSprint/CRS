@@ -1811,6 +1811,27 @@ public class DataLayer {
         return newEntry;
     }
 
+    public boolean getSipPolygonById(int id){
+        boolean captureSipPolygon = false;
+        Cursor cursor = null;
+        try {
+            String[] columns = new String[]{"*"};
+            String whereClause = OFISDBContract.SipSubGroupEntry.COLUMN_NAME_ID + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(id)};
+            cursor = db.query(OFISDBContract.SipSubGroupEntry.TABLE_NAME , columns , whereClause , whereArgs , null , null, null);
+            if(cursor != null){
+                while(cursor.moveToNext()){
+                    captureSipPolygon = Objects.equals(cursor.getString(cursor.getColumnIndex(OFISDBContract.SipSubGroupEntry.COLUMN_NAME_CAPTURE_SIP_POLYGON)), "true");
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            cursor.close();
+        }
+        return captureSipPolygon;
+    }
+
     public String getGlobalIdByQuestionId(int questionId){
         String metricId = "";
         Cursor cursor = null;
