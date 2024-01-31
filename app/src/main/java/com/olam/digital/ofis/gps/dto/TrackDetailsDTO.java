@@ -28,6 +28,11 @@ public class TrackDetailsDTO {
     private String accuracy;
     private String nationalId;
 
+
+    private int sipCategoryId;
+
+    private String sipCategoryName;
+
     public String getNationalId() {
         return nationalId;
     }
@@ -194,5 +199,21 @@ public class TrackDetailsDTO {
 
     public void setSubmittedDate(String submittedDate) {
         this.submittedDate = submittedDate;
+    }
+
+    public int getSipCategoryId() {
+        return sipCategoryId;
+    }
+
+    public void setSipCategoryId(int sipCategoryId) {
+        this.sipCategoryId = sipCategoryId;
+    }
+
+    public String getSipCategoryName() {
+        return sipCategoryName;
+    }
+
+    public void setSipCategoryName(String sipCategoryName) {
+        this.sipCategoryName = sipCategoryName;
     }
 }
