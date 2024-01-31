@@ -393,8 +393,8 @@ public class RecordSipPolygon extends AppCompatActivity {
 
         expander.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                View topSection = findViewById(R.id.topSection);
-                View saveRecording = findViewById(R.id.save_recording);
+                View topSection = findViewById(R.id.topSectionSip);
+                View saveRecording = findViewById(R.id.save_recording_sip);
                 if (topSection.getVisibility() == View.VISIBLE) {
                     topSection.setVisibility(View.GONE);
                     saveRecording.setVisibility(View.GONE);

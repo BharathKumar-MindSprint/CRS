@@ -81,7 +81,7 @@
                 <Button
                     android:id="@+id/pause_recording_sip"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:background="@drawable/selector_thirdcolor"
                     android:enabled="false"
                     android:paddingLeft="15dp"
@@ -94,21 +94,34 @@
                 <Button
                     android:id="@+id/start_stop_recording_sip"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="15dp"
-                    android:layout_marginRight="15dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
                     android:layout_weight=".3"
                     android:background="@drawable/selector_consold"
-                    android:paddingLeft="15dp"
-                    android:paddingRight="15dp"
+                    android:paddingLeft="7dp"
+                    android:paddingRight="7dp"
                     android:text="@string/start_logging_button_text"
+                    android:textColor="@color/ofis_base_font_white"
+                    android:textSize="@dimen/ofis_med_text" />
+
+                <Button
+                    android:id="@+id/delete_plot_sip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginRight="7dp"
+                    android:layout_weight=".3"
+                    android:background="@drawable/selector_consold"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:text="@string/delete_plot"
                     android:textColor="@color/ofis_base_font_white"
                     android:textSize="@dimen/ofis_med_text" />
 
 
                 <ImageView
                     android:id="@+id/recording_status_sip"
-                    android:layout_width="32dp"
+                    android:layout_width="30dp"
                     android:layout_height="match_parent"
                     android:layout_weight=".3"
                     app:srcCompat="@drawable/ic_recording_stopped"
@@ -121,7 +134,7 @@
             android:id="@+id/view_map_sip"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/topSection"
+            android:layout_below="@+id/topSectionSip"
             android:layout_marginBottom="5dp"
             android:gravity="bottom"
             android:orientation="vertical">
