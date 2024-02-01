@@ -729,5 +729,6 @@
     <string name="alert_review_hint">Lütfen aralığında bir değer girin %1$d-%2$d</string>
     <string name="range_hint_A_R">Phis̄ạy: %1$d-%2$d</string>
     <string name="metrics">วัด:</string>
+    <string name="converted_metrics">Metrik thī̀ pælng læ̂w</string>
 
 </resources>
