@@ -728,5 +728,6 @@
     <string name="alert_review_hint">Vui lòng nhập giá trị trong phạm vi %1$d-%2$d</string>
     <string name="range_hint_A_R">Phạm vi: %1$d-%2$d</string>
     <string name="metrics">Metrics:</string>
+    <string name="converted_metrics">Số liệu đã chuyển đổi</string>
 
 </resources>

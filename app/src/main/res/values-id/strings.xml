@@ -744,4 +744,5 @@
     <string name="others">Others</string>
     <string name="please_update_the_certification_of_farmer">Harap perbarui sertifikasi petani</string>
     <string name="metrics">Metrik:</string>
+    <string name="converted_metrics">Metrik yang dikonversi</string>
 </resources>

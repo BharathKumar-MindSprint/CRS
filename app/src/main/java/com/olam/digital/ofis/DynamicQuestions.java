@@ -2090,9 +2090,8 @@ public class DynamicQuestions {
         previewLayout.setOrientation(LinearLayout.VERTICAL);
         previewLayout.setPadding(16, 16, 16, 16);
 
-        // Create the first TextView with the title "Converted Metrics"
         TextView titleTextView = new TextView(context);
-        titleTextView.setText("Converted Metrics");
+        titleTextView.setText(context.getResources().getString(R.string.converted_metrics));
         titleTextView.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
@@ -3326,9 +3325,8 @@ public class DynamicQuestions {
         previewLayout.setOrientation(LinearLayout.VERTICAL);
         previewLayout.setPadding(16, 16, 16, 16);
 
-        // Create the first TextView with the title "Converted Metrics"
         TextView titleTextView = new TextView(context);
-        titleTextView.setText("Converted Metrics");
+        titleTextView.setText(context.getResources().getString(R.string.converted_metrics));
         titleTextView.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
@@ -4019,9 +4017,8 @@ public class DynamicQuestions {
         previewLayout.setOrientation(LinearLayout.VERTICAL);
         previewLayout.setPadding(16, 16, 16, 16);
 
-        // Create the first TextView with the title "Converted Metrics"
         TextView titleTextView = new TextView(context);
-        titleTextView.setText("Converted Metrics");
+        titleTextView.setText(context.getResources().getString(R.string.converted_metrics));
         titleTextView.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
@@ -4938,9 +4935,8 @@ public class DynamicQuestions {
         previewLayout.setOrientation(LinearLayout.VERTICAL);
         previewLayout.setPadding(16, 16, 16, 16);
 
-        // Create the first TextView with the title "Converted Metrics"
         TextView titleTextView = new TextView(context);
-        titleTextView.setText("Converted Metrics");
+        titleTextView.setText(context.getResources().getString(R.string.converted_metrics));
         titleTextView.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
