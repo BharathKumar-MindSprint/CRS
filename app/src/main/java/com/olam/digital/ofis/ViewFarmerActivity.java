@@ -217,7 +217,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
     ImageButton farmerPhotoActionButton;
     // Runtime Permission Request Code
     private final static int MY_PROFILE_PIC_PERMISSIONS_REQUEST = 9998;
-    private final static int REQUEST_PERMISSIONS_FOR_TIRAMISU = 25009;
+    private final static int REQUEST_PERMISSIONS_FOR_TIRAMISU = 2509;
     // Required for camera operations in order to save the image file on resume.
     private String mCurrentPhotoPath = null;
     private Uri mCapturedImageURI = null;
