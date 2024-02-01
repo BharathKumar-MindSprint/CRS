@@ -646,5 +646,5 @@
     <string name="certification_name">Tên chứng nhận</string>
     <string name="others">Others</string>
     <string name="please_update_the_certification_of_farmer">Vui lòng cập nhật chứng nhận của nông dân</string>
-    <string name="metrics">Metrics</string>
+    <string name="metrics">Metrics:</string>
 </resources>
