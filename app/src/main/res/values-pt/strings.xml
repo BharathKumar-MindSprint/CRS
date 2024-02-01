@@ -747,5 +747,5 @@
     <string name="certification_name">Nome da Certificação</string>
     <string name="others">Others</string>
     <string name="please_update_the_certification_of_farmer">Atualize a certificação do agricultor</string>
-    <string name="metrics">Métricas</string>
+    <string name="metrics">Métricas:</string>
 </resources>

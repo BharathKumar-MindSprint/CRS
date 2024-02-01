@@ -4001,7 +4001,7 @@ public class DynamicQuestions {
 
 
         TextView text = new TextView(getInstance().context);
-        text.setText("Metrics:");
+        text.setText(context.getResources().getString(R.string.metrics));
         text.setTextColor(context.getResources().getColor(R.color.weightage_bar));
         LinearLayout.LayoutParams textParams = new LinearLayout.LayoutParams(
                 0, // Width set to 0
@@ -4920,7 +4920,7 @@ public class DynamicQuestions {
 
 
         TextView text = new TextView(getInstance().context);
-        text.setText("Metrics:");
+        text.setText(context.getResources().getString(R.string.metrics));
         text.setTextColor(context.getResources().getColor(R.color.weightage_bar));
         LinearLayout.LayoutParams textParams = new LinearLayout.LayoutParams(
                 0, // Width set to 0
