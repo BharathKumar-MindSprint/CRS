@@ -3509,7 +3509,7 @@ public class NetworkLayer implements SyncAllTask.SyncAllTaskDelegate {
                         if (postResponse.isSuccessful()) {
 //                                dl.syncFarmerModule(farmerModuleId, farmerId, moduleId, submissionDate);
 
-                            dl.updateSipPlotSync(networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_SUBMODULE_ID)));
+                            dl.deleteSipPlotItem(Integer.parseInt(networkQueueItems.getString(networkQueueItems.getColumnIndex(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_SUBMODULE_ID))));
                             dl.deleteSipNetworkQueueItem(networkQueueItemId);
                             initGPSSync();
                             statusMessage = res.getString(R.string.item_synced);

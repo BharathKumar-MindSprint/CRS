@@ -3838,6 +3838,14 @@ public class DataLayer {
 
     }
 
+    public void deleteSipPlotItem(int id) {
+        String whereClause = OFISDBContract.SipPlot.COLUMN_NAME_SIP_CATEGORY_ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(id)};
+        try {
+            db.delete(OFISDBContract.SipPlot.TABLE_NAME, whereClause, whereArgs);
+        }catch (Exception e){}
+    }
+
     public void updateSyncedStatusFixed(long farmerid, long updatedFarmerId) {
         try {
             ContentValues values = new ContentValues();

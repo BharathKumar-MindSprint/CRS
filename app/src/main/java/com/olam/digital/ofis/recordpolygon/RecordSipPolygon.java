@@ -115,12 +115,14 @@ public class RecordSipPolygon extends AppCompatActivity {
 
     private int category_sip_id;
 
+    DataLayer dl;
+
     private static final String CATEGORY_NAME = "MODULE_NAME";
     private static final String SIP_NAME = "SIP_NAME";
     private static final String SIP_CATEGORY_ID = "SIP_CATEGORY_ID";
 
     TextView category_name_sip, name_sip;
-    Button start_stop_recording_sip, pause_recording_sip, bttnSave;
+    Button start_stop_recording_sip, pause_recording_sip, bttnSave, delete_plot;
     static int currentLoggingTrackSpinnerPosition = 0;
 
     protected LocationManager mLocationManager;
@@ -153,7 +155,7 @@ public class RecordSipPolygon extends AppCompatActivity {
     long mLastTime = 0; // milliseconds
     double mSpeed = 0.0; // km/h
 
-    String currentTrackname = "OFIS Track";
+    String currentTrackname = "Record Sip Plot";
     float mAzimuthAngleSpeed = 0.0f;
 
     protected boolean mTrackingMode;
@@ -207,6 +209,7 @@ public class RecordSipPolygon extends AppCompatActivity {
         mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         logger.addRecordToLog("Record polygon activity started");
         db = OFISRoomDB.getDbInstance(getApplicationContext());
+        dl = new DataLayer(getResources(),RecordSipPolygon.this);
 
         Dexter.withActivity(this)
                 .withPermission(Manifest.permission.ACCESS_FINE_LOCATION)
@@ -275,6 +278,7 @@ public class RecordSipPolygon extends AppCompatActivity {
         start_stop_recording_sip = (Button) findViewById(R.id.start_stop_recording_sip);
         pause_recording_sip = (Button) findViewById(R.id.pause_recording_sip);
         bttnSave = (Button) findViewById(R.id.save_recording_sip);
+        delete_plot = (Button) findViewById(R.id.delete_plot_sip);
 
         pause_recording_sip.setEnabled(false);
         bttnSave.setEnabled(false);
@@ -430,15 +434,72 @@ public class RecordSipPolygon extends AppCompatActivity {
         initializeLoggingVariables();
 
         try {
-            DataLayer dl = new DataLayer(getResources(), RecordSipPolygon.this);
             if (dl.getSipPlot(category_sip_id) > 0){
                 plotGraphInMap(category_sip_id);
+                delete_plot.setVisibility(View.VISIBLE);
             }
         }catch (Exception e){
             e.printStackTrace();
         }
 
+        delete_plot.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                try {
+                    editPlotAlertDialog();
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+
+            }
+        });
+
     }
+
+    private void editPlotAlertDialog(){
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setCancelable(false);
+        LayoutInflater inflater = this.getLayoutInflater();
+        View dialogView= inflater.inflate(R.layout.common_alert_dialog, null);
+        builder.setView(dialogView);
+        TextView tvMsg=(TextView)dialogView.findViewById(R.id.tv_msg);
+        tvMsg.setText(getResources().getString(R.string.delete_sip_polygon));
+        Button btnNo = (Button)dialogView.findViewById(R.id.btn_no);
+        btnNo.setText(getResources().getString(R.string.no));
+        Button btnYes = (Button)dialogView.findViewById(R.id.btn_yes);
+        btnYes.setText(getResources().getString(R.string.yes));
+        AlertDialog alert = builder.create();
+
+        btnYes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SharedPreferenceUtils.getInstance(getApplicationContext()).removePlotUsingKey(currentTrackname);
+                if (polygon != null) {
+                    map.getOverlays().remove(polygon);
+                }
+                if(mDestinationPolygon != null){
+                    map.getOverlays().remove(mDestinationPolygon);
+                }
+                dl.deleteSipPlotItem(category_sip_id);
+                delete_plot.setVisibility(View.GONE);
+//                initiateLogging();
+
+                alert.dismiss();
+            }
+        });
+        btnNo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                alert.dismiss();
+            }
+        });
+        alert.show();
+
+    }
+
 
     private void plotGraphInMap(int id){
         DataLayer dl = new DataLayer(getResources(), RecordSipPolygon.this);
@@ -452,6 +513,9 @@ public class RecordSipPolygon extends AppCompatActivity {
         if (!plotPoints.isEmpty()) {
             if (polygon != null) {
                 map.getOverlays().remove(polygon);
+            }
+            if(mDestinationPolygon != null){
+                map.getOverlays().remove(mDestinationPolygon);
             }
 
             polygon = new Polygon();
@@ -627,6 +691,7 @@ public class RecordSipPolygon extends AppCompatActivity {
             setViewOn(bb);
         }
         map.invalidate();
+        delete_plot.setVisibility(View.VISIBLE);
     }
 
     void setViewOn(BoundingBox bb) {
@@ -995,10 +1060,6 @@ public class RecordSipPolygon extends AppCompatActivity {
                                 enableSaveBtn(bttnSave);
                                 setButtonsLoggingState(false);
                             } else {
-
-
-
-
                                 showToastMessage(getResources().getString(R.string.location_not_yet_logged));
                                 pause_recording_sip.setEnabled(false);
                                 bttnSave.setEnabled(false);

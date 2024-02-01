@@ -115,6 +115,7 @@
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp"
                     android:text="@string/delete_plot"
+                    android:visibility="gone"
                     android:textColor="@color/ofis_base_font_white"
                     android:textSize="@dimen/ofis_med_text" />
 
