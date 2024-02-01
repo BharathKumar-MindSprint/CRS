@@ -1066,24 +1066,23 @@ public class AddInfrastructureActivity extends BaseActivity {
                     dynamicQuestions.answerSet.clear();
                     subModuleId = subModuleDTOS.get(position).getId();
                     getSubModuleQuestions(subModuleId);
-                        sip_polygon_icon.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                if (!poiName.getText().toString().equals("")){
-                                    Intent sipPolygonIntent = new Intent(context, RecordSipPolygon.class);
-                                    sipPolygonIntent.putExtra(CATEGORY_NAME, moduleName);
-                                    sipPolygonIntent.putExtra(SIP_NAME, poiName.getText().toString());
-                                    sipPolygonIntent.putExtra(SIP_CATEGORY_ID, subModuleDTOS.get(position).getId());
-                                    //recordPolygonIntent.setAction(Intent.ACTION_DEFAULT);
-                                    startActivity(sipPolygonIntent);
-                                }else {
-                                    Toast.makeText(AddInfrastructureActivity.this,"Please provide the Sip Name",Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        });
-
 
                 }
+                sip_polygon_icon.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (!poiName.getText().toString().equals("")){
+                            Intent sipPolygonIntent = new Intent(context, RecordSipPolygon.class);
+                            sipPolygonIntent.putExtra(CATEGORY_NAME, moduleName);
+                            sipPolygonIntent.putExtra(SIP_NAME, poiName.getText().toString());
+                            sipPolygonIntent.putExtra(SIP_CATEGORY_ID, subModuleDTOS.get(position).getId());
+                            //recordPolygonIntent.setAction(Intent.ACTION_DEFAULT);
+                            startActivity(sipPolygonIntent);
+                        }else {
+                            Toast.makeText(AddInfrastructureActivity.this,"Please provide the Sip Name",Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
             }
 
             @Override
