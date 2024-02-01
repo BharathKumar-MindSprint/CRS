@@ -1742,6 +1742,101 @@ public class DataLayer {
         boolean modurationstatus = addFarmerNationalids(context, farmerId, storeableNationalids, status, farmername);
         return modurationstatus;
     }
+    void updateCertificationsByFarmerId(long farmerId, String certificationIds, String certificationText, String farmerName) {
+        ContentValues values = new ContentValues();
+        values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_CERTIFICATION_ID, certificationIds);
+        values.put(OFISDBContract.FarmerEntry.COLUMN_NAME_CERTIFICATION_TEXT, certificationText);
+        String whereClause = OFISDBContract.FarmerEntry.COLUMN_NAME_ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(farmerId)};
+        try {
+            db.update(OFISDBContract.FarmerEntry.TABLE_NAME, values, whereClause, whereArgs);
+            updateNetworkQueueCertificationEntry(farmerId,certificationIds,certificationText,farmerName);
+        }catch (Exception e){}
+
+    }
+
+    private long updateNetworkQueueCertificationEntry(long farmerId, String certificationIds, String certificationText, String name) {
+        long newEntry;
+        ContentValues networkQueueValues = new ContentValues();
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SUBMISSION_TYPE, "certification");
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_TYPE, "certification");
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_POI_NAME, name.trim());
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_OLAM_FARMER_ID, " ");
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_ID, farmerId);
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CERTIFICATION_ID, certificationIds);
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CERTIFICATION_TEXT, certificationText);
+
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        networkQueueValues.put(OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT, timestamp.toString());
+
+        newEntry = insertNetworkQueueEntry(networkQueueValues);
+
+        return newEntry;
+    }
+
+    public String getGlobalIdByQuestionId(int questionId){
+        String metricId = "";
+        Cursor cursor = null;
+        try {
+            String[] columns = new String[]{"*"};
+            String whereClause = OFISDBContract.QuestionEntry.COLUMN_NAME_ID + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(questionId)};
+            cursor = db.query(OFISDBContract.QuestionEntry.TABLE_NAME , columns , whereClause , whereArgs , null , null, null);
+            if(cursor != null){
+                while(cursor.moveToNext()){
+                    metricId = cursor.getString(cursor.getColumnIndex(OFISDBContract.QuestionEntry.COLUMN_NAME_METRIC));
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            cursor.close();
+        }
+        return metricId;
+    }
+
+
+    public String getGlobalIdByAnswerID(int answerId){
+        String metricId = "";
+        Cursor cursor = null;
+        try {
+            String[] columns = new String[]{"*"};
+            String whereClause = OFISDBContract.AnswerEntry.COLUMN_NAME_ID + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(answerId)};
+            cursor = db.query(OFISDBContract.AnswerEntry.TABLE_NAME , columns , whereClause , whereArgs , null , null, null);
+            if(cursor != null){
+                while(cursor.moveToNext()){
+                    metricId = cursor.getString(cursor.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_METRIC_GLOBAL_ID));
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            cursor.close();
+        }
+        return metricId;
+    }
+
+    public String getLocalIdByAnswerID(int answerId){
+        String metricId = "";
+        Cursor cursor = null;
+        try {
+            String[] columns = new String[]{"*"};
+            String whereClause = OFISDBContract.AnswerEntry.COLUMN_NAME_ID + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(answerId)};
+            cursor = db.query(OFISDBContract.AnswerEntry.TABLE_NAME , columns , whereClause , whereArgs , null , null, null);
+            if(cursor != null){
+                while(cursor.moveToNext()){
+                    metricId = cursor.getString(cursor.getColumnIndex(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_METRIC_LOCAL_ID));
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            cursor.close();
+        }
+        return metricId;
+    }
 
     public String getAssignmentByFarmerTypeID(long farmerId , String assignmentTypeColumn ){
         String assignmentField="";
@@ -4029,6 +4124,31 @@ public class DataLayer {
         return status;
     }
 
+    public boolean isCertificationavailable(long farmerId) {
+        boolean status = false;
+        Cursor nids = getCertificationsbyfarmerid(farmerId);
+
+        try {
+            if (nids.getCount() > 0 ) {
+                if(nids.moveToFirst()) {
+                    String id = nids.getString(nids.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_CERTIFICATION_ID));
+                    String text = nids.getString(nids.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_CERTIFICATION_TEXT));
+                    if(id!=null || text!=null){
+                        if(!id.equals("null") || !text.equals("null")){
+                            status = true;
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            nids.close();
+        }
+
+        return status;
+    }
+
     public boolean isConsentChecked(String name) {
         boolean status = false;
         Cursor nids = getConsentStatementByName(name);
@@ -4511,6 +4631,9 @@ public class DataLayer {
                     String answer = currentAnswer.getString("answer");
                     String sub_answers = currentAnswer.optString("sub_answers");
                     int reportingYear = currentAnswer.getInt("reporting_year");
+                    int globalMetricId = currentAnswer.getInt("globalMetricId");
+                    int localMetricId = currentAnswer.getInt("localMetricId");
+                    double metricAnswer = currentAnswer.getDouble("metricAnswer");
 
                     ContentValues values = new ContentValues();
                     values.put(OFISDBContract.AnswerEntry.COLUMN_NAME_QUESTION_ID, currentQuestionId);
@@ -4545,6 +4668,9 @@ public class DataLayer {
                         values.put("answer_text", sub_answers);
                     }
                     values.put(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_REPORTING_YEAR, reportingYear);
+                    values.put(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_METRIC_GLOBAL_ID, globalMetricId);
+                    values.put(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_METRIC_LOCAL_ID, localMetricId);
+                    values.put(OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_METRIC, metricAnswer);
 
                     db.insert(OFISDBContract.AnswerEntry.TABLE_NAME, null, values);
 
@@ -9700,6 +9826,14 @@ public class DataLayer {
                 nqi.close();
         }
         return (nqicount > 0);
+    }
+
+    public Cursor getCertificationsbyfarmerid(long farmerid) {
+        String[] columns = new String[]{OFISDBContract.FarmerEntry.COLUMN_NAME_CERTIFICATION_ID,OFISDBContract.FarmerEntry.COLUMN_NAME_CERTIFICATION_TEXT};
+        String whereClause = OFISDBContract.FarmerEntry.COLUMN_NAME_ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(farmerid)};
+        String orderBy = OFISDBContract.FarmerEntry.COLUMN_NAME_ID + " ASC";
+        return db.query(OFISDBContract.FarmerEntry.TABLE_NAME, columns, whereClause, whereArgs, null, null, orderBy);
     }
 }
 

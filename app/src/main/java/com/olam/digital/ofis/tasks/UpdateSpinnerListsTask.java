@@ -2,16 +2,25 @@ package com.olam.digital.ofis.tasks;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.util.Log;
 
 import com.google.firebase.crash.FirebaseCrash;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.olam.digital.ofis.OFISDBContract;
 import com.olam.digital.ofis.R;
 import com.olam.digital.ofis.Utilities;
 import com.olam.digital.ofis.gps.utils.GPSConstants;
+import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
+import com.olam.digital.ofis.mvvmmodule.roomdb.dbpojo.Certifications;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by ben on 24/02/16.
@@ -23,6 +32,7 @@ class UpdateSpinnerListsTask extends DatabaseTask {
 
     public UpdateSpinnerListsTask(Context context, ProgressDialog pd) {
         super(context);
+        Log.e("UpdateSpinnerListsTask:","inside cons");
         this.pd = pd;
         pd = Utilities.updateProgressDialog(pd, 0, 0, context.getString(R.string.data_initialization));
     }
@@ -37,6 +47,7 @@ class UpdateSpinnerListsTask extends DatabaseTask {
     protected String doInBackground(JSONObject... params) {
 
         try {
+            Log.e("UpdateSpinnerListsTask:","inside doin");
 
             JSONObject spinnerResponse = params[0];
 
@@ -46,7 +57,7 @@ class UpdateSpinnerListsTask extends DatabaseTask {
 
                 // get the various sub lists
                 JSONArray countryArray, regionArray, districtArray, placeArray, farmergroupArray, sectionArray, productArray, subdistrictArray;
-                
+                List<Certifications> certificationsList = new ArrayList<>();
 
                 try {
                     countryArray = response.getJSONArray(OFISDBContract.CountriesEntry.TABLE_NAME);
@@ -105,6 +116,30 @@ class UpdateSpinnerListsTask extends DatabaseTask {
                     fillTable(productArray, OFISDBContract.ProductsEntry.TABLE_NAME, OFISDBContract.ProductsEntry.COLUMN_LIST);
                 } catch (JSONException e) {
                     FirebaseCrash.report(new Exception("UpdateSpinnerListsTask: Error filling products table", e));
+                    e.printStackTrace();
+                }
+                try {
+                    Log.e("UpdateSpinnerListsTask:","inside try");
+                    Gson gson = new Gson();
+                    JSONArray certificationsArray=null;
+                    if(!response.isNull("certifications")){
+                        certificationsArray = response.getJSONArray("certifications");
+
+                    }
+                    OFISRoomDB roomDB = OFISRoomDB.getDbInstance(context);
+                    roomDB.certificationsDao().deleteAll();
+                    if(certificationsArray!=null) {
+                        Type type = new TypeToken<List<Certifications>>() {
+                        }.getType();
+                        certificationsList = gson.fromJson(String.valueOf(certificationsArray), type);
+                        Log.e("UpdateSpinnerListsTask:", "certificationsList");
+//                    certificationsArray = response.getJSONArray(Certifications.class.getSimpleName());
+                        roomDB.certificationsDao().insertAll(certificationsList);
+                    }
+//                    fillTable(productArray, OFISDBContract.ProductsEntry.TABLE_NAME, OFISDBContract.ProductsEntry.COLUMN_LIST);
+                } catch (JSONException e) {
+                    Log.e("UpdateSpinnerListsTask:","inside catch");
+                    FirebaseCrash.report(new Exception("UpdateSpinnerListsTask: Error filling Certification table", e));
                     e.printStackTrace();
                 }
             }

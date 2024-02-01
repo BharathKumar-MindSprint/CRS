@@ -17,12 +17,13 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
-    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO"/>
-    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO"/>
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
+    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
     <uses-permission
         android:name="android.permission.WRITE_SETTINGS"
         android:maxSdkVersion="22" />
+
     <uses-feature
         android:name="android.hardware.Camera"
         android:required="true" />
@@ -33,7 +34,7 @@
         android:required="false" />
 
     <application
-        android:name="com.olam.digital.ofis.EnableMultiDex"
+        android:name=".EnableMultiDex"
         android:allowBackup="false"
         android:hardwareAccelerated="false"
         android:icon="@drawable/ic_launcher"
@@ -45,7 +46,16 @@
         android:theme="@style/AppCompactTheme"
         tools:ignore="GoogleAppIndexingWarning,UnusedAttribute"
         tools:replace="android:supportsRtl,android:allowBackup,android:theme">
-
+        <activity
+            android:name=".AddCertificationsActivity"
+            android:label="@string/update_certification"
+            android:parentActivityName=".ViewFarmerActivity"
+            android:screenOrientation="portrait"
+            tools:ignore="UnusedAttribute">
+        <meta-data
+            android:name="android.support.PARENT_ACTIVITY"
+            android:value=".ViewFarmerActivity" />
+        </activity>
         <activity
             android:name=".ManageTrainingRecords.Records"
             android:exported="false"
@@ -82,7 +92,6 @@
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
-
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_channel_id"
             android:resource="@drawable/ic_notification_icon" />
@@ -91,21 +100,21 @@
             android:resource="@color/ofis_poi_screen_top_background_school" />
 
         <service
-            android:name="com.olam.digital.ofis.companionFirebaseInstanceIdService"
+            android:name=".companionFirebaseInstanceIdService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
         <service
-            android:name="com.olam.digital.ofis.companionFirebaseMessagingService"
+            android:name=".companionFirebaseMessagingService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
         <service
-            android:name="com.olam.digital.ofis.tasks.AuthenticatorService"
+            android:name=".tasks.AuthenticatorService"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator" />
@@ -116,7 +125,7 @@
                 android:resource="@xml/authenticator" />
         </service>
         <service
-            android:name="com.olam.digital.ofis.SyncService"
+            android:name=".SyncService"
             android:exported="false"
             android:process=":sync">
             <intent-filter>
@@ -129,7 +138,7 @@
         </service>
 
         <provider
-            android:name="com.olam.digital.ofis.tasks.StubProvider"
+            android:name=".tasks.StubProvider"
             android:authorities="${applicationId}.provider"
             android:exported="false"
             android:syncable="true" />
@@ -144,7 +153,7 @@
         </provider>
 
         <activity
-            android:name="com.olam.digital.ofis.HomeActivity"
+            android:name=".HomeActivity"
             android:exported="true"
             android:label="@string/applicationName"
             android:screenOrientation="portrait">
@@ -155,13 +164,13 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.olam.digital.ofis.SettingsActivity"
+            android:name=".SettingsActivity"
             android:label="@string/title_activity_settings"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.olam.digital.ofis.AddFarmerActivity"
+            android:name=".AddFarmerActivity"
             android:label="@string/title_activity_add_farmer"
-            android:parentActivityName="com.olam.digital.ofis.HomeActivity"
+            android:parentActivityName=".HomeActivity"
             android:screenOrientation="portrait"
             tools:ignore="UnusedAttribute">
             <meta-data
@@ -169,9 +178,9 @@
                 android:value="com.olam.digital.ofis.HomeActivity" />
         </activity>
         <activity
-            android:name="com.olam.digital.ofis.AddInfrastructureActivity"
+            android:name=".AddInfrastructureActivity"
             android:label="@string/title_activity_add_infrastructure"
-            android:parentActivityName="com.olam.digital.ofis.HomeActivity"
+            android:parentActivityName=".HomeActivity"
             android:screenOrientation="portrait"
             tools:ignore="UnusedAttribute">
             <meta-data
@@ -179,9 +188,9 @@
                 android:value="com.olam.digital.ofis.HomeActivity" />
         </activity>
         <activity
-            android:name="com.olam.digital.ofis.FindFarmerActivity"
+            android:name=".FindFarmerActivity"
             android:label="@string/title_activity_find_farmer"
-            android:parentActivityName="com.olam.digital.ofis.HomeActivity"
+            android:parentActivityName=".HomeActivity"
             android:screenOrientation="portrait"
             tools:ignore="UnusedAttribute">
             <meta-data
@@ -189,9 +198,9 @@
                 android:value="com.olam.digital.ofis.HomeActivity" />
         </activity>
         <activity
-            android:name="com.olam.digital.ofis.ViewFarmerActivity"
+            android:name=".ViewFarmerActivity"
             android:label="@string/title_activity_view_farmer"
-            android:parentActivityName="com.olam.digital.ofis.FindFarmerActivity"
+            android:parentActivityName=".FindFarmerActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize"
             tools:ignore="UnusedAttribute">
@@ -200,9 +209,9 @@
                 android:value="com.olam.digital.ofis.FindFarmerActivity" />
         </activity>
         <activity
-            android:name="com.olam.digital.ofis.downloadsurvey.DownloadSurveyData"
+            android:name=".downloadsurvey.DownloadSurveyData"
             android:label="@string/download_survey_data"
-            android:parentActivityName="com.olam.digital.ofis.FindFarmerActivity"
+            android:parentActivityName=".FindFarmerActivity"
             android:screenOrientation="portrait"
             tools:ignore="UnusedAttribute">
             <meta-data
@@ -210,9 +219,9 @@
                 android:value="com.olam.digital.ofis.FindFarmerActivity" />
         </activity>
         <activity
-            android:name="com.olam.digital.ofis.downloadsurvey.ListDownSurveys"
+            android:name=".downloadsurvey.ListDownSurveys"
             android:label="@string/download_survey_data"
-            android:parentActivityName="com.olam.digital.ofis.FindFarmerActivity"
+            android:parentActivityName=".FindFarmerActivity"
             android:screenOrientation="portrait"
             tools:ignore="UnusedAttribute">
             <meta-data
@@ -220,9 +229,9 @@
                 android:value="com.olam.digital.ofis.FindFarmerActivity" />
         </activity>
         <activity
-            android:name="com.olam.digital.ofis.recordpolygon.RecordPolygonActivity"
+            android:name=".recordpolygon.RecordPolygonActivity"
             android:label="@string/title_activity_record_polygon"
-            android:parentActivityName="com.olam.digital.ofis.ViewFarmerActivity"
+            android:parentActivityName=".ViewFarmerActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize"
             tools:ignore="UnusedAttribute">
@@ -231,10 +240,10 @@
                 android:value="com.olam.digital.ofis.ViewFarmerActivity" />
         </activity>
         <activity
-            android:name="com.olam.digital.ofis.CompleteModuleActivity"
+            android:name=".CompleteModuleActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_complete_module"
-            android:parentActivityName="com.olam.digital.ofis.ViewFarmerActivity"
+            android:parentActivityName=".ViewFarmerActivity"
             android:screenOrientation="portrait"
             tools:ignore="UnusedAttribute">
             <meta-data
@@ -242,9 +251,9 @@
                 android:value="com.olam.digital.ofis.ViewFarmerActivity" />
         </activity>
         <activity
-            android:name="com.olam.digital.ofis.ReviewFarmManagementPlan"
+            android:name=".ReviewFarmManagementPlan"
             android:label="@string/title_activity_review_farm_management_plan"
-            android:parentActivityName="com.olam.digital.ofis.ViewFarmerActivity"
+            android:parentActivityName=".ViewFarmerActivity"
             android:screenOrientation="portrait"
             tools:ignore="UnusedAttribute">
             <meta-data
@@ -252,9 +261,9 @@
                 android:value="com.olam.digital.ofis.ViewFarmerActivity" />
         </activity>
         <activity
-            android:name="com.olam.digital.ofis.TransactionItems"
+            android:name=".TransactionItems"
             android:label="@string/ViewTransactionsTitle"
-            android:parentActivityName="com.olam.digital.ofis.HomeActivity"
+            android:parentActivityName=".HomeActivity"
             android:screenOrientation="portrait"
             tools:ignore="UnusedAttribute">
             <meta-data
@@ -262,9 +271,9 @@
                 android:value="com.olam.digital.ofis.HomeActivity" />
         </activity>
         <activity
-            android:name="com.olam.digital.ofis.BuyingAgent"
+            android:name=".BuyingAgent"
             android:label="@string/buyingagent"
-            android:parentActivityName="com.olam.digital.ofis.TransactionItems"
+            android:parentActivityName=".TransactionItems"
             android:screenOrientation="portrait"
             tools:ignore="UnusedAttribute">
             <meta-data
@@ -272,9 +281,9 @@
                 android:value="com.olam.digital.ofis.TransactionItems" />
         </activity>
         <activity
-            android:name="com.olam.digital.ofis.TransactionItem"
+            android:name=".TransactionItem"
             android:label="@string/AddTransactionItemTitle"
-            android:parentActivityName="com.olam.digital.ofis.TransactionItems"
+            android:parentActivityName=".TransactionItems"
             android:screenOrientation="portrait"
             tools:ignore="UnusedAttribute">
             <meta-data
@@ -282,7 +291,7 @@
                 android:value="com.olam.digital.ofis.TransactionItems" />
         </activity>
         <activity
-            android:name="com.olam.digital.ofis.TrainingRecords"
+            android:name=".TrainingRecords"
             android:label="@string/TrainingRecordsTitle"
             android:parentActivityName=".ManageTrainingRecords.Records"
             android:screenOrientation="portrait"
@@ -292,10 +301,10 @@
                 android:value="com.olam.digital.ofis.HomeActivity" />
         </activity>
         <activity
-            android:name="com.olam.digital.ofis.TrainingRecord"
+            android:name=".TrainingRecord"
             android:label="@string/TrainingRecordTitle"
             android:launchMode="singleTop"
-            android:parentActivityName="com.olam.digital.ofis.TrainingRecords"
+            android:parentActivityName=".TrainingRecords"
             android:screenOrientation="portrait"
             tools:ignore="UnusedAttribute">
             <meta-data
@@ -303,9 +312,9 @@
                 android:value="com.olam.digital.ofis.TrainingRecords" />
         </activity>
         <activity
-            android:name="com.olam.digital.ofis.TrainingRecordConfirmation"
+            android:name=".TrainingRecordConfirmation"
             android:label="@string/TrainingRecordConfirmationTitle"
-            android:parentActivityName="com.olam.digital.ofis.TrainingRecord"
+            android:parentActivityName=".TrainingRecord"
             android:screenOrientation="portrait"
             tools:ignore="UnusedAttribute">
             <meta-data
@@ -313,9 +322,9 @@
                 android:value="com.olam.digital.ofis.TrainingRecord" />
         </activity>
         <activity
-            android:name="com.olam.digital.ofis.TrainingAttendees"
+            android:name=".TrainingAttendees"
             android:label="@string/TrainingAttendees"
-            android:parentActivityName="com.olam.digital.ofis.TrainingRecord"
+            android:parentActivityName=".TrainingRecord"
             android:screenOrientation="portrait"
             tools:ignore="UnusedAttribute">
             <meta-data
@@ -323,9 +332,9 @@
                 android:value="com.olam.digital.ofis.TrainingRecord" />
         </activity>
         <activity
-            android:name="com.olam.digital.ofis.TrainingAttendeeScores"
+            android:name=".TrainingAttendeeScores"
             android:label="@string/TrainingAttendeeScores"
-            android:parentActivityName="com.olam.digital.ofis.TrainingRecord"
+            android:parentActivityName=".TrainingRecord"
             android:screenOrientation="portrait"
             tools:ignore="UnusedAttribute">
             <meta-data
@@ -333,16 +342,16 @@
                 android:value="com.olam.digital.ofis.TrainingRecord" />
         </activity>
         <activity
-            android:name="com.olam.digital.ofis.TasksActivity"
+            android:name=".TasksActivity"
             android:label="@string/title_activity_tasks"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.olam.digital.ofis.smartnotification.NotificationActivity"
+            android:name=".smartnotification.NotificationActivity"
             android:label="@string/notifications"
-            android:parentActivityName="com.olam.digital.ofis.HomeActivity"
+            android:parentActivityName=".HomeActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.olam.digital.ofis.childlabour.RegisterChildActivity"
+            android:name=".childlabour.RegisterChildActivity"
             android:label="@string/title_child_labour"
             android:parentActivityName=".ViewFarmerActivity"
             android:screenOrientation="portrait"
@@ -352,7 +361,7 @@
                 android:value=".ViewFarmerActivity" />
         </activity>
         <activity
-            android:name="com.olam.digital.ofis.childlabour.AddNewChildActivity"
+            android:name=".childlabour.AddNewChildActivity"
             android:label="@string/title_child_labour"
             android:parentActivityName=".childlabour.RegisterChildActivity"
             android:screenOrientation="portrait"
@@ -361,9 +370,8 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".childlabour.RegisterChildActivity" />
         </activity>
-
         <activity
-            android:name="com.olam.digital.ofis.childlabour.ChildVisitDetailActivity"
+            android:name=".childlabour.ChildVisitDetailActivity"
             android:label="@string/visit_detail"
             android:parentActivityName=".childlabour.RegisterChildActivity"
             android:screenOrientation="portrait"
@@ -373,7 +381,7 @@
                 android:value=".childlabour.RegisterChildActivity" />
         </activity>
         <activity
-            android:name="com.olam.digital.ofis.childlabour.ChildLabourDetailsActivity"
+            android:name=".childlabour.ChildLabourDetailsActivity"
             android:label="@string/child_details"
             android:parentActivityName=".ViewFarmerActivity"
             android:screenOrientation="portrait"
@@ -413,7 +421,7 @@
                 android:value=".ViewFarmerActivity" />
         </activity>
         <activity
-            android:name="com.olam.digital.ofis.childlabour.ViewChildLabourSurveyActivity"
+            android:name=".childlabour.ViewChildLabourSurveyActivity"
             android:label="@string/child_details"
             android:parentActivityName=".childlabour.ChildLabourDetailsActivity"
             android:screenOrientation="portrait"
@@ -433,7 +441,7 @@
                 android:value=".ViewFarmerActivity" />
         </activity>
         <activity
-            android:name="com.olam.digital.ofis.childlabour.ChildLabourCompleteModuleActivity"
+            android:name=".childlabour.ChildLabourCompleteModuleActivity"
             android:label="@string/child_details"
             android:parentActivityName=".childlabour.ChildLabourCompleteModuleActivity"
             android:screenOrientation="portrait"
@@ -442,13 +450,12 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".childlabour.ChildLabourCompleteModuleActivity" />
         </activity>
-
         <activity
-            android:name="com.olam.digital.ofis.PrivacyStatementActivity"
+            android:name=".PrivacyStatementActivity"
             android:label="@string/title_privacy_statement"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.olam.digital.ofis.PrivacyStatementWebViewActivity"
+            android:name=".PrivacyStatementWebViewActivity"
             android:label="@string/title_privacy_statement"
             android:screenOrientation="portrait" />
         <activity
@@ -456,9 +463,9 @@
             android:label="Add Farm Information"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.olam.digital.ofis.RegisterAdditionalTrainee"
+            android:name=".RegisterAdditionalTrainee"
             android:label="Add Attendee"
-            android:parentActivityName="com.olam.digital.ofis.HomeActivity"
+            android:parentActivityName=".HomeActivity"
             android:screenOrientation="portrait"
             tools:ignore="UnusedAttribute">
             <meta-data
@@ -466,17 +473,15 @@
                 android:value="com.olam.digital.ofis.HomeActivity" />
         </activity>
         <activity
-            android:name="com.olam.digital.ofis.farmplandownload.DownloadFarmPlanActivity"
+            android:name=".farmplandownload.DownloadFarmPlanActivity"
             android:label="@string/download_farm_plan"
-            android:parentActivityName="com.olam.digital.ofis.HomeActivity"
+            android:parentActivityName=".HomeActivity"
             android:screenOrientation="portrait"
             tools:ignore="UnusedAttribute">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.olam.digital.ofis.HomeActivity" />
         </activity>
-
-
         <activity
             android:name=".mvvmmodule.view.diagnosticmodule.DiagnosticModuleActivity"
             android:label="Farmer Details"
@@ -487,7 +492,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.olam.digital.ofis.HomeActivity" />
         </activity>
-
         <activity
             android:name=".mvvmmodule.view.diagnosticmodule.DiagnosticModuleFollowUp"
             android:label="Follow Up Farmer Details"
@@ -498,8 +502,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.olam.digital.ofis.ViewFarmerActivity" />
         </activity>
-
-
     </application>
 
 </manifest>

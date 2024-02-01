@@ -14,6 +14,7 @@
     <string name="title_activity_find_farmer">Çiftçi bul</string>
     <string name="title_activity_view_farmer">Çiftçi detayları</string>
     <string name="title_activity_complete_module">Tam anket modülü</string>
+    <string name="updating_local_unit_details">Downloading Local Units details</string>
 
     <!-- main stuff -->
     <string name="app_name">OFI Yardımcısı Ayıklama</string>

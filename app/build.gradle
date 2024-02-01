@@ -37,8 +37,6 @@ android {
         versionName "10.6.4"
 
 
-
-
         javaCompileOptions {
             annotationProcessorOptions {
                 arguments += ["room.schemaLocation": "$projectDir/schemas".toString()]
