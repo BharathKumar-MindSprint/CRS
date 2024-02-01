@@ -14,7 +14,6 @@
     <string name="title_activity_find_farmer">Çiftçi bul</string>
     <string name="title_activity_view_farmer">Çiftçi detayları</string>
     <string name="title_activity_complete_module">Tam anket modülü</string>
-    <string name="updating_local_unit_details">Downloading Local Units details</string>
 
     <!-- main stuff -->
     <string name="app_name">OFI Yardımcısı Ayıklama</string>
@@ -729,4 +728,5 @@
     <string name="alert_review">Girilen değer izin verilen aralığın dışında, yönetici incelemesi için gönderilecek</string>
     <string name="alert_review_hint">Lütfen %1$d-%2$d aralığında bir değer girin</string>
     <string name="range_hint_A_R">Menzil: %1$d-%2$d</string>
+    <string name="metrics">Ölçüm</string>
 </resources>

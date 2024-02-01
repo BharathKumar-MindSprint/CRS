@@ -14,7 +14,6 @@
     <string name="title_activity_find_farmer">ค้นหาเกษตรกร</string>
     <string name="title_activity_view_farmer">รายละเอียดเกษตรกร</string>
     <string name="title_activity_complete_module">แบบสอบถามเสร็จสมบูรณ์</string>
-    <string name="updating_local_unit_details">Downloading Local Units details</string>
 
     <!-- main stuff -->
     <string name="app_name">OFIS Companion Debug</string>
@@ -646,5 +645,6 @@
     <string name="certification_name">Chụ̄̀x rạbrxng</string>
     <string name="others">Others</string>
     <string name="please_update_the_certification_of_farmer">Pord prạbprung bırạbrxng k̄hxng kes̄ʹtrkr</string>
+    <string name="metrics">วัด</string>
 
 </resources>
