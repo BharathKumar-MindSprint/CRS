@@ -67,6 +67,7 @@ import com.olam.digital.ofis.matoma.MatomoHelper;
 import com.olam.digital.ofis.matoma.ScreenNameConstants;
 import com.olam.digital.ofis.model.ModuleDTO;
 import com.olam.digital.ofis.model.SubModuleDTO;
+import com.olam.digital.ofis.recordpolygon.AlphanumericFilterSip;
 import com.olam.digital.ofis.recordpolygon.RecordPolygonActivity;
 import com.olam.digital.ofis.recordpolygon.RecordSipPolygon;
 import com.olam.digital.ofis.recordpolygon.SharedPreferenceUtils;
@@ -223,6 +224,7 @@ public class AddInfrastructureActivity extends BaseActivity {
         dl = new DataLayer(res, context);
         poiName = (EditText) findViewById(R.id.poiName);
         poiName.setFilters(new InputFilter[]{new Utils.EmojiExcludeFilter()});
+        poiName.setFilters(new InputFilter[]{new AlphanumericFilterSip(20)});
         poiName.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
         subModulesSpinner = (Spinner) findViewById(R.id.spinner_submodules);
         modulesSpinner = (Spinner) findViewById(R.id.spinner_modules);
