@@ -578,6 +578,7 @@ public class RecordSipPolygon extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 alert.dismiss();
+                currentTrackname = category_sip_id + "_" + currentTrackname.toLowerCase().replace(" ", "-");
 
                 LocationBeanList lLocationBeanList = new LocationBeanList();
                 lLocationBeanList.setLocationBean(mLocationBeanList);
@@ -801,6 +802,7 @@ public class RecordSipPolygon extends AppCompatActivity {
     }
 
     void handleStartStopLoggingButton() {
+        currentTrackname = sip_name;
 
         if (isGPSProviderEnabled() || locationMode()==2) {
             if (!checkPlotEntryExistInPreference()) {
@@ -1363,7 +1365,7 @@ public class RecordSipPolygon extends AppCompatActivity {
             return;
         }
         if (mIsLoggingStarted) {
-            recordCurrentLocationInTrack(currentTrackname.toLowerCase().replace(" ", "-"), currentTrackname, newLocation);
+            recordCurrentLocationInTrack(category_sip_id + "_" + currentTrackname.toLowerCase().replace(" ", "-"), currentTrackname, newLocation);
         }
     }
 
