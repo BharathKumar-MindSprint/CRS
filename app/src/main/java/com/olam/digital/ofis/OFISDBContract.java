@@ -986,6 +986,7 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_PLOT = "plot";
         public static final String COLUMN_NAME_CERTIFICATION_ID = "certificationIds";
         public static final String COLUMN_NAME_CERTIFICATION_TEXT = "certificationText";
+        public static final String COLUMN_NAME_AGE = "age";
 
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
@@ -1024,6 +1025,7 @@ public class OFISDBContract {
                     add(COLUMN_NAME_PROGRAMME_ID);
                     add(COLUMN_NAME_CERTIFICATION_ID);
                     add(COLUMN_NAME_CERTIFICATION_TEXT);
+                    add(COLUMN_NAME_AGE);
                 }}
         );
         public static final List<String> SYNC_COLUMN_LIST = Collections.unmodifiableList(
@@ -1033,6 +1035,7 @@ public class OFISDBContract {
                     add(COLUMN_NAME_PLACE_ID);
                     add(COLUMN_NAME_SECTION_ID);
                     add(COLUMN_NAME_FARMER_NAME);
+                    add(COLUMN_NAME_GENDER);
                     add(COLUMN_NAME_OLAM_FARMER_ID);
                     add(COLUMN_NAME_WEBSITE_SUBMITTED_MODULES);
                     add(COLUMN_NAME_FARM_PRIMARY_LAT);
@@ -1052,6 +1055,9 @@ public class OFISDBContract {
                     add(COLUMN_NAME_ODFARMERID);
                     add(COLUMN_NAME_CERTIFICATION_ID);
                     add(COLUMN_NAME_CERTIFICATION_TEXT);
+                    add(COLUMN_NAME_PARTNER_ID);
+                    add(COLUMN_NAME_PROGRAMME_ID);
+                    add(COLUMN_NAME_AGE);
                 }}
         );
         public static final String COLUMN_NAME_OLAM_FARMER_ID_DISPLAY = "displayFarmerId";
@@ -1471,6 +1477,7 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_PLOT_ID = "plot_id";
         public static final String COLUMN_NAME_CERTIFICATION_ID = "certificationIds";
         public static final String COLUMN_NAME_CERTIFICATION_TEXT = "certificationText";
+        public static final String COLUMN_NAME_PLOT_NAME = "plotName";
 
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
@@ -1523,6 +1530,7 @@ public class OFISDBContract {
                     add(COLUMN_NAME_PLOT_ID);
                     add(COLUMN_NAME_CERTIFICATION_ID);
                     add(COLUMN_NAME_CERTIFICATION_TEXT);
+                    add(COLUMN_NAME_PLOT_NAME);
                 }}
         );
 
@@ -2549,6 +2557,7 @@ public class OFISDBContract {
         public static final String COLUMN_NAME_PLOT_NAME = "plotName";
         public static final String COLUMN_NAME_PLOTTED_NAME = "plottedName";
         public static final String COLUMN_IS_SYNCED = "isSynced";
+        public static final String COLUMN_NAME_CREATED_AT = "created_at";
 
         public static final List<String> COLUMN_LIST = Collections.unmodifiableList(
                 new ArrayList<String>() {{
@@ -2557,6 +2566,7 @@ public class OFISDBContract {
                     add(COLUMN_NAME_PLOT_NAME);
                     add(COLUMN_NAME_PLOTTED_NAME);
                     add(COLUMN_IS_SYNCED);
+                    add(COLUMN_NAME_CREATED_AT);
                 }}
         );
     }

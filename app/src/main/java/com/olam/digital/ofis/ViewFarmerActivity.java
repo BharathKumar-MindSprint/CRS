@@ -98,7 +98,6 @@ import com.olam.digital.ofis.matoma.MatomoHelper;
 import com.olam.digital.ofis.matoma.ScreenNameConstants;
 import com.olam.digital.ofis.matoma.multifarm.UpdateMultiFarmActivity;
 
-import com.olam.digital.ofis.matoma.multifarm.UpdateMultiFarmActivity;
 import com.olam.digital.ofis.multifarm.MultiFarmDTO;
 import com.olam.digital.ofis.multifarm.MultiFarmUtils;
 
@@ -113,6 +112,8 @@ import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.FollowUp.FollowUpR
 import com.olam.digital.ofis.mvvmmodule.view.diagnosticmodule.RecurrenceUtils;
 import com.olam.digital.ofis.recordpolygon.RecordPolygonActivity;
 import com.olam.digital.ofis.recordpolygon.SharedPreferenceUtils;
+import com.olam.digital.ofis.recordpolygon.polygonhistory.InternetConnectionHelper;
+import com.olam.digital.ofis.recordpolygon.polygonhistory.PolygonHistory;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -122,10 +123,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -189,6 +188,8 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
     private static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = 1000;
 
     private static final int REQUEST_CHECK_SETTINGS = 100;
+
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 7070;
 
 
     // bunch of location related apis
@@ -474,6 +475,22 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         TextView farmerName = (TextView) findViewById(R.id.viewFarmerFarmerName);
         TextView farmerOlamId = (TextView) findViewById(R.id.viewFarmerOlamFarmerID);
         ImageView farmerPhoto = (ImageView) findViewById(R.id.viewFarmerFarmerPhoto);
+//        ImageView infoSectionBackground = (ImageView) findViewById(R.id.infoSectionBackground);
+        //View farmer info
+        TextView viewFarmerInfo = (TextView) findViewById(R.id.viewFarmerInfo);
+        LinearLayout linear_viewInfo = (LinearLayout) findViewById(R.id.linear_viewInfo);
+        TextView genderInfo = (TextView) findViewById(R.id.genderInfo);
+        TextView ageInfo = (TextView) findViewById(R.id.ageInfo);
+        TextView pNumberInfo = (TextView) findViewById(R.id.pNumberInfo);
+        TextView partnerInfo = (TextView) findViewById(R.id.partnerInfo);
+        TextView programInfo = (TextView) findViewById(R.id.programInfo);
+        TextView countryInfo = (TextView) findViewById(R.id.countryInfo);
+        TextView regionInfo = (TextView) findViewById(R.id.regionInfo);
+        TextView districtInfo = (TextView) findViewById(R.id.districtInfo);
+        TextView subDistrictInfo = (TextView) findViewById(R.id.subDistrictInfo);
+        TextView placeInfo = (TextView) findViewById(R.id.placeInfo);
+        TextView fgInfo = (TextView) findViewById(R.id.fgInfo);
+        TextView sectionInfo = (TextView) findViewById(R.id.sectionInfo);
 
         farmer = dl.getFarmerById(farmerId);
 
@@ -501,9 +518,39 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 }
             }
 
+            //setting farmer info
+            Cursor existingNumbers = dl.getFarmerPhoneNumbers(farmerId, false);
+            StringBuilder phonenumberinfo = new StringBuilder();
+            String ptInfo = null , prInfo=null;
+
+            if (existingNumbers.getCount() > 0) {
+                while (existingNumbers.moveToNext()) {
+                    if(!phonenumberinfo.toString().equals("")){
+                        phonenumberinfo.append("\n");
+                    }
+                    phonenumberinfo.append("+").append(existingNumbers.getString(existingNumbers.getColumnIndex(OFISDBContract.PhoneNumber.COLUMN_NAME_COUNTRY_ID))).append(" ").append(existingNumbers.getString(existingNumbers.getColumnIndex(OFISDBContract.PhoneNumber.COLUMN_NAME_NUMBER)));
+                }
+            }
+            genderInfo.setText(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_GENDER)));
+            ageInfo.setText(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_AGE)));
+            pNumberInfo.setText(phonenumberinfo.toString());
+            if(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_PARTNER_ID))!=null) {
+                ptInfo = db.partnersDao().getPartnerNameById(Integer.parseInt(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_PARTNER_ID))));
+            }
+            if(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_PROGRAMME_ID))!=null){
+                prInfo=db.programmeDao().getProgrammeNameById(Integer.parseInt(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_PROGRAMME_ID))));
+            }
+            partnerInfo.setText(ptInfo);
+            programInfo.setText(prInfo);
+            countryInfo.setText(dl.getCountryName(Integer.parseInt(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_COUNTRY_ID)))));
+            regionInfo.setText(dl.getRegionName(Integer.parseInt(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_REGIONID)))));
+            districtInfo.setText(dl.getDistrictName(Integer.parseInt(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_DISTRICTID)))));
+            subDistrictInfo.setText(dl.getSubDistrictName(Integer.parseInt(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_SUBDISTRICTID)))));
+            placeInfo.setText(dl.getPlaceName(Integer.parseInt(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_PLACE_ID)))));
+            fgInfo.setText(dl.getFGName(Integer.parseInt(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMERGROUPID)))));
+            sectionInfo.setText(dl.getSectionName(Integer.parseInt(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_SECTION_ID)))));
             JSONObject submittedModules;
             try {
-
 
                 // fetching Info for Multifarms
                 int roleId = 0;
@@ -658,6 +705,16 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                     // Call methods directly for Android versions lower than Marshmallow
                     bindFarmerPhotoButton();
                 }
+            }
+        });
+
+        viewFarmerInfo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+//                infoSectionBackground.setVisibility((infoSectionBackground.getVisibility()==View.GONE) ? View.VISIBLE : View.GONE);
+                linear_viewInfo.setVisibility((linear_viewInfo.getVisibility()==View.GONE) ? View.VISIBLE : View.GONE);
+                viewFarmerInfo.setCompoundDrawablesWithIntrinsicBounds(0, 0,(linear_viewInfo.getVisibility()==View.GONE) ? R.drawable.ic_drop_down_collapse : R.drawable.ic_task_drop_down_expand, 0);
             }
         });
 
@@ -1099,6 +1156,40 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                         "farmpolygon"
                 });
 
+                /*// add new polygon history task
+                mc.addRow(new String[]{
+                        "0",
+                        res.getString(R.string.recorded_polygon_history),
+                        res.getString(R.string.recorded_polygon_history),
+                        res.getString(R.string.recorded_polygon_history),
+                        res.getString(R.string.recorded_polygon_history),
+                        res.getString(R.string.recorded_polygon_history),
+                        res.getString(R.string.recorded_polygon_history),
+                        res.getString(R.string.recorded_polygon_history),
+                        res.getString(R.string.recorded_polygon_history),
+                        res.getString(R.string.recorded_polygon_history),
+                        "0",
+                        "",
+                        "",
+                        "",
+                        res.getString(R.string.record_farm_polygon_hint),
+                        res.getString(R.string.record_farm_polygon_hint),
+                        res.getString(R.string.record_farm_polygon_hint),
+                        res.getString(R.string.record_farm_polygon_hint),
+                        res.getString(R.string.record_farm_polygon_hint),
+                        res.getString(R.string.record_farm_polygon_hint),
+                        res.getString(R.string.record_farm_polygon_hint),
+                        res.getString(R.string.record_farm_polygon_hint),
+                        res.getString(R.string.record_farm_polygon_hint),
+                        "",
+                        "",
+                        "",
+                        "",
+                        "","",
+                        "", "", "",
+                        "",
+                        "polygon_history"
+                });*/
 
                 boolean isHHAvailable = Utilities.getBoolFromSharedPrefs(context, Utilities.HOUSEHOLD_ENUMERATOR, false);
                 if (isHHAvailable) {
@@ -1664,6 +1755,8 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                     TextView plotCount = plotLayout.findViewById(R.id.plotCount);
                     EditText plotName = plotLayout.findViewById(R.id.plotName);
                     LinearLayout plotDelete = plotLayout.findViewById(R.id.deletePlot);
+                    Cursor plotIdsSynced = dl.syncedPlotIds(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)));
+                    int totalPlotCount = plotIdsSynced.getCount() + plotList.getChildCount();
                     plotCount.setText("Plot " + plotList.getChildCount());
                     bindPlotDelete(plotDelete);
                 }
@@ -1689,8 +1782,10 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 public void onClick(View view) {
 //                    String lPlotCountString = edTxtNumberOfPlots.getText().toString();
                     String farmerID = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID));
+
                     ArrayList<String> plotNames = getAllPlotValues();
-                    dl.insertNewPlot(farmerID,plotNames);
+                    dl.insertNewPlot(farmerID, plotNames);
+
                     /*String lPlotCountString = "1";
                     int lPlotCount = 0;
                     if (!TextUtils.isEmpty(lPlotCountString)) {
@@ -1718,8 +1813,9 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
             recordPolygonIntent.putExtra(FARM_ID, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
             recordPolygonIntent.putExtra(OLAM_FARMER_ID, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
             recordPolygonIntent.putExtra(FARMER_NAME, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME)));
-            recordPolygonIntent.putExtra(PLOT_COUNT, count);
-            recordPolygonIntent.setAction(Intent.ACTION_DEFAULT);
+            int totalCount = dl.fetchPlotTotalCount(String.valueOf(farmerId));
+            recordPolygonIntent.putExtra(PLOT_COUNT, totalCount);
+            SharedPreferenceUtils.getInstance(getApplicationContext()).setPlotCount("" + strFarmID, totalCount);
             recordPolygonIntent.setAction(Intent.ACTION_DEFAULT);
             startActivity(recordPolygonIntent);
         }
@@ -1728,7 +1824,22 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
 
     private void loadPlotLayout() {
         plotList.removeAllViews();
-        Cursor plotIds = dl.fetchPlotids(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)));
+        Cursor plotIds = dl.fetchAllPlotIds(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)));
+        Cursor plotIdsSynced = dl.syncedPlotIds(farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID)));
+
+        /*if (plotIdsSynced.getCount() > 0){
+            int size = plotIdsSynced.getCount();
+            for (int i = 1; i <= size; i++) {
+                plotIdsSynced.moveToNext();
+                if(position == i){
+                    name = plotIdsSynced.getString(plotIds.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_PLOT_NAME));
+                    selectedPlotId = plotIdsSynced.getInt(plotIds.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_ID));
+                    txtPlotName.setText(name);
+                }
+            }
+        }*/
+        int totalPlotCount = plotIdsSynced.getCount();
+
         if(plotIds.getCount() > 0){
             int size = plotIds.getCount();
             for (int i = 1; i <= size; i++) {
@@ -1738,8 +1849,10 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 TextView plotCount = plotLayout.findViewById(R.id.plotCount);
                 EditText plotName = plotLayout.findViewById(R.id.plotName);
                 LinearLayout plotDelete = plotLayout.findViewById(R.id.deletePlot);
+                int finalCount = i + totalPlotCount;
                 plotCount.setText("Plot " + i);
                 String name = plotIds.getString(plotIds.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_PLOT_NAME));
+                String isSynced = plotIds.getString(plotIds.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_IS_SYNCED));
                 if(! name.equalsIgnoreCase("null")){
                     plotName.setText(name);
                 }
@@ -1748,6 +1861,9 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                     plotDelete.setVisibility(View.INVISIBLE);
                 }else{
                     plotDelete.setVisibility(View.VISIBLE);
+                }
+                if(isSynced.equalsIgnoreCase("1")){
+                    plotDelete.setVisibility(View.INVISIBLE);
                 }
 
                 plotName.setFocusableInTouchMode(true);
@@ -1759,6 +1875,8 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
             plotList.addView(plotLayout);
             TextView plotCount = plotLayout.findViewById(R.id.plotCount);
             EditText plotName = plotLayout.findViewById(R.id.plotName);
+            int finalCount = 1 + totalPlotCount;
+            plotCount.setText("Plot " + 1);
             LinearLayout plotDelete = plotLayout.findViewById(R.id.deletePlot);
             plotDelete.setVisibility(View.GONE);
             bindPlotDelete(plotDelete);
@@ -2022,6 +2140,7 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
 
                         phoneNumbersHolder.startAnimation(mSlideBottomDown);
                         phonenumbersSave.setEnabled(false);
+                        setupUI();
                         Toast.makeText(context, res.getString(R.string.Farmer_Updated), Toast.LENGTH_LONG).show();
                     }
                 } else {
@@ -2385,9 +2504,27 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                         MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_FARM_POLYGON, ScreenNameConstants.BUTTON_CLICKED);
                         polygon = true;
                         enableFarmPolygon(v);
-
-                        //Ticket-OFISDM-39 newly added
-                    }else if(recordedLng != null && recordedLng.getText().equals("diagnostic")){
+                        
+                    } /*else if (recordedLng != null && recordedLng.getText().equals("polygon_history")) {
+                        // check internet connection
+                        if (InternetConnectionHelper.isInternetAvailable(context)) {
+                            if (hasRequiredPermissions(context)) {
+                                MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.BUTTON_POLYGON_HISTORY, ScreenNameConstants.BUTTON_CLICKED);
+                                Intent polygonHistoryIntent = new Intent(this, PolygonHistory.class);
+                                polygonHistoryIntent.putExtra(FARMER_ID, farmerId);
+                                polygonHistoryIntent.putExtra(FARM_ID, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
+                                polygonHistoryIntent.putExtra(OLAM_FARMER_ID, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_OLAM_FARMER_ID)));
+                                polygonHistoryIntent.putExtra(FARMER_NAME, farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_FARMER_NAME)));
+                                startActivity(polygonHistoryIntent);
+                            } else {
+                                showToast(context, " Location Permission not granted");
+                            }
+                        } else {
+                            showToast(context, "No internet connection");
+                        }
+                    }*/
+                    //Ticket-OFISDM-39 newly added
+                    else if(recordedLng != null && recordedLng.getText().equals("diagnostic")){
                         Constants.MODULE_ID = subModuleTv.getText().toString();
                         Constants.MODULE_NAME = moduleListModuleName.getText().toString();
                         Constants.FARMER_ID = farmer.getString(farmer.getColumnIndex(OFISDBContract.FarmerEntry.COLUMN_NAME_ID));
@@ -3010,6 +3147,45 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
         dialog.show();
     }
 
+    private static boolean hasRequiredPermissions(Context context) {
+        // Replace with the actual permission you need to check
+        String permission = "android.permission.ACCESS_FINE_LOCATION";
+//        int result = context.checkCallingOrSelfPermission(permission);
+//        return result == PackageManager.PERMISSION_GRANTED;
+
+        // Check if the location permission is not granted
+        if (ContextCompat.checkSelfPermission(context, permission)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // Request location permission
+            ActivityCompat.requestPermissions((Activity) context,
+                    new String[]{permission},
+                    LOCATION_PERMISSION_REQUEST_CODE);
+
+            // Return false because the permission is not yet granted
+            return false;
+        }
+
+        // Location permission is already granted
+        return true;
+    }
+
+    private static void showToast(Context context, String message) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+    }
+
+    // Call this method in your Activity's onRequestPermissionsResult
+    public static void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                                  @NonNull int[] grantResults, Context context) {
+        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Location permission granted, you can proceed with your logic here
+            } else {
+                // Location permission denied, show a toast or handle the denial gracefully
+                showToast(context, "Location permission denied");
+            }
+        }
+    }
 
 
 }

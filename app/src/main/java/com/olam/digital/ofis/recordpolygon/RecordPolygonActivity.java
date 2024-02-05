@@ -1,9 +1,11 @@
 package com.olam.digital.ofis.recordpolygon;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -16,6 +18,8 @@ import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -34,6 +38,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Base64;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -51,10 +56,13 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.gson.Gson;
 import com.karumi.dexter.Dexter;
@@ -68,8 +76,11 @@ import com.olam.digital.ofis.DataLayer;
 import com.olam.digital.ofis.HomeActivity;
 import com.olam.digital.ofis.OFISDBContract;
 import com.olam.digital.ofis.R;
+import com.olam.digital.ofis.RetrofitServices.ManageRecords;
+import com.olam.digital.ofis.RetrofitServices.RetrofitClient;
 import com.olam.digital.ofis.SettingsActivity;
 import com.olam.digital.ofis.TasksActivity;
+import com.olam.digital.ofis.Utilities;
 import com.olam.digital.ofis.gps.GPSTracker;
 import com.olam.digital.ofis.gps.businesslogic.GpsTrackerLogic;
 import com.olam.digital.ofis.gps.dto.TrackDetailsDTO;
@@ -77,7 +88,16 @@ import com.olam.digital.ofis.gps.utils.GPSConstants;
 import com.olam.digital.ofis.gps.utils.GPSUtils;
 import com.olam.digital.ofis.matoma.MatomoHelper;
 import com.olam.digital.ofis.matoma.ScreenNameConstants;
+import com.olam.digital.ofis.mvvmmodule.roomdb.OFISRoomDB;
+import com.olam.digital.ofis.recordpolygon.polygonhistory.InternetConnectionHelper;
+import com.olam.digital.ofis.recordpolygon.polygonhistory.PlotDataParser;
+import com.olam.digital.ofis.recordpolygon.polygonhistory.PolygonHistory;
+import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.APICall.PolygonHistoryResponseModel;
+import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.PolygonHistoryData;
+import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.PolygonPlotHistory;
+import com.olam.digital.ofis.recordpolygon.polygonhistory.roomdbpolygon.list.PolygonHistoryDataList;
 
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -102,6 +122,7 @@ import org.osmdroid.util.NetworkLocationIgnorer;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.FolderOverlay;
 import org.osmdroid.views.overlay.MapEventsOverlay;
+import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.Overlay;
 import org.osmdroid.views.overlay.Polygon;
 import org.osmdroid.views.overlay.ScaleBarOverlay;
@@ -110,6 +131,7 @@ import org.osmdroid.views.overlay.infowindow.InfoWindow;
 import org.osmdroid.views.overlay.mylocation.DirectedLocationOverlay;
 
 import java.io.File;
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -119,6 +141,9 @@ import java.util.Map;
 import java.util.Stack;
 
 import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
+
+import retrofit2.Call;
+import retrofit2.Response;
 
 public class RecordPolygonActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, MapEventsReceiver, LocationListener {
 
@@ -214,6 +239,14 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
     ArrayList<String> plotNameList;
     private LinearLayout plotList;
     int selectedPlotId;
+
+    OFISRoomDB db;
+
+    Polygon polygon;
+
+    private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 7;
+
+    private Marker currentLocationMarker , farmLocationMarker;
     // boolean flag to toggle the ui
 //    private Boolean mRequestingLocationUpdates;
     @Override
@@ -235,7 +268,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         logger.addRecordToLog("Record polygon activity started");
-
+        db = OFISRoomDB.getDbInstance(getApplicationContext());
         Dexter.withActivity(this)
                 .withPermission(Manifest.permission.ACCESS_FINE_LOCATION)
                 .withListener(new PermissionListener() {
@@ -289,6 +322,26 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
             olamFarmerId.setText(mOlamFarmerId);
         }
         loadPlotName(0);
+
+        /*DataLayer dl = new DataLayer(getResources(), RecordPolygonActivity.this);
+        Cursor plotIdsSynced = dl.syncedPlotIds(String.valueOf(mFarmerId));
+        if (plotIdsSynced!=null){
+            int totalPlotCount = plotIdsSynced.getCount();
+            spinnerArray = new String[lPlotCount];
+            for (int i = 0; i < lPlotCount; i++) {
+                spinnerArray[i] = getResources().getString(R.string.plot, (i + 1 + totalPlotCount));
+
+                //SharedPreferenceUtils.getInstance(getApplicationContext()).removePlotUsingKey("Plot " + (i + 1));
+            }
+        }else {
+            spinnerArray = new String[lPlotCount];
+            for (int i = 0; i < lPlotCount; i++) {
+                spinnerArray[i] = getResources().getString(R.string.plot, (i + 1));
+
+                //SharedPreferenceUtils.getInstance(getApplicationContext()).removePlotUsingKey("Plot " + (i + 1));
+            }
+        }*/
+
         spinnerArray = new String[lPlotCount];
         for (int i = 0; i < lPlotCount; i++) {
             spinnerArray[i] = getResources().getString(R.string.plot, (i + 1));
@@ -748,7 +801,8 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                 }
 
             } else {
-                showToastMessage(getResources().getString(R.string.already_logged_and_saved, currentTrackname));
+//                showToastMessage(getResources().getString(R.string.already_logged_and_saved, currentTrackname));
+                editPlotAlertDialog();
             }
 
             /**
@@ -819,10 +873,31 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                     if (mIsGPSLocationAvailable) {
                         dismissProgressDialog();
                         if (!mIsLoggingStarted) {
-                            if (checkPreviousPlotEntryExistInPreference() || (currentTrackname.equals(previousTrackname)))
-                                showPlotLocationConfirmDialog(currentTrackname);
-                            else
-                                showToastMessage(getResources().getString(R.string.previous_plot_not_recorded_msg, getLastLoggedPlotFromPreference()));
+                            DataLayer dl = new DataLayer(getResources(), RecordPolygonActivity.this);
+                            int farmPlotCount = dl.fetchSyncedPlotCountByFarmerID(String.valueOf(mFarmerId));
+                            if(farmPlotCount == 0) {
+                                if (checkPreviousPlotEntryExistInPreference() || (currentTrackname.equals(previousTrackname)))
+                                    showPlotLocationConfirmDialog(currentTrackname);
+                                else
+                                    showToastMessage(getResources().getString(R.string.previous_plot_not_recorded_msg, getLastLoggedPlotFromPreference()));
+                            }else{
+                                int loggedPlotCount = getTotalLoggedPlotCount() ;
+                                int actualPlot = Integer.parseInt(StringUtils.split(currentTrackname)[1]);
+                                if(loggedPlotCount == 0 ){
+                                    if(actualPlot == farmPlotCount + 1){
+                                        showPlotLocationConfirmDialog(currentTrackname);
+                                    }else{
+                                        showToastMessage(getResources().getString(R.string.previous_plot_not_recorded_msg, "Plot " + (farmPlotCount+1)));
+                                    }
+                                }else{
+                                    int i = loggedPlotCount + farmPlotCount;
+                                    if(i+1 == actualPlot){
+                                        showPlotLocationConfirmDialog(currentTrackname);
+                                    }else{
+                                        showToastMessage(getResources().getString(R.string.previous_plot_not_recorded_msg, "Plot " + (i+1)));
+                                    }
+                                }
+                            }
                         } else {
                             if (mLocationBeanList.size() > 0) {
                                 showToastMessage(getResources().getString(R.string.ready_to_save, currentTrackname).trim().toUpperCase());
@@ -1059,6 +1134,15 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
+                }
+            }
+            case REQUEST_PERMISSIONS_REQUEST_CODE: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                    // Location permissions granted, get the last known location
+                    getLastLocation();
+                } else {
+                    // Location permissions not granted, handle accordingly
+                    Log.d("Location", "Location permissions not granted.");
                 }
             }
 
@@ -1345,11 +1429,21 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        DataLayer dl = new DataLayer(getResources(), RecordPolygonActivity.this);
+        int farmPlotCount = dl.fetchSyncedPlotCountByFarmerID(String.valueOf(mFarmerId));
         currentTrackname = getResources().getString(R.string.plot, (position + 1));
-        if (position == 0)
-            previousTrackname = getResources().getString(R.string.plot, (position + 1));
-        else
-            previousTrackname = getResources().getString(R.string.plot, position);
+
+        if(farmPlotCount == 0){
+            if (position == 0)
+                previousTrackname = getResources().getString(R.string.plot, (position + 1));
+            else
+                previousTrackname = getResources().getString(R.string.plot, position);
+        }else if (farmPlotCount > 0){
+            if (position == farmPlotCount + 1 )
+                previousTrackname = getResources().getString(R.string.plot, (position + 1));
+            else
+                previousTrackname = getResources().getString(R.string.plot, position);
+        }
         loadPlotName(position);
         areaInfo.setText("");
         if (mIsLoggingStarted) {
@@ -1407,16 +1501,60 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
             previousTrackname = getResources().getString(R.string.plot, (position + 1));
         else
             previousTrackname = getResources().getString(R.string.plot, position);
-
-        if (!checkPlotEntryExistInPreference()) {
-            showToastMessage(getResources().getString(R.string.not_logged_yet, currentTrackname));
-            initializeKMLDocument();
-            loadMapWithPolygon(currentTrackname);
-            return;
-        } else {
-            initializeKMLDocument();
-            loadMapWithPolygon(currentTrackname);
+        if (polygon != null) {
+            map.getOverlays().remove(polygon);
         }
+        if(isSyncedPlot(position)){
+            if (InternetConnectionHelper.isInternetAvailable(this)) {
+                if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                        && ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+                    ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_PERMISSIONS_REQUEST_CODE);
+                } else {
+//                    getLastLocation();
+                    try {
+                        PolygonHistoryApiCall((int) mFarmerId, position);
+
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                    getFarmLocation();
+                }
+            } else {
+                showAlert(getString(R.string.no_internet_polygon));
+            }
+            mStartLoggingButton.setVisibility(View.GONE);
+            pause.setVisibility(View.GONE);
+            bttnSave.setVisibility(View.GONE);
+            recordingStatus.setVisibility(View.GONE);
+        }else {
+            mStartLoggingButton.setVisibility(View.VISIBLE);
+            pause.setVisibility(View.VISIBLE);
+            bttnSave.setVisibility(View.VISIBLE);
+            recordingStatus.setVisibility(View.VISIBLE);
+            if (!checkPlotEntryExistInPreference()) {
+                showToastMessage(getResources().getString(R.string.not_logged_yet, currentTrackname));
+                initializeKMLDocument();
+                loadMapWithPolygon(currentTrackname);
+            } else {
+                initializeKMLDocument();
+                loadMapWithPolygon(currentTrackname);
+            }
+        }
+
+    }
+
+    private void showAlert(String msg) {
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
+        builder.setMessage(msg);
+        builder.setTitle(R.string.Alert_txt);
+        builder.setCancelable(false);
+        builder.setPositiveButton(R.string.ok, (DialogInterface.OnClickListener) (dialog, which) -> {
+            dialog.cancel();
+        });
+        android.app.AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+
     }
 
     protected Polygon mDestinationPolygon;
@@ -1494,7 +1632,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
         TextView tvTitle= dialogView.findViewById(R.id.tv_title);
         tvTitle.setVisibility(View.VISIBLE);
         tvTitle.setText(getResources().getString(R.string.save_polygon_alertdialog_title, currentTrackname));
-        tvMsg.setText(getResources().getString(R.string.save_polygon_alertdialog_msg, currentTrackname));
+        tvMsg.setText(getResources().getString(R.string.save_polygon_alertdialog, currentTrackname));
         Button btnNo = (Button)dialogView.findViewById(R.id.btn_no);
         Button btnYes = (Button)dialogView.findViewById(R.id.btn_yes);
         btnNo.setText(R.string.close);
@@ -1533,7 +1671,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                 }catch (Exception e){}
                 try {
                     String plotallLocations = prepareJsonServerSync();
-                    saveToSyncDatabase(plotallLocations);
+                    saveToSyncDatabase(plotallLocations, plotId);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -1645,11 +1783,11 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
     public void onNothingSelected(AdapterView<?> parent) {
     }
 
-    void saveToSyncDatabase(String plotsJson) {
+    void saveToSyncDatabase(String plotsJson , String plotId) {
         DataLayer dl = new DataLayer(getResources(), RecordPolygonActivity.this);
         if (plotsJson != null) {
             plotsJson = Base64.encodeToString(plotsJson.getBytes(), Base64.NO_WRAP);
-            dl.updateFarmPolygon(mFarmerId, plotsJson, mOlamFarmerId, mFarmerName);
+            dl.updateFarmPolygon(mFarmerId, plotsJson, mOlamFarmerId, mFarmerName, plotId);
         }
     }
 
@@ -1834,6 +1972,8 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                     TextView plotCount = plotLayout.findViewById(R.id.plotCount);
                     EditText plotName = plotLayout.findViewById(R.id.plotName);
                     LinearLayout plotDelete = plotLayout.findViewById(R.id.deletePlot);
+                    Cursor plotIdsSynced = dl.syncedPlotIds(String.valueOf(mFarmerId));
+                    int totalPlotCount = plotIdsSynced.getCount() + plotList.getChildCount();
                     plotCount.setText("Plot " + plotList.getChildCount());
                     bindPlotDelete(plotDelete);
                 }
@@ -1894,7 +2034,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
         String name = "Plot 0";
         position = position + 1;
         DataLayer dl = new DataLayer(getResources(), RecordPolygonActivity.this);
-        Cursor plotIds = dl.fetchPlotids(String.valueOf(mFarmerId));
+        Cursor plotIds = dl.fetchAllPlotIds(String.valueOf(mFarmerId));
         if(plotIds.getCount() > 0) {
             int size = plotIds.getCount();
             for (int i = 1; i <= size; i++) {
@@ -1909,10 +2049,48 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
         return name;
     }
 
+    public boolean isSyncedPlot(int position){
+        boolean status = false;
+        position = position + 1;
+        DataLayer dl = new DataLayer(getResources(), RecordPolygonActivity.this);
+        Cursor plotIds = dl.fetchAllPlotIds(String.valueOf(mFarmerId));
+        if(plotIds.getCount() > 0) {
+            int size = plotIds.getCount();
+            for (int i = 1; i <= size; i++) {
+                plotIds.moveToNext();
+                if(position == i){
+                   String isSynced = plotIds.getString(plotIds.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_IS_SYNCED));
+                   if(isSynced.equalsIgnoreCase("1")){
+                       status = true;
+                   }
+                }
+            }
+        }
+        return status;
+    }
+
+    public int getPlotId(int position){
+        int status = 0;
+        position = position + 1;
+        DataLayer dl = new DataLayer(getResources(), RecordPolygonActivity.this);
+        Cursor plotIds = dl.fetchAllPlotIds(String.valueOf(mFarmerId));
+        if(plotIds.getCount() > 0) {
+            int size = plotIds.getCount();
+            for (int i = 1; i <= size; i++) {
+                plotIds.moveToNext();
+                if(position == i){
+                    status = plotIds.getInt(plotIds.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_ID));
+
+                }
+            }
+        }
+        return status;
+    }
+
     public void loadPlotLayout(LayoutInflater inflater) {
         DataLayer dl = new DataLayer(getResources(), RecordPolygonActivity.this);
         plotList.removeAllViews();
-        Cursor plotIds = dl.fetchPlotids(String.valueOf(mFarmerId));
+        Cursor plotIds = dl.fetchAllPlotIds(String.valueOf(mFarmerId));
         if(plotIds.getCount() > 0){
             int size = plotIds.getCount();
             for (int i = 1; i <= size; i++) {
@@ -1922,8 +2100,11 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                 TextView plotCount = plotLayout.findViewById(R.id.plotCount);
                 EditText plotName = plotLayout.findViewById(R.id.plotName);
                 LinearLayout plotDelete = plotLayout.findViewById(R.id.deletePlot);
+                Cursor plotIdsSynced = dl.syncedPlotIds(String.valueOf(mFarmerId));
+                int totalPlotCount = plotIdsSynced.getCount() + i;
                 plotCount.setText("Plot " + i);
                 String name = plotIds.getString(plotIds.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_PLOT_NAME));
+                String isSynced = plotIds.getString(plotIds.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_IS_SYNCED));
                 if(! name.equalsIgnoreCase("null")){
                     plotName.setText(name);
                 }
@@ -1932,6 +2113,9 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                     plotDelete.setVisibility(View.INVISIBLE);
                 }else{
                     plotDelete.setVisibility(View.VISIBLE);
+                }
+                if(isSynced.equalsIgnoreCase("1")){
+                    plotDelete.setVisibility(View.INVISIBLE);
                 }
                 plotName.setFocusableInTouchMode(true);
                 bindPlotDelete(plotDelete);
@@ -1974,14 +2158,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
         }
         return plotNameList;
     }
-    /**
-     * Reallocates an array with a new size, and copies the contents
-     * of the old array to the new array.
-     *
-     * @param oldArray the old array, to be reallocated.
-     * @param newSize  the new array size.
-     * @return A new array with the same contents.
-     */
+
     private static Object resizeArray(Object oldArray, int newSize) {
         int oldSize = java.lang.reflect.Array.getLength(oldArray);
         Class elementType = oldArray.getClass().getComponentType();
@@ -2115,6 +2292,326 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
         value = value * factor;
         long tmp = Math.round(value);
         return (double) tmp / factor;
+    }
+
+
+    private void getFarmLocation() {
+        double farmLatitude = db.polygonHistoryDataDao().getLattitude(mFarmerId);
+        double farmLongitude = db.polygonHistoryDataDao().getLongitude(mFarmerId);
+
+        // Create a GeoPoint from the last known location
+        GeoPoint farmLocation = new GeoPoint(farmLatitude, farmLongitude);
+
+        // Create a Marker for the current location
+        farmLocationMarker = new Marker(map);
+        farmLocationMarker.setPosition(farmLocation);
+        farmLocationMarker.setTitle("Farm Location");
+        farmLocationMarker.setSnippet("Latitude: " + farmLatitude + "\nLongitude: " + farmLongitude); // Set the snippet with lat and long
+        farmLocationMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+        farmLocationMarker.setIcon(ContextCompat.getDrawable(RecordPolygonActivity.this, R.drawable.location_mark_purple));
+        map.getOverlays().add(farmLocationMarker);
+
+        farmLocationMarker.setOnMarkerClickListener(new Marker.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker, MapView mapView) {
+//                            Toast.makeText(PolygonHistory.this, marker.getTitle() + "\n" + marker.getSnippet(), Toast.LENGTH_SHORT).show();
+                View dialogView = getLayoutInflater().inflate(R.layout.custom_location_dialog, null);
+
+                // Find views in the dialog layout
+                TextView textLatitude = dialogView.findViewById(R.id.textLatitude);
+                TextView textLongitude = dialogView.findViewById(R.id.textLongitude);
+                TextView farmerName = dialogView.findViewById(R.id.enumName);
+
+                farmerName.setText("Name: " + mFarmerName);
+                textLatitude.setText("Latitude: " + farmLatitude);
+                textLongitude.setText("Longitude: " + farmLongitude);
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(RecordPolygonActivity.this);
+                builder.setView(dialogView)
+                        .setTitle(marker.getTitle())
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+
+                AlertDialog dialog = builder.create();
+                dialog.show();
+
+                 new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Dismiss the dialog after 15 seconds
+                        if (dialog.isShowing()) {
+                            dialog.dismiss();
+                        }
+                    }
+                }, 7000); // 7 seconds in milliseconds
+                return true;
+            }
+        });
+    }
+
+    private void getLastLocation() {
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+           return;
+        }
+
+        FusedLocationProviderClient fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+        fusedLocationProviderClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
+            @Override
+            public void onSuccess(Location location) {
+                if (location != null) {
+                    // Use the last known location
+                    double latitude = location.getLatitude();
+                    double longitude = location.getLongitude();
+                    Log.d("Location", "Latitude: " + latitude + ", Longitude: " + longitude);
+
+//                    // Get a reference to the MapView
+//                    MapView mapView = (MapView) findViewById(R.id.mapView);
+
+                    // Create a GeoPoint from the last known location
+                    GeoPoint currentLocation = new GeoPoint(latitude, longitude);
+                    if (currentLocationMarker != null) {
+                        map.getOverlays().remove(currentLocationMarker);
+                    }
+                    // Create a Marker for the current location
+                    currentLocationMarker = new Marker(map);
+
+                    currentLocationMarker.setPosition(currentLocation);
+                    currentLocationMarker.setTitle("Enumerator Current Location");
+                    currentLocationMarker.setSnippet("Latitude: " + latitude + "\nLongitude: " + longitude); // Set the snippet with lat and long
+                    currentLocationMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+                    currentLocationMarker.setIcon(ContextCompat.getDrawable(RecordPolygonActivity.this, R.drawable.location_mark));
+                    map.getOverlays().add(currentLocationMarker);
+
+                    // Set a marker click listener
+                    currentLocationMarker.setOnMarkerClickListener(new Marker.OnMarkerClickListener() {
+                        @Override
+                        public boolean onMarkerClick(Marker marker, MapView mapView) {
+//                            Toast.makeText(PolygonHistory.this, marker.getTitle() + "\n" + marker.getSnippet(), Toast.LENGTH_SHORT).show();
+                            View dialogView = getLayoutInflater().inflate(R.layout.custom_location_dialog, null);
+
+                            // Find views in the dialog layout
+                            TextView textLatitude = dialogView.findViewById(R.id.textLatitude);
+                            TextView textLongitude = dialogView.findViewById(R.id.textLongitude);
+                            TextView enumName = dialogView.findViewById(R.id.enumName);
+
+                            String enumerator_id = Utilities.getFromSharedPrefs(getApplicationContext());
+                            String enumerator_name = Utilities.getEnumeratorNameSharedPrefs(getApplicationContext());
+                            // Set the latitude and longitude in the dialog
+                            enumName.setText("Name: " + enumerator_name);
+                            textLatitude.setText("Latitude: " + latitude);
+                            textLongitude.setText("Longitude: " + longitude);
+
+                            // Create and show the dialog
+                            AlertDialog.Builder builder = new AlertDialog.Builder(RecordPolygonActivity.this);
+                            builder.setView(dialogView)
+                                    .setTitle(marker.getTitle())
+                                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            // Dismiss the dialog if OK is clicked
+                                            dialog.dismiss();
+                                        }
+                                    });
+
+                            AlertDialog dialog = builder.create();
+                            dialog.show();
+
+                            // Use a Handler to delay the dismissal of the dialog
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    // Dismiss the dialog after 15 seconds
+                                    if (dialog.isShowing()) {
+                                        dialog.dismiss();
+                                    }
+                                }
+                            }, 7000); // 7 seconds in milliseconds
+                            return true;
+                        }
+                    });
+
+                    // Zoom the MapView to the current location
+//                    map.getController().animateTo(currentLocation);
+//                    map.getController().setZoom(20.0);
+                } else {
+                    // No last known location is available
+                    Log.d("Location", "No last known location available.");
+                }
+            }
+        });
+    }
+
+    private void PolygonHistoryApiCall(Integer farmerId, int position) {
+        ManageRecords getPolygonHistoryData = RetrofitClient.getRetrofit().create(ManageRecords.class);
+        retrofit2.Call<PolygonHistoryResponseModel> call = getPolygonHistoryData.getAllPolygonHistoryResponse(farmerId , 1);
+
+        call.enqueue(new retrofit2.Callback<PolygonHistoryResponseModel>() {
+
+            @Override
+            public void onResponse(Call<PolygonHistoryResponseModel> call, Response<PolygonHistoryResponseModel> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    ProgressDialog pd = new ProgressDialog(RecordPolygonActivity.this);
+                    pd.setCancelable(false);
+                    pd.setIndeterminate(false);
+                    pd.setMessage(getResources().getString(R.string.fetching_data));
+                    pd.show();
+                    try {
+                        db = OFISRoomDB.getDbInstance(getApplicationContext());
+                        if (response.body() != null ) {
+                            PolygonHistoryResponseModel outputData = response.body();
+                            db.polygonHistoryDataDao().deleteAll();
+                            db.polygonPlotHistoryDao().deleteAll();
+                            if (outputData != null) {
+                                PolygonHistoryDataList polygonHistoryEntity = convertToEntity(outputData);
+                                // Insert into Room database
+//                                db.polygonHistoryDataDao().insertAll(polygonHistoryEntity);
+
+                                PolygonHistoryData data = new PolygonHistoryData();
+                                data.farmerName = polygonHistoryEntity.getFarmerName();
+                                data.olamFarmerId = polygonHistoryEntity.getOlamFarmerId();
+                                data.primaryLat = polygonHistoryEntity.getPrimaryLat();
+                                data.primaryLng = polygonHistoryEntity.getPrimaryLng();
+                                data.farmerId = polygonHistoryEntity.getFarmerId();
+                                data.farmerGroupId = polygonHistoryEntity.getFarmerGroupId();
+                                data.farmId = polygonHistoryEntity.getFarmId();
+                                data.farmCode = polygonHistoryEntity.getFarmCode();
+                                data.farmName = polygonHistoryEntity.getFarmName();
+                                db.polygonHistoryDataDao().insert(data);
+
+                                ArrayList<PolygonPlotHistory> polygonPlotHistories = polygonHistoryEntity.getPlot();
+                                if (polygonPlotHistories != null && !polygonPlotHistories.isEmpty()) {
+                                    for (PolygonPlotHistory polygonPlotHistories1 : polygonPlotHistories) {
+                                        db.polygonPlotHistoryDao().insert(polygonPlotHistories1);
+                                    }
+                                }
+
+                            }
+                            int plotId = getPlotId(position);
+                            plotGraphInMap(plotId);
+                            getFarmLocation();
+                            getLastLocation();
+                        }else {
+                            try {
+                                Log.d("FailureMessage", "Error response body: " + response.errorBody().string());
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            pd.dismiss();
+                        }
+                    }, 2000);
+
+                }else {
+                    try {
+                        Log.d("FailureMessage", "Error response body: " + response.errorBody().string());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<PolygonHistoryResponseModel> call, Throwable t) {
+                Log.d("TAGFailure", "Network request failed", t);
+            }
+        });
+    }
+
+    private static PolygonHistoryDataList convertToEntity(PolygonHistoryResponseModel responseModel) {
+        PolygonHistoryDataList entity = new PolygonHistoryDataList();
+        entity.setFarmerName(responseModel.getFarmerName());
+        entity.setOlamFarmerId(responseModel.getOlamFarmerId());
+        entity.setPrimaryLat(responseModel.getPrimaryLat());
+        entity.setPrimaryLng(responseModel.getPrimaryLng());
+        entity.setFarmerId(responseModel.getFarmerId());
+        entity.setFarmerGroupId(responseModel.getFarmerGroupId());
+        entity.setFarmId(responseModel.getFarmId());
+        entity.setFarmCode(responseModel.getFarmCode());
+        entity.setFarmName(responseModel.getFarmName());
+        entity.setPlot(responseModel.getPlot());
+
+        return entity;
+    }
+
+    private void plotGraphInMap(long id){
+        String jsonString = db.polygonPlotHistoryDao().getPositionData(id);
+        ArrayList<GeoPoint> plotPoints = PlotDataParser.parsePlotData(jsonString);
+        IMapController mapController = map.getController();
+        mapController.setZoom(21);
+
+        if (!plotPoints.isEmpty()) {
+            if (polygon != null) {
+                map.getOverlays().remove(polygon);
+            }
+
+            polygon = new Polygon();
+            polygon.setFillColor(Color.GREEN);
+            polygon.setStrokeColor(Color.BLACK);
+            polygon.setStrokeWidth(2);
+            polygon.setPoints(plotPoints);
+            map.getOverlays().add(polygon);
+
+            // Set map center to the first point
+            mapController.setCenter(plotPoints.get(0));
+        }
+    }
+
+    private void editPlotAlertDialog(){
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setCancelable(false);
+        LayoutInflater inflater = this.getLayoutInflater();
+        View dialogView= inflater.inflate(R.layout.common_alert_dialog, null);
+        builder.setView(dialogView);
+        TextView tvMsg=(TextView)dialogView.findViewById(R.id.tv_msg);
+        tvMsg.setText(getResources().getString(R.string.edit_already_logged_plot, currentTrackname));
+        Button btnNo = (Button)dialogView.findViewById(R.id.btn_no);
+        btnNo.setText(getResources().getString(R.string.no));
+        Button btnYes = (Button)dialogView.findViewById(R.id.btn_yes);
+        btnYes.setText(getResources().getString(R.string.yes));
+        AlertDialog alert = builder.create();
+
+        btnYes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String plotName = currentTrackname.toLowerCase().replace(" ", "").toString().concat("_" + mOlamFarmerId);
+                SharedPreferenceUtils.getInstance(getApplicationContext()).removePlotUsingKey(currentTrackname);
+                if (polygon != null) {
+                    map.getOverlays().remove(polygon);
+                }
+                DataLayer dl = new DataLayer(getResources(), RecordPolygonActivity.this);
+                dl.deletePlotDataFromNetworkQueue(plotName);
+                initiateLogging();
+
+                alert.dismiss();
+            }
+        });
+        btnNo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                alert.dismiss();
+            }
+        });
+        alert.show();
+
+
+
     }
 
 }

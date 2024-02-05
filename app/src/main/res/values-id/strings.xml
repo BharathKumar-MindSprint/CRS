@@ -742,7 +742,15 @@
     <string name="certification">Certification</string>
     <string name="certification_name">Nama Sertifikasi</string>
     <string name="others">Others</string>
-    <string name="please_update_the_certification_of_farmer">Harap perbarui sertifikasi petani</string>
     <string name="metrics">Metrik:</string>
     <string name="converted_metrics">Metrik yang dikonversi</string>
+    <string name="please_update_the_certification_of_farmer">Harap perbarui sertifikasi petani</string>
+    <string name="advanced_filters">Filter tingkat lanjut</string>
+    <string name="spinner_partner_default">Mitra</string>
+    <string name="spinner_programme_default">Program</string>
+   <string name="view_farmer_information"><u>View Farmer Information</u></string>
+    <string name="no_internet_polygon">Harap aktifkan internet perangkat Anda untuk melihat poligon yang sudah diambil!</string>
+    <string name="edit_already_logged_plot">%1$s sudah dicatat dan disimpan! Apakah Anda ingin merekam ulang plot yang sama lagi?</string>
+    <string name="save_polygon_alertdialog">Apakah Anda yakin akan menghemat %1$s sekarang?</string>
+
 </resources>

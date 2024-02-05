@@ -14,6 +14,7 @@
     <string name="title_activity_find_farmer">Recherchez un planteur</string>
     <string name="title_activity_view_farmer">Détails sur le planteur</string>
     <string name="title_activity_complete_module">Remplir le questionnaire</string>
+    <string name="updating_local_unit_details">Downloading Local Units details</string>
 
     <!-- main stuff -->
     <string name="app_name">OFIS Compagnon Debug</string>
@@ -1080,5 +1081,12 @@ Conformément aux Nevada Revised Statutes Chapter 603A et Maine Revised Statutes
     <string name="please_update_the_certification_of_farmer">Veuillez mettre à jour la certification de l\'agriculteur</string>
     <string name="metrics">Métrique:</string>
     <string name="converted_metrics">Métriques converties</string>
+    <string name="advanced_filters">Filtres avancés</string>
+    <string name="spinner_partner_default">Partenaire</string>
+    <string name="spinner_programme_default">Programme</string>
+    <string name="view_farmer_information"><u>View Farmer Information</u></string>
+    <string name="no_internet_polygon">Veuillez activer Internet sur votre appareil pour afficher le polygone déjà capturé !</string>
+    <string name="edit_already_logged_plot">%1$s déjà enregistrés et enregistrés ! Voulez-vous réenregistrer la même intrigue ?</string>
+    <string name="save_polygon_alertdialog">Êtes-vous sûr d\'économiser %1$s maintenant ?</string>
 
 </resources>

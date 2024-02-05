@@ -14,6 +14,7 @@
     <string name="title_activity_find_farmer">Tìm kiếm Nông hộ</string>
     <string name="title_activity_view_farmer">Chi tiết Nông hộ</string>
     <string name="title_activity_complete_module">Mục bảng hỏi hoàn tất</string>
+    <string name="updating_local_unit_details">Downloading Local Units details</string>
 
     <!-- main stuff -->
     <string name="app_name">Hiệu chỉnh đồng hành OFIS</string>
@@ -648,4 +649,12 @@
     <string name="please_update_the_certification_of_farmer">Vui lòng cập nhật chứng nhận của nông dân</string>
     <string name="metrics">Metrics:</string>
     <string name="converted_metrics">Số liệu đã chuyển đổi</string>
+    <string name="advanced_filters">Bộ lọc nâng cao</string>
+    <string name="spinner_partner_default">Cộng sự</string>
+    <string name="spinner_programme_default">Chương trình</string>
+    <string name="view_farmer_information"><u>View Farmer Information</u></string>
+    <string name="no_internet_polygon">Vui lòng kích hoạt internet thiết bị của bạn để xem đa giác đã được chụp!</string>
+    <string name="edit_already_logged_plot">%1$s đã được ghi lại và lưu! Bạn có muốn ghi lại cùng một cốt truyện một lần nữa không?</string>
+    <string name="save_polygon_alertdialog">Bạn có chắc chắn lưu %1$s bây giờ không?</string>
+
 </resources>

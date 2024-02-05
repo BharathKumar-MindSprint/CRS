@@ -9,18 +9,327 @@
 
     <ImageView
         android:layout_width="match_parent"
-        android:layout_height="160dp"
+        android:layout_height="170dp"
         android:id="@+id/topSectionBackground"
         android:background="@color/ofis_farmer_screen_actions_background"
         android:contentDescription="@string/cd_topSectionColour" />
 
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:orientation="vertical"
+        android:paddingTop="@dimen/margin_10"
+        android:paddingBottom="@dimen/margin_10"
+        android:background="@color/ofis_farmer_screen_actions_background"
+        android:layout_below="@+id/topSectionBackground"
+        android:id="@+id/linear_viewInfo">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="2">
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_weight="1">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Gender - "
+                android:textStyle="bold"
+                android:textColor="@color/ofis_base_font_white"
+                android:paddingLeft="@dimen/margin_10"
+                android:paddingBottom="@dimen/margin_10"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/genderInfo"
+                android:textColor="@color/ofis_base_font_white"
+                android:paddingLeft="@dimen/margin_10"
+                android:paddingBottom="@dimen/margin_10"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_weight="1">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Age - "
+                android:textStyle="bold"
+                android:textColor="@color/ofis_base_font_white"
+                android:paddingLeft="@dimen/margin_10"
+                android:paddingBottom="@dimen/margin_10"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/ageInfo"
+                android:textColor="@color/ofis_base_font_white"
+                android:paddingLeft="@dimen/margin_10"
+                android:paddingBottom="@dimen/margin_10"/>
+        </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="2">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_weight="1">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Phone Number -"
+                    android:textStyle="bold"
+                    android:textColor="@color/ofis_base_font_white"
+                    android:paddingLeft="@dimen/margin_10"
+                    android:paddingBottom="@dimen/margin_10"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/pNumberInfo"
+                    android:textColor="@color/ofis_base_font_white"
+                    android:paddingLeft="@dimen/margin_10"
+                    android:paddingBottom="@dimen/margin_10"/>
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="2">
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_weight="1">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Partner -"
+                    android:textStyle="bold"
+                    android:textColor="@color/ofis_base_font_white"
+                    android:paddingLeft="@dimen/margin_10"
+                    android:paddingBottom="@dimen/margin_10"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/partnerInfo"
+                    android:textColor="@color/ofis_base_font_white"
+                    android:paddingLeft="@dimen/margin_10"
+                    android:paddingBottom="@dimen/margin_10"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_weight="1">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Program -"
+                    android:textStyle="bold"
+                    android:textColor="@color/ofis_base_font_white"
+                    android:paddingLeft="@dimen/margin_10"
+                    android:paddingBottom="@dimen/margin_10"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/programInfo"
+                    android:textColor="@color/ofis_base_font_white"
+                    android:paddingLeft="@dimen/margin_10"
+                    android:paddingBottom="@dimen/margin_10"/>
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="2">
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_weight="1">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Country -"
+                    android:textStyle="bold"
+                    android:textColor="@color/ofis_base_font_white"
+                    android:paddingLeft="@dimen/margin_10"
+                    android:paddingBottom="@dimen/margin_10"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/countryInfo"
+                    android:textColor="@color/ofis_base_font_white"
+                    android:paddingLeft="@dimen/margin_10"
+                    android:paddingBottom="@dimen/margin_10"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_weight="1">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Region -"
+                    android:textStyle="bold"
+                    android:textColor="@color/ofis_base_font_white"
+                    android:paddingLeft="@dimen/margin_10"
+                    android:paddingBottom="@dimen/margin_10"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/regionInfo"
+                    android:textColor="@color/ofis_base_font_white"
+                    android:paddingLeft="@dimen/margin_10"
+                    android:paddingBottom="@dimen/margin_10"/>
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="2">
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_weight="1">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="District -"
+                    android:textStyle="bold"
+                    android:textColor="@color/ofis_base_font_white"
+                    android:paddingLeft="@dimen/margin_10"
+                    android:paddingBottom="@dimen/margin_10"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/districtInfo"
+                    android:textColor="@color/ofis_base_font_white"
+                    android:paddingLeft="@dimen/margin_10"
+                    android:paddingBottom="@dimen/margin_10"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_weight="1">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Sub-District -"
+                    android:textStyle="bold"
+                    android:textColor="@color/ofis_base_font_white"
+                    android:paddingLeft="@dimen/margin_10"
+                    android:paddingBottom="@dimen/margin_10"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/subDistrictInfo"
+                    android:textColor="@color/ofis_base_font_white"
+                    android:paddingLeft="@dimen/margin_10"
+                    android:paddingBottom="@dimen/margin_10"/>
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="2">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_weight="1">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Place -"
+                    android:textStyle="bold"
+                    android:textColor="@color/ofis_base_font_white"
+                    android:paddingLeft="@dimen/margin_10"
+                    android:paddingBottom="@dimen/margin_10"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/placeInfo"
+                    android:textColor="@color/ofis_base_font_white"
+                    android:paddingLeft="@dimen/margin_10"
+                    android:paddingBottom="@dimen/margin_10"/>
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="2">
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_weight="1">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Farmer Group - "
+                    android:textStyle="bold"
+                    android:textColor="@color/ofis_base_font_white"
+                    android:paddingLeft="@dimen/margin_10"
+                    android:paddingBottom="@dimen/margin_10"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/fgInfo"
+                    android:textColor="@color/ofis_base_font_white"
+                    android:paddingLeft="@dimen/margin_10"
+                    android:paddingBottom="@dimen/margin_10"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_weight="1">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Section - "
+                    android:textStyle="bold"
+                    android:textColor="@color/ofis_base_font_white"
+                    android:paddingLeft="@dimen/margin_10"
+                    android:paddingBottom="@dimen/margin_10"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/sectionInfo"
+                    android:textColor="@color/ofis_base_font_white"
+                    android:paddingLeft="@dimen/margin_10"
+                    android:paddingBottom="@dimen/margin_10"/>
+            </LinearLayout>
+        </LinearLayout>
+
+    </LinearLayout>
 
     <!-- Custom error message section -->
     <LinearLayout
         android:id="@+id/layout_notification1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/topSectionBackground"
+        android:layout_below="@+id/linear_viewInfo"
         android:orientation="vertical">
 
     <LinearLayout
@@ -33,7 +342,7 @@
             android:padding="@dimen/home_activity_horizontal_margin"
             android:visibility="gone"
             android:layout_marginBottom="1dp"
-            android:layout_below="@+id/topSectionBackground"
+            android:layout_below="@+id/linear_viewInfo"
             android:baselineAligned="false">
             <ImageView
                 android:id="@+id/consent_info_status_icon"
@@ -70,7 +379,7 @@
         android:background="@color/color_secondary_3"
         android:padding="@dimen/home_activity_horizontal_margin"
         android:visibility="gone"
-        android:layout_below="@+id/topSectionBackground"
+        android:layout_below="@+id/linear_viewInfo"
         android:baselineAligned="false">
         <ImageView
             android:id="@+id/info_status_icon"
@@ -108,7 +417,7 @@
         android:background="@color/color_secondary_3"
         android:padding="@dimen/home_activity_horizontal_margin"
         android:visibility="gone"
-        android:layout_below="@+id/topSectionBackground"
+        android:layout_below="@+id/linear_viewInfo"
         android:baselineAligned="false">
         <ImageView
             android:id="@+id/plot_info_status_icon"
@@ -146,7 +455,7 @@
             android:background="@color/color_secondary_3"
             android:padding="@dimen/home_activity_horizontal_margin"
             android:visibility="gone"
-            android:layout_below="@+id/topSectionBackground"
+            android:layout_below="@+id/linear_viewInfo"
             android:baselineAligned="false">
             <ImageView
                 android:id="@+id/cert_info_status_icon"
@@ -295,6 +604,16 @@
                 android:layout_marginBottom="@dimen/ofis_input_field_bottom_margin"
                 android:maxLines="1" />
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/ofis_large_text"
+                android:id="@+id/viewFarmerInfo"
+                android:textColor="@color/ofis_base_font_white"
+                android:paddingBottom="@dimen/ofis_input_field_bottom_margin"
+                android:text="@string/view_farmer_information"
+                android:drawableEnd="@drawable/ic_drop_down_collapse"
+                android:maxLines="1" />
         </LinearLayout>
         <!-- end add farmer white input fields and heading -->
         <RelativeLayout
@@ -305,16 +624,15 @@
             android:paddingLeft="10dp"
             android:paddingRight="@dimen/activity_horizontal_margin"
             android:paddingEnd="@dimen/activity_horizontal_margin"
+            android:gravity="center_vertical"
             android:id="@+id/wrapper_farmerPhoto">
 
             <ImageView
                 android:layout_width="84dp"
                 android:layout_height="112dp"
-                android:paddingTop="@dimen/margin_10"
                 android:contentDescription="@string/Farmer_Photo"
                 android:id="@+id/viewFarmerFarmerPhoto"
                 app:srcCompat="@drawable/empty_farmer_icon"
-                android:layout_marginTop="@dimen/margin_10"
                 android:background="@android:color/transparent"
                 android:scaleType="fitStart"
                 android:layout_alignParentLeft="false"

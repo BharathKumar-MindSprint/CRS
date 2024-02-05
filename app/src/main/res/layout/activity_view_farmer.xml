@@ -293,6 +293,17 @@
                 android:layout_marginBottom="@dimen/ofis_input_field_bottom_margin"
                 android:maxLines="1" />
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:textSize="@dimen/ofis_input_field_text"
+                android:id="@+id/viewFarmerInfo"
+                android:textColor="@color/ofis_base_font_white"
+                android:layout_marginBottom="@dimen/ofis_input_field_bottom_margin"
+                android:text="View Farmer Information"
+                android:maxLines="1" />
+
+
         </LinearLayout>
         <!-- end add farmer white input fields and heading -->
         <RelativeLayout

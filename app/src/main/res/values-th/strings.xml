@@ -14,6 +14,7 @@
     <string name="title_activity_find_farmer">ค้นหาเกษตรกร</string>
     <string name="title_activity_view_farmer">รายละเอียดเกษตรกร</string>
     <string name="title_activity_complete_module">แบบสอบถามเสร็จสมบูรณ์</string>
+    <string name="updating_local_unit_details">Downloading Local Units details</string>
 
     <!-- main stuff -->
     <string name="app_name">OFIS Companion Debug</string>
@@ -647,5 +648,12 @@
     <string name="please_update_the_certification_of_farmer">Pord prạbprung bırạbrxng k̄hxng kes̄ʹtrkr</string>
     <string name="metrics">วัด:</string>
     <string name="converted_metrics">Metrik thī̀ pælng læ̂w</string>
+    <string name="advanced_filters">ตัวกรองขั้นสูง</string>
+    <string name="spinner_partner_default">พันธมิตร</string>
+    <string name="spinner_programme_default">โปรแกรม</string>
+    <string name="view_farmer_information"><u>View Farmer Information</u></string>
+    <string name="no_internet_polygon">Pord peid chı̂ ngān xinthexr̒nĕt xupkrṇ̒ k̄hxng khuṇ pheụ̄̀x dū rūp h̄lāy h̄elī̀ym thī̀ bạnthụk wị̂ læ̂w!</string>
+    <string name="edit_already_logged_plot">%1$S k̄hêā s̄ū̀ rabb læa bạnthụk wị̂ læ̂w! Khuṇ t̂xngkār bạn thụk phl̆xt reụ̄̀xng deim xīk khrậng h̄rụ̄x mị̀?</string>
+    <string name="save_polygon_alertdialog">Khuṇ næ̀cı h̄rụ̄x ẁā cabạn thụk%1$s txn nī̂?</string>
 
 </resources>

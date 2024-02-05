@@ -146,7 +146,6 @@
     <string name="permission_permanent_denial_title">Permission was permanently denied</string>
     <string name="permission_permanent_denial_msg">Permission request is permanently denied. Please provide permissions from Application Settings.</string>
     <string name="go_to_settings_msg">Allow permission from application settings.\nGo to settings?</string>
-
     <!-- in XML -->
     <string name="Add_Farmer">Add Farmer</string>
     <string name="Farmer_Name">Farmer Name</string>
@@ -1099,4 +1098,8 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="range_hint_A_R">Range : %1$d-%2$d</string>
     <string name="metrics">Metrics:</string>
     <string name="converted_metrics">Converted Metrics</string>
+    <string name="no_internet_polygon">Please enable your device internet to view the already captured polygon!</string>
+    <string name="edit_already_logged_plot">%1$s already Logged and Saved! Do you want to rerecord the same plot again ?</string>
+    <string name="save_polygon_alertdialog">Are you sure to save %1$s now?</string>
+
 </resources>

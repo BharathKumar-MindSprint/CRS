@@ -731,4 +731,8 @@
     <string name="range_hint_A_R">Menzil: %1$d-%2$d</string>
     <string name="metrics">Ölçüm:</string>
     <string name="converted_metrics">Dönüştürülen metrikler</string>
+    <string name="no_internet_polygon">Halihazırda yakalanan çokgeni görüntülemek için lütfen cihazınızın internetini etkinleştirin!</string>
+    <string name="edit_already_logged_plot">%1$s zaten Günlüğe Kaydedildi ve Kaydedildi! Aynı planı tekrar kaydetmek ister misiniz?</string>
+    <string name="save_polygon_alertdialog">%1$s\'ı şimdi kaydettiğinizden emin misiniz?</string>
+
 </resources>
