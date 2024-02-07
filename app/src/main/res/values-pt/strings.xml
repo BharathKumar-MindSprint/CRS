@@ -13,7 +13,6 @@
     <string name="title_activity_find_farmer">Encontrar produtor</string>
     <string name="title_activity_view_farmer">Detalhes do produtor</string>
     <string name="title_activity_complete_module">Completar o questiário</string>
-    <string name="updating_local_unit_details">Downloading Local Units details</string>
 
     <!-- main stuff -->
     <string name="app_name">Depurar OFIS</string>

@@ -14,7 +14,6 @@
     <string name="title_activity_find_farmer">Recherchez un planteur</string>
     <string name="title_activity_view_farmer">Détails sur le planteur</string>
     <string name="title_activity_complete_module">Remplir le questionnaire</string>
-    <string name="updating_local_unit_details">Downloading Local Units details</string>
 
     <!-- main stuff -->
     <string name="app_name">OFIS Compagnon Debug</string>
