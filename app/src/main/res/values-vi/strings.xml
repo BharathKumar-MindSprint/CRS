@@ -14,7 +14,6 @@
     <string name="title_activity_find_farmer">Tìm kiếm Nông hộ</string>
     <string name="title_activity_view_farmer">Chi tiết Nông hộ</string>
     <string name="title_activity_complete_module">Mục bảng hỏi hoàn tất</string>
-    <string name="updating_local_unit_details">Downloading Local Units details</string>
 
     <!-- main stuff -->
     <string name="app_name">Hiệu chỉnh đồng hành OFIS</string>
@@ -647,4 +646,5 @@
     <string name="certification_name">Tên chứng nhận</string>
     <string name="others">Others</string>
     <string name="please_update_the_certification_of_farmer">Vui lòng cập nhật chứng nhận của nông dân</string>
+    <string name="metrics">Metrics</string>
 </resources>
