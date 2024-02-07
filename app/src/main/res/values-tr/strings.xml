@@ -647,5 +647,6 @@
     <string name="certification_name">Sertifika Adı</string>
     <string name="others">Others</string>
     <string name="please_update_the_certification_of_farmer">Lütfen çiftçinin sertifikasyonunu güncelleyin</string>
-    <string name="metrics">Ölçüm</string>
+    <string name="metrics">Ölçüm:</string>
+    <string name="converted_metrics">Dönüştürülen metrikler</string>
 </resources>

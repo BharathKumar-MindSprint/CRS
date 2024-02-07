@@ -955,6 +955,7 @@
     <!--    <string name="Trainee_relationships">ອື່ນໆ</string>-->
     <!--    <string name="Trainee_relationships">ລູກຊາຍ/ລູກສາວຂອງຊາວກະສິກອນ</string>-->
     <!--    <string name="Trainee_relationships">ຫລານສາວ/ຫລານຊາຍຂອງຊາວກະສິກອນ</string>-->
-    <string name="metrics">Metrics</string>
+    <string name="metrics">Metrics:</string>
+    <string name="converted_metrics">ວັດແທກການປ່ຽນແປງ</string>
 
 </resources>
