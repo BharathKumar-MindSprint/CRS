@@ -883,8 +883,8 @@ public class SyncAllTask extends SyncTask {
 
                        /* publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.updating_farmers));
                         delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_FARMERS);*/
-                        publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.updating_local_unit_details));
-                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_LOCAL_UNIT);
+                        publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.download_nationalidtype_enumerator));
+                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_NATIONALIDS);
 
                     } else {
                         try {
@@ -1046,8 +1046,8 @@ public class SyncAllTask extends SyncTask {
                         e.printStackTrace();
                     }
 
-                    publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.download_nationalidtype_enumerator));
-                    delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_NATIONALIDS);
+                    publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.downloading_notification));
+                    delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_SMART_NOTIFICATION);
 
                 } else {
                     // Handle unsuccessful response here
@@ -1101,8 +1101,10 @@ public class SyncAllTask extends SyncTask {
                         }
                         moduleResponse = response;
 
-                        publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.downloading_notification));
-                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_SMART_NOTIFICATION);
+                        /*publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.downloading_notification));
+                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_SMART_NOTIFICATION);*/
+                        publishProgress(SyncOperation.CONTINUE_DOWNLOADING, res.getString(R.string.survey_data));
+                        delegate.didCompleteSyncOperation(SyncAllTask.this, SyncTaskOperationType.SYNC_LOCAL_UNIT);
                     } else {
                         try {
                             FabricLogsWriter.printCrashLog(TAG, finalEndPoint, postResponse.code(), postResponse.networkResponse().toString(), context);

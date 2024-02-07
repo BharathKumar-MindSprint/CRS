@@ -14,7 +14,6 @@
     <string name="title_activity_find_farmer">Encontrar produtor</string>
     <string name="title_activity_view_farmer">Detalhes do produtor</string>
     <string name="title_activity_complete_module">Completar o questiário</string>
-    <string name="updating_local_unit_details">Downloading Local Units details</string>
 
     <!-- main stuff -->
     <string name="app_name">Depurar OFI</string>
@@ -804,4 +803,5 @@
     <string name="alert_review">O valor inserido está fora do intervalo permitido, será enviado para revisão do administrador</string>
     <string name="alert_review_hint">Por favor insira o valor dentro do intervalo %1$d-%2$d</string>
     <string name="range_hint_A_R">Faixa: %1$d-%2$d</string>
+    <string name="metrics">Métricas</string>
 </resources>
