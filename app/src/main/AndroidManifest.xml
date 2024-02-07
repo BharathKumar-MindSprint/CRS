@@ -47,6 +47,9 @@
         tools:ignore="GoogleAppIndexingWarning,UnusedAttribute"
         tools:replace="android:supportsRtl,android:allowBackup,android:theme">
         <activity
+            android:name=".recordpolygon.RecordSipPolygon"
+            android:exported="false" />
+        <activity
             android:name=".recordpolygon.polygonhistory.PolygonHistory"
             android:exported="false" />
         <activity

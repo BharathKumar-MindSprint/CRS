@@ -67,6 +67,9 @@ import com.olam.digital.ofis.matoma.MatomoHelper;
 import com.olam.digital.ofis.matoma.ScreenNameConstants;
 import com.olam.digital.ofis.model.ModuleDTO;
 import com.olam.digital.ofis.model.SubModuleDTO;
+import com.olam.digital.ofis.recordpolygon.RecordPolygonActivity;
+import com.olam.digital.ofis.recordpolygon.RecordSipPolygon;
+import com.olam.digital.ofis.recordpolygon.SharedPreferenceUtils;
 import com.olam.digital.ofis.recordpolygon.Utils;
 
 import java.sql.Timestamp;
@@ -102,7 +105,7 @@ public class AddInfrastructureActivity extends BaseActivity {
 
     // for GPS location system
     private EditText gpsField;
-    private ImageButton requestLocation;
+    private ImageButton requestLocation, sip_polygon_icon;
     private Location poiLocation;
     private String recorded_lat, recorded_lng;
     private String accuracy;
@@ -176,6 +179,10 @@ public class AddInfrastructureActivity extends BaseActivity {
     boolean isSubdistrictCapture;
     LinearLayout layout_geo_old, layout_geo_new;
 
+    private static final String CATEGORY_NAME = "MODULE_NAME";
+    private static final String SIP_NAME = "SIP_NAME";
+    private static final String SIP_CATEGORY_ID = "SIP_CATEGORY_ID";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -223,6 +230,7 @@ public class AddInfrastructureActivity extends BaseActivity {
         villageSpinner.setVisibility(View.GONE);
 
         requestLocation = (ImageButton) findViewById(R.id.requestLocation);
+        sip_polygon_icon = (ImageButton) findViewById(R.id.sip_polygon_icon);
         if(!editMode)
             searchingGPS();
 
@@ -1026,6 +1034,12 @@ public class AddInfrastructureActivity extends BaseActivity {
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
 
                 moduleName=subModuleDTOS.get(position).getSipName().trim().toLowerCase();
+                boolean captureSipPolygon = dl.getSipPolygonById(subModuleDTOS.get(position).getId());
+                if (captureSipPolygon){
+                    sip_polygon_icon.setVisibility(View.VISIBLE);
+                }else{
+                    sip_polygon_icon.setVisibility(View.GONE);
+                }
                 MatomoHelper.matomoEventTracker(MATOMOTAG, ScreenNameConstants.SPINNER_SUB_MODULES,  ScreenNameConstants.SPINNER_CHANGED);
                 if (!editMode) {
 //                    swapPoiType(i);
@@ -1052,7 +1066,23 @@ public class AddInfrastructureActivity extends BaseActivity {
                     dynamicQuestions.answerSet.clear();
                     subModuleId = subModuleDTOS.get(position).getId();
                     getSubModuleQuestions(subModuleId);
+
                 }
+                sip_polygon_icon.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (!poiName.getText().toString().equals("")){
+                            Intent sipPolygonIntent = new Intent(context, RecordSipPolygon.class);
+                            sipPolygonIntent.putExtra(CATEGORY_NAME, moduleName);
+                            sipPolygonIntent.putExtra(SIP_NAME, poiName.getText().toString());
+                            sipPolygonIntent.putExtra(SIP_CATEGORY_ID, subModuleDTOS.get(position).getId());
+                            //recordPolygonIntent.setAction(Intent.ACTION_DEFAULT);
+                            startActivity(sipPolygonIntent);
+                        }else {
+                            Toast.makeText(AddInfrastructureActivity.this,"Please provide the Sip Name",Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
             }
 
             @Override

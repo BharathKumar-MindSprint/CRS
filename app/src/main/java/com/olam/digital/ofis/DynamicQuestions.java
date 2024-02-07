@@ -145,6 +145,7 @@ public class DynamicQuestions {
         this.dl = dl;
         this.updatingHundredPercent = false;
         this.questionColumnSuffix = questionColumnSuffix;
+        this.roomDB = OFISRoomDB.getDbInstance(context);
     }
 
     public static DynamicQuestions getInstance(Context context, String questionColumnSuffix, DataLayer dl) {

@@ -154,6 +154,14 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.RecurrenceType.COLUMN_NAME_VALUE + " TEXT, "
             + OFISDBContract.RecurrenceType.COLUMN_NAME_ACTIVE + " TEXT)";
 
+
+    private static final String OFIS_SIP_PLOT_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.SipPlot.TABLE_NAME
+            + " ( " + OFISDBContract.SipPlot.COLUMN_NAME_SIP_CATEGORY_ID + " INTEGER PRIMARY KEY, "
+            + OFISDBContract.SipPlot.COLUMN_NAME_SIP_CATEGORY + " TEXT, "
+            + OFISDBContract.SipPlot.COLUMN_NAME_SIP_NAME + " TEXT, "
+            + OFISDBContract.SipPlot.COLUMN_NAME_IS_SYNCED + " TEXT, "
+            + OFISDBContract.SipPlot.COLUMN_NAME_SIP_PLOT + " TEXT)";
+
     // create NationalidModules
     private static final String OFIS_NATIONALIDS_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.NationalIDEntry.TABLE_NAME
             + " ( " + OFISDBContract.NationalIDEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, "
@@ -179,7 +187,9 @@ class OFISDB extends SQLiteOpenHelper {
     // create SIP SubModules
     private static final String OFIS_SIPSUBGROUP_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.SipSubGroupEntry.TABLE_NAME
             + " ( " + OFISDBContract.SipSubGroupEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY, " + OFISDBContract.SipSubGroupEntry.COLUMN_NAME_MODULE_ID + " INTEGER, "
-            /*+ OFISDBContract.SipSubGroupEntry.COLUMN_NAME_POSITION + " INTEGER, " */+ OFISDBContract.SipSubGroupEntry.COLUMN_NAME_NAME + " TEXT, "
+            /*+ OFISDBContract.SipSubGroupEntry.COLUMN_NAME_POSITION + " INTEGER, " */
+            + OFISDBContract.SipSubGroupEntry.COLUMN_NAME_CAPTURE_SIP_POLYGON + " TEXT, "
+            + OFISDBContract.SipSubGroupEntry.COLUMN_NAME_NAME + " TEXT, "
             + OFISDBContract.SipSubGroupEntry.COLUMN_NAME_NAME_FR + " TEXT, " + OFISDBContract.SipSubGroupEntry.COLUMN_NAME_NAME_ES + " TEXT, "
             + OFISDBContract.SipSubGroupEntry.COLUMN_NAME_NAME_ID + " TEXT, " + OFISDBContract.SipSubGroupEntry.COLUMN_NAME_NAME_PT + " TEXT, "
             + OFISDBContract.SipSubGroupEntry.COLUMN_NAME_NAME_TR + " TEXT, " + OFISDBContract.SipSubGroupEntry.COLUMN_NAME_NAME_LO + " TEXT, "
@@ -543,6 +553,7 @@ class OFISDB extends SQLiteOpenHelper {
             + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CREATED_AT + " TEXT, " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_UPDATED_AT + " TEXT, "
             + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_FARMER_PHOTO + " TEXT, "
             + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PLOT_NAME + " TEXT, "
+            + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SIP_PLOT + " TEXT, "
             + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CERTIFICATION_ID + " TEXT, " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_CERTIFICATION_TEXT + " TEXT)";
 
     private static final String OFIS_FMP_TABLE_CREATE = "CREATE TABLE IF NOT EXISTS " + OFISDBContract.FarmManagementPlanEntry.TABLE_NAME +
@@ -956,6 +967,9 @@ class OFISDB extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(OFIS_ANSWERTYPE_TABLE_CREATE);
         sqLiteDatabase.execSQL(OFIS_RECURRENCETYPE_TABLE_CREATE);
 
+        // SIP
+        sqLiteDatabase.execSQL(OFIS_SIP_PLOT_TABLE_CREATE);
+
     }
 
     @Override
@@ -1164,6 +1178,10 @@ class OFISDB extends SQLiteOpenHelper {
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.AnswerEntry.TABLE_NAME +" ADD COLUMN " + OFISDBContract.AnswerEntry.COLUMN_NAME_ANSWER_METRIC +" TEXT default null");
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.NetworkQueueEntry.TABLE_NAME +" ADD COLUMN " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PLOT_NAME +" TEXT default null");
             sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.PlotEntry.TABLE_NAME +" ADD COLUMN " + OFISDBContract.PlotEntry.COLUMN_NAME_CREATED_AT +" TEXT default null");
+            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.SipSubGroupEntry.TABLE_NAME +" ADD COLUMN " + OFISDBContract.SipSubGroupEntry.COLUMN_NAME_CAPTURE_SIP_POLYGON +" TEXT default null");
+            sqLiteDatabase.execSQL(" ALTER TABLE " + OFISDBContract.NetworkQueueEntry.TABLE_NAME +" ADD COLUMN " + OFISDBContract.NetworkQueueEntry.COLUMN_NAME_SIP_PLOT +" TEXT default null");
+
+            sqLiteDatabase.execSQL(OFIS_SIP_PLOT_TABLE_CREATE);
         }catch (Exception e){
             e.printStackTrace();
         }

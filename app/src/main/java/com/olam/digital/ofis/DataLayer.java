@@ -243,6 +243,46 @@ public class DataLayer {
         }
     }
 
+    public void updateSipPlotGeoData(int category_sip_id, String category_name, String plotGeoData, String sip_name) {
+
+        // delete need to be handled
+//        String whereClause = OFISDBContract.PlotGeoData.COLUMN_NAME_PLOT_NAME + " = ?";
+//        String[] whereArgs = new String[]{String.valueOf(plotName)};
+//        db.delete(OFISDBContract.PlotGeoData.TABLE_NAME, whereClause, whereArgs);
+
+        ContentValues plotGeoValues = new ContentValues();
+        plotGeoValues.put(OFISDBContract.SipPlot.COLUMN_NAME_SIP_CATEGORY_ID, category_sip_id);
+        plotGeoValues.put(OFISDBContract.SipPlot.COLUMN_NAME_SIP_CATEGORY, category_name);
+        plotGeoValues.put(OFISDBContract.SipPlot.COLUMN_NAME_SIP_NAME, sip_name);
+
+        /*//temp. added server_id to avoid null, later will update server_id with web-services response actual value (at sync with server)
+        if (!plotGeoValues.containsKey(OFISDBContract.PlotGeoData.COLUMN_NAME_SERVER_ID)) {
+            plotGeoValues.put(OFISDBContract.PlotGeoData.COLUMN_NAME_SERVER_ID, UUID.randomUUID().toString());
+        }*/
+
+        plotGeoValues.put(OFISDBContract.SipPlot.COLUMN_NAME_SIP_PLOT, plotGeoData);
+        plotGeoValues.put(OFISDBContract.SipPlot.COLUMN_NAME_IS_SYNCED, "false"); //default is false, once it will sync with server it will update with true
+
+        long plotGeoDBInsert = db.insert(OFISDBContract.SipPlot.TABLE_NAME, null, plotGeoValues);
+
+        if (plotGeoDBInsert == -1) {
+            Log.e(TAG, "Error to insert data into the PlotGeoData DB");
+        }
+    }
+
+
+    public int getSipPlot(int id) {
+        int count = 0;
+        String query = "SELECT COUNT(*) FROM " + OFISDBContract.SipPlot.TABLE_NAME + " WHERE " + OFISDBContract.SipPlot.COLUMN_NAME_SIP_CATEGORY_ID + " = ?";
+        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(id)});
+        if (cursor.moveToFirst()) {
+            count = cursor.getInt(0);
+        }
+        cursor.close();
+        db.close();
+        return count;
+    }
+
     public void deletePlotDataFromNetworkQueue(String plotName){
         try {
             String whereClause = OFISDBContract.NetworkQueueEntry.COLUMN_NAME_PLOT_NAME + " = ?";
@@ -347,6 +387,16 @@ public class DataLayer {
 
     }
 
+    public int fetchSyncedSipPlotCountById(String id) {
+        String[] columns = new String[]{"*"};
+        String whereClause = OFISDBContract.SipPlot.COLUMN_NAME_SIP_CATEGORY_ID + " = ? AND "
+                + OFISDBContract.SipPlot.COLUMN_NAME_IS_SYNCED + " = ? ";
+        String[] whereArgs = new String[]{String.valueOf(id),"1"};
+        Cursor data = db.query(OFISDBContract.SipPlot.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+        return data.getCount();
+
+    }
+
     public int fetchPlotTotalCount(String id) {
         String[] columns = new String[]{"*"};
         String whereClause = OFISDBContract.PlotEntry.COLUMN_NAME_FARMER_ID + " = ? ";
@@ -423,6 +473,11 @@ public class DataLayer {
     public Cursor getPlotGeoData() {
         String[] columns = new String[]{"*"};
         return db.query(OFISDBContract.PlotGeoData.TABLE_NAME, columns, null, null, null, null, null);
+    }
+
+    public Cursor getSipPlotGeoData() {
+        String[] columns = new String[]{"*"};
+        return db.query(OFISDBContract.SipPlot.TABLE_NAME, columns, null, null, null, null, null);
     }
 
 
@@ -1811,6 +1866,27 @@ public class DataLayer {
         return newEntry;
     }
 
+    public boolean getSipPolygonById(int id){
+        boolean captureSipPolygon = false;
+        Cursor cursor = null;
+        try {
+            String[] columns = new String[]{"*"};
+            String whereClause = OFISDBContract.SipSubGroupEntry.COLUMN_NAME_ID + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(id)};
+            cursor = db.query(OFISDBContract.SipSubGroupEntry.TABLE_NAME , columns , whereClause , whereArgs , null , null, null);
+            if(cursor != null){
+                while(cursor.moveToNext()){
+                    captureSipPolygon = Objects.equals(cursor.getString(cursor.getColumnIndex(OFISDBContract.SipSubGroupEntry.COLUMN_NAME_CAPTURE_SIP_POLYGON)), "true");
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            cursor.close();
+        }
+        return captureSipPolygon;
+    }
+
     public String getGlobalIdByQuestionId(int questionId){
         String metricId = "";
         Cursor cursor = null;
@@ -1915,6 +1991,28 @@ public class DataLayer {
         }
         return  assignmentField;
     }
+
+    public String getPLotDataFromCategoryId(String id){
+        String plotdata="";
+        Cursor farmerCursor=null;
+        try {
+            String[] columns = new String[]{"*"};
+            String whereClause = OFISDBContract.SipPlot.COLUMN_NAME_SIP_CATEGORY_ID + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(id)};
+            farmerCursor = db.query(OFISDBContract.SipPlot.TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+            if (farmerCursor != null) {
+                while (farmerCursor.moveToNext()) {
+                    plotdata = farmerCursor.getString(farmerCursor.getColumnIndex(OFISDBContract.SipPlot.COLUMN_NAME_SIP_PLOT));
+                }
+            }
+        } catch (Exception e) {
+        }finally {
+            farmerCursor.close();
+        }
+        return plotdata;
+    }
+
+
 
     public Cursor getNIDPhotostatusByType(String type, long farmerid) {
         String[] columns = new String[]{"*"};
@@ -3727,6 +3825,25 @@ public class DataLayer {
             db.update(OFISDBContract.FarmerNationalIDs.TABLE_NAME, values, whereClause, whereArgs);
         }catch (Exception e){}
 
+    }
+
+    public void updateSipPlotSync(String id) {
+        ContentValues values = new ContentValues();
+        values.put(OFISDBContract.SipPlot.COLUMN_NAME_IS_SYNCED, "true");
+        String whereClause = OFISDBContract.SipPlot.COLUMN_NAME_SIP_CATEGORY_ID + " = ?";
+        String[] whereArgs = new String[]{id};
+        try {
+            db.update(OFISDBContract.SipPlot.TABLE_NAME, values, whereClause, whereArgs);
+        }catch (Exception e){}
+
+    }
+
+    public void deleteSipPlotItem(int id) {
+        String whereClause = OFISDBContract.SipPlot.COLUMN_NAME_SIP_CATEGORY_ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(id)};
+        try {
+            db.delete(OFISDBContract.SipPlot.TABLE_NAME, whereClause, whereArgs);
+        }catch (Exception e){}
     }
 
     public void updateSyncedStatusFixed(long farmerid, long updatedFarmerId) {
