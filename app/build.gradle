@@ -385,6 +385,7 @@ dependencies {
     implementation 'androidx.room:room-runtime:2.2.5'
     annotationProcessor 'androidx.room:room-compiler:2.2.5'
     implementation 'com.itextpdf:itextg:5.5.10'
+    implementation 'com.github.pratikbutani:MultiSelectSpinner:1.0.1'
 }
 
 apply plugin: 'com.google.gms.google-services'
