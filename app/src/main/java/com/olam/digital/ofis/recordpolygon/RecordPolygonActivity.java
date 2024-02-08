@@ -400,7 +400,7 @@ public class RecordPolygonActivity extends AppCompatActivity implements AdapterV
                 setLoggingStarted(false);
                 setRecordingIcon(RecordingState.STOPPED);
                 if (!checkPlotEntryExistInPreference()) {
-                    if (calculateArea() >= 0.01){
+                    if (calculateArea() >= 0.0009){
                         savePolygonToSharedPreference();
                     }else{
                     areaInfo.setText(getResources().getString(R.string.area_info, String.valueOf(areaWithoutRounded)));
