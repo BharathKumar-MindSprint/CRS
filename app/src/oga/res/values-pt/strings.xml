@@ -775,7 +775,7 @@
     <string name="please_check_question">Por favor, verifique a pergunta</string>
     <string name="please_check_dependent_question">já que a questão sobre dependentes foi atualizada</string>
     <string name="national_id_info">Atualize o ID nacional do produtor</string>
-    <string name="zero_area_msg">Não é possível salvar o polígono registrado com 0 ha. Tente gravar um polígono diferente.</string>
+    <string name="zero_area_msg">Não é possível salvar o polígono registrado com 0.0009ha. Tente gravar um polígono diferente.</string>
     <string name="direct_value_below_error">Insira o valor da pergunta %1$d abaixo de %2$d</string>
     <string name="direct_value_above_error">Insira o valor da pergunta %1$d acima de %2$d</string>
     <string name="direct_value_greater_than_error">Insira o valor da pergunta %1$d dentro ou igual a %2$d</string>

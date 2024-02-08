@@ -658,7 +658,7 @@
     <string name="biometric_licence_deactivation_queue">Biyometrik Lisans Devre Dışı Bırakma</string>
     <string name="face_recognizion">Yüz tanıma</string>
 
-    <string name="zero_area_msg">Cannot save recorded polygon with 0ha. Please try recording a different polygon</string>
+    <string name="zero_area_msg">Cannot save recorded polygon with 0.0009ha. Please try recording a different polygon</string>
     <string name="direct_value_below_error">Please enter value of question %1$d below %2$d</string>
     <string name="direct_value_above_error">Please enter value of question %1$d above %2$d</string>
     <string name="direct_value_greater_than_error">Please enter value of question %1$d within or equal to %2$d</string>
