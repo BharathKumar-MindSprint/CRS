@@ -15,7 +15,6 @@
     <string name="title_activity_view_farmer">Farmer Details</string>
     <string name="title_activity_record_polygon">Record Plot Polygon</string>
     <string name="title_activity_complete_module">Complete Questionnaire Module</string>
-    <string name="updating_local_unit_details">Downloading Local Units details</string>
 
 
     <!-- main stuff -->
@@ -1120,11 +1119,12 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="certification_name">Certification Name</string>
     <string name="select_certification">Select Certifications</string>
     <string name="others">Others</string>
+    <string name="metrics">Metrics:</string>
+    <string name="converted_metrics">Converted Metrics</string>
     <string name="please_update_the_certification_of_farmer">Please update the Certification of farmer</string>
     <string name="advanced_filters">Advanced Filters</string>
     <string name="spinner_partner_default">Partner</string>
     <string name="spinner_programme_default">Programme</string>
-    <string name="metrics">Metrics</string>
     <string name="view_farmer_information"><u>View Farmer Information</u></string>
     <string name="no_internet_polygon">Please enable your device internet to view the already captured polygon!</string>
     <string name="edit_already_logged_plot">%1$s already Logged and Saved! Do you want to rerecord the same plot again ?</string>

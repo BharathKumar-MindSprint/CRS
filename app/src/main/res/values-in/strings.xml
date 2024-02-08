@@ -14,7 +14,6 @@
     <string name="title_activity_find_farmer">Temukan Petani</string>
     <string name="title_activity_view_farmer">Detail petani</string>
     <string name="title_activity_complete_module">Selesaikan modul kusioner</string>
-    <string name="updating_local_unit_details">Downloading Local Units details</string>
 
     <!-- main stuff -->
     <string name="app_name">OFIS Debug</string>
@@ -740,7 +739,8 @@
     <string name="certification_name">Nama Sertifikasi</string>
     <string name="others">Others</string>
     <string name="please_update_the_certification_of_farmer">Harap perbarui sertifikasi petani</string>
-    <string name="metrics">Metrik</string>
+    <string name="metrics">Metrik:</string>
+    <string name="converted_metrics">Metrik yang dikonversi</string>
     <string name="view_farmer_information"><u>View Farmer Information</u></string>
     <string name="no_internet_polygon">Harap aktifkan internet perangkat Anda untuk melihat poligon yang sudah diambil!</string>
     <string name="edit_already_logged_plot">%1$s sudah dicatat dan disimpan! Apakah Anda ingin merekam ulang plot yang sama lagi?</string>

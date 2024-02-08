@@ -1072,7 +1072,8 @@ Conformément aux Nevada Revised Statutes Chapter 603A et Maine Revised Statutes
     <string name="alert_review">La valeur saisie est en dehors de la plage autorisée, elle sera poussée pour examen par l\'administrateur</string>
     <string name="alert_review_hint">Veuillez entrer la valeur dans la plage %1$d-%2$d</string>
     <string name="range_hint_A_R">Gamme: %1$d-%2$d</string>
-    <string name="metrics">Métrique</string>
+    <string name="metrics">Métrique:</string>
+    <string name="converted_metrics">Métriques converties</string>
     <string name="no_internet_polygon">Veuillez activer Internet sur votre appareil pour afficher le polygone déjà capturé !</string>
     <string name="edit_already_logged_plot">%1$s déjà enregistrés et enregistrés ! Voulez-vous réenregistrer la même intrigue ?</string>
     <string name="save_polygon_alertdialog">Êtes-vous sûr d\'économiser %1$s maintenant ?</string>

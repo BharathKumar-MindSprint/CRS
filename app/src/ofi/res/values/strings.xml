@@ -170,9 +170,6 @@
     <string name="Task_list_header">Task List</string>
     <string name="record_farm_location">Record Farm Location</string>
     <string name="record_farm_polygon">Record Farm Polygon</string>
-<!--    <string name="recorded_polygon_history">Polygon History</string>-->
-<!--    <string name="no_polygon_history">No Polygon Recorded</string>-->
-<!--    <string name="view_polygon_history">Tap to View</string>-->
     <string name="record_farm_location_hint">Tap to get GPS</string>
     <string name="record_farm_polygon_hint">Tap to Record Farm Polygon</string>
     <string name="record_farm_polygon_complete">Polygon recorded</string>
@@ -485,7 +482,6 @@
     <string name="camera_and_gallery_permission_denial_msg">Camera &amp; Gallery Feature will not work without this Permission</string>
     <string name="loggin_In">Logging In</string>
     <string name="updating_master_details">Downloading master details</string>
-    <string name="updating_local_unit_details">Downloading Local Units details</string>
     <string name="authentication_failed">Authentication failed. Please try again</string>
     <string name="authentication_attempt">Please wait for 30 minutes for your login to be enabled and try again with your same enumerator ID and Passcode</string>
     <string name="enumerator_empty">Please enter the valid enumerator Id &amp; Passcode</string>
@@ -1113,7 +1109,8 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="alert_review">Value entered will be pushed for administrator review for additional validation</string>
     <string name="alert_review_hint">Please enter the value within the range %1$d-%2$d</string>
     <string name="range_hint_A_R">Range : %1$d-%2$d</string>
-    <string name="metrics">Metrics</string>
+    <string name="metrics">Metrics:</string>
+    <string name="converted_metrics">Converted Metrics</string>
     <string name="no_internet_polygon">Please enable your device internet to view the already captured polygon!</string>
     <string name="edit_already_logged_plot">%1$s already Logged and Saved! Do you want to rerecord the same plot again ?</string>
     <string name="save_polygon_alertdialog">Are you sure to save %1$s now?</string>

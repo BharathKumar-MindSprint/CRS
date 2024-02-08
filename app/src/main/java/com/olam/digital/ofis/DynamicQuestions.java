@@ -145,6 +145,7 @@ public class DynamicQuestions {
         this.dl = dl;
         this.updatingHundredPercent = false;
         this.questionColumnSuffix = questionColumnSuffix;
+        this.roomDB = OFISRoomDB.getDbInstance(context);
     }
 
     public static DynamicQuestions getInstance(Context context, String questionColumnSuffix, DataLayer dl) {
@@ -2089,9 +2090,8 @@ public class DynamicQuestions {
         previewLayout.setOrientation(LinearLayout.VERTICAL);
         previewLayout.setPadding(16, 16, 16, 16);
 
-        // Create the first TextView with the title "Converted Metrics"
         TextView titleTextView = new TextView(context);
-        titleTextView.setText("Converted Metrics");
+        titleTextView.setText(context.getResources().getString(R.string.converted_metrics));
         titleTextView.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
@@ -3325,9 +3325,8 @@ public class DynamicQuestions {
         previewLayout.setOrientation(LinearLayout.VERTICAL);
         previewLayout.setPadding(16, 16, 16, 16);
 
-        // Create the first TextView with the title "Converted Metrics"
         TextView titleTextView = new TextView(context);
-        titleTextView.setText("Converted Metrics");
+        titleTextView.setText(context.getResources().getString(R.string.converted_metrics));
         titleTextView.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
@@ -4001,7 +4000,7 @@ public class DynamicQuestions {
 
 
         TextView text = new TextView(getInstance().context);
-        text.setText("Metrics:");
+        text.setText(context.getResources().getString(R.string.metrics));
         text.setTextColor(context.getResources().getColor(R.color.weightage_bar));
         LinearLayout.LayoutParams textParams = new LinearLayout.LayoutParams(
                 0, // Width set to 0
@@ -4018,9 +4017,8 @@ public class DynamicQuestions {
         previewLayout.setOrientation(LinearLayout.VERTICAL);
         previewLayout.setPadding(16, 16, 16, 16);
 
-        // Create the first TextView with the title "Converted Metrics"
         TextView titleTextView = new TextView(context);
-        titleTextView.setText("Converted Metrics");
+        titleTextView.setText(context.getResources().getString(R.string.converted_metrics));
         titleTextView.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
@@ -4920,7 +4918,7 @@ public class DynamicQuestions {
 
 
         TextView text = new TextView(getInstance().context);
-        text.setText("Metrics:");
+        text.setText(context.getResources().getString(R.string.metrics));
         text.setTextColor(context.getResources().getColor(R.color.weightage_bar));
         LinearLayout.LayoutParams textParams = new LinearLayout.LayoutParams(
                 0, // Width set to 0
@@ -4937,9 +4935,8 @@ public class DynamicQuestions {
         previewLayout.setOrientation(LinearLayout.VERTICAL);
         previewLayout.setPadding(16, 16, 16, 16);
 
-        // Create the first TextView with the title "Converted Metrics"
         TextView titleTextView = new TextView(context);
-        titleTextView.setText("Converted Metrics");
+        titleTextView.setText(context.getResources().getString(R.string.converted_metrics));
         titleTextView.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT

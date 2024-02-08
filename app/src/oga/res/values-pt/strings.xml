@@ -803,7 +803,8 @@
     <string name="alert_review">O valor inserido está fora do intervalo permitido, será enviado para revisão do administrador</string>
     <string name="alert_review_hint">Por favor insira o valor dentro do intervalo %1$d-%2$d</string>
     <string name="range_hint_A_R">Faixa: %1$d-%2$d</string>
-    <string name="metrics">Métricas</string>
+    <string name="metrics">Métricas:</string>
+    <string name="converted_metrics">Métricas convertidas</string>
     <string name="no_internet_polygon">Habilite a Internet do seu dispositivo para visualizar o polígono já capturado!</string>
     <string name="edit_already_logged_plot">%1$s já logado e salvo! Quer regravar o mesmo enredo novamente?</string>
     <string name="save_polygon_alertdialog">Tem certeza de que deseja economizar %1$s agora?</string>

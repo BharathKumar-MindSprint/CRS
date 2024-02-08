@@ -14,7 +14,6 @@
     <string name="title_activity_find_farmer">Recherchez un planteur</string>
     <string name="title_activity_view_farmer">Détails sur le planteur</string>
     <string name="title_activity_complete_module">Remplir le questionnaire</string>
-    <string name="updating_local_unit_details">Downloading Local Units details</string>
 
     <!-- main stuff -->
     <string name="app_name">OFIS Compagnon Debug</string>
@@ -1079,7 +1078,8 @@ Conformément aux Nevada Revised Statutes Chapter 603A et Maine Revised Statutes
     <string name="certification_name">Nom du certificat</string>
     <string name="others">Others</string>
     <string name="please_update_the_certification_of_farmer">Veuillez mettre à jour la certification de l\'agriculteur</string>
-    <string name="metrics">Métrique</string>
+    <string name="metrics">Métrique:</string>
+    <string name="converted_metrics">Métriques converties</string>
     <string name="advanced_filters">Filtres avancés</string>
     <string name="spinner_partner_default">Partenaire</string>
     <string name="spinner_programme_default">Programme</string>
