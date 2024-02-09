@@ -1099,7 +1099,7 @@ Mandatory disclosures and legal claims (e.g. to comply with any subpoena, court 
     <string name="metrics">Metrics:</string>
     <string name="converted_metrics">Converted Metrics</string>
     <string name="no_internet_polygon">Please enable your device internet to view the already captured polygon!</string>
-    <string name="edit_already_logged_plot">%1$s already Logged and Saved! Do you want to rerecord the same plot again ?</string>
+    <string name="edit_already_logged_plot">%1$s already Logged and Saved! Do you want to re-record the same plot again ?</string>
     <string name="save_polygon_alertdialog">Are you sure to save %1$s now?</string>
 
 </resources>
