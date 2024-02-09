@@ -489,7 +489,7 @@ public class DataLayer {
         }
     }
 
-    public void updatePlotDataAfterSync(String plotId, String plotName, String farmerId, String plottedName) {
+    public void updatePlotDataAfterSync(String plotId, String plotName, String farmerId, String plottedName, String created_date) {
         try {
 
             String plotTable = OFISDBContract.PlotEntry.TABLE_NAME;
@@ -505,6 +505,7 @@ public class DataLayer {
             updatePlotGeoDataAfterSyncValues.put(OFISDBContract.PlotEntry.COLUMN_IS_SYNCED, "1");
             updatePlotGeoDataAfterSyncValues.put(OFISDBContract.PlotEntry.COLUMN_NAME_FARMER_ID, farmerId);
             updatePlotGeoDataAfterSyncValues.put(OFISDBContract.PlotEntry.COLUMN_NAME_PLOT_NAME, plotName);
+            updatePlotGeoDataAfterSyncValues.put(OFISDBContract.PlotEntry.COLUMN_NAME_CREATED_AT, created_date);
 
             db.insert(OFISDBContract.PlotEntry.TABLE_NAME, null, updatePlotGeoDataAfterSyncValues);
         }catch (Exception e){
