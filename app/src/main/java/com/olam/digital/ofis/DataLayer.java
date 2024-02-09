@@ -7393,6 +7393,27 @@ public class DataLayer {
         return  newId;
     }
 
+    public String getCreatedPlotDateByID(int plotId){
+        String createdDate = "";
+        Cursor cursor = null;
+        try {
+            String[] columns = new String[]{"*"};
+            String whereClause = OFISDBContract.PlotEntry.COLUMN_NAME_ID + " = ?";
+            String[] whereArgs = new String[]{String.valueOf(plotId)};
+            cursor = db.query(OFISDBContract.PlotEntry.TABLE_NAME , columns , whereClause , whereArgs , null , null, null);
+            if(cursor != null){
+                while(cursor.moveToNext()){
+                    createdDate = cursor.getString(cursor.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_NAME_CREATED_AT));
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            cursor.close();
+        }
+        return createdDate;
+    }
+
     public MultiFarmDTO getMultiFarmInfoObj(long farmId) {
         String[] columns = new String[]{"*"};
         String whereClause = OFISDBContract.MultiFarmFarms.COLUMN_NAME_ID + " = ?";
