@@ -1855,6 +1855,11 @@ public class ViewFarmerActivity extends BaseListActivity implements AdapterView.
                 String isSynced = plotIds.getString(plotIds.getColumnIndex(OFISDBContract.PlotEntry.COLUMN_IS_SYNCED));
                 if(! name.equalsIgnoreCase("null")){
                     plotName.setText(name);
+                    if (isSynced.equalsIgnoreCase("1")){
+                        plotName.setEnabled(false);
+                    }else {
+                        plotName.setEnabled(true);
+                    }
                 }
                 int count = dl.fetchPlotData(String.valueOf(farmerId));
                 if(i == 1 || i <= count){

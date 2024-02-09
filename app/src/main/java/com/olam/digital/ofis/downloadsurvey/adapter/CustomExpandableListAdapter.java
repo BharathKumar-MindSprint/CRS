@@ -540,8 +540,7 @@ public class CustomExpandableListAdapter extends BaseExpandableListAdapter {
         }else{
             plotName.setText(plotDTO.getPlotName());
         }
-        String createdDate = dl.getCreatedPlotDateByID(plotDTO.getPlotId());
-        plotId.setText("Plot ID:"+plotDTO.getPlotId() + " | Created Date: " + createdDate);
+        plotId.setText("Plot ID:"+plotDTO.getPlotId());
         return convertView;
     }
 
